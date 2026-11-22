@@ -1,11 +1,14 @@
 import { existsSync, statSync } from "node:fs";
 import type { WorkspaceProfile } from '../../shared/types/workspace';
-import { canonicalWorktreePath, findManagedWorktreeByRoot, worktreeNativeIdentity } from '../../openclaw_runtime/src/agents/worktree-registry';
+import { canonicalWorktreePath, findManagedWorktreeByRoot, worktreeNativeIdentity, filesystemInstance } from '../../openclaw_runtime/src/agents/worktree-registry';
 import { assertCleanupCommitRetained, assertWorktreeIndexVisible, removeNativeGitWorktree } from '../../openclaw_runtime/src/agents/worktree-service';
 import type { GitOperationResult } from '../../shared/types/git';
 import { checkoutWriterSnapshot } from '../../openclaw_runtime/src/agents/worktree-writer';
 import { resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { TaskSystemStore } from "../../shared/task-system/store";
+import { readTaskTrace, type TaskTraceQuery } from '../../shared/task-system/trace';
+import { canonicalPath } from "../../shared/task-system/identity";
+import { projectCoordinatorProfile, projectCoordinatorScope } from "../../shared/task-system/project-coordinator";
 import { createExecutionTaskAccess, openExecutionTaskStore, inheritExecutionTaskReference, type ExecutionTaskAuthorityBasis } from "../../openclaw_runtime/src/agents/execution-task-authority";
 import type {
   TaskSystemCommand,
@@ -14,7 +17,7 @@ import type {
   TaskPage,
   TaskSessionSnapshot,
 } from "../../shared/task-system/types";
-import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from "./workspaces-api";
+import { getPersistedCoordinatorBinding, getProjectCoordinatorProfiles, getWorkspaceRootPathById } from "./workspaces-api";
 import type { GatewayManager } from "../gateway/manager";
 
 type UiWorktreeRemovalRead = { blocked: true; reason: string } | { blocked: false; identity: string };
@@ -117,6 +120,15 @@ export async function listManagedTasks(workspaceId?: string | null): Promise<Tas
     store?.close();
   }
 }
+export async function readManagedTaskTrace(workspaceId: string, query: TaskTraceQuery) {
+  if (typeof query?.taskNodeId !== 'string' || !query.taskNodeId.trim() || (query.revision !== undefined && (!Number.isSafeInteger(query.revision) || query.revision < 1)) ||
+      (query.digest !== undefined && !/^[a-f0-9]{64}$/i.test(query.digest)) ||
+      (query.candidate !== undefined && (typeof query.candidate !== 'string' || !query.candidate.trim()))) throw new Error('TASK_TRACE_QUERY_INVALID');
+  const store = await openTaskSystem(workspaceId);
+  if (!store) throw new Error('TASK_STORE_UNAVAILABLE');
+  try { return readTaskTrace(store, query, filesystemInstance); }
+  finally { store.close(); }
+}
 export async function pageManagedTasks(
   workspaceId: string | null | undefined,
   query: TaskQuery = {},
@@ -142,11 +154,15 @@ export async function readSessionTask(workspaceId:string,sessionKey:string,gatew
     if (!generation) return {task:null,children:[]};
     const snapshot=store.sessionSnapshot(sessionKey,generation);
     const verificationReceipts=snapshot.task?store.getTaskEvidence(snapshot.task.contract.taskNodeId):[];
+    const profile = projectCoordinatorProfile(await getProjectCoordinatorProfiles(), sessionKey);
+    const projectPlan = profile?.id === workspaceId
+      ? store.projectPlan(projectCoordinatorScope(profile, sessionKey, generation, store.domain.worktree).workspaceId)
+      : undefined;
     if (expectedGeneration) {
       const after=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey});
       if (after.session?.sessionId !== generation) throw new Error('TASK_GENERATION_STALE');
     }
-    return {...snapshot,verificationReceipts};
+    return {...snapshot,verificationReceipts,...(projectPlan ? {projectPlan} : {})};
   } finally {store.close();}
 }
 
@@ -156,7 +172,7 @@ export async function assertManagedTaskAdmission(input: {
   sessionKey: string;
   generation: string;
   requestId: string;
-}): Promise<void> {
+}): Promise<'reserved' | 'existing' | void> {
   if (!existsSync(input.workspaceRoot)) return;
   const access = createExecutionTaskAccess(input.workspaceRoot);
   const domain = access.domain;
@@ -173,7 +189,7 @@ export async function assertManagedTaskAdmission(input: {
     store.assertOwner(task.claim);
     // One logical dispatch per task epoch. A repair or another writer needs a
     // new task/attempt instead of another request key for the same work.
-    store.reserveDelegation(task.claim, input.requestId);
+    return store.reserveDelegation(task.claim, input.requestId);
   } finally {
     store.close();
   }
@@ -327,10 +343,11 @@ export async function taskSystemCommand(
 ): Promise<unknown> {
   const store = await openTaskSystem(workspaceId, !['history', 'readRetainedArtifact'].includes(command.action));
   if (!store) throw new Error("TASK_STORE_UNAVAILABLE");
-  const generationFor = async (sessionKey: string, bindingWorkspaceId = workspaceId) => {
+  const generationFor = async (sessionKey: string, bindingWorkspaceId = workspaceId, allowUserPaused = false) => {
     if (!gateway) throw new Error("TASK_SESSION_OWNER_UNAVAILABLE");
     const binding = await getPersistedCoordinatorBinding(bindingWorkspaceId, sessionKey);
-    if (!binding || binding.state !== "active") throw new Error("TASK_COORDINATOR_REQUIRED");
+    if (!binding || (binding.state !== "active" && !(allowUserPaused && binding.state === "paused" && binding.invalidationReason === "user-paused")))
+      throw new Error("TASK_COORDINATOR_REQUIRED");
     const described = await gateway.rpc<{ session?: { sessionId?: string } }>(
       "sessions.describe",
       { key: sessionKey },
@@ -401,9 +418,20 @@ export async function taskSystemCommand(
       }
     }
     const credential = command.credential;
-    const current = await generationFor(credential.sessionKey);
-    if (current.generation !== credential.generation) throw new Error("TASK_GENERATION_STALE");
-    const scoped = openExecutionTaskStore(current.worktree);
+    const controlOnly = command.action === "cancel" || command.action === "reconcile";
+    const worker = controlOnly ? store.writerDelegationFor(credential) : null;
+    const coordinator = worker?.parent ?? credential;
+    const current = await generationFor(coordinator.sessionKey, workspaceId, controlOnly);
+    if (current.generation !== coordinator.generation) throw new Error("TASK_GENERATION_STALE");
+    if (worker) {
+      if (worker.parentWorktree !== canonicalPath(current.worktree)) throw new Error("TASK_SESSION_DOMAIN_MISMATCH");
+      const described = await gateway!.rpc<{ session?: { sessionId?: string } }>(
+        "sessions.describe", { key: credential.sessionKey }, 10_000,
+      );
+      if (described.session?.sessionId !== credential.generation) throw new Error("TASK_GENERATION_STALE");
+    }
+    const worktree = worker?.childWorktree ?? current.worktree;
+    const scoped = openExecutionTaskStore(worktree);
     try {
       if (command.action === "decompose")
         return scoped.decompose(credential, command.children, command.requestId);
@@ -412,7 +440,7 @@ export async function taskSystemCommand(
         return gateway.rpc(
           "tasks.contract.reconcile",
           {
-            workspaceDir: current.worktree,
+            workspaceDir: worktree,
             credential,
             operationId: command.operationId,
             effectReceiptId: command.effectReceiptId,
@@ -429,6 +457,7 @@ export async function taskSystemCommand(
         return scoped.handoff(credential, command.targetSessionKey, next.generation, next.worktree);
       }
       if (command.action === "submit") return scoped.submit(credential, command.candidate);
+      if (command.action === "repair") return scoped.repair(credential, command.candidate, command.requestId, command.reason);
       if (command.action === "verifyFile")
         return scoped.verifyFile(
           credential,
@@ -449,8 +478,25 @@ export async function taskSystemCommand(
       }
       if (command.action === "cancel") {
         const cancelled = scoped.control(credential, "cancel");
-        if (cancelled.contract.state === "cancelling" && gateway)
-          await gateway.rpc("sessions.stop", { key: credential.sessionKey }, 20_000);
+        if (cancelled.contract.state === "cancelling" && gateway) {
+          const stopOwned = async (view: TaskView) => {
+            const claim = view.claim;
+            if (view.contract.state !== "cancelling") return;
+            for (const id of view.childTaskNodeIds ?? []) await stopOwned(scoped.get(id));
+            if (!claim || claim.state === "released") return;
+            const delegation = scoped.writerDelegationFor(claim);
+            if (delegation?.phase === "returned") return;
+            const stopped = await gateway.rpc<{ ok: boolean; sessionId: string }>(
+              "sessions.stop", { key: claim.sessionKey, expectedSessionId: claim.generation }, 20_000,
+            );
+            if (!stopped.ok || stopped.sessionId !== claim.generation) throw new Error("TASK_CANCEL_STOP_UNCONFIRMED");
+            if (delegation) scoped.returnDelegatedWriter(claim.sessionKey, {
+              runId: delegation.childRunId, parentGeneration: delegation.parent.generation,
+              endedAt: Date.now(), outcome: "cancelled",
+            });
+          };
+          await stopOwned(cancelled);
+        }
         return scoped.get(credential.taskNodeId);
       }
       return scoped.control(credential, command.action);

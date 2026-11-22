@@ -1,0 +1,17 @@
+{
+  "schema": "G5RepairEvidenceManifest/v1",
+  "driven_by": "agent",
+  "actor": "g5-relay-20261117",
+  "realHumanEvidence": false,
+  "files": [
+    {
+      "path": "REPORT.md",
+      "sha256": "776436162a2af4ec0dae6325442b9ec5c50d4128285a7903863b24a905e59cf0"
+    },
+    {
+      "path": "report.json",
+      "sha256": "4489bc4434490d9aac733440574e5dd8a77f7fa40546c5a00509840d9a98defa"
+    }
+  ],
+  "hashScope": "Git blob bytes with LF line endings"
+}

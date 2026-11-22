@@ -531,7 +531,10 @@ export function createOpenClawTools(
       agentId: sessionAgentId,
       agentAccountId: options?.agentAccountId,
     }),
-    ...(includeTranscriptsTool ? [createTranscriptsTool({ config: resolvedConfig })] : []),
+    ...(includeTranscriptsTool ? [createTranscriptsTool({ config: resolvedConfig,
+      owner: options?.agentSessionKey && options.sessionId && workspaceDir
+        ? { sessionKey: options.agentSessionKey, generation: options.sessionId, workspace: workspaceDir } : undefined,
+    })] : []),
     ...collectPresentOpenClawTools([imageGenerateTool, musicGenerateTool, videoGenerateTool]),
     ...(embedded
       ? []

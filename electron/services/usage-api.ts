@@ -241,7 +241,9 @@ export function createUsageApi(): CompleteHostServiceRegistry['usage'] {
         success: true,
         usage: {
           sessionKey,
-          runId,
+          scope: 'session',
+          runId: null,
+          requestedRunId: runId,
           inputTokens: summary.inputTokens,
           outputTokens: summary.outputTokens,
           cacheReadTokens: summary.cacheReadTokens,

@@ -129,12 +129,13 @@ function SessionTaskScopeChip({
           {list}
         </SheetContent>
       </Sheet> : toggle}
-      <span className="sr-only" role="status">
+      <span className={cn('min-w-0 truncate', attention ? 'max-w-[220px] text-amber-700 dark:text-amber-400' : state === 'loading' ? 'max-w-[160px] text-muted-foreground' : 'sr-only')} role="status">
         {statusText}
       </span>
       {/* Secondary actions stay reachable for pointer and keyboard but only
         * claim attention when the scope needs it. */}
-      <span className={cn('items-center', attention ? 'inline-flex' : 'hidden')}>
+      <span className={cn('inline-flex items-center transition-opacity duration-150',
+        attention ? 'opacity-100' : 'opacity-0 group-hover/task-scope:opacity-100 group-focus-within/task-scope:opacity-100')}>
         <button type="button" aria-label={t('summary.refresh')} title={t('summary.refresh')} onClick={onRefresh} disabled={loading}
           className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 dark:hover:bg-white/10">
           <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} aria-hidden="true" />
@@ -191,6 +192,7 @@ export function TaskLedgerSummaryPanel({
   const selectingTaskRef = useRef<object | null>(null);
   const requestVersion = useRef(0);
   const scopeKey = JSON.stringify([workspaceId, session?.key, session?.sessionId]);
+  const scopeAvailable = Boolean(workspaceId && session);
   const viewScope = useMemo(() => ({ key: scopeKey }), [scopeKey]);
   const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
   const selectingTask = selection?.scope === viewScope ? selection.task : null;
@@ -200,6 +202,11 @@ export function TaskLedgerSummaryPanel({
 
   const load = useCallback(async () => {
     const version = ++requestVersion.current;
+    if (mode === 'bar' && !scopeAvailable) {
+      setLoaded(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const result = await hostApi.taskLedger.snapshot(workspaceId ? { workspaceId } : undefined);
@@ -210,7 +217,7 @@ export function TaskLedgerSummaryPanel({
     } finally {
       if (version === requestVersion.current) setLoading(false);
     }
-  }, [workspaceId, scopeKey]);
+  }, [workspaceId, scopeKey, mode, scopeAvailable]);
 
   useEffect(() => {
     void load();
@@ -241,7 +248,6 @@ export function TaskLedgerSummaryPanel({
     const projectReadable = projectWide && ['ready', 'empty'].includes(container.status);
     const nodes = projectReadable ? (snapshot?.nodes ?? []).filter((node) => node.kind === 'task') : container.nodes;
     const status = projectReadable ? nodes.length ? 'ready' : 'empty' : container.status;
-    if (hideWhenEmpty && !loadError && (status === 'empty' || (!snapshot && loading))) return null;
     const statusText = loading && !snapshot ? t('summary.loading')
       : status === 'unavailable' ? unavailableText : t(`summary.scope.${status}`);
     const scopeTitle = t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks');
@@ -311,7 +317,7 @@ export function TaskLedgerSummaryPanel({
               <h2 className="truncate text-xs font-semibold text-foreground">{t('summary.title')}</h2>
               <p className="truncate text-2xs text-muted-foreground">
                 {snapshot ? t('summary.counts', { nodes: snapshot.nodes.length, events: snapshot.eventsCount })
-                  : loadError && !loading ? unavailableText : t('summary.loading')}
+                  : loading ? t('summary.loading') : unavailableText}
               </p>
             </div>
           </div>
@@ -322,7 +328,7 @@ export function TaskLedgerSummaryPanel({
 
         {!hasContent ? (
           <div className="rounded-md bg-surface-input p-3 text-xs text-muted-foreground">
-            {loading ? t('summary.loading') : loadError ? unavailableText : t('summary.empty')}
+            {loading ? t('summary.loading') : loadError || (mode === 'bar' && !scopeAvailable) ? unavailableText : t('summary.empty')}
           </div>
         ) : (
           <div className="space-y-3">

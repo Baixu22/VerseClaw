@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
 import { existsSync, realpathSync, readFileSync, statSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
+import type { TaskCredential } from './types.js';
+import type { TaskRunProvenance } from './trace.js';
 
 export type TaskDomain = { id: string; root: string; database: string; worktree: string };
 
@@ -13,6 +15,7 @@ export type TaskAuthorityBasis = {
   projectRevision: number | null;
   identityDigest: string;
   databaseIdentity?: string;
+  worktreeIncarnation?: string;
 };
 
 export type TaskAuthorityAccess = {
@@ -20,6 +23,7 @@ export type TaskAuthorityAccess = {
   assertCurrent(): void;
   resolveRelated(workspaceRoot: string): TaskDomain;
   withWriteBarrier?<T>(operation: () => T): T;
+  runProvenance?(credential: TaskCredential, runId: string): TaskRunProvenance;
 };
 
 export function canonicalPath(input: string): string {

@@ -87,6 +87,8 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     await setSessionChainViewport(app, { width: 1280, height: 800 });
     await page.reload();
     await expect(page.getByTestId('chat-header-session-name')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', project.generation, { timeout: 60_000 });
+    await expect(page.getByTestId('chat-scroll-container').getByText('U2-READ-27', { exact: true })).toBeAttached({ timeout: 60_000 });
     const scroller = page.getByTestId('chat-scroll-container');
     await expect(scroller).toBeVisible();
     await page.getByTestId('chat-composer-input').fill('U2 parent draft must survive the reading round trip');

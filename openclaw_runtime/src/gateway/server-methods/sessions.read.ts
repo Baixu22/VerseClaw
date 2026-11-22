@@ -41,7 +41,7 @@ import { resolveSessionKeyFromResolveParams } from "../sessions-resolve.js";
 import { loadOptionalServerMethodModelCatalog } from "./optional-model-catalog.js";
 import { hasTrackedActiveSessionRun } from "./session-active-runs.js";
 import { emitSessionsChanged } from "./session-change-event.js";
-import { filterArchivedSessionStore } from "../session-archive-index.js";
+import { filterArchivedSessionStore, readSessionArchiveIndex, resolveSessionArchiveIndexPath } from "../session-archive-index.js";
 import { assertValidParams } from "./validation.js";
 import {
   filterSessionStoreToConfiguredAgents,
@@ -337,7 +337,7 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
 
     respond(true, { ts: Date.now(), previews } satisfies SessionsPreviewResult, undefined);
   },
-  "sessions.describe": ({ params, respond, context }) => {
+  "sessions.describe": async ({ params, respond, context }) => {
     if (!assertValidParams(params, validateSessionsDescribeParams, "sessions.describe", respond)) {
       return;
     }
@@ -348,10 +348,17 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
     }
     const cfg = context.getRuntimeConfig();
     const { target, storePath } = resolveGatewaySessionTargetFromKey(key, cfg);
+    const archive = p.identityOnly === true ? await readSessionArchiveIndex(resolveSessionArchiveIndexPath(storePath)) : undefined;
     const store = loadSessionStore(storePath);
     const entry = resolveFreshestSessionEntryFromStoreKeys(store, target.storeKeys);
     if (!entry) {
       respond(true, { session: null }, undefined);
+      return;
+    }
+    if (p.identityOnly === true) {
+      const archived = archive?.entries.some((row) => (row.sessionKey === target.canonicalKey || target.storeKeys.includes(row.sessionKey))
+        && (!('sessionId' in row.sessionsJsonSnapshot) || row.sessionsJsonSnapshot.sessionId === entry.sessionId));
+      respond(true, { session: { key: target.canonicalKey, sessionId: entry.sessionId, status: archived ? 'archived' : entry.status } }, undefined);
       return;
     }
     const row = buildGatewaySessionRow({

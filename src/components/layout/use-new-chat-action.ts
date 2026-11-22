@@ -7,7 +7,8 @@ export function useNewChatAction(): () => void {
   const navigate = useNavigate();
 
   return useCallback(() => {
-    navigate('/');
-    void createWorkspaceScopedNewSession().catch(toastUserError);
+    void createWorkspaceScopedNewSession().then((sessionKey) => {
+      if (sessionKey) navigate('/');
+    }).catch(toastUserError);
   }, [navigate]);
 }

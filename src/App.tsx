@@ -4,7 +4,7 @@
  */
 import { Navigate, Routes, Route, useNavigate, useLocation, type Location } from 'react-router-dom';
 import { Component, lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { ErrorInfo, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import i18n, { changeLanguageWithResources } from './i18n';
 import { MainLayout } from './components/layout/MainLayout';
@@ -38,6 +38,7 @@ const ImageGenerationPage = lazy(() => import('./pages/ImageGeneration').then((m
 const ObservabilityDashboard = lazy(() => import('./pages/Observability').then((m) => ({ default: m.ObservabilityDashboard })));
 const TaskLedgerPage = lazy(() => import('./pages/TaskLedger'));
 const ProjectPage = lazy(() => import('./pages/Projects'));
+const SystemPortfolio = lazy(() => import('./components/agents/SystemPortfolioPanel').then(m => ({ default: m.SystemPortfolioPanel })));
 const ClawGraphPage = lazy(() => import('./pages/ClawGraph'));
 const Knowledge = lazy(() => import('./pages/Knowledge').then((m) => ({ default: m.Knowledge })));
 const MemoryPage = lazy(() => import('./pages/Memory').then((m) => ({ default: m.MemoryPage })));
@@ -116,6 +117,7 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
         <Route path="/remote-tasks" element={<Navigate to="/inbox?source=remote-task" replace />} />
         <Route path="/task-ledger" element={<TaskLedgerPage />} />
         <Route path="/projects/:workspaceId" element={<ProjectPage />} />
+        <Route path="/system" element={<SystemPortfolio />} />
         <Route path="/clawgraph" element={<ClawGraphPage />} />
         <Route
           path="/code-review"
@@ -167,9 +169,7 @@ const BackgroundRoutes = memo(function BackgroundRoutes({
 
 /**
  * Error Boundary to catch and display React rendering errors.
- * The raw message / stack are logged to the developer console only; the UI
- * renders a sanitized message so internal paths, module names, stack frames,
- * and secret-shaped text never reach the user.
+ * Logs and UI use sanitized messages without raw errors or component stacks.
  */
 function generateErrorReference(): string {
   return `err-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
@@ -188,13 +188,13 @@ class ErrorBoundary extends Component<
     return { hasError: true, error, errorId: generateErrorReference() };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  componentDidCatch(error: Error) {
     if (recoverFromDynamicImportLoadError(error)) {
-      console.warn('Recovering from stale renderer chunk; reloading app shell.', error);
+      console.warn('Recovering from stale renderer chunk; reloading app shell.', sanitizeUiErrorText(error));
       return;
     }
 
-    console.error('React Error Boundary caught error:', error, info);
+    console.error('React Error Boundary caught error:', sanitizeUiErrorText(error));
   }
 
   render() {

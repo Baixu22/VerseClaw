@@ -1,9 +1,6 @@
 import { createHash } from "node:crypto";
 import type { Selectable } from "kysely";
-import {
-  executeSqliteQuerySync,
-  getNodeSqliteKysely,
-} from "../../infra/kysely-sync.js";
+import { executeSqliteQuerySync, getNodeSqliteKysely } from "../../infra/kysely-sync.js";
 import {
   openOpenClawStateDatabase,
   runOpenClawStateWriteTransaction,
@@ -60,56 +57,128 @@ type SekbErrorSignatureCacheRow = Selectable<
 >;
 
 function attributionDigest(value: unknown): string {
-  const ordered = (input: unknown): unknown => Array.isArray(input) ? input.map(ordered) :
-    input && typeof input === "object" ? Object.fromEntries(Object.keys(input).toSorted().map((key) =>
-      [key, ordered((input as Record<string, unknown>)[key])])) : input;
-  return createHash("sha256").update(JSON.stringify(ordered(value))).digest("hex");
+  const ordered = (input: unknown): unknown =>
+    Array.isArray(input)
+      ? input.map(ordered)
+      : input && typeof input === "object"
+        ? Object.fromEntries(
+            Object.keys(input)
+              .toSorted()
+              .map((key) => [key, ordered((input as Record<string, unknown>)[key])]),
+          )
+        : input;
+  return createHash("sha256")
+    .update(JSON.stringify(ordered(value)))
+    .digest("hex");
 }
 
 function validateAttributionEvidence(principleId: string, evidence: SekbAdoptionEvidence): void {
-  const boundedId = (value: unknown) => typeof value === "string" &&
-    value.length > 0 && value.length <= 256 && value === value.trim() && [...value].every((char) => char.charCodeAt(0) >= 32);
-  if (!boundedId(principleId) || evidence?.schemaVersion !== SEKB_ATTRIBUTION_SCHEMA || evidence.driven_by !== "agent") {
+  const boundedId = (value: unknown) =>
+    typeof value === "string" &&
+    value.length > 0 &&
+    value.length <= 256 &&
+    value === value.trim() &&
+    [...value].every((char) => char.charCodeAt(0) >= 32);
+  if (
+    !boundedId(principleId) ||
+    evidence?.schemaVersion !== SEKB_ATTRIBUTION_SCHEMA ||
+    evidence.driven_by !== "agent"
+  ) {
     throw new Error(`SEKB adoption requires ${SEKB_ATTRIBUTION_SCHEMA} evidence`);
   }
-  const allowed = new Set(["schemaVersion", "principleVersion", "taskId", "runId", "sessionId", "sessionKey",
-    "experimentId", "arm", "repeat", "trajectoryId", "trigger", "source", "outcome", "outcomeKind",
-    "observationId", "operation", "actor", "driven_by"]);
-  if (Object.keys(evidence).some((key) => !allowed.has(key)) ||
-    (evidence.operation && Object.keys(evidence.operation).some((key) => !["toolCallId", "toolName", "observed", "succeeded"].includes(key)))) {
+  const allowed = new Set([
+    "schemaVersion",
+    "principleVersion",
+    "taskId",
+    "runId",
+    "sessionId",
+    "sessionKey",
+    "experimentId",
+    "arm",
+    "repeat",
+    "trajectoryId",
+    "trigger",
+    "source",
+    "outcome",
+    "outcomeKind",
+    "observationId",
+    "operation",
+    "actor",
+    "driven_by",
+  ]);
+  if (
+    Object.keys(evidence).some((key) => !allowed.has(key)) ||
+    (evidence.operation &&
+      Object.keys(evidence.operation).some(
+        (key) => !["toolCallId", "toolName", "observed", "succeeded"].includes(key),
+      ))
+  ) {
     throw new Error("Invalid SEKB attribution fields");
   }
-  if (!["retrieved", "operation", "cited", "adopted", "outcome"].includes(evidence.trigger) ||
+  if (
+    ![
+      "ui-exposure",
+      "context-exposure",
+      "retrieved",
+      "operation",
+      "cited",
+      "adopted",
+      "outcome",
+    ].includes(evidence.trigger) ||
     !["runtime", "agent", "grader"].includes(evidence.source) ||
     !["success", "failure", "unknown"].includes(evidence.outcome) ||
-    ![null, "operational", "task"].includes(evidence.outcomeKind)) {
+    ![null, "operational", "task"].includes(evidence.outcomeKind)
+  ) {
     throw new Error("Invalid SEKB attribution trigger, source or outcome");
   }
-  if (!/^[a-f0-9]{64}$/u.test(evidence.principleVersion) ||
-    (evidence.trajectoryId !== null && !boundedId(evidence.trajectoryId)) || !boundedId(evidence.actor)) {
+  if (
+    !/^[a-f0-9]{64}$/u.test(evidence.principleVersion) ||
+    (evidence.trajectoryId !== null && !boundedId(evidence.trajectoryId)) ||
+    !boundedId(evidence.actor)
+  ) {
     throw new Error("Invalid SEKB attribution content version or actor identity");
   }
-  for (const key of ["taskId", "runId", "sessionId", "sessionKey", "experimentId", "arm", "observationId"] as const) {
-    if (evidence[key] !== null && !boundedId(evidence[key])) throw new Error(`Invalid SEKB attribution ${key}`);
+  for (const key of [
+    "taskId",
+    "runId",
+    "sessionId",
+    "sessionKey",
+    "experimentId",
+    "arm",
+    "observationId",
+  ] as const) {
+    if (evidence[key] !== null && !boundedId(evidence[key]))
+      throw new Error(`Invalid SEKB attribution ${key}`);
   }
   if (evidence.repeat !== null && (!Number.isSafeInteger(evidence.repeat) || evidence.repeat < 1)) {
     throw new Error("Invalid SEKB attribution repeat");
   }
-  if (evidence.operation !== null && (!boundedId(evidence.operation?.toolCallId) ||
-    (evidence.operation.toolName !== null && !boundedId(evidence.operation.toolName)) || typeof evidence.operation.observed !== "boolean" ||
-    (evidence.operation.succeeded !== null && typeof evidence.operation.succeeded !== "boolean"))) {
+  if (
+    evidence.operation !== null &&
+    (!boundedId(evidence.operation?.toolCallId) ||
+      (evidence.operation.toolName !== null && !boundedId(evidence.operation.toolName)) ||
+      typeof evidence.operation.observed !== "boolean" ||
+      (evidence.operation.succeeded !== null && typeof evidence.operation.succeeded !== "boolean"))
+  ) {
     throw new Error("Invalid SEKB attribution operation");
   }
 }
 
 function attributionFromRow(row: SekbAttributionRow): SekbAttributionReceipt {
   return {
-    eventId: row.event_id, principleId: row.principle_id,
+    eventId: row.event_id,
+    principleId: row.principle_id,
     evidence: JSON.parse(row.payload_json) as SekbAdoptionEvidence,
-    status: row.status as SekbAttributionReceipt["status"], reason: row.reason,
-    recordedAt: row.recorded_at, duplicateCount: row.duplicate_count, conflictCount: row.conflict_count,
-    rejectionCount: row.rejection_count, firstRejection: row.first_rejection,
-    lastConflict: row.last_conflict_json ? JSON.parse(row.last_conflict_json) as SekbAdoptionEvidence : null,
+    status: row.status as SekbAttributionReceipt["status"],
+    reason: row.reason,
+    recordedAt: row.recorded_at,
+    duplicateCount: row.duplicate_count,
+    conflictCount: row.conflict_count,
+    rejectionCount: row.rejection_count,
+    firstRejection: row.first_rejection,
+    lastConflict: row.last_conflict_json
+      ? (JSON.parse(row.last_conflict_json) as SekbAdoptionEvidence)
+      : null,
   };
 }
 
@@ -120,45 +189,100 @@ function attributionRejection(
 ): string | null {
   if (!evidence.runId) return "run-identity-missing";
   if (!evidence.sessionId && !evidence.sessionKey) return "session-identity-missing";
-  const experimental = evidence.experimentId !== null || evidence.arm !== null || evidence.repeat !== null;
-  if (experimental && (!evidence.experimentId || !evidence.arm || evidence.repeat === null || !evidence.taskId)) {
+  const experimental =
+    evidence.experimentId !== null || evidence.arm !== null || evidence.repeat !== null;
+  if (
+    experimental &&
+    (!evidence.experimentId || !evidence.arm || evidence.repeat === null || !evidence.taskId)
+  ) {
     return "experiment-identity-incomplete";
   }
-  const expectedSource = evidence.trigger === "cited" || evidence.trigger === "adopted" ? "agent" :
-    evidence.trigger === "outcome" && evidence.outcomeKind === "task" ? "grader" : "runtime";
+  const expectedSource =
+    evidence.trigger === "cited" || evidence.trigger === "adopted"
+      ? "agent"
+      : evidence.trigger === "outcome" && evidence.outcomeKind === "task"
+        ? "grader"
+        : "runtime";
   if (evidence.source !== expectedSource) return "source-not-authorized";
-  if (evidence.trigger !== "outcome" && (evidence.outcome !== "unknown" || evidence.outcomeKind !== null ||
-    (evidence.trigger !== "operation" && evidence.observationId !== null))) {
+  if (
+    evidence.trigger !== "outcome" &&
+    (evidence.outcome !== "unknown" ||
+      evidence.outcomeKind !== null ||
+      (evidence.trigger !== "operation" && evidence.observationId !== null))
+  ) {
     return "outcome-without-terminal";
   }
-  if (evidence.trigger === "outcome" && (!evidence.outcomeKind || !evidence.observationId)) return "outcome-observation-missing";
+  if (evidence.trigger === "outcome" && (!evidence.outcomeKind || !evidence.observationId))
+    return "outcome-observation-missing";
   if (evidence.outcomeKind === "task" && !evidence.taskId) return "task-identity-missing";
   if (!principle) return "principle-not-found";
-  if (["retrieved", "cited", "adopted"].includes(evidence.trigger)) {
-    if (getPrincipleVersion(principle) !== evidence.principleVersion) return "principle-version-mismatch";
+  if (
+    ["ui-exposure", "context-exposure", "retrieved", "cited", "adopted"].includes(evidence.trigger)
+  ) {
+    if (getPrincipleVersion(principle) !== evidence.principleVersion)
+      return "principle-version-mismatch";
     if (principle.status !== "active") return "principle-not-active";
   }
-  if (evidence.trigger !== "retrieved" && !related.some((receipt) => receipt.evidence.trigger === "retrieved")) {
+  if (
+    evidence.trigger !== "retrieved" &&
+    evidence.trigger !== "context-exposure" &&
+    evidence.trigger !== "ui-exposure" &&
+    !related.some(
+      (receipt) =>
+        receipt.evidence.trigger === "retrieved" || receipt.evidence.trigger === "context-exposure",
+    )
+  ) {
     return "principle-not-exposed";
   }
-  if ((evidence.trigger === "operation" || evidence.trigger === "adopted") && !evidence.operation) return "operation-evidence-missing";
-  if ((evidence.trigger === "operation" || evidence.trigger === "adopted") && !evidence.operation?.observed) return "operation-not-observed";
+  if ((evidence.trigger === "operation" || evidence.trigger === "adopted") && !evidence.operation)
+    return "operation-evidence-missing";
+  if (
+    (evidence.trigger === "operation" || evidence.trigger === "adopted") &&
+    !evidence.operation?.observed
+  )
+    return "operation-not-observed";
   if (evidence.trigger === "adopted") {
     if (evidence.operation?.succeeded !== true) return "operation-not-successful";
-    const observed = related.some((receipt) => receipt.evidence.trigger === "operation" &&
-      receipt.evidence.operation?.toolCallId === evidence.operation?.toolCallId &&
-      receipt.evidence.operation?.toolName === evidence.operation?.toolName && receipt.evidence.operation?.succeeded === true);
+    const observed = related.some(
+      (receipt) =>
+        receipt.evidence.trigger === "operation" &&
+        receipt.evidence.operation?.toolCallId === evidence.operation?.toolCallId &&
+        receipt.evidence.operation?.toolName === evidence.operation?.toolName &&
+        receipt.evidence.operation?.succeeded === true,
+    );
     if (!observed) return "operation-not-observed";
   }
-  if ((evidence.trigger === "cited" || evidence.trigger === "adopted") &&
-    related.some((receipt) => receipt.evidence.outcomeKind === "task" && receipt.evidence.outcome !== "unknown")) return "run-already-ended";
-  if (evidence.trigger === "operation" && evidence.operation?.succeeded !== null && related.some((receipt) =>
-    receipt.evidence.trigger === "operation" && receipt.evidence.operation?.toolCallId === evidence.operation?.toolCallId &&
-    receipt.evidence.operation?.succeeded !== null && receipt.evidence.operation?.succeeded !== evidence.operation?.succeeded)) {
+  if (
+    (evidence.trigger === "cited" || evidence.trigger === "adopted") &&
+    related.some(
+      (receipt) =>
+        receipt.evidence.outcomeKind === "task" && receipt.evidence.outcome !== "unknown",
+    )
+  )
+    return "run-already-ended";
+  if (
+    evidence.trigger === "operation" &&
+    evidence.operation?.succeeded !== null &&
+    related.some(
+      (receipt) =>
+        receipt.evidence.trigger === "operation" &&
+        receipt.evidence.operation?.toolCallId === evidence.operation?.toolCallId &&
+        receipt.evidence.operation?.succeeded !== null &&
+        receipt.evidence.operation?.succeeded !== evidence.operation?.succeeded,
+    )
+  ) {
     return "conflicting-operation-outcome";
   }
-  if (evidence.outcomeKind === "task" && evidence.outcome !== "unknown" && related.some((receipt) =>
-    receipt.evidence.outcomeKind === "task" && receipt.evidence.outcome !== "unknown" && receipt.evidence.outcome !== evidence.outcome)) {
+  if (
+    evidence.outcomeKind === "task" &&
+    evidence.outcome !== "unknown" &&
+    related.some(
+      (receipt) =>
+        receipt.evidence.outcomeKind === "task" &&
+        receipt.evidence.outcome !== "unknown" &&
+        receipt.evidence.outcome !== evidence.outcome,
+    )
+  ) {
     return "conflicting-task-outcome";
   }
   return null;
@@ -182,14 +306,24 @@ export class KnowledgeStore {
     this.#now = options.now ?? (() => new Date());
   }
 
+  get_source_namespace_id(): string {
+    const database = this.#openDatabase(this.#database);
+    return `sekb:${createHash("sha256").update(database.path).digest("hex")}`;
+  }
+
   /** Insert an immutable trajectory record; a competing or repeated insert keeps the first bytes. */
   create_trajectory(trajectory: Trajectory): boolean {
     const row = rowFromTrajectory(trajectory, this.#now().getTime());
     return runOpenClawStateWriteTransaction((database) => {
       const query = getNodeSqliteKysely<SekbDatabase>(database.db);
-      const result = executeSqliteQuerySync(database.db, query.insertInto("sekb_trajectories")
-        .values(row).onConflict((conflict) => conflict.column("trajectory_id").doNothing())
-        .returning("trajectory_id"));
+      const result = executeSqliteQuerySync(
+        database.db,
+        query
+          .insertInto("sekb_trajectories")
+          .values(row)
+          .onConflict((conflict) => conflict.column("trajectory_id").doNothing())
+          .returning("trajectory_id"),
+      );
       return result.rows.length === 1;
     }, this.#database);
   }
@@ -291,13 +425,16 @@ export class KnowledgeStore {
       select = select.where("distilled", "=", filters.distilled ? 1 : 0);
     }
     const tags = normalizeTags(filters.context_tags);
-    return (executeSqliteQuerySync(
-      db,
-      select.orderBy("created_at", "desc").orderBy("trajectory_id", "asc"),
-    ).rows as SekbTrajectoryRow[])
+    return (
+      executeSqliteQuerySync(
+        db,
+        select.orderBy("created_at", "desc").orderBy("trajectory_id", "asc"),
+      ).rows as SekbTrajectoryRow[]
+    )
       .map(trajectoryFromRow)
-      .filter((trajectory) =>
-        tags.length === 0 || tags.some((tag) => trajectory.context_fingerprint.includes(tag))
+      .filter(
+        (trajectory) =>
+          tags.length === 0 || tags.some((tag) => trajectory.context_fingerprint.includes(tag)),
       );
   }
 
@@ -341,7 +478,11 @@ export class KnowledgeStore {
 
   update_principle(id: string, updates: Partial<Principle>): void {
     const existing = this.get_principle(id);
-    this.save_principle({ ...existing, ...updates, updated_at: updates.updated_at ?? isoNow(this.#now) });
+    this.save_principle({
+      ...existing,
+      ...updates,
+      updated_at: updates.updated_at ?? isoNow(this.#now),
+    });
   }
 
   get_principle(id: string): Principle {
@@ -363,13 +504,17 @@ export class KnowledgeStore {
       select = select.where("status", "=", filters.status);
     }
     const taskTypes = normalizeTags(filters.task_types ?? undefined);
-    return (executeSqliteQuerySync(
-      db,
-      select.orderBy("updated_at", "desc").orderBy("principle_id", "asc"),
-    ).rows as SekbPrincipleRow[])
+    return (
+      executeSqliteQuerySync(
+        db,
+        select.orderBy("updated_at", "desc").orderBy("principle_id", "asc"),
+      ).rows as SekbPrincipleRow[]
+    )
       .map(principleFromRow)
-      .filter((principle) =>
-        taskTypes.length === 0 || taskTypes.some((taskType) => principle.task_types.includes(taskType))
+      .filter(
+        (principle) =>
+          taskTypes.length === 0 ||
+          taskTypes.some((taskType) => principle.task_types.includes(taskType)),
       );
   }
 
@@ -385,7 +530,10 @@ export class KnowledgeStore {
         database.db,
         query.deleteFrom("sekb_principles").where("principle_id", "=", id),
       );
-      executeSqliteQuerySync(database.db, query.deleteFrom("sekb_attribution_events").where("principle_id", "=", id));
+      executeSqliteQuerySync(
+        database.db,
+        query.deleteFrom("sekb_attribution_events").where("principle_id", "=", id),
+      );
     }, this.#database);
   }
 
@@ -397,7 +545,10 @@ export class KnowledgeStore {
         database.db,
         query.deleteFrom("sekb_trajectories").where("trajectory_id", "=", id),
       );
-      executeSqliteQuerySync(database.db, query.deleteFrom("sekb_attribution_events").where("trajectory_id", "=", id));
+      executeSqliteQuerySync(
+        database.db,
+        query.deleteFrom("sekb_attribution_events").where("trajectory_id", "=", id),
+      );
     }, this.#database);
   }
 
@@ -441,91 +592,237 @@ export class KnowledgeStore {
     // Observations must not change updated_at and reorder the knowledge index.
     runOpenClawStateWriteTransaction((database) => {
       const query = getNodeSqliteKysely<SekbDatabase>(database.db);
-      executeSqliteQuerySync(database.db, query.updateTable("sekb_principles")
-        .set((eb) => ({ retrieval_count: eb("retrieval_count", "+", 1) }))
-        .where("principle_id", "=", principle_id));
+      executeSqliteQuerySync(
+        database.db,
+        query
+          .updateTable("sekb_principles")
+          .set((eb) => ({ retrieval_count: eb("retrieval_count", "+", 1) }))
+          .where("principle_id", "=", principle_id),
+      );
     }, this.#database);
   }
 
   /** Persist provenance and its counters in one transaction, including rejected attempts. */
-  record_adoption(principle_id: string, evidence: SekbAdoptionEvidence): SekbAttributionReceipt & {
+  record_adoption(
+    principle_id: string,
+    evidence: SekbAdoptionEvidence,
+  ): SekbAttributionReceipt & {
     disposition: "recorded" | "duplicate" | "rejected" | "conflict";
   } {
     validateAttributionEvidence(principle_id, evidence);
     const runKey = attributionDigest([
-      evidence.taskId, evidence.runId, evidence.sessionId, evidence.sessionKey,
-      evidence.experimentId, evidence.arm, evidence.repeat,
+      evidence.taskId,
+      evidence.runId,
+      evidence.sessionId,
+      evidence.sessionKey,
+      evidence.experimentId,
+      evidence.arm,
+      evidence.repeat,
       evidence.runId ? null : evidence.trajectoryId,
     ]);
     const eventId = attributionDigest([
-      runKey, principle_id, evidence.principleVersion, evidence.trigger, evidence.source,
-      evidence.operation?.toolCallId ?? null, evidence.outcomeKind, evidence.observationId,
+      runKey,
+      principle_id,
+      evidence.principleVersion,
+      evidence.trigger,
+      evidence.source,
+      evidence.operation?.toolCallId ?? null,
+      evidence.outcomeKind,
+      evidence.observationId,
     ]);
     // A replay may have a fresh capture id; the established run/operation identity owns deduplication.
     const payloadDigest = attributionDigest({ ...evidence, trajectoryId: null });
     return runOpenClawStateWriteTransaction((database) => {
       const query = getNodeSqliteKysely<SekbDatabase>(database.db);
-      const previous = executeSqliteQuerySync(database.db, query.selectFrom("sekb_attribution_events")
-        .selectAll().where("event_id", "=", eventId)).rows[0] as SekbAttributionRow | undefined;
-      const requestDigest = (input: SekbAdoptionEvidence) => attributionDigest({ ...input, trajectoryId: null,
-        operation: input.operation ? { toolCallId: input.operation.toolCallId } : null });
-      const conflicting = previous && previous.payload_digest !== payloadDigest &&
-        (previous.status === "accepted" || requestDigest(JSON.parse(previous.payload_json) as SekbAdoptionEvidence) !== requestDigest(evidence));
+      const previous = executeSqliteQuerySync(
+        database.db,
+        query.selectFrom("sekb_attribution_events").selectAll().where("event_id", "=", eventId),
+      ).rows[0] as SekbAttributionRow | undefined;
+      const requestDigest = (input: SekbAdoptionEvidence) =>
+        attributionDigest({
+          ...input,
+          trajectoryId: null,
+          operation: input.operation ? { toolCallId: input.operation.toolCallId } : null,
+        });
+      const conflicting =
+        previous &&
+        previous.payload_digest !== payloadDigest &&
+        (previous.status === "accepted" ||
+          requestDigest(JSON.parse(previous.payload_json) as SekbAdoptionEvidence) !==
+            requestDigest(evidence));
       if (conflicting) {
-        executeSqliteQuerySync(database.db, query.updateTable("sekb_attribution_events")
-          .set({ conflict_count: previous.conflict_count + 1, last_conflict_json: JSON.stringify(evidence) })
-          .where("event_id", "=", eventId));
-        return { ...attributionFromRow({ ...previous, conflict_count: previous.conflict_count + 1,
-          last_conflict_json: JSON.stringify(evidence) }), disposition: "conflict" as const };
+        executeSqliteQuerySync(
+          database.db,
+          query
+            .updateTable("sekb_attribution_events")
+            .set({
+              conflict_count: previous.conflict_count + 1,
+              last_conflict_json: JSON.stringify(evidence),
+            })
+            .where("event_id", "=", eventId),
+        );
+        return {
+          ...attributionFromRow({
+            ...previous,
+            conflict_count: previous.conflict_count + 1,
+            last_conflict_json: JSON.stringify(evidence),
+          }),
+          disposition: "conflict" as const,
+        };
       }
       if (previous?.status === "accepted") {
-        executeSqliteQuerySync(database.db, query.updateTable("sekb_attribution_events")
-          .set({ duplicate_count: previous.duplicate_count + 1 }).where("event_id", "=", eventId));
-        return { ...attributionFromRow({ ...previous, duplicate_count: previous.duplicate_count + 1 }),
-          disposition: "duplicate" as const };
+        executeSqliteQuerySync(
+          database.db,
+          query
+            .updateTable("sekb_attribution_events")
+            .set({ duplicate_count: previous.duplicate_count + 1 })
+            .where("event_id", "=", eventId),
+        );
+        return {
+          ...attributionFromRow({ ...previous, duplicate_count: previous.duplicate_count + 1 }),
+          disposition: "duplicate" as const,
+        };
       }
-      const related = (executeSqliteQuerySync(database.db, query.selectFrom("sekb_attribution_events")
-        .selectAll().where("run_key", "=", runKey).where("principle_id", "=", principle_id)
-        .where("principle_version", "=", evidence.principleVersion).where("status", "=", "accepted")
-      ).rows as SekbAttributionRow[]).map(attributionFromRow);
-      const principleRow = executeSqliteQuerySync(database.db, query.selectFrom("sekb_principles")
-        .selectAll().where("principle_id", "=", principle_id)).rows[0] as SekbPrincipleRow | undefined;
+      const related = (
+        executeSqliteQuerySync(
+          database.db,
+          query
+            .selectFrom("sekb_attribution_events")
+            .selectAll()
+            .where("run_key", "=", runKey)
+            .where("principle_id", "=", principle_id)
+            .where("principle_version", "=", evidence.principleVersion)
+            .where("status", "=", "accepted"),
+        ).rows as SekbAttributionRow[]
+      ).map(attributionFromRow);
+      const principleRow = executeSqliteQuerySync(
+        database.db,
+        query.selectFrom("sekb_principles").selectAll().where("principle_id", "=", principle_id),
+      ).rows[0] as SekbPrincipleRow | undefined;
       const principle = principleRow ? principleFromRow(principleRow) : null;
       const reason = attributionRejection(evidence, principle, related);
       const row: SekbAttributionRow = {
-        event_id: eventId, run_key: runKey, run_id: evidence.runId, trajectory_id: evidence.trajectoryId,
-        principle_id, principle_version: evidence.principleVersion, trigger: evidence.trigger,
-        payload_json: JSON.stringify(evidence), payload_digest: payloadDigest,
-        status: reason ? "rejected" : "accepted", reason, recorded_at: isoNow(this.#now),
-        duplicate_count: previous?.duplicate_count ?? 0, conflict_count: previous?.conflict_count ?? 0,
+        event_id: eventId,
+        run_key: runKey,
+        run_id: evidence.runId,
+        trajectory_id: evidence.trajectoryId,
+        principle_id,
+        principle_version: evidence.principleVersion,
+        trigger: evidence.trigger,
+        payload_json: JSON.stringify(evidence),
+        payload_digest: payloadDigest,
+        status: reason ? "rejected" : "accepted",
+        reason,
+        recorded_at: isoNow(this.#now),
+        duplicate_count: previous?.duplicate_count ?? 0,
+        conflict_count: previous?.conflict_count ?? 0,
         rejection_count: (previous?.rejection_count ?? 0) + (reason ? 1 : 0),
-        first_rejection: previous?.first_rejection ?? reason, last_conflict_json: previous?.last_conflict_json ?? null,
+        first_rejection: previous?.first_rejection ?? reason,
+        last_conflict_json: previous?.last_conflict_json ?? null,
       };
-      executeSqliteQuerySync(database.db, query.insertInto("sekb_attribution_events").values(row)
-        .onConflict((conflict) => conflict.column("event_id").doUpdateSet(row)));
+      executeSqliteQuerySync(
+        database.db,
+        query
+          .insertInto("sekb_attribution_events")
+          .values(row)
+          .onConflict((conflict) => conflict.column("event_id").doUpdateSet(row)),
+      );
       const adopted = related.some((receipt) => receipt.evidence.trigger === "adopted");
-      const gradedSuccess = related.some((receipt) => receipt.evidence.trigger === "outcome" &&
-        receipt.evidence.outcomeKind === "task" && receipt.evidence.outcome === "success");
+      const gradedSuccess = related.some(
+        (receipt) =>
+          receipt.evidence.trigger === "outcome" &&
+          receipt.evidence.outcomeKind === "task" &&
+          receipt.evidence.outcome === "success",
+      );
       const adoptionDelta = !reason && evidence.trigger === "adopted" && !adopted ? 1 : 0;
-      const successDelta = !reason && evidence.trigger === "outcome" && evidence.outcomeKind === "task" &&
-        evidence.outcome === "success" && adopted && !gradedSuccess ? 1 : 0;
+      const successDelta =
+        !reason &&
+        evidence.trigger === "outcome" &&
+        evidence.outcomeKind === "task" &&
+        evidence.outcome === "success" &&
+        adopted &&
+        !gradedSuccess
+          ? 1
+          : 0;
       if (adoptionDelta || successDelta) {
-        executeSqliteQuerySync(database.db, query.updateTable("sekb_principles").set((eb) => ({
-          adoption_count: eb("adoption_count", "+", adoptionDelta),
-          post_adoption_success: eb("post_adoption_success", "+", successDelta),
-        })).where("principle_id", "=", principle_id));
+        executeSqliteQuerySync(
+          database.db,
+          query
+            .updateTable("sekb_principles")
+            .set((eb) => ({
+              adoption_count: eb("adoption_count", "+", adoptionDelta),
+              post_adoption_success: eb("post_adoption_success", "+", successDelta),
+            }))
+            .where("principle_id", "=", principle_id),
+        );
       }
-      return { ...attributionFromRow(row), disposition: reason ? "rejected" as const : "recorded" as const };
+      return {
+        ...attributionFromRow(row),
+        disposition: reason ? ("rejected" as const) : ("recorded" as const),
+      };
     }, this.#database);
   }
 
-  list_adoption_events(filters: { principleId?: string; runId?: string } = {}): SekbAttributionReceipt[] {
+  list_adoption_events(
+    filters: { principleId?: string; runId?: string } = {},
+  ): SekbAttributionReceipt[] {
     const { db, query } = this.#stateDb();
     let select = query.selectFrom("sekb_attribution_events").selectAll();
     if (filters.principleId) select = select.where("principle_id", "=", filters.principleId);
     if (filters.runId) select = select.where("run_id", "=", filters.runId);
-    return (executeSqliteQuerySync(db, select.orderBy("recorded_at", "asc").orderBy("event_id", "asc"))
-      .rows as SekbAttributionRow[]).map(attributionFromRow);
+    return (
+      executeSqliteQuerySync(db, select.orderBy("recorded_at", "asc").orderBy("event_id", "asc"))
+        .rows as SekbAttributionRow[]
+    ).map(attributionFromRow);
+  }
+
+  delete_adoption_event(eventId: string): void {
+    runOpenClawStateWriteTransaction((database) => {
+      const query = getNodeSqliteKysely<SekbDatabase>(database.db);
+      const event = executeSqliteQuerySync(
+        database.db,
+        query
+          .selectFrom("sekb_attribution_events")
+          .select(["principle_id", "trigger"])
+          .where("event_id", "=", eventId),
+      ).rows[0] as { principle_id: string; trigger: string } | undefined;
+      executeSqliteQuerySync(
+        database.db,
+        query.deleteFrom("sekb_attribution_events").where("event_id", "=", eventId),
+      );
+      if (!event || (event.trigger !== "adopted" && event.trigger !== "outcome")) return;
+      const rows = executeSqliteQuerySync(
+        database.db,
+        query
+          .selectFrom("sekb_attribution_events")
+          .selectAll()
+          .where("principle_id", "=", event.principle_id)
+          .where("status", "=", "accepted"),
+      ).rows as SekbAttributionRow[];
+      const adopted = new Set(
+        rows.filter((row) => row.trigger === "adopted").map((row) => row.run_key),
+      );
+      const successes = new Set(
+        rows
+          .filter((row) => {
+            const evidence = attributionFromRow(row).evidence;
+            return (
+              adopted.has(row.run_key) &&
+              evidence.trigger === "outcome" &&
+              evidence.outcomeKind === "task" &&
+              evidence.outcome === "success"
+            );
+          })
+          .map((row) => row.run_key),
+      );
+      executeSqliteQuerySync(
+        database.db,
+        query
+          .updateTable("sekb_principles")
+          .set({ adoption_count: adopted.size, post_adoption_success: successes.size })
+          .where("principle_id", "=", event.principle_id),
+      );
+    }, this.#database);
   }
 
   read_error_signature_cache(raw_error_hash: string): string | null {
@@ -588,14 +885,16 @@ export class KnowledgeStore {
 
   list_distillation_rejections(): DistillationRejection[] {
     const { db, query } = this.#stateDb();
-    return (executeSqliteQuerySync(
-      db,
-      query
-        .selectFrom("sekb_distillation_rejections")
-        .selectAll()
-        .orderBy("created_at", "desc")
-        .orderBy("rejection_id", "asc"),
-    ).rows as SekbRejectionRow[]).map((row) => ({
+    return (
+      executeSqliteQuerySync(
+        db,
+        query
+          .selectFrom("sekb_distillation_rejections")
+          .selectAll()
+          .orderBy("created_at", "desc")
+          .orderBy("rejection_id", "asc"),
+      ).rows as SekbRejectionRow[]
+    ).map((row) => ({
       rejection_id: row.rejection_id,
       created_at: row.created_at,
       suggestion: parseJsonObject(row.suggestion_json),
@@ -609,28 +908,34 @@ export class KnowledgeStore {
       const query = getNodeSqliteKysely<SekbDatabase>(database.db);
       executeSqliteQuerySync(
         database.db,
-        query.insertInto("sekb_batch_distillation_events").values(rowFromBatchDistillationEvent(event)),
+        query
+          .insertInto("sekb_batch_distillation_events")
+          .values(rowFromBatchDistillationEvent(event)),
       );
     }, this.#database);
   }
 
   list_batch_distillation_events(): SekbBatchDistillationEvent[] {
     const { db, query } = this.#stateDb();
-    return (executeSqliteQuerySync(
-      db,
-      query
-        .selectFrom("sekb_batch_distillation_events")
-        .selectAll()
-        .orderBy("created_at", "desc")
-        .orderBy("batch_id", "asc"),
-    ).rows as SekbBatchDistillationEventRow[]).map(batchDistillationEventFromRow);
+    return (
+      executeSqliteQuerySync(
+        db,
+        query
+          .selectFrom("sekb_batch_distillation_events")
+          .selectAll()
+          .orderBy("created_at", "desc")
+          .orderBy("batch_id", "asc"),
+      ).rows as SekbBatchDistillationEventRow[]
+    ).map(batchDistillationEventFromRow);
   }
 
   record_batch_distillation_confirmation(batchId: string, editDistance: number | null): void {
     this.#updateBatchDistillationEvent(batchId, (event) => ({
       confirmation_count: event.confirmation_count + 1,
-      edit_distance_sum: editDistance === null ? event.edit_distance_sum : event.edit_distance_sum + editDistance,
-      edit_distance_count: editDistance === null ? event.edit_distance_count : event.edit_distance_count + 1,
+      edit_distance_sum:
+        editDistance === null ? event.edit_distance_sum : event.edit_distance_sum + editDistance,
+      edit_distance_count:
+        editDistance === null ? event.edit_distance_count : event.edit_distance_count + 1,
     }));
   }
 
@@ -726,7 +1031,9 @@ function rowFromBatchDistillationEvent(event: SekbBatchDistillationEvent) {
   };
 }
 
-function batchDistillationEventFromRow(row: SekbBatchDistillationEventRow): SekbBatchDistillationEvent {
+function batchDistillationEventFromRow(
+  row: SekbBatchDistillationEventRow,
+): SekbBatchDistillationEvent {
   return {
     batch_id: row.batch_id,
     created_at: row.created_at,
@@ -805,7 +1112,8 @@ function principleFromRow(row: SekbPrincipleRow): Principle {
     context_tags: parseStringArray(row.context_tags_json),
     embedding: row.embedding_json ? parseNumberArray(row.embedding_json) : null,
     source_trajectories: parseStringArray(row.source_trajectories_json),
-    created_by: row.created_by === "agent" || row.created_by === "distiller" ? row.created_by : "human",
+    created_by:
+      row.created_by === "agent" || row.created_by === "distiller" ? row.created_by : "human",
     // Explicit: an unknown author is never upgraded to human on readback.
     status: normalizePrincipleStatus(row.status),
     retrieval_count: normalizeNumber(row.retrieval_count),
@@ -829,7 +1137,8 @@ function normalizePrinciple(principle: Principle, now: Date): Principle {
     condition,
     action,
     reason,
-    full_content: principle.full_content.trim() || buildPrincipleFullContent({ condition, action, reason }),
+    full_content:
+      principle.full_content.trim() || buildPrincipleFullContent({ condition, action, reason }),
     task_types: normalizeTags(principle.task_types),
     context_tags: normalizeTags(principle.context_tags),
     source_trajectories: [...new Set(principle.source_trajectories)].toSorted(),
@@ -856,10 +1165,12 @@ function formatIndexEntry(entry: IndexEntry): string {
 }
 
 function compareIndexPrinciples(left: Principle, right: Principle): number {
-  return Number(right.pinned) - Number(left.pinned) ||
+  return (
+    Number(right.pinned) - Number(left.pinned) ||
     criticalityRank(right.criticality) - criticalityRank(left.criticality) ||
     right.updated_at.localeCompare(left.updated_at) ||
-    left.title.localeCompare(right.title);
+    left.title.localeCompare(right.title)
+  );
 }
 
 function criticalityRank(value: PrincipleCriticality): number {
@@ -907,12 +1218,14 @@ function parseSteps(value: string): TrajectoryStep[] {
     }
     const record = item as Record<string, unknown>;
     return typeof record.action === "string" && typeof record.timestamp === "string"
-      ? [{
-        action: record.action,
-        input: record.input,
-        output: record.output,
-        timestamp: record.timestamp,
-      }]
+      ? [
+          {
+            action: record.action,
+            input: record.input,
+            output: record.output,
+            timestamp: record.timestamp,
+          },
+        ]
       : [];
   });
 }
@@ -933,7 +1246,7 @@ function parseCost(value: string): TrajectoryCost {
 function parseJsonObject(value: string): JsonObject {
   const parsed = parseJson(value);
   return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-    ? parsed as JsonObject
+    ? (parsed as JsonObject)
     : {};
 }
 
@@ -963,12 +1276,12 @@ function normalizeNullableMetric(value: unknown): number | null {
 }
 
 function normalizeBatchFallbackReason(value: unknown): SekbBatchDistillationFallbackReason | null {
-  return value === "provider_unavailable"
-    || value === "timeout"
-    || value === "invalid_json"
-    || value === "schema_invalid"
-    || value === "limit_exceeded"
-    || value === "no_eligible_trajectories"
+  return value === "provider_unavailable" ||
+    value === "timeout" ||
+    value === "invalid_json" ||
+    value === "schema_invalid" ||
+    value === "limit_exceeded" ||
+    value === "no_eligible_trajectories"
     ? value
     : null;
 }
@@ -979,7 +1292,9 @@ function isoNow(now: () => Date): string {
 
 function clampText(value: string, maxLength: number): string {
   const trimmed = value.trim().replace(/\s+/g, " ");
-  return trimmed.length <= maxLength ? trimmed : `${trimmed.slice(0, Math.max(0, maxLength - 3))}...`;
+  return trimmed.length <= maxLength
+    ? trimmed
+    : `${trimmed.slice(0, Math.max(0, maxLength - 3))}...`;
 }
 
 export type { DistillationSuggestion };

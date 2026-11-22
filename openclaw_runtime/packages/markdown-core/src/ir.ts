@@ -20,6 +20,7 @@ type RenderEnv = {
 
 type MarkdownToken = {
   type: string;
+  tag?: string;
   content?: string;
   info?: string;
   children?: MarkdownToken[];
@@ -27,6 +28,8 @@ type MarkdownToken = {
   attrGet?: (name: string) => string | null;
   hidden?: boolean;
   level?: number;
+  map?: [number, number] | null;
+  nesting?: number;
 };
 
 export type MarkdownStyle =
@@ -143,6 +146,121 @@ function createMarkdownIt(options: MarkdownParseOptions): MarkdownIt {
     md.disable("autolink");
   }
   return md;
+}
+
+export type MarkdownSourceBlockKind =
+  | "heading"
+  | "paragraph"
+  | "list"
+  | "step"
+  | "code"
+  | "table"
+  | "blockquote"
+  | "other";
+
+export type MarkdownSourceBlock = {
+  kind: MarkdownSourceBlockKind;
+  /**
+   * Effective structural content range, not a rewritten raw range. markdown-it may absorb
+   * trailing separator blanks into container maps; endLine is the first line after content.
+   */
+  startLine: number;
+  endLine: number;
+  headingLevel?: number;
+  headingText?: string;
+};
+
+// markdown-it list maps can absorb separator blanks; expose only the block's contributor lines.
+function structuralLineMap(sourceLines: string[], lineMap: [number, number]): [number, number] {
+  let endLine = lineMap[1];
+  while (endLine > lineMap[0] + 1 && !(sourceLines[endLine - 1] ?? "").trim()) {
+    endLine -= 1;
+  }
+  return [lineMap[0], endLine];
+}
+
+/**
+ * Return the source block skeleton without rendering or rewriting the markdown.
+ * Callers retain the original lines and map these line indexes back to raw UTF-8.
+ */
+export function parseMarkdownSourceBlocks(markdown: string): MarkdownSourceBlock[] {
+  const md = createMarkdownIt({ linkify: false, tableMode: "block" });
+  const tokens = md.parse(markdown ?? "", {}) as MarkdownToken[];
+  const sourceLines = (markdown ?? "").split(/\r\n|\n|\r/);
+  const blocks: MarkdownSourceBlock[] = [];
+  const listKinds: Array<"list" | "step"> = [];
+  let listItemDepth = 0;
+  let opaqueContainerDepth = 0;
+  let pendingHeading: MarkdownSourceBlock | undefined;
+
+  for (const token of tokens) {
+    if (opaqueContainerDepth > 0) {
+      if (token.nesting === 1) opaqueContainerDepth += 1;
+      else if (token.nesting === -1) opaqueContainerDepth -= 1;
+      continue;
+    }
+
+    if (token.type === "ordered_list_open" || token.type === "bullet_list_open") {
+      listKinds.push(token.type === "ordered_list_open" ? "step" : "list");
+      continue;
+    }
+    if (token.type === "ordered_list_close" || token.type === "bullet_list_close") {
+      listKinds.pop();
+      continue;
+    }
+    if (token.type === "list_item_close") {
+      listItemDepth = Math.max(0, listItemDepth - 1);
+      continue;
+    }
+    if (token.type === "blockquote_open") {
+      const lineMap = token.map ? structuralLineMap(sourceLines, token.map) : null;
+      if (lineMap) {
+        blocks.push({ kind: "blockquote", startLine: lineMap[0], endLine: lineMap[1] });
+      }
+      // Keep each blockquote as one source-owned boundary, including nested text.
+      opaqueContainerDepth = 1;
+      continue;
+    }
+
+    const lineMap = token.map ? structuralLineMap(sourceLines, token.map) : null;
+    if (!lineMap) continue;
+    const base = { startLine: lineMap[0], endLine: lineMap[1] };
+
+    if (token.type === "list_item_open") {
+      const kind = listKinds.at(-1);
+      if (kind) blocks.push({ kind, ...base });
+      listItemDepth += 1;
+      continue;
+    }
+    if (token.type === "heading_open") {
+      const level = Number(token.tag?.slice(1));
+      pendingHeading = {
+        kind: "heading",
+        ...base,
+        ...(Number.isInteger(level) && level >= 1 && level <= 6 ? { headingLevel: level } : {}),
+      };
+      blocks.push(pendingHeading);
+      continue;
+    }
+    if (token.type === "inline" && pendingHeading) {
+      pendingHeading.headingText = token.content?.trim();
+      pendingHeading = undefined;
+      continue;
+    }
+    if (token.type === "paragraph_open") {
+      if (listItemDepth === 0) blocks.push({ kind: "paragraph", ...base });
+    } else if (token.type === "fence" || token.type === "code_block") {
+      blocks.push({ kind: "code", ...base });
+    } else if (token.type === "table_open") {
+      blocks.push({ kind: "table", ...base });
+    } else if (token.type === "hr" || token.type === "html_block") {
+      blocks.push({ kind: "other", ...base });
+    }
+  }
+
+  return blocks.sort(
+    (left, right) => left.startLine - right.startLine || left.endLine - right.endLine,
+  );
 }
 
 function getAttr(token: MarkdownToken, name: string): string | null {

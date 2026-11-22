@@ -385,6 +385,14 @@ type CompleteSubagentRunParams = {
 async function completeSubagentRunWithRecovery(params: CompleteSubagentRunParams, source: string) {
   try {
     await completeSubagentRun(params);
+    const completed = subagentRuns.get(params.runId);
+    if (completed?.childSessionKey) {
+      const { finishExecutionCheckoutRun } = await import('./execution-checkout-tools.js');
+      const child = loadSubagentSessionEntry({ childSessionKey: completed.childSessionKey });
+      if (child?.sessionId) finishExecutionCheckoutRun(params.runId, {
+        sessionKey: completed.childSessionKey, sessionGeneration: child.sessionId,
+      });
+    }
     await subagentDispatchQueue.drain();
     await maybeStartDeferredOrchestrationVerifier(params.runId);
     return;

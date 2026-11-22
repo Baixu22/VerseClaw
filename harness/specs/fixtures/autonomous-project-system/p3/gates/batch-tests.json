@@ -1,0 +1,127 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 7,
+  "numPassedTests": 7,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795018033715,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "long-session orchestration completion batches"
+          ],
+          "fullName": "long-session orchestration completion batches stays collecting until every expected accepted worker is terminal",
+          "status": "passed",
+          "title": "stays collecting until every expected accepted worker is terminal",
+          "duration": 3.0815000000000055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-session orchestration completion batches"
+          ],
+          "fullName": "long-session orchestration completion batches commits one deterministic consolidated receipt after success, failure and cancellation all settle",
+          "status": "passed",
+          "title": "commits one deterministic consolidated receipt after success, failure and cancellation all settle",
+          "duration": 7.419799999999896,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-session orchestration completion batches"
+          ],
+          "fullName": "long-session orchestration completion batches fences a terminal batch when the requester generation changed",
+          "status": "passed",
+          "title": "fences a terminal batch when the requester generation changed",
+          "duration": 0.2800999999999476,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-session orchestration completion batches"
+          ],
+          "fullName": "long-session orchestration completion batches preserves busy/paused delivery intent and never treats a pending intent as delivered",
+          "status": "passed",
+          "title": "preserves busy/paused delivery intent and never treats a pending intent as delivered",
+          "duration": 0.3872000000001208,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-session orchestration completion batches"
+          ],
+          "fullName": "long-session orchestration completion batches replays the same batch receipt from persisted rows after restart",
+          "status": "passed",
+          "title": "replays the same batch receipt from persisted rows after restart",
+          "duration": 0.4674999999999727,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-session orchestration completion batches"
+          ],
+          "fullName": "long-session orchestration completion batches keeps multiple independent batches separate",
+          "status": "passed",
+          "title": "keeps multiple independent batches separate",
+          "duration": 0.26789999999982683,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "long-session orchestration completion batches"
+          ],
+          "fullName": "long-session orchestration completion batches uses terminal outcome facts rather than model text to classify a member",
+          "status": "passed",
+          "title": "uses terminal outcome facts rather than model text to classify a member",
+          "duration": 0.19929999999999382,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795018035125,
+      "endTime": 1795018035137.1992,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/long-session-completion-continuation.test.ts"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "codex-project-continuation",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
+}

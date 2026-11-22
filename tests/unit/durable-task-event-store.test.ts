@@ -85,6 +85,30 @@ describe("existing Task Ledger transactional migration", () => {
       rmSync(root, { recursive: true, force: true });
     }
   });
+  it("replays a single session-link batch using the original generated ID", () => {
+    const root = mkdtempSync(join(tmpdir(), "task-link-replay-"));
+    const file = join(root, "events.jsonl");
+    try {
+      const first: TaskLedgerEvent = {
+        ...event("first-link-event"), type: "session_linked", taskId: "task", sessionId: "session",
+        idempotencyKey: "link-key", payload: { sessionLink: {
+          id: "link-one", sessionKey: "session", nodeId: "task", relation: "related", createdAt: "2026-11-07T00:00:00Z",
+        } },
+      };
+      const replay: TaskLedgerEvent = {
+        ...first, id: "retry-event", payload: { sessionLink: { ...first.payload.sessionLink!, id: "link-two" } },
+      };
+      appendPersistentTaskEvents(file, [first], first.idempotencyKey);
+      appendPersistentTaskEvents(file, [replay], first.idempotencyKey);
+      expect(readPersistentTaskEvents(file)).toEqual([first]);
+      const different = { ...replay, payload: { sessionLink: { ...replay.payload.sessionLink!, relation: "forked_from" as const } } };
+      expect(() => appendPersistentTaskEvents(file, [different], first.idempotencyKey)).toThrow("TASK_EVENT_IDEMPOTENCY_CONFLICT");
+      appendPersistentTaskEvents(file, [{ ...replay, idempotencyKey: "new-link-key" }], "new-link-key");
+      expect(readPersistentTaskEvents(file)).toHaveLength(2);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
   it("rejects corrupt legacy history instead of presenting an empty task graph", () => {
     const root = mkdtempSync(join(tmpdir(), "task-events-"));
     const file = join(root, "events.jsonl");

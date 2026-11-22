@@ -1,5 +1,8 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { createOwnerReadSnapshot, deriveReadAdmissionContext, digestOwnerReadContent } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+import { createRetrievalPlan } from '../../openclaw_runtime/src/knowledge/retrieval/plan';
+import { PROJECT_RAG_DEFAULTS } from '../../shared/knowledge/operations';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -11,6 +14,25 @@ vi.mock('electron', () => ({
 }));
 
 const root = join(tmpdir(), `clawx-knowledge-api-${Date.now()}`);
+
+function retrievalFixture(rows: Array<Record<string, unknown>>) {
+  return {
+    schema: 'RetrievalResult/v2',
+    plan: createRetrievalPlan({ query: 'owner fixture', namespaceIds: ['wiki-owner-fixture'] }),
+    status: 'partial', effectiveProfile: 'lexical', filters: [],
+    fallbackReasons: ['lexical:page-lexical-fallback'],
+    lanes: [{ lane: 'lexical', namespaceId: 'wiki-owner-fixture', queryFamily: 'root', status: 'available', reason: 'page-lexical-fallback', candidateCount: rows.length, elapsedMs: 1 }],
+    results: rows.map((row, index) => ({
+      ...row, rank: index + 1, score: 1 / (61 + index), scoreKind: 'rrf',
+      rankSignals: { schema: 'RankSignals/v2', fusionScore: 1 / (61 + index), lanes: [
+        { lane: 'lexical', namespaceId: 'wiki-owner-fixture', queryFamily: 'root', rank: index + 1, rawScore: row.score ?? 0, scoreKind: 'page-lexical', contribution: 1 / (61 + index) },
+      ] },
+      sourceRef: row.sourceRef ?? { schema: 'SourceRef/v2', domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'wiki-owner-fixture',
+        subjectId: row.lookup, revision: '1', sourceDigest: `sha256:${'a'.repeat(64)}`, policyEpoch: `sha256:${'b'.repeat(64)}` },
+      autoReadAdmission: { eligible: row.autoReadEligible === true, contextId: 'owner-fixture', reason: 'fixture-owner-admission' },
+    })),
+  };
+}
 
 
 type FakeConfirmOptions = {
@@ -74,11 +96,82 @@ vi.mock('@electron/utils/paths', () => ({
   expandPath: (path: string) => path,
   getOpenClawConfigDir: () => root,
   getDataDir: () => join(root, 'userData'),
+  getResourcesDir: () => join(process.cwd(), 'resources'),
   // Point at a temp root without openclaw_runtime dist so SEKB ops degrade honestly.
   getOpenClawRuntimeDir: () => join(root, 'missing-openclaw-runtime'),
 }));
 
 describe('knowledge host API', () => {
+  it('rejects unpinned memory reads and an all-corpus raw-memory fallback', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.get') return { corpus: 'memory', content: 'UNADMITTED_MEMORY_BODY' };
+      throw Error(method);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    for (const corpus of ['memory', 'all'] as const) {
+      const result = await api.get({ lookup: 'memory/source.md', corpus });
+      expect(result).toMatchObject({ success: false, readDenial: 'denied' });
+      expect(JSON.stringify(result)).not.toContain('UNADMITTED_MEMORY_BODY');
+    }
+    expect(gatewayManager.rpc.mock.calls.filter(([method]) => method === 'wiki.get')).toHaveLength(1);
+  });
+
+  it.each(['native-memory', 'role-memory', 'experience'] as const)('reads %s for SourceSet answers and preserves Studio pins', async domain => {
+    const owner = domain === 'native-memory' ? 'native-memory' : domain === 'experience' ? 'sekb' : 'memory-slot';
+    const namespaceId = `${owner}:host-source-fixture`;
+    let changed = false;
+    const snapshotFor = (identity: { workspaceId?: string; workspaceDir?: string; agentSessionKey?: string; sessionId?: string }) => {
+      const content = changed ? 'CHANGED_MEMORY_SOURCE_BODY' : 'Memory source requires review before applying.';
+      const context = deriveReadAdmissionContext({ principalId: 'operator', agentId: 'main',
+        sessionId: identity.sessionId!, sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId!,
+        workspaceRootDigest: digestOwnerReadContent(identity.workspaceDir!), ownerNamespaces: [namespaceId],
+        policyDigest: digestOwnerReadContent('memory-host-policy'), egressProviderRefs: [], expiresAt: new Date(Date.now() + 30000).toISOString() });
+      return createOwnerReadSnapshot({ raw: content, startChar: 0, endChar: content.length, context, title: 'Memory source',
+        source: { domain, authorityId: owner, namespaceId, subjectId: 'memory-source', revision: changed ? '2' : '1' },
+        policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] },
+          scope: { workspaceId: context.workspaceId, agentId: 'main' }, retention: { policy: 'source-coupled' }, updatedAt: '2026-11-16T00:00:00Z' } });
+    };
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'memory.readSource' || method === 'sekb.readSource') return { status: 'admitted', snapshot: snapshotFor(params.readIdentity as never) };
+      throw Error(`Unexpected memory source RPC ${method}`);
+    }) };
+    const { prepareKnowledgeReadScope } = await import('@electron/services/knowledge-read-scope');
+    const scope = await prepareKnowledgeReadScope(gatewayManager as never, {});
+    const pin = snapshotFor(scope.identity).source;
+    const ref = { id: 'memory-source', kind: 'other' as const, sourceRef: pin };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const answer = await api.answerFromSourceSet({ question: 'Review memory source', sourceRefs: [ref] });
+    expect(answer.sources).toHaveLength(1);
+    expect(answer.sources[0].citation).toMatchObject({ owner, sourceRef: pin });
+    expect(answer.retrievalDiagnostics).toMatchObject({ corpus: domain === 'experience' ? 'all' : 'memory', items: [
+      expect.objectContaining({ owner, sourceRef: pin, sourceKind: domain === 'native-memory' ? 'memory-file' : domain === 'experience' ? 'sekb-principle' : 'memory-card' }),
+    ] });
+    expect(await api.get({ lookup: pin.subjectId, sourceRef: pin, corpus: domain === 'experience' ? 'all' : 'memory' })).toMatchObject({ success: true });
+    for (const conflicting of [{ revision: 'stale-version' }, { contentDigest: digestOwnerReadContent('stale body') }, { corpus: 'wiki' as const }]) {
+      const rejected = await api.get({ lookup: pin.subjectId, sourceRef: pin, ...conflicting });
+      expect(rejected).toMatchObject({ success: false });
+      expect(JSON.stringify(rejected)).not.toContain('Memory source requires review');
+    }
+    const studio = await api.createArtifactDraft({ artifactType: 'summary', sourceRefs: [ref] });
+    expect(studio).toMatchObject({ success: true, draft: { sourceRefs: [expect.objectContaining({ sourceRef: pin })] } });
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'wiki.get')).toBe(false);
+    changed = true;
+    const stale = await api.answerFromSourceSet({ question: 'Review memory source', sourceRefs: [ref] });
+    expect(stale.sources).toEqual([]);
+    expect(stale.retrievalDiagnostics).toMatchObject({ corpus: domain === 'experience' ? 'all' : 'memory', items: [] });
+    expect(stale.answer).not.toContain('CHANGED_MEMORY_SOURCE_BODY');
+    const legacy = { id: owner + ':memory-source', kind: 'file' as const };
+    const unpinned = await api.answerFromSourceSet({ question: 'Review legacy memory', sourceRefs: [legacy] });
+    expect(unpinned.sources).toEqual([]);
+    expect(unpinned.retrievalDiagnostics).toMatchObject({ corpus: domain === 'experience' ? 'all' : 'memory' });
+    expect(unpinned.rejections).toEqual(expect.arrayContaining([expect.objectContaining({ owner, reason: 'not_found' })]));
+    expect(await api.createArtifactDraft({ artifactType: 'summary', sourceRefs: [legacy] })).toMatchObject({ success: false });
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'wiki.get')).toBe(false);
+  });
   beforeEach(async () => {
     closeOpenClawStateDatabaseForTest();
     const mod = await import('@electron/services/knowledge-api');
@@ -88,6 +181,8 @@ describe('knowledge host API', () => {
     mod.__setSekbRuntimeModuleForTests(undefined);
     rmSync(root, { recursive: true, force: true });
     mkdirSync(root, { recursive: true });
+    const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
+    await createWorkspacesApi().create({ name: 'Knowledge owner fixture', rootPath: root, agentId: 'main', permissionMode: 'acceptEdits' });
   });
 
   afterEach(async () => {
@@ -116,6 +211,56 @@ describe('knowledge host API', () => {
       error: 'gateway unavailable',
     });
     expect(gatewayManager.rpc).toHaveBeenNthCalledWith(1, 'wiki.status', {}, 12000);
+  });
+
+  it('validates operations config before RPC and preserves the config base hash', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { key: params.key, sessionId: 'physical-rag12-config' } };
+      if (method === 'config.get') return { hash: 'rag12-base-hash' };
+      return { ok: true };
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    expect(await api.operationsConfigure({ mode: 'auto-read' } as never)).toMatchObject({ success: false });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    expect(await api.operationsConfigure({ profile: 'quality', answerMode: 'open', maxStorageBytes: 1024 ** 3 }))
+      .toMatchObject({ success: true, restartRequired: true });
+    const patch = gatewayManager.rpc.mock.calls.find(([method]) => method === 'config.patch')![1];
+    expect(patch.baseHash).toBe('rag12-base-hash');
+    expect(JSON.parse(patch.raw as string)).toEqual({ plugins: { entries: { 'memory-wiki': { config: { retrieval: {
+      profile: 'quality', answerMode: 'open', maxStorageBytes: 1024 ** 3,
+    } } } } } });
+  });
+
+  it('rejects late operations snapshots after a session generation changes', async () => {
+    let generation = 'physical-rag12-before';
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { key: params.key, sessionId: generation } };
+      if (method === 'wiki.operations.status') { generation = 'physical-rag12-after'; return { owner: 'old-scope' }; }
+      return {};
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    expect(await api.operationsStatus()).toMatchObject({ success: false, error: expect.stringMatching(/identity changed/i) });
+  });
+
+  it('uses owner config for omitted profiles, keeps explicit bounds and fails closed without config', async () => {
+    let configAvailable = true;
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>, _timeoutMs?: number) => {
+      if (method === 'sessions.describe') return { session: { key: params.key, sessionId: 'physical-rag12-profile' } };
+      if (method === 'wiki.operations.config') return configAvailable ? { ...PROJECT_RAG_DEFAULTS, profile: 'quality' } : undefined;
+      if (method === 'wiki.retrieve') return { ...retrievalFixture([]), plan: createRetrievalPlan({ query: 'owner fixture', profile: params.profile as 'local' | 'quality', namespaceIds: ['wiki-owner-fixture'] }) };
+      return {};
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    expect(await api.retrieve({ query: 'owner fixture' })).toMatchObject({ success: true, retrieval: { plan: { profile: 'quality' } } });
+    expect(await api.retrieve({ query: 'owner fixture', profile: 'local' })).toMatchObject({ success: true, retrieval: { plan: { profile: 'local' } } });
+    const calls = gatewayManager.rpc.mock.calls.filter(([method]) => method === 'wiki.retrieve');
+    expect(calls[0][2]).toBeLessThanOrEqual(2500); expect(calls[1][2]).toBeLessThanOrEqual(900);
+    configAvailable = false; gatewayManager.rpc.mockClear();
+    expect(await api.retrieve({ query: 'owner fixture' })).toMatchObject({ success: false, error: expect.stringMatching(/configuration is unavailable/) });
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'wiki.retrieve')).toBe(false);
   });
 
   it('returns a read-only SEKB runtime lessons report without Gateway writes', async () => {
@@ -352,6 +497,7 @@ describe('knowledge host API', () => {
   it('configures memory-wiki defaults without overwriting unrelated plugin config', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'config.get') {
           return {
             hash: 'h1',
@@ -458,6 +604,7 @@ describe('knowledge host API', () => {
 
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.ingest') {
           return {
             sourcePath: params.inputPath,
@@ -580,7 +727,8 @@ describe('knowledge host API', () => {
       off: vi.fn((_event: string, listener: (event: unknown) => void) => {
         listeners.delete(listener);
       }),
-      rpc: vi.fn(async (method: string) => {
+      rpc: vi.fn(async (method: string, _params?: Record<string, unknown>, _timeoutMs?: number) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'agent') {
           return { runId: 'steward-run-1' };
         }
@@ -617,8 +765,14 @@ describe('knowledge host API', () => {
     expect(review.tags).toContain('governance');
     expect(review.notes).toContain('Semantic steward pass');
     expect(review.warnings.some((w) => w.includes('[quality]'))).toBe(true);
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true }), 60000);
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent.wait', expect.objectContaining({ runId: 'steward-run-1' }), 65000);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true }), expect.any(Number));
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent.wait', expect.objectContaining({ runId: 'steward-run-1' }), expect.any(Number));
+    const agentCall = gatewayManager.rpc.mock.calls.find(([method]) => method === 'agent')!;
+    const waitCall = gatewayManager.rpc.mock.calls.find(([method]) => method === 'agent.wait')!;
+    expect(agentCall[2]).toBeGreaterThan(0);
+    expect(agentCall[2]).toBeLessThanOrEqual(60000);
+    expect(waitCall[2]).toBeLessThanOrEqual(65000);
+    expect(waitCall[2]).toBe((waitCall[1]!.timeoutMs as number) + 5000);
   });
 
   it('orchestrates inbox candidates into drafts without applying wiki writes', async () => {
@@ -908,6 +1062,7 @@ describe('knowledge host API', () => {
   it('validates proposals and applies only approved create proposals', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.apply') return { pageId: 'synthesis-1' };
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -962,6 +1117,7 @@ describe('knowledge host API', () => {
   it('converts legacy applyDraft calls into review-gated drafts without direct wiki apply', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         throw new Error(`unexpected rpc ${method}`);
       }),
     };
@@ -1007,12 +1163,27 @@ describe('knowledge host API', () => {
     });
   });
 
+  it('forwards the selected profile for explicit Wiki search', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
+      if (method === 'wiki.retrieve') return retrievalFixture([{ id: 'manual', title: 'Manual source', lookup: 'source.md' }]);
+      throw new Error(`Unexpected ${method}`);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const result = await createKnowledgeApi({ gatewayManager: gatewayManager as never }).search({ query: 'manual query', profile: 'quality', corpus: 'wiki' });
+    expect(result.success).toBe(true);
+    expect(result.results?.[0].title).toBe('Manual source');
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.retrieve', expect.objectContaining({ profile: 'quality', mode: 'suggest' }), expect.any(Number));
+  });
+
   it('routes knowledge context only when scope and mode allow read-only search', async () => {
     const gatewayManager = {
-      rpc: vi.fn(async (method: string) => {
-        if (method === 'wiki.search') {
-          return {
-            results: [
+      rpc: vi.fn(async (method: string, _params?: unknown, _timeout?: number) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
+        if (method === 'wiki.retrieve') {
+          return retrievalFixture([
               {
                 id: 'route-1',
                 title: 'Architecture Decision',
@@ -1041,8 +1212,7 @@ describe('knowledge host API', () => {
                 score: 0.7,
                 metadata: { knowledgeKind: 'rule' },
               },
-            ],
-          };
+          ]);
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1099,7 +1269,8 @@ describe('knowledge host API', () => {
           attachKind: 'suggested',
           lookup: 'architecture/decision.md',
           routeGroup: 'docs',
-          confidence: 0.82,
+          scoreKind: 'rrf',
+          rank: 1,
         }),
         expect.objectContaining({
           lookup: 'troubleshooting/route-context.md',
@@ -1128,27 +1299,48 @@ describe('knowledge host API', () => {
         reason: 'not-requested',
       },
     });
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({
-      corpus: 'wiki',
-      maxResults: 3,
-    }), 30000);
+    expect(suggest.candidates.every(candidate => candidate.confidence === undefined)).toBe(true);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.retrieve', expect.objectContaining({
+      profile: 'local', mode: 'suggest', readIdentity: expect.any(Object), deadlineAtMs: expect.any(Number),
+    }), expect.any(Number));
+    const retrievalCall = gatewayManager.rpc.mock.calls.find(call => call[0] === 'wiki.retrieve')!;
+    expect(retrievalCall[2]).toBeLessThanOrEqual(900);
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
-  it('keeps Runtime Lessons opt-in and exposes principle provenance', async () => {
+  it('keeps Runtime Lessons opt-in and records only current acknowledged candidates', async () => {
+    let sessionId = '10000000-0000-4000-8000-000000000001';
+    let retrievalDelay = Promise.resolve();
+    let exposureFailure = false;
     const gatewayManager = {
-      rpc: vi.fn(async (method: string) => {
-        if (method === 'wiki.search') {
-          return {
-            results: [{
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
+        if (method === 'sekb.recordExposure') {
+          if (exposureFailure) throw new Error('temporary exposure transport failure');
+          return { success: true, recorded: 1 };
+        }
+        if (method === 'sekb.retrieve') {
+          await retrievalDelay;
+          const identity = params.readIdentity as { sessionId: string; workspaceId: string; agentSessionKey: string; workspaceDir: string };
+          const context = deriveReadAdmissionContext({ principalId: 'operator', agentId: 'main', sessionId: identity.sessionId,
+            sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, workspaceRootDigest: digestOwnerReadContent(identity.workspaceDir),
+            ownerNamespaces: ['sekb:test'], policyDigest: digestOwnerReadContent('policy'), egressProviderRefs: [], expiresAt: new Date(Date.now()+30000).toISOString() });
+          const snapshot = createOwnerReadSnapshot({ raw: principle.action, startChar: 0, endChar: principle.action.length, context,
+            title: principle.title, source: { domain: 'experience', authorityId: 'sekb', namespaceId: 'sekb:test', subjectId: principle.principle_id, revision: 'version' },
+            policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
+          return { status: 'admitted', candidates: [{ ...principle, content: snapshot.content, sourceRef: snapshot.source, snapshot }] };
+        }
+
+        if (method === 'wiki.retrieve') {
+          return retrievalFixture([{
               id: 'route-1',
               title: 'Architecture Decision',
               lookup: 'architecture/decision.md',
               pagePath: 'architecture/decision.md',
               snippet: 'Use the managed wiki as read-only context.',
               score: 0.82,
-            }],
-          };
+          }]);
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1217,15 +1409,52 @@ describe('knowledge host API', () => {
     expect(withSourcePolicy.candidateGroups).toEqual(expect.arrayContaining([
       expect.objectContaining({ key: 'runtime_lessons' }),
     ]));
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'sekb.recordExposure')).toBe(false);
+    expect(await api.recordExperienceExposure({ requestId: 'not-issued', principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    expect(await api.recordExperienceExposure({ requestId: withSourcePolicy.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: true, recorded: 1 });
+    expect(await api.recordExperienceExposure({ requestId: withSourcePolicy.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    const retrieve = () => api.routeContext({ message: '之前项目里为什么选择 managed wiki 架构？', scope: 'wiki', mode: 'suggest', sourcePolicy: { runtimeLessons: true } });
+    const retryable = await retrieve();
+    exposureFailure = true;
+    expect(await api.recordExperienceExposure({ requestId: retryable.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    exposureFailure = false;
+    expect(await api.recordExperienceExposure({ requestId: retryable.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: true, recorded: 1 });
+    expect(await api.recordExperienceExposure({ requestId: retryable.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    const expired = await retrieve();
+    const now = Date.now();
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(now + 31_000);
+    try {
+      expect(await api.recordExperienceExposure({ requestId: expired.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    } finally { clock.mockRestore(); }
+    const changed = await retrieve();
+    sessionId = '10000000-0000-4000-8000-000000000002';
+    expect(await api.recordExperienceExposure({ requestId: changed.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: false, recorded: 0 });
+    const unselected = await retrieve();
+    expect(await api.recordExperienceExposure({ requestId: unselected.experienceExposureId!, principleIds: ['not-retrieved'] })).toMatchObject({ success: true, recorded: 0 });
+    const stillVisible = await retrieve();
+    let release!: () => void;
+    retrievalDelay = new Promise<void>(resolve => { release = resolve; });
+    const lateStart = gatewayManager.rpc.mock.calls.length;
+    const timedOut = await Promise.all(Array.from({ length: 64 }, () => retrieve()));
+    expect(timedOut.every(result => result.runtimeLessons?.reason === 'deadline-exceeded' && !result.experienceExposureId)).toBe(true);
+    release();
+    const lateResults = gatewayManager.rpc.mock.calls.flatMap(([method], index) => index >= lateStart && method === 'sekb.retrieve' ? [gatewayManager.rpc.mock.results[index].value] : []);
+    await Promise.all(lateResults);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(await api.recordExperienceExposure({ requestId: stillVisible.experienceExposureId!, principleIds: [principle.principle_id] })).toMatchObject({ success: true, recorded: 1 });
+    expect(gatewayManager.rpc.mock.calls.filter(([method]) => method === 'sekb.recordExposure')).toHaveLength(4);
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
-  it('adds retrieval diagnostics to search without replacing legacy results', async () => {
+  it.each(['array', 'results', 'hits'] as const)('preserves %s Gateway rows and SourceRef in Host search', async (shape) => {
+    const sourceRef = { schema: 'SourceRef/v2', domain: 'wiki', authorityId: 'memory-wiki',
+      namespaceId: 'wiki-owner-fixture', subjectId: 'notes/route-context.md', revision: '1',
+      sourceDigest: `sha256:${'a'.repeat(64)}`, policyEpoch: `sha256:${'b'.repeat(64)}` };
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.search') {
-          return {
-            results: [
+          const rows = [
               {
                 id: 'search-1',
                 title: 'Route context notes',
@@ -1234,9 +1463,10 @@ describe('knowledge host API', () => {
                 snippet: 'Knowledge side effects are best effort.',
                 score: 0.91,
                 metadata: { knowledgeKind: 'rule' },
+                sourceRef,
               },
-            ],
-          };
+            ];
+          return shape === 'array' ? rows : { [shape]: rows };
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1248,8 +1478,9 @@ describe('knowledge host API', () => {
 
     expect(result.success).toBe(true);
     expect(result.results).toEqual([
-      expect.objectContaining({ id: 'search-1', lookup: 'notes/route-context.md' }),
+      expect.objectContaining({ id: 'search-1', lookup: 'notes/route-context.md', sourceRef }),
     ]);
+    expect(result).not.toHaveProperty('0');
     expect(result.retrievalDiagnostics).toMatchObject({
       query: 'routeContext failure',
       corpus: 'wiki',
@@ -1374,6 +1605,7 @@ describe('knowledge host API', () => {
   it('aggregates governance quality metrics from audit issues and error-experience counters', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.compile') {
           return {
             freshnessReports: [
@@ -1469,19 +1701,19 @@ describe('knowledge host API', () => {
     ]));
   });
 
-  it('auto-read routes only high-confidence fresh non-contradicted candidates', async () => {
+  it('auto-read uses owner admission and rejects raw scores without it', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
-        if (method === 'wiki.search') {
-          return {
-            results: [
-              { id: 'fresh', title: 'Fresh', lookup: 'fresh.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
+        if (method === 'wiki.retrieve') {
+          return retrievalFixture([
+              { id: 'fresh', title: 'Fresh', lookup: 'fresh.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'supported', autoReadEligible: true },
               { id: 'low', title: 'Low', lookup: 'low.md', score: 0.2, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
               { id: 'stale', title: 'Stale', lookup: 'stale.md', score: 0.9, freshnessLevel: 'stale', matchedClaimStatus: 'supported' },
               { id: 'conflict', title: 'Conflict', lookup: 'conflict.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'contradicted' },
-              { id: 'extra', title: 'Extra', lookup: 'extra.md', score: 0.8, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
-            ],
-          };
+              { id: 'extra', title: 'Extra', lookup: 'extra.md', score: 0.8, freshnessLevel: 'fresh', matchedClaimStatus: 'supported', autoReadEligible: true },
+          ]);
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1609,6 +1841,7 @@ describe('knowledge host API', () => {
 
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.ingest') {
           return {
             sourcePath: params.inputPath,
@@ -1655,6 +1888,8 @@ describe('knowledge host API', () => {
   it.each([false, true])('rejects archived Source Set evidence without fallback (semantic=%s)', async (semantic) => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.embedding.status') return { mode: 'remote', status: 'ready', providerRef: 'agent-fixture-provider', dimensions: 2, spaceId: 'agent-fixture-space' };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: 'notes/archived.md', title: 'Archived decision',
           content: 'ARCHIVED_BODY_MUST_NOT_ENTER_ANSWER', status: 'archived', revision: 19,
@@ -1674,11 +1909,13 @@ describe('knowledge host API', () => {
     expect(answer.answer).not.toContain('ARCHIVED_BODY_MUST_NOT_ENTER_ANSWER');
     expect(answer.rejections).toEqual([expect.objectContaining({ reason: 'archived', subjectId: 'notes/archived.md' })]);
     expect(answer.confidence).toBeUndefined();
+    expect(gatewayManager.rpc.mock.calls.some(call => call[0] === 'wiki.embedding.embed')).toBe(false);
   });
 
   it('retains explicit Source Set version pins and rejects a changed owner revision', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: 'notes/versioned.md', title: 'Versioned decision',
           content: 'OWNER_REVISION_20_BODY', status: 'active', revision: 20,
@@ -1701,6 +1938,7 @@ describe('knowledge host API', () => {
   it('reports unverified Source Set excerpts as partial rather than a calibrated answer', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: params.lookup, title: String(params.lookup),
           content: params.lookup === 'notes/port-a.md' ? 'The gateway port is 8080.' : 'The gateway port is 9090.',
@@ -1725,6 +1963,7 @@ describe('knowledge host API', () => {
   it('keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: params.lookup, title: String(params.lookup),
           content: params.lookup === 'notes/active.md' ? 'ADMITTED_BODY' : 'ARCHIVED_BODY',
@@ -1756,7 +1995,9 @@ describe('knowledge host API', () => {
   });
 
   it('applies saved Source Set workspace context without granting cross-workspace reads', async () => {
-    const gatewayManager = { rpc: vi.fn(async () => ({ corpus: 'wiki', path: 'notes/scoped.md', content: 'OTHER_WORKSPACE_BODY', status: 'active', scope: { workspaceId: 'workspace-b' } })) };
+    const gatewayManager = { rpc: vi.fn(async (method: string) => method === 'sessions.describe'
+      ? { session: { sessionId: '10000000-0000-4000-8000-000000000001' } }
+      : ({ corpus: 'wiki', path: 'notes/scoped.md', content: 'OTHER_WORKSPACE_BODY', status: 'active', scope: { workspaceId: 'workspace-b' } })) };
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
     const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
     const saved = await api.saveSourceSet({ title: 'Workspace A', sourceRefs: [{ id: 'notes/scoped.md', kind: 'wiki' }], metadata: { workspaceId: 'workspace-a' } });
@@ -1766,18 +2007,51 @@ describe('knowledge host API', () => {
     expect(answer.answer).not.toContain('OTHER_WORKSPACE_BODY');
   });
 
-  it('answers default and follow-up questions through the existing model-only Gateway with checked citations', async () => {
+  it.each(['same', 'changed', 'provider-error', 'unsupported'])('checks source answers and support outcome: %s', async (outcome) => {
+    const sourceChanged = outcome === 'changed';
     const listeners = new Set<(value: unknown) => void>();
+    const body = '网关端口为8080。';
+    let sourceBody = body;
+    let isSupportRun = false;
+    const snapshotFor = (identity: { workspaceId: string; sessionId: string; agentSessionKey: string }) => {
+      const context = deriveReadAdmissionContext({ principalId: 'operator', sessionId: identity.sessionId,
+        sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, ownerNamespaces: ['wiki-owner-fixture'],
+        egressProviderRefs: [],
+        policyDigest: digestOwnerReadContent('qa-fixture'), expiresAt: new Date(Date.now() + 30000).toISOString() });
+      return createOwnerReadSnapshot({ raw: sourceBody, startChar: 0, endChar: sourceBody.length, title: 'Gateway port', context,
+        source: { domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'wiki-owner-fixture', subjectId: 'port.md', revision: '1' },
+        policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
+    };
     const gatewayManager = {
       on: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.add(callback)),
       off: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.delete(callback)),
-      rpc: vi.fn(async (method: string) => {
-        if (method === 'wiki.search') return { results: [{ pagePath: 'port.md', title: 'Gateway port' }] };
-        if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: '网关端口为8080。', revision: 2, status: 'active' };
-        if (method === 'agent') return { runId: 'qa-run' };
+      rpc: vi.fn(async (method: string, params: Record<string, unknown> = {}) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
+        if (method === 'wiki.retrieve') return retrievalFixture([{ pagePath: 'port.md', lookup: 'port.md', title: 'Gateway port', sourceRef: snapshotFor(params.readIdentity as never).source }]);
+        if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: sourceBody, revision: 1, status: 'active', ownerSnapshot: snapshotFor(params.readIdentity as never) };
+        if (method === 'agent') {
+          if (outcome === 'provider-error') throw Error('provider unavailable');
+          isSupportRun = params.label === 'Knowledge claim support'; return { runId: isSupportRun ? 'support-run' : 'qa-run' };
+        }
         if (method === 'agent.wait') {
-          for (const callback of listeners) callback({ runId: 'qa-run', type: 'assistant.delta', text: JSON.stringify({ claims: [{ text: '网关端口为8080。', citations: [{ sourceId: 'memory-wiki:port.md', quote: '端口为8080' }] }], unknowns: [] }) });
-          return { status: 'completed' };
+          for (const callback of listeners) callback({ runId: 'qa-run', type: 'assistant.delta', text: JSON.stringify({ claims: [{ text: '网关端口为8080。', citations: [{ sourceId: `memory-wiki:wiki-owner-fixture:port.md:0-${Buffer.byteLength(body)}`, quote: '端口为8080' }] }], unknowns: [] }) });
+          const terminal = { status: 'completed', text: JSON.stringify(isSupportRun
+            ? { answerability: outcome === 'unsupported' ? 'insufficient' : 'answerable', claims: [{ index: 0, status: outcome === 'unsupported' ? 'unsupported' : 'supported', reason: 'The cited source states 8080.' }] }
+            : { claims: [{ kind: 'source', text: outcome === 'unsupported' ? '网关端口为9999。' : '网关端口为8080。', citations: [{ sourceId: `memory-wiki:wiki-owner-fixture:port.md:0-${Buffer.byteLength(body)}`, quote: '端口为8080' }] }], unknowns: [] }), retainedEvidence: {
+            schema: 'RetainedEvidenceManifest/v1', turnId: 'qa-run', estimateMethod: 'utf8-bytes-div4',
+            retainedChars: body.length, retainedUtf8Bytes: Buffer.byteLength(body), estimatedTokens: Math.ceil(Buffer.byteLength(body) / 4),
+            units: [{ schema: 'KnowledgeCandidatePacking/v2', unitId: 'fixture-unit', candidateId: 'fixture-candidate', ordinal: 0,
+              projectionDigest: digestOwnerReadContent(body), retainedChars: body.length, retainedUtf8Bytes: Buffer.byteLength(body),
+              estimatedTokens: Math.ceil(Buffer.byteLength(body) / 4), citations: [{
+                refId: 'fixture-ref', intentId: 'memory-wiki:wiki-owner-fixture:port.md:0-' + Buffer.byteLength(body),
+                sourceRef: snapshotFor({ workspaceId: 'workspace-a', sessionId: '10000000-0000-4000-8000-000000000001', agentSessionKey: 'agent:main:main' }).source,
+                sourceDigest: digestOwnerReadContent(body), chunkDigest: digestOwnerReadContent(body),
+                retainedBodyChars: body.length, retainedBodyUtf8Bytes: Buffer.byteLength(body),
+              }] }],
+          } };
+          if (sourceChanged) sourceBody = body + '来源在模型执行后发生改变。';
+          return terminal;
         }
         throw Error(`Unexpected RPC ${method}`);
       }),
@@ -1785,17 +2059,36 @@ describe('knowledge host API', () => {
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
     const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
     const answer = await api.answerFromSourceSet({ question: '它的端口呢？', sourceRefs: [], synthesis: true, history: [{ role: 'user', content: '讨论网关' }] });
+    if (outcome === 'provider-error') {
+      expect(answer).toMatchObject({ synthesisMode: 'unknown', groundingStatus: 'partial', model: { status: 'error' } });
+      expect(answer.sources).toHaveLength(1); expect(answer.unknowns.join(' ')).toContain('provider unavailable');
+      return;
+    }
+    if (outcome === 'unsupported') {
+      expect(answer.synthesisMode).toBe('unknown'); expect(answer.claims).toEqual([]);
+      expect(answer.claimSupport?.status).toBe('completed'); expect(answer.answer).not.toContain('9999');
+      return;
+    }
+    if (sourceChanged) {
+      expect(answer.model?.status).toBe('error');
+      expect(answer.synthesisMode).toBe('unknown');
+      expect(answer.claims).toBeUndefined();
+      expect(answer.unknowns.join(' ')).toContain('changed during model execution');
+      return;
+    }
     expect(answer).toMatchObject({ success: true, synthesisMode: 'model', model: { status: 'completed', runId: 'qa-run' }, groundingStatus: 'partial' });
     expect(answer.unknowns.join(' ')).toContain('no known freshness');
     expect(answer.answer).toContain('网关端口为8080');
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({ query: expect.stringContaining('讨论网关') }), 30000);
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true, promptMode: 'none', message: expect.stringContaining('讨论网关'), deliver: false }), 60000);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.retrieve', expect.objectContaining({ query: expect.stringContaining('讨论网关') }), expect.any(Number));
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true, promptMode: 'none', message: expect.stringContaining('讨论网关'), deliver: false }), expect.any(Number));
+    expect(answer.claims?.[0].evidenceStatus.semanticSupport).toBe('supported');
     expect(listeners.size).toBe(0);
   });
 
   it('persists source sets and answers from their selected sources without applying durable wiki changes', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') {
           return {
             lookup: params.lookup,
@@ -1855,71 +2148,101 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
-  it('uses the real semantic lane for opt-in SourceSet answers while preserving fallback inputs', async () => {
+  it.each([false, true])('uses the selected semantic service with owner pins and one shared deadline (query expires=%s)', async (queryExpires) => {
+    let clock = Date.now();
+    const now = vi.spyOn(Date, 'now').mockImplementation(() => clock);
+    vi.stubEnv('KNOWLEDGE_EMBEDDING_DEADLINE_MS', '1000');
+    try {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.embedding.status') return { mode: 'remote', status: 'ready', providerRef: 'agent-fixture-provider', dimensions: 2, spaceId: 'agent-fixture-space' };
+        if (method === 'wiki.embedding.embed') {
+          if (params.kind === 'query') { clock += queryExpires ? 1001 : 100; return { vectors: [[1, 0]] }; }
+          return { vectors: (params.sources as Array<{ subjectId: string }>).map(pin => pin.subjectId.includes('procedure') ? [0, 1] : [1, 0]) };
+        }
         if (method === 'wiki.get') {
-          return {
-            lookup: params.lookup,
-            title: params.lookup === 'notes/decision.md' ? 'Decision note' : 'Procedure note',
-            pagePath: params.lookup,
-            body: params.lookup === 'notes/decision.md'
-              ? 'Use source-backed drafts before durable Knowledge writes.'
-              : 'Review generated artifacts before applying them.',
-          };
+          const identity = params.readIdentity as { workspaceId: string; sessionId: string; agentSessionKey: string; egressProviderRefs: string[] };
+          const context = deriveReadAdmissionContext({ principalId: 'operator', sessionId: identity.sessionId,
+            sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, ownerNamespaces: ['agent-fixture-wiki'],
+            policyDigest: digestOwnerReadContent('agent-fixture-policy'), egressProviderRefs: identity.egressProviderRefs,
+            expiresAt: new Date(Date.now() + 30_000).toISOString() });
+          const body = params.lookup === 'notes/decision.md'
+            ? 'Use source-backed drafts before durable Knowledge writes.'
+            : 'Review generated artifacts before applying them.';
+          const title = params.lookup === 'notes/decision.md' ? 'Decision note' : 'Procedure note';
+          const snapshot = createOwnerReadSnapshot({ raw: body, startChar: 0, endChar: body.length, title, context,
+            source: { domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'agent-fixture-wiki', subjectId: String(params.lookup), revision: '1' },
+            policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
+          return { lookup: params.lookup, title, pagePath: params.lookup, body, ownerSnapshot: snapshot };
         }
         if (method === 'wiki.apply') throw new Error('wiki.apply must not be called');
-        throw new Error(`unexpected rpc ${method}`);
+        throw new Error('unexpected rpc ' + method);
       }),
     };
-    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
-      const body = JSON.parse(String(init?.body ?? '{}')) as { input: string[] };
-      const data = body.input.map((text, index) => ({
-        index,
-        embedding: body.input.length === 1
-          ? [1, 0]
-          : (text.includes('Review generated artifacts') ? [0, 1] : [1, 0]),
-      }));
-      return new Response(JSON.stringify({ data }), { status: 200 });
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const answer = await api.answerFromSourceSet({
+      question: 'Why keep review before durable writes?', semantic: true,
+      sourceRefs: [
+        { id: 'notes/procedure.md', kind: 'wiki', path: 'notes/procedure.md', label: 'Procedure note' },
+        { id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision note' },
+      ],
     });
-    vi.stubGlobal('fetch', fetchMock);
-    vi.stubEnv('SILICONFLOW_API_KEY', 'test-key');
-    try {
-      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
-      const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
-      const answer = await api.answerFromSourceSet({
-        question: 'Why keep review before durable writes?',
-        semantic: true,
-        sourceRefs: [
-          { id: 'notes/procedure.md', kind: 'wiki', path: 'notes/procedure.md', label: 'Procedure note' },
-          { id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision note' },
-        ],
-      });
-
-      expect(answer.success).toBe(true);
-      expect(answer.semanticRequested).toBe(true);
-      expect(answer.semanticLane).toMatchObject({
-        status: 'available',
-        providerId: expect.stringContaining('siliconflow:Qwen/Qwen3-Embedding-8B:'),
-      });
-      expect(answer.retrievalDiagnostics.backend).toBe('semantic');
-      expect(answer.sources.map((source) => source.lookup)).toEqual([
-        'notes/decision.md',
-        'notes/procedure.md',
-      ]);
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-      const batchBody = JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit | undefined)?.body)) as { input: string[] };
-      expect(batchBody.input).toHaveLength(2);
-      expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
-    } finally {
-      vi.unstubAllGlobals();
-      vi.unstubAllEnvs();
+    expect(answer.success).toBe(true);
+    expect(answer.semanticRequested).toBe(true);
+    if (queryExpires) {
+      expect(answer.semanticLane).toMatchObject({ status: 'error', reason: expect.stringContaining('total deadline') });
+      expect(gatewayManager.rpc.mock.calls.filter(call => call[0] === 'wiki.embedding.embed')).toHaveLength(1);
+      return;
     }
+    expect(answer.semanticLane, JSON.stringify(answer)).toMatchObject({ status: 'available', providerId: 'agent-fixture-provider' });
+    expect(answer.retrievalDiagnostics.backend).toBe('semantic');
+    expect(answer.sources.map(source => source.lookup)).toEqual(['notes/procedure.md', 'notes/decision.md']);
+    const calls = gatewayManager.rpc.mock.calls.filter(call => call[0] === 'wiki.embedding.embed');
+    expect(calls).toHaveLength(2);
+    expect(calls[0][1]).toMatchObject({ kind: 'query', expectedSpaceId: 'agent-fixture-space' });
+    expect(calls[1][1]).toMatchObject({ kind: 'document', expectedSpaceId: 'agent-fixture-space' });
+    expect((calls[1][1].sources as unknown[])).toHaveLength(2);
+    expect(calls[1][1]).not.toHaveProperty('texts');
+    expect(calls[0][1].deadlineAt).toBe(calls[1][1].deadlineAt);
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+    } finally { now.mockRestore(); vi.unstubAllEnvs(); }
+  });
+
+  it('normalizes provider whitespace before deriving owner egress and sending configure', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.embedding.configure') return { mode: params.mode, status: 'installing', credentialEpoch: 1 };
+      throw new Error(`unexpected rpc ${method}`);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    await expect(api.embeddingConfigure({ mode: 'remote', providerRef: ' siliconflow ' })).resolves.toMatchObject({ success: true });
+    const call = gatewayManager.rpc.mock.calls.find(row => row[0] === 'wiki.embedding.configure')!;
+    expect(call[1]).toMatchObject({ providerRef: 'siliconflow', readIdentity: { egressProviderRefs: ['siliconflow'] } });
+  });
+
+  it('keeps admitted lexical evidence available when the embedding status service fails', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.embedding.status') throw new Error('embedding service unavailable');
+      if (method === 'wiki.get') return { corpus: 'wiki', path: 'notes/decision.md', title: 'Decision', content: 'Review source-backed drafts before durable writes.', status: 'active', revision: 1 };
+      throw new Error(`unexpected rpc ${method}`);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const result = await api.answerFromSourceSet({ question: 'Review before durable writes', semantic: true,
+      sourceRefs: [{ id: 'notes/decision.md', path: 'notes/decision.md', kind: 'wiki' }] });
+    expect(result.sources).toHaveLength(1);
+    expect(result.semanticLane?.status).toBe('unavailable');
+    expect(gatewayManager.rpc.mock.calls.some(call => call[0] === 'wiki.embedding.embed')).toBe(false);
   });
 
   it('creates reviewable studio artifact drafts from selected source sets', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.get') {
           return {
             lookup: params.lookup,
@@ -2046,6 +2369,7 @@ describe('knowledge host API', () => {
     it('idempotent apply retry is duplicate success and writes an operation journal', async () => {
       const gatewayManager = {
         rpc: vi.fn(async (method: string) => {
+        if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
           if (method === 'wiki.apply') return { pageId: 'idempotent-page' };
           throw new Error(`unexpected rpc ${method}`);
         }),

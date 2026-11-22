@@ -17,5 +17,8 @@
     "./query": "./src/query.ts",
     "./secret": "./src/secret.ts",
     "./status": "./src/status.ts"
+  },
+  "dependencies": {
+    "node-llama-cpp": "3.22.3"
   }
 }

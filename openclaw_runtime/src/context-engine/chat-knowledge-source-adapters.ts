@@ -1,12 +1,38 @@
-import { createHash } from "node:crypto";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { getMemoryCard, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
-import { KnowledgeStore } from "../knowledge/sekb/knowledge-store.js";
 import {
+  getMemoryCard,
+  isMemoryStoreConfigured,
+  isRoleMemoryEnabled,
+  resolveRoleMemoryStorePath,
+} from "../memory/memory-store.js";
+import { isMemoryCardInContextScope } from "../memory/memory-card.js";
+import { readNativeMemorySource } from "../memory/native-memory-source.js";
+import { applyMemoryUseGateOverlay, isPoisonRevokedCard } from "../memory/memory-dual-gate.js";
+import { KnowledgeStore } from "../knowledge/sekb/knowledge-store.js";
+import { isSekbEnabled } from "../knowledge/sekb/feature-flags.js";
+import {
+  experienceReadPolicy,
+  getPrincipleVersion,
+  isConfirmedPrinciple,
+} from "../knowledge/sekb/types.js";
+import {
+  createMemoryWikiReadContext,
   getMemoryWikiPage,
   resolveMemoryWikiConfig,
   type MemoryWikiPluginConfig,
+  type MemoryWikiReadIdentity,
 } from "../../extensions/memory-wiki/runtime-api.js";
+import {
+  createOwnerReadSnapshot,
+  digestOwnerReadContent,
+  evaluateOwnerReadPolicy,
+  evaluateOwnerReadSnapshot,
+  isOwnerReadSnapshotV1,
+  matchOwnerReadPin,
+  type OwnerReadPolicy,
+  type OwnerReadRejectionCode,
+  type OwnerReadSnapshotV1,
+} from "../runtime-core/knowledge-owner-read.js";
 import {
   createResolvedChatKnowledgeRef,
   type ChatKnowledgeReferenceIntent,
@@ -15,250 +41,412 @@ import {
   type ResolvedChatKnowledgeRef,
 } from "./chat-knowledge-intent.js";
 
+type OwnerReadOptions = {
+  cfg?: OpenClawConfig;
+  identity?: MemoryWikiReadIdentity;
+  signal?: AbortSignal;
+  internalRunId?: string;
+};
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }
-
-function readMemoryWikiPluginConfig(config: OpenClawConfig | undefined): MemoryWikiPluginConfig | undefined {
-  if (!config) return undefined;
-  const entries = config.plugins?.entries;
-  if (!isRecord(entries)) return undefined;
-  const pluginEntry = entries["memory-wiki"];
-  if (!isRecord(pluginEntry) || !isRecord(pluginEntry.config)) return undefined;
-  return pluginEntry.config as MemoryWikiPluginConfig;
+function wikiConfig(cfg: OpenClawConfig | undefined) {
+  const entry = cfg?.plugins?.entries?.["memory-wiki"];
+  const config = isRecord(entry?.config) ? (entry.config as MemoryWikiPluginConfig) : undefined;
+  return resolveMemoryWikiConfig(config);
 }
-
-function sha256(value: string): string {
-  return createHash("sha256").update(value, "utf8").digest("hex");
+function denied(reason: OwnerReadRejectionCode): ChatKnowledgeSourceAdapterResult {
+  return {
+    status: "denied",
+    reason,
+    visibleReason: `Knowledge source cannot be read (${reason}).`,
+  };
 }
-
-type WikiGetResult = NonNullable<Awaited<ReturnType<typeof getMemoryWikiPage>>>;
-
-function wikiResultToResolved(
+function legacyPinReason(
   ref: ChatKnowledgeReferenceIntent,
-  result: WikiGetResult,
-  now: string,
-): ResolvedChatKnowledgeRef {
-  const content = result.content ?? "";
-  const revision = `sha256:${sha256(content)}`;
-  return createResolvedChatKnowledgeRef({
-    owner: "memory-wiki",
-    subjectKind: "wiki-page",
-    subjectId: result.path ?? ref.lookup,
-    revision,
-    title: result.title ?? ref.title,
-    lookup: result.path ?? ref.lookup,
-    content,
-    trust: "advisory",
-    sensitivity: "workspace",
-    sourceRefs: [`memory-wiki:${result.path ?? ref.lookup}`],
-    evidenceRefs: [],
-    materializedAt: now,
+  snapshot: OwnerReadSnapshotV1,
+): OwnerReadRejectionCode | undefined {
+  if (ref.revision !== undefined && ref.revision !== snapshot.source.revision)
+    return "revision_mismatch";
+  if (ref.contentDigest !== undefined && ref.contentDigest !== snapshot.contentDigest)
+    return "digest_mismatch";
+  return ref.sourceRef ? matchOwnerReadPin(snapshot, ref.sourceRef) : undefined;
+}
+function resolved(
+  ref: ChatKnowledgeReferenceIntent,
+  snapshot: OwnerReadSnapshotV1,
+  evidenceRefs: string[] = [],
+): ChatKnowledgeSourceAdapterResult {
+  const reason = legacyPinReason(ref, snapshot);
+  if (reason) return denied(reason);
+  const owner = snapshot.source.authorityId as ResolvedChatKnowledgeRef["owner"];
+  return {
+    status: "resolved",
+    resolved: createResolvedChatKnowledgeRef({
+      intentId: ref.id,
+      conflictGroupId: ref.conflictGroupId,
+      owner,
+      subjectKind:
+        owner === "memory-wiki"
+          ? "wiki-page"
+          : owner === "native-memory"
+            ? "memory-file"
+            : owner === "memory-slot"
+              ? "memory-card"
+              : "experience-principle",
+      subjectId: snapshot.source.subjectId,
+      revision: snapshot.source.revision,
+      title: snapshot.title,
+      lookup: snapshot.source.subjectId,
+      content: snapshot.content,
+      sourceRefs: [`${owner}:${snapshot.source.subjectId}`],
+      evidenceRefs,
+      ownerSnapshot: snapshot,
+      materializedAt: snapshot.readAt,
+    }),
+  };
+}
+
+/** Materialize the owner's original body and policy; selection can only narrow its range. */
+function readOwnedBody(
+  ref: ChatKnowledgeReferenceIntent,
+  input: {
+    owner: ResolvedChatKnowledgeRef["owner"];
+    domain: OwnerReadSnapshotV1["source"]["domain"];
+    namespaceId: string;
+    subjectId: string;
+    revision: string;
+    raw: string;
+    title: string;
+    policy: OwnerReadPolicy;
+    options: OwnerReadOptions;
+    evidenceRefs?: string[];
+  },
+): ChatKnowledgeSourceAdapterResult {
+  const context = createMemoryWikiReadContext({
+    config: wikiConfig(input.options.cfg),
+    appConfig: input.options.cfg,
+    identity: input.options.identity,
   });
+  context.ownerNamespaces = [input.namespaceId];
+  const reason = evaluateOwnerReadPolicy(input.policy, context, input.namespaceId, {
+    signal: input.options.signal,
+  });
+  if (reason) return denied(reason);
+  let startChar = 0,
+    endChar = input.raw.length;
+  if (ref.sourceRef?.locator) {
+    const range = ref.sourceRef.locator,
+      bytes = Buffer.from(input.raw, "utf8");
+    if (range.endByteExclusive > bytes.length) return denied("invalid_range");
+    try {
+      const decoder = new TextDecoder("utf8", { fatal: true, ignoreBOM: true });
+      const prefix = decoder.decode(bytes.subarray(0, range.startByte));
+      const body = decoder.decode(bytes.subarray(range.startByte, range.endByteExclusive));
+      startChar = prefix.length;
+      endChar = startChar + body.length;
+    } catch {
+      return denied("invalid_range");
+    }
+  }
+  const snapshot = createOwnerReadSnapshot({
+    raw: input.raw,
+    startChar,
+    endChar,
+    policy: input.policy,
+    context,
+    title: input.title,
+    source: {
+      domain: input.domain,
+      authorityId: input.owner,
+      namespaceId: input.namespaceId,
+      subjectId: input.subjectId,
+      revision: input.revision,
+    },
+  });
+  return resolved(ref, snapshot, input.evidenceRefs);
 }
 
 export class MemoryWikiChatKnowledgeSourceAdapter implements ChatKnowledgeSourceAdapter {
   readonly owner = "memory-wiki" as const;
-  readonly #cfg: OpenClawConfig | undefined;
-
-  constructor(cfg: OpenClawConfig | undefined) {
-    this.#cfg = cfg;
-  }
+  constructor(
+    private readonly cfg: OpenClawConfig | undefined,
+    private readonly options: Omit<OwnerReadOptions, "cfg"> = {},
+  ) {}
 
   async resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult> {
+    if (
+      this.cfg?.plugins?.enabled === false ||
+      this.cfg?.plugins?.entries?.["memory-wiki"]?.enabled === false
+    )
+      return denied("not_found");
     const lookup = ref.lookup || ref.pagePath || ref.sourcePath;
     if (!lookup) return { status: "not_found" };
     try {
-      const pluginConfig = readMemoryWikiPluginConfig(this.#cfg);
-      const resolvedConfig = resolveMemoryWikiConfig(pluginConfig);
       const result = await getMemoryWikiPage({
-        config: resolvedConfig,
-        appConfig: this.#cfg,
+        config: wikiConfig(this.cfg),
+        appConfig: this.cfg,
         lookup,
         lineCount: 80,
+        searchCorpus: "wiki",
+        sourceRef: ref.sourceRef,
+        readIdentity: this.options.identity,
+        signal: this.options.signal,
       });
-      if (!result || !result.content) return { status: "not_found" };
-      return {
-        status: "resolved",
-        resolved: wikiResultToResolved(ref, result, new Date().toISOString()),
-      };
+      if (result?.status === "denied") return denied(result.reason as OwnerReadRejectionCode);
+      if (!result || result.corpus !== "wiki" || !result.content) {
+        return ref.sourceRef || ref.corpus === "wiki"
+          ? denied("not_found")
+          : { status: "not_found" };
+      }
+      if (!isOwnerReadSnapshotV1(result.ownerSnapshot)) return denied("denied");
+      return resolved(
+        {
+          ...ref,
+          conflictGroupId:
+            ref.conflictGroupId ?? (result.hasConflicts ? "known-conflicts" : undefined),
+        },
+        result.ownerSnapshot,
+      );
     } catch {
-      return { status: "not_found" };
+      return denied("denied");
     }
   }
 }
 
-function memoryCardToResolved(
-  ref: ChatKnowledgeReferenceIntent,
-  card: {
-    id: string;
-    content: string;
-    version: number;
-    status: string;
-    supersededBy?: string | null;
-    sensitivity?: string | null;
-  },
-  now: string,
-): ResolvedChatKnowledgeRef {
-  return createResolvedChatKnowledgeRef({
-    owner: "memory-slot",
-    subjectKind: "memory-card",
-    subjectId: card.id,
-    revision: String(card.version),
-    title: ref.title || card.id,
-    lookup: ref.lookup || card.id,
-    content: card.content,
-    trust: "confirmed",
-    sensitivity:
-      card.sensitivity === "secret"
-        ? "secret"
-        : card.sensitivity === "secret_adjacent"
-          ? "secret-adjacent"
-          : "workspace",
-    sourceRefs: [`memory-slot:${card.id}`],
-    evidenceRefs: [],
-    materializedAt: now,
-  });
+export class NativeMemoryChatKnowledgeSourceAdapter implements ChatKnowledgeSourceAdapter {
+  readonly owner = "native-memory" as const;
+  constructor(private readonly options: OwnerReadOptions = {}) {}
+  async resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult> {
+    if (!ref.sourceRef && !ref.lookup.startsWith("native-memory:") && !/\.md$/i.test(ref.lookup))
+      return { status: "not_found" };
+    try {
+      const read = await readNativeMemorySource({
+        ...this.options,
+        lookup: ref.lookup,
+        sourceRef: ref.sourceRef,
+      });
+      return read.status === "admitted"
+        ? resolved(ref, read.snapshot)
+        : denied(read.reason as OwnerReadRejectionCode);
+    } catch {
+      return denied("denied");
+    }
+  }
 }
 
 export class RoleMemoryChatKnowledgeSourceAdapter implements ChatKnowledgeSourceAdapter {
   readonly owner = "memory-slot" as const;
+  constructor(private readonly options: OwnerReadOptions = {}) {}
 
   async resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult> {
-    if (!isRoleMemoryEnabled() || !isMemoryStoreConfigured()) {
-      return {
-        status: "denied",
-        reason: "not_found",
-        visibleReason: `Role memory is not enabled or configured, so "${ref.title}" cannot be included.`,
-      };
-    }
-    const byId = getMemoryCard(ref.id);
-    const card =
-      byId ??
-      (ref.pageId ? getMemoryCard(ref.pageId) : undefined) ??
-      (ref.sourcePath ? getMemoryCard(ref.sourcePath) : undefined) ??
-      getMemoryCard(ref.lookup);
-    if (!card) {
-      return {
-        status: "denied",
-        reason: "not_found",
-        visibleReason: `Role memory reference "${ref.title}" could not be found.`,
-      };
-    }
-    if (card.status !== "active") {
-      return {
-        status: "denied",
-        reason: card.status === "tombstone" || card.status === "archived" ? "revoked" : "stale",
-        visibleReason: `Role memory reference "${ref.title}" is ${card.status} and cannot be included.`,
-      };
-    }
-    if (card.sensitivity === "secret" || card.sensitivity === "secret_adjacent") {
-      return {
-        status: "denied",
-        reason: "sensitive",
-        visibleReason: `Role memory reference "${ref.title}" is ${card.sensitivity} and cannot be injected into chat context.`,
-      };
-    }
-    return {
-      status: "resolved",
-      resolved: memoryCardToResolved(
-        ref,
-        {
-          id: card.id,
-          content: card.content,
-          version: card.version,
-          status: card.status,
-          supersededBy: card.supersededBy,
-          sensitivity: card.sensitivity,
+    if (!isRoleMemoryEnabled() || !isMemoryStoreConfigured()) return denied("not_found");
+    const namespaceId = `memory-slot:${digestOwnerReadContent(resolveRoleMemoryStorePath()).slice(7)}`;
+    if (
+      ref.sourceRef &&
+      (ref.sourceRef.domain !== "role-memory" ||
+        ref.sourceRef.authorityId !== "memory-slot" ||
+        ref.sourceRef.namespaceId !== namespaceId)
+    )
+      return denied("namespace_mismatch");
+    const ids = ref.sourceRef
+      ? [ref.sourceRef.subjectId]
+      : ref.lookup.startsWith("memory-slot:")
+        ? [ref.lookup]
+        : [ref.id, ref.pageId, ref.sourcePath, ref.lookup];
+    const card = ids
+      .flatMap((id) => (id ? [getMemoryCard(id.replace(/^memory-slot:/, ""))] : []))
+      .find(Boolean);
+    if (!card)
+      return ref.sourceRef || ref.corpus === "memory"
+        ? denied("not_found")
+        : { status: "not_found" };
+    if (isPoisonRevokedCard(card) || applyMemoryUseGateOverlay([card]).length === 0)
+      return denied("denied");
+    const context = createMemoryWikiReadContext({
+      config: wikiConfig(this.options.cfg),
+      appConfig: this.options.cfg,
+      identity: this.options.identity,
+    });
+    if (this.options.identity?.sessionId && context.sessionId !== this.options.identity.sessionId)
+      return denied("invalid_context");
+    if (["agent", "workspace", "project", "session", "task"].includes(card.scope) && !card.scopeKey)
+      return denied("scope_mismatch");
+    if (
+      !isMemoryCardInContextScope(card, {
+        workspace: context.workspaceId,
+        sessionKey: context.sessionKey,
+      })
+    )
+      return denied("scope_mismatch");
+    const scope: OwnerReadPolicy["scope"] =
+      card.scope === "agent"
+        ? { agentId: card.scopeKey! }
+        : card.scope === "workspace" || card.scope === "project"
+          ? { workspaceId: card.scopeKey! }
+          : card.scope === "session"
+            ? { sessionKey: card.scopeKey! }
+            : card.scope === "task"
+              ? { taskId: card.scopeKey! }
+              : undefined;
+    return readOwnedBody(ref, {
+      owner: this.owner,
+      domain: "role-memory",
+      namespaceId,
+      subjectId: card.id,
+      revision: String(card.version),
+      raw: card.content,
+      title: card.id,
+      policy: {
+        status: card.supersededBy
+          ? "stale"
+          : card.status === "active"
+            ? "active"
+            : card.status === "tombstone"
+              ? "deleted"
+              : card.status === "archived"
+                ? "archived"
+                : "stale",
+        trust: "confirmed",
+        sensitivity:
+          card.sensitivity === undefined || card.sensitivity === "normal"
+            ? "workspace"
+            : card.sensitivity === "secret"
+              ? "secret"
+              : card.sensitivity === "secret_adjacent"
+                ? "secret-adjacent"
+                : card.sensitivity === "sensitive"
+                  ? "sensitive"
+                  : "secret",
+        acl: { read: ["operator"] },
+        ...(scope ? { scope } : {}),
+        retention: {
+          policy: "source-coupled",
+          ...(card.expiresAt ? { expiresAt: card.expiresAt } : {}),
         },
-        new Date().toISOString(),
-      ),
-    };
+        updatedAt: card.updatedAt ?? card.createdAt,
+      },
+      options: this.options,
+      evidenceRefs: card.evidence,
+    });
   }
-}
-
-function sekbPrincipleToResolved(
-  ref: ChatKnowledgeReferenceIntent,
-  principle: {
-    principle_id: string;
-    updated_at: string;
-    title: string;
-    full_content: string;
-    status: string;
-  },
-  now: string,
-): ResolvedChatKnowledgeRef {
-  const revision = principle.updated_at || now;
-  return createResolvedChatKnowledgeRef({
-    owner: "sekb",
-    subjectKind: "experience-principle",
-    subjectId: principle.principle_id,
-    revision,
-    title: principle.title || ref.title,
-    lookup: ref.lookup || principle.principle_id,
-    content: principle.full_content,
-    trust: "confirmed",
-    sensitivity: "workspace",
-    sourceRefs: [`sekb:${principle.principle_id}`],
-    evidenceRefs: [],
-    materializedAt: now,
-  });
 }
 
 export class SekbChatKnowledgeSourceAdapter implements ChatKnowledgeSourceAdapter {
   readonly owner = "sekb" as const;
-  readonly #store: KnowledgeStore;
-
-  constructor(store?: KnowledgeStore) {
-    this.#store = store ?? new KnowledgeStore();
-  }
+  constructor(
+    private readonly store: KnowledgeStore = new KnowledgeStore(),
+    private readonly options: OwnerReadOptions = {},
+  ) {}
 
   async resolve(ref: ChatKnowledgeReferenceIntent): Promise<ChatKnowledgeSourceAdapterResult> {
+    if (!isSekbEnabled(this.options.cfg)) return denied("not_found");
     try {
-      const candidates = [ref.id, ref.pageId, ref.sourcePath, ref.lookup].filter(
-        (value): value is string => typeof value === "string" && value.trim().length > 0,
-      );
-      for (const candidate of candidates) {
-        const principle = this.#store.query_principles({ status: "active" }).find(
-          (entry) =>
-            entry.principle_id === candidate ||
-            entry.title === candidate ||
-            entry.full_content.includes(candidate),
-        );
-        if (principle) {
-          return {
-            status: "resolved",
-            resolved: sekbPrincipleToResolved(ref, principle, new Date().toISOString()),
-          };
-        }
-        // Also check non-active so we can report revoked instead of not_found.
-        const existing = this.#store.query_principles({ status: null }).find(
-          (entry) =>
-            entry.principle_id === candidate ||
-            entry.title === candidate,
-        );
-        if (existing && existing.status !== "active") {
-          return {
-            status: "denied",
-            reason: existing.status === "archived" ? "revoked" : "stale",
-            visibleReason: `SEKB experience reference "${ref.title}" is ${existing.status} and cannot be included.`,
-          };
-        }
-      }
-      return { status: "not_found" };
+      const namespaceId = this.store.get_source_namespace_id();
+      if (ref.corpus === "wiki" || ref.corpus === "memory") return denied("scope_mismatch");
+      if (
+        ref.sourceRef &&
+        (ref.sourceRef.domain !== "experience" ||
+          ref.sourceRef.authorityId !== "sekb" ||
+          ref.sourceRef.namespaceId !== namespaceId)
+      )
+        return denied("namespace_mismatch");
+      const id = ref.sourceRef?.subjectId ?? ref.lookup.replace(/^sekb:/, "");
+      const principle = this.store.get_principle(id);
+      if (!isConfirmedPrinciple(principle))
+        return denied(principle.status === "archived" ? "archived" : "denied");
+      const context = createMemoryWikiReadContext({
+        config: wikiConfig(this.options.cfg),
+        appConfig: this.options.cfg,
+        identity: this.options.identity,
+      });
+      if (this.options.identity?.sessionId && context.sessionId !== this.options.identity.sessionId)
+        return denied("invalid_context");
+      return readOwnedBody(ref, {
+        owner: this.owner,
+        domain: "experience",
+        namespaceId,
+        subjectId: principle.principle_id,
+        revision: getPrincipleVersion(principle),
+        raw: principle.full_content,
+        title: principle.title,
+        policy: experienceReadPolicy(principle),
+        options: this.options,
+      });
     } catch {
-      return { status: "not_found" };
+      return denied("denied");
     }
   }
 }
 
-/** Production owner source adapters for the Chat/DCS single consumption path. */
 export function createProductionChatKnowledgeSourceAdapters(
   cfg: OpenClawConfig | undefined,
+  options: Omit<OwnerReadOptions, "cfg"> = {},
 ): ChatKnowledgeSourceAdapter[] {
   return [
-    new MemoryWikiChatKnowledgeSourceAdapter(cfg),
-    new RoleMemoryChatKnowledgeSourceAdapter(),
-    new SekbChatKnowledgeSourceAdapter(),
+    new MemoryWikiChatKnowledgeSourceAdapter(cfg, options),
+    new NativeMemoryChatKnowledgeSourceAdapter({ ...options, cfg }),
+    new RoleMemoryChatKnowledgeSourceAdapter({ ...options, cfg }),
+    new SekbChatKnowledgeSourceAdapter(undefined, { ...options, cfg }),
   ];
+}
+
+/** Re-read the exact source at model preparation; stale cached bytes never authorize a new use. */
+export async function revalidateChatKnowledgeRefs(input: {
+  refs: readonly ResolvedChatKnowledgeRef[];
+  cfg?: OpenClawConfig;
+  identity: MemoryWikiReadIdentity;
+  signal?: AbortSignal;
+  internalRunId?: string;
+}): Promise<ResolvedChatKnowledgeRef[]> {
+  const adapters = new Map(
+    createProductionChatKnowledgeSourceAdapters(input.cfg, input).map((adapter) => [
+      adapter.owner,
+      adapter,
+    ]),
+  );
+  const admitted: ResolvedChatKnowledgeRef[] = [];
+  for (const previous of input.refs) {
+    const snapshot = previous.ownerSnapshot;
+    if (!snapshot || input.signal?.aborted) continue;
+    const adapter = adapters.get(previous.owner);
+    if (!adapter) continue;
+    let read: ChatKnowledgeSourceAdapterResult;
+    try {
+      read = await adapter.resolve({
+        id: previous.intentId ?? previous.refId,
+        title: previous.title,
+        lookup: previous.lookup,
+        sourceRef: snapshot.source,
+        conflictGroupId: previous.conflictGroupId,
+      });
+    } catch {
+      continue;
+    }
+    if (read.status !== "resolved" || !read.resolved.ownerSnapshot) continue;
+    const fresh = read.resolved.ownerSnapshot;
+    if (
+      fresh.context.sessionId !== snapshot.context.sessionId ||
+      fresh.context.sessionKey !== snapshot.context.sessionKey ||
+      fresh.context.workspaceId !== snapshot.context.workspaceId ||
+      fresh.context.workspaceRootDigest !== snapshot.context.workspaceRootDigest ||
+      fresh.context.agentId !== snapshot.context.agentId ||
+      fresh.context.policyDigest !== snapshot.context.policyDigest ||
+      evaluateOwnerReadSnapshot(fresh, fresh.context, {
+        stage: "prompt",
+        providerRef: input.identity.egressProviderRefs?.[0],
+        signal: input.signal,
+      })
+    )
+      continue;
+    admitted.push(read.resolved);
+  }
+  const ids = new Set(admitted.map((ref) => ref.intentId ?? ref.refId));
+  const deniedGroups = new Set(
+    input.refs
+      .filter((ref) => ref.conflictGroupId && !ids.has(ref.intentId ?? ref.refId))
+      .map((ref) => ref.conflictGroupId),
+  );
+  return admitted.filter((ref) => !ref.conflictGroupId || !deniedGroups.has(ref.conflictGroupId));
 }

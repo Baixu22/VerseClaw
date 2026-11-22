@@ -1,0 +1,46 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0676-evidence-verifier",
+  "sourceCandidate": "2f20d5715270f4dd3f450580cdaf6e07fdccfb0b",
+  "rows": [
+    {
+      "provider": "custom-sessionc",
+      "model": "mock-coder",
+      "state": "unknown",
+      "reserved_tokens": 132096,
+      "actual_tokens": null,
+      "actual_cost_micros": null,
+      "scope_json": "{\"workspaceId\":\"worker-canary\",\"projectId\":\"worker-canary\",\"sessionKey\":\"agent:main:subagent:ba64004d-c8a0-443b-beea-e9e551be6418\",\"sessionGeneration\":\"a6c8ea4a-0b9c-4c83-b2e3-e3851dedacfd\"}"
+    },
+    {
+      "provider": "custom-sessionc",
+      "model": "mock-coder",
+      "state": "unknown",
+      "reserved_tokens": 132096,
+      "actual_tokens": null,
+      "actual_cost_micros": null,
+      "scope_json": "{\"workspaceId\":\"worker-canary\",\"projectId\":\"worker-canary\",\"sessionKey\":\"agent:main:subagent:ba64004d-c8a0-443b-beea-e9e551be6418\",\"sessionGeneration\":\"a6c8ea4a-0b9c-4c83-b2e3-e3851dedacfd\"}"
+    },
+    {
+      "provider": "custom-sessionc",
+      "model": "mock-coder",
+      "state": "unknown",
+      "reserved_tokens": 132096,
+      "actual_tokens": null,
+      "actual_cost_micros": null,
+      "scope_json": "{\"workspaceId\":\"worker-canary\",\"projectId\":\"worker-canary\",\"sessionKey\":\"agent:main:subagent:ba64004d-c8a0-443b-beea-e9e551be6418\",\"sessionGeneration\":\"a6c8ea4a-0b9c-4c83-b2e3-e3851dedacfd\"}"
+    },
+    {
+      "provider": "custom-customca",
+      "model": "mock-backup",
+      "state": "unknown",
+      "reserved_tokens": 132096,
+      "actual_tokens": 150,
+      "actual_cost_micros": null,
+      "scope_json": "{\"workspaceId\":\"worker-canary\",\"projectId\":\"worker-canary\",\"sessionKey\":\"agent:main:subagent:ba64004d-c8a0-443b-beea-e9e551be6418\",\"sessionGeneration\":\"a6c8ea4a-0b9c-4c83-b2e3-e3851dedacfd\"}"
+    }
+  ],
+  "workerRunId": "cbd4f11b-dae9-466d-8085-0f971b3d3745",
+  "unpricedCostUsd": null,
+  "knownTokensAtFileReadback": 150
+}

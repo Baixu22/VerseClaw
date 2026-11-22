@@ -27,11 +27,19 @@ function resolveSourceTitle(sourcePath: string, explicitTitle?: string): string 
 }
 
 function assertUtf8Text(buffer: Buffer, sourcePath: string): string {
-  const preview = buffer.subarray(0, Math.min(buffer.length, 4096));
-  if (preview.includes(0)) {
+  if (buffer.length === 0 || buffer.length > 2 * 1024 * 1024) {
+    throw new Error(`Cannot ingest empty or oversized source: ${sourcePath}`);
+  }
+  if (buffer.includes(0)) {
     throw new Error(`Cannot ingest binary file as markdown source: ${sourcePath}`);
   }
-  return buffer.toString("utf8");
+  try {
+    const text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(buffer);
+    if (!text.trim()) throw new Error("Source has no content");
+    return text;
+  } catch (error) {
+    throw new Error(`Cannot ingest source with invalid UTF-8: ${sourcePath}`, { cause: error });
+  }
 }
 
 export async function ingestMemoryWikiSource(params: {

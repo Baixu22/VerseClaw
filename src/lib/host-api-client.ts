@@ -184,7 +184,7 @@ export async function invokeHost<
   // its own budget to what remains here, so layers never add their timeouts.
   const deadline = createHostDeadline({
     stage: 'renderer',
-    timeoutMs: hostActionTimeoutMs(module, action),
+    timeoutMs: hostActionTimeoutMs(module, action, request.payload),
     requestId: request.id,
   });
   request.deadline = deadline;

@@ -1,0 +1,324 @@
+{
+  "schema": "clawx.tf0666-candidate-review/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0666-review",
+  "sourceCandidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+  "sourceTree": "01710d798f747d8b8cf86a79bb762f4c8f4d3616",
+  "verdict": "PASS_WITH_REPOSITORY_HARNESS_CI_FAILURE",
+  "findings": [
+    {
+      "id": "candidate-binding",
+      "status": "verified",
+      "detail": "product.json 与 S1 report 将候选绑定到 b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b / tree 01710d798f747d8b8cf86a79bb762f4c8f4d3616；跑次记录 dirty=false。P1-P4 旧报告的 sourceCandidate 各异，只用作验收路径对照。"
+    },
+    {
+      "id": "P1-planning",
+      "status": "passed",
+      "detail": "Electron 计划旅程读回 project coordinator owner、请求 ID、修订 1→2、保留假设与待决项及两个子任务；plan readback 为 agent/local-scripted。"
+    },
+    {
+      "id": "P2-dispatch",
+      "status": "passed",
+      "detail": "无预算请求被拒，具预算 admission 被接受；读回 coordinator generation、admission receipt、worker session/run 与 worker 写入。执行为受控 fixture；不代表 live-provider 质量。"
+    },
+    {
+      "id": "P3-continuation",
+      "status": "passed",
+      "detail": "所有既定P3路径均有当前候选证据。追加隔离b5补跑 goal-wake-triggers.test.ts 13/13 与 subagent-registry-owners.recovery.test.ts 6/6，共19/19、8 suites、零失败零跳过；包含32次timer fire同tick去重和remapped worker取消后restore不announce、不resume。原11条Electron旅程中完成批次重放复用同一orchestrationRunId，model calls 1→1；项目续行calls 7→7→7、coordinator write=1，迟到旧generation fenced。"
+    },
+    {
+      "id": "P4-closeout",
+      "status": "passed",
+      "detail": "closeout-readback 记录 p4broken 一次修复、p4fixed 一次 accepted、一次 owner_verified、task done、anomalies=[]；provider=local-scripted，reviewer 是 agent 驱动 subagent-verifier，不记作真人证据。"
+    },
+    {
+      "id": "unit-selection-correction",
+      "status": "corrected",
+      "detail": "初选误列不存在的 tests/unit/session-delegation-admission.test.ts；project-boundaries实际覆盖3个文件、67/67。随后在固定b5跑次补跑实际 tests/unit/long-session-delegation-admission.test.ts 及3个预算/调度文件81/81，不重复计数；拼写错误不构成现存测试缺失。"
+    },
+    {
+      "id": "S1-evidence",
+      "status": "sealed_manifest_repaired",
+      "detail": "S1证据包先由commit 2db0adc4e72ad885ae0f9d46488ceb6d781d0303封存；commit 7a9921dca2a4d2c402ba697d19820e304a9313a6仅更新S1/SHA256SUMS以规范Git blob LF哈希。调用方报告15个证据blob digest均匹配；本次不复核S1源码。S1的harness:ci仍为exit=1。"
+    },
+    {
+      "id": "repository-harness-ci",
+      "status": "failed",
+      "detail": "S1 harness:ci exit=1，报告4项Agent Dev证据过期，并记录既有deep-test性能限值超限：typecheck 68533>45000ms、playwright-agent-dev 46635>40000ms、contract 3388>3000ms。其余S1 build、typecheck、contract、i18n、comms replay/compare、harness validate/dry-run、artifact retention各自exit=0；不能称全绿。"
+    },
+    {
+      "id": "provider-boundary",
+      "status": "measured-scope",
+      "detail": "P 阶段旅程为 agent/local-scripted；本证据不声称 live-provider 质量或 real-human 评审。"
+    }
+  ],
+  "coverageCounts": {
+    "pPhase": {
+      "taskUnit": {
+        "tests": 163,
+        "passed": 163,
+        "failed": 0,
+        "skipped": 0,
+        "files": 15
+      },
+      "projectBoundaries": {
+        "tests": 67,
+        "passed": 67,
+        "failed": 0,
+        "skipped": 0,
+        "actualFiles": 3,
+        "requestedFileCount": 4
+      },
+      "correctiveDispatchBudgets": {
+        "tests": 81,
+        "passed": 81,
+        "failed": 0,
+        "skipped": 0,
+        "files": 4
+      },
+      "unitRunTotal": 330,
+      "distinctUnitFiles": 24,
+      "electron": {
+        "expected": 11,
+        "passed": 11,
+        "unexpected": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "specFiles": 3,
+        "cases": {
+          "projectAgentLoop": 9,
+          "longSessionCompletion": 1,
+          "projectCloseout": 1
+        }
+      },
+      "p3RequiredPathsNotRun": 0
+    },
+    "s1": {
+      "unitTests": 81,
+      "electronTests": 1,
+      "frames": 8,
+      "buildExit": 0,
+      "typecheckExit": 0,
+      "contractExit": 0,
+      "commsReplayExit": 0,
+      "commsCompareExit": 0,
+      "harnessCiExit": 1
+    },
+    "provider": "local-scripted",
+    "realHumanEvidence": false
+  },
+  "evidenceRead": [
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/product.json",
+      "sha256": "89e4e6f7c3cb43fca39727de724bbb7c6ea21915a36707556cf755cc194cac6b"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/task-units.json",
+      "sha256": "7ae8cb21985fcaa1abdd4a060239f75261216169ebaff75802e9a820bcbd0c92"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/project-boundaries.json",
+      "sha256": "dd06e5079f559e56c194cb3c75234f81ba27e1d25f8d5785423bab2e889bb7ef"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/selection-correction.json",
+      "sha256": "e4f9f7267cd7e7abbb4e1b0295ba54ea9b399be5272ef78b73d0d01c2aa2a256"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/dispatch-budgets-gate.json",
+      "sha256": "75b8a2d108722a8a9d4f95faf40c9a6b2693ce34c7ad469a1511e0c2cc99282f"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/dispatch-budgets.json",
+      "sha256": "75a73bd631d6846451d01447944b7f16bf84274b25f197a7df6757a707d231e8"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron.json",
+      "sha256": "6a6d4442cf577acb260150fc3bedcbcb4d6ecd7efca872dbceb621860f70878b"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron.log",
+      "sha256": "b472733cbb3ad3e38705d71c8b53e876d8ebc274277045d057c9b119144f6308"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan/project-plan-readback.json",
+      "sha256": "d74d8df3977a2367a1d27d8a79edd66ada3412951eb6744e376c1b1d68d8c7a4"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-dispatc-61c13-and-reads-its-worker-effect/project-worker-admission.json",
+      "sha256": "86b3e3f5171ad3539f70cedf458058b0fac6386d477ebcf707ddd7a1d5e1af88"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-dispatc-61c13-and-reads-its-worker-effect/project-worker-execution.json",
+      "sha256": "7af9c512b0968bea2097ba042b2e8919f4e1d75ff9a673eba5e05e7b56ae158f"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-dispatc-61c13-and-reads-its-worker-effect/project-continuation.json",
+      "sha256": "dd6565cbb4d5d50afa706e381e6c943fd83f288b2fcd1dc9829d7b93a0e6df9a"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-advance-3abd6-ter-terminal-worker-failure/worker-fault-readback.json",
+      "sha256": "64a12991af1d9e1bd6148afd5a13bb4a9c6a209a359ae52c54f3e7263ff4127a"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-advance-9ff11-mission-caps-worker-retries/worker-fault-readback.json",
+      "sha256": "f987e380aa3c87ace1b756067edb979d251894a4ef4d2932a30ad298c21b2dc3"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-cancels-4ca3a--delivering-its-late-result/worker-fault-readback.json",
+      "sha256": "58592978f1029cff9ae070d51c5f64818c1c623f72a8031fbca74cd18e2c755c"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project-handoff-checkpoint.json",
+      "sha256": "4a33933b26592fa86d17c26aaeaf7ac1e1a6a38e5ab743e2b1bc5827345c070d"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-resumes-8a4e1-n-in-flight-Gateway-restart/project-restart-checkpoint.json",
+      "sha256": "ff17246150c708755b60dc2dd3b46238afac3f29b1d773a67b5686cfbc1736c2"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-resumes-8a4e1-n-in-flight-Gateway-restart/restart-provider.json",
+      "sha256": "f97876bd713c3fa482c87e180dffa873cfc79fe8f09eb77f2f8b91a76693aaf9"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-blocks--88b1d-the-effect-owner-reconciles/project-restart-checkpoint.json",
+      "sha256": "11429e49d36dd5d835d221361d3785f5c766546933fff179f0874658ab9c0c00"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-blocks--88b1d-the-effect-owner-reconciles/restart-provider.json",
+      "sha256": "a99a5e6dc5dbef015fb3bbf638c488dac2a151a2bb456729fd8f317765fcbbcf"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-agent-loop-separat-b1a7b--stop-and-task-cancellation/project-control-readback.json",
+      "sha256": "ff0150aac34b9d3190fe3994ed331b02570c8bb8e6987d6e104e83eefa8aec25"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/long-session-completion-co-12137--fenced-batch-after-restart/completion-continuation-e2e.json",
+      "sha256": "1d3e74552385185c9c6bd7b8b4a85da3299dbfd6d4caa6b016f16481d8ea1c2e"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/electron/project-closeout-a-project-0d40c-without-another-user-prompt/closeout-readback.json",
+      "sha256": "156a4f593cd066e0377464fbb7ad132a867eea04f92fcfb964b121ae778e5a2d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/autonomous-project-system.md",
+      "sha256": "25ee4662c21064f2cecb9499cdc0cc98c3dd92c10fe254d2cc046b1e0114c3be"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+      "sha256": "009d45ca08763d9b9bdcf9470d37b037a6920dbd6aa22ce6f594b77e9cf1a8dd"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+      "sha256": "0407715acf0d574c7de3621095c33d88550a24c18fd1503e94a90f109412cc3f"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "d980f9bd5454be58118f7c0f2e3a86c2da2a5aa7ccc064e5a4e45aef4b27a5ac"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/p1/report.json",
+      "sha256": "4e527e0333d4a952cddf5d5219a30d2064eba89d3e8667809fe22f6d16b21483"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/p2/report.json",
+      "sha256": "261c94b2956395e162ccf21bc442766847bf170a46d5062a46bba72c616d7d93"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/p3/report.json",
+      "sha256": "3d332947c730d71ad1ce829a1ee9ee0e69f2133c3e5f6a76143f3f044d42bb63"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/p3/closeout/report.json",
+      "sha256": "1fe18c22ac8fc1929d584b98de912ffbcd190d24340f322ad20d8f6f5a773fc5"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/p4/report.json",
+      "sha256": "6938ea962eedbecfc0ac566b3b30bdc8ed399fe643b90301870c545210edd287"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/product.json",
+      "sha256": "da3975b2d4ec62260a8c4c1d18347defc06d249020b91d6a97d5774cb6d7c505"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/support.json",
+      "sha256": "3a52c3d237a3e53d4989ba725a80ffc90e107125b303215a85130e6c8ef2870e"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/harness-ci.log",
+      "sha256": "9f605b3a2b580bea297d49080f1f1216cae60af321076e865af93bce7f5abff8"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/report.json",
+      "sha256": "11546e96503cf7a31d395d0473d01be7b7381ab75794c5535f91839cd16b603d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/gates.json",
+      "sha256": "9d48d15e034aea6338ca0a753e79bd243495efe38d697d030bcb5e590d0c57f6"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/unit-tests.json",
+      "sha256": "18c9eed325b78569d66508a959243ea431daf56a821fb715d9ec59e5683bafee"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/electron.json",
+      "sha256": "1b4cd26920d34bc20da7ce94be54b09d9fb9d0e13eedfc9d83f58b18549f1830"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/independent-review.json",
+      "sha256": "5cf4df22b6253a2890cad72cd7212b0f952d77490856b083cb08b179256a2558"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/verify.py",
+      "sha256": "4d1eb4afb79263a68cc3aeb031b48545fb18f356da578e17ad9d71c739c592e9"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/build-vite.log",
+      "sha256": "38b7aac0675420f25ddf92f7bdaa7d4c1ed03c3f2c147198af5226a0392d9054"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/typecheck.log",
+      "sha256": "9d6c8a1176afa89c36297fee6ac255f95538ae6354c3ab80671196cf5403caa3"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/contract.log",
+      "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/comms-replay.log",
+      "sha256": "83b65d036f2a6604331e1efa3b379129f2feb883e4b31b53e837c05edaaa28f7"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/s1-final/comms-compare.log",
+      "sha256": "a337a616a4d3051e635485e700364a8f6fa1f250f4c85561502152a57775ab68"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/runtime-missing.json",
+      "sha256": "12c0b45256726de2eacaff98bb3b1086e614a84073c9974c796432ac8d0c3b9f"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/runtime-missing-gate.json",
+      "sha256": "378230e7688dd2bbef43147ebe169da5c369c656b04ef5831dda2ecb6399faca"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-phase-current/runtime-missing.log",
+      "sha256": "ed1b5af2ae8384b0a9b713567313976bf1ac6137f991018fa73b97952b03fab4"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-runtime-candidate/openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+      "sha256": "009d45ca08763d9b9bdcf9470d37b037a6920dbd6aa22ce6f594b77e9cf1a8dd"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/p-runtime-candidate/openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts",
+      "sha256": "0407715acf0d574c7de3621095c33d88550a24c18fd1503e94a90f109412cc3f"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/SHA256SUMS",
+      "sha256": "3cae3db13e3a4ece25f5dadacb69ae2d76126cfa0887f6052b91a81b13178437"
+    }
+  ],
+  "s1Commit": "2db0adc4e72ad885ae0f9d46488ceb6d781d0303",
+  "observedHead": "04c460f1cb10dbb5c8d3b35f426671b08186acb7",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reviewAgentId": "01a1f6e6-e9b0-76c3-be42-20e5e6400105"
+}

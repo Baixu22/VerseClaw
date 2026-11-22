@@ -1,4 +1,4 @@
-import type { TaskId, SessionKey } from "../types/identity-scope.js";
+import type { TaskId, SessionKey, WorkspaceId } from "../types/identity-scope.js";
 import type { TaskAuthorityBasis } from './identity.js';
 
 export const TASK_DELEGATION_DISPATCH_TOOLS: readonly string[] = ['sessions_spawn', 'team_orchestrate', 'mission_loop', 'task_loop'];
@@ -20,6 +20,7 @@ export type TaskContractInput = {
   occurrenceKey?: string;
   dependencies?: string[];
   expectedOutcomes?: string[];
+  maxRepairAttempts?: number;
 };
 export type TaskContract = TaskContractInput & {
   origin: { source: string; requestId: string; sessionKey?: string };
@@ -59,7 +60,10 @@ export type TaskEvidence = {
   path: string;
   sha256: string;
   verifier: string;
+  operationId?: string;
   createdAt: number;
+  repairAttempt?: number;
+  submissionSequence?: number;
   inputArtifacts?: Array<{ path: string; sha256: string }>;
   ownerProof?: {
     verifierReceiptId: string;
@@ -67,6 +71,18 @@ export type TaskEvidence = {
     evidenceDigest: string;
     proposalDigest?: string;
   };
+};
+/** File bytes and returned coverage observed by the read-tool owner. */
+export type TaskReviewReadProof = {
+  path: string;
+  sha256: string;
+  start: number;
+  end: number;
+  lines: number;
+  kind: 'text' | 'image';
+  startChar?: number;
+  endChar?: number;
+  characters?: number;
 };
 export type TaskView = {
   contract: TaskContract;
@@ -87,8 +103,46 @@ export type TaskQuery = {
   sessionKey?: string;
 };
 export type TaskPage = { tasks: TaskView[]; nextCursor?: string };
-export type TaskSessionSnapshot = { task: TaskView | null; children: TaskView[]; verificationReceipts?: TaskEvidence[] };
+export type TaskSessionSnapshot = {
+  task: TaskView | null;
+  children: TaskView[];
+  verificationReceipts?: TaskEvidence[];
+  projectPlan?: ProjectPlanSnapshot;
+};
 export type TaskPlanItem = { key: string; contract: TaskContractInput; dependsOn?: string[] };
+export type ProjectPlanInput = {
+  requestId: string;
+  goal: TaskContractInput;
+  children: TaskPlanItem[];
+  nextAction: string;
+  assumptions?: string[];
+  decisions?: string[];
+  revise?: { taskNodeId: string; expectedRevision: number; reason: string };
+};
+export type ProjectPlanRevision = {
+  taskNodeId: TaskId;
+  revision: number;
+  workspaceId: WorkspaceId;
+  sessionKey: SessionKey;
+  generation: string;
+  requestId: string;
+  objective: string;
+  nextAction: string;
+  assumptions: string[];
+  pendingDecisions: string[];
+  reason?: string;
+  previousChildIds: TaskId[];
+  childIds: TaskId[];
+};
+export type ProjectPlanSnapshot = {
+  task: TaskView;
+  children: TaskView[];
+  revisions: ProjectPlanRevision[];
+};
+export function nextReadyPlanChild(children: TaskView[]): TaskView | undefined {
+  const done = new Set<string>(children.filter(child => child.contract.state === 'done').map(child => child.contract.taskNodeId));
+  return children.find(child => child.contract.state === 'ready' && (child.contract.dependencies ?? []).every(id => done.has(id)));
+}
 export type TaskWriterDelegation = {
   delegationId: string;
   taskNodeId: TaskId;
@@ -104,6 +158,9 @@ export type TaskWriterDelegation = {
   contractRevision?: number;
   authorityBasis?: TaskAuthorityBasis;
   candidateArtifacts?: Array<{ path: string; sha256: string }>;
+  submissionSequence?: number;
+  reviewReservationId?: string;
+  verifier?: boolean;
 };
 export type TaskDelegationIntent = {
   workspace: string;
@@ -115,6 +172,8 @@ export type TaskDelegationIntent = {
   childRunId: string;
   observer: boolean;
   expectedParent: TaskCredential;
+  reviewReservationId?: string;
+  verifier?: boolean;
   authorityBasis?: TaskAuthorityBasis;
 };
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
@@ -145,6 +204,7 @@ export type TaskSystemCommand =
     }
   | { action: "recover"; taskNodeId: string; targetSessionKey: string }
   | { action: "submit"; credential: TaskCredential; candidate: string }
+  | { action: "repair"; credential: TaskCredential; candidate: string; requestId: string; reason: string }
   | {
       action: "verifyFile";
       credential: TaskCredential;

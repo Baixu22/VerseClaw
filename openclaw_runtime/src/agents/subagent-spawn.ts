@@ -1,3 +1,4 @@
+import { assertSystemExecutionAllowed } from '../../../shared/task-system/project-coordinator.js';
 /**
  * Subagent spawn executor.
  *
@@ -210,6 +211,7 @@ export type SpawnSubagentParams = {
 };
 
 export type SpawnSubagentContext = {
+  reviewReservationId?: string;
   agentSessionKey?: string;
   /** Separate key used only for completion routing, not sandbox policy. */
   completionOwnerKey?: string;
@@ -224,6 +226,7 @@ export type SpawnSubagentContext = {
   requesterAgentIdOverride?: string;
   /** Explicit workspace directory for subagent to inherit (optional). */
   workspaceDir?: string;
+  taskAuthorityWorkspaceDir?: string;
   /** Recheck the parent session owner before the child Gateway run is dispatched. */
   assertWorkspaceCurrent?: () => void;
   inheritedToolAllowlist?: string[];
@@ -231,6 +234,7 @@ export type SpawnSubagentContext = {
 };
 
 export type SpawnSubagentResult = {
+  dispatchOutcome?: 'not-dispatched';
   status: "accepted" | "forbidden" | "error";
   runState?: 'queued';
   childSessionKey?: string;
@@ -327,6 +331,7 @@ async function assertVerifierCandidate(orchestration: TeamOrchestrationMetadata 
 
 /** Executes only this registry's already-prepared agent request after rechecking its owner. */
 export async function dispatchQueuedSubagentRun(entry: import('./subagent-registry.types.js').SubagentRunRecord): Promise<QueuedSubagentDispatchResult> {
+  try { assertSystemExecutionAllowed(); } catch (error) { return { status: 'rejected', error: String(error) }; }
   const queued = entry.queuedDispatch;
   if (!queued) return { status: 'rejected', error: 'queued dispatch payload missing' };
   if (queued.params.sessionKey !== entry.childSessionKey || queued.params.idempotencyKey !== entry.runId) {
@@ -1188,11 +1193,12 @@ export async function spawnSubagentDirect(
   params: SpawnSubagentParams,
   ctx: SpawnSubagentContext,
 ): Promise<SpawnSubagentResult> {
+  try { assertSystemExecutionAllowed(); } catch (error) { return { status: 'error', dispatchOutcome: 'not-dispatched', error: String(error) }; }
   const task = params.task;
   const taskNameResult = normalizeSubagentTaskName(params.taskName);
   if (taskNameResult.error) {
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error: taskNameResult.error,
     };
   }
@@ -1206,7 +1212,7 @@ export async function spawnSubagentDirect(
   // creates ghost workspace directories and triggers cascading cron loops (#31311).
   if (requestedAgentId && !isValidAgentId(requestedAgentId)) {
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error: `Invalid agentId "${requestedAgentId}". Agent IDs must match [a-z0-9][a-z0-9_-]{0,63}. Use agents_list to discover valid targets.`,
     };
   }
@@ -1220,7 +1226,7 @@ export async function spawnSubagentDirect(
   });
   if (spawnMode === "session" && !requestThreadBinding) {
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error:
         'sessions_spawn(mode="session") requires thread=true so the subagent can stay bound to a channel thread. ' +
         'Retry with { mode: "session", thread: true } on a channel that supports threads, use mode="run" for one-shot work, or use sessions_send(sessionKey=...) to keep talking to a persistent session without thread binding.',
@@ -1414,7 +1420,7 @@ export async function spawnSubagentDirect(
   });
   if (plan.status === "error") {
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error: plan.error,
     };
   }
@@ -1465,7 +1471,7 @@ export async function spawnSubagentDirect(
   const initialPatchError = await patchChildSession(initialChildSessionPatch);
   if (initialPatchError) {
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error: initialPatchError,
       childSessionKey,
     };
@@ -1484,7 +1490,7 @@ export async function spawnSubagentDirect(
       deleteTranscript: true,
     });
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error: preparedSpawnContext.error,
       childSessionKey,
     };
@@ -1510,7 +1516,7 @@ export async function spawnSubagentDirect(
         // Best-effort cleanup only.
       }
       return {
-        status: "error",
+        status: "error", dispatchOutcome: "not-dispatched",
         error: runtimeModelPersistError,
         childSessionKey,
       };
@@ -1548,7 +1554,7 @@ export async function spawnSubagentDirect(
         // Best-effort cleanup only.
       }
       return {
-        status: "error",
+        status: "error", dispatchOutcome: "not-dispatched",
         error: bindResult.error,
         childSessionKey,
       };
@@ -1610,7 +1616,7 @@ export async function spawnSubagentDirect(
       deleteTranscript: true,
     });
     return {
-      status: materializedAttachments.status,
+      status: materializedAttachments.status, dispatchOutcome: "not-dispatched",
       error: materializedAttachments.error,
     };
   }
@@ -1652,7 +1658,7 @@ export async function spawnSubagentDirect(
       deleteTranscript: true,
     });
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error: spawnLineagePatchError,
       childSessionKey,
     };
@@ -1675,7 +1681,7 @@ export async function spawnSubagentDirect(
       deleteTranscript: true,
     });
     return {
-      status: "error",
+      status: "error", dispatchOutcome: "not-dispatched",
       error: contextEnginePrepareResult.error,
       childSessionKey,
     };
@@ -1733,6 +1739,7 @@ export async function spawnSubagentDirect(
     orchestration: params.orchestration,
   };
   let dispatchReserved = false;
+  let dispatchAttempted = false;
   let taskDelegation: PreparedTaskDelegation | null = null;
   const returnTaskAfterConfirmedDelete = (deleted: unknown) => {
     if (!taskDelegation || !isConfirmedSubagentDeletion(deleted)) return;
@@ -1789,7 +1796,8 @@ export async function spawnSubagentDirect(
     };
     const childTarget = resolveGatewaySessionStoreTarget({cfg, key: childSessionKey});
     const childEntry = resolveStoreEntryByKeys(loadSessionStore(childTarget.storePath, {skipCache:true,clone:false}), childTarget.storeKeys);
-    const taskIntent = capturePersistentTaskDelegationIntent({workspace:ctx.workspaceDir,childWorkspace:spawnedCwd??spawnedWorkspaceDir,parentSessionKey:requesterInternalKey,parentGeneration:parentAdmissionEntry?.sessionId,childSessionKey,childGeneration:childEntry?.sessionId,childRunId:childIdem,observer:params.orchestration?.isVerifier===true || params.writeSet?.length === 0});
+    const taskIntent = capturePersistentTaskDelegationIntent({workspace:ctx.taskAuthorityWorkspaceDir ?? ctx.workspaceDir,childWorkspace:spawnedCwd??spawnedWorkspaceDir,parentSessionKey:requesterInternalKey,parentGeneration:parentAdmissionEntry?.sessionId,childSessionKey,childGeneration:childEntry?.sessionId,childRunId:childIdem,observer:params.orchestration?.isVerifier===true || params.writeSet?.length === 0,reviewReservationId:ctx.reviewReservationId,verifier:params.orchestration?.isVerifier===true});
+    if (ctx.reviewReservationId && !taskIntent) throw new Error('TASK_REVIEW_RESERVATION_REQUIRED');
     if (queuedOrchestration) {
       if (!parentAdmissionEntry?.sessionId) throw new Error('orchestration controller generation unavailable');
       enqueueSubagentRun({ ...reservedRun, cleanup: 'keep', queuedDispatch: {
@@ -1809,6 +1817,7 @@ export async function spawnSubagentDirect(
       }
       await assertVerifierCandidate(params.orchestration, spawnedCwd ?? spawnedWorkspaceDir ?? ctx.workspaceDir);
       taskDelegation = taskIntent ? preparePersistentTaskDelegation(taskIntent) : null;
+      dispatchAttempted = true;
       const response = await callSubagentGateway(dispatchRequest);
       const runId = readGatewayRunId(response);
       if (!runId) throw new Error('subagent dispatch returned no run identity');
@@ -1879,7 +1888,7 @@ export async function spawnSubagentDirect(
       status: "error",
       error: messageText,
       childSessionKey,
-      runId: childRunId,
+      ...(dispatchAttempted || taskDelegation ? { runId: childRunId } : { dispatchOutcome: 'not-dispatched' as const }),
     };
   }
 

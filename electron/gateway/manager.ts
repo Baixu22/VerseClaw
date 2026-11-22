@@ -10,7 +10,7 @@ import { PORTS } from '../utils/config';
 import { getSetting } from '../utils/store';
 import { GatewayRpcError, JsonRpcNotification, isNotification, isResponse } from './protocol';
 import { logger } from '../utils/logger';
-import { clampHostTimeoutToDeadline } from '@shared/host-api/host-deadline';
+import { clampHostTimeoutToDeadline, HostTimeoutError, toHostTimeoutDetails } from '@shared/host-api/host-deadline';
 import { getHostDeadline } from '../utils/host-deadline-context';
 import { captureTelemetryEvent, trackMetric } from '../utils/telemetry';
 import {
@@ -537,6 +537,7 @@ export class GatewayManager extends EventEmitter {
       const t0 = Date.now();
       let tSpawned = 0;
       let tReady = 0;
+      let startupReloadRevision: number | undefined;
 
       await runGatewayStartupSequence({
         port: this.status.port,
@@ -570,13 +571,10 @@ export class GatewayManager extends EventEmitter {
             this.setStatus({ pid: undefined });
           }
 
-          // Treat a successful reconnect to the owned process as a restart
-          // completion (e.g. after a Gateway code-1012 in-process restart).
-          // This updates lastRestartCompletedAt so that flushDeferredRestart
-          // drops any deferred restart requested before this reconnect,
-          // avoiding a redundant kill+respawn cycle.
-          if (isOwnProcess) {
-            this.restartController.recordRestartCompleted();
+          // A retry may connect to the process spawned by this same startup.
+          // An ordinary reconnect gives no evidence of which config it read.
+          if (isOwnProcess && startupReloadRevision !== undefined) {
+            this.restartController.consumeStartupReload(startupReloadRevision);
           }
 
           this.startHealthCheck();
@@ -585,6 +583,8 @@ export class GatewayManager extends EventEmitter {
           await waitForPortFree(port);
         },
         startProcess: async () => {
+          // Capture before prepareGatewayLaunchContext reads configuration.
+          startupReloadRevision = this.restartController.captureStartupReloadRevision();
           await this.startProcess();
           tSpawned = Date.now();
         },
@@ -599,6 +599,9 @@ export class GatewayManager extends EventEmitter {
           tReady = Date.now();
         },
         onConnectedToManagedGateway: () => {
+          if (startupReloadRevision !== undefined) {
+            this.restartController.consumeStartupReload(startupReloadRevision);
+          }
           this.startHealthCheck();
           const tConnected = Date.now();
           logger.info('[metric] gateway.startup', {
@@ -633,7 +636,9 @@ export class GatewayManager extends EventEmitter {
       throw error;
     } finally {
       this.startLock = false;
-      this.restartController.flushDeferredRestart(
+      // The enclosing restart must settle before a new restart can execute;
+      // otherwise restart() joins the old promise and loses the queued update.
+      if (!this.restartInFlight) this.restartController.flushDeferredRestart(
         'start:finally',
         {
           state: this.status.state,
@@ -777,7 +782,9 @@ export class GatewayManager extends EventEmitter {
       // in restart-governor.ts.)
       const waitMs = Math.max(0, decision.retryAfterMs);
       if (waitMs > 0 && waitMs <= RESTART_COOLDOWN_MAX_WAIT_MS) {
+        const restartEpoch = this.lifecycleController.getCurrentEpoch();
         await new Promise((resolve) => setTimeout(resolve, waitMs + 50));
+        if (this.lifecycleController.getCurrentEpoch() !== restartEpoch) return;
         await this.restart();
       }
       return;
@@ -786,10 +793,18 @@ export class GatewayManager extends EventEmitter {
     const pidBefore = this.status.pid;
     logger.info(`[gateway-refresh] mode=restart requested pidBefore=${pidBefore ?? 'n/a'}`);
     this.restartInFlight = (async () => {
-      await this.stop();
+      const stopping = this.stop();
+      const stopEpoch = this.lifecycleController.getCurrentEpoch();
+      await stopping;
+      this.lifecycleController.assert(stopEpoch, 'restart/stop');
+      const starting = this.start();
+      const startEpoch = this.lifecycleController.getCurrentEpoch();
       try {
-        await this.start();
+        await starting;
+        this.lifecycleController.assert(startEpoch, 'restart/start');
       } catch (err) {
+        this.lifecycleController.assert(startEpoch, 'restart/recovery');
+        if (err instanceof LifecycleSupersededError) throw err;
         // stop() set shouldReconnect=false. Restore it so the gateway
         // can self-heal via scheduleReconnect() instead of dying permanently.
         logger.warn('Gateway restart: start() failed after stop(), enabling auto-reconnect recovery', err);
@@ -802,7 +817,6 @@ export class GatewayManager extends EventEmitter {
     try {
       await this.restartInFlight;
       this.restartGovernor.recordExecuted();
-      this.restartController.recordRestartCompleted();
       const observability = this.restartGovernor.getObservability();
       const props = {
         gateway_restart_executed_total: observability.executed_total,
@@ -815,6 +829,9 @@ export class GatewayManager extends EventEmitter {
         `[gateway-refresh] mode=restart result=applied pidBefore=${pidBefore ?? 'n/a'} pidAfter=${this.status.pid ?? 'n/a'} ` +
         `suppressed=${observability.suppressed_total} executed=${observability.executed_total} circuitOpenUntil=${observability.circuit_open_until}`,
       );
+    } catch (error) {
+      if (!(error instanceof LifecycleSupersededError)) throw error;
+      logger.debug(`Gateway restart superseded: ${error.message}`);
     } finally {
       this.restartInFlight = null;
       this.restartController.flushDeferredRestart(
@@ -1086,20 +1103,29 @@ export class GatewayManager extends EventEmitter {
     const effectiveTimeoutMs = ambientDeadline
       ? clampHostTimeoutToDeadline(timeoutMs, ambientDeadline)
       : timeoutMs;
+    const id = crypto.randomUUID();
+    const timeoutError = () => new HostTimeoutError(`RPC timeout: ${method}`, toHostTimeoutDetails({
+      stage: 'gateway',
+      deadlineMs: effectiveTimeoutMs,
+      elapsedMs: Date.now() - startedAt,
+      requestId: ambientDeadline?.requestId ?? id,
+      ...(ambientDeadline ? { deadline: ambientDeadline } : {}),
+    }));
+    // Permission or admission work may consume the caller's remaining budget.
+    // An expired request must not reach the socket and start a new Mission.
+    if (effectiveTimeoutMs <= 0) throw timeoutError();
     return await new Promise<T>((resolve, reject) => {
       if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
         reject(new Error('Gateway not connected'));
         return;
       }
 
-      const id = crypto.randomUUID();
-
       // Set timeout for request
       const timeout = setTimeout(() => {
         if (method === 'chat.send') {
           logger.warn(`[gateway-rpc] chat.send timeout id=${id} timeoutMs=${effectiveTimeoutMs}`);
         }
-        rejectPendingGatewayRequest(this.pendingRequests, id, new Error(`RPC timeout: ${method}`));
+        rejectPendingGatewayRequest(this.pendingRequests, id, timeoutError());
       }, effectiveTimeoutMs);
 
       // Store pending request

@@ -1,0 +1,91 @@
+---
+lifecycleStatus: active
+implementationStatus: planned
+id: project-rag-cross-encoder-rerank
+title: 实现多语言 cross-encoder 重排服务
+scenario: gateway-backend-communication
+taskType: runtime-bridge
+programKey: RAG-08
+intent: 在召回覆盖后提高实际送入模型的证据精度。
+diffBase: e292dd49b2844cf5da52865559e1feb227a74d9b
+touchedAreas:
+  - "openclaw_runtime/src/knowledge/retrieval/**"
+  - "openclaw_runtime/src/plugin-sdk/**"
+  - "openclaw_runtime/extensions/memory-wiki/**"
+  - "shared/knowledge/**"
+  - "shared/i18n/locales/*/settings.json"
+  - "src/components/settings/KnowledgeRerankSettings.tsx"
+  - "src/lib/host-api/knowledge/**"
+  - "src/pages/Models/index.tsx"
+  - "scripts/contract-check.mjs"
+  - "electron/services/knowledge-api.ts"
+  - "shared/host-api/contract.ts"
+  - "shared/dcs/prod-flags-catalog.ts"
+  - "docs/generated/catalogs/prod-flags.md"
+  - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
+  - "docs/dev/project-rag/**"
+  - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
+  - "docs/dev/adr/2026-08-17-knowledge-system-unification-authority.md"
+  - "docs/modules/knowledge-base.md"
+  - "docs/enhancements/knowledge-persistence/*.md"
+  - "docs/clawx-design-overview.md"
+  - "docs/dev/runtime-control-planes.md"
+  - "docs/dev/evidence/project-rag-longterm-20261109/**"
+  - "docs/dev/evidence/project-rag/RAG-08/**"
+  - "harness/specs/tasks/project-rag-*.md"
+  - "harness/specs/rules/project-rag-long-term-boundary.md"
+  - ".gitignore"
+  - "scripts/repository-artifacts.json"
+  - "artifacts/agent-dev-deep-test/**"
+  - "artifacts/agent-dev-quality/**"
+  - "artifacts/agent-dev-workbench/**"
+  - "README*.md"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/project-rag-rerank-provider.test.ts"
+  - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
+requiredProfiles:
+  - "fast"
+  - "comms"
+requiredRules:
+  - "contract-first-boundary"
+  - "backend-communication-boundary"
+  - "knowledge-source-set-read-admission"
+  - "project-rag-long-term-boundary"
+requiredTests:
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/project-rag-rerank-provider.test.ts"
+  - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
+plannedTests:
+  - "tests/unit/project-rag-rerank-provider.test.ts"
+plannedE2E:
+  - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
+expectedUserBehavior:
+  - "在召回覆盖后提高实际送入模型的证据精度。"
+acceptance:
+  - "Qwen3-Reranker-0.6B 为参考 cross-encoder；实现具备模型清单的本地/远端 endpoint adapter 与取消、超时、批次预算。"
+  - "输入仅包含已准入候选；结果 id/order/count/finite score 校验，raw logit 或 sigmoid 不作为校准概率。"
+  - "quality/research profile 实际调用重排；local profile 不依赖该服务；失败有 effectiveProfile 与降级原因。"
+  - "与固定候选池做模型/无重排消融，输出 nDCG/precision 与端到端成本，不把 provider 可达性当收益。"
+  - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+docs:
+  required: true
+  readmeTranslations: not-required
+  files:
+    - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
+    - docs/dev/project-rag/WORK-PACKAGES.md
+---
+
+# 实现多语言 cross-encoder 重排服务
+
+所属长期计划：RAG-08。前置工作包：RAG-07。Owner：rerank provider / retrieval planner。
+
+契约：RerankProvider/v1、RerankResult/v1。
+
+本文件冻结实现合同。当前规划不代表产品实现已通过；执行该叶前复核绑定的工作树、前置证据与实际 HEAD，刷新 diffBase。新增测试必须实现并加入 requiredTests；plannedE2E 指定的是必须补齐的产品旅程。
+
+所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
+
+回滚：关单一 scorer，保留 RRF 次序与同一准入集。

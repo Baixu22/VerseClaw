@@ -54,4 +54,17 @@ describe('R0-4 host-api-client timeout fallback', () => {
     const result = await invokeHost('app', 'version');
     expect(result).toBe('1.2.3');
   });
+
+  it.each([
+    { method: 'mission.run', timeoutMs: 15 * 60_000 },
+    { method: ' mission.run ', timeoutMs: 15 * 60_000 },
+    { method: 'memory.proposals', timeoutMs: 60_000 },
+  ])('propagates the nested Gateway deadline for $method', async ({ method, timeoutMs }) => {
+    hostInvokeMock.mockImplementation(async () => ({ id: 'rpc', ok: true, data: 'settled' }));
+    const { invokeHost } = await import('@/lib/host-api-client');
+
+    await invokeHost('gateway', 'rpc', { method, timeoutMs: 150_000 });
+    const request = hostInvokeMock.mock.calls[0][0] as { id: string; deadline: { timeoutMs: number } };
+    expect(request.deadline).toMatchObject({ stage: 'renderer', timeoutMs, requestId: request.id });
+  });
 });

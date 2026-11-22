@@ -1,0 +1,13 @@
+{
+  "schema": "G5HarnessCiRefreshManifest/v1",
+  "driven_by": "agent",
+  "actor": "codex/g5-ci-refresh",
+  "realHumanEvidence": false,
+  "hashScope": "Git blob bytes with LF line endings",
+  "files": [
+    {
+      "path": "report.json",
+      "sha256": "d315da902641ee3118e4dd999c8cd23c9e91cb526fa3575ea31af9f72469666b"
+    }
+  ]
+}

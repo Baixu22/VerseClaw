@@ -1,4 +1,5 @@
 import type { ElectronApplication } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { closeElectronApp, expect, test } from './fixtures/electron';
@@ -84,8 +85,15 @@ async function createSession(app: ElectronApplication, label: string): Promise<s
 
 test('real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(300_000);
+  const sourceCandidate = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  const sourceDirty = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim();
+  if (process.env.CLAWX_M1_EXPECTED_HEAD) {
+    expect(sourceCandidate).toBe(process.env.CLAWX_M1_EXPECTED_HEAD);
+    expect(sourceDirty).toBe('');
+  }
   let app: ElectronApplication | undefined;
   const observation: Record<string, unknown> = {
+    sourceCandidate, sourceDirty,
     schema: 'clawx.long-session.d1-continuity-preview/v1',
     driven_by: 'agent',
     actor: 'codex-long-session-r2',
@@ -265,6 +273,27 @@ test('real Host/Gateway continuity preview reads accepted owners and fails close
     expect(preview.rendered).toContain('Original history is not copied into this turn');
     expect(pack.originalHistory.transcriptRef).toBe(`session:${coordinatorSessionKey}`);
     expect(pack.originalHistory.taskLedgerRef).toBe(`task-ledger:${workspace.id}`);
+
+    const foreign = await hostInvoke<{ snapshot: { nodes: Array<{ id: string; title: string }> } }>(app, 'taskLedger', 'createNode', {
+      workspaceId: workspace.id, node: { title: `M1 separate task ${token}`, kind: 'task', status: 'todo' },
+    });
+    const foreignId = foreign.snapshot.nodes.find(node => node.title === `M1 separate task ${token}`)!.id;
+    const foreignProposal = createTaskLedgerWorkingContextProposal({ proposalId: `m1-foreign-${token}`, field: 'Constraints',
+      value: [`PRIVATE_OTHER_TASK_${token}`], version: 1, actor: 'assistant', taskId: foreignId,
+      sessionId: ordinarySessionKey, evidenceRefs: [{ type: 'session', ref: ordinarySessionKey }], sensitivity: 'workspace', trust: 'confirmed' });
+    const foreignDecision = createTaskLedgerWorkingContextDecision({ proposalId: `m1-foreign-${token}`, field: 'Constraints',
+      version: 1, decision: 'accepted', actor: 'system', taskId: foreignId, sessionId: ordinarySessionKey, policyDigest });
+    if (!foreignProposal.ok || !foreignDecision.ok) throw new Error('Foreign task fixture construction failed');
+    await hostInvoke(app, 'taskLedger', 'appendEvents', { workspaceId: workspace.id, events: [foreignProposal.event, foreignDecision.event] });
+    const isolated = await hostInvoke<ContinuityResult>(app, 'chat', 'continuityPreview', {
+      sessionKey: coordinatorSessionKey, workspaceId: workspace.id, activeTaskNodeId: taskNodeId,
+    });
+    expect(isolated.validation).toBe('current');
+    expect(isolated.rendered).not.toContain(`PRIVATE_OTHER_TASK_${token}`);
+    expect(isolated.rendered).toContain('Stay inside workspace scope.');
+    expect(isolated.pack?.items.every(item => item.scope.key !== foreignId)).toBe(true);
+    observation.foreignAcceptedTask = { foreignId, isolated };
+    (observation.negatives as string[]).push('accepted fact for another task is excluded from current task context');
 
     const retainedPath = testInfo.outputPath('continuity-preview.json');
     await writeFile(retainedPath, JSON.stringify({ schema: 'clawx.long-session.d1-pack/v1', driven_by: 'agent', actor: 'codex-long-session-r2', workspaceId: workspace.id, coordinatorSessionKey, taskNodeId, memoryContent: rememberedContent, preview }, null, 2) + '\n', 'utf8');

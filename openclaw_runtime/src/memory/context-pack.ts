@@ -176,8 +176,8 @@ export function selectMemoryForContextPack(input: ContextPackInput): {
     let selectedCandidate =
       classification.injectionClass === "must" ||
       classification.injectionClass === "should" ||
-      (classification.injectionClass === "may" && card.status === "active" && taskMatch >= 0.35) ||
-      (card.status === "cold" && taskMatch >= 0.75);
+      (classification.injectionClass === "may" &&
+        ((card.status === "active" && taskMatch >= 0.35) || (card.status === "cold" && taskMatch >= 0.75)));
     if (card.sensitivity === "secret") {
       penalties.push("sensitivity");
       selectedCandidate = false;

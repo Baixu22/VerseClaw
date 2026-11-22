@@ -782,25 +782,14 @@ export function buildSourceRuntimeIsolationEnv(params: {
   homeDir: string;
   configPath: string;
 }): Record<string, string> {
-  // Desktop source isolation defers post-ready sidecars so chat can attach quickly.
-  // Playwright E2E needs startup-gated RPCs (tools.effective) available before
-  // assertions; with defer enabled, tools.effective stays unavailable until
-  // sidecars finish - and a hung/slow plugin service never unblocks it. Under
-  // VERSE_CLAW_E2E we therefore skip defer entirely so sidecars complete on
-  // the ready path (production keeps the long defer).
-  const isE2E = process.env.VERSE_CLAW_E2E === '1';
+  // Session RPC admission depends on sidecar initialization. Keep source launches
+  // on the normal startup path in both ordinary and test windows.
   return {
     OPENCLAW_STATE_DIR: params.stateDir,
     OPENCLAW_CONFIG_PATH: params.configPath,
     OPENCLAW_HOME: params.homeDir,
     OPENCLAW_SKIP_LEGACY_STATE_MIGRATION: '1',
     OPENCLAW_NO_AUTO_UPDATE: '1',
-    ...(isE2E
-      ? {}
-      : {
-          OPENCLAW_DEFER_STARTUP_SIDECARS: '1',
-          OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS: '600000',
-        }),
   };
 }
 
@@ -933,6 +922,9 @@ function prepareSourceRuntimeIsolation(): {
 
   mkdirSync(fsPath(stateDir), { recursive: true });
   mkdirSync(fsPath(homeDir), { recursive: true });
+  // Agent defaults use ~/.openclaw/...; the source-runtime HOME must contain
+  // that directory before the Gateway resolves a newly-created agent there.
+  mkdirSync(join(homeDir, '.openclaw'), { recursive: true });
 
   // Read the user's actual config so we can inherit model, agent, and plugin
   // settings. The isolation sandbox must still be able to resolve the same

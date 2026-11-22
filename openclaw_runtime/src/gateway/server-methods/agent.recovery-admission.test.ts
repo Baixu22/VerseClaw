@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -155,9 +155,108 @@ beforeEach(() => {
   };
 });
 afterEach(async () => {
+  vi.unstubAllEnvs();
   await new Promise<void>((resolve) => setTimeout(resolve, 20));
   closeOpenClawAgentDatabasesForTest();
   rmSync(dir, { recursive: true, force: true });
+});
+
+describe("agent continuation generation against the real session store", () => {
+  beforeEach(() => {
+    delete params.recoveryAdmission;
+    params.expectedSessionId = sessionId;
+    params.idempotencyKey = "completion-generation-pin";
+    mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      store[sessionKey].subagentRecovery = undefined;
+      store[sessionKey].abortedLastRun = false;
+    });
+  });
+  it('removes an unaccepted controller when pause races admission and lets the same request retry', async () => {
+    const path = join(dir, 'workspaces.json');
+    const policy = (paused: boolean) => writeFileSync(path, JSON.stringify({ systemControl: {
+      revision: paused ? 1 : 2, paused, inFlightPolicy: 'settle-admitted-effects', recentRequests: [],
+    } }));
+    policy(false); vi.stubEnv('CLAWX_WORKSPACE_OWNER_PATH', path);
+    mocks.beforeWrite = () => policy(true);
+    const call = invocation();
+    await expect(call.run()).rejects.toThrow('SYSTEM_EXECUTION_PAUSED');
+    expect(call.context.chatAbortControllers.size).toBe(0);
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    policy(false);
+    await call.run();
+    await vi.waitFor(() => expect(mocks.ingress).toHaveBeenCalledTimes(1));
+    expect(call.respond.mock.calls.some(args => (args[1] as { status?: string })?.status === 'accepted')).toBe(true);
+  });
+
+  it("resumes an idle expired generation without rotating the transcript", async () => {
+    const call = invocation();
+    await call.run();
+    await vi.waitFor(() => expect(mocks.ingress).toHaveBeenCalledTimes(1));
+    expect(mocks.ingress.mock.calls[0][0]).toMatchObject({ sessionId, sessionKey });
+    expect(loadSqliteSessionStore(storePath)[sessionKey].sessionId).toBe(sessionId);
+  });
+
+  it.each(["replace", "delete"])("rejects a %s before ingress", async (action) => {
+    mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      if (action === "delete") delete store[sessionKey];
+      else store[sessionKey].sessionId = "replacement-generation";
+    });
+    const before = loadSqliteSessionStore(storePath);
+    await expect(invocation().run()).rejects.toThrow("AGENT_SESSION_GENERATION_STALE");
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    expect(loadSqliteSessionStore(storePath)).toEqual(before);
+  });
+
+  it("rejects a reset racing the atomic session patch", async () => {
+    mocks.beforeWrite = () => mutateSqliteSessionStoreAtomic(storePath, (store) => {
+      store[sessionKey].sessionId = "concurrent-generation";
+      store[sessionKey].lifecycleRunId = "concurrent-run";
+    });
+    await expect(invocation().run()).rejects.toThrow("AGENT_SESSION_GENERATION_STALE");
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    expect(loadSqliteSessionStore(storePath)[sessionKey]).toMatchObject({
+      sessionId: "concurrent-generation", lifecycleRunId: "concurrent-run",
+    });
+  });
+
+  it.each(["before delivery", "during the session update", "after acceptance"])(
+    "refuses ingress when a handoff retires the requester %s",
+    async (timing) => {
+      const ownerPath = join(dir, "workspaces.json");
+      writeFileSync(ownerPath, JSON.stringify({ profiles: [] }));
+      vi.stubEnv("CLAWX_WORKSPACE_OWNER_PATH", ownerPath);
+      const retire = () => writeFileSync(ownerPath, JSON.stringify({ profiles: [{
+        id: "project",
+        coordinatorBindings: { [sessionKey]: {
+          workspaceId: "project", sessionKey, sessionGeneration: sessionId,
+          state: "paused", invalidationReason: "handoff-to-new-session",
+        } },
+      }] }));
+      const call = invocation();
+      if (timing === "before delivery") retire();
+      else if (timing === "during the session update") mocks.beforeWrite = retire;
+      else call.respond.mockImplementationOnce(retire);
+      const before = loadSqliteSessionStore(storePath);
+      if (timing === "after acceptance") {
+        await call.run();
+        await vi.waitFor(() => expect(call.respond.mock.calls[1]?.[2]?.message).toContain("AGENT_CONTINUATION_OWNER_RETIRED"));
+      } else {
+        await expect(call.run()).rejects.toThrow("AGENT_CONTINUATION_OWNER_RETIRED");
+        expect(loadSqliteSessionStore(storePath)).toEqual(before);
+      }
+      expect(mocks.ingress).not.toHaveBeenCalled();
+      expect(loadSqliteSessionStore(storePath)[sessionKey].sessionId).toBe(sessionId);
+    },
+  );
+
+  it.each(["key", "id"])("rejects a conflicting %s", async (field) => {
+    if (field === "key") delete params.sessionKey;
+    else params.sessionId = "foreign-generation";
+    const before = loadSqliteSessionStore(storePath);
+    await expect(invocation().run()).rejects.toThrow("AGENT_SESSION_GENERATION_STALE");
+    expect(mocks.ingress).not.toHaveBeenCalled();
+    expect(loadSqliteSessionStore(storePath)).toEqual(before);
+  });
 });
 
 describe("agent receiver recovery admission against the real session store", () => {

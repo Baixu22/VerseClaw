@@ -72,7 +72,7 @@ describe('RuntimeApprovalPrompt', () => {
     const question = parseToolUiInteraction({ type: 'question-flow', id: 'question-priority',
       steps: [{ id: 'target', title: 'Choose a target', options: [{ id: 'staging', label: 'Staging' }, { id: 'prod', label: 'Production' }] }] })!;
     const approval = { id: 'workspace-priority', workspaceId: 'workspace', sessionKey: 'agent:main:main', source: 'terminal' as const,
-      risk: 'dangerous' as const, status: 'pending' as const, requestedAt: 1, command: 'node --test', reason: 'Run verification' };
+      mode: 'readOnly' as const, risk: 'dangerous' as const, status: 'pending' as const, requestedAt: 1, command: 'node --test', reason: 'Run verification' };
     const onDecision = vi.fn().mockResolvedValue(undefined);
     const tree = (permission: boolean, questionPending = true) => (
       <RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" requestPending={permission || questionPending}

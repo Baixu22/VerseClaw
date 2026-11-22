@@ -85,6 +85,7 @@ export function buildEmbeddedRunBaseParams(params: {
     // attempt can prefer it over the locally computed `effectiveWorkspace`
     // fingerprint. Absent → agent-config fallback path uses the local compute.
     workspaceFingerprint: params.run.workspaceFingerprint,
+    chatKnowledgeRefs: params.run.chatKnowledgeRefs,
     agentDir: params.run.agentDir,
     config,
     skillsSnapshot: params.run.skillsSnapshot,

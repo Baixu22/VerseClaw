@@ -28,7 +28,7 @@ import {
   type GoalWakeDispatchInput,
   type GoalWakeTriggerKind,
 } from "./goal-wake-types.js";
-import { saveMissionRun } from "./mission-control/store.js";
+import { getMissionRun, saveMissionRun } from "./mission-control/store.js";
 import type { MissionRunRecord } from "./mission-control/types.js";
 
 const tempRoots: string[] = [];
@@ -231,7 +231,7 @@ describe("goal-wake trigger kinds", () => {
 });
 
 describe("timer fire seam", () => {
-  it("resolves the wait from its cron job id and fires exactly once", async () => {
+  it("resolves the wait from its cron job id and consumes a burst of 32 fires in one tick", async () => {
     enable();
     saveMissionRun(fixture("mission-timer-fire"));
     const arm = await armGoalWaitProcess({
@@ -251,15 +251,19 @@ describe("timer fire seam", () => {
     expect(resolved?.fireAt).toBe(FIRE_AT);
     expect(findGoalWaitTimerTaskByCronJobId("cron-unknown")).toBeUndefined();
 
-    const fired = await fireGoalWaitTimer({ taskId: arm.taskId, firedAt: FIRE_AT + 25 });
-    expect(fired.task?.status).toBe("succeeded");
-    expect(fired.levelCheck.flows[0]?.outcome).toBe("dispatched");
+    const fired = await Promise.all(Array.from({ length: 32 }, (_, index) =>
+      fireGoalWaitTimer({ taskId: arm.taskId, firedAt: FIRE_AT + 25 + index }),
+    ));
+    expect(fired.map(result => result.task?.ended_at)).toEqual(Array(32).fill(FIRE_AT + 25));
+    expect(fired.flatMap(result => result.levelCheck.flows).filter(flow => flow.outcome === "dispatched")).toHaveLength(1);
+    expect(getMissionRun("mission-timer-fire")?.tick).toBe(2);
     expect(getGoalWakeFlowRow(arm.flowId)?.status).toBe("succeeded");
 
-    // Cron delivery is at-least-once: a redelivered fire must be a no-op.
+    closeOpenClawStateDatabase();
     const again = await fireGoalWaitTimer({ taskId: arm.taskId, firedAt: FIRE_AT + 900 });
     expect(again.task?.status).toBe("succeeded");
     expect(again.levelCheck.flows).toEqual([]);
+    expect(getMissionRun("mission-timer-fire")?.tick).toBe(2);
     // The settled wait is no longer reachable from the cron job id either.
     expect(findGoalWaitTimerTaskByCronJobId("cron-fire-1")).toBeUndefined();
   });

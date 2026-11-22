@@ -4,7 +4,8 @@ title: 将任务验收接入既有 verifier 与 effect 回执 owner
 lifecycleStatus: active
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 2522aced4
+previousValidationDiffBase: 2522aced4
+diffBase: 177ee7ed214979b82c4615fca6ddfda3b400a6b3
 intent: 从真实文件、命令和独立 verifier 的持久回执构造逐项验收输入，复用现有 EvidenceVerifier 与 EffectReceiptStore；完成操作按当前任务版本、执行代数和候选摘要提交并可幂等回读。
 requiredRules:
   - backend-communication-boundary
@@ -40,6 +41,13 @@ touchedAreas:
   - docs/dev/durable-task-system/**
   - tests/e2e/durable-task-system.spec.ts
   - harness/specs/tasks/durable-task-owner-acceptance.md
+residualPaths:
+  - harness/specs/tasks/autonomy-object-owner-contract.md
+  - harness/specs/tasks/autonomy-task-completion.md
+  - harness/specs/tasks/autonomy-session-task-scope.md
+  - harness/specs/tasks/autonomy-host-readiness.md
+  - harness/specs/tasks/g5-foundation-current-acceptance.md
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
 requiredTests:
   - pnpm exec vitest run --config vitest.task-system.config.ts
   - pnpm run typecheck

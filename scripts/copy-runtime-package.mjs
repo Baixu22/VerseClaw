@@ -1,6 +1,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { dirname, isAbsolute, join, relative, sep } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { parse as parseYaml } from 'yaml';
 
 // Each emitted Main chunk resolves external packages from the complete copied
 // graph before electron-builder's partial ASAR dependency collection.
@@ -29,6 +30,19 @@ if (process.type === 'browser' && require('electron').app.isPackaged && !globalT
 function isInside(root, file) {
   const rel = relative(root, file);
   return !isAbsolute(rel) && rel !== '..' && !rel.startsWith('..' + sep);
+}
+
+function installedDependencyRoots(installationRoot) {
+  const roots = [realpathSync(installationRoot)];
+  const metadataPath = join(installationRoot, 'node_modules', '.modules.yaml');
+  if (!existsSync(metadataPath)) return roots;
+  const metadata = parseYaml(readFileSync(metadataPath, 'utf8'));
+  if (typeof metadata?.packageManager === 'string' && /^pnpm@\d/.test(metadata.packageManager)
+      && typeof metadata.virtualStoreDir === 'string' && metadata.virtualStoreDir.trim()) {
+    // pnpm owns this installation's virtual store even when it is outside the checkout.
+    roots.push(realpathSync(resolve(installationRoot, 'node_modules', metadata.virtualStoreDir)));
+  }
+  return roots;
 }
 
 // Node 24's native recursive copy can preserve nested Windows junctions despite
@@ -64,7 +78,7 @@ function packageAt(importer, name) {
 // same package name may legitimately appear at multiple versions, so identity
 // is the resolved realpath rather than the bare package name.
 export function collectRuntimeDependencyPackages(source, installationRoot = source) {
-  installationRoot = realpathSync(installationRoot);
+  const dependencyRoots = installedDependencyRoots(installationRoot);
   const collected = new Map();
   const queue = [{ importer: source, destination: source, packageName: null }];
   const visited = new Set();
@@ -84,7 +98,7 @@ export function collectRuntimeDependencyPackages(source, installationRoot = sour
     const dependencies = { ...manifest.peerDependencies, ...manifest.dependencies, ...manifest.optionalDependencies };
     for (const name of Object.keys(dependencies)) {
       const resolved = packageAt(current.importer, name);
-      const installed = resolved && isInside(installationRoot, resolved) ? resolved : null;
+      const installed = resolved && dependencyRoots.some((root) => isInside(root, resolved)) ? resolved : null;
       if (!installed) {
         if (name in (manifest.optionalDependencies ?? {}) || manifest.peerDependenciesMeta?.[name]?.optional) continue;
         throw new Error(`Missing installed dependency ${name} of ${current.importer}`);
@@ -102,7 +116,7 @@ export function collectRuntimeDependencyPackages(source, installationRoot = sour
 // Preserve each importer's installed version. Ancestors can satisfy matching
 // versions; conflicts get normal nested node_modules, without development links.
 export function copyRuntimeDependencies(source, destination, installationRoot = source) {
-  installationRoot = realpathSync(installationRoot);
+  const dependencyRoots = installedDependencyRoots(installationRoot);
   const queue = [{ source, destination }];
   const visited = new Set();
   let copied = 0;
@@ -114,7 +128,7 @@ export function copyRuntimeDependencies(source, destination, installationRoot = 
     const dependencies = { ...manifest.peerDependencies, ...manifest.dependencies, ...manifest.optionalDependencies };
     for (const name of Object.keys(dependencies)) {
       const resolved = packageAt(current.source, name);
-      const installed = resolved && isInside(installationRoot, resolved) ? resolved : null;
+      const installed = resolved && dependencyRoots.some((root) => isInside(root, resolved)) ? resolved : null;
       if (!installed) {
         if (name in (manifest.optionalDependencies ?? {}) || manifest.peerDependenciesMeta?.[name]?.optional) continue;
         throw new Error(`Missing installed dependency ${name} of ${current.source}`);

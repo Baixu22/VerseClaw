@@ -4,7 +4,8 @@ id: autonomy-host-readiness
 title: TF-0674 实际宿主能力与持续运行回读
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: d0723901104107e602efb7473aae4e1975663398
+previousValidationDiffBase: d0723901104107e602efb7473aae4e1975663398
+diffBase: 177ee7ed214979b82c4615fca6ddfda3b400a6b3
 intent: 在既有 sessionActivity/effective-policy 和 Gateway monitor 中回读当前宿主能力，拒绝把静态声明、过期探针或配置保存当成实际可用。
 expectedUserBehavior:
   - 当前能力通过既有会话诊断回读，未知、失效与不可用保持区别。
@@ -22,32 +23,22 @@ touchedAreas:
   - tests/unit/autonomy-host-readiness.test.ts
   - tests/unit/long-session-effective-policy.test.ts
   - tests/unit/gateway-manager-diagnostics.test.ts
+  - tests/unit/dcs-preview-switch.test.ts
   - tests/e2e/autonomy-host-readiness.spec.ts
   - tests/e2e/autonomy-runtime-readiness.spec.ts
+  - tests/e2e/fixtures/electron.ts
   - harness/specs/tasks/autonomy-host-readiness.md
   - harness/specs/rules/autonomy-host-readiness-boundary.md
   - harness/specs/scenarios/autonomy-host-readiness.md
   - harness/specs/fixtures/autonomous-project-system/a5/**
 residualPaths:
-  - docs/dev/architecture-skeleton/ADMISSION-GATE.md
-  - electron/main/ipc-handlers.ts
-  - electron/main/ipc/request-helpers.ts
-  - electron/preload/index.ts
-  - electron/services/system-notifications-api.ts
-  - electron/services/window-api.ts
-  - harness/specs/guides/admission-seam-migration.md
-  - harness/specs/tasks/architecture-skeleton-admission-regression.md
-  - harness/specs/tasks/architecture-skeleton-admission-retirement.md
-  - scripts/contract-check-flat-ipc.json
-  - scripts/contract-check.mjs
-  - src/types/electron.d.ts
-  - tests/fixtures/contract-check/flat-ipc-allowlist-dangling.json
-  - tests/fixtures/contract-check/flat-ipc-preload-direct-invoke.json
-  - tests/fixtures/contract-check/flat-ipc-preload-mismatch.json
-  - tests/fixtures/contract-check/flat-ipc-removal-plan-missing.json
-  - tests/fixtures/contract-check/flat-ipc-retired-channel-live.json
-  - tests/unit/contract-check.test.ts
-  - tests/unit/system-notifications-api.test.ts
+  - harness/specs/tasks/autonomy-object-owner-contract.md
+  - harness/specs/tasks/autonomy-task-completion.md
+  - harness/specs/tasks/autonomy-session-task-scope.md
+  - harness/specs/tasks/durable-task-owner-acceptance.md
+  - harness/specs/tasks/g5-foundation-current-acceptance.md
+  - harness/specs/tasks/g5-readiness-test-lifecycle.md
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
 requiredRules:
   - identity-scope-boundary
   - autonomy-object-owner-boundary
@@ -61,6 +52,7 @@ requiredRules:
   - disk-temp-policy
   - docs-sync
 requiredTests:
+  - pnpm exec vitest run tests/unit/dcs-preview-switch.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm test:e2e:run tests/e2e/autonomy-runtime-readiness.spec.ts --workers=1
   - pnpm exec vitest run tests/unit/autonomy-host-readiness.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/gateway-manager-diagnostics.test.ts tests/unit/gateway-manager-restart-recovery.test.ts tests/unit/session-activity-background-read.test.ts tests/unit/workspace-preflight.test.ts --maxWorkers=1
   - pnpm typecheck

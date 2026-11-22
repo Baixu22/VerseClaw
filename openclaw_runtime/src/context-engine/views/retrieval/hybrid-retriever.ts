@@ -9,6 +9,7 @@
 import type { CodeChunk } from "../../fact-types.js";
 import type { FactStore } from "../../factstore/store.js";
 import { rerankWithGraph } from "./graph-reranker.js";
+import type { SourceRefV2 } from "../../../runtime-core/knowledge-owner-read.js";
 import type { QueryContext } from "./query-context.js";
 
 export interface SearchHit {
@@ -28,6 +29,7 @@ export interface HybridRetrievalResult {
 export interface HybridRetrievalOptions {
   limit?: number;
   disableGraphRerank?: boolean;
+  relationshipSources?: readonly SourceRefV2[];
 }
 
 /** Exact + keyword recall over the FactStore, fused with RRF, then graph-reranked. */
@@ -41,7 +43,10 @@ export function retrieveHybrid(
   const exactHits = searchExact(store, repoRoot, context, Math.max(20, limit * 2));
   const keywordHits = searchKeyword(store, repoRoot, context, Math.max(40, limit * 4));
   const fused = fuseHits(exactHits, keywordHits);
-  const reranked = options.disableGraphRerank ? fused : rerankWithGraph(store, repoRoot, fused);
+  const reranked =
+    options.disableGraphRerank || !options.relationshipSources
+      ? fused
+      : rerankWithGraph(store, repoRoot, fused, { admittedSources: options.relationshipSources });
   return {
     hits: reranked.slice(0, limit),
     exactCount: exactHits.length,
@@ -49,7 +54,12 @@ export function retrieveHybrid(
   };
 }
 
-function searchExact(store: FactStore, repoRoot: string, context: QueryContext, cap: number): SearchHit[] {
+function searchExact(
+  store: FactStore,
+  repoRoot: string,
+  context: QueryContext,
+  cap: number,
+): SearchHit[] {
   const needles = new Set<string>();
   for (const token of context.codeTokens) {
     needles.add(token);
@@ -96,7 +106,12 @@ function chunkForSymbol(
   );
 }
 
-function searchKeyword(store: FactStore, repoRoot: string, context: QueryContext, cap: number): SearchHit[] {
+function searchKeyword(
+  store: FactStore,
+  repoRoot: string,
+  context: QueryContext,
+  cap: number,
+): SearchHit[] {
   const terms = context.lexicalTerms.map((term) => term.term).filter((term) => term.length >= 2);
   if (terms.length === 0) return [];
   const weightByTerm = new Map(context.lexicalTerms.map((term) => [term.term, term.weight]));

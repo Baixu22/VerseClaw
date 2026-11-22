@@ -10,13 +10,13 @@ import { resolveExecutionCheckout } from './worktree-service.js';
 
 export type PreparedTaskDelegation = { workspace: string; record: TaskWriterDelegation; authorityBasis?: ExecutionTaskAuthorityBasis };
 
-export function capturePersistentTaskDelegationIntent(input:{workspace?:string;childWorkspace?:string;parentSessionKey:string;parentGeneration?:string;childSessionKey:string;childGeneration?:string;childRunId:string;observer?:boolean}):TaskDelegationIntent|null{
-  if(!input.workspace||!existsSync(input.workspace))return null;
-  const access=createExecutionTaskAccess(input.workspace);const domain=access.domain;if(!existsSync(domain.database))return null;
+export function capturePersistentTaskDelegationIntent(input:{workspace?:string;childWorkspace?:string;parentSessionKey:string;parentGeneration?:string;childSessionKey:string;childGeneration?:string;childRunId:string;observer?:boolean;reviewReservationId?:string;verifier?:boolean}):TaskDelegationIntent|null{
+  if(!input.workspace||!existsSync(input.workspace)){if(input.reviewReservationId)throw new Error('TASK_REVIEW_RESERVATION_REQUIRED');return null;}
+  const access=createExecutionTaskAccess(input.workspace);const domain=access.domain;if(!existsSync(domain.database)){if(input.reviewReservationId)throw new Error('TASK_REVIEW_RESERVATION_REQUIRED');return null;}
   const store=new TaskSystemStore(domain, undefined, access);
   try{
     const parent=store.binding(input.parentSessionKey,input.parentGeneration);
-    if(!parent)return null;
+    if(!parent){if(input.reviewReservationId)throw new Error('TASK_REVIEW_RESERVATION_REQUIRED');return null;}
     if(parent.referenceOnly||!parent.claim||!input.parentGeneration||!input.childGeneration)throw new Error('TASK_DELEGATION_PARENT_NOT_WRITER');
     store.assertOwner(parent.claim);
     return {...input,workspace:input.workspace,childWorkspace:input.childWorkspace??input.workspace,parentGeneration:input.parentGeneration,childGeneration:input.childGeneration,observer:input.observer===true,authorityBasis:access.basis,expectedParent:{taskNodeId:parent.claim.taskNodeId,sessionKey:parent.claim.sessionKey,generation:parent.claim.generation,epoch:parent.claim.epoch}};
@@ -34,13 +34,15 @@ export function preparePersistentTaskDelegation(input: {
   childRunId: string;
   observer?: boolean;
   expectedParent?:TaskCredential;
+  reviewReservationId?: string;
+  verifier?: boolean;
   authorityBasis?: ExecutionTaskAuthorityBasis;
 }): PreparedTaskDelegation | null {
-  if (!input.workspace || !existsSync(input.workspace)) return null;
+  if (!input.workspace || !existsSync(input.workspace)) { if (input.reviewReservationId) throw new Error('TASK_REVIEW_RESERVATION_REQUIRED'); return null; }
   const access = createExecutionTaskAccess(input.workspace, input.authorityBasis);
   const domain = access.domain;
   if (access.basis.registrationRevision !== null && !input.authorityBasis) throw new Error('TASK_DELEGATION_AUTHORITY_REQUIRED');
-  if (!existsSync(domain.database)) return null;
+  if (!existsSync(domain.database)) { if (input.reviewReservationId) throw new Error('TASK_REVIEW_RESERVATION_REQUIRED'); return null; }
   const store = new TaskSystemStore(domain, undefined, access);
   try {
     const existing = store.delegationForChild(input.childSessionKey);
@@ -59,7 +61,7 @@ export function preparePersistentTaskDelegation(input: {
       return { workspace: input.workspace, record: existing, authorityBasis: access.basis };
     }
     const parent = store.binding(input.parentSessionKey, input.parentGeneration);
-    if (!parent) return null;
+    if (!parent) { if (input.reviewReservationId) throw new Error('TASK_REVIEW_RESERVATION_REQUIRED'); return null; }
     if (parent.referenceOnly || !parent.claim) throw new Error("TASK_DELEGATION_PARENT_NOT_WRITER");
     if(input.expectedParent&&(parent.claim.taskNodeId!==input.expectedParent.taskNodeId||parent.claim.epoch!==input.expectedParent.epoch||parent.claim.generation!==input.expectedParent.generation))throw new Error('TASK_DELEGATION_PARENT_CHANGED_WHILE_QUEUED');
     if (!input.parentGeneration || parent.claim.generation !== input.parentGeneration)
@@ -73,6 +75,8 @@ export function preparePersistentTaskDelegation(input: {
       childRunId: input.childRunId,
       mode: input.observer ? "observer" : "writer",
       authorityBasis: access.basis,
+      reviewReservationId: input.reviewReservationId,
+      verifier: input.verifier,
     });
     return { workspace: input.workspace, record, authorityBasis: access.basis };
   } finally {
@@ -89,6 +93,24 @@ export function recordPersistentTaskDispatch(
   const store = openExecutionTaskStore(prepared.workspace, prepared.authorityBasis);
   try {
     store.recordDelegationDispatch(prepared.record.child.sessionKey, runId, phase);
+  } finally {
+    store.close();
+  }
+}
+
+/** Read the task owner's cancellation before emitting or replaying a worker completion. */
+export function isCancelledPersistentTaskWorker(entry: {
+  workspaceDir?: string; childSessionKey: string; runId: string; initialRunId?: string;
+}): boolean {
+  if (!entry.workspaceDir || !existsSync(entry.workspaceDir)) return false;
+  const access = createExecutionTaskAccess(entry.workspaceDir);
+  if (!existsSync(access.domain.database)) return false;
+  const store = new TaskSystemStore(access.domain, undefined, access);
+  try {
+    const delegation = store.delegationForChild(entry.childSessionKey);
+    if (!delegation || delegation.mode !== "writer" || delegation.childRunId !== (entry.initialRunId ?? entry.runId)) return false;
+    const { contract } = store.get(delegation.taskNodeId);
+    return contract.state === "cancelling" || contract.state === "cancelled";
   } finally {
     store.close();
   }

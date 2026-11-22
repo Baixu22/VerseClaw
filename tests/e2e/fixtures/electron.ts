@@ -1,4 +1,5 @@
 import electronBinaryPath from 'electron';
+import { resolveE2EElectronExecutable } from './electron-executable';
 import { _electron as electron, expect, test as base, type ElectronApplication, type Locator, type Page } from '@playwright/test';
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { appendFileSync } from 'node:fs';
@@ -23,6 +24,7 @@ type LaunchElectronOptions = {
   profileDir?: string;
   packaged?: boolean;
   executablePath?: string;
+  productionWindowLifecycle?: boolean;
 };
 
 type IpcMockConfig = {
@@ -258,13 +260,49 @@ async function pinWindowContentSize(
   size: { width: number; height: number },
 ): Promise<{ width: number; height: number }> {
   return await app.evaluate(async ({ BrowserWindow }, target) => {
-    const win = BrowserWindow.getAllWindows()[0];
+    const windows = BrowserWindow.getAllWindows().filter(window => !window.isDestroyed() && !window.webContents.isDestroyed());
+    const win = windows.find(window => window.isVisible()) ?? windows[0];
     if (!win) throw new Error('pinWindowContentSize: no BrowserWindow available');
+    const deadline = Date.now() + 30_000;
+    const settle = () => new Promise(resolve => setTimeout(resolve, 50));
+    if (win.isMinimized()) win.restore();
     if (win.isFullScreen()) win.setFullScreen(false);
     if (win.isMaximized()) win.unmaximize();
+    while (win.isMinimized() || win.isFullScreen() || win.isMaximized()) {
+      if (Date.now() >= deadline) throw new Error('pinWindowContentSize: window state did not settle');
+      await settle();
+    }
+    const bounds = win.getBounds(), content = win.getContentBounds();
+    const [minimumWidth, minimumHeight] = win.getMinimumSize();
+    const expected = {
+      width: Math.max(target.width, minimumWidth - (bounds.width - content.width)),
+      height: Math.max(target.height, minimumHeight - (bounds.height - content.height)),
+    };
     win.setContentSize(target.width, target.height);
-    const [width, height] = win.getContentSize();
-    return { width, height };
+    let measured = { width: 0, height: 0 };
+    while (Date.now() < deadline) {
+      if (win.isDestroyed() || win.webContents.isDestroyed()) throw new Error('pinWindowContentSize: window closed during resize');
+      const [width, height] = win.getContentSize();
+      measured = { width, height };
+      if (width > 0 && height > 0 && Math.abs(width - expected.width) <= 2 && Math.abs(height - expected.height) <= 2) {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        let viewport: { width: number; height: number };
+        try {
+          viewport = await Promise.race([
+            win.webContents.executeJavaScript('({ width: window.innerWidth, height: window.innerHeight })') as Promise<{ width: number; height: number }>,
+            new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error('pinWindowContentSize: renderer measurement timed out')), Math.max(0, deadline - Date.now())); }),
+          ]);
+        } finally { clearTimeout(timer); }
+        if (Date.now() >= deadline) throw new Error('pinWindowContentSize: renderer measurement exceeded the resize deadline');
+        if (win.isDestroyed() || win.webContents.isDestroyed()) throw new Error('pinWindowContentSize: window closed during measurement');
+        const [currentWidth, currentHeight] = win.getContentSize();
+        const zoom = win.webContents.getZoomFactor();
+        if (currentWidth > 0 && currentHeight > 0 && Math.abs(currentWidth - expected.width) <= 2 && Math.abs(currentHeight - expected.height) <= 2
+          && Math.abs(viewport.width * zoom - currentWidth) <= 2 && Math.abs(viewport.height * zoom - currentHeight) <= 2) return { width: currentWidth, height: currentHeight };
+      }
+      await settle();
+    }
+    throw new Error(`pinWindowContentSize: resize did not settle; requested=${JSON.stringify(target)} expected=${JSON.stringify(expected)} measured=${JSON.stringify(measured)}`);
   }, size);
 }
 
@@ -369,7 +407,8 @@ async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOption
     // keep their persisted setting across relaunches in the same profile.
   }
 
-  await writeFile(settingsPath, JSON.stringify({ language: 'en', ...existing, ...(theme ? { theme } : {}) }, null, 2), 'utf-8');
+  const gatewayPort = typeof existing.gatewayPort === 'number' ? existing.gatewayPort : await allocatePort();
+  await writeFile(settingsPath, JSON.stringify({ language: 'en', ...existing, gatewayPort, ...(theme ? { theme } : {}) }, null, 2), 'utf-8');
 }
 
 async function cleanupTempDir(path: string): Promise<void> {
@@ -405,7 +444,7 @@ async function launchVerseClawElectron(
     : {};
   const pendingLaunch = await recordElectronLaunch(userDataDir);
   const app = await electron.launch({
-    executablePath: options.executablePath ?? String(electronBinaryPath),
+    executablePath: resolveE2EElectronExecutable(String(electronBinaryPath), options.executablePath),
     args: [
       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.
       ...(process.platform === 'win32' ? ['--no-sandbox'] : []),
@@ -431,8 +470,8 @@ async function launchVerseClawElectron(
       LANG: 'en_US.UTF-8',
       LC_ALL: 'en_US.UTF-8',
       LANGUAGE: 'en',
-      VERSE_CLAW_E2E: '1',
-      CLAWX_AGENT_DEV: '1',
+      VERSE_CLAW_E2E: options.productionWindowLifecycle ? '0' : '1',
+      CLAWX_AGENT_DEV: options.productionWindowLifecycle ? (options.env?.CLAWX_AGENT_DEV ?? process.env.CLAWX_AGENT_DEV) : '1',
       ...(options.flags?.length ? { CLAWX_FLAGS: options.flags.join(',') } : {}),
       ...(options.visualMode ? { CLAWX_VISUAL_MODE: '1' } : {}),
       ...(options.devScenario ? { CLAWX_DEV_SCENARIO: options.devScenario } : {}),

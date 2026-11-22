@@ -7,8 +7,10 @@
 import { createServer as createHttpServer, type Server } from 'node:http';
 import { createServer as createNetServer } from 'node:net';
 import type { ElectronApplication } from '@playwright/test';
+import { createHostDeadline } from '../../../shared/host-api/host-deadline';
+import { hostActionTimeoutMs } from '../../../shared/host-api/host-action-timeouts';
 
-export type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
+export type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string; details?: unknown } };
 export type GatewayStatus = { state?: string; port?: number; gatewayReady?: boolean };
 export type HostSuccess = { success: boolean };
 const hostSenderWindows = new WeakMap<ElectronApplication, number>();
@@ -36,6 +38,8 @@ export async function hostInvoke<T>(
   action: string,
   payload: Record<string, unknown> | null = null,
 ): Promise<T> {
+  const id = `fp-p1-${Date.now()}-${Math.random()}`;
+  const deadline = createHostDeadline({ stage: 'renderer', timeoutMs: hostActionTimeoutMs(module, action, payload), requestId: id });
   const bridged = (await app.evaluate(async (_electron, input) => {
     const { senderWindowId, ...request } = input;
     const { ipcMain, BrowserWindow } = process.mainModule!.require(
@@ -55,12 +59,14 @@ export async function hostInvoke<T>(
       sender,
       senderFrame: { url: typeof sender.getURL === 'function' ? sender.getURL() : '' },
     };
-    return { response: await handler(event, { id: `fp-p1-${Date.now()}-${Math.random()}`, ...request }), windowId: win.id };
-  }, { module, action, payload, senderWindowId: hostSenderWindows.get(app) })) as { response: HostResponse<T>; windowId: number };
+    return { response: await handler(event, request), windowId: win.id };
+  }, { id, deadline, module, action, payload, senderWindowId: hostSenderWindows.get(app) })) as { response: HostResponse<T>; windowId: number };
   const response = bridged.response;
   if (response.ok) hostSenderWindows.set(app, bridged.windowId);
   if (!response.ok) {
-    throw new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'failed'}`);
+    throw Object.assign(new Error(`[${response.error?.code ?? 'HOST'}] ${response.error?.message ?? 'failed'}`), {
+      code: response.error?.code, details: response.error?.details,
+    });
   }
   return response.data as T;
 }
@@ -89,6 +95,7 @@ export async function startGateway(app: ElectronApplication, options: { port?: n
 export type ToolCallSpec = { id: string; name: string; args: Record<string, unknown> };
 
 export type LlmRequestLog = {
+  model?: string;
   turn: string;
   toolResults: Record<string, string>;
   issued: string | null;
@@ -109,12 +116,13 @@ export type ScriptedLlmRequest = {
   }>;
 };
 
+type ScriptedResponse = { toolCall?: ToolCallSpec; text?: string; rateLimited?: boolean };
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
   requestIndex: number,
   request: ScriptedLlmRequest,
-) => { toolCall?: ToolCallSpec; text?: string } | Promise<{ toolCall?: ToolCallSpec; text?: string }>;
+) => ScriptedResponse | Promise<ScriptedResponse>;
 
 /**
  * Scripted OpenAI-compatible chat/completions endpoint. The script decides the
@@ -195,7 +203,14 @@ export function startScriptedLlm(script: LlmScript): Promise<{
         // A filtered tool never produces a result frame. Let the scripted
         // control terminate from the request count in that case.
         const action = await script(userText, toolResults, log.length, parsed);
+        if (action.rateLimited) {
+          log.push({ model:parsed.model, turn:userText.slice(0,60), toolResults, issued:'http:429' });
+          res.writeHead(429, { 'content-type':'application/json', 'retry-after':'1' });
+          res.end(JSON.stringify({error:{type:'rate_limit_error',message:'Fixture rate limit'}}));
+          return;
+        }
         log.push({
+          model: parsed.model,
           turn: userText.slice(0, 60),
           toolResults,
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,

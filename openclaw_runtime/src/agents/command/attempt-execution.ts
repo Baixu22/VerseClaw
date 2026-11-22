@@ -17,7 +17,11 @@ import {
   injectTimestamp,
   timestampOptsFromConfig,
 } from "../../gateway/server-methods/agent-timestamp.js";
-import { emitAgentEvent } from "../../infra/agent-events.js";
+import {
+  emitAgentEvent,
+  getAgentRunContext,
+  registerAgentRunContext,
+} from "../../infra/agent-events.js";
 import { readErrorName } from "../../infra/errors.js";
 import { redactSensitiveText } from "../../logging/redact.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
@@ -427,7 +431,7 @@ export async function persistCliTurnTranscript(params: {
   });
 }
 
-export function runAgentAttempt(params: {
+export async function runAgentAttempt(params: {
   providerOverride: string;
   modelOverride: string;
   originalProvider: string;
@@ -441,6 +445,7 @@ export function runAgentAttempt(params: {
   cwd?: string;
   body: string;
   isFallbackRetry: boolean;
+  providerFallbackIndex?: number;
   resolvedThinkLevel: ThinkLevel;
   fastMode?: boolean;
   timeoutMs: number;
@@ -687,7 +692,54 @@ export function runAgentAttempt(params: {
     });
   }
 
-  return runEmbeddedAgent({
+  const internalKnowledgeRead =
+    params.opts.knowledgeReferences?.length &&
+    params.opts.sessionEffects === "internal" &&
+    params.opts.runId &&
+    params.sessionKey
+      ? {
+          sessionKey: params.sessionKey,
+          sessionId: params.sessionId,
+          workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
+          workspaceDir: params.workspaceDir,
+        }
+      : undefined;
+  if (internalKnowledgeRead) registerAgentRunContext(params.opts.runId!, { internalKnowledgeRead });
+  try {
+    let chatKnowledgeRefs:
+      | import("../../context-engine/chat-knowledge-intent.js").ResolvedChatKnowledgeRef[]
+      | undefined;
+    if (params.opts.knowledgeReferences?.length) {
+      const deadline = Date.now() + Math.min(5000, params.timeoutMs);
+      const { resolveChatKnowledgeIntent } =
+        await import("../../context-engine/chat-knowledge-intent.js");
+      const { createProductionChatKnowledgeSourceAdapters } =
+        await import("../../context-engine/chat-knowledge-source-adapters.js");
+      const signal = AbortSignal.any([
+        ...(params.opts.abortSignal ? [params.opts.abortSignal] : []),
+        AbortSignal.timeout(Math.max(1, deadline - Date.now())),
+      ]);
+      const resolution = await resolveChatKnowledgeIntent({
+        scope: "all",
+        mode: "manual",
+        references: params.opts.knowledgeReferences,
+        signal,
+        adapters: createProductionChatKnowledgeSourceAdapters(params.cfg, {
+          signal,
+          internalRunId: params.opts.runId,
+          identity: {
+            sessionId: params.sessionId,
+            agentSessionKey: params.sessionKey,
+            workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
+            workspaceDir: params.workspaceDir,
+            egressProviderRefs: [embeddedAgentProvider],
+          },
+        }),
+      });
+      chatKnowledgeRefs = resolution.admitted;
+    }
+    return await runEmbeddedAgent({
+      chatKnowledgeRefs,
     sessionId: params.sessionId,
     sessionKey: params.sessionKey,
     agentId: params.sessionAgentId,
@@ -711,7 +763,7 @@ export function runAgentAttempt(params: {
     senderIsOwner: params.opts.senderIsOwner,
     sessionFile: params.sessionFile,
     workspaceDir: params.workspaceDir,
-    workspaceId: params.sessionEntry?.workspaceId,
+      workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
     cwd: params.cwd,
     config: params.cfg,
     agentHarnessId: embeddedAgentHarnessOverride,
@@ -724,6 +776,7 @@ export function runAgentAttempt(params: {
     provider: embeddedAgentProvider,
     model: params.modelOverride,
     modelFallbacksOverride: params.modelFallbacksOverride,
+    providerFallbackIndex: params.providerFallbackIndex,
     authProfileId,
     authProfileIdSource: authProfileId ? harnessAuthSelection.authProfileIdSource : undefined,
     thinkLevel: params.resolvedThinkLevel,
@@ -747,6 +800,7 @@ export function runAgentAttempt(params: {
     allowTransientCooldownProbe: params.allowTransientCooldownProbe,
     cleanupBundleMcpOnRunEnd: params.opts.cleanupBundleMcpOnRunEnd,
     modelRun: params.opts.modelRun,
+      modelBudget: params.opts.modelBudget,
     promptMode: params.opts.promptMode,
     disableTools: params.opts.modelRun === true,
     onAgentEvent: params.onAgentEvent,
@@ -756,6 +810,12 @@ export function runAgentAttempt(params: {
     bootstrapPromptWarningSignaturesSeen,
     bootstrapPromptWarningSignature,
   });
+  } finally {
+    const context = params.opts.runId ? getAgentRunContext(params.opts.runId) : undefined;
+    if (internalKnowledgeRead && context?.internalKnowledgeRead === internalKnowledgeRead) {
+      delete context.internalKnowledgeRead;
+    }
+  }
 }
 
 export function buildAcpResult(params: {
@@ -903,7 +963,6 @@ export function emitAcpLifecycleError(params: {
     },
   });
 }
-
 
 export function emitAcpAssistantDelta(params: { runId: string; text: string; delta: string }) {
   emitAgentEvent({

@@ -38,9 +38,11 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
   const observer = useRef<ResizeObserver | null>(null);
   const elements = useRef(new Map<string, HTMLElement>());
   const frame = useRef<number | undefined>(undefined);
-  const initialRestore = useRef<{ sessionKey: string; position?: ReadingPosition; done: boolean }>({ sessionKey, position: initialReadingPosition, done: !initialReadingPosition });
+  const initialRestore = useRef<{ sessionKey: string; position?: ReadingPosition; done: boolean; cancelled?: boolean }>({ sessionKey, position: initialReadingPosition, done: !initialReadingPosition });
   useLayoutEffect(() => {
-    if (initialRestore.current.sessionKey !== sessionKey) initialRestore.current = { sessionKey, position: initialReadingPosition, done: !initialReadingPosition };
+    if (initialRestore.current.sessionKey !== sessionKey || (!initialRestore.current.cancelled && !initialRestore.current.position && initialReadingPosition)) {
+      initialRestore.current = { sessionKey, position: initialReadingPosition, done: !initialReadingPosition };
+    }
   }, [sessionKey, initialReadingPosition]);
   const origin = useCallback(() => {
     const container = getScrollElement();
@@ -153,12 +155,13 @@ export function useMessageViewport<T extends Item>(items: T[], getScrollElement:
       else if (index >= 0) container.scrollTo({ top: origin() + layout.offsets[index] + saved.offset, behavior: 'instant' });
     }
     schedule();
-  }, [items, layout, sessionKey, getScrollElement, origin, captureAnchor, schedule, measurements]);
+  }, [items, layout, sessionKey, getScrollElement, origin, captureAnchor, schedule, measurements, initialReadingPosition]);
 
   const scrollToIndex = useCallback((messageIndex: number) => {
     const container = getScrollElement(); const latest = current.current;
     const position = latest.items.findIndex(item => item.index === messageIndex);
     if (!container || position < 0) return;
+    initialRestore.current = { ...initialRestore.current, done: true, cancelled: true };
     pendingJump.current = latest.items[position].key;
     container.scrollTo({ top: Math.max(0, origin() + latest.layout.offsets[position] - 20), behavior: 'instant' });
     sync();

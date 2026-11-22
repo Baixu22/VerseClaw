@@ -140,6 +140,12 @@ export function KnowledgeAssistantMessage({
               <div className="min-w-0" data-testid="knowledge-librarian-answer-section">
                 <KnowledgeAssistantMarkdown content={localTemplate ? localBody! : groundedAnswer.answer} />
               </div>
+              {groundedAnswer.claims?.length ? <div className="flex flex-wrap gap-2 text-tiny text-muted-foreground" data-testid="knowledge-claim-status">
+                {groundedAnswer.claims.map((claim, index) => <span key={index}>
+                  {index + 1}. {t(`librarian.claimKind.${claim.kind}`)}
+                  {claim.kind === 'source' && <> · {t('librarian.evidence.quote')} · {t('librarian.evidence.pin')} · {t(`librarian.evidence.${claim.evidenceStatus.semanticSupport}`)}</>}
+                </span>)}
+              </div> : null}
               <section data-testid="knowledge-librarian-sources-section">
                 <div className={compact ? 'flex flex-wrap gap-1.5' : 'grid gap-1.5'}>
                   {groundedAnswer.sources.map((source, index) => (
@@ -148,7 +154,7 @@ export function KnowledgeAssistantMessage({
                       type="button"
                       className={cn('flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/5', compact && 'knowledge-bot-source')}
                       title={source.path || source.lookup}
-                      onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score })}
+                      onClick={() => onOpenCitation({ lookup: source.lookup, title: source.title, excerpt: source.excerpt, path: source.path, score: source.score, sourceRef: source.answerCitation?.sourceRef ?? source.citation?.sourceRef })}
                       data-testid="knowledge-librarian-source"
                     >
                       {compact ? <FileText className="h-3 w-3 shrink-0 text-muted-foreground" /> : <span className="w-4 shrink-0 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>}

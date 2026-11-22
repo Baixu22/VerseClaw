@@ -9,6 +9,10 @@ import {
   createMemoryWikiImportRunStateStore,
 } from "./src/import-runs-state.js";
 import { createWikiPromptSectionBuilder } from "./src/prompt-section.js";
+import { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
+import { createMemoryWikiEmbeddingService } from "./src/retrieval-embeddings.js";
+import { createMemoryWikiVectorService } from "./src/retrieval/vector-service.js";
+import { createMemoryWikiRerankService } from "./src/retrieval-rerank.js";
 import {
   configureMemoryWikiSourceSyncStateStore,
   createMemoryWikiSourceSyncStateStore,
@@ -39,7 +43,54 @@ export default definePluginEntry({
     api.registerMemoryCorpusSupplement(
       createWikiCorpusSupplement({ config, appConfig: api.config }),
     );
-    registerMemoryWikiGatewayMethods({ api, config, appConfig: api.config });
+    const projection = createMemoryWikiProjectionService({
+      config,
+      appConfig: api.config,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+      onError: (error) => api.logger.warn(`Knowledge projection unavailable: ${error.message}`),
+    });
+    api.registerService({
+      id: "wiki-retrieval-projection",
+      start: () => projection.start(),
+      stop: () => projection.stop(),
+    });
+    const embedding = createMemoryWikiEmbeddingService({
+      config,
+      appConfig: api.config,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+    });
+    api.registerService({
+      id: "wiki-retrieval-embedding",
+      start: () => embedding.start(),
+      stop: () => embedding.stop(),
+    });
+    const vector = createMemoryWikiVectorService({
+      config,
+      appConfig: api.config,
+      projection,
+      embedding,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+    });
+    const rerank = createMemoryWikiRerankService({
+      config,
+      appConfig: api.config,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+    });
+    api.registerService({ id: "wiki-retrieval-rerank", start: () => rerank.start(), stop: () => rerank.close() });
+    api.registerService({
+      id: "wiki-vector-projection",
+      start: () => vector.start(),
+      stop: () => vector.stop(),
+    });
+    registerMemoryWikiGatewayMethods({
+      api,
+      config,
+      appConfig: api.config,
+      projection,
+      embedding,
+      vector,
+      rerank,
+    });
     api.registerTool(createWikiStatusTool(config, api.config), { name: "wiki_status" });
     api.registerTool(createWikiLintTool(config, api.config), { name: "wiki_lint" });
     if (config.tools.allowAgentApply) {

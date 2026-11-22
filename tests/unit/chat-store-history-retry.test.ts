@@ -50,6 +50,7 @@ vi.mock('@/lib/host-api', () => ({
       }),
       delete: vi.fn(async () => ({ success: true })),
       rename: vi.fn(async () => ({ success: true })),
+      truncate: vi.fn(async () => ({ success: true })),
     },
     chat: {
       sendWithMedia: vi.fn(async () => ({ success: true, result: { runId: 'run-media' } })),
@@ -92,6 +93,63 @@ describe('useChatStore startup history retry', () => {
     await useChatStore.getState().loadHistory(false);
     expect(useChatStore.getState().messages.some(message => message.content === 'Persisted earlier turn')).toBe(true);
     expect(useChatStore.getState().sessionLastActivity[key]).toBe(liveAt);
+  });
+
+  it('binds a knowledge ACK to the exact new turn when the preceding turn has identical text', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { hostApi } = await import('@/lib/host-api');
+    const refs = [{ id: 'source', title: 'Source', lookup: 'source.md', corpus: 'wiki' as const }];
+    vi.mocked(hostApi.chat.sendWithMedia).mockResolvedValue({ success: true, result: { runId: 'new-knowledge-run' } });
+    gatewayRpcMock.mockImplementation(async () => ({}));
+    useChatStore.setState({ currentSessionKey: 'agent:main:main', currentAgentId: 'main',
+      sessions: [{ key: 'agent:main:main' }], sending: false, activeRunId: null, pendingFinal: false,
+      messages: [{ id: 'previous', role: 'user', content: 'same exact question', timestamp: (Date.now()-1000)/1000,
+        _knowledgeRefs: refs, _knowledgeRunId: 'previous-knowledge-run', _knowledgeRequestedCount: 1 }] });
+    await useChatStore.getState().sendMessage('same exact question', { knowledgeScope: 'wiki', knowledgeMode: 'manual', knowledgeReferences: refs });
+    const messages = useChatStore.getState().messages.filter(message => message.role === 'user');
+    expect(messages.find(message => message.id === 'previous')?._knowledgeRunId).toBe('previous-knowledge-run');
+    expect(messages.find(message => message.id !== 'previous')?._knowledgeRunId).toBe('new-knowledge-run');
+  });
+
+  it('drains an ordinary queued turn with its owner references after a final event', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const refs = [{ id: 'source', title: 'Source', lookup: 'source.md', corpus: 'wiki' as const }];
+    const send = vi.fn(async () => {});
+    useChatStore.setState({ currentSessionKey: 'agent:main:main', currentAgentId: 'main',
+      sending: true, activeRunId: 'ending-run', pendingFinal: false, pendingMessages: [],
+      messages: [], sendMessage: send });
+    useChatStore.getState().queuePendingMessage('queued source question', { knowledgeReferences: refs, knowledgeScope: 'wiki' });
+    useChatStore.getState().handleChatEvent({ state: 'final', runId: 'ending-run', sessionKey: 'agent:main:main',
+      message: { role: 'assistant', content: 'First run complete', timestamp: Date.now()/1000 } });
+    await Promise.resolve();
+    expect(send).toHaveBeenCalledWith('queued source question', expect.objectContaining({ knowledgeReferences: refs }));
+    expect(useChatStore.getState().pendingMessages).toEqual([]);
+  });
+
+  it('drains a queued turn after the matching structured runtime terminal event', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const send = vi.fn(async () => {});
+    useChatStore.setState({ currentSessionKey: 'agent:main:main', currentAgentId: 'main',
+      sending: true, activeRunId: 'structured-run', pendingFinal: false, pendingMessages: [], runtimeRuns: {},
+      messages: [], sendMessage: send });
+    useChatStore.getState().queuePendingMessage('structured queued question');
+    useChatStore.getState().handleRuntimeEvent({ type: 'run.ended', runId: 'structured-run', sessionKey: 'agent:main:main',
+      status: 'completed', ts: Date.now(), seq: 1 });
+    await Promise.resolve();
+    expect(send).toHaveBeenCalledWith('structured queued question', expect.any(Object));
+  });
+  it('resends the original owner pins and conflict group after resetting the transcript', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const send = vi.fn(async () => {});
+    const references = [{ id: 'source', title: 'source', lookup: 'source.md', corpus: 'wiki' as const,
+      conflictGroupId: 'known-conflicts', revision: '1', contentDigest: 'sha256:' + 'a'.repeat(64) }];
+    useChatStore.setState({ currentSessionKey: 'agent:main:main', currentAgentId: 'main', sending: false,
+      activeRunId: null, pendingFinal: false, messages: [{ id: 'user-message', role: 'user', content: 'original',
+        _knowledgeRefs: references, _knowledgeScope: 'wiki', _knowledgeMode: 'manual' }], sendMessage: send });
+    await useChatStore.getState().resendUserMessage({ text: 'edited', messageIndex: 0, messageId: 'user-message' });
+    expect(send).toHaveBeenCalledWith('edited', expect.objectContaining({
+      knowledgeReferences: references, knowledgeScope: 'wiki', knowledgeMode: 'manual',
+    }));
   });
 
   it('uses the longer timeout only for the initial foreground history load', async () => {

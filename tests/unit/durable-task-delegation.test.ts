@@ -213,6 +213,16 @@ describe("durable production delegation protocol", () => {
       f.close();
     }
   });
+  it('rejects reservation-backed review after the parent task is cancelled', () => {
+    const f = fixture();
+    try {
+      f.store.control(f.claim, 'cancel');
+      expect(() => capturePersistentTaskDelegationIntent({ ...f.input, observer: true, verifier: true, reviewReservationId: 'reserved-review' }))
+        .toThrow('TASK_REVIEW_RESERVATION_REQUIRED');
+      expect(() => preparePersistentTaskDelegation({ ...f.input, observer: true, verifier: true, reviewReservationId: 'reserved-review' }))
+        .toThrow('TASK_REVIEW_RESERVATION_REQUIRED');
+    } finally { f.close(); }
+  });
   it("gives a verifier a read reference without transferring writer or blocking the parent", () => {
     const f = fixture();
     try {

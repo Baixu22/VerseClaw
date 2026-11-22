@@ -46,6 +46,20 @@ describe('Chinese and bounded long-source retrieval', () => {
 });
 
 describe('content-addressed embedding cache', () => {
+  it('uses the owner-selected Qwen VL model when no model override is set', async () => {
+    vi.stubEnv('SILICONFLOW_API_KEY', 'agent-fixture-default-model');
+    vi.stubEnv('SILICONFLOW_BASE_URL', '');
+    vi.stubEnv('SILICONFLOW_EMBEDDING_MODEL', '');
+    const requestImpl = vi.fn<typeof proxyAwareFetch>(async () => new Response(JSON.stringify({
+      data: [{ index: 0, embedding: [1, 0] }],
+    })));
+    const provider = createSiliconFlowEmbeddingProvider({ requestImpl });
+    await provider.embedQuery('owner-selected embedding model');
+    const [url, init] = requestImpl.mock.calls[0];
+    expect(url).toBe('https://api.siliconflow.cn/v1/embeddings');
+    expect(JSON.parse(String(init?.body)).model).toBe('Qwen/Qwen3-VL-Embedding-8B');
+  });
+
   it('reuses query/document vectors across providers and invalidates content, model, endpoint and credential scope', async () => {
     vi.stubEnv('SILICONFLOW_API_KEY', 'agent-fixture-cache-1');
     vi.stubEnv('SILICONFLOW_EMBEDDING_MODEL', 'agent-cache-model');

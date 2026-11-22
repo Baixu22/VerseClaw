@@ -6,16 +6,18 @@ import type { GatewayRequestContext } from "./types.js";
 /**
  * Active-run matcher used by session list/update methods.
  *
- * It only reports runs visible to the Control UI so background or hidden runs
- * do not make a session look busy to user-facing session operations.
+ * Presentation reads report visible runs. Execution mutations can include
+ * hidden runs and pin the physical generation through the same matcher.
  */
 type TrackedActiveSessionRun = {
   sessionKey: string;
   agentId?: string;
+  sessionId?: string;
 };
 
 function collectTrackedActiveSessionRuns(
   context: Partial<Pick<GatewayRequestContext, "chatAbortControllers">>,
+  options: { includeHidden?: boolean; expectedSessionId?: string } = {},
 ): TrackedActiveSessionRun[] {
   const runs: TrackedActiveSessionRun[] = [];
   if (!(context.chatAbortControllers instanceof Map)) {
@@ -23,14 +25,14 @@ function collectTrackedActiveSessionRuns(
   }
   for (const active of context.chatAbortControllers.values()) {
     if (
-      active.projectSessionActive !== false &&
-      active.controlUiVisible !== false &&
+      (options.includeHidden || (active.projectSessionActive !== false && active.controlUiVisible !== false)) &&
       typeof active.sessionKey === "string" &&
       active.sessionKey.trim()
     ) {
       runs.push({
         sessionKey: active.sessionKey,
         agentId: typeof active.agentId === "string" ? normalizeAgentId(active.agentId) : undefined,
+        sessionId: typeof active.sessionId === "string" ? active.sessionId : undefined,
       });
     }
   }
@@ -59,16 +61,18 @@ function isTrackedActiveSessionRunForKey(
     : false;
 }
 
-/** Returns true when either requested or canonical session key has a visible active run. */
-export function hasTrackedActiveSessionRun(params: {
+/** Matches active runs by canonical/requested key and the requested visibility/generation. */
+export function readTrackedSessionRunState(params: {
   context: Partial<Pick<GatewayRequestContext, "chatAbortControllers">>;
   requestedKey: string;
   canonicalKey: string;
   agentId?: string;
   defaultAgentId?: string;
-}): boolean {
-  const activeRuns = collectTrackedActiveSessionRuns(params.context);
-  return activeRuns.some(
+  includeHidden?: boolean;
+  expectedSessionId?: string;
+}): "active" | "unknown" | "idle" {
+  const activeRuns = collectTrackedActiveSessionRuns(params.context, params);
+  const matches = activeRuns.filter(
     (active) =>
       isTrackedActiveSessionRunForKey(
         active,
@@ -83,4 +87,10 @@ export function hasTrackedActiveSessionRun(params: {
         params.defaultAgentId,
       ),
   );
+  if (params.expectedSessionId && matches.some(active => !active.sessionId)) return "unknown";
+  return matches.some(active => !params.expectedSessionId || active.sessionId === params.expectedSessionId) ? "active" : "idle";
+}
+
+export function hasTrackedActiveSessionRun(params: Parameters<typeof readTrackedSessionRunState>[0]): boolean {
+  return readTrackedSessionRunState(params) !== "idle";
 }

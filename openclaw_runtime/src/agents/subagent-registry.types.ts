@@ -231,10 +231,14 @@ export type SubagentCompletionDeliveryState = {
     | "parent_run_ended"
     | "sink_unavailable"
     | "dedupe"
-    | "waiting_for_requester_turn";
+    | "waiting_for_requester_turn"
+    | "requester_generation_stale"
+    | "requester_owner_retired";
 };
 
 export type SubagentRunRecord = {
+  /** Dispatch identity retained when the registry replaces the execution run. */
+  initialRunId?: string;
   runId: string;
   /** Prepared agent RPC owned by this registry; retained until dispatch is acknowledged. */
   queuedDispatch?: {

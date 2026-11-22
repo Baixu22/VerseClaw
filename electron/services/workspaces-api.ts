@@ -1,4 +1,9 @@
 import { access, realpath, stat } from 'node:fs/promises';
+import { systemProjectOwnerKey } from '@shared/types/system-portfolio';
+import type { WorkspaceId } from '@shared/types/identity-scope';
+import { normalizeSystemControl, type SystemControlChange, type SystemControlState } from '@shared/types/system-control';
+import { getExecutionWorkspaceProfile, getProjectExecutionScope } from './project-execution-scope';
+import type { ConfigurationOperation } from './project-configuration-operator';
 import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
 import { basename, resolve } from 'node:path';
@@ -58,6 +63,7 @@ import {
 type WorkspaceStoreDocument = {
   activeWorkspaceId: string | null;
   profiles: WorkspaceProfile[];
+  systemControl?: SystemControlState;
 };
 
 const workspaceNavigationObservers=new Set<()=>void>();
@@ -75,6 +81,7 @@ function publishWorkspaceNavigation(before:WorkspaceProfile[],after:WorkspacePro
 }
 
 type WorkspaceCreateBody = {
+  activate?: unknown;
   name?: unknown;
   rootPath?: unknown;
   agentId?: unknown;
@@ -330,6 +337,8 @@ function normalizeCoordinatorBindings(
         branch: typeof environment.branch === 'string' ? environment.branch : null,
         detachedHead: environment.detachedHead,
         setupProfile: typeof environment.setupProfile === 'string' ? environment.setupProfile : null,
+        ...(typeof environment.managedWorktreeGeneration === 'string'
+          ? { managedWorktreeGeneration: environment.managedWorktreeGeneration } : {}),
       },
       archiveRestorePolicy: candidate.archiveRestorePolicy,
       state: candidate.state,
@@ -668,6 +677,47 @@ export async function getPersistedCoordinatorBinding(
   const profile = document.profiles.find((candidate) => candidate.id === workspaceId);
   const binding = profile?.coordinatorBindings?.[sessionKey];
   return binding?.workspaceId === workspaceId && binding.sessionKey === sessionKey ? binding : null;
+}
+
+export async function getProjectCoordinatorProfiles(): Promise<WorkspaceProfile[]> {
+  return (await readDocument()).profiles;
+}
+
+export async function readSystemControl(): Promise<SystemControlState> {
+  return normalizeSystemControl((await getWorkspaceStore()).get('systemControl'));
+}
+
+export async function readProjectConfigurationOperations(): Promise<Record<string, ConfigurationOperation>> {
+  return (await getWorkspaceStore()).get('projectConfigurationOperations') ?? {};
+}
+export async function saveProjectConfigurationOperations(operations: Record<string, ConfigurationOperation>): Promise<void> {
+  (await getWorkspaceStore()).set('projectConfigurationOperations', operations);
+}
+export function withProjectConfigurationOwner<T>(workspaceId: string, ownerKey: string, execute: () => Promise<T>): Promise<T> {
+  return withCoordinatorMutationLock(async () => {
+    const profile = (await readDocument()).profiles.find(p => p.id === workspaceId);
+    if (!profile || systemProjectOwnerKey(profile) !== ownerKey) throw new Error('CONFIG_PROJECT_OWNER_CHANGED');
+    return execute();
+  });
+}
+
+async function changeSystemControl(input: SystemControlChange): Promise<SystemControlState> {
+  if (!input || !Number.isSafeInteger(input.expectedRevision) || input.expectedRevision < 0
+    || typeof input.requestId !== 'string' || !input.requestId.trim() || input.requestId.length > 160
+    || typeof input.paused !== 'boolean') throw new Error('SYSTEM_CONTROL_INVALID');
+  const store = await getWorkspaceStore();
+  const current = normalizeSystemControl(store.get('systemControl'));
+  const prior = current.recentRequests.find(request => request.requestId === input.requestId);
+  if (prior) {
+    if (prior.paused !== input.paused) throw new Error('SYSTEM_CONTROL_REQUEST_CONFLICT');
+    return current;
+  }
+  if (current.revision !== input.expectedRevision) throw new Error('SYSTEM_CONTROL_REVISION_CONFLICT');
+  const next: SystemControlState = { revision: current.revision + 1, paused: input.paused,
+    inFlightPolicy: 'settle-admitted-effects', updatedAt: new Date().toISOString(),
+    recentRequests: [...current.recentRequests, { requestId: input.requestId, paused: input.paused }].slice(-128) };
+  store.set('systemControl', next);
+  return next;
 }
 
 export async function readWorkspaceHandoffOperation(input: {
@@ -1017,6 +1067,16 @@ async function resolveCoordinatorEnvironment(
       setupProfile,
     };
   }
+  const { findManagedWorktreeByRoot } = await import('../../openclaw_runtime/src/agents/worktree-registry');
+  const managed = findManagedWorktreeByRoot(rootPath);
+  if (managed?.record.backend === 'inprocess') {
+    const { findManagedWorktree, isManagedWorktreeCurrent } = await import('../../openclaw_runtime/src/agents/worktree-service');
+    const current = findManagedWorktree(rootPath, managed.record.id);
+    if (!isSamePath(managed.baseRoot, profile.rootPath) || !current || !isManagedWorktreeCurrent(current))
+      throw coordinatorError('COORDINATOR_ENVIRONMENT_SCOPE_MISMATCH', 'Managed worktree does not belong to the current project.');
+    return { kind: 'managed-worktree', canonicalRoot: rootPath, backend: 'local-workspace',
+      branch: null, detachedHead: false, setupProfile, managedWorktreeGeneration: current.generation };
+  }
   if (!ctx.gitApi) {
     throw coordinatorError('COORDINATOR_GIT_OWNER_UNAVAILABLE', 'Git owner is unavailable.');
   }
@@ -1060,6 +1120,7 @@ async function validateStoredCoordinatorEnvironment(
       environment.backend !== binding.environment.backend
       || environment.branch !== binding.environment.branch
       || environment.detachedHead !== binding.environment.detachedHead
+      || environment.managedWorktreeGeneration !== binding.environment.managedWorktreeGeneration
     ) {
       return { ok: false, reason: 'environment-generation-changed' };
     }
@@ -1092,6 +1153,31 @@ async function persistCoordinatorBinding(
   });
   await writeDocument(nextDocument, true);
   return persisted!;
+}
+
+const COORDINATOR_WORKSPACE_BINDING_PENDING = 'workspace-binding-pending';
+
+async function activateCoordinatorWorkspaceBinding(
+  ctx: WorkspacesApiContext,
+  binding: WorkspaceCoordinatorBinding,
+): Promise<WorkspaceCoordinatorBinding> {
+  await ctx.gatewayManager!.rpc('sessions.patch', {
+    key: binding.sessionKey, agentId: binding.agentId,
+    workspaceDir: binding.environment.canonicalRoot, expectedSessionId: binding.sessionGeneration,
+  }, 15_000);
+  if (binding.taskLedgerReferences.length === 1) {
+    const { selectManagedSessionTask } = await import('./task-system-service');
+    selectManagedSessionTask({ workspaceRoot: binding.environment.canonicalRoot, sessionKey: binding.sessionKey,
+      generation: binding.sessionGeneration!, taskNodeId: binding.taskLedgerReferences[0].taskLedgerNodeId,
+      requestId: `coordinator-selection:${binding.sessionKey}:${binding.sessionGeneration}:${binding.bindingRevision}` });
+  }
+  return persistCoordinatorBinding(binding.workspaceId, binding.sessionKey, current => {
+    if (!current || current.bindingRevision !== binding.bindingRevision || current.state !== 'paused'
+      || current.invalidationReason !== COORDINATOR_WORKSPACE_BINDING_PENDING || current.sessionGeneration !== binding.sessionGeneration) {
+      throw coordinatorError('COORDINATOR_REVISION_CONFLICT', 'Coordinator binding changed before activation.');
+    }
+    return { ...current, state: 'active', invalidationReason: null, updatedAt: new Date().toISOString() };
+  });
 }
 
 async function markCoordinatorInvalid(
@@ -1188,7 +1274,8 @@ async function resolveCoordinatorBinding(
   if (binding.workspaceId !== input.workspaceId || binding.agentId !== input.agentId || binding.sessionKey !== input.sessionKey) {
     throw coordinatorError('COORDINATOR_SCOPE_MISMATCH', 'Coordinator binding belongs to another workspace, agent, or session.');
   }
-  if (binding.state === 'paused') {
+  const workspaceBindingPending = binding.state === 'paused' && binding.invalidationReason === COORDINATOR_WORKSPACE_BINDING_PENDING;
+  if (binding.state === 'paused' && !workspaceBindingPending) {
     return coordinatorResult(binding, coordinatorRecovery('paused', binding.invalidationReason ?? 'archive-restore-policy', binding));
   }
   if (binding.state === 'invalid') {
@@ -1231,6 +1318,15 @@ async function resolveCoordinatorBinding(
   if (!environment.ok) {
     const invalid = await markCoordinatorInvalid(input.workspaceId, input.sessionKey, environment.reason);
     return coordinatorResult(invalid, coordinatorRecovery('environment-missing', environment.reason, invalid));
+  }
+  if (workspaceBindingPending) {
+    try {
+      await validateCoordinatorTaskReferences(ctx, binding.workspaceId, binding.taskLedgerReferences.map(ref => ref.taskLedgerNodeId));
+      const active = await activateCoordinatorWorkspaceBinding(ctx, binding);
+      return coordinatorResult(active, coordinatorRecovery('ready', null, active));
+    } catch (error) {
+      return coordinatorResult(binding, coordinatorRecovery('unavailable', error instanceof Error ? error.message : 'workspace-binding-unavailable', binding));
+    }
   }
   return coordinatorResult(binding, coordinatorRecovery('ready', null, binding));
 }
@@ -1370,6 +1466,7 @@ async function readTaskScopeRun(ctx: WorkspacesApiContext, input: {
 
 async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTaskEffectRequest): Promise<SessionTaskEffectAdmission> {
   const request = parseSessionTaskEffectRequest(raw);
+  if ((await readSystemControl()).paused) throw new Error('SYSTEM_EXECUTION_PAUSED');
   const live = await readTaskScopeRun(ctx, request);
   if (!live.active || live.currentGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_RUN_STALE');
   const document = await readDocument();
@@ -1386,6 +1483,7 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   });
   if (candidates.length !== 1) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
   const profile = candidates[0];
+  if (profile.permissionMode === 'readOnly' || profile.permissionMode === 'plan') throw new Error('TASK_SCOPE_PERMISSION_REVOKED');
   if (live.scheduled?.coordinator) {
     const scheduled = live.scheduled.coordinator;
     const binding = profile.coordinatorBindings?.[scheduled.sessionKey];
@@ -1546,7 +1644,8 @@ export function createWorkspacesApi(
       if (taskRef.kind !== 'ledger') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
       const document = await readDocument();
       const profile = document.profiles.find((entry) => entry.id === workspaceId);
-      if (!profile || document.activeWorkspaceId !== workspaceId) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
+      const executionWorkspaceId = getProjectExecutionScope() ? (await getExecutionWorkspaceProfile())?.id : document.activeWorkspaceId;
+      if (!profile || executionWorkspaceId !== workspaceId) throw new Error('TASK_SCOPE_WORKSPACE_UNAVAILABLE');
       const associated = profile.activeSessionKey === sessionKey || Object.hasOwn(profile.sessionStates ?? {}, sessionKey)
         || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
         || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey);
@@ -1599,6 +1698,30 @@ export function createWorkspacesApi(
       const document = await ensureDocumentWithDefault();
       return successSnapshot(document);
     },
+    projectSummary: async (payload) => {
+      const { readSystemProject } = await import('./system-portfolio');
+      return readSystemProject(payload, ctx.gatewayManager);
+    },
+    portfolio: async () => ({ scope: 'system', profiles: (await readDocument()).profiles.map(profile => ({
+      id: profile.id as WorkspaceId, name: profile.name, ownerKey: systemProjectOwnerKey(profile),
+    })) }),
+    systemControl: () => readSystemControl(),
+    setSystemControl: payload => withCoordinatorMutationLock(() => changeSystemControl(payload)),
+    previewConfiguration: async payload => {
+      const { createProjectConfigurationOperator } = await import('./project-configuration-operator');
+      return createProjectConfigurationOperator(ctx.gatewayManager).preview(payload);
+    },
+    applyConfiguration: async payload => {
+      const { createProjectConfigurationOperator } = await import('./project-configuration-operator');
+      return createProjectConfigurationOperator(ctx.gatewayManager).apply(payload);
+    },
+    configurationOperation: async ({ requestId }) => (await readProjectConfigurationOperations())[requestId]?.result ?? null,
+    configurationOperations: async ({ workspaceId }) => Object.values(await readProjectConfigurationOperations())
+      .filter(operation => operation.result.workspaceId === workspaceId).map(operation => operation.result),
+    reconcileConfiguration: async payload => {
+      const { createProjectConfigurationOperator } = await import('./project-configuration-operator');
+      return createProjectConfigurationOperator(ctx.gatewayManager).reconcile(payload);
+    },
     getActive: async () => {
       const document = await ensureDocumentWithDefault();
       const snapshot = toSnapshot(document);
@@ -1608,7 +1731,7 @@ export function createWorkspacesApi(
         activeWorkspace: snapshot.activeWorkspace,
       };
     },
-    create: async (payload) => {
+    create: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceCreateBody : {};
       const rootPath = await normalizeRootPath(body.rootPath);
       const name = normalizeName(body.name, rootPath);
@@ -1646,17 +1769,17 @@ export function createWorkspacesApi(
         },
       };
       const nextDocument = {
-        activeWorkspaceId: id,
+        activeWorkspaceId: body.activate === false ? document.activeWorkspaceId : id,
         profiles: [...document.profiles, profile],
       };
       await ensureVerseClawWorkspaceHarness(rootPath);
       await writeDocument(nextDocument);
       ctx.terminalManager?.registerWorkspace(profile);
       ctx.webPreviewManager?.registerWorkspace(profile);
-      await syncWorkspacePermissionBestEffort();
-      return successSnapshot(nextDocument);
-    },
-    update: async (payload) => {
+      if (body.activate !== false) await syncWorkspacePermissionBestEffort();
+      return { ...successSnapshot(nextDocument), createdWorkspace: profile };
+    }),
+    update: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceUpdateBody : {};
       const id = requireId(body.id);
       const document = await readDocument();
@@ -1750,10 +1873,12 @@ export function createWorkspacesApi(
         await syncWorkspacePermissionBestEffort();
       }
       return successSnapshot(nextDocument);
-    },
-    delete: async (payload) => {
+    }),
+    delete: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceIdBody : {};
       const id = requireId(body.id);
+      if (Object.values(await readProjectConfigurationOperations()).some(operation => operation.result.workspaceId === id
+        && ['pending', 'degraded'].includes(operation.result.phase))) throw new Error('CONFIG_RECOVER_BEFORE_PROJECT_DELETE');
       const document = await readDocument();
       const profiles = document.profiles.filter((profile) => profile.id !== id);
       if (profiles.length === document.profiles.length) {
@@ -1781,7 +1906,7 @@ export function createWorkspacesApi(
         await syncWorkspacePermissionBestEffort();
       }
       return successSnapshot(nextDocument);
-    },
+    }),
     // FP-P1-02: preflight a directory before accepting it as the workspace.
     preflight: async (payload) => {
       const body = isRecord(payload) ? payload as { rootPath?: unknown } : {};
@@ -1814,7 +1939,7 @@ export function createWorkspacesApi(
         };
       }
     },
-    switch: async (payload) => {
+    switch: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceIdBody : {};
       const id = requireId(body.id);
       const document = await readDocument();
@@ -1839,8 +1964,8 @@ export function createWorkspacesApi(
         activeWorkspaceId: id,
         activeWorkspace,
       };
-    },
-    saveState: async (payload) => {
+    }),
+    saveState: (payload) => withCoordinatorMutationLock(async () => {
       const body = isRecord(payload) ? payload as WorkspaceSaveStateBody : {};
       const id = requireId(body.id);
       const document = await readDocument();
@@ -1884,7 +2009,7 @@ export function createWorkspacesApi(
       };
       await writeDocument({ ...document, profiles });
       return { success: true };
-    },
+    }),
     createFolder: async (payload) => {
       const body = isRecord(payload) ? payload as WorkspaceFolderCreateBody : {};
       const workspaceId = requireId(body.workspaceId);
@@ -2024,7 +2149,9 @@ export function createWorkspacesApi(
         throw coordinatorError('COORDINATOR_SESSION_SCOPE_MISMATCH', 'The selected session is not the Workspace/Assistant main session.');
       }
       const existing = profile.coordinatorBindings?.[input.sessionKey];
-      if (existing && input.expectedRevision !== existing.bindingRevision) {
+      const workspaceBindingPending = existing?.state === 'paused' && existing.invalidationReason === COORDINATOR_WORKSPACE_BINDING_PENDING;
+      if (existing && input.expectedRevision !== existing.bindingRevision
+        && !(workspaceBindingPending && input.expectedRevision === existing.bindingRevision - 1)) {
         throw coordinatorError('COORDINATOR_REVISION_CONFLICT', `Expected revision ${input.expectedRevision ?? 'missing'} but found ${existing.bindingRevision}.`);
       }
       if (!existing && input.expectedRevision !== undefined && input.expectedRevision !== 0) {
@@ -2037,6 +2164,18 @@ export function createWorkspacesApi(
         input.taskLedgerNodeIds,
       );
       const environment = await resolveCoordinatorEnvironment(ctx, profile, input.environment);
+      if (workspaceBindingPending) {
+        if (existing!.sessionGeneration !== session.sessionId) {
+          throw coordinatorError('COORDINATOR_SESSION_SCOPE_MISMATCH', 'The pending binding belongs to another session generation.');
+        }
+        if (JSON.stringify(existing!.taskLedgerReferences) !== JSON.stringify(taskLedgerReferences)
+          || JSON.stringify(existing!.environment) !== JSON.stringify(environment)
+          || existing!.archiveRestorePolicy !== input.archiveRestorePolicy) {
+          throw coordinatorError('COORDINATOR_REVISION_CONFLICT', 'A pending binding must be recovered before replacing its intent.');
+        }
+        const active = await activateCoordinatorWorkspaceBinding(ctx, existing!);
+        return coordinatorResult(active, coordinatorRecovery('ready', null, active));
+      }
       const environmentChanged = Boolean(existing) && (
         existing!.environment.kind !== environment.kind
         || !isSamePath(existing!.environment.canonicalRoot, environment.canonicalRoot)
@@ -2057,12 +2196,6 @@ export function createWorkspacesApi(
         if (!writer.quiescent) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
       }
       const now = new Date().toISOString();
-      if (taskLedgerReferences.length === 1) {
-        const { selectManagedSessionTask } = await import('./task-system-service');
-        selectManagedSessionTask({ workspaceRoot: environment.canonicalRoot, sessionKey: input.sessionKey,
-          generation: session.sessionId, taskNodeId: taskLedgerReferences[0].taskLedgerNodeId,
-          requestId: `coordinator-selection:${input.sessionKey}:${session.sessionId}:${(existing?.bindingRevision ?? 0) + 1}` });
-      }
       const binding: WorkspaceCoordinatorBinding = {
         schemaVersion: 1,
         workspaceId: input.workspaceId,
@@ -2074,23 +2207,22 @@ export function createWorkspacesApi(
         ...(!environmentChanged && !tasksChanged && existing?.writerClaim ? { writerClaim: existing.writerClaim } : {}),
         environment,
         archiveRestorePolicy: input.archiveRestorePolicy,
-        state: 'active',
+        state: 'paused',
         bindingRevision: (existing?.bindingRevision ?? 0) + 1,
-        invalidationReason: null,
+        invalidationReason: COORDINATOR_WORKSPACE_BINDING_PENDING,
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
       };
-      const nextDocument = updateWorkspaceProfile(document, input.workspaceId, (current) => ({
-        ...current,
-        projectCoordinatorSessionKey: current.projectCoordinatorSessionKey ?? input.sessionKey,
-        coordinatorBindings: {
-          ...(current.coordinatorBindings ?? {}),
-          [input.sessionKey]: binding,
-        },
-        updatedAt: Date.now(),
-      }));
-      await writeDocument(nextDocument, true);
-      return coordinatorResult(binding, coordinatorRecovery('ready', null, binding));
+      // Persist the intent before changing Runtime or task references. A failed
+      // acknowledgement/activation leaves this same revision recoverable.
+      const pending = await persistCoordinatorBinding(input.workspaceId, input.sessionKey, current => {
+        if ((current?.bindingRevision ?? 0) !== (existing?.bindingRevision ?? 0)) {
+          throw coordinatorError('COORDINATOR_REVISION_CONFLICT', 'Coordinator binding changed before intent commit.');
+        }
+        return binding;
+      }, true);
+      const active = await activateCoordinatorWorkspaceBinding(ctx, pending);
+      return coordinatorResult(active, coordinatorRecovery('ready', null, active));
     }),
     resolveCoordinator: (payload) => withCoordinatorMutationLock(() => resolveCoordinatorBinding(ctx, payload)),
     pauseCoordinator: (payload) => withCoordinatorMutationLock(async () => {

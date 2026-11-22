@@ -1,0 +1,701 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex/tf0675-evidence-verifier",
+  "sourceCandidate": "95b7e3c247540a9136f4abf0921787d1fa8b941b",
+  "provider": "local-scripted",
+  "realHumanEvidence": false,
+  "node": "TF-0675",
+  "verifiedAt": "2026-11-18T10:08:56.275233+00:00",
+  "verdict": "pass",
+  "counts": {
+    "unitTotal": 92,
+    "unitPassed": 92,
+    "unitSkipped": 0,
+    "planningUnitCases": 6,
+    "electronPassed": 1,
+    "electronSkipped": 0,
+    "gatesPassed": 14
+  },
+  "acceptance": [
+    {
+      "criterion": "Persist a natural-language goal, tasks, dependencies, verification and next action",
+      "status": "pass",
+      "artifact": "harness/specs/fixtures/autonomous-project-system/p1/goal-plan-revisions.json"
+    },
+    {
+      "criterion": "Retain assumptions and pending scope decisions; isolate revision evidence",
+      "status": "pass",
+      "artifact": "harness/specs/fixtures/autonomous-project-system/p1/assumption-decisions.json"
+    },
+    {
+      "criterion": "Read plan versions from the same Task owner after project navigation",
+      "status": "pass",
+      "artifact": "harness/specs/fixtures/autonomous-project-system/p1/task-graph-refs.json"
+    },
+    {
+      "criterion": "Reject conflicting retries, stale identity, foreign scopes, unsettled/recursive plans, cycles and confirmed assumption objects",
+      "status": "pass",
+      "tests": [
+        {
+          "name": "project coordinator planning takes planning scope from the Workspace owner and fences stale Runtime calls",
+          "status": "passed"
+        },
+        {
+          "name": "project coordinator planning persists the plan, provisional facts and dependencies across reopen and idempotent retries",
+          "status": "passed"
+        },
+        {
+          "name": "project coordinator planning keeps settled tasks and evidence when replacing a revision without recycling child identities",
+          "status": "passed"
+        },
+        {
+          "name": "project coordinator planning rolls back cyclic, missing and foreign dependencies without leaving any tasks",
+          "status": "passed"
+        },
+        {
+          "name": "project coordinator planning uses the Workspace owner binding and rejects another checkout, generation or duplicate coordinator",
+          "status": "passed"
+        },
+        {
+          "name": "session bridge consumes the persistent task owner reads project plans only through the current Workspace coordinator binding",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "criterion": "Read candidate-bound command, configuration, actor and artifact evidence from disk",
+      "status": "pass",
+      "artifactCount": 21
+    }
+  ],
+  "sourceInputs": {
+    "driven_by": "agent",
+    "actor": "codex/tf0675-source-verifier",
+    "candidate": "95b7e3c247540a9136f4abf0921787d1fa8b941b",
+    "tree": "55ed77323b071154ea22ff76ba25ed8fe307f060",
+    "root": "D:\\ClawX-work\\tf0675-source-check-20261118-01a1ed85",
+    "sourceFiles": [
+      {
+        "path": ".gitignore",
+        "gitBlob": "57109e41054bc02745a2944db71d989dca27b18e",
+        "gitBlobSha256": "108a634aa3570257efdf775efa8c1a382ea8d97ca42a74d5bfd64796ad1ee6b4",
+        "workingSha256": "108a634aa3570257efdf775efa8c1a382ea8d97ca42a74d5bfd64796ad1ee6b4"
+      },
+      {
+        "path": "README.ja-JP.md",
+        "gitBlob": "45bb8fd05dcbf51d26cd0e501e9930460ecaee15",
+        "gitBlobSha256": "72301e9f606094246b41b995dfcbf37d3b849bb63ede63f499064c4253725b6e",
+        "workingSha256": "72301e9f606094246b41b995dfcbf37d3b849bb63ede63f499064c4253725b6e"
+      },
+      {
+        "path": "README.md",
+        "gitBlob": "e1174a4e18404c0b68f18c90cb8e8e2b08b393de",
+        "gitBlobSha256": "11710154253e92441cbce46f6f7fa628e3810c63054e6cc4ae23add2d18311dd",
+        "workingSha256": "11710154253e92441cbce46f6f7fa628e3810c63054e6cc4ae23add2d18311dd"
+      },
+      {
+        "path": "README.ru-RU.md",
+        "gitBlob": "f7fb4acbb2a1142e12f98a027b79981e6d6d87d6",
+        "gitBlobSha256": "38d0f58b64485744c49c02a972febb651e6a7e326f2c716bb74d9fab4d0eddb8",
+        "workingSha256": "38d0f58b64485744c49c02a972febb651e6a7e326f2c716bb74d9fab4d0eddb8"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "gitBlob": "adb2ae82dd0ea01ec2d22b7dc326f1dc073ac2b7",
+        "gitBlobSha256": "7660793fe7d4871533609baeb8e74a94ce974c249303550b2f98a6af42ef4f1a",
+        "workingSha256": "7660793fe7d4871533609baeb8e74a94ce974c249303550b2f98a6af42ef4f1a"
+      },
+      {
+        "path": "docs/modules/multi-agent-and-tasks.md",
+        "gitBlob": "c6e2991b938c0284c6a59081ef83b5cade0ad978",
+        "gitBlobSha256": "0705d9377c7eedf7ecfb7672fcdb10da650e55f7481580f68132198a89d1ec41",
+        "workingSha256": "0705d9377c7eedf7ecfb7672fcdb10da650e55f7481580f68132198a89d1ec41"
+      },
+      {
+        "path": "electron/gateway/process-launcher.ts",
+        "gitBlob": "2e93afd702d789c2954cdf41230d193a4d2b8404",
+        "gitBlobSha256": "ee9afb7d0ba9c1696c2880225cfb969850b840948b4de9decc7989db20f9b37b",
+        "workingSha256": "ee9afb7d0ba9c1696c2880225cfb969850b840948b4de9decc7989db20f9b37b"
+      },
+      {
+        "path": "electron/services/task-ledger-api.ts",
+        "gitBlob": "e1178a1fcc1d71b87a0d5fafbd02858b1a7b0d9f",
+        "gitBlobSha256": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972",
+        "workingSha256": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972"
+      },
+      {
+        "path": "electron/services/task-system-service.ts",
+        "gitBlob": "aaa8b74d35b8f6e9883b4cb3474f104072bc925b",
+        "gitBlobSha256": "988acf39dce44011f3b92e7f0924a2a62bb9a01b578ad7c70728b7d1dfa8189d",
+        "workingSha256": "988acf39dce44011f3b92e7f0924a2a62bb9a01b578ad7c70728b7d1dfa8189d"
+      },
+      {
+        "path": "electron/services/workspaces-api.ts",
+        "gitBlob": "edefed3158727b35033106875b43f63896a7a318",
+        "gitBlobSha256": "5a21a881cf648b858f71ab258f6ac00fcee674576a6580dad228f8f3816b6523",
+        "workingSha256": "5a21a881cf648b858f71ab258f6ac00fcee674576a6580dad228f8f3816b6523"
+      },
+      {
+        "path": "harness/specs/rules/durable-task-system-boundary.md",
+        "gitBlob": "3f2fe0de3cf66cafc5ab3174d149a38af6d3bbcf",
+        "gitBlobSha256": "c149498b405775f0e0aaa2e3417fc2976a3408b733d1d3fffc1f7e1cb2df19a7",
+        "workingSha256": "c149498b405775f0e0aaa2e3417fc2976a3408b733d1d3fffc1f7e1cb2df19a7"
+      },
+      {
+        "path": "harness/specs/scenarios/autonomy-session-task-scope.md",
+        "gitBlob": "05b6edee99b9ae709e2e4f627edf9ce5c5bd18b4",
+        "gitBlobSha256": "51b08dc1b8d0082664f2a17e74c7428be860cde1f4194546792bfa4d22c904f0",
+        "workingSha256": "51b08dc1b8d0082664f2a17e74c7428be860cde1f4194546792bfa4d22c904f0"
+      },
+      {
+        "path": "harness/specs/tasks/project-coordinator-planning.md",
+        "gitBlob": "883b58efb7ab153106836738a2526f9f6227fac8",
+        "gitBlobSha256": "a91a4d7f0c089bcb29c64352640ab4ee1626fdc594f0633e314e9cf238d59645",
+        "workingSha256": "a91a4d7f0c089bcb29c64352640ab4ee1626fdc594f0633e314e9cf238d59645"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+        "gitBlob": "9df280c777067e03d90ea9eafe85bfdbf5d3f18c",
+        "gitBlobSha256": "0b9fd52e06f9d87bf9621ed4109e692875d9fccc1c784f1dcc3d36b974432bac",
+        "workingSha256": "0b9fd52e06f9d87bf9621ed4109e692875d9fccc1c784f1dcc3d36b974432bac"
+      },
+      {
+        "path": "openclaw_runtime/src/config/sessions/store.ts",
+        "gitBlob": "6f46bf50ddf985ff6565594f8cad2e03741723b8",
+        "gitBlobSha256": "c4c111ce318baa2946fc0803acf2b754f99f06eea2b82a01008fa5235f00b0d2",
+        "workingSha256": "c4c111ce318baa2946fc0803acf2b754f99f06eea2b82a01008fa5235f00b0d2"
+      },
+      {
+        "path": "package.json",
+        "gitBlob": "140029ad9b6b0a743f2105d487d3d8f5057c3aac",
+        "gitBlobSha256": "07ec23b416fb92c5c3a9d311dbcf71719e6e3670dc8f1370979a151c5a32df16",
+        "workingSha256": "07ec23b416fb92c5c3a9d311dbcf71719e6e3670dc8f1370979a151c5a32df16"
+      },
+      {
+        "path": "playwright.config.ts",
+        "gitBlob": "f2067243aa805b501f08f1ec073662cead094297",
+        "gitBlobSha256": "2cd607585ca31082af882c3a55f4edb11842c4a81e275f391dc7773c949ee804",
+        "workingSha256": "2cd607585ca31082af882c3a55f4edb11842c4a81e275f391dc7773c949ee804"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "gitBlob": "9d12d14da0ebf42aef8690dab96cb2dcbec33a57",
+        "gitBlobSha256": "9a36ae57be4028d929b42b1461c67f3913fccdfb8e30c0bfe24b9379afab1ac4",
+        "workingSha256": "9a36ae57be4028d929b42b1461c67f3913fccdfb8e30c0bfe24b9379afab1ac4"
+      },
+      {
+        "path": "pnpm-workspace.yaml",
+        "gitBlob": "9bf4bd14f3786b32dbfed43b3118386ea81f19fa",
+        "gitBlobSha256": "1a7fadfbf22ef3baa94e402e70a4e6b367c40ff4ba428e1da5c175dca1e79bd9",
+        "workingSha256": "1a7fadfbf22ef3baa94e402e70a4e6b367c40ff4ba428e1da5c175dca1e79bd9"
+      },
+      {
+        "path": "scripts/build-openclaw-runtime.mjs",
+        "gitBlob": "d7fe8bc360c07e4c63977cbe708a69b46165b213",
+        "gitBlobSha256": "71779440d206fa034527019444b8aebe8a614ecc436fb3ba49c9125c04048a5b",
+        "workingSha256": "71779440d206fa034527019444b8aebe8a614ecc436fb3ba49c9125c04048a5b"
+      },
+      {
+        "path": "scripts/repository-artifacts.json",
+        "gitBlob": "e0acc0074ae9e36f9d011c8ebc3d01d9c64a9e9c",
+        "gitBlobSha256": "5b3ad247715596312ce52a670758108002f746323d5b51f7d648b1f2c9e42ae5",
+        "workingSha256": "5b3ad247715596312ce52a670758108002f746323d5b51f7d648b1f2c9e42ae5"
+      },
+      {
+        "path": "shared/host-api/contract.ts",
+        "gitBlob": "76585e30a23109ef7de72de0e2a87ac422579c8c",
+        "gitBlobSha256": "7c6c08d707ee828764ee13bd2d2701dcf607cd23410b0f1c54e97cf75f868238",
+        "workingSha256": "7c6c08d707ee828764ee13bd2d2701dcf607cd23410b0f1c54e97cf75f868238"
+      },
+      {
+        "path": "shared/i18n/locales/en/taskLedger.json",
+        "gitBlob": "5f014d2a713b6b844e410bcc0787be18fb5c8ddd",
+        "gitBlobSha256": "abb6e4f11a07b26e837ea149fa69dd69a9a1d657a4bb7e064cf040f87840d13d",
+        "workingSha256": "abb6e4f11a07b26e837ea149fa69dd69a9a1d657a4bb7e064cf040f87840d13d"
+      },
+      {
+        "path": "shared/i18n/locales/ja/taskLedger.json",
+        "gitBlob": "db257f3655300e7f1fbc8fb2e8ef60f70b385c03",
+        "gitBlobSha256": "5e9b2f688b10f3b23ac168a45bd1faae43196b60892bb95cc75b7bc6a8264170",
+        "workingSha256": "5e9b2f688b10f3b23ac168a45bd1faae43196b60892bb95cc75b7bc6a8264170"
+      },
+      {
+        "path": "shared/i18n/locales/ru/taskLedger.json",
+        "gitBlob": "7a0b88f80e34aecc98f37e5f50c231fbbdf9bb5e",
+        "gitBlobSha256": "0aefa36fa201c790abdd57fcd607a058211ed70baaf2dc9fda9cb947ccce7270",
+        "workingSha256": "0aefa36fa201c790abdd57fcd607a058211ed70baaf2dc9fda9cb947ccce7270"
+      },
+      {
+        "path": "shared/i18n/locales/zh/taskLedger.json",
+        "gitBlob": "18aea15f3254dafaed0d49bb8742810a4c866144",
+        "gitBlobSha256": "23b9e5ee7cf3e0deb642bb008b4ec8be6adb48b3c5314f0a6d2567489701d743",
+        "workingSha256": "23b9e5ee7cf3e0deb642bb008b4ec8be6adb48b3c5314f0a6d2567489701d743"
+      },
+      {
+        "path": "shared/task-system/project-coordinator.ts",
+        "gitBlob": "215e2837dbd0748ca3851984d27aa1d84520115f",
+        "gitBlobSha256": "91b73a61bf8033be28b3dd446bd5f5e8dc5b49cad36d2096d4cd911b5efde56d",
+        "workingSha256": "91b73a61bf8033be28b3dd446bd5f5e8dc5b49cad36d2096d4cd911b5efde56d"
+      },
+      {
+        "path": "shared/task-system/store.ts",
+        "gitBlob": "34684d60e98ba25df3d5de4c683a0c9deee6080b",
+        "gitBlobSha256": "91938772a5adac197dd3a7dbb075e047d49dda474a7e0fbdb505b5d18a36bf74",
+        "workingSha256": "91938772a5adac197dd3a7dbb075e047d49dda474a7e0fbdb505b5d18a36bf74"
+      },
+      {
+        "path": "shared/task-system/types.ts",
+        "gitBlob": "e4659e53ef690486f89f794484873716d7e7c237",
+        "gitBlobSha256": "752f778a9b0d1136322fc639abd95b29c450a5dccae698b0056aed1a03a7e9a7",
+        "workingSha256": "752f778a9b0d1136322fc639abd95b29c450a5dccae698b0056aed1a03a7e9a7"
+      },
+      {
+        "path": "shared/types/identity-scope.ts",
+        "gitBlob": "0cd6be8ac86fd1e6c0b144c83ce7e388d8b738d6",
+        "gitBlobSha256": "5187ad04b0e214c1d225a16b40e852becc2163f7019812b44fa82fa2926a7ae2",
+        "workingSha256": "5187ad04b0e214c1d225a16b40e852becc2163f7019812b44fa82fa2926a7ae2"
+      },
+      {
+        "path": "shared/types/workspace.ts",
+        "gitBlob": "b460a43a72db62fc871ea23316ce361ffb588e5e",
+        "gitBlobSha256": "e6742fe457173e07b206e39b7784e83616537aee4b4248d7eb1144d55bc5a080",
+        "workingSha256": "e6742fe457173e07b206e39b7784e83616537aee4b4248d7eb1144d55bc5a080"
+      },
+      {
+        "path": "src/pages/Chat/SessionTaskDock.tsx",
+        "gitBlob": "48869e3cec296f02fe5c2741005f67f7687efb4c",
+        "gitBlobSha256": "21cafa6fbbc7c663afe9b1e3c85363284e54e6f871ccce26a1d85f1873efde2f",
+        "workingSha256": "21cafa6fbbc7c663afe9b1e3c85363284e54e6f871ccce26a1d85f1873efde2f"
+      },
+      {
+        "path": "src/pages/Chat/index.tsx",
+        "gitBlob": "6922368734dc6f9b3430bcf0cffa5fa5167606f4",
+        "gitBlobSha256": "9d2731d3dc4f2b4fdaa3df990a3cb2599ac2f6d608ee639efc3b290fbe2f7b65",
+        "workingSha256": "9d2731d3dc4f2b4fdaa3df990a3cb2599ac2f6d608ee639efc3b290fbe2f7b65"
+      },
+      {
+        "path": "tests/e2e/fixtures/electron.ts",
+        "gitBlob": "0b670017e9d7ea3c7416781dbe08dfc3664457a9",
+        "gitBlobSha256": "dccbb072a7887929b99b2a52722f68a49944d4c456ba22e2ca04e0923cfdfc33",
+        "workingSha256": "dccbb072a7887929b99b2a52722f68a49944d4c456ba22e2ca04e0923cfdfc33"
+      },
+      {
+        "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+        "gitBlob": "74fd604098341f3e8a1d6a8e8a1b8645cf3d218a",
+        "gitBlobSha256": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+        "workingSha256": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14"
+      },
+      {
+        "path": "tests/e2e/fixtures/session-task-chain.ts",
+        "gitBlob": "7180651c6e1b02bec74a8501a059bd1a9ac07aff",
+        "gitBlobSha256": "b21dac03bffdb3593695f1ea3bf16ec342f9da0c41b3a365c0f375264a4f942e",
+        "workingSha256": "b21dac03bffdb3593695f1ea3bf16ec342f9da0c41b3a365c0f375264a4f942e"
+      },
+      {
+        "path": "tests/e2e/project-agent-loop.spec.ts",
+        "gitBlob": "07482fb903d23dea2df2f4c2bf948924e7d953bb",
+        "gitBlobSha256": "b551d60a1b6ccd3ff8e457bdd551d7c6c1190ea96df200a034cf1a6cebdeb3df",
+        "workingSha256": "b551d60a1b6ccd3ff8e457bdd551d7c6c1190ea96df200a034cf1a6cebdeb3df"
+      },
+      {
+        "path": "tests/unit/durable-task-project-planning.test.ts",
+        "gitBlob": "b05e4c9b564d604b803f5983b660f8dda52b9c08",
+        "gitBlobSha256": "e82bbe2840d1047b015b921769d03d97e33ad1274ccd7a0c0bd605c9a7d56a80",
+        "workingSha256": "e82bbe2840d1047b015b921769d03d97e33ad1274ccd7a0c0bd605c9a7d56a80"
+      },
+      {
+        "path": "tests/unit/durable-task-session-scope.test.ts",
+        "gitBlob": "a61759e8fa7443262f370232536fb588ab68b8be",
+        "gitBlobSha256": "46f4aa550bd1db1e61f1da12db8d6ad3e7bfa158e22f062ef59d01bb38ce6af8",
+        "workingSha256": "46f4aa550bd1db1e61f1da12db8d6ad3e7bfa158e22f062ef59d01bb38ce6af8"
+      },
+      {
+        "path": "tests/unit/durable-task-start.test.ts",
+        "gitBlob": "ad603b517f37258db47a666413c0e5166fe5b42b",
+        "gitBlobSha256": "1fd63d12e8c54e16e2404f3854ae44546655a595d312dda0e36c21093f7c69c8",
+        "workingSha256": "1fd63d12e8c54e16e2404f3854ae44546655a595d312dda0e36c21093f7c69c8"
+      },
+      {
+        "path": "tsconfig.node.json",
+        "gitBlob": "2e71a0531c025775e4edc002d7c8dc903d2ea4d8",
+        "gitBlobSha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324",
+        "workingSha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324"
+      },
+      {
+        "path": "tsconfig.test.json",
+        "gitBlob": "0a3dd43b648810eb74ae0b00da02404d636076a3",
+        "gitBlobSha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d",
+        "workingSha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d"
+      },
+      {
+        "path": "tsconfig.web.json",
+        "gitBlob": "17cffca9f1a732f226722e599291600a9a377f65",
+        "gitBlobSha256": "6f7f149dcc5f75bea4955a81a49c38a949825403e37be5fdb7917fe9cca15bbd",
+        "workingSha256": "6f7f149dcc5f75bea4955a81a49c38a949825403e37be5fdb7917fe9cca15bbd"
+      },
+      {
+        "path": "vite.config.ts",
+        "gitBlob": "5be166879c11bed77fe9b392bb728356ec8d3502",
+        "gitBlobSha256": "098fabf9b6508810bfc0b4396485e420697d4c1f73ca9a42bb6102fa688f1bb6",
+        "workingSha256": "098fabf9b6508810bfc0b4396485e420697d4c1f73ca9a42bb6102fa688f1bb6"
+      },
+      {
+        "path": "vitest.task-system.config.ts",
+        "gitBlob": "4edb5f2e0e1fdb00e25917194ea3ec8c2f5ed862",
+        "gitBlobSha256": "a0401b337b78e43f480043a6142b2104e4eccee1f6e5832406bf85146a7e1a2b",
+        "workingSha256": "a0401b337b78e43f480043a6142b2104e4eccee1f6e5832406bf85146a7e1a2b"
+      }
+    ],
+    "dependencyReuse": [
+      {
+        "target": "D:\\ClawX-work\\unified-architecture-relay-20261112-01a1ce4c\\node_modules",
+        "path": "node_modules",
+        "kind": "Junction"
+      },
+      {
+        "target": "D:\\ClawX-work\\unified-architecture-relay-20261112-01a1ce4c\\openclaw_runtime\\node_modules",
+        "path": "openclaw_runtime/node_modules",
+        "kind": "Junction"
+      },
+      {
+        "target": "D:\\ClawX-work\\g5-test-review-20261118\\packages\\versebrowser\\node_modules",
+        "path": "packages/versebrowser/node_modules",
+        "kind": "Junction"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "id": "runtime-build",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "build:runtime"
+      ],
+      "startedAt": "2026-11-18T09:59:21.464244+00:00",
+      "finishedAt": "2026-11-18T09:59:59.278931+00:00",
+      "durationMs": 37828,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\runtime-build.log"
+    },
+    {
+      "id": "vite-build",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "build:vite"
+      ],
+      "startedAt": "2026-11-18T09:59:59.279814+00:00",
+      "finishedAt": "2026-11-18T10:00:55.732749+00:00",
+      "durationMs": 56453,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\vite-build.log"
+    },
+    {
+      "id": "unit",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.task-system.config.ts",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\unit.json"
+      ],
+      "startedAt": "2026-11-18T10:00:55.733263+00:00",
+      "finishedAt": "2026-11-18T10:01:11.038517+00:00",
+      "durationMs": 15297,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\unit.log"
+    },
+    {
+      "id": "typecheck",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-11-18T10:01:11.038517+00:00",
+      "finishedAt": "2026-11-18T10:01:32.064000+00:00",
+      "durationMs": 21031,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\typecheck.log"
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "contract:check"
+      ],
+      "startedAt": "2026-11-18T10:01:32.064000+00:00",
+      "finishedAt": "2026-11-18T10:01:34.418163+00:00",
+      "durationMs": 2344,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\contract.log"
+    },
+    {
+      "id": "i18n",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "i18n:lint"
+      ],
+      "startedAt": "2026-11-18T10:01:34.418163+00:00",
+      "finishedAt": "2026-11-18T10:01:35.514552+00:00",
+      "durationMs": 1109,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\i18n.log"
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "comms:replay"
+      ],
+      "startedAt": "2026-11-18T10:01:35.514552+00:00",
+      "finishedAt": "2026-11-18T10:01:36.492165+00:00",
+      "durationMs": 969,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\comms-replay.log"
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "comms:compare"
+      ],
+      "startedAt": "2026-11-18T10:01:36.493168+00:00",
+      "finishedAt": "2026-11-18T10:01:37.356454+00:00",
+      "durationMs": 859,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\comms-compare.log"
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-coordinator-planning.md"
+      ],
+      "startedAt": "2026-11-18T10:01:37.357491+00:00",
+      "finishedAt": "2026-11-18T10:01:39.308982+00:00",
+      "durationMs": 1937,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\harness-validate.log"
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-coordinator-planning.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-18T10:01:39.310019+00:00",
+      "finishedAt": "2026-11-18T10:01:41.118102+00:00",
+      "durationMs": 1797,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\harness-dry-run.log"
+    },
+    {
+      "id": "lint",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "exec",
+        "eslint",
+        "electron/gateway/process-launcher.ts",
+        "electron/services/task-system-service.ts",
+        "electron/services/workspaces-api.ts",
+        "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+        "shared/task-system/project-coordinator.ts",
+        "shared/task-system/store.ts",
+        "shared/task-system/types.ts",
+        "src/pages/Chat/SessionTaskDock.tsx",
+        "src/pages/Chat/index.tsx",
+        "tests/e2e/project-agent-loop.spec.ts",
+        "tests/unit/durable-task-project-planning.test.ts",
+        "tests/unit/durable-task-session-scope.test.ts",
+        "tests/unit/durable-task-start.test.ts"
+      ],
+      "startedAt": "2026-11-18T10:01:41.120547+00:00",
+      "finishedAt": "2026-11-18T10:01:47.105817+00:00",
+      "durationMs": 5984,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\lint.log"
+    },
+    {
+      "id": "e2e",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/project-agent-loop.spec.ts",
+        "--workers=1",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e"
+      ],
+      "startedAt": "2026-11-18T10:01:47.106988+00:00",
+      "finishedAt": "2026-11-18T10:04:20.656123+00:00",
+      "durationMs": 153547,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e.log"
+    },
+    {
+      "id": "harness-ci",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "harness:ci"
+      ],
+      "startedAt": "2026-11-18T10:04:20.657149+00:00",
+      "finishedAt": "2026-11-18T10:04:46.672318+00:00",
+      "durationMs": 26015,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\harness-ci.log"
+    },
+    {
+      "id": "repository-artifacts",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "repo:artifacts:check"
+      ],
+      "startedAt": "2026-11-18T10:04:46.672318+00:00",
+      "finishedAt": "2026-11-18T10:04:50.248149+00:00",
+      "durationMs": 3578,
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\repository-artifacts.log"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "harness/specs/fixtures/autonomous-project-system/p1/goal-plan-revisions.json",
+      "sha256": "66c457beb3297371dccdd5ed77075b2288fd900ea33afd12c5d03e0c41582c95"
+    },
+    {
+      "file": "harness/specs/fixtures/autonomous-project-system/p1/task-graph-refs.json",
+      "sha256": "4a83e486c191297d65ba4f9c2555d482cbc8fd0b723124469c5e6c4ff1870871"
+    },
+    {
+      "file": "harness/specs/fixtures/autonomous-project-system/p1/assumption-decisions.json",
+      "sha256": "76d89b7e504ab1b42f5c45625bc05115b084f0d5a36fb625aa51112dff908c8c"
+    }
+  ],
+  "rawRetained": [
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\unit.json",
+      "sha256": "bb5384cfef2fb6a09d53677a32df3b376cd1e3c1c29d5bec714bc755082f00b7"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e.json",
+      "sha256": "66031bb25b47ee25ecc4ba0a78378cb189400fe47f0d96f8607d745df5de6ba7"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\source-inputs.json",
+      "sha256": "8ce44acdebeab16715076398a68bc602b221d44b72b2ecd834e4af1e81fd41fb"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\receipts.json",
+      "sha256": "4996ce32f0fb408a12a2953a7ad4ccd15a13bd264d5110a0ec24cbb67a31ae00"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e\\project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan\\project-plan-readback.json",
+      "sha256": "c770fe504611b986f79e1e905b4b4854160f8a784f03e8e1442cfe6890ed4b26"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e\\project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan\\provider-log.json",
+      "sha256": "6d0012b9c54483fc1699aba5aed7b3d2fe7ee0ad6419a487d52cc20c870fc9d2"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e\\project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan\\cleanup.json",
+      "sha256": "35935b4ce0c63bb3e33ce0bc72e3de11b6608e1a2fd4c4ad150bac758dc0381c"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\runtime-build.log",
+      "sha256": "4ce35510e22719b9282caaef086defc9ab7fa4cb1401cbf4f6ee9717d4b6d3bf"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\vite-build.log",
+      "sha256": "7d0dc039c37ea62d9c6be95c7327cb845138356abd12c3e349e3ab465d19d469"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\unit.log",
+      "sha256": "367fcecdc0a446817689cb66987d0374e4105e6c1372ca7071a16d0979c075ad"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\typecheck.log",
+      "sha256": "3b8e5b9d8dcd0bc4b19715be143084ae4581657ac1fd2b69350be3eea5f17fe6"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\contract.log",
+      "sha256": "7c99a45dcfec484626ba09c65cc2657d5b52d674f1abeb979073a0a2d7ffaa0d"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\i18n.log",
+      "sha256": "514dfdd588206367585da81fd97c18a229b9b97bc8cf74e04489e15e02ff8982"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\comms-replay.log",
+      "sha256": "fcff53ba1e23cb715f4b34b75cb4bbde8f28302f37639920feaca23b6897a9c6"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\comms-compare.log",
+      "sha256": "7fa3abd2f82c99037863a0d559c24ca95f42cde0ffedc828646505d06229c390"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\harness-validate.log",
+      "sha256": "4edad93cd4f6d331a8fb8dba7042c21eda6fb8986188614a01bbf52f91687807"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\harness-dry-run.log",
+      "sha256": "239dfd12c14b3859049a1d41a2434956762bc40166c5bf8fc0b61cedc6946d70"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\lint.log",
+      "sha256": "f16295ec454c42cee7b29f4a6e723e4b62b95010fe14f4efea9b08034facabc0"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\e2e.log",
+      "sha256": "9018ef93cd9d37493cdaf5bec972d4ad121a911f627b4ba9884c9a09bb33a059"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\harness-ci.log",
+      "sha256": "c43e8d280d4d3094774b8e339a58ba2526d120128c1e461cbf0270edd8d42b88"
+    },
+    {
+      "localFile": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v2\\repository-artifacts.log",
+      "sha256": "7f982628b59e849839d746620c76923e4b555c9a68b8106709027abc73255dd2"
+    }
+  ],
+  "preliminaryRuns": {
+    "final-v1": {
+      "sourceCandidate": "661e1dc5d9b76a51589cd0af3e6943b63f351314",
+      "gatesPassed": 13,
+      "failedGate": "repository-artifacts",
+      "rawReceipts": "D:\\tmp\\tf0675-relay-20261118-01a1ed85\\final-v1\\receipts.json"
+    },
+    "developmentFailures": [
+      "missing Workspace mock export",
+      "scripted tool id normalization loop",
+      "diagnostic callback binding",
+      "legacy host fixture claim without coordinator binding"
+    ]
+  },
+  "coverage": {
+    "platform": "Windows source Electron/Gateway",
+    "provider": "local-scripted",
+    "notRun": [
+      "live-provider planning quality",
+      "packaged distribution",
+      "TF-0867 full concurrent acceptance"
+    ]
+  }
+}

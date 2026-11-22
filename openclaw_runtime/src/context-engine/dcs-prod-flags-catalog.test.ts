@@ -68,9 +68,9 @@ describe("dcs prod p0 safe defaults", () => {
     ).toBe(false);
   });
 
-  it("TASK-P1-02: working-memory assembler default remains off", () => {
+  it("Workspace Context keeps the working-memory assembler enabled by default", () => {
     expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS["runtime.contextBlock.working_memory.enabled"]).toBe(
-      false,
+      true,
     );
   });
 });

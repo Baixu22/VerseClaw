@@ -1,4 +1,5 @@
 import { ManagedTasks } from './ManagedTasks';
+import { TaskTracePanel } from '@/components/task-ledger/TaskTracePanel';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Download, GitBranch, GitMerge, History, Link2, ListTree, Plus, RefreshCw, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -47,17 +48,18 @@ type NodeCardProps = {
   onReviewClear: (node: TaskLedgerNode) => void;
   onOpenEvidence: (ref: string, type: string) => void;
   t: ReturnType<typeof useTranslation<'taskLedger'>>['t'];
+  depth?: number;
 };
 
-function NodeCard({ node, getChildren, onStatus, onReviewClear, onOpenEvidence, t }: NodeCardProps) {
+function NodeCard({ node, getChildren, onStatus, onReviewClear, onOpenEvidence, t, depth = 0 }: NodeCardProps) {
   const childrenNodes = getChildren(node.id);
   const readOnlyProjection = isReadOnlyTaskLedgerProjection(node);
   return (
-    <article className="rounded-md border border-border/70 bg-background p-3" data-testid="task-ledger-node">
+    <article className={cn('min-w-0 py-2.5', depth === 0 && 'px-3')} data-testid="task-ledger-node">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-1.5">
-            <h3 className="truncate text-sm font-medium text-foreground">{node.title}</h3>
+            <h3 className="min-w-0 break-words text-sm font-medium text-foreground">{node.title}</h3>
             <Badge variant="outline" className="rounded-full text-2xs">{t(`kind.${node.kind}`)}</Badge>
             <Badge variant="outline" className={cn('rounded-full text-2xs', statusTone(node.status))}>{t(`status.${node.status}`)}</Badge>
           </div>
@@ -71,7 +73,7 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, onOpenEvidence, 
         >
           <SelectTrigger
             data-testid={`task-ledger-status-${node.id}`}
-            className="h-8 w-28 text-xs"
+            className="h-7 w-28 text-xs"
             disabled={readOnlyProjection}
           >
             <SelectValue />
@@ -96,9 +98,9 @@ function NodeCard({ node, getChildren, onStatus, onReviewClear, onOpenEvidence, 
         </Button>
       )}
       {childrenNodes.length > 0 && (
-        <div className="mt-3 space-y-2 border-l border-border/70 pl-3">
+        <div className="mt-2 divide-y divide-border/40 border-l border-border pl-3">
           {childrenNodes.map((child) => (
-            <NodeCard key={child.id} node={child} getChildren={getChildren} onStatus={onStatus} onReviewClear={onReviewClear} onOpenEvidence={onOpenEvidence} t={t} />
+            <NodeCard key={child.id} node={child} getChildren={getChildren} onStatus={onStatus} onReviewClear={onReviewClear} onOpenEvidence={onOpenEvidence} t={t} depth={depth + 1} />
           ))}
         </div>
       )}
@@ -115,7 +117,7 @@ export default function TaskLedgerPage() {
   const selectedSessionKey = useChatStore((state) => state.currentSessionKey);
   const [snapshot, setSnapshot] = useState<TaskLedgerSnapshot | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab,setActiveTab]=useState('tree');
+  const [activeTab, setActiveTab] = useState(() => searchParams.get('nodeId') ? 'tree' : 'managed');
   const [query, setQuery] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -154,7 +156,7 @@ export default function TaskLedgerPage() {
   }, [load]);
 
   useEffect(() => {
-    if (focusedNodeId) setQuery(focusedNodeId);
+    if (focusedNodeId) { setQuery(focusedNodeId); setActiveTab('tree'); }
   }, [focusedNodeId]);
 
   const filteredNodes = useMemo(() => {
@@ -260,88 +262,98 @@ export default function TaskLedgerPage() {
     } catch { if (isCurrent()) toast.error(t('summary.scope.unavailable')); }
   };
 
-  return (
-    <div data-testid="task-ledger-page" className="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col gap-4">
-      <header className="flex shrink-0 flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="font-serif text-3xl font-normal tracking-tight text-foreground">{t('title')}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          {workspaceId && currentSessionKey && <Button type="button" variant="outline" size="sm" data-testid="task-ledger-return-session"
-            onClick={() => { void openEvidence(currentSessionKey, 'session'); }}>
-            {t('summary.returnSession')}
-          </Button>}
-          <Button type="button" variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
-            <RefreshCw className={cn('mr-1.5 h-4 w-4', loading && 'animate-spin')} />
-            {t('actions.refresh')}
-          </Button>
-          <Button type="button" size="sm" onClick={() => void exportHtml()}>
-            <Download className="mr-1.5 h-4 w-4" />
-            {t('actions.exportHtml')}
-          </Button>
-        </div>
-      </header>
-
-      {activeTab!=='managed'&&<section className="grid shrink-0 gap-3 rounded-md border border-border/70 bg-background p-3 md:grid-cols-[1.2fr_0.8fr_auto_auto]">
-        <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t('form.titlePlaceholder')} className="h-9" />
-        <Input value={description} onChange={(event) => setDescription(event.target.value)} placeholder={t('form.descriptionPlaceholder')} className="h-9" />
+  const auxiliaryControls = (
+    <div className="shrink-0 space-y-2 pt-2">
+<div className="relative shrink-0">
+        <Search className="pointer-events-none absolute left-3 top-2 h-4 w-4 text-muted-foreground" />
+        <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t('search')} className="h-8 pl-9" />
+      </div>
+      <details className="group/organize">
+        <summary className="inline-flex min-h-8 cursor-pointer list-none items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10">
+          <Plus className="h-3.5 w-3.5" aria-hidden="true" />{t('actions.organize')}
+        </summary>
+<section className="mt-2 grid gap-2 rounded-lg bg-surface-input p-3 md:grid-cols-[1.2fr_0.8fr_auto_auto]">
+        <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t('form.titlePlaceholder')} className="h-8" />
+        <Input value={description} onChange={(event) => setDescription(event.target.value)} placeholder={t('form.descriptionPlaceholder')} className="h-8" />
         <Select value={kind} onValueChange={(value) => setKind(value as TaskLedgerNodeKind)}>
-          <SelectTrigger className="h-9 w-full md:w-36"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="h-8 w-full md:w-36"><SelectValue /></SelectTrigger>
           <SelectContent>
             {NODE_KINDS.map((item) => <SelectItem key={item} value={item}>{t(`kind.${item}`)}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Button type="button" className="h-9" onClick={() => void createNode()} disabled={!title.trim()}>
+        <Button type="button" className="h-8" onClick={() => void createNode()} disabled={!title.trim()}>
           <Plus className="mr-1.5 h-4 w-4" />
           {t('actions.addNode')}
         </Button>
         <Select value={parentId} onValueChange={setParentId}>
-          <SelectTrigger className="h-9 md:col-span-2"><SelectValue placeholder={t('form.parentPlaceholder')} /></SelectTrigger>
+          <SelectTrigger className="h-8 md:col-span-2"><SelectValue placeholder={t('form.parentPlaceholder')} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="none">{t('form.noParent')}</SelectItem>
             {(snapshot?.nodes ?? []).map((node) => <SelectItem key={node.id} value={node.id}>{node.title}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={linkNodeId} onValueChange={setLinkNodeId}>
-          <SelectTrigger className="h-9"><SelectValue placeholder={t('session.nodePlaceholder')} /></SelectTrigger>
+          <SelectTrigger className="h-8"><SelectValue placeholder={t('session.nodePlaceholder')} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="none">{t('session.noNode')}</SelectItem>
             {(snapshot?.nodes ?? []).map((node) => <SelectItem key={node.id} value={node.id}>{node.title}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Button type="button" variant="outline" className="h-9" onClick={() => void linkSession()} disabled={!currentSessionKey}>
+        <Button type="button" variant="outline" className="h-8" onClick={() => void linkSession()} disabled={!currentSessionKey}>
           <Link2 className="mr-1.5 h-4 w-4" />
           {t('actions.linkSession')}
         </Button>
-      </section>}
+      </section>
+      </details>
+    </div>
+  );
 
-      {activeTab!=='managed'&&<div className="relative shrink-0">
-        <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t('search')} className="h-9 pl-9" />
-      </div>}
+  return (
+    <div data-testid="task-ledger-page" className="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col gap-3">
+      <header className="flex shrink-0 flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-sans text-2xl font-normal tracking-normal text-foreground">{t('title')}</h1>
+          <p className="mt-1 text-meta text-muted-foreground">{t('subtitle')}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {workspaceId && currentSessionKey && <Button type="button" variant="outline" size="sm" data-testid="task-ledger-return-session"
+            onClick={() => { void openEvidence(currentSessionKey, 'session'); }}>
+            {t('summary.returnSession')}
+          </Button>}
+          {activeTab !== 'managed' && <Button type="button" className="h-8" variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
+            <RefreshCw className={cn('mr-1.5 h-4 w-4', loading && 'animate-spin')} />
+            {t('actions.refresh')}
+          </Button>}
+          <Button type="button" className="h-8" variant="outline" size="sm" onClick={() => void exportHtml()}>
+            <Download className="mr-1.5 h-4 w-4" />
+            {t('actions.exportHtml')}
+          </Button>
+        </div>
+      </header>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="min-h-0 flex-1 overflow-hidden">
-        <TabsList className="shrink-0">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <TabsList className="shrink-0 self-start">
           <TabsTrigger value="managed">{t('managed.tab')}</TabsTrigger>
           <TabsTrigger value="tree"><ListTree className="mr-1.5 h-4 w-4" />{t('tabs.tree')}</TabsTrigger>
           <TabsTrigger value="dag"><GitBranch className="mr-1.5 h-4 w-4" />{t('tabs.dag')}</TabsTrigger>
           <TabsTrigger value="history"><History className="mr-1.5 h-4 w-4" />{t('tabs.history')}</TabsTrigger>
           <TabsTrigger value="review"><ShieldCheck className="mr-1.5 h-4 w-4" />{t('tabs.review')}</TabsTrigger>
         </TabsList>
-        <TabsContent value="managed" className="h-[calc(100%-3rem)] overflow-y-auto">
+        {activeTab !== 'managed' && auxiliaryControls}
+        <TabsContent value="managed" className="min-h-0 flex-1 overflow-y-auto pt-2">
           {workspaceId && currentSessionKey ? <ManagedTasks workspaceId={workspaceId} sessionKey={currentSessionKey} />
             : <p className="text-sm text-muted-foreground">{t('summary.scope.unavailable')}</p>}
         </TabsContent>
 
-        <TabsContent value="tree" className="h-[calc(100%-3rem)] overflow-y-auto">
+        <TabsContent value="tree" className="min-h-0 flex-1 overflow-y-auto pt-2">
+          {focusedNodeId && workspaceId && hasScopedWorkspace && <div className="mb-3"><TaskTracePanel workspaceId={workspaceId} taskNodeId={focusedNodeId} defaultOpen /></div>}
           <QuietLoadingSurface
             surfaceId="task-ledger"
             loading={loading && !snapshot}
             label={t('common:status.loading')}
             skeleton={<QuietListSkeleton rows={6} />}
           >
-          <div className="space-y-3" data-testid="task-ledger-tree">
+          <div className="divide-y divide-border rounded-lg border border-border bg-background" data-testid="task-ledger-tree">
             {(childMap.get('root') ?? []).length === 0 ? (
               <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">{t('empty')}</div>
             ) : (
@@ -361,13 +373,13 @@ export default function TaskLedgerPage() {
           </QuietLoadingSurface>
         </TabsContent>
 
-        <TabsContent value="dag" className="h-[calc(100%-3rem)] overflow-y-auto">
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="task-ledger-dag">
+        <TabsContent value="dag" className="min-h-0 flex-1 overflow-y-auto pt-2">
+          <div className="divide-y divide-border rounded-lg border border-border" data-testid="task-ledger-dag">
             {(snapshot?.edges ?? []).length === 0 ? (
               <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground md:col-span-2 xl:col-span-3">{t('dag.empty')}</div>
             ) : (
               snapshot!.edges.map((edge) => (
-                <article key={edge.id} className="rounded-md border border-border/70 bg-background p-3">
+                <article key={edge.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 bg-background px-3 py-2.5">
                   <p className="text-sm font-medium text-foreground">{nodesById.get(edge.from)?.title ?? edge.from}</p>
                   <div className="my-2 flex items-center gap-2 text-xs text-muted-foreground">
                     <GitMerge className="h-3.5 w-3.5" />
@@ -380,7 +392,7 @@ export default function TaskLedgerPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="history" className="h-[calc(100%-3rem)] overflow-y-auto">
+        <TabsContent value="history" className="min-h-0 flex-1 overflow-y-auto pt-2">
           <div className="space-y-2" data-testid="task-ledger-history">
             {(snapshot?.eventsCount ?? 0) === 0 ? (
               <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">{t('history.empty')}</div>
@@ -408,8 +420,8 @@ export default function TaskLedgerPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="review" className="h-[calc(100%-3rem)] overflow-y-auto">
-          <div className="space-y-3" data-testid="task-ledger-review">
+        <TabsContent value="review" className="min-h-0 flex-1 overflow-y-auto pt-2">
+          <div className="divide-y divide-border rounded-lg border border-border" data-testid="task-ledger-review">
             {reviewNodes.length === 0 ? (
               <div className="rounded-md border border-dashed border-border p-8 text-center text-sm text-muted-foreground">{t('review.empty')}</div>
             ) : reviewNodes.map((node) => (

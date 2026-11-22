@@ -44,7 +44,7 @@ describe("B-3 v3 buildDirectChildSessionPatch writeSet", () => {
     expect(patch.spawnedWriteSet).toEqual(["src/auth/middleware.ts"]);
   });
 
-  it("rejects a parent reset during context preparation before dispatching the child", async () => {
+  it.each(['parent-reset', 'context-error'] as const)("rejects %s during preparation before dispatching the child", async mode => {
     const fixtureRoot = mkdtempSync(join(tmpdir(), "subagent-spawn-generation-"));
     const storePath = join(fixtureRoot, "sessions.json");
     const parentKey = "agent:main:parent";
@@ -88,6 +88,7 @@ describe("B-3 v3 buildDirectChildSessionPatch writeSet", () => {
         assemble: async ({ messages }) => ({ messages, estimatedTokens: 0 }),
         compact: async () => ({ ok: true, compacted: false }),
         prepareSubagentSpawn: async () => {
+          if (mode === 'context-error') throw new Error('fixture context preparation failed');
           await updateSessionStore(storePath, (store) => {
             store[parentKey] = { ...parentEntry, sessionId: "parent-generation-2" };
           });
@@ -104,12 +105,15 @@ describe("B-3 v3 buildDirectChildSessionPatch writeSet", () => {
       );
 
       expect(result.status).toBe("error");
-      expect(result.error).toMatch(/generation changed/);
+      expect(result.error).toMatch(mode === 'context-error' ? /fixture context preparation failed/ : /generation changed/);
       expect(dispatches).toContain("sessions.delete");
       expect(dispatches).not.toContain("agent");
-      expect(rollback).toHaveBeenCalledOnce();
+      if (mode === 'context-error') {
+        expect(result.dispatchOutcome).toBe('not-dispatched');
+        expect(rollback).not.toHaveBeenCalled();
+      } else expect(rollback).toHaveBeenCalledOnce();
       const persisted = loadSessionStore(storePath, { clone: false });
-      expect(persisted[parentKey]?.sessionId).toBe("parent-generation-2");
+      expect(persisted[parentKey]?.sessionId).toBe(mode === 'context-error' ? 'parent-generation-1' : 'parent-generation-2');
       expect(persisted[result.childSessionKey!]).toBeUndefined();
     } finally {
       closeSqliteSessionStoreDatabase(storePath);

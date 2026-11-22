@@ -1,0 +1,607 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-g5-line-relay-01a1fcf5",
+  "generatedAt": "2026-11-22T03:51:06.121849+00:00",
+  "node": "TF-0687",
+  "candidate": "df38805eb2348f15d100f9385a0a981fb620fa04",
+  "tree": "c64e461d7feb69eea745396dc0b421294e9fec2f",
+  "scope": "M2 controlled source lifecycle and existing memory governance",
+  "source": {
+    "files": [
+      {
+        "path": "README.ja-JP.md",
+        "gitBlob": "6a4a79fb211072c96eb13ede38d6055591399433",
+        "sha256": "9c7fe07e3e03a3d86692f40c4fe788b5392ba42608e5ea5b09f0677d42762e1a"
+      },
+      {
+        "path": "README.md",
+        "gitBlob": "320eda9c22e88409aa8951cf684449065b35a965",
+        "sha256": "b4116d8caa8f3e84daaa9038c374eb01ecd18b13deec4440511286a539be7512"
+      },
+      {
+        "path": "README.ru-RU.md",
+        "gitBlob": "2499fe4d09772ec125176342813d187d0afb7799",
+        "sha256": "1a18c559ba401bd63f96b1cabd1f0659b079276ead48ef0575a48054c42fd7af"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "gitBlob": "f8224ad4f43d2214c46082f261cbb660a8fd69ce",
+        "sha256": "f24751bd8961e141003ecd5b0619d3515811266b5b4a6d08c7591399d50b2311"
+      },
+      {
+        "path": "docs/modules/multi-agent-and-tasks.md",
+        "gitBlob": "0adbb093f418e3984d7f8e19486e6b8ef4269137",
+        "sha256": "27f95ac1be0024f0d7b45f6b8197e0f94cdfac0287a01ab19398b8e9c7834660"
+      },
+      {
+        "path": "electron/gateway/manager.ts",
+        "gitBlob": "e359ed359c08fed67eb83565b7a3be697f9be010",
+        "sha256": "1069f83c458ce6c065edcd6a8a2e78b0762f27d81350a56335cbbaa310791087"
+      },
+      {
+        "path": "electron/main/index.ts",
+        "gitBlob": "5f508a34269ba31df0f121c04d96a281bd403a01",
+        "sha256": "ffc29f0311c61f7ce2d52246826c8b65f94841c9bf834e0687010f4cd818c678"
+      },
+      {
+        "path": "electron/main/ipc/host-invoke.ts",
+        "gitBlob": "0705b577e695e2966a9770e30d73eabbf4f7222d",
+        "sha256": "a751d0a64d3aeeb1d470bc85b312b0348d54305d5cd8ba15220e6bd5d30bd8f9"
+      },
+      {
+        "path": "electron/services/gateway-api.ts",
+        "gitBlob": "a5cec7891c7440d6a7e7b7d041667be2cc6f9203",
+        "sha256": "202b52bec49065b00266c71e066349723dbb680cb26fbfc6834f7d581e855a07"
+      },
+      {
+        "path": "electron/services/task-ledger-service.ts",
+        "gitBlob": "e42b50e979f4c5c9fafe443a05c8761766a06fbf",
+        "sha256": "41fa1c8af4b6306e6f8f5564c96c96ed6b051d43016edab131e93263ca60c9da"
+      },
+      {
+        "path": "harness/specs/scenarios/autonomous-project-system.md",
+        "gitBlob": "ba8e388026876a036ed43a0b1a4376e2dea5d8aa",
+        "sha256": "82081c93c3aca1b62d1a22f43457128e5fa1bff79ce02618769c3e4ac1d37c76"
+      },
+      {
+        "path": "harness/specs/tasks/project-experience-governance.md",
+        "gitBlob": "c68ab902a0f8fb4743cb7ba667c3eafcf0c8bf7a",
+        "sha256": "51f8b3b027ffb7276194c2ee842f50943c21634223eb197c2195a001e33589ba"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+        "gitBlob": "7a48a389ba68fffa473a5a826fb9943b7408b9f5",
+        "sha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/role-spawn.ts",
+        "gitBlob": "fe65add2de6333259249e67fa14eddf593ae24bd",
+        "sha256": "ef23babc8c73ea9c22440af8f68dcf32dd20dff0a741ae8d09d7443c5d973c52"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/simple-completion-transport.ts",
+        "gitBlob": "ba4ef542906434e8bd81db2b4e4050363d797fab",
+        "sha256": "64ad92702aff5eed73c0cdd278e6ea80d51e5a0c16cf5d3adff7dd26a9764d79"
+      },
+      {
+        "path": "openclaw_runtime/src/context-engine/role-memory-context-provider.ts",
+        "gitBlob": "8ef864ca43f305054591926e4b1ed4a830c08f90",
+        "sha256": "5afe026c7216abe2bb5a90e176576510d20fe41fefc45b0289016426872b26ea"
+      },
+      {
+        "path": "openclaw_runtime/src/memory/context-pack.ts",
+        "gitBlob": "715beb7e7a8405c062f5915732a3ef6efcafb12a",
+        "sha256": "ec7409547889acad6b08e5a5f8b319d3ee01a90bdaccaa9673e56fa6d22850ba"
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-card.ts",
+        "gitBlob": "73a07ded86850248032d9832a3553ffd14e86a0e",
+        "sha256": "fe58827e2468422cbd67d652c5d335ea8050063bb5a695e3d89eb767366fa2ab"
+      },
+      {
+        "path": "openclaw_runtime/src/memory/memory-store.ts",
+        "gitBlob": "46e29ed351882cafe20097b5d9a5be9f51465ecf",
+        "sha256": "5c00d34fb12d59e7429199226a739aa93fe17423c06f15e575c741f0f9e8fd10"
+      },
+      {
+        "path": "openclaw_runtime/src/plugins/provider-public-artifacts.ts",
+        "gitBlob": "e7c80aa9f04af12ffaf61ef4bf8c7434761cb618",
+        "sha256": "1372c70dcd305b3553c5fd7820ead95bb1b7b511d09dc82d6bd1fda96e2f854b"
+      },
+      {
+        "path": "shared/host-api/host-action-timeouts.ts",
+        "gitBlob": "e8ac0a3957eb3dd3d373d6fa20452dc3eeb5a737",
+        "sha256": "ddb197e8eff3d10256be1c0937b88a80f61157b66cf0d288eef7a4d813ab2bff"
+      },
+      {
+        "path": "shared/host-api/host-deadline.ts",
+        "gitBlob": "c5cb7655cbd7c3ad23eb63cf38019ebc9ae35d9b",
+        "sha256": "ea5879175a029b0c1001fa480fcc2b29582f9b4fc42284fb6e15d379bdf86334"
+      },
+      {
+        "path": "shared/task-system/event-store.ts",
+        "gitBlob": "f7d75f0af48d02b01b475bc38dba62726dc9251b",
+        "sha256": "e64993125893a427412adb5f236473c6ea9ad48211826e1ada97a63bef603a50"
+      },
+      {
+        "path": "src/components/agents/RolesOrchestrationPanel.tsx",
+        "gitBlob": "96383744acbff8cfb8432c7e0ae434af0f4c1f3f",
+        "sha256": "8a2e307602912c82d281fb063138733855abba5e259167852fc445664823c6b8"
+      },
+      {
+        "path": "src/lib/host-api-client.ts",
+        "gitBlob": "c309db2048162c8cc7be16b6877350b42e55bd79",
+        "sha256": "58b2f689030593dc418482a534dd4f052ba44e574f890662a32cb9b9122617ff"
+      },
+      {
+        "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+        "gitBlob": "73b72448fad4db7930e1201d81c98836733d80d9",
+        "sha256": "e82824eb80b0e6a11f39dbc8f12500cd7628f9093102479d88c195d17de27fc2"
+      },
+      {
+        "path": "tests/e2e/mission-control-panel.spec.ts",
+        "gitBlob": "d487c9181ec84c391352a1b21dd96e23eec0d391",
+        "sha256": "4c32557222883cd953fb7e3c730bcec840ae9847d06ea12a4734d4248ae02ec3"
+      },
+      {
+        "path": "tests/e2e/project-experience-governance.spec.ts",
+        "gitBlob": "5ef47684abfb32fdf3abd1bb5256d5cf942d721b",
+        "sha256": "4da5ed82c9ccc62530617cac6ca2d43617b8597c85462034802d348934a77fee"
+      },
+      {
+        "path": "tests/unit/fp-p1-host-bridge-deadline.test.ts",
+        "gitBlob": "a4a83769852288a2b8c1d31b6c9b89da98e27bcf",
+        "sha256": "6a7b70b24e73c75c3ecc425ca324351b59d67eae2e64ef8a9aa1752df2d2139c"
+      },
+      {
+        "path": "tests/unit/gateway-manager-heartbeat.test.ts",
+        "gitBlob": "7fa780e44d66e0d135189a29443cb2e407bbf3cb",
+        "sha256": "01c26d0f6ce6efbbcb1b0399b17c80065c249ac09691a9281d0d6dc17d08c577"
+      },
+      {
+        "path": "tests/unit/gateway-permissions-api.test.ts",
+        "gitBlob": "5a9dc843cf182e9445c32d7b612bdf2a5bd885d0",
+        "sha256": "b0a099a574c29b702e1c44f254d777c3beb1c713aa2000e86e2b95ba3f72c115"
+      },
+      {
+        "path": "tests/unit/host-action-timeouts.test.ts",
+        "gitBlob": "b9b6a2f46e5220ce66f2737049c6c4d528a2067b",
+        "sha256": "c62ac0fde4503bbd06a9614fdb0f02695ac18a63aee7a8f7e28cbf6ae66f78c6"
+      },
+      {
+        "path": "tests/unit/mission-control-loop.test.ts",
+        "gitBlob": "0bba9c17b8a4f19e0ec89ce32ade9ed0be3a4042",
+        "sha256": "a1e9d8bb32828733ebf2ba475f3c9628041ac0fd5805a70e615f6db5561d5add"
+      },
+      {
+        "path": "tests/unit/project-experience-governance.test.ts",
+        "gitBlob": "85800ef44194138bc5f9bad7bb578b90eb56a93c",
+        "sha256": "575161e7593dabb3caec97407bff41d1dc6632e44625abc1be8c4a93c110e930"
+      },
+      {
+        "path": "tests/unit/provider-policy-ownership.test.ts",
+        "gitBlob": "15bfcdac9e586ffeabc4d0a44f916b13fd12e118",
+        "sha256": "00f5bdc2f552d2217271c541078d97d717505d9db027f819b22d8c0d0a4c0fa0"
+      },
+      {
+        "path": "tests/unit/r0-4-host-api-client-timeout.test.ts",
+        "gitBlob": "320b076de159c30ab431d804a6f4259262348a54",
+        "sha256": "471c9654e59419c24cd859bc5b1b3853a672c15a2a8bf425b0bc4757a17239ae"
+      },
+      {
+        "path": "tests/unit/r0-4-host-invoke-timeout.test.ts",
+        "gitBlob": "a72901351120a9b11732cfa72fd8c4ca02bdc35e",
+        "sha256": "3a30b8ef87145519f94383d09c048222e259f0d08ed391cf88b21e2503a3972d"
+      },
+      {
+        "path": "tests/unit/role-memory-context-provider.test.ts",
+        "gitBlob": "75c737c05ac0c97ccb37ff55b4587954ea29af6b",
+        "sha256": "272665292027133e91d50ba31d20aed2508f476e27732f8d2dadedb868acc477"
+      },
+      {
+        "path": "tests/unit/roles-orchestration-panel.test.tsx",
+        "gitBlob": "e7c742f1baa031868ed886e486a5e4e3dca9cbde",
+        "sha256": "66c261fe4017deb0b11d1a38b02581ac22bfa151214da72f98c7e3d9fa6fa3ff"
+      },
+      {
+        "path": "tests/unit/task-ledger-lifecycle.test.ts",
+        "gitBlob": "1d2292d0c9bfb1b3442e372232da8c3ec75d3afb",
+        "sha256": "a3994b726b005b736dc1a3c1a060363c7bc160d0413123de88df99e4348e4ad6"
+      }
+    ],
+    "evaluatorPath": "tests/unit/helpers/role-memory-eval-score.ts",
+    "evaluatorBlob": "ad0cef7f4c535690754eb6831f8571c1e90dd0f1",
+    "evaluatorUnchanged": true
+  },
+  "validation": {
+    "unit": {
+      "passed": 252,
+      "failed": 0,
+      "skipped": 0
+    },
+    "runtimeAdjacent": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    },
+    "electron": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "retries": 0
+    },
+    "typeProjects": [
+      "node",
+      "web",
+      "tests"
+    ],
+    "requiredSupportSteps": [
+      {
+        "logSha256": "1c11355b72b037675f1231d96022d89663e80ef4cc012da08f909052e5ae8fe6",
+        "name": "extension-bridge",
+        "elapsedMs": 222,
+        "exit": 0,
+        "command": [
+          "node",
+          "scripts/generate-ext-bridge.mjs"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "55c4b41912bad5023ad1fd31bdd9ad68189a252118225941b02016f464734f06",
+        "name": "typecheck-node",
+        "elapsedMs": 15523,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "typecheck:node"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "792ce7e1b094715d619d0aee6c12ce0ff1e474e4744c07ff87e1f45ee26a2fa4",
+        "name": "typecheck-web",
+        "elapsedMs": 3702,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "typecheck:web"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "d3d1fa1e880f14d028c73f22eb6b438fbcbcc3c775a9a0d33d08e69a5b7de5ae",
+        "name": "typecheck-tests",
+        "elapsedMs": 31991,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "typecheck:test"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "b8c98af2bdb32f7a1a361b0ad1b3a50f1b494606d54059860ea0a6d70549ca38",
+        "name": "units",
+        "elapsedMs": 65762,
+        "exit": 0,
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/mission-control-loop.test.ts",
+          "tests/unit/project-experience-governance.test.ts",
+          "tests/unit/role-memory-v2.test.ts",
+          "tests/unit/role-memory-context-provider.test.ts",
+          "tests/unit/role-memory-eval-pack.test.ts",
+          "tests/unit/host-action-timeouts.test.ts",
+          "tests/unit/r0-4-host-invoke-timeout.test.ts",
+          "tests/unit/r0-4-host-api-client-timeout.test.ts",
+          "tests/unit/gateway-permissions-api.test.ts",
+          "tests/unit/gateway-manager-heartbeat.test.ts",
+          "tests/unit/memory-authority-contract.test.ts",
+          "tests/unit/task-ledger-lifecycle.test.ts",
+          "tests/unit/task-ledger-service.test.ts",
+          "tests/unit/durable-task-event-store.test.ts",
+          "tests/unit/role-spawn.test.ts",
+          "tests/unit/error-governance-boundary.test.ts",
+          "tests/unit/fp-p1-host-bridge-deadline.test.ts",
+          "tests/unit/roles-orchestration-panel.test.tsx",
+          "tests/unit/provider-policy-ownership.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=D:/tmp/g5-20261121/line-relay-01a1fcf5/m2-clean-support-r3/units.json"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "002f019d478d5f54338572be439c8946a97808298296ce5ce55fe29196545ec8",
+        "name": "runtime-control-siblings",
+        "elapsedMs": 33798,
+        "exit": 0,
+        "command": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "src/agents/mission-control/fenced-tick-wiring.test.ts",
+          "src/agents/mission-control/mission-lifecycle-cutover.test.ts",
+          "src/agents/mission-control/mission-taskflow-projection.test.ts",
+          "src/agents/mission-control/managed-task.test.ts",
+          "src/agents/mission-control/rollback-wiring.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=D:/tmp/g5-20261121/line-relay-01a1fcf5/m2-clean-support-r3/runtime-control-siblings.json"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1/openclaw_runtime"
+      },
+      {
+        "logSha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0",
+        "name": "contract",
+        "elapsedMs": 2252,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "contract:check"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "8f12258799e49eb025317039203ca2617155a8b26bece4b745ccad498a70b306",
+        "name": "i18n",
+        "elapsedMs": 1049,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "i18n:lint"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "565dbd75efb46472cc2824bebb29b55959d643111f1b728ba195e8e0ab7b1f62",
+        "name": "comms-replay",
+        "elapsedMs": 941,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "comms:replay"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "bc9f49bee0a476f37ecfa8b50ae6683ba01c668d6a0028b6ced508c2e511d19f",
+        "name": "comms-compare",
+        "elapsedMs": 873,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "comms:compare"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "73364743380174565f0f0c39776122ab438b13381e8c60cc6c964a84dc9b77a5",
+        "name": "error-governance",
+        "elapsedMs": 274,
+        "exit": 0,
+        "command": [
+          "node",
+          "scripts/check-error-governance.mjs"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "4d9971aa4cef093f49b3348e0e74470f5670d08c9112d1d5657465d2c783e52c",
+        "name": "harness-validate",
+        "elapsedMs": 835,
+        "exit": 0,
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/project-experience-governance.md"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "f8f1534dc4f3e6fb5515a1c1f65e74b79435bd3d04a5703c069862a4cf8bb208",
+        "name": "harness-dry-run",
+        "elapsedMs": 918,
+        "exit": 0,
+        "command": [
+          "node",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/project-experience-governance.md",
+          "--dry-run"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      },
+      {
+        "logSha256": "e67e69695f231626645e01fc92bf51f25edafddbcd43b3d14932e9c544df15d6",
+        "name": "retention",
+        "elapsedMs": 4790,
+        "exit": 0,
+        "command": [
+          "pnpm",
+          "run",
+          "repo:artifacts:check"
+        ],
+        "cwd": "D:/ClawX-acceptance/g5-m2-20261122-bc36961-r1"
+      }
+    ],
+    "runtimeAndViteBuiltFromCleanCandidate": true,
+    "sourceMutationCount": 0,
+    "dependencyReuse": true,
+    "cleanCheckout": true
+  },
+  "review": {
+    "engine": "direct-responses",
+    "model": "hy4flash-free",
+    "actionableFindings": 0,
+    "fullM2ReportSha256": "8f241efc119472d690c62b2d6854a8337803b95ff415a09bd6f6c4741251e201",
+    "providerIncrementReportSha256": "750deae8ae1ed16d00501889919ee5ec8b4483eb5fda9f5d67f0faba5eac9826"
+  },
+  "governance": {
+    "candidateInvisibleBeforeReview": true,
+    "acceptedInOriginalSession": true,
+    "foreignSessionInjectionCount": 0,
+    "revokedInjectionCount": 0,
+    "promptInjectionRejected": true,
+    "scope": "session",
+    "ttlHours": 24,
+    "supersedeAndExpiryOwnerTestsPassed": true,
+    "ledgerWriteFailures": 0
+  },
+  "controls": [
+    {
+      "control": "cancelled",
+      "phaseBeforeControl": "execute",
+      "statusAfterSettlement": "cancelled",
+      "reviewerCalls": 0,
+      "traceId": "trace_3b7b4ac5-76e5-403c-b44f-463040cd438c",
+      "taskLoopRunId": "loop_ac060045-0a07-4192-adce-d538e9d2e932",
+      "receiptSha256": "c465e9a6681a3449d5e6e122c707f0a55d8305f98a75ee7f4c7ad4826f58dc49"
+    },
+    {
+      "control": "paused",
+      "phaseBeforeControl": "execute",
+      "statusAfterSettlement": "paused",
+      "reviewerCalls": 0,
+      "traceId": "trace_749824d4-cace-4caa-93d8-9ace48805397",
+      "taskLoopRunId": "loop_f2d98d46-65e2-412e-a1f3-b0ce16526bee",
+      "receiptSha256": "821d37b974b937a5599a2a44d76ea6eda6190e1d75831585c9827e1b403c3418"
+    }
+  ],
+  "ledger": [
+    {
+      "owner": "missionEvents",
+      "events": 52,
+      "duplicateEventIds": 0,
+      "createdEvents": 11,
+      "sessionLinkEvents": 1
+    },
+    {
+      "owner": "taskLoopEvents",
+      "events": 162,
+      "duplicateEventIds": 0,
+      "createdEvents": 17,
+      "sessionLinkEvents": 1
+    }
+  ],
+  "heldout": {
+    "measurement": "governed retrieval structure, no live provider quality inference",
+    "beforeCoverage": 0,
+    "afterCoverage": 8,
+    "denominator": 8,
+    "tokenOverhead": [
+      11,
+      15,
+      14,
+      13,
+      15,
+      14,
+      13,
+      15
+    ],
+    "providerCost": "unknown",
+    "modelQuality": "not measured by this retrieval fixture"
+  },
+  "providerTests": {
+    "mode": "recorded owner context with actual hy4flash-free provider",
+    "passed": 2,
+    "failed": 0
+  },
+  "retainedFailures": {
+    "firstFrozenCandidate": "bc36961ac15aafe23ec8d67b6a398df05dad05a6",
+    "firstCleanElectron": {
+      "passed": 6,
+      "failed": 1,
+      "skipped": 0,
+      "failure": "completion delivery pending at the unchanged 60-second preflight"
+    },
+    "providerPolicyRegressionBeforeFix": {
+      "passed": 1,
+      "failed": 2
+    },
+    "hostDependencyLayout": "React declarations resolved to JavaScript in the external virtual store",
+    "firstCheckout": "four Windows long-path files were missing; restored with checkout-local longpaths"
+  },
+  "repositoryHarnessCI": {
+    "exit": 1,
+    "reason": "retained Agent Dev evidence is stale and reports historical quality/performance failures",
+    "currentContractMs": 2252
+  },
+  "evidence": [
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-support-r3\\support.json",
+      "sha256": "c1cbe85de2cc9e852b2477857f012544cc37e404b916f4feb916dffe87650205"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-support-r3\\units.json",
+      "sha256": "144b978e964fe07e7df468230fd9facab6e990a88adc1f07bab5f58e1972875b"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-support-r3\\runtime-control-siblings.json",
+      "sha256": "3ebde8e0387db1c8bca403fae2cfce5ed8ac3a0f47ea95d3ada21781deea9380"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-support-r3\\heldout.json",
+      "sha256": "0826f1b51c106b514598084b0f57d678ba96b749bf78a61e5127b0669cd48822"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-product-r2\\product.json",
+      "sha256": "c20a461b62444a6eb24a8558a69ed125c8966c8815e07aa0081c6aae91d4a7b9"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-product-r2\\electron.json",
+      "sha256": "ffe58764ff4b034d6b620a653472c3d4363df0429e798550848378fdb0431cd5"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-product-r2\\electron\\project-experience-governa-f461b-disappears-after-revocation\\experience-governance.json",
+      "sha256": "48c0772cd21b6dc85691742a93e7ee2782c492c25db8023afb4674f06c462e3d"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-review-hy4-r6\\direct-responses\\report.json",
+      "sha256": "8f241efc119472d690c62b2d6854a8337803b95ff415a09bd6f6c4741251e201"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\provider-review-hy4-r3\\direct-responses\\report.json",
+      "sha256": "750deae8ae1ed16d00501889919ee5ec8b4483eb5fda9f5d67f0faba5eac9826"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261122\\hy4flash-g5-01a1fcf5-r1\\recorded-context-r2\\summary.json",
+      "sha256": "ea9f5a5744bb690d260be7d050a8312abf8d28ba3a669321e6f83a58db92ef25"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\provider-policy-before-r1.json",
+      "sha256": "195ee8e6d9fd34d891b97e3e0a5ceea0d3ed7b7ad5618fad75fc916eb8159349"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\provider-policy-after-r1.json",
+      "sha256": "1733e6e740932788c071699f1150fe638052013daa52daa884d49ed93f2aede3"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\m2-clean-product-r1\\product.json",
+      "sha256": "c70eb11ff367e60a07a169468ac71870f36eb4a6b495168ee8505078c62d65ce"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\dependency-layout-repair-r1\\receipt.json",
+      "sha256": "8370989ac4f2092bd70cba210e076b50e39273508545bcb864a7220903124f51"
+    },
+    {
+      "path": "D:\\tmp\\g5-20261121\\line-relay-01a1fcf5\\validation-source-first-failure-r1.json",
+      "sha256": "83f1f57dadd21b5e781186ebeffa4b73405992b0deb7f8dfef11fbee08a8dd88"
+    }
+  ]
+}

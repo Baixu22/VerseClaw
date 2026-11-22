@@ -1,0 +1,1657 @@
+{
+  "numTotalTestSuites": 20,
+  "numPassedTestSuites": 20,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 128,
+  "numPassedTests": 128,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795167438895,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow global pause refuses orchestrator.run before calling Runtime",
+          "status": "passed",
+          "title": "global pause refuses orchestrator.run before calling Runtime",
+          "duration": 186.29309999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow global pause refuses task_loop.run before calling Runtime",
+          "status": "passed",
+          "title": "global pause refuses task_loop.run before calling Runtime",
+          "duration": 0.8631000000000313,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow global pause refuses mission.run before calling Runtime",
+          "status": "passed",
+          "title": "global pause refuses mission.run before calling Runtime",
+          "duration": 0.3466000000000804,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow global pause refuses mission.tick before calling Runtime",
+          "status": "passed",
+          "title": "global pause refuses mission.tick before calling Runtime",
+          "duration": 0.4152000000001408,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow global pause refuses mission.resume before calling Runtime",
+          "status": "passed",
+          "title": "global pause refuses mission.resume before calling Runtime",
+          "duration": 0.3865000000000691,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow binds chat workspace identity to the Main owner and refuses forged scopes",
+          "status": "passed",
+          "title": "binds chat workspace identity to the Main owner and refuses forged scopes",
+          "duration": 2.4875999999999294,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow rejects verification for a workspace whose permissions were not evaluated",
+          "status": "passed",
+          "title": "rejects verification for a workspace whose permissions were not evaluated",
+          "duration": 0.39030000000002474,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow refuses verification when its persisted physical root differs from Main",
+          "status": "passed",
+          "title": "refuses verification when its persisted physical root differs from Main",
+          "duration": 0.8416999999999462,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow TF-0772 rejects MCP scope drift before the workspace permission gate: {\"workspaceId\":\"other-workspace\"}",
+          "status": "passed",
+          "title": "TF-0772 rejects MCP scope drift before the workspace permission gate: {\"workspaceId\":\"other-workspace\"}",
+          "duration": 0.4034999999998945,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow TF-0772 rejects MCP scope drift before the workspace permission gate: {\"workspaceDir\":\"D:/tmp/other-workspace\"}",
+          "status": "passed",
+          "title": "TF-0772 rejects MCP scope drift before the workspace permission gate: {\"workspaceDir\":\"D:/tmp/other-workspace\"}",
+          "duration": 0.2563000000000102,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow TF-0772 rejects MCP scope drift before the workspace permission gate: {\"sessionKey\":\"agent:main:foreign-workspace\"}",
+          "status": "passed",
+          "title": "TF-0772 rejects MCP scope drift before the workspace permission gate: {\"sessionKey\":\"agent:main:foreign-workspace\"}",
+          "duration": 0.18249999999989086,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow requires approval for dangerous gateway RPC and consumes approval before replay",
+          "status": "passed",
+          "title": "requires approval for dangerous gateway RPC and consumes approval before replay",
+          "duration": 1.483600000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow uses the persisted coordinator root at the tools.invoke permission gate",
+          "status": "passed",
+          "title": "uses the persisted coordinator root at the tools.invoke permission gate",
+          "duration": 0.4079999999999018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow uses the persisted coordinator root at the mcp.callTool permission gate",
+          "status": "passed",
+          "title": "uses the persisted coordinator root at the mcp.callTool permission gate",
+          "duration": 0.2153000000000702,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow does not allow an approved gateway request to be reused for different params",
+          "status": "passed",
+          "title": "does not allow an approved gateway request to be reused for different params",
+          "duration": 0.3410000000001219,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+          "status": "passed",
+          "title": "captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+          "duration": 1.8756000000000768,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow returns structured sandbox denial details for a fail-closed gateway action",
+          "status": "passed",
+          "title": "returns structured sandbox denial details for a fail-closed gateway action",
+          "duration": 0.4395999999999276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167460616,
+      "endTime": 1795167460813.8755,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/gateway-permissions-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator previews without writes and applies only after loaded Runtime readback",
+          "status": "passed",
+          "title": "previews without writes and applies only after loaded Runtime readback",
+          "duration": 4.45150000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"apiKey\":\"forbidden\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"apiKey\":\"forbidden\"} before writing",
+          "duration": 1.008199999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"evaluator\":false} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"evaluator\":false} before writing",
+          "duration": 0.30689999999998463,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"permissionMode\":\"fullAccess\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"permissionMode\":\"fullAccess\"} before writing",
+          "duration": 0.2185000000000059,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"contextTokens\":16384} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"contextTokens\":16384} before writing",
+          "duration": 0.31389999999998963,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"denyTools\":[]} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"denyTools\":[]} before writing",
+          "duration": 0.2913000000000352,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"modelRef\":\"known/expensive\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"modelRef\":\"known/expensive\"} before writing",
+          "duration": 0.262800000000027,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects schema or scope expansion {\"modelRef\":\"unknown/model\"} before writing",
+          "status": "passed",
+          "title": "rejects schema or scope expansion {\"modelRef\":\"unknown/model\"} before writing",
+          "duration": 0.2566999999999666,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rejects stale revision, shared agent ownership and same request id with different intent",
+          "status": "passed",
+          "title": "rejects stale revision, shared agent ownership and same request id with different intent",
+          "duration": 0.9431999999999903,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator restores previous fields and verifies rollback when Runtime reload fails",
+          "status": "passed",
+          "title": "restores previous fields and verifies rollback when Runtime reload fails",
+          "duration": 0.8129000000000133,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator preserves a concurrent field edit and blocks later writes when rollback ownership is lost",
+          "status": "passed",
+          "title": "preserves a concurrent field edit and blocks later writes when rollback ownership is lost",
+          "duration": 1.2059000000000424,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator rolls back its context field while preserving another owner tool change",
+          "status": "passed",
+          "title": "rolls back its context field while preserving another owner tool change",
+          "duration": 0.473700000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator reconciles a persisted pending operation through the same request instead of writing twice",
+          "status": "passed",
+          "title": "reconciles a persisted pending operation through the same request instead of writing twice",
+          "duration": 0.454400000000021,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator detects retained assistant bindings on another workspace",
+          "status": "passed",
+          "title": "detects retained assistant bindings on another workspace",
+          "duration": 0.2418999999999869,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator preserves configured model fallbacks when changing the primary",
+          "status": "passed",
+          "title": "preserves configured model fallbacks when changing the primary",
+          "duration": 0.4286000000000172,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator preserves inherited fallbacks when the agent had no model override",
+          "status": "passed",
+          "title": "preserves inherited fallbacks when the agent had no model override",
+          "duration": 0.46580000000000155,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator keeps default fallbacks disabled for an explicit string model",
+          "status": "passed",
+          "title": "keeps default fallbacks disabled for an explicit string model",
+          "duration": 0.4031999999999698,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator restarts an offline Gateway before validating live recovery identity",
+          "status": "passed",
+          "title": "restarts an offline Gateway before validating live recovery identity",
+          "duration": 0.5048999999999637,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "typed project configuration operator"
+          ],
+          "fullName": "typed project configuration operator refuses stale-owner replay then lets the current owner reconcile after a renderer restart",
+          "status": "passed",
+          "title": "refuses stale-owner replay then lets the current owner reconcile after a renderer restart",
+          "duration": 0.5652000000000044,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167464711,
+      "endTime": 1795167464724.5652,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/project-configuration-operator.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope pins an inactive project policy without changing UI workspace or leaking concurrent contexts",
+          "status": "passed",
+          "title": "pins an inactive project policy without changing UI workspace or leaking concurrent contexts",
+          "duration": 1.7670999999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed permission before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed permission before consuming its scope",
+          "duration": 0.979299999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed root before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed root before consuming its scope",
+          "duration": 0.26250000000001705,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed generation before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed generation before consuming its scope",
+          "duration": 0.21819999999999595,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed duplicate before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed duplicate before consuming its scope",
+          "duration": 0.19170000000002574,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed pause before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed pause before consuming its scope",
+          "duration": 0.21009999999998286,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects a changed revision before consuming its scope",
+          "status": "passed",
+          "title": "rejects a changed revision before consuming its scope",
+          "duration": 0.1636000000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "trusted project execution scope"
+          ],
+          "fullName": "trusted project execution scope rejects corrupt policy values instead of normalizing them to unpaused",
+          "status": "passed",
+          "title": "rejects corrupt policy values instead of normalizing them to unpaused",
+          "duration": 0.2571000000000083,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167465005,
+      "endTime": 1795167465009.257,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/project-execution-scope.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy replaces active-project defaults for the bound project and keeps explicit tool denies",
+          "status": "passed",
+          "title": "replaces active-project defaults for the bound project and keeps explicit tool denies",
+          "duration": 58.583300000000065,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy accepts a worker only through its persistent task binding and rejects stale or unrelated identities",
+          "status": "passed",
+          "title": "accepts a worker only through its persistent task binding and rejects stale or unrelated identities",
+          "duration": 282.9066,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy preserves config for sessions without project association",
+          "status": "passed",
+          "title": "preserves config for sessions without project association",
+          "duration": 1.4975000000000591,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy keeps task_loop status in the control channel",
+          "status": "passed",
+          "title": "keeps task_loop status in the control channel",
+          "duration": 1.320100000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy keeps mission_loop status in the control channel",
+          "status": "passed",
+          "title": "keeps mission_loop status in the control channel",
+          "duration": 1.2770999999999049,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy keeps transcripts stop in the control channel",
+          "status": "passed",
+          "title": "keeps transcripts stop in the control channel",
+          "duration": 1.28449999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy keeps process kill in the control channel",
+          "status": "passed",
+          "title": "keeps process kill in the control channel",
+          "duration": 1.3484999999999445,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "project runtime policy"
+          ],
+          "fullName": "project runtime policy keeps subagents kill in the control channel",
+          "status": "passed",
+          "title": "keeps subagents kill in the control channel",
+          "duration": 1.236099999999965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167458497,
+      "endTime": 1795167458847.236,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/project-runtime-policy.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rechecks a restrictive project permission before the next effect",
+          "status": "passed",
+          "title": "rechecks a restrictive project permission before the next effect",
+          "duration": 509.35629999999946,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract serializes permission downgrade behind an already admitted effect boundary",
+          "status": "passed",
+          "title": "serializes permission downgrade behind an already admitted effect boundary",
+          "duration": 331.4378999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps paused task_loop status on its owning control path",
+          "status": "passed",
+          "title": "keeps paused task_loop status on its owning control path",
+          "duration": 97.23829999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps paused mission_loop status on its owning control path",
+          "status": "passed",
+          "title": "keeps paused mission_loop status on its owning control path",
+          "duration": 49.03200000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps paused transcripts stop on its owning control path",
+          "status": "passed",
+          "title": "keeps paused transcripts stop on its owning control path",
+          "duration": 47.757300000000214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract global pause rejects the next managed effect even when its project binding remains active",
+          "status": "passed",
+          "title": "global pause rejects the next managed effect even when its project binding remains active",
+          "duration": 430.83759999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract binds an in-process worker through its persisted worktree owner",
+          "status": "passed",
+          "title": "binds an in-process worker through its persisted worktree owner",
+          "duration": 494.29429999999957,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract uses the canonical parent reference after transfer even before its navigation link was persisted",
+          "status": "passed",
+          "title": "uses the canonical parent reference after transfer even before its navigation link was persisted",
+          "duration": 403.5685000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract admits an owned child while the fenced parent run remains active",
+          "status": "passed",
+          "title": "admits an owned child while the fenced parent run remains active",
+          "duration": 470.8631999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects missing and incomplete contracts without creating a Legacy business task",
+          "status": "passed",
+          "title": "rejects missing and incomplete contracts without creating a Legacy business task",
+          "duration": 228.04659999999967,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract starts a complete canonical contract through task_control without requiring a session bridge",
+          "status": "passed",
+          "title": "starts a complete canonical contract through task_control without requiring a session bridge",
+          "duration": 339.72869999999875,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract associates a live isolated scheduled run with its canonical contract without replacing the project coordinator",
+          "status": "passed",
+          "title": "associates a live isolated scheduled run with its canonical contract without replacing the project coordinator",
+          "duration": 328.7293000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract uses a decomposed scheduled child contract under the recorded parent TaskRef",
+          "status": "passed",
+          "title": "uses a decomposed scheduled child contract under the recorded parent TaskRef",
+          "duration": 411.72700000000077,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a missing scheduled coordinator before claiming another task",
+          "status": "passed",
+          "title": "rejects a missing scheduled coordinator before claiming another task",
+          "duration": 275.665500000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a stale scheduled coordinator before claiming another task",
+          "status": "passed",
+          "title": "rejects a stale scheduled coordinator before claiming another task",
+          "duration": 343.6399000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a paused scheduled coordinator before claiming another task",
+          "status": "passed",
+          "title": "rejects a paused scheduled coordinator before claiming another task",
+          "duration": 311.33619999999974,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects an isolated schedule from another workspace or agent before creating a task",
+          "status": "passed",
+          "title": "rejects an isolated schedule from another workspace or agent before creating a task",
+          "duration": 183.2494999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract consumes a canonical business contract after a failed turn left a diagnostic deviation link",
+          "status": "passed",
+          "title": "consumes a canonical business contract after a failed turn left a diagnostic deviation link",
+          "duration": 539.4710999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract selects an existing completed task and preserves its status and historical links",
+          "status": "passed",
+          "title": "selects an existing completed task and preserves its status and historical links",
+          "duration": 509.2086999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract uses the captured worker parent TaskRef with a real child contract despite a later parent selection",
+          "status": "passed",
+          "title": "uses the captured worker parent TaskRef with a real child contract despite a later parent selection",
+          "duration": 491.1912000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract pauses new dispatch while retaining the already admitted writer and workgroup ownership",
+          "status": "passed",
+          "title": "pauses new dispatch while retaining the already admitted writer and workgroup ownership",
+          "duration": 372.9427999999989,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary",
+          "status": "passed",
+          "title": "keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary",
+          "duration": 499.97659999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract captures checkout execution revision while allowing the admitted run through coordinator pause",
+          "status": "passed",
+          "title": "captures checkout execution revision while allowing the admitted run through coordinator pause",
+          "duration": 386.6976999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects effects on a completed canonical task, including after owner reconstruction",
+          "status": "passed",
+          "title": "rejects effects on a completed canonical task, including after owner reconstruction",
+          "duration": 423.1247000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+          "status": "passed",
+          "title": "rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+          "duration": 285.66539999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+          "status": "passed",
+          "title": "keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+          "duration": 404.6244000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract does not release a live canonical claim because a new API instance or response settled",
+          "status": "passed",
+          "title": "does not release a live canonical claim because a new API instance or response settled",
+          "duration": 487.2066999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+          "status": "passed",
+          "title": "rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+          "duration": 313.6862000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface",
+          "status": "passed",
+          "title": "preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface",
+          "duration": 563.6873999999989,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects unknown session before writing a task",
+          "status": "passed",
+          "title": "rejects unknown session before writing a task",
+          "duration": 211.1921000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects wrong root before writing a task",
+          "status": "passed",
+          "title": "rejects wrong root before writing a task",
+          "duration": 248.98539999999957,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects stale generation before writing a task",
+          "status": "passed",
+          "title": "rejects stale generation before writing a task",
+          "duration": 284.02260000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects forged claim before writing a task",
+          "status": "passed",
+          "title": "rejects forged claim before writing a task",
+          "duration": 185.4358000000011,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+          "status": "passed",
+          "title": "rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+          "duration": 357.266599999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract fences a generation change while admission is awaiting its final live owner read",
+          "status": "passed",
+          "title": "fences a generation change while admission is awaiting its final live owner read",
+          "duration": 186.66699999999764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract leaves a selected task unclaimed when the final run check fails",
+          "status": "passed",
+          "title": "leaves a selected task unclaimed when the final run check fails",
+          "duration": 246.66070000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract rejects a contract revision changed after resolution without claiming the revised task",
+          "status": "passed",
+          "title": "rejects a contract revision changed after resolution without claiming the revised task",
+          "duration": 238.10499999999956,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract blocks task selection and rebinding on session resources even without a Workspace writer",
+          "status": "passed",
+          "title": "blocks task selection and rebinding on session resources even without a Workspace writer",
+          "duration": 365.69730000000345,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract requires explicit canonical selection for multiple links and rejects an external reference as a task",
+          "status": "passed",
+          "title": "requires explicit canonical selection for multiple links and rejects an external reference as a task",
+          "duration": 501.3284999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract does not silently switch a running canonical task through coordinator rebinding",
+          "status": "passed",
+          "title": "does not silently switch a running canonical task through coordinator rebinding",
+          "duration": 262.23929999999746,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract requires admission for unknown MCP effects and checks cancellation before execution",
+          "status": "passed",
+          "title": "requires admission for unknown MCP effects and checks cancellation before execution",
+          "duration": 30.27560000000085,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "first effect consumes the canonical execution contract"
+          ],
+          "fullName": "first effect consumes the canonical execution contract cancels an effect after Main admission without releasing or upgrading its canonical claim",
+          "status": "passed",
+          "title": "cancels an effect after Main admission without releasing or upgrading its canonical claim",
+          "duration": 272.03779999999824,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167444038,
+      "endTime": 1795167457963.0378,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/session-task-scope-completion.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh publishes each project independently, retains old observations on failure, and never activates a workspace",
+          "status": "passed",
+          "title": "publishes each project independently, retains old observations on failure, and never activates a workspace",
+          "duration": 59.44829999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh ignores a late response from a replaced project root",
+          "status": "passed",
+          "title": "ignores a late response from a replaced project root",
+          "duration": 61.589800000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio refresh"
+          ],
+          "fullName": "system portfolio refresh rejects a response for another project and keeps successful entries when the list fails",
+          "status": "passed",
+          "title": "rejects a response for another project and keeps successful entries when the list fails",
+          "duration": 0.4904000000000224,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167464286,
+      "endTime": 1795167464407.4905,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-portfolio-store.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read reads two plans from the same task authority without leaking tasks, receipts or changing history",
+          "status": "passed",
+          "title": "reads two plans from the same task authority without leaking tasks, receipts or changing history",
+          "duration": 61.45170000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read rejects missing projects and a request for an old workspace identity",
+          "status": "passed",
+          "title": "rejects missing projects and a request for an old workspace identity",
+          "duration": 32.80630000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read rejects an owner change while the live session read is in flight",
+          "status": "passed",
+          "title": "rejects an owner change while the live session read is in flight",
+          "duration": 37.344899999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps duplicate coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps duplicate coordinator unavailable while retaining its task facts",
+          "duration": 39.31099999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps archived coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps archived coordinator unavailable while retaining its task facts",
+          "duration": 66.73539999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps stale-generation coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps stale-generation coordinator unavailable while retaining its task facts",
+          "duration": 30.210000000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps handoff coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps handoff coordinator unavailable while retaining its task facts",
+          "duration": 36.84159999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system portfolio owner read"
+          ],
+          "fullName": "system portfolio owner read keeps gateway-down coordinator unavailable while retaining its task facts",
+          "status": "passed",
+          "title": "keeps gateway-down coordinator unavailable while retaining its task facts",
+          "duration": 33.48890000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167461133,
+      "endTime": 1795167461471.489,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-portfolio.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "system dispatch admission"
+          ],
+          "fullName": "system dispatch admission admits three projects in order and isolates one rejected project without duplicate concurrent calls",
+          "status": "passed",
+          "title": "admits three projects in order and isolates one rejected project without duplicate concurrent calls",
+          "duration": 59.893100000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system dispatch admission"
+          ],
+          "fullName": "system dispatch admission rechecks global pause after a queued lease is granted",
+          "status": "passed",
+          "title": "rechecks global pause after a queued lease is granted",
+          "duration": 59.79609999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "system dispatch admission"
+          ],
+          "fullName": "system dispatch admission refuses foreign coordinator identity and stale policy before reserving",
+          "status": "passed",
+          "title": "refuses foreign coordinator identity and stale policy before reserving",
+          "duration": 0.4689000000000192,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167463868,
+      "endTime": 1795167463988.469,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-project-dispatch.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "global pause transcript ownership"
+          ],
+          "fullName": "global pause transcript ownership retries its failed service capture and gives a restarted service a new capture identity",
+          "status": "passed",
+          "title": "retries its failed service capture and gives a restarted service a new capture identity",
+          "duration": 198.5937,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "global pause transcript ownership"
+          ],
+          "fullName": "global pause transcript ownership hides foreign captures and refuses foreign stop while allowing the original owner during pause",
+          "status": "passed",
+          "title": "hides foreign captures and refuses foreign stop while allowing the original owner during pause",
+          "duration": 7.646200000000022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167463331,
+      "endTime": 1795167463537.6462,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-transcript-control.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration persists versioned global pause and rejects stale or conflicting requests",
+          "status": "passed",
+          "title": "persists versioned global pause and rejects stale or conflicting requests",
+          "duration": 153.61250000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps a project with unfinished configuration recoverable before deletion",
+          "status": "passed",
+          "title": "keeps a project with unfinished configuration recoverable before deletion",
+          "duration": 1.2798999999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "status": "passed",
+          "title": "hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "duration": 1.5254999999999654,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration publishes background membership after persistence without publishing draft-only edits",
+          "status": "passed",
+          "title": "publishes background membership after persistence without publishing draft-only edits",
+          "duration": 3.715400000000045,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration normalizes legacy nested session folders and new parent input to one level",
+          "status": "passed",
+          "title": "normalizes legacy nested session folders and new parent input to one level",
+          "duration": 1.068300000000022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+          "status": "passed",
+          "title": "creates the default workspace from list when no workspace exists",
+          "duration": 0.6580000000000155,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+          "status": "passed",
+          "title": "falls back to the default workspace when the stored active id is missing",
+          "duration": 0.4897000000000844,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+          "status": "passed",
+          "title": "keeps independent UI state for each session inside a workspace",
+          "duration": 0.510599999999954,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+          "status": "passed",
+          "title": "does not copy the previous active session state into a newly selected empty session",
+          "duration": 0.522199999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+          "status": "passed",
+          "title": "keeps each agent binding session independent within the same workspace",
+          "duration": 0.7658000000000129,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+          "status": "passed",
+          "title": "does not inherit the previous agent state when switching to a new agent binding",
+          "duration": 0.6625999999999976,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+          "status": "passed",
+          "title": "seeds the Verse Claw harness when creating a workspace profile",
+          "duration": 1.8699000000000296,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+          "status": "passed",
+          "title": "switches workspaces without rewriting the target workspace session or state",
+          "duration": 1.5756000000000085,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+          "status": "passed",
+          "title": "P2-001: creates new workspaces with readOnly permission mode by default",
+          "duration": 0.9305000000000518,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "status": "passed",
+          "title": "P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "duration": 58.419500000000085,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "status": "passed",
+          "title": "P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "duration": 1.85550000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration switches workspaces without closing the previous workspace resources",
+          "status": "passed",
+          "title": "switches workspaces without closing the previous workspace resources",
+          "duration": 1.5419999999999163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspaces api compatibility migration"
+          ],
+          "fullName": "workspaces api compatibility migration workspace delete reclaims Main browser and managed-port owners",
+          "status": "passed",
+          "title": "workspace delete reclaims Main browser and managed-port owners",
+          "duration": 0.5884000000000924,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795167462335,
+      "endTime": 1795167462566.5884,
+      "status": "passed",
+      "message": "",
+      "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/workspaces-api.test.ts"
+    }
+  ]
+}

@@ -180,6 +180,20 @@ describe('provider owner layered spend reservation', () => {
     expect(() => reserve('priced-later', { config: { host: { maxCostUsd: 100 } } })).toThrow(/unknown-cost/);
   });
 
+  it('accounts for a fallback separately and rejects replay of the same fallback attempt', async () => {
+    const inner: StreamFn = () => {
+      const stream = createAssistantMessageEventStream();
+      stream.push({type:'done',reason:'stop',message:message(10)});
+      return stream;
+    };
+    const run = {config:{host:{maxTokens:1000}}, workspaceId:'project-a',sessionKey:'session-a',sessionGeneration:'generation-one',runId:'fallback-run'};
+    const attempt = (providerFallbackIndex: number) => wrapProviderSpendStream(inner,{...run,providerFallbackIndex})(model,{messages:[]});
+    await (await attempt(0)).result();
+    await (await attempt(1)).result();
+    await expect(attempt(1)).rejects.toThrow(/duplicate/);
+    expect(providerSpendSnapshot(scope())[0].spentTokens).toBe(20);
+  });
+
   it('pins the run identity before mutable caller metadata changes', async () => {
     const inner: StreamFn = () => { const stream = createAssistantMessageEventStream(); stream.push({ type: 'done', reason: 'stop', message: message(10) }); return stream; };
     const run = { config: { host: { maxTokens: 1000 } }, workspaceId: 'project-a', sessionKey: 'session-a', sessionGeneration: 'generation-one', runId: 'pinned' };

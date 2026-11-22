@@ -19,3 +19,10 @@ describe('DCS mutation host timeouts', () => {
     expect(hostActionTimeoutMs('chat', 'history')).toBe(HOST_ACTION_DEFAULT_TIMEOUT_MS);
   });
 });
+
+it('bounds a long Mission tick without extending unrelated Gateway RPCs', () => {
+  expect(hostActionTimeoutMs('gateway', 'rpc', { method: 'mission.run', timeoutMs: 150_000 })).toBe(HOST_ACTION_LONG_TIMEOUT_MS);
+  expect(hostActionTimeoutMs('gateway', 'rpc', { method: ' mission.run ' })).toBe(HOST_ACTION_LONG_TIMEOUT_MS);
+  expect(hostActionTimeoutMs('gateway', 'rpc', { method: 'mission.status' })).toBe(HOST_ACTION_DEFAULT_TIMEOUT_MS);
+  expect(hostActionTimeoutMs('gateway', 'rpc', { method: 'chat.send' })).toBe(HOST_ACTION_DEFAULT_TIMEOUT_MS);
+});

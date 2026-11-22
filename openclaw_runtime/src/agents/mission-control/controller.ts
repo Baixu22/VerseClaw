@@ -1,3 +1,4 @@
+import { assertSystemExecutionAllowed } from '../../../../shared/task-system/project-coordinator.js';
 import crypto, { createHash } from "node:crypto";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { AgentConfig } from "../../config/types.agents.js";
@@ -19,7 +20,7 @@ import {
   recordLongTaskCheckpoint,
 } from "../long-task-control/store.js";
 import { executeReplayRollback, type ReplayRollbackDeps } from "../replay-rollback-authority.js";
-import { ensureLongTaskLedgerRoot } from "../long-task-control/task-ledger.js";
+import { ensureLongTaskLedgerRoot, stableLongTaskLedgerRootId } from "../long-task-control/task-ledger.js";
 import { mergeRuntimeLineage, normalizeRuntimeLineage } from "../../runtime-core/lineage.js";
 import { missionWaitMode, projectMissionRun } from "./mission-taskflow-projection.js";
 import {
@@ -705,7 +706,7 @@ function withInnerTaskLoopConfig(
 }
 
 function memoryEvidenceRefs(record: MissionRunRecord): MemoryEvidenceRef[] {
-  return record.evidenceRefs.flatMap((ref) => {
+  return [{ type: 'session', ref: record.sessionKey }, { type: 'tool', ref: `mission:${record.missionId}:tick:${record.tick}` }, ...record.evidenceRefs.flatMap((ref) => {
     if (
       ref.type === "trace" ||
       ref.type === "session" ||
@@ -730,7 +731,7 @@ function memoryEvidenceRefs(record: MissionRunRecord): MemoryEvidenceRef[] {
       ];
     }
     return [];
-  });
+  })] as MemoryEvidenceRef[];
 }
 
 function clampScore(value: number): number {
@@ -982,8 +983,9 @@ function proposeMemoryCandidates(
     const proposal: MemoryProposal = {
       type: "episode",
       scope: "session",
-      scopeKey: record.missionId,
+      scopeKey: record.sessionKey,
       roleTags: ["mission-control"],
+      applicableRoles: ["mission-control", "main"],
       content: candidate.summary,
       evidenceRefs: memoryEvidenceRefs(record),
       evidence: candidate.evidenceRefs,
@@ -991,6 +993,8 @@ function proposeMemoryCandidates(
       importance: 0.4,
       source: "trace",
       durability: "session",
+      sensitivity: 'normal',
+      expiresAt: new Date((deps.now?.() ?? Date.now()) + 24 * 60 * 60 * 1000).toISOString(),
       operation: "create",
       reason: `Mission ${record.missionId} memory candidate`,
     };
@@ -1038,7 +1042,7 @@ function proposeExtractedMemoryCandidates(
   const drafts = extractMemoryProposalDrafts({
     text,
     roleName: "mission-control",
-    scopeKey: record.missionId,
+    scopeKey: record.sessionKey,
     source: "trace_summary",
     evidenceRefs: memoryEvidenceRefs(record),
   });
@@ -1046,9 +1050,10 @@ function proposeExtractedMemoryCandidates(
   for (const draft of drafts) {
     const proposal: MemoryProposal = {
       type: draft.type,
-      scope: draft.scope,
-      scopeKey: draft.scopeKey ?? record.missionId,
+      scope: 'session',
+      scopeKey: record.sessionKey,
       roleTags: draft.roleTags,
+      applicableRoles: ["mission-control", "main"],
       content: draft.content,
       evidenceRefs: draft.evidenceRefs,
       evidence: draft.evidenceRefs?.map((ref) => ref.ref),
@@ -1056,6 +1061,8 @@ function proposeExtractedMemoryCandidates(
       importance: draft.importance,
       source: draft.source,
       durability: "session",
+      sensitivity: 'normal',
+      expiresAt: new Date((deps.now?.() ?? Date.now()) + 24 * 60 * 60 * 1000).toISOString(),
       operation: "create",
       reason: `Mission ${record.missionId} extracted memory candidate (tick ${record.tick})`,
     };
@@ -1091,6 +1098,18 @@ function proposeKnowledgeInboxCandidates(
   return proposed;
 }
 
+function ensureMissionLedgerRoot(
+  mission: Pick<MissionRunRecord, "missionId" | "workspaceId" | "sessionKey" | "agentId" | "objective" | "acceptance" | "createdAt">,
+  expectedRoot?: string,
+): string {
+  const identity = { workspaceId: mission.workspaceId, sessionKey: mission.sessionKey, runId: mission.missionId, source: "mission_loop" as const };
+  if (expectedRoot !== undefined && expectedRoot !== stableLongTaskLedgerRootId(identity)) {
+    throw new Error("MISSION_LEDGER_ROOT_MISMATCH");
+  }
+  return ensureLongTaskLedgerRoot({ ...identity, agentId: mission.agentId, title: mission.objective,
+    createdAt: mission.createdAt, metadata: { missionId: mission.missionId, acceptance: mission.acceptance } });
+}
+
 export function createMission(
   request: MissionRunRequest,
   cfg: OpenClawConfig | undefined,
@@ -1124,16 +1143,7 @@ export function createMission(
     : (request.acceptance ?? []);
   let taskLedgerRootId: string | undefined;
   try {
-    taskLedgerRootId = ensureLongTaskLedgerRoot({
-      workspaceId: request.workspaceId,
-      sessionKey: request.sessionKey,
-      ...(request.agentId ? { agentId: request.agentId } : {}),
-      runId: missionId,
-      title: objective,
-      source: "mission_loop",
-      createdAt: now,
-      metadata: { missionId, acceptance },
-    });
+    taskLedgerRootId = ensureMissionLedgerRoot({ ...request, missionId, objective, acceptance, createdAt: now });
   } catch {
     // Mission state remains authoritative if the ledger file is temporarily unavailable.
   }
@@ -1163,6 +1173,8 @@ export function createMission(
       important: request.important ?? false,
       templateId: request.templateId ?? request.teamTemplateId,
       leadRole: request.leadRole ?? request.preferredLeadRole,
+      maxWorkers: request.maxWorkers,
+      includeVerifier: request.includeVerifier,
       ...(managedTask
         ? {
             managedTask: managedTask.reference,
@@ -1200,6 +1212,7 @@ export async function runMission(
   cfg: OpenClawConfig | undefined,
   deps: MissionControllerDeps = {},
 ): Promise<MissionRunResult> {
+  assertSystemExecutionAllowed();
   const existing = request.missionId
     ? (deps.getMission ?? getMissionRunFromStore)(request.missionId)
     : undefined;
@@ -1213,6 +1226,7 @@ export async function tickMission(
   deps: MissionControllerDeps = {},
 ): Promise<MissionRunResult> {
   const getMission = deps.getMission ?? getMissionRunFromStore;
+  assertSystemExecutionAllowed();
   const record = getMission(input.missionId);
   if (!record) throw new Error(`unknown mission "${input.missionId}"`);
   const missionFencingEnabled = goalWakeController.isMissionFencingEnabled();
@@ -1298,6 +1312,50 @@ export async function tickMission(
   }
 
   let taskLoopResult: TaskLoopRunResult | undefined;
+  const controlRevision = record.metadata?.controlRevision;
+  const runningTick = fencedTickClaimed ? record.tick : record.tick + 1;
+  const activeTickId = record.activeTickId;
+  const stopForControl = (): MissionRunRecord | undefined => {
+    const current = getMission(record.missionId);
+    if (!current || current.metadata?.controlRevision === controlRevision) return undefined;
+
+    // Controls can pause and resume while an await is pending. Settle that tick
+    // from the accepted record, preserving its evidence without restarting it.
+    recorder.recordEvent("mission.control", current.status, {
+      attributes: {
+        missionId: record.missionId, tick: runningTick,
+        taskLoopRunId: taskLoopResult?.loopRunId, taskLoopTraceId: taskLoopResult?.traceId,
+      },
+    });
+    const { trace, scorecard } = completeObservedRun(recorder, "aborted");
+    (deps.storeTrace ?? storeRuntimeTrace)(trace, scorecard);
+    if (current.tick !== runningTick || current.activeTickId !== activeTickId) return clone(current);
+    if (taskLoopResult) {
+      current.taskLoopRunId = taskLoopResult.loopRunId;
+      current.lineage = record.lineage;
+      current.evidenceRefs = [...new Map(
+        [...current.evidenceRefs, ...record.evidenceRefs].map((ref) => [`${ref.type}:${ref.ref}`, ref]),
+      ).values()];
+    }
+    current.traceId = trace.id;
+    if (missionFencingEnabled && activeTickId) {
+      const finish = goalWakeController.finishMissionTick({
+        missionId: current.missionId,
+        expectedRevision: current.revision ?? 0,
+        activeTickId,
+        status: current.status,
+      });
+      if (!finish.ok) return clone(getMission(record.missionId) ?? current);
+      current.revision = finish.revision;
+      current.activeTickId = null;
+      current.updatedAt = finish.row.updated_at;
+    }
+    const saved = saveMission(current);
+    if (typeof saved.revision === "number") current.revision = saved.revision;
+    missionLocalControlPlaneConfigs.set(current, cfg);
+    emit(current, deps);
+    return clone(current);
+  };
   try {
     if (!fencedTickClaimed) {
       record.tick += 1;
@@ -1435,12 +1493,19 @@ export async function tickMission(
         typeof record.metadata?.templateId === "string" ? record.metadata.templateId : undefined,
       leadRole:
         typeof record.metadata?.leadRole === "string" ? record.metadata.leadRole : undefined,
+      ...(typeof record.metadata?.maxWorkers === "number" ? { maxWorkers: record.metadata.maxWorkers } : {}),
+      ...(typeof record.metadata?.includeVerifier === "boolean" ? { includeVerifier: record.metadata.includeVerifier } : {}),
       ...(record.lineage ? { lineage: record.lineage } : {}),
     };
     taskLoopResult = await (deps.runTaskLoop ?? runTaskLoop)(
       taskRequest,
       withInnerTaskLoopConfig(cfg, config),
-      deps.taskLoopDeps,
+      taskRequest.taskLedgerRootId && !deps.taskLoopDeps?.ensureTaskLedgerRoot
+        ? { ...deps.taskLoopDeps,
+            // The child loop can replay the Mission's root, but cannot recreate it with its own run ID.
+            ensureTaskLedgerRoot: () => ensureMissionLedgerRoot(record, taskRequest.taskLedgerRootId),
+          }
+        : deps.taskLoopDeps,
     );
     record.taskLoopRunId = taskLoopResult.loopRunId;
     record.traceId = taskLoopResult.traceId;
@@ -1456,6 +1521,8 @@ export async function tickMission(
     record.evidenceRefs = evidenceFromTaskLoop(taskLoopResult);
     record.risks = taskLoopResult.risks;
     record.remaining = taskLoopResult.remaining;
+    const controlledAfterTaskLoop = stopForControl();
+    if (controlledAfterTaskLoop) return controlledAfterTaskLoop;
 
     record.phase = "collect_evidence";
     emit(record, deps, { taskLoopRunId: record.taskLoopRunId, traceId: record.traceId });
@@ -1516,6 +1583,8 @@ export async function tickMission(
       },
       deps.reviewerDeps,
     );
+    const controlledAfterReview = stopForControl();
+    if (controlledAfterReview) return controlledAfterReview;
     let reviewer = gateMissionReviewerCompletion(rawReviewer, record);
 
     const noProgressHash = buildNoProgressHash(
@@ -1675,6 +1744,8 @@ export async function tickMission(
               deps.rollback,
             )
           : undefined;
+        const controlledAfterRollback = stopForControl();
+        if (controlledAfterRollback) return controlledAfterRollback;
         if (rollbackResult?.ok) {
           // Rollback succeeded: record the event, clear the no-progress latch
           // so the next repair tick may make progress, and keep the mission
@@ -1867,6 +1938,8 @@ export async function tickMission(
     });
     return clone(record);
   } catch (error) {
+    const controlledAfterError = stopForControl();
+    if (controlledAfterError) return controlledAfterError;
     if (error instanceof MissionLifecycleConflictError) {
       // The lifecycle owner settled this mission elsewhere (e.g. a concurrent
       // cancel); the tick stops and mission_runs keeps the committed state.
@@ -1937,6 +2010,7 @@ export function pauseMission(
   if (!terminal(record.status)) {
     record.status = "paused";
     record.phase = "schedule";
+    record.metadata = { ...(record.metadata ?? {}), controlRevision: crypto.randomUUID() };
     emit(record, deps);
   }
   return clone(record);
@@ -1959,6 +2033,7 @@ export function resumeMission(
   if (record.status === "paused") {
     record.status = "sleeping";
     record.phase = "schedule";
+    record.metadata = { ...(record.metadata ?? {}), controlRevision: crypto.randomUUID() };
     emit(record, deps);
   }
   return clone(record);
@@ -1974,6 +2049,7 @@ export function cancelMission(
     record.status = "cancelled";
     record.phase = "blocked";
     record.completedAt = deps.now?.() ?? Date.now();
+    record.metadata = { ...(record.metadata ?? {}), controlRevision: crypto.randomUUID() };
     emit(record, deps);
   }
   return clone(record);

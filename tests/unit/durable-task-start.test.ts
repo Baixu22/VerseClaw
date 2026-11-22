@@ -11,6 +11,7 @@ const fixture = vi.hoisted(() => ({ root: "" }));
 vi.mock("../../electron/services/workspaces-api", () => ({
   getWorkspaceRootPathById: async () => fixture.root,
   getPersistedCoordinatorBinding: async () => null,
+  getProjectCoordinatorProfiles: async () => [],
 }));
 import {
   readSessionTask,

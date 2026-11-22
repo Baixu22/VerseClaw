@@ -1032,5 +1032,120 @@
       "removable": "可移除",
       "protected": "受保护"
     }
+  },
+  "embedding": {
+    "title": "项目检索向量模型",
+    "description": "选择项目检索使用的模型服务。",
+    "mode": "服务位置",
+    "local": "本地模型",
+    "remote": "远端服务",
+    "provider": "已配置的服务",
+    "configure": "使用此服务",
+    "retry": "重试 / 刷新凭据",
+    "cancel": "取消",
+    "disable": "禁用",
+    "statusLabel": "状态",
+    "progress": "模型下载进度",
+    "failed": "向量模型服务不可用。",
+    "states": {
+      "disabled": "已禁用",
+      "installing": "安装模型中",
+      "warming": "预热中",
+      "ready": "已就绪",
+      "unavailable": "不可用",
+      "cancelled": "已取消"
+    }
+  },
+  "rerank": {
+    "title": "项目证据重排",
+    "description": "使用本地端点或已配置的远端 cross-encoder 对已准入证据排序。local 检索不依赖此服务。",
+    "mode": "服务位置",
+    "local": "本地端点",
+    "remote": "远端服务",
+    "model": "Cross-encoder 模型",
+    "provider": "已配置的服务",
+    "endpoint": "本地端点",
+    "configure": "使用此服务",
+    "retry": "重试 / 刷新凭据",
+    "cancel": "取消",
+    "disable": "禁用",
+    "status": "状态",
+    "failed": "重排服务不可用。",
+    "states": {
+      "disabled": "已禁用",
+      "ready": "已就绪",
+      "unavailable": "不可用",
+      "cancelled": "已取消"
+    }
+  },
+  "vector": {
+    "title": "项目向量索引",
+    "description": "向量模型就绪后，为获准的项目来源构建派生索引。",
+    "backend": "索引后端",
+    "portable": "可移植精确检索",
+    "ann": "原生 ANN 检索",
+    "nativeUnavailable": "原生 ANN 不可用，可使用可移植检索。",
+    "configure": "构建此索引",
+    "rebuild": "重建",
+    "optimize": "优化",
+    "disable": "禁用",
+    "status": "状态",
+    "failed": "向量索引不可用，请检查所选模型与平台容量。",
+    "states": {
+      "disabled": "已禁用",
+      "building": "构建中",
+      "ready": "已就绪",
+      "unavailable": "不可用",
+      "cancelled": "已取消"
+    }
+  },
+  "operations": {
+    "title": "知识运维",
+    "description": "管理默认检索方案和当前工作区的索引。",
+    "sources": "选择来源与来源集",
+    "owner": "来源所有者：当前工作区的 Memory Wiki",
+    "profile": "默认检索方案",
+    "answerMode": "默认回答策略",
+    "storageBudget": "索引发布空间预算（MiB）",
+    "save": "保存配置",
+    "status": "能力状态",
+    "enable": "启用索引",
+    "pause": "暂停",
+    "resume": "恢复",
+    "rebuild": "重建",
+    "reconcile": "同步",
+    "cleanup": "清理旧代际",
+    "disable": "关闭索引",
+    "generations": "有效来源代际",
+    "lag": "等待索引的来源",
+    "deleted": "逻辑删除的来源",
+    "cleanupPending": "等待清理的旧代际",
+    "storageUsed": "数据库占用（MiB）",
+    "restarting": "配置已保存，正在等待 Gateway 重启并回读配置。",
+    "failed": "知识运维暂不可用，请在 Gateway 就绪后重试。",
+    "profiles": {
+      "local": "本地",
+      "quality": "质量",
+      "research": "研究"
+    },
+    "answers": {
+      "strict": "严格来源证据",
+      "open": "来源证据与标注的模型知识"
+    },
+    "states": {
+      "enabled": "已启用，等待来源",
+      "ready": "就绪",
+      "degraded": "退化",
+      "disabled": "已关闭",
+      "unavailable": "不可用"
+    },
+    "reasons": {
+      "index-paused": "索引已暂停，原文读取继续检查撤权。",
+      "index-unavailable": "索引需要恢复。",
+      "storage-budget": "索引发布空间预算已超出。",
+      "index-lag": "部分来源变更正在等待索引。",
+      "dense-unavailable": "此方案的 embedding 或向量检索不可用。",
+      "rerank-unavailable": "此方案的重排不可用。"
+    }
   }
 }

@@ -1,0 +1,263 @@
+{
+  "schema": "G5ReadinessReview/v1",
+  "driven_by": "agent",
+  "actor": "codex/g5-readiness-relay",
+  "realHumanEvidence": false,
+  "foundation": {
+    "status": "passed",
+    "productCandidate": "f90c1b1938a68d8a83b73674df5a0beb45de34c8",
+    "productTree": "05f2d1d5c863ffa7f9ebce46b92a9fc15b18f345",
+    "criteria": [
+      {
+        "id": "TF-0670-AC1",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0670-AC2",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0670-AC3",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0670-AC4",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0670-AC5",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0670-AC6",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0671-AC1",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0671-AC2",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0671-AC3",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0671-AC4",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0671-AC5",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0672-AC1",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0672-AC2",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0672-AC3",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0672-AC4",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0672-AC5",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0673-AC1",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0673-AC2",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0673-AC3",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0673-AC4",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0673-AC5",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0673-AC6",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0674-AC1",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0674-AC2",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0674-AC3",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0674-AC4",
+        "status": "passed"
+      },
+      {
+        "id": "TF-0674-AC5",
+        "status": "passed"
+      }
+    ],
+    "commands": 23,
+    "executionChecks": {
+      "executedChecks": 729,
+      "passedChecks": 729
+    },
+    "artifactCount": 318,
+    "readback": {
+      "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/foundation-readback-v8.json",
+      "sha256": "7e27041d31496d76e9aa7cd782746cc903a8302c738043ff0a47802643aa9ffc"
+    },
+    "reader": {
+      "path": "D:\\tmp\\g5-verify-1ed1ae769-5cf4b5\\readback-foundation-v8.py",
+      "sha256": "218f3a7792493e2b4b2ad0ac5662ba3af2944d6862883df57f550a87e985adc5"
+    },
+    "original73": {
+      "path": "D:\\tmp\\g5-verify-1ed1ae769-5cf4b5\\foundation-readback-v8-original73-reverified.json",
+      "sha256": "1361333835ca614d00bd3091f1bfe15f8023bac132c91139e1de023588e05ffb"
+    },
+    "original73Reader": {
+      "path": "D:\\tmp\\g5-verify-1ed1ae769-5cf4b5\\readback-original73-v6.cjs",
+      "sha256": "e0ce4a3208c3de3600e235ad37f1d578f75f93894b4354edba0cdf020842e5ba"
+    }
+  },
+  "nonProductTestRevision": {
+    "head": "1ed1ae769ffde2f9e948df8ff4ebc099d8f114a1",
+    "tree": "23986e32f077b20df6029a2777b678410471308b",
+    "buildManifest": {
+      "path": "D:/tmp/g5-relay-20261117b/candidate-current-v6-build-manifest.json",
+      "sha256": "ddc72d1b337b09600ece586184a34eea16fdf2ecc5d31c435e35cc00bfa78375"
+    },
+    "buildFilesReverified": 13972,
+    "runtime": {
+      "status": "passed",
+      "playCount": 1,
+      "nodeExited": 2,
+      "receipt": {
+        "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/runtime/receipt.json",
+        "sha256": "b5d9693a39c8a3ca34f2d76e43e7c1c83bcb633855e69b9a66f5b7cf6ab3f6e3"
+      },
+      "cleanup": {
+        "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/runtime/node-gateway-process-cleanup.json",
+        "sha256": "53520dd74b0e811f8fe1780ebca422a29988a5088f971e17f0bf41b69901513b"
+      }
+    },
+    "host": {
+      "status": "passed",
+      "playCount": 1,
+      "providerRequests": 4,
+      "hostGatewayExited": 3,
+      "electronRunIdentitiesExited": 6,
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/autonomy-host-readiness.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:/tmp/g5-verify-1ed1ae769-5cf4b5/host-results"
+      ],
+      "play": {
+        "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/host.json",
+        "sha256": "f8d5bb75f5b1aba425bd5f59f6df60d0c921005c12a6464154bffcc68fc5fd6f"
+      },
+      "owner": {
+        "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/host-results/autonomy-host-readiness-TF-b54cc-uation-and-restart-recovery/host-readiness.json",
+        "sha256": "db7ee49abd3b2f5ceb168f04ed9d715811ad20c776a811695eecc2873ced5edc"
+      },
+      "gatewayCleanup": {
+        "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/host-results/autonomy-host-readiness-TF-b54cc-uation-and-restart-recovery/host-gateway-cleanup.json",
+        "sha256": "276c7e5cf0efdb23359216b47ed87a66b3a0a13b6c3f8b5f4e07e4205ab6917d"
+      },
+      "electronCleanup": {
+        "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/host-results/electron-process-cleanup.json",
+        "sha256": "f5e105427083f48bc165790df2a68992d38ad681d09d260535b6749ae0811de0"
+      },
+      "sourceGuard": {
+        "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/host-results/source-mutation-guard.json",
+        "sha256": "0f97b299d8ae4e3d366a8e23b62761df37c15470b1a2c0b28d78f24eabe9af63"
+      }
+    },
+    "focused": {
+      "status": "passed",
+      "unitTests": 45,
+      "typecheckTest": "passed",
+      "commsComparison": "passed",
+      "selfcheck": {
+        "path": "D:/tmp/verse-claw-e2e-run-XmoWG1/node-process-selfcheck.json",
+        "sha256": "8f6728556c3eaef4130da8b5a10493c8ef36367fd900b7edc124a774272dee5b"
+      }
+    }
+  },
+  "harnessCi": {
+    "status": "failed",
+    "exitCode": 1,
+    "preAuditTests": 59,
+    "gate": "agent-dev:audit",
+    "findings": [
+      "evidence-stale:workbench",
+      "evidence-stale:deep-test",
+      "evidence-stale:deep-test-history",
+      "evidence-stale:quality",
+      "performance-limit:vitest-agent-dev",
+      "performance-limit:typecheck",
+      "performance-limit:contract"
+    ],
+    "log": {
+      "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/harness-ci.log",
+      "sha256": "2169e79e35abeab940f568a1f6457ead063ca61384e443efd007487f1fd0ee47"
+    }
+  },
+  "integration": {
+    "status": "not-passed",
+    "paired": {
+      "candidatePassed": 6,
+      "baselinePassed": 5,
+      "totalPerSide": 6,
+      "baselineFailure": "Handoff preview dialog did not open",
+      "ac4Status": "incomplete",
+      "ac4Counts": {
+        "unsupported": 2,
+        "passed": 26
+      },
+      "receipt": {
+        "path": "D:/tmp/g5-relay-20261117b/paired-ac4-current-v2.json",
+        "sha256": "46beed363d9d98d5d70cd99fad1c18df309f992ade8c110dd4e3fe03c162a209"
+      }
+    }
+  },
+  "earlierFailures": [
+    {
+      "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/foundation-readback-v6.json",
+      "sha256": "035255377768719af20ae5f55aabafe6eefc52dc10f7f398853074a89fb0477b"
+    },
+    {
+      "path": "D:/tmp/g5-verify-1ed1ae769-5cf4b5/foundation-readback-v7.json",
+      "sha256": "7f943f221b686f5fe4d72e29f713c1074f89464fbd84a7d96cfe788b9d1e7e6c"
+    },
+    {
+      "path": "D:/tmp/g5-verify-138c2b5bb-f42e22/host.log",
+      "sha256": "164d82d5e733c65bfd9c5696b23d4003f7e319138a6c72f5f2c66c8f4f404f1e"
+    }
+  ]
+}

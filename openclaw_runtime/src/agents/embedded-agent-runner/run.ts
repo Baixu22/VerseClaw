@@ -1074,7 +1074,9 @@ export async function runEmbeddedAgent(
       const pluginHarnessForwardedProfileCandidates = pluginHarnessOwnsTransport
         ? profileCandidates.filter(isForwardablePluginHarnessAuthProfile)
         : [];
-      const profileFailureStore = pluginHarnessOwnsTransport ? attemptAuthProfileStore : authStore;
+        const profileFailureStore = pluginHarnessOwnsTransport
+          ? attemptAuthProfileStore
+          : authStore;
       let profileIndex = 0;
       const traceAttempts: TraceAttempt[] = [];
 
@@ -1555,7 +1557,9 @@ export async function runEmbeddedAgent(
 
           const basePrompt =
             nextAttemptPromptOverride ??
-            (provider === "anthropic" ? scrubAnthropicRefusalMagic(params.prompt) : params.prompt);
+              (provider === "anthropic"
+                ? scrubAnthropicRefusalMagic(params.prompt)
+                : params.prompt);
           nextAttemptPromptOverride = null;
           const promptAdditions = [
             ackExecutionFastPathInstruction,
@@ -1657,6 +1661,7 @@ export async function runEmbeddedAgent(
             sessionFile: activeSessionFile,
             workspaceDir: resolvedWorkspace,
             workspaceId: params.workspaceId,
+              chatKnowledgeRefs: params.chatKnowledgeRefs,
             cwd: params.cwd,
             agentDir,
             config: params.config,
@@ -1705,7 +1710,9 @@ export async function runEmbeddedAgent(
             authProfileStore: runAttemptAuthProfileStore,
             // These harnesses build OpenClaw tools internally. Keep transport auth
             // scoped while letting tool construction see plugin/provider creds.
-            toolAuthProfileStore: harnessBuildsOpenClawTools ? attemptAuthProfileStore : undefined,
+              toolAuthProfileStore: harnessBuildsOpenClawTools
+                ? attemptAuthProfileStore
+                : undefined,
             modelRegistry,
             agentId: workspaceResolution.agentId,
             beforeAgentStartResult,
@@ -1724,6 +1731,7 @@ export async function runEmbeddedAgent(
             runTimeoutOverrideMs: params.runTimeoutOverrideMs,
             runId: params.runId,
             attemptIndex: (rc03AttemptBase ?? 0) + runLoopIterations - 1,
+            providerFallbackIndex: params.providerFallbackIndex,
             abortSignal: attemptAbortController.signal,
             replyOperation: params.replyOperation,
             shouldEmitToolResult: params.shouldEmitToolResult,
@@ -1747,6 +1755,7 @@ export async function runEmbeddedAgent(
             contentProvenance: params.contentProvenance,
             streamParams: params.streamParams,
             modelRun: params.modelRun,
+              modelBudget: params.modelBudget,
             promptMode: params.promptMode,
             ownerNumbers: params.ownerNumbers,
             enforceFinalTag: params.enforceFinalTag,
@@ -1763,7 +1772,9 @@ export async function runEmbeddedAgent(
             internalEvents: params.internalEvents,
             bootstrapPromptWarningSignaturesSeen,
             bootstrapPromptWarningSignature:
-              bootstrapPromptWarningSignaturesSeen[bootstrapPromptWarningSignaturesSeen.length - 1],
+                bootstrapPromptWarningSignaturesSeen[
+                  bootstrapPromptWarningSignaturesSeen.length - 1
+                ],
             suppressNextUserMessagePersistence,
             beforeAgentFinalizeRevisionAttempts,
             maxBeforeAgentFinalizeRevisions: MAX_BEFORE_AGENT_FINALIZE_REVISIONS,
@@ -2627,7 +2638,11 @@ export async function runEmbeddedAgent(
             attempt.codexAppServerFailure && attempt.promptTimeoutOutcome,
           );
           let shouldSurfaceCodexCompletionTimeout = false;
-          if (promptError && promptErrorSource !== "compaction" && attempt.codexAppServerFailure) {
+            if (
+              promptError &&
+              promptErrorSource !== "compaction" &&
+              attempt.codexAppServerFailure
+            ) {
             // Retry replay-safe Codex app-server failures.
             const codexAppServerRecoveryRetry = resolveCodexAppServerRecoveryRetry({
               attempt,
@@ -3136,7 +3151,8 @@ export async function runEmbeddedAgent(
             compactionCount: autoCompactionCount > 0 ? autoCompactionCount : undefined,
             compactionTokensAfter: lastCompactionTokensAfter,
           };
-          const finalAssistantVisibleText = resolveFinalAssistantVisibleText(sessionLastAssistant);
+            const finalAssistantVisibleText =
+              resolveFinalAssistantVisibleText(sessionLastAssistant);
           const finalAssistantRawText = resolveFinalAssistantRawText(sessionLastAssistant);
 
           const payloads = buildEmbeddedRunPayloads({
@@ -3637,7 +3653,8 @@ export async function runEmbeddedAgent(
             !promptError &&
             !timedOut &&
             sessionLastAssistant?.stopReason === "error" &&
-            ((sessionLastAssistant?.usage as { output?: number } | undefined)?.output ?? 0) === 0 &&
+              ((sessionLastAssistant?.usage as { output?: number } | undefined)?.output ?? 0) ===
+                0 &&
             (silentErrorContent?.length ?? 0) === 0 &&
             (attempt.replayMetadata ? !attempt.replayMetadata.hadPotentialSideEffects : false) &&
             emptyErrorRetries < MAX_EMPTY_ERROR_RETRIES
@@ -3857,7 +3874,9 @@ export async function runEmbeddedAgent(
                   : {}),
               },
               contextManagement:
-                autoCompactionCount > 0 ? { lastTurnCompactions: autoCompactionCount } : undefined,
+                  autoCompactionCount > 0
+                    ? { lastTurnCompactions: autoCompactionCount }
+                    : undefined,
             },
             didSendViaMessagingTool: attempt.didSendViaMessagingTool,
             didDeliverSourceReplyViaMessageTool:

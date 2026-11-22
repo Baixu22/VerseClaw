@@ -1,0 +1,88 @@
+{
+  "candidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+  "baseCommit": "208ad0c362cd644a8fc8118aafb8424913dbe968",
+  "driven_by": "agent",
+  "actor": "codex",
+  "findings": [],
+  "overall_correctness": "00910db9e：修补成立，静态复核未发现实质缺陷。产物读取限于打开时的 fstat 大小和剩余 32 MiB 预算，并核对 descriptor/path 的设备、inode、大小及时间戳；并发增长标记 stale，后续超预算文件标记 unverified 且零读。chat-api 与 Working Context 的任务范围和 owner 复核一致；E2E guard 仅在设置 CLAWX_M1_EXPECTED_HEAD 时核对提交和干净工作树。按要求未运行测试或构建。",
+  "inspectedFiles": [
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.ja-JP.md",
+      "sha256": "df2dc09be9092bcf04d10029d6ce600075d69318a4fa58fa527e7e8a2361f38d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.md",
+      "sha256": "f37da09cc51bb9774a61f1e6bed0b4a4a9c3feeb92db76a06207805b4e13d77c"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.ru-RU.md",
+      "sha256": "46fea42911f325f03428964114b9acc7263e236b7853499fe5640c3aa47207c2"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/README.zh-CN.md",
+      "sha256": "3eb34ad6242b5b61f7aba8948cfa62e3133f972152ddf8229e9588c6f5a1ce92"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/docs/modules/multi-agent-and-tasks.md",
+      "sha256": "d4f37465eda5b0c4b9bc94de38e026066a765262633680138ac63a539f379129"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/electron/services/chat-api.ts",
+      "sha256": "cdc026a112053255104cf5d26bd66e13705e83e11455fea93976c5cab0981d79"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/electron/services/task-ledger-working-context.ts",
+      "sha256": "adec690372271519d1db552dd07f907ff8e0ea63f0f01e4aa59dfae7d54eabfe"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/scenarios/autonomous-project-system.md",
+      "sha256": "cf93f207d35ca4005118d74c5311fab4899dc14585958f5600f2de9a8efbfe8a"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/autonomy-project-continuity.md",
+      "sha256": "567142bdc12c74d7771d29a9e8835d284752bda5561b65972dc627d3267d74a8"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/shared/long-session-continuity.ts",
+      "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/shared/task-system/store.ts",
+      "sha256": "2926c7612443cea3c18dfcf4bb814545852d7c018ec44668978d789e4af237fd"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/e2e/long-session-continuity-context.spec.ts",
+      "sha256": "2e7131bb934eb3c70b394d938fb502f8e99081d6e1f5ab472ee89c2d26a9bbcd"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/autonomy-context-paired.test.ts",
+      "sha256": "a336d7304011cdffd1612e11d42d74310143fb89ef080133245ca9a66f66c141"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-context-artifacts.test.ts",
+      "sha256": "2d213084b9de1951ce604aebea421694bb81c5f500eb128e9ca24ec8e685185a"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-project-planning.test.ts",
+      "sha256": "eae8024f5ae9bde77f808f52c1078648e7d291152fdda0cfed488b02e286bbfe"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-runtime.test.ts",
+      "sha256": "bf08170ec68944144ecbf099be7cd50fefd161d3545afb4307337f7bb9ba0687"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/fixtures/autonomy-context-baseline.json",
+      "sha256": "b35e61d517aeaf42daa1cba73ee03ac2d97d70b609a199ad2c138f85efe69294"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/long-session-continuity-context.test.ts",
+      "sha256": "c090e8a412bbd134e06d8440375fc63d8d48abf64b11721142859218abb31926"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/unit/task-ledger-working-context-single-source.test.ts",
+      "sha256": "caf1ae8f850217b8a8c516c859d383a90649cf85c9c55742b2f77e8458364982"
+    }
+  ],
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reviewAgentId": "01a1f715-be2c-7dc2-a53f-0ab9251f416b"
+}

@@ -2142,7 +2142,7 @@
       "menu": "送信方法",
       "guide": "誘導",
       "guideTooltip": "実行を止めずに、次のステップで現在の実行に追加",
-      "longTaskRequired": "中断/ガイド/キュー/目標修正には、このセッションでアクティブな /loop 長タスクコンテキストが必要です。",
+      "longTaskRequired": "割り込みとガイドには実行中の長期タスクが必要です。",
       "reviseGoal": "目標を修正",
       "reviseGoalTooltip": "チェックポイントを保存し、このメッセージを新しい目標として再開",
       "queueDefault": "実行中: Enter でキュー",
@@ -2296,6 +2296,30 @@
     "knowledgeRuntimeLessons": {
       "title": "ランタイムレッスン",
       "description": "確認済みの SEKB プリンシップを可視的な知識ソースとして利用します。"
+    },
+    "knowledgeInteraction": {
+      "label": "知識モード",
+      "off": "オフ",
+      "manual": "手動",
+      "suggest": "提案",
+      "auto-read": "自動読み取り"
+    },
+    "knowledgeProfile": {
+      "label": "検索プロファイル",
+      "local": "ローカル",
+      "quality": "品質",
+      "research": "調査"
+    },
+    "knowledgeRead": {
+      "cancel": "読み取りを取消",
+      "cancelled": "取消済み",
+      "timeout": "読み取り時間切れ",
+      "error": "読み取り不可",
+      "inspect": "資料を表示",
+      "version": "版 {{version}}",
+      "bytes": "候補本文 {{bytes}} バイト",
+      "fallback": "資料検索の代替経路を使用中",
+      "partial": "検索結果は一部利用可能"
     }
   },
   "historyBuckets": {
@@ -3025,5 +3049,12 @@
     "copyDetails": "詳細をコピー",
     "history": "ブランチと履歴",
     "tools": "リポジトリツール"
+  },
+  "knowledgeUsage": {
+    "summary": "使用知識: {{count}} 断片 · {{chars}} 文字 · 約 {{tokens}} トークン",
+    "unavailable": "使用記録なし",
+    "pending": "最終知識記録を待機中",
+    "dropped": "選択資料 {{count}} 件は未保持",
+    "selectionUnavailable": "選択資料の比較は利用不可"
   }
 }

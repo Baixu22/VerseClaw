@@ -8,6 +8,7 @@ pathPatterns:
   - src/components/layout/SessionFolderTree.tsx
   - src/components/layout/session-buckets.ts
   - src/components/layout/Sidebar.tsx
+  - src/components/chat/ResourceChip.tsx
   - src/pages/Chat/**
   - src/stores/chat/**
   - shared/chat/**
@@ -19,6 +20,8 @@ requiredTests:
   - tests/unit/session-workstreams.test.ts
   - tests/unit/session-folder-tree.test.tsx
   - tests/unit/session-derivation-lineage.test.ts
+  - tests/unit/resource-chip-activity-readback.test.tsx
+  - tests/e2e/long-session-coordination.spec.ts
   - tests/e2e/session-derivation-ui.spec.ts
 ---
 
@@ -43,6 +46,7 @@ requiredTests:
   Runtime 确认 child 后即保存其 generation；Workspace 的激活回执决定 `ready` 状态，激活异常保留 `creating`，供同一 operationId 恢复。
 - `parent-missing`、`cycle` 和 `bound-exceeded` 必须如实显示为来源缺失、循环或已截断；不得把异常链伪装成根会话。
 - 运行状态继续来自现有 session activity/status 投影。父会话的聚合计数不得覆盖父会话自己的状态。
+- 资源弹窗打开时通过现有 Session Activity store 刷新当前 workspace、session 和 generation 的活动投影，读取协调器及 worker 回执；后台状态轮询停止后仍可主动刷新。
 
 ## 派生语义
 

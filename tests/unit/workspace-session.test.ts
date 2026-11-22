@@ -190,14 +190,93 @@ describe('workspace session helpers', () => {
   });
 
   it('preserves the source after rejected creation and can retry the same intent', async () => {
-    const { createWorkspaceScopedNewSession } = await import('@/lib/workspace-session');
+    const { createWorkspaceScopedNewSession, registerWorkspaceSessionViewSave } = await import('@/lib/workspace-session');
+    const saveCurrentView = vi.fn(async () => workspaceState.saveWorkspaceState({ id: 'workspace-a', sessionKey: 'agent:reviewer:old', state: { draftInput: 'latest draft before debounce' } }));
+    const unregister = registerWorkspaceSessionViewSave({ workspaceId: 'workspace-a', sessionKey: 'agent:reviewer:old', viewRevision: chatState.viewRevision, save: saveCurrentView });
     hostApiMock.workspaces.update.mockRejectedValueOnce(new Error('NEW_SESSION_OWNER_REJECTED'));
     await expect(createWorkspaceScopedNewSession()).rejects.toThrow('NEW_SESSION_OWNER_REJECTED');
+    expect(saveCurrentView).toHaveBeenCalledOnce();
+    expect(hostApiMock.workspaces.saveState).toHaveBeenCalledWith(expect.objectContaining({ state: { draftInput: 'latest draft before debounce' } }));
+    expect(workspaceState.saveWorkspaceState).toHaveBeenCalledWith({ id: 'workspace-a', sessionKey: 'agent:reviewer:old', activeSessionKey: 'agent:reviewer:old' });
+    expect(workspaceState.saveWorkspaceState.mock.invocationCallOrder[0]).toBeLessThan(hostApiMock.workspaces.update.mock.invocationCallOrder[0]);
     expect(chatState.currentSessionKey).toBe('agent:reviewer:old');
     expect(chatState.resetSessionView).not.toHaveBeenCalled();
     expect(workspaceState.fetchWorkspaces).not.toHaveBeenCalled();
+    unregister();
     await expect(createWorkspaceScopedNewSession()).resolves.toMatch(/^agent:reviewer:session-/);
     expect(chatState.resetSessionView).toHaveBeenCalledTimes(1);
+  });
+
+  it('discards a replaced new-session intent before saving the old active session', async () => {
+    const { createWorkspaceScopedNewSession } = await import('@/lib/workspace-session');
+    const profile = workspaceState.activeWorkspace;
+    workspaceState.activeWorkspace = null as never;
+    let release!: () => void;
+    workspaceState.fetchWorkspaces.mockImplementationOnce(async () => {
+      await new Promise<void>(resolve => { release = resolve; });
+      workspaceState.activeWorkspace = profile;
+    });
+    const created = createWorkspaceScopedNewSession();
+    await vi.waitFor(() => expect(workspaceState.fetchWorkspaces).toHaveBeenCalledTimes(1));
+    chatState.switchSession('agent:reviewer:neighbour');
+    profile.activeSessionKey = 'agent:reviewer:neighbour';
+    release();
+    await expect(created).resolves.toBeNull();
+    expect(workspaceState.saveWorkspaceState).not.toHaveBeenCalled();
+    expect(hostApiMock.workspaces.update).not.toHaveBeenCalled();
+    expect(profile.activeSessionKey).toBe('agent:reviewer:neighbour');
+  });
+
+  it('creates in another project only after saving its source view and uses the target agent', async () => {
+    const { createWorkspaceScopedNewSession, registerWorkspaceSessionViewSave } = await import('@/lib/workspace-session');
+    const source = workspaceState.activeWorkspace;
+    const target = { ...baseWorkspace, id: 'workspace-b', selectedAgentId: 'main', agentId: 'main', activeSessionKey: 'agent:main:target', sessionStates: {} };
+    workspaceState.profiles = [source, target];
+    const unregister = registerWorkspaceSessionViewSave({ workspaceId: source.id, sessionKey: chatState.currentSessionKey,
+      viewRevision: chatState.viewRevision, save: async () => workspaceState.saveWorkspaceState({ id: source.id, sessionKey: chatState.currentSessionKey, state: { draftInput: 'unsaved source text' } }) });
+    const key = await createWorkspaceScopedNewSession(target.id);
+    expect(key).toMatch(/^agent:main:session-/);
+    expect(hostApiMock.workspaces.update).toHaveBeenCalledWith(target.id, expect.objectContaining({ agentId: 'main', activeSessionKey: key }));
+    expect(hostApiMock.workspaces.saveState.mock.invocationCallOrder[0]).toBeLessThan(hostApiMock.workspaces.update.mock.invocationCallOrder[0]);
+    expect(hostApiMock.workspaces.update.mock.invocationCallOrder[0]).toBeLessThan(workspaceState.switchWorkspace.mock.invocationCallOrder[0]);
+    expect(source.sessionStates).toEqual({ 'agent:reviewer:old': { draftInput: 'unsaved source text' } });
+    expect(chatState.resetSessionView).toHaveBeenCalledWith(key, { deferSessionEntry: true });
+    unregister();
+  });
+
+  it('abandons a view callback disposed while new-session hydration is pending', async () => {
+    const { createWorkspaceScopedNewSession, registerWorkspaceSessionViewSave } = await import('@/lib/workspace-session');
+    const source = workspaceState.activeWorkspace;
+    let finish!: () => void;
+    const save = vi.fn(async () => undefined);
+    const unregister = registerWorkspaceSessionViewSave({ workspaceId: source.id, sessionKey: chatState.currentSessionKey, viewRevision: chatState.viewRevision, save });
+    workspaceState.activeWorkspace = null as never;
+    workspaceState.fetchWorkspaces.mockImplementationOnce(() => new Promise<void>(resolve => { finish = () => { workspaceState.activeWorkspace = source; resolve(); }; }));
+    const pending = createWorkspaceScopedNewSession();
+    await vi.waitFor(() => expect(workspaceState.fetchWorkspaces).toHaveBeenCalledOnce());
+    unregister(); finish();
+    await expect(pending).resolves.toBeNull();
+    expect(save).not.toHaveBeenCalled();
+    expect(hostApiMock.workspaces.update).not.toHaveBeenCalled();
+  });
+
+  it('preserves the workspace owner when its selection changes before session hydration', async () => {
+    const { createWorkspaceScopedNewSession } = await import('@/lib/workspace-session');
+    const profile = workspaceState.activeWorkspace;
+    workspaceState.activeWorkspace = null as never;
+    let release!: () => void;
+    workspaceState.fetchWorkspaces.mockImplementationOnce(async () => {
+      await new Promise<void>(resolve => { release = resolve; });
+      workspaceState.activeWorkspace = { ...profile, id: 'workspace-b', activeSessionKey: 'agent:reviewer:workspace-b' };
+      workspaceState.activeWorkspaceId = 'workspace-b';
+    });
+    const created = createWorkspaceScopedNewSession();
+    await vi.waitFor(() => expect(workspaceState.fetchWorkspaces).toHaveBeenCalledTimes(1));
+    release();
+    await expect(created).resolves.toBeNull();
+    expect(workspaceState.saveWorkspaceState).not.toHaveBeenCalled();
+    expect(hostApiMock.workspaces.update).not.toHaveBeenCalled();
+    expect(workspaceState.activeWorkspace.activeSessionKey).toBe('agent:reviewer:workspace-b');
   });
 
   it('keeps a source revisit during the last new-session await', async () => {

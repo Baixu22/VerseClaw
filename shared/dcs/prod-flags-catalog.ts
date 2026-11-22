@@ -4,6 +4,8 @@
  * Must stay aligned with openclaw_runtime coding-runtime-flags / dcs-context-tools-flags.
  * Does NOT flip any production defaults.
  */
+import { PROJECT_RAG_DEFAULTS } from '../knowledge/operations.js';
+
 export type DcsProdFlagRisk =
   | 'baseline-on'
   | 'opt-in'
@@ -33,6 +35,57 @@ export type DcsProdFlagEntry = {
 };
 
 export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
+  {
+    id: 'project-rag-bounded-research', wave: 'RAG-16', kind: 'request',
+    key: 'knowledge.researchStart', defaultDisplay: 'explicit request only', defaultValue: false, risk: 'request-only',
+    enable: 'Select Research in the Chat knowledge picker and run an explicit source search.',
+    rollback: 'Cancel the current research and select Local or Quality; the selected source scope is retained.',
+    riskNote: 'One owner scope and deadline cover at most three rounds, eight queries and two budgeted planning calls. Missing pricing, discarded evidence and cancellation return partial results.',
+    executor: { status: 'wired', sites: ['electron/services/knowledge-research.ts:56'] },
+  },
+  {
+    id: 'project-rag-code-relationships', wave: 'RAG-15', kind: 'request',
+    key: 'context_understand.intent', defaultDisplay: 'lookup', defaultValue: 'lookup', risk: 'request-only',
+    enable: 'Request relationship or research in the normal coding context tool; context_impact explicitly requests the same exact relationship discovery.',
+    rollback: 'Use lookup; the existing context-view-tools rollback removes the tool family.',
+    riskNote: 'Current owner/version checks admit each endpoint; traversal defaults to one hop and is capped at two hops and 32 files.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/src/agents/tools/context-agent-tools.ts:407'] },
+  },
+  {
+    id: 'project-rag-task-context-hint', wave: 'RAG-15', kind: 'request',
+    key: 'context_understand.includeTaskHint', defaultDisplay: 'true for relationship/research', defaultValue: true, risk: 'request-only',
+    enable: 'Read the bound task revision, constraints and evidence references in an explicit relationship request or taskLedger.contextHint.',
+    rollback: 'Set includeTaskHint=false; the independent taskLedger.contextHint request accepts enabled=false.',
+    riskNote: 'The current session generation and Task Ledger binding own the read; changed or missing bindings return a gap without a task write.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/src/knowledge/retrieval/task-context-hint.ts:129'] },
+  },
+  {
+    id: 'project-rag-default-profile', wave: 'RAG-12', kind: 'config',
+    key: 'plugins.entries.memory-wiki.config.retrieval.profile', defaultDisplay: 'local',
+    defaultValue: PROJECT_RAG_DEFAULTS.profile, risk: 'opt-in',
+    enable: 'Choose Local, Quality or Research in Settings > Models & Providers > Knowledge operations.',
+    rollback: 'Restore local and reread the owner configuration after Gateway restart.',
+    riskNote: 'The configured default applies to omitted profiles; source scope and interaction mode remain request facts.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts:119'] },
+  },
+  {
+    id: 'project-rag-answer-strategy', wave: 'RAG-12', kind: 'config',
+    key: 'plugins.entries.memory-wiki.config.retrieval.answerMode', defaultDisplay: 'strict',
+    defaultValue: PROJECT_RAG_DEFAULTS.answerMode, risk: 'opt-in',
+    enable: 'Choose the default answer strategy in Knowledge operations; Knowledge Librarian keeps the current explicit selection.',
+    rollback: 'Restore strict in Knowledge operations.',
+    riskNote: 'Open answers identify model knowledge separately from owner evidence.',
+    executor: { status: 'wired', sites: ['src/pages/Chat/KnowledgeChat.tsx:62'] },
+  },
+  {
+    id: 'project-rag-index-storage-budget', wave: 'RAG-12', kind: 'config',
+    key: 'plugins.entries.memory-wiki.config.retrieval.maxStorageBytes', defaultDisplay: '512 MiB',
+    defaultValue: String(PROJECT_RAG_DEFAULTS.maxStorageBytes), risk: 'opt-in',
+    enable: 'Set the index publication storage budget in Knowledge operations.',
+    rollback: 'Restore the previous verified budget and rebuild the current owner index.',
+    riskNote: 'Publication checks actual database, WAL and SHM bytes; staging and retired-generation cleanup remain visible.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/src/knowledge/retrieval/index-controller.ts:258', 'openclaw_runtime/src/knowledge/retrieval/index-controller.ts:268'] },
+  },
   {
     id: 'context-view-tools',
     wave: 'C1',

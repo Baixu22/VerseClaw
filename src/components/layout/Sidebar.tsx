@@ -3,10 +3,10 @@
  * Navigation sidebar with menu items.
  * No longer fixed - sits inside the flex layout below the title bar.
  */
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/shallow';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate, type NavLinkRenderProps } from 'react-router-dom';
 import {
   Settings as SettingsIcon,
   MoreHorizontal,
@@ -79,7 +79,7 @@ import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLin
 import { toast } from 'sonner';
 import i18n from 'i18next';
 import { useSessionIntentStore } from '@/stores/session-intent';
-import { activateWorkspaceScopedSession, activateWorkspaceSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
+import { activateWorkspaceScopedSession, activateWorkspaceSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession, createWorkspaceScopedNewSession } from '@/lib/workspace-session';
 
 interface NavItemProps {
   to: string;
@@ -548,11 +548,11 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
       to="/settings/general"
       data-testid="sidebar-nav-settings"
       aria-label={t('sidebar.settings')}
-      onClick={(event) => {
+      onClick={(event: MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         openSettings('/settings/general');
       }}
-      className={({ isActive }) =>
+      className={({ isActive }: NavLinkRenderProps) =>
         cn(
           'profile-menu-trigger',
           (isActive || settingsOpen) && 'open',
@@ -661,7 +661,7 @@ export function Sidebar() {
     return () => window.clearInterval(intervalId);
   }, [location.pathname, refreshInbox]);
 
-  const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'codeReview']);
+  const { t } = useTranslation(['common', 'chat', 'taskLedger', 'clawGraph', 'codeReview', 'agents']);
   /* The delete target outlives the dialog on purpose: the closing animation
      still shows its name, and the next request replaces it. It used to be
      cleared by a 160ms timer, which raced the 130ms exit animation under load
@@ -806,12 +806,11 @@ export function Sidebar() {
 
   const handleNewSessionInWorkspace = useCallback(async (workspaceId: string) => {
     try {
-      await switchWorkspace(workspaceId);
-      handleNewChat();
+      if (await createWorkspaceScopedNewSession(workspaceId)) navigate('/');
     } catch (error) {
       toast.error(String(error instanceof Error ? error.message : error));
     }
-  }, [handleNewChat, switchWorkspace]);
+  }, [navigate]);
 
   const toggleFolder = useCallback((folderId: string) => {
     setCollapsedFolderIds((current) => ({
@@ -1094,6 +1093,7 @@ export function Sidebar() {
   const extraNavItems = rendererExtensionRegistry.getExtraNavItems();
 
   const coreNavItems = [
+    { to: '/system', icon: <Laptop className="h-4 w-4" strokeWidth={2} />, label: t('agents:portfolio.title'), testId: 'sidebar-nav-system' },
     {
       to: '/inbox',
       icon: <CodexInbox className="h-4 w-4" strokeWidth={2} />,

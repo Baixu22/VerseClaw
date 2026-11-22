@@ -1,0 +1,28 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-m1-negative",
+  "sourceCandidate": "b5ce07acd5c6c866f55b8e3ba2887b14a664bb3b",
+  "expected": "task-b objective excluded for task-a",
+  "actual": [
+    {
+      "id": "working-context:Objective:1",
+      "kind": "objective",
+      "source": "task-ledger-working-context",
+      "text": "Private objective belonging only to task B",
+      "owner": "task-ledger",
+      "scope": {
+        "kind": "workspace",
+        "key": "project-a"
+      },
+      "freshness": "fresh",
+      "acceptedAt": "2026-11-20T00:01:00.000Z",
+      "expiresAt": "2026-11-21T00:00:00.000Z",
+      "trust": "owner-accepted",
+      "evidenceRefs": [
+        "task_ledger:task-b"
+      ],
+      "chars": 42
+    }
+  ],
+  "defectReproduced": true
+}

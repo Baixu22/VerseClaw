@@ -152,4 +152,10 @@ Renderer code must still call backend data through `src/lib/host-api.ts`; these 
 
 On Windows, Playwright global setup defaults Electron homes and process ledgers to the ignored `.tmp/e2e-runs` directory inside the checkout. This avoids the low-integrity `D:\tmp` ACL mismatch that can stop Electron before `BrowserWindow` creation. Set `CLAWX_E2E_RUN_ROOT_BASE` or `CLAWX_E2E_RUN_ROOT` only when an isolated run root is intentionally required.
 
+`CLAWX_E2E_EXECUTABLE_PATH` selects a staged runtime for source E2E launches when the installed Electron executable's integrity label prevents startup. Keep the staged runtime byte-identical to the installed runtime and record its SHA-256. An explicit per-test executable takes precedence.
+
+Source visual tests resize the visible live window and wait for its restored state, native content size, and renderer viewport to agree before capture. Requests below the product's minimum window bounds record their actual clamped size. Wide and narrow journey evidence must show distinct measured viewports and image dimensions.
+
+Cleanup receipts record both the detected launch markers and the markers remaining after native process checks and removal. An unavailable process census keeps the marker and reports cleanup failure.
+
 See also [`docs/agent-dev-tooling-evaluation.md`](agent-dev-tooling-evaluation.md) for the current external-tool adoption plan and measured benefit report.

@@ -1,5 +1,6 @@
 import { invokeHost } from '../../host-api-client';
 import type {
+  HostSuccess,
   KnowledgeMatchErrorExperiencePayload,
   KnowledgeMatchErrorExperienceResult,
   KnowledgeRuntimeLessonsReportResult,
@@ -73,6 +74,9 @@ export const knowledgeRuntimeLessonsApi = {
     input: KnowledgeSekbRetrieveForTaskPayload,
   ): Promise<KnowledgeSekbRetrieveForTaskResult> => (
     invokeHost('knowledge', 'sekbRetrieveForTask', input)
+  ),
+  recordExperienceExposure: (input: { requestId: string; principleIds: string[] }): Promise<HostSuccess & { recorded: number }> => (
+    invokeHost('knowledge', 'recordExperienceExposure', input)
   ),
   matchErrorExperience: (
     input: KnowledgeMatchErrorExperiencePayload,

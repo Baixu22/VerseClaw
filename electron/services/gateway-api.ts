@@ -1,6 +1,7 @@
 import { assertSensitiveCaptureAllowed } from './sensitive-capture-gate';
 import type { GatewayManager } from '../gateway/manager';
 import type { ResourceFabric } from './resource-fabric';
+import { hostActionTimeoutMs } from '../../shared/host-api/host-action-timeouts';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { createHash } from 'node:crypto';
 import { realpathSync } from 'node:fs';
@@ -38,7 +39,12 @@ import {
   listActiveOrchestrationPresets,
   matchOrchestrationPreset,
 } from './orchestration-presets-api';
-import { getActiveWorkspaceProfile } from './workspaces-api';
+import { getExecutionWorkspaceProfile } from './project-execution-scope';
+import { readSystemControl } from './workspaces-api';
+import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent, type KnowledgeReadScope } from './knowledge-read-scope';
+import { computeWorkspaceFingerprint } from '../../shared/workspace-fingerprint';
+import { normalizeChatKnowledgeReferences } from '../../openclaw_runtime/src/context-engine/chat-knowledge-intent';
+import { normalizeSourceRefV2 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { createSandboxDenialDetails, type SandboxDenialDetails } from '@shared/sandbox/errors';
 import { decideGatewayRpc, isApprovalRisk, resolveWorkspaceSessionRoot } from './workspace-permissions';
@@ -104,12 +110,21 @@ function runGatewayRpc(
   method: string,
   params: unknown,
   timeoutMs: number | undefined,
+  readScope?: KnowledgeReadScope,
 ): Promise<unknown> {
+  // A synchronous Mission waits for its inner loop and reviewer. Use the host
+  // budget when the caller omits an explicit RPC limit.
+  const requestTimeoutMs = timeoutMs ?? (method === 'mission.run'
+    ? hostActionTimeoutMs('gateway', 'rpc', { method })
+    : undefined);
   return resourceFabricInstance.run(
     method,
     params,
-    timeoutMs,
-    (rpcMethod, rpcParams, rpcTimeoutMs) => gatewayManager.rpc(rpcMethod, rpcParams, rpcTimeoutMs),
+    requestTimeoutMs,
+    async (rpcMethod, rpcParams, rpcTimeoutMs) => {
+      if (readScope) await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+      return gatewayManager.rpc(rpcMethod, rpcParams, rpcTimeoutMs);
+    },
   );
 }
 
@@ -345,10 +360,36 @@ export function createGatewayApi(
     method: string,
     params: unknown,
     timeoutMs: number | undefined,
-    policyWorkspace?: Awaited<ReturnType<typeof getActiveWorkspaceProfile>>,
+    policyWorkspace?: Awaited<ReturnType<typeof getExecutionWorkspaceProfile>>,
   ) => {
+    if (['orchestrator.run', 'task_loop.run', 'mission.run', 'mission.tick', 'mission.resume'].includes(method) && (await readSystemControl()).paused) {
+      return { success: false, rejectedBeforeDispatch: true, error: 'SYSTEM_EXECUTION_PAUSED' };
+    }
+    let knowledgeReadScope: KnowledgeReadScope | undefined;
+    if (method === 'wiki.get' || method === 'wiki.search' || method === 'wiki.retrieve' || method.startsWith('wiki.index.') || method.startsWith('wiki.embedding.') || method.startsWith('wiki.vector.')) {
+      const values = isRecord(params) ? params : {};
+      knowledgeReadScope = await prepareKnowledgeReadScope(gatewayManager, {
+        sessionKey: typeof values.sessionKey === 'string' ? values.sessionKey : undefined,
+        workspaceId: typeof values.workspaceId === 'string' ? values.workspaceId : undefined,
+      });
+      const sourceRef = normalizeSourceRefV2(values.sourceRef);
+      if (values.sourceRef !== undefined && !sourceRef) throw Object.assign(new Error('Invalid knowledge pin'), { code: 'VALIDATION' });
+      params = { ...values, ...(sourceRef ? { sourceRef } : {}), readIdentity: knowledgeReadScope.identity };
+    }
+    if (method === 'chat.send' && isRecord(params) && Array.isArray(params.knowledgeReferences) && params.knowledgeReferences.length) {
+      knowledgeReadScope = await prepareKnowledgeReadScope(gatewayManager, {
+        sessionKey: typeof params.sessionKey === 'string' ? params.sessionKey : undefined,
+        workspaceId: typeof params.workspaceId === 'string' ? params.workspaceId : undefined,
+      });
+      const references = normalizeChatKnowledgeReferences(params.knowledgeReferences);
+      if (references.some(ref => ref.invalidPin)) throw Object.assign(new Error('Invalid knowledge pin'), { code: 'VALIDATION' });
+      params = { ...params, knowledgeReferences: references,
+        workspaceId: knowledgeReadScope.identity.workspaceId, workspaceDir: knowledgeReadScope.identity.workspaceDir,
+        workspaceFingerprint: computeWorkspaceFingerprint(knowledgeReadScope.identity.workspaceDir ?? ''),
+        ...(knowledgeReadScope.expectedSessionGeneration ? { expectedSessionGeneration: knowledgeReadScope.expectedSessionGeneration } : {}) };
+    }
     if (method === 'chat.send' || method === 'orchestrator.run') {
-      const active = await getActiveWorkspaceProfile();
+      const active = await getExecutionWorkspaceProfile();
       if (policyWorkspace && (!active || active.id !== policyWorkspace.id
         || active.rootPath !== policyWorkspace.rootPath || active.permissionMode !== policyWorkspace.permissionMode)) {
         throw Object.assign(new Error('Gateway workspace scope changed after permission evaluation'), { code: 'VALIDATION' });
@@ -359,14 +400,14 @@ export function createGatewayApi(
       if (active && policyWorkspace && isRecord(params)) params = { ...params, workspaceId: active.id };
     }
     if (method === 'task_loop.verifyCompletion') {
-      const active = await getActiveWorkspaceProfile();
+      const active = await getExecutionWorkspaceProfile();
       if (!active || !isRecord(params) || params.workspaceId !== active.id || params.sessionKey !== active.activeSessionKey) {
         throw Object.assign(new Error('Verification execution scope differs from the workspace/session whose policy was checked'), { code: 'VALIDATION' });
       }
       const facts = await gatewayManager.rpc<{ workspaceRoot: string; checkpoint: unknown }>('task_loop.completionEvidence', {
         workspaceId: params.workspaceId, sessionKey: params.sessionKey, checkpointId: params.checkpointId,
       }, 20_000);
-      const fresh = await getActiveWorkspaceProfile();
+      const fresh = await getExecutionWorkspaceProfile();
       const physical = (value: string) => { const root = realpathSync(value); return process.platform === 'win32' ? root.toLowerCase() : root; };
       if (!fresh || !facts.checkpoint || fresh.id !== active.id || fresh.activeSessionKey !== active.activeSessionKey
         || physical(facts.workspaceRoot) !== physical(fresh.rootPath) || physical(active.rootPath) !== physical(fresh.rootPath)
@@ -378,7 +419,8 @@ export function createGatewayApi(
         throw Object.assign(new Error('Verification workspace policy changed after permission evaluation'), { code: 'VALIDATION' });
       }
     }
-    const result = await runGatewayRpc(gatewayManager, resourceFabricInstance, method, params, timeoutMs);
+    const result = await runGatewayRpc(gatewayManager, resourceFabricInstance, method, params, timeoutMs, knowledgeReadScope);
+    if (knowledgeReadScope) await assertKnowledgeReadScopeCurrent(gatewayManager, knowledgeReadScope);
     await captureMissionKnowledgeCandidates(method, result, options.createKnowledgeInboxItem, capturedMissionKnowledgeKeys);
     return result;
   };
@@ -440,18 +482,21 @@ export function createGatewayApi(
       if (!method) {
         throw new Error('Invalid gateway RPC method');
       }
+      if (['memory.readSource', 'sekb.readSource', 'sekb.retrieve', 'sekb.recordExposure'].includes(method)) {
+        return { success: false, rejectedBeforeDispatch: true, error: 'Memory owner reads use the knowledge service' };
+      }
       if (method.startsWith('taskScope.')) {
         return { success: false, rejectedBeforeDispatch: true, error: 'Task scope bridge methods are backend-owned' };
       }
       const timeoutMs = parseTimeoutMs(body.timeoutMs);
       const approvalId = normalizeApprovalId(body.approvalId);
-      const workspace = await getActiveWorkspaceProfile();
+      const workspace = await getExecutionWorkspaceProfile();
       const expectedWorkspaceId = typeof body.expectedWorkspaceId === 'string' ? body.expectedWorkspaceId : undefined;
       if (expectedWorkspaceId && workspace?.id !== expectedWorkspaceId) {
         return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed' };
       }
       const runScopedRpc = async () => {
-        if (expectedWorkspaceId && (await getActiveWorkspaceProfile())?.id !== expectedWorkspaceId) {
+        if (expectedWorkspaceId && (await getExecutionWorkspaceProfile())?.id !== expectedWorkspaceId) {
           return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed before dispatch' };
         }
         return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);

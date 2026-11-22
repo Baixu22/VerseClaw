@@ -63,6 +63,11 @@ export interface RawMessage {
   _attachedFiles?: AttachedFileMeta[];
   /** Local-only: knowledge pages explicitly attached to this chat turn. */
   _knowledgeRefs?: ChatKnowledgeReference[];
+  _knowledgeScope?: WorkspaceKnowledgeScope;
+  _knowledgeMode?: KnowledgeInvocationMode;
+  /** Runtime run owning the final DCS usage receipt for this user turn. */
+  _knowledgeRunId?: string;
+  _knowledgeRequestedCount?: number;
   /** Local-only: selected tool results folded back into visible assistant tool-call turns. */
   _toolResults?: Array<{
     toolCallId?: string;

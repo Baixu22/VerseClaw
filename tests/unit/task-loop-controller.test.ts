@@ -43,6 +43,7 @@ import {
 } from '../../openclaw_runtime/src/runtime-core';
 import { createRuntimeMemoryRuntimeIntegration } from '../../openclaw_runtime/src/runtime-core/memory-runtime-integration';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
 
 type FakePlan = {
   mode: 'router' | 'lead-workers' | 'adversarial-review';
@@ -325,15 +326,23 @@ beforeEach(() => {
   vi.stubEnv('OPENCLAW_STATE_DIR', path.dirname(createTaskLoopRuntimeMemoryDbPath()));
 });
 
+beforeEach(() => {
+  const stateDir = mkdtempSync(path.join(os.tmpdir(), 'task-loop-controller-'));
+  taskLoopRuntimeMemoryTempDirs.push(stateDir);
+  vi.stubEnv('OPENCLAW_STATE_DIR', stateDir);
+});
+
 afterEach(() => {
   clearTaskLoopRunsForTests();
   clearTaskStateHandlerConfig();
   resetAllGuardianCircuitBreakersForTests();
+  closeOpenClawAgentDatabasesForTest();
   closeOpenClawStateDatabaseForTest();
   vi.unstubAllEnvs();
   for (const dir of taskLoopRuntimeMemoryTempDirs.splice(0)) {
     rmSync(dir, { recursive: true, force: true });
   }
+  vi.unstubAllEnvs();
 });
 
 describe('task-loop context and self-check', () => {
@@ -2357,11 +2366,12 @@ describe('runTaskLoop', () => {
   it('runs a scoped repair iteration before completing', async () => {
     const tasks: string[] = [];
     let checks = 0;
+    let nextId = 0;
     const result = await runTaskLoop(
       { task: 'add dashboard', sessionKey: 'agent:main:abc' },
       {},
       {
-        idFactory: (prefix) => `${prefix}_${tasks.length}`,
+        idFactory: (prefix) => `${prefix}_${nextId++}`,
         runObserved: (async (request: ObservedOrchestrationRunRequest) => {
           tasks.push(request.task);
           return fakeResult(request.templateId);

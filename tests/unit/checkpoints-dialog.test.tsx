@@ -154,7 +154,7 @@ describe('CheckpointsDialog', () => {
     fireEvent.click(screen.getByTestId('chat-checkpoint-restore-c1'));
     await waitFor(() => {
       expect(restoreCheckpointMock).toHaveBeenCalledWith(
-        expect.objectContaining({ sessionKey: 'agent::s1', checkpointId: 'c1' }),
+        expect.objectContaining({ sessionKey: 'agent::s1', checkpointId: 'c1', expectedSessionId: 'generation-1' }),
       );
     });
     await waitFor(() => {

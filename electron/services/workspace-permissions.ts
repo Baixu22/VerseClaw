@@ -81,6 +81,11 @@ const SAFE_GATEWAY_METHODS = new Set([
   'health',
   'mcp.listTools',
   'mcp.heartbeat',
+  'wiki.index.status',
+  'wiki.index.search',
+  'wiki.embedding.status',
+  'wiki.vector.status',
+  'wiki.vector.search',
   // Role-first runtime read methods (registry/templates/planning are side-effect free).
   // orchestrator.run is intentionally NOT here: it spawns subagents and is gated as a
   // mutating request so it requires approval outside fullAccess mode.

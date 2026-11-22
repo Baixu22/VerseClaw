@@ -2,6 +2,30 @@ import { existsSync } from "node:fs";
 import { TaskSystemStore } from "./store.js";
 import { resolveTaskDomain, type TaskAuthorityAccess } from "./identity.js";
 import type { TaskCredential } from "./types.js";
+import type { TaskModelCall, TaskModelUsage } from './trace.js';
+
+/** Capture the original execution before the request; settlement keeps that identity. */
+export function createTaskModelUsageRecorder(guard: ReturnType<typeof createTaskRuntimeGuard>) {
+  const calls = new Map<string, TaskModelCall>();
+  return {
+    start(callId: string, provider: string, model: string): void {
+      if (!guard?.runId || !guard.generation || !existsSync(guard.domain.database)) return;
+      const store = new TaskSystemStore(guard.domain, undefined, guard.access);
+      try {
+        const credential = guard.credential ?? store.modelCallScope(guard.sessionKey, guard.generation, guard.runId)?.credential;
+        if (!credential || credential.sessionKey !== guard.sessionKey || credential.generation !== guard.generation) return;
+        calls.set(callId, store.beginModelCall(credential, { callId, runId: guard.runId, provider, model }));
+      } finally { store.close(); }
+    },
+    finish(callId: string, usage: TaskModelUsage): void {
+      const call = calls.get(callId);
+      if (!call || !guard) return;
+      const store = new TaskSystemStore(guard.domain, undefined, guard.access);
+      try { store.recordModelUsage(call.credential, callId, usage); calls.delete(callId); }
+      finally { store.close(); }
+    },
+  };
+}
 
 /** Session lineage and generations come from the session owner; forks inherit no claim. */
 export function inheritPersistentTaskReference(workspace:string,sourceSessionKey:string,sourceGeneration:string,sessionKey:string,generation:string,access?:TaskAuthorityAccess) {
@@ -209,6 +233,7 @@ export async function executeTaskGuarded<T>(
     "web_search",
     "web_fetch",
     "session_status",
+    "sessions_yield",
     "task_control",
     "read_file",
     "read_files",
@@ -240,6 +265,14 @@ export async function executeTaskGuarded<T>(
     }
   }
   if (!guard.credential) {
+    if (toolName === 'read' && readonlyTools.has(toolName)) {
+      const reader = new TaskSystemStore(guard.domain, undefined, guard.access);
+      try {
+        const result = await execute();
+        reader.recordReviewRead(guard.sessionKey, guard.generation, operationId, result);
+        return result;
+      } finally { reader.close(); }
+    }
     if (readonlyTools.has(toolName)) return execute();
     throw new Error("TASK_CLAIM_REQUIRED");
   }
@@ -301,7 +334,7 @@ export async function executeTaskGuarded<T>(
       store.binding(guard.sessionKey, guard.generation)?.referenceOnly !== true &&
       store.get(credential.taskNodeId).contract.state !== "cancelled"
     )
-      store.recordToolVerification(credential, toolName, params, result, verificationInputs);
+      store.recordToolVerification(credential, toolName, params, result, verificationInputs, operationId);
     return result;
   } finally {
     if (heartbeat) clearInterval(heartbeat);

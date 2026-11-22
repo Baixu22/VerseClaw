@@ -1,0 +1,298 @@
+{
+  "schema": "G5HarnessCiRefresh/v1",
+  "driven_by": "agent",
+  "actor": "codex/g5-ci-refresh",
+  "realHumanEvidence": false,
+  "foundation": {
+    "result": "passed",
+    "candidate": "f90c1b1938a68d8a83b73674df5a0beb45de34c8",
+    "criteria": 27,
+    "source": {
+      "path": "harness/specs/fixtures/g5-readiness-review/20261118/report.json",
+      "sha256": "a7fa5c4251a10d495415ae801376c37e7af11f6b102c1c9b25d2c06870aef786"
+    }
+  },
+  "ciCandidate": {
+    "head": "12aba63c1c39c140e82c1fd3dc7a91996c4e6538",
+    "tree": "c1a7e6d22453fe6b7b75012e89417379c3a36724",
+    "productionBuild": {
+      "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/fresh-v3/dist-electron/versebrowser-build-provenance.json",
+      "sha256": "95ef670a782679ab580dca4385afc50a29aa853fe82d94c4ec91cc9de6b5ba15"
+    },
+    "productionInputsUnchanged": true,
+    "mainlineSources": [
+      "e8d17d510",
+      "47303b189"
+    ],
+    "dependencyMode": "reused local pinned dependencies"
+  },
+  "successfulRun": {
+    "mode": "reused verified build, full uncached typecheck, full Electron",
+    "command": "node scripts/agent-dev-deep-test.mjs --reuse-build",
+    "verdict": "needs-full-gate",
+    "timings": [
+      {
+        "id": "typecheck",
+        "commandLine": "pnpm run typecheck",
+        "durationMs": 24802,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "contract",
+        "commandLine": "node scripts/contract-check.mjs",
+        "durationMs": 1679,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "i18n",
+        "commandLine": "pnpm i18n:lint",
+        "durationMs": 1147,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "workbench",
+        "commandLine": "pnpm agent-dev:workbench",
+        "durationMs": 807,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "harness-agent-dev",
+        "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
+        "durationMs": 2038,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "vitest-agent-dev",
+        "commandLine": "pnpm agent-dev:unit",
+        "durationMs": 11407,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "comms-replay",
+        "commandLine": "pnpm run comms:replay",
+        "durationMs": 1041,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "comms-compare",
+        "commandLine": "pnpm run comms:compare",
+        "durationMs": 1095,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "e2e-build",
+        "commandLine": "reuse existing build",
+        "durationMs": 1,
+        "exitCode": 0,
+        "skipped": true
+      },
+      {
+        "id": "playwright-agent-dev",
+        "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+        "durationMs": 36265,
+        "exitCode": 0,
+        "skipped": false
+      },
+      {
+        "id": "workbench-refresh",
+        "commandLine": "pnpm agent-dev:workbench",
+        "durationMs": 2427,
+        "exitCode": 0,
+        "skipped": false
+      }
+    ],
+    "releaseReady": false,
+    "unitTests": 188,
+    "electronTests": 4,
+    "errorFreeSource": {
+      "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/final-source-mutation-guard.json",
+      "sha256": "c775c9944c91dea4e3175ab342331aa7a59d6f326eb4237440176bb156399c99"
+    },
+    "cleanup": {
+      "processIdentities": 12,
+      "receipt": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/final-electron-process-cleanup.json",
+        "sha256": "f562a19b877286aed56930a389f5239f53060daa8fbeb3b954aedc6021330e7a"
+      }
+    },
+    "log": {
+      "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/deep-test-reuse-v2.log",
+      "sha256": "729a39b7bf539c8b597ac385d33793efb6846c001bf9e1236a15c33856a6d26a"
+    },
+    "reports": [
+      {
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "sha256": "9880a61d6aac121f37857a2a1467aa3fabd71bdddbc9806753813389452bf2c1"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "sha256": "30441456f21cfd2d9cb9fe188f28cf51b02039eee3510e261f68bfd89031671f"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/history.json",
+        "sha256": "3d5bb8f4c634fb2c75e22bf8b2934488df0ba8f94ecd14b1911b2bc5cda458e7"
+      },
+      {
+        "path": "artifacts/agent-dev-quality/report.json",
+        "sha256": "0295dbc1c390bad8a05847a4ec41626db29ccb9e9efda58c96177c1c5640a3d4"
+      }
+    ]
+  },
+  "harnessCi": {
+    "command": "pnpm run harness:ci",
+    "status": "passed",
+    "exitCode": 0,
+    "tests": 59,
+    "references": 188,
+    "audit": {
+      "status": "warn",
+      "grade": "B",
+      "score": 82,
+      "disqualifiers": 0,
+      "receipt": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/audit-v3.json",
+        "sha256": "dd714f39fb9f24e31193c13e8ed6fd2dfd5f2a8dfbdb80468a403232b788570f"
+      }
+    },
+    "log": {
+      "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/harness-ci-v3.log",
+      "sha256": "1bd05c525d686c6a59b96468c7b0ea03452c7bc4de235cbf581194ea2b3226ea"
+    }
+  },
+  "typecheckGateRegression": {
+    "command": "pnpm exec vitest run tests/unit/typecheck-gate.test.ts --maxWorkers=1",
+    "testsPassed": 1,
+    "log": {
+      "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/typecheck-gate.log",
+      "sha256": "5b78e11f62a460d96a80d39f076cb372035fa61b7dbdedcd38de17563c4385b8"
+    }
+  },
+  "previousAttempts": [
+    {
+      "report": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/failed-build/artifacts/agent-dev-deep-test/report.json",
+        "sha256": "71919ea50999b81815473d5eaefb3dad4e17b94f3e4b9b223ce3ad279eed750a"
+      },
+      "log": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/deep-test.log",
+        "sha256": "95f7590d0f7f5b747be8738cf7798769e9c7d61f87d035383f13472703ef2736"
+      },
+      "verdict": "blocked",
+      "hardLimits": [
+        {
+          "id": "typecheck",
+          "durationMs": 59462,
+          "targetMs": 25000,
+          "limitMs": 45000,
+          "overTargetMs": 34462,
+          "overLimitMs": 14462,
+          "ratioToTarget": 2.38,
+          "severity": "limit",
+          "loop": "full-local",
+          "owner": "compiled contract and renderer/Main safety",
+          "mitigation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+          "commandLine": "pnpm run typecheck",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "report": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/fresh-v2/artifacts/agent-dev-deep-test/report.json",
+        "sha256": "9437971d215508f0734afff33429bcf1e1ca5f1269881592e4439ad1277664ec"
+      },
+      "log": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/deep-test-v2.log",
+        "sha256": "52efa2f51fc96436aa1e9b15f419f821acf380d7f27bf5ce14a2ae10bc475f4d"
+      },
+      "verdict": "blocked",
+      "hardLimits": [
+        {
+          "id": "e2e-build",
+          "durationMs": 69389,
+          "targetMs": 25000,
+          "limitMs": 58000,
+          "overTargetMs": 44389,
+          "overLimitMs": 11389,
+          "ratioToTarget": 2.78,
+          "severity": "limit",
+          "loop": "full-local",
+          "owner": "Vite/Electron production build",
+          "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+          "commandLine": "pnpm run build:vite",
+          "skipped": false,
+          "reuseStatus": "fresh"
+        }
+      ]
+    },
+    {
+      "report": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/reuse-v1/artifacts/agent-dev-deep-test/report.json",
+        "sha256": "1492f38c7725e10515e80b9fbd563b2d37acc389d0cc8aa8a27f4a1c031dd149"
+      },
+      "log": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/deep-test-reuse.log",
+        "sha256": "11a0d2999d86e7a6646f38714fb3aadbd41a1e0c4a8eb842cf44e56ccf70182c"
+      },
+      "verdict": "blocked",
+      "hardLimits": [
+        {
+          "id": "playwright-agent-dev",
+          "durationMs": 40063,
+          "targetMs": 25000,
+          "limitMs": 40000,
+          "overTargetMs": 15063,
+          "overLimitMs": 63,
+          "ratioToTarget": 1.6,
+          "severity": "limit",
+          "loop": "full-local",
+          "owner": "Electron Agent Dev scenario path",
+          "mitigation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+          "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "report": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/fresh-v3/artifacts/agent-dev-deep-test/report.json",
+        "sha256": "6a1106603641476dc81c382e4e94880a01ecb0742fbe4aa3502fdba086551373"
+      },
+      "log": {
+        "path": "D:/tmp/g5-ci-0cdf7d197-42bb47/deep-test-v3.log",
+        "sha256": "4571707ae85510dd5a11f8b538d76423d0f0409e7d44e0902420aa4bf873f358"
+      },
+      "verdict": "blocked",
+      "hardLimits": [
+        {
+          "id": "e2e-build",
+          "durationMs": 67676,
+          "targetMs": 25000,
+          "limitMs": 58000,
+          "overTargetMs": 42676,
+          "overLimitMs": 9676,
+          "ratioToTarget": 2.71,
+          "severity": "limit",
+          "loop": "full-local",
+          "owner": "Vite/Electron production build",
+          "mitigation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+          "commandLine": "pnpm run build:vite",
+          "skipped": false,
+          "reuseStatus": "fresh"
+        }
+      ]
+    }
+  ],
+  "remaining": {
+    "freshBuildBudget": "67.676s and 69.389s against 58s",
+    "integration": "TF-0867 pending TF-0688 and a valid paired baseline; baseline Handoff failed and two AC4 chain slots are unsupported"
+  }
+}

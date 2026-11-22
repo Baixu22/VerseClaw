@@ -95,9 +95,12 @@ export interface ReadToolInput {
   path: string;
   offset?: number;
   limit?: number;
+  charOffset?: number;
+  charLimit?: number;
 }
 
 export interface ReadToolDetails {
+  reviewReads?: import('../../../../../shared/task-system/types.js').TaskReviewReadProof[];
   versegit_basis?: VerseGitToolBasis;
   truncation?: TruncationResult;
 }

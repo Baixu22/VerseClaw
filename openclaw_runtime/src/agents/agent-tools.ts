@@ -1282,6 +1282,7 @@ export function createOpenClawCodingTools(options?: {
   // Passed by reference to sessions_spawn and populated after the final policy
   // pass so child sessions inherit the actual parent tool surface.
   const inheritedToolAllowlist: string[] = [];
+  const taskReviewToolAllowlist: string[] = [];
   const shouldInheritEffectiveToolAllowlist = [
     profilePolicy,
     providerProfilePolicy,
@@ -1346,7 +1347,8 @@ export function createOpenClawCodingTools(options?: {
     : [];
   const tools: AnyAgentTool[] = [
     ...base,
-    ...(options?.sessionKey && options?.sessionId && !sandbox ? [createPersistentTaskTool({ workspace: workspaceRoot,sessionKey:options.sessionKey,generation:options.sessionId })] : []),
+    ...(options?.sessionKey && options?.sessionId && !sandbox ? [createPersistentTaskTool({ workspace: workspaceRoot,sessionKey:options.sessionKey,generation:options.sessionId,
+      inheritedToolAllowlist: taskReviewToolAllowlist, inheritedToolDenylist })] : []),
     ...(includeShellTools && applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
     ...(execTool ? [execTool as unknown as AnyAgentTool] : []),
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),
@@ -1504,6 +1506,8 @@ export function createOpenClawCodingTools(options?: {
   if (shouldInheritEffectiveToolAllowlist) {
     replaceWithEffectiveToolAllowlist(inheritedToolAllowlist, subagentFiltered);
   }
+  // A task_control review must not restore delegation tools removed by a deny-only policy.
+  replaceWithEffectiveToolAllowlist(taskReviewToolAllowlist, subagentFiltered);
   options?.recordToolPrepStage?.("authorization-policy");
   // Always normalize tool JSON Schemas before handing them to OpenClaw model runtime.
   // Without this, some providers (notably OpenAI) will reject root-level union schemas.

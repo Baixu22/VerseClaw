@@ -31,7 +31,9 @@ export async function appendTaskLedgerWorkingContextEvents(
 
 export async function readTaskLedgerWorkingContext(
   workspaceId: string | null | undefined,
+  taskIds?: readonly string[],
 ) {
   const { events } = await readTaskLedgerEvents(workspaceId);
-  return projectTaskLedgerWorkingContext(events);
+  const scope = taskIds ? new Set(taskIds) : null;
+  return projectTaskLedgerWorkingContext(scope ? events.filter(event => event.taskId && scope.has(event.taskId)) : events);
 }

@@ -28,7 +28,13 @@ export function loadConfig(path: string): Promise<string> {
 }
 `;
 
-function makeFile(projectId: string, repoRoot: string, filePath: string, language: LanguageId, content: string): CodeFile {
+function makeFile(
+  projectId: string,
+  repoRoot: string,
+  filePath: string,
+  language: LanguageId,
+  content: string,
+): CodeFile {
   return {
     projectId,
     path: filePath,
@@ -80,9 +86,13 @@ describe("factstore (gate C)", () => {
       chunks: analysis.chunks.length,
     });
 
-    const byId = <T extends { id: string }>(items: T[]) => [...items].sort((a, b) => a.id.localeCompare(b.id));
+    const byId = <T extends { id: string }>(items: T[]) =>
+      [...items].sort((a, b) => a.id.localeCompare(b.id));
     // The store canonicalizes exported to a boolean (ragcode semantics: exported ? 1 : 0).
-    const expectedSymbols = analysis.symbols.map((symbol) => ({ ...symbol, exported: symbol.exported ?? false }));
+    const expectedSymbols = analysis.symbols.map((symbol) => ({
+      ...symbol,
+      exported: symbol.exported ?? false,
+    }));
     expect(byId(store.getSymbolsByFile(repoRoot, file.path))).toEqual(byId(expectedSymbols));
     expect(store.getEdgesByFile(repoRoot, file.path)).toEqual(analysis.edges);
     expect(byId(store.getChunksByFile(repoRoot, file.path))).toEqual(byId(analysis.chunks));
@@ -109,6 +119,28 @@ describe("factstore (gate C)", () => {
     expect(store.getChunksByFile(repoRoot, file.path)).toHaveLength(analysis.chunks.length);
   });
 
+  it("bounds edge reads while preserving the full-query default", () => {
+    const file = makeFile(projectId, repoRoot, "src/config.ts", "typescript", TS_FIXTURE);
+    const analysis = analyzeFileWithRegistry({ repoRoot, file, content: TS_FIXTURE });
+    store.upsertFileFacts({
+      repoRoot,
+      file,
+      producer: "ts-compiler",
+      symbols: analysis.symbols,
+      edges: analysis.edges,
+      chunks: analysis.chunks,
+    });
+    const all = store.getEdgesByFile(repoRoot, file.path);
+    expect(all.length).toBeGreaterThanOrEqual(2);
+    expect(store.getEdgesByFile(repoRoot, file.path, 1)).toEqual(all.slice(0, 1));
+    expect(store.getEdgesByFile(repoRoot, file.path, 0)).toEqual([]);
+    const imports = store.getEdgesByKind(repoRoot, "imports");
+    expect(imports.length).toBeGreaterThan(0);
+    expect(store.getEdgesByKind(repoRoot, "imports", 1)).toEqual(imports.slice(0, 1));
+    expect(store.getEdgesByKind(repoRoot, "imports", 0)).toEqual([]);
+    expect(store.getEdgesByFile(repoRoot, file.path)).toEqual(all);
+  });
+
   it("reports stale when the file content hash diverges from produced_hash (gate C-2)", () => {
     const { file, analysis } = analyzePython(projectId, repoRoot);
     store.upsertFileFacts({
@@ -120,12 +152,16 @@ describe("factstore (gate C)", () => {
       chunks: analysis.chunks,
     });
 
-    const unchanged = store.freshness(repoRoot, new Map([[file.path, file.contentHash]]), { mode: "fast" });
+    const unchanged = store.freshness(repoRoot, new Map([[file.path, file.contentHash]]), {
+      mode: "fast",
+    });
     expect(unchanged.fresh).toEqual([file.path]);
     expect(unchanged.stale).toEqual([]);
 
     const editedHash = sha256(`${PY_FIXTURE}\n# edited\n`);
-    const afterEdit = store.freshness(repoRoot, new Map([[file.path, editedHash]]), { mode: "fast" });
+    const afterEdit = store.freshness(repoRoot, new Map([[file.path, editedHash]]), {
+      mode: "fast",
+    });
     expect(afterEdit.stale).toEqual([file.path]);
     expect(afterEdit.fresh).toEqual([]);
 
@@ -146,7 +182,9 @@ describe("factstore (gate C)", () => {
       edges: analysis.edges,
       chunks: analysis.chunks,
     });
-    const report = store.freshness(repoRoot, new Map([["src/other.py", "deadbeef"]]), { mode: "fast" });
+    const report = store.freshness(repoRoot, new Map([["src/other.py", "deadbeef"]]), {
+      mode: "fast",
+    });
     expect(report.missing).toEqual(["src/other.py"]);
   });
 
@@ -173,7 +211,13 @@ describe("factstore (gate C)", () => {
   });
 
   it("refuses ignored paths and records them in skipped_files (gate C-4)", () => {
-    const ignored = makeFile(projectId, repoRoot, "node_modules/foo.js", "javascript", "module.exports = 1;");
+    const ignored = makeFile(
+      projectId,
+      repoRoot,
+      "node_modules/foo.js",
+      "javascript",
+      "module.exports = 1;",
+    );
     const result = store.upsertFileFacts({
       repoRoot,
       file: ignored,
@@ -201,7 +245,13 @@ describe("factstore (gate C)", () => {
       { filePath: "node_modules/foo.js", reason: "ignored_directory:node_modules" },
     ]);
 
-    const generated = makeFile(projectId, repoRoot, "src/api.gen.ts", "typescript", "export const x = 1;");
+    const generated = makeFile(
+      projectId,
+      repoRoot,
+      "src/api.gen.ts",
+      "typescript",
+      "export const x = 1;",
+    );
     const generatedResult = store.upsertFileFacts({
       repoRoot,
       file: generated,
@@ -281,7 +331,11 @@ describe("freshness gate modes", () => {
   });
 
   it("balanced mode refreshes within the budget", () => {
-    const report = gateFreshness(checks, { mode: "balanced", maxRefreshFiles: 2, refresh: (paths) => paths });
+    const report = gateFreshness(checks, {
+      mode: "balanced",
+      maxRefreshFiles: 2,
+      refresh: (paths) => paths,
+    });
     expect(report.refreshed).toEqual(["a.ts", "b.ts"]);
   });
 
@@ -300,7 +354,9 @@ describe("freshness gate modes", () => {
 describe("ignore policy", () => {
   it("flags ignored directories anywhere in the path", () => {
     expect(factStoreIgnoreReason("node_modules/foo.js")).toBe("ignored_directory:node_modules");
-    expect(factStoreIgnoreReason("packages/a/node_modules/b.js")).toBe("ignored_directory:node_modules");
+    expect(factStoreIgnoreReason("packages/a/node_modules/b.js")).toBe(
+      "ignored_directory:node_modules",
+    );
     expect(factStoreIgnoreReason(".openclaw/factstore.sqlite")).toBe("ignored_directory:.openclaw");
     expect(factStoreIgnoreReason("src/api.gen.ts")).toBe("generated_suffix:.gen.ts");
     expect(factStoreIgnoreReason("src/app.min.js")).toBe("generated_suffix:.min.js");
@@ -357,7 +413,13 @@ describe("neutral membrane artifact (gate C-5)", () => {
         edges: python.analysis.edges,
         chunks: python.analysis.chunks,
       });
-      const tsFile = makeFile(membraneProjectId, repoRoot, "src/config.ts", "typescript", TS_FIXTURE);
+      const tsFile = makeFile(
+        membraneProjectId,
+        repoRoot,
+        "src/config.ts",
+        "typescript",
+        TS_FIXTURE,
+      );
       const tsAnalysis = analyzeFileWithRegistry({ repoRoot, file: tsFile, content: TS_FIXTURE });
       store.upsertFileFacts({
         repoRoot,

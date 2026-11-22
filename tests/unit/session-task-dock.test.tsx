@@ -4,6 +4,7 @@ import type { TaskSessionSnapshot, TaskView } from "../../shared/task-system/typ
 import type { ChatRuntimeEvent } from "../../shared/chat-runtime-events";
 import type { TaskId } from "../../shared/types/identity-scope";
 import type { RunPlanSurface } from "../../src/pages/Chat/run-surface-promotion";
+import taskLedgerEn from "../../shared/i18n/locales/en/taskLedger.json";
 const mocks = vi.hoisted(() => ({
   read: vi.fn(),
   command: vi.fn(),
@@ -149,12 +150,12 @@ describe("quiet conversation task dock", () => {
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation/>);
     await screen.findByTestId('session-task-panel');mocks.read.mockRejectedValue(new Error('offline'));
     fireEvent(window,new Event('focus'));
-    await waitFor(()=>expect(screen.getByTestId('session-task-status')).toHaveTextContent('conversation.stale'));
+    await waitFor(()=>expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.stale));
     expect(screen.getByTestId('session-task-plan')).toHaveTextContent('Deliver a');
     fireEvent.click(screen.getByTestId('session-task-plan').querySelector('button')!);
     mocks.read.mockResolvedValue(result('a'));
-    fireEvent.click(screen.getByRole('button',{name:'conversation.refresh'}));
-    await waitFor(()=>expect(screen.getByTestId('session-task-status')).not.toHaveTextContent('conversation.stale'));
+    fireEvent.click(screen.getByRole('button',{name:taskLedgerEn.conversation.refresh}));
+    await waitFor(()=>expect(screen.getByTestId('session-task-status')).not.toHaveTextContent(taskLedgerEn.conversation.stale));
     expect(mocks.command).not.toHaveBeenCalled();
   });
   it("reveals a new task without inheriting the previous task's hidden preference",async()=>{
@@ -179,7 +180,7 @@ describe("quiet conversation task dock", () => {
     mocks.read.mockResolvedValue({...result('parent'),children:[first,second]});
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation/>);
     expect(await screen.findByRole('progressbar')).toHaveAttribute('aria-valuenow','50');
-    expect(screen.getByTestId('session-task-status')).toHaveTextContent('conversation.states.doing');
+    expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.states.doing);
     expect(screen.getByTestId('session-task-status')).toHaveTextContent('1/2');
   });
 });
@@ -196,12 +197,14 @@ describe("task handles", () => {
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     mocks.read.mockResolvedValue(result(uuid));
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
+    await screen.findByTestId('session-task-panel');
+    fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
     const chip = await screen.findByTestId("session-task-id");
     expect(chip).toHaveTextContent(`#${uuid.slice(0, 8)}`);
     expect(chip).toHaveAttribute("title", expect.stringContaining(uuid));
     fireEvent.click(chip);
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(uuid));
-    await waitFor(() => expect(mocks.toastSuccess).toHaveBeenCalledWith("conversation.idCopied"));
+    await waitFor(() => expect(mocks.toastSuccess).toHaveBeenCalledWith(taskLedgerEn.conversation.idCopied.replace('{{id}}', shortTaskId(uuid))));
     openMenu();
     fireEvent.click(screen.getByTestId("session-task-menu-copy"));
     await waitFor(() => expect(writeText).toHaveBeenCalledTimes(2));
@@ -210,8 +213,10 @@ describe("task handles", () => {
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined });
     mocks.read.mockResolvedValue(result(uuid));
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
+    await screen.findByTestId('session-task-panel');
+    fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
     fireEvent.click(await screen.findByTestId("session-task-id"));
-    expect(mocks.toastError).toHaveBeenCalledWith("conversation.copyFailed");
+    expect(mocks.toastError).toHaveBeenCalledWith(taskLedgerEn.conversation.copyFailed);
     expect(mocks.toastSuccess).not.toHaveBeenCalled();
   });
   it("opens the task and each child task in the ledger by their own IDs", async () => {
@@ -238,7 +243,7 @@ describe("task handles", () => {
     ] };
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan} runActive onOpenTask={vi.fn()} />);
     await screen.findByTestId("session-task-panel");
-    expect(screen.getByTestId("session-task-title")).toHaveTextContent("conversation.plan");
+    expect(screen.getByTestId("session-task-title")).toHaveTextContent(taskLedgerEn.conversation.plan);
     expect(screen.queryByTestId("session-task-id")).toBeNull();
     openMenu();
     expect(screen.queryByTestId("session-task-menu-copy")).toBeNull();
@@ -290,8 +295,10 @@ describe("dock lifetime", () => {
     done.task.contract.state = "done";
     mocks.read.mockResolvedValue(done);
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
-    expect(await screen.findByTestId("session-task-status")).toHaveTextContent("conversation.states.done");
-    expect(screen.getByTestId("session-task-id")).toBeInTheDocument();
+    expect(await screen.findByTestId("session-task-status")).toHaveTextContent(taskLedgerEn.conversation.states.done);
+    expect(screen.queryByTestId("session-task-id")).toBeNull();
+    openMenu();
+    expect(screen.getByTestId('session-task-menu-copy')).toBeInTheDocument();
     expect(screen.queryByTestId("session-task-current")).toBeNull();
     expect(screen.queryByTestId("session-task-details")).toBeNull();
   });

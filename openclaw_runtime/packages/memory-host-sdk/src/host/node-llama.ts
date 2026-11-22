@@ -8,11 +8,14 @@ export type LlamaEmbedding = {
 /** Embedding context created from a loaded llama model. */
 export type LlamaEmbeddingContext = {
   getEmbeddingFor: (text: string) => Promise<LlamaEmbedding>;
+  calculateInputLength: (text: string) => number;
   dispose?: () => Promise<void> | void;
 };
 
 /** Loaded llama model capable of creating embedding contexts. */
 export type LlamaModel = {
+  embeddingVectorSize: number;
+  trainContextSize: number;
   createEmbeddingContext: (options?: {
     contextSize?: number | "auto";
     createSignal?: AbortSignal;

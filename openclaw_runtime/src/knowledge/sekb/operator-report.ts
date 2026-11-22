@@ -37,6 +37,15 @@ type OperatorMetric =
   | { status: "unavailable"; reason: string };
 
 export type SekbOperatorReport = {
+  attribution: {
+    uiExposures: number;
+    contextExposures: number;
+    citations: number;
+    adoptions: number;
+    operationalOutcomes: number;
+    taskGrades: number;
+    unknownOperationalOutcomes: number;
+  };
   lineageSchema: "runtime-lineage.v1";
   counts: {
     trajectories: number;
@@ -150,6 +159,24 @@ export function buildSekbOperatorReport(
     batchDistillationAssistantEnabled: options.batchDistillationAssistantEnabled,
   });
   return {
+    attribution: (() => {
+      const rows = store.list_adoption_events().filter((row) => row.status === "accepted");
+      return {
+        uiExposures: rows.filter((row) => row.evidence.trigger === "ui-exposure").length,
+        contextExposures: rows.filter((row) => row.evidence.trigger === "context-exposure").length,
+        citations: rows.filter((row) => row.evidence.trigger === "cited").length,
+        adoptions: rows.filter((row) => row.evidence.trigger === "adopted").length,
+        operationalOutcomes: rows.filter(
+          (row) => row.evidence.trigger === "outcome" && row.evidence.outcomeKind === "operational",
+        ).length,
+        taskGrades: rows.filter(
+          (row) => row.evidence.trigger === "outcome" && row.evidence.outcomeKind === "task",
+        ).length,
+        unknownOperationalOutcomes: rows.filter(
+          (row) => row.evidence.outcomeKind === "operational" && row.evidence.outcome === "unknown",
+        ).length,
+      };
+    })(),
     lineageSchema: RUNTIME_LINEAGE_SCHEMA,
     counts: {
       trajectories: trajectories.length,

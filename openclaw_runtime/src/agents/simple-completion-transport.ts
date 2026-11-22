@@ -115,5 +115,17 @@ export function prepareModelForSimpleCompletion<TApi extends Api>(params: {
     return { ...model, api };
   }
 
+  // The pruned runtime has no built-in Chat Completions adapter. Use the same
+  // guarded HTTP transport as chat for an explicitly configured compatible endpoint.
+  const configured = cfg?.models?.providers?.[model.provider];
+  if (model.api === "openai-completions" && configured?.baseUrl && configured.api === model.api && !getApiProvider(model.api)) {
+    const api = resolveTransportAwareSimpleApi(model.api);
+    const streamFn = createOpenClawTransportStreamFnForModel(model, { cfg });
+    if (api && streamFn) {
+      ensureCustomApiRegistered(api, streamFn);
+      return { ...model, api };
+    }
+  }
+
   return model;
 }

@@ -78,6 +78,9 @@ const chatState = {
   streamingTools: [],
   pendingFinal: false,
   activeRunId: null,
+  handoffOperation: null,
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   runtimeRuns: {
     'run-1': {
       runId: 'run-1',
@@ -134,19 +137,16 @@ vi.mock('@/stores/artifact-panel', () => ({
 }));
 
 const activityState = vi.hoisted(() => ({
-  snapshots: {} as Record<string, unknown>,
+  scopedSnapshots: {} as Record<string, unknown>,
   load: vi.fn(),
 }));
 
-vi.mock('@/stores/session-activity', () => ({
+vi.mock('@/stores/session-activity', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/stores/session-activity')>(),
   useSessionActivityStore: Object.assign(
     (selector: (state: typeof activityState) => unknown) => selector(activityState),
     { getState: () => activityState },
   ),
-  /* The page reads the scoped snapshot through this selector; the fake store
-     keys snapshots by session only, which is all this rail test needs. */
-  selectSessionActivitySnapshot: (state: typeof activityState, _workspaceId: unknown, sessionKey: string) =>
-    state.snapshots[sessionKey],
 }));
 
 vi.mock('@/components/file-preview/ArtifactPanel', () => ({
@@ -215,7 +215,7 @@ function seedSnapshotWithGitRepo() {
     untrackedCount: 0,
     conflictedCount: 0,
   };
-  activityState.snapshots = { [SESSION_KEY]: snapshot };
+  activityState.scopedSnapshots = { [JSON.stringify([null, SESSION_KEY])]: snapshot };
 }
 
 function railElement() {
@@ -254,7 +254,7 @@ describe('Chat session status rail', () => {
   it('keeps a clean environment hidden even while a reply is running', async () => {
     planState.hasPlan = false;
     const snapshot = createEmptySessionActivitySnapshot(SESSION_KEY);
-    activityState.snapshots = { [SESSION_KEY]: snapshot };
+    activityState.scopedSnapshots = { [JSON.stringify([null, SESSION_KEY])]: snapshot };
     render(<Chat />);
     expect(await screen.findByTestId('stub-activity-toggle')).toHaveAttribute('data-available', 'false');
     expect(railElement()).not.toBeInTheDocument();

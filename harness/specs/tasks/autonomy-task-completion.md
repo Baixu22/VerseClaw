@@ -4,6 +4,8 @@ id: autonomy-task-completion
 title: A3 把自动完成声明提交为可回读的任务验收
 scenario: gateway-backend-communication
 taskType: runtime-bridge
+previousValidationDiffBase: null
+diffBase: 177ee7ed214979b82c4615fca6ddfda3b400a6b3
 intent: 只在现有 TaskLoop、Evidence Verifier、Task Ledger 与 effect owner 的同一候选记录齐备时，允许自动业务任务声明产生一次可回读的完成提交；缺证据、错任务、旧 generation、篡改或模型自述一律拒绝。
 requiredRules:
   - identity-scope-boundary
@@ -33,12 +35,19 @@ expectedUserBehavior:
   - completed 或 exit 0、run/text、accepted 本身都不能把业务任务转成 done。
   - 只有同 task、同 candidate、同 generation 的 verifier 与 owner 证据齐备时才产生完成提交。
   - 证据缺失、篡改、来源过期、错任务、旧 generation 均被拒绝并可回读诊断。
+residualPaths:
+  - harness/specs/tasks/autonomy-object-owner-contract.md
+  - harness/specs/tasks/autonomy-session-task-scope.md
+  - harness/specs/tasks/autonomy-host-readiness.md
+  - harness/specs/tasks/durable-task-owner-acceptance.md
+  - harness/specs/tasks/g5-foundation-current-acceptance.md
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
 requiredTests:
   - pnpm exec vitest run tests/unit/autonomy-task-completion.test.ts
   - pnpm run typecheck:test
   - pnpm contract:check
-  - pnpm harness validate --spec harness/specs/tasks/autonomy-task-completion.md --no-diff
-  - pnpm harness run --spec harness/specs/tasks/autonomy-task-completion.md --no-diff --dry-run
+  - pnpm harness validate --spec harness/specs/tasks/autonomy-task-completion.md
+  - pnpm harness run --spec harness/specs/tasks/autonomy-task-completion.md --dry-run
   - git diff --check
 acceptance:
   - complete+repair/blocked/unavailable 不能产生自动验收 done；单纯 accepted/exit0/text 也不能。
@@ -77,11 +86,14 @@ text, a bare `accepted` flag, or exit code 0.
 
 ## Owner-readback boundary
 
-The current codebase has no durable verifier-receipt lookup keyed by a stable receipt id, and its
-effect receipts do not carry the TaskLoop candidate/generation tuple. Until both owners expose a
-readback contract with that correlation, `submitCompletion` must reject every claim rather than
-accept a caller-authored verdict or synthesize a second fact store. A future positive path requires
-a separate owner contract and evidence; absence of a positive path is not made green by mocks.
+Main supplies its Gateway manager to the Task Ledger API. `submitCompletion` reads the
+managed task and current writer, then requests `tasks.contract.receipt` from the existing
+Runtime owner. The Runtime checks the persisted task, generation, candidate and saved
+verifier/effect references. A validated credential is submitted through the existing
+TaskSystem acceptance operation, and Task Ledger reads its resulting projection.
+
+A missing Gateway, execution contract, current owner or matching receipt produces a
+rejection. Caller-authored verdicts and effects remain outside this readback contract.
 
 ## Evidence
 

@@ -37,6 +37,7 @@ type SupervisorLogRuntime = typeof import("./supervisor-log.runtime.js");
 
 type ActiveRun = {
   run: ManagedRun;
+  canSignal: () => boolean;
   scopeKey?: string;
   lifecycle?: ProcessLifecycleIdentity;
 };
@@ -150,7 +151,7 @@ export function createProcessSupervisor(
 
   const cancel = (runId: string, reason: TerminationReason = "manual-cancel") => {
     const current = active.get(runId);
-    if (!current) {
+    if (!current || !current.canSignal()) {
       return;
     }
     registry.updateState(runId, "exiting", {
@@ -253,6 +254,7 @@ export function createProcessSupervisor(
     registry.add(record);
 
     let forcedReason: TerminationReason | null = null;
+    let adapterFinished = false;
     let settled = false;
     let stdout = "";
     let stderr = "";
@@ -278,13 +280,14 @@ export function createProcessSupervisor(
     let cancelAdapter: ((reason: TerminationReason) => void) | null = null;
 
     const requestCancel = (reason: TerminationReason) => {
+      if (adapterFinished) return;
       setForcedReason(reason);
       cancelAdapter?.(reason);
     };
 
     const touchOutput = () => {
       registry.touchOutput(runId);
-      if (!noOutputTimeoutMs || settled) {
+      if (!noOutputTimeoutMs || settled || adapterFinished) {
         return;
       }
       noOutputTimeoutDeadlineMs = performance.now() + noOutputTimeoutMs;
@@ -390,6 +393,11 @@ export function createProcessSupervisor(
 
       const waitPromise = (async (): Promise<RunExit> => {
         const result = await adapter.wait();
+        // The adapter has finished; OS verification can still be pending.
+        // Stop signalling this PID before it can be reused by another process.
+        adapterFinished = true;
+        clearTimers();
+        cancelAdapter = null;
         const deadlineReason = resolveElapsedTimeoutReason({
           nowMs: performance.now(),
           overallTimeoutDeadlineMs,
@@ -466,6 +474,7 @@ export function createProcessSupervisor(
 
       active.set(runId, {
         run: managedRun,
+        canSignal: () => !adapterFinished && !settled,
         scopeKey,
         lifecycle,
       });
@@ -582,7 +591,12 @@ export function createProcessSupervisor(
       // SIGTERM-equivalent request and would otherwise wait for the adapter's
       // 5s SIGKILL timer. Lifecycle drain is a terminal operation: escalate to
       // force tree termination immediately so reset/delete/stop stay bounded.
-      if (process.platform === "win32" && typeof run.pid === "number" && run.pid > 0) {
+      if (
+        process.platform === "win32" &&
+        typeof run.pid === "number" &&
+        run.pid > 0 &&
+        active.get(run.runId)?.canSignal()
+      ) {
         signalProcessTree(run.pid, "SIGKILL");
       }
     }

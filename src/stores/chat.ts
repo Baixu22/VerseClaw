@@ -507,6 +507,29 @@ function forceNextHistoryLoad(sessionKey: string): void {
   _forceNextHistoryLoadBySession.add(sessionKey);
 }
 
+function preserveKnowledgeUsage(current: RawMessage[], next: RawMessage[]): RawMessage[] {
+  const merged = [...next];
+  const used = new Set<number>();
+  for (const local of current) {
+    if (local.role !== 'user' || (!local._knowledgeRunId && !local._knowledgeRefs?.length)) continue;
+    let index = next.findIndex((message, at) => !used.has(at) && message.role === 'user' && local.id && message.id === local.id);
+    if (index < 0 && local.timestamp) {
+      const matches = next.map((message, at) => ({ message, at,
+        delta: Math.abs(toMs(local.timestamp!) - toMs(message.timestamp ?? 0)) }))
+        .filter(({ message, at, delta }) => !used.has(at) && message.role === 'user' && message.timestamp
+          && delta < 5000 && matchesOptimisticUserMessage(message, local, toMs(local.timestamp!)))
+        .sort((a, b) => a.delta - b.delta);
+      if (matches.length === 1 || (matches.length > 1 && matches[0].delta < matches[1].delta)) index = matches[0].at;
+    }
+    if (index < 0) continue;
+    used.add(index);
+    merged[index] = { ...merged[index], _knowledgeRefs: local._knowledgeRefs, _knowledgeRunId: local._knowledgeRunId,
+      _knowledgeRequestedCount: local._knowledgeRequestedCount, _knowledgeScope: local._knowledgeScope,
+      _knowledgeMode: local._knowledgeMode };
+  }
+  return merged;
+}
+
 function cloneHistoryMessages(messages: RawMessage[]): RawMessage[] {
   return messages.map((message) => ({
     ...message,
@@ -3530,7 +3553,18 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const existingLoad = _historyLoadInFlight.get(currentSessionKey);
     const shouldShowForegroundLoading = !quiet && get().messages.length === 0;
     if (existingLoad) {
-      await existingLoad;
+      const ownsForegroundWait = () => get().currentSessionKey === currentSessionKey
+        && (_historyLoadInFlight.get(currentSessionKey) ?? existingLoad) === existingLoad;
+      if (shouldShowForegroundLoading) set({ loading: true, error: null, runError: null });
+      const safetyTimer = shouldShowForegroundLoading ? setTimeout(() => {
+        if (ownsForegroundWait()) set({ loading: false });
+      }, getHistoryLoadingSafetyTimeout(isInitialForegroundLoad)) : null;
+      try {
+        await existingLoad;
+      } finally {
+        if (safetyTimer) clearTimeout(safetyTimer);
+        if (shouldShowForegroundLoading && ownsForegroundWait()) set({ loading: false });
+      }
       if (!forceLoad) {
         return;
       }
@@ -3553,7 +3587,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     let loadingTimedOut = false;
     const loadingSafetyTimer = shouldShowForegroundLoading ? setTimeout(() => {
       loadingTimedOut = true;
-      set({ loading: false });
+      if (get().currentSessionKey === currentSessionKey) set({ loading: false });
     }, getHistoryLoadingSafetyTimeout(isInitialForegroundLoad)) : null;
 
     const loadPromise = (async () => {
@@ -3686,6 +3720,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       }
       finalMessages = dropRedundantOptimisticUserMessages(currentSessionKey, finalMessages);
       finalMessages = preserveExistingAttachmentPreviews(get().messages, finalMessages);
+      finalMessages = preserveKnowledgeUsage(get().messages, finalMessages);
 
       const { pendingFinal, lastUserMessageAt, sending: isSendingNow } = get();
       const userMsTs = lastUserMessageAt != null ? toMs(lastUserMessageAt) : 0;
@@ -4269,7 +4304,12 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       };
     });
 
-    await get().sendMessage(trimmed);
+    const references = targetMessage?._knowledgeRefs?.map(reference => ({ ...reference }));
+    await get().sendMessage(trimmed, references?.length ? {
+      knowledgeReferences: references,
+      knowledgeScope: targetMessage._knowledgeScope ?? (references.every(reference => reference.corpus === 'memory') ? 'memory' : 'wiki'),
+      knowledgeMode: targetMessage._knowledgeMode ?? 'manual',
+    } : undefined);
   },
 
   queuePendingMessage: (text, opts) => {
@@ -4378,6 +4418,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const nowMs = Date.now();
     const userMsg: RawMessage = {
       role: 'user',
+      ...(knowledgeScope ? { _knowledgeScope: knowledgeScope } : {}),
+      ...(knowledgeMode ? { _knowledgeMode: knowledgeMode } : {}),
       content: trimmed || (attachments?.length ? '(file attached)' : ''),
       timestamp: nowMs / 1000,
       id: crypto.randomUUID(),
@@ -4389,7 +4431,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         filePath: a.stagedPath,
       })),
       ...(knowledgeReferences && knowledgeReferences.length > 0
-        ? { _knowledgeRefs: knowledgeReferences.map((reference) => ({ ...reference })) }
+        ? { _knowledgeRefs: knowledgeReferences.map((reference) => ({ ...reference })), _knowledgeRequestedCount: knowledgeReferences.length }
         : {}),
     };
     rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
@@ -4672,6 +4714,17 @@ export const useChatStore = create<ChatState>((set, get, api) => {
           );
         }
         const latest = get();
+        const boundUser = { ...userMsg, _knowledgeRunId: returnedRunId,
+          ...(result.knowledgeReferences ? { _knowledgeRefs: result.knowledgeReferences } : {}) };
+        for (const entry of _pendingOptimisticUserMessages.get(currentSessionKey) ?? []) {
+          if (entry.message.id === userMsg.id) entry.message = boundUser;
+        }
+        const cachedHistory = getCachedSessionHistory(currentSessionKey);
+        if (cachedHistory) cacheSessionHistory(currentSessionKey,
+          preserveKnowledgeUsage([boundUser], cachedHistory.messages), cachedHistory.thinkingLevel);
+        if (latest.currentSessionKey === currentSessionKey) {
+          set(state => ({ messages: preserveKnowledgeUsage([boundUser], state.messages) }));
+        }
         const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
         const canAttachToCurrentSession = latest.currentSessionKey === currentSessionKey
           && latest.sending
@@ -4736,7 +4789,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const isCurrentAbortTarget = () => get().viewRevision === viewRevision && get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
       && get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
     // A retry clears its previous request error before waiting, never a newer error on completion.
-    set({ error: null });
+    if (get().error !== null) set({ error: null });
 
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
@@ -4768,12 +4821,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     // Use the Gateway's acknowledged run identity; retain a result that arrived
     // while the abort request was pending.
     const generationUnchanged = get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
-    const confirmed = generationUnchanged && activeRunId && receipt?.aborted === true
-      && (!receipt.runIds || receipt.runIds.includes(activeRunId))
-      && get().runtimeRuns[activeRunId]?.status === 'running';
-    const runtimeRuns = confirmed ? applyRuntimeEventToRuns(get().runtimeRuns, {
-      type: 'run.ended', runId: activeRunId, sessionKey: currentSessionKey, status: 'aborted', endedAt: Date.now(),
-    }) : get().runtimeRuns;
+    const confirmedRunIds = generationUnchanged && receipt?.aborted === true
+      ? receipt.runIds ?? (activeRunId ? [activeRunId] : []) : [];
+    let runtimeRuns = get().runtimeRuns;
+    for (const runId of confirmedRunIds) {
+      if (runtimeRuns[runId] && runtimeRuns[runId].status !== 'running') continue;
+      runtimeRuns = applyRuntimeEventToRuns(runtimeRuns, {
+        type: 'run.ended', runId, sessionKey: currentSessionKey, status: 'aborted', endedAt: Date.now(),
+      });
+    }
     if (!isCurrentAbortTarget()) {
       if (runtimeRuns !== get().runtimeRuns) set({ runtimeRuns });
       if (generationUnchanged && get().currentSessionKey !== currentSessionKey && activeRunId
@@ -4805,6 +4861,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const eventState = String(event.state || '');
     const eventSessionKey = event.sessionKey != null ? String(event.sessionKey) : null;
     const { activeRunId, currentSessionKey } = get();
+
+    // Cancellation is final for every legacy frame, including tool and text finals.
+    if (runId && get().runtimeRuns[runId]?.status === 'aborted') return;
 
     // Only process events for the current session (when sessionKey is present)
     if (eventSessionKey != null && eventSessionKey !== currentSessionKey) {
@@ -5254,6 +5313,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         break;
       }
     }
+    if ((resolvedState === 'final' || resolvedState === 'error') && !get().sending) {
+      get().drainPendingMessages();
+    }
   },
 
   handleRuntimeEvent: (event: ChatRuntimeEvent) => {
@@ -5354,6 +5416,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     set(nextPatch);
+    if (event.type === 'run.ended' && nextPatch.sending === false && event.status !== 'aborted') {
+      get().drainPendingMessages();
+    }
   },
 
   // ── Refresh: reload history + sessions ──

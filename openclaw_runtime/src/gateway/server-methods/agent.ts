@@ -1,6 +1,8 @@
+import { assertSystemExecutionAllowed } from '../../../../shared/task-system/project-coordinator.js';
 // Gateway agent methods implement agent.run, agent.wait, agent.reset, identity,
 // and related session-aware RPC handlers used by UI and operator clients.
 import { randomUUID } from "node:crypto";
+import { listContextFinalSnapshots } from "../../context-engine/context-final-snapshot.js";
 import { existsSync } from "node:fs";
 import {
   normalizeOptionalLowercaseString,
@@ -34,6 +36,7 @@ import {
 import { clearAllCliSessions } from "../../agents/cli-session.js";
 import { isCurrentRecoverySession } from "../../agents/recovery-authority/owner-admission.js";
 import type { RecoveryAdmissionIdentity } from "../../../../shared/recovery-authority/contract.js";
+import { isHandedOffCoordinator } from "../../../../shared/task-system/project-coordinator.js";
 import type { AgentCommandOpts } from "../../agents/command/types.js";
 import { isTimeoutError } from "../../agents/failover-error.js";
 import {
@@ -1042,6 +1045,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       replyTo?: string;
       sessionId?: string;
       sessionKey?: string;
+      expectedSessionId?: string;
       thinking?: string;
       deliver?: boolean;
       attachments?: Array<{
@@ -1061,6 +1065,8 @@ export const agentHandlers: GatewayRequestHandlers = {
       lane?: string;
       extraSystemPrompt?: string;
       modelRun?: boolean;
+      modelBudget?: import("../../agents/command/shared-types.js").ModelRequestBudget;
+      knowledgeReferences?: import("../../context-engine/chat-knowledge-intent.js").ChatKnowledgeReferenceIntent[];
       promptMode?: "full" | "minimal" | "none";
       bootstrapContextMode?: "full" | "lightweight";
       bootstrapContextRunKind?: "default" | "heartbeat" | "cron";
@@ -1080,10 +1086,34 @@ export const agentHandlers: GatewayRequestHandlers = {
       label?: string;
       inputProvenance?: InputProvenance;
       workspaceDir?: string;
+      workspaceId?: string;
       voiceWakeTrigger?: string;
     };
     const allowModelOverride = resolveAllowModelOverrideFromClient(client);
     const canUseInternalRuntimeHandoff = resolveCanUseInternalRuntimeHandoff(client);
+    if (request.modelBudget && (!canUseInternalRuntimeHandoff || request.modelRun !== true)) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "Model budget requires a trusted model-only caller.",
+        ),
+      );
+      return;
+    }
+    if (
+      request.knowledgeReferences?.length &&
+      !clientHasAdminScope(client) &&
+      !client?.connect?.scopes?.includes("operator.read")
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "Knowledge read requires operator.read scope."),
+      );
+      return;
+    }
     const requestedModelOverride = Boolean(request.provider || request.model);
     const requestedInternalSessionEffects = request.sessionEffects === "internal";
     const requestedPromptPersistenceSuppression = request.suppressPromptPersistence === true;
@@ -1115,11 +1145,14 @@ export const agentHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    if (request.workspaceDir && !canUseInternalRuntimeHandoff) {
+    if ((request.workspaceDir || request.workspaceId) && !canUseInternalRuntimeHandoff) {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, "workspaceDir is reserved for backend callers."),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "workspace selectors are reserved for backend callers.",
+        ),
       );
       return;
     }
@@ -1217,8 +1250,11 @@ export const agentHandlers: GatewayRequestHandlers = {
       });
       return;
     }
+    try { assertSystemExecutionAllowed(); }
+    catch (error) { respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, String(error))); return; }
     let agentDedupeReserved = false;
     let agentRunAccepted = false;
+    let cleanupUnacceptedRun: (() => void) | undefined;
     const ownerConnId = typeof client?.connId === "string" ? client.connId : undefined;
     const ownerDeviceId =
       typeof client?.connect?.device?.id === "string" ? client.connect.device.id : undefined;
@@ -1373,6 +1409,23 @@ export const agentHandlers: GatewayRequestHandlers = {
       }
     }
     const requestedSessionId = normalizeOptionalString(request.sessionId);
+    const expectedSessionId = normalizeOptionalString(request.expectedSessionId);
+    const checkContinuationOwner = (entry: SessionEntry | undefined, sessionKey: string) => {
+      if (!expectedSessionId) return;
+      if (entry?.sessionId !== expectedSessionId) {
+        throw new Error("AGENT_SESSION_GENERATION_STALE: continuation no longer owns the session");
+      }
+      if (isHandedOffCoordinator(sessionKey)) {
+        throw new Error("AGENT_CONTINUATION_OWNER_RETIRED: requester handed off its coordinator role");
+      }
+    };
+    if (expectedSessionId) {
+      if (!requestedSessionKeyRaw || (requestedSessionId && requestedSessionId !== expectedSessionId)) {
+        throw new Error("AGENT_SESSION_GENERATION_STALE: continuation requires its original session key and generation");
+      }
+      const { entry, canonicalKey } = loadSessionEntry(requestedSessionKeyRaw);
+      checkContinuationOwner(entry, canonicalKey);
+    }
     let requestedSessionKey =
       requestedSessionKeyRaw ??
       (!requestedSessionId
@@ -1685,6 +1738,7 @@ export const agentHandlers: GatewayRequestHandlers = {
           canonicalKey,
         } = loadSessionEntry(requestedSessionKey, sessionLoadOptions);
         cfgForAgent = cfgLocal;
+        checkContinuationOwner(entry, canonicalKey);
         const sessionMaintenanceConfig = resolveMaintenanceConfigFromInput(
           cfgLocal.session?.maintenance,
         );
@@ -1784,9 +1838,11 @@ export const agentHandlers: GatewayRequestHandlers = {
           : false;
         const canReuseSession =
           Boolean(entry?.sessionId) &&
-          (recoverySession || (freshness?.fresh ?? false)) &&
+          (Boolean(expectedSessionId) || recoverySession || (freshness?.fresh ?? false)) &&
           !failedSessionTranscriptMissing &&
           !terminalMainTranscriptNewerThanRegistry;
+        if (expectedSessionId && !canReuseSession)
+          throw new Error("AGENT_SESSION_GENERATION_STALE: original transcript cannot be reused");
         if (recoverySession && !canReuseSession)
           throw new Error("recovery admission cannot replace its durable transcript");
         let usableRequestedSessionId =
@@ -1826,6 +1882,8 @@ export const agentHandlers: GatewayRequestHandlers = {
         const buildSessionPatch = (
           freshEntry: SessionEntry | undefined,
         ): AgentSessionPatchBuild => {
+          // Reject a reset or completed handoff racing the initial delivery check.
+          checkContinuationOwner(freshEntry, canonicalKey);
           const freshSpawnedBy = canonicalizeSpawnedByForAgent(
             cfgLocal,
             sessionAgent,
@@ -1939,9 +1997,11 @@ export const agentHandlers: GatewayRequestHandlers = {
             resolveFailedSessionTranscriptMissingForEntry(freshEntry);
           const freshCanReuseSession =
             Boolean(freshEntry?.sessionId) &&
-            (checkRecoverySession(freshEntry) || (freshFreshness?.fresh ?? false)) &&
+            (Boolean(expectedSessionId) || checkRecoverySession(freshEntry) || (freshFreshness?.fresh ?? false)) &&
             !freshFailedSessionTranscriptMissing &&
             !freshTerminalMainTranscriptNewerThanRegistry;
+          if (expectedSessionId && !freshCanReuseSession)
+            throw new Error("AGENT_SESSION_GENERATION_STALE: original transcript cannot be reused");
           if (request.recoveryAdmission && !freshCanReuseSession)
             throw new Error("recovery admission cannot replace its durable transcript");
           const freshUsableRequestedSessionId =
@@ -2412,6 +2472,7 @@ export const agentHandlers: GatewayRequestHandlers = {
         controlUiVisible: !suppressVisibleSessionEffects,
         kind: "agent",
       });
+      if (activeRunAbort.registered) cleanupUnacceptedRun = activeRunAbort.cleanup;
       const existingRunAbort = context.chatAbortControllers.get(runId);
       if (!activeRunAbort.registered && existingRunAbort) {
         agentRunAccepted = existingRunAbort.kind === "agent";
@@ -2430,31 +2491,9 @@ export const agentHandlers: GatewayRequestHandlers = {
       });
       let dispatchTaskTrackingMode: Exclude<GatewayAgentTaskTrackingMode, "plugin_subagent"> =
         taskTrackingMode === "cli" ? "cli" : "none";
-      if (taskTrackingMode === "plugin_subagent" && resolvedSessionKey) {
-        try {
-          await registerPluginSubagentRunFromGateway({
-            cfg,
-            runId,
-            childSessionKey: resolvedSessionKey,
-            task: request.message.trim(),
-            requesterOrigin: normalizeDeliveryContext({
-              channel: resolvedChannel,
-              to: resolvedTo,
-              accountId: resolvedAccountId,
-              threadId: resolvedThreadId,
-            }),
-            pluginId: normalizeOptionalString(client?.internal?.pluginRuntimeOwnerId),
-          });
-        } catch (err) {
-          context.logGateway.warn(
-            `failed to register plugin subagent run ${runId}; falling back to cli task tracking: ${formatForLog(
-              err,
-            )}`,
-          );
-          dispatchTaskTrackingMode = "cli";
-        }
-      }
 
+
+      assertSystemExecutionAllowed();
       const accepted = {
         runId,
         sessionKey: resolvedSessionKey,
@@ -2513,6 +2552,31 @@ export const agentHandlers: GatewayRequestHandlers = {
               { runId },
             );
             return;
+          }
+
+          if (taskTrackingMode === "plugin_subagent" && resolvedSessionKey) {
+            try {
+              await registerPluginSubagentRunFromGateway({
+                cfg,
+                runId,
+                childSessionKey: resolvedSessionKey,
+                task: request.message.trim(),
+                requesterOrigin: normalizeDeliveryContext({
+                  channel: resolvedChannel,
+                  to: resolvedTo,
+                  accountId: resolvedAccountId,
+                  threadId: resolvedThreadId,
+                }),
+                pluginId: normalizeOptionalString(client?.internal?.pluginRuntimeOwnerId),
+              });
+            } catch (err) {
+              context.logGateway.warn(
+                `failed to register plugin subagent run ${runId}; falling back to cli task tracking: ${formatForLog(
+                  err,
+                )}`,
+              );
+              dispatchTaskTrackingMode = "cli";
+            }
           }
 
           if (resolvedSessionKey) {
@@ -2578,6 +2642,9 @@ export const agentHandlers: GatewayRequestHandlers = {
           // TF-0002: Context Orchestrator (memory + VToken) runs on embedded attempt.
           // Gateway passes base extraSystemPrompt through unchanged (flag-off parity).
           const memoryExtraSystemPrompt = request.extraSystemPrompt;
+          if (expectedSessionId && resolvedSessionKey) {
+            checkContinuationOwner(loadSessionEntry(resolvedSessionKey).entry, resolvedSessionKey);
+          }
           dispatchAgentRunFromGateway({
             ingressOpts: {
               message,
@@ -2616,6 +2683,11 @@ export const agentHandlers: GatewayRequestHandlers = {
               runId,
               lane: request.lane,
               modelRun: request.modelRun === true,
+              modelBudget: request.modelBudget,
+              knowledgeReferences: request.knowledgeReferences,
+              workspaceId: canUseInternalRuntimeHandoff
+                ? normalizeOptionalString(request.workspaceId)
+                : undefined,
               promptMode: request.promptMode,
               extraSystemPrompt: memoryExtraSystemPrompt,
               bootstrapContextMode: request.bootstrapContextMode,
@@ -2694,6 +2766,7 @@ export const agentHandlers: GatewayRequestHandlers = {
         }
       })();
     } finally {
+      if (!agentRunAccepted) cleanupUnacceptedRun?.();
       clearUnacceptedExecApprovalFollowupDedupe();
     }
   },
@@ -2762,7 +2835,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       undefined,
     );
   },
-  "agent.wait": async ({ params, respond, context }) => {
+  "agent.wait": async ({ params, respond, context, client }) => {
     if (!validateAgentWaitParams(params)) {
       respond(
         false,
@@ -2776,6 +2849,52 @@ export const agentHandlers: GatewayRequestHandlers = {
     }
     const p = params;
     const runId = (p.runId ?? "").trim();
+    const waitStartedAt = Date.now();
+    const respondWithEvidence = async (payload: Record<string, unknown>) => {
+      const canRead =
+        clientHasAdminScope(client) || client?.connect?.scopes?.includes("operator.read");
+      let text: string | undefined;
+      if (
+        canRead &&
+        (payload.status === "ok" || payload.status === "completed") &&
+        context.dedupe.has("agent:" + runId)
+      ) {
+        // Lifecycle completion can precede the final result cache by one microtask.
+        await waitForTerminalGatewayDedupe({
+          dedupe: context.dedupe,
+          runId,
+          timeoutMs: Math.max(0, timeoutMs - (Date.now() - waitStartedAt)),
+        });
+        const result = (
+          context.dedupe.get("agent:" + runId)?.payload as
+            | {
+                result?: {
+                  payloads?: Array<{ text?: string }>;
+                  meta?: { finalAssistantVisibleText?: string; finalAssistantRawText?: string };
+                };
+              }
+            | undefined
+        )?.result;
+        const output =
+          result?.payloads?.map((part) => part.text ?? "").join("\n") ||
+          result?.meta?.finalAssistantVisibleText ||
+          result?.meta?.finalAssistantRawText;
+        if (output && output.length <= 100000) text = output;
+      }
+      const retainedEvidence = canRead
+        ? listContextFinalSnapshots(runId).at(-1)?.budget.retainedEvidence
+        : undefined;
+      const providerSpend =
+        canRead && p.includeProviderSpend === true
+          ? (await import("../../agents/provider-spend-budget.js")).providerSpendForRun(runId)
+          : undefined;
+      respond(true, {
+        ...payload,
+        ...(providerSpend ? { providerSpend } : {}),
+        ...(retainedEvidence ? { retainedEvidence } : {}),
+        ...(text ? { text } : {}),
+      });
+    };
     const timeoutMs =
       typeof p.timeoutMs === "number" && Number.isFinite(p.timeoutMs)
         ? Math.max(0, Math.floor(p.timeoutMs))
@@ -2792,7 +2911,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       ignoreAgentTerminalSnapshot: hasActiveChatRun,
     });
     if (cachedGatewaySnapshot) {
-      respond(true, {
+      await respondWithEvidence({
         runId,
         status: cachedGatewaySnapshot.status,
         startedAt: cachedGatewaySnapshot.startedAt,
@@ -2822,14 +2941,14 @@ export const agentHandlers: GatewayRequestHandlers = {
       const snapshot = await dedupePromise;
       dedupeAbortController.abort();
       if (!snapshot) {
-        respond(true, {
+        await respondWithEvidence({
           runId,
           status: "timeout",
           timeoutPhase: "gateway_draining",
         });
         return;
       }
-      respond(true, {
+      await respondWithEvidence({
         runId,
         status: snapshot.status,
         startedAt: snapshot.startedAt,
@@ -2872,7 +2991,7 @@ export const agentHandlers: GatewayRequestHandlers = {
 
     if (!snapshot) {
       const activeRunRegistered = activeChatEntry !== undefined;
-      respond(true, {
+      await respondWithEvidence({
         runId,
         status: "timeout",
         timeoutPhase: activeRunRegistered ? "gateway_draining" : "queue",
@@ -2880,7 +2999,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       });
       return;
     }
-    respond(true, {
+    await respondWithEvidence({
       runId,
       status: snapshot.status,
       startedAt: snapshot.startedAt,

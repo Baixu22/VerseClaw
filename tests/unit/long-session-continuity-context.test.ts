@@ -1,4 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { MemorySurfaceEntry, MemorySurfaceSnapshot } from '@shared/types/memory';
 import type {
   TaskLedgerSnapshot,
@@ -30,6 +33,7 @@ vi.mock('@electron/services/task-ledger-working-context', () => ({
   readTaskLedgerWorkingContext: (...args: unknown[]) => readTaskLedgerWorkingContextMock(...args),
 }));
 vi.mock('@electron/services/workspaces-api', () => ({
+  getActiveWorkspaceProfile: vi.fn(() => ({ id: 'workspace-a', rootPath: '/repo', permissionMode: 'readOnly' })),
   getPersistedCoordinatorBinding: (...args: unknown[]) => getPersistedCoordinatorBindingMock(...args),
   getWorkspaceRootPathById: (...args: unknown[]) => getWorkspaceRootPathByIdMock(...args),
 }));
@@ -44,7 +48,8 @@ vi.mock('@electron/utils/store', () => ({
 const NOW = Date.parse('2026-10-23T06:00:00.000Z');
 const WORKSPACE_ID = 'workspace-a';
 const SESSION_KEY = 'agent:architect:long-session';
-const ROOT = process.cwd();
+const ROOT = mkdtempSync(join(tmpdir(), 'continuity-workspace-'));
+afterAll(() => rmSync(ROOT, { recursive: true, force: true }));
 const POLICY = `sha256:${'a'.repeat(64)}`;
 
 function acceptedWorkingContextRecord(
@@ -250,6 +255,73 @@ beforeEach(() => {
 });
 
 describe('long-session continuity context', () => {
+  it('excludes accepted facts belonging to another task in the same workspace', () => {
+    const workingContext = workingContextSnapshot();
+    workingContext.fields.Objective.current = { ...workingContext.fields.Objective.current!, taskId: 'task-other', value: 'PRIVATE_TASK_B_OBJECTIVE' };
+    const pack = buildLongSessionContinuityContext({ sessionKey: SESSION_KEY, workspaceId: WORKSPACE_ID,
+      bindingRevision: 3, activeTaskNodeId: 'task-1', taskRefs: ['task-1'], taskLedger: ledgerSnapshot(), workingContext, now: NOW });
+    expect(renderLongSessionContinuityContext(pack)).not.toContain('PRIVATE_TASK_B_OBJECTIVE');
+    expect(pack.exclusions).toContainEqual({ ref: 'task-ledger-working-context:wc-objective', reason: 'out-of-scope' });
+    expect(pack.items).toEqual(expect.arrayContaining([expect.objectContaining({ kind: 'constraint', scope: { kind: 'task', key: 'task-1' } })]));
+  });
+  it('rejects a foreign workspace snapshot even when task ids collide', () => {
+    expect(() => buildLongSessionContinuityContext({ sessionKey: SESSION_KEY, workspaceId: WORKSPACE_ID,
+      bindingRevision: 3, taskRefs: ['task-1'], taskLedger: { ...ledgerSnapshot(), sourceWorkspaceId: 'foreign-workspace' },
+      workingContext: workingContextSnapshot(), now: NOW })).toThrow('CONTINUITY_WORKSPACE_MISMATCH');
+  });
+  it.each(['task-dropped', 'unconfirmed', 'missing-acceptance'])('excludes %s working context', reason => {
+    const workingContext = workingContextSnapshot(), ledger = ledgerSnapshot();
+    if (reason === 'task-dropped') ledger.nodes[0].status = 'dropped';
+    if (reason === 'unconfirmed') workingContext.fields.Objective.current!.trust = 'uncertain';
+    if (reason === 'missing-acceptance') workingContext.fields.Objective.current!.acceptedEventId = '';
+    const pack = buildLongSessionContinuityContext({ sessionKey: SESSION_KEY, workspaceId: WORKSPACE_ID,
+      bindingRevision: 3, taskRefs: ['task-1'], taskLedger: ledger, workingContext, now: NOW });
+    expect(pack.items.some(item => item.id === 'working-context:Objective:1')).toBe(false);
+  });
+  it('records critical constraint loss separately from optional budget omissions', () => {
+    const workingContext = workingContextSnapshot();
+    workingContext.fields.Constraints.current!.value = ['Critical restriction '.repeat(100)];
+    const pack = buildLongSessionContinuityContext({ sessionKey: SESSION_KEY, workspaceId: WORKSPACE_ID,
+      bindingRevision: 3, taskRefs: ['task-1'], taskLedger: ledgerSnapshot(), workingContext, budgetChars: 220, now: NOW });
+    expect(pack.budget.criticalOmissions).toBeGreaterThan(0);
+  });
+  it.each(['binding', 'generation'])('rejects %s replaced while context owners are being read', async changed => {
+    const initial = await getPersistedCoordinatorBindingMock();
+    let descriptions = 0;
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: ++descriptions === 2 && changed === 'generation' ? 'replacement' : 'session-generation-1' } };
+      if (method === 'memory.surface') {
+        if (changed === 'binding') getPersistedCoordinatorBindingMock.mockResolvedValue({ ...initial, bindingRevision: 4, state: 'paused' });
+        return memorySurface();
+      }
+      if (method === 'sessions.compressionArtifact') return {};
+      if (method === 'session.activitySnapshot') return {};
+      throw new Error(`unexpected rpc ${method}`);
+    }), getStatus: () => ({ state: 'running', gatewayReady: true }) };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const preview = await api.continuityPreview({ sessionKey: SESSION_KEY, workspaceId: WORKSPACE_ID });
+    expect(preview.validation).toBe('invalidated');
+    expect(preview.pack).toBeUndefined();
+    expect(preview.rendered).toBeUndefined();
+  });
+  it('rejects a binding revision changed after preview but before chat dispatch', async () => {
+    const initial = await getPersistedCoordinatorBindingMock();
+    getPersistedCoordinatorBindingMock.mockReset().mockResolvedValue({ ...initial, bindingRevision: 4 })
+      .mockResolvedValueOnce(initial).mockResolvedValueOnce(initial);
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: 'session-generation-1' } };
+      if (method === 'memory.surface') return memorySurface();
+      if (method === 'sessions.compressionArtifact' || method === 'session.activitySnapshot') return {};
+      throw new Error(`unexpected rpc ${method}`);
+    }), getStatus: () => ({ state: 'running', gatewayReady: true }) };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const result = await api.sendWithMedia({ sessionKey: SESSION_KEY, workspaceId: WORKSPACE_ID,
+      message: 'Continue the scoped task', idempotencyKey: 'context-owner-race' });
+    expect(result).toMatchObject({ success: false, error: expect.stringContaining('context_owner_changed_before_send') });
+    expect(gatewayManager.rpc.mock.calls.some(call => call[0] === 'chat.send')).toBe(false);
+  });
   it('projects accepted owner facts with provenance, freshness, scope and bounded history refs', () => {
     const pack = buildPack();
     const rendered = renderLongSessionContinuityContext(pack);
@@ -503,9 +575,9 @@ describe('long-session continuity context', () => {
   });
 
   it('resolves native compaction ownership from the effective policy production read', async () => {
-    getPersistedCoordinatorBindingMock.mockResolvedValueOnce({
+    getPersistedCoordinatorBindingMock.mockResolvedValue({
       schemaVersion: 1, workspaceId: WORKSPACE_ID, agentId: 'architect', sessionKey: SESSION_KEY,
-      sessionGeneration: null, taskLedgerReferences: [{ direction: 'workboard-to-task-ledger', taskLedgerNodeId: 'task-1', source: 'runtime' }],
+      sessionGeneration: 'session-generation-1', taskLedgerReferences: [{ direction: 'workboard-to-task-ledger', taskLedgerNodeId: 'task-1', source: 'runtime' }],
       environment: { kind: 'local', canonicalRoot: ROOT, backend: 'local-workspace', branch: 'main', detachedHead: false, setupProfile: null },
       archiveRestorePolicy: 'restore', state: 'active', bindingRevision: 10, invalidationReason: null,
       createdAt: '2026-10-23T04:00:00.000Z', updatedAt: '2026-10-23T04:00:00.000Z',
@@ -616,7 +688,7 @@ describe('long-session continuity context', () => {
     const { createChatApi } = await import('@electron/services/chat-api');
     const api = createChatApi({ gatewayManager: gatewayManager as never });
 
-    await api.sendWithMedia({
+    const sent = await api.sendWithMedia({
       sessionKey: SESSION_KEY,
       workspaceId: WORKSPACE_ID,
       message: 'Continue the task',
@@ -624,6 +696,7 @@ describe('long-session continuity context', () => {
       knowledgeReferences: [{ id: 'wiki:decision-1', title: 'Knowledge decision', lookup: 'notes/decision.md', corpus: 'wiki', freshnessLevel: 'fresh' }],
     });
 
+    expect(sent, JSON.stringify(sent)).toMatchObject({ success: true });
     expect(gatewayManager.rpc.mock.calls.map((call) => call[0])).toEqual(expect.arrayContaining([
       'sessions.compressionArtifact', 'memory.surface', 'chat.send',
     ]));

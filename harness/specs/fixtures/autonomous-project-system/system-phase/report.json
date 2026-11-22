@@ -1,0 +1,23 @@
+{
+  "node": "TF-0668",
+  "driven_by": "agent",
+  "actor": "codex-g5-system-phase",
+  "candidate": "c051aa58fea6c1c410dbb9215dff92f6011408de",
+  "tree": "062e4fcf7c1822eb193210f027f82c33080bdc0f",
+  "verdict": "passed",
+  "counts": {
+    "unit": 128,
+    "electron": 3,
+    "failed": 0,
+    "skipped": 0
+  },
+  "children": [
+    "TF-0683",
+    "TF-0684",
+    "TF-0685"
+  ],
+  "previousFailedRun": "D:/tmp/g5-20261120/system-phase-current",
+  "failureResolution": "Windows Gateway cwd released before directory-unavailable injection; original assertions retained",
+  "repositoryHarnessCi": "Historical Agent Dev stale/performance failures remain recorded in S1 report",
+  "rawRoot": "D:\\tmp\\g5-20261120\\system-phase-r2"
+}

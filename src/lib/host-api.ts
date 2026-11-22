@@ -1,4 +1,7 @@
 import { knowledgeHostApi } from './host-api/knowledge';
+import type { SystemProjectRead } from '@shared/types/system-portfolio';
+import type { SystemControlChange } from '@shared/types/system-control';
+import type { ProjectConfigurationApply, ProjectConfigurationInput, ProjectConfigurationRecovery } from '@shared/project-configuration';
 import type { SessionStorageScope, StorageRemovePayload } from '@shared/types/session-storage';
 import type {
   AgentCreatePayload,
@@ -346,6 +349,8 @@ import type {
   SessionHistoryPayload,
   SessionSendWorkerPayload,
   SessionDelegationPayload,
+  ProjectPlanDispatchPayload,
+  SystemProjectDispatchPayload,
   SessionDelegationResult,
   SessionHandoffPayload,
   SessionHandoffResult,
@@ -829,6 +834,15 @@ export const hostApi = {
   },
   workspaces: {
     list: () => invokeHost('workspaces', 'list'),
+    portfolio: () => invokeHost('workspaces', 'portfolio'),
+    projectSummary: (input: SystemProjectRead) => invokeHost('workspaces', 'projectSummary', input),
+    systemControl: () => invokeHost('workspaces', 'systemControl'),
+    setSystemControl: (input: SystemControlChange) => invokeHost('workspaces', 'setSystemControl', input),
+    previewConfiguration: (input: ProjectConfigurationInput) => invokeHost('workspaces', 'previewConfiguration', input),
+    applyConfiguration: (input: ProjectConfigurationApply) => invokeHost('workspaces', 'applyConfiguration', input),
+    configurationOperation: (requestId: string) => invokeHost('workspaces', 'configurationOperation', { requestId }),
+    configurationOperations: (workspaceId: string) => invokeHost('workspaces', 'configurationOperations', { workspaceId }),
+    reconcileConfiguration: (input: ProjectConfigurationRecovery) => invokeHost('workspaces', 'reconcileConfiguration', input),
     getActive: () => invokeHost('workspaces', 'getActive'),
     create: (input: WorkspaceCreatePayload) => invokeHost('workspaces', 'create', input),
     update: (id: string, input: Omit<WorkspaceUpdatePayload, 'id'>) => (
@@ -1494,6 +1508,8 @@ export const hostApi = {
     ),
   },
   sessions: {
+    dispatchSystemProject: (input: SystemProjectDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchSystemProject', input),
+    dispatchPlanTask: (input: ProjectPlanDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchPlanTask', input),
     delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
       invokeHost('sessions', 'delegate', input)
     ),
@@ -1786,7 +1802,9 @@ export const hostApi = {
     managedTasks: (input?: TaskLedgerWorkspacePayload): Promise<import('@shared/host-api/contract').TaskSystemListResult> => invokeHost('taskLedger', 'managedTasks', input),
     queryTasks: (input?: import('@shared/host-api/contract').TaskSystemQueryPayload): Promise<import('@shared/host-api/contract').TaskSystemQueryResult> => invokeHost('taskLedger', 'queryTasks', input),
     sessionTask: (input: import('@shared/host-api/contract').TaskSessionPayload): Promise<import('@shared/host-api/contract').TaskSessionResult> => invokeHost('taskLedger', 'sessionTask', input),
+    contextHint: (input: import('@shared/host-api/contract').TaskContextHintPayload): Promise<import('@shared/host-api/contract').TaskContextHintResult> => invokeHost('taskLedger', 'contextHint', input),
     command: (input: import('@shared/host-api/contract').TaskSystemCommandPayload): Promise<import('@shared/host-api/contract').TaskSystemCommandResult> => invokeHost('taskLedger', 'command', input),
+    trace: (input: import('@shared/host-api/contract').TaskTracePayload): Promise<import('@shared/host-api/contract').TaskTraceResult> => invokeHost('taskLedger', 'trace', input),
     snapshot: (input?: TaskLedgerWorkspacePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'snapshot', input),
     appendEvents: (input: TaskLedgerAppendEventsPayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'appendEvents', input),
     createNode: (input: TaskLedgerCreateNodePayload): Promise<TaskLedgerSnapshotResult> => invokeHost('taskLedger', 'createNode', input),

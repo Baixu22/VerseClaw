@@ -1,5 +1,6 @@
 // Gateway Protocol schema module defines protocol validation shapes.
 import { Type } from "typebox";
+import { ChatKnowledgeReferenceSchema } from "./logs-chat.js";
 import { InputProvenanceSchema, NonEmptyString, SessionLabelString } from "./primitives.js";
 
 /**
@@ -189,6 +190,8 @@ export const AgentParamsSchema = Type.Object(
     replyTo: Type.Optional(Type.String()),
     sessionId: Type.Optional(Type.String()),
     sessionKey: Type.Optional(Type.String()),
+    /** Compare the current generation before dispatching a continuation. */
+    expectedSessionId: Type.Optional(NonEmptyString),
     thinking: Type.Optional(Type.String()),
     /** Backend recovery pins a session to an already committed owner admission. */
     recoveryAdmission: Type.Optional(
@@ -219,6 +222,18 @@ export const AgentParamsSchema = Type.Object(
     // agent requests; the gateway accepts but intentionally ignores it.
     cleanupBundleMcpOnRunEnd: Type.Optional(Type.Boolean()),
     modelRun: Type.Optional(Type.Boolean()),
+    modelBudget: Type.Optional(
+      Type.Object(
+        {
+          maxInputTokens: Type.Integer({ minimum: 1, maximum: 20000 }),
+          maxOutputTokens: Type.Integer({ minimum: 1, maximum: 4096 }),
+          maxCostUsd: Type.Number({ minimum: 0, maximum: 1 }),
+          maxCalls: Type.Literal(1),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    knowledgeReferences: Type.Optional(Type.Array(ChatKnowledgeReferenceSchema, { maxItems: 8 })),
     promptMode: Type.Optional(
       Type.Union([Type.Literal("full"), Type.Literal("minimal"), Type.Literal("none")]),
     ),
@@ -236,6 +251,7 @@ export const AgentParamsSchema = Type.Object(
     inputProvenance: Type.Optional(InputProvenanceSchema),
     /** Trusted Backend-selected workspace root for a normal gateway session. */
     workspaceDir: Type.Optional(NonEmptyString),
+    workspaceId: Type.Optional(NonEmptyString),
     suppressPromptPersistence: Type.Optional(Type.Boolean()),
     sessionEffects: Type.Optional(Type.Union([Type.Literal("visible"), Type.Literal("internal")])),
     sourceReplyDeliveryMode: Type.Optional(
@@ -277,6 +293,7 @@ export const AgentWaitParamsSchema = Type.Object(
   {
     runId: NonEmptyString,
     timeoutMs: Type.Optional(Type.Integer({ minimum: 0 })),
+    includeProviderSpend: Type.Optional(Type.Boolean()),
   },
   { additionalProperties: false },
 );

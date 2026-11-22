@@ -301,7 +301,7 @@ async function executeReadWithAdaptivePaging(params: {
   const userLimit = params.args.limit;
   const hasExplicitLimit =
     typeof userLimit === "number" && Number.isFinite(userLimit) && userLimit > 0;
-  if (hasExplicitLimit) {
+  if (hasExplicitLimit || params.args.charOffset !== undefined) {
     return await executeReadPage(params);
   }
 
@@ -315,6 +315,11 @@ async function executeReadWithAdaptivePaging(params: {
   let aggregatedBytes = 0;
   let capped = false;
   let continuationOffset: number | undefined;
+  const reviewReads: import('../../../shared/task-system/types.js').TaskReviewReadProof[] = [];
+  const withReadProof = (result: AgentToolResult<unknown>, text: string) => {
+    const value = withToolResultText(result, text);
+    return { ...value, details: { ...(value.details as Record<string, unknown> | undefined), reviewReads } };
+  };
 
   for (let page = 0; page < MAX_ADAPTIVE_READ_PAGES; page += 1) {
     const pageArgs = { ...params.args, offset: nextOffset };
@@ -349,9 +354,10 @@ async function executeReadWithAdaptivePaging(params: {
 
     aggregatedText += `${delimiter}${pageText}`;
     aggregatedBytes += nextBytes;
+    reviewReads.push(...((pageResult.details as { reviewReads?: typeof reviewReads } | undefined)?.reviewReads ?? []));
 
     if (!canContinue || !truncation) {
-      return withToolResultText(firstResult, aggregatedText);
+      return withReadProof(firstResult, aggregatedText);
     }
 
     nextOffset += truncation.outputLines;
@@ -371,7 +377,7 @@ async function executeReadWithAdaptivePaging(params: {
   if (capped && continuationOffset) {
     finalText += `\n\n[Read output capped at ${formatBytes(params.maxBytes)} for this call. Use offset=${continuationOffset} to continue.]`;
   }
-  return withToolResultText(firstResult, finalText);
+  return withReadProof(firstResult, finalText);
 }
 
 function rewriteReadImageHeader(text: string, mimeType: string): string {

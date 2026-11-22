@@ -353,7 +353,7 @@ class BorrowedMemoryManager implements MemorySearchManager {
     return await this.inner.search(query, opts);
   }
 
-  async readFile(params: { relPath: string; from?: number; lines?: number }) {
+  async readFile(params: { relPath: string; from?: number; lines?: number; raw?: boolean }) {
     return await this.inner.readFile(params);
   }
 
@@ -478,7 +478,7 @@ class FallbackMemoryManager implements MemorySearchManager {
     throw new Error(this.lastError ?? "memory search unavailable");
   }
 
-  async readFile(params: { relPath: string; from?: number; lines?: number }) {
+  async readFile(params: { relPath: string; from?: number; lines?: number; raw?: boolean }) {
     this.ensureOpen();
     if (!this.primaryFailed) {
       return await this.deps.primary.readFile(params);

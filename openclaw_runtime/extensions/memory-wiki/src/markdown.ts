@@ -104,7 +104,7 @@ export type WikiPageSummary = {
   revision?: number;
 };
 
-const FRONTMATTER_PATTERN = /^---\n([\s\S]*?)\n---\n?/;
+const FRONTMATTER_PATTERN = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
 const OBSIDIAN_LINK_PATTERN = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
 const MARKDOWN_LINK_PATTERN = /\[[^\]]+\]\(([^)]+)\)/g;
 const RELATED_BLOCK_PATTERN = new RegExp(

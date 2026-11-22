@@ -402,7 +402,14 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadWizardHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["tasks.list", "tasks.get", "tasks.cancel", "tasks.contract.accept", "tasks.contract.receipt", "tasks.contract.reconcile"],
+    methods: [
+      "tasks.list",
+      "tasks.get",
+      "tasks.cancel",
+      "tasks.contract.accept",
+      "tasks.contract.receipt",
+      "tasks.contract.reconcile",
+    ],
     loadHandlers: loadTasksHandlers,
   }),
   ...createLazyCoreHandlers({
@@ -444,8 +451,14 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
     loadHandlers: loadAgentBrowserHandlers,
   }),
   ...createLazyCoreHandlers({
-    methods: ["taskScope.admit", "taskScope.admit.result", "taskScope.runState",
-      "taskScope.migration.prepare", "taskScope.migration.confirm", "taskScope.migration.read"],
+    methods: [
+      "taskScope.admit",
+      "taskScope.admit.result",
+      "taskScope.runState",
+      "taskScope.migration.prepare",
+      "taskScope.migration.confirm",
+      "taskScope.migration.read",
+    ],
     loadHandlers: loadSessionTaskScopeHandlers,
   }),
   ...createLazyCoreHandlers({
@@ -633,6 +646,10 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
       "memory.utilityReport",
       "memory.evalReport",
       "memory.detail",
+      "memory.readSource",
+      "sekb.readSource",
+      "sekb.retrieve",
+      "sekb.recordExposure",
       "memory.previewProposal",
       "memory.feedbackList",
       "memory.propose",

@@ -1,3 +1,5 @@
+import { isMemorySourceRef } from '@shared/knowledge/memory';
+import { isExperienceSourceRef } from '@shared/knowledge/experience';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -12,6 +14,8 @@ import { errorMessageFrom } from '@/lib/user-error';
 import { createDraftPayloadFromGroundedAnswer, createErrorExperienceInboxPayloadFromGroundedAnswer, type KnowledgeLibrarianGroundedAnswer } from '@/lib/knowledge-librarian';
 import { type SearchRow, makeLibrarianMessage, parseLibrarianCheckpoint, KNOWLEDGE_LIBRARIAN_STORAGE_KEY, type KnowledgeLibrarianMessage, type KnowledgeLibrarianCitation, type KnowledgeLibrarianCheckpoint } from '../Knowledge/knowledge-view-utils';
 import { KnowledgeAssistantMessage, KnowledgeAssistantPromptInput, KnowledgeAssistantErrorCard } from '../Knowledge/KnowledgeAssistant';
+import type { KnowledgeAnswerMode } from '@shared/knowledge/answer';
+import { useWorkspacesStore } from '@/stores/workspaces';
 
 export type KnowledgeChatContext = {
   editorTitle?: string;
@@ -47,6 +51,21 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
   const currentSourceSetId = context.sourceSetId ?? null;
   const [status, setStatus] = useState<KnowledgeStatusResult['status'] | null>(null);
   const [running, setRunning] = useState<string | null>(null);
+  const [answerMode, setAnswerMode] = useState<KnowledgeAnswerMode>('strict');
+  const answerModeEdited = useRef(false);
+  const workspaceId = useWorkspacesStore(state => state.activeWorkspaceId);
+  useEffect(() => {
+    let active = true;
+    answerModeEdited.current = false;
+    void (async () => {
+      try {
+        const result = await hostApi.knowledge.operationsStatus();
+        if (active && !answerModeEdited.current && result.success && result.operations)
+          setAnswerMode(result.operations.config.answerMode);
+      } catch { /* The existing strict default remains available during Gateway recovery. */ }
+    })();
+    return () => { active = false; };
+  }, [workspaceId]);
   const [error, setError] = useState<string | null>(null);
   const { state: botState, setActivity, setComposing, reset: resetBot } = useKnowledgeBotActivity();
   const busy = Boolean(running);
@@ -66,7 +85,7 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
       return;
     }
     const search = routeSearch(); search.set('lookup', citation.lookup);
-    navigate({ pathname: '/knowledge', search: search.toString() }, { state: { knowledgeContext: context, knowledgeTitle: citation.title } });
+    navigate({ pathname: '/knowledge', search: search.toString() }, { state: { knowledgeContext: context, knowledgeTitle: citation.title, knowledgeCitation: citation } });
   };
   const openQueue = useCallback((kind: 'draft' | 'inbox', id?: string, stewardReview?: KnowledgeStewardReviewResult) => {
     onClose?.();
@@ -161,20 +180,23 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
     try {
       const history = librarianMessages.slice(-8).flatMap(message => message.role === 'system' ? [] : [{ role: message.role, content: message.content }]);
       const result = await hostApi.knowledge.answerFromSourceSet({
-        question, sourceRefs: currentSourceRefs, synthesis: true, history,
+        question, sourceRefs: currentSourceRefs, synthesis: true, history, answerMode,
         ...(currentSourceSetId ? { sourceSetId: currentSourceSetId } : {}),
       });
       if (!result.success) throw new Error(result.error || t('errors.search'));
       const citations: KnowledgeLibrarianCitation[] = result.sources.map(source => ({
         lookup: source.lookup, title: source.title, path: source.path || source.lookup,
         excerpt: source.excerpt || t('librarian.emptyCitation'),
+        sourceRef: result.claims?.flatMap(claim => claim.citations).find(citation => citation.sourceId === source.citation?.refId)?.sourceRef ?? source.citation?.sourceRef,
       }));
-      const sources = result.sources.map(source => ({ ...source, path: source.path || source.lookup, corpus: 'wiki' as const }));
+      const sources = result.sources.map(source => ({ ...source, path: source.path || source.lookup, corpus: isExperienceSourceRef(source.citation?.sourceRef) ? 'all' as const : isMemorySourceRef(source.citation?.sourceRef) ? 'memory' as const : 'wiki' as const,
+        answerCitation: result.claims?.flatMap(claim => claim.citations).find(citation => citation.sourceId === source.citation?.refId) }));
       const groundedAnswer: KnowledgeLibrarianGroundedAnswer = {
         question, answer: result.answer, sources, unknowns: result.unknowns,
         suggestions: result.suggestedNextActions, nextActions: result.suggestedNextActions,
         groundingStatus: result.groundingStatus,
-        retrieval: { query: question, corpus: 'wiki', roleTag: 'knowledge-librarian', resultCount: result.retrievalDiagnostics.resultCount, selectedSources: sources },
+        answerMode: result.answerMode ?? answerMode, claims: result.claims,
+        retrieval: { query: question, corpus: result.retrievalDiagnostics.corpus, roleTag: 'knowledge-librarian', resultCount: result.retrievalDiagnostics.resultCount, selectedSources: sources },
       };
       setLibrarianMessages(messages => [...messages, makeLibrarianMessage('assistant', groundedAnswer.answer, citations, groundedAnswer)].slice(-30));
       setActivity(groundedAnswer.groundingStatus === 'missing_sources' ? 'confused' : 'finished');
@@ -187,7 +209,7 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
     } finally {
       setRunning(null);
     }
-  }, [currentSourceRefs, currentSourceSetId, librarianMessages, librarianQuestion, running, setActivity, t]);
+  }, [answerMode, currentSourceRefs, currentSourceSetId, librarianMessages, librarianQuestion, running, setActivity, t]);
 
   const copyLibrarianMessage = useCallback(async (messageId: string, content: string) => {
     if (!content.trim()) return;
@@ -272,6 +294,12 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
 
   return (<div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col bg-background" data-testid="knowledge-chat-page" data-bot-state={botState} data-compact={embedded}>
           <header className={`flex shrink-0 items-center gap-3 text-left ${embedded ? 'justify-end px-3 py-1.5' : 'justify-between border-b border-black/10 px-4 py-3 dark:border-white/10'}`}>
+            <select data-testid="knowledge-answer-mode" aria-label={t('librarian.answerMode.label')} value={answerMode}
+              disabled={busy} onChange={event => { answerModeEdited.current = true; setAnswerMode(event.target.value as KnowledgeAnswerMode); }}
+              className="rounded-md border border-border bg-surface-input px-2 py-1 text-xs text-foreground">
+              <option value="strict">{t('librarian.answerMode.strict')}</option>
+              <option value="open">{t('librarian.answerMode.open')}</option>
+            </select>
             <div className={embedded ? 'sr-only' : 'flex min-w-0 items-center gap-2.5'}>
               {!embedded && <KnowledgeBot size={44} state={botState} />}
               <div className="min-w-0">

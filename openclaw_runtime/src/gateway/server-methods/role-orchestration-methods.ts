@@ -1,3 +1,6 @@
+import { KnowledgeStore } from "../../knowledge/sekb/knowledge-store.js";
+import { RetrievalEngine } from "../../knowledge/sekb/retrieval-engine.js";
+import { isSekbEnabled } from "../../knowledge/sekb/feature-flags.js";
 // Role-first orchestration gateway methods.
 //
 // Exposes the role registry, team templates, and orchestrator planning/execution
@@ -8,10 +11,23 @@
 // Params are parsed defensively here rather than via generated protocol
 // validators, so no change to the gateway-protocol package is required.
 import crypto from "node:crypto";
+import path from "node:path";
+import { realpath } from "node:fs/promises";
+import { resolveAgentWorkspaceDir, resolveSessionAgentId } from "../../agents/agent-scope.js";
+import { getSessionEntry } from "../../config/sessions/store.js";
+import { resolveStorePath } from "../../config/sessions/paths.js";
+import { normalizeSourceRefV2 } from "../../runtime-core/knowledge-owner-read.js";
+import {
+  createProductionChatKnowledgeSourceAdapters,
+  SekbChatKnowledgeSourceAdapter,
+} from "../../context-engine/chat-knowledge-source-adapters.js";
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
-import { GATEWAY_CLIENT_MODES } from '../../../packages/gateway-protocol/src/client-info.js';
-import { updateSessionStoreEntry } from '../../config/sessions/store.js';
-import { resolveGatewaySessionStoreTargetWithStore, resolveFreshestSessionStoreMatchFromStoreKeys } from '../session-utils.js';
+import { GATEWAY_CLIENT_MODES } from "../../../packages/gateway-protocol/src/client-info.js";
+import { updateSessionStoreEntry } from "../../config/sessions/store.js";
+import {
+  resolveGatewaySessionStoreTargetWithStore,
+  resolveFreshestSessionStoreMatchFromStoreKeys,
+} from "../session-utils.js";
 import { compileRoleContractToSoul } from "../../agents/role-contract.js";
 import {
   buildRoleRegistry,
@@ -359,7 +375,7 @@ function readDelegationAdmission(value: unknown): DelegationAdmissionContext | u
   };
 }
 
-function readExplicitWorkers(
+export function readExplicitWorkers(
   params: Record<string, unknown>,
   respond: RespondFn,
   cfg: OpenClawConfig,
@@ -422,7 +438,7 @@ function readExplicitWorkers(
       task,
       ...(readString(rawWorker.label) ? { label: readString(rawWorker.label) } : {}),
       ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
-      ...(writeSet.length > 0 ? { writeSet } : {}),
+      ...(Array.isArray(rawWorker.writeSet) ? { writeSet } : {}),
       ...(isolation ? { isolation } : {}),
       ...(readString(rawWorker.worktreeId) ? { worktreeId: readString(rawWorker.worktreeId) } : {}),
     });
@@ -430,7 +446,261 @@ function readExplicitWorkers(
   return workers;
 }
 
+function ownerReadHandler(
+  mode: "memory" | "experience" | "experience-search" | "experience-exposure",
+): GatewayRequestHandlers[string] {
+  return async ({ params, respond, context, client }) => {
+    const reference = normalizeSourceRefV2(params.sourceRef);
+    const rawIdentity = params.readIdentity;
+    const validRequest =
+      mode === "experience-search"
+        ? typeof params.query === "string" &&
+          Boolean(params.query.trim()) &&
+          params.query.length <= 8000
+        : mode === "experience-exposure"
+          ? typeof params.requestId === "string" &&
+            /^[a-f0-9-]{36}$/i.test(params.requestId) &&
+            Array.isArray(params.sourceRefs) &&
+            params.sourceRefs.length <= 5 &&
+            params.sourceRefs.every((pin) => normalizeSourceRefV2(pin)?.domain === "experience")
+          : reference &&
+            (mode === "memory" ? ["native-memory", "role-memory"] : ["experience"]).includes(
+              reference.domain,
+            );
+    if (
+      !validRequest ||
+      !rawIdentity ||
+      typeof rawIdentity !== "object" ||
+      Array.isArray(rawIdentity)
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "A memory owner pin and backend read identity are required",
+        ),
+      );
+      return;
+    }
+    const identity = rawIdentity as Record<string, unknown>;
+    if (
+      client?.connect?.client?.mode !== GATEWAY_CLIENT_MODES.BACKEND ||
+      !client.connect.scopes?.includes("operator.admin") ||
+      (identity.egressProviderRefs !== undefined &&
+        (!Array.isArray(identity.egressProviderRefs) ||
+          identity.egressProviderRefs.length > 32 ||
+          identity.egressProviderRefs.some(
+            (ref) => typeof ref !== "string" || !ref.trim() || ref.length > 256,
+          ))) ||
+      ["workspaceId", "workspaceDir", "agentSessionKey", "sessionId"].some(
+        (key) => typeof identity[key] !== "string" || !identity[key],
+      )
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "Trusted backend owner identity is required"),
+      );
+      return;
+    }
+    const cfg = context.getRuntimeConfig();
+    const agentId = resolveSessionAgentId({
+      config: cfg,
+      sessionKey: identity.agentSessionKey as string,
+    });
+    const entry = getSessionEntry({
+      agentId,
+      sessionKey: identity.agentSessionKey as string,
+      storePath: resolveStorePath(cfg.session?.store, { agentId }),
+    });
+    const canonicalPath = async (value: string) => {
+      const root = await realpath(path.resolve(value));
+      return process.platform === "win32" ? root.toLowerCase() : root;
+    };
+    try {
+      if (
+        !entry ||
+        entry.sessionId !== identity.sessionId ||
+        (entry.workspaceId && entry.workspaceId !== identity.workspaceId) ||
+        (await canonicalPath(identity.workspaceDir as string)) !==
+          (await canonicalPath(entry.workspaceDir ?? resolveAgentWorkspaceDir(cfg, agentId)))
+      ) {
+        respond(true, { status: "denied", reason: "invalid_context" });
+        return;
+      }
+    } catch {
+      respond(true, { status: "denied", reason: "invalid_context" });
+      return;
+    }
+    const readIdentity = {
+      workspaceId: identity.workspaceId as string,
+      workspaceDir: identity.workspaceDir as string,
+      agentSessionKey: identity.agentSessionKey as string,
+      sessionId: identity.sessionId as string,
+      egressProviderRefs: readStringArray(identity.egressProviderRefs),
+    };
+    const currentIdentity = async () => {
+      const current = getSessionEntry({
+        agentId,
+        sessionKey: readIdentity.agentSessionKey,
+        storePath: resolveStorePath(cfg.session?.store, { agentId }),
+      });
+      return (
+        current?.sessionId === readIdentity.sessionId &&
+        current?.workspaceId === entry?.workspaceId &&
+        (await canonicalPath(current?.workspaceDir ?? resolveAgentWorkspaceDir(cfg, agentId))) ===
+          (await canonicalPath(readIdentity.workspaceDir))
+      );
+    };
+    if (mode === "experience-search") {
+      try {
+        if (!isSekbEnabled(cfg)) {
+          respond(true, { status: "denied", reason: "denied", candidates: [] });
+          return;
+        }
+        const store = new KnowledgeStore();
+        const engine = new RetrievalEngine({ store, confirmedOnly: true });
+        const adapter = new SekbChatKnowledgeSourceAdapter(store, { cfg, identity: readIdentity });
+        const candidates = [];
+        const requestId = crypto.randomUUID();
+        const maxResults =
+          typeof params.maxResults === "number" && Number.isSafeInteger(params.maxResults)
+            ? Math.max(0, Math.min(5, params.maxResults))
+            : 5;
+        for (const principle of engine.retrieve_for_task(
+          params.query as string,
+          readString(params.taskType) ?? "chat",
+          readStringArray(params.contextTags),
+          maxResults,
+        )) {
+          const result = await adapter.resolve({
+            id: principle.principle_id,
+            title: principle.title,
+            lookup: `sekb:${principle.principle_id}`,
+            corpus: "all",
+          });
+          if (result.status !== "resolved") continue;
+          const snapshot = result.resolved.ownerSnapshot;
+          if (!snapshot) continue;
+          candidates.push({
+            principle_id: principle.principle_id,
+            title: principle.title,
+            condition: principle.condition,
+            action: principle.action,
+            reason: principle.reason,
+            retrieval_count: principle.retrieval_count,
+            sourceRef: snapshot.source,
+            content: snapshot.content,
+            snapshot,
+          });
+        }
+        if (!(await currentIdentity())) {
+          respond(true, { status: "denied", reason: "invalid_context", candidates: [] });
+          return;
+        }
+        respond(true, { status: "admitted", requestId, candidates });
+      } catch {
+        respond(true, { status: "denied", reason: "denied", candidates: [] });
+      }
+      return;
+    }
+    if (mode === "experience-exposure") {
+      try {
+        if (!isSekbEnabled(cfg)) {
+          respond(true, { success: false, recorded: 0 });
+          return;
+        }
+        const store = new KnowledgeStore();
+        const adapter = new SekbChatKnowledgeSourceAdapter(store, { cfg, identity: readIdentity });
+        const pins = (params.sourceRefs as unknown[]).map((value) => normalizeSourceRefV2(value)!);
+        const admitted = [];
+        for (const pin of pins) {
+          const result = await adapter.resolve({
+            id: pin.subjectId,
+            title: pin.subjectId,
+            lookup: `sekb:${pin.subjectId}`,
+            sourceRef: pin,
+            corpus: "all",
+          });
+          if (result.status === "resolved") admitted.push(pin);
+        }
+        if (!(await currentIdentity())) {
+          respond(true, { success: false, recorded: 0 });
+          return;
+        }
+        let recorded = 0;
+        for (const pin of admitted) {
+          const result = store.record_adoption(pin.subjectId, {
+            schemaVersion: "RsiExperienceAttribution/v1",
+            principleVersion: pin.revision,
+            taskId: null,
+            runId: `ui:${params.requestId}`,
+            sessionId: readIdentity.sessionId,
+            sessionKey: readIdentity.agentSessionKey,
+            experimentId: null,
+            arm: null,
+            repeat: null,
+            trajectoryId: null,
+            trigger: "ui-exposure",
+            source: "runtime",
+            outcome: "unknown",
+            outcomeKind: null,
+            observationId: null,
+            operation: null,
+            actor: "project-rag-ui",
+            driven_by: "agent",
+          });
+          if (result.status === "accepted") recorded++;
+        }
+        respond(true, { success: true, recorded });
+      } catch {
+        respond(true, { success: false, recorded: 0 });
+      }
+      return;
+    }
+    const owner = createProductionChatKnowledgeSourceAdapters(cfg, {
+      identity: {
+        workspaceId: identity.workspaceId as string,
+        workspaceDir: identity.workspaceDir as string,
+        agentSessionKey: identity.agentSessionKey as string,
+        sessionId: identity.sessionId as string,
+        egressProviderRefs: readStringArray(identity.egressProviderRefs),
+      },
+    }).find((adapter) => adapter.owner === reference!.authorityId);
+    if (!owner) {
+      respond(true, { status: "denied", reason: "namespace_mismatch" });
+      return;
+    }
+    try {
+      const result = await owner.resolve({
+        id: reference!.subjectId,
+        title: reference!.subjectId,
+        lookup: reference!.subjectId,
+        corpus: mode === "memory" ? "memory" : "all",
+        sourceRef: reference,
+      });
+      if (!(await currentIdentity())) {
+        respond(true, { status: "denied", reason: "invalid_context" });
+        return;
+      }
+      respond(
+        true,
+        result.status === "resolved"
+          ? { status: "admitted", snapshot: result.resolved.ownerSnapshot }
+          : { status: "denied", reason: result.status === "denied" ? result.reason : "not_found" },
+      );
+    } catch {
+      respond(true, { status: "denied", reason: "denied" });
+    }
+  };
+}
+
 export const roleOrchestrationHandlers: GatewayRequestHandlers = {
+  "memory.readSource": ownerReadHandler("memory"),
+  "sekb.readSource": ownerReadHandler("experience"),
+  "sekb.retrieve": ownerReadHandler("experience-search"),
+  "sekb.recordExposure": ownerReadHandler("experience-exposure"),
   "roles.list": async ({ respond, context }) => {
     const cfg = context.getRuntimeConfig();
     const registry = buildRoleRegistry(rolesConfig(cfg));
@@ -593,26 +863,57 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     const requestedWorkspaceId = readString(params.workspaceId);
     if (requestedWorkspaceId) {
       if (client?.connect?.client?.mode !== GATEWAY_CLIENT_MODES.BACKEND) {
-        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Orchestration workspaceId is reserved for backend callers.'));
+        respond(
+          false,
+          undefined,
+          errorShape(
+            ErrorCodes.INVALID_REQUEST,
+            "Orchestration workspaceId is reserved for backend callers.",
+          ),
+        );
         return;
       }
       const target = resolveGatewaySessionStoreTargetWithStore({ cfg, key: sessionKey });
-      const parent = resolveFreshestSessionStoreMatchFromStoreKeys(target.store, target.storeKeys)?.entry;
+      const parent = resolveFreshestSessionStoreMatchFromStoreKeys(
+        target.store,
+        target.storeKeys,
+      )?.entry;
       if (!parent?.sessionId) {
-        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Orchestration workspace requires a session owner generation.'));
+        respond(
+          false,
+          undefined,
+          errorShape(
+            ErrorCodes.INVALID_REQUEST,
+            "Orchestration workspace requires a session owner generation.",
+          ),
+        );
         return;
       }
       try {
-        const bound = await updateSessionStoreEntry({ storePath: target.storePath, sessionKey: target.canonicalKey ?? sessionKey,
-          skipMaintenance: true, update: owner => {
-            if (owner.sessionId !== parent.sessionId || owner.workspaceId && owner.workspaceId !== requestedWorkspaceId) {
-              throw new Error('Orchestration session workspace scope changed before dispatch');
+        const bound = await updateSessionStoreEntry({
+          storePath: target.storePath,
+          sessionKey: target.canonicalKey ?? sessionKey,
+          skipMaintenance: true,
+          update: (owner) => {
+            if (
+              owner.sessionId !== parent.sessionId ||
+              (owner.workspaceId && owner.workspaceId !== requestedWorkspaceId)
+            ) {
+              throw new Error("Orchestration session workspace scope changed before dispatch");
             }
             return owner.workspaceId ? null : { workspaceId: requestedWorkspaceId };
-          } });
-        if (!bound) throw new Error('Orchestration session owner disappeared before dispatch');
+          },
+        });
+        if (!bound) throw new Error("Orchestration session owner disappeared before dispatch");
       } catch (error) {
-        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, error instanceof Error ? error.message : String(error)));
+        respond(
+          false,
+          undefined,
+          errorShape(
+            ErrorCodes.INVALID_REQUEST,
+            error instanceof Error ? error.message : String(error),
+          ),
+        );
         return;
       }
     }
@@ -625,6 +926,14 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       return;
     }
     const delegationAdmission = readDelegationAdmission(params.delegationAdmission);
+    if (delegationAdmission?.idempotencyKey.startsWith('project-dispatch:')) {
+      const budget = cfg.runtime?.providerBudget?.project;
+      if (!requestedWorkspaceId || delegationAdmission.coordinator.workspaceId !== requestedWorkspaceId || !budget ||
+          (budget.maxTokens === undefined && budget.maxCostUsd === undefined) || budget.maxTokens === 0 || budget.maxCostUsd === 0) {
+        respond(true, { rejectedBeforeDispatch: true, error: 'TASK_PROJECT_BUDGET_UNAVAILABLE' });
+        return;
+      }
+    }
     if (params.delegationAdmission !== undefined && !delegationAdmission) {
       respond(
         false,

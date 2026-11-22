@@ -65,7 +65,7 @@ import { deleteSubagentSessionForCleanup } from "./subagent-session-cleanup.js";
 import { createWorktreeService } from './worktree-service.js';
 import { runSubagentVerseGitCleanup } from './subagent-versegit-cleanup.js';
 import { loadSubagentSessionEntry } from './subagent-session-reconciliation.js';
-import { returnPersistentTaskWriter } from './persistent-task-delegation.js';
+import { isCancelledPersistentTaskWorker, returnPersistentTaskWriter } from './persistent-task-delegation.js';
 
 type CaptureSubagentCompletionReply =
   (typeof import("./subagent-announce.js"))["captureSubagentCompletionReply"];
@@ -228,6 +228,16 @@ export function createSubagentRegistryLifecycleController(params: {
         typeof delivery.deliveredAt === "number" ? delivery.deliveredAt : Date.now();
       deliveryState.deliveredAt = deliveredAt;
       deliveryState.lastDropReason = undefined;
+    }
+    if (!delivery.delivered && delivery.terminal) {
+      deliveryState.status = "failed";
+      deliveryState.lastError = formatAnnounceDeliveryError(delivery);
+      const reason = delivery.reason;
+      deliveryState.lastDropReason =
+        reason === "requester_generation_stale" || reason === "requester_owner_retired"
+          ? reason
+          : "sink_unavailable";
+      params.persist();
     }
   };
 
@@ -984,6 +994,16 @@ export function createSubagentRegistryLifecycleController(params: {
     }
 
     const now = Date.now();
+    if (entry.delivery?.status === "failed") {
+      const reason = getDeliveryLastError(entry) ?? "terminal completion delivery failure";
+      safeSetSubagentTaskDeliveryStatus({ runId, childSessionKey: entry.childSessionKey,
+        deliveryStatus: "failed", deliveryError: reason });
+      safeMarkRequiredCompletionDeliveryBlocked({ entry, reason });
+      if (!(await runTerminalCleanup({ runId, entry, cleanup }))) return;
+      completeCleanupBookkeeping({ runId, entry, cleanup, completedAt: now });
+      await emitCompletionEndedHookIfNeeded(entry, resolveCleanupCompletionReason(entry));
+      return;
+    }
     const deferredDecision = resolveDeferredCleanupDecision({
       entry,
       now,
@@ -1069,6 +1089,10 @@ export function createSubagentRegistryLifecycleController(params: {
   };
 
   const startSubagentAnnounceCleanupFlow = (runId: string, entry: SubagentRunRecord): boolean => {
+    if (entry.expectsCompletionMessage !== false && isCancelledPersistentTaskWorker(entry)) {
+      entry.expectsCompletionMessage = false;
+      params.persist();
+    }
     if (typeof entry.delivery?.announcedAt === "number" || entry.delivery?.status === "delivered") {
       if (!beginSubagentCleanup(runId)) {
         return false;
@@ -1111,7 +1135,7 @@ export function createSubagentRegistryLifecycleController(params: {
     let latestDeliveryError = getDeliveryLastError(entry);
     const finalizeAnnounceCleanup = async (didAnnounce: boolean) => {
       const shouldCreditPriorDelivery =
-        !didAnnounce && (await hasPriorRequesterDeliveryMirror(entry));
+        !didAnnounce && entry.delivery?.status !== "failed" && (await hasPriorRequesterDeliveryMirror(entry));
       if (shouldCreditPriorDelivery) {
         latestDeliveryError = undefined;
       }
@@ -1138,6 +1162,7 @@ export function createSubagentRegistryLifecycleController(params: {
         childSessionKey: pendingPayload.childSessionKey,
         childRunId: pendingPayload.childRunId,
         requesterSessionKey: pendingPayload.requesterSessionKey,
+        expectedRequesterSessionId: entry.requesterSessionId,
         requesterOrigin,
         requesterDisplayKey: pendingPayload.requesterDisplayKey,
         task: pendingPayload.task,
@@ -1164,7 +1189,7 @@ export function createSubagentRegistryLifecycleController(params: {
             latestDeliveryError = undefined;
             return;
           }
-          if (delivery.path === "none") {
+          if (delivery.path === "none" && !delivery.terminal) {
             ensureDeliveryState(entry).lastDropReason = "sink_unavailable";
           }
           latestDeliveryError = formatAnnounceDeliveryError(delivery);
@@ -1200,6 +1225,8 @@ export function createSubagentRegistryLifecycleController(params: {
     if (!entry) {
       return;
     }
+    const taskCancelled = isCancelledPersistentTaskWorker(entry);
+    if (taskCancelled && typeof entry.cleanupCompletedAt === "number") return;
 
     // Old terminal events cannot clean up a child owned by unresolved recovery.
     if (
@@ -1225,8 +1252,9 @@ export function createSubagentRegistryLifecycleController(params: {
     }
 
     let endedAt = typeof completeParams.endedAt === "number" ? completeParams.endedAt : Date.now();
-    let completionOutcome = completeParams.outcome;
-    let completionReason = completeParams.reason;
+    let completionOutcome: SubagentRunOutcome = taskCancelled
+      ? { status: "error", error: "Persistent task cancelled" } : completeParams.outcome;
+    let completionReason = taskCancelled ? SUBAGENT_ENDED_REASON_KILLED : completeParams.reason;
     if (
       shouldPreservePublishedExplicitRunTimeout({
         entry,
@@ -1253,7 +1281,7 @@ export function createSubagentRegistryLifecycleController(params: {
       nextEndedAt: endedAt,
       observedStartedAt,
     });
-    if (expiredDeadlineMs !== undefined) {
+    if (expiredDeadlineMs !== undefined && !taskCancelled) {
       endedAt = expiredDeadlineMs;
       completionOutcome = { status: "timeout" };
       completionReason = SUBAGENT_ENDED_REASON_COMPLETE;
@@ -1320,7 +1348,7 @@ export function createSubagentRegistryLifecycleController(params: {
     if(entry.workspaceDir){
       try{
         const parent=loadSubagentSessionEntry({childSessionKey:entry.requesterSessionKey});
-        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.runId,endedAt:entry.endedAt,outcome:outcome.status,parentGeneration:parent?.sessionId});
+        returnPersistentTaskWriter({workspace:entry.workspaceDir,childSessionKey:entry.childSessionKey,runId:entry.initialRunId ?? entry.runId,endedAt:entry.endedAt,outcome:completionReason === SUBAGENT_ENDED_REASON_KILLED ? "cancelled" : outcome.status,parentGeneration:parent?.sessionId});
       }catch(error){params.warn('persistent task writer return requires recovery',{runId:entry.runId,error:String(error)});}
     }
     safeFinalizeSubagentTaskRun({

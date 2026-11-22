@@ -1,0 +1,14 @@
+{
+  "schema": "ContractCheckFixture/v1",
+  "id": "knowledge-embedding-facade-missing",
+  "rule": "facade/missing-action",
+  "expect": "missing hostApi.knowledge.embeddingStatus facade",
+  "description": "Reject a missing facade from the extracted embedding API module.",
+  "mutations": [
+    {
+      "file": "src/lib/host-api/knowledge/embedding.ts",
+      "find": "  embeddingStatus: (): Promise<KnowledgeEmbeddingStatusResult> => invokeHost('knowledge', 'embeddingStatus'),\n",
+      "replace": ""
+    }
+  ]
+}

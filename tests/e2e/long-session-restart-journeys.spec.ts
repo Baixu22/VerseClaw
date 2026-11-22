@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import type { ElectronApplication, TestInfo } from '@playwright/test';
+import type { SessionActivitySnapshotResult } from '../../shared/host-api/contract';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import {
   buildMockProviderConfig,
@@ -86,14 +87,13 @@ async function activeWorkspace(app: ElectronApplication): Promise<Workspace> {
   return active.activeWorkspace;
 }
 
-async function createWorkspace(app: ElectronApplication, rootPath: string, name: string): Promise<Workspace> {
+async function createInactiveWorkspace(app: ElectronApplication, rootPath: string, name: string): Promise<Workspace> {
   await mkdir(rootPath, { recursive: true });
-  const result = await hostInvoke<{ activeWorkspace?: Workspace; profiles?: Workspace[] }>(app, 'workspaces', 'create', {
-    name, rootPath, permissionMode: 'fullAccess', agentId: 'main',
+  const { createdWorkspace } = await hostInvoke<{ createdWorkspace?: Workspace }>(app, 'workspaces', 'create', {
+    name, rootPath, permissionMode: 'fullAccess', agentId: 'main', activate: false,
   });
-  const workspace = result.activeWorkspace ?? result.profiles?.find((entry) => entry.rootPath === rootPath);
-  if (!workspace?.id) throw new Error(`Workspace create returned no profile for ${name}`);
-  return workspace;
+  if (!createdWorkspace?.id) throw new Error(`Workspace create returned no profile for ${name}`);
+  return createdWorkspace;
 }
 
 async function createLedgerNode(app: ElectronApplication, workspaceId: string, title: string): Promise<string> {
@@ -117,16 +117,21 @@ async function writeReceipt(testInfo: TestInfo, receipt: unknown): Promise<void>
 test.describe('long-session restart journeys', () => {
   test('real Electron journeys preserve scope, transcripts, task links, and lifecycle generations', async ({ launchElectronApp, homeDir, userDataDir }, testInfo) => {
     test.setTimeout(900_000);
-    const llm = await startScriptedLlm((text) => ({
-      text: text.includes('F1-REAL-TURN') ? 'F1-REAL-TURN completed' : 'F1 deterministic gateway reply',
-    }));
-    const workspaceA = await mkdtemp(join(tmpdir(), 'clawx-f1-workspace-a-'));
+    const llm = await startScriptedLlm((text) => {
+      const role = ['TESTER', 'ARCHITECT'].find((candidate) => text.includes(`F1-${candidate}-WORK`));
+      if (role) return { text: `## Summary\nF1-${role}-RESULT\n\n## Verification\nScripted worker fixture.` };
+      return { text: text.includes('F1-REAL-TURN') ? 'F1-REAL-TURN completed' : 'F1 deterministic gateway reply' };
+    });
     const workspaceB = await mkdtemp(join(tmpdir(), 'clawx-f1-workspace-b-'));
     const openclawDir = join(homeDir, '.openclaw');
+    const workspaceA = join(openclawDir, 'workspace');
     const sourceStateDir = join(userDataDir, 'openclaw-source-state');
     const sourceConfigPath = join(sourceStateDir, 'openclaw.json');
     const config = buildMockProviderConfig(llm.port, workspaceA);
-    await mkdir(openclawDir, { recursive: true });
+    const [model] = (config.models as { providers: { openai: { models: Array<Record<string, unknown>> } } }).providers.openai.models;
+    model.reasoning = true;
+    model.compat = { supportsReasoningEffort: true, supportedReasoningEfforts: ['low', 'medium', 'high'] };
+    await mkdir(workspaceA, { recursive: true });
     await mkdir(sourceStateDir, { recursive: true });
     await writeFile(join(openclawDir, 'openclaw.json'), `${JSON.stringify(config, null, 2)}
 `, 'utf8');
@@ -141,14 +146,15 @@ test.describe('long-session restart journeys', () => {
     let beforeGatewayRestart: GatewayStatus | undefined;
     let afterGatewayRestart: GatewayStatus | undefined;
     let firstLlmRequests: number;
-    let dualWorkerBatch: Record<string, unknown> | undefined;
+    let dualWorkerBatch: SessionActivitySnapshotResult['snapshot']['completionBatches'][number] | undefined;
     try {
       const firstApp = app;
       if (!firstApp) throw new Error('first Electron app did not launch');
       await getStableWindow(firstApp);
       beforeGatewayRestart = await ensureGatewayReady(firstApp);
       const firstWorkspace = await activeWorkspace(firstApp);
-      const secondWorkspace = await createWorkspace(firstApp, workspaceB, 'F1 Workspace B');
+      expect(firstWorkspace.rootPath).toBe(workspaceA);
+      const secondWorkspace = await createInactiveWorkspace(firstApp, workspaceB, 'F1 Workspace B');
       const sourceSession = await createSession(firstApp, 'F1 source session');
       const ordinarySession = await createSession(firstApp, 'F1 ordinary session');
       await hostInvoke(firstApp, 'workspaces', 'update', {
@@ -204,17 +210,18 @@ test.describe('long-session restart journeys', () => {
       });
       expect(compact.success).toBe(true);
       if (compact.compacted !== true) throw new Error(`located compaction did not compact: ${JSON.stringify(compact)}`);
-      const handoff = await hostInvoke<{ success: boolean; sessionKey?: string }>(firstApp, 'sessions', 'createHandoff', {
+      const handoff = await hostInvoke<{ success: boolean; sessionKey?: string; operation?: { sessionGeneration: string } }>(firstApp, 'sessions', 'createHandoff', {
         sessionKey: sourceSession.key, agentId: 'main', workspaceId: firstWorkspace.id, draftInput: 'F1 handoff draft',
       });
       expect(handoff.success).toBe(true);
       handoffKey = handoff.sessionKey;
       if (!handoffKey) throw new Error('createHandoff returned no session key');
-      const handoffCreated = await hostInvoke<{ ok?: boolean; key?: string; sessionId?: string; entry?: { sessionId?: string } }>(firstApp, 'gateway', 'rpc', {
-        method: 'sessions.create', params: { key: handoffKey, agentId: 'main', label: 'F1 handoff child' }, timeoutMs: 60_000,
+      expect(handoff.operation).toMatchObject({ phase: 'ready', sessionGeneration: expect.any(String) });
+      const handoffChild = await hostInvoke<{ session?: { sessionId: string; parentSessionKey: string } }>(firstApp, 'gateway', 'rpc', {
+        method: 'sessions.describe', params: { key: handoffKey }, timeoutMs: 30_000,
       });
-      expect(handoffCreated.ok).toBe(true);
-      expect(handoffCreated.key ?? handoffCreated.sessionId ?? handoffCreated.entry?.sessionId).toBeTruthy();
+      if (!handoffChild.session?.sessionId) throw new Error('handoff child has no generation');
+      expect(handoffChild.session).toMatchObject({ sessionId: handoff.operation?.sessionGeneration, parentSessionKey: sourceSession.key });
       await inject(firstApp, handoffKey, 'F1-HANDOFF-ONLY');
 
       afterGatewayRestart = await (async () => {
@@ -230,6 +237,7 @@ test.describe('long-session restart journeys', () => {
       expect(await historyContains(firstApp, sourceSession.key, 'F1-DETERMINISTIC-SOURCE')).toBe(true);
       expect(await historyContains(firstApp, sourceSession.key, 'F1-REAL-TURN completed')).toBe(true);
       expect(await historyContains(firstApp, ordinarySession.key, 'F1-ORDINARY-ISOLATED')).toBe(true);
+      expect(await historyContains(firstApp, handoffKey, 'F1-HANDOFF-ONLY')).toBe(true);
 
       const archived = await hostInvoke<{ success: boolean; resourceReclamation?: { recoveryRequired?: boolean } }>(app, 'sessions', 'archive', {
         id: sourceSession.key, originalWorkspaceId: firstWorkspace.id, label: 'F1 archived source',
@@ -269,18 +277,23 @@ test.describe('long-session restart journeys', () => {
       const relaunchedLedger = await hostInvoke<LedgerSnapshot>(relaunched, 'taskLedger', 'snapshot', { workspaceId: firstWorkspace.id });
       expect(relaunchedLedger.snapshot.sessionLinks.filter((link) => link.sessionKey === sourceSession.key && link.nodeId === sourceTaskId)).toHaveLength(1);
 
-      const orchestration = await hostInvoke<{ status?: string; orchestrationRunId?: string; spawnedRunIds?: string[]; expectedChildren?: unknown[] }>(relaunched, 'gateway', 'rpc', {
+      await hostInvoke(relaunched, 'workspaces', 'saveState', {
+        id: firstWorkspace.id, activeSessionKey: handoffKey, sessionKey: handoffKey,
+      });
+      const active = await hostInvoke<{ activeWorkspace?: Workspace }>(relaunched, 'workspaces', 'getActive');
+      expect(active.activeWorkspace).toMatchObject({ id: firstWorkspace.id, activeSessionKey: handoffKey });
+      const orchestration = await hostInvoke<{ orchestrationRunId?: string }>(relaunched, 'gateway', 'rpc', {
         method: 'orchestrator.run',
         params: {
           task: 'F1 dual worker restart journey',
-          sessionKey: sourceSession.key,
+          sessionKey: handoffKey,
           agentId: 'main',
           backend: 'subagent',
           workspaceDir: firstWorkspace.rootPath,
           includeVerifier: false,
           workers: [
-            { roleName: 'architect', task: 'Return the architect receipt', isolation: 'shared', writeSet: [] },
-            { roleName: 'tester', task: 'Return the tester receipt', isolation: 'shared', writeSet: [] },
+            { roleName: 'architect', task: 'F1-ARCHITECT-WORK: return the architect receipt', isolation: 'shared', writeSet: [] },
+            { roleName: 'tester', task: 'F1-TESTER-WORK: return the tester receipt', isolation: 'shared', writeSet: [] },
           ],
         },
         timeoutMs: 180_000,
@@ -289,9 +302,9 @@ test.describe('long-session restart journeys', () => {
       if (!orchestrationRunId) throw new Error('orchestrator.run returned no orchestrationRunId');
       const batchDeadline = Date.now() + 120_000;
       while (Date.now() < batchDeadline) {
-        const activity = await hostInvoke<{ snapshot?: { completionBatches?: Array<Record<string, unknown>> } }>(relaunched, 'sessionActivity', 'snapshot', {
+        const activity = await hostInvoke<SessionActivitySnapshotResult>(relaunched, 'sessionActivity', 'snapshot', {
           workspaceId: firstWorkspace.id,
-          sessionKey: sourceSession.key,
+          sessionKey: handoffKey,
         });
         const batch = activity.snapshot?.completionBatches?.find((candidate) => candidate.orchestrationRunId === orchestrationRunId);
         if (batch?.status === 'terminal') {
@@ -301,8 +314,27 @@ test.describe('long-session restart journeys', () => {
         await new Promise((resolve) => setTimeout(resolve, 750));
       }
       if (!dualWorkerBatch) throw new Error('dual worker completion batch did not become terminal');
-      expect((dualWorkerBatch.counts as Record<string, number>).expected).toBe(2);
-      expect((dualWorkerBatch.counts as Record<string, number>).settled).toBe(2);
+      expect(dualWorkerBatch).toMatchObject({
+        requesterSessionKey: handoffKey,
+        requesterSessionGeneration: handoffChild.session.sessionId,
+        generationState: 'matching',
+        outcome: 'completed',
+        counts: { expected: 2, settled: 2, completed: 2, failed: 0, cancelled: 0, unknown: 0 },
+      });
+      expect(dualWorkerBatch.members.map(({ roleName, status }) => `${roleName}:${status}`).sort()).toEqual([
+        'architect:completed', 'tester:completed',
+      ]);
+      const workerResults = await Promise.all(dualWorkerBatch.members.map(async ({ roleName, runId, childSessionKey }) => {
+        const marker = `F1-${roleName.toUpperCase()}-RESULT`;
+        const history = await hostInvoke<{ success: boolean; messages?: Array<{ role: string; content: unknown }>; error?: string }>(
+          relaunched, 'sessions', 'history', { sessionKey: childSessionKey, expectedParentSessionKey: handoffKey },
+        );
+        expect(history.success, history.error).toBe(true);
+        const result = history.messages?.find(({ role, content }) => role === 'assistant' && JSON.stringify(content)?.includes(marker));
+        expect(result, `${roleName} transcript result`).toBeDefined();
+        return { roleName, runId, childSessionKey, marker, result };
+      }));
+      expect(llm.anomalies).toEqual([]);
 
       const deleted = await hostInvoke<{ success: boolean; error?: string; expectedSessionId?: string }>(relaunched, 'sessions', 'delete', { id: ordinarySession.key });
       expect(deleted.success, deleted.error).toBe(true);
@@ -320,31 +352,31 @@ test.describe('long-session restart journeys', () => {
         schema: 'clawx.long-session.restart-journeys/v1',
         driven_by: 'agent',
         actor: process.env.COMPASS_AGENT_NAME ?? 'clawx-f1-agent',
+        realHumanEvidence: false,
         candidate: process.env.CLAWX_E2E_CANDIDATE ?? null,
         transport: 'built Electron host:invoke -> actual Main -> actual Gateway -> local scripted OpenAI-compatible provider; lifecycle via existing transcript/archive/TaskLedger owners',
         evidenceLevels: {
           openclawRuntime: 'real local scripted OpenAI-compatible provider; production Gateway/runner/transcript path',
           nativeBackend: 'unverified: no native provider route exercised',
-          workerBatch: 'separate real Electron completion-continuation fixture required',
+          workerBatch: 'completed two-worker batch and role-specific transcript results under the handoff generation',
         },
         journeys: {
           realProviderTurn: { requests: firstLlmRequests, transcriptReadback: true },
           gatewayRestart: { beforePid: beforeGatewayRestart?.childPid ?? null, afterPid: afterGatewayRestart?.childPid ?? null, transcriptReadback: true },
           appRestart: { transcriptReadback: true, taskLedgerReadback: true },
-          forkCompactHandoff: { forkKey, handoffKey, compact: compact.success, compacted: compact.compacted ?? false },
+          forkCompactHandoff: { forkKey, handoffKey, handoffChild: handoffChild.session, compact: compact.success, compacted: compact.compacted ?? false },
           archiveRestore: { archived: true, archiveEntry, archivedGeneration: sourceSession.sessionId, restoredGeneration, restoredHistory: true },
           isolation: { workspaces: 2, ordinarySessions: 1, crossWorkspaceNodes: 0, taskLinksForOrdinarySession: 0 },
           lifecycleNegative: { duplicateRestoreRejected: true, ordinaryDeleteDidNotTouchSource: true, staleError: stale.error ?? null },
           dualWorkerBatch,
+          workerResults,
         },
-        cleanup: { electronClosed: true, llmServerClosed: true, recoveryRequired: false },
         unmeasured: ['No live external model provider or model-quality comparison was run.', 'Native backend route was not exercised.'],
       });
     } finally {
       if (app) await closeElectronApp(app).catch(() => undefined);
       llm.server.closeAllConnections();
       await new Promise<void>((resolve) => llm.server.close(() => resolve()));
-      await rm(workspaceA, { recursive: true, force: true }).catch(() => undefined);
       await rm(workspaceB, { recursive: true, force: true }).catch(() => undefined);
     }
   });

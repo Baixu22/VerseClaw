@@ -35,6 +35,11 @@ export function isInjectableMemoryCard(card: MemoryCard, now = new Date()): bool
   return card.status === "active" && !isMemoryCardExpired(card, now) && !card.supersededBy;
 }
 
+/** Cold cards compete on relevance, but share the active card's lifecycle cutoff. */
+export function isMemoryContextCandidate(card: MemoryCard): boolean {
+  return (card.status === "active" || card.status === "cold") && !isMemoryCardExpired(card) && !card.supersededBy;
+}
+
 export function isMemoryCardInContextScope(
   card: MemoryCard,
   context: MemoryCardScopeContext,

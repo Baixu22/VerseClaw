@@ -7,6 +7,7 @@ import { resolveExecutionDomain } from "./execution-domain.js";
 import { filesystemInstance } from "./worktree-registry.js";
 import { withExecutionTaskBarrier } from './execution-task-barrier.js';
 import { canonicalPath } from '../../../shared/task-system/identity.js';
+import { checkoutWriterSnapshot } from './worktree-writer.js';
 
 export type ExecutionTaskAuthorityBasis = TaskAuthorityBasis;
 
@@ -21,6 +22,7 @@ function resolveAuthority(workspaceRoot: string) {
     executionWorktree: resolution.local.worktree,
     registrationRevision: registration?.revision ?? null,
     projectRevision: registration?.projectRevision ?? null,
+    worktreeIncarnation: filesystemInstance(resolution.local.worktree),
     identityDigest: createHash("sha256").update(JSON.stringify({
       localRoot: filesystemInstance(resolution.local.root),
       worktree: filesystemInstance(resolution.local.worktree),
@@ -58,6 +60,20 @@ export function createExecutionTaskAccess(workspaceRoot: string, expected?: Exec
   };
   return {
     domain: resolved.domain, basis: resolved.basis, assertCurrent,
+    runProvenance(credential, runId) {
+      assertCurrent();
+      let writer: ReturnType<typeof checkoutWriterSnapshot>;
+      try { writer = checkoutWriterSnapshot(workspaceRoot); }
+      catch { return { authority: structuredClone(resolved.basis) }; }
+      const owner = writer?.owner;
+      const matches = owner?.kind === 'run' && owner.run.runId === runId && owner.run.scope.sessionKey === credential.sessionKey &&
+        owner.sessionGeneration === credential.generation && (!owner.task || (owner.task.taskNodeId === credential.taskNodeId && owner.task.epoch === credential.epoch));
+      return { authority: structuredClone(resolved.basis), ...(matches && writer && owner?.kind === 'run' ? {
+        run: owner.run, checkout: { root: writer.root, incarnation: writer.incarnation, generation: writer.generation,
+          epoch: writer.epoch, bindingRevision: owner.bindingRevision, effects: writer.operations.flatMap(operation => operation.receipt
+            ? [{ operationId: operation.id, ownerReceipt: operation.receipt.ownerReceipt, outcome: operation.receipt.outcome }] : []) },
+      } : {}) };
+    },
     withWriteBarrier: operation => withExecutionTaskBarrier([resolved.basis.localDomainId, resolved.basis.authorityId], () => {
       assertCurrent();
       return operation();

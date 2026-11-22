@@ -17,6 +17,14 @@ export type AgentStreamParams = {
   seed?: number;
 };
 
+/** A trusted one-shot model caller may only tighten the provider owner's limits. */
+export type ModelRequestBudget = {
+  maxInputTokens: number;
+  maxOutputTokens: number;
+  maxCostUsd: number;
+  maxCalls: 1;
+};
+
 /** Simplified tool definition for client-provided OpenResponses hosted tools. */
 export type ClientToolDefinition = {
   type: "function";

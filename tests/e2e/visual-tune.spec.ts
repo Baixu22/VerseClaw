@@ -1,4 +1,5 @@
 import electronBinaryPath from 'electron';
+import { resolveE2EElectronExecutable } from './fixtures/electron-executable';
 import { _electron as electron, expect, test } from '@playwright/test';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -29,7 +30,7 @@ test.describe('visual tuning screenshots', () => {
     await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({ language: 'en' }, null, 2), 'utf-8');
 
     const app = await electron.launch({
-      executablePath: electronBinaryPath as unknown as string,
+      executablePath: resolveE2EElectronExecutable(String(electronBinaryPath)),
       args: ['--lang=en-US', join(repoRoot, 'dist-electron/main/index.js')],
       env: {
         ...process.env,

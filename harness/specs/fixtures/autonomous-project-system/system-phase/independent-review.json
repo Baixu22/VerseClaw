@@ -1,0 +1,668 @@
+{
+  "task": "TF-0668",
+  "review_type": "final-independent-evidence-readonly",
+  "reviewed_at": "2026-11-20T09:51:33.851090+00:00",
+  "driven_by": "agent",
+  "actor": "tf0668-final-evidence-review",
+  "requestedModel": "ccs-ai/gpt-6.1-sol",
+  "verdict": "GO",
+  "findings": [],
+  "scope": "TF0668父阶段候选证据闭环",
+  "sourceCandidate": {
+    "worktree": "D:/ClawX-work/g5-test-review-20261118",
+    "head": "c051aa58fea6c1c410dbb9215dff92f6011408de",
+    "tree": "062e4fcf7c1822eb193210f027f82c33080bdc0f",
+    "runDirty": false,
+    "currentDirty": true,
+    "currentStatus": " M openclaw_runtime/src/agents/mission-control/controller.ts\n M tests/unit/mission-control-loop.test.ts\n?? harness/specs/tasks/project-experience-governance.md\n?? tests/unit/project-experience-governance.test.ts\n",
+    "sourceGuard": {
+      "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+      "driven_by": "agent",
+      "actor": "playwright-runner",
+      "ok": true,
+      "sourceChanged": false,
+      "before": {
+        "status": "",
+        "trackedFilesSha256": "9411bd60a58f30e25b57647b2623bf3b1338c248f8c5b41dfde8b02d264be6df",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "status": "",
+        "trackedFilesSha256": "9411bd60a58f30e25b57647b2623bf3b1338c248f8c5b41dfde8b02d264be6df",
+        "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "buildReuse": {
+      "source": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9",
+      "buildstamp": {
+        "builtAt": 1795164759639,
+        "head": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9"
+      },
+      "postbuildstamp": {
+        "syncedAt": 1795164759793,
+        "head": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9"
+      },
+      "productionDiff": [],
+      "changesSinceSource": [
+        "harness/specs/fixtures/autonomous-project-system/s3/SHA256SUMS",
+        "harness/specs/fixtures/autonomous-project-system/s3/configuration-en.png",
+        "harness/specs/fixtures/autonomous-project-system/s3/configuration-ja.png",
+        "harness/specs/fixtures/autonomous-project-system/s3/configuration-ru.png",
+        "harness/specs/fixtures/autonomous-project-system/s3/configuration-zh.png",
+        "harness/specs/fixtures/autonomous-project-system/s3/credential-scan.json",
+        "harness/specs/fixtures/autonomous-project-system/s3/gates.json",
+        "harness/specs/fixtures/autonomous-project-system/s3/independent-review.json",
+        "harness/specs/fixtures/autonomous-project-system/s3/journey.json",
+        "harness/specs/fixtures/autonomous-project-system/s3/report.json",
+        "harness/specs/fixtures/autonomous-project-system/s3/unit-tests.json",
+        "harness/specs/fixtures/autonomous-project-system/s3/verify.py",
+        "scripts/repository-artifacts.json",
+        "tests/e2e/system-agent-portfolio.spec.ts"
+      ],
+      "conclusion": "c48至c051提交的生产源码一致，r2复用c48构建成立；复核期间新增的工作树修改不在r2候选内。"
+    },
+    "testFix": "stop Gateway释放cwd后rename注入，恢复目录后startGateway；unavailable、另一项目observed、恢复observed及导航断言保留。",
+    "currentTrackedSourceMatchesHead": false
+  },
+  "checks": {
+    "candidateTree": true,
+    "runClean": true,
+    "units128": true,
+    "electron3": true,
+    "journeysPassed": true,
+    "journeyCandidates": true,
+    "s1Recovery": true,
+    "s2ScopePause": true,
+    "s3Rollback": true,
+    "leafIntegrity": true,
+    "buildReuse": true,
+    "childrenDone": true
+  },
+  "counts": {
+    "units": {
+      "total": 128,
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0
+    },
+    "electron": {
+      "startTime": "2026-11-20T09:37:46.144Z",
+      "duration": 256144.16,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "leafHistoricalCounts": {
+      "s1": {
+        "unit": 81,
+        "electron": 1,
+        "localeThemeFrames": 8
+      },
+      "s2": {
+        "unit": 490,
+        "electron": 2,
+        "localeThemeFrames": 8,
+        "failed": 0,
+        "skipped": 0
+      },
+      "s3": {
+        "unit": 148,
+        "electron": 1,
+        "locales": 4,
+        "failures": 0,
+        "skips": 0
+      }
+    },
+    "packageIntegrity": {
+      "s1": {
+        "files": 15,
+        "hashMismatches": []
+      },
+      "s2": {
+        "files": 15,
+        "hashMismatches": []
+      },
+      "s3": {
+        "files": 11,
+        "hashMismatches": []
+      }
+    },
+    "evidenceFilesRead": 74
+  },
+  "journeyReadbacks": {
+    "s1": {
+      "status": "passed",
+      "unavailableRecovered": true,
+      "readOnly": {
+        "workspaceUnchanged": true,
+        "modelCallsBefore": 0,
+        "modelCallsAfter": 0
+      },
+      "owners": [
+        "alpha",
+        "beta"
+      ]
+    },
+    "s2": {
+      "status": "passed",
+      "activeWorkspaceUnchanged": true,
+      "permission": "readOnly",
+      "admissions": {
+        "alphaAdmission": "accepted",
+        "betaAdmission": "accepted",
+        "refused": "rejected",
+        "stale": "rejected"
+      },
+      "pausedAgent": {
+        "pausedAgentError": "Error: [INTERNAL] Error: SYSTEM_EXECUTION_PAUSED",
+        "modelCallsBeforePausedAgent": 2,
+        "modelCallsAfter": 2
+      },
+      "betaWriteDenied": true
+    },
+    "s3": {
+      "status": "passed",
+      "loaded": {
+        "agentId": "configuration-owner",
+        "values": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 4096
+        }
+      },
+      "degraded": {
+        "requestId": "reload-failure",
+        "workspaceId": "configuration-project",
+        "agentId": "configuration-owner",
+        "phase": "degraded",
+        "desired": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 2048
+        },
+        "configured": null,
+        "effective": null,
+        "runtimeGeneration": null,
+        "error": "CONFIG_RECOVERY_REQUIRED"
+      },
+      "rollback": {
+        "requestId": "reload-failure",
+        "workspaceId": "configuration-project",
+        "agentId": "configuration-owner",
+        "phase": "rolled-back",
+        "desired": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 2048
+        },
+        "configured": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 4096
+        },
+        "effective": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 4096
+        },
+        "runtimeGeneration": "4",
+        "error": "CONFIG_APPLY_RELOADED_ROLLBACK"
+      },
+      "modelsInvoked": 0
+    }
+  },
+  "taskForest": {
+    "method": "仅CLI show，未直接读取canonical",
+    "nodes": [
+      {
+        "id": "TF-0668",
+        "status": "in_progress",
+        "progress": 95.0,
+        "children": [
+          "TF-0683",
+          "TF-0684",
+          "TF-0685"
+        ],
+        "primary_parent": "TF-0664"
+      },
+      {
+        "id": "TF-0683",
+        "status": "done",
+        "progress": 100.0,
+        "children": [],
+        "primary_parent": "TF-0668"
+      },
+      {
+        "id": "TF-0684",
+        "status": "done",
+        "progress": 100.0,
+        "children": [],
+        "primary_parent": "TF-0668"
+      },
+      {
+        "id": "TF-0685",
+        "status": "done",
+        "progress": 100.0,
+        "children": [],
+        "primary_parent": "TF-0668"
+      }
+    ],
+    "cliEvidence": [
+      {
+        "command": [
+          "python",
+          "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+          "show",
+          "TF-0668",
+          "--workspace",
+          "D:/ClawX",
+          "--json"
+        ],
+        "stdoutSha256": "bd90ca42754331ee23cf6d860877a4d046cdbfc1a966271dc4dd8d60c2b56834"
+      },
+      {
+        "command": [
+          "python",
+          "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+          "show",
+          "TF-0683",
+          "--workspace",
+          "D:/ClawX",
+          "--json"
+        ],
+        "stdoutSha256": "b3c648725fdeb189e4f72f2f9378d95c0b2431d7fd1cfcd33c068f6e4ece9196"
+      },
+      {
+        "command": [
+          "python",
+          "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+          "show",
+          "TF-0684",
+          "--workspace",
+          "D:/ClawX",
+          "--json"
+        ],
+        "stdoutSha256": "75bd30a9377d4f104d97d5bb2ca7633e3bc9d7717dbb8f2eb160748a8310dec0"
+      },
+      {
+        "command": [
+          "python",
+          "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+          "show",
+          "TF-0685",
+          "--workspace",
+          "D:/ClawX",
+          "--json"
+        ],
+        "stdoutSha256": "66f5b0888c531bc27e13fce10af2c58f8bdc107c21a176f193c1ad222b2747a8"
+      }
+    ]
+  },
+  "separateRecords": [
+    {
+      "topic": "复核期间并发修改",
+      "detail": "复核开始仅有未跟踪规范；随后出现controller.ts、mission-control-loop.test.ts及新测试等并发修改。r2原始source guard前后为空status且hash一致；GO仅绑定已留存c051候选。当前工作树须另行验证。",
+      "status": " M openclaw_runtime/src/agents/mission-control/controller.ts\n M tests/unit/mission-control-loop.test.ts\n?? harness/specs/tasks/project-experience-governance.md\n?? tests/unit/project-experience-governance.test.ts\n"
+    },
+    {
+      "topic": "父节点状态",
+      "detail": "TF0668当前in_progress/95，三个子节点done；GO为父阶段证据复核结论，节点尚待后续收口。"
+    },
+    {
+      "topic": "旧NO_GO保留",
+      "path": "D:/tmp/g5-20261120/system-phase-current",
+      "verdict": {
+        "status": "NO_GO",
+        "parentAllLeavesCurrentCandidateEstablished": false,
+        "reason": "当前组合 Electron 2/3 通过，S1 unavailable 注入失败；父子叶完整清单受 CLI 锁阻塞。",
+        "leaves": {
+          "TF-0683": "current-run-failed",
+          "TF-0684": "current-run-passed",
+          "TF-0685": "current-run-passed"
+        },
+        "repositoryCi": "historical-failed"
+      },
+      "electronStats": {
+        "startTime": "2026-11-20T09:03:40.625Z",
+        "duration": 602745.585,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "detail": "原EPERM失败保留，新r2通过。"
+    },
+    {
+      "topic": "历史全仓CI",
+      "status": "separate",
+      "details": [
+        "four Agent Dev reports exceed 24-hour freshness",
+        "historical typecheck 68533/45000ms",
+        "historical Playwright Agent Dev 46635/40000ms",
+        "historical contract 3388/3000ms"
+      ],
+      "detail": "Agent Dev历史stale/perf另记；父阶段GO不更改该历史记录。"
+    }
+  ],
+  "verification": {
+    "testsExecuted": false,
+    "buildsExecuted": false,
+    "installsExecuted": false,
+    "sourceModified": false,
+    "delegated": false
+  },
+  "evidenceRead": [
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/product.json",
+      "sha256": "276be8e6260927cbeb5aa8a6a9107a853bac1249180e6e4c07077d6d9b4d2dc9"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/units.json",
+      "sha256": "c7c51656d1636cfe1205aa176a5299b073d8230a4b1e087721af9ca7b8cf5331"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron.json",
+      "sha256": "6df1a2240606fce772fa32289d88e00828a157745ad25e161f561a3a0099ba59"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/system-agent-portfolio-sys-faa12-nd-unavailable-observations/system-portfolio.json",
+      "sha256": "3ffa7a3fddd304d7d6284321214f1333a47a236c8b3408bb094a5e5a300e7f91"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/system-agent-portfolio-sys-829cb-ause-fences-the-next-effect/system-dispatch.json",
+      "sha256": "8e01a8f5dda34d541e70c91846dbe10c3f1a607396f130947edba3d1a32a2ee0"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/project-configuration-oper-48800-them-after-a-reload-failure/configuration-operator.json",
+      "sha256": "f04faa62c47cfed11eeec778400095e81e3e54a28bb146f352c60241e7f5a805"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/run.ps1",
+      "sha256": "f532cbb8ab4717c3759c17b39f709f308aea08253c4405e72968e858b586d0d9"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron.log",
+      "sha256": "bbb77756280bc532d77e94aa216eee9cdfbc1e07fddb872d7770006c1406421d"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/system-units.log",
+      "sha256": "84ceba6c7ba6516d4f7e009a133203c2fadbd0306d076fe8cbd6fc8e3d4004c5"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/electron-process-cleanup.json",
+      "sha256": "5ca65d00a5eb44d1b6c24fac4fd7e34872f4eb0838019a8e24b46e62804dd3ad"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/electron-process-run.json",
+      "sha256": "5731f82dc0f2453987b998b979bf6f504e39c61b8b461d7b1fef189e99925cd0"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/source-mutation-guard.json",
+      "sha256": "63ae402f7605893acc2fc4a1d334d22e6a70cc307c30d38d228a8b7f3ef50b04"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/source-state-after.json",
+      "sha256": "bd2c3eac8ab1b1a751f219c09157c606602e6f382e0a7cd93b9f38da0ceee3de"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-r2/electron/source-state-before.json",
+      "sha256": "bd2c3eac8ab1b1a751f219c09157c606602e6f382e0a7cd93b9f38da0ceee3de"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/SHA256SUMS",
+      "sha256": "3cae3db13e3a4ece25f5dadacb69ae2d76126cfa0887f6052b91a81b13178437"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/credential-scan.json",
+      "sha256": "8a56523caeb5f966157f916f8a2026f2e1b6b938063c0738e1708f462cbdb825"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/electron.json",
+      "sha256": "6fe7ad6f6ecdbce89117ffa6b9abc519a393270cf5a43249765243850e477217"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/en-dark.png",
+      "sha256": "435d903ac118e2cc11031ae9ffb0fd85b557ff988f9de69219da378b2a0f4e76"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/en-light.png",
+      "sha256": "dc59201a3b1c701a7965415db85d63f3db46914c810431aa7b1fa78b26c4033d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/gates.json",
+      "sha256": "c07576afdb6fa2ff2ee4abb1bb246ad50fdd15d0f07162767d4e6ccdc553fb6e"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/independent-review.json",
+      "sha256": "a2784493e2571b59d8ab624e911ff83cf7746a60835ce91a7270bd36ca89ffe4"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/ja-dark.png",
+      "sha256": "b7827b74a5dfbedba251ebc9352d2ad59cbe3b16ef5655a9af399777e14f6c88"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/ja-light.png",
+      "sha256": "a436146f2692688b4f4085312ccf84c15843788c12404b1ea87d464fa84761d0"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/report.json",
+      "sha256": "292367669267f84644014db7174f06d23fac1d604b229c7dc9997eb09658b667"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/ru-dark.png",
+      "sha256": "ae1abff21d89d570d493a501d031d2e46ac6937d3bc6c1b747f00c6c137ee9d8"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/ru-light.png",
+      "sha256": "e720fbad1314778709baef6657bae17105c5643cf2836f16acf06521692497a3"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/unit-tests.json",
+      "sha256": "d6129ffb58ef0ebea5e779cd52b01f17221ad5d142fdf0692e6d90ac59b18fc5"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/verify.py",
+      "sha256": "6a4fce26c679ac4c031ce80435a1767f178182b54fd559952009c3b4c21972ac"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/zh-dark.png",
+      "sha256": "54337542a6609f3b076eecd1062acec4228e94390e95dc75ccc2760855dae982"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s1/zh-light.png",
+      "sha256": "3485dfda86ea44dce3681c1bc1a3779293d3297f15634997a1ce733d73d022de"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/SHA256SUMS",
+      "sha256": "79f489d5fc6d3a96ded9c162831575a089bbc5b52d90d0d509c6ecec28148dae"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/credential-scan.json",
+      "sha256": "efd02258eeae463b55f86def023ed7b69c42748fd1fd7ddf611918e4cf3b24c4"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/en-dark.png",
+      "sha256": "3fceddce18893c52120498b15a7d1a75d4bddded17e132a6e9419a23bd92406c"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/en-light.png",
+      "sha256": "c3af319c2ccee2258242e5805a0835e6138a642df69ad7222a7c3381b38c77ac"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/gates.json",
+      "sha256": "a6e34c0da07d73883cd2391b43926f926cab1d88c492a8caeb2ed23d49b17e69"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/independent-review.json",
+      "sha256": "00134bec1e82e1196dfad78fb1d521b69d53a3dd383fcf341e32a0a45ebc470c"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/ja-dark.png",
+      "sha256": "6d131395407afded8e93dc8a6649e5873d659c3d3aaaebe8ae59631b0213e353"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/ja-light.png",
+      "sha256": "fb640a90324554b6cf2fe313ae8e5ea732d5f5a67b77132023eab75857d4f3df"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/journeys.json",
+      "sha256": "7889baf613af31ae6efb64c7f2794bb8a3ece5cb7eabac22160665fdf6fe39b7"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/report.json",
+      "sha256": "6743460f2f724e89ad7c0974a587695e55bec85eac79d14d407ff5c3e0139888"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/ru-dark.png",
+      "sha256": "2b60cbebaac82ad661abef16dca5b48d38578283427e079c3c81c4701857df20"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/ru-light.png",
+      "sha256": "f85034ef9fb71a0a332016a5290f12aef3b63007a08c412d9eaeaa3d4f0892e3"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/unit-tests.json",
+      "sha256": "1e0be1b47d1b018222fef971093492d288acb3406087d213c84df34cabc744bc"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/verify.py",
+      "sha256": "65a605a1c4fc153944e7ae149f97ea91ef9bceac703a52200e6092a4a6982142"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/zh-dark.png",
+      "sha256": "70bec76f8ddfc8c289a2450d0123d623610fa32da22107b16bed4e997e03ade8"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s2/zh-light.png",
+      "sha256": "ac727e87fc411e0229174a846c738f199583672503adc6366d8fd0eb3a3a3f53"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/SHA256SUMS",
+      "sha256": "419e82c184f7fa885114fe181885aa2732cdee8f252794932c72176e4f6dc803"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/configuration-en.png",
+      "sha256": "79c2e4e7d0f8469eaa3db58a690a62568909fc8dd268b67881937ce357145454"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/configuration-ja.png",
+      "sha256": "bbe6974bbab764562380573d30e34d9a7a53f651b2870b93ca3958e3b31c5f9c"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/configuration-ru.png",
+      "sha256": "b5555b851e95681985d2011aebbd1966cb4f52680431fb44fad99efb274801e9"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/configuration-zh.png",
+      "sha256": "e4326702c1fcbedb281b48dabcf3441673ad65557340c63e7f47a6ff0e3d3250"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/credential-scan.json",
+      "sha256": "efd02258eeae463b55f86def023ed7b69c42748fd1fd7ddf611918e4cf3b24c4"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/gates.json",
+      "sha256": "91f13ccd8ae036212b1c82a8cc0a197935e1b38d704b201d91f2a51c186afbc3"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/independent-review.json",
+      "sha256": "c24f70dc65e4215e7c19ea4b5906da796dde4a31a99c1c3e3aeba1f4b2d674ee"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/journey.json",
+      "sha256": "23b7df0346e1a449fcb0328c536a6429d38d99e12f0f0ecf17b2694cd1a09c1d"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/report.json",
+      "sha256": "ec13a61b22ee8e74b2f5c66bb23b801195cb4a1e0a8b940c4f80119cc991d3ad"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/unit-tests.json",
+      "sha256": "9f8345e6698626e310ce665eb053a96032f531f72c7501f0a1b0176b4be24e8a"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/fixtures/autonomous-project-system/s3/verify.py",
+      "sha256": "660f905a370c27a1d1a9435aab1e972b6dac75d90d7645f1c5135299b118a865"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-review.json",
+      "sha256": "62e61d030606b1b959ad80ec3057e5870f6376b803c4ff82ba13914363e083f5"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-current/electron.json",
+      "sha256": "11a2b16e65a3f1b5b63f00e781fcf2ed4a23598b00cabca94b24fbf71b94b6e2"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-current/product.json",
+      "sha256": "9132a9546b9fc370aba4a86fae7de4965ef6a14f027b3fbcc5846aa79f0e2a61"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-current/electron/system-agent-portfolio-sys-faa12-nd-unavailable-observations/system-portfolio.json",
+      "sha256": "7029f7d243453338e76736cb98476565520945702bff2dfff77ad0131084476c"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-current/electron/system-agent-portfolio-sys-829cb-ause-fences-the-next-effect/system-dispatch.json",
+      "sha256": "20127c2bd48defae0b4731b44b3d65c41c27f0646c1a954bd2775e3042de2c1f"
+    },
+    {
+      "path": "D:/tmp/g5-20261120/system-phase-current/electron/project-configuration-oper-48800-them-after-a-reload-failure/configuration-operator.json",
+      "sha256": "3b1c5da97a3e891bb6878433d34a63a10e582eb7d7725ea8bc385d5b25622ff7"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/e2e/system-agent-portfolio.spec.ts",
+      "sha256": "4125609fbba26fbd3948fe20317323d621988198b3f07c389405065c302415cc"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/e2e/project-configuration-operator.spec.ts",
+      "sha256": "27e9844e40b3783af6ae90cb21d430f75e35816caddbefa71d7a2a621b070a21"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/tests/e2e/fixtures/electron.ts",
+      "sha256": "dccbb072a7887929b99b2a52722f68a49944d4c456ba22e2ca04e0923cfdfc33"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/autonomous-project-system.md",
+      "sha256": "25ee4662c21064f2cecb9499cdc0cc98c3dd92c10fe254d2cc046b1e0114c3be"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/system-agent-portfolio.md",
+      "sha256": "4fdbdb6cdc32fa4bcb64ac7f127cb61414b041dfda98ae9182c0802e6e92d286"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/system-project-dispatch.md",
+      "sha256": "e2fedcb36c6da01638897f5fc382b948a97c7b86041143f28de69a3c19fdabb4"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/project-configuration-operator.md",
+      "sha256": "a5d4c73b1ffa9c1d80c71506f1b41a7da6e40aec816c3e8e7be9147f402042a3"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/dist/.buildstamp",
+      "sha256": "afb407830da28eed4f0738107ec481a76d8876fba9e463e1250f5854f4c883d2"
+    },
+    {
+      "path": "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/dist/.runtime-postbuildstamp",
+      "sha256": "bd520dce5c91847cdc1452ebd842e6aaa1ad2a9def03b9f2399c7783cf557ab5"
+    }
+  ]
+}

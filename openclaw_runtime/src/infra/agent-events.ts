@@ -142,6 +142,13 @@ export type AgentEventPayload = {
 
 /** Per-run metadata used to stamp events and gate Control UI visibility. */
 export type AgentRunContext = {
+  /** Read identity for a backend-owned internal run without a visible session row. */
+  internalKnowledgeRead?: {
+    sessionKey: string;
+    sessionId: string;
+    workspaceId?: string;
+    workspaceDir: string;
+  };
   /** Isolated scheduled execution owned by the registered embedded handle. */
   cronTaskScope?: {
     jobId: string;
@@ -205,6 +212,7 @@ export function registerAgentRunContext(runId: string, context: AgentRunContext)
     existing.sessionId = context.sessionId;
   }
   if (context.memoryFlushOwner) existing.memoryFlushOwner = context.memoryFlushOwner;
+  if (context.internalKnowledgeRead) existing.internalKnowledgeRead = context.internalKnowledgeRead;
   if (context.cronTaskScope) existing.cronTaskScope = context.cronTaskScope;
   if (context.verboseLevel && existing.verboseLevel !== context.verboseLevel) {
     existing.verboseLevel = context.verboseLevel;
@@ -234,8 +242,12 @@ export function clearAgentRunContext(runId: string) {
   const context = state.runContextById.get(runId);
   state.runContextById.delete(runId);
   state.seqByRun.delete(runId);
-  clearSessionTaskScopeRun(runId, context?.sessionKey && context.sessionId
-    ? { sessionKey: context.sessionKey, sessionGeneration: context.sessionId } : undefined);
+  clearSessionTaskScopeRun(
+    runId,
+    context?.sessionKey && context.sessionId
+      ? { sessionKey: context.sessionKey, sessionGeneration: context.sessionId }
+      : undefined,
+  );
 }
 
 /**

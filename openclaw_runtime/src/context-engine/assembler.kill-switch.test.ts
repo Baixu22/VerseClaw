@@ -104,6 +104,20 @@ describe("FP-P0-02 Assembler kill-switch matrix", () => {
     expect(query).not.toHaveBeenCalled();
   });
 
+  it.each(['config', 'env'] as const)('cuts the context ladder store query when %s kill is engaged', async (source) => {
+    if (source === 'env') process.env[CONTEXT_ENHANCEMENT_KILL_SWITCH_ENV] = '1';
+    const { query, assembler } = makeAssembler();
+    const messages = [{ role: 'user' as const, content: 'go' }];
+    const result = await assembler.assemble({
+      session_id: 'session-kill',
+      cfg: source === 'config' ? CONFIG_KILL : CONFIG_NO_KILL,
+      contextLadder: { enabled: true, mode: 'normal', tokenBudget: 256 },
+    }, { existing_output: messages }, ALL_ON);
+    expect(query).not.toHaveBeenCalled();
+    expect(result.context_ladder).toBeUndefined();
+    expect(result.output).toBe(messages);
+  });
+
   it("env kill only: cuts injection AND the BlockStore query", async () => {
     process.env[CONTEXT_ENHANCEMENT_KILL_SWITCH_ENV] = "1";
     const { query, assembler } = makeAssembler();

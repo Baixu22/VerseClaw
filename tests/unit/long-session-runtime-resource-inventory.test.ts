@@ -1,13 +1,14 @@
 // @vitest-environment node
 
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readRuntimeSessionResourceInventory } from '../../openclaw_runtime/src/gateway/session-resource-inventory';
 import { sessionAdmissionRegistry } from '../../openclaw_runtime/src/sessions/session-admission-registry';
 import { __resetWorktreeRegistry, createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
 import { getProcessSupervisor } from '../../openclaw_runtime/src/process/supervisor/index';
 import { resetResourceEnvelopeLedgerForTest } from '../../openclaw_runtime/src/resources/resource-envelope';
+import { clearRuntimeConfigSnapshot, setRuntimeConfigSnapshot } from '../../openclaw_runtime/src/config/config';
 
 const OWNER = {
   agentId: 'agent-e2',
@@ -15,6 +16,7 @@ const OWNER = {
   expectedSessionId: 'generation-e2',
 } as const;
 const roots: string[] = [];
+let stateDbPath: string;
 
 function makeRoot(): string {
   mkdirSync('D:\\tmp', { recursive: true });
@@ -23,9 +25,19 @@ function makeRoot(): string {
   return root;
 }
 
+beforeEach(() => {
+  const stateRoot = makeRoot();
+  stateDbPath = path.join(stateRoot, 'state', 'openclaw.sqlite');
+  vi.stubEnv('OPENCLAW_STATE_DIR', stateRoot);
+  vi.stubEnv('CLAWX_EXECUTION_STATE_PATH', stateDbPath);
+  setRuntimeConfigSnapshot({});
+});
+
 afterEach(() => {
   sessionAdmissionRegistry.clearForTests();
   __resetWorktreeRegistry();
+  clearRuntimeConfigSnapshot();
+  vi.unstubAllEnvs();
   for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 });
 
@@ -37,6 +49,7 @@ describe('runtime long-session resource inventory', () => {
     }, 'exec-spawn');
     try {
       const inventory = await readRuntimeSessionResourceInventory({ ...OWNER, workspaceId: 'workspace-e2', rootPath: missingRoot });
+      expect(existsSync(stateDbPath)).toBe(true);
       expect(inventory.scope.expectedSessionId).toBe(OWNER.expectedSessionId);
       expect(inventory.owners.find(owner => owner.kind === 'admission-permit')).toMatchObject({
         generation: OWNER.expectedSessionId, authority: 'managed', state: 'known', activePermits: 1,

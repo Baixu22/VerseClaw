@@ -15,7 +15,8 @@
     "exportHtml": "导出 HTML",
     "addNode": "添加",
     "linkSession": "关联会话",
-    "clearReview": "清除复核"
+    "clearReview": "清除复核",
+    "organize": "新建与关联"
   },
   "form": {
     "titlePlaceholder": "节点标题",
@@ -160,7 +161,9 @@
     "children": "计划包含 {{count}} 个子任务，验收子任务后才能完成此目标。",
     "parentGoal": "本任务保留父目标及其约束。",
     "coverage": "任务归属检查覆盖本仓库的受管 agent 工具。外部终端不参与此领取协议。",
-    "stale": "当前显示上次成功读取的记录。任务库恢复可用前，任务操作暂停。"
+    "stale": "当前显示上次成功读取的记录。任务库恢复可用前，任务操作暂停。",
+    "details": "任务详情",
+    "closeForm": "收起表单"
   },
   "conversation": {
     "task": "任务",
@@ -189,6 +192,11 @@
     "plan": "执行计划",
     "current": "当前",
     "next": "下一步",
+    "dispatchNext": "派发下一个计划任务",
+    "dispatchAccepted": "执行会话已接收任务",
+    "planRevision": "计划第 {{revision}} 版",
+    "planAssumption": "暂定假设",
+    "planDecision": "待决事项",
     "more": "任务操作",
     "copyId": "复制任务 ID",
     "copyIdNamed": "复制任务 ID {{id}}",
@@ -199,5 +207,68 @@
     "showSteps": "展开步骤",
     "hideSteps": "收起步骤",
     "updated": "{{time}}更新"
+  },
+  "trace": {
+    "open": "任务追溯报告",
+    "loading": "正在读取任务报告…",
+    "unavailable": "任务报告暂不可用，刷新后重试。",
+    "unknown": "未知",
+    "elapsed": "{{seconds}} 秒",
+    "source": "任务版本 {{revision}} · {{target}}",
+    "goal": "目标：{{goal}}",
+    "calls": "模型调用",
+    "tokens": "Token 用量",
+    "cost": "估算费用",
+    "estimatedCost": "估算 {{amount}} 美元",
+    "checks": "检查与产物（{{count}}）",
+    "diagnosticCount": "需核对的引用（{{count}}）",
+    "raw": "技术追踪",
+    "executionCount": "{{runs}} 次运行 · {{operations}} 次操作",
+    "states": {
+      "current": "当前记录已核对",
+      "stale": "来源或产物已变化",
+      "incomplete": "追溯引用缺失"
+    },
+    "artifacts": {
+      "current": "内容已核验",
+      "retained": "保留证据已核验",
+      "stale": "内容已变化",
+      "incomplete": "核验未完成",
+      "superseded": "历史候选",
+      "missing": "已缺失",
+      "unavailable": "不可用"
+    },
+    "phases": {
+      "queue": "等待领取",
+      "execution": "执行",
+      "verification": "验证",
+      "recovery": "恢复"
+    },
+    "operations": {
+      "completed": "已返回",
+      "pending": "待结清",
+      "unknown": "效果未知",
+      "reconciled": "已核对",
+      "delegation_unknown": "委派结果未知"
+    },
+    "diagnostics": {
+      "source_changed": "任务版本已变化。",
+      "source_missing": "来源任务契约记录缺失。",
+      "candidate_changed": "请求候选与实际提交候选不同。",
+      "receipt_missing": "必要的验证回执缺失。",
+      "receipt_invalid": "回执与原始来源或检查不匹配。",
+      "artifact_changed": "产物内容已变化：{{ref}}",
+      "artifact_missing": "产物缺失：{{ref}}",
+      "artifact_unavailable": "产物无法核验：{{ref}}",
+      "checkout_replaced": "原检出实例已被替换。",
+      "run_missing": "操作缺少对应运行记录。",
+      "operation_missing": "操作引用缺失。",
+      "effect_missing": "操作仍需效果回执。",
+      "cost_unknown": "部分模型调用的金额未知。",
+      "cost_conflict": "用量回执冲突，无法汇总费用。",
+      "phase_unknown": "{{phase}}时间边界缺失。",
+      "source_identity_unknown": "运行作用域或检出身份未被记录。"
+    },
+    "metrics": "用量与耗时"
   }
 }

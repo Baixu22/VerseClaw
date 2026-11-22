@@ -15,7 +15,8 @@ Runtime 资源等待保留原 AbortSignal，取消立即移除 waiter；grant �
 未知成本、未声明容量和模拟隔离均单列，不能用0、无限值或 caller bool 声称安全余量。
 
 Provider spend 扩展归既有 ProviderOutboundBudget：runtime.providerBudget 显式配置host、
-project或session token/USD上限，未配置时不启用。预算journal在原共享SQLite内，三层
+project 或 session 限额。模型降级尝试独立预留，沿用同一 run 和会话范围。重放同一次降级使用原调用身份，保留前次未知用量。
+未配置时保持原行为。预算 journal 在原共享 SQLite 内，三层
 预留同一事务检查并写入，原scope和随机owner token绑定；不得用shadow视图授予额度。
 每次model call按模型上下文/输出上界保守预留，最终usage按同call身份核销；缺usage、
 全零未定价模型或不明发送保留unknown liability，重启/取消/TTL不清账。历史transcript
@@ -92,3 +93,6 @@ usage有效正数分项之和须等于报告总量才可核销；不一致时tok
 
 保持现有配置、产品锁与冻结默认。所有自动场景和故障注入标为 driven_by: agent；
 实现阶段的局部通过不等于 TF-0679 完成，更不代表 TF-0664 或 GA。
+
+
+总控可为显式绑定的后台项目提交执行意图。Main 的单请求执行范围固定项目、负责人代次、目录、权限和控制版本；原 Gateway 权限路径读取该范围，不能通过切换全局活动工作区借用权限。排队、获得资源和发出派发前复核；项目 Task owner继续裁决计划和单writer。全局暂停状态由Workspace owner持久化，变更与新效果准入共享原mutation barrier；项目恢复不能覆盖它。Runtime新领取/派发和受管工具也检查暂停，已准入效果的结算及取消停止保留。

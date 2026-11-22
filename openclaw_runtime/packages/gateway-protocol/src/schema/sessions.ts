@@ -269,6 +269,7 @@ export const SessionsPreviewParamsSchema = Type.Object(
 export const SessionsDescribeParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    identityOnly: Type.Optional(Type.Boolean()),
     includeDerivedTitles: Type.Optional(Type.Boolean()),
     includeLastMessage: Type.Optional(Type.Boolean()),
   },
@@ -395,6 +396,8 @@ export const SessionsStopResultSchema = Type.Object(
 export const SessionsPatchParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
+    workspaceDir: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     label: Type.Optional(Type.Union([SessionLabelString, Type.Null()])),
     thinkingLevel: Type.Optional(Type.Union([NonEmptyString, Type.Null()])),

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex/tf0675-evidence-verifier",
+  "sourceCandidate": "95b7e3c247540a9136f4abf0921787d1fa8b941b",
+  "provider": "local-scripted",
+  "realHumanEvidence": false,
+  "revisions": [
+    {
+      "revision": 2,
+      "objective": "Revise the checklist plan to include a rollback check; preserve the previous verification.",
+      "nextAction": "Draft the rollback checklist",
+      "reason": "Add the rollback requirement",
+      "assumptions": [
+        "Existing checklist format is suitable"
+      ],
+      "pendingDecisions": [
+        "Confirm deployment scope"
+      ]
+    },
+    {
+      "revision": 1,
+      "objective": "Plan the release checklist and its verification without running either step.",
+      "nextAction": "Draft the release checklist",
+      "reason": null,
+      "assumptions": [
+        "Existing checklist format is suitable"
+      ],
+      "pendingDecisions": [
+        "Confirm deployment scope"
+      ]
+    }
+  ]
+}

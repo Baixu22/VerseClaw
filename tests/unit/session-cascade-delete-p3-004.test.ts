@@ -280,6 +280,7 @@ describe('P3-004 session hard-delete cascade + TTL', () => {
     const mockStore = {
       query_principles: () => principles,
       query_trajectories: () => trajectories,
+      list_adoption_events: () => [],
       delete_principle: (id: string) => {
         const idx = principles.findIndex((p) => p.principle_id === id);
         if (idx >= 0) principles.splice(idx, 1);

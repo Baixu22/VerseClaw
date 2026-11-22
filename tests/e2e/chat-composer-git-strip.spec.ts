@@ -181,14 +181,54 @@ async function installComposerGitMocks(
       },
     },
   });
-  await app.evaluate(({ ipcMain }, initialBranch) => {
+  await app.evaluate(({ ipcMain }, seed) => {
     const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: {
-      id?: string; module: string; action: string; payload?: { name?: string };
+      id?: string; module: string; action: string; payload?: {
+        name?: string; id?: string; rootPath?: string; agentId?: string;
+        activeSessionKey?: string; activate?: boolean; method?: string;
+        params?: { key?: string; sessionKey?: string };
+      };
     }) => Promise<unknown>> })._invokeHandlers;
     const original = handlers.get('host:invoke')!;
-    let selected = initialBranch;
+    let selected = seed.initialBranch;
+    let created: typeof seed.target | null = null;
+    let active: typeof seed.source | typeof seed.target = seed.source;
+    const snapshot = () => ({ profiles: created ? [seed.source, created] : [seed.source],
+      activeWorkspaceId: active.id, activeWorkspace: active,
+      ...(created ? { createdWorkspace: created } : {}) });
     ipcMain.removeHandler('host:invoke');
     ipcMain.handle('host:invoke', async (event, request) => {
+      const payload = request.payload ?? {};
+      const record = () => (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: unknown[] })
+        .__verseClawE2eHostCalls?.push({ module: request.module, action: request.action, payload });
+      if (request.module === 'gateway' && request.action === 'rpc' && payload.method === 'chat.history') {
+        const key = payload.params?.key ?? payload.params?.sessionKey;
+        if (key === seed.source.activeSessionKey || key === created?.activeSessionKey) {
+          record();
+          return { id: request.id, ok: true, data: { success: true,
+            result: { messages: key === seed.source.activeSessionKey ? seed.messages : [] } } };
+        }
+      }
+      if (request.module === 'workspaces' && request.action === 'create') {
+        if (payload.rootPath !== seed.target.rootPath || payload.name !== 'feature/existing' || payload.agentId !== 'main'
+            || payload.activate !== false || typeof payload.activeSessionKey !== 'string'
+            || !payload.activeSessionKey.startsWith('agent:main:session-')) {
+          return { id: request.id, ok: false, error: { code: 'INVALID_ARGUMENT', message: 'Workspace fixture identity mismatch' } };
+        }
+        record();
+        created = { ...seed.target, name: payload.name, activeSessionKey: payload.activeSessionKey,
+          agentBindings: { main: { workspaceId: seed.target.id, agentId: 'main', sessionKey: payload.activeSessionKey } },
+          sessionStates: { [payload.activeSessionKey]: {} } };
+        return { id: request.id, ok: true, data: snapshot() };
+      }
+      if (request.module === 'workspaces' && created && ['switch', 'list', 'getActive'].includes(request.action)) {
+        if (request.action === 'switch') {
+          if (payload.id !== created.id) return { id: request.id, ok: false, error: { code: 'INVALID_ARGUMENT', message: 'Workspace fixture identity mismatch' } };
+          active = created;
+        }
+        record();
+        return { id: request.id, ok: true, data: snapshot() };
+      }
       const response = await original(event, request) as { data?: {
         success?: boolean; status?: { branch?: string }; branches?: Array<{ name: string; current: boolean }>;
       } };
@@ -206,7 +246,7 @@ async function installComposerGitMocks(
       }
       return response;
     });
-  }, gitStatus.branch!);
+  }, { initialBranch: gitStatus.branch!, source: workspace, target: worktreeWorkspace, messages });
 }
 
 test.describe('Chat composer Git strip', () => {
@@ -299,6 +339,7 @@ test.describe('Chat composer Git strip', () => {
       expect(Math.abs(promptBox.width - stripBox.width)).toBeLessThanOrEqual(1);
       await page.screenshot({ path: testInfo.outputPath('runtime-approval-inline-with-git.png') });
       await prompt.screenshot({ path: testInfo.outputPath('runtime-approval-inline-prompt.png') });
+      await expect(strip).toBeVisible();
       const currentStripBox = (await strip.boundingBox())!;
       expect(currentStripBox.y + currentStripBox.height).toBeLessThanOrEqual(promptBox.y + 1);
 

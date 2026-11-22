@@ -1,0 +1,417 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0676-evidence-verifier",
+  "sourceCandidate": "2f20d5715270f4dd3f450580cdaf6e07fdccfb0b",
+  "sourceTree": "c9d3453f6071a6bd1db0b3d427b9c16a8fc15719",
+  "base": "a1cf565abebe88244d388201df6d5f4e69678d05",
+  "gates": [
+    {
+      "gate": "task",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.task-system.config.ts",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\p2verified-1ee44\\task.json"
+      ],
+      "exitCode": 0,
+      "log": "task.log",
+      "sha256": "0e4992ac92a754292bdfff9ee63a9ac932fdc84d50262a1bc0c6c91b0ea45ff5",
+      "seconds": 40.1
+    },
+    {
+      "gate": "admission",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/long-session-delegation-admission.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/autonomy-resource-admission.test.ts",
+        "tests/unit/autonomy-provider-spend.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\p2verified-1ee44\\admission.json"
+      ],
+      "exitCode": 0,
+      "log": "admission.log",
+      "sha256": "ef93afe797a51d4a4265f565d15a1a49f024840ca66e05a790f8dc2e41d877f4",
+      "seconds": 81.1
+    },
+    {
+      "gate": "typecheck",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "log": "typecheck.log",
+      "sha256": "20f1a496869e2e48fa95d46014a726dd526ca6d89935e80a4ded67cd033bae3b",
+      "seconds": 56.0
+    },
+    {
+      "gate": "contract:check",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "contract:check"
+      ],
+      "exitCode": 0,
+      "log": "contract-check.log",
+      "sha256": "7c99a45dcfec484626ba09c65cc2657d5b52d674f1abeb979073a0a2d7ffaa0d",
+      "seconds": 5.9
+    },
+    {
+      "gate": "i18n:lint",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "i18n:lint"
+      ],
+      "exitCode": 0,
+      "log": "i18n-lint.log",
+      "sha256": "514dfdd588206367585da81fd97c18a229b9b97bc8cf74e04489e15e02ff8982",
+      "seconds": 3.6
+    },
+    {
+      "gate": "comms:replay",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "comms:replay"
+      ],
+      "exitCode": 0,
+      "log": "comms-replay.log",
+      "sha256": "d5fd489d65dba26f64520b5476f29299e1cdd91048417459f8430dd03d5a93cc",
+      "seconds": 3.2
+    },
+    {
+      "gate": "comms:compare",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "comms:compare"
+      ],
+      "exitCode": 0,
+      "log": "comms-compare.log",
+      "sha256": "e8bcc05f85553e37f072e53065627a67c575f1750685122b24307667b1cfa360",
+      "seconds": 2.1
+    },
+    {
+      "gate": "repo:artifacts:check",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "repo:artifacts:check"
+      ],
+      "exitCode": 0,
+      "log": "repo-artifacts-check.log",
+      "sha256": "10f53ffba2deef8ce74aaa4d6c81f1e507c3fb4bf514b694fdeeb95a8ad629c3",
+      "seconds": 14.5
+    },
+    {
+      "gate": "spec",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-coordinator-dispatch.md"
+      ],
+      "exitCode": 0,
+      "log": "spec.log",
+      "sha256": "effd961f714eda62f7745f9375cf50fe9a480322d64d656de8e3dc8a1be9c64c",
+      "seconds": 3.6
+    },
+    {
+      "gate": "dry",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-coordinator-dispatch.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "log": "dry.log",
+      "sha256": "f0699b7d05bddc13fa3f8f51d7d6f7f2c26e437a7b8e2e8225241fe445482673",
+      "seconds": 4.4
+    },
+    {
+      "gate": "runtime",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "build:runtime"
+      ],
+      "exitCode": 0,
+      "log": "runtime.log",
+      "sha256": "e3f88eb6fac6d4a5d3df220bbf13c9383793b4f62f99755e171a6906000dac6c",
+      "seconds": 89.1
+    },
+    {
+      "gate": "vite",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\npm\\pnpm.cmd",
+        "run",
+        "build:vite"
+      ],
+      "exitCode": 0,
+      "log": "vite.log",
+      "sha256": "fa99c33e6cc9d59c4b12240dce2aaf2b39ca68c3ab348d046b7e385f39eec092",
+      "seconds": 150.3
+    },
+    {
+      "gate": "electron",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/project-agent-loop.spec.ts",
+        "tests/e2e/long-session-delegation-admission.spec.ts",
+        "--workers=1",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\p2verified-1ee44\\e2e"
+      ],
+      "exitCode": 0,
+      "log": "electron.log",
+      "sha256": "a1b921f580c92d703cbf3395760d066fe64d3a3e2bc16cabac0406fcaee2b81d",
+      "seconds": 477.3
+    }
+  ],
+  "raw": [
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\task.json",
+      "sha256": "7517e96cf2730a5312b9efd72599be3c6ec5a2a00919bc26adc60bc2845c5b9b"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\admission.json",
+      "sha256": "8f105bf0ff0f3e057a36a89117e5078c0f0ffe2479a280652adcfdbabe466270"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\project-worker-admission.json",
+      "sha256": "5d1a9ce4e2f5101710a34c66cff929de7f857ed12837370c5de59a8fc80555c7"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\project-worker-execution.json",
+      "sha256": "d0ff402e0db4e5be7c27de256d7009eb2138f821e8db3b6fe369f1595de93716"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\e2e\\project-agent-loop-a-proje-140a5-opens-its-owner-backed-plan\\project-plan-readback.json",
+      "sha256": "62f6f39d527fec7ade294317c7f9e68746f8f7e658eb019f3bf083f65561ab39"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\e2e\\long-session-delegation-ad-f5568--durable-admission-receipts\\delegation-admission-e2e.json",
+      "sha256": "59c6da1dd6471301e528bf7ba3c1ef0820595a23ab34bae06bc80547c73901e8"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\project\\checklist.txt",
+      "sha256": "2b19b6a8105debfcea31dc934499f3c288e5f0a80395ab4b147edd031bd572ae"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\e2e\\project-agent-loop-dispatc-61c13-and-reads-its-worker-effect\\provider-log.json",
+      "sha256": "45ad24a8668db2e23c77aecd22066d870dcea1691f506ba82c89003c6327c1c9"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\e2e.json",
+      "sha256": "6d38d4381ad98f01bae66da23653f5b4f565f6e217865c709e80e051ef56539c"
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\renewed-ci.log",
+      "sha256": "47412ff8bc657837bbfb5914b3330213d61f32b8b826784454f56c38e383285e",
+      "exitCode": 1
+    },
+    {
+      "path": "D:\\tmp\\p2verified-1ee44\\ci-second.log",
+      "sha256": "59670bbb08f9ebe5d7196c4cfb11f5ca5355c59f42fd79c6f5a80d16d11ee359",
+      "exitCode": 1
+    }
+  ],
+  "taskTestsPassed": 95,
+  "admissionTestsPassed": 81,
+  "electronTestsPassed": 3,
+  "negativeCases": [
+    "existing verifier and effect owners rejects new generations and unresolved operations before completing",
+    "recovers a fork's read reference from owner lineage without copying its parent's writer",
+    "rehydrates a coordinator read reference using the parent generation while a child owns the writer",
+    "durable production delegation protocol retains ownership after lost dispatch acknowledgement and rejects a second writer",
+    "durable production delegation protocol does not return writing authority to a reset parent generation",
+    "task owner fault boundaries blocks writes on a corrupt database while preserving its bytes for recovery",
+    "task discovery and goal decomposition replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+    "task discovery and goal decomposition paginates a frozen insertion window without hiding old tasks behind new arrivals",
+    "task discovery and goal decomposition suggests overlapping goals without merging their identities",
+    "task discovery and goal decomposition decomposes atomically, retains the original goal and gates the parent on accepted children",
+    "task discovery and goal decomposition rolls back every child when the plan contains an invalid dependency",
+    "task discovery and goal decomposition rehydrates the root goal through multiple decompositions and retains valid progress JSON",
+    "task discovery and goal decomposition cancels a whole plan only after child effects settle and replays the final effect receipt",
+    "task discovery and goal decomposition retires settled children explicitly before revising a parent plan",
+    "task discovery and goal decomposition rejects cycles that cross a parent-child plan edge",
+    "project coordinator planning takes planning scope from the Workspace owner and fences stale Runtime calls",
+    "project coordinator planning checks the active Workspace and live generation before claiming, including on replay",
+    "project coordinator planning selects a dependency-ready child in plan order and fences replays after handoff or completion",
+    "project coordinator planning rolls back cyclic, missing and foreign dependencies without leaving any tasks",
+    "project coordinator planning uses the Workspace owner binding and rejects another checkout, generation or duplicate coordinator",
+    "production task runtime guard captures the old epoch and refuses execution after handoff",
+    "session bridge consumes the persistent task owner fences worker acceptance reads before and after a session generation changes",
+    "session bridge consumes the persistent task owner keeps the task owner readable when generation check 1 takes twelve seconds",
+    "session bridge consumes the persistent task owner keeps the task owner readable when generation check 2 takes twelve seconds",
+    "session bridge consumes the persistent task owner rejects a second writer and a stale generation at the new entry point",
+    "reads only the owning session generation, including its cancelled task",
+    "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+    "durable product task ownership refuses a changed contract for the same business key",
+    "durable product task ownership rejects forged generation and same-session calls from another worktree",
+    "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+    "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+    "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+    "provider owner layered spend reservation rejects a plugin slot that would overwrite the owner workspace budget identity",
+    "provider owner layered spend reservation reserves every scope atomically, denies overspend across sessions, and reconciles once",
+    "provider owner layered spend reservation session budget cannot be reset by changing the project coordinate",
+    "provider owner layered spend reservation rejects unknown scope and cost before reserving, and compensates only unsent reservations",
+    "provider owner layered spend reservation rejects invalid estimates instead of allowing NaN or negative cost to mint capacity",
+    "provider owner layered spend reservation never rounds a fractional microdollar ceiling upward or lets actual overruns create credit",
+    "provider owner layered spend reservation accounts for a fallback separately and rejects replay of the same fallback attempt",
+    "provider owner layered spend reservation reads the session owner project and rejects missing, stale or conflicting identities before sending",
+    "provider owner layered spend reservation persists the trusted initial workspace and recovers it after the owner DB is reopened",
+    "provider owner layered spend reservation the production stream resolver and guarded HTTP boundary refuse a physical retry before a second send",
+    "provider owner layered spend reservation compensates the spend reservation when the transport confirms overloaded before wire dispatch",
+    "provider owner layered spend reservation prevents two real processes from double spending host tokens capacity",
+    "provider owner layered spend reservation prevents two real processes from double spending project tokens capacity",
+    "provider owner layered spend reservation prevents two real processes from double spending session tokens capacity",
+    "provider owner layered spend reservation prevents two real processes from double spending host cost capacity",
+    "provider owner layered spend reservation prevents two real processes from double spending project cost capacity",
+    "provider owner layered spend reservation prevents two real processes from double spending session cost capacity",
+    "TF-0679 existing Fabric admission owners does not spend the same host capacity independently for different tenants",
+    "TF-0679 existing Fabric admission owners keeps all workspace accounts within the existing shared host capacity and wakes another account",
+    "A4 delegation task-scope gate uses the Main default resolver for 'a current explicit task link'",
+    "A4 delegation task-scope gate uses the Main default resolver for 'the requested task after an unrelated…'",
+    "A4 delegation task-scope gate uses the Main default resolver for 'a missing task'",
+    "A4 delegation task-scope gate uses the Main default resolver for 'a missing link'",
+    "A4 delegation task-scope gate uses the Main default resolver for 'another session link'",
+    "A4 delegation task-scope gate uses the Main default resolver for 'an old-generation link'",
+    "A4 delegation task-scope gate rejects before Gateway delegation when the explicit task scope is unavailable",
+    "long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+    "long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+    "long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+    "long-session delegation admission clamps child tool authorization to the parent allowlist",
+    "long-session delegation admission records a refused spawn as rejected with no completion evidence",
+    "resource-aware orchestration scheduler uses custom exclusive tool groups and role cost overrides in metrics"
+  ],
+  "scope": "Single active project, serial writer, Windows Electron, local scripted providers",
+  "nonMeasured": "External provider billing, cross-project concurrency and release readiness",
+  "artifacts": [
+    {
+      "file": "harness/specs/fixtures/autonomous-project-system/p2/dispatch-admission.json",
+      "sha256": "510fdd5fc9df30364f5878534dd2d85d60c4d313b3469c313eeed7ef49d1ed68"
+    },
+    {
+      "file": "harness/specs/fixtures/autonomous-project-system/p2/model-route.json",
+      "sha256": "9d90a11c1d6941f3b4d4fc550183465d196c686f44cd3888208dd0ca95034685"
+    },
+    {
+      "file": "harness/specs/fixtures/autonomous-project-system/p2/usage-reservation.json",
+      "sha256": "e62a41031123dc1175d11b5a0d1bf1358d1501d03fe1817e1c6ecacc9da5cde9"
+    }
+  ],
+  "functionalVerdict": "pass",
+  "mergeGate": "blocked-by-agent-dev-performance",
+  "repositoryCI": {
+    "gates": [
+      {
+        "path": "D:\\tmp\\p2verified-1ee44\\deep-first\\artifacts_agent-dev-deep-test_report.json",
+        "sha256": "711b9b5fbbfabc421f6d3803a013e3480aa2de745856726205c9d8db87ad11d0",
+        "hardLimits": [
+          {
+            "id": "playwright-agent-dev",
+            "durationMs": 41425,
+            "limitMs": 40000
+          },
+          {
+            "id": "vitest-agent-dev",
+            "durationMs": 25218,
+            "limitMs": 21000
+          },
+          {
+            "id": "contract",
+            "durationMs": 3540,
+            "limitMs": 3000
+          }
+        ]
+      },
+      {
+        "path": "D:\\ClawX-work\\g5-test-review-20261118\\artifacts\\agent-dev-deep-test\\report.json",
+        "sha256": "4cd99e40c7c7a63386ef710ff6d3ec10fe775ae720192ef790c76d9bd4570059",
+        "hardLimits": [
+          {
+            "id": "typecheck",
+            "durationMs": 68533,
+            "limitMs": 45000
+          },
+          {
+            "id": "playwright-agent-dev",
+            "durationMs": 46635,
+            "limitMs": 40000
+          },
+          {
+            "id": "contract",
+            "durationMs": 3388,
+            "limitMs": 3000
+          }
+        ]
+      }
+    ]
+  },
+  "sourceBlobs": {
+    "README.ja-JP.md": "009b53227d7d78643b5b36630ca61574f5e67f08",
+    "README.md": "fea683bb74737e69c9c96c5d89d4184a47ba4990",
+    "README.ru-RU.md": "e4b49506753119c00f232e3907358e426b2721b7",
+    "README.zh-CN.md": "e2be39f960f6256a02355ba039e6168ae0137ccb",
+    "docs/modules/multi-agent-and-tasks.md": "c3bf4ae86336489070d0b04dfd1c2b60eb161191",
+    "electron/main/ipc-handlers.ts": "54e135deafceb18f4ae5da51933bd8dd509aa118",
+    "electron/services/session-delegation-admission.ts": "cea1efcfce1f9c8fdef0cdbd4c55771ac17d2232",
+    "electron/services/sessions-api.ts": "ab45d0db3de1d4860f9f9e4e85b56f5bf2d9d754",
+    "electron/services/task-system-service.ts": "9233f34ec03e9a4185df8b216cb056f234eb1c43",
+    "harness/specs/rules/autonomy-resource-owner-admission.md": "049f247b2f0145f806e1e872b8b64c64d81e1b61",
+    "harness/specs/rules/durable-task-system-boundary.md": "429428ddf677bf0593beb84f8bbea4d93bd861e7",
+    "harness/specs/scenarios/autonomy-session-task-scope.md": "94e7ad988939849180bd518e3b9a1865abbeb25f",
+    "harness/specs/tasks/project-coordinator-dispatch.md": "3370679d7887e2975c886af67b0d4d5733c37f7f",
+    "openclaw_runtime/src/agents/agent-command.ts": "b26d4caaaff1e2782c70c6b4cb37e1b8cfedb36f",
+    "openclaw_runtime/src/agents/command/attempt-execution.ts": "cce7a41f1d09cdbd032d9c037125afe8b334ee94",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run.ts": "519248c3df4f77acb47db33b5ac5f175925a6bd7",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts": "c0894480112f44421190f1add211f8ae6665deed",
+    "openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts": "43148d696164bfb72fecb7ebb496c8302b1d91bb",
+    "openclaw_runtime/src/agents/provider-spend-budget.ts": "9dd58073a8d221d5f15d3ffb6f0b86950de300f8",
+    "openclaw_runtime/src/agents/tools/persistent-task-tool.ts": "51db55af68735295c68527cc70288fd4003a6a40",
+    "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts": "1f04084a38acdfe572b195075f3706a4f25e05a1",
+    "shared/host-api/contract.ts": "8bf8f4c3e2099bc9dea546e8a0ad4ea79751b31f",
+    "shared/i18n/locales/en/taskLedger.json": "a5ae2f05c8f88170f4acb0ab6dfa3344b7b0af2a",
+    "shared/i18n/locales/ja/taskLedger.json": "1acba113b0330355f3c698abb6d5836e7b69452e",
+    "shared/i18n/locales/ru/taskLedger.json": "2a01b3412285e34d91249a218806297d401c958f",
+    "shared/i18n/locales/zh/taskLedger.json": "44ea6fb07bd0c2381d412af380adfdc12afb22d5",
+    "shared/task-system/project-coordinator.ts": "65c1f60bba0a309018156d5ca3dbf7a42ba58d78",
+    "shared/task-system/store.ts": "83c719e9bebb276756685fb5b0256993ce39600f",
+    "shared/task-system/types.ts": "867ddd904fb9098c9aa535aa4a3ec674d76ccd04",
+    "src/lib/host-api.ts": "c5b8898502f1ba3146653c0f830c3f2dd69d7397",
+    "src/pages/Chat/SessionTaskDock.tsx": "854dff66ddfeb998caf69946b223aaeb68acf2ee",
+    "tests/e2e/fixtures/fp-p1-harness.ts": "62b144ee37a6aa2dbd0185d52bb5fd3f7c1ff7a7",
+    "tests/e2e/project-agent-loop.spec.ts": "8b4ed0651dfcd45ffaf686172e997ba14748adf6",
+    "tests/unit/autonomy-provider-spend.test.ts": "8cbbc2dc3da8be7a573df0b8d8e92a718998741c",
+    "tests/unit/durable-task-project-planning.test.ts": "297e980102c716c92132ed9ab7659b9f6df1be3f",
+    "tests/unit/long-session-delegation-admission.test.ts": "5352d5fb52433638db8b76e587d94a2d0026fcb3"
+  },
+  "outcomes": {
+    "incorrectBusinessCompletionOnAdmission": 0,
+    "duplicateWorkerWriteInCanary": 0,
+    "crossProjectClaimsInNegativeCase": 0,
+    "acceptance": {
+      "zeroUnexpected": true,
+      "zeroSkipped": true
+    },
+    "executionSource": "Scripted provider responses. Main, Gateway, role router, worker, file write and spend journal ran in the built Electron app."
+  }
+}

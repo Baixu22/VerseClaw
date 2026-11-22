@@ -96,7 +96,7 @@ export function createKnowledgeGithubConnector(input: {
             const inScope = row.path === config.path || (row.path.startsWith(config.path ? `${config.path}/` : '') && !row.path.slice(config.path ? config.path.length + 1 : 0).includes('/'));
             if (!inScope || row.path.split('/').some(part => part === '..' || part === '.') || !row.sha || !/^[a-f0-9]{40}$/.test(row.sha)) throw Error('Invalid GitHub source identity');
             if (sources.has(row.path)) throw Error('Duplicate GitHub source identity');
-            if (!Number.isSafeInteger(row.size) || row.size! > 256 * 1024 || row.size! < 0) throw Error('GitHub source exceeds the 256 KiB file budget');
+            if (!Number.isSafeInteger(row.size) || row.size! > 256 * 1024 || row.size! <= 0) throw Error('GitHub source is empty or exceeds the 256 KiB file budget');
             totalBytes += row.size!;
             if (totalBytes > 4 * 1024 * 1024) throw Error('GitHub source snapshot exceeds 4 MiB');
             const previous = cursor.files[row.path];
@@ -106,7 +106,9 @@ export function createKnowledgeGithubConnector(input: {
             const bytes = Buffer.from(blob.content, 'base64');
             const gitSha = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
             if (bytes.length !== row.size || gitSha !== row.sha || bytes.includes(0)) throw Error('GitHub blob integrity or text validation failed');
-            sources.set(row.path, { sha: row.sha, digest: hash(bytes), body: bytes.toString('utf8') });
+            const body = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
+            if (!body.trim()) throw Error('GitHub source has no content');
+            sources.set(row.path, { sha: row.sha, digest: hash(bytes), body });
           }
         }
       } catch (error) {

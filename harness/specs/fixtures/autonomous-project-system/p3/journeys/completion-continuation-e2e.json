@@ -1,0 +1,172 @@
+{
+  "schema": "clawx.long-session.completion-continuation-e2e/v1",
+  "driven_by": "agent",
+  "actor": "clawx-e2e-agent",
+  "provider": "local-scripted",
+  "modelCallsBeforeRestart": 1,
+  "modelCallsAfterReplay": 1,
+  "workspaceId": "completion-continuation",
+  "rootPath": "D:\\tmp\\p3-relay-1ef52\\batch-e2e\\long-session-completion-co-12137--fenced-batch-after-restart\\workspace",
+  "sessionKey": "agent:main:session-1795018301659-completioncontinuation",
+  "sessionGeneration": "c0296b0f-fb60-4a8c-9266-35bb479f2bde",
+  "taskRef": "5cbc4326-65e5-4ffe-96d3-53dc24028ae4",
+  "taskLedgerStatusAfter": "doing",
+  "idempotencyKey": "delegation-admission-1795018344346",
+  "first": {
+    "status": "accepted",
+    "admissionId": "dfa01997-631e-462c-bb82-333071c51c32",
+    "orchestrationRunId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695",
+    "bindingRevision": 1,
+    "parentEnvironmentRevision": 1,
+    "budget": {
+      "status": "observed",
+      "reason": null,
+      "maxWorkers": 5,
+      "process": {
+        "maxChildrenPerAgent": 5,
+        "maxSpawnDepth": 1,
+        "source": "agents.defaults.subagents"
+      },
+      "backgroundTerminal": {
+        "lane": "subagent",
+        "maxConcurrent": 8,
+        "activeCount": 0,
+        "queuedCount": 0,
+        "source": "process.command-queue.subagent"
+      }
+    },
+    "children": [
+      {
+        "roleName": "architect",
+        "taskNodeId": "architect-1",
+        "roleInstanceId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695:architect-1:architect:attempt-1",
+        "admissionStatus": "accepted",
+        "runState": "accepted-not-completed",
+        "completionObserved": false,
+        "backend": "subagent",
+        "childSessionKey": "agent:main:subagent:4c8925a1-3292-47ec-a482-45a8e9ed5455",
+        "childRunId": "189d7356-55da-48af-83cb-f178a44c1276",
+        "toolAuthorization": {
+          "status": "effective",
+          "source": "role-contract+parent-clamp",
+          "roleName": "architect",
+          "effectiveRoleName": "architect",
+          "parentRoleName": null,
+          "allowlist": [
+            "read",
+            "glob",
+            "grep"
+          ],
+          "denylist": [
+            "write",
+            "edit",
+            "apply_patch",
+            "undo_write",
+            "team_orchestrate",
+            "task_loop",
+            "mission_loop",
+            "exec",
+            "bash",
+            "__role_capability:mcp_write",
+            "web_search",
+            "web_fetch",
+            "x_search",
+            "code_execution",
+            "browser",
+            "__role_capability:mcp_network"
+          ],
+          "permissionDecisionCount": 16
+        },
+        "isolation": {
+          "mode": "shared",
+          "backend": "shared-inprocess",
+          "canonicalRoot": "D:\\tmp\\p3-relay-1ef52\\batch-e2e\\long-session-completion-co-12137--fenced-batch-after-restart\\workspace",
+          "branch": null,
+          "detachedHead": false,
+          "verifiedCheckout": false
+        },
+        "schedulerWave": 1,
+        "error": null
+      }
+    ],
+    "completionObserved": false
+  },
+  "duplicate": {
+    "status": "accepted",
+    "replayed": true,
+    "orchestrationRunId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695"
+  },
+  "restartRetry": {
+    "status": "accepted",
+    "replayed": true,
+    "orchestrationRunId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695"
+  },
+  "staleGeneration": {
+    "status": "rejected",
+    "error": "Coordinator binding is generation-mismatch: session-generation-mismatch"
+  },
+  "unsupportedBackend": {
+    "status": "rejected",
+    "error": "Unsupported delegation backend: native-shell"
+  },
+  "unknownWorker": {
+    "status": "rejected",
+    "phantomChildCreated": false
+  },
+  "terminalBatch": {
+    "batchId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695:agent:main:session-1795018301659-completioncontinuation:c0296b0f-fb60-4a8c-9266-35bb479f2bde",
+    "status": "terminal",
+    "outcome": "completed",
+    "generationState": "matching",
+    "consolidatedReceiptId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695:agent:main:session-1795018301659-completioncontinuation:c0296b0f-fb60-4a8c-9266-35bb479f2bde:consolidated:v1",
+    "counts": {
+      "expected": 1,
+      "settled": 1,
+      "completed": 1,
+      "failed": 0,
+      "cancelled": 0,
+      "unknown": 0
+    },
+    "delivery": {
+      "state": "pending",
+      "delivered": 0,
+      "pending": 1,
+      "suspended": 0,
+      "failed": 0,
+      "discarded": 0,
+      "waitingForRequesterTurn": false
+    },
+    "members": [
+      {
+        "runId": "189d7356-55da-48af-83cb-f178a44c1276",
+        "childSessionKey": "agent:main:subagent:4c8925a1-3292-47ec-a482-45a8e9ed5455",
+        "roleName": "architect",
+        "status": "completed",
+        "deliveryStatus": "pending"
+      }
+    ]
+  },
+  "restartReplay": {
+    "batchId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695:agent:main:session-1795018301659-completioncontinuation:c0296b0f-fb60-4a8c-9266-35bb479f2bde",
+    "status": "terminal",
+    "consolidatedReceiptId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695:agent:main:session-1795018301659-completioncontinuation:c0296b0f-fb60-4a8c-9266-35bb479f2bde:consolidated:v1",
+    "members": [
+      {
+        "runId": "189d7356-55da-48af-83cb-f178a44c1276",
+        "childSessionKey": "agent:main:subagent:4c8925a1-3292-47ec-a482-45a8e9ed5455",
+        "roleName": "architect",
+        "status": "completed",
+        "deliveryStatus": "pending"
+      }
+    ]
+  },
+  "resetFence": {
+    "batchId": "orch_8ceb90e2-b4a6-4fce-98f1-0359a5af9695:agent:main:session-1795018301659-completioncontinuation:c0296b0f-fb60-4a8c-9266-35bb479f2bde",
+    "status": "fenced",
+    "outcome": "fenced",
+    "generationState": "mismatch",
+    "consolidatedReceiptId": null
+  },
+  "transport": "built Electron session.activitySnapshot -> persisted subagent registry batches -> existing generation-pinned delivery owner",
+  "sourceCandidate": "561bbf296abde6e965347ce7c8b1f967b1de90b6"
+}

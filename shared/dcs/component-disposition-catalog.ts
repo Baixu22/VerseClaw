@@ -182,7 +182,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
     id: 'component.dcs-context-tools', label: 'DCS fact views and context tools', disposition: 'default', owner: 'dcs-fact-view-and-tools', implementationNodeId: 'TF-0495', currentMode: 'opt-in', targetDefaultMode: 'baseline',
     ...user('model context_read/search/understand tools in ordinary Chat'),
     currentConsumers: ['context_read', 'context_search', 'context_understand', 'tool catalog'], evidenceRefs: [...CONTEXT_EVIDENCE, LANDED],
-    coverage: { authorityComponentIds: ['dcs-fact-view-and-tools'], dcsFlagIds: ['context-view-tools', 'context-tools-alias'], runtimeLeafPatterns: ['contextBlock.context-write.*', 'contextBlock.context-understand.*'] },
+    coverage: { authorityComponentIds: ['dcs-fact-view-and-tools'], dcsFlagIds: ['context-view-tools', 'context-tools-alias', 'project-rag-code-relationships', 'project-rag-task-context-hint'], runtimeLeafPatterns: ['contextBlock.context-write.*', 'contextBlock.context-understand.*'] },
   }),
   entry({
     id: 'component.role-memory', label: 'Role-memory card governance', disposition: 'default', owner: 'role-memory-card-governance', implementationNodeId: 'TF-0498', currentMode: 'opt-in', targetDefaultMode: 'baseline',
@@ -229,8 +229,8 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'component.knowledge-retrieval-source', label: 'Knowledge retrieval source', disposition: 'default', owner: 'knowledge-retrieval-source', implementationNodeId: 'TF-0499', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('model knowledge context in ordinary Chat and Knowledge review'),
-    currentConsumers: ['Knowledge retrieval', 'DCS knowledge candidate source', 'source sets'], evidenceRefs: KNOWLEDGE_EVIDENCE,
-    coverage: { authorityComponentIds: ['knowledge-retrieval-source'] },
+    currentConsumers: ['Knowledge retrieval', 'DCS knowledge candidate source', 'source sets', 'Knowledge operations', 'Bounded Research'], evidenceRefs: [...KNOWLEDGE_EVIDENCE, 'docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md', 'docs/dev/project-rag/RESEARCH-CONTRACT.md'],
+    coverage: { authorityComponentIds: ['knowledge-retrieval-source'], dcsFlagIds: ['project-rag-default-profile', 'project-rag-answer-strategy', 'project-rag-index-storage-budget', 'project-rag-bounded-research'], settingsPanelIds: ['KnowledgeOperationsSettings', 'KnowledgeEmbeddingSettings', 'KnowledgeVectorSettings', 'KnowledgeRerankSettings'] },
   }),
   entry({
     id: 'component.sekb-candidate-provider', label: 'Knowledge engineering-principle adapter', disposition: 'internal', owner: 'TF-0499', implementationNodeId: 'TF-0499', currentMode: 'mixed', targetDefaultMode: 'internal',

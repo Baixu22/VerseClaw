@@ -1,6 +1,6 @@
 // Memory Wiki plugin module implements gateway behavior.
 import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { resolveDefaultAgentId } from "openclaw/plugin-sdk/memory-host-core";
+import { normalizeSourceRefV2, resolveDefaultAgentId } from "openclaw/plugin-sdk/memory-host-core";
 import { readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
 import type { OpenClawConfig, OpenClawPluginApi } from "../api.js";
 import { applyMemoryWikiMutation, normalizeMemoryWikiMutationInput } from "./apply.js";
@@ -26,6 +26,14 @@ import { getMemoryWikiPage, searchMemoryWiki, WIKI_SEARCH_MODES } from "./query.
 import { syncMemoryWikiImportedSources } from "./source-sync.js";
 import { buildMemoryWikiDoctorReport, resolveMemoryWikiStatus } from "./status.js";
 import { initializeMemoryWikiVault } from "./vault.js";
+import type { MemoryWikiReadIdentity } from "./owner-read.js";
+import type { MemoryWikiProjectionService } from "./retrieval-index.js";
+import type { MemoryWikiEmbeddingService } from "./retrieval-embeddings.js";
+import type { MemoryWikiVectorService } from "./retrieval/vector-service.js";
+import type { MemoryWikiRerankService } from "./retrieval-rerank.js";
+import { retrieveMemoryWiki } from "./retrieval/plan-service.js";
+import { memoryWikiNamespaceId } from "./owner-read.js";
+import type { RetrievalCapabilitySnapshotV1 } from "openclaw/plugin-sdk/knowledge-retrieval";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -35,6 +43,30 @@ type GatewayMethodContext = Parameters<
   Parameters<OpenClawPluginApi["registerGatewayMethod"]>[1]
 >[0];
 type GatewayRespond = GatewayMethodContext["respond"];
+
+function readIdentity(
+  request: Record<string, unknown>,
+  client: GatewayMethodContext["client"],
+): MemoryWikiReadIdentity {
+  if (client?.connect?.client?.mode !== "backend")
+    throw new Error("Knowledge read identity is backend-owned.");
+  const value = request.readIdentity;
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    throw new Error("Invalid knowledge read identity.");
+  const facts = value as Record<string, unknown>;
+  const providerRefs =
+    Array.isArray(facts.egressProviderRefs) &&
+    facts.egressProviderRefs.every((entry) => typeof entry === "string" && entry.trim())
+      ? (facts.egressProviderRefs as string[])
+      : [];
+  return {
+    agentSessionKey: readStringParam(facts, "agentSessionKey"),
+    sessionId: readStringParam(facts, "sessionId"),
+    workspaceId: readStringParam(facts, "workspaceId"),
+    workspaceDir: readStringParam(facts, "workspaceDir"),
+    egressProviderRefs: providerRefs,
+  };
+}
 
 function readStringParam(params: Record<string, unknown>, key: string): string | undefined;
 function readStringParam(
@@ -98,8 +130,347 @@ export function registerMemoryWikiGatewayMethods(params: {
   api: OpenClawPluginApi;
   config: ResolvedMemoryWikiConfig;
   appConfig?: OpenClawConfig;
+  projection?: MemoryWikiProjectionService;
+  embedding?: MemoryWikiEmbeddingService;
+  vector?: MemoryWikiVectorService;
+  rerank?: MemoryWikiRerankService;
 }) {
   const { api, config, appConfig } = params;
+  api.registerGatewayMethod(
+    "wiki.operations.config",
+    async ({ params: request, respond, client }) => {
+      try {
+        const identity = readIdentity(request, client);
+        if (!identity?.workspaceId || !identity.sessionId)
+          throw new Error("Retrieval configuration requires a backend-owned workspace/session");
+        respond(true, config.retrieval);
+      } catch (error) {
+        respondError(respond, error);
+      }
+    },
+    { scope: READ_SCOPE },
+  );
+  api.registerGatewayMethod(
+    "wiki.operations.status",
+    async ({ params: request, respond, client }) => {
+      try {
+        const identity = readIdentity(request, client);
+        if (!identity?.workspaceId || !identity.sessionId || !params.projection)
+          throw new Error("Retrieval operations require an active backend-owned workspace/session");
+        const current = async <T>(read: () => T | Promise<T>): Promise<T | undefined> => {
+          try {
+            return await read();
+          } catch {
+            return undefined;
+          }
+        };
+        const [embedding, vector, rerank] = await Promise.all([
+          current(() => params.embedding?.status(identity)),
+          current(() => params.vector?.status(identity)),
+          current(() => params.rerank?.status(identity)),
+        ]);
+        const index = params.projection.status(identity);
+        const reasons: string[] = [];
+        if (index.status === "paused") reasons.push("index-paused");
+        if (index.status === "unavailable" || index.status === "degraded")
+          reasons.push("index-unavailable");
+        if (index.storage.budgetExceeded) reasons.push("storage-budget");
+        if (index.lagCount) reasons.push("index-lag");
+        if (config.retrieval.profile !== "local") {
+          if (embedding?.status !== "ready" || vector?.status !== "ready")
+            reasons.push("dense-unavailable");
+          if (rerank?.status !== "ready") reasons.push("rerank-unavailable");
+        }
+        const snapshot: RetrievalCapabilitySnapshotV1 = {
+          schema: "RetrievalCapabilitySnapshot/v1",
+          owner: {
+            namespaceId: memoryWikiNamespaceId(config),
+            workspaceId: identity.workspaceId,
+            sessionId: identity.sessionId,
+          },
+          config: config.retrieval,
+          index,
+          embedding,
+          vector,
+          rerank,
+          reasons,
+          status: ["disabled", "stopped"].includes(index.status)
+            ? "disabled"
+            : reasons.length
+              ? "degraded"
+              : index.sources.some((source) => source.eligible && source.activeGeneration)
+                ? "ready"
+                : "enabled",
+        };
+        respond(true, snapshot);
+      } catch (error) {
+        respondError(respond, error);
+      }
+    },
+    { scope: READ_SCOPE },
+  );
+  api.registerGatewayMethod(
+    "wiki.retrieve",
+    async ({ params: request, respond, client }) => {
+      try {
+        const identity = readIdentity(request, client);
+        if (!identity) throw new Error("Retrieval requires a backend-owned identity");
+        if (typeof request.query !== "string") throw new Error("Retrieval query must be a string");
+        for (const key of ["profile", "mode"] as const) {
+          if (request[key] !== undefined && (typeof request[key] !== "string" || !request[key]))
+            throw new Error(`Invalid retrieval ${key}`);
+        }
+        const refs = Array.isArray(request.sourceRefs)
+          ? request.sourceRefs.map(normalizeSourceRefV2)
+          : [];
+        if (
+          request.sourceRefs !== undefined &&
+          (!Array.isArray(request.sourceRefs) || refs.some((ref) => !ref))
+        )
+          throw new Error("Invalid retrieval source pins");
+        if (
+          request.deadlineAtMs !== undefined &&
+          (typeof request.deadlineAtMs !== "number" || !Number.isFinite(request.deadlineAtMs))
+        )
+          throw new Error("Invalid retrieval deadline");
+        if (request.allowRemote !== undefined && typeof request.allowRemote !== "boolean")
+          throw new Error("Invalid retrieval egress restriction");
+        const profile = readEnumParam(request, "profile", [
+          "local",
+          "quality",
+          "research",
+        ] as const);
+        const mode = readEnumParam(request, "mode", [
+          "off",
+          "manual",
+          "suggest",
+          "auto-read",
+        ] as const);
+        respond(
+          true,
+          await retrieveMemoryWiki({
+            config,
+            appConfig,
+            identity,
+            query: readStringParam(request, "query") ?? "",
+            profile,
+            mode,
+            explicitRefs: refs.filter((ref) => ref !== undefined),
+            deadlineAtMs: request.deadlineAtMs as number | undefined,
+            allowRemote: request.allowRemote as boolean | undefined,
+            requestId: readStringParam(request, "requestId"),
+            projection: params.projection,
+            embedding: params.embedding,
+            vector: params.vector,
+            rerank: params.rerank,
+          }),
+        );
+      } catch (error) {
+        respondError(respond, error);
+      }
+    },
+    { scope: READ_SCOPE },
+  );
+  if (params.vector) {
+    const vector = params.vector;
+    for (const operation of [
+      "start",
+      "stop",
+      "status",
+      "idle",
+      "rebuild",
+      "optimize",
+      "search",
+    ] as const) {
+      api.registerGatewayMethod(
+        `wiki.vector.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity) throw new Error("Vector operations require a backend-owned identity");
+            let result: unknown;
+            if (operation === "start") {
+              const backend = readEnumParam(request, "backend", [
+                "sqlite-flat",
+                "lancedb-ann",
+              ] as const);
+              if (!backend) throw new Error("Vector backend is required");
+              await vector.enable(identity, backend);
+              result = await vector.status(identity);
+            } else if (operation === "search") {
+              result = await vector.search(
+                identity,
+                readStringParam(request, "query", { required: true }),
+                readPositiveIntegerParam(request, "limit"),
+              );
+            } else if (operation === "status") result = await vector.status(identity);
+            else {
+              if (operation === "stop") await vector.disable(identity);
+              else await vector[operation](identity);
+              result = await vector.status(identity);
+            }
+            respond(true, result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: ["status", "search"].includes(operation) ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
+  if (params.rerank) {
+    const rerank = params.rerank;
+    for (const operation of ["status", "configure", "retry", "cancel", "disable"] as const) {
+      api.registerGatewayMethod(
+        `wiki.rerank.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity)
+              throw new Error("Rerank operations require a backend-owned read identity");
+            let result: unknown;
+            if (operation === "configure") {
+              result = await rerank.configure(
+                {
+                  mode: readEnumParam(request, "mode", ["local", "remote"] as const) ?? "remote",
+                  providerRef: readStringParam(request, "providerRef"),
+                  model: readStringParam(request, "model"),
+                  endpoint: readStringParam(request, "endpoint"),
+                },
+                identity,
+              );
+            } else if (operation === "status") result = rerank.status(identity);
+            else result = await rerank[operation](identity);
+            respond(true, result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: operation === "status" ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
+
+  if (params.embedding) {
+    const embedding = params.embedding;
+    for (const operation of [
+      "status",
+      "configure",
+      "retry",
+      "cancel",
+      "disable",
+      "embed",
+    ] as const) {
+      api.registerGatewayMethod(
+        `wiki.embedding.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity)
+              throw new Error("Embedding operations require a backend-owned read identity");
+            let result: unknown;
+            if (operation === "configure") {
+              const mode = readEnumParam(request, "mode", ["local", "remote"] as const);
+              if (!mode) throw new Error("Embedding mode is required");
+              result = await embedding.configure(
+                {
+                  mode,
+                  providerRef: readStringParam(request, "providerRef"),
+                  model: readStringParam(request, "model"),
+                },
+                identity,
+              );
+            } else if (operation === "embed") {
+              if (
+                request.deadlineAt !== undefined &&
+                (typeof request.deadlineAt !== "number" || !Number.isFinite(request.deadlineAt))
+              ) {
+                throw new Error("Invalid embedding deadline");
+              }
+              const deadlineAt =
+                typeof request.deadlineAt === "number" ? request.deadlineAt : undefined;
+              const kind = readEnumParam(request, "kind", ["query", "document"] as const);
+              if (kind === "query") {
+                result = await embedding.embed(identity, {
+                  kind,
+                  text: readStringParam(request, "text", { required: true }),
+                  expectedSpaceId: readStringParam(request, "expectedSpaceId"),
+                  deadlineAt,
+                });
+              } else if (kind === "document" && Array.isArray(request.sources)) {
+                const sources = request.sources.map(normalizeSourceRefV2);
+                if (sources.some((source) => !source))
+                  throw new Error("Invalid embedding source pins");
+                result = await embedding.embed(identity, {
+                  kind,
+                  sources: sources.filter((source) => source !== undefined),
+                  expectedSpaceId: readStringParam(request, "expectedSpaceId"),
+                  deadlineAt,
+                });
+              } else throw new Error("Embedding inputs are required");
+            } else {
+              result = await embedding[operation](identity);
+            }
+            respond(true, result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: operation === "status" ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
+
+  if (params.projection) {
+    const projection = params.projection;
+    const operations = [
+      "start",
+      "stop",
+      "pause",
+      "resume",
+      "status",
+      "reconcile",
+      "rebuild",
+      "idle",
+      "search",
+    ] as const;
+    for (const operation of operations) {
+      api.registerGatewayMethod(
+        `wiki.index.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity)
+              throw new Error("Projection operations require a backend-owned read identity");
+            const result =
+              operation === "start"
+                ? await projection.enable(identity)
+                : operation === "stop"
+                  ? await projection.disable(identity)
+                  : operation === "status"
+                    ? projection.status(identity)
+                    : operation === "pause"
+                      ? await projection.pause(identity)
+                      : operation === "resume"
+                        ? await projection.resume(identity)
+                        : operation === "reconcile" || operation === "rebuild"
+                          ? await projection.reconcile(identity, operation === "rebuild")
+                          : operation === "idle"
+                            ? await projection.idle(identity)
+                            : await projection.search(
+                                identity,
+                                readStringParam(request, "query", { required: true }),
+                                readPositiveIntegerParam(request, "limit"),
+                              );
+            respond(true, operation === "stop" ? projection.status(identity) : result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: ["status", "search"].includes(operation) ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
 
   api.registerGatewayMethod(
     "wiki.status",
@@ -271,8 +642,9 @@ export function registerMemoryWikiGatewayMethods(params: {
 
   api.registerGatewayMethod(
     "wiki.search",
-    async ({ params: requestParams, respond }) => {
+    async ({ params: requestParams, respond, client }) => {
       try {
+        const identity = readIdentity(requestParams, client);
         await syncImportedSourcesIfNeeded(config, appConfig);
         const query = readStringParam(requestParams, "query", { required: true });
         const maxResults = readPositiveIntegerParam(requestParams, "maxResults");
@@ -291,6 +663,7 @@ export function registerMemoryWikiGatewayMethods(params: {
             searchBackend,
             searchCorpus,
             mode,
+            readIdentity: identity,
           }),
         );
       } catch (error) {
@@ -353,15 +726,20 @@ export function registerMemoryWikiGatewayMethods(params: {
 
   api.registerGatewayMethod(
     "wiki.get",
-    async ({ params: requestParams, respond }) => {
+    async ({ params: requestParams, respond, client }) => {
       try {
-        await syncImportedSourcesIfNeeded(config, appConfig);
         const lookup = readStringParam(requestParams, "lookup", { required: true });
         const fromLine = readPositiveIntegerParam(requestParams, "fromLine");
         const lineCount = readPositiveIntegerParam(requestParams, "lineCount");
         const searchBackend = readEnumParam(requestParams, "backend", WIKI_SEARCH_BACKENDS);
         const searchCorpus = readEnumParam(requestParams, "corpus", WIKI_SEARCH_CORPORA);
         const agentId = resolveGatewayAgentId(requestParams, appConfig);
+        const sourceRef = normalizeSourceRefV2(requestParams.sourceRef);
+        if (requestParams.sourceRef !== undefined && !sourceRef)
+          throw new Error("Invalid SourceRef/v2 pin.");
+        const identity = readIdentity(requestParams, client);
+        // A pinned read preserves the owner bytes sealed by retrieval and indexing.
+        if (!sourceRef) await syncImportedSourcesIfNeeded(config, appConfig);
         respond(
           true,
           await getMemoryWikiPage({
@@ -373,6 +751,8 @@ export function registerMemoryWikiGatewayMethods(params: {
             lineCount,
             searchBackend,
             searchCorpus,
+            sourceRef,
+            readIdentity: identity,
           }),
         );
       } catch (error) {

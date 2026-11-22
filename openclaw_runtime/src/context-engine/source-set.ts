@@ -2,6 +2,15 @@ import { createHash } from "node:crypto";
 import { cjkBigrams } from "../runtime-core/memory-tokenization.js";
 import type { RuntimeEmbeddingProvider } from "../runtime-core/memory-embedding-provider.js";
 import type { ResolvedChatKnowledgeRef } from "./chat-knowledge-intent.js";
+import {
+  evaluateOwnerReadSnapshot,
+  isSourceRefV2,
+  matchOwnerReadPin,
+  type OwnerReadRejectionCode,
+  type OwnerReadSnapshotV1,
+  type OwnerReadStage,
+  type SourceRefV2,
+} from "../runtime-core/knowledge-owner-read.js";
 
 /**
  * KS-07 SourceSet/v1 derived report.
@@ -15,6 +24,7 @@ export const SOURCE_SET_SCHEMA = "SourceSet/v1" as const;
 
 export type SourceSetOwner =
   | "memory-wiki"
+  | "native-memory"
   | "memory-slot"
   | "sekb"
   | "task-ledger"
@@ -23,6 +33,7 @@ export type SourceSetOwner =
 
 export type SourceSetSubjectKind =
   | "wiki-page"
+  | "memory-file"
   | "memory-card"
   | "experience-principle"
   | "task-context"
@@ -37,13 +48,7 @@ export type SourceSetSensitivity =
   | "secret-adjacent"
   | "secret";
 
-export type SourceSetStatus =
-  | "active"
-  | "archived"
-  | "revoked"
-  | "deleted"
-  | "denied"
-  | "stale";
+export type SourceSetStatus = "active" | "archived" | "revoked" | "deleted" | "denied" | "stale";
 
 export type SourceSetRef = {
   refId: string;
@@ -52,6 +57,8 @@ export type SourceSetRef = {
   subjectId: string;
   revision: string;
   contentDigest: string;
+  sourceRef?: SourceRefV2;
+  ownerSnapshot?: OwnerReadSnapshotV1;
   scope?: {
     workspaceId?: string;
     agentId?: string;
@@ -94,6 +101,7 @@ export type SourceSetPinnedRef = {
   subjectId: string;
   revision?: string;
   contentDigest?: string;
+  sourceRef?: SourceRefV2;
 };
 
 export type SourceSetQueryContext = {
@@ -103,6 +111,7 @@ export type SourceSetQueryContext = {
   workspaceId?: string;
   agentId?: string;
   roleTags?: string[];
+  sessionKey?: string;
 };
 
 export type SourceSetQuery = {
@@ -127,7 +136,8 @@ export type SourceSetRejectionReason =
   | "scope_mismatch"
   | "digest_mismatch"
   | "revision_mismatch"
-  | "not_found";
+  | "not_found"
+  | OwnerReadRejectionCode;
 
 export type SourceSetRejection = {
   refId: string;
@@ -144,6 +154,7 @@ export type SourceSetCitation = {
   revision: string;
   contentDigest: string;
   sourceRefs: string[];
+  sourceRef?: SourceRefV2;
 };
 
 export type SourceSetScoredSource = {
@@ -188,7 +199,7 @@ export type SourceSetSuggestedAction = {
 export type SourceSetEvidenceStatus = "grounded" | "partial" | "missing_sources";
 
 export type SourceSetSemanticLaneReport =
-  | { status: "unavailable"; reason: "embedding-provider-unavailable" }
+  | { status: "unavailable"; reason: "embedding-provider-unavailable" | "no-admitted-sources" }
   | {
       status: "available";
       providerId: string;
@@ -234,9 +245,16 @@ export type SourceSetResult = {
 export type RetrieveSourceSetOptions = {
   query: SourceSetQuery;
   sources: readonly SourceSetCandidate[];
+  /** Trusted retrieval producers supply an admitted order; owner checks still run. */
+  preserveOrder?: boolean;
   embeddingProvider?: RuntimeEmbeddingProvider;
   now?: () => Date;
   runtimeMemoryShadow?: readonly RuntimeMemoryShadowCandidate[];
+  verifyOwnerRead?: (
+    candidate: SourceSetCandidate,
+    stage: OwnerReadStage,
+    providerRef?: string,
+  ) => Promise<OwnerReadRejectionCode | undefined>;
 };
 
 const SENSITIVITY_ORDER: SourceSetSensitivity[] = [
@@ -274,30 +292,121 @@ export function sourceSetSourceFromResolvedChatKnowledgeRef(
       contentDigest: ref.contentDigest,
       trust: ref.trust,
       sensitivity: ref.sensitivity,
-      acl: { read: [] },
+      acl: ref.ownerSnapshot?.policy.acl ?? { read: [] },
+      ...(ref.ownerSnapshot?.policy.scope ? { scope: ref.ownerSnapshot.policy.scope } : {}),
+      ...(ref.ownerSnapshot
+        ? {
+            retention: ref.ownerSnapshot.policy.retention,
+            sourceRef: ref.ownerSnapshot.source,
+            ownerSnapshot: ref.ownerSnapshot,
+          }
+        : {}),
       provenance: {
         sourceRefs: ref.sourceRefs,
         evidenceRefs: ref.evidenceRefs,
       },
     },
     content: ref.content,
-    status: "active",
+    status: ref.ownerSnapshot?.policy.status ?? "active",
     indexedAt: options.indexedAt ?? ref.materializedAt,
   };
 }
 
 const LEXICAL_STOP_WORDS = new Set([
-  "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
-  "have", "has", "had", "do", "does", "did", "will", "would", "could",
-  "should", "may", "might", "must", "can", "shall", "to", "of", "in",
-  "on", "at", "by", "for", "with", "about", "as", "into", "through",
-  "during", "before", "after", "above", "below", "from", "up", "down",
-  "out", "off", "over", "under", "again", "further", "then", "once",
-  "here", "there", "when", "where", "why", "how", "which", "who",
-  "whom", "we", "all", "each", "few", "more", "most", "other", "some",
-  "such", "no", "nor", "not", "only", "own", "same", "so", "than",
-  "too", "very", "s", "t", "just", "and", "but", "if", "or", "because",
-  "what", "principles", "every", "show", "use",
+  "a",
+  "an",
+  "the",
+  "is",
+  "are",
+  "was",
+  "were",
+  "be",
+  "been",
+  "being",
+  "have",
+  "has",
+  "had",
+  "do",
+  "does",
+  "did",
+  "will",
+  "would",
+  "could",
+  "should",
+  "may",
+  "might",
+  "must",
+  "can",
+  "shall",
+  "to",
+  "of",
+  "in",
+  "on",
+  "at",
+  "by",
+  "for",
+  "with",
+  "about",
+  "as",
+  "into",
+  "through",
+  "during",
+  "before",
+  "after",
+  "above",
+  "below",
+  "from",
+  "up",
+  "down",
+  "out",
+  "off",
+  "over",
+  "under",
+  "again",
+  "further",
+  "then",
+  "once",
+  "here",
+  "there",
+  "when",
+  "where",
+  "why",
+  "how",
+  "which",
+  "who",
+  "whom",
+  "we",
+  "all",
+  "each",
+  "few",
+  "more",
+  "most",
+  "other",
+  "some",
+  "such",
+  "no",
+  "nor",
+  "not",
+  "only",
+  "own",
+  "same",
+  "so",
+  "than",
+  "too",
+  "very",
+  "s",
+  "t",
+  "just",
+  "and",
+  "but",
+  "if",
+  "or",
+  "because",
+  "what",
+  "principles",
+  "every",
+  "show",
+  "use",
 ]);
 
 function normalizeTokens(value: string): string[] {
@@ -327,12 +436,7 @@ export function lexicalOverlapScore(queryText: string, haystackText: string): nu
 
 function shapedQueryText(query: SourceSetQuery): string {
   const task = query.taskContext;
-  return [
-    query.text,
-    task?.taskIntent,
-    task?.taskType,
-    ...(task?.roleTags ?? []),
-  ]
+  return [query.text, task?.taskIntent, task?.taskType, ...(task?.roleTags ?? [])]
     .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
     .join(" ");
 }
@@ -361,14 +465,54 @@ function statusRejectionReason(status: SourceSetStatus): SourceSetRejectionReaso
   }
 }
 
-type CandidateEvaluation =
-  | { accepted: true }
-  | { accepted: false; rejection: SourceSetRejection };
+type CandidateEvaluation = { accepted: true } | { accepted: false; rejection: SourceSetRejection };
 
 function evaluateCandidate(
   candidate: SourceSetCandidate,
   query: SourceSetQuery,
 ): CandidateEvaluation {
+  const reject = (
+    reason: SourceSetRejectionReason,
+    visibleReason: string,
+  ): CandidateEvaluation => ({
+    accepted: false,
+    rejection: {
+      refId: candidate.ref.refId,
+      owner: candidate.ref.owner,
+      subjectId: candidate.ref.subjectId,
+      reason,
+      visibleReason,
+    },
+  });
+  if (candidate.ref.ownerSnapshot) {
+    const snapshot = candidate.ref.ownerSnapshot;
+    const reason = evaluateOwnerReadSnapshot(snapshot, snapshot.context);
+    if (reason) return reject(reason, `Source cannot be read (${reason}).`);
+    if (
+      candidate.content !== snapshot.content ||
+      candidate.ref.contentDigest !== snapshot.contentDigest
+    ) {
+      return reject("digest_mismatch", "Candidate bytes do not match the owner read snapshot.");
+    }
+    if (!isSourceRefV2(candidate.ref.sourceRef) || !candidate.ref.sourceRef.locator) {
+      return reject("invalid_range", "Resolved candidate is missing its raw source locator.");
+    }
+    if (
+      candidate.ref.owner !== snapshot.source.authorityId ||
+      candidate.ref.subjectId !== snapshot.source.subjectId ||
+      candidate.ref.revision !== snapshot.source.revision ||
+      !candidate.ref.sourceRef ||
+      matchOwnerReadPin(snapshot, candidate.ref.sourceRef) ||
+      candidate.status !== snapshot.policy.status ||
+      candidate.ref.trust !== snapshot.policy.trust ||
+      candidate.ref.sensitivity !== snapshot.policy.sensitivity ||
+      JSON.stringify(candidate.ref.acl) !== JSON.stringify(snapshot.policy.acl) ||
+      JSON.stringify(candidate.ref.scope) !== JSON.stringify(snapshot.policy.scope) ||
+      JSON.stringify(candidate.ref.retention) !== JSON.stringify(snapshot.policy.retention)
+    ) {
+      return reject("denied", "Candidate identity or policy does not match its owner snapshot.");
+    }
+  }
   const computedDigest = digestSourceSetContent(candidate.content);
   if (candidate.ref.contentDigest !== computedDigest) {
     return {
@@ -397,10 +541,7 @@ function evaluateCandidate(
     };
   }
   const ceiling = query.sensitivityCeiling ?? "workspace";
-  if (
-    SENSITIVITY_ORDER.indexOf(candidate.ref.sensitivity) >
-    SENSITIVITY_ORDER.indexOf(ceiling)
-  ) {
+  if (SENSITIVITY_ORDER.indexOf(candidate.ref.sensitivity) > SENSITIVITY_ORDER.indexOf(ceiling)) {
     return {
       accepted: false,
       rejection: {
@@ -430,7 +571,7 @@ function evaluateCandidate(
   }
   const queryWorkspaceId = query.taskContext?.workspaceId;
   const sourceWorkspaceId = candidate.ref.scope?.workspaceId;
-  if (queryWorkspaceId && sourceWorkspaceId && queryWorkspaceId !== sourceWorkspaceId) {
+  if (sourceWorkspaceId && queryWorkspaceId !== sourceWorkspaceId) {
     return {
       accepted: false,
       rejection: {
@@ -441,6 +582,21 @@ function evaluateCandidate(
         visibleReason: `Source "${candidate.ref.refId}" belongs to workspace "${sourceWorkspaceId}" and does not match the query workspace.`,
       },
     };
+  }
+  if (
+    (candidate.ref.scope?.agentId && candidate.ref.scope.agentId !== query.taskContext?.agentId) ||
+    (candidate.ref.scope?.sessionKey &&
+      candidate.ref.scope.sessionKey !== query.taskContext?.sessionKey) ||
+    (candidate.ref.scope?.taskId && candidate.ref.scope.taskId !== query.taskContext?.taskId)
+  ) {
+    return reject("scope_mismatch", "Source does not match the current agent, session or task.");
+  }
+  const expiresAt = candidate.ref.retention?.expiresAt;
+  if (
+    expiresAt !== undefined &&
+    (!Number.isFinite(Date.parse(expiresAt)) || Date.parse(expiresAt) <= Date.now())
+  ) {
+    return reject("expired", "Source retention has expired.");
   }
   return { accepted: true };
 }
@@ -491,8 +647,7 @@ function resolveExact(
   blockedRefIds: string[];
 } {
   const matches = sources.filter(
-    (source) =>
-      source.ref.owner === pinned.owner && source.ref.subjectId === pinned.subjectId,
+    (source) => source.ref.owner === pinned.owner && source.ref.subjectId === pinned.subjectId,
   );
   if (matches.length === 0) {
     return {
@@ -517,24 +672,37 @@ function resolveExact(
       ),
     };
   }
+  let pinRejection: SourceSetRejection | undefined;
   for (const candidate of revisionMatches) {
     const evaluation = evaluateCandidate(candidate, query);
     if (!evaluation.accepted) continue;
-    if (
-      pinned.contentDigest &&
-      pinned.contentDigest !== candidate.ref.contentDigest
-    ) {
-      return {
-        blockedRefIds: [candidate.ref.refId],
-        rejection: makePinnedRejection(
+    if (pinned.sourceRef) {
+      const reason = candidate.ref.ownerSnapshot
+        ? matchOwnerReadPin(candidate.ref.ownerSnapshot, pinned.sourceRef)
+        : "denied";
+      if (reason) {
+        // One owner subject can have several admitted ranges. A sibling range
+        // mismatch must not hide the exact pin later in the same candidate set.
+        pinRejection ??= makePinnedRejection(
           pinned,
-          "digest_mismatch",
-          `Pinned ref "${pinned.owner}:${pinned.subjectId}" expected digest "${pinned.contentDigest}" but the source carries "${candidate.ref.contentDigest}".`,
-        ),
-      };
+          reason,
+          `Pinned source is invalid (${reason}).`,
+        );
+        continue;
+      }
+    }
+    if (pinned.contentDigest && pinned.contentDigest !== candidate.ref.contentDigest) {
+      pinRejection ??= makePinnedRejection(
+        pinned,
+        "digest_mismatch",
+        `Pinned ref "${pinned.owner}:${pinned.subjectId}" expected digest "${pinned.contentDigest}" but the source carries "${candidate.ref.contentDigest}".`,
+      );
+      continue;
     }
     return { blockedRefIds: [], resolution: { candidate, evaluation } };
   }
+  if (pinRejection)
+    return { blockedRefIds: matches.map((source) => source.ref.refId), rejection: pinRejection };
   const firstEvaluation = evaluateCandidate(matches[0]!, query);
   if (!firstEvaluation.accepted) {
     return { blockedRefIds: [], rejection: firstEvaluation.rejection };
@@ -557,6 +725,7 @@ function citationFor(candidate: SourceSetCandidate): SourceSetCitation {
     revision: candidate.ref.revision,
     contentDigest: candidate.ref.contentDigest,
     sourceRefs: candidate.ref.provenance?.sourceRefs ?? [],
+    ...(candidate.ref.sourceRef ? { sourceRef: candidate.ref.sourceRef } : {}),
   };
 }
 
@@ -723,10 +892,7 @@ export async function retrieveSourceSet(
 ): Promise<SourceSetResult> {
   const query = options.query;
   const now = options.now?.() ?? new Date();
-  const limit = Math.min(
-    MAX_LIMIT,
-    Math.max(1, Math.trunc(query.limit ?? DEFAULT_LIMIT)),
-  );
+  const limit = Math.min(MAX_LIMIT, Math.max(1, Math.trunc(query.limit ?? DEFAULT_LIMIT)));
   const rejections: SourceSetRejection[] = [];
   const unresolvedPinnedRefs: SourceSetRejection[] = [];
   const mismatchBlockedRefIds = new Set<string>();
@@ -757,32 +923,63 @@ export async function retrieveSourceSet(
       rejections.push(evaluation.rejection);
     }
   }
+  const verify = async (stage: OwnerReadStage, providerRef?: string) => {
+    if (!options.verifyOwnerRead) return;
+    for (let index = accepted.length - 1; index >= 0; index -= 1) {
+      const candidate = accepted[index]!;
+      let reason: OwnerReadRejectionCode | undefined;
+      try {
+        reason = await options.verifyOwnerRead(candidate, stage, providerRef);
+      } catch {
+        reason = "denied";
+      }
+      if (!reason) continue;
+      accepted.splice(index, 1);
+      mismatchBlockedRefIds.add(candidate.ref.refId);
+      const rejection: SourceSetRejection = {
+        refId: candidate.ref.refId,
+        owner: candidate.ref.owner,
+        subjectId: candidate.ref.subjectId,
+        reason,
+        visibleReason: `Source is unavailable at ${stage} (${reason}).`,
+      };
+      rejections.push(rejection);
+      if (exactByRefId.has(candidate.ref.refId)) unresolvedPinnedRefs.push(rejection);
+    }
+  };
+  await verify("snippet");
 
   const shapedQuery = shapedQueryText(query);
   const lexicalByRefId = new Map<string, number>();
   for (const candidate of accepted) {
-    lexicalByRefId.set(
-      candidate.ref.refId,
-      lexicalOverlapScore(shapedQuery, candidate.content),
-    );
+    lexicalByRefId.set(candidate.ref.refId, lexicalOverlapScore(shapedQuery, candidate.content));
   }
 
   let semanticLane: SourceSetSemanticLaneReport;
   let semanticSimilarityByRefId = new Map<string, number>();
   if (!options.embeddingProvider) {
     semanticLane = { status: "unavailable", reason: "embedding-provider-unavailable" };
+  } else if (accepted.length === 0) {
+    semanticLane = { status: "unavailable", reason: "no-admitted-sources" };
   } else {
     try {
       const provider = options.embeddingProvider;
+      await verify("embedding", provider.id);
+      if (!accepted.length) throw new Error("no-admitted-sources");
       const queryVector = await provider.embedQuery(shapedQuery);
-      const contentVectors = await provider.embedBatch(
-        accepted.map((candidate) => candidate.content),
-      );
+      // A provider wait must not widen the stale-authorisation window for document bytes.
+      await verify("embedding", provider.id);
+      if (!accepted.length) throw new Error("no-admitted-sources");
+      const pins = accepted.map((candidate) => candidate.ref.sourceRef);
+      if (provider.embedSources && pins.some((pin) => !pin))
+        throw new Error("embedding-owner-pin-unavailable");
+      const contentVectors = provider.embedSources
+        ? await provider.embedSources(pins.filter((pin) => pin !== undefined))
+        : await provider.embedBatch(accepted.map((candidate) => candidate.content));
+      if (contentVectors.length !== accepted.length)
+        throw new Error("embedding-vector-count-mismatch");
       const similarities = accepted.map((candidate, index) => {
-        const similarity = cosineSimilarity(
-          queryVector,
-          contentVectors[index] ?? [],
-        );
+        const similarity = cosineSimilarity(queryVector, contentVectors[index] ?? []);
         return { refId: candidate.ref.refId, similarity };
       });
       semanticSimilarityByRefId = new Map(
@@ -801,6 +998,7 @@ export async function retrieveSourceSet(
       };
     }
   }
+  await verify("snippet");
 
   const scored = accepted.map((candidate) => {
     const lexicalScore = lexicalByRefId.get(candidate.ref.refId) ?? 0;
@@ -813,12 +1011,12 @@ export async function retrieveSourceSet(
       lexicalScore +
       exactBonus +
       (semanticSimilarity === null ? 0 : semanticSimilarity * SEMANTIC_WEIGHT);
-    const lane: SourceSetLane = exactBonus > 0
-      ? "exact"
-      : semanticSimilarity !== null &&
-          semanticSimilarity * SEMANTIC_WEIGHT > lexicalScore
-        ? "semantic"
-        : "lexical";
+    const lane: SourceSetLane =
+      exactBonus > 0
+        ? "exact"
+        : semanticSimilarity !== null && semanticSimilarity * SEMANTIC_WEIGHT > lexicalScore
+          ? "semantic"
+          : "lexical";
     return {
       candidate,
       lexicalScore,
@@ -829,24 +1027,27 @@ export async function retrieveSourceSet(
     };
   });
 
-  scored.sort((left, right) => {
-    if (right.combinedScore !== left.combinedScore) {
-      return right.combinedScore - left.combinedScore;
-    }
-    if (right.freshnessScore !== left.freshnessScore) {
-      return right.freshnessScore - left.freshnessScore;
-    }
-    const leftExactOrder = exactOrderByRefId.get(left.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
-    const rightExactOrder = exactOrderByRefId.get(right.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
-    if (leftExactOrder !== rightExactOrder) {
-      return leftExactOrder - rightExactOrder;
-    }
-    return left.candidate.ref.refId < right.candidate.ref.refId
-      ? -1
-      : left.candidate.ref.refId > right.candidate.ref.refId
-        ? 1
-        : 0;
-  });
+  if (!options.preserveOrder)
+    scored.sort((left, right) => {
+      if (right.combinedScore !== left.combinedScore) {
+        return right.combinedScore - left.combinedScore;
+      }
+      if (right.freshnessScore !== left.freshnessScore) {
+        return right.freshnessScore - left.freshnessScore;
+      }
+      const leftExactOrder =
+        exactOrderByRefId.get(left.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
+      const rightExactOrder =
+        exactOrderByRefId.get(right.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
+      if (leftExactOrder !== rightExactOrder) {
+        return leftExactOrder - rightExactOrder;
+      }
+      return left.candidate.ref.refId < right.candidate.ref.refId
+        ? -1
+        : left.candidate.ref.refId > right.candidate.ref.refId
+          ? 1
+          : 0;
+    });
 
   const isRetrievable = (entry: (typeof scored)[number]) =>
     entry.combinedScore > 0 &&
@@ -968,25 +1169,23 @@ export async function retrieveSourceSet(
     });
   }
 
-  const resultWithoutExtras: Omit<
-    SourceSetResult,
-    "suggestedNextActions" | "runtimeMemoryShadow"
-  > = {
-    schema: SOURCE_SET_SCHEMA,
-    query,
-    evidenceStatus,
-    semanticLane,
-    retrieved,
-    claims,
-    synthesisMode: claims.length > 0 ? "claims" : "source-list",
-    conflictSet,
-    rejections: [...rejections].filter(
-      (rejection, index, all) =>
-        all.findIndex((entry) => rejectionKey(entry) === rejectionKey(rejection)) === index,
-    ),
-    unknowns,
-    unresolvedPinnedRefs,
-  };
+  const resultWithoutExtras: Omit<SourceSetResult, "suggestedNextActions" | "runtimeMemoryShadow"> =
+    {
+      schema: SOURCE_SET_SCHEMA,
+      query,
+      evidenceStatus,
+      semanticLane,
+      retrieved,
+      claims,
+      synthesisMode: claims.length > 0 ? "claims" : "source-list",
+      conflictSet,
+      rejections: [...rejections].filter(
+        (rejection, index, all) =>
+          all.findIndex((entry) => rejectionKey(entry) === rejectionKey(rejection)) === index,
+      ),
+      unknowns,
+      unresolvedPinnedRefs,
+    };
 
   const runtimeMemoryShadow = buildRuntimeMemoryShadowReport(
     options.runtimeMemoryShadow ?? [],
@@ -1026,7 +1225,6 @@ function buildRuntimeMemoryShadowReport(
       };
     }),
     runtimeMemoryEnteredActiveAnswer: false,
-    note:
-      "Runtime Memory candidates were compared for shadow observability only and did not participate in SourceSet admission, ranking, claims, or citations.",
+    note: "Runtime Memory candidates were compared for shadow observability only and did not participate in SourceSet admission, ranking, claims, or citations.",
   };
 }

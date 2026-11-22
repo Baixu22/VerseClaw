@@ -1,3 +1,4 @@
+import { assertSystemExecutionAllowed } from '../../../shared/task-system/project-coordinator.js';
 import crypto from "node:crypto";
 import { stat } from "node:fs/promises";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
@@ -3370,6 +3371,7 @@ export async function runTaskLoop(
   cfg: OpenClawConfig | undefined,
   deps: TaskLoopControllerDeps = {},
 ): Promise<TaskLoopRunResult> {
+  assertSystemExecutionAllowed();
   const now = deps.now ?? Date.now;
   const idFactory = deps.idFactory ?? defaultId;
   const config = resolveAgentTaskLoopConfig(cfg, request.agentId);

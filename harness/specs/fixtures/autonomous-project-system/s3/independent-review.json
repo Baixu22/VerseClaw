@@ -1,0 +1,136 @@
+{
+  "task": "TF-0685",
+  "review_type": "S3-final-fallback-targeted-readonly",
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "原唯一 P2 已修复；本次补丁和相关调用链定向复核未发现新实际问题。",
+  "sourceCandidate": {
+    "worktree": "D:/ClawX-work/g5-test-review-20261118",
+    "dirty": false,
+    "sourceMatchesHead": true,
+    "head": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9",
+    "parent": "0c7528eff42d8cf94d5067043f22b66b2b31a703",
+    "tree": "fd138d5b5efa280dbe1fcec87a27b7f23877f9d6"
+  },
+  "inspectedFiles": [
+    {
+      "gitBlob": "5e5bddfbadf956cf8b6047a17a66efc74284e7d1",
+      "sha256": "e5b7c958e52ebbe306effcd14877893aa262e27e1d8b8f44cbcef1a4f0f98135",
+      "matchesHead": true,
+      "file": "electron/services/project-configuration-operator.ts"
+    },
+    {
+      "gitBlob": "c69b3c40219c4a148af7c87cc723034ffba03b03",
+      "sha256": "e623bc847215df9eff0c21eecd3e35148a386428b64619b1185b1bba76a77ff4",
+      "matchesHead": true,
+      "file": "tests/unit/project-configuration-operator.test.ts"
+    },
+    {
+      "gitBlob": "68ffeaffb6e6829a0c2191b65ea1215b3e51bcd6",
+      "sha256": "07b0d32fe974ea0731cf02912058296370bef60d79ae25eb3bab5c7c114f7821",
+      "matchesHead": true,
+      "file": "shared/project-configuration.ts"
+    },
+    {
+      "gitBlob": "1526b781b7ece8efaa229d7b0b9b39edb2ccee52",
+      "sha256": "97be56892c0f28872501e74f2cb6779489e9cfed2408b469068c39beb1315682",
+      "matchesHead": true,
+      "file": "openclaw_runtime/src/agents/agent-scope.ts"
+    },
+    {
+      "gitBlob": "ad5b524a70c1ba6c08e315b1fa13599b339aa2bf",
+      "sha256": "64f48b7c3c00d7c5841ee1363b8c2cd7aa874285b47585dfb9f2650838abeea8",
+      "matchesHead": true,
+      "file": "openclaw_runtime/src/config/zod-schema.agent-model.ts"
+    },
+    {
+      "gitBlob": "7eb297c2cd7488159132eff06cdc9bf4f17f6e4e",
+      "sha256": "d3637e172b1455b5e583c7ffc845de480df386ac17b104943f88837baaf7caab",
+      "matchesHead": true,
+      "file": "AGENTS.md"
+    }
+  ],
+  "hashes": {
+    "artifacts": [
+      {
+        "file": "D:/tmp/g5-20261120/s3-review-recovery-final.json",
+        "sha256": "f0ebcf218cd8628f0705ab23e32cd59e46addef78691ee22a9c6b36655f3625f"
+      },
+      {
+        "file": "D:/tmp/g5-20261120/s3-fallback-final.json",
+        "sha256": "845574e7388f2813fe71f722a69c2a59c721ae8a74728530745ef6fa93102780"
+      },
+      {
+        "file": "D:/tmp/g5-20261120/s3-fallback-final.log",
+        "sha256": "26c806590667c79917a6c8497676ad8745214e00a5ae1f3b6cb0a103165d9953"
+      }
+    ],
+    "algorithm": "SHA-256",
+    "source": [
+      {
+        "gitBlob": "5e5bddfbadf956cf8b6047a17a66efc74284e7d1",
+        "sha256": "e5b7c958e52ebbe306effcd14877893aa262e27e1d8b8f44cbcef1a4f0f98135",
+        "matchesHead": true,
+        "file": "electron/services/project-configuration-operator.ts"
+      },
+      {
+        "gitBlob": "c69b3c40219c4a148af7c87cc723034ffba03b03",
+        "sha256": "e623bc847215df9eff0c21eecd3e35148a386428b64619b1185b1bba76a77ff4",
+        "matchesHead": true,
+        "file": "tests/unit/project-configuration-operator.test.ts"
+      },
+      {
+        "gitBlob": "68ffeaffb6e6829a0c2191b65ea1215b3e51bcd6",
+        "sha256": "07b0d32fe974ea0731cf02912058296370bef60d79ae25eb3bab5c7c114f7821",
+        "matchesHead": true,
+        "file": "shared/project-configuration.ts"
+      },
+      {
+        "gitBlob": "1526b781b7ece8efaa229d7b0b9b39edb2ccee52",
+        "sha256": "97be56892c0f28872501e74f2cb6779489e9cfed2408b469068c39beb1315682",
+        "matchesHead": true,
+        "file": "openclaw_runtime/src/agents/agent-scope.ts"
+      },
+      {
+        "gitBlob": "ad5b524a70c1ba6c08e315b1fa13599b339aa2bf",
+        "sha256": "64f48b7c3c00d7c5841ee1363b8c2cd7aa874285b47585dfb9f2650838abeea8",
+        "matchesHead": true,
+        "file": "openclaw_runtime/src/config/zod-schema.agent-model.ts"
+      },
+      {
+        "gitBlob": "7eb297c2cd7488159132eff06cdc9bf4f17f6e4e",
+        "sha256": "d3637e172b1455b5e583c7ffc845de480df386ac17b104943f88837baaf7caab",
+        "matchesHead": true,
+        "file": "AGENTS.md"
+      }
+    ]
+  },
+  "resolvedFinding": {
+    "evidence": [
+      "operator:142-145 仅 !agent.model 继承 defaults；非空字符串生成 fallbacks=[]；对象模型保留自身 fallback。",
+      "unit:110-126 对象、缺省、显式字符串三种表示均有断言；新增用例在 defaults 含 backup 时断言字符串模型更新后 fallback=[]。",
+      "agent-scope:410-424 有效字符串和显式空数组均禁用全局 fallback，修复后保持一致。"
+    ],
+    "priority": "P2",
+    "status": "fixed"
+  },
+  "verification": {
+    "testsExecuted": false,
+    "sourceModified": false,
+    "existingTests": {
+      "binding": "现有 JSON 含三类 fallback 用例通过记录，但自身无 HEAD/源码哈希；本报告分别绑定当前源码与产物哈希。",
+      "success": true,
+      "passed": 19,
+      "total": 19,
+      "file": "D:/tmp/g5-20261120/s3-fallback-final.json"
+    },
+    "installsExecuted": false,
+    "buildsExecuted": false,
+    "delegated": false,
+    "method": "只读源码、git diff 与已有磁盘产物"
+  },
+  "driven_by": "agent",
+  "actor": "s3-fallback-final-readonly-review-agent",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reviewed_at": "2026-11-20T08:48:29.8391740Z"
+}

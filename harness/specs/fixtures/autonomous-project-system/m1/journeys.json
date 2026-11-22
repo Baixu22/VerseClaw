@@ -1,0 +1,688 @@
+{
+  "candidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+  "stats": {
+    "startTime": "2026-11-20T04:02:45.807Z",
+    "duration": 235329.99300000002,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "readbacks": {
+    "long-session-continuity-co-5953e-losed-across-scope-rollback/continuity-observation.json": {
+      "sourceCandidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+      "sourceDirty": "",
+      "schema": "clawx.long-session.d1-continuity-preview/v1",
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "negatives": [
+        "accepted fact for another task is excluded from current task context",
+        "ordinary session missing coordinator binding -> no pack",
+        "deleted coordinator session -> binding invalidated -> no pack"
+      ],
+      "foreignAcceptedTask": {
+        "foreignId": "64dc0599-30d8-4afb-a59a-a931edbd6026",
+        "isolated": {
+          "success": true,
+          "validation": "current",
+          "pack": {
+            "schemaVersion": "ContinuityContextPack/v1",
+            "generatedAt": "2026-11-20T04:03:27.615Z",
+            "sessionKey": "agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0",
+            "workspaceId": "default",
+            "bindingRevision": 1,
+            "activeTaskNodeId": "58209754-e886-4702-8237-345a0fb5ec2a",
+            "status": "partial",
+            "complete": false,
+            "budget": {
+              "maxChars": 1800,
+              "usedChars": 453,
+              "truncated": false,
+              "droppedItems": 0,
+              "criticalOmissions": 0
+            },
+            "items": [
+              {
+                "id": "working-context:Constraints:1",
+                "kind": "constraint",
+                "source": "task-ledger-working-context",
+                "text": "Stay inside workspace scope.; Never inject unapproved candidates.",
+                "owner": "task-ledger",
+                "scope": {
+                  "kind": "task",
+                  "key": "58209754-e886-4702-8237-345a0fb5ec2a"
+                },
+                "freshness": "fresh",
+                "acceptedAt": "2026-11-20T04:03:21.454Z",
+                "expiresAt": "2026-11-21T04:03:21.453Z",
+                "trust": "owner-accepted",
+                "evidenceRefs": [
+                  "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0"
+                ],
+                "chars": 65
+              },
+              {
+                "owner": "task-ledger",
+                "scope": {
+                  "kind": "workspace",
+                  "key": "default"
+                },
+                "freshness": "fresh",
+                "trust": "owner-fact",
+                "evidenceRefs": [],
+                "id": "task-node:58209754-e886-4702-8237-345a0fb5ec2a:next",
+                "kind": "next-action",
+                "source": "task-ledger-node",
+                "text": "Verify accepted continuity owners.",
+                "chars": 34
+              },
+              {
+                "id": "working-context:NextAction:1",
+                "kind": "next-action",
+                "source": "task-ledger-working-context",
+                "text": "Run the real continuity preview.",
+                "owner": "task-ledger",
+                "scope": {
+                  "kind": "task",
+                  "key": "58209754-e886-4702-8237-345a0fb5ec2a"
+                },
+                "freshness": "fresh",
+                "acceptedAt": "2026-11-20T04:03:21.454Z",
+                "expiresAt": "2026-11-21T04:03:21.454Z",
+                "trust": "owner-accepted",
+                "evidenceRefs": [
+                  "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0"
+                ],
+                "chars": 32
+              },
+              {
+                "id": "accepted-memory:role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f",
+                "kind": "memory-ref",
+                "source": "accepted-memory-ref",
+                "owner": "memory",
+                "text": "role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f (user; workspace)",
+                "scope": {
+                  "kind": "workspace",
+                  "key": "D:\\tmp\\g5-20261120\\m1-final\\electron\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwogev4a"
+                },
+                "freshness": "fresh",
+                "acceptedAt": "2026-11-20T04:03:26.334Z",
+                "trust": "owner-accepted",
+                "evidenceRefs": [
+                  "memory:role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f"
+                ],
+                "chars": 75
+              }
+            ],
+            "sourceStates": [
+              {
+                "source": "task-ledger",
+                "status": "available",
+                "detail": "events=9; nodes=2"
+              },
+              {
+                "source": "working-context",
+                "status": "available"
+              },
+              {
+                "source": "compression-artifact",
+                "status": "unavailable",
+                "detail": "no compression artifact for this session"
+              },
+              {
+                "source": "memory",
+                "status": "available",
+                "detail": "accepted=1; modelVisible=1"
+              },
+              {
+                "source": "knowledge",
+                "status": "empty",
+                "detail": "no selected knowledge refs"
+              }
+            ],
+            "exclusions": [
+              {
+                "ref": "task-ledger-working-context:d1-pending-risk-mwogev4a",
+                "reason": "pending-not-accepted"
+              }
+            ],
+            "originalHistory": {
+              "transcriptRef": "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0",
+              "taskLedgerRef": "task-ledger:default",
+              "taskLedgerEventCount": 9,
+              "compressionAvailable": false
+            },
+            "evidenceRefs": [
+              "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0",
+              "memory:role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f"
+            ]
+          },
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=453/1800; truncated=false\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=task:58209754-e886-4702-8237-345a0fb5ec2a; freshness=fresh; trust=owner-accepted)\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=task:58209754-e886-4702-8237-345a0fb5ec2a; freshness=fresh; trust=owner-accepted)\n- [memory-ref] role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\tmp\\g5-20261120\\m1-final\\electron\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwogev4a; freshness=fresh; trust=owner-accepted)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0; taskLedger=task-ledger:default; taskLedgerEvents=9; compression=unavailable. Recall old evidence on demand through the owning session/task APIs."
+        }
+      },
+      "primary": "D:\\tmp\\g5-20261120\\m1-final\\electron\\long-session-continuity-co-5953e-losed-across-scope-rollback\\continuity-preview.json",
+      "status": "passed",
+      "packStatus": "partial",
+      "items": [
+        {
+          "kind": "constraint",
+          "source": "task-ledger-working-context",
+          "freshness": "fresh",
+          "scope": {
+            "kind": "task",
+            "key": "58209754-e886-4702-8237-345a0fb5ec2a"
+          }
+        },
+        {
+          "kind": "next-action",
+          "source": "task-ledger-node",
+          "freshness": "fresh",
+          "scope": {
+            "kind": "workspace",
+            "key": "default"
+          }
+        },
+        {
+          "kind": "next-action",
+          "source": "task-ledger-working-context",
+          "freshness": "fresh",
+          "scope": {
+            "kind": "task",
+            "key": "58209754-e886-4702-8237-345a0fb5ec2a"
+          }
+        },
+        {
+          "kind": "memory-ref",
+          "source": "accepted-memory-ref",
+          "freshness": "fresh",
+          "scope": {
+            "kind": "workspace",
+            "key": "D:\\tmp\\g5-20261120\\m1-final\\electron\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwogev4a"
+          }
+        },
+        {
+          "kind": "knowledge-ref",
+          "source": "knowledge-ref",
+          "freshness": "fresh",
+          "scope": {
+            "kind": "workspace",
+            "key": "default"
+          }
+        }
+      ],
+      "sourceStates": [
+        {
+          "source": "task-ledger",
+          "status": "available",
+          "detail": "events=6; nodes=1"
+        },
+        {
+          "source": "working-context",
+          "status": "available"
+        },
+        {
+          "source": "compression-artifact",
+          "status": "unavailable",
+          "detail": "no compression artifact for this session"
+        },
+        {
+          "source": "memory",
+          "status": "available",
+          "detail": "accepted=1; modelVisible=1"
+        },
+        {
+          "source": "knowledge",
+          "status": "available",
+          "detail": "refs=1"
+        }
+      ],
+      "exclusions": [
+        {
+          "ref": "task-ledger-working-context:d1-pending-risk-mwogev4a",
+          "reason": "pending-not-accepted"
+        }
+      ]
+    },
+    "long-session-continuity-co-5953e-losed-across-scope-rollback/continuity-preview.json": {
+      "schema": "clawx.long-session.d1-pack/v1",
+      "driven_by": "agent",
+      "actor": "codex-long-session-r2",
+      "workspaceId": "default",
+      "coordinatorSessionKey": "agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0",
+      "taskNodeId": "58209754-e886-4702-8237-345a0fb5ec2a",
+      "memoryContent": "D1 accepted memory mwogev4a: remain within the bound workspace.",
+      "preview": {
+        "success": true,
+        "validation": "current",
+        "pack": {
+          "schemaVersion": "ContinuityContextPack/v1",
+          "generatedAt": "2026-11-20T04:03:26.966Z",
+          "sessionKey": "agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0",
+          "workspaceId": "default",
+          "bindingRevision": 1,
+          "activeTaskNodeId": "58209754-e886-4702-8237-345a0fb5ec2a",
+          "status": "partial",
+          "complete": false,
+          "budget": {
+            "maxChars": 1800,
+            "usedChars": 539,
+            "truncated": false,
+            "droppedItems": 0,
+            "criticalOmissions": 0
+          },
+          "items": [
+            {
+              "id": "working-context:Constraints:1",
+              "kind": "constraint",
+              "source": "task-ledger-working-context",
+              "text": "Stay inside workspace scope.; Never inject unapproved candidates.",
+              "owner": "task-ledger",
+              "scope": {
+                "kind": "task",
+                "key": "58209754-e886-4702-8237-345a0fb5ec2a"
+              },
+              "freshness": "fresh",
+              "acceptedAt": "2026-11-20T04:03:21.454Z",
+              "expiresAt": "2026-11-21T04:03:21.453Z",
+              "trust": "owner-accepted",
+              "evidenceRefs": [
+                "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0"
+              ],
+              "chars": 65
+            },
+            {
+              "owner": "task-ledger",
+              "scope": {
+                "kind": "workspace",
+                "key": "default"
+              },
+              "freshness": "fresh",
+              "trust": "owner-fact",
+              "evidenceRefs": [],
+              "id": "task-node:58209754-e886-4702-8237-345a0fb5ec2a:next",
+              "kind": "next-action",
+              "source": "task-ledger-node",
+              "text": "Verify accepted continuity owners.",
+              "chars": 34
+            },
+            {
+              "id": "working-context:NextAction:1",
+              "kind": "next-action",
+              "source": "task-ledger-working-context",
+              "text": "Run the real continuity preview.",
+              "owner": "task-ledger",
+              "scope": {
+                "kind": "task",
+                "key": "58209754-e886-4702-8237-345a0fb5ec2a"
+              },
+              "freshness": "fresh",
+              "acceptedAt": "2026-11-20T04:03:21.454Z",
+              "expiresAt": "2026-11-21T04:03:21.454Z",
+              "trust": "owner-accepted",
+              "evidenceRefs": [
+                "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0"
+              ],
+              "chars": 32
+            },
+            {
+              "id": "accepted-memory:role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f",
+              "kind": "memory-ref",
+              "source": "accepted-memory-ref",
+              "owner": "memory",
+              "text": "role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f (user; workspace)",
+              "scope": {
+                "kind": "workspace",
+                "key": "D:\\tmp\\g5-20261120\\m1-final\\electron\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwogev4a"
+              },
+              "freshness": "fresh",
+              "acceptedAt": "2026-11-20T04:03:26.334Z",
+              "trust": "owner-accepted",
+              "evidenceRefs": [
+                "memory:role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f"
+              ],
+              "chars": 75
+            },
+            {
+              "id": "knowledge:wiki:d1:mwogev4a",
+              "kind": "knowledge-ref",
+              "source": "knowledge-ref",
+              "owner": "knowledge",
+              "text": "D1 owner decision (notes/d1.md)",
+              "scope": {
+                "kind": "workspace",
+                "key": "default"
+              },
+              "freshness": "fresh",
+              "trust": "owner-fact",
+              "evidenceRefs": [
+                "knowledge:wiki:d1:mwogev4a"
+              ],
+              "chars": 31
+            }
+          ],
+          "sourceStates": [
+            {
+              "source": "task-ledger",
+              "status": "available",
+              "detail": "events=6; nodes=1"
+            },
+            {
+              "source": "working-context",
+              "status": "available"
+            },
+            {
+              "source": "compression-artifact",
+              "status": "unavailable",
+              "detail": "no compression artifact for this session"
+            },
+            {
+              "source": "memory",
+              "status": "available",
+              "detail": "accepted=1; modelVisible=1"
+            },
+            {
+              "source": "knowledge",
+              "status": "available",
+              "detail": "refs=1"
+            }
+          ],
+          "exclusions": [
+            {
+              "ref": "task-ledger-working-context:d1-pending-risk-mwogev4a",
+              "reason": "pending-not-accepted"
+            }
+          ],
+          "originalHistory": {
+            "transcriptRef": "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0",
+            "taskLedgerRef": "task-ledger:default",
+            "taskLedgerEventCount": 6,
+            "compressionAvailable": false
+          },
+          "evidenceRefs": [
+            "session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0",
+            "memory:role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f",
+            "knowledge:wiki:d1:mwogev4a"
+          ]
+        },
+        "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=539/1800; truncated=false\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=task:58209754-e886-4702-8237-345a0fb5ec2a; freshness=fresh; trust=owner-accepted)\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=task:58209754-e886-4702-8237-345a0fb5ec2a; freshness=fresh; trust=owner-accepted)\n- [memory-ref] role-memory-card:mem_fb89bd54-7bf6-4a21-a6ba-74de05cad82f (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\tmp\\g5-20261120\\m1-final\\electron\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwogev4a; freshness=fresh; trust=owner-accepted)\n- [knowledge-ref] D1 owner decision (notes/d1.md) (source=knowledge-ref; scope=workspace:default; freshness=fresh; trust=owner-fact)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:0f38d6a5-d98d-4a89-9c34-f4cda1cf4ab0; taskLedger=task-ledger:default; taskLedgerEvents=6; compression=unavailable. Recall old evidence on demand through the owning session/task APIs."
+      }
+    },
+    "project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project-handoff-checkpoint.json": {
+      "driven_by": "agent",
+      "actor": "playwright-project-handoff",
+      "sourceCandidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+      "original": {
+        "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+        "sessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+        "generation": "2b67c314-1f7c-4e76-a2f1-c341200f5149",
+        "epoch": 1,
+        "attemptId": "ec6b974c-8d22-4bd9-9c9b-7ccfd566af73",
+        "worktree": "d:/tmp/g5-20261120/m1-final/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project",
+        "contractRevision": 1,
+        "expiresAt": 1795147614428,
+        "state": "active"
+      },
+      "operation": {
+        "id": "project-checkpoint-handoff",
+        "workspaceId": "checkpoint-handoff",
+        "agentId": "main",
+        "sourceSessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+        "sourceGeneration": "2b67c314-1f7c-4e76-a2f1-c341200f5149",
+        "sessionKey": "agent:main:session-1795147497186-project-chec",
+        "sessionGeneration": "4286d666-ace7-4bdd-b013-0c42c7db5ae0",
+        "draftInput": "Resume the handed-off project task from its checkpoint.",
+        "draftDigest": "86212b5c46f9c3cf51e18566fe55368e70d7ccc3a47c3caf760d59f67ccef022",
+        "firstSendIdempotencyKey": "handoff-first:project-checkpoint-handoff",
+        "phase": "ready",
+        "handoffDepth": 1,
+        "handoffRootSessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+        "rootHandoffId": "project-checkpoint-handoff",
+        "createdAt": "2026-11-20T04:04:57.186Z",
+        "updatedAt": "2026-11-20T04:05:03.368Z"
+      },
+      "blocked": {
+        "contract": {
+          "objective": "Continue a checkpointed project task",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "proof",
+              "description": "Verify the replacement owner checkpoint",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "fixture"
+              }
+            }
+          ],
+          "target": ".",
+          "dependencies": [],
+          "businessKey": "parent:79fcaa4d-d1d6-493d-be40-4a70b1a72f3c:continue",
+          "occurrenceKey": "1",
+          "origin": {
+            "source": "project-plan-child",
+            "sessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+            "requestId": "project:2c002c41742784dd9f36927e699da24c09f30c7e312e0128a0ac75cad9503ffd:continue"
+          },
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "domain": "a438966080b5699f7bc2d1758b944ac7e1edb35ccbdcae6e7f857628928c9016",
+          "revision": 1,
+          "digest": "8a82c916d8ae03c4678d366e515791c018a580ae9267919dbb6eff6a761780d9",
+          "state": "doing",
+          "createdAt": 1795147494405,
+          "updatedAt": 1795147494429
+        },
+        "claim": {
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "sessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+          "generation": "2b67c314-1f7c-4e76-a2f1-c341200f5149",
+          "epoch": 1,
+          "attemptId": "ec6b974c-8d22-4bd9-9c9b-7ccfd566af73",
+          "worktree": "d:/tmp/g5-20261120/m1-final/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project",
+          "contractRevision": 1,
+          "expiresAt": 1795147614473,
+          "state": "active"
+        },
+        "checkpoint": {
+          "nextAction": "Read the confirmed handoff checkpoint",
+          "completed": [
+            "Prepared fixture work"
+          ],
+          "unresolved": [],
+          "artifacts": []
+        },
+        "pendingOperations": 1,
+        "pendingOperationDetails": [
+          {
+            "operationId": "fixture-operation",
+            "tool": "write",
+            "state": "started",
+            "startedAt": 1795147494473
+          }
+        ],
+        "parentTaskNodeId": "79fcaa4d-d1d6-493d-be40-4a70b1a72f3c",
+        "childTaskNodeIds": []
+      },
+      "transferred": {
+        "contract": {
+          "objective": "Continue a checkpointed project task",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "proof",
+              "description": "Verify the replacement owner checkpoint",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "fixture"
+              }
+            }
+          ],
+          "target": ".",
+          "dependencies": [],
+          "businessKey": "parent:79fcaa4d-d1d6-493d-be40-4a70b1a72f3c:continue",
+          "occurrenceKey": "1",
+          "origin": {
+            "source": "project-plan-child",
+            "sessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+            "requestId": "project:2c002c41742784dd9f36927e699da24c09f30c7e312e0128a0ac75cad9503ffd:continue"
+          },
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "domain": "a438966080b5699f7bc2d1758b944ac7e1edb35ccbdcae6e7f857628928c9016",
+          "revision": 1,
+          "digest": "8a82c916d8ae03c4678d366e515791c018a580ae9267919dbb6eff6a761780d9",
+          "state": "doing",
+          "createdAt": 1795147494405,
+          "updatedAt": 1795147503354
+        },
+        "claim": {
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "sessionKey": "agent:main:session-1795147497186-project-chec",
+          "generation": "4286d666-ace7-4bdd-b013-0c42c7db5ae0",
+          "epoch": 2,
+          "attemptId": "a5755237-0363-403c-9065-3910450663de",
+          "worktree": "d:/tmp/g5-20261120/m1-final/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project",
+          "contractRevision": 1,
+          "expiresAt": 1795147623354,
+          "state": "active"
+        },
+        "checkpoint": {
+          "nextAction": "Read the confirmed handoff checkpoint",
+          "completed": [
+            "Prepared fixture work"
+          ],
+          "unresolved": [],
+          "artifacts": []
+        },
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "parentTaskNodeId": "79fcaa4d-d1d6-493d-be40-4a70b1a72f3c",
+        "childTaskNodeIds": []
+      },
+      "observed": {
+        "contract": {
+          "objective": "Continue a checkpointed project task",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "proof",
+              "description": "Verify the replacement owner checkpoint",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "fixture"
+              }
+            }
+          ],
+          "target": ".",
+          "dependencies": [],
+          "businessKey": "parent:79fcaa4d-d1d6-493d-be40-4a70b1a72f3c:continue",
+          "occurrenceKey": "1",
+          "origin": {
+            "source": "project-plan-child",
+            "sessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+            "requestId": "project:2c002c41742784dd9f36927e699da24c09f30c7e312e0128a0ac75cad9503ffd:continue"
+          },
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "domain": "a438966080b5699f7bc2d1758b944ac7e1edb35ccbdcae6e7f857628928c9016",
+          "revision": 1,
+          "digest": "8a82c916d8ae03c4678d366e515791c018a580ae9267919dbb6eff6a761780d9",
+          "state": "doing",
+          "createdAt": 1795147494405,
+          "updatedAt": 1795147503354
+        },
+        "claim": {
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "sessionKey": "agent:main:session-1795147497186-project-chec",
+          "generation": "4286d666-ace7-4bdd-b013-0c42c7db5ae0",
+          "epoch": 2,
+          "attemptId": "a5755237-0363-403c-9065-3910450663de",
+          "worktree": "d:/tmp/g5-20261120/m1-final/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project",
+          "contractRevision": 1,
+          "expiresAt": 1795147628142,
+          "state": "active"
+        },
+        "checkpoint": {
+          "nextAction": "Read the confirmed handoff checkpoint",
+          "completed": [
+            "Prepared fixture work"
+          ],
+          "unresolved": [],
+          "artifacts": []
+        },
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "parentTaskNodeId": "79fcaa4d-d1d6-493d-be40-4a70b1a72f3c",
+        "childTaskNodeIds": []
+      },
+      "resumed": {
+        "contract": {
+          "objective": "Continue a checkpointed project task",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "proof",
+              "description": "Verify the replacement owner checkpoint",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "fixture"
+              }
+            }
+          ],
+          "target": ".",
+          "dependencies": [],
+          "businessKey": "parent:79fcaa4d-d1d6-493d-be40-4a70b1a72f3c:continue",
+          "occurrenceKey": "1",
+          "origin": {
+            "source": "project-plan-child",
+            "sessionKey": "agent:main:session-1795147445588-checkpointhandoff",
+            "requestId": "project:2c002c41742784dd9f36927e699da24c09f30c7e312e0128a0ac75cad9503ffd:continue"
+          },
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "domain": "a438966080b5699f7bc2d1758b944ac7e1edb35ccbdcae6e7f857628928c9016",
+          "revision": 1,
+          "digest": "8a82c916d8ae03c4678d366e515791c018a580ae9267919dbb6eff6a761780d9",
+          "state": "doing",
+          "createdAt": 1795147494405,
+          "updatedAt": 1795147503354
+        },
+        "claim": {
+          "taskNodeId": "f3159942-62c0-4981-ada1-5ac060ca68b1",
+          "sessionKey": "agent:main:session-1795147497186-project-chec",
+          "generation": "4286d666-ace7-4bdd-b013-0c42c7db5ae0",
+          "epoch": 2,
+          "attemptId": "a5755237-0363-403c-9065-3910450663de",
+          "worktree": "d:/tmp/g5-20261120/m1-final/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project",
+          "contractRevision": 1,
+          "expiresAt": 1795147628142,
+          "state": "active"
+        },
+        "checkpoint": {
+          "nextAction": "Continue with the replacement coordinator",
+          "completed": [
+            "Prepared fixture work"
+          ],
+          "unresolved": [],
+          "artifacts": []
+        },
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "parentTaskNodeId": "79fcaa4d-d1d6-493d-be40-4a70b1a72f3c",
+        "childTaskNodeIds": []
+      },
+      "checkpoints": [
+        {
+          "seq": 5,
+          "kind": "checkpoint",
+          "at": 1795147494462,
+          "json": "{\"nextAction\":\"Read the confirmed handoff checkpoint\",\"completed\":[\"Prepared fixture work\"],\"unresolved\":[],\"artifacts\":[],\"worktree\":\"d:/tmp/g5-20261120/m1-final/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project\"}"
+        },
+        {
+          "seq": 8,
+          "kind": "checkpoint",
+          "at": 1795147526601,
+          "json": "{\"nextAction\":\"Continue with the replacement coordinator\",\"completed\":[\"Prepared fixture work\"],\"unresolved\":[],\"artifacts\":[],\"worktree\":\"d:/tmp/g5-20261120/m1-final/electron/project-agent-loop-hands-a-5dc4e--completion-for-the-old-one/project\"}"
+        }
+      ],
+      "originalGenerationRetained": true,
+      "lateCompletionProviderCalls": 0
+    }
+  }
+}

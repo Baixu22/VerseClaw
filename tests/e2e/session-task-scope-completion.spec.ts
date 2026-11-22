@@ -51,13 +51,15 @@ test('a real isolated schedule admits its first write without replacing the proj
     });
     ((evidence.workspaceConfig ??= []) as unknown[]).push({ stage, profiles, config });
     await writeFile(testInfo.outputPath('scheduled-task-scope.json'), JSON.stringify(evidence, null, 2));
+    return config;
   };
   try {
     await getStableWindow(app);
     await configureSessionChainProvider(app, llm.port);
     await captureWorkspaceConfig('after-provider');
     const project = await createSessionChainProject(app, testInfo.outputPath('scheduled-workspace'), 'Scheduled project');
-    await captureWorkspaceConfig('after-project-start');
+    const effectiveConfig = await captureWorkspaceConfig('after-project-start');
+    expect(effectiveConfig.isolated?.defaultWorkspace).toBe(project.rootPath);
     const job = await hostInvoke<{ id: string }>(app, 'cron', 'create', { name: 'Agent schedule acceptance', agentId: 'main',
       schedule: '0 0 1 1 *', enabled: false, message: 'A4-SCHEDULED-EFFECT: write the assigned result.', delivery: { mode: 'none' } });
     const trigger = await hostInvoke(app, 'cron', 'trigger', { id: job.id });
@@ -144,20 +146,17 @@ test('real Gateway keeps discussion empty, admits one write, and restores the sa
         workspaceId, sessionKey: key, message: marker, idempotencyKey: `acceptance-${marker}`, ...extra,
       });
       expect(result.success, result.error).toBe(true);
+      const runId = result.result?.runId;
+      expect(runId).toBeTruthy();
+      await expect.poll(async () => {
+        const state = await rpc<{ status: string }>('agent.wait', { runId: runId!, timeoutMs: 1000 });
+        await record(`completion-${marker}`, state);
+        return state.status;
+      }, { timeout: 30_000 }).toBe('ok');
       await expect.poll(async () => JSON.stringify((await rpc<{ messages?: unknown[] }>('chat.history', { sessionKey: key, limit: 100 })).messages ?? [])
         .includes(`FINISHED ${marker}`), { timeout: 60_000 }).toBe(true);
       await expect.poll(async () => (await rpc<{ session?: { hasActiveRun?: boolean } }>('sessions.describe', { key })).session?.hasActiveRun ?? false,
         { timeout: 30_000 }).toBe(false);
-      if (marker === 'A4-EXECUTE' || marker === 'A4-CONTINUE') {
-        expect(result.result?.runId).toBeTruthy();
-        await expect.poll(async () => {
-          const state = await rpc<{ status: string }>('agent.wait', {
-            runId: result.result?.runId, timeoutMs: 1000,
-          });
-          await record(`completion-${marker}`, state);
-          return state.status;
-        }, { timeout: 30_000 }).toBe('ok');
-      }
     };
     for (let turn = 0; turn < 10; turn++) await send(sessionKey, `A4-DISCUSS-${turn}`);
     const discussion = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId });
@@ -210,6 +209,7 @@ test('real Gateway keeps discussion empty, admits one write, and restores the sa
       workspaceId, sessionKey: recovered.sessionKey, operationId: input.operationId,
     });
     expect(unknown.operation.phase).toBe('unknown');
+    await expect.poll(async () => (await rpc<{ status: string }>('agent.wait', { runId: recovered.operation!.firstSendIdempotencyKey, timeoutMs: 1000 })).status, { timeout: 60_000 }).toBe('ok');
     await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: recovered.sessionKey, limit: 100 })).includes('FINISHED A4-HANDOFF'), { timeout: 60_000 }).toBe(true);
     await record('unknownBeforeSecondRestart', unknown);
     await hostInvoke(app, 'gateway', 'stop'); await closeElectronApp(app); app = undefined;

@@ -21,6 +21,18 @@ afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 describe('continuous local knowledge synchronization', () => {
+  it('rejects invalid UTF-8 without capturing replacement bytes or advancing the owner cursor', async () => {
+    const f = await fixture();
+    await writeFile(join(f.root, 'broken.md'), Buffer.from([0x23, 0x20, 0xc3, 0x28]));
+    await expect(f.sync.scan()).rejects.toThrow();
+    expect(f.received).toHaveLength(0);
+    await expect(readFile(f.config.cursorPath)).rejects.toMatchObject({ code: 'ENOENT' });
+    const raw = '\uFEFF# 中文\r\n日本語 русский 😀\r\n';
+    await writeFile(join(f.root, 'broken.md'), raw, 'utf8');
+    await f.sync.scan();
+    expect(f.received).toHaveLength(1);
+    expect(f.received[0].body).toBe(raw);
+  });
   it('shares recursive roots while preserving independent patterns and final release', async () => {
     const f = await fixture(); const other: KnowledgeSourceTransition[] = [];
     const second = createKnowledgeSourceSync({ ...f.config, id: 'text-source', patterns: ['**/*.txt'], cursorPath: join(f.base, 'text-cursor.json'), capture: async value => { other.push(value); } }); active.push(second);
@@ -75,14 +87,29 @@ describe('continuous local knowledge synchronization', () => {
     fail = false; await sync.scan(); expect(f.received).toHaveLength(1);
     await sync.scan(); expect(f.received).toHaveLength(1);
   });
-  it('rejects oversized/binary files and never follows a symlink outside the root', async () => {
+  it('never follows a symlink outside the root', async () => {
     const f = await fixture({ maxBytesPerFile: 32 });
-    await writeFile(join(f.root, 'large.md'), 'a'.repeat(100));
-    await writeFile(join(f.root, 'binary.md'), Buffer.from([1, 0, 2]));
     await writeFile(join(f.base, 'outside.md'), 'private outside');
     await symlink(join(f.base, 'outside.md'), join(f.root, 'link.md'));
     await writeFile(join(f.root, 'good.md'), 'usable'); await f.sync.start();
     expect(f.received.map(x => x.relativePath)).toEqual(['good.md']);
+  });
+  it.each([
+    ['empty', Buffer.from('')], ['oversized', Buffer.from('x'.repeat(33))],
+    ['binary', Buffer.from([1, 0, 2])], ['whitespace', Buffer.from('\uFEFF\r\n   ')],
+  ])('reports %s source updates without false withdrawal or cursor advancement', async (_kind, bytes) => {
+    const f = await fixture({ maxBytesPerFile: 32 });
+    const file = join(f.root, 'retained.md');
+    await writeFile(file, 'previous valid body'); await f.sync.scan();
+    const cursor = await readFile(f.config.cursorPath, 'utf8');
+    f.received.splice(0);
+    await writeFile(file, bytes);
+    await expect(f.sync.scan()).rejects.toThrow();
+    expect(f.received).toHaveLength(0);
+    expect(await readFile(f.config.cursorPath, 'utf8')).toBe(cursor);
+    await writeFile(file, 'repaired valid body'); await f.sync.scan();
+    expect(f.received).toHaveLength(1);
+    expect(f.received[0].kind).toBe('updated');
   });
   it('does not infer deletions from a capped incomplete scan and stops pending work', async () => {
     const f = await fixture(); await writeFile(join(f.root, 'retained.md'), 'retained'); await f.sync.start(); f.sync.stop();

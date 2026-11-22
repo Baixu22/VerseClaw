@@ -10,6 +10,7 @@ import type { PromptImageOrderEntry } from "../../media/prompt-image-order.js";
 import type { InputProvenance } from "../../sessions/input-provenance.js";
 import type { ExecElevatedDefaults } from "../bash-tools.exec-types.js";
 import type { AgentStreamParams, ClientToolDefinition } from "./shared-types.js";
+import type { ChatKnowledgeReferenceIntent } from "../../context-engine/chat-knowledge-intent.js";
 
 /** Image content block for Claude API multimodal messages. */
 export type ImageContent = {
@@ -128,6 +129,8 @@ export type AgentCommandOpts = {
   streamParams?: AgentStreamParams;
   /** Explicit workspace directory override (for subagents to inherit parent workspace). */
   workspaceDir?: SpawnedRunMetadata["workspaceDir"];
+  /** Backend-owned workspace selector for source reads, separate from transcript effects. */
+  workspaceId?: string;
   /** B-3 v3: write-set coordinate inherited by a spawned worker (files it is expected to touch). */
   writeSet?: string[];
   /** Explicit task working directory for this run. Bootstrap still uses workspaceDir. */
@@ -142,6 +145,9 @@ export type AgentCommandOpts = {
   onActiveModelSelected?: (ctx: { provider: string; model: string }) => void;
   /** Internal one-shot model probe mode: no tools, no workspace/chat prompt policy. */
   modelRun?: boolean;
+  modelBudget?: import("./shared-types.js").ModelRequestBudget;
+  /** Untrusted pins; the selected source owners resolve these before DCS packing. */
+  knowledgeReferences?: ChatKnowledgeReferenceIntent[];
   /** Internal prompt-mode override for trusted local/gateway callsites. */
   promptMode?: PromptMode;
   /** Internal ACP-ready session turn source. Manual spawn turns bypass only the dispatch gate. */

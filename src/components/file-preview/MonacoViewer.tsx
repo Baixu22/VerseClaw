@@ -48,7 +48,7 @@ export default function MonacoViewer({
         defaultLanguage={language}
         language={language}
         value={value}
-        onChange={(next) => onChange?.(next ?? '')}
+        onChange={(next: string | undefined) => onChange?.(next ?? '')}
         theme={monacoTheme}
         loading={
           <div className="flex h-full items-center justify-center">

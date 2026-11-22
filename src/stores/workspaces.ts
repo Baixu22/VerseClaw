@@ -11,6 +11,7 @@ import type {
 const workspaceStateSaves = new Map<string, Promise<void>>();
 
 type WorkspaceCreateInput = {
+  activate?: boolean;
   name?: string;
   rootPath: string;
   agentId?: string;
@@ -153,7 +154,7 @@ export const useWorkspacesStore = create<WorkspaceState>((set, get) => ({
     try {
       const snapshot = await hostApi.workspaces.create(input);
       set(applySnapshot(snapshot));
-      return snapshot.activeWorkspace ?? null;
+      return snapshot.createdWorkspace;
     } catch (error) {
       set({ error: String(error) });
       throw error;

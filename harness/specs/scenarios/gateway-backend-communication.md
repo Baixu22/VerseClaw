@@ -55,6 +55,11 @@ forbiddenPatterns:
 
 Gateway backend communication covers all Verse Claw paths that move data between the visual desktop UI and OpenClaw runtime/backend services.
 
+Startup consumes a pending configuration reload only when the successful launch
+covered its captured request revision. Later reloads and explicit restart requests
+execute after startup and any enclosing restart settle. Reconnection alone does
+not confirm that new configuration has been loaded.
+
 Coding retirement also crosses this boundary. Legacy Patch Flow requests and restored worker
 metadata must not revive proposal-only execution or delayed candidate application. Developer
 flags show retired controls as unavailable, while ordinary journal-backed coding and explicit

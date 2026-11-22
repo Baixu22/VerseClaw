@@ -790,6 +790,10 @@ async function ensureGitRepo(dir: string, isBrandNewWorkspace: boolean) {
   if (await hasGitRepo(dir)) {
     return;
   }
+  // Managed checkouts keep the task domain chosen by their worktree owner.
+  // A nested git init here would silently detach an in-process worker from it.
+  const { findManagedWorktreeByRoot } = await import('./worktree-registry.js');
+  if (findManagedWorktreeByRoot(dir)) return;
   if (!(await isGitAvailable())) {
     return;
   }

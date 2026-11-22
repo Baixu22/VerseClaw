@@ -21,7 +21,7 @@ type LedgerFault = {
 };
 type FaultGlobal = typeof globalThis & { __u2LedgerFault?: LedgerFault };
 
-test.beforeEach(async ({}, info) => {
+test.beforeEach(async ({ browserName: _browserName }, info) => {
   test.setTimeout(240_000);
   runs.set(info.testId, { facts: {
     driven_by: 'agent', actor: 'playwright-u2-state-proof',
@@ -30,7 +30,7 @@ test.beforeEach(async ({}, info) => {
   } });
 });
 
-test.afterEach(async ({}, info) => {
+test.afterEach(async ({ browserName: _browserName }, info) => {
   const run = runs.get(info.testId)!;
   try {
     if (run.app) {
@@ -107,6 +107,7 @@ async function holdLedgerRead(app: ElectronApplication, workspaceId: string) {
 
 test('AC8: an owner-created project without a coordinator names the missing association', async ({ launchElectronApp }, info) => {
   const app = await launchElectronApp({ skipSetup: true });
+  await expect((await getStableWindow(app)).getByTestId('task-ledger-summary')).toHaveCount(0);
   const facts = attach(app, info);
   const page = await getStableWindow(app);
   await expect(page.getByTestId('main-layout')).toBeVisible();

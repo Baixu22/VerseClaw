@@ -9,6 +9,11 @@ import './styles/structural-loading.css';
 import { RendererRoot } from './components/loading/RendererRoot';
 import { installMockHostBridge, isMockModeEnabled, seedMockPersistedSettings } from './lib/mock-host-bridge';
 import { initRendererPerformanceMetrics } from './lib/performance-metrics';
+import { sanitizeUiErrorText } from '@shared/privacy/ui-error-sanitize';
+
+const reportRendererError = (error: unknown) => {
+  console.error('React renderer error:', sanitizeUiErrorText(error));
+};
 
 // Mock host bridge for browser-only UI development (`?mock=1`). Must install
 // BEFORE any store init or host call: stores cache their first host response
@@ -25,7 +30,10 @@ initRendererPerformanceMetrics();
 // internally fail-open, so a dynamic import failure still mounts the app with
 // the English fallback instead of leaving a blank window.
 void i18nReady.then(() => {
-  ReactDOM.createRoot(document.getElementById('root')!).render(
+  ReactDOM.createRoot(document.getElementById('root')!, {
+    onCaughtError: reportRendererError,
+    onUncaughtError: reportRendererError,
+  }).render(
     <React.StrictMode>
       <RendererRoot />
     </React.StrictMode>,

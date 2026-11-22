@@ -1,0 +1,283 @@
+{
+  "candidate": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9",
+  "stats": {
+    "startTime": "2026-11-20T08:54:51.863Z",
+    "duration": 122948.699,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "journey": {
+    "driven_by": "agent",
+    "actor": "s3-electron-verifier",
+    "candidate": "c48fc9d699cf1f0cda92cd0a21d371204a7039b9",
+    "dirty": "",
+    "provider": "local-scripted",
+    "realHumanEvidence": false,
+    "preview": {
+      "workspaceId": "configuration-project",
+      "agentId": "configuration-owner",
+      "ownerKey": "[\"configuration-project\",\"D:\\\\tmp\\\\g5-20261120\\\\s3-final-r2\\\\electron\\\\project-configuration-oper-48800-them-after-a-reload-failure\\\\configuration-project\",\"agent:configuration-owner:configuration-project\",[\"configuration-project\",\"agent:configuration-owner:configuration-project\",\"7d50066d-b784-4275-aa02-e19e4d31fe43\",1,\"active\",null,{\"kind\":\"local\",\"canonicalRoot\":\"D:\\\\tmp\\\\g5-20261120\\\\s3-final-r2\\\\electron\\\\project-configuration-oper-48800-them-after-a-reload-failure\\\\configuration-project\",\"backend\":\"local-workspace\",\"branch\":null,\"detachedHead\":false,\"setupProfile\":null}],false]",
+      "configRevision": "0ac020a0af1260b3e8141d5428f268abe1a0bf84c04f745bc5a6348f8bef807c",
+      "digest": "f167f1e90e6ab912f657e2162694b56f4428f81a630602c74651ffe0eea45c37",
+      "before": {
+        "modelRef": "custom-sessionc/mock-coder",
+        "denyTools": [
+          "browser"
+        ],
+        "contextTokens": 8192
+      },
+      "desired": {
+        "modelRef": "custom-sessionc/mock-coder",
+        "denyTools": [
+          "browser",
+          "exec"
+        ],
+        "contextTokens": 4096
+      }
+    },
+    "loaded": {
+      "schema": "runtime-flag-ack/v1",
+      "gatewayGeneration": "2",
+      "childPid": 48852,
+      "launchEnv": {
+        "VERSE_VTOKEN_ASSEMBLY_ENABLED": {
+          "present": false
+        },
+        "VERSE_CONTEXT_ENHANCEMENT_KILL_SWITCH": {
+          "present": false
+        },
+        "OPENCLAW_DCS_CONTEXT_VIEW_TOOLS": {
+          "present": false
+        },
+        "OPENCLAW_DCS_CONTEXT_TOOLS": {
+          "present": false
+        }
+      },
+      "injectionBudget": {
+        "totalChars": 6000,
+        "precedence": [
+          "knowledge",
+          "session_start",
+          "working_memory",
+          "tool_registry",
+          "cvk_addition",
+          "vtoken",
+          "memory_pilot",
+          "other"
+        ],
+        "dropAlertRatio": 0.1,
+        "counters": {
+          "turns": 0,
+          "killedTurns": 0,
+          "appliedChars": 0,
+          "requestedChars": 0,
+          "droppedChars": 0,
+          "truncatedChars": 0,
+          "dropAlerts": 0
+        },
+        "lastTurn": null
+      },
+      "effectiveFlags": {
+        "runtime.contextBlock.compass.enabled": false,
+        "runtime.contextBlock.role_memory.enabled": false,
+        "runtime.contextBlock.working_memory.enabled": true,
+        "runtime.contextBlock.tool_registry.enabled": true,
+        "runtime.coding.parseOnTouch.enabled": true,
+        "runtime.coding.staleWriteGuard.enabled": false,
+        "runtime.coding.writeJournal.enabled": true,
+        "runtime.coding.autoVerify.enabled": "auto",
+        "runtime.coding.worktree.backend": "inprocess",
+        "runtime.coding.symbolLease.enabled": false,
+        "runtime.coding.symbolLease.mode": "memory",
+        "runtime.coding.patchFlow.default": false,
+        "runtime.coding.sekb.experienceShadow": false,
+        "runtime.coding.sekb.retrievalShadow": false,
+        "runtime.coding.routingMemo.shadow": false,
+        "runtime.vtoken.assembly.enabled": false,
+        "dcs.contextViewTools.enabled": false,
+        "runtime.contextEnhancement.killSwitch": false
+      },
+      "flagAttribution": {
+        "runtime.contextBlock.compass.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.contextBlock.role_memory.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.contextBlock.working_memory.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.contextBlock.tool_registry.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.coding.parseOnTouch.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.coding.staleWriteGuard.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.writeJournal.enabled": {
+          "value": true,
+          "origin": "default"
+        },
+        "runtime.coding.autoVerify.enabled": {
+          "value": "auto",
+          "origin": "default"
+        },
+        "runtime.coding.worktree.backend": {
+          "value": "inprocess",
+          "origin": "default"
+        },
+        "runtime.coding.symbolLease.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.symbolLease.mode": {
+          "value": "memory",
+          "origin": "default"
+        },
+        "runtime.coding.patchFlow.default": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.sekb.experienceShadow": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.sekb.retrievalShadow": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.coding.routingMemo.shadow": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.vtoken.assembly.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "dcs.contextViewTools.enabled": {
+          "value": false,
+          "origin": "default"
+        },
+        "runtime.contextEnhancement.killSwitch": {
+          "value": false,
+          "origin": "default"
+        }
+      },
+      "configSource": {
+        "path": "D:\\tmp\\g5-20261120\\s3-final-r2\\temp\\verse-claw-e2e-run-MVd3rv\\verse-claw-e2e-user-data-2nrh4b\\openclaw-source-state\\openclaw.json",
+        "exists": true,
+        "origin": "env-override"
+      },
+      "runtimeBuildOrConfigHash": "7a570eced40e474cbeaaecf3c041c198",
+      "turnEffectProbe": {
+        "wouldChangeTurn": true,
+        "killSwitchEngaged": false,
+        "activeSurfaces": [
+          "runtime.contextBlock.working_memory.enabled",
+          "runtime.contextBlock.tool_registry.enabled"
+        ]
+      },
+      "degradedReason": null,
+      "answeredAt": "2026-11-20T08:55:43.691Z",
+      "projectConfiguration": {
+        "agentId": "configuration-owner",
+        "values": {
+          "modelRef": "custom-sessionc/mock-coder",
+          "denyTools": [
+            "browser",
+            "exec"
+          ],
+          "contextTokens": 4096
+        }
+      }
+    },
+    "degraded": {
+      "requestId": "reload-failure",
+      "workspaceId": "configuration-project",
+      "agentId": "configuration-owner",
+      "phase": "degraded",
+      "desired": {
+        "modelRef": "custom-sessionc/mock-coder",
+        "denyTools": [
+          "browser",
+          "exec"
+        ],
+        "contextTokens": 2048
+      },
+      "configured": null,
+      "effective": null,
+      "runtimeGeneration": null,
+      "error": "CONFIG_RECOVERY_REQUIRED"
+    },
+    "rollback": {
+      "requestId": "reload-failure",
+      "workspaceId": "configuration-project",
+      "agentId": "configuration-owner",
+      "phase": "rolled-back",
+      "desired": {
+        "modelRef": "custom-sessionc/mock-coder",
+        "denyTools": [
+          "browser",
+          "exec"
+        ],
+        "contextTokens": 2048
+      },
+      "configured": {
+        "modelRef": "custom-sessionc/mock-coder",
+        "denyTools": [
+          "browser",
+          "exec"
+        ],
+        "contextTokens": 4096
+      },
+      "effective": {
+        "modelRef": "custom-sessionc/mock-coder",
+        "denyTools": [
+          "browser",
+          "exec"
+        ],
+        "contextTokens": 4096
+      },
+      "runtimeGeneration": "4",
+      "error": "CONFIG_APPLY_RELOADED_ROLLBACK"
+    },
+    "session": {
+      "ok": true,
+      "key": "agent:configuration-owner:configuration-project",
+      "sessionId": "7d50066d-b784-4275-aa02-e19e4d31fe43",
+      "entry": {
+        "sessionId": "7d50066d-b784-4275-aa02-e19e4d31fe43",
+        "sessionFile": "D:\\tmp\\g5-20261120\\s3-final-r2\\temp\\verse-claw-e2e-run-MVd3rv\\verse-claw-e2e-user-data-2nrh4b\\openclaw-source-state\\agents\\configuration-owner\\sessions\\7d50066d-b784-4275-aa02-e19e4d31fe43.jsonl",
+        "updatedAt": 1795164926235
+      },
+      "runStarted": false
+    },
+    "modelsInvoked": 0,
+    "frames": [
+      "configuration-en.png",
+      "configuration-zh.png",
+      "configuration-ja.png",
+      "configuration-ru.png"
+    ],
+    "status": "passed"
+  },
+  "ui": {
+    "errors": [],
+    "pages": [
+      {
+        "url": "file:///D:/ClawX-work/g5-test-review-20261118/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/system",
+        "body": "Verse\nНовая задача\nОбзор системы\nВходящие\nЗапланировано\nЗнания\nПроекты\nConfiguration Project\n7d50066d (2026-11-20)\nНовый рабочий поток\n默认工作区\nНовый рабочий поток\nНастройки\nCtrl+,\nОбзор системы\n\nОбласть системы · У каждого проекта собственные координатор, права и бюджет.\n\nОбновить\nПриостановить систему\n\nПриём действий открыт\n\nФильтр проектов\n默认工作区\n\nОбласть проекта · Выполнением управляет координатор проекта\n\nСостояние проекта недоступно.\n\nConfiguration Project\n\nОбласть проекта · Выполнением управляет координатор проекта\n\nКоординатор: Доступен\n\nПроверено: 20.11.2026, 16:56:31\n\nПлан проекта ещё не записан.\n\nЗанятые права на задачи\nНеизвестно\nНезавершённые действия\nНеизвестно\nУчтённая стоимость\nНеизвестно\nНаблюдаемые активные ресурсы\nНеизвестно\nИсточники состояния и подтверждения\nНастройки проекта\n\nНужен отдельный Agent проекта. Разрешена смена на существующую модель с известной ценой без роста расходов; ограничения инструментов и контекста можно только ужесточить.\n\nСуществующая модель (необязательно)\nПолный список запрещённых инструментов через запятую\nЛимит токенов контекста (необязательно)\nПредпросмотр\nПрименить и проверить\nЖелаемое\nМодель: custom-sessionc/mock-coder · Запрещено: browser, exec · Контекст: 2048\nСохранённое\nМодель: custom-sessionc/mock-coder · Запрещено: browser, exec · Контекст: 4096\nДействующее\nМодель: custom-sessionc/mock-coder · Запрещено: browser, exec · Контекст: 4096\nПоколение Runtime\n4\n\nОшибка перезагрузки; прежние значения восстановлены и проверены"
+      }
+    ]
+  }
+}

@@ -28,15 +28,36 @@ function ledger(title: string): TaskLedgerSnapshot {
 }
 beforeEach(() => { vi.clearAllMocks(); });
 
-it('keeps an empty header task scope silent and surfaces a failed read', async () => {
+it('keeps an empty header task scope available and surfaces a failed read', async () => {
   const snapshot = { ...ledger('Task A'), nodes: [], sessionLinks: [], rootNodeIds: [] };
   host.snapshot.mockResolvedValue({ success: true, snapshot });
   const view = render(<MemoryRouter><TaskLedgerSummaryPanel workspaceId="workspace-a" session={sessions[0]} mode="bar" hideWhenEmpty /></MemoryRouter>);
   await waitFor(() => expect(host.snapshot).toHaveBeenCalled());
-  expect(screen.queryByTestId('session-task-container')).toBeNull();
+  await waitFor(() => expect(screen.getByTestId('session-task-container')).toHaveAttribute('data-state', 'empty'));
   host.snapshot.mockRejectedValue(new Error('Snapshot unavailable'));
   view.rerender(<MemoryRouter><TaskLedgerSummaryPanel workspaceId="workspace-a" session={sessions[0]} mode="bar" hideWhenEmpty refreshKey="retry" /></MemoryRouter>);
   await waitFor(() => expect(screen.getByTestId('session-task-container')).toHaveAttribute('data-state', 'unavailable'));
+});
+
+it('keeps an empty non-header task view hidden when requested', async () => {
+  host.snapshot.mockResolvedValue({ success: true, snapshot: { ...ledger('Task A'), nodes: [], sessionLinks: [], rootNodeIds: [] } });
+  const view = render(<MemoryRouter><TaskLedgerSummaryPanel workspaceId="workspace-a" session={sessions[0]} hideWhenEmpty /></MemoryRouter>);
+  await waitFor(() => expect(host.snapshot).toHaveBeenCalled());
+  await act(async () => { await host.snapshot.mock.results[0].value; });
+  expect(view.container).toBeEmptyDOMElement();
+});
+
+it('ends loading when the header loses its task scope and ignores the pending read', async () => {
+  let finish!: (value: unknown) => void;
+  host.snapshot.mockReturnValue(new Promise(resolve => { finish = resolve; }));
+  const view = render(<MemoryRouter><TaskLedgerSummaryPanel workspaceId="workspace-a" session={sessions[0]} mode="bar" /></MemoryRouter>);
+  expect(screen.getByTestId('session-task-container')).toHaveAttribute('data-state', 'loading');
+  view.rerender(<MemoryRouter><TaskLedgerSummaryPanel mode="bar" /></MemoryRouter>);
+  expect(screen.queryByText('summary.loading')).not.toBeInTheDocument();
+  expect(screen.getAllByText('summary.scope.unavailable')).toHaveLength(2);
+  await act(async () => finish({ success: true, snapshot: ledger('Task A') }));
+  expect(screen.queryByText('Task A')).not.toBeInTheDocument();
+  expect(screen.queryByText('summary.loading')).not.toBeInTheDocument();
 });
 
 describe('family navigation', () => {
@@ -74,7 +95,7 @@ describe('family navigation', () => {
     view.rerender(renderTree(true));
     expect(order()).toEqual(before);expect(screen.getByText('Older:error')).toBeVisible();
     expect(screen.getByTestId('session-family-toggle-parent')).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByTestId('sidebar-session-family-parent').querySelector('.session-family__count')).toBeNull();
+    expect(screen.getByTestId('sidebar-session-family-parent').querySelector('.session-family__count')).toHaveTextContent('3');
     expect(screen.queryByText('New')).not.toBeInTheDocument();
     fireEvent.pointerLeave(treeNode,{relatedTarget:null});
     fireEvent.blur(screen.getByTestId('session-family-toggle-parent'),{relatedTarget:null});
@@ -88,7 +109,7 @@ describe('family navigation', () => {
     const toggle = screen.getByTestId('session-family-toggle-parent');
     fireEvent.keyDown(toggle, { key: 'ArrowRight' });
     expect(screen.getByText('Child')).toBeVisible();
-    expect(screen.getByTestId('sidebar-session-family-parent').querySelector('.session-family__count')).toBeNull();
+    expect(screen.getByTestId('sidebar-session-family-parent').querySelector('.session-family__count')).toHaveTextContent('1');
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
     fireEvent.keyDown(toggle, { key: 'ArrowLeft' });
     expect(screen.queryByText('Child')).not.toBeInTheDocument();

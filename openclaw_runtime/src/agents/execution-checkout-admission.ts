@@ -56,7 +56,7 @@ export async function admitExecutionCheckout(input: {
       if (observed.inFlightProcesses !== 0) throw new Error('TASK_CHECKOUT_PROCESSES_PENDING');
       assertTask();
       let canonicalTransfer = false;
-      let retainedForDelegation = false;
+      let retainedForDelegation: boolean;
       const store = new TaskSystemStore(access.domain, undefined, access);
       try {
         const old = former.task;

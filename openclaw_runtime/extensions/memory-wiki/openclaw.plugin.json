@@ -10,6 +10,18 @@
   },
   "skills": ["./skills"],
   "uiHints": {
+    "retrieval.profile": {
+      "label": "Retrieval Profile",
+      "help": "Default profile for requests without an explicit profile; interaction mode and source scope remain request-owned."
+    },
+    "retrieval.answerMode": {
+      "label": "Answer Strategy",
+      "help": "Strict answers use retained owner evidence; open answers label external model knowledge separately."
+    },
+    "retrieval.maxStorageBytes": {
+      "label": "Index Storage Budget",
+      "help": "Maximum database, WAL and SHM bytes admitted when publishing an index generation; staging and cleanup remain observable."
+    },
     "vaultMode": {
       "label": "Vault Mode",
       "help": "Choose isolated, bridge, or unsafe-local mode for the wiki vault."
@@ -51,6 +63,24 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+      "retrieval": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "type": "string",
+            "enum": ["local", "quality", "research"],
+            "default": "local"
+          },
+          "answerMode": { "type": "string", "enum": ["strict", "open"], "default": "strict" },
+          "maxStorageBytes": {
+            "type": "integer",
+            "minimum": 1048576,
+            "maximum": 68719476736,
+            "default": 536870912
+          }
+        }
+      },
       "vaultMode": {
         "type": "string",
         "enum": ["isolated", "bridge", "unsafe-local"]

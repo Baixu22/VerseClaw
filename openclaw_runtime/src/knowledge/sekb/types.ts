@@ -1,4 +1,8 @@
 import { createHash } from "node:crypto";
+import {
+  readOwnerReadPolicyMetadata,
+  type OwnerReadPolicy,
+} from "../../runtime-core/knowledge-owner-read.js";
 
 export type JsonObject = Record<string, unknown>;
 
@@ -81,7 +85,14 @@ export type PrincipleQuery = {
 };
 
 export const SEKB_ATTRIBUTION_SCHEMA = "RsiExperienceAttribution/v1" as const;
-export type SekbAdoptionTrigger = "retrieved" | "operation" | "cited" | "adopted" | "outcome";
+export type SekbAdoptionTrigger =
+  | "ui-exposure"
+  | "context-exposure"
+  | "retrieved"
+  | "operation"
+  | "cited"
+  | "adopted"
+  | "outcome";
 export type SekbRunIdentity = {
   taskId: string | null;
   runId: string | null;
@@ -101,7 +112,12 @@ export type SekbAdoptionEvidence = SekbRunIdentity & {
   outcome: "success" | "failure" | "unknown";
   outcomeKind: "operational" | "task" | null;
   observationId: string | null;
-  operation: { toolCallId: string; toolName: string | null; observed: boolean; succeeded: boolean | null } | null;
+  operation: {
+    toolCallId: string;
+    toolName: string | null;
+    observed: boolean;
+    succeeded: boolean | null;
+  } | null;
   actor: string;
   driven_by: "agent";
 };
@@ -122,10 +138,45 @@ export type SekbAttributionReceipt = {
 
 /** Stable identity of public advice; counters and diagnostics do not create new versions. */
 export function getPrincipleVersion(principle: Principle): string {
-  return createHash("sha256").update(JSON.stringify([
-    principle.title, principle.condition, principle.action, principle.reason,
-    principle.full_content, normalizeTags(principle.task_types), normalizeTags(principle.context_tags),
-  ])).digest("hex");
+  return createHash("sha256")
+    .update(
+      JSON.stringify([
+        principle.title,
+        principle.condition,
+        principle.action,
+        principle.reason,
+        principle.full_content,
+        normalizeTags(principle.task_types),
+        normalizeTags(principle.context_tags),
+      ]),
+    )
+    .digest("hex");
+}
+
+/** Active status alone does not establish the owner's confirmation provenance. */
+export function isConfirmedPrinciple(principle: Principle): boolean {
+  const provenance = principle.metadata.confirmProvenance;
+  if (!provenance || typeof provenance !== "object" || Array.isArray(provenance)) return false;
+  const p = provenance as Record<string, unknown>;
+  return (
+    principle.status === "active" &&
+    p.schema === "sekb-confirm-provenance.v1" &&
+    (p.integrity === "confirmed" || p.integrity === "high_trust") &&
+    principle.metadata.confirmIntegrity === p.integrity &&
+    ["sekb", "ui-confirm", "batch-distiller"].includes(String(p.sourceSystem)) &&
+    typeof p.sessionId === "string" &&
+    Boolean(p.sessionId.trim()) &&
+    Number.isFinite(Date.parse(String(p.confirmedAt))) &&
+    p.revokeKey === `revoke:sekb-principle:${principle.principle_id}`
+  );
+}
+
+export function experienceReadPolicy(principle: Principle): OwnerReadPolicy {
+  return {
+    ...readOwnerReadPolicyMetadata(principle.metadata),
+    trust: "confirmed",
+    updatedAt: principle.updated_at,
+  };
 }
 
 export type DistillationSuggestion = {
@@ -186,8 +237,9 @@ export function approxTokenCount(value: string): number {
 }
 
 export function normalizeTags(values: readonly string[] | undefined): string[] {
-  return [...new Set((values ?? []).map((value) => value.trim().toLowerCase()).filter(Boolean))]
-    .toSorted((left, right) => left.localeCompare(right));
+  return [
+    ...new Set((values ?? []).map((value) => value.trim().toLowerCase()).filter(Boolean)),
+  ].toSorted((left, right) => left.localeCompare(right));
 }
 
 export function buildPrincipleFullContent(input: {

@@ -7,10 +7,17 @@ import {
   type KeRetrievalShadowContext,
   type KeRetrievalShadowResult,
 } from "../../runtime-core/ke-retrieval-shadow.js";
-import { getPrincipleVersion, normalizeTags, type Principle } from "./types.js";
+import {
+  getPrincipleVersion,
+  isConfirmedPrinciple,
+  normalizeTags,
+  type Principle,
+} from "./types.js";
 
 export type RetrievalEngineOptions = {
   store: KnowledgeStore;
+  /** Project RAG requires confirmed content matches; legacy SEKB studies keep their policy. */
+  confirmedOnly?: boolean;
   /** KE-P1-2 shadow retrieval config (runtime.coding.sekb.retrievalShadow). Off => no shadow. */
   config?: unknown;
   /** Receipt writer to persist the shadow_context receipt (optional). */
@@ -29,6 +36,7 @@ type ScoredPrinciple = {
 /** Deterministic advisory retriever for SEKB principles. */
 export class RetrievalEngine {
   readonly #store: KnowledgeStore;
+  readonly #confirmedOnly: boolean;
   readonly #config: unknown;
   readonly #receiptWriter: KeReceiptWriter | undefined;
   readonly #onRetrievalShadow: ((result: KeRetrievalShadowResult) => void) | undefined;
@@ -36,6 +44,7 @@ export class RetrievalEngine {
 
   constructor(options: RetrievalEngineOptions) {
     this.#store = options.store;
+    this.#confirmedOnly = options.confirmedOnly === true;
     this.#config = options.config;
     this.#receiptWriter = options.receiptWriter;
     this.#onRetrievalShadow = options.onRetrievalShadow;
@@ -50,21 +59,28 @@ export class RetrievalEngine {
   ): Principle[] {
     const tags = normalizeTags(context_tags);
     const taskType = task_type.trim().toLowerCase();
-    const candidates = this.#store.query_principles({ status: "active", task_types: [taskType] })
-      .filter((principle) =>
-        tags.length === 0 || tags.some((tag) => principle.context_tags.includes(tag))
+    const candidates = this.#store
+      .query_principles({ status: "active", task_types: [taskType] })
+      .filter(
+        (principle) =>
+          tags.length === 0 || tags.some((tag) => principle.context_tags.includes(tag)),
       );
     const query = [task_intent, taskType, ...tags].join(" ");
     this.#recordShadow(query, candidates, { taskType, contextTags: tags }, top_k);
-    return this.#rank(candidates, query, top_k);
+    return this.#rank(candidates, this.#confirmedOnly ? task_intent : query, top_k);
   }
 
   retrieve_for_error(error_signature: string, context_tags: string[], top_k = 3): Principle[] {
     const tags = normalizeTags(context_tags);
     const candidates = this.#store.query_principles({ status: "active" });
     const query = [error_signature, ...tags].join(" ");
-    this.#recordShadow(query, candidates, { taskType: "error", contextTags: tags, errorSignature: error_signature }, top_k);
-    return this.#rank(candidates, query, top_k);
+    this.#recordShadow(
+      query,
+      candidates,
+      { taskType: "error", contextTags: tags, errorSignature: error_signature },
+      top_k,
+    );
+    return this.#rank(candidates, this.#confirmedOnly ? error_signature : query, top_k);
   }
 
   format_for_injection(principles: Principle[]): string {
@@ -77,7 +93,7 @@ export class RetrievalEngine {
           `Action: ${principle.action}`,
           `Reason: ${principle.reason}`,
           "---",
-        ].join("\n")
+        ].join("\n"),
       )
       .join("\n");
   }
@@ -105,7 +121,9 @@ export class RetrievalEngine {
           configDigest: this.#shadowBase.configDigest ?? "sekb-retrieval",
           ...this.#shadowBase,
           contextTags: context.contextTags,
-          ...(context.errorSignature !== undefined ? { errorSignature: context.errorSignature } : {}),
+          ...(context.errorSignature !== undefined
+            ? { errorSignature: context.errorSignature }
+            : {}),
         },
         topK,
       );
@@ -121,15 +139,21 @@ export class RetrievalEngine {
 
   #rank(candidates: Principle[], query: string, topK: number): Principle[] {
     const ranked = candidates
+      .filter(
+        (principle) =>
+          !this.#confirmedOnly ||
+          (isConfirmedPrinciple(principle) && lexicalScore(query, principle, true) > 0),
+      )
       .map<ScoredPrinciple>((principle) => ({
         principle,
         score: lexicalScore(query, principle) + metadataScore(principle),
       }))
       .filter((item) => item.score > 0)
-      .toSorted((left, right) =>
-        right.score - left.score ||
-        Number(right.principle.pinned) - Number(left.principle.pinned) ||
-        left.principle.title.localeCompare(right.principle.title)
+      .toSorted(
+        (left, right) =>
+          right.score - left.score ||
+          Number(right.principle.pinned) - Number(left.principle.pinned) ||
+          left.principle.title.localeCompare(right.principle.title),
       )
       .slice(0, Math.max(0, Math.trunc(topK)))
       .map((item) => item.principle);
@@ -161,7 +185,11 @@ export class ContextInjector {
     return injection ? `${system_prompt}\n${injection}` : system_prompt;
   }
 
-  for_error(error_signature: string, context_tags: string[], onRetrieved?: (principles: readonly Principle[]) => void): string {
+  for_error(
+    error_signature: string,
+    context_tags: string[],
+    onRetrieved?: (principles: readonly Principle[]) => void,
+  ): string {
     const principles = this.#engine.retrieve_for_error(error_signature, context_tags);
     onRetrieved?.(principles);
     const injection = this.#engine.format_for_injection(principles);
@@ -169,20 +197,21 @@ export class ContextInjector {
   }
 }
 
-function lexicalScore(query: string, principle: Principle): number {
+function lexicalScore(query: string, principle: Principle, contentOnly = false): number {
   const queryTokens = tokens(query);
   if (queryTokens.size === 0) {
     return 0;
   }
-  const haystack = tokens([
-    principle.title,
-    principle.condition,
-    principle.action,
-    principle.reason,
-    principle.full_content,
-    ...principle.task_types,
-    ...principle.context_tags,
-  ].join(" "));
+  const haystack = tokens(
+    [
+      ...(contentOnly ? [] : [principle.title]),
+      principle.condition,
+      principle.action,
+      principle.reason,
+      principle.full_content,
+      ...(contentOnly ? [] : [...principle.task_types, ...principle.context_tags]),
+    ].join(" "),
+  );
   let score = 0;
   for (const token of queryTokens) {
     if (haystack.has(token)) {

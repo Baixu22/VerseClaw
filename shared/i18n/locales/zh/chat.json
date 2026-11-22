@@ -2142,7 +2142,7 @@
       "menu": "发送方式",
       "guide": "引导",
       "guideTooltip": "不停止运行，在下一步加入当前运行",
-      "longTaskRequired": "打断/引导/排队/修改目标需要当前会话存在有效的 /loop 长任务上下文。",
+      "longTaskRequired": "中断和引导需要活动的长任务。",
       "reviseGoal": "修改目标",
       "reviseGoalTooltip": "保存检查点，并以这条消息作为新目标重新开始",
       "queueDefault": "运行中：Enter 默认排队",
@@ -2296,6 +2296,30 @@
     "knowledgeRuntimeLessons": {
       "title": "运行时经验",
       "description": "将已确认的 SEKB 原则作为可见知识来源。"
+    },
+    "knowledgeInteraction": {
+      "label": "知识模式",
+      "off": "关闭",
+      "manual": "手动",
+      "suggest": "建议",
+      "auto-read": "自动读取"
+    },
+    "knowledgeProfile": {
+      "label": "检索方案",
+      "local": "本地",
+      "quality": "质量",
+      "research": "研究"
+    },
+    "knowledgeRead": {
+      "cancel": "取消读取",
+      "cancelled": "已取消",
+      "timeout": "读取超时",
+      "error": "读取不可用",
+      "inspect": "查看来源",
+      "version": "版本 {{version}}",
+      "bytes": "候选正文 {{bytes}} 字节",
+      "fallback": "正在使用来源检索回退",
+      "partial": "检索结果部分可用"
     }
   },
   "historyBuckets": {
@@ -3025,5 +3049,12 @@
     "copyDetails": "复制详情",
     "history": "分支与历史",
     "tools": "仓库工具"
+  },
+  "knowledgeUsage": {
+    "summary": "已用知识：{{count}} 个片段 · {{chars}} 字符 · 约 {{tokens}} token",
+    "unavailable": "用量收据不可用",
+    "pending": "等待最终知识用量收据",
+    "dropped": "{{count}} 个已选来源未保留",
+    "selectionUnavailable": "已选来源对照不可用"
   }
 }

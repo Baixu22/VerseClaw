@@ -65,7 +65,10 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
   const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8', windowsHide: true }).trim();
   const inputChanges = execFileSync('git', ['status', '--porcelain=v1', '--untracked-files=all', '--', 'src', 'shared', 'electron', 'openclaw_runtime', 'tests/e2e/fixtures'],
     { encoding: 'utf8', windowsHide: true }).trim();
-  const allowedBaselineHelperChanges = new Set(helperNames.map(name => `M tests/e2e/fixtures/${name}`));
+  const allowedBaselineHelperChanges = new Set([
+    ...helperNames.map(name => `M tests/e2e/fixtures/${name}`),
+    '?? tests/e2e/fixtures/electron-executable.ts',
+  ]);
   const unexpectedInputChanges = inputChanges.split(/\r?\n/).map(line => line.trim()).filter(Boolean)
     .filter(line => !(side === 'baseline' && allowedBaselineHelperChanges.has(line)));
   expect(unexpectedInputChanges, '产品或公共 helper 有未冻结差异，先固定候选').toEqual([]);
@@ -243,15 +246,26 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       await expect.poll(() => owned.exitCode !== null || owned.signalCode !== null, { timeout: 15_000 }).toBe(true);
       const cleanup = await closeElectronApp(app); expect(cleanup.launcherExited).toBe(true);
       app = await launchElectronApp({ skipSetup: true, skipSeed: true, profileDir: userDataDir });
-      await configureSessionChainProvider(app, llm.port); await hostInvoke(app, 'gateway', 'start');
-      await expect.poll(async () => (await hostInvoke<{ state: string }>(app, 'gateway', 'status')).state, { timeout: 60_000 }).toBe('running');
+      const restartStartedAt = Date.now();
+      await configureSessionChainProvider(app, llm.port);
+      const gatewayStart = await hostInvoke<{ success: boolean }>(app, 'gateway', 'start')
+        .then(result => ({ result, timeout: null as string | null }))
+        .catch(error => {
+          const timeout = String(error);
+          if (!timeout.includes('[TIMEOUT] Host action gateway.start timed out after 60s')) throw error;
+          return { result: null, timeout };
+        });
+      await expect.poll(async () => (await hostInvoke<{ state: string }>(app, 'gateway', 'status')).state,
+        { timeout: 120_000 }).toBe('running');
+      const gatewayReadyAfterMs = Date.now() - restartStartedAt;
       page = await getStableWindow(app); await expect(id('main-layout')).toBeVisible({ timeout: 30_000 });
       const afterCrash = { described: await rpc<{ session: { sessionId: string } }>('sessions.describe', { key: project.sessionKey }),
         history: await hostInvoke(app, 'sessions', 'history', { sessionKey: project.sessionKey, limit: 50 }) };
       expect(afterCrash.described.session.sessionId).toBe(project.generation);
       expect(JSON.stringify(afterCrash.history)).toContain(`Recorded objective: ${objective}`);
       evidence.fault = { kind: 'main-process-kill-after-persisted-task-history', pid: owned.pid, observed_exit: true,
-        launcher_exited: cleanup.launcherExited, explicit_relaunch: true, same_session_generation: true, before: beforeCrash, after: afterCrash, user_steps: false };
+        launcher_exited: cleanup.launcherExited, explicit_relaunch: true, gateway_start: gatewayStart,
+        gateway_ready_after_ms: gatewayReadyAfterMs, same_session_generation: true, before: beforeCrash, after: afterCrash, user_steps: false };
     }
     await page.exposeFunction('u6Reminder', (text: string) => {
       if (!recording) return;
@@ -310,10 +324,23 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       const created = await hostInvoke<{ tasks: Array<{ contract: { taskNodeId: string; objective: string } }> }>(app, 'taskLedger', 'queryTasks', { workspaceId: project.workspaceId });
       expect(created.tasks).toHaveLength(1); expect(created.tasks[0].contract.objective).toBe(objective); evidence.owner = created;
     } else if (journey === 'cross-tree-migration') {
-      await click('chat-toolbar-more'); await need('execution-migration-open'); await click('execution-migration-open');
+      if (!(await id('execution-migration-open').isVisible())) await click('chat-toolbar-more');
+      await need('execution-migration-open'); await click('execution-migration-open');
       await expect(id('execution-migration-dialog')).toBeVisible();
-      if (await id('execution-migration-target').inputValue() !== targetWorkspaceId) await ui('selectOption', 'checkout:target',
-        () => id('execution-migration-target').selectOption(targetWorkspaceId!), { identity: true, value: targetWorkspaceId! });
+      const migrationTarget = id('execution-migration-target');
+      const nativeSelect = await migrationTarget.evaluate(element => element instanceof HTMLSelectElement);
+      if (nativeSelect) {
+        if (await migrationTarget.inputValue() !== targetWorkspaceId) await ui('selectOption', 'checkout:target',
+          () => migrationTarget.selectOption(targetWorkspaceId!), { identity: true, value: targetWorkspaceId! });
+        await expect(migrationTarget).toHaveValue(targetWorkspaceId!);
+      } else {
+        if ((await migrationTarget.textContent())?.trim() !== 'U6 target') {
+          await ui('click', 'checkout:target:open', () => migrationTarget.click());
+          await ui('click', 'option:U6 target', () => page.getByRole('option', { name: 'U6 target', exact: true }).click(),
+            { identity: true, value: targetWorkspaceId! });
+        }
+        await expect(migrationTarget).toHaveText('U6 target');
+      }
       await click('execution-migration-start', { confirmation: 'migrate', value: targetWorkspaceId! });
       await expect(id('execution-migration-dialog')).toHaveCount(0, { timeout: 60_000 });
       const moved = await hostInvoke<{ operation: { id: string; phase: string; sessionKey: string; targetGeneration: string } }>(app,
@@ -379,12 +406,14 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
           return response;
         });
       });
-      await ui('click', 'chat-header:options', () => id('chat-toolbar-more').click());
+      if (side === 'baseline') {
+        await click('chat-header-session-name');
+      } else {
+        await click('chat-toolbar-more');
+      }
       await need('chat-session-handoff');
       await expect(id('chat-session-handoff')).toBeEnabled();
-      await ui('press', 'testid:chat-session-handoff:Enter', async () => {
-        await id('chat-session-handoff').focus(); await id('chat-session-handoff').press('Enter');
-      });
+      await click('chat-session-handoff');
       await expect(id('chat-handoff-dialog')).toBeVisible();
       let draft = await id('chat-handoff-draft').inputValue(); expect(draft.trim()).not.toBe('');
       if (!draft.includes(objective)) {

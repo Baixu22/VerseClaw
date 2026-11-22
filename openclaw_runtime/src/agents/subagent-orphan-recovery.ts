@@ -27,6 +27,7 @@ import { formatErrorMessage } from "../infra/errors.js";
 import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveInternalSessionEffectsTranscriptPath } from "./internal-session-effects.js";
+import { isCancelledPersistentTaskWorker } from "./persistent-task-delegation.js";
 import {
   evaluateSubagentRecoveryGate,
   markSubagentRecoveryAttempt,
@@ -268,6 +269,10 @@ export async function recoverOrphanedSubagentSessions(params: {
       let releaseRecoveryPermit: (() => void) | undefined;
       let preserveRecoveryOwner = authorityEnabled;
       try {
+        if (isCancelledPersistentTaskWorker(runRecord)) {
+          result.skipped++;
+          continue;
+        }
         const agentId = resolveAgentIdFromSessionKey(childSessionKey);
         const storePath = resolveStorePath(cfg.session?.store, { agentId });
 

@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -45,13 +45,15 @@ afterEach(() => {
 describe("durable product task ownership", () => {
   it("migrates the prior task schema without changing task identity and rejects future schemas", () => {
     const c = setupOwner();
-    store.db.exec("PRAGMA user_version=1");
+    store.beginRun(c, "legacy-running");
+    store.db.exec("ALTER TABLE task_active_runs DROP COLUMN owner_pid; PRAGMA user_version=6;");
     const migrated = new TaskSystemStore(resolveTaskDomain(root), () => now);
     try {
       expect(migrated.get(c.taskNodeId).claim!.epoch).toBe(c.epoch);
       expect(
         (migrated.db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
-      ).toBe(6);
+      ).toBe(7);
+      expect(() => migrated.beginRun(c, "new-run")).toThrow("TASK_RUN_ALREADY_ACTIVE");
     } finally {
       migrated.close();
     }
@@ -67,6 +69,61 @@ describe("durable product task ownership", () => {
     expect(() => store.beginRun(c, "run-b")).toThrow("RUN_ALREADY_ACTIVE");
     store.endRun(c, "run-a");
     expect(() => store.beginRun(c, "run-b")).not.toThrow();
+  });
+  it("replaces an exited process's run without replacing its task owner or checkpoint", () => {
+    const c = setupOwner();
+    const previousPid = process.pid + 1;
+    const checkpoint = { nextAction: "Verify the saved artifact", completed: [], unresolved: [], artifacts: [] };
+    store.checkpoint(c, checkpoint);
+    store.beginRun(c, "original");
+    store.db.prepare("UPDATE task_active_runs SET owner_pid=? WHERE task_id=?").run(previousPid, c.taskNodeId);
+    const probe = vi.spyOn(process, "kill").mockImplementation(() => { throw Object.assign(new Error(), { code: "ESRCH" }); });
+    try {
+      store.beginRun(c, "recovered");
+      store.endRun(c, "original");
+      store.beginRun(c, "recovered");
+      expect(() => store.beginRun(c, "duplicate")).toThrow("TASK_RUN_ALREADY_ACTIVE");
+      expect(probe).toHaveBeenCalledExactlyOnceWith(previousPid, 0);
+      expect(store.get(c.taskNodeId)).toMatchObject({ claim: c, checkpoint });
+      const recovered = store.history(c.taskNodeId).filter(event => event.kind === "interrupted_run_replaced");
+      expect(recovered).toHaveLength(1);
+      expect(JSON.parse(recovered[0].json)).toMatchObject({
+        epoch: c.epoch, generation: c.generation, previousRunId: "original", previousPid, runId: "recovered", pid: process.pid,
+      });
+    } finally {
+      probe.mockRestore();
+    }
+  });
+  it.each([undefined, "EPERM"])("retains the run when the PID probe establishes no exit (%s)", errorCode => {
+    const c = setupOwner();
+    store.beginRun(c, "original");
+    store.db.prepare("UPDATE task_active_runs SET owner_pid=? WHERE task_id=?").run(process.pid + 1, c.taskNodeId);
+    const probe = vi.spyOn(process, "kill").mockImplementation(() => {
+      if (errorCode) throw Object.assign(new Error(), { code: errorCode });
+      return true;
+    });
+    try {
+      expect(() => store.beginRun(c, "original")).toThrow("TASK_RUN_ALREADY_ACTIVE");
+      expect(() => store.beginRun(c, "recovered")).toThrow("TASK_RUN_ALREADY_ACTIVE");
+    } finally {
+      probe.mockRestore();
+    }
+  });
+  it.each(["started", "unknown"] as const)("retains the old run after process exit while an effect is %s", state => {
+    const c = setupOwner();
+    store.beginRun(c, "original");
+    store.beginOperation(c, "effect", "exec");
+    if (state === "unknown") store.finishOperation(c, "effect", "unknown", "lost receipt");
+    store.db.prepare("UPDATE task_active_runs SET owner_pid=? WHERE task_id=?").run(process.pid + 1, c.taskNodeId);
+    const probe = vi.spyOn(process, "kill").mockImplementation(() => { throw Object.assign(new Error(), { code: "ESRCH" }); });
+    try {
+      expect(() => store.beginRun(c, "recovered")).toThrow("TASK_EFFECT_OWNER_RECONCILIATION_REQUIRED");
+      expect(store.get(c.taskNodeId).pendingOperationDetails).toMatchObject([{ operationId: "effect", state }]);
+      expect(store.db.prepare("SELECT run_id FROM task_active_runs WHERE task_id=?").get(c.taskNodeId)).toMatchObject({ run_id: "original" });
+      expect(store.history(c.taskNodeId).some(event => event.kind === "interrupted_run_replaced")).toBe(false);
+    } finally {
+      probe.mockRestore();
+    }
   });
   it("keeps identity across retries, detects exact duplicates, and separates different goals", () => {
     const a = store.create(contract(), "request-1");

@@ -23,6 +23,9 @@
       "@openclaw/normalization-core": [
         "./openclaw_runtime/packages/normalization-core/src/index.ts"
       ],
+      "@openclaw/markdown-core/*": [
+        "./openclaw_runtime/packages/markdown-core/src/*"
+      ],
       "@openclaw/normalization-core/number-coercion": [
         "./openclaw_runtime/packages/normalization-core/src/number-coercion.ts"
       ],

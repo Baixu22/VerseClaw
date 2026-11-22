@@ -1,0 +1,289 @@
+{
+  "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "driven_by": "agent",
+  "reports": [
+    {
+      "file": "autoreview-final-fix-r1.json",
+      "sha256": "9e410d6e9b2682854da1d358605bfa4616ff56d25cf98118732f6b9026dffbcc",
+      "report": {
+        "findings": [],
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "The three incremental changes are consistent: the environment object now explicitly matches the string-or-undefined contract accepted by execFileSync; the duplicate side-effect import is redundant because the named import already evaluates the same module; and the denial-path test directly verifies that source synchronization is not invoked when knowledge requests are rejected, with mock state restored after each test. No actionable defect was found in this review scope.",
+        "overall_confidence": 0.94
+      }
+    },
+    {
+      "file": "autoreview-g5-late-r1.json",
+      "sha256": "ab5a50236c6c32f47febb587a38fcdcb6bcde2a2e54dfb450ec3a980e48faf3a",
+      "report": {
+        "findings": [
+          {
+            "title": "中断后的规划前 Research 会永久阻塞同一请求",
+            "body": "触发：`startPrePlanResearch` 写入 `preplan_research_started` 后，进程退出、Electron 重启，或 `runPrePlanResearch`/`completePrePlanResearch` 抛错。结果：以相同 requestId 重试时，`preparePrePlanResearch` 幂等返回同一 prepared，`startPrePlanResearch` 命中已有 started 事件即抛 `TASK_RESEARCH_PENDING_RECONCILE`；store 与服务层没有清除、过期或对账该事件的路径，`task-system-service` 的 `reconcile` 命令只处理任务 claim。该 requestId 及其 goal 任务在无手工改库时无法再次完成，重启恢复路径失效。",
+            "priority": "P2",
+            "confidence": 0.85,
+            "category": "bug",
+            "code_location": {
+              "file_path": "shared/task-system/store.ts",
+              "line": 536
+            }
+          },
+          {
+            "title": "基线读取把非 Git 异常静默降级为 unversioned",
+            "body": "触发：`readResearchBaseline` 在 `git ls-files --others` 与 `lstatSync`/`readFileSync` 之间遇到未跟踪文件被删除、权限或句柄错误，或 `git diff --binary HEAD` 超过 5 秒超时等非 `RESEARCH_BASELINE_*` 异常。结果：catch 统一返回 `{kind:'unversioned',reason:'git-unavailable'}`，即使工作区是正常 Git 仓库；研究包因此丢失 commit/tree/workingTreeDigest 绑定。同一次保存中 `completePrePlanResearch`/`assertPrePlanResearchCurrent` 会重新读取基线，瞬时失败与包内基线不一致时抛 `TASK_RESEARCH_BASELINE_STALE`，正常研究被误判过期。",
+            "priority": "P2",
+            "confidence": 0.65,
+            "category": "bug",
+            "code_location": {
+              "file_path": "shared/task-system/preplan-research.ts",
+              "line": 91
+            }
+          },
+          {
+            "title": "基线摘要在主线程同步读取全部脏工作树，且不受 Research 预算约束",
+            "body": "触发：工作区存在大量或大体积未跟踪文件、大 diff。`readResearchBaseline` 用 `execFileSync` 缓冲完整 `git diff --binary HEAD`，并对每个未跟踪文件 `readFileSync`（单文件上限 32MB，但无总字节数和文件数上限），全部在主进程同步执行；`ResearchBudgetEnvelope` 在基线计算之后才创建，`maxWallMs`/`maxTokens` 无法限制这段耗时与读取量。结果：调用 `prePlanResearch`/`savePlan` 前主进程可能长时间阻塞，实际读取超出显式三轴预算。",
+            "priority": "P3",
+            "confidence": 0.7,
+            "category": "maintainability",
+            "code_location": {
+              "file_path": "shared/task-system/preplan-research.ts",
+              "line": 76
+            }
+          },
+          {
+            "title": "归因测试只覆盖 exec，非 exec 完成操作的 effect 归属未验证",
+            "body": "触发：任务完成 `write_file`、浏览器或其他非 `exec` 工具操作。`recordToolVerification` 对 `tool !== 'exec'` 直接返回，不产生带 operationId 的 TaskEvidence；`finishOperation` 的 `operation_settled` 事件也不携带 `receipt`。`projectReverseAttribution` 对该 completed operation 得到空 `effectReceiptIds`，添加 `unattributed-effect` 并把报告降为 `broken-link`，除非另有该 operationId 的 effect 回执。现有单测和 E2E 只构造 exec 操作，未覆盖常见写入路径，无法区分这是预期诊断还是误报。",
+            "priority": "P3",
+            "confidence": 0.6,
+            "category": "test_gap",
+            "code_location": {
+              "file_path": "shared/task-system/reverse-attribution-index.ts",
+              "line": 66
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "本次只读静态核对调用边界、持久任务基线、异步恢复、读取预算与归因索引，未运行测试、构建或写操作。主要接线（host-api → task-system-service → store、researchPacketId 绑定、预算三轴、索引冷重建）结构一致，但中断研究留下的 started 事件没有对账路径，同 requestId 重试会永久失败；基线读取用宽泛 catch 把非 Git 错误降级为 unversioned，既削弱 Git 绑定也会造成瞬时 BASELINE_STALE；基线摘要同步遍历脏工作树且不受 Research 预算约束；归因测试仅覆盖 exec，非 exec 完成操作可能被降为 broken-link 而未被验证。",
+        "overall_confidence": 0.7
+      }
+    },
+    {
+      "file": "autoreview-owner-1-r2.json",
+      "sha256": "67f871142babeee53b80ade8224a629a596071770d3a09335f56207b01588f90",
+      "report": {
+        "findings": [
+          {
+            "title": "启用任务生命周期账本时引用了不存在的导出 | Task lifecycle ledger merge seam is incomplete",
+            "body": "`electron/main/index.ts` imports `appendTaskLedgerLifecycleEvents` from `task-ledger-service` and calls it in both task-loop and mission lifecycle paths, but this commit defining no such export anywhere. Typechecking/building the commit fails at the import, so lifecycle receipts cannot be written. Include the missing service implementation/export in the bundle or keep the existing `appendTaskLedgerEvents` path until the merge is complete.",
+            "priority": "P0",
+            "confidence": 1,
+            "category": "bug",
+            "code_location": {
+              "file_path": "electron/main/index.ts",
+              "line": 77
+            }
+          },
+          {
+            "title": "Knowledge owner/retrieval merge references files absent from the commit",
+            "body": "`knowledge-api.ts` imports owner-read, research, embedding, operations, vector, rerank, answer, retrieval-plan, and retrieval-session modules that are not present in the commit tree. `openclaw_runtime/src/knowledge/retrieval/research.ts` likewise imports missing `./plan.js` and `./embedding-session.js`. Module resolution therefore fails before owner-scoped retrieval can run. Add the complete source set to this change or remove the dependent imports.",
+            "priority": "P0",
+            "confidence": 1,
+            "category": "bug",
+            "code_location": {
+              "file_path": "electron/services/knowledge-api.ts",
+              "line": 44
+            }
+          },
+          {
+            "title": "Host timeout merge uses an API that does not exist at this commit",
+            "body": "`host-invoke.ts` imports `HostTimeoutError`, but `shared/host-api/host-deadline.ts` exports no such class. It also calls `hostActionTimeoutMs(module, action, payload)` while this commit's function accepts only two arguments. Both produce compile errors, blocking all host-api dispatch. Land the corresponding host-deadline/timeout changes or revert to the existing `HostActionTimeoutError` contract.",
+            "priority": "P0",
+            "confidence": 1,
+            "category": "bug",
+            "code_location": {
+              "file_path": "electron/main/ipc/host-invoke.ts",
+              "line": 20
+            }
+          },
+          {
+            "title": "Experience exposure receipt is discarded before recording succeeds",
+            "body": "`recordExperienceExposure` deletes the pending exposure entry immediately after selecting source refs, before the read-scope assertion and `sekb.recordExposure` RPC complete. If the scope changed or the RPC fails, the client's retry with the same requestId finds no pending entry and returns `recorded: 0`, permanently losing the exposure receipt. Delete the entry only after a successful RPC, or retain it until expiry so retries remain possible.",
+            "priority": "P1",
+            "confidence": 0.99,
+            "category": "bug",
+            "code_location": {
+              "file_path": "electron/services/knowledge-api.ts",
+              "line": 5944
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "The commit cannot build from its own tree: several imported owner/retrieval modules, the lifecycle-ledger export, and the host timeout class/signature are missing at this merge seam. Independently, the experience-exposure acknowledgement path deletes its retryable receipt before recording completes, so a failed scope check or RPC loses the receipt.",
+        "overall_confidence": 1
+      }
+    },
+    {
+      "file": "autoreview-owner-1-r3.json",
+      "sha256": "132236e0deb74d180aeb259d09a27a80e7738e1563b437d9e189cb02cd4cbbb2",
+      "report": {
+        "findings": [],
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "在当前工作区合并依赖下核对了本批 owner 变更及接缝：任务生命周期写入改为按事件摘要分批并经 appendTaskLedgerLifecycleEvents 串行去重；host-invoke 的共享 HostTimeoutError 与 payload-aware 预算签名在当前源码中一致；知识检索的 report.results、owner read 快照校验、experience 的 principle_id→sourceRef.subjectId 映射以及 exposure receipt 的 requestId 回传路径均与 gateway handler 对齐。未发现可复算的功能错误、跨项目错配或回执丢失。",
+        "overall_confidence": 0.76
+      }
+    },
+    {
+      "file": "autoreview-owner-2-r1.json",
+      "sha256": "56d78e78ba9eae9d29e62a268425d13dc121463c42611ed6c3129c4736754bb4",
+      "report": {
+        "findings": [
+          {
+            "title": "省略 readIdentity 可绕过知识 owner 绑定",
+            "body": "`readIdentity` 只有在请求携带 `readIdentity` 时才校验 `client.connect.client.mode === \"backend\"`；字段缺失时直接返回 `undefined`。`wiki.get` / `wiki.search` 随后仍用默认配置或请求里的 `agentSessionKey` 构造 owner context，因此持有 `operator.read` 的非 backend Gateway 客户端只要省略 `readIdentity`，就能绕过本次新增的 backend-owned owner 绑定读取知识。Main 经 `gateway-api.ts` 调用时会补齐 identity，但直接 RPC 面仍暴露该绕过。应要求这些 owner-scoped 方法必须提供 `readIdentity`，缺失或来源非 backend 时拒绝。",
+            "priority": "P1",
+            "confidence": 0.82,
+            "category": "security",
+            "code_location": {
+              "file_path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+              "line": 51
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "发现一处可复现的 owner 读取越权接缝：新增的 backend-owned 身份校验只在请求显式提供 `readIdentity` 时生效，直接 Gateway RPC 可省略该字段并回退到默认或请求方提供的会话身份，从而绕过知识 owner 绑定。其余已检查的任务、会话、配置与知识回执接缝未发现可确认的功能错误或回执丢失。",
+        "overall_confidence": 0.82
+      }
+    },
+    {
+      "file": "autoreview-owner-2-r2.json",
+      "sha256": "c715f3ad2a210e1d140e4722c9a986827bd31ce38cf8b3a6661f0503e290a36d",
+      "report": {
+        "findings": [
+          {
+            "title": "wiki.search 身份校验先于导入同步的时序未被直接断言",
+            "body": "本次将 readIdentity 移到 syncImportedSourcesIfNeeded 之前，核心安全属性是未授权调用不再触发导入同步副作用。现有测试只断言未授权调用返回 respond(false) 且 vault 文件未变，无法区分同步是否已执行：即使身份校验发生在同步之后，这些断言同样会通过。建议在测试中直接锁定该时序，例如对 syncImportedSourcesIfNeeded（或其依赖的索引/导入状态）加 spy，断言 wiki.search 在非 backend、缺 identity、伪造 identity 三种拒绝路径下同步未被调用，从而防止该硬性检查被后续改动回退。",
+            "priority": "P3",
+            "confidence": 0.6,
+            "category": "test_gap",
+            "code_location": {
+              "file_path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+              "line": 647
+            }
+          }
+        ],
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "变更按调用链核对无误。readIdentity 去掉了 request.readIdentity 为 undefined 时返回 undefined 的分支，改为在 client 模式非 backend 或身份对象缺失/非法时直接抛错；gateway.ts 中全部 9 个调用点（wiki.operations.config、wiki.retrieve、wiki.vector.*、wiki.rerank.*、wiki.embedding.*、wiki.index.*、wiki.get、wiki.search）都以 try/catch + respondError 处理拒绝，此前依赖 undefined 作为拒绝信号的分支（如 if (!identity) throw）在新行为下仍会拒绝，仅错误文案统一为 Invalid knowledge read identity.，无路径被放宽。wiki.search 将身份校验移到 syncImportedSourcesIfNeeded 之前，未授权调用不再触发导入同步副作用，与 wiki.get 既有的先校验后同步顺序一致；校验通过后传入 searchMemoryWiki 的 identity 与原先内联调用结果相同，searchMemoryWiki/getMemoryWikiPage 的 readIdentity 均为可选参数，类型与运行时契约兼容。CLI 与 runtime 本地工具不经过该 gateway 入口，不受此收紧影响。测试引用的 createPluginStateKeyedStoreForTests、closeOpenClawStateDatabase、closeTrackedSqliteHandlesUnder 及 projection 服务的 enable/idle/search/status/stop 签名均与实现匹配，覆盖非 backend 缺失/伪造 identity、backend 省略 identity、正常搜索与固定来源读取。唯一可改进点是新增的校验时序安全属性缺少直接测试断言。未运行构建/测试（按约束仅做只读核对），运行时相关的检索行为断言以代码契约为准。",
+        "overall_confidence": 0.85
+      }
+    },
+    {
+      "file": "autoreview-owner-3-r1.json",
+      "sha256": "b9b27ff49468a2d4849eea258c9b7a4de560a64aaff82402e28ab46e2ef46748",
+      "report": {
+        "findings": [],
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "已按当前工作区作为完整候选核对本批 owner 变更及合并接缝，并确认本批引用的任务、会话、知识接口依赖在当前工作区存在。未发现可复算的非 UI 功能错误、跨项目边界错误或回执丢失问题；UI 发送与页面状态问题不在本批重复审查。",
+        "overall_confidence": 0.72
+      }
+    },
+    {
+      "file": "autoreview-ui-r1.json",
+      "sha256": "2bb777131e6cb81e02c7cf9df25b0fa177738c132a22aa4fd58594dd09f277b3",
+      "report": {
+        "findings": [
+          {
+            "title": "Active-run send path bypasses duplicate-send guard",
+            "body": "The new sendPreparingRef guard is checked only in handleSend. handleRunningSend calls completeSend directly. When completeSend awaits a before-send hook, the run is still active and the draft remains in state, so a second click can invoke the same path and dispatch the same message or attachments twice. Apply the guard inside completeSend or serialize running sends before the hook await.",
+            "priority": "P1",
+            "confidence": 0.88,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/pages/Chat/ChatInput.tsx",
+              "line": 2512
+            }
+          },
+          {
+            "title": "Auto-read is skipped for queued and guided sends",
+            "body": "Only handleSend calls routeKnowledgeForMessage before dispatch. handleRunningSend passes selectedKnowledgeRefs directly, and the canSend false queue branch calls queuePendingMessage without routing. With auto-read selected and no manual references, the queued or guided message reaches chat.send with knowledgeMode but no knowledgeReferences; the runtime resolves knowledge only for non-empty references, so no knowledge is read. Route before every dispatch path or make the runtime handle auto-read itself.",
+            "priority": "P2",
+            "confidence": 0.93,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/pages/Chat/ChatInput.tsx",
+              "line": 2528
+            }
+          },
+          {
+            "title": "Task summary bar stays loading after scope is cleared",
+            "body": "When scopeAvailable becomes false, load returns before incrementing requestVersion or resetting loading. If a previous snapshot request is in flight when workspace or session is cleared, its cleanup invalidates its finally block, leaving loading true indefinitely and the bar permanently showing the loading state. Reset loading and loaded state before the early return.",
+            "priority": "P2",
+            "confidence": 0.91,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+              "line": 204
+            }
+          },
+          {
+            "title": "Editing project configuration hides required recovery action",
+            "body": "field resets result on every input edit. When mount found a pending or degraded operation, that result is the only UI path to reconcileConfiguration. After an edit the recovery button disappears while the backend still rejects new applies with CONFIG_RECOVERY_REQUIRED, leaving the project stuck until the route is refreshed. Keep recovery state separate from preview and apply state until a new operation is started.",
+            "priority": "P2",
+            "confidence": 0.9,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/agents/ProjectConfigurationPanel.tsx",
+              "line": 56
+            }
+          },
+          {
+            "title": "Operations polling can publish stale config after save",
+            "body": "save sets snapshot undefined while waiting for restart and readback, but an already-running refresh has no generation guard tied to save and still calls setSnapshot(next). An old status can therefore replace the restarting state, clear blocked, and enable index or configuration actions against stale state. Invalidate in-flight status reads when saving or ignore responses while pendingConfig or restarting is active.",
+            "priority": "P2",
+            "confidence": 0.86,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/settings/KnowledgeOperationsSettings.tsx",
+              "line": 54
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "The patch keeps most task and knowledge display paths tied to existing owners, but the active-run send path still permits duplicates and drops auto-read knowledge routing. Additional stale-state defects remain in the task summary and configuration recovery flows.",
+        "overall_confidence": 0.86
+      }
+    },
+    {
+      "file": "autoreview-ui-r2.json",
+      "sha256": "dd22f1aeaf8ab1c811d8a9e5bb4a3564146fe4bfa68a6990cd62b9064ae640fd",
+      "report": {
+        "findings": [
+          {
+            "title": "异步发送预检期间编辑草稿仍发送旧文本",
+            "body": "sendIdentityRef 只由会话/目标 agent/模型/附件状态/已选知识引用组成，不包含 input 文本。点击发送后，completeSend 会在 auto-read 路由或 before-send hook 的 await 期间保留调用时的 textToSend；此时用户只修改输入框不会触发 2446/2463 的身份检查。await 完成后仍发送旧文本，并在 2473 清空用户刚输入的新文本。应把提交文本纳入身份检查，或在身份变化时保留最新草稿而不派发旧消息。",
+            "priority": "P2",
+            "confidence": 0.82,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/pages/Chat/ChatInput.tsx",
+              "line": 1229
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "当前修复覆盖了重复提交、运行中入口、provider 预检锁、任务摘要作用域失效和配置恢复的主要路径；复查未发现这些路径的新增回归。但发送身份未绑定草稿文本，异步路由或前置钩子期间编辑输入框会让旧消息通过身份检查并清除新草稿，属于可触发的用户可见缺陷。其余检查到的刷新与配置恢复路径具备版本失效、作用域绑定或忙碌禁用，未形成可操作问题。",
+        "overall_confidence": 0.78
+      }
+    }
+  ],
+  "rejectedFindings": [
+    {
+      "run": "autoreview-owner-1-r2",
+      "reason": "The split diff omitted other batches from its tree; the full working candidate contains the referenced owners and types."
+    },
+    {
+      "run": "autoreview-ui-r2",
+      "reason": "knowledgeRequestKey includes input.trim(); both Auto-read and before-send editing cancellation checks passed."
+    }
+  ],
+  "pendingFinalReview": true
+}

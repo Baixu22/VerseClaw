@@ -3,12 +3,14 @@ import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import type { ElectronApplication, Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, pinWindowContentSize, test } from './fixtures/electron';
+import { configureSessionChainProvider, createSessionChainTask } from './fixtures/session-task-chain';
+import { startScriptedLlm } from './fixtures/fp-p1-harness';
+import type { TaskView } from '../../shared/task-system/types';
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type GatewayStatus = { state?: string; gatewayReady?: boolean };
 type CreatedSession = { key?: string; sessionKey?: string; entry?: { sessionId?: string } };
 type DescribedSession = { session?: { sessionId?: string } };
-type LedgerSnapshot = { snapshot: { nodes: Array<{ id: string; title: string; status: string }> } };
 type BindingResult = {
   success: boolean;
   binding?: {
@@ -184,9 +186,11 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
   launchElectronApp,
 }, testInfo) => {
   test.setTimeout(600_000);
+  const provider = await startScriptedLlm(() => ({ text: 'Coordinator worker result is ready for review.' }));
   const app = await launchElectronApp({ skipSetup: true });
   try {
     const page = await getStableWindow(app);
+    await configureSessionChainProvider(app, provider.port);
     await ensureGatewayReady(app);
     const active = await hostInvoke<{
       activeWorkspace?: { id?: string; rootPath?: string };
@@ -229,13 +233,14 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
       sessionKey,
     });
 
-    const ledger = await hostInvoke<LedgerSnapshot>(app, 'taskLedger', 'createNode', {
-      workspaceId: workspace.id,
-      node: { title: `Coordination task ${Date.now()}`, kind: 'task', status: 'todo' },
-      idempotencyKey: `coordination-task-${Date.now()}`,
+    const managedTask = await createSessionChainTask(app, workspace.id, `coordination-task-${Date.now()}`, {
+      objective: 'Exercise the long-session coordinator UI with an actual worker receipt',
+      target: 'docs/coordination-note.md',
+      constraints: ['Worker completion remains separate from task acceptance'],
+      acceptance: [{ id: 'owner-review', description: 'Review the coordinator worker result',
+        verification: { kind: 'owner-receipt', owner: 'coordination-review', files: ['docs/coordination-note.md'] } }],
     });
-    const task = ledger.snapshot.nodes.at(-1);
-    if (!task) throw new Error('Task Ledger returned no task');
+    const task = { id: managedTask.contract.taskNodeId };
     await hostInvoke(app, 'taskLedger', 'linkSession', {
       workspaceId: workspace.id,
       nodeId: task.id,
@@ -258,6 +263,12 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     expect(bound.binding?.sessionGeneration).toBe(sessionGeneration);
     const bindingRevision = bound.binding?.bindingRevision;
     if (typeof bindingRevision !== 'number') throw new Error('Coordinator binding revision is missing');
+    const claimed = await hostInvoke<{ result: TaskView }>(app, 'taskLedger', 'command', {
+      workspaceId: workspace.id,
+      command: { action: 'claim', taskNodeId: task.id, sessionKey, requestId: `coordination-claim-${task.id}` },
+    });
+    expect(claimed.result.claim).toMatchObject({ sessionKey, generation: sessionGeneration });
+    expect(claimed.result.contract.state).toBe('doing');
 
     const idempotencyKey = `coordination-ui-${Date.now()}`;
     const delegated = await hostInvoke<DelegationResult>(app, 'sessions', 'delegate', {
@@ -278,7 +289,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
       },
       includeVerifier: false,
     });
-    expect(delegated.success).toBe(true);
+    expect(delegated.success, JSON.stringify(delegated)).toBe(true);
     expect(delegated.status).toBe('accepted');
     const orchestrationRunId = delegated.receipt?.orchestrationRunId;
     if (!orchestrationRunId) throw new Error('Delegation returned no orchestration run id');
@@ -368,6 +379,10 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     await expect(childRow.locator(
       'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " sidebar-row ")][1]',
     )).toHaveAttribute('data-hook-selected', 'true', { timeout: 30_000 });
+    const workerSelection = await hostInvoke<{ activeWorkspace: { id: string; activeSessionKey: string; projectCoordinatorSessionKey: string } }>(app, 'workspaces', 'getActive');
+    expect(workerSelection.activeWorkspace.id).toBe(workspace.id);
+    expect(workerSelection.activeWorkspace.activeSessionKey).toBe(worker.childSessionKey);
+    expect(workerSelection.activeWorkspace.projectCoordinatorSessionKey).toBe(sessionKey);
     if (await page.getByTestId('resource-popover-close').isVisible().catch(() => false)) {
       await page.getByTestId('resource-popover-close').click();
     }
@@ -375,18 +390,45 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     coordinator = await openCoordinator(page);
     await expect(coordinator).toContainText(task.id);
 
-    const locales: Array<{ locale: Locale; title: string; active: string }> = [];
+    await app.evaluate((_electron, target) => {
+      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+      const observed = ipcMain as unknown as {
+        _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+        coordinatorActivityReads: number;
+      };
+      const handler = observed._invokeHandlers.get('host:invoke');
+      if (!handler) throw new Error('host:invoke unavailable');
+      observed.coordinatorActivityReads = 0;
+      observed._invokeHandlers.set('host:invoke', async (event, request) => {
+        const result = await handler(event, request);
+        const input = request as { module?: string; action?: string; payload?: { workspaceId?: string; sessionKey?: string } };
+        const response = result as HostResponse<ActivitySnapshot>;
+        if (input.module === 'sessionActivity' && input.action === 'snapshot'
+          && input.payload?.workspaceId === target.workspaceId && input.payload?.sessionKey === target.sessionKey
+          && response.ok && response.data?.snapshot.completionBatches.some((item) => item.batchId === target.batchId)) {
+          observed.coordinatorActivityReads++;
+        }
+        return result;
+      });
+    }, { workspaceId: workspace.id, sessionKey, batchId: batch.batchId });
+    const activityReadCount = () => app.evaluate(() => {
+      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+      return (ipcMain as unknown as { coordinatorActivityReads: number }).coordinatorActivityReads;
+    });
+    const locales: Array<{ locale: Locale; title: string; active: string; activityReadsOnOpen: number }> = [];
     for (const locale of ['en', 'zh', 'ja', 'ru'] as const) {
       await hostInvoke(app, 'settings', 'set', { key: 'language', value: locale });
       await reloadChat(app, page, sessionKey);
       await expect(page.locator('html')).toHaveAttribute('lang', locale);
+      const readsBeforeOpen = await activityReadCount();
       coordinator = await openCoordinator(page);
       const copy = COORDINATOR_COPY[locale];
       const title = coordinator.getByText(copy.title, { exact: true });
       await expect(title).toBeVisible({ timeout: 30_000 });
       await expect(coordinator).toContainText(copy.active);
       await expect(coordinator.getByTestId(`coordinator-worker-${batch.batchId}`)).toContainText(worker.roleName);
-      locales.push({ locale, title: await title.innerText(), active: copy.active });
+      await expect.poll(activityReadCount).toBeGreaterThan(readsBeforeOpen);
+      locales.push({ locale, title: await title.innerText(), active: copy.active, activityReadsOnOpen: await activityReadCount() - readsBeforeOpen });
       await page.getByTestId('resource-popover-close').click();
     }
 
@@ -404,7 +446,9 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     expect(observedWorkerManagedStopControls).toBe(0);
 
     const requestedWide = { width: 1280, height: 800 };
+    const browserWindow = await app.browserWindow(page);
     const wide = await pinWindowContentSize(app, requestedWide);
+    const wideZoom = await browserWindow.evaluate(window => window.webContents.getZoomFactor());
     const widePath = testInfo.outputPath('coordination-wide.png');
     await page.screenshot({ path: widePath, fullPage: true });
     const wideEvidence = await pngEvidence(widePath);
@@ -416,6 +460,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
 
     const requestedNarrow = { width: 680, height: 760 };
     const narrow = await pinWindowContentSize(app, requestedNarrow);
+    const narrowZoom = await browserWindow.evaluate(window => window.webContents.getZoomFactor());
     const narrowPath = testInfo.outputPath('coordination-narrow.png');
     await page.screenshot({ path: narrowPath, fullPage: true });
     const narrowEvidence = await pngEvidence(narrowPath);
@@ -424,6 +469,16 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
       innerHeight: window.innerHeight,
       devicePixelRatio: window.devicePixelRatio,
     }));
+    expect(wide.width).toBeGreaterThan(0);
+    expect(wide.height).toBeGreaterThan(0);
+    expect(Math.abs(wideViewport.innerWidth * wideZoom - wide.width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(wideViewport.innerHeight * wideZoom - wide.height)).toBeLessThanOrEqual(2);
+    expect(narrow.width).toBeGreaterThan(0);
+    expect(narrow.height).toBeGreaterThan(0);
+    expect(Math.abs(narrowViewport.innerWidth * narrowZoom - narrow.width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(narrowViewport.innerHeight * narrowZoom - narrow.height)).toBeLessThanOrEqual(2);
+    expect(narrowViewport.innerWidth).toBeLessThan(wideViewport.innerWidth);
+    expect(narrowEvidence.pixels.width).toBeLessThan(wideEvidence.pixels.width);
     await pinWindowContentSize(app, requestedWide);
 
     const screenshots = [
@@ -432,6 +487,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
         path: 'coordination-wide.png',
         requestedViewport: requestedWide,
         contentSize: wide,
+        zoomFactor: wideZoom,
         browserViewport: wideViewport,
         pixels: wideEvidence.pixels,
         bytes: wideEvidence.bytes,
@@ -442,6 +498,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
         path: 'coordination-narrow.png',
         requestedViewport: requestedNarrow,
         contentSize: narrow,
+        zoomFactor: narrowZoom,
         browserViewport: narrowViewport,
         pixels: narrowEvidence.pixels,
         bytes: narrowEvidence.bytes,
@@ -484,7 +541,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
         },
         windowLifecycle,
         taskLedgerNavigation: { hash: taskLedgerHash, includesNodeId: taskLedgerHash.includes(`nodeId=${encodeURIComponent(task.id)}`) },
-        workerNavigation: { childSessionKey: worker.childSessionKey, sidebarSelected: true, returnedToCoordinator: true },
+        workerNavigation: { childSessionKey: worker.childSessionKey, workspaceReadback: workerSelection.activeWorkspace, sidebarSelected: true, returnedToCoordinator: true },
         locales,
         quietWindow: {
           durationMs: 2_500,
@@ -529,5 +586,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     await testInfo.attach('coordination-narrow', { path: narrowPath, contentType: 'image/png' });
   } finally {
     await closeElectronApp(app);
+    provider.server.closeAllConnections();
+    await new Promise<void>((resolve) => provider.server.close(() => resolve()));
   }
 });

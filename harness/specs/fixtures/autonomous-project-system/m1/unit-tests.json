@@ -1,0 +1,2611 @@
+{
+  "candidate": "00910db9e62ed97bfb26e5af5cd6b4830d7a6288",
+  "suites": [
+    {
+      "name": "task-units",
+      "passed": 167,
+      "failed": 0,
+      "testResults": [
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners preserves ordinary task resubmission and revision after a generic observer",
+              "status": "passed",
+              "title": "preserves ordinary task resubmission and revision after a generic observer",
+              "duration": 110.29790000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners binds a review to the submitted candidate even when the files are identical",
+              "status": "passed",
+              "title": "binds a review to the submitted candidate even when the files are identical",
+              "duration": 193.12689999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners does not fall back to an old pass while a new reviewer is pending",
+              "status": "passed",
+              "title": "does not fall back to an old pass while a new reviewer is pending",
+              "duration": 126.34050000000025,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects a pass without candidate reads and accepts only complete matching read ranges",
+              "status": "passed",
+              "title": "rejects a pass without candidate reads and accepts only complete matching read ranges",
+              "duration": 130.46540000000005,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects another generic observer for the same submitted candidate",
+              "status": "passed",
+              "title": "rejects another generic observer for the same submitted candidate",
+              "duration": 97.11829999999964,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners requires an explicit repair budget when creating an independent review contract",
+              "status": "passed",
+              "title": "requires an explicit repair budget when creating an independent review contract",
+              "duration": 50.23919999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects an independent review contract without input files: undefined",
+              "status": "passed",
+              "title": "rejects an independent review contract without input files: undefined",
+              "duration": 49.45649999999978,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects an independent review contract without input files: undefined",
+              "status": "passed",
+              "title": "rejects an independent review contract without input files: undefined",
+              "duration": 54.496900000000096,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners keeps the original failing check and scope after entering repair",
+              "status": "passed",
+              "title": "keeps the original failing check and scope after entering repair",
+              "duration": 97.78560000000016,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects a verifier receipt from an earlier repaired submission even after acceptance",
+              "status": "passed",
+              "title": "rejects a verifier receipt from an earlier repaired submission even after acceptance",
+              "duration": 284.46810000000005,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners recovers a missing dispatch response from the terminal reservation-bound reviewer",
+              "status": "passed",
+              "title": "recovers a missing dispatch response from the terminal reservation-bound reviewer",
+              "duration": 111.99119999999994,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners recovers a error dispatch response from the terminal reservation-bound reviewer",
+              "status": "passed",
+              "title": "recovers a error dispatch response from the terminal reservation-bound reviewer",
+              "duration": 102.40950000000021,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners preserves the independent review requirement during a repair revision: remove",
+              "status": "passed",
+              "title": "preserves the independent review requirement during a repair revision: remove",
+              "duration": 118.7548999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners preserves the independent review requirement during a repair revision: replace-files",
+              "status": "passed",
+              "title": "preserves the independent review requirement during a repair revision: replace-files",
+              "duration": 94.0326,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners keeps the new submitted reviewer selected when an older completion replays late",
+              "status": "passed",
+              "title": "keeps the new submitted reviewer selected when an older completion replays late",
+              "duration": 280.6846999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners cannot reroll a zero-budget review through candidate renaming, revision or handoff",
+              "status": "passed",
+              "title": "cannot reroll a zero-budget review through candidate renaming, revision or handoff",
+              "duration": 219.66449999999986,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners allows a current successor to consume the retained review budget after handoff",
+              "status": "passed",
+              "title": "allows a current successor to consume the retained review budget after handoff",
+              "duration": 289.4175,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners allows a current successor to consume the retained review budget after pause-resume",
+              "status": "passed",
+              "title": "allows a current successor to consume the retained review budget after pause-resume",
+              "duration": 295.0691999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners preserves review provenance after an idle zero-budget lease expires via accept",
+              "status": "passed",
+              "title": "preserves review provenance after an idle zero-budget lease expires via accept",
+              "duration": 226.6273000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners preserves review provenance after an idle zero-budget lease expires via recover",
+              "status": "passed",
+              "title": "preserves review provenance after an idle zero-budget lease expires via recover",
+              "duration": 358.8226999999997,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners does not restore a review lease while its old run is still registered",
+              "status": "passed",
+              "title": "does not restore a review lease while its old run is still registered",
+              "duration": 112.53340000000026,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners reconciles the exited process of an interrupted review without changing candidate provenance",
+              "status": "passed",
+              "title": "reconciles the exited process of an interrupted review without changing candidate provenance",
+              "duration": 369.1944999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners replays repair after lease renewal using only stable writer identity",
+              "status": "passed",
+              "title": "replays repair after lease renewal using only stable writer identity",
+              "duration": 87.55670000000009,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects wrong-run verifier provenance",
+              "status": "passed",
+              "title": "rejects wrong-run verifier provenance",
+              "duration": 88.85040000000026,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects wrong-generation verifier provenance",
+              "status": "passed",
+              "title": "rejects wrong-generation verifier provenance",
+              "duration": 110.10900000000038,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects implementer verifier provenance",
+              "status": "passed",
+              "title": "rejects implementer verifier provenance",
+              "duration": 84.29700000000048,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects a candidate changed before reviewer dispatch as well as missing files",
+              "status": "passed",
+              "title": "rejects a candidate changed before reviewer dispatch as well as missing files",
+              "duration": 90.45859999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners allows observer dispatch during review while retaining the writer fence",
+              "status": "passed",
+              "title": "allows observer dispatch during review while retaining the writer fence",
+              "duration": 273.4855000000007,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners persists a single repair across restart and invalidates checks even for unchanged files",
+              "status": "passed",
+              "title": "persists a single repair across restart and invalidates checks even for unchanged files",
+              "duration": 123.32110000000011,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners retains review admission and refuses an unknown dispatch retry after reopening",
+              "status": "passed",
+              "title": "retains review admission and refuses an unknown dispatch retry after reopening",
+              "duration": 131.6909999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners does not bypass the repair budget by resuming or removing it from the contract",
+              "status": "passed",
+              "title": "does not bypass the repair budget by resuming or removing it from the contract",
+              "duration": 92.35450000000037,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners retries a known dispatch refusal without spending a repair: undefined",
+              "status": "passed",
+              "title": "retries a known dispatch refusal without spending a repair: undefined",
+              "duration": 103.53759999999966,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners retries a known dispatch refusal without spending a repair: allocated-but-never-dispatched",
+              "status": "passed",
+              "title": "retries a known dispatch refusal without spending a repair: allocated-but-never-dispatched",
+              "duration": 93.58739999999943,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners keeps an error dispatch fenced across a renamed candidate: {}",
+              "status": "passed",
+              "title": "keeps an error dispatch fenced across a renamed candidate: {}",
+              "duration": 115.52129999999943,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners keeps an error dispatch fenced across a renamed candidate: {\"runId\":\"unconfirmed\",\"childSessionKey\":\"unconfirmed-child\"}",
+              "status": "passed",
+              "title": "keeps an error dispatch fenced across a renamed candidate: {\"runId\":\"unconfirmed\",\"childSessionKey\":\"unconfirmed-child\"}",
+              "duration": 87.90130000000045,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners only lets the reservation owner attach a reviewer and retains a late immutable refusal",
+              "status": "passed",
+              "title": "only lets the reservation owner attach a reviewer and retains a late immutable refusal",
+              "duration": 100.19380000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners records a known refusal after cancellation without changing task state",
+              "status": "passed",
+              "title": "records a known refusal after cancellation without changing task state",
+              "duration": 79.69889999999941,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners leaves the verifier slot free after a normal read-only observer",
+              "status": "passed",
+              "title": "leaves the verifier slot free after a normal read-only observer",
+              "duration": 254.83090000000084,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners permits a trusted pre-dispatch error to retry without relaxing an ambiguous error",
+              "status": "passed",
+              "title": "permits a trusted pre-dispatch error to retry without relaxing an ambiguous error",
+              "duration": 72.11819999999989,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners reads an existing accepted receipt without submission metadata only for a single unambiguous submission",
+              "status": "passed",
+              "title": "reads an existing accepted receipt without submission metadata only for a single unambiguous submission",
+              "duration": 269.5074000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners reconciles an unknown effect only from a matching terminal receipt owned by the runtime",
+              "status": "passed",
+              "title": "reconciles an unknown effect only from a matching terminal receipt owned by the runtime",
+              "duration": 218.35930000000008,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners requires an independent verifier run bound to the unchanged input snapshot",
+              "status": "passed",
+              "title": "requires an independent verifier run bound to the unchanged input snapshot",
+              "duration": 181.32949999999983,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners reads actual evidence, records an existing effect receipt, and accepts only the current candidate",
+              "status": "passed",
+              "title": "reads actual evidence, records an existing effect receipt, and accepts only the current candidate",
+              "duration": 201.6900000000005,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects artifacts changed after the requirement was checked",
+              "status": "passed",
+              "title": "rejects artifacts changed after the requirement was checked",
+              "duration": 61.32470000000103,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners does not accept caller-chosen unknown owners",
+              "status": "passed",
+              "title": "does not accept caller-chosen unknown owners",
+              "duration": 50.79520000000048,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing verifier and effect owners"
+              ],
+              "fullName": "existing verifier and effect owners rejects new generations and unresolved operations before completing",
+              "status": "passed",
+              "title": "rejects new generations and unresolved operations before completing",
+              "duration": 57.754000000000815,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147241351,
+          "endTime": 1795147248154.754,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-acceptance.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "TaskSystemStore authority access"
+              ],
+              "fullName": "TaskSystemStore authority access rejects stale authority on construction, reads, and writes without changing the ledger",
+              "status": "passed",
+              "title": "rejects stale authority on construction, reads, and writes without changing the ledger",
+              "duration": 56.46840000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "TaskSystemStore authority access"
+              ],
+              "fullName": "TaskSystemStore authority access rejects an access domain mismatch before opening the database",
+              "status": "passed",
+              "title": "rejects an access domain mismatch before opening the database",
+              "duration": 1.76339999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "TaskSystemStore authority access"
+              ],
+              "fullName": "TaskSystemStore authority access rejects an execution worktree mismatch before opening the database",
+              "status": "passed",
+              "title": "rejects an execution worktree mismatch before opening the database",
+              "duration": 2.3684000000000083,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "TaskSystemStore authority access"
+              ],
+              "fullName": "TaskSystemStore authority access rejects other authorities and allows one authority across physical checkouts",
+              "status": "passed",
+              "title": "rejects other authorities and allows one authority across physical checkouts",
+              "duration": 98.26860000000005,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rechecks real authority after another process releases SQLite (unchanged)",
+              "status": "passed",
+              "title": "rechecks real authority after another process releases SQLite (unchanged)",
+              "duration": 846.1193999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rechecks real authority after another process releases SQLite (removed)",
+              "status": "passed",
+              "title": "rechecks real authority after another process releases SQLite (removed)",
+              "duration": 731.694,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rechecks real authority after another process releases SQLite (replaced)",
+              "status": "passed",
+              "title": "rechecks real authority after another process releases SQLite (replaced)",
+              "duration": 1167.9280000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147248612,
+          "endTime": 1795147251516.928,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-authority-access.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "bounded checkpoint artifact projection"
+              ],
+              "fullName": "bounded checkpoint artifact projection hashes through a bounded descriptor when concurrent growth is false",
+              "status": "passed",
+              "title": "hashes through a bounded descriptor when concurrent growth is false",
+              "duration": 52.10500000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "bounded checkpoint artifact projection"
+              ],
+              "fullName": "bounded checkpoint artifact projection hashes through a bounded descriptor when concurrent growth is true",
+              "status": "passed",
+              "title": "hashes through a bounded descriptor when concurrent growth is true",
+              "duration": 80.29490000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147267665,
+          "endTime": 1795147267797.295,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-context-artifacts.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [],
+              "fullName": "recovers a fork's read reference from owner lineage without copying its parent's writer",
+              "status": "passed",
+              "title": "recovers a fork's read reference from owner lineage without copying its parent's writer",
+              "duration": 528.3529,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rehydrates a coordinator read reference using the parent generation while a child owns the writer",
+              "status": "passed",
+              "title": "rehydrates a coordinator read reference using the parent generation while a child owns the writer",
+              "duration": 75.90620000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147266808,
+          "endTime": 1795147267412.9062,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-coordinator-context.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "durable production delegation protocol"
+              ],
+              "fullName": "durable production delegation protocol does not transfer queued work until dispatch and rejects changed parent ownership",
+              "status": "passed",
+              "title": "does not transfer queued work until dispatch and rejects changed parent ownership",
+              "duration": 1285.1652000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable production delegation protocol"
+              ],
+              "fullName": "durable production delegation protocol transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence",
+              "status": "passed",
+              "title": "transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence",
+              "duration": 1011.0542999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable production delegation protocol"
+              ],
+              "fullName": "durable production delegation protocol retains ownership after lost dispatch acknowledgement and rejects a second writer",
+              "status": "passed",
+              "title": "retains ownership after lost dispatch acknowledgement and rejects a second writer",
+              "duration": 600.4335999999994,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable production delegation protocol"
+              ],
+              "fullName": "durable production delegation protocol restores the delegation from disk and keeps unknown effects as a return barrier",
+              "status": "passed",
+              "title": "restores the delegation from disk and keeps unknown effects as a return barrier",
+              "duration": 529.2390999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable production delegation protocol"
+              ],
+              "fullName": "durable production delegation protocol rejects reservation-backed review after the parent task is cancelled",
+              "status": "passed",
+              "title": "rejects reservation-backed review after the parent task is cancelled",
+              "duration": 441.26929999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable production delegation protocol"
+              ],
+              "fullName": "durable production delegation protocol gives a verifier a read reference without transferring writer or blocking the parent",
+              "status": "passed",
+              "title": "gives a verifier a read reference without transferring writer or blocking the parent",
+              "duration": 445.1697000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable production delegation protocol"
+              ],
+              "fullName": "durable production delegation protocol does not return writing authority to a reset parent generation",
+              "status": "passed",
+              "title": "does not return writing authority to a reset parent generation",
+              "duration": 560.5679,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147242041,
+          "endTime": 1795147246915.5679,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-delegation.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "existing Task Ledger transactional migration"
+              ],
+              "fullName": "existing Task Ledger transactional migration reuses the current projection and invalidates it after an appended event",
+              "status": "passed",
+              "title": "reuses the current projection and invalidates it after an appended event",
+              "duration": 137.37210000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing Task Ledger transactional migration"
+              ],
+              "fullName": "existing Task Ledger transactional migration deduplicates event-level keys while preserving new logical requests",
+              "status": "passed",
+              "title": "deduplicates event-level keys while preserving new logical requests",
+              "duration": 93.95760000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing Task Ledger transactional migration"
+              ],
+              "fullName": "existing Task Ledger transactional migration imports old IDs, leaves original bytes intact, and appends in one owner store",
+              "status": "passed",
+              "title": "imports old IDs, leaves original bytes intact, and appends in one owner store",
+              "duration": 164.5324,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing Task Ledger transactional migration"
+              ],
+              "fullName": "existing Task Ledger transactional migration replays a single session-link batch using the original generated ID",
+              "status": "passed",
+              "title": "replays a single session-link batch using the original generated ID",
+              "duration": 106.54650000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "existing Task Ledger transactional migration"
+              ],
+              "fullName": "existing Task Ledger transactional migration rejects corrupt legacy history instead of presenting an empty task graph",
+              "status": "passed",
+              "title": "rejects corrupt legacy history instead of presenting an empty task graph",
+              "duration": 89.67430000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147265692,
+          "endTime": 1795147266285.6743,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-event-store.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "task owner fault boundaries"
+              ],
+              "fullName": "task owner fault boundaries rejects a busy claim transaction then resumes the same request without a partial owner",
+              "status": "passed",
+              "title": "rejects a busy claim transaction then resumes the same request without a partial owner",
+              "duration": 3455.411,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task owner fault boundaries"
+              ],
+              "fullName": "task owner fault boundaries blocks writes on a corrupt database while preserving its bytes for recovery",
+              "status": "passed",
+              "title": "blocks writes on a corrupt database while preserving its bytes for recovery",
+              "duration": 62.01729999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task owner fault boundaries"
+              ],
+              "fullName": "task owner fault boundaries handles clock rollback conservatively without losing the task or admitting a second owner",
+              "status": "passed",
+              "title": "handles clock rollback conservatively without losing the task or admitting a second owner",
+              "duration": 101.43269999999984,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147247137,
+          "endTime": 1795147250755.4326,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-faults.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+              "status": "passed",
+              "title": "replays committed changes after a missed acknowledgement and rejects a stale consumer cursor",
+              "duration": 126.79560000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition paginates a frozen insertion window without hiding old tasks behind new arrivals",
+              "status": "passed",
+              "title": "paginates a frozen insertion window without hiding old tasks behind new arrivals",
+              "duration": 104.1164,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition suggests overlapping goals without merging their identities",
+              "status": "passed",
+              "title": "suggests overlapping goals without merging their identities",
+              "duration": 73.21719999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition decomposes atomically, retains the original goal and gates the parent on accepted children",
+              "status": "passed",
+              "title": "decomposes atomically, retains the original goal and gates the parent on accepted children",
+              "duration": 105.14870000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition rolls back every child when the plan contains an invalid dependency",
+              "status": "passed",
+              "title": "rolls back every child when the plan contains an invalid dependency",
+              "duration": 96.63689999999997,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition rehydrates the root goal through multiple decompositions and retains valid progress JSON",
+              "status": "passed",
+              "title": "rehydrates the root goal through multiple decompositions and retains valid progress JSON",
+              "duration": 97.582,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition cancels a whole plan only after child effects settle and replays the final effect receipt",
+              "status": "passed",
+              "title": "cancels a whole plan only after child effects settle and replays the final effect receipt",
+              "duration": 115.22680000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition retires settled children explicitly before revising a parent plan",
+              "status": "passed",
+              "title": "retires settled children explicitly before revising a parent plan",
+              "duration": 100.42500000000007,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "task discovery and goal decomposition"
+              ],
+              "fullName": "task discovery and goal decomposition rejects cycles that cross a parent-child plan edge",
+              "status": "passed",
+              "title": "rejects cycles that cross a parent-child plan edge",
+              "duration": 79.98630000000014,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147262671,
+          "endTime": 1795147263569.9863,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-planning.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning retains plan decisions and provisional assumptions when the child coordinator changes",
+              "status": "passed",
+              "title": "retains plan decisions and provisional assumptions when the child coordinator changes",
+              "duration": 81.55629999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning takes planning scope from the Workspace owner and fences stale Runtime calls",
+              "status": "passed",
+              "title": "takes planning scope from the Workspace owner and fences stale Runtime calls",
+              "duration": 656.8882000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning releases a settled failed writer without accepting its task or unlocking its dependents",
+              "status": "passed",
+              "title": "releases a settled failed writer without accepting its task or unlocking its dependents",
+              "duration": 114.81709999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning holds a cancelling project writer until its worker and effects both settle",
+              "status": "passed",
+              "title": "holds a cancelling project writer until its worker and effects both settle",
+              "duration": 99.5599000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning checks the active Workspace and live generation before claiming, including on replay",
+              "status": "passed",
+              "title": "checks the active Workspace and live generation before claiming, including on replay",
+              "duration": 100.16210000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning persists the plan, provisional facts and dependencies across reopen and idempotent retries",
+              "status": "passed",
+              "title": "persists the plan, provisional facts and dependencies across reopen and idempotent retries",
+              "duration": 116.31950000000006,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning selects a dependency-ready child in plan order and fences replays after handoff or completion",
+              "status": "passed",
+              "title": "selects a dependency-ready child in plan order and fences replays after handoff or completion",
+              "duration": 98.39650000000029,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning does not admit work in a new plan while a previous plan child has a writer",
+              "status": "passed",
+              "title": "does not admit work in a new plan while a previous plan child has a writer",
+              "duration": 55.29399999999987,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning keeps settled tasks and evidence when replacing a revision without recycling child identities",
+              "status": "passed",
+              "title": "keeps settled tasks and evidence when replacing a revision without recycling child identities",
+              "duration": 104.85220000000027,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning rolls back cyclic, missing and foreign dependencies without leaving any tasks",
+              "status": "passed",
+              "title": "rolls back cyclic, missing and foreign dependencies without leaving any tasks",
+              "duration": 44.86629999999968,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "project coordinator planning"
+              ],
+              "fullName": "project coordinator planning uses the Workspace owner binding and rejects another checkout, generation or duplicate coordinator",
+              "status": "passed",
+              "title": "uses the Workspace owner binding and rejects another checkout, generation or duplicate coordinator",
+              "duration": 86.84400000000005,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147255011,
+          "endTime": 1795147256570.844,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-project-planning.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [],
+              "fullName": "denies review dispatch when deny-only policy removes both delegation tools",
+              "status": "passed",
+              "title": "denies review dispatch when deny-only policy removes both delegation tools",
+              "duration": 560.4098000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "dispatches review through the existing spawn path with the final read-only allowlist",
+              "status": "passed",
+              "title": "dispatches review through the existing spawn path with the final read-only allowlist",
+              "duration": 167.5676000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147271680,
+          "endTime": 1795147272407.5676,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-review-wiring.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [],
+              "fullName": "dispatches a read-only role using the submitted files and replays one durable receipt",
+              "status": "passed",
+              "title": "dispatches a read-only role using the submitted files and replays one durable receipt",
+              "duration": 482.6775,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rejects a parent without both read and delegation authority: undefined",
+              "status": "passed",
+              "title": "rejects a parent without both read and delegation authority: undefined",
+              "duration": 96.87889999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rejects a parent without both read and delegation authority: \"read\"",
+              "status": "passed",
+              "title": "rejects a parent without both read and delegation authority: \"read\"",
+              "duration": 79.12979999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+              "status": "passed",
+              "title": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+              "duration": 112.98620000000005,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+              "status": "passed",
+              "title": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+              "duration": 89.8715000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+              "status": "passed",
+              "title": "rejects a parent without both read and delegation authority: \"sessions_spawn\"",
+              "duration": 79.74610000000007,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "honors an explicit delegation denylist before reserving or spawning",
+              "status": "passed",
+              "title": "honors an explicit delegation denylist before reserving or spawning",
+              "duration": 72.70649999999978,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147261432,
+          "endTime": 1795147262446.7065,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-review.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard rehydrates checkpoint evidence references after handoff and marks changed artifacts stale",
+              "status": "passed",
+              "title": "rehydrates checkpoint evidence references after handoff and marks changed artifacts stale",
+              "duration": 69.5649999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard credits read coverage only after an untruncated provider request returns successfully",
+              "status": "passed",
+              "title": "credits read coverage only after an untruncated provider request returns successfully",
+              "duration": 137.6223999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard credits a delivered base64 image and rejects an image removed by provider serialization",
+              "status": "passed",
+              "title": "credits a delivered base64 image and rejects an image removed by provider serialization",
+              "duration": 131.6261000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard credits a delivered binary image and rejects an image removed by provider serialization",
+              "status": "passed",
+              "title": "credits a delivered binary image and rejects an image removed by provider serialization",
+              "duration": 94.40059999999994,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard records actual read-tool evidence for utf8-bom candidates",
+              "status": "passed",
+              "title": "records actual read-tool evidence for utf8-bom candidates",
+              "duration": 137.8126000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard records actual read-tool evidence for utf16-bom candidates",
+              "status": "passed",
+              "title": "records actual read-tool evidence for utf16-bom candidates",
+              "duration": 98.6851999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard records actual read-tool evidence for image candidates",
+              "status": "passed",
+              "title": "records actual read-tool evidence for image candidates",
+              "duration": 90.30239999999958,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard records actual read-tool evidence for paged candidates",
+              "status": "passed",
+              "title": "records actual read-tool evidence for paged candidates",
+              "duration": 91.19640000000072,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard records actual read-tool evidence for cr-lines candidates",
+              "status": "passed",
+              "title": "records actual read-tool evidence for cr-lines candidates",
+              "duration": 66.62670000000071,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard records the actual read output of an observer across all candidate line ranges",
+              "status": "passed",
+              "title": "records the actual read output of an observer across all candidate line ranges",
+              "duration": 74.54819999999927,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard executes the yield callback while a submitted candidate waits for independent review",
+              "status": "passed",
+              "title": "executes the yield callback while a submitted candidate waits for independent review",
+              "duration": 89.52839999999924,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard requires a task before the first write even when no task database exists yet",
+              "status": "passed",
+              "title": "requires a task before the first write even when no task database exists yet",
+              "duration": 1.991399999999885,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard records cancellation immediately and waits for the in-flight owner before releasing the task",
+              "status": "passed",
+              "title": "records cancellation immediately and waits for the in-flight owner before releasing the task",
+              "duration": 89.44970000000012,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard blocks retries after a background effect until the real process owner reports completion",
+              "status": "passed",
+              "title": "blocks retries after a background effect until the real process owner reports completion",
+              "duration": 82.59559999999965,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard restores a goal created during the run after ten compacted contexts without duplicating it",
+              "status": "passed",
+              "title": "restores a goal created during the run after ten compacted contexts without duplicating it",
+              "duration": 167.36549999999988,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard does not grant a fork or unbound session write access in a managed repository",
+              "status": "passed",
+              "title": "does not grant a fork or unbound session write access in a managed repository",
+              "duration": 92.9349000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard adopts only a new initial binding, then keeps its epoch pinned",
+              "status": "passed",
+              "title": "adopts only a new initial binding, then keeps its epoch pinned",
+              "duration": 94.8107,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard captures the old epoch and refuses execution after handoff",
+              "status": "passed",
+              "title": "captures the old epoch and refuses execution after handoff",
+              "duration": 87.95859999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "production task runtime guard"
+              ],
+              "fullName": "production task runtime guard binds a real tool result to unchanged verification inputs",
+              "status": "passed",
+              "title": "binds a real tool result to unchanged verification inputs",
+              "duration": 139.4978000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147261648,
+          "endTime": 1795147263487.4978,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-runtime.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner reads project plans only through the current Workspace coordinator binding",
+              "status": "passed",
+              "title": "reads project plans only through the current Workspace coordinator binding",
+              "duration": 460.5532999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner reads actual verifier receipts without promoting a doing task to accepted",
+              "status": "passed",
+              "title": "reads actual verifier receipts without promoting a doing task to accepted",
+              "duration": 107.33939999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner fences worker acceptance reads before and after a session generation changes",
+              "status": "passed",
+              "title": "fences worker acceptance reads before and after a session generation changes",
+              "duration": 109.97450000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner keeps the task owner readable when generation check 1 takes twelve seconds",
+              "status": "passed",
+              "title": "keeps the task owner readable when generation check 1 takes twelve seconds",
+              "duration": 93.05709999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner keeps the task owner readable when generation check 2 takes twelve seconds",
+              "status": "passed",
+              "title": "keeps the task owner readable when generation check 2 takes twelve seconds",
+              "duration": 125.87709999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner rejects effects without a contract without creating a database",
+              "status": "passed",
+              "title": "rejects effects without a contract without creating a database",
+              "duration": 1.817600000000084,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner reuses the canonical TaskID and writer attempt across admission retries",
+              "status": "passed",
+              "title": "reuses the canonical TaskID and writer attempt across admission retries",
+              "duration": 120.70259999999985,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner rejects a legacy reference without inventing a contract or upgrading its state",
+              "status": "passed",
+              "title": "rejects a legacy reference without inventing a contract or upgrading its state",
+              "duration": 73.56860000000006,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner rejects a second writer and a stale generation at the new entry point",
+              "status": "passed",
+              "title": "rejects a second writer and a stale generation at the new entry point",
+              "duration": 147.08339999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner keeps fork references read only until an explicit new owner is granted",
+              "status": "passed",
+              "title": "keeps fork references read only until an explicit new owner is granted",
+              "duration": 87.0494000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner uses the existing handoff epoch and fences the previous credential",
+              "status": "passed",
+              "title": "uses the existing handoff epoch and fences the previous credential",
+              "duration": 127.29729999999995,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner retains the old owner while an effect is still unresolved",
+              "status": "passed",
+              "title": "retains the old owner while an effect is still unresolved",
+              "duration": 102.67399999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner keeps an accepted task closed when selected for another effect",
+              "status": "passed",
+              "title": "keeps an accepted task closed when selected for another effect",
+              "duration": 162.93499999999995,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner retains task identity and writer exclusivity when runtime bootstrap initializes Git",
+              "status": "passed",
+              "title": "retains task identity and writer exclusivity when runtime bootstrap initializes Git",
+              "duration": 642.7249000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner rejects conflicting stores after repository initialization",
+              "status": "passed",
+              "title": "rejects conflicting stores after repository initialization",
+              "duration": 272.4205999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner rejects a conflicting explicit task instead of reverting the selection",
+              "status": "passed",
+              "title": "rejects a conflicting explicit task instead of reverting the selection",
+              "duration": 155.01569999999992,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner selects another canonical task without changing its state and grants only its next execution",
+              "status": "passed",
+              "title": "selects another canonical task without changing its state and grants only its next execution",
+              "duration": 154.82389999999987,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "session bridge consumes the persistent task owner"
+              ],
+              "fullName": "session bridge consumes the persistent task owner retains the current task when an execution or an unknown operation blocks selection",
+              "status": "passed",
+              "title": "retains the current task when an execution or an unknown operation blocks selection",
+              "duration": 155.05949999999984,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147251351,
+          "endTime": 1795147254452.0596,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-session-scope.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [],
+              "fullName": "starts and binds an execution task in one tool call and reuses the original attempt on retry",
+              "status": "passed",
+              "title": "starts and binds an execution task in one tool call and reuses the original attempt on retry",
+              "duration": 397.39689999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rolls back a proposed task if the session is already implementing another task",
+              "status": "passed",
+              "title": "rolls back a proposed task if the session is already implementing another task",
+              "duration": 47.19489999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "rejects a duplicate writer through the automatic start path and preserves the first claim",
+              "status": "passed",
+              "title": "rejects a duplicate writer through the automatic start path and preserves the first claim",
+              "duration": 81.68369999999982,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [],
+              "fullName": "reads only the owning session generation, including its cancelled task",
+              "status": "passed",
+              "title": "reads only the owning session generation, including its cancelled task",
+              "duration": 104.74720000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147264805,
+          "endTime": 1795147265435.7473,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-start.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+              "status": "passed",
+              "title": "migrates the prior task schema without changing task identity and rejects future schemas",
+              "duration": 99.15950000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+              "status": "passed",
+              "title": "prevents two runs in the same owning session from implementing one task concurrently",
+              "duration": 79.2636,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership replaces an exited process's run without replacing its task owner or checkpoint",
+              "status": "passed",
+              "title": "replaces an exited process's run without replacing its task owner or checkpoint",
+              "duration": 89.39300000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership retains the run when the PID probe establishes no exit (undefined)",
+              "status": "passed",
+              "title": "retains the run when the PID probe establishes no exit (undefined)",
+              "duration": 70.86629999999997,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership retains the run when the PID probe establishes no exit (EPERM)",
+              "status": "passed",
+              "title": "retains the run when the PID probe establishes no exit (EPERM)",
+              "duration": 105.50130000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership retains the old run after process exit while an effect is started",
+              "status": "passed",
+              "title": "retains the old run after process exit while an effect is started",
+              "duration": 88.9104000000001,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership retains the old run after process exit while an effect is unknown",
+              "status": "passed",
+              "title": "retains the old run after process exit while an effect is unknown",
+              "duration": 76.2482,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+              "status": "passed",
+              "title": "keeps identity across retries, detects exact duplicates, and separates different goals",
+              "duration": 128.21450000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership refuses a changed contract for the same business key",
+              "status": "passed",
+              "title": "refuses a changed contract for the same business key",
+              "duration": 57.74380000000008,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+              "status": "passed",
+              "title": "persists the goal and checkpoint independently of chat compression and process connections",
+              "duration": 80.49369999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership rejects a second owner and a stale revision",
+              "status": "passed",
+              "title": "rejects a second owner and a stale revision",
+              "duration": 73.34440000000018,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership does not convert lease expiration into automatic reassignment",
+              "status": "passed",
+              "title": "does not convert lease expiration into automatic reassignment",
+              "duration": 68.76189999999997,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+              "status": "passed",
+              "title": "keeps in-flight and unknown operations as a handoff barrier",
+              "duration": 87.84089999999992,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership enforces dependencies and rejects cycles",
+              "status": "passed",
+              "title": "enforces dependencies and rejects cycles",
+              "duration": 108.91579999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+              "status": "passed",
+              "title": "accepts only the contract-bound artifact after submitting the same candidate",
+              "duration": 87.27189999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+              "status": "passed",
+              "title": "does not let a file hash satisfy a business verification requirement",
+              "duration": 74.88920000000007,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership uses one task domain for two real Git worktrees",
+              "status": "passed",
+              "title": "uses one task domain for two real Git worktrees",
+              "duration": 477.30179999999996,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+              "status": "passed",
+              "title": "rejects forged generation and same-session calls from another worktree",
+              "duration": 69.14589999999998,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+              "status": "passed",
+              "title": "preserves the goal while paused, and fences the previous writer on resume",
+              "duration": 100.25610000000006,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+              "status": "passed",
+              "title": "refuses recovery while an unknown external operation lacks its owner receipt",
+              "duration": 75.95960000000014,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+              "status": "passed",
+              "title": "keeps a lost-response retry tied to the original attempt after ownership changes",
+              "duration": 86.89669999999978,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "durable product task ownership"
+              ],
+              "fullName": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+              "status": "passed",
+              "title": "refuses oversize goals and does not infer uniqueness from the title",
+              "duration": 111.54849999999988,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147251790,
+          "endTime": 1795147254088.5486,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-system.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "agent-facing production task tool"
+              ],
+              "fullName": "agent-facing production task tool creates, claims, executes a real check, and accepts its owner-produced receipt",
+              "status": "passed",
+              "title": "creates, claims, executes a real check, and accepts its owner-produced receipt",
+              "duration": 932.0445,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "agent-facing production task tool"
+              ],
+              "fullName": "agent-facing production task tool does not let an old task tool take control of a newer epoch",
+              "status": "passed",
+              "title": "does not let an old task tool take control of a newer epoch",
+              "duration": 95.83600000000024,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "agent-facing production task tool"
+              ],
+              "fullName": "agent-facing production task tool revises an explicitly changed goal with optimistic versioning and fences the previous run",
+              "status": "passed",
+              "title": "revises an explicitly changed goal with optimistic versioning and fences the previous run",
+              "duration": 149.64379999999983,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147259134,
+          "endTime": 1795147260311.6438,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/durable-task-tool.test.ts"
+        }
+      ]
+    },
+    {
+      "name": "context-units",
+      "passed": 37,
+      "failed": 0,
+      "testResults": [
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "current project continuity over the frozen paired workload"
+              ],
+              "fullName": "current project continuity over the frozen paired workload preserves decisions and prior failure outcomes across all 30 owner projections",
+              "status": "passed",
+              "title": "preserves decisions and prior failure outcomes across all 30 owner projections",
+              "duration": 1733.8201999999999,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147281686,
+          "endTime": 1795147283419.8203,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/autonomy-context-paired.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context excludes accepted facts belonging to another task in the same workspace",
+              "status": "passed",
+              "title": "excludes accepted facts belonging to another task in the same workspace",
+              "duration": 9.179999999999836,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context rejects a foreign workspace snapshot even when task ids collide",
+              "status": "passed",
+              "title": "rejects a foreign workspace snapshot even when task ids collide",
+              "duration": 0.6532999999999447,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context excludes task-dropped working context",
+              "status": "passed",
+              "title": "excludes task-dropped working context",
+              "duration": 0.4882999999999811,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context excludes unconfirmed working context",
+              "status": "passed",
+              "title": "excludes unconfirmed working context",
+              "duration": 0.27300000000013824,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context excludes missing-acceptance working context",
+              "status": "passed",
+              "title": "excludes missing-acceptance working context",
+              "duration": 0.2211000000002059,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context records critical constraint loss separately from optional budget omissions",
+              "status": "passed",
+              "title": "records critical constraint loss separately from optional budget omissions",
+              "duration": 0.3247000000001208,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context rejects binding replaced while context owners are being read",
+              "status": "passed",
+              "title": "rejects binding replaced while context owners are being read",
+              "duration": 1097.174,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context rejects generation replaced while context owners are being read",
+              "status": "passed",
+              "title": "rejects generation replaced while context owners are being read",
+              "duration": 0.609599999999773,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context rejects a binding revision changed after preview but before chat dispatch",
+              "status": "passed",
+              "title": "rejects a binding revision changed after preview but before chat dispatch",
+              "duration": 440.88179999999966,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context projects accepted owner facts with provenance, freshness, scope and bounded history refs",
+              "status": "passed",
+              "title": "projects accepted owner facts with provenance, freshness, scope and bounded history refs",
+              "duration": 2.070400000000518,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context reports unknown instead of inventing a recovered task when all sources are absent",
+              "status": "passed",
+              "title": "reports unknown instead of inventing a recovered task when all sources are absent",
+              "duration": 0.46640000000024884,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context truncates deterministically under budget and records every dropped item",
+              "status": "passed",
+              "title": "truncates deterministically under budget and records every dropped item",
+              "duration": 1.3161000000000058,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context rebuilds after fork or restart from owner refs without copying the old session transcript",
+              "status": "passed",
+              "title": "rebuilds after fork or restart from owner refs without copying the old session transcript",
+              "duration": 1.4817000000002736,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context rejects foreign agent and role memory scopes without leaking their refs",
+              "status": "passed",
+              "title": "rejects foreign agent and role memory scopes without leaking their refs",
+              "duration": 0.5864999999994325,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context excludes expired, tombstoned, superseded and disabled memory while preserving source provenance",
+              "status": "passed",
+              "title": "excludes expired, tombstoned, superseded and disabled memory while preserving source provenance",
+              "duration": 0.5259999999998399,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context resolves native compaction ownership from the effective policy production read",
+              "status": "passed",
+              "title": "resolves native compaction ownership from the effective policy production read",
+              "duration": 2.098099999999249,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context falls back when the session generation changes after the coordinator binding",
+              "status": "passed",
+              "title": "falls back when the session generation changes after the coordinator binding",
+              "duration": 0.5452999999997701,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context keeps native compaction ownership and unknown backend state explicit",
+              "status": "passed",
+              "title": "keeps native compaction ownership and unknown backend state explicit",
+              "duration": 0.45759999999972933,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "long-session continuity context"
+              ],
+              "fullName": "long-session continuity context routes the explicit coordinator production path through the continuity block and falls back when the binding is invalidated",
+              "status": "passed",
+              "title": "routes the explicit coordinator production path through the continuity block and falls back when the binding is invalidated",
+              "duration": 85.10879999999997,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147279680,
+          "endTime": 1795147281324.109,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/long-session-continuity-context.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "D2 frozen paired workload"
+              ],
+              "fullName": "D2 frozen paired workload freezes at least 30 agent-driven pairs with every required family before measurement",
+              "status": "passed",
+              "title": "freezes at least 30 agent-driven pairs with every required family before measurement",
+              "duration": 19.403500000000008,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 frozen paired workload"
+              ],
+              "fullName": "D2 frozen paired workload keeps one identical model/parameter block and the frozen hash stable across regeneration",
+              "status": "passed",
+              "title": "keeps one identical model/parameter block and the frozen hash stable across regeneration",
+              "duration": 11.098999999999933,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 frozen paired workload"
+              ],
+              "fullName": "D2 frozen paired workload rejects a tampered workload, budget or case input instead of silently re-measuring",
+              "status": "passed",
+              "title": "rejects a tampered workload, budget or case input instead of silently re-measuring",
+              "duration": 24.921499999999924,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 frozen paired workload"
+              ],
+              "fullName": "D2 frozen paired workload excludes pending, unverified, revoked and cross-scope facts from the candidate projection",
+              "status": "passed",
+              "title": "excludes pending, unverified, revoked and cross-scope facts from the candidate projection",
+              "duration": 4.681600000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring scores fidelity, next action, false completion and revoked leaks from raw arm text",
+              "status": "passed",
+              "title": "scores fidelity, next action, false completion and revoked leaks from raw arm text",
+              "duration": 7.02030000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring promotes nothing without live-provider evidence and returns keep-baseline NO-GO inputs",
+              "status": "passed",
+              "title": "promotes nothing without live-provider evidence and returns keep-baseline NO-GO inputs",
+              "duration": 8.747700000000009,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring keeps a structurally clean agent-derived candidate blocked only on missing live evidence",
+              "status": "passed",
+              "title": "keeps a structurally clean agent-derived candidate blocked only on missing live evidence",
+              "duration": 8.833100000000059,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring rejects character-estimated cost as evidence of savings",
+              "status": "passed",
+              "title": "rejects character-estimated cost as evidence of savings",
+              "duration": 8.41330000000005,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring fails a candidate that drops a required fact, invents completion or re-injects a revoked fact",
+              "status": "passed",
+              "title": "fails a candidate that drops a required fact, invents completion or re-injects a revoked fact",
+              "duration": 14.770600000000059,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring blocks a candidate whose P95 latency exceeds 1.10x of baseline",
+              "status": "passed",
+              "title": "blocks a candidate whose P95 latency exceeds 1.10x of baseline",
+              "duration": 5.93870000000004,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring allows promotion only with a full live-provider sample that also clears cost and latency gates",
+              "status": "passed",
+              "title": "allows promotion only with a full live-provider sample that also clears cost and latency gates",
+              "duration": 10.589699999999993,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "D2 paired scoring"
+              ],
+              "fullName": "D2 paired scoring rejects measurement rows outside the frozen workload and mixed model identity",
+              "status": "passed",
+              "title": "rejects measurement rows outside the frozen workload and mixed model identity",
+              "duration": 11.481400000000122,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147284373,
+          "endTime": 1795147284509.4814,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/long-session-paired-evaluation.test.ts"
+        },
+        {
+          "assertionResults": [
+            {
+              "ancestorTitles": [
+                "L01 working-context single source"
+              ],
+              "fullName": "L01 working-context single source projects each task before selecting current fields so another task cannot hide accepted context",
+              "status": "passed",
+              "title": "projects each task before selecting current fields so another task cannot hide accepted context",
+              "duration": 1690.9041000000002,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "L01 working-context single source"
+              ],
+              "fullName": "L01 working-context single source persists through the transactional ledger and reads back a consistent projection",
+              "status": "passed",
+              "title": "persists through the transactional ledger and reads back a consistent projection",
+              "duration": 126.48319999999967,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "L01 working-context single source"
+              ],
+              "fullName": "L01 working-context single source is idempotent across a replayed batch (no duplicate events, identical projection)",
+              "status": "passed",
+              "title": "is idempotent across a replayed batch (no duplicate events, identical projection)",
+              "duration": 183.51980000000003,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "L01 working-context single source"
+              ],
+              "fullName": "L01 working-context single source surfaces a write failure instead of reporting success",
+              "status": "passed",
+              "title": "surfaces a write failure instead of reporting success",
+              "duration": 4.535600000000159,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            },
+            {
+              "ancestorTitles": [
+                "L01 working-context single source"
+              ],
+              "fullName": "L01 working-context single source keeps workspaces isolated on the single ledger",
+              "status": "passed",
+              "title": "keeps workspaces isolated on the single ledger",
+              "duration": 190.98390000000018,
+              "failureMessages": [],
+              "meta": {},
+              "tags": []
+            }
+          ],
+          "startTime": 1795147274558,
+          "endTime": 1795147276753.984,
+          "status": "passed",
+          "message": "",
+          "name": "D:/ClawX-work/g5-test-review-20261118/tests/unit/task-ledger-working-context-single-source.test.ts"
+        }
+      ]
+    }
+  ]
+}

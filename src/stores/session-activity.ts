@@ -590,7 +590,7 @@ export const useSessionActivityStore = create<SessionActivityState>((set, get) =
       const hydrated = candidate && policyMatchesScope(candidate, requestedWorkspaceId, sessionKey)
         ? candidate
         : null;
-      let snapshot = current;
+      let snapshot: SessionActivitySnapshot;
       if (hydrated) {
         const generationChanged = Boolean(hydrated.session.sessionId
           && current.session.sessionId !== hydrated.session.sessionId);

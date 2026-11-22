@@ -2,7 +2,7 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, sign } from 'node:crypto';
+import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, randomUUID, sign } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import { GatewayClient } from '../../openclaw_runtime/packages/gateway-client/src/index';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
@@ -11,26 +11,21 @@ import { allocatePort, buildMockProviderConfig, startScriptedLlm } from './fixtu
 test('reads actual Gateway tool exposure and continues the same isolated session after runtime restart', async () => {
   test.setTimeout(300_000);
   const testInfo = test.info();
-  const root = await mkdtemp(join(tmpdir(), 'clawx-a5-runtime-'));
-  const workspace = join(root, 'workspace');
-  await mkdir(workspace);
-  const llm = await startScriptedLlm((text) => ({ text: text.includes('A5-NODE-CONTINUE') ? 'A5-NODE-CONTINUE-RECEIPT' : 'A5-NODE-FIRST-RECEIPT' }));
-  const configPath = join(root, 'openclaw.json');
-  await writeFile(configPath, JSON.stringify(buildMockProviderConfig(llm.port, workspace)));
-  const keys = generateKeyPairSync('ed25519');
-  const publicKeyPem = keys.publicKey.export({ type: 'spki', format: 'pem' }).toString();
-  const privateKeyPem = keys.privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
-  const rawPublicKey = (pem: string) => Buffer.from(createPublicKey(pem).export({ type: 'spki', format: 'der' })).subarray(-32);
-  const identity = { deviceId: createHash('sha256').update(rawPublicKey(publicKeyPem)).digest('hex'), publicKeyPem, privateKeyPem };
-  const port = await allocatePort();
-  const token = 'a5-isolated-runtime-fixture';
-  const env = { ...process.env, OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_STATE_DIR: join(root, 'state'), OPENCLAW_DISABLE_BONJOUR: '1' };
+  let root: string | undefined;
+  let llm: Awaited<ReturnType<typeof startScriptedLlm>> | undefined;
+  let env!: NodeJS.ProcessEnv;
+  let identity!: { deviceId: string; publicKeyPem: string; privateKeyPem: string };
+  let rawPublicKey!: (pem: string) => Buffer;
+  let port!: number;
+  let token!: string;
   let child: ChildProcess | undefined;
   let client: GatewayClient | undefined;
   let output = '';
   async function boot() {
     output = '';
-    child = spawn(process.execPath, [resolve('openclaw_runtime/dist/entry.js'), 'gateway', 'run', '--port', String(port), '--bind', 'loopback', '--token', token, '--tailscale', 'off', '--allow-unconfigured'], { cwd: resolve('openclaw_runtime'), env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+    // The direct launcher supplies the generation normally stamped by Main.
+    const launchEnv = { ...env, VERSE_CLAW_GATEWAY_GENERATION: randomUUID() };
+    child = spawn(process.execPath, [resolve('openclaw_runtime/dist/entry.js'), 'gateway', 'run', '--port', String(port), '--bind', 'loopback', '--token', token, '--tailscale', 'off', '--allow-unconfigured'], { cwd: resolve('openclaw_runtime'), env: launchEnv, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
     const append = (chunk: Buffer) => { output = (output + chunk.toString()).slice(-16000); };
     child.stdout?.on('data', append);
     child.stderr?.on('data', append);
@@ -54,24 +49,50 @@ test('reads actual Gateway tool exposure and continues the same isolated session
     });
   }
   async function stop() {
-    await client?.stopAndWait({ timeoutMs: 3000 });
+    const ownedClient = client;
     client = undefined;
+    let clientStopFailed = false;
+    let clientStopError: unknown;
+    try {
+      await ownedClient?.stopAndWait({ timeoutMs: 3000 });
+    } catch (error) {
+      clientStopFailed = true;
+      clientStopError = error;
+    }
     const owned = child;
     child = undefined;
-    if (!owned || owned.exitCode !== null) return;
+    if (!owned || owned.exitCode !== null || owned.signalCode !== null) {
+      if (clientStopFailed) throw clientStopError;
+      return;
+    }
     let didExit = false;
     const exited = new Promise<void>((done) => owned.once('exit', () => { didExit = true; done(); }));
-    owned.kill();
-    await Promise.race([exited, new Promise<void>((done) => setTimeout(done, 5000))]);
-    if (!didExit && owned.pid) {
-      if (process.platform === 'win32') {
-        const killer = spawn('taskkill.exe', ['/PID', String(owned.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' });
-        await new Promise<void>((done) => { killer.once('exit', () => done()); killer.once('error', () => done()); });
-      } else owned.kill('SIGKILL');
-      await exited;
+    if (owned.exitCode !== null || owned.signalCode !== null) didExit = true;
+    else owned.kill();
+    if (!didExit) await Promise.race([exited, new Promise<void>((done) => setTimeout(done, 5000))]);
+    if (!didExit && process.platform !== 'win32') {
+      owned.kill('SIGKILL');
+      if (!didExit) await Promise.race([exited, new Promise<void>((done) => setTimeout(done, 5000))]);
     }
+    if (clientStopFailed) throw clientStopError;
+    if (!didExit) throw new Error(`Gateway process ${owned.pid ?? 'unknown'} did not exit during cleanup`);
   }
   try {
+    root = await mkdtemp(join(tmpdir(), 'clawx-a5-runtime-'));
+    const workspace = join(root, 'workspace');
+    await mkdir(workspace);
+    const provider = await startScriptedLlm((text) => ({ text: text.includes('A5-NODE-CONTINUE') ? 'A5-NODE-CONTINUE-RECEIPT' : 'A5-NODE-FIRST-RECEIPT' }));
+    llm = provider;
+    const configPath = join(root, 'openclaw.json');
+    await writeFile(configPath, JSON.stringify(buildMockProviderConfig(provider.port, workspace)));
+    const keys = generateKeyPairSync('ed25519');
+    const publicKeyPem = keys.publicKey.export({ type: 'spki', format: 'pem' }).toString();
+    const privateKeyPem = keys.privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
+    rawPublicKey = (pem: string) => Buffer.from(createPublicKey(pem).export({ type: 'spki', format: 'der' })).subarray(-32);
+    identity = { deviceId: createHash('sha256').update(rawPublicKey(publicKeyPem)).digest('hex'), publicKeyPem, privateKeyPem };
+    port = await allocatePort();
+    token = 'a5-isolated-runtime-fixture';
+    env = { ...process.env, OPENCLAW_CONFIG_PATH: configPath, OPENCLAW_STATE_DIR: join(root, 'state'), OPENCLAW_DISABLE_BONJOUR: '1' };
     await boot();
     const created = await client!.request<{ key?: string; sessionKey?: string }>('sessions.create', { agentId: 'main', label: 'A5 actual runtime isolated' });
     const sessionKey = created.key ?? created.sessionKey;
@@ -105,15 +126,30 @@ test('reads actual Gateway tool exposure and continues the same isolated session
     const continued = await snapshot();
     expect(continued.policy?.generation.runtimeGeneration).toBe(secondAck.gatewayGeneration);
     expect(continued.policy?.tools?.status).toBe('effective');
-    expect(llm.anomalies).toEqual([]);
-    if (process.env.CLAWX_A5_RUNTIME_RECEIPT) await writeFile(process.env.CLAWX_A5_RUNTIME_RECEIPT, JSON.stringify({ schema: 'AutonomyA5RuntimeIntegration/v1', driven_by: 'agent', actor: 'codex-a5-runtime-integration', candidate: process.env.CLAWX_TEST_CANDIDATE ?? null, firstAck, secondAck, firstPolicy: first.policy, continuedPolicy: continued.policy, cronEnabled: cron.enabled, providerRequests: llm.log.length, transcriptReadback: true, limitations: ['Node Gateway integration; native Electron host and production close-to-tray not exercised', 'scripted local provider; no model quality or installed-service claim'] }, null, 2));
+    expect(provider.anomalies).toEqual([]);
+    if (process.env.CLAWX_A5_RUNTIME_RECEIPT) {
+      await writeFile(process.env.CLAWX_A5_RUNTIME_RECEIPT, JSON.stringify({ schema: 'AutonomyA5RuntimeIntegration/v1', driven_by: 'agent', actor: 'codex-a5-runtime-integration', realHumanEvidence: false, candidate: process.env.CLAWX_TEST_CANDIDATE ?? null, firstAck, secondAck, firstPolicy: first.policy, continuedPolicy: continued.policy, cronEnabled: cron.enabled, providerRequests: provider.log.length, transcriptReadback: true, limitations: ['Node Gateway integration; native Electron host and production close-to-tray not exercised', 'scripted local provider; no model quality or installed-service claim'] }, null, 2));
+      await testInfo.attach('reads actual Gateway tool exposure', { path: process.env.CLAWX_A5_RUNTIME_RECEIPT, contentType: 'application/json' });
+    }
   } finally {
-    const logPath = testInfo.outputPath('gateway.log');
-    await writeFile(logPath, output);
-    await testInfo.attach('gateway-runtime-log', { path: logPath, contentType: 'text/plain' });
-    await stop();
-    llm.server.closeAllConnections();
-    await new Promise<void>((done) => llm.server.close(() => done()));
-    await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    try {
+      try {
+        const logPath = testInfo.outputPath('gateway.log');
+        await writeFile(logPath, output);
+        await testInfo.attach('gateway-runtime-log', { path: logPath, contentType: 'text/plain' });
+      } finally {
+        await stop();
+      }
+    } finally {
+      try {
+        const server = llm?.server;
+        if (server) {
+          server.closeAllConnections();
+          await new Promise<void>((done) => server.close(() => done()));
+        }
+      } finally {
+        if (root) await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+      }
+    }
   }
 });

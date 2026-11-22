@@ -1,0 +1,635 @@
+{
+  "schema": "G5StartupRepairPhase/v1",
+  "driven_by": "agent",
+  "actor": "g5-relay-20261117",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-17T06:21:11.361251+00:00",
+  "codeHead": "7fee8fab78bccd60624ee458c4fd278a645b5853",
+  "testedProductHead": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+  "status": "repairs-verified-program-open",
+  "globalGoalCompleted": false,
+  "changes": [
+    "Consume only startup-covered reload revisions; retain later updates and explicit restart requests.",
+    "Cancel superseded restart work at stop/start/recovery/cooldown boundaries.",
+    "Remove source-only ten-minute sidecar delay; ordinary and E2E source launch share runtime startup.",
+    "Align acceptance fixtures with selected session, launch generation and current migration/handoff controls.",
+    "Refresh three retirement adjudication values and lifecycle metadata without changing product flags."
+  ],
+  "currentVerification": {
+    "unitTests": 109,
+    "uncachedTypes": [
+      "node",
+      "web",
+      "test"
+    ],
+    "desktopBuild": "passed",
+    "runtimeBuild": "passed",
+    "comms": "passed",
+    "taskHarness": "passed",
+    "productionHostJourney": "passed",
+    "providerRequests": 4,
+    "nativeCleanup": "passed",
+    "review": {
+      "path": "D:\\tmp\\g5-relay-20261117\\source-parity-review.json",
+      "sha256": "b98d20ff579e7c24970e38cb4f8c76ddcfa8d3f6056f53de2146a54d5edb31e5"
+    },
+    "hostOwner": {
+      "path": "D:\\tmp\\g5-relay-20261117\\host-readiness-parity-v3-results\\autonomy-host-readiness-TF-b54cc-uation-and-restart-recovery\\host-readiness.json",
+      "sha256": "04d6a5159d151f0f7048c226ddf4ac5f18ce74b369a40d86a5f645c34f2fd10b"
+    },
+    "checks": [
+      {
+        "name": "source-parity-final-units",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/config-sync-source-runtime.test.ts",
+          "tests/unit/gateway-manager-restart-recovery.test.ts",
+          "tests/unit/harness-spec-lifecycle.test.ts",
+          "tests/unit/semantic-authority-consistency.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=D:/tmp/g5-relay-20261117/source-parity-final-units.tests.json"
+        ],
+        "exitCode": 0,
+        "durationMs": 61554,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": {
+          "total": 109,
+          "passed": 109,
+          "failed": 0,
+          "pending": 0,
+          "failedSuites": 0
+        },
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-final-units.result.json",
+          "sha256": "eeb281acd2ff5508b359d70e0ee381463675e78cb7675adfa4c2b6c32a298408"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-final-units.log",
+          "sha256": "9961ee0d005ff6ae535e976c640a30a2a4403dce0a1b539b87373211d906d9e3"
+        }
+      },
+      {
+        "name": "source-parity-types-v1",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/typecheck-agent-dev.mjs",
+          "--no-cache"
+        ],
+        "exitCode": 0,
+        "durationMs": 305055,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": null,
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-types-v1.result.json",
+          "sha256": "635dfe50edd83cc7af82d214ab4f3946815d474b711bc9559fceca6b0ae1f139"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-types-v1.log",
+          "sha256": "7e867ff20ca69bf1fb2a66cd8359010a1cca3775fe01e856b9d1fe6215b53d4a"
+        }
+      },
+      {
+        "name": "source-parity-desktop-build-v1",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=6144",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "exitCode": 0,
+        "durationMs": 292275,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": null,
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-desktop-build-v1.result.json",
+          "sha256": "a81f71b94a4313e967ffda081091a1156ce05e7afb40d0ed1ad43694ab28a048"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-desktop-build-v1.log",
+          "sha256": "6c8343904f6840ec490d34f6818f858dab652956b6dde5278c31426a2539b3f7"
+        }
+      },
+      {
+        "name": "source-parity-runtime-build-v1",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/build-openclaw-runtime.mjs"
+        ],
+        "exitCode": 0,
+        "durationMs": 80725,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": null,
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-runtime-build-v1.result.json",
+          "sha256": "510159211b009037bd7d79e3cab39defe3e38eadae64270478afd4ef181e0e8e"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-runtime-build-v1.log",
+          "sha256": "7d24e0e014014eff7837fcbf7f846529730390a4f014ec9f60e660f7bfcee9ef"
+        }
+      },
+      {
+        "name": "source-parity-comms-replay",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/comms/replay.mjs"
+        ],
+        "exitCode": 0,
+        "durationMs": 2360,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": null,
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-comms-replay.result.json",
+          "sha256": "3ed0176a54b8165ba2ae69934420ec6ccbf2dd3f875a29c4cac1860b8caa101d"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-comms-replay.log",
+          "sha256": "7e6711240bdf812950dd156906af1a87766e6134c518d89be4915be8d6bf4001"
+        }
+      },
+      {
+        "name": "source-parity-comms-compare",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/comms/compare.mjs"
+        ],
+        "exitCode": 0,
+        "durationMs": 3268,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": null,
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-comms-compare.result.json",
+          "sha256": "94d8c21ac5ec6f201b022396176ae3ecbed10739cc7ee35431805aaa988d1df1"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-comms-compare.log",
+          "sha256": "4af9497279ffef9257f5d09fcc806292d59b8f2f32a7081b123b1500e2b07c7f"
+        }
+      },
+      {
+        "name": "source-parity-harness-final",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "--",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/gateway-source-startup-parity.md"
+        ],
+        "exitCode": 0,
+        "durationMs": 2786,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": null,
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-harness-final.result.json",
+          "sha256": "54aee6278802e4287ff1f500beee20c1dd99bab1e9071ae9c596415cef8ea8d6"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-harness-final.log",
+          "sha256": "84ce863d9f70daf32864c0dba0f9024dbc822412a9fd8a6521402478535119f8"
+        }
+      },
+      {
+        "name": "source-parity-harness-flow-final",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "--",
+          "run",
+          "--spec",
+          "harness/specs/tasks/gateway-source-startup-parity.md",
+          "--dry-run"
+        ],
+        "exitCode": 0,
+        "durationMs": 2371,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": null,
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-harness-flow-final.result.json",
+          "sha256": "69dca083b6bcb4a15f6256497bc754cac305cb8db61ed935cc38d9d46dbc4f2f"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\source-parity-harness-flow-final.log",
+          "sha256": "63af5fc8c34dde33338d24e1b719aee652e9f4a9a487de7b2033ffabfc089f08"
+        }
+      },
+      {
+        "name": "host-readiness-parity-v3",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/autonomy-host-readiness.spec.ts",
+          "--workers=1",
+          "--retries=0",
+          "--reporter=list,json",
+          "--output=D:/tmp/g5-relay-20261117/host-readiness-parity-v3-results"
+        ],
+        "exitCode": 0,
+        "durationMs": 159934,
+        "sourceUnchanged": true,
+        "dirty": "",
+        "tests": {
+          "startTime": "2026-11-17T05:46:50.949Z",
+          "duration": 155548.287,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\host-readiness-parity-v3.result.json",
+          "sha256": "2e93be601fe368f0efac4e93745e79d7594d74d7e668f29d465b50e3a4596111"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\host-readiness-parity-v3.log",
+          "sha256": "a0d8594d45ad0ad043635e648eb8c608896e107b73f01eb96c674231302a4d3f"
+        }
+      },
+      {
+        "name": "u6-migration-correct-target-v2",
+        "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/u6-interaction-metrics.final.spec.ts",
+          "--grep",
+          "U6 interaction metrics: cross-tree-migration$",
+          "--workers=1",
+          "--retries=0",
+          "--reporter=list,json",
+          "--output=D:/tmp/g5-relay-20261117/u6-migration-correct-target-v2-results"
+        ],
+        "exitCode": 0,
+        "durationMs": 73462,
+        "sourceUnchanged": true,
+        "dirty": "M tests/e2e/u6-interaction-metrics.final.spec.ts",
+        "tests": {
+          "startTime": "2026-11-17T06:18:05.042Z",
+          "duration": 70956.981,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\u6-migration-correct-target-v2.result.json",
+          "sha256": "81011106e39d8c3af3d93fca178d865eccc6dff918330b1d13282ba7d3e89b25"
+        },
+        "log": {
+          "path": "D:\\tmp\\g5-relay-20261117\\u6-migration-correct-target-v2.log",
+          "sha256": "b8442f2130629ade910c7c0f1206ae8554193814d37b5f16221f0e8cfb03cc38"
+        }
+      },
+      {
+        "name": "host-readiness-parity-v3-native-cleanup",
+        "status": "passed",
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\host-readiness-parity-v3-results\\electron-process-cleanup.json",
+          "sha256": "6e26b8d1130f7c4184a96dffac2fbfea0b8360b2c7a8535df95860dcf3045492"
+        },
+        "identities": 4
+      },
+      {
+        "name": "u6-migration-correct-target-v2-native-cleanup",
+        "status": "passed",
+        "receipt": {
+          "path": "D:\\tmp\\g5-relay-20261117\\u6-migration-correct-target-v2-results\\electron-process-cleanup.json",
+          "sha256": "c513f03e611aeb5739f6507de13f51d44003d60a6319e0a9366fc8f751babff3"
+        },
+        "identities": 3
+      }
+    ]
+  },
+  "otherBoundCandidates": [
+    {
+      "candidate": "a18ac30df6a7807667337a8822e3b4df33b56759",
+      "gateSteps": 20,
+      "tests": 335,
+      "originalE2E": 73,
+      "extraE2E": 5,
+      "readback": {
+        "path": "D:\\tmp\\g5-relay-20261117\\original73-a18ac3-v3-readback.json",
+        "sha256": "ce250ca2c502db1c31711b62f6e9eb90d172f0fa5ae329501f6f0e18aa40503b"
+      },
+      "extra": {
+        "path": "D:\\tmp\\g5-relay-20261117\\extra-cases-a18ac3-v1.result.json",
+        "sha256": "89368087c25ba98cf68be8a16c5bb913936d3552338453347b1744aa3e133c0a"
+      },
+      "buildArchive": {
+        "path": "D:\\tmp\\g5-relay-20261117\\a18ac3-build-archive-readback.json",
+        "sha256": "283c0cb4b83413fc170a05b8ad6b3b416bdd08ed1dfc7b960c9689bc31528441"
+      }
+    },
+    {
+      "candidate": "2d6607fe1d4efcbe76cae2cf4eb3999e0ec70616",
+      "focusedNative": {
+        "taskLifecycle": "passed",
+        "nodeRuntimeReadiness": "passed",
+        "hostReadiness": "failed-before-production-fix"
+      },
+      "receipt": {
+        "path": "D:\\tmp\\g5-relay-20261117\\foundation-focused-native-v1.result.json",
+        "sha256": "945680beeab3cb627dfb4131f75cf9999af9516a39630c9c6c37fed664cc8dc5"
+      }
+    },
+    {
+      "candidate": "e663bd9b6bd1a9279e75ac30d8bf529a3d2060c0",
+      "targetedU6": {
+        "handoff": "passed",
+        "migration": "passed after correcting only the test target label"
+      },
+      "handoffRun": {
+        "path": "D:\\tmp\\g5-relay-20261117\\u6-fixed-candidate-v1.result.json",
+        "sha256": "3431cdec4d7779541070e62a1ce05c8876e5eabbba40d1cf780c668bbef108d5"
+      },
+      "migrationRun": {
+        "path": "D:\\tmp\\g5-relay-20261117\\u6-migration-correct-target-v2.result.json",
+        "sha256": "81011106e39d8c3af3d93fca178d865eccc6dff918330b1d13282ba7d3e89b25"
+      },
+      "migrationDriverSha256": "5dbeb33cf8413e303ced4d2525f57862a85c638a839db56d2646e76c2e78010d",
+      "migrationSourceStatus": "Product frozen; one test driver changed before execution and unchanged during execution."
+    }
+  ],
+  "integration": {
+    "candidate": "a18ac30df6a7807667337a8822e3b4df33b56759",
+    "status": "not-passed",
+    "chain": {
+      "candidatePassed": 1,
+      "candidateFailed": 1,
+      "baselineUnsupported": 2,
+      "failure": "Owned Gateway exit receipt timeout; cleanup later passed"
+    },
+    "mixed": {
+      "passedTrials": 24,
+      "events": 1152,
+      "comparisons": [
+        {
+          "windows": 1,
+          "workers": 1,
+          "throughput": {
+            "before": 5.933186653494607,
+            "after": 2.5020919141475884,
+            "changePct": -57.828869033239116
+          },
+          "p95Total": {
+            "before": 627.8619500000023,
+            "after": 2905.7886500000022,
+            "changePct": 362.8069355054868
+          },
+          "p95Input": {
+            "before": 112.64999999850988,
+            "after": 92.94999999925494,
+            "changePct": -17.48779405194455
+          },
+          "p95Scroll": {
+            "before": 425.6499999985099,
+            "after": 1589.7000000029802,
+            "changePct": 273.47586045073314
+          }
+        },
+        {
+          "windows": 1,
+          "workers": 4,
+          "throughput": {
+            "before": 9.497843849793268,
+            "after": 12.938436545774604,
+            "changePct": 36.22498695907939
+          },
+          "p95Total": {
+            "before": 811.6964000000007,
+            "after": 606.6096500000003,
+            "changePct": -25.266435825020316
+          },
+          "p95Input": {
+            "before": 151.30000000074506,
+            "after": 92.85000000149012,
+            "changePct": -38.63185723659426
+          },
+          "p95Scroll": {
+            "before": 445.1499999985099,
+            "after": 327.2499999962747,
+            "changePct": -26.485454341824067
+          }
+        },
+        {
+          "windows": 1,
+          "workers": 8,
+          "throughput": {
+            "before": 7.752932118970759,
+            "after": 3.1905104698028026,
+            "changePct": -58.84769244921031
+          },
+          "p95Total": {
+            "before": 1653.4285499999987,
+            "after": 4059.7821500000027,
+            "changePct": 145.53719905223642
+          },
+          "p95Input": {
+            "before": 124.85000000149012,
+            "after": 97.30000000074506,
+            "changePct": -22.066479776064273
+          },
+          "p95Scroll": {
+            "before": 478.8500000014901,
+            "after": 423.94999999925494,
+            "changePct": -11.464968153297338
+          }
+        },
+        {
+          "windows": 2,
+          "workers": 1,
+          "throughput": {
+            "before": 6.712728066286563,
+            "after": 4.09888367268739,
+            "changePct": -38.93863072938593
+          },
+          "p95Total": {
+            "before": 486.72389999999996,
+            "after": 933.4390999999996,
+            "changePct": 91.78000094098515
+          },
+          "p95Input": {
+            "before": 120,
+            "after": 139.19999999925494,
+            "changePct": 15.99999999937911
+          },
+          "p95Scroll": {
+            "before": 508.44999999925494,
+            "after": 433.19999999925494,
+            "changePct": -14.799881994318076
+          }
+        },
+        {
+          "windows": 2,
+          "workers": 4,
+          "throughput": {
+            "before": 10.110549769204171,
+            "after": 9.423987065961065,
+            "changePct": -6.790557575160905
+          },
+          "p95Total": {
+            "before": 1551.6432499999992,
+            "after": 976.4444000000021,
+            "changePct": -37.070302725835816
+          },
+          "p95Input": {
+            "before": 137.84999999776483,
+            "after": 126.75,
+            "changePct": -8.052230684036854
+          },
+          "p95Scroll": {
+            "before": 795.7999999970198,
+            "after": 319.8999999985099,
+            "changePct": -59.80145765271325
+          }
+        },
+        {
+          "windows": 2,
+          "workers": 8,
+          "throughput": {
+            "before": 16.05512846933864,
+            "after": 13.680496212676832,
+            "changePct": -14.79049053513819
+          },
+          "p95Total": {
+            "before": 823.0355500000005,
+            "after": 886.0343999999996,
+            "changePct": 7.654450649185085
+          },
+          "p95Input": {
+            "before": 174.75,
+            "after": 110.99999999627471,
+            "changePct": -36.48068669741076
+          },
+          "p95Scroll": {
+            "before": 374.44999999925494,
+            "after": 352.0000000037253,
+            "changePct": -5.995460006829834
+          }
+        }
+      ]
+    },
+    "readback": {
+      "path": "D:\\tmp\\g5a\\runs\\ac4-a18ac3-v5\\readback.json",
+      "sha256": "23588fdcccd1bf7c5ca3a6572927a0cffa35a95d50458cce2d8a63f3320cf862"
+    }
+  },
+  "remaining": [
+    {
+      "item": "TF-0665 current-candidate phase acceptance",
+      "status": "open",
+      "details": "Fresh complete 27-criterion readback and correctly scoped current acceptance spec are pending; the historical narrow specs failed ownership checks."
+    },
+    {
+      "item": "TF-0867 integration",
+      "status": "open",
+      "details": "Frozen baseline lacks chain support; one candidate stop timed out; five of six measured workload points had lower candidate throughput."
+    },
+    {
+      "item": "latest six-journey paired acceptance",
+      "status": "incomplete",
+      "details": "Baseline handoff dialog still failed; candidate run was interrupted after D drive reached zero. Separate identity-checked cleanup passed. Candidate migration/handoff targeted checks subsequently passed.",
+      "cleanup": {
+        "path": "D:\\tmp\\g5-relay-20261117\\paired-e663bd-v1-abort-cleanup.json",
+        "sha256": "dab1c883e4cbae9af690cf8a182340a8b19ce7ab17af7947857ca5c1f60b020d"
+      }
+    },
+    {
+      "item": "Gateway stop diagnosis",
+      "status": "hypothesis-not-applied",
+      "details": "Synchronous Windows UtilityProcess.kill may delay exit handling; proposed path still requires native validation.",
+      "diagnosis": {
+        "path": "D:\\tmp\\g5-relay-20261117\\gateway-stop-diagnosis-supplement.json",
+        "sha256": "c01243f0625bd6580b06a39bf9ff1e3db1a6db00a20bc17855cf0545216f7c77"
+      }
+    },
+    {
+      "item": "Harness CI",
+      "status": "failed",
+      "details": "59 tests and 821 lifecycle checks passed; Agent Dev audit rejected four stale evidence files and three historical performance limits.",
+      "receipt": {
+        "path": "D:\\tmp\\g5-relay-20261117\\harness-ci-e663bd.result.json",
+        "sha256": "ff750f8920889be9d8f7ab4f230b6839ee6936ad799b01c5f8cec2e1f4a4344c"
+      }
+    },
+    {
+      "item": "G5 later planning and coordination nodes",
+      "status": "not-completed",
+      "details": "Task owner replan/decomposition and dependent system coordination nodes remain in the existing task graph."
+    },
+    {
+      "item": "Repository artifact retention",
+      "status": "failed-existing-paths",
+      "details": "Existing tracked docs/dev/evidence/ui-hierarchy-20261112 files violate the local-only/ignored policy; this phase retained them intact.",
+      "log": {
+        "path": "D:\\tmp\\g5-relay-20261117\\repair-evidence-retention.log",
+        "sha256": "ed29064c9c4c0a721a8b7db00e1ec367249cdc8f44a73e6d0ed90034cdef6ebc"
+      }
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "electron/gateway/manager.ts",
+      "sha256": "8dd35c3f445c4ce09b14241a4b6d3144d90e2d729830788b63d86f7e360bf2bf",
+      "blob": "d3821bf0a24463b7deb9066873a3d6f9ad4249bd"
+    },
+    {
+      "path": "electron/gateway/restart-controller.ts",
+      "sha256": "cfba7334c6d55ea1583099a626d5014f9a45aec3fc0a4d30f6eccc1d3ea74575",
+      "blob": "746757cf4578486ae16a4039dbfd5cb6344f0236"
+    },
+    {
+      "path": "electron/gateway/config-sync.ts",
+      "sha256": "f64b5bae6fed1f54714a0d8232d3748388919499c2763a9fe20455644b4401fe",
+      "blob": "3facef7cdb6ed4b4e6fb32bea26da129dfdc3902"
+    },
+    {
+      "path": "tests/e2e/u6-interaction-metrics.final.spec.ts",
+      "sha256": "5dbeb33cf8413e303ced4d2525f57862a85c638a839db56d2646e76c2e78010d",
+      "blob": "d96207e0d3e886187350e1baa08c7c8197f4d9ad"
+    },
+    {
+      "path": "tests/e2e/autonomy-runtime-readiness.spec.ts",
+      "sha256": "4334b7095735b9182fd75f501a68ed5e1e19ef14a40784420310d4473e222eb5",
+      "blob": "d0195a70c379d6d90d825176aee3094a7f86c7ac"
+    },
+    {
+      "path": "tests/e2e/autonomy-host-readiness.spec.ts",
+      "sha256": "de855feaf0f4fd4af4cd0f89e3404811d2a235abcc1d8f50d86725e2107011c5",
+      "blob": "01df359728019542588f8c43c2bf9ca80852c38e"
+    },
+    {
+      "path": "tests/e2e/durable-task-lifecycle.spec.ts",
+      "sha256": "3df62372c7a7f6fcf496aa18949d9f48f45d67f712565a6a302f5da1559084b4",
+      "blob": "e0ea6918d9d34886121bad536983c41dce4e937f"
+    }
+  ],
+  "rawRecovery": {
+    "root": "D:\\tmp\\g5-relay-20261117",
+    "baseline": "D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c",
+    "rawEvidenceRetention": "Local private artifacts; historical failures retained by original run IDs."
+  }
+}

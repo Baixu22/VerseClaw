@@ -2156,7 +2156,7 @@
       "menu": "Delivery options",
       "guide": "Guide",
       "guideTooltip": "Add to the current run at its next step, without stopping it",
-      "longTaskRequired": "Interrupt/guide/queue/revise-goal requires an active /loop long-task context for this session.",
+      "longTaskRequired": "Interrupt and guidance require an active long task.",
       "reviseGoal": "Revise goal",
       "reviseGoalTooltip": "Save a checkpoint and restart with this message as the new goal",
       "queueDefault": "Running: Enter queues this message",
@@ -2296,6 +2296,30 @@
     "knowledgeRuntimeLessons": {
       "title": "Runtime Lessons",
       "description": "Opt in to reviewed SEKB principles as a visible knowledge source."
+    },
+    "knowledgeInteraction": {
+      "label": "Knowledge mode",
+      "off": "Off",
+      "manual": "Manual",
+      "suggest": "Suggest",
+      "auto-read": "Auto-read"
+    },
+    "knowledgeProfile": {
+      "label": "Retrieval profile",
+      "local": "Local",
+      "quality": "Quality",
+      "research": "Research"
+    },
+    "knowledgeRead": {
+      "cancel": "Cancel read",
+      "cancelled": "Cancelled",
+      "timeout": "Read timed out",
+      "error": "Read unavailable",
+      "inspect": "Inspect source",
+      "version": "Version {{version}}",
+      "bytes": "Candidate body {{bytes}} bytes",
+      "fallback": "Using source search fallback",
+      "partial": "Partial retrieval"
     }
   },
   "historyBuckets": {
@@ -3025,5 +3049,12 @@
     "copyDetails": "Copy details",
     "history": "Branches and history",
     "tools": "Repository tools"
+  },
+  "knowledgeUsage": {
+    "summary": "Used Knowledge: {{count}} fragments · {{chars}} chars · ~{{tokens}} tokens",
+    "unavailable": "Usage receipt unavailable",
+    "pending": "Awaiting final knowledge receipt",
+    "dropped": "{{count}} selected sources not retained",
+    "selectionUnavailable": "Selection comparison unavailable"
   }
 }

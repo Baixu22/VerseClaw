@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { proxyAwareFetch } from '../utils/proxy-fetch';
 
 const DEFAULT_SILICONFLOW_BASE = 'https://api.siliconflow.cn/v1';
-const DEFAULT_SILICONFLOW_MODEL = 'Qwen/Qwen3-Embedding-8B';
+const DEFAULT_SILICONFLOW_MODEL = 'Qwen/Qwen3-VL-Embedding-8B';
 const DEFAULT_EMBEDDING_DIMENSION = 4096;
 /** Per-batch ceiling. This is NOT the total operation budget. */
 const REQUEST_TIMEOUT_MS = 30_000;

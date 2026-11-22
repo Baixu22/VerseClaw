@@ -13,7 +13,7 @@ export function SessionFamilyNavigation({ session, sessions, derivation, onNavig
   onNavigate: (key: string) => void;
   onRefresh: () => void;
 }) {
-  const { t } = useTranslation('chat');
+  const { t, i18n } = useTranslation('chat');
   const relation = classifyDerivation(session);
   const parent = sessions.find((entry) => entry.key === relation.parentSessionKey);
   const problem = derivation?.hops.find((hop) => hop.status !== 'resolved')?.status;
@@ -22,6 +22,8 @@ export function SessionFamilyNavigation({ session, sessions, derivation, onNavig
   if (!relation.parentSessionKey && !relation.diagnostics?.length) return null;
   const name = (entry: ChatSession) => entry.displayName || entry.label || entry.derivedTitle || entry.key;
   const kind = t(`sessionFamily.kind.${relation.kind}`);
+  const forkTime = session.forkedFromTimestamp && session.forkedFromTimestamp > 0
+    ? new Intl.DateTimeFormat(i18n.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(session.forkedFromTimestamp)) : null;
   const showRelations = hops.length > 1 || Boolean(problem);
   return <nav aria-label={t('sessionFamily.navigation')} data-testid="session-family-navigation"
     className="session-family-nav mb-1 flex min-w-0 flex-col border-b border-border/50 pb-1">
@@ -31,7 +33,7 @@ export function SessionFamilyNavigation({ session, sessions, derivation, onNavig
           <ArrowLeft className="size-3.5 shrink-0" aria-hidden="true" />
           <span className="min-w-0 flex-1">
             <span className="block text-2xs text-muted-foreground">{t('session.navigation.source')} · {kind}</span>
-            <span className="block truncate">{name(parent)}</span>
+            <span className="block truncate" data-testid="chat-session-lineage">{t("session.navigation.from", { session: name(parent) })}{forkTime ? ` · ${forkTime}` : ''}</span>
           </span>
         </button>
       : <button type="button" data-testid="session-family-source-unloaded" onClick={onRefresh} className={ROW}>

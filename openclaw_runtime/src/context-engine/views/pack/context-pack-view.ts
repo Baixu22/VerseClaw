@@ -15,7 +15,6 @@ import type { FactStore } from "../../factstore/store.js";
 import { estimatePackCost, truncatePackToBudget } from "./context-budget.js";
 import { chooseExpansion } from "./expansion-policy.js";
 import { skeletonizeChunk } from "./skeletonizer.js";
-import { rerankWithGraph } from "../retrieval/graph-reranker.js";
 import { retrieveHybrid, type SearchHit } from "../retrieval/hybrid-retriever.js";
 import { classifyEvidencePath } from "../retrieval/path-classification.js";
 import { buildQueryContext } from "../retrieval/query-context.js";
@@ -47,7 +46,7 @@ export async function buildContextPack(
   const retrieval = retrieveHybrid(store, repoRoot, queryContext, {
     limit: Math.max(request.maxSnippets ?? DEFAULT_MAX_SNIPPETS, 12),
   });
-  let hits = rerankWithGraph(store, repoRoot, retrieval.hits);
+  let hits = retrieval.hits;
 
   // Degradation chain (§3): index miss → automatic ripgrep backfill. Text hits are
   // memoized into the store (producer=ripgrep) and served as snippets so a cold or
@@ -73,7 +72,12 @@ export async function buildContextPack(
 
   const ownerChain = buildOwnerChain(store, repoRoot, hits);
   const topology = buildTopology(store, repoRoot, ownerChain);
-  const snippets = buildSnippets(hits, request.query, mode, request.maxSnippets ?? DEFAULT_MAX_SNIPPETS);
+  const snippets = buildSnippets(
+    hits,
+    request.query,
+    mode,
+    request.maxSnippets ?? DEFAULT_MAX_SNIPPETS,
+  );
   const freshness = buildFreshness(store, repoRoot, ensure, ownerChain);
   const missingEvidence = buildMissingEvidence(ensure, hits, request.query);
   if (grepFallbackUsed) {
@@ -154,7 +158,11 @@ function buildOwnerChain(store: FactStore, repoRoot: string, hits: SearchHit[]):
     }));
 }
 
-function buildTopology(store: FactStore, repoRoot: string, ownerChain: OwnerNode[]): TopologyEdge[] {
+function buildTopology(
+  store: FactStore,
+  repoRoot: string,
+  ownerChain: OwnerNode[],
+): TopologyEdge[] {
   const edges: TopologyEdge[] = [];
   for (const owner of ownerChain) {
     for (const edge of store.getEdgesByFile(repoRoot, owner.filePath)) {
@@ -194,7 +202,8 @@ function buildSnippets(
     seenFiles.set(hit.chunk.filePath, perFile + 1);
 
     const decision = chooseExpansion(hit.chunk, query, mode);
-    const originalLineCount = hit.chunk.content.length === 0 ? 0 : hit.chunk.content.split(/\r?\n/).length;
+    const originalLineCount =
+      hit.chunk.content.length === 0 ? 0 : hit.chunk.content.split(/\r?\n/).length;
     let content: string;
     let startLine = hit.chunk.startLine;
     let endLine = hit.chunk.endLine;
@@ -250,13 +259,19 @@ function buildFreshness(
   };
 }
 
-function buildMissingEvidence(ensure: EnsureFactsResult, hits: SearchHit[], query: string): string[] {
+function buildMissingEvidence(
+  ensure: EnsureFactsResult,
+  hits: SearchHit[],
+  query: string,
+): string[] {
   const entries = [...ensure.missingEvidence];
   for (const failure of ensure.failed) {
     entries.push(`unreadable (${failure.error}): ${failure.path}`);
   }
   if (hits.length === 0) {
-    entries.push(`No indexed evidence matched "${query}". The store may not cover the relevant files yet.`);
+    entries.push(
+      `No indexed evidence matched "${query}". The store may not cover the relevant files yet.`,
+    );
   }
   return entries;
 }
@@ -266,7 +281,10 @@ function ripgrepPatternFor(queryContext: ReturnType<typeof buildQueryContext>): 
   const terms = new Set<string>();
   for (const token of queryContext.codeTokens) terms.add(token);
   for (const term of queryContext.lexicalTerms) {
-    if ((term.source === "raw" || term.source === "identifier" || term.source === "lexicon") && term.term.length >= 3) {
+    if (
+      (term.source === "raw" || term.source === "identifier" || term.source === "lexicon") &&
+      term.term.length >= 3
+    ) {
       terms.add(term.term);
     }
   }
@@ -290,7 +308,10 @@ function buildNextQueries(codeTokens: string[], ownerChain: OwnerNode[]): string
   for (const token of codeTokens.slice(0, 2)) {
     queries.push(`impact of changing ${token}`);
   }
-  if (ownerChain[1]) queries.push(`how does ${ownerChain[1].filePath} relate to ${ownerChain[0]?.filePath ?? "the entrypoint"}`);
+  if (ownerChain[1])
+    queries.push(
+      `how does ${ownerChain[1].filePath} relate to ${ownerChain[0]?.filePath ?? "the entrypoint"}`,
+    );
   return dedupe(queries).slice(0, 3);
 }
 
@@ -301,7 +322,8 @@ function deriveConfidence(
 ): "low" | "medium" | "high" {
   if (hits.length === 0) return "low";
   const hasExact = hits.some((hit) => hit.source === "exact");
-  const noGaps = missingEvidence.length === 0 && freshness.stale.length === 0 && freshness.missing.length === 0;
+  const noGaps =
+    missingEvidence.length === 0 && freshness.stale.length === 0 && freshness.missing.length === 0;
   if (hasExact && noGaps) return "high";
   if (noGaps || hasExact) return "medium";
   return "low";
@@ -315,7 +337,8 @@ function deriveEditReadiness(
   missingEvidence: string[],
 ): ContextPack["editReadiness"] {
   if (!answerable) return "not_enough_context";
-  const hasGaps = missingEvidence.length > 0 || freshness.stale.length > 0 || freshness.missing.length > 0;
+  const hasGaps =
+    missingEvidence.length > 0 || freshness.stale.length > 0 || freshness.missing.length > 0;
   if (hasGaps || confidence === "low") return "investigate_only";
   return "safe_to_edit_after_reading";
 }

@@ -1,6 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { useChatStore } from '@/stores/chat';
+import { Chat } from '@/pages/Chat/index';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
   gatewayState: { status: { state: 'running', port: 18789 } },
@@ -130,12 +132,7 @@ vi.mock('@/pages/Chat/ChatToolbar', () => ({ ChatToolbar: () => null }));
 vi.mock('@/pages/Chat/ChatInput', () => ({ ChatInput: () => null }));
 
 describe('Chat leading orphan tool folding', () => {
-  beforeEach(() => {
-    vi.resetModules();
-  });
-
   it('hides paginated-prefix tool rows and folds them into the first user execution graph', async () => {
-    const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
         { role: 'assistant', id: 'orphan-exec', content: [{ type: 'toolCall', id: 'e1', name: 'exec', input: {} }] },
@@ -162,7 +159,6 @@ describe('Chat leading orphan tool folding', () => {
       thinkingLevel: null,
     });
 
-    const { Chat } = await import('@/pages/Chat/index');
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
     await waitFor(() => {

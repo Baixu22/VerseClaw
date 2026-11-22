@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import RolesOrchestrationPanel from '@/components/agents/RolesOrchestrationPanel';
@@ -92,14 +93,24 @@ vi.mock('sonner', () => ({
   },
 }));
 
-function renderPanel() {
-  return render(
-    <TooltipProvider>
-      <RolesOrchestrationPanel
-        agents={[{ id: 'main', name: 'Main', isDefault: true, mainSessionKey: 'agent:main:abc' }]}
-      />
-    </TooltipProvider>,
+type PanelAgents = Parameters<typeof RolesOrchestrationPanel>[0]['agents'];
+
+function panelView(agents: PanelAgents) {
+  return (
+    <MemoryRouter><TooltipProvider>
+      <RolesOrchestrationPanel agents={agents} />
+    </TooltipProvider></MemoryRouter>
   );
+}
+
+function renderPanel(agents: PanelAgents = [{ id: 'main', name: 'Main', isDefault: true, mainSessionKey: 'agent:main:abc' }]) {
+  return render(panelView(agents));
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(done => { resolve = done; });
+  return { promise, resolve };
 }
 
 describe('RolesOrchestrationPanel', () => {
@@ -184,6 +195,70 @@ describe('RolesOrchestrationPanel', () => {
     });
   });
 
+  it('keeps Mission run responses and busy state in the current scope', async () => {
+    const runA = deferred<unknown>(); const runB = deferred<unknown>();
+    let callsA = 0;
+    gatewayRpcMock.mockImplementation((method: string, params?: { sessionKey?: string }) => {
+      if (method === 'mission.run') {
+        if (params?.sessionKey !== 'agent:a:main') return runB.promise;
+        if (++callsA === 1) return Promise.resolve({ mission: { missionId: 'mission-a', status: 'running', phase: 'execute', tick: 1, traceId: 'trace-a' } });
+        return runA.promise;
+      }
+      return Promise.resolve({ roles: [] });
+    });
+    const view = renderPanel([{ id: 'a', name: 'A', isDefault: true, mainSessionKey: 'agent:a:main' }]);
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    fireEvent.change(screen.getByTestId('role-orchestration-task-input'), { target: { value: 'Keep the current scope' } });
+    fireEvent.click(screen.getByTestId('role-mission-run'));
+    expect(await screen.findByTestId('role-mission-trace')).toHaveTextContent('trace-a');
+    await waitFor(() => expect(screen.getByTestId('role-mission-run')).toBeEnabled());
+    fireEvent.click(screen.getByTestId('role-mission-run'));
+    await waitFor(() => expect(gatewayRpcMock.mock.calls.filter(call => call[0] === 'mission.run')).toHaveLength(2));
+    view.rerender(panelView([{ id: 'b', name: 'B', isDefault: true, mainSessionKey: 'agent:b:main' }]));
+    expect(screen.queryByTestId('role-mission-result')).toBeNull();
+    expect(screen.getByTestId('role-mission-run')).toBeEnabled();
+    fireEvent.click(screen.getByTestId('role-mission-run'));
+    expect(gatewayRpcMock).toHaveBeenLastCalledWith('mission.run', expect.objectContaining({ sessionKey: 'agent:b:main', agentId: 'b' }));
+    expect(gatewayRpcMock.mock.calls.filter(call => call[0] === 'mission.run').at(-1)?.[1]).not.toHaveProperty('missionId');
+    await act(async () => { runA.resolve({ mission: { missionId: 'mission-a', status: 'complete', phase: 'complete', tick: 1, traceId: 'trace-a' } }); });
+    expect(screen.queryByTestId('role-mission-result')).toBeNull();
+    expect(screen.getByTestId('role-mission-run')).toBeDisabled();
+    await act(async () => { runB.resolve({ mission: { missionId: 'mission-b', status: 'running', phase: 'execute', tick: 1, traceId: 'trace-b' } }); });
+    expect(screen.getByTestId('role-mission-trace')).toHaveTextContent('trace-b');
+    expect(screen.getByTestId('role-mission-run')).toBeEnabled();
+  });
+
+  it('keeps delayed Mission controls in their originating scope', async () => {
+    const pauseA = deferred<unknown>(); const cancelB = deferred<unknown>();
+    gatewayRpcMock.mockImplementation((method: string, params?: { sessionKey?: string }) => {
+      if (method === 'mission.pause') return pauseA.promise;
+      if (method === 'mission.cancel') return cancelB.promise;
+      if (method === 'mission.run') {
+        const id = params?.sessionKey === 'agent:a:main' ? 'a' : 'b';
+        return Promise.resolve({ mission: { missionId: `mission-${id}`, status: 'running', phase: 'execute', tick: 1, traceId: `trace-${id}` } });
+      }
+      return Promise.resolve({ roles: [] });
+    });
+    const view = renderPanel([{ id: 'a', name: 'A', isDefault: true, mainSessionKey: 'agent:a:main' }]);
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    fireEvent.change(screen.getByTestId('role-orchestration-task-input'), { target: { value: 'Keep controls scoped' } });
+    fireEvent.click(screen.getByTestId('role-mission-run'));
+    await screen.findByTestId('role-mission-result');
+    fireEvent.click(screen.getByTestId('role-mission-pause'));
+    view.rerender(panelView([{ id: 'b', name: 'B', isDefault: true, mainSessionKey: 'agent:b:main' }]));
+    expect(screen.getByTestId('role-mission-run')).toBeEnabled();
+    fireEvent.click(screen.getByTestId('role-mission-run'));
+    await waitFor(() => expect(screen.getByTestId('role-mission-trace')).toHaveTextContent('trace-b'));
+    fireEvent.click(screen.getByTestId('role-mission-cancel'));
+    await act(async () => { pauseA.resolve({ mission: { missionId: 'mission-a', status: 'paused', phase: 'execute', tick: 1, traceId: 'trace-a' } }); });
+    expect(screen.getByTestId('role-mission-trace')).toHaveTextContent('trace-b');
+    expect(screen.getByTestId('role-mission-cancel')).toBeDisabled();
+    await act(async () => { cancelB.resolve({ mission: { missionId: 'mission-b', status: 'cancelled', phase: 'blocked', tick: 1, traceId: 'trace-b' } }); });
+    expect(screen.getByTestId('role-mission-run')).toBeEnabled();
+    expect(screen.getByTestId('role-mission-pause')).toBeDisabled();
+    expect(gatewayRpcMock).toHaveBeenCalledWith('mission.cancel', { missionId: 'mission-b' });
+  });
+
   it('records successful orchestration plan previews to Task Ledger as read-only projections', async () => {
     renderPanel();
 
@@ -213,6 +288,26 @@ describe('RolesOrchestrationPanel', () => {
         }),
       ]),
     }));
+  });
+
+  it('keeps an empty role list settled until an explicit refresh', async () => {
+    const refreshed = deferred<unknown>(); let roleReads = 0;
+    gatewayRpcMock.mockImplementation((method: string) => {
+      if (method === 'roles.list') return ++roleReads === 1 ? Promise.resolve({ roles: [] }) : refreshed.promise;
+      return Promise.resolve({});
+    });
+    renderPanel();
+    fireEvent.click(screen.getByTestId('role-orchestration-toggle'));
+    const refresh = screen.getByTestId('role-catalog-refresh');
+    await waitFor(() => expect(refresh).toBeEnabled());
+    fireEvent.change(screen.getByTestId('role-orchestration-task-input'), { target: { value: 'Keep the empty catalogue settled' } });
+    await act(async () => { await Promise.resolve(); });
+    expect(roleReads).toBe(1);
+    fireEvent.click(refresh);
+    expect(refresh).toBeDisabled();
+    await act(async () => { refreshed.resolve({ roles: [] }); });
+    expect(refresh).toBeEnabled();
+    expect(roleReads).toBe(2);
   });
 
   it('saves lightweight plan edits to Task Ledger without creating a DAG editor', async () => {

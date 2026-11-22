@@ -134,5 +134,15 @@ test('paired retained history and scrolling workload', async ({ launchElectronAp
       workload: { sessions: 12, messagesPerSession: 200, toolMetadataLines: 32768, scrolls: 12, scrollDelta: 320 },
       beforeHeap, retainedHeap, heapGrowth: retainedHeap - beforeHeap, finalHeap: await heap(), calls, samples,
       limits: 'Controlled Host API history fixtures with retained large tool metadata; actual Electron renderer heap after GC and mouse scrolling.' }, null, 2));
+    await page.getByTestId('chat-message-nav-rail-item-0').click();
+    await expect(page.getByTestId('chat-message-0')).toBeInViewport();
+    await page.getByTestId('sidebar-session-' + sessions[1].key).click();
+    await expect(page.getByText('Answer 99 cache-1', { exact: true })).toBeAttached();
+    await expect(page.locator('.ws-tree')).toHaveAttribute('data-order-held', 'false');
+    await page.getByTestId('sidebar-session-' + sessionKey).click();
+    await expect(page.getByTestId('chat-message-0')).toBeInViewport();
+    await writeFile(testInfo.outputPath('session-restore.json'), JSON.stringify({
+      driven_by: 'agent', actor: 'playwright', restoredMessage: 0, interactionOrderReleased: true,
+    }, null, 2));
   } finally { await closeElectronApp(app); }
 });

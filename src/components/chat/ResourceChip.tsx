@@ -14,7 +14,7 @@ import type { WorkspaceCoordinatorBinding, WorkspaceCoordinatorRecovery } from '
 import type { RuntimeResourceEnvelopeState } from '@shared/host-api/contract';
 import { hostApi } from '@/lib/host-api';
 import { createPollScheduler } from '@/lib/poll-scheduler';
-import { getWorkspaceCoordinatorBinding } from '@/lib/workspace-session';
+import { activateWorkspaceSession, getWorkspaceCoordinatorBinding } from '@/lib/workspace-session';
 import { useChatStore } from '@/stores/chat';
 import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
 import { useWorkspacesStore } from '@/stores/workspaces';
@@ -36,11 +36,11 @@ export function ResourceChip() {
   const [stoppingId, setStoppingId] = useState<string | null>(null);
   const [stoppingAll, setStoppingAll] = useState(false);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
-  const switchSession = useChatStore((state) => state.switchSession);
   const activeTaskNodeId = useChatStore((state) => state.activeTaskNodeId);
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
   const generation = useChatStore((state) => state.sessions.find((session) => session.key === currentSessionKey)?.sessionId);
   const activitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspace?.id, currentSessionKey, generation));
+  const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const scope = useMemo(() => ({ workspaceId: activeWorkspace?.id, rootPath: activeWorkspace?.rootPath, sessionKey: currentSessionKey, generation }), [activeWorkspace?.id, activeWorkspace?.rootPath, currentSessionKey, generation]);
   const scopeRef = useRef(scope); scopeRef.current = scope;
   const [coordinatorBinding, setCoordinatorBinding] = useState<WorkspaceCoordinatorBinding | null>(null);
@@ -53,6 +53,15 @@ export function ResourceChip() {
     ? getWorkspaceCoordinatorBinding(activeWorkspace, agentId, currentSessionKey)
     : null;
   const completionBatches = activitySnapshot?.completionBatches ?? [];
+  const openWorkerSession = async (sessionKey: string) => {
+    const selectionScope = scope;
+    setCoordinatorError(null);
+    try {
+      if (await activateWorkspaceSession(sessionKey)) setPopoverOpen(false);
+    } catch (error) {
+      if (scopeRef.current === selectionScope) setCoordinatorError(error instanceof Error ? error.message : String(error));
+    }
+  };
   const activeBackgroundTerminalCount = activitySnapshot?.terminals.filter((terminal) => ['starting', 'running', 'idle', 'blocked'].includes(terminal.status)).length ?? 0;
   const loadCoordinator = useCallback(async () => {
     setCoordinatorBinding(null); setCoordinatorRecovery(null); setCoordinatorError(null);
@@ -63,6 +72,7 @@ export function ResourceChip() {
     const [resolved, envelope] = await Promise.allSettled([
       hostApi.workspaces.resolveCoordinator({ workspaceId: scope.workspaceId, agentId, sessionKey: currentSessionKey }),
       hostApi.resourceEnvelope.getState(),
+      loadSessionActivity({ workspaceId: scope.workspaceId, sessionKey: currentSessionKey }),
     ]);
     if (scopeRef.current !== scope) return;
     if (resolved.status === 'fulfilled') {
@@ -72,7 +82,7 @@ export function ResourceChip() {
       setCoordinatorBinding(cachedBinding);
     }
     if (envelope.status === 'fulfilled') setResourceEnvelope(envelope.value);
-  }, [agentId, cachedBinding, currentSessionKey, scope]);
+  }, [agentId, cachedBinding, currentSessionKey, loadSessionActivity, scope]);
   const binding = coordinatorBinding?.workspaceId === activeWorkspace?.id && coordinatorBinding?.sessionKey === currentSessionKey
     ? coordinatorBinding : cachedBinding;
   const runCoordinatorAction = async (action: 'bind' | 'pause' | 'resume') => {
@@ -290,7 +300,7 @@ export function ResourceChip() {
                       <div className="space-y-0.5">
                         {completionBatches.slice(-3).map((batch) => (
                           <div key={batch.batchId} className="flex items-center justify-between gap-2">
-                            <button type="button" data-testid={`coordinator-worker-${batch.batchId}`} onClick={() => { const child = batch.members[0]?.childSessionKey; if (child) switchSession(child); }} className="truncate text-left hover:text-foreground">{batch.members.map((member) => member.roleName).join(', ')}</button>
+                            <button type="button" data-testid={`coordinator-worker-${batch.batchId}`} disabled={!batch.members[0]?.childSessionKey} onClick={() => { const child = batch.members[0]?.childSessionKey; if (child) void openWorkerSession(child); }} className="truncate text-left hover:text-foreground disabled:cursor-default disabled:text-muted-foreground">{batch.members.map((member) => member.roleName).join(', ')}</button>
                             <span className="shrink-0 rounded bg-foreground/5 px-1 py-0.5 font-medium text-foreground">
                               {batch.outcome} / {batch.delivery.state}
                             </span>

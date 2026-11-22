@@ -27,7 +27,7 @@ import {
 } from "./role-permissions-policy.js";
 import { buildRolePermissionDecisionEvents } from "./role-permission-audit.js";
 import { getMemoryCards, ensureMemoryCardsLoaded, recordMemoryInjection, listMemoryConflicts, isMemoryStoreConfigured, isRoleMemoryEnabled } from "../memory/memory-store.js";
-import { isInjectableMemoryCard, isMemoryCardInContextScope, type MemoryCardScopeContext } from "../memory/memory-card.js";
+import { isMemoryContextCandidate, isMemoryCardInContextScope, type MemoryCardScopeContext } from "../memory/memory-card.js";
 import { applyMemoryUseGateOverlay } from "../memory/memory-dual-gate.js";
 import { buildContextPack, renderContextPack } from "../memory/context-pack.js";
 import { dcsObservability } from "../context-engine/dcs-observability.js";
@@ -72,6 +72,8 @@ export type RoleSpawnContext = {
   agentMemberRoleIds?: string[];
   requesterAgentIdOverride?: string;
   workspaceDir?: string;
+  /** Parent Task Ledger authority workspace when workspaceDir is an isolated child checkout. */
+  taskAuthorityWorkspaceDir?: string;
   /** Resolved by the parent session owner, never by model/request path parameters. */
   workspaceOwner?: WorktreeLifecycleOwner;
   assertWorkspaceCurrent?: () => void;
@@ -81,10 +83,13 @@ export type RoleSpawnContext = {
   parentRole?: RoleContract | null;
   permissionDecisionEvents?: PermissionDecisionEvent[];
   completionOwnerKey?: string;
+  /** Internal Task Ledger reservation; never supplied by model-authored spawn arguments. */
+  reviewReservationId?: string;
 };
 
 /** Result shape returned by a spawn call. */
 export type RoleSpawnResultShape = {
+  dispatchOutcome?: 'not-dispatched';
   status: "accepted" | "forbidden" | "error";
   runState?: 'queued';
   runId?: string;
@@ -183,9 +188,7 @@ export function buildRoleSystemPrompt(
     memoryCards &&
     memoryCards.length > 0
   ) {
-    const legacyInjectable = memoryCards.filter((card) =>
-      isInjectableMemoryCard(card) || (card.status === "cold" && !card.supersededBy),
-    );
+    const legacyInjectable = memoryCards.filter(isMemoryContextCandidate);
     // TF-0110 (T-P0-1, req-1): consult the memory use gate on the real
     // role-spawn injection path (same semantics as
     // role-memory-context-provider.ts: gate enabled -> strict filter;

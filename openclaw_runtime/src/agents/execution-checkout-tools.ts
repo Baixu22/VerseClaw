@@ -14,6 +14,9 @@ import { withSessionTaskScope } from './session-task-scope.js';
 import { checkoutWritersForRun } from './worktree-writer.js';
 import { returnPersistentTaskWriter } from './persistent-task-delegation.js';
 import { getSessionEntry } from '../config/sessions/store.js';
+import { assertSystemExecutionAllowed } from '../../../shared/task-system/project-coordinator.js';
+import { requiresSessionTaskScope } from './tool-mutation.js';
+import { isSystemExecutionControl } from '../../../shared/system-execution-control.js';
 
 type Guard = ReturnType<typeof createExecutionTaskGuard>;
 type Checkout = NonNullable<SessionTaskEffectAdmission['checkout']>;
@@ -48,7 +51,7 @@ export function reconcileExecutionCheckout(checkout: Checkout): void {
   if (current?.terminalReceipt && current.operations.every(operation => operation.state === 'settled') && !processesPending(current)) {
     const ledger = openExecutionTaskStore(current.root);
     let delegation;
-    let terminalTask = false;
+    let terminalTask: boolean;
     try {
       delegation = ledger.delegationForChild(sessionKey);
       const task = ledger.get(state.owner.task.taskNodeId);
@@ -59,6 +62,13 @@ export function reconcileExecutionCheckout(checkout: Checkout): void {
         const parent = getSessionEntry({ sessionKey: delegation.parent.sessionKey });
         returnPersistentTaskWriter({ workspace: current.root, childSessionKey: sessionKey,
           ...delegation.terminalReceipt, parentGeneration: parent?.sessionId });
+      }
+      if (delegation.phase === 'returned' && delegation.childWorktree !== delegation.parentWorktree) {
+        // An isolated worker has returned the task to another checkout. Its
+        // settled source can now be acquired by the existing merge owner.
+        service.releaseWriter(checkout.credential);
+        runCheckouts.delete(state.owner.run.runId);
+        return;
       }
       // The returning task retains checkout exclusion until the parent's next
       // admitted run atomically rotates it; never expose a release/claim gap.
@@ -110,6 +120,9 @@ export async function executeManagedTaskTool<T>(
   const operationId = `${context?.runId ?? 'run'}:${toolCallId}`;
   const action = String((args as { action?: unknown } | null)?.action ?? '');
   const processControl = toolName === 'process' && ['poll','log','list','kill'].includes(action);
+  const systemControl = isSystemExecutionControl(toolName, args);
+  if (!systemControl && requiresSessionTaskScope(toolName, args)) assertSystemExecutionAllowed();
+  if (systemControl && !processControl) return execute();
   const executeTask = (effect: () => Promise<T>) => executeTaskGuarded(guard, operationId, toolName, effect, args);
   if (toolName === 'task_control') {
     const result = await executeTask(execute);

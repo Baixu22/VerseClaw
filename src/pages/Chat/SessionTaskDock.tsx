@@ -33,6 +33,8 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { toastUserError } from '@/lib/user-error';
+import { nextReadyPlanChild } from '@shared/task-system/types';
 import { useDismissOnOutside, usePopover } from "@/components/settings/primitives/usePopover";
 import { ToolUiPlanItemIcon, type ToolUiPlanTodoStatus } from "@/components/tool-ui/plan-view";
 import { useOverlayPortalContainer } from "@/components/ui/overlay-portal";
@@ -40,7 +42,7 @@ import { hostApi } from "@/lib/host-api";
 import { hostEvents } from "@/lib/host-events";
 import { formatRelativeTime } from "@/lib/git-ui";
 import { cn } from "@/lib/utils";
-import type { TaskSessionSnapshot, TaskView } from "@shared/task-system/types";
+import type { ProjectPlanSnapshot, TaskSessionSnapshot, TaskView } from "@shared/task-system/types";
 import type { RunPlanSurface } from "./run-surface-promotion";
 
 type Mode = "collapsed" | "expanded" | "hidden";
@@ -115,7 +117,7 @@ function useSessionTask(workspaceId: string | null, sessionKey: string, active: 
         if (!disposed) {
           relatedSessions = new Set([
             sessionKey,
-            ...[result.task, ...result.children].flatMap((task) =>
+            ...[result.task, ...result.children, result.projectPlan?.task, ...(result.projectPlan?.children ?? [])].flatMap((task) =>
               task?.claim ? [task.claim.sessionKey] : [],
             ),
           ]);
@@ -219,6 +221,7 @@ export function SessionTaskDock({
   workspaceId,
   sessionKey,
   hasConversation,
+  projectEntry = false,
   plan,
   runActive = false,
   onOpenTask,
@@ -226,6 +229,7 @@ export function SessionTaskDock({
   workspaceId: string | null;
   sessionKey: string;
   hasConversation: boolean;
+  projectEntry?: boolean;
   plan?: RunPlanSurface | null;
   /** A run is streaming in this session; a finished plan stays until it ends. */
   runActive?: boolean;
@@ -236,20 +240,38 @@ export function SessionTaskDock({
   const { scope, snapshot, stale, retry } = useSessionTask(
     workspaceId,
     sessionKey,
-    hasConversation,
+    hasConversation || projectEntry,
   );
-  const task = snapshot?.task ?? null;
+  const projectPlan = projectEntry ? snapshot?.projectPlan : undefined;
+  const [dispatching, setDispatching] = useState(false);
+  const activeChild = projectPlan?.children.find(child => !['ready', 'done', 'cancelled'].includes(child.contract.state));
+  const nextChild = activeChild ? (activeChild.contract.state === 'doing' && activeChild.claim?.sessionKey === sessionKey ? activeChild : undefined)
+    : projectPlan && nextReadyPlanChild(projectPlan.children);
+  const dispatch = projectPlan && workspaceId && nextChild && !stale && !runActive && !dispatching ? async () => {
+      setDispatching(true);
+      try {
+        const result = await hostApi.sessions.dispatchPlanTask({ workspaceId, sessionKey,
+          expectedSessionGeneration:projectPlan.revisions[0].generation, planId:projectPlan.task.contract.taskNodeId,
+          expectedRevision:projectPlan.task.contract.revision, expectedChildId:nextChild.contract.taskNodeId });
+        if (!result.success) throw new Error(result.error ?? result.status);
+        toast.success(t('conversation.dispatchAccepted'));
+      } catch (error) { toastUserError(error); }
+      finally { setDispatching(false); retry(); }
+    } : undefined;
+  const task = projectPlan?.task ?? snapshot?.task ?? null;
   const planTodos = plan?.todos ?? [];
   const planVisible = planTodos.length > 0 && runActive;
   const taskId = task?.contract.taskNodeId ?? (planVisible && plan ? `plan:${plan.id}` : "");
-  if (!hasConversation || !taskId) return null;
+  if ((!hasConversation && !projectPlan) || !taskId) return null;
   return (
     <TaskDockBody
       key={`${scope}:${taskId}`}
       {...{ scope, taskId, task, stale, retry, runActive, onOpenTask, t }}
       plan={task ? null : plan}
       locale={i18n.language}
-      childrenTasks={snapshot?.children ?? []}
+      childrenTasks={projectPlan?.children ?? snapshot?.children ?? []}
+      projectPlan={projectPlan}
+      dispatch={dispatch}
     />
   );
 }
@@ -272,7 +294,7 @@ function StatusGlyph({ tone, progress }: { tone: Tone; progress: number | null }
     // tasks that only report a next action. Track and fill are two layers so
     // the gradient stays a plain `currentColor` stop.
     return (
-      <span className="relative inline-flex h-3.5 w-3.5 shrink-0 text-foreground/70" aria-hidden="true">
+      <span className="relative inline-flex h-3.5 w-3.5 shrink-0 text-blue-700 dark:text-blue-400" aria-hidden="true">
         <span className="absolute inset-0 rounded-full border-[1.5px] border-foreground/15" />
         <span
           className="absolute inset-0 rounded-full"
@@ -288,7 +310,7 @@ function StatusGlyph({ tone, progress }: { tone: Tone; progress: number | null }
   if (tone === "active") {
     return (
       <span
-        className="h-3.5 w-3.5 shrink-0 rounded-full border-[1.5px] border-foreground/20 border-t-foreground/70 motion-safe:animate-spin"
+        className="h-3.5 w-3.5 shrink-0 rounded-full border-[1.5px] border-blue-500/20 border-t-blue-700 motion-safe:animate-spin dark:border-t-blue-400"
         aria-hidden="true"
       />
     );
@@ -412,10 +434,12 @@ function TaskMenu({ t, items }: { t: Translate; items: MenuItem[] }) {
 }
 
 function TaskDockBody({
+  dispatch,
   scope,
   taskId,
   task,
   childrenTasks,
+  projectPlan,
   plan,
   stale,
   retry,
@@ -424,10 +448,12 @@ function TaskDockBody({
   locale,
   t,
 }: {
+  dispatch?: () => Promise<void>;
   scope: string;
   taskId: string;
   task: TaskView | null;
   childrenTasks: TaskView[];
+  projectPlan?: ProjectPlanSnapshot;
   plan?: RunPlanSurface | null;
   stale: boolean;
   retry: () => void;
@@ -490,6 +516,8 @@ function TaskDockBody({
   const updated = task ? formatRelativeTime(task.contract.updatedAt, locale) : "";
   const openTask = durableId && onOpenTask ? () => onOpenTask(durableId) : undefined;
   const menuItems: MenuItem[] = [
+    ...(dispatch ? [{key:'dispatch', testId:'project-plan-dispatch', label:t('conversation.dispatchNext'),
+      icon:<ListChecks className="h-3.5 w-3.5" />, run:() => void dispatch()}] : []),
     ...(durableId
       ? [
           {
@@ -568,7 +596,7 @@ function TaskDockBody({
         </button>
       ) : (
         <div
-          className="relative mx-2 overflow-hidden rounded-xl border border-black/[0.08] bg-background/60 dark:border-white/[0.09]"
+          className="relative overflow-hidden rounded-lg border border-border bg-background"
           data-testid="session-task-panel"
         >
           <div className="flex min-w-0 items-center gap-1.5 py-1.5 pl-3 pr-1.5">
@@ -600,7 +628,7 @@ function TaskDockBody({
                 />
               </button>
             </div>
-            {durableId && (
+            {durableId && expanded && (
               <button
                 type="button"
                 data-testid="session-task-id"
@@ -643,6 +671,7 @@ function TaskDockBody({
               className="border-t border-black/[0.06] px-3 pb-2 pt-1.5 text-xs text-muted-foreground motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200 dark:border-white/[0.07]"
               data-testid="session-task-details"
             >
+              {projectPlan && <ProjectPlanDetails plan={projectPlan} t={t} />}
               {steps.length > 0 ? (
                 <ol
                   className="max-h-[min(30vh,220px)] space-y-0.5 overflow-y-auto overscroll-contain pr-1"
@@ -737,5 +766,28 @@ function TaskDockBody({
         </div>
       )}
     </section>
+  );
+}
+
+function ProjectPlanDetails({ plan, t }: { plan: ProjectPlanSnapshot; t: Translate }) {
+  const [current] = plan.revisions;
+  if (!current) return null;
+  return (
+    <details className="my-1 break-words" data-testid="project-plan-history">
+      <summary className="cursor-pointer py-1 font-medium text-foreground">
+        {t("conversation.planRevision", { revision: current.revision })}
+      </summary>
+      <div className="max-h-44 space-y-2 overflow-auto py-1">
+        {plan.revisions.map((entry) => (
+          <div key={entry.revision} className="space-y-1 border-b border-border pb-1">
+            <p>{t("conversation.planRevision", { revision: entry.revision })}: {entry.objective}</p>
+            {entry.reason && <p>{entry.reason}</p>}
+            <p>{t("conversation.next")}: {entry.nextAction}</p>
+            {entry.assumptions.map((value, index) => <p key={`a${index}`}>{t("conversation.planAssumption")}: {value}</p>)}
+            {entry.pendingDecisions.map((value, index) => <p key={`d${index}`}>{t("conversation.planDecision")}: {value}</p>)}
+          </div>
+        ))}
+      </div>
+    </details>
   );
 }

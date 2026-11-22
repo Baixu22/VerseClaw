@@ -1,0 +1,178 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "两项旧 P2 均已解决；相对指定基线的定向复核未发现修补引入的实际正确性问题。",
+  "scope": {
+    "prior_review": "D:/tmp/g5-20261120/s2-review-third.json",
+    "diff_base": "117f0f2b00b3afb6c9d82e523423b29333ad52c5",
+    "mode": "targeted read-only review",
+    "head": "1e7d28cb90f06685d5566932213c4223916fdcd0",
+    "state": "frozen commit; clean working tree; all inspected source SHA-256 values match prior review",
+    "workspace": "D:/ClawX-work/g5-test-review-20261118"
+  },
+  "resolved_findings": [
+    {
+      "evidence": "s2-transcript-retry.json: 2/2 passed; covers first provider failure, same-ID retry, new-service new ID, foreign-owner rejection.",
+      "locations": [
+        "transcripts-tool.ts:218-255",
+        "transcripts-tool.ts:489-566"
+      ],
+      "title": "autoStart 自身失败重试被防覆盖检查阻断",
+      "status": "resolved",
+      "reason": "每个 service 创建内部 token；仅匹配 token、无 captureOwner、无 stoppedAt 且不在 activeSessions 的既存记录允许复用。直接采用 prior.session 保留 startedAt/source/title/metadata 及原日期目录。重试沿用 entry ID，新服务的配置 ID 带随机 suffix。Agent tool 不传 token，继续随机生成 ID；生产 service caller 不带 owner，目标 owner/generation 检查保留。",
+      "priority": "P2"
+    },
+    {
+      "evidence": "s2-agent-pause-retry2.json: 21/21 passed; new pause-during-session-update case asserts controller count zero and same-ID retry accepted with one ingress.",
+      "locations": [
+        "agent.ts:2429-2492",
+        "agent.ts:2527-2550",
+        "agent.ts:2727-2735",
+        "chat-abort.ts:132-143"
+      ],
+      "title": "最终暂停拒绝遗留 controller 导致同 ID 幽灵 in_flight",
+      "status": "resolved",
+      "reason": "仅保存本次 registered controller 的 cleanup；外层 finally 在未 accepted 时清理，cleanup 以 controller 对象身份保护其他执行。Plugin tracking 移入 accepted 后 dispatch try；controller 注册、最终 pause 断言与 accepted 之间没有 await，暂停拒绝不再遗留插件预留。未 accepted dedupe 清理及既有 accepted/replay/in_flight 分支保留。",
+      "priority": "P2"
+    }
+  ],
+  "fixture_review": {
+    "assessment": "消除入口 pause 读取 ENOENT；retire 时机与原 handoff、ingress、generation 断言保留。",
+    "location": "agent.recovery-admission.test.ts:222-248",
+    "change": "仅在旧 handoff timing fixture 设置路径前初始化 {profiles:[]}。",
+    "history": "首次 19/21，两项旧 handoff timing 失败；修正 fixture 后重跑 21/21。"
+  },
+  "verification": {
+    "subdelegation": false,
+    "only_written_file": "D:/tmp/g5-20261120/s2-review-recovery-final.json",
+    "installs_executed": false,
+    "source_edits": false,
+    "existing_test_artifacts": [
+      {
+        "path": "D:/tmp/g5-20261120/s2-agent-pause-retry.json",
+        "success": false,
+        "total": 21,
+        "passed": 19,
+        "failed": 2,
+        "provenance": "existing Vitest JSON read from disk; reviewer did not run tests"
+      },
+      {
+        "path": "D:/tmp/g5-20261120/s2-agent-pause-retry2.json",
+        "success": true,
+        "total": 21,
+        "passed": 21,
+        "failed": 0,
+        "provenance": "existing Vitest JSON read from disk; reviewer did not run tests"
+      },
+      {
+        "path": "D:/tmp/g5-20261120/s2-transcript-retry.json",
+        "success": true,
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "provenance": "existing Vitest JSON read from disk; reviewer did not run tests"
+      }
+    ],
+    "tests_executed_by_reviewer": false,
+    "builds_executed": false,
+    "artifact_binding": "Counts read from existing JSON; inspected source and artifact bytes hashed below. Vitest JSON itself supplies no candidate source hashes."
+  },
+  "inspectedFiles": [
+    "D:/ClawX-work/g5-test-review-20261118/AGENTS.md",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/AGENTS.md",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/AGENTS.md",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tools/AGENTS.md",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/AGENTS.md",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/AGENTS.md",
+    "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/system-project-dispatch.md",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tools/transcripts-tool.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/transcripts/store.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/transcripts/config.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/extensions/discord/src/voice/transcripts-source.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-startup-post-attach.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/agent.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/chat-abort.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-plugins.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/subagent-registry.ts",
+    "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/project-runtime-policy.ts",
+    "D:/ClawX-work/g5-test-review-20261118/shared/system-execution-control.ts",
+    "D:/ClawX-work/g5-test-review-20261118/shared/task-system/project-coordinator.ts",
+    "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-transcript-control.test.ts",
+    "D:/tmp/g5-20261120/s2-review-third.json",
+    "D:/tmp/g5-20261120/s2-agent-pause-retry.json",
+    "D:/tmp/g5-20261120/s2-agent-pause-retry2.json",
+    "D:/tmp/g5-20261120/s2-transcript-retry.json"
+  ],
+  "hashes": {
+    "files": {
+      "D:/ClawX-work/g5-test-review-20261118/AGENTS.md": "d3637e172b1455b5e583c7ffc845de480df386ac17b104943f88837baaf7caab",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/AGENTS.md": "f10e0a01272febb69970bdb284cd8459536274a3cd8d9de065bede300cb7b5d4",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/AGENTS.md": "7d340cc98f131a885da0a83bb230dd5528d5ff59390820b30c1c409c77977fc0",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tools/AGENTS.md": "beff74544808f4df9c0bb5f7b9c4b5c7b037c24b0ea1cd879f00a2be47dabfbf",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/AGENTS.md": "59194dbfe4af16d7c35085dafc5e31ca7cdd38ce24085af48a2b611d51a94548",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/AGENTS.md": "51d90efef7dad89c17938fcd78f43075726d538a3c2fe8982d14e34297620f80",
+      "D:/ClawX-work/g5-test-review-20261118/harness/specs/tasks/system-project-dispatch.md": "e2fedcb36c6da01638897f5fc382b948a97c7b86041143f28de69a3c19fdabb4",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/tools/transcripts-tool.ts": "cf83ef1a571afd4e8e9d103f620393cc823c912e233aee57be1238004cac858f",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/transcripts/store.ts": "1bedea79d080b7fc5e6d42c0697c6e2a49d23af5e397e55a1fee499180ebf66b",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/transcripts/config.ts": "9e160457b4311a46fcc3b36f4ddc26f1ae82f5eee11cc358ad7842b82272e02b",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/extensions/discord/src/voice/transcripts-source.ts": "027c1a6387ea173c587f7d34d30c5b34d51a82ae8c31fcb9b3f77cbc8c729c1f",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-startup-post-attach.ts": "05d62d02179c12820d6f21cc736b963c4859c6b7da2f69f8fbbda31e151343fd",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/agent.ts": "2d10fbf70002c87c787702b8ea1d4d9355356712509c3a3dfe0fce9f68845f54",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts": "d269441b5e797b126b0b68f56c52a76d2c11eeed5b7f61b9856380bb4ac6fe6b",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/chat-abort.ts": "58f87b4d09bbd9284139f576ac610288fd64a35e54bb7b8f69be4481793c6f4b",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/gateway/server-plugins.ts": "ea72b18d3d40e4c8d936934e1408f9e2bb88f89b0264a127447d82337e3b9dfd",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/subagent-registry.ts": "5d90c5a321c066bffe7b203b0b554a5461fafc1a0033a139240028f3a2a3b8e6",
+      "D:/ClawX-work/g5-test-review-20261118/openclaw_runtime/src/agents/project-runtime-policy.ts": "d196d248229f0bbeb3a306381c62c16d72fcff3c94dafba87af917d4b7de87f3",
+      "D:/ClawX-work/g5-test-review-20261118/shared/system-execution-control.ts": "8ea2b262e112a83e1511e676526232b55fdae0a80b45d728355dff036623f4f7",
+      "D:/ClawX-work/g5-test-review-20261118/shared/task-system/project-coordinator.ts": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839",
+      "D:/ClawX-work/g5-test-review-20261118/tests/unit/system-transcript-control.test.ts": "27070be6b50d5db7b748ad97124f1947f4786f8c45e2327bb582282ceece31bb",
+      "D:/tmp/g5-20261120/s2-review-third.json": "fe1e923665a5c6c1a8b713cdf0d3a52f9f9709f4f068ba5ec5d1d46fcca479a1",
+      "D:/tmp/g5-20261120/s2-agent-pause-retry.json": "df17b8da202fb2768b3fb99035aec882bea826e315314948a96aa15bd14b9851",
+      "D:/tmp/g5-20261120/s2-agent-pause-retry2.json": "7e548d6209809b5bec6f4b209621b0f19dd3d067d0703c810e0022cd8eb7a708",
+      "D:/tmp/g5-20261120/s2-transcript-retry.json": "02e7931285ed6b7c2b3805a534acbaadbd087d8b88eee7bbf6eab572e73d4b41"
+    },
+    "algorithm": "SHA-256"
+  },
+  "driven_by": "agent",
+  "actor": "codex-readonly-review",
+  "requested_model": "ccs-ai/gpt-6.1-sol",
+  "generated_at": "2026-11-20T14:48:14.8893329+08:00",
+  "commit_binding": {
+    "commit": "1e7d28cb90f06685d5566932213c4223916fdcd0",
+    "verified_at": "2026-11-20T14:49:56.1298435+08:00",
+    "working_tree_clean": true,
+    "all_previously_inspected_source_hashes_match": true,
+    "git_blob_ids": {
+      "AGENTS.md": "7eb297c2cd7488159132eff06cdc9bf4f17f6e4e",
+      "openclaw_runtime/AGENTS.md": "3309487f3084f2b3792cc35c01ce8892a70ad1a1",
+      "openclaw_runtime/src/agents/AGENTS.md": "971e548e415663edc9bcfe4e53489a69b3656e25",
+      "openclaw_runtime/src/agents/tools/AGENTS.md": "9ea013fe92f602206b5249d018464eafa8fb605e",
+      "openclaw_runtime/src/gateway/AGENTS.md": "8341e39f132774d1da03f968d7cec94d733215f6",
+      "openclaw_runtime/src/gateway/server-methods/AGENTS.md": "c6839330f7b41f532b5e24347f27eae9cbc636c9",
+      "harness/specs/tasks/system-project-dispatch.md": "89fdf40d1540f815a9e54e315202cb4121b235e5",
+      "openclaw_runtime/src/agents/tools/transcripts-tool.ts": "538560af260382b4a475f4fb32e65c7f33c2b6dc",
+      "openclaw_runtime/src/transcripts/store.ts": "4cbd1610257a1220d2d99c638a38ab5c753f98a3",
+      "openclaw_runtime/src/transcripts/config.ts": "c8fdd39c233c0a0cae82e920b3d7632c4936805b",
+      "openclaw_runtime/extensions/discord/src/voice/transcripts-source.ts": "a6e64e03e5a2747515f8a3ba16462978e359189a",
+      "openclaw_runtime/src/gateway/server-startup-post-attach.ts": "b79b19b5e69b0944e7620265c2b116ea1d954e7e",
+      "openclaw_runtime/src/gateway/server-methods/agent.ts": "0d7d10ddd1e740648565502a4eb5c2f44c24bf6d",
+      "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts": "d0216cdd5a6e17e8c27124187a7e0f00615b5236",
+      "openclaw_runtime/src/gateway/chat-abort.ts": "a5b0603c2cf210da2aa23ac7acd96247ff0075f2",
+      "openclaw_runtime/src/gateway/server-plugins.ts": "b9a242309e9c9baa153d2d5aa8675e4f5421f19e",
+      "openclaw_runtime/src/agents/subagent-registry.ts": "f66d20431a08ee4c6b558d20e442a5f6da6a606b",
+      "openclaw_runtime/src/agents/project-runtime-policy.ts": "afb3eaffa88204fc06ec550031571ecfc4e1b309",
+      "shared/system-execution-control.ts": "4cff84cc2fdf5c6524020ce0d03cc889377f2a1f",
+      "shared/task-system/project-coordinator.ts": "5a7f311d6fe8bb7eca2248cf06ff83b55b4fb4d4",
+      "tests/unit/system-transcript-control.test.ts": "aeffa2dc320ef6be78e6bebe335606b4f175fd6e"
+    },
+    "review_conclusion": "Both P2 findings resolved; no new actionable correctness findings in the targeted diff.",
+    "support_run": "s2-final-r2 started, as reported by user; no result claimed by this targeted review",
+    "additional_validation": {
+      "lint": "passed, reported by user; s2-last-fixes-lint.log exists and is empty",
+      "full_typecheck": "passed, reported by user; existing s2-typecheck-recovery-fixes.log inspected"
+    }
+  },
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reviewAgentId": "01a1f7b2-e59f-7982-b89e-e962af15bf43"
+}

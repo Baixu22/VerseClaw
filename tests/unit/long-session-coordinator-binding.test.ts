@@ -11,6 +11,7 @@ import { normalizeTaskLedgerWorkspaceId } from '@electron/services/task-ledger-s
 const state = vi.hoisted(() => ({
   activeWorkspaceId: 'workspace-a' as string | null,
   profiles: [] as unknown[],
+  failBindingWrite: null as 'paused' | 'active' | null,
 }));
 
 vi.mock('electron-store', () => {
@@ -27,6 +28,13 @@ vi.mock('electron-store', () => {
       return undefined;
     }
     set(key: string, value: unknown) {
+      if (key === 'profiles' && state.failBindingWrite && Array.isArray(value)) {
+        const binding = (value[0] as WorkspaceProfile | undefined)?.coordinatorBindings?.['agent:main:main'];
+        if (binding?.state === state.failBindingWrite) {
+          state.failBindingWrite = null;
+          throw new Error('COORDINATOR_DISK_WRITE_FAILED');
+        }
+      }
       if (key === 'profiles') state.profiles = Array.isArray(value) ? [...value] : [];
       if (key === 'activeWorkspaceId') state.activeWorkspaceId = typeof value === 'string' ? value : null;
     }
@@ -104,12 +112,20 @@ async function apiWith(options: {
   worktrees?: Array<{ path: string; branch?: string; detached?: boolean; bare?: boolean; prunable?: boolean }>;
   taskNodes?: string[];
   worktreesForWorkspace?: (workspace: WorkspaceProfile) => Promise<unknown>;
+  workspaceBindings?: unknown[];
+  workspacePatch?: () => Promise<void>;
 } = { workspaceRoot: '' }) {
   const { createWorkspacesApi } = await import('@electron/services/workspaces-api');
   const generation = options.generation ?? 'generation-1';
   return createWorkspacesApi({
     gatewayManager: {
-      rpc: vi.fn(async (method: string, payload: { key?: string }) => {
+      rpc: vi.fn(async (method: string, payload: { key?: string; workspaceDir?: string; expectedSessionId?: string }) => {
+        if (method === 'sessions.patch') {
+          options.workspaceBindings?.push(payload);
+          if (payload.expectedSessionId !== generation) throw new Error('SESSION_GENERATION_CHANGED');
+          await options.workspacePatch?.();
+          return { sessionId: generation, entry: { sessionId: generation, workspaceDir: payload.workspaceDir } };
+        }
         if (method !== 'sessions.describe') throw new Error(`unexpected RPC ${method}`);
         if (payload.key === 'agent:main:deleted') return { session: null };
         return { session: { key: payload.key, sessionId: generation, status: options.sessionStatus, hasActiveRun: options.hasActiveRun } };
@@ -153,6 +169,7 @@ beforeEach(async () => {
   const root = await mkdtemp(join(tmpdir(), 'clawx-coordinator-binding-'));
   roots.push(root);
   state.activeWorkspaceId = 'workspace-a';
+  state.failBindingWrite = null;
   state.profiles = [profile(root)];
 });
 
@@ -175,10 +192,82 @@ async function bindLocal(api: Awaited<ReturnType<typeof apiWith>>, overrides: Re
 }
 
 describe('long-session coordinator binding', () => {
-  it('persists one explicit Workspace/Assistant/Session binding with Task Ledger refs and restores it', async () => {
+  it('creates an inactive workspace without changing the current owner', async () => {
     const workspace = state.profiles[0] as WorkspaceProfile;
     const api = await apiWith({ workspaceRoot: workspace.rootPath });
+    const other = join(workspace.rootPath, 'inactive'); await mkdir(other);
+    const created = await api.create({ name: 'Inactive', rootPath: other, agentId: 'main', activate: false });
+    expect(created.activeWorkspaceId).toBe('workspace-a');
+    expect(state.activeWorkspaceId).toBe('workspace-a');
+    expect((state.profiles as WorkspaceProfile[]).some(profile => profile.rootPath === resolve(other))).toBe(true);
+  });
+  it('commits its intent before changing the Runtime workspace', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    const workspaceBindings: unknown[] = [];
+    const api = await apiWith({ workspaceRoot: workspace.rootPath, workspaceBindings });
+    state.failBindingWrite = 'paused';
+    await expect(bindLocal(api)).rejects.toThrow('COORDINATOR_DISK_WRITE_FAILED');
+    expect(workspaceBindings).toHaveLength(0);
+    expect((state.profiles[0] as WorkspaceProfile).coordinatorBindings).toBeUndefined();
+  });
+
+  it('recovers the same committed intent after the active-state write fails', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    const workspaceBindings: unknown[] = [];
+    const api = await apiWith({ workspaceRoot: workspace.rootPath, workspaceBindings });
+    state.failBindingWrite = 'active';
+    await expect(bindLocal(api)).rejects.toThrow('COORDINATOR_DISK_WRITE_FAILED');
+    const pending = (state.profiles[0] as WorkspaceProfile).coordinatorBindings?.['agent:main:main'];
+    expect(pending).toMatchObject({ state: 'paused', invalidationReason: 'workspace-binding-pending', bindingRevision: 1, sessionGeneration: 'generation-1' });
+    const restarted = await apiWith({ workspaceRoot: workspace.rootPath, workspaceBindings });
+    const recovered = await restarted.resolveCoordinator({ workspaceId: 'workspace-a', agentId: 'main', sessionKey: 'agent:main:main' });
+    expect(recovered.recovery.state).toBe('ready');
+    expect(recovered.binding).toMatchObject({ state: 'active', bindingRevision: 1, sessionGeneration: 'generation-1' });
+    expect(workspaceBindings).toHaveLength(2);
+  });
+
+  it('retries the original revision after a lost workspace acknowledgement', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    let attempts = 0;
+    const workspaceBindings: unknown[] = [];
+    const api = await apiWith({ workspaceRoot: workspace.rootPath, workspaceBindings,
+      workspacePatch: async () => { if (attempts++ === 0) throw new Error('WORKSPACE_REPLY_LOST'); } });
+    await expect(bindLocal(api)).rejects.toThrow('WORKSPACE_REPLY_LOST');
+    const recovered = await bindLocal(api);
+    expect(recovered.binding).toMatchObject({ state: 'active', bindingRevision: 1, sessionGeneration: 'generation-1' });
+    expect(workspaceBindings).toHaveLength(2);
+  });
+
+  it('rejects a different pending payload before repeating workspace effects', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    const workspaceBindings: unknown[] = [];
+    const api = await apiWith({ workspaceRoot: workspace.rootPath, workspaceBindings });
+    state.failBindingWrite = 'active';
+    await expect(bindLocal(api)).rejects.toThrow('COORDINATOR_DISK_WRITE_FAILED');
+    await expect(bindLocal(api, { taskLedgerNodeIds: ['TF-100'] })).rejects.toThrow('COORDINATOR_REVISION_CONFLICT');
+    expect(workspaceBindings).toHaveLength(1);
+    expect((state.profiles[0] as WorkspaceProfile).coordinatorBindings?.['agent:main:main']?.state).toBe('paused');
+  });
+
+  it('refuses a replacement generation while a workspace intent is pending', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    const workspaceBindings: unknown[] = [];
+    const api = await apiWith({ workspaceRoot: workspace.rootPath, workspaceBindings });
+    state.failBindingWrite = 'active';
+    await expect(bindLocal(api)).rejects.toThrow('COORDINATOR_DISK_WRITE_FAILED');
+    const restarted = await apiWith({ workspaceRoot: workspace.rootPath, generation: 'generation-2', workspaceBindings });
+    const recovered = await restarted.resolveCoordinator({ workspaceId: 'workspace-a', agentId: 'main', sessionKey: 'agent:main:main' });
+    expect(recovered.recovery.state).toBe('generation-mismatch');
+    expect(recovered.binding?.state).toBe('invalid');
+    expect(workspaceBindings).toHaveLength(1);
+  });
+  it('persists one explicit Workspace/Assistant/Session binding with Task Ledger refs and restores it', async () => {
+    const workspace = state.profiles[0] as WorkspaceProfile;
+    const workspaceBindings: unknown[] = [];
+    const api = await apiWith({ workspaceRoot: workspace.rootPath, workspaceBindings });
     const bound = await bindLocal(api);
+    expect(workspaceBindings).toEqual([{ key: 'agent:main:main', agentId: 'main',
+      workspaceDir: resolve(workspace.rootPath), expectedSessionId: 'generation-1' }]);
 
     expect(bound.recovery).toMatchObject({ state: 'ready', bindingRevision: 1 });
     expect(bound.binding).toMatchObject({
@@ -275,8 +364,10 @@ describe('long-session coordinator binding', () => {
     await bindLocal(initial);
     const worktree = join(workspace.rootPath, '..', `${workspace.name}-active-switch`);
     await mkdir(worktree, { recursive: true });
+    const workspaceBindings: unknown[] = [];
     const running = await apiWith({
       workspaceRoot: workspace.rootPath,
+      workspaceBindings,
       sessionStatus: 'running',
       hasActiveRun: true,
       worktrees: [
@@ -288,6 +379,7 @@ describe('long-session coordinator binding', () => {
       expectedRevision: 1,
       environment: { kind: 'managed-worktree', rootPath: worktree },
     })).rejects.toThrow('COORDINATOR_BINDING_SWITCH_BLOCKED');
+    expect(workspaceBindings).toHaveLength(0);
   });
 
   it('invalidates reset generations and applies archive policy without deleting the environment', async () => {

@@ -1,4 +1,5 @@
 import { invokeHost } from '../../host-api-client';
+import type { ProjectRagConfigInput, KnowledgeOperationsResult, KnowledgeOperationsConfigureResult, KnowledgeIndexResult } from '@shared/knowledge/operations';
 import type {
   KnowledgeApplyDraftPayload,
   KnowledgeApplyDraftResult,
@@ -21,6 +22,15 @@ import type {
 } from '@shared/host-api/contract';
 
 export const knowledgeLibraryApi = {
+  operationsStatus: (): Promise<KnowledgeOperationsResult> => invokeHost('knowledge', 'operationsStatus'),
+  operationsConfigure: (input: ProjectRagConfigInput): Promise<KnowledgeOperationsConfigureResult> => invokeHost('knowledge', 'operationsConfigure', input),
+  indexEnable: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexEnable'),
+  indexDisable: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexDisable'),
+  indexPause: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexPause'),
+  indexResume: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexResume'),
+  indexRebuild: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexRebuild'),
+  indexReconcile: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexReconcile'),
+  indexCleanup: (): Promise<KnowledgeIndexResult> => invokeHost('knowledge', 'indexCleanup'),
   status: (): Promise<KnowledgeStatusResult> => invokeHost('knowledge', 'status'),
   init: (): Promise<KnowledgeInitResult> => invokeHost('knowledge', 'init'),
   configure: (input?: KnowledgeConfigurePayload) => invokeHost('knowledge', 'configure', input),

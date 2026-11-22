@@ -11,6 +11,7 @@ const storeState = vi.hoisted(() => ({
 
 const activeWorkspace = vi.hoisted(() => ({
   profile: null as WorkspaceProfile | null,
+  paused: false,
 }));
 
 vi.mock('@electron/services/permissions-api', async () => {
@@ -67,10 +68,12 @@ vi.mock('electron-store', () => {
 
 vi.mock('@electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
+  readSystemControl: vi.fn(async () => ({ paused: activeWorkspace.paused, revision: 0 })),
 }));
 
 vi.mock('../../electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => activeWorkspace.profile),
+  readSystemControl: vi.fn(async () => ({ paused: activeWorkspace.paused, revision: 0 })),
 }));
 
 vi.mock('@electron/utils/store', () => ({
@@ -106,6 +109,31 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 }
 
 describe('gateway permission approval flow', () => {
+  it.each([
+    { method: 'mission.run', supplied: undefined, expected: 15 * 60_000 },
+    { method: ' mission.run ', supplied: undefined, expected: 15 * 60_000 },
+    { method: 'mission.run', supplied: 150_000, expected: 150_000 },
+    { method: 'memory.proposals', supplied: undefined, expected: undefined },
+  ])('forwards the effective RPC budget for $method ($supplied)', async ({ method, supplied, expected }) => {
+    activeWorkspace.profile = workspace('fullAccess');
+    const params = { sessionKey: 'agent:main:main' };
+    const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((rpcMethod, rpcParams, timeoutMs, run) => run(rpcMethod, rpcParams, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+
+    await api.rpc({ method, params, ...(supplied === undefined ? {} : { timeoutMs: supplied }) });
+    expect(gatewayManager.rpc).toHaveBeenCalledWith(method.trim(), params, expected);
+  });
+  it.each(['orchestrator.run', 'task_loop.run', 'mission.run', 'mission.tick', 'mission.resume'])('global pause refuses %s before calling Runtime', async method => {
+    activeWorkspace.profile = workspace('fullAccess'); activeWorkspace.paused = true;
+    const gatewayManager = { rpc: vi.fn(async () => ({ success: true })) };
+    const fabric = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };
+    const { createGatewayApi } = await import('@electron/services/gateway-api');
+    const api = createGatewayApi(gatewayManager as never, fabric as never);
+    expect(await api.rpc({ method, params: {} })).toMatchObject({ success: false, rejectedBeforeDispatch: true, error: 'SYSTEM_EXECUTION_PAUSED' });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+  });
   it('binds chat workspace identity to the Main owner and refuses forged scopes', async () => {
     activeWorkspace.profile = workspace('fullAccess');
     const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({ runId: 'bounded-run' })) };
@@ -156,6 +184,7 @@ describe('gateway permission approval flow', () => {
     const { permissionsApiTestDouble } = await import('../helpers/permissions-api-test-double');
     permissionsApiTestDouble.reset();
     activeWorkspace.profile = workspace();
+    activeWorkspace.paused = false;
   });
 
   it.each([

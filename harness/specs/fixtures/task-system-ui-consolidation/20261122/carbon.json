@@ -1,0 +1,190 @@
+{
+  "driven_by": "agent",
+  "actor": "carbon-ui-designer",
+  "model": "Gemini 4 Carbon (High)",
+  "conversationId": "eb3b50af-3d9d-49d2-b5f8-f194ac54b66f",
+  "direction": "### 1. 截图可见的三大问题\n- **顶栏跳动与控件重复**：`Task Ledger` 切 `Tree` 时，双行新建表单与搜索框插在 `Tabs` 上方致布局跳动；`Persistent tasks` 重复出现第二个 `Refresh` 与双层说明。\n- **层层套框与空值噪音**：`ManagedTasks` 嵌厚底 `Task report` 条，`Accepted` 项仍显空 `Next:`；`TaskTracePanel` 重复任务标题并用双列网格平铺 `Unknown`/`0`；`Tree` 子节点层层套框且字色发虚。\n- **总览堆砌与托盘错位**：`System overview` 单项目窄卡堆叠十余行等权文本、粗下划线链接与双折叠框；会话 `SessionTaskDock` 因 `mx-2` 窄于下方输入框且主行暴露 `#11111111`。\n\n### 2. 统一五端信息层级\n- **默认可见**：状态图标+目标标题、状态与进度（`1/3`）、非空 `Next`、至多一个当前主操作。\n- **按需展开**：验收与约束、归属/worktree、有效耗时与成本、运行/检查/诊断/原始记录、项目证据与配置；`#ID` 移入菜单与展开态，隐藏空 `Next` 与全 `Unknown` 指标块。\n\n### 3. 排版、边界与状态规则\n- **字阶**：页 H1 用 `font-sans text-2xl(24px) font-normal tracking-normal`（禁 `font-serif`/`text-3xl`）；项标题 `14px font-medium text-foreground`；正文 `13–14px`；辅助 `12px text-muted-foreground`。\n- **表面与间距**：工作面 `bg-background`，单层容器 `bg-surface-modal border-border` 配 `divide-y` 细线替代套框，展开区 `bg-surface-input`，选中/悬停 `bg-black/5 dark:bg-white/10`；区块 `gap-3`，行内距 `px-3 py-2.5`。\n- **状态与操作**：常规按钮 `h-8`（28–32px），单屏单主 CTA；运行态、悬停链接（去粗下划线）与焦点用蓝，完成绿 `700/400`、告警琥珀 `700/400`、待办中性灰。\n\n### 4. 六组件关键布局修改\n- [index.tsx](file:///D:/ClawX/src/pages/TaskLedger/index.tsx)：固定 `Header -> Tabs` 顶部顺序，新建/关联表单与搜索移入页签内（新建默认折叠），`NodeCard` 子级改左导引线去套框并恢复正文对比度。\n- [ManagedTasks.tsx](file:///D:/ClawX/src/pages/TaskLedger/ManagedTasks.tsx)：删重复 `Refresh`，搜索、筛选与新建合为单行工具栏；改细线列表、折叠验收约束、空 `nextAction` 不渲染。\n- [TaskTracePanel.tsx](file:///D:/ClawX/src/components/task-ledger/TaskTracePanel.tsx)：改卡底轻量内联折叠行（`min-h-8`），删重复标题，非空耗时/调用合为单行摘要并折叠 `Unknown`。\n- [SessionTaskDock.tsx](file:///D:/ClawX/src/pages/Chat/SessionTaskDock.tsx)：去 `mx-2` 与输入框同宽对齐，活跃运行环改蓝色，主行隐藏 `#ID`。\n- [SystemPortfolioPanel.tsx](file:///D:/ClawX/src/components/agents/SystemPortfolioPanel.tsx)：启停与筛选合为单行栏；项目卡改“标题+状态 / 目标+下一步+操作 / 单行有效指标”三段式，去粗下划线。\n- [ProjectConfigurationPanel.tsx](file:///D:/ClawX/src/components/agents/ProjectConfigurationPanel.tsx)：与证据引用并作卡底细线折叠区，三项输入改紧凑网格配 `h-8` 按钮。\n\nactor: carbon-ui-designer，driven_by: agent\n",
+  "imageInputs": [
+    {
+      "file": "before/ledger-light-1280.png",
+      "sha256": "9368041244a0d1fe59648cd3994db8975954bd46cc5867365d55b6e8026d0b1f",
+      "stage": "before"
+    },
+    {
+      "file": "before/trace-light-1280.png",
+      "sha256": "6a1076cfa0300516d56d6793fe8a5cae5d9b1f42b1d7aa95239484d482f0e0ab",
+      "stage": "before"
+    },
+    {
+      "file": "before/tree-light-1280.png",
+      "sha256": "13ba7259f7ae13eb38f471ed315304fd160dc829a5508e7d984e3f9c5e40c955",
+      "stage": "before"
+    },
+    {
+      "file": "before/projects-light-1280.png",
+      "sha256": "dbeb3db2441dfed0efacf2a477955e3edde6b59143c4b480f98e4f27102d917d",
+      "stage": "before"
+    },
+    {
+      "file": "before/ledger-dark-960.png",
+      "sha256": "cae81a1e561800d9c0b9edabdec7f93a211a996512480385bc07040beb13a7b0",
+      "stage": "before"
+    },
+    {
+      "file": "before/tray-dark-960.png",
+      "sha256": "61fb6be0b7f480f1bcedd89a7eabc8798401fcab4c01ba0d7d9047f5da092865",
+      "stage": "before"
+    }
+  ],
+  "lastConversationReportedUsage": {
+    "input_tokens": 131431,
+    "output_tokens": 38172,
+    "thinking_tokens": 36607,
+    "cache_read_tokens": 42538,
+    "total_tokens": 169603
+  },
+  "accounting": "Last reported conversation usage is retained without summing partial receipts; billing and remaining balance were not returned.",
+  "forwardedCarbonRequests": 4,
+  "callReceipts": [
+    {
+      "file": "carbon-direction.receipt.json",
+      "actor": "carbon-ui-designer",
+      "driven_by": "agent",
+      "exitCode": 0,
+      "status": "SUCCESS",
+      "usage": {
+        "input_tokens": 131431,
+        "output_tokens": 38172,
+        "thinking_tokens": 36607,
+        "cache_read_tokens": 42538,
+        "total_tokens": 169603
+      },
+      "carbonRequests": 1,
+      "blockedRequests": 0
+    },
+    {
+      "file": "carbon-r1.receipt.json",
+      "actor": "carbon-ui-designer",
+      "driven_by": "agent",
+      "model": "Gemini 4 Carbon (High)",
+      "exitCode": 2,
+      "carbonRequests": 0,
+      "blockedRequests": 0,
+      "status": "NO_RESULT",
+      "sources": [
+        {
+          "path": "src/pages/TaskLedger/index.tsx",
+          "sha256": "1074aa373de848d6cfaa37b6e22b02b538eb6ebac987f013ae6476b10ce1e5c3"
+        },
+        {
+          "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+          "sha256": "7661e2cef713494261cf178e2100126759db17733786c810b802964ec229ccfe"
+        },
+        {
+          "path": "src/components/task-ledger/TaskTracePanel.tsx",
+          "sha256": "4111b032c2346744d0b14596e353d3f00ffe6f28f8c30530c1af62caecfa2b9a"
+        },
+        {
+          "path": "src/pages/Chat/SessionTaskDock.tsx",
+          "sha256": "ebdad46fced640f72dbb42d9c1cabe52a0a75065ef491f8444894f198cc9646e"
+        },
+        {
+          "path": "src/components/agents/SystemPortfolioPanel.tsx",
+          "sha256": "ff87f08397f761f4ef32591ba4e21935aedabbb80ba1ca2b47865196ac8786d7"
+        },
+        {
+          "path": "src/components/agents/ProjectConfigurationPanel.tsx",
+          "sha256": "512f160deef8f0e09cd674ca996e70da0cff208badb0043ef84698e6a8cb2a3a"
+        }
+      ]
+    },
+    {
+      "file": "carbon-r2.receipt.json",
+      "actor": "carbon-ui-designer",
+      "driven_by": "agent",
+      "model": "Gemini 4 Carbon (High)",
+      "exitCode": 1,
+      "carbonRequests": 0,
+      "blockedRequests": 0,
+      "status": "ERROR",
+      "conversationId": "",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 0,
+        "total_tokens": 0
+      },
+      "sources": [
+        {
+          "path": "src/pages/TaskLedger/index.tsx",
+          "sha256": "1074aa373de848d6cfaa37b6e22b02b538eb6ebac987f013ae6476b10ce1e5c3"
+        },
+        {
+          "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+          "sha256": "7661e2cef713494261cf178e2100126759db17733786c810b802964ec229ccfe"
+        },
+        {
+          "path": "src/components/task-ledger/TaskTracePanel.tsx",
+          "sha256": "4111b032c2346744d0b14596e353d3f00ffe6f28f8c30530c1af62caecfa2b9a"
+        },
+        {
+          "path": "src/pages/Chat/SessionTaskDock.tsx",
+          "sha256": "ebdad46fced640f72dbb42d9c1cabe52a0a75065ef491f8444894f198cc9646e"
+        },
+        {
+          "path": "src/components/agents/SystemPortfolioPanel.tsx",
+          "sha256": "ff87f08397f761f4ef32591ba4e21935aedabbb80ba1ca2b47865196ac8786d7"
+        },
+        {
+          "path": "src/components/agents/ProjectConfigurationPanel.tsx",
+          "sha256": "512f160deef8f0e09cd674ca996e70da0cff208badb0043ef84698e6a8cb2a3a"
+        }
+      ]
+    },
+    {
+      "file": "carbon-r3.receipt.json",
+      "actor": "carbon-ui-designer",
+      "driven_by": "agent",
+      "model": "Gemini 4 Carbon (High)",
+      "exitCode": 3,
+      "carbonRequests": 3,
+      "blockedRequests": 0,
+      "status": "ERROR",
+      "conversationId": "eb3b50af-3d9d-49d2-b5f8-f194ac54b66f",
+      "usage": {
+        "input_tokens": 26699,
+        "output_tokens": 3784,
+        "thinking_tokens": 3195,
+        "cache_read_tokens": 15837,
+        "total_tokens": 30483
+      },
+      "sources": [
+        {
+          "path": "src/pages/TaskLedger/index.tsx",
+          "sha256": "1074aa373de848d6cfaa37b6e22b02b538eb6ebac987f013ae6476b10ce1e5c3"
+        },
+        {
+          "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+          "sha256": "7661e2cef713494261cf178e2100126759db17733786c810b802964ec229ccfe"
+        },
+        {
+          "path": "src/components/task-ledger/TaskTracePanel.tsx",
+          "sha256": "4111b032c2346744d0b14596e353d3f00ffe6f28f8c30530c1af62caecfa2b9a"
+        },
+        {
+          "path": "src/pages/Chat/SessionTaskDock.tsx",
+          "sha256": "ebdad46fced640f72dbb42d9c1cabe52a0a75065ef491f8444894f198cc9646e"
+        },
+        {
+          "path": "src/components/agents/SystemPortfolioPanel.tsx",
+          "sha256": "ff87f08397f761f4ef32591ba4e21935aedabbb80ba1ca2b47865196ac8786d7"
+        },
+        {
+          "path": "src/components/agents/ProjectConfigurationPanel.tsx",
+          "sha256": "512f160deef8f0e09cd674ca996e70da0cff208badb0043ef84698e6a8cb2a3a"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 // Memory Host SDK module implements embeddings behavior.
+import { createHash } from "node:crypto";
+import { createReadStream } from "node:fs";
 import { DEFAULT_LOCAL_MODEL } from "./embedding-defaults.js";
-import { sanitizeAndNormalizeEmbedding } from "./embedding-vectors.js";
 import { createLocalEmbeddingWorkerProvider } from "./embeddings-worker.js";
 import type { EmbeddingProvider, EmbeddingProviderOptions } from "./embeddings.types.js";
 import {
@@ -46,6 +47,18 @@ async function disposeResources(
   }
 }
 
+function normalizeLocalVector(vector: Float32Array | number[]): number[] {
+  const values = Array.from(vector);
+  if (values.length === 0 || values.some((value) => !Number.isFinite(value))) {
+    throw new Error("Local embedding model returned an invalid vector");
+  }
+  const magnitude = Math.sqrt(values.reduce((sum, value) => sum + value * value, 0));
+  if (!Number.isFinite(magnitude) || magnitude === 0) {
+    throw new Error("Local embedding model returned an invalid vector");
+  }
+  return values.map((value) => value / magnitude);
+}
+
 export async function createLocalEmbeddingProvider(
   options: EmbeddingProviderOptions,
 ): Promise<EmbeddingProvider> {
@@ -69,6 +82,8 @@ export async function createLocalEmbeddingProviderInProcess(
   let initAbortController: AbortController | null = null;
   let closePromise: Promise<void> | null = null;
   let closed = false;
+  let resolvedModelPath: string | undefined;
+  let modelDigest: string | undefined;
 
   const throwIfClosed = () => {
     if (closed) {
@@ -113,6 +128,7 @@ export async function createLocalEmbeddingProviderInProcess(
             loadSignal: abortController.signal,
           });
           embeddingModel = await disposeAndThrowIfClosed(nextModel);
+          resolvedModelPath = resolved;
         }
         if (!embeddingContext) {
           const nextContext = await embeddingModel.createEmbeddingContext({
@@ -137,6 +153,41 @@ export async function createLocalEmbeddingProviderInProcess(
   return {
     id: "local",
     model: modelPath,
+    inspect: async (texts, callOptions) => {
+      throwIfClosed();
+      callOptions?.signal?.throwIfAborted();
+      const ctx = await ensureContext();
+      throwIfClosed();
+      callOptions?.signal?.throwIfAborted();
+      if (contextSize === "auto") {
+        throw new Error("A fixed local context size is required for capability inspection");
+      }
+      if (!modelDigest) {
+        const hash = createHash("sha256");
+        for await (const bytes of createReadStream(resolvedModelPath!)) {
+          throwIfClosed();
+          callOptions?.signal?.throwIfAborted();
+          hash.update(bytes);
+        }
+        modelDigest = `sha256:${hash.digest("hex")}`;
+      }
+      // GGUF contains the actual vocabulary, merges and special token metadata.
+      // calculateInputLength includes the native embedding context's BOS/EOS preparation.
+      const tokenizerId = "node-llama-cpp/calculateInputLength/v1";
+      const tokenizerDigest = `sha256:${createHash("sha256")
+        .update(JSON.stringify([modelDigest, tokenizerId]))
+        .digest("hex")}`;
+      callOptions?.signal?.throwIfAborted();
+      throwIfClosed();
+      return {
+        dimensions: embeddingModel!.embeddingVectorSize,
+        maxInputTokens: Math.min(contextSize, embeddingModel!.trainContextSize) - 1,
+        modelDigest,
+        tokenizerId,
+        tokenizerDigest,
+        tokenCounts: texts.map((text) => ctx.calculateInputLength(text)),
+      };
+    },
     embedQuery: async (text, optionsValue) => {
       throwIfClosed();
       optionsValue?.signal?.throwIfAborted();
@@ -144,7 +195,9 @@ export async function createLocalEmbeddingProviderInProcess(
       throwIfClosed();
       optionsValue?.signal?.throwIfAborted();
       const embedding = await ctx.getEmbeddingFor(text);
-      return sanitizeAndNormalizeEmbedding(Array.from(embedding.vector));
+      throwIfClosed();
+      optionsValue?.signal?.throwIfAborted();
+      return normalizeLocalVector(embedding.vector);
     },
     embedBatch: async (texts, optionsLocal) => {
       throwIfClosed();
@@ -157,7 +210,9 @@ export async function createLocalEmbeddingProviderInProcess(
         throwIfClosed();
         optionsLocal?.signal?.throwIfAborted();
         const embedding = await ctx.getEmbeddingFor(text);
-        embeddings.push(sanitizeAndNormalizeEmbedding(Array.from(embedding.vector)));
+        throwIfClosed();
+        optionsLocal?.signal?.throwIfAborted();
+        embeddings.push(normalizeLocalVector(embedding.vector));
       }
       return embeddings;
     },

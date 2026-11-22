@@ -8,9 +8,11 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 # Verse Claw
 
+Activating a project keeps its directory and permission policy aligned with the runtime while preserving the selected model.
+
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
-Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery uses the conversation’s recorded working directory.
+Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
 
 Chat groups ordinary streamed text updates by animation frame. Approvals, cancellation, errors and completion publish immediately; completed message content stays stable while the active reply grows.
 
@@ -21,6 +23,8 @@ Compatible filesystem subscriptions share native watchers while keeping independ
 Managed process lifecycles retain their shared executor until their own terminal result. Poll dispatch leaves room for stdin and cancellation, and captured output uses a shared byte limit with the existing artifact references.
 
 Terminal PTYs and governed processes share declared host capacity. Known server ports are reserved before launch, stale terminal generations reject control, and uncertain exits retain their reservations for recovery. See [terminal resource ownership](harness/specs/guides/terminal-resource-ownership.md).
+
+Opening the resource popover refreshes the current session's coordinator status and worker receipts.
 
 Runtime-managed worktree ownership, creation stages and merge intent persist in SQLite across restarts. Replaced paths, incomplete setup and unknown merge outcomes retain their resources and reject stale execution credentials. See the [registration and recovery contract](harness/specs/guides/execution-domain-registry.md).
 
@@ -67,6 +71,7 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 | Workspaces and coding | Workspace preflight, four permission modes, file preview, PTY terminals, web previews, Git operations, review panel, write journal, stale-write guard and auto verification | [Workspace and coding](docs/modules/workspace-and-coding.md) |
 | Knowledge | Markdown/wiki-first library, Inbox → Draft → Steward → Proposal → explicit apply, Source Sets, OKF, Runtime Lessons/SEKB, provenance and governance | [Knowledge base](docs/modules/knowledge-base.md) |
 | Multi-agent and tasks | Agent/Persona/Role separation, nine built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop and ClawGraph | [Multi-agent and tasks](docs/modules/multi-agent-and-tasks.md) |
+| Task reports | Expand a persistent task card to inspect its source, runs, effects, candidate checks and retained evidence. Recorded model calls are counted once across coordinator and worker views; catalog prices are estimates and missing amounts remain unknown. | [Task reports](docs/modules/multi-agent-and-tasks.md) |
 | Project and session navigation | Project names open their coordinator; the project view retains every explicitly associated coordinator across agents. Families expand within existing workgroups and show scoped tasks. Ledger history opens linked transcripts and checkpoint artifacts. Fork questions stay as drafts; Handoff creates and sends with restart recovery. | [Session and task flow](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers, and retired VToken | [Verse tools](docs/modules/verse-tools.md) |
 | Resources and observability | ResourceFabric with bounded per-operation latency feedback and memory/event-loop pressure control, background shedding, process tracking, token/cost limits and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
@@ -159,6 +164,10 @@ pnpm dev
 
 `pnpm dev` builds VerseBrowser, the embedded runtime and bundled skills before opening Vite and Electron. The Gateway normally needs 10–30 seconds to become ready. A Vite page alone does not provide the full Electron Host services.
 
+Queued configuration reloads already included in a successful Gateway launch are consumed at startup. Later changes and explicit restart requests run after the current startup or restart finishes. An explicit stop cancels pending restart work, including cooldown waits and startup recovery.
+
+Source launches initialize session services through the normal runtime startup path in both ordinary and test windows.
+
 Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
 
 First session:
@@ -170,7 +179,7 @@ First session:
 5. Resolve approvals in Inbox.
 6. Use Knowledge or Memory only through their review surfaces.
 7. Manage a conversation from its row: hovering shows Pin and ⋯ (rename, move to a workgroup, mark unread, fork, hand off, copy, archive with Undo, delete); right-click opens the same menu, and long titles scroll while hovered.
-   Related conversations use a shallow indent and a quiet guide; their count appears while collapsed. The compact header keeps unboxed workspace and conversation names. Click the title to search, switch or return to a source conversation; More holds checkpoints, fork, handoff, refresh, recovery, migration and memory tools. Dark mode separates the sidebar, reading surface and raised composer with graphite tones. Empty task scopes stay hidden. Settings → Session & Recovery offers a quiet display preset.
+   Related conversations use a shallow indent and a quiet guide; their count stays visible when expanded or collapsed. The compact header keeps unboxed workspace and conversation names. Click the title to search, switch or return to a source conversation; More holds checkpoints, fork, handoff, refresh, recovery, migration and memory tools. Starting a new conversation saves the current draft first; a refused creation keeps the source conversation and draft. Dark mode separates the sidebar, reading surface and raised composer with graphite tones. Empty task scopes remain available from the header. Settings → Session & Recovery offers a quiet display preset.
 8. While a conversation runs or waits for you, the sidebar bell uses the same animated status as its row; settled activity uses a static semantic icon. When idle, the bell shows the latest unread result and returns to its bell glyph after the feed is read. Its badge counts unread activity. The panel shows running conversations with elapsed time, plus completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery. The Settings control stays bottom-anchored when the sidebar is collapsed.
 
 Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
@@ -323,6 +332,14 @@ Worker details show task acceptance from the task owner for the displayed sessio
 
 Task Ledger → Persistent tasks saves objectives, constraints and acceptance checks independently of chat history. Sessions claim tasks in a repository shared by its local Git worktrees. Task execution checks ownership before managed tool calls and restores the current goal before model requests. Configure either an exact file-content check or a command check with declared input files; commands use the existing tool permissions. See [task-system architecture](docs/dev/durable-task-system/PLAN.md).
 
+Ask the project coordinator to plan a goal. The task panel shows the saved tasks and plan versions, including the next action, assumptions, and pending decisions. A revision preserves prior tasks and acceptance records.
+Ask the coordinator to take the next step in that plan. It claims the first task whose dependencies have passed acceptance and waits if another plan task in the project is still being worked on.
+Open the plan’s task menu and choose **Dispatch next plan task** to start one worker. Dispatch requires a project token or cost budget. The worker uses the configured role and model policy.
+Completed workers resume the coordinator that started them. Completion retries preserve its session generation. Results for a replaced generation or a coordinator that handed off are rejected before a model call; the successor resumes from the saved task checkpoint.
+After a Gateway restart, an interrupted coordinator with a valid task claim resumes from the saved checkpoint once the previous process has exited and no task effects are unsettled.
+Pausing dispatch keeps the current run and lets you cancel its task or reconcile pending effects. Stopping a run keeps the task and its checkpoint.
+Cancelling a delegated task stops its worker and prevents late results from resuming the coordinator. A failed worker with settled effects releases its claim and leaves an unaccepted checkpoint; the coordinator can continue an independent ready task within its budget.
+
 Managed worktree cleanup preserves historical task artifacts under verified Git references and records the retained bytes in the original task history. Agents can trace acceptance and read those artifacts after the checkout is removed. Active tasks, unresolved effects and artifacts without a matching retained snapshot keep the checkout available.
 
 Cleanup retains ignored files, hidden Git index edits, and in-process files or permissions without a verified retained copy. Git and Storage deletion entries use the same hidden-index check; a confirmed native dirty-file refusal keeps the checkout retryable, while an unknown deletion result retains its execution reservation.
@@ -333,10 +350,24 @@ Changing the implicit main agent's model or name preserves its workspace inherit
 
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
-Conversation tasks are managed by the agent. A running task docks just above the input — title, a short task ID you can copy, the current step and real step progress — and stays there until it finishes, then folds into a one-line receipt; its menu opens the Task Ledger, expands the steps or hides the dock without touching the task. The session's task scope is a quiet chip in the header instead of a strip over the transcript. The session status panel reads like a short key–value list: context usage, connectors in use, changes with a review action, and background workers and commands. A compact changed-file review bar appears above the composer only when files change; it shows the branch and unique file count, opens review directly, and keeps branch and worktree operations in its menu. Running commands retain their progress animation and show output at their original position in the process timeline.
+Conversation tasks are managed by the agent. A running task docks just above the input — title, state, the current step and real step progress — and stays there until it finishes, then folds into a one-line receipt; the expanded details and menu copy the task ID, open the Task Ledger, expand the steps or hides the dock without touching the task. The session's task scope is a quiet chip in the header instead of a strip over the transcript. The session status panel reads like a short key–value list: context usage, connectors in use, changes with a review action, and background workers and commands. A compact changed-file review bar appears above the composer only when files change; it shows the branch and unique file count, opens review directly, and keeps branch and worktree operations in its menu. Running commands retain their progress animation and show output at their original position in the process timeline.
 
 Recovery implementation and evidence: the opt-in execution writer persists tool lifecycle phases on TaskFlow, claims work before effects, and resumes only owner-authorized work. Both lifecycle and execution writers must explicitly select `taskflow`; defaults remain `legacy`. Unknown effects require reconciliation. Recovery follow-up fixes pending-delivery run ownership and startup recovery ordering; see the [follow-up verification](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md). The [2026-11-05 evaluation](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md) retains 60 live answers and 30 primary fault windows. Candidate outcome classification improves, while frozen latency gates return FAIL/NO-GO.
 
 Gated subagent recovery (`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority`, with both writers selecting `taskflow`) commits its decision and budget before RPC and preserves unknown outcomes for reconciliation. Recovered tool events enter the current run subscription to update delivery and completion records. See the [recovery admission guide](docs/dev/recovery-contract/GA-READINESS-20261106.md).
 
 Managed worktree integration preserves deletions, renames and binary bytes through the existing Coding journal. Persistent worktree receipts reconcile duplicate completion and restart, while target drift refuses an overwrite. Cleanup preserves undeclared and ignored local files. Executable permission changes are refused before integration.
+
+Tasks with an independent review criterion submit a candidate for a read-only reviewer. The coordinator can repair it once when the task allows it, rerun checks and request a fresh review before acceptance. Review results stay bound to the submitted files, and repair counts survive restart and handoff.
+
+System overview in the sidebar reads each registered project independently, including its plan, next action, coordinator and verification references. Open a project by name to enter its coordinator. Failed refreshes retain the previous observation with its timestamp; unattributed resource usage and cost remain unknown.
+
+Project continuity reads accepted context for the bound tasks and rechecks coordinator identity before sending. Handoffs retain task goals, constraints, pending decisions, progress and artifact references. Missing or changed artifact bytes remain explicit; oversized critical context stops the send with a diagnostic.
+
+System overview can dispatch the next ready task for an explicitly bound project without switching the active workspace. Each request uses that project’s permissions and budget. Global pause blocks new dispatches and managed effects while admitted effects settle; resuming a project cannot override the global pause.
+
+Project configuration supports typed previews for an exclusive project Agent. It may select an existing model with known non-increasing prices, add tool restrictions, or reduce context limits. Applying verifies the loaded Runtime generation; reload failures roll back only the fields changed by that operation. Pending or degraded operations can be recovered from the project card after reopening the app.
+
+Mission experience remains a reviewable candidate, bound to the originating session with source references and a 24-hour expiry. Mission Control and the main chat can reuse approved experience only in its originating session. The 24-hour limit also applies to cold cards; revocation, replacement and expiry stop subsequent reuse. Delivery to a model also depends on the existing shared context budget. The panel follows lifecycle events from its current session. Running Missions can be paused or cancelled while their request is pending; the panel retains confirmed control state when an older run response arrives. Once pause, cancel or resume is accepted, Runtime settles the older tick and retains its execution evidence. Changing the default Agent or its session resets the Mission projection; delayed replies keep their original session scope. The role catalog loads when the panel opens; an empty catalog stays idle until reopened or manually refreshed.
+
+The task ledger opens a compact persistent-task list. Rows show the objective, state and next step; ownership, acceptance and actions expand on demand. Task reports show recorded timing in a short summary, with usage and complete records in details. The system overview uses the same list hierarchy for project goals, progress, evidence and configuration.

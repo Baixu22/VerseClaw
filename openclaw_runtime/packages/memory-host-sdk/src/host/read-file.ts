@@ -72,6 +72,7 @@ export async function readMemoryFile(params: {
   lines?: number;
   defaultLines?: number;
   maxChars?: number;
+  raw?: boolean;
 }): Promise<MemoryReadResult> {
   const rawPath = params.relPath.trim();
   if (!rawPath) {
@@ -107,7 +108,9 @@ export async function readMemoryFile(params: {
           allowedAdditional = true;
           break;
         }
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
   }
   if (!allowedWorkspace && !allowedAdditional) {
@@ -118,6 +121,7 @@ export async function readMemoryFile(params: {
   }
   if (allowedWorkspace) {
     try {
+      await assertNoSymlinkParents({ rootDir: params.workspaceDir, targetPath: absPath });
       // Workspace reads use the safe fs root so symlink escapes are rejected before file IO.
       const workspaceRoot = await root(params.workspaceDir);
       await workspaceRoot.resolve(relPath);
@@ -134,18 +138,20 @@ export async function readMemoryFile(params: {
   }
   let content: string;
   try {
-    content = (
-      await retryTransientMemoryRead(
-        () => readRegularFile({ filePath: absPath }),
-        `read memory file ${absPath}`,
-      )
-    ).buffer.toString("utf-8");
+    const file = await retryTransientMemoryRead(
+      () => readRegularFile({ filePath: absPath }),
+      `read memory file ${absPath}`,
+    );
+    content = params.raw
+      ? new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(file.buffer)
+      : file.buffer.toString("utf-8");
   } catch (err) {
     if (isFileDisappearedDuringReadError(err)) {
       return { text: "", path: relPath };
     }
     throw err;
   }
+  if (params.raw) return { text: content, path: relPath };
   return buildMemoryReadResult({
     content,
     relPath,

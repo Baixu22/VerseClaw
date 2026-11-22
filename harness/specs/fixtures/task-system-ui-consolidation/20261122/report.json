@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-ui-integration",
+  "generatedAt": "2026-11-22T20:06:36.573218+00:00",
+  "status": "preparing-clean-verification",
+  "candidate": {
+    "commit": "910206880dae301b41aed03efb7e5ff1de1103fe",
+    "tree": "feda2055e78bcd090f4b480261c04c78e4bf5b9c",
+    "dirty": true
+  },
+  "taskSpec": "harness/specs/tasks/task-system-ui-consolidation-20261122.md",
+  "changes": [
+    "Unified task list, tree, trace, composer dock and system portfolio hierarchy.",
+    "Integrated frontend and owner dependencies from G2/G3/G4/G5; new unwired planning/attribution methods remain in their source workspace for recovery fixes.",
+    "Fixed send serialization, Auto-read paths, stale UI/configuration reads and retryable knowledge exposure receipts."
+  ],
+  "evidenceScope": "Electron screenshots and UI interactions use agent-driven fixed task data.",
+  "resourceSummary": {
+    "carbonForwardedRequests": 4,
+    "lastReportedTotalTokens": 169603
+  }
+}

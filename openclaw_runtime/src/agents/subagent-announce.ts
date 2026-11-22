@@ -235,6 +235,7 @@ export async function runSubagentAnnounceFlow(params: {
   childSessionKey: string;
   childRunId: string;
   requesterSessionKey: string;
+  expectedRequesterSessionId?: string;
   requesterOrigin?: DeliveryContext;
   requesterDisplayKey: string;
   task: string;
@@ -400,7 +401,8 @@ export async function runSubagentAnnounceFlow(params: {
         reply = await readSubagentOutput(params.childSessionKey, outcome);
       }
 
-      if (!reply?.trim() && allowFailedOutputCapture) {
+      // A terminal error already has a status to report, even without assistant text.
+      if (!reply?.trim() && !failedTerminalOutcome) {
         reply = await readLatestSubagentOutputWithRetry({
           sessionKey: params.childSessionKey,
           maxWaitMs: params.timeoutMs,
@@ -555,22 +557,23 @@ export async function runSubagentAnnounceFlow(params: {
           })
         : targetRequesterOrigin;
     const directIdempotencyKey = buildAnnounceIdempotencyKey(announceId);
-    // TF-0082 generation pin: only the original requester target (no nested
-    // fallback redirect) carries the spawn-time sessionId pin. A redirected
-    // grandparent target is not the pinned generation and keeps legacy
-    // liveness-only behavior.
-    let expectedRequesterSessionId: string | undefined;
-    try {
-      const registryRuntime =
-        subagentRegistryRuntime ?? (await loadSubagentRegistryRuntime());
-      const run = registryRuntime.getLatestSubagentRunByChildSessionKey(
-        params.childSessionKey,
-      );
-      if (run?.requesterSessionId && targetRequesterSessionKey === run.requesterSessionKey) {
-        expectedRequesterSessionId = run.requesterSessionId;
+    // Lifecycle retries carry the persisted spawn pin. Other callers read the
+    // exact child run so a newer attempt cannot lend its generation to this result.
+    let expectedRequesterSessionId =
+      targetRequesterSessionKey === params.requesterSessionKey
+        ? params.expectedRequesterSessionId
+        : undefined;
+    if (!expectedRequesterSessionId) {
+      try {
+        const registryRuntime =
+          subagentRegistryRuntime ?? (await loadSubagentRegistryRuntime());
+        const run = registryRuntime.getSubagentRunByRunId(stripWakeRunSuffixes(params.childRunId));
+        if (run?.requesterSessionId && targetRequesterSessionKey === run.requesterSessionKey) {
+          expectedRequesterSessionId = run.requesterSessionId;
+        }
+      } catch {
+        // Callers with a persisted pin keep it even when the registry is unavailable.
       }
-    } catch {
-      // Registry unavailable: keep legacy liveness-only wake behavior.
     }
     const delivery = await deliverSubagentAnnouncement({
       requesterSessionKey: targetRequesterSessionKey,

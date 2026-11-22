@@ -80,12 +80,14 @@ async function setup(launch: Launch, info: TestInfo, providerPort?: number) {
 async function select(c: Context, key: string) {
   const back = c.page.getByTestId('settings-back-button');
   if (await back.isVisible()) { await back.focus(); await back.press('Enter'); }
-  const family = c.page.getByTestId(`chat-session-derived-${key}`);
+  const family = c.page.getByTestId(`chat-session-derived-${key}`).or(c.page.getByTestId(`chat-session-item-${key}`));
   if (key === c.neighbour) {
     await openSessionNavigation(c.page);
     const window = await c.app.browserWindow(c.page);
     await window.evaluate(window => { window.show(); window.focus(); }); await window.dispose();
     await c.page.bringToFront();
+    await expect(family).toHaveCount(1);
+    await expect(family).toBeVisible();
     await family.click();
     try { await expect(c.page.getByTestId('chat-composer-input')).toHaveValue('U5 draft B'); }
     finally {

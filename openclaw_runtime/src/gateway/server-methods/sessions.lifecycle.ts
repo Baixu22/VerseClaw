@@ -1,8 +1,12 @@
 // Sessions gateway lifecycle mutation methods (create/fork/patch/reset/delete).
-import type { GatewayRequestHandlers } from "./types.js";
+import type { GatewayRequestHandlerOptions, GatewayRequestHandlers } from "./types.js";
 import { randomUUID } from "node:crypto";
+import { realpathSync, statSync } from "node:fs";
 import path from "node:path";
+import { GATEWAY_CLIENT_MODES } from "../../../packages/gateway-protocol/src/client-info.js";
+import { sessionAdmissionRegistry, type SessionAdmissionFenceHandle } from "../../sessions/session-admission-registry.js";
 import { inheritExecutionTaskReference } from "../../agents/execution-task-authority.js";
+import { isEmbeddedAgentRunActive } from "../../agents/embedded-agent-runner/runs.js";
 import {
   normalizeOptionalLowercaseString,
   normalizeOptionalString,
@@ -69,6 +73,7 @@ import {
   migrateAndPruneGatewaySessionStoreKey,
   readSessionMessageCountAsync,
   resolveGatewaySessionStoreTarget,
+  resolveFreshestSessionEntryFromStoreKeys,
   resolveSessionDisplayModelIdentityRef,
   resolveSessionModelRef,
   type SessionsPatchResult,
@@ -77,6 +82,8 @@ import { applySessionsPatchToStore } from "../sessions-patch.js";
 import { chatHandlers } from "./chat.js";
 import { emitSessionsChanged } from "./session-change-event.js";
 import { assertValidParams } from "./validation.js";
+import { readTrackedSessionRunState } from "./session-active-runs.js";
+
 import {
   inheritSessionRuntimeSelection,
   loadSessionsRuntimeModule,
@@ -92,6 +99,23 @@ import {
   isSessionBusyForManualCompaction,
 } from "./sessions.shared.js";
 
+function resolveBackendSessionWorkspace(
+  params: { workspaceDir?: string },
+  client: GatewayRequestHandlerOptions["client"],
+): string | undefined {
+  const requested = normalizeOptionalString(params.workspaceDir);
+  if (params.workspaceDir === undefined) return undefined;
+  if (!requested) throw new Error("workspaceDir must name a directory");
+  if (client?.connect?.client?.mode !== GATEWAY_CLIENT_MODES.BACKEND) {
+    throw new Error("workspaceDir is reserved for backend callers");
+  }
+  if (!client.connect.scopes?.includes(ADMIN_SCOPE)) {
+    throw new Error(`workspaceDir requires gateway scope: ${ADMIN_SCOPE}`);
+  }
+  const root = realpathSync(requested);
+  if (!statSync(root).isDirectory()) throw new Error("workspaceDir is not a directory");
+  return root;
+}
 
 function respondLifecycleMutationFailure(
   respond: Parameters<GatewayRequestHandlers[string]>[0]["respond"],
@@ -635,6 +659,14 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
     if (rejectWebchatSessionMutation({ action: "patch", client, isWebchatConnect, respond })) {
       return;
     }
+    let workspaceDir: string | undefined;
+    try {
+      workspaceDir = resolveBackendSessionWorkspace(p, client);
+      if (workspaceDir && !p.expectedSessionId) throw new Error("expectedSessionId is required for workspaceDir");
+    } catch (error) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, String(error)));
+      return;
+    }
 
     const cfg = context.getRuntimeConfig();
     const requestedAgent = resolveRequestedGlobalAgentId(cfg, key, p.agentId);
@@ -646,22 +678,65 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
     const { target, storePath } = resolveGatewaySessionTargetFromKey(key, cfg, {
       agentId: requestedAgentId,
     });
-    const applied = await updateSessionStore(storePath, async (store) => {
-      const { primaryKey } = migrateAndPruneGatewaySessionStoreKey({
-        cfg,
-        key,
-        store,
-        agentId: requestedAgentId,
+    let workspaceFence: SessionAdmissionFenceHandle | undefined;
+    let applied: Awaited<ReturnType<typeof applySessionsPatchToStore>>;
+    try {
+      applied = await updateSessionStore(storePath, async (store) => {
+        const currentTarget = resolveGatewaySessionStoreTarget({ cfg, key, store, agentId: requestedAgentId });
+        const existing = resolveFreshestSessionEntryFromStoreKeys(store, currentTarget.storeKeys);
+        // The same store queue pins the generation before reset/delete can replace it.
+        if (p.expectedSessionId && existing?.sessionId !== p.expectedSessionId) {
+          return { ok: false as const, error: errorShape(ErrorCodes.INVALID_REQUEST, "SESSION_GENERATION_CHANGED") };
+        }
+        if (workspaceDir && existing) {
+          const identity = { agentId: target.agentId, canonicalSessionKey: target.canonicalKey, expectedSessionId: existing.sessionId };
+          const admission = sessionAdmissionRegistry.snapshot(identity);
+          if (admission?.fenced) return { ok: false as const, error: errorShape(ErrorCodes.INVALID_REQUEST, "SESSION_WORKSPACE_SWITCH_BLOCKED") };
+          const currentWorkspace = existing.workspaceDir ?? resolveAgentWorkspaceDir(cfg, target.agentId);
+          let currentRoot: string;
+          try {
+            currentRoot = realpathSync(currentWorkspace);
+          } catch (error) {
+            if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+            // An unmaterialized default workspace has no existing directory identity.
+            currentRoot = path.resolve(currentWorkspace);
+          }
+          if (path.relative(currentRoot, workspaceDir) !== "") {
+            const tracked = readTrackedSessionRunState({ context, requestedKey: key, canonicalKey: target.canonicalKey,
+              agentId: target.agentId, defaultAgentId: resolveDefaultAgentId(cfg), includeHidden: true, expectedSessionId: existing.sessionId });
+            if (tracked === "unknown") {
+              return { ok: false as const, error: errorShape(ErrorCodes.INVALID_REQUEST, "SESSION_WORKSPACE_RUN_IDENTITY_UNAVAILABLE") };
+            }
+            if (admission?.active || tracked === "active" || isEmbeddedAgentRunActive(existing.sessionId)) {
+              return { ok: false as const, error: errorShape(ErrorCodes.INVALID_REQUEST, "SESSION_WORKSPACE_SWITCH_BLOCKED") };
+            }
+            workspaceFence = await sessionAdmissionRegistry.fence(identity, { operation: "sessions.patch workspace" });
+          }
+        }
+        const { primaryKey } = migrateAndPruneGatewaySessionStoreKey({
+          cfg,
+          key,
+          store,
+          agentId: requestedAgentId,
+        });
+        const result = await applySessionsPatchToStore({
+          cfg,
+          store,
+          storeKey: primaryKey,
+          agentId: requestedAgentId,
+          patch: p,
+          loadGatewayModelCatalog: context.loadGatewayModelCatalog,
+        });
+        if (result.ok && workspaceDir) {
+          result.entry = { ...result.entry, workspaceDir };
+          store[primaryKey] = result.entry;
+        }
+        return result;
       });
-      return await applySessionsPatchToStore({
-        cfg,
-        store,
-        storeKey: primaryKey,
-        agentId: requestedAgentId,
-        patch: p,
-        loadGatewayModelCatalog: context.loadGatewayModelCatalog,
-      });
-    });
+    } finally {
+      // Admission resumes only after the metadata transaction has committed.
+      workspaceFence?.release();
+    }
     if (!applied.ok) {
       respond(false, undefined, applied.error);
       return;

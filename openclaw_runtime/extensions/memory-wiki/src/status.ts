@@ -21,6 +21,7 @@ type MemoryWikiStatusWarning = {
 };
 
 export type MemoryWikiStatus = {
+  retrieval: ResolvedMemoryWikiConfig["retrieval"];
   vaultMode: ResolvedMemoryWikiConfig["vaultMode"];
   renderMode: ResolvedMemoryWikiConfig["vault"]["renderMode"];
   vaultPath: string;
@@ -239,6 +240,7 @@ export async function resolveMemoryWikiStatus(
       };
 
   return {
+    retrieval: config.retrieval,
     vaultMode: config.vaultMode,
     renderMode: config.vault.renderMode,
     vaultPath: config.vault.path,
@@ -297,6 +299,7 @@ export function renderMemoryWikiStatus(status: MemoryWikiStatus): string {
     `Wiki vault mode: ${status.vaultMode}`,
     `Vault: ${status.vaultExists ? "ready" : "missing"} (${status.vaultPath})`,
     `Render mode: ${status.renderMode}`,
+    `Retrieval: ${status.retrieval.profile}; answers: ${status.retrieval.answerMode}; index publication budget: ${status.retrieval.maxStorageBytes} bytes`,
     `Obsidian CLI: ${status.obsidianCli.available ? "available" : "missing"}${status.obsidianCli.requested ? " (requested)" : ""}`,
     `Bridge: ${status.bridge.enabled ? "enabled" : "disabled"}${typeof status.bridgePublicArtifactCount === "number" ? ` (${status.bridgePublicArtifactCount} exported artifact${status.bridgePublicArtifactCount === 1 ? "" : "s"})` : ""}`,
     `Unsafe local: ${status.unsafeLocal.allowPrivateMemoryCoreAccess ? `enabled (${status.unsafeLocal.pathCount} paths)` : "disabled"}`,

@@ -5,6 +5,14 @@ import { ChatMessage } from '@/pages/Chat/ChatMessage';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { RawMessage } from '@/stores/chat';
 
+vi.mock('react-i18next', () => ({
+  initReactI18next: { type: '3rdParty', init: vi.fn() },
+  useTranslation: () => ({
+    t: (key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key,
+    i18n: { language: 'zh' },
+  }),
+}));
+
 // ChatMessage renders Tooltip for the copy / interrupt affordances (added with
 // the Codex-style polish pass), so tests must render inside a TooltipProvider
 // the way the real Chat tree does.

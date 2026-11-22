@@ -20,7 +20,7 @@ vi.mock('react-i18next', () => ({
     init: vi.fn(),
   },
   useTranslation: () => ({
-    t: (_key: string, defaultValue?: string) => defaultValue ?? '',
+    t: (key: string, defaultValue?: unknown) => typeof defaultValue === 'string' ? defaultValue : key,
   }),
 }));
 
@@ -46,6 +46,9 @@ const chatState = {
   streamingTools: [],
   pendingFinal: false,
   activeRunId: null,
+  handoffOperation: null,
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   sendMessage: vi.fn(),
   abortRun: vi.fn(),
   clearError: vi.fn(),

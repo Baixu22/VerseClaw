@@ -8,6 +8,12 @@ import type { EmbeddingProvider, EmbeddingProviderOptions } from "./embeddings.t
 type LocalEmbeddingWorkerRequest =
   | {
       id: number;
+      type: "inspect";
+      options: EmbeddingProviderOptions;
+      texts: string[];
+    }
+  | {
+      id: number;
       type: "initialize";
       options: EmbeddingProviderOptions;
     }
@@ -92,6 +98,12 @@ async function handleRequest(request: LocalEmbeddingWorkerRequest): Promise<void
   }
   if (request.type === "embedQuery") {
     const value = await currentProvider.embedQuery(request.text);
+    send({ id: request.id, ok: true, value });
+    return;
+  }
+  if (request.type === "inspect") {
+    if (!currentProvider.inspect) throw new Error("Local embedding inspection is unavailable");
+    const value = await currentProvider.inspect(request.texts);
     send({ id: request.id, ok: true, value });
     return;
   }

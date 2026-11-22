@@ -60,7 +60,10 @@ function ref(input: {
       trust: "advisory",
       sensitivity: input.sensitivity ?? "workspace",
       acl: { read: input.acl ?? [] },
-      provenance: { sourceRefs: [`${input.owner ?? "memory-wiki"}:${input.subjectId}`], evidenceRefs: [] },
+      provenance: {
+        sourceRefs: [`${input.owner ?? "memory-wiki"}:${input.subjectId}`],
+        evidenceRefs: [],
+      },
     },
     content: input.content,
     status: input.status ?? "active",
@@ -230,7 +233,10 @@ describe("retrieveSourceSet filtering and evidence status", () => {
     expect(result.conflictSet).toHaveLength(0);
     expect(result.unknowns.length).toBeGreaterThan(0);
     expect(result.suggestedNextActions.length).toBeGreaterThan(0);
-    expect(result.semanticLane).toEqual({ status: "unavailable", reason: "embedding-provider-unavailable" });
+    expect(result.semanticLane).toEqual({
+      status: "unavailable",
+      reason: "embedding-provider-unavailable",
+    });
   });
 
   it("returns partial when one pinned ref resolves and one is missing", async () => {
@@ -385,7 +391,10 @@ describe("retrieveSourceSet lanes", () => {
       sources: [DEPLOY_RUNBOOK, DEPLOY_LEGACY],
       now: () => FIXED_NOW,
     });
-    expect(result.semanticLane).toEqual({ status: "unavailable", reason: "embedding-provider-unavailable" });
+    expect(result.semanticLane).toEqual({
+      status: "unavailable",
+      reason: "embedding-provider-unavailable",
+    });
     expect(result.retrieved.length).toBeGreaterThan(0);
   });
 
@@ -415,7 +424,10 @@ describe("retrieveSourceSet lanes", () => {
       now: () => FIXED_NOW,
     });
     expect(result.semanticLane.status).toBe("available");
-    expect(result.semanticLane).toMatchObject({ providerId: "deterministic-test-provider", dimension: 3 });
+    expect(result.semanticLane).toMatchObject({
+      providerId: "deterministic-test-provider",
+      dimension: 3,
+    });
     expect(result.retrieved[0]?.ref.refId).toBe("wiki:deploy-runbook");
   });
 
@@ -437,6 +449,25 @@ describe("retrieveSourceSet lanes", () => {
       now: () => FIXED_NOW,
     });
     expect(result.semanticLane.status).toBe("error");
+    expect(result.retrieved.length).toBeGreaterThan(0);
+  });
+
+  it.each([0, 3])("rejects %i vectors for two admitted documents before scoring", async (count) => {
+    const result = await retrieveSourceSet({
+      query: { text: "gateway control port" },
+      sources: [DEPLOY_RUNBOOK, DEPLOY_LEGACY],
+      embeddingProvider: {
+        id: "agent-fixture-count",
+        dimension: 2,
+        embedQuery: async () => [1, 0],
+        embedBatch: async () => Array.from({ length: count }, () => [1, 0]),
+      },
+      now: () => FIXED_NOW,
+    });
+    expect(result.semanticLane).toMatchObject({
+      status: "error",
+      reason: "embedding-vector-count-mismatch",
+    });
     expect(result.retrieved.length).toBeGreaterThan(0);
   });
 });
@@ -518,7 +549,9 @@ describe("citation resolution and DCS single path", () => {
       sources: [source],
       now: () => FIXED_NOW,
     });
-    expect(result.retrieved.map((entry) => entry.ref.refId)).toEqual(["memory-wiki:deploy-runbook"]);
+    expect(result.retrieved.map((entry) => entry.ref.refId)).toEqual([
+      "memory-wiki:deploy-runbook",
+    ]);
     expect(result.retrieved[0]?.lane).toBe("exact");
   });
 });

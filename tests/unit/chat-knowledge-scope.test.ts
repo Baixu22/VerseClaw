@@ -5,6 +5,18 @@ const loadTaskLedgerSnapshotMock = vi.fn();
 vi.mock('@electron/services/task-ledger-service', () => ({
   loadTaskLedgerSnapshot: (...args: unknown[]) => loadTaskLedgerSnapshotMock(...args),
 }));
+// A fixed owner binding keeps intent tests independent of the desktop's active workspace.
+vi.mock('@electron/services/knowledge-read-scope', () => ({
+  prepareKnowledgeReadScope: vi.fn(async () => ({
+    identity: { agentSessionKey: 'agent:main:main', sessionId: 'fixture-session',
+      workspaceId: 'workspace-a', workspaceDir: process.cwd() },
+    expectedSessionGeneration: 'fixture-session', fingerprint: 'fixture-owner',
+  })),
+  assertKnowledgeReadScopeCurrent: vi.fn(async () => {}),
+}));
+vi.mock('@electron/services/task-ledger-working-context', () => ({
+  readTaskLedgerWorkingContext: vi.fn(async () => null),
+}));
 
 /**
  * `sendWithMedia` gates on the session's persisted token usage before it reaches
@@ -208,6 +220,7 @@ describe('chat knowledge retrieval intent (KS-04)', () => {
   });
 
   it('injects selected Task Ledger context when an active node is provided', async () => {
+    const selectSessionTask = vi.fn(async () => ({ success: true }));
     loadTaskLedgerSnapshotMock.mockResolvedValue({
       schemaVersion: 1,
       workspaceId: 'workspace-a',
@@ -248,7 +261,7 @@ describe('chat knowledge retrieval intent (KS-04)', () => {
       getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
     };
     const { createChatApi } = await import('@electron/services/chat-api');
-    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const api = createChatApi({ gatewayManager: gatewayManager as never, selectSessionTask: selectSessionTask as never });
 
     await api.sendWithMedia({
       sessionKey: 'agent:main:main',
@@ -260,6 +273,9 @@ describe('chat knowledge retrieval intent (KS-04)', () => {
 
     const payload = gatewayManager.rpc.mock.calls[0]?.[1] as unknown as { message: string };
     expect(loadTaskLedgerSnapshotMock).toHaveBeenCalledWith('workspace-a');
+    expect(selectSessionTask).toHaveBeenCalledWith(expect.objectContaining({
+      workspaceId: 'workspace-a', sessionKey: 'agent:main:main', taskNodeId: 'task-1',
+    }));
     expect(payload.message).toContain('Task Ledger context (untrusted metadata)');
     expect(payload.message).toContain('"activeTaskNodeId":"task-1"');
     expect(payload.message).toContain('"title":"Record every chat turn"');

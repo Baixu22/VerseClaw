@@ -1,4 +1,17 @@
 import type { RawMessage } from '../chat/types';
+import type { SystemPortfolio, SystemProjectRead, SystemProjectSnapshot } from '../types/system-portfolio';
+import type { SystemControlChange, SystemControlState } from '../types/system-control';
+import type { ProjectConfigurationApply, ProjectConfigurationInput, ProjectConfigurationPreview, ProjectConfigurationRecovery, ProjectConfigurationResult } from '../project-configuration';
+import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from '../knowledge/embedding';
+import type { KnowledgeVectorStatusResult } from '../knowledge/vector';
+import type { ProjectRagConfigInput, KnowledgeOperationsResult, KnowledgeOperationsConfigureResult, KnowledgeIndexResult } from '../knowledge/operations';
+import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../knowledge/rerank';
+import type { RetainedEvidenceManifestV1 } from '../knowledge/packing';
+import type { AnswerClaimV1, KnowledgeAnswerMode } from '../knowledge/answer';
+import type { KnowledgeResearchPayload, KnowledgeResearchRequestPayload, KnowledgeResearchResult } from '../knowledge/research';
+import type { RankSignalsV2, RetrievalMode, RetrievalProfile, RetrievalResultV2 } from '../knowledge/retrieval';
+import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
+export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 import type { SessionHandoffOperation } from '../types/session-handoff';
 import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
 export type { WorkspaceExecutionMigrationPayload, WorkspaceExecutionMigrationReadPayload } from '../types/execution-migration';
@@ -617,6 +630,7 @@ export type RuntimeResourceEnvelopeState = {
 };
 
 export type WorkspaceSnapshotResult = HostSuccess & WorkspaceSnapshot;
+export type WorkspaceCreateResult = WorkspaceSnapshotResult & { createdWorkspace: WorkspaceProfile };
 
 /** FP-P1-02: workspace preflight (run before accepting a directory as workspace). */
 export type WorkspacePreflightPayload = { rootPath: string };
@@ -636,6 +650,7 @@ export type WorkspacePreflightResult = {
   error?: string;
 };
 export type WorkspaceCreatePayload = {
+  activate?: boolean;
   name?: string;
   rootPath: string;
   agentId?: string;
@@ -3347,6 +3362,18 @@ export type WorkspaceSessionTaskSelectPayload = {
   expectedSessionGeneration?: string;
   expectedRevision?: number;
 };
+export type ProjectPlanDispatchPayload = {
+  workspaceId: string;
+  sessionKey: string;
+  expectedSessionGeneration: string;
+  planId: string;
+  expectedRevision: number;
+  expectedChildId: string;
+  approvalId?: string;
+};
+export type SystemProjectDispatchPayload = ProjectPlanDispatchPayload & {
+  expectedPolicyRevision: number;
+};
 export type SessionCreateHandoffResult = HostSuccess & {
   operation?: SessionHandoffOperation;
   sessionKey?: string;
@@ -3635,6 +3662,7 @@ export type ChatSendWithMediaResult = HostSuccess & {
     used: number;
   };
   knowledgeDenials?: ChatKnowledgeDenial[];
+  knowledgeReferences?: ChatKnowledgeReference[];
 };
 
 export type ChatContinuityPreviewPayload = {
@@ -3658,11 +3686,7 @@ export type ChatKnowledgeDenial = {
   reason:
     | 'invalid_ref'
     | 'unsupported_owner'
-    | 'not_found'
-    | 'acl_denied'
-    | 'sensitive'
-    | 'stale'
-    | 'revoked';
+    | OwnerReadRejectionCode;
   visibleReason: string;
 };
 
@@ -3681,6 +3705,13 @@ export type ChatKnowledgeReference = {
   confidence?: number;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
+  sourceRef?: SourceRefV2;
+  revision?: string;
+  contentDigest?: string;
+  conflictGroupId?: string;
+  rank?: number;
+  scoreKind?: string;
+  rankSignals?: RankSignalsV2;
 };
 
 export type KnowledgeRouteCandidateGroupKey = 'docs' | 'pitfalls' | 'rules' | 'runtime_lessons';
@@ -3692,6 +3723,7 @@ export type KnowledgeRouteContextPayload = {
   selectedReferences?: ChatKnowledgeReference[];
   sessionKey?: string;
   workspaceId?: string | null;
+  profile?: RetrievalProfile;
   sourcePolicy?: {
     runtimeLessons?: boolean;
   };
@@ -3700,7 +3732,7 @@ export type KnowledgeRouteContextPayload = {
 export type KnowledgeRouteCandidate = ChatKnowledgeReference & {
   attachKind: 'suggested' | 'auto';
   routingReason: string;
-  confidence: number;
+  confidence?: number;
   routeGroup?: KnowledgeRouteCandidateGroupKey;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
@@ -3720,6 +3752,7 @@ export type KnowledgeRouteCandidateGroup = {
 };
 
 export type KnowledgeRouteContextResult = HostSuccess & {
+  experienceExposureId?: string;
   decision: 'skip' | 'suggest' | 'auto_attach';
   reason: string;
   query?: string;
@@ -3727,6 +3760,7 @@ export type KnowledgeRouteContextResult = HostSuccess & {
   candidateGroups?: KnowledgeRouteCandidateGroup[];
   groupedCandidates?: Partial<Record<KnowledgeRouteCandidateGroupKey, KnowledgeRouteCandidate[]>>;
   retrievalDiagnostics?: KnowledgeRetrievalDiagnostics;
+  retrieval?: KnowledgeRetrievalReport;
   budget: {
     maxReferences: number;
     maxSnippetChars: number;
@@ -3740,7 +3774,30 @@ export type KnowledgeRouteContextResult = HostSuccess & {
   };
 };
 
+export type KnowledgeRetrievePayload = {
+  query: string;
+  profile?: RetrievalProfile;
+  mode?: RetrievalMode;
+  sourceRefs?: SourceRefV2[];
+  sessionKey?: string;
+  workspaceId?: string | null;
+};
+export type KnowledgeRetrievalRow = ChatKnowledgeReference & {
+  rank: number;
+  scoreKind: string;
+  rankSignals: RankSignalsV2;
+  sourceRef: SourceRefV2;
+  metadata?: Record<string, unknown>;
+  autoReadAdmission?: { eligible: boolean; contextId: string; reason: string };
+};
+export type KnowledgeRetrievalReport = Omit<RetrievalResultV2<unknown>, 'results'> & { results: KnowledgeRetrievalRow[] };
+export type KnowledgeRetrieveResult = HostSuccess & { retrieval?: KnowledgeRetrievalReport };
+
 export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
+  attribution?: {
+    uiExposures: number; contextExposures: number; citations: number; adoptions: number;
+    operationalOutcomes: number; taskGrades: number; unknownOperationalOutcomes: number;
+  };
   available: boolean;
   reason?: 'runtimeUnavailable' | 'reportFailed';
   counts: {
@@ -4003,6 +4060,8 @@ export type KnowledgeSekbCaptureTrajectoryResult = HostSuccess & {
 };
 
 export type KnowledgeSekbRetrieveForTaskPayload = {
+  sessionKey?: string;
+  workspaceId?: string;
   taskIntent: string;
   taskType: string;
   contextTags?: string[];
@@ -4010,9 +4069,11 @@ export type KnowledgeSekbRetrieveForTaskPayload = {
 };
 
 export type KnowledgeSekbRetrieveForTaskResult = HostSuccess & {
+  experienceExposureId?: string;
   available: boolean;
   reason?: 'runtimeUnavailable' | 'retrieveFailed';
   principles: Array<{
+    sourceRef?: import('../knowledge/experience').ExperienceRefV1;
     principle_id: string;
     title: string;
     condition: string;
@@ -4153,9 +4214,12 @@ export type KnowledgeOkfImportResult = HostSuccess & {
 };
 export type KnowledgeSearchPayload = {
   query: string;
+  profile?: RetrievalProfile;
   maxResults?: number;
   corpus?: 'wiki' | 'memory' | 'all';
   mode?: string;
+  sessionKey?: string;
+  workspaceId?: string | null;
   /**
    * Area 5 §3.4 — optional role tag for ranking shaping. When set, entries
    * whose `roleTags` contain this tag rank first in the result list. This is
@@ -4168,7 +4232,9 @@ export type KnowledgeRetrievalDiagnosticItem = {
   id: string;
   title: string;
   lookup: string;
-  sourceKind: 'wiki-page' | 'memory-card' | 'error-experience' | 'rule' | 'draft' | 'inbox' | 'unknown';
+  sourceKind: 'wiki-page' | 'memory-file' | 'memory-card' | 'sekb-principle' | 'error-experience' | 'rule' | 'draft' | 'inbox' | 'unknown';
+  owner?: SourceRefV2['authorityId'];
+  sourceRef?: SourceRefV2;
   reason: string;
   score?: number;
   confidence?: number;
@@ -4194,8 +4260,17 @@ export type KnowledgeGetPayload = {
   fromLine?: number;
   lineCount?: number;
   corpus?: 'wiki' | 'memory' | 'all';
+  sourceRef?: SourceRefV2;
+  revision?: string;
+  contentDigest?: string;
+  sessionKey?: string;
+  workspaceId?: string | null;
 };
-export type KnowledgeGetResult = OptionalHostSuccess & Record<string, unknown>;
+export type KnowledgeGetResult = OptionalHostSuccess & Record<string, unknown> & {
+  sourceRef?: SourceRefV2;
+  ownerSnapshot?: OwnerReadSnapshotV1;
+  readDenial?: OwnerReadRejectionCode;
+};
 export type KnowledgeApplyDraftPayload = {
   title: string;
   body: string;
@@ -4232,6 +4307,7 @@ export type KnowledgeSourceRef = {
   /** Optional owner version and digest pins; selection never overrides these. */
   revision?: string;
   contentDigest?: string;
+  sourceRef?: SourceRefV2;
 };
 export type KnowledgeInteractionMvpMetadata = {
   mvpVersion: 'knowledge-interaction-mvp-1';
@@ -4616,8 +4692,10 @@ export type KnowledgeSourceSetCitation = {
   revision: string;
   contentDigest: string;
   sourceRefs: string[];
+  sourceRef?: SourceRefV2;
 };
 export type KnowledgeSourceSetAnswerSource = {
+  conflictGroupId?: string;
   id: string;
   lookup: string;
   title: string;
@@ -4629,6 +4707,7 @@ export type KnowledgeSourceSetAnswerSource = {
   readRange?: { fromLine: number; toLine: number; totalLines?: number; truncated: boolean };
 };
 export type KnowledgeAnswerFromSourceSetPayload = {
+  answerMode?: KnowledgeAnswerMode;
   question: string;
   sourceRefs: KnowledgeSourceRef[];
   artifactType?: KnowledgeArtifactType;
@@ -4640,6 +4719,8 @@ export type KnowledgeAnswerFromSourceSetPayload = {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
 };
 export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
+  answerMode?: KnowledgeAnswerMode;
+  retainedEvidence?: RetainedEvidenceManifestV1;
   question: string;
   answer: string;
   sources: KnowledgeSourceSetAnswerSource[];
@@ -4648,12 +4729,14 @@ export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   groundingStatus: 'grounded' | 'partial' | 'missing_sources';
   /** Populated only by a measured answer path; template excerpts omit it. */
   confidence?: number;
-  synthesisMode?: 'source-excerpts' | 'model';
+  synthesisMode?: 'source-excerpts' | 'model' | 'unknown';
   model?: { status: 'completed' | 'unavailable' | 'error'; runId?: string; reason?: string };
-  claims?: Array<{ text: string; citations: Array<{ sourceId: string; quote: string }> }>;
+  claims?: AnswerClaimV1[];
+  claimSupport?: { status: 'completed' | 'error'; runId?: string; reason?: string; actor: 'knowledge-claim-support'; driven_by: 'agent' };
   rejections?: Array<{ refId: string; owner: string; subjectId: string; reason: string; visibleReason: string }>;
   conflictSet?: Array<{ kind: 'claim' | 'source'; key: string; description: string; stances?: string[]; citations: KnowledgeSourceSetCitation[] }>;
   retrievalDiagnostics: KnowledgeRetrievalDiagnostics;
+  retrieval?: KnowledgeRetrievalReport;
   semanticRequested?: boolean;
   semanticLane?: {
     status: 'available' | 'unavailable' | 'error';
@@ -5021,11 +5104,15 @@ export type GithubPrCreateResult = GitOperationResult & { pullRequest?: GithubPr
 export type TaskLedgerWorkspacePayload = { workspaceId?: string | null };
 export type TaskSystemCommandPayload = { workspaceId: string; command: import('../task-system/types').TaskSystemCommand };
 export type TaskSystemCommandResult = HostSuccess & { result?: unknown; error?: string };
+export type TaskTracePayload = import('../task-system/trace').TaskTraceQuery & { workspaceId: string };
+export type TaskTraceResult = HostSuccess & { report?: import('../task-system/trace').TaskTraceReport; error?: string };
 export type TaskSystemListResult = HostSuccess & { tasks: import('../task-system/types').TaskView[] };
 export type TaskSystemQueryPayload = TaskLedgerWorkspacePayload & import('../task-system/types').TaskQuery;
 export type TaskSystemQueryResult = HostSuccess & import('../task-system/types').TaskPage;
 export type TaskSessionPayload = { workspaceId: string; sessionKey: string; expectedSessionGeneration?: string };
 export type TaskSessionResult = HostSuccess & import('../task-system/types').TaskSessionSnapshot;
+export type TaskContextHintPayload = TaskSessionPayload & { enabled?: boolean; sourceRef?: SourceRefV2 };
+export type TaskContextHintResult = HostSuccess & { hint: import('../knowledge/code-task-context').TaskContextHintV1 };
 export type TaskLedgerSnapshotResult = HostSuccess & { snapshot: TaskLedgerSnapshot };
 export type TaskLedgerAppendEventsPayload = TaskLedgerWorkspacePayload & {
   events: TaskLedgerEventInput[];
@@ -5822,8 +5909,17 @@ export type HostApiContract = {
   };
   workspaces: {
     list: () => WorkspaceSnapshotResult;
+    portfolio: () => SystemPortfolio;
+    projectSummary: (payload: SystemProjectRead) => SystemProjectSnapshot;
+    systemControl: () => SystemControlState;
+    setSystemControl: (payload: SystemControlChange) => SystemControlState;
+    previewConfiguration: (payload: ProjectConfigurationInput) => ProjectConfigurationPreview;
+    applyConfiguration: (payload: ProjectConfigurationApply) => ProjectConfigurationResult;
+    configurationOperation: (payload: { requestId: string }) => ProjectConfigurationResult | null;
+    configurationOperations: (payload: { workspaceId: string }) => ProjectConfigurationResult[];
+    reconcileConfiguration: (payload: ProjectConfigurationRecovery) => ProjectConfigurationResult;
     getActive: () => WorkspaceActiveResult;
-    create: (payload: WorkspaceCreatePayload) => WorkspaceSnapshotResult;
+    create: (payload: WorkspaceCreatePayload) => WorkspaceCreateResult;
     update: (payload: WorkspaceUpdatePayload) => WorkspaceSnapshotResult;
     delete: (payload: WorkspaceDeletePayload) => WorkspaceSnapshotResult;
     switch: (payload: WorkspaceSwitchPayload) => WorkspaceActiveResult;
@@ -6194,6 +6290,8 @@ export type HostApiContract = {
   };
   sessions: {
     delegate: (payload: SessionDelegationPayload) => SessionDelegationResult;
+    dispatchPlanTask: (payload: ProjectPlanDispatchPayload) => SessionDelegationResult;
+    dispatchSystemProject: (payload: SystemProjectDispatchPayload) => SessionDelegationResult;
     delete: (payload: SessionDeletePayload) => SessionDeleteResult;
     rename: (payload: SessionRenamePayload) => HostSuccess;
     summaries: (payload?: SessionSummariesPayload) => SessionSummariesResult;
@@ -6239,6 +6337,31 @@ export type HostApiContract = {
     validateArtifact: (payload: WorkProviderValidateArtifactPayload) => WorkProviderValidateArtifactResult;
   };
   knowledge: {
+    operationsStatus: () => KnowledgeOperationsResult;
+    operationsConfigure: (payload: ProjectRagConfigInput) => KnowledgeOperationsConfigureResult;
+    indexEnable: () => KnowledgeIndexResult;
+    indexDisable: () => KnowledgeIndexResult;
+    indexPause: () => KnowledgeIndexResult;
+    indexResume: () => KnowledgeIndexResult;
+    indexRebuild: () => KnowledgeIndexResult;
+    indexReconcile: () => KnowledgeIndexResult;
+    indexCleanup: () => KnowledgeIndexResult;
+    retrieve: (payload: KnowledgeRetrievePayload) => KnowledgeRetrieveResult;
+    vectorStatus: () => KnowledgeVectorStatusResult;
+    vectorConfigure: (payload: { backend: 'sqlite-flat' | 'lancedb-ann' }) => KnowledgeVectorStatusResult;
+    vectorDisable: () => KnowledgeVectorStatusResult;
+    vectorRebuild: () => KnowledgeVectorStatusResult;
+    vectorOptimize: () => KnowledgeVectorStatusResult;
+    embeddingStatus: () => KnowledgeEmbeddingStatusResult;
+    embeddingConfigure: (payload: KnowledgeEmbeddingSelection) => KnowledgeEmbeddingStatusResult;
+    embeddingCancel: () => KnowledgeEmbeddingStatusResult;
+    embeddingDisable: () => KnowledgeEmbeddingStatusResult;
+    embeddingRetry: () => KnowledgeEmbeddingStatusResult;
+    rerankStatus: () => KnowledgeRerankStatusResult;
+    rerankConfigure: (payload: KnowledgeRerankSelection) => KnowledgeRerankStatusResult;
+    rerankCancel: () => KnowledgeRerankStatusResult;
+    rerankDisable: () => KnowledgeRerankStatusResult;
+    rerankRetry: () => KnowledgeRerankStatusResult;
     status: () => KnowledgeStatusResult;
     init: () => KnowledgeInitResult;
     configure: (payload?: KnowledgeConfigurePayload) => HostSuccess;
@@ -6246,6 +6369,9 @@ export type HostApiContract = {
     validateOkfBundle: (payload: KnowledgeValidateOkfBundlePayload) => KnowledgeOkfValidationResult;
     importOkfBundle: (payload: KnowledgeImportOkfBundlePayload) => KnowledgeOkfImportResult;
     search: (payload: KnowledgeSearchPayload) => KnowledgeSearchResult;
+    researchStart: (payload: KnowledgeResearchPayload) => KnowledgeResearchResult;
+    researchStatus: (payload: KnowledgeResearchRequestPayload) => KnowledgeResearchResult;
+    researchCancel: (payload: KnowledgeResearchRequestPayload) => HostSuccess;
     get: (payload: KnowledgeGetPayload) => KnowledgeGetResult;
     compile: () => KnowledgeCompileResult;
     lint: () => KnowledgeLintResult;
@@ -6285,6 +6411,7 @@ export type HostApiContract = {
     sekbRejectSuggestion: (payload: KnowledgeSekbRejectSuggestionPayload) => KnowledgeSekbRejectSuggestionResult;
     sekbCaptureTrajectory: (payload: KnowledgeSekbCaptureTrajectoryPayload) => KnowledgeSekbCaptureTrajectoryResult;
     sekbRetrieveForTask: (payload: KnowledgeSekbRetrieveForTaskPayload) => KnowledgeSekbRetrieveForTaskResult;
+    recordExperienceExposure: (payload: { requestId: string; principleIds: string[] }) => HostSuccess & { recorded: number };
     matchErrorExperience: (payload: KnowledgeMatchErrorExperiencePayload) => KnowledgeMatchErrorExperienceResult;
     updateErrorExperienceEffectiveness: (payload: KnowledgeUpdateErrorExperienceEffectivenessPayload) => KnowledgeUpdateErrorExperienceEffectivenessResult;
     recordKnowledgeReference: (payload: KnowledgeRecordReferencePayload) => KnowledgeProvenanceResult;
@@ -6317,7 +6444,9 @@ export type HostApiContract = {
     managedTasks: (payload?: TaskLedgerWorkspacePayload) => TaskSystemListResult;
     queryTasks: (payload?: TaskSystemQueryPayload) => TaskSystemQueryResult;
     sessionTask: (payload: TaskSessionPayload) => TaskSessionResult;
+    contextHint: (payload: TaskContextHintPayload) => TaskContextHintResult;
     command: (payload: TaskSystemCommandPayload) => TaskSystemCommandResult;
+    trace: (payload: TaskTracePayload) => TaskTraceResult;
     snapshot: (payload?: TaskLedgerWorkspacePayload) => TaskLedgerSnapshotResult;
     appendEvents: (payload: TaskLedgerAppendEventsPayload) => TaskLedgerSnapshotResult;
     createNode: (payload: TaskLedgerCreateNodePayload) => TaskLedgerSnapshotResult;

@@ -142,11 +142,13 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     const before = await ownerReadback(app, project.sessionKey); evidence.before = before;
     await installFault(app, 'compact', project.sessionKey);
     const page = await getStableWindow(app); await page.reload();
+    await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', project.generation, { timeout: 60_000 });
     await expect(page.getByText('U5_TARGET', { exact: true })).toBeVisible({ timeout: 60_000 });
     const locale = JSON.parse(await readFile('shared/i18n/locales/en/chat.json', 'utf8'));
     const open = async () => {
       await page.getByTestId('chat-composer-input').fill('/compact');
       const option = page.getByTestId('chat-slash-command-option-compact');
+      await expect(option).toBeEnabled();
       await expect(option).toContainText(/[\d.]+k?\s*\/\s*[\d.]+k?\s*tokens/);
       await option.focus(); await option.press('Enter');
       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
@@ -157,6 +159,7 @@ test('U5 manual compact preserves its instructions on cancel, pending, refusal a
     await dialog.getByRole('button', { name: locale.composer.compaction.cancel, exact: true }).click();
     expect((await faultState(app)).calls).toHaveLength(0);
     await open(); await expect(instructions).toHaveValue('U5 preserve this explicit instruction');
+    await expect(page.getByTestId('chat-compaction-confirm')).toBeEnabled();
     await page.getByTestId('chat-compaction-confirm').focus(); await page.getByTestId('chat-compaction-confirm').press('Enter');
     await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await expect(page.getByTestId('chat-compaction-confirm')).toBeDisabled();

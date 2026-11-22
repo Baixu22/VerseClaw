@@ -1032,5 +1032,120 @@
       "removable": "削除可能",
       "protected": "保護対象"
     }
+  },
+  "embedding": {
+    "title": "プロジェクト検索の埋め込みモデル",
+    "description": "プロジェクト検索で使用するモデルサービスを選択します。",
+    "mode": "サービスの場所",
+    "local": "ローカルモデル",
+    "remote": "リモートサービス",
+    "provider": "設定済みプロバイダー",
+    "configure": "このサービスを使用",
+    "retry": "再試行 / 認証情報を更新",
+    "cancel": "キャンセル",
+    "disable": "無効にする",
+    "statusLabel": "状態",
+    "progress": "モデルのダウンロード進捗",
+    "failed": "埋め込みサービスを利用できません。",
+    "states": {
+      "disabled": "無効",
+      "installing": "モデルをインストール中",
+      "warming": "準備中",
+      "ready": "準備完了",
+      "unavailable": "利用不可",
+      "cancelled": "キャンセル済み"
+    }
+  },
+  "rerank": {
+    "title": "プロジェクト証拠の再ランク付け",
+    "description": "許可された証拠をローカルエンドポイントまたは設定済みのリモート cross-encoder で並べ替えます。local 検索はこのサービスを必要としません。",
+    "mode": "サービスの場所",
+    "local": "ローカルエンドポイント",
+    "remote": "リモートサービス",
+    "model": "Cross-encoder モデル",
+    "provider": "設定済みプロバイダー",
+    "endpoint": "ローカルエンドポイント",
+    "configure": "このサービスを使用",
+    "retry": "再試行 / 認証情報を更新",
+    "cancel": "キャンセル",
+    "disable": "無効化",
+    "status": "状態",
+    "failed": "再ランク付けサービスを利用できません。",
+    "states": {
+      "disabled": "無効",
+      "ready": "準備完了",
+      "unavailable": "利用不可",
+      "cancelled": "キャンセル済み"
+    }
+  },
+  "vector": {
+    "title": "プロジェクトのベクトル索引",
+    "description": "埋め込みモデルの準備後に、許可されたプロジェクト資料の索引を構築します。",
+    "backend": "索引の方式",
+    "portable": "移植可能な厳密検索",
+    "ann": "ネイティブ ANN 検索",
+    "nativeUnavailable": "ネイティブ ANN を利用できません。移植可能な検索を利用できます。",
+    "configure": "索引を構築",
+    "rebuild": "再構築",
+    "optimize": "最適化",
+    "disable": "無効化",
+    "status": "状態",
+    "failed": "ベクトル索引を利用できません。モデルとプラットフォーム容量を確認してください。",
+    "states": {
+      "disabled": "無効",
+      "building": "構築中",
+      "ready": "準備完了",
+      "unavailable": "利用不可",
+      "cancelled": "キャンセル済み"
+    }
+  },
+  "operations": {
+    "title": "ナレッジ運用",
+    "description": "既定の検索方針と現在のワークスペースのインデックスを管理します。",
+    "sources": "ソースとソースセットを選択",
+    "owner": "ソース所有者：現在のワークスペースの Memory Wiki",
+    "profile": "既定の検索プロファイル",
+    "answerMode": "既定の回答方針",
+    "storageBudget": "インデックス公開の容量予算（MiB）",
+    "save": "設定を保存",
+    "status": "機能の状態",
+    "enable": "インデックスを有効化",
+    "pause": "一時停止",
+    "resume": "再開",
+    "rebuild": "再構築",
+    "reconcile": "同期",
+    "cleanup": "旧世代を削除",
+    "disable": "インデックスを無効化",
+    "generations": "有効なソース世代",
+    "lag": "インデックス待ちのソース",
+    "deleted": "論理削除済みソース",
+    "cleanupPending": "削除待ちの旧世代",
+    "storageUsed": "データベース使用量（MiB）",
+    "restarting": "設定を保存しました。Gateway の再起動と設定の読み戻しを待っています。",
+    "failed": "ナレッジ運用を利用できません。Gateway の準備後に再試行してください。",
+    "profiles": {
+      "local": "ローカル",
+      "quality": "品質",
+      "research": "調査"
+    },
+    "answers": {
+      "strict": "ソース証拠に限定",
+      "open": "ソース証拠と明示されたモデル知識"
+    },
+    "states": {
+      "enabled": "有効、ソース待ち",
+      "ready": "準備完了",
+      "degraded": "機能低下",
+      "disabled": "無効",
+      "unavailable": "利用不可"
+    },
+    "reasons": {
+      "index-paused": "インデックスは一時停止中です。原文の読み取りでは権限失効を確認します。",
+      "index-unavailable": "インデックスの復旧が必要です。",
+      "storage-budget": "インデックス公開の容量予算を超えています。",
+      "index-lag": "一部のソース変更はインデックス待ちです。",
+      "dense-unavailable": "このプロファイルの埋め込みまたはベクトル検索を利用できません。",
+      "rerank-unavailable": "このプロファイルの再ランキングを利用できません。"
+    }
   }
 }

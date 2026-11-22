@@ -9,6 +9,25 @@ import { resolveMemoryDreamingWorkspaces } from "./memory-core-host-status.js";
 import { resolveMemoryHostEventLogPath } from "./memory-host-events.js";
 
 export * from "./memory-core-host-runtime-core.js";
+export {
+  boundOwnerReadSnapshot,
+  createOwnerReadSnapshot,
+  readOwnerReadPolicyMetadata,
+  deriveReadAdmissionContext,
+  digestOwnerReadContent,
+  evaluateOwnerReadPolicy,
+  evaluateOwnerReadSnapshot,
+  isSourceRefV2,
+  isOwnerReadSnapshotV1,
+  normalizeSourceRefV2,
+  matchOwnerReadPin,
+  type OwnerReadPolicy,
+  type OwnerReadSnapshotV1,
+  type OwnerReadRejectionCode,
+  type ReadAdmissionContextV1,
+  type SourceRefV2,
+  type RawSourceLocator,
+} from "../runtime-core/knowledge-owner-read.js";
 
 async function pathExists(filePath: string): Promise<boolean> {
   try {

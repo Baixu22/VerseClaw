@@ -27,6 +27,23 @@ function renderChat(context: KnowledgeChatContext = {}) {
 }
 
 describe('Chat knowledge mode', () => {
+  it('sends the selected open mode and preserves the exact citation pointer on navigation', async () => {
+    const original = { schema: 'SourceRef/v2', domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'fixture', subjectId: 'port.md', revision: '2', sourceDigest: 'sha256:raw', policyEpoch: 'epoch', locator: { coordinateSpace: 'raw-source-utf8-v1', startByte: 0, endByteExclusive: 100, startLine: 1, endLine: 8 } };
+    const quote = { ...original, locator: { ...original.locator, startByte: 50, endByteExclusive: 60, startLine: 4, endLine: 4 } };
+    knowledge.answerFromSourceSet.mockResolvedValue({ success: true, answerMode: 'open', answer: 'A cited statement.', groundingStatus: 'partial', unknowns: [], suggestedNextActions: [],
+      sources: [{ id: 'port', title: 'Port', lookup: 'port.md', excerpt: 'Source', citation: { refId: 'pin', sourceRef: original, revision: '2', contentDigest: 'sha256:chunk' } }],
+      claims: [{ kind: 'source', text: 'Statement', citations: [{ sourceId: 'pin', quote: 'Source', sourceRef: quote }], evidenceStatus: { semanticSupport: 'supported' } }],
+      retrievalDiagnostics: { resultCount: 1 } });
+    renderChat();
+    fireEvent.change(screen.getByTestId('knowledge-answer-mode'), { target: { value: 'open' } });
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Port?' } });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+    await screen.findByText('A cited statement.');
+    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith(expect.objectContaining({ answerMode: 'open' }));
+    fireEvent.click(screen.getByTestId('knowledge-librarian-source'));
+    const destination = JSON.parse((await screen.findByTestId('destination')).textContent!);
+    expect(destination.state.knowledgeCitation.sourceRef).toEqual(quote);
+  });
   beforeEach(() => {
     cleanup();
     vi.resetAllMocks();
@@ -66,7 +83,7 @@ describe('Chat knowledge mode', () => {
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
     expect(await screen.findByTestId('knowledge-librarian-answer-section')).toHaveTextContent('A source-backed answer.');
     expect(screen.queryByText('80%')).not.toBeInTheDocument();
-    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith({ question: 'What was decided?', sourceRefs: refs, sourceSetId: 'source-set-1', synthesis: true, history: [] });
+    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith({ question: 'What was decided?', sourceRefs: refs, sourceSetId: 'source-set-1', synthesis: true, history: [], answerMode: 'strict' });
     expect(knowledge.search).not.toHaveBeenCalled();
     expect(knowledge.createDraft).not.toHaveBeenCalled();
     fireEvent.click(screen.getByTestId('knowledge-librarian-save-draft'));

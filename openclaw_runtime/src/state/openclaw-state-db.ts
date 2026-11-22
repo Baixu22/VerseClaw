@@ -1041,9 +1041,9 @@ export function recordOpenClawStateBackupRun(options: RecordOpenClawStateBackupR
 }
 
 /** Close all cached shared state database handles. */
-export function closeOpenClawStateDatabase(): void {
+export function closeOpenClawStateDatabase(options?: { checkpoint?: boolean }): void {
   for (const database of cachedDatabases.values()) {
-    database.walMaintenance.close();
+    database.walMaintenance.close(options);
     clearNodeSqliteKyselyCacheForDatabase(database.db);
     if (database.db.isOpen) {
       database.db.close();

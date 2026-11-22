@@ -96,6 +96,7 @@ vi.mock('@/lib/host-api', () => ({
       recordPromptCacheRiskEvent: vi.fn().mockResolvedValue({ success: true, event: null }),
     },
     sessions: {
+      handoffOperation: vi.fn().mockResolvedValue({ success: true, operation: null }),
       history: vi.fn().mockResolvedValue({ success: true, messages: [], hasMore: false }),
       compactionStatus: vi.fn().mockResolvedValue({
         success: true, available: true, canCompact: false, inProgress: false,
@@ -104,8 +105,6 @@ vi.mock('@/lib/host-api', () => ({
       longTaskControlStatus: vi.fn().mockResolvedValue({
         success: true, available: false, key: 'agent:main:main', queueCount: 0, warnings: [],
       }),
-      // The page reconciles any interrupted session handoff on mount.
-      handoffOperation: vi.fn().mockResolvedValue({ success: true, operation: null }),
     },
   },
   hostApiFetch: vi.fn().mockResolvedValue({ success: true, messages: [] }),

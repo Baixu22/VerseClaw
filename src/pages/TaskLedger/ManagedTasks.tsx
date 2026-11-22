@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
+import { CheckCircle2, ChevronRight, Circle, Loader2, PauseCircle, Plus, Search } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { hostApi } from "@/lib/host-api";
 import type { TaskSystemCommand, TaskView } from "@shared/task-system/types";
+import { TaskTracePanel } from '@/components/task-ledger/TaskTracePanel';
 
 export function ManagedTasks({
   workspaceId,
@@ -77,10 +79,11 @@ export function ManagedTasks({
     setStale(false);
   }, [workspaceId]);
   useEffect(() => {
+    const versionRef = requestVersion;
     const timer = setTimeout(() => void load(), 180);
     return () => {
       clearTimeout(timer);
-      requestVersion.current++;
+      versionRef.current++;
       dependencyRead.current = null;
     };
   }, [load]);
@@ -164,18 +167,20 @@ export function ManagedTasks({
     }
   };
   return (
-    <section className="space-y-4" data-testid="managed-tasks">
-      <p className="text-sm text-muted-foreground">{t("managed.description")}</p>
-      <p className="text-xs text-muted-foreground">{t("managed.coverage")}</p>
-      <div className="flex gap-2">
+    <section className="space-y-3" data-testid="managed-tasks">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative min-w-48 flex-1">
+        <Search className="pointer-events-none absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <Input
           aria-label={t("managed.search")}
           placeholder={t("managed.search")}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
+          className="h-8 pl-8 text-sm"
         />
+        </div>
         <Select value={stateFilter} onValueChange={setStateFilter}>
-          <SelectTrigger aria-label={t("managed.filter")} className="w-40">
+          <SelectTrigger aria-label={t("managed.filter")} className="h-8 w-40 text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -189,15 +194,16 @@ export function ManagedTasks({
             ))}
           </SelectContent>
         </Select>
-        <Button variant="outline" disabled={busy} onClick={() => void load()}>{t("actions.refresh")}</Button>
-      </div>
-      {!showForm && (
-        <Button variant="outline" onClick={() => setShowForm(true)}>
+        <Button className="h-8" variant="outline" disabled={busy} onClick={() => void load()}>{t("actions.refresh")}</Button>
+        {!showForm && <Button className="h-8" onClick={() => setShowForm(true)}>
+          <Plus className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
           {t("managed.create")}
-        </Button>
-      )}
+        </Button>}
+        {showForm && <Button className="h-8" variant="ghost" onClick={() => setShowForm(false)}>{t('managed.closeForm')}</Button>}
+      </div>
       {showForm && (
-        <div className="grid gap-2 rounded-md border border-border p-3">
+        <div className="grid gap-2 rounded-lg border border-border bg-surface-input p-3">
+          <p className="text-sm text-muted-foreground">{t("managed.description")}</p>
           <Input
             aria-label={t("managed.objective")}
             placeholder={t("managed.objective")}
@@ -256,6 +262,7 @@ export function ManagedTasks({
                 : "managed.commandCheckExplanation",
             )}
           </p>
+          <p className="text-xs text-muted-foreground">{t("managed.coverage")}</p>
           <div className="flex gap-2">
             <Button
               disabled={
@@ -312,8 +319,14 @@ export function ManagedTasks({
       )}
       {stale && tasks.length > 0 && <p role="status" className="text-sm text-amber-700 dark:text-amber-400">{t("managed.stale")}</p>}
       {tasks.length === 0 && <p className="text-sm text-muted-foreground">{t("managed.empty")}</p>}
+      {tasks.length > 0 && <div className="divide-y divide-border rounded-lg border border-border bg-background" data-testid="managed-task-list">
       {tasks.map((view) => {
         const { contract, claim } = view;
+        const stateTone = contract.state === 'doing' ? 'text-blue-700 dark:text-blue-400'
+          : contract.state === 'done' ? 'text-green-700 dark:text-green-400'
+            : ['paused', 'review', 'cancelling'].includes(contract.state) ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground';
+        const StateIcon = contract.state === 'doing' ? Loader2 : contract.state === 'done' ? CheckCircle2
+          : contract.state === 'paused' ? PauseCircle : Circle;
         const mine = claim?.sessionKey === sessionKey;
         const dependencies = (contract.dependencies ?? []).map((id) => ({ id,
           task: tasks.find((task) => task.contract.taskNodeId === id),
@@ -322,19 +335,39 @@ export function ManagedTasks({
           <article
             key={contract.taskNodeId}
             data-testid="managed-task"
+            data-state={contract.state}
             tabIndex={-1}
             ref={(card) => {
               if (card) taskCards.current.set(contract.taskNodeId, card);
               else taskCards.current.delete(contract.taskNodeId);
             }}
-            className="space-y-2 rounded-md border border-border p-4"
+            className="min-w-0 space-y-2.5 px-3 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
           >
-            <div className="flex flex-wrap justify-between gap-2">
-              <h3 className="font-medium">{contract.objective}</h3>
-              <span className="text-sm text-muted-foreground">
+            <div className="flex min-w-0 items-start justify-between gap-3">
+              <div className="flex min-w-0 items-start gap-2">
+                <StateIcon className={`mt-0.5 h-4 w-4 shrink-0 ${stateTone}`} aria-hidden="true" />
+                <h3 className="min-w-0 break-words text-sm font-medium text-foreground">{contract.objective}</h3>
+              </div>
+              <span className={`shrink-0 text-xs ${stateTone}`}>
                 {t(`managed.states.${contract.state}`)}
               </span>
             </div>
+            {view.checkpoint?.nextAction && !['done', 'cancelled'].includes(contract.state) && (
+              <p className="pl-6 text-meta text-muted-foreground" data-testid="managed-task-next">
+                {t("managed.nextAction", { action: view.checkpoint.nextAction })}
+              </p>
+            )}
+            {view.pendingOperations > 0 && (
+              <p className="pl-6 text-xs text-amber-700 dark:text-amber-400">
+                {t("managed.pending", { count: view.pendingOperations })}
+              </p>
+            )}
+            <details className="group/task-details pl-6" data-testid="managed-task-details">
+              <summary className="inline-flex min-h-8 cursor-pointer list-none items-center gap-1.5 rounded-md text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <ChevronRight className="h-3.5 w-3.5 transition-transform group-open/task-details:rotate-90" aria-hidden="true" />
+                {t('managed.details')}
+              </summary>
+              <div className="space-y-3 border-t border-border/60 py-2.5">
             <p className="break-all text-xs text-muted-foreground">
               {t("managed.owner", {
                 owner:
@@ -389,16 +422,6 @@ export function ManagedTasks({
                 </ul>
               </div>
             )}
-            {view.checkpoint && (
-              <p className="text-sm">
-                {t("managed.nextAction", { action: view.checkpoint.nextAction })}
-              </p>
-            )}
-            {view.pendingOperations > 0 && (
-              <p className="text-sm text-amber-700 dark:text-amber-400">
-                {t("managed.pending", { count: view.pendingOperations })}
-              </p>
-            )}
             <div className="flex flex-wrap gap-2">
               {mine &&
                 claim &&
@@ -416,6 +439,7 @@ export function ManagedTasks({
               {contract.state === "ready" && (
                 <Button
                   size="sm"
+                  variant="outline"
                   disabled={busy || stale || !sessionKey || dependencies.length > 0}
                   onClick={() =>
                     void command({
@@ -466,9 +490,13 @@ export function ManagedTasks({
                 </Button>
               )}
             </div>
+              </div>
+            </details>
+            {workspaceId && <TaskTracePanel workspaceId={workspaceId} taskNodeId={contract.taskNodeId} revision={contract.revision} digest={contract.digest} />}
           </article>
         );
       })}
+      </div>}
       {nextCursor && (
         <Button variant="outline" disabled={busy} onClick={() => void loadMore()}>
           {t("managed.loadMore")}

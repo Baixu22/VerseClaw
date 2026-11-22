@@ -47,6 +47,21 @@ async function runProcessProbe(
   }
 }
 
+function windowsCreationToken(value: string): string | null {
+  if (/^\d+$/u.test(value)) return BigInt(value) > 0n ? BigInt(value).toString() : null;
+  const match = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\.(\d{6})([+-])(\d{3})$/u.exec(value);
+  if (!match) return null;
+  const [, year, month, day, hour, minute, second, micros, sign, offset] = match;
+  const local = `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+  const milliseconds = Date.parse(`${local}Z`);
+  if (!Number.isFinite(milliseconds) || new Date(milliseconds).toISOString().slice(0, 19) !== local)
+    return null;
+  const utc = BigInt(milliseconds) - BigInt(Number(offset) * (sign === "+" ? 1 : -1) * 60_000);
+  // CIM DateTime and WMIC DMTF describe the same instant; compare exact FILETIME ticks.
+  const ticks = (utc + 11_644_473_600_000n) * 10_000n + BigInt(micros!) * 10n;
+  return ticks > 0n ? ticks.toString() : null;
+}
+
 async function readWindowsProcessMap(): Promise<
   { ok: true; processes: Map<number, OsProcessRecord> } | { ok: false; detail: string }
 > {
@@ -63,10 +78,12 @@ async function readWindowsProcessMap(): Promise<
       const columns = line.split(separator);
       const pid = Number.parseInt(columns[0] ?? "", 10);
       const parentPid = Number.parseInt(columns[1] ?? "", 10);
-      const token = (columns[2] ?? "").trim();
-      if (!Number.isInteger(pid) || pid <= 0 || !token) {
+      if (!Number.isInteger(pid) || pid <= 0) {
         continue;
       }
+      const token = windowsCreationToken((columns[2] ?? "").trim());
+      if (!token)
+        return { ok: false, detail: `${source} returned an invalid creation time for PID ${pid}` };
       processes.set(pid, {
         pid,
         parentPid: Number.isInteger(parentPid) ? parentPid : -1,
@@ -84,11 +101,14 @@ async function readWindowsProcessMap(): Promise<
     "-NoProfile",
     "-NonInteractive",
     "-Command",
-    "$ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process | ForEach-Object { \"{0}`t{1}`t{2}\" -f $_.ProcessId, $_.ParentProcessId, $_.CreationDate.ToFileTimeUtc() }",
+    "$ErrorActionPreference = 'Stop'; Get-CimInstance -ClassName Win32_Process -Property ProcessId,ParentProcessId,CreationDate | ForEach-Object { \"{0}`t{1}`t{2}\" -f $_.ProcessId, $_.ParentProcessId, $_.CreationDate.ToFileTimeUtc() }",
   ]);
   if (powershell.ok) {
     const parsed = parseProcessRows(
-      powershell.stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean),
+      powershell.stdout
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean),
       "\t",
       "PowerShell Get-CimInstance",
     );
@@ -104,15 +124,24 @@ async function readWindowsProcessMap(): Promise<
     "/format:csv",
   ]);
   if (wmic.ok) {
-    const lines = wmic.stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const lines = wmic.stdout
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
     const header = lines[0]?.split(",") ?? [];
     const pidIndex = header.findIndex((column) => column.trim().toLowerCase() === "processid");
-    const parentIndex = header.findIndex((column) => column.trim().toLowerCase() === "parentprocessid");
+    const parentIndex = header.findIndex(
+      (column) => column.trim().toLowerCase() === "parentprocessid",
+    );
     const tokenIndex = header.findIndex((column) => column.trim().toLowerCase() === "creationdate");
     if (pidIndex >= 0 && parentIndex >= 0 && tokenIndex >= 0) {
       const rows = lines.slice(1).map((line) => {
         const columns = line.split(",");
-        return [columns[pidIndex] ?? "", columns[parentIndex] ?? "", columns[tokenIndex] ?? ""].join("\t");
+        return [
+          columns[pidIndex] ?? "",
+          columns[parentIndex] ?? "",
+          columns[tokenIndex] ?? "",
+        ].join("\t");
       });
       const parsed = parseProcessRows(rows, "\t", "wmic");
       if (parsed.ok) {
@@ -190,26 +219,19 @@ async function readProcessMap(): Promise<
 }
 
 function tokenIsNotBefore(token: string, parentToken: string): boolean {
-  const numericToken = Number(token);
-  const numericParentToken = Number(parentToken);
-  if (Number.isFinite(numericToken) && Number.isFinite(numericParentToken)) {
+  if (/^\d+$/u.test(token) && /^\d+$/u.test(parentToken)) {
     // A child cannot be older than its parent. Equal tokens are accepted
     // because coarse start-time resolution (Linux jiffies, Windows FileTime
     // rounding) legitimately produces the same value for a parent and a child
     // forked in the same tick; dropping them would under-capture the tree.
-    return numericToken >= numericParentToken;
+    return BigInt(token) >= BigInt(parentToken);
   }
-  // Windows CIM datetime tokens (YYYYMMDDHHmmss.uuuuuu+mmm) compare
-  // lexicographically for processes from the same machine/timezone.
   return token >= parentToken;
 }
 
 type TreeCollection = { captured: Map<number, string>; truncated: boolean };
 
-function collectTreePids(
-  processes: Map<number, OsProcessRecord>,
-  roots: number[],
-): TreeCollection {
+function collectTreePids(processes: Map<number, OsProcessRecord>, roots: number[]): TreeCollection {
   const captured = new Map<number, string>();
   const queue: Array<{ pid: number; token: string }> = [];
   for (const root of roots) {
@@ -266,16 +288,16 @@ export async function captureProcessTrees(roots: number[]): Promise<OsProcessTre
 function findLiveCapturedProcess(
   processes: Map<number, OsProcessRecord>,
   capture: OsProcessTreeCapture,
-): { pid: number; reused: boolean } | undefined {
+): { pid: number; reused: boolean; capturedToken: string; currentToken: string } | undefined {
   for (const [pid, capturedToken] of capture.capturedPids) {
     const current = processes.get(pid);
     if (!current || current.zombie) {
       continue;
     }
     if (current.token !== capturedToken) {
-      return { pid, reused: true };
+      return { pid, reused: true, capturedToken, currentToken: current.token };
     }
-    return { pid, reused: false };
+    return { pid, reused: false, capturedToken, currentToken: current.token };
   }
   return undefined;
 }
@@ -300,7 +322,7 @@ export async function verifyProcessTreesTerminated(
     if (live.reused) {
       return {
         status: "unknown",
-        detail: `PID ${live.pid} was reused after cancellation; OS containment evidence is inconclusive`,
+        detail: `PID ${live.pid} was reused after cancellation; OS containment evidence is inconclusive (captured=${live.capturedToken}, current=${live.currentToken})`,
       };
     }
     if (Date.now() >= settleDeadline) {

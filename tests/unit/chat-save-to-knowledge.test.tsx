@@ -7,7 +7,7 @@ const hostApiMock = vi.hoisted(() => ({
   applyDraft: vi.fn(),
   createDraft: vi.fn(),
   proposeChange: vi.fn(),
-  saveWorkspaceState: vi.fn(),
+  saveWorkspaceState: vi.fn(async () => ({ success: true })),
 }));
 
 const chatState = vi.hoisted(() => ({
@@ -33,6 +33,9 @@ const chatState = vi.hoisted(() => ({
   streamingTools: [],
   pendingFinal: false,
   activeRunId: null,
+  handoffOperation: null,
+  taskLedgerSnapshot: null,
+  taskLedgerLoaded: true,
   runtimeRuns: {},
   sendMessage: vi.fn(),
   abortRun: vi.fn(),
@@ -276,7 +279,7 @@ describe('Chat toolbar slash entry', () => {
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
     const more = await screen.findByTestId('chat-toolbar-more');
-    expect(screen.queryByTestId('chat-toolbar-more-menu')).toBeNull();
+    expect(screen.getByTestId('chat-toolbar-more-menu')).not.toBeVisible();
     fireEvent.click(more);
     await waitFor(() => expect(screen.getByTestId('chat-toolbar-more-menu')).toBeVisible());
     expect(screen.getByTestId('chat-toolbar-refresh')).toBeInTheDocument();

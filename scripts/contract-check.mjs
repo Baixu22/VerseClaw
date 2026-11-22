@@ -810,6 +810,9 @@ async function runCheck(fixtures, output = console) {
           knowledgeProvenanceApi: await readProjectFile('src/lib/host-api/knowledge/provenance.ts'),
           knowledgeWatchedDirectoriesApi: await readProjectFile('src/lib/host-api/knowledge/watched-directories.ts'),
           knowledgeConnectorsApi: await readProjectFile('src/lib/host-api/knowledge/connectors.ts'),
+          knowledgeEmbeddingApi: await readProjectFile('src/lib/host-api/knowledge/embedding.ts'),
+          knowledgeVectorApi: await readProjectFile('src/lib/host-api/knowledge/vector.ts'),
+          knowledgeRerankApi: await readProjectFile('src/lib/host-api/knowledge/rerank.ts'),
         },
       ),
       ipcHandlersText: [
