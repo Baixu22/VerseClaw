@@ -1,0 +1,16 @@
+{
+  "sourceCommit": "67f29efa6fd86e86a75edb7017f85ccc4bcd464b",
+  "sourceInputs": 10,
+  "gitBlobsMatchedWorkingTree": true,
+  "lineEndingComparison": "CRLF normalized to LF",
+  "protectedAgentBytesPreserved": true,
+  "protectedStagingPreserved": true,
+  "rawFilesHashedAfterDecompression": 72,
+  "trackedProjectionInputs": 3,
+  "testsPassed": 13,
+  "testsFailed": 0,
+  "reviewFindings": 0,
+  "driven_by": "agent",
+  "actor": "codex/g3-native-parent-development",
+  "realHumanEvidence": false
+}
