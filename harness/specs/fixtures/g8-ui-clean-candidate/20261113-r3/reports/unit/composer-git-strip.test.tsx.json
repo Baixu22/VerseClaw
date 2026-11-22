@@ -1,0 +1,180 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\composer-git-strip-tsx.json",
+  "sourceSha256": "f1e9fec1f10086b435637d7d1aca734ff3a978d3f66ad9e8fdb4161a41b529dd",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 11,
+    "numPassedTests": 11,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563318683,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip shows only the changed-file summary until details are explicitly opened",
+            "status": "passed",
+            "title": "shows only the changed-file summary until details are explicitly opened",
+            "duration": 59.05410000000006,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip ignores a late Git response from the previous workspace",
+            "status": "passed",
+            "title": "ignores a late Git response from the previous workspace",
+            "duration": 19.997700000000123,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip hides when the active workspace is not a repository",
+            "status": "passed",
+            "title": "hides when the active workspace is not a repository",
+            "duration": 15.645700000000033,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip stays hidden before work starts and on a clean repository",
+            "status": "passed",
+            "title": "stays hidden before work starts and on a clean repository",
+            "duration": 1.8173999999999069,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip counts a file once when it appears in both staged and unstaged buckets",
+            "status": "passed",
+            "title": "counts a file once when it appears in both staged and unstaged buckets",
+            "duration": 3.050799999999981,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip checks out a branch through the host Git API and refreshes context",
+            "status": "passed",
+            "title": "checks out a branch through the host Git API and refreshes context",
+            "duration": 57.524999999999864,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip reports blocked branch checkouts and refreshes context afterward",
+            "status": "passed",
+            "title": "reports blocked branch checkouts and refreshes context afterward",
+            "duration": 46.96069999999986,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip creates a branch with checkout enabled",
+            "status": "passed",
+            "title": "creates a branch with checkout enabled",
+            "duration": 31.43399999999997,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip blocks duplicate worktree branches and adds valid worktrees",
+            "status": "passed",
+            "title": "blocks duplicate worktree branches and adds valid worktrees",
+            "duration": 44.039200000000164,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip switches worktree workspace through the parent callback",
+            "status": "passed",
+            "title": "switches worktree workspace through the parent callback",
+            "duration": 35.09310000000005,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ComposerGitStrip"
+            ],
+            "fullName": "ComposerGitStrip labels worktrees by folder, branch, and short commit",
+            "status": "passed",
+            "title": "labels worktrees by folder, branch, and short commit",
+            "duration": 29.83340000000021,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563319913,
+        "endTime": 1794563320257.8335,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/composer-git-strip.test.tsx"
+      }
+    ]
+  }
+}

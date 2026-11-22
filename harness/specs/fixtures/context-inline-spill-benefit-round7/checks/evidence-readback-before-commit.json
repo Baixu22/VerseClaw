@@ -1,0 +1,38 @@
+{
+  "schema": "G7Round7PreservationReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-13T09:49:28.398Z",
+  "currentHead": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+  "currentDirty": true,
+  "testedCandidate": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "sameEvaluationSourceBytes": true,
+  "rootManifestSha256": "bcd73a32ad9c559fbdb36fe436b88050dd17f5b908cc4cccb1873d2601222dd1",
+  "filesVerified": 235,
+  "commandsVerified": 51,
+  "originalRound5FilesPreserved": 32,
+  "round6FilesPreserved": 105,
+  "changedOriginalFiles": [],
+  "credentialHits": 0,
+  "decision": {
+    "status": "mechanism-only",
+    "verdict": "NO_GO",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": -105.875,
+    "tokenGrowthPct": -0.22563398895912926,
+    "b7_evidence": true
+  },
+  "taskForestUpdated": false
+}

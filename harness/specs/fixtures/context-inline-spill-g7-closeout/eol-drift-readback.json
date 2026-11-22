@@ -1,0 +1,35 @@
+{
+  "schema": "G7CloseoutEolDrift/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "variants": [
+    {
+      "path": "checks/integration-contract.stderr.txt",
+      "expected": "2abd72e7fe1c1efece03f63ffa7d5d1b306462f9c145e13f99e378ee9e308dbe",
+      "originalWorktree": "2abd72e7fe1c1efece03f63ffa7d5d1b306462f9c145e13f99e378ee9e308dbe",
+      "main": "22605a54f39ff0caf223e874e922d38a55ad087ac11b0fe5e96eeb4529d2ddf6"
+    },
+    {
+      "path": "checks/integration-harness-validate.stdout.txt",
+      "expected": "e892cf09e5d2fda600887f2a509a599fd671d5e6d3f03907e1b3bdc182185a05",
+      "originalWorktree": "e892cf09e5d2fda600887f2a509a599fd671d5e6d3f03907e1b3bdc182185a05",
+      "main": "64d90a65fc145bd5466c09052a4d4ac06988f6ec54876616262da9838ae70f0c"
+    },
+    {
+      "path": "checks/integration-versebrowser-build.stderr.txt",
+      "expected": "e86253c8c89a488e89b777d3f17c593638dce50a5bdd8b9e20f45e528b7c87e3",
+      "originalWorktree": "e86253c8c89a488e89b777d3f17c593638dce50a5bdd8b9e20f45e528b7c87e3",
+      "main": "c4470da0fec96295e16c924a8966eb2be2c6ba3465453642dfc224fba0131114"
+    },
+    {
+      "path": "checks/integration-versebrowser-build.stdout.txt",
+      "expected": "a30479a243da19c3bd6357346b2248fbfa8e004e6efd3631dc1b72575902268f",
+      "originalWorktree": "a30479a243da19c3bd6357346b2248fbfa8e004e6efd3631dc1b72575902268f",
+      "main": "31d9cc56c76ecec485c2519fcc058cec5eb44143502736213e6cb972ccf3846e"
+    }
+  ],
+  "originalWorktreeManifestMatches": true,
+  "mainDriftFound": true,
+  "measuredRound9ManifestUnaffected": true
+}

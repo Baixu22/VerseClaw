@@ -1,0 +1,30 @@
+
+Running 18 tests using 1 worker
+
+[1A[2K(node:23444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:23444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/18] tests\e2e\chat-memory-injection-panel.spec.ts:104:7 › R3-2.2 memory-injection panel › injected: shows the source group with selected refs and budget
+[1A[2K[2/18] tests\e2e\chat-memory-injection-panel.spec.ts:121:7 › R3-2.2 memory-injection panel › none: a successful empty read shows the empty state
+[1A[2K[3/18] tests\e2e\chat-memory-injection-panel.spec.ts:135:7 › R3-2.2 memory-injection panel › timeout: a failed read shows a retryable error
+[1A[2K[4/18] tests\e2e\main-navigation.spec.ts:17:7 › Verse Claw main navigation without setup flow › navigates between core pages with setup bypassed
+[1A[2K[5/18] tests\e2e\main-navigation.spec.ts:45:7 › Verse Claw main navigation without setup flow › native New Chat menu opens the same chat route as the sidebar action
+[1A[2K[6/18] tests\e2e\main-navigation.spec.ts:77:7 › Verse Claw main navigation without setup flow › refreshes native menu labels after switching language
+[1A[2K[7/18] tests\e2e\rareui-interactions.spec.ts:156:5 › conversation rail, hook selection, completion bell and Markdown TOC have real Electron screenshot evidence
+[1A[2K[8/18] tests\e2e\rareui-interactions.spec.ts:247:5 › Cron time edits persist and animated deletion retains confirmation and cancellation
+[1A[2K[9/18] tests\e2e\sidebar-session-folders-archive.spec.ts:331:7 › Sidebar session workgroups and archive › pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting
+[1A[2K[10/18] tests\e2e\sidebar-session-folders-archive.spec.ts:394:7 › Sidebar session workgroups and archive › keeps workgroups inside the project and renders time sorting as a direct list
+[1A[2K[11/18] tests\e2e\sidebar-session-folders-archive.spec.ts:420:7 › Sidebar session workgroups and archive › creates a workgroup, moves a running session into it, searches it, then deletes the workgroup
+[1A[2K[12/18] tests\e2e\sidebar-session-folders-archive.spec.ts:517:7 › Sidebar session workgroups and archive › delete dialog offers archive and permanent delete; archive modal restores sessions
+[1A[2K[13/18] tests\e2e\sidebar-session-folders-archive.spec.ts:563:7 › Sidebar session workgroups and archive › drags a conversation after another to auto-group, rename, and remove the group
+[1A[2K[14/18] tests\e2e\sidebar-session-folders-archive.spec.ts:645:7 › Sidebar session workgroups and archive › permanent delete from the archived settings page removes the entry
+[1A[2K[15/18] tests\e2e\sidebar-session-row-polish.spec.ts:99:7 › Sidebar session rows and activity bell › keeps the header compact, separates navigation from actions, and retains migration dialogs
+[1A[2K[16/18] tests\e2e\sidebar-session-row-polish.spec.ts:175:7 › Sidebar session rows and activity bell › hover shows pin + more, long titles loop and settle, and reduced motion keeps them still
+[1A[2K[17/18] tests\e2e\sidebar-session-row-polish.spec.ts:228:7 › Sidebar session rows and activity bell › more menu opens under its button and archive offers an undo
+[1A[2K[18/18] tests\e2e\sidebar-session-row-polish.spec.ts:276:7 › Sidebar session rows and activity bell › bell shows the row status orb while running, and stays aligned in the collapsed sidebar
+[1A[2K  18 passed (3.3m)

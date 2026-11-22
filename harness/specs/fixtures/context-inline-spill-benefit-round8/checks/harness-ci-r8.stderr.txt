@@ -1,0 +1,15 @@
+$ pnpm harness list && pnpm harness validate --spec harness/specs/scenarios/gateway-backend-communication.md && pnpm harness validate --spec harness/specs/tasks/fix-chat-history-gateway-timeout.example.md --no-diff && pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run && pnpm exec vitest run tests/unit/harness-specs.test.ts tests/unit/harness-git.test.ts tests/unit/harness-spec-lifecycle.test.ts tests/unit/docs-index.test.ts tests/unit/runtime-source-policy.test.ts && pnpm harness:specs:lifecycle && pnpm repo:duplicates:check && pnpm docs:policy:validate && pnpm catalogs:check && pnpm agent-dev:audit && pnpm repo:evidence:check && pnpm repo:test-coverage:check
+$ pnpm --filter @verse-claw/harness start -- "list"
+$ node src/cli.mjs "--" "list"
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/scenarios/gateway-backend-communication.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/scenarios/gateway-backend-communication.md"
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/fix-chat-history-gateway-timeout.example.md" "--no-diff"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/fix-chat-history-gateway-timeout.example.md" "--no-diff"
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/scenarios/gateway-backend-communication.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/scenarios/gateway-backend-communication.md" "--dry-run"
+$ node scripts/check-spec-lifecycle.mjs
+$ node scripts/check-duplicate-assets.mjs
+Unapproved duplicate groups: 3
+  18631c50fa9022ef1f14b10e06f0183c2997d3d210b654d09b4247f024e334f1 harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.jsonl == harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.jsonl == harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.jsonl
+  727aa679f46127c188507b99148eb9a12f91a94429b0dee474d08e4c34502211 harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/provider-calls.jsonl == harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/provider-calls.jsonl == harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/provider-calls.jsonl
+  983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17 harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.json == harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.json == harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.json

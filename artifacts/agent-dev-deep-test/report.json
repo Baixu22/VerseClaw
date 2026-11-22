@@ -2252,6 +2252,51 @@
       "previousSameModeGeneratedAt": "2026-11-18T15:02:14.538Z",
       "note": "Compared with previous same-mode run 2026-11-18T15:02:14.538Z."
     },
-    "sampleCount": 20
+    "sampleCount": 20,
+    "mergedBranchEntryCount": 33
+  },
+  "mergeProvenance": {
+    "sources": [
+      {
+        "branch": "g5",
+        "commit": "4f3c7ff8bffea595fa3c7acab69bb6746700d0b7",
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "sha256": "4cd99e40c7c7a63386ef710ff6d3ec10fe775ae720192ef790c76d9bd4570059"
+      },
+      {
+        "branch": "main",
+        "commit": "910206880dae301b41aed03efb7e5ff1de1103fe",
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "sha256": "5c5e382fe3ac1cdb7d39027c1ddeb1cf7bfff9b9ebcb3eda8a65f2e50c60bd0e"
+      }
+    ],
+    "priorMainGeneratedAt": "2026-11-16T02:42:54.610Z",
+    "priorMainDecision": {
+      "status": "needs-full-gate",
+      "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+      "dailyLoopReady": true,
+      "releaseReady": false,
+      "fullGateComplete": false,
+      "budgetStatus": "watch",
+      "fastPathModes": [
+        "reuse-build",
+        "cached-typecheck",
+        "smoke-e2e"
+      ],
+      "requiredFullGates": [
+        "pnpm run build:vite",
+        "pnpm run typecheck",
+        "pnpm test:e2e:agent-dev-quality"
+      ],
+      "watchSteps": [
+        "vitest-agent-dev",
+        "playwright-agent-dev",
+        "harness-agent-dev",
+        "contract",
+        "i18n"
+      ],
+      "limitSteps": []
+    },
+    "policy": "Keep the newer g5 measurement intact; main source remains addressable by immutable Git blob and deep-test history union."
   }
 }

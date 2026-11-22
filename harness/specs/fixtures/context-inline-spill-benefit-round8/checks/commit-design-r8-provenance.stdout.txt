@@ -1,0 +1,4 @@
+[codex/g7-inline-spill-tf0749-20261113 3e875f462] eval(context): freeze source labels for scripted and live recall evidence
+ 4 files changed, 589 insertions(+), 5 deletions(-)
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round8/prior-designs/486f078ab/design.freeze.json
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round8/prior-designs/486f078ab/mechanism-readback.json

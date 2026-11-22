@@ -1,0 +1,96 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-model-selection-ts.json",
+  "sourceSha256": "8309307a2e1bed40accda1d89de0ad59c0aafa52d8e04e39dd477327fbee7c88",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 4,
+    "numPassedTests": 4,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563260721,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "chat model selection"
+            ],
+            "fullName": "chat model selection starts a new draft with the last explicit available model",
+            "status": "passed",
+            "title": "starts a new draft with the last explicit available model",
+            "duration": 1.4552000000001044,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat model selection"
+            ],
+            "fullName": "chat model selection restores a conversation choice instead of inheriting a later preference",
+            "status": "passed",
+            "title": "restores a conversation choice instead of inheriting a later preference",
+            "duration": 0.26080000000001746,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat model selection"
+            ],
+            "fullName": "chat model selection does not change a conversation with history while its messages are loading",
+            "status": "passed",
+            "title": "does not change a conversation with history while its messages are loading",
+            "duration": 0.19470000000001164,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat model selection"
+            ],
+            "fullName": "chat model selection falls back when the preferred provider or model is removed",
+            "status": "passed",
+            "title": "falls back when the preferred provider or model is removed",
+            "duration": 0.19699999999988904,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563262044,
+        "endTime": 1794563262046.197,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-model-selection.test.ts"
+      }
+    ]
+  }
+}

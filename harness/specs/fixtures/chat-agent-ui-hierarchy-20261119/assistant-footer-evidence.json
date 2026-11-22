@@ -1,0 +1,113 @@
+{
+  "schema": "clawx.agent-driven-chat-interaction.v1",
+  "recordedAt": "2026-11-20",
+  "driven_by": "agent",
+  "actor": "Codex",
+  "baseCommit": "47303b18996f94ec7fd9afbc89ba1dac0910e66d",
+  "candidateSourceSha256": "5a150cdf3092300f0383c4a87c48c6b70118deb2562b1154604cc82fe167a015",
+  "candidateSourceHashAlgorithm": "SHA-256 of JSON.stringify(sourceFiles) sorted by path",
+  "sourceFiles": [
+    {
+      "path": "harness/specs/tasks/chat-agent-ui-hierarchy-20261119.md",
+      "sha256": "08b37b5e8ee0b2f66ed66078dcc526b87ff5fa25c93ba314fc984f5448bb3f52"
+    },
+    {
+      "path": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "0cab9322badd1eee63e88979aae6fcef9716fe3498324b9207aa6637f5a9dc34"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "7b20deb442e545152625a707c146bcfb459bb2e62491be98bd839d5dd5ba37d6"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "14d63e5e1f08d32d04f7f805442756d55d3289de5621f78055254fe8d5ce69ba"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "c3dd2bbc9b3aeea9d8dd1238657a0c8f81d5d12e5396f747eb64b6b0ca28a5ab"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "457f1d36a3353ea2b75799dd6a295af7f5bb6d31101ff0d075c8226d51c0e450"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "71313070d5142b7231aab44182b6eabb2a645aa66836e30e925fe296e827b3c0"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "2c30a80ecfc59623e7c6b782aa429ddc4e29f7c2938845e989f5dbb445efa0fd"
+    },
+    {
+      "path": "tests/e2e/chat-user-message-actions.spec.ts",
+      "sha256": "e157926943fa81780cf07cffdc6e9cdbf653836285d3ecd0a103fad70c0e1fca"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "sha256": "b0c7d8f444814dcfa8f8a1ca9ba81ced692eaac33ba2ee1d0955148ba12b8a27"
+    }
+  ],
+  "checks": [
+    {
+      "name": "focused-unit",
+      "status": "passed",
+      "result": "74 tests in 3 files"
+    },
+    {
+      "name": "typecheck-web",
+      "status": "passed"
+    },
+    {
+      "name": "typecheck-test",
+      "status": "passed"
+    },
+    {
+      "name": "eslint-changed-typescript",
+      "status": "passed",
+      "result": "0 errors, 9 warnings"
+    },
+    {
+      "name": "i18n-lint",
+      "status": "passed"
+    },
+    {
+      "name": "harness-validate",
+      "status": "passed"
+    },
+    {
+      "name": "harness-run-dry",
+      "status": "passed"
+    },
+    {
+      "name": "ego-browser-response-actions",
+      "status": "passed",
+      "result": "Copy confirmed; quote filled the composer; fork opened the existing response draft."
+    },
+    {
+      "name": "desktop-action-row",
+      "status": "passed",
+      "result": "Left edge aligned with response; 6px vertical gap; no conversation-column overflow."
+    },
+    {
+      "name": "touch-action-row",
+      "status": "passed",
+      "result": "Visible without hover at 390px; three eligible controls; no conversation-column overflow."
+    },
+    {
+      "name": "electron-e2e",
+      "status": "passed",
+      "result": "Assistant response actions passed in the 15-test Electron E2E run."
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "assistant-footer-wide.png",
+      "sha256": "f0c71e77f5c77a363453859ea175d06bda5f3af0a4dca5caf95f5edf89dad4ca"
+    },
+    {
+      "path": "assistant-footer-touch.png",
+      "sha256": "494aeafea57c73cc42df5700f9d03e740f84bbb8a49add729596cfeac0916bd1"
+    }
+  ]
+}

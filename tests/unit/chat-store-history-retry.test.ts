@@ -338,6 +338,42 @@ describe('useChatStore startup history retry', () => {
     ]);
   });
 
+  it.each(['history-first', 'final-first', 'run-ended-first'] as const)('keeps one terminal question when publication is %s', async (order) => {
+    const { useChatStore } = await import('@/stores/chat');
+    const key = 'agent:main:main';
+    const runId = 'run-question';
+    const at = Date.now();
+    const user = { role: 'user' as const, content: 'Ask me about paper.', timestamp: at };
+    const content = '```tool-ui\n{"type":"question-flow","id":"paper-finish","steps":[]}\n```';
+    const record = {
+      role: 'assistant' as const, content: [{ type: 'thinking', thinking: 'Ask about paper.' }, { type: 'text', text: content }],
+      stopReason: 'stop', __openclaw: { id: 'question-entry' }, timestamp: at + 1,
+    };
+    useChatStore.setState({
+      currentSessionKey: key, currentAgentId: 'main', sessions: [{ key }], messages: [user],
+      sending: true, activeRunId: runId, pendingFinal: false, lastUserMessageAt: at, streamingTools: [],
+      streamingMessage: { role: 'assistant', content },
+    });
+    gatewayRpcMock.mockResolvedValue({ messages: [user, record] });
+    const assistantMessages = () => useChatStore.getState().messages.filter((message) => message.role === 'assistant');
+    if (order === 'run-ended-first') {
+      useChatStore.getState().handleRuntimeEvent({ type: 'run.started', sessionKey: key, runId, startedAt: at });
+      useChatStore.getState().handleRuntimeEvent({ type: 'run.ended', sessionKey: key, runId, status: 'completed', endedAt: at + 10 });
+      expect(useChatStore.getState().lastUserMessageAt).toBeNull();
+    }
+    if (order !== 'final-first') {
+      await useChatStore.getState().loadHistory(true);
+      expect(assistantMessages()[0]?.__openclaw?.id).toBe('question-entry');
+    }
+    useChatStore.getState().handleChatEvent({
+      state: 'final', runId, sessionKey: key, message: { role: 'assistant', content, timestamp: at + 20 },
+    });
+    expect(assistantMessages()).toHaveLength(1);
+    await vi.waitFor(() => expect(assistantMessages()[0]?.__openclaw?.id).toBe('question-entry'));
+    expect(assistantMessages()).toHaveLength(1);
+    expect(useChatStore.getState().sending).toBe(false);
+  });
+
   it('forces the internal final-message reload through the quiet history cooldown', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({

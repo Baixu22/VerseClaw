@@ -1,0 +1,204 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-agent-effort-popover-tsx.json",
+  "sourceSha256": "2cb205aa81ac02d28b405c509a5633cedf94dbafb71e88a9de00cfa9156ee9ec",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 13,
+    "numPassedTests": 13,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563210981,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton renders the current effort label from the agent",
+            "status": "passed",
+            "title": "renders the current effort label from the agent",
+            "duration": 32.36259999999993,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton opens the popover with a slider and 7 options",
+            "status": "passed",
+            "title": "opens the popover with a slider and 7 options",
+            "duration": 117.28780000000006,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton commits the slider value through updateAgentReasoningEffort",
+            "status": "passed",
+            "title": "commits the slider value through updateAgentReasoningEffort",
+            "duration": 44.84939999999983,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton maps the top slider slot to the runtime max thinking level",
+            "status": "passed",
+            "title": "maps the top slider slot to the runtime max thinking level",
+            "duration": 45.80880000000002,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton uses the shared dropdown squircle card",
+            "status": "passed",
+            "title": "uses the shared dropdown squircle card",
+            "duration": 15.97219999999993,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton keeps the card squircle but uses a real rounded track",
+            "status": "passed",
+            "title": "keeps the card squircle but uses a real rounded track",
+            "duration": 34.00849999999991,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton moves continuously and snaps to the nearest effort on release",
+            "status": "passed",
+            "title": "moves continuously and snaps to the nearest effort on release",
+            "duration": 59.12310000000002,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton only ignites the fire trail at max effort",
+            "status": "passed",
+            "title": "only ignites the fire trail at max effort",
+            "duration": 32.780899999999974,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton shows all 7 tick labels under the track",
+            "status": "passed",
+            "title": "shows all 7 tick labels under the track",
+            "duration": 32.08320000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton highlights the active tick label with the theme accent",
+            "status": "passed",
+            "title": "highlights the active tick label with the theme accent",
+            "duration": 28.27449999999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton closes the popover on Escape key",
+            "status": "passed",
+            "title": "closes the popover on Escape key",
+            "duration": 26.081899999999905,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton does not commit when slider value matches the initial effort",
+            "status": "passed",
+            "title": "does not commit when slider value matches the initial effort",
+            "duration": 79.89390000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatAgentEffortButton"
+            ],
+            "fullName": "ChatAgentEffortButton toggles chevron rotation when popover opens",
+            "status": "passed",
+            "title": "toggles chevron rotation when popover opens",
+            "duration": 16.710600000000113,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563212430,
+        "endTime": 1794563212995.7107,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-agent-effort-popover.test.tsx"
+      }
+    ]
+  }
+}

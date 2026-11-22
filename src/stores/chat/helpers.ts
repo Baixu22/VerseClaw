@@ -660,7 +660,7 @@ function unwrapTeamOrchestrationResult(value: unknown): unknown {
  * keeps its structured result unwrapped for the orchestration card path.
  */
 function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMessage[] {
-  const resultsByToolCallId = new Map<string, { toolCallId?: string; toolName?: string; result: unknown }>();
+  const resultsByToolCallId = new Map<string, NonNullable<RawMessage['_toolResults']>[number]>();
 
   for (const msg of messages) {
     const role = normalizeRoleName(msg.role);
@@ -674,6 +674,7 @@ function enrichWithTeamOrchestrationToolResults(messages: RawMessage[]): RawMess
     resultsByToolCallId.set(toolCallId, {
       toolCallId,
       toolName: toolName ?? (isTeamOrchestration ? 'team_orchestrate' : undefined),
+      ...(msg.isError ? { isError: true } : {}),
       result,
     });
   }

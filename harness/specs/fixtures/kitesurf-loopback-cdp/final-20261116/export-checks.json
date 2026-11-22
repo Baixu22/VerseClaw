@@ -1,0 +1,41 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "ok": true,
+  "files": [
+    {
+      "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\page.png",
+      "sha256": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+      "width": 1280,
+      "height": 720,
+      "nonWhitePixels": 22362
+    },
+    {
+      "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\cli-page.png",
+      "sha256": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+      "width": 1280,
+      "height": 720,
+      "nonWhitePixels": 22362
+    },
+    {
+      "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\page.pdf",
+      "sha256": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136",
+      "pages": 1,
+      "pageSizePoints": [
+        612.0,
+        792.0
+      ],
+      "text": "Site Title\nHome•\nAbout•\nSign up\nEmail address  Password \n  Accept terms\nyou@example.com\n \nPlan\nFree Pro\n  Create account Cancel\n  \nSomething went wrong\nRetry\nFooter text"
+    },
+    {
+      "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\cli-page.pdf",
+      "sha256": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136",
+      "pages": 1,
+      "pageSizePoints": [
+        612.0,
+        792.0
+      ],
+      "text": "Site Title\nHome•\nAbout•\nSign up\nEmail address  Password \n  Accept terms\nyou@example.com\n \nPlan\nFree Pro\n  Create account Cancel\n  \nSomething went wrong\nRetry\nFooter text"
+    }
+  ]
+}

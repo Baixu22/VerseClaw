@@ -1,0 +1,65 @@
+{
+  "schema": "G7MergeCommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "integration-cherry-pick",
+  "cwd": "C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX",
+  "command": [
+    "git",
+    "cherry-pick",
+    "-x",
+    "6eee064950273b393240a647702d6ee5652bae35",
+    "811bdab408bef0dacd894a1e1b5cc6421523fef2",
+    "c898624dc11605877bff2cd8b76c910d86b767ee",
+    "224199e45172b3ac68d4b86aca70f0725386f578",
+    "ab8605136618bd021c1cf8772c18aac92dd83411",
+    "1ad696a8fc7089b0e9a658d65b6b144b58506ea0",
+    "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "449192523851b3795ee6793751e78331831af047",
+    "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "1a12ad0cd23ab5873e6865f73c8e51f62ec71595",
+    "486f078abdbaefe191c83d11c620cfed67ddbbec",
+    "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+    "3e875f462ce16ca8b6ed4feb412397fe0f391311",
+    "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+    "69884a18a614886ad1712331b860465cb9a644a7",
+    "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+    "05969eba873265b9791bd23945bcdbee1900f853"
+  ],
+  "startedAt": "2026-11-13T15:07:58.565Z",
+  "status": "finished",
+  "before": {
+    "commit": "fda6346dd998b11b7f256d24c18d541c9b2a0ebf",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "",
+    "tree": "83a6a442c0e512b7e43a6c5fbaa493e748e2b2bf"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T15:08:06.620Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "",
+    "tree": "a0f8511b513554aa7ece4c99d65b4bd28e168225"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-cherry-pick.stdout.txt",
+      "bytes": 99564,
+      "sha256": "e83daee427f9594a40c542ef0c34e1b218e559d27a7e1ce442d2473f81ca0751"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-cherry-pick.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

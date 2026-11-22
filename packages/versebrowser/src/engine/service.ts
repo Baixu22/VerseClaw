@@ -729,6 +729,9 @@ export class AgentBrowserService {
     requestGuard?: AgentBrowserSupervisedRequestGuard,
     requireCompleteNetwork = false,
   ): Promise<{ session: AgentBrowserSession; textSample?: string }> {
+    if (payload.browser !== undefined) {
+      throw new Error('E_CAPABILITY_UNAVAILABLE: kitesurf attach is standalone loopback CDP only; desktop managed sessions stay on the browser-window engine');
+    }
     const mode = normalizeMode(payload.mode);
     const profile = normalizeProfile(payload.profile);
     const authPersistence = normalizeAuthPersistence(payload.authPersistence);

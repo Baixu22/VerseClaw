@@ -1,0 +1,235 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\output\\electron-process-cleanup.json",
+  "sourceSha256": "4a3e0cc7cf016b3e269a240fa264e634bee6d2f6db7dd5ce653c8493ea62ef84",
+  "result": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\.tmp\\e2e-runs\\verse-claw-e2e-run-UYMvOg",
+    "ledgerEntries": 35,
+    "checks": [
+      {
+        "pid": 12132,
+        "creationTime": 1794564550107,
+        "status": "exited"
+      },
+      {
+        "pid": 37924,
+        "creationTime": 1794564562621,
+        "status": "exited"
+      },
+      {
+        "pid": 37236,
+        "creationTime": 1794564563079,
+        "status": "exited"
+      },
+      {
+        "pid": 17260,
+        "creationTime": 1794564567798,
+        "status": "exited"
+      },
+      {
+        "pid": 12944,
+        "creationTime": 1794564572789,
+        "status": "exited"
+      },
+      {
+        "pid": 21732,
+        "creationTime": 1794564573021,
+        "status": "exited"
+      },
+      {
+        "pid": 33836,
+        "creationTime": 1794564575590,
+        "status": "exited"
+      },
+      {
+        "pid": 5820,
+        "creationTime": 1794564580768,
+        "status": "exited"
+      },
+      {
+        "pid": 42288,
+        "creationTime": 1794564581030,
+        "status": "exited"
+      },
+      {
+        "pid": 30944,
+        "creationTime": 1794564584235,
+        "status": "exited"
+      },
+      {
+        "pid": 10848,
+        "creationTime": 1794564590473,
+        "status": "exited"
+      },
+      {
+        "pid": 16312,
+        "creationTime": 1794564591048,
+        "status": "exited"
+      },
+      {
+        "pid": 35592,
+        "creationTime": 1794564594276,
+        "status": "exited"
+      },
+      {
+        "pid": 36604,
+        "creationTime": 1794564600099,
+        "status": "exited"
+      },
+      {
+        "pid": 45896,
+        "creationTime": 1794564600358,
+        "status": "exited"
+      },
+      {
+        "pid": 39252,
+        "creationTime": 1794564603441,
+        "status": "exited"
+      },
+      {
+        "pid": 27408,
+        "creationTime": 1794564608514,
+        "status": "exited"
+      },
+      {
+        "pid": 45168,
+        "creationTime": 1794564608734,
+        "status": "exited"
+      },
+      {
+        "pid": 33284,
+        "creationTime": 1794564613189,
+        "status": "exited"
+      },
+      {
+        "pid": 2964,
+        "creationTime": 1794564617941,
+        "status": "exited"
+      },
+      {
+        "pid": 42292,
+        "creationTime": 1794564618142,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 12132,
+          "creationTime": 1794564550107,
+          "status": "exited"
+        },
+        {
+          "pid": 37924,
+          "creationTime": 1794564562621,
+          "status": "exited"
+        },
+        {
+          "pid": 37236,
+          "creationTime": 1794564563079,
+          "status": "exited"
+        },
+        {
+          "pid": 17260,
+          "creationTime": 1794564567798,
+          "status": "exited"
+        },
+        {
+          "pid": 12944,
+          "creationTime": 1794564572789,
+          "status": "exited"
+        },
+        {
+          "pid": 21732,
+          "creationTime": 1794564573021,
+          "status": "exited"
+        },
+        {
+          "pid": 33836,
+          "creationTime": 1794564575590,
+          "status": "exited"
+        },
+        {
+          "pid": 5820,
+          "creationTime": 1794564580768,
+          "status": "exited"
+        },
+        {
+          "pid": 42288,
+          "creationTime": 1794564581030,
+          "status": "exited"
+        },
+        {
+          "pid": 30944,
+          "creationTime": 1794564584235,
+          "status": "exited"
+        },
+        {
+          "pid": 10848,
+          "creationTime": 1794564590473,
+          "status": "exited"
+        },
+        {
+          "pid": 16312,
+          "creationTime": 1794564591048,
+          "status": "exited"
+        },
+        {
+          "pid": 35592,
+          "creationTime": 1794564594276,
+          "status": "exited"
+        },
+        {
+          "pid": 36604,
+          "creationTime": 1794564600099,
+          "status": "exited"
+        },
+        {
+          "pid": 45896,
+          "creationTime": 1794564600358,
+          "status": "exited"
+        },
+        {
+          "pid": 39252,
+          "creationTime": 1794564603441,
+          "status": "exited"
+        },
+        {
+          "pid": 27408,
+          "creationTime": 1794564608514,
+          "status": "exited"
+        },
+        {
+          "pid": 45168,
+          "creationTime": 1794564608734,
+          "status": "exited"
+        },
+        {
+          "pid": 33284,
+          "creationTime": 1794564613189,
+          "status": "exited"
+        },
+        {
+          "pid": 2964,
+          "creationTime": 1794564617941,
+          "status": "exited"
+        },
+        {
+          "pid": 42292,
+          "creationTime": 1794564618142,
+          "status": "exited"
+        }
+      ]
+    ],
+    "owned": [],
+    "remaining": [],
+    "survivors": [],
+    "pendingLaunches": 0,
+    "status": "passed"
+  }
+}

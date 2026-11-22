@@ -1,0 +1,377 @@
+{
+  "schema": "clawx.kitesurf-acceptance/v2",
+  "driven_by": "agent",
+  "actor": "codex",
+  "decision": "GO",
+  "scope": "standalone-loopback-kitesurf-cdp",
+  "evaluatedAt": "2026-11-16T02:57:31.696Z",
+  "repository": "D:/ClawX-work/kitesurf-cdp-20261114",
+  "branch": "codex/kitesurf-cdp-20261114",
+  "head": "c3521cfc4252fab0a6c19c75eb3231cbf0f8e9af",
+  "sourceHashes": {
+    "packages/versebrowser/src/engine/kitesurf-cdp.ts": "992fb4ea7ef2f0311d8a05a6032a12cd615e63c808e817f3cbeba6530b070cb4",
+    "packages/versebrowser/src/engine/service.ts": "7eeb08edc22e388c7ac7d171d4eea1565fce8fb0411e0af128a15cb629963748",
+    "packages/versebrowser/src/engine/playwright-host-api.ts": "1820b67d2929104f1e43636b3ca708b846a4286a696ac8e5f3b0c4bc6fb843d1",
+    "packages/versebrowser/src/engine/persistent-sessions.ts": "b2ec309cf2b6f98ea634e98d39d6408a23119cfbb4aa2638278ae0638768b3c6",
+    "packages/versebrowser/src/cli.ts": "4b17db0f4c1ca180dd9fe16224af9e55fc544dc98da204e17c000c1615be0722",
+    "packages/versebrowser/src/types/host-api.ts": "faf159cc7468f04f8885fb01dcb2effc9bfd263b7522f935e6bc9c869eb53e29",
+    "packages/versebrowser/src/engine/kitesurf-session.ts": "d428d6875a6275fa47f838d492ca767f991f538a74e08752ca3b0efd659bae09",
+    "packages/versebrowser/src/engine/upstream-control.ts": "57100d6cf4a3e8cb3e9812e26f1fdb8a25178e18e143fa3dc73d109434162e7c",
+    "packages/versebrowser/src/engine/facade.ts": "580052b4ab742238d91c30dbb6bddec0667303b7c0992b1b68a88c82e17dc01c",
+    "packages/versebrowser/src/engine/driver-profile.ts": "c82907eb8ed7b7be1cc1508f8cc9a4841bb0a25248c37d2817b9f2ecaa321ea9",
+    "packages/versebrowser/src/evidence/output.ts": "5d3eb307c5f81a7b683856274e91b26b075f64cdfc00576b51746d8b3d013229",
+    "scripts/kitesurf-local-runtime.mjs": "4feefe23a1dd03399e5aabedac34d07c83d9204496a8e4b3fa2c15e6064f7554",
+    "pnpm-workspace.yaml": "09032c26656852712da8f0c25af16f9156162d67cba6fa633bef40f408298ff3",
+    "scripts/contract-check.mjs": "b1edfdceaaafab017d195462f0de36dcd768097d49e01beeb9e2a0dc9a4f6961",
+    "vitest.agent-dev.node.config.ts": "89cea603aaa5f854ac4a2bb4ff8e447c352e62a54bd22fc273a7dd2c4dcae301",
+    "scripts/typecheck-agent-dev.mjs": "04d3306e3685e453130d51f7e571984f562bc8d36cf108f4d2517ab3bace230b",
+    "tests/unit/typecheck-gate.test.ts": "23dd25334137fbcdcbe525ef5f96e7a58fa9049dc6198bedd10a5eb3ab821fc7"
+  },
+  "package": {
+    "files": 129,
+    "passed": 1132,
+    "failed": 0,
+    "skipped": 0,
+    "sourceUnchanged": true,
+    "resultPath": "D:\\ClawX-work\\kitesurf-cdp-20261114\\harness\\specs\\fixtures\\kitesurf-loopback-cdp\\final-20261116\\package-tests.json",
+    "startedAt": "2026-11-16T02:26:08.579Z",
+    "finishedAt": "2026-11-16T02:39:26.473Z"
+  },
+  "native": {
+    "passed": 9,
+    "assertions": 20,
+    "calls": 97
+  },
+  "protocol": {
+    "passed": 13
+  },
+  "cli": {
+    "steps": 17,
+    "passed": 17
+  },
+  "mcpEof": {
+    "passed": 2,
+    "deadlineMs": 3000
+  },
+  "evidence": {
+    "verifierChecks": 39,
+    "guardTests": 9,
+    "sourceMatchesReceipts": true
+  },
+  "documentation": {
+    "reviewed": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "rootReadmeTranslationUpdateRequired": false,
+    "reason": "Root README links to the driver reference updated by this change.",
+    "retainedRunbook": "docs/dev/kitesurf-loopback-cdp.md"
+  },
+  "gates": {
+    "harnessCi": 0,
+    "eslint": 0,
+    "fullTypecheck": {
+      "success": true,
+      "mode": "parallel",
+      "testTypes": {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 18532,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "D:\\ClawX-work\\kitesurf-cdp-20261114\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      },
+      "cache": {
+        "enabled": true,
+        "status": "miss",
+        "key": "deb9759d3741b46d0c32ea5e7b8ae5a5797404ca7fbb6ab1cff4b8f9bafc866c",
+        "inputCount": 13910,
+        "report": "D:\\ClawX-work\\kitesurf-cdp-20261114\\artifacts\\typecheck-cache\\report.json"
+      },
+      "totalDurationMs": 44684,
+      "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+      "results": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 144
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 17576
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 10257
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 18532,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "D:\\ClawX-work\\kitesurf-cdp-20261114\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    },
+    "fullAgentDevUnits": {
+      "id": "vitest-agent-dev",
+      "command": "pnpm",
+      "args": [
+        "agent-dev:unit"
+      ],
+      "goal": "Focused Agent Dev behavior and facade tests",
+      "commandLine": "pnpm agent-dev:unit",
+      "exitCode": 0,
+      "durationMs": 12860,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "\n RUN  v4.1.1 D:/ClawX-work/kitesurf-cdp-20261114\n\n\n Test Files  7 passed (7)\n      Tests  188 passed (188)\n   Start at  10:42:24\n   Duration  9.77s (transform 535ms, setup 215ms, import 575ms, tests 11.64s, environment 1.35s)\n\n",
+      "stderrTail": "$ vitest run --config vitest.agent-dev.node.config.ts tests/unit/agent-dev-api.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts tests/unit/host-api-facade.test.ts\n"
+    },
+    "fullE2e": {
+      "id": "playwright-agent-dev",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "test:e2e:agent-dev-quality:run"
+      ],
+      "goal": "Electron Agent Dev scenario and in-app Workbench path",
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+      "exitCode": 0,
+      "durationMs": 44548,
+      "ok": true,
+      "skipped": false,
+      "stdoutTail": "\nRunning 4 tests using 2 workers\n\n  ok 1 tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario (15.6s)\n  ok 2 tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling (15.7s)\n  ok 4 tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (22.1s)\n  ok 3 tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario (23.0s)\n\n  4 passed (42.4s)\n",
+      "stderrTail": "$ playwright test tests/e2e/agent-dev-quality.spec.ts --workers=2\n(node:29492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:29492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:30264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "diagnostics": {
+        "playwright": {
+          "kind": "playwright",
+          "passed": 4,
+          "reportedDurationMs": 42400,
+          "tests": [
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+              "durationMs": 23000
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+              "durationMs": 22100
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+              "durationMs": 15700
+            },
+            {
+              "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+              "durationMs": 15600
+            }
+          ]
+        }
+      }
+    },
+    "workspaceCacheGuard": {
+      "passed": 1,
+      "failed": 0,
+      "regressionBefore": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\typecheck-workspace-regression-before.json",
+      "regressionAfter": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\typecheck-workspace-regression-after.json"
+    }
+  },
+  "agentDev": {
+    "auditStatus": "warn",
+    "score": 82,
+    "disqualifiers": [],
+    "decision": {
+      "status": "needs-full-gate",
+      "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+      "dailyLoopReady": true,
+      "releaseReady": false,
+      "fullGateComplete": false,
+      "budgetStatus": "watch",
+      "fastPathModes": [
+        "reuse-build",
+        "cached-typecheck",
+        "smoke-e2e"
+      ],
+      "requiredFullGates": [
+        "pnpm run build:vite",
+        "pnpm run typecheck",
+        "pnpm test:e2e:agent-dev-quality"
+      ],
+      "watchSteps": [
+        "vitest-agent-dev",
+        "playwright-agent-dev",
+        "harness-agent-dev",
+        "contract",
+        "i18n"
+      ],
+      "limitSteps": []
+    },
+    "completeFunctionalConditions": {
+      "driven_by": "agent",
+      "actor": "codex",
+      "command": "node scripts/agent-dev-deep-test.mjs --reuse-build",
+      "GOMAXPROCS": "2",
+      "TEMP": "D:\\tmp",
+      "startedAt": "2026-11-16T02:20:29.7153532Z",
+      "finishedAt": "2026-11-16T02:22:49.4793679Z",
+      "exitCode": 0
+    },
+    "modes": {
+      "build": "reused",
+      "typecheck": "cached",
+      "unit": "full",
+      "e2e": "smoke"
+    },
+    "completeFunctionalReport": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\agent-dev-delivery-controlled.json",
+    "performanceStatus": "OPEN",
+    "unresolvedPerformance": [
+      {
+        "id": "typecheck",
+        "durationMs": 64655,
+        "limitMs": 45000,
+        "exitCode": 0
+      },
+      {
+        "id": "playwright-agent-dev",
+        "durationMs": 44548,
+        "limitMs": 40000,
+        "exitCode": 0
+      }
+    ],
+    "coldBuild": {
+      "durationMs": 83470,
+      "exitCode": 0,
+      "limitMs": 58000,
+      "reportPath": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\agent-dev-full-final.json"
+    }
+  },
+  "runtime": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "available": true,
+    "endpoint": "ws://127.0.0.1:46115/devtools/browser",
+    "linuxProcessId": 555,
+    "upstreamRevision": "4a2903813a22b08d4f3cc64a4b35339d0293a5d1",
+    "engineResourceHashes": {
+      "/home/bai/tmp/kitesurf-upstream-20261114/packages/page-script/dist/page-script.js": "bd77d59623f44dba92ca7f95a57f1f9279142b533e78b4db5841a9864584594b",
+      "/home/bai/tmp/kitesurf-upstream-20261114/packages/core/pkg/kitesurf_core_bg.wasm": "182ca845a68c9a5511313f61df1b1e919289b43f5771a3ca2a487a497bd5ba1a"
+    },
+    "version": {
+      "Browser": "Kitesurf/0.0.1",
+      "Protocol-Version": "1.3",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+      "V8-Version": "12.0.0",
+      "WebKit-Version": "537.36",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:46115/devtools/browser"
+    },
+    "observedAt": "2026-11-16T02:57:31.3895243Z",
+    "controlWorkers": [],
+    "privateNetworkEnabled": false,
+    "remoteBrowserRun": false
+  },
+  "exports": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "ok": true,
+    "files": [
+      {
+        "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\page.png",
+        "sha256": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+        "width": 1280,
+        "height": 720,
+        "nonWhitePixels": 22362
+      },
+      {
+        "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\cli-page.png",
+        "sha256": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+        "width": 1280,
+        "height": 720,
+        "nonWhitePixels": 22362
+      },
+      {
+        "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\page.pdf",
+        "sha256": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136",
+        "pages": 1,
+        "pageSizePoints": [
+          612,
+          792
+        ],
+        "text": "Site Title\nHome•\nAbout•\nSign up\nEmail address  Password \n  Accept terms\nyou@example.com\n \nPlan\nFree Pro\n  Create account Cancel\n  \nSomething went wrong\nRetry\nFooter text"
+      },
+      {
+        "file": "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\exports\\cli-page.pdf",
+        "sha256": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136",
+        "pages": 1,
+        "pageSizePoints": [
+          612,
+          792
+        ],
+        "text": "Site Title\nHome•\nAbout•\nSign up\nEmail address  Password \n  Accept terms\nyou@example.com\n \nPlan\nFree Pro\n  Create account Cancel\n  \nSomething went wrong\nRetry\nFooter text"
+      }
+    ]
+  },
+  "engineLimits": [
+    "Kitesurf confirm() is not implemented; unowned dialog ids are refused.",
+    "Kitesurf omits global property descriptors; bounded runtime inspection is refused before reading the page."
+  ],
+  "initialReview": "D:\\ClawX-work\\kitesurf-cdp-20261114\\harness\\specs\\fixtures\\kitesurf-loopback-cdp\\acceptance-initial-20261115.json",
+  "priorRuns": [
+    "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\full-01\\batched-package-tests.json",
+    "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\full-02\\batched-package-tests.json",
+    "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\full-03\\batched-package-tests.json",
+    "D:\\tmp\\kitesurf-gap-20261115-01a1dc94\\full-04\\batched-package-tests.json"
+  ],
+  "curatedFiles": {
+    "package-tests.json": "78aaeeb8a4896d5d028a6e90eb0e1993541aff4870681bc39a0a5fed6e1aaa2a",
+    "evidence-guards.json": "bc9ad9a1d79ff966b7170c66baa031fa66a3fea72bc24ef9d2988b7b1be971bf",
+    "typecheck-regression-before.json": "a7740b79e75482dfb3db1a14abccb8dd6354cd76a50fa37a33e40f29b1f6b598",
+    "typecheck-regression-after.json": "aa19f08f6787451b43adf9c9b8fa9bca5cbbd0bf52cf587c545130ebabc235d9",
+    "typecheck.json": "dbb958a770144d45f5884f209fff2456b4014d4e88829e1688ddce33974c33fc",
+    "complete-functional-gates.json": "d11952e42bfa03e7e1b530dc524a1fb9c82d1b1372b5b474dabd2ccf77c9768d",
+    "complete-functional-conditions.json": "95cc12ac446b7f7651540323c420a20a86b23b25d748e225c9cf64668a05f2fa",
+    "harness-ci.exit.json": "7558b80c0db378e9876f8242990c8990a34cd9fc27dca5a5778fc3d2c8fa9b16",
+    "eslint.exit.json": "0ba53f57d5c4569ac81ea41f6886d230a3484da76da6d4c30b5e22a5cca45357",
+    "artifact-retention.json": "d778d53fe267473d8a353a9faa67611fa4a82c0c426be8ba65c4744de72dfe99",
+    "cold-build-gates.json": "be954774711464243373d003dfffb381c27af116f88863c04fb90a6a0cc62349",
+    "runtime.json": "280fa9f13d2ee4b5b8afd5a21b0564b8a179fe558c2d5e605b2b9876daf1ac17",
+    "export-checks.json": "eb3cfa7c84a75a5b4688c9e9ae060436816c40f83fe531cb2e198692909877da",
+    "public-page-snapshot.txt": "81e0cfc00c1b044ddb9b70cc3227b325b23e841abd8063cf4266eed15c0a2762",
+    "public-page-text.txt": "43338e32beb5871d10be1ac1816172af356bb5a731591005220a4bd4043c5ca4",
+    "public-page-network.json": "dfab75a242f1e06847131829b21c000b0127d642525ca1d1ea12ea4a5f54b334",
+    "page.png": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+    "page.pdf": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136",
+    "cli-page.png": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+    "cli-page.pdf": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136"
+  },
+  "curatedOriginalHashes": {
+    "package-tests.json": "78aaeeb8a4896d5d028a6e90eb0e1993541aff4870681bc39a0a5fed6e1aaa2a",
+    "evidence-guards.json": "bc9ad9a1d79ff966b7170c66baa031fa66a3fea72bc24ef9d2988b7b1be971bf",
+    "typecheck-regression-before.json": "a7740b79e75482dfb3db1a14abccb8dd6354cd76a50fa37a33e40f29b1f6b598",
+    "typecheck-regression-after.json": "aa19f08f6787451b43adf9c9b8fa9bca5cbbd0bf52cf587c545130ebabc235d9",
+    "typecheck.json": "5f1aaa55f0631b20f1bcd97f552171cfc7d13716f2c04e4d292541aea670c504",
+    "complete-functional-gates.json": "d11952e42bfa03e7e1b530dc524a1fb9c82d1b1372b5b474dabd2ccf77c9768d",
+    "complete-functional-conditions.json": "f420ca6d82f7790aef9194f125a91292fd7e87de4bd86c1f5974844cd3fd79d4",
+    "harness-ci.exit.json": "460d25cc3528677dbce47bc805581ff6f1395768644c4eb09685dc0e7e550824",
+    "eslint.exit.json": "1baec2bc6ffbbd24cdcb4ea2750d26f440b297e07e5df28c34e8adf2b13b61dc",
+    "artifact-retention.json": "4d013efe213a54808be883bf16f2a538a459f8571b5303b391de88b51bfd485b",
+    "cold-build-gates.json": "be954774711464243373d003dfffb381c27af116f88863c04fb90a6a0cc62349",
+    "runtime.json": "37572f02afd4daf9d91d598c1467076a1f17c661013d1dfe945d95153bf8e1f3",
+    "export-checks.json": "48e75c172e25ea33d0c5f4e65d095a78f658f82ab9c6022285447cb3e68256ae",
+    "public-page-snapshot.txt": "81e0cfc00c1b044ddb9b70cc3227b325b23e841abd8063cf4266eed15c0a2762",
+    "public-page-text.txt": "43338e32beb5871d10be1ac1816172af356bb5a731591005220a4bd4043c5ca4",
+    "public-page-network.json": "dfab75a242f1e06847131829b21c000b0127d642525ca1d1ea12ea4a5f54b334",
+    "page.png": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+    "page.pdf": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136",
+    "cli-page.png": "ae0428a96362f9cf24d742c1ab77053920a81f0383b0ec905e9540280cb6f51e",
+    "cli-page.pdf": "6f939540fa181e75490747d3bb0de28086fe113cd5d5dec41f21d877b821f136"
+  },
+  "curatedTextLineEndings": "LF",
+  "deliveryConfigHashes": {
+    ".gitignore": "fb5db9c134e41c6ba3aa3a0a25d46a27267b6f97f35f508cb3f78c1c1ff3cf5c",
+    "scripts/repository-artifacts.json": "f0551b99998de0263924213464081d802b4e3d2179e6da1d443df555ca646d19"
+  }
+}

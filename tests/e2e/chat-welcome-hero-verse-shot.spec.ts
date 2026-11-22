@@ -19,6 +19,7 @@ import {
   test,
 } from './fixtures/electron';
 import { evidencePath } from './fixtures/evidence-root';
+import type { GitRepositoryStatus } from '../../shared/types/git';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -49,20 +50,21 @@ const WORKSPACES = [
   makeWorkspace('ws-verse', 'verseshell', 'D:\\work\\verseshell', 100),
 ];
 
-// The context row only renders a branch chip when git reports a repository.
-// Long enough on purpose: the row's 24-char truncation is part of what the
-// screenshot is meant to show.
-const GIT_STATUS = {
+// A complete empty repository snapshot keeps the welcome surface quiet.
+const GIT_STATUS: { success: boolean; status: GitRepositoryStatus } = {
   success: true,
   status: {
     isRepository: true,
     branch: 'codex/ui-polish-verse-hero',
     detached: false,
-    clean: false,
+    clean: true,
     hasConflicts: false,
-    stagedCount: 2,
-    unstagedCount: 3,
-    untrackedCount: 1,
+    ahead: 0,
+    behind: 0,
+    changes: [],
+    stagedCount: 0,
+    unstagedCount: 0,
+    untrackedCount: 0,
     conflictedCount: 0,
     repoRoot: 'D:\\work\\ClawX',
     workspaceRoot: 'D:\\work\\ClawX',

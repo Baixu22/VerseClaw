@@ -66,6 +66,20 @@ No build depends on the independent `D:/versebrowser` checkout; that path is onl
   desktop host pins `browser-window`, while a service constructed with a CLI runner
   pins `agent-browser-cli`. If the selected CLI engine is unavailable, `open()` fails
   with `E_CLI_UNAVAILABLE` instead of silently switching engines.
+  A loopback [Kitesurf](https://github.com/cloudflare/kitesurf) engine can be attached
+  from the standalone CLI with `vb open --kitesurf --cdp ws://127.0.0.1:8787/devtools/browser`.
+  The endpoint must use `127.0.0.1`, `localhost`, or `[::1]` and identify Kitesurf
+  through `/json/version`. A plain `--cdp` attach that identifies Kitesurf uses the
+  same control process, preserving its WebSocket across CLI invocations.
+  Native page JavaScript, accessibility, input, network, exact-element queries,
+  forms, page selection and same-origin frame reads use that connection.
+  `vb pdf --session <id>` saves the rendered page under the workspace evidence root.
+  Page requests run in the Kitesurf engine's network environment.
+  [Local runtime and acceptance setup](../docs/dev/kitesurf-loopback-cdp.md)
+  covers the pinned engine, host proxy egress and private-network rejection.
+  Kitesurf does not expose global property descriptors, so bounded runtime
+  inspection returns `E_CAPABILITY_UNAVAILABLE`; `confirm()` is also unavailable.
+  Desktop `open()` rejects `browser: 'kitesurf'` before creating a window.
   Packaged evidence for the original N8 defect and its final repair remains in
   `harness/specs/fixtures/versebrowser-invocation-maturity/n8-20261016/`; current
   candidate evidence is kept under

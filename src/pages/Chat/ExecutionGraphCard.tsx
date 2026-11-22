@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { TaskStep } from './task-visualization';
 import { CallChip, inferCallChipIcon } from '@/components/tool-ui/shared/call-chip';
+import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
+import type { RunTerminalSurface } from '@/components/tool-ui/run-surfaces';
 
 interface ExecutionGraphCardProps {
   agentLabel: string;
@@ -18,6 +20,7 @@ interface ExecutionGraphCardProps {
   traceId?: string;
   expandedStepIds?: ReadonlySet<string>;
   onStepExpandedChange?: (stepId: string, expanded: boolean) => void;
+  terminals?: RunTerminalSurface[];
 }
 
 const TOOL_ROW_EXTRA_INDENT_PX = 0;
@@ -28,18 +31,20 @@ function StepDetailRow({
   compact = false,
   expanded: controlledExpanded,
   onExpandedChange,
+  inputDetail,
 }: {
   step: TaskStep;
   result?: TaskStep;
   compact?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
+  inputDetail?: string;
 }) {
   const { t } = useTranslation('chat');
   const detailId = useId();
   const [localExpanded, setLocalExpanded] = useState(false);
   const expanded = controlledExpanded ?? localExpanded;
-  const hasDetail = Boolean(step.detail || result?.detail);
+  const hasDetail = Boolean(step.detail || inputDetail || result?.detail);
   const isNarration = step.kind === 'message';
   const isTool = step.kind === 'tool';
   const isSystem = step.kind === 'system';
@@ -52,18 +57,30 @@ function StepDetailRow({
   const showRunning = step.status === 'running' && (isTool || isSystem);
   const showError = step.status === 'error' || result?.status === 'error';
 
-  let formattedDetail = step.detail;
-  if (formattedDetail && (isTool || isSystem)) {
+  if (isTool && (inputDetail || step.detail)) {
     try {
-      const parsed: unknown = JSON.parse(formattedDetail);
-      formattedDetail = JSON.stringify(parsed, null, 2);
-      if (isTool && parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        const input = parsed as Record<string, unknown>;
+      const previewInput = JSON.parse(inputDetail ?? step.detail ?? '') as unknown;
+      if (previewInput && typeof previewInput === 'object' && !Array.isArray(previewInput)) {
+        const input = previewInput as Record<string, unknown>;
         const target = ['file_path', 'filePath', 'path', 'command', 'cmd', 'pattern', 'query', 'url']
           .map((key) => input[key])
           .find((value): value is string => typeof value === 'string' && value.trim().length > 0);
-        detailPreview = target?.replace(/\s+/g, ' ').trim();
+        if (target) detailPreview = target.replace(/\s+/g, ' ').trim();
       }
+    } catch {
+      // Preserve the latest text as the preview when arguments are not JSON.
+    }
+  }
+
+  let formattedInput = inputDetail;
+  if (formattedInput && isTool) {
+    try { formattedInput = JSON.stringify(JSON.parse(formattedInput), null, 2); } catch { /* Preserve plain arguments. */ }
+  }
+
+  let formattedDetail = step.detail;
+  if (formattedDetail && (isTool || isSystem)) {
+    try {
+      formattedDetail = JSON.stringify(JSON.parse(formattedDetail) as unknown, null, 2);
     } catch {
       // Keep non-JSON tool and system details unchanged.
     }
@@ -91,6 +108,7 @@ function StepDetailRow({
   if (resultDetail) {
     try { resultDetail = JSON.stringify(JSON.parse(resultDetail), null, 2); } catch { /* Preserve plain output. */ }
   }
+  const distinctToolResult = isTool && inputDetail !== undefined && step.detail !== undefined && inputDetail !== step.detail;
   const detail = hasDetail && expanded ? (
     <div
       id={detailId}
@@ -100,11 +118,24 @@ function StepDetailRow({
       className="mt-1 max-h-72 overflow-auto rounded-r-md border-l border-border/70 bg-surface-input px-3 py-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       data-testid="chat-execution-step-detail"
     >
-      {formattedDetail && (
+      {isTool && formattedInput && (
         <>
-          {resultDetail && <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.arguments')}</p>}
-          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedDetail}</pre>
+          <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.arguments')}</p>
+          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedInput}</pre>
         </>
+      )}
+      {formattedDetail && (distinctToolResult || !inputDetail || !isTool) && (
+        distinctToolResult && formattedInput ? (
+          <div className="mt-3 border-t border-border/60 pt-2">
+            <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.result')}</p>
+            <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedDetail}</pre>
+          </div>
+        ) : (
+          <>
+            {(distinctToolResult || resultDetail) && <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.result')}</p>}
+          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedDetail}</pre>
+          </>
+        )
       )}
       {resultDetail && (
         <div className={cn(formattedDetail && 'mt-3 border-t border-border/60 pt-2')}>
@@ -237,6 +268,7 @@ export function ExecutionGraphCard({
   traceId,
   expandedStepIds,
   onStepExpandedChange,
+  terminals = [],
 }: ExecutionGraphCardProps) {
   const { t } = useTranslation('chat');
   const shouldShowTrailingThinking = active && !suppressThinking;
@@ -262,7 +294,22 @@ export function ExecutionGraphCard({
   //
   // The trailing thinking shimmer is real content, so an active run without
   // steps yet still renders.
-  if (steps.length === 0 && !shouldShowTrailingThinking) return null;
+  if (steps.length === 0 && terminals.length === 0 && !shouldShowTrailingThinking) return null;
+
+  const timeline = [
+    ...visibleSteps.map((step, index) => ({
+      kind: 'step' as const,
+      step,
+      order: step.eventOrder ?? index,
+      position: index,
+    })),
+    ...terminals.map((surface, index) => ({
+      kind: 'terminal' as const,
+      surface,
+      order: surface.eventOrder ?? visibleSteps.length + index,
+      position: visibleSteps.length + index,
+    })),
+  ].sort((left, right) => left.order - right.order || left.position - right.position);
 
   return (
     <div
@@ -272,7 +319,16 @@ export function ExecutionGraphCard({
       className="w-full min-w-0 text-muted-foreground"
     >
       <div className="mt-0.5">
-        {visibleSteps.map((step) => {
+        {timeline.map((item) => {
+          if (item.kind === 'terminal') {
+            return (
+              <div key={`terminal:${item.surface.id}`} className="relative mt-0.5" data-testid="chat-execution-timeline-terminal">
+                <RunTerminalSurfaces surfaces={[item.surface]} />
+              </div>
+            );
+          }
+
+          const step = item.step;
           const alignedIndentOffset = (
             step.kind === 'tool'
             || step.kind === 'message'
@@ -302,6 +358,7 @@ export function ExecutionGraphCard({
                   result={pairedResults.get(step.id)}
                   expanded={expandedStepIds?.has(step.id)}
                   onExpandedChange={(expanded) => onStepExpandedChange?.(step.id, expanded)}
+                  inputDetail={step.inputDetail}
                 />
               </div>
             </div>

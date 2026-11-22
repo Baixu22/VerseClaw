@@ -1,0 +1,12 @@
+{
+  "schema": "G7FinalHygieneNodeObservation/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "observedAt": "2026-11-13T18:17:13.659Z",
+  "node": "TF-0749",
+  "status": "done",
+  "progress": 100,
+  "sourceReceiptSha256": "b95b64b326b0413e2086f46099b030392267f743b62ef60de7122c0184e1c9e0",
+  "noTaskForestMutation": true
+}

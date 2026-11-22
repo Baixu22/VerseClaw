@@ -1,0 +1,468 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\repository-ci-audit.json",
+  "sourceSha256": "fa37faeca770e2cfd9bf5ea20911666e47125aef92460d4000f3bc32de459c7e",
+  "result": {
+    "schema": "clawx.agent-dev.audit.v1",
+    "generatedAt": "2026-11-13T09:53:56.073Z",
+    "policy": {
+      "schema": "clawx.agent-dev.audit.v1",
+      "passScore": 90,
+      "warnScore": 80,
+      "maxEvidenceAgeHours": 24,
+      "maxHistoryEntries": 20,
+      "hardVetoSeverities": [
+        "fail"
+      ],
+      "statusSemantics": {
+        "pass": "Score is at least 90 and no hard-veto findings exist.",
+        "warn": "Score is at least 80 and below 90 with no hard-veto findings.",
+        "fail": "Score is below 80 or at least one hard-veto finding exists."
+      }
+    },
+    "status": "warn",
+    "grade": "B",
+    "maturityLevel": "daily-loop-ready",
+    "confidence": {
+      "level": "high",
+      "reason": "Required generated evidence is present, parseable, and within the freshness window.",
+      "freshGeneratedCount": 4,
+      "generatedSourceCount": 4,
+      "staleGeneratedCount": 0
+    },
+    "totalScore": 88,
+    "maxScore": 100,
+    "summary": {
+      "pass": 5,
+      "warn": 0,
+      "fail": 1,
+      "disqualifierCount": 0
+    },
+    "dimensions": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "maxScore": 20,
+        "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "maxScore": 20,
+        "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "maxScore": 20,
+        "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "maxScore": 20,
+        "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence.",
+        "score": 8,
+        "findings": [
+          {
+            "id": "performance-watch:e2e-build",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "e2e-build exceeded target: 53963ms > 25000ms.",
+            "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+          },
+          {
+            "id": "performance-watch:vitest-agent-dev",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "vitest-agent-dev exceeded target: 12925ms > 10000ms.",
+            "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+          },
+          {
+            "id": "performance-watch:contract",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "contract exceeded target: 2185ms > 1000ms.",
+            "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+          },
+          {
+            "id": "performance-watch:typecheck",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "typecheck exceeded target: 25578ms > 25000ms.",
+            "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "maxScore": 10,
+        "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation.",
+        "score": 10,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "maxScore": 10,
+        "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded.",
+        "score": 10,
+        "findings": [],
+        "status": "pass"
+      }
+    ],
+    "scoreBreakdown": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "score": 8,
+        "maxScore": 20,
+        "deducted": 12,
+        "status": "fail",
+        "reason": "4 finding(s) deducted 12 point(s).",
+        "findings": [
+          {
+            "id": "performance-watch:e2e-build",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+          },
+          {
+            "id": "performance-watch:vitest-agent-dev",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+          },
+          {
+            "id": "performance-watch:contract",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+          },
+          {
+            "id": "performance-watch:typecheck",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+          }
+        ]
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "score": 10,
+        "maxScore": 10,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "score": 10,
+        "maxScore": 10,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      }
+    ],
+    "rubric": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "maxScore": 20,
+        "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required."
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "maxScore": 20,
+        "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist."
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "maxScore": 20,
+        "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage."
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "maxScore": 20,
+        "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence."
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "maxScore": 10,
+        "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation."
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "maxScore": 10,
+        "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded."
+      }
+    ],
+    "evidenceInventory": [
+      {
+        "id": "workbench",
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.018Z",
+        "generatedAt": "2026-11-13T09:15:46.371Z",
+        "ageHours": 0.64,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "deep-test",
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.012Z",
+        "generatedAt": "2026-11-13T09:13:48.548Z",
+        "ageHours": 0.67,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "deep-test-history",
+        "path": "artifacts/agent-dev-deep-test/history.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.015Z",
+        "generatedAt": "2026-11-13T09:13:48.548Z",
+        "ageHours": 0.67,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "quality",
+        "path": "artifacts/agent-dev-quality/report.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.015Z",
+        "generatedAt": "2026-11-13T09:13:48.007Z",
+        "ageHours": 0.67,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "package-scripts",
+        "path": "package.json",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T08:55:15.584Z",
+        "generatedAt": null,
+        "ageHours": 0.98,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "agent-dev-runbook",
+        "path": "docs/agent-dev-control-plane.md",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:13:40.518Z",
+        "generatedAt": null,
+        "ageHours": 4.67,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "agent-instructions",
+        "path": "AGENTS.md",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:13:35.126Z",
+        "generatedAt": null,
+        "ageHours": 4.67,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "scenario-registry",
+        "path": "shared/agent-dev/scenarios.ts",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:15:11.889Z",
+        "generatedAt": null,
+        "ageHours": 4.64,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "regularization-tests",
+        "path": "tests/unit/agent-dev-regularization.test.ts",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:15:15.935Z",
+        "generatedAt": null,
+        "ageHours": 4.64,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      }
+    ],
+    "prioritizedFindings": [
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:contract",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "contract exceeded target: 2185ms > 1000ms.",
+        "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:e2e-build",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "e2e-build exceeded target: 53963ms > 25000ms.",
+        "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:typecheck",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "typecheck exceeded target: 25578ms > 25000ms.",
+        "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:vitest-agent-dev",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "vitest-agent-dev exceeded target: 12925ms > 10000ms.",
+        "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      }
+    ],
+    "disqualifiers": [],
+    "recommendations": [
+      "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+      "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+      "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+    ]
+  }
+}

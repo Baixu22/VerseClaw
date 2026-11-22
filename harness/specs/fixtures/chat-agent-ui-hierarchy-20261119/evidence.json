@@ -1,0 +1,432 @@
+{
+  "schema": "clawx.agent-driven-ui-acceptance.v1",
+  "recordedAt": "2026-11-20",
+  "driven_by": "agent",
+  "actor": "Codex",
+  "baseCommit": "47303b18996f94ec7fd9afbc89ba1dac0910e66d",
+  "candidateSourceSha256": "11c61dbb8939356c43e4e92df0e72c359f7f8f5d0c90d8cdab80e2bdc5121794",
+  "sourceFiles": [
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "sha256": "fa88165445108acb22499078fb0b1f6845c1b6945dcc6580260f83c2fa685ffe"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/activity-bell-completed-light.png",
+      "sha256": "f1bbadb723b42a4ebf79b8d42654f1cc0a0fd01aa2e669fc6b0e6f2664fe1a7c"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/activity-bell-running-light.png",
+      "sha256": "1ac4538a91cf97f6299f868c1f98ccb9badce280599f22ce12e7a7b0e5bfbd28"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/assistant-footer-touch.png",
+      "sha256": "494aeafea57c73cc42df5700f9d03e740f84bbb8a49add729596cfeac0916bd1"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/assistant-footer-wide.png",
+      "sha256": "f0c71e77f5c77a363453859ea175d06bda5f3af0a4dca5caf95f5edf89dad4ca"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/composer-git-layout-narrow.png",
+      "sha256": "33d9f241bdc7a77f5d5ef7d6138130e06f5594837e732d7ad20966826b84c836"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/composer-review-bar.png",
+      "sha256": "4158bc2231bbdc52e250995d0f2d0cd0248de5cc03057d9da19c4206e064b2b7"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/conversation-dark.png",
+      "sha256": "d1478dd2d44b0a6c61c094067d1e317cce0548a0c84707d052e8d7563e4ea631"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/conversation-light.png",
+      "sha256": "27155cf6314980b8b35eefed90cc1798544d9bf419c9eae1495a1cb207c2dc79"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/conversation-narrow.png",
+      "sha256": "5d6b77d50ec6c32a7e5b8b90e2cf75c4915c41cf226d62c9fcd5906b08f446cb"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/file-diff-narrow.png",
+      "sha256": "411e5165650c348217fce09dd74e1fbda6bb46ae10454f94e07361780e208662"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/ordered-run-output-narrow.png",
+      "sha256": "a40a2b30ec172099ab39a0d4f3959d28f9f9fe8003f887f058b90e4d4744860d"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/ordered-run-output-wide.png",
+      "sha256": "134bcf71c0408b71ad2f47d97de4d687241a8d45172c3e0a1f01242f33afba0f"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/runtime-approval-inline.png",
+      "sha256": "31bf60722e52bffd86291930ff7b165b6338154a3483a61918496f3416b8c847"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/session-status-rail-narrow.png",
+      "sha256": "3fadf5257188aa432c9f90003d8af2e11f78bd8d7472bd6ea7020b0d0c9e4848"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/sidebar-collapsed-running-dark.png",
+      "sha256": "ab5b1b16e1340567270d60b205247b827b74eaf3e55a1fddd3f562bdefdc824e"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/sidebar-summary.png",
+      "sha256": "de01482f585ad254eaf8459b2733ed0129f1f7b230dfac0f13a5d17335a6259e"
+    },
+    {
+      "path": "harness/specs/rules/sidebar-session-row-controls.md",
+      "sha256": "6e6439629f524f457bbb5ee280a31c1dda8fb3a1be370ec51352bfa51bf4d49a"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "1d8bec83739a35d71e9408713fdb673d00c08e1c1de7088297f9248bad5b277a"
+    },
+    {
+      "path": "harness/specs/tasks/chat-agent-ui-hierarchy-20261119.md",
+      "sha256": "08b37b5e8ee0b2f66ed66078dcc526b87ff5fa25c93ba314fc984f5448bb3f52"
+    },
+    {
+      "path": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "0cab9322badd1eee63e88979aae6fcef9716fe3498324b9207aa6637f5a9dc34"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "74e78157b730e6b7a94810fd1403f32643c93eaa7e5cf7721ddb9aa5b1c07557"
+    },
+    {
+      "path": "README.md",
+      "sha256": "a539905cfbf3695f3b12103fdd6d83e5ad38c4a657b9ac12a395f40bf6af95c7"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "ea2b17965b957130bcc0b43d68ec95d5576c5afccf9a6ad467a0553196490be0"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "7b20deb442e545152625a707c146bcfb459bb2e62491be98bd839d5dd5ba37d6"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "14d63e5e1f08d32d04f7f805442756d55d3289de5621f78055254fe8d5ce69ba"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "c3dd2bbc9b3aeea9d8dd1238657a0c8f81d5d12e5396f747eb64b6b0ca28a5ab"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "457f1d36a3353ea2b75799dd6a295af7f5bb6d31101ff0d075c8226d51c0e450"
+    },
+    {
+      "path": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "384b75b9fb2c88233e862bf52d28fe89c79b7dc897cf429d14172bbfd586f71c"
+    },
+    {
+      "path": "src/components/assistant-ui/orb-status.tsx",
+      "sha256": "916ea192d65914c58f867c2ef89b750192e8016a03694a3a4eed5513031538b6"
+    },
+    {
+      "path": "src/components/file-preview/GeneratedFilesPanel.tsx",
+      "sha256": "71403ceabe4eb87d69f5efb34ce730ae623b5dc9d9b75c7ad67bc930623b7689"
+    },
+    {
+      "path": "src/components/layout/Sidebar.tsx",
+      "sha256": "df226366d437b6c04193ed059d5f2ad9afa2b2ff13017b7874f47c80118f12fb"
+    },
+    {
+      "path": "src/components/rareui/CompletionActivityMenu.tsx",
+      "sha256": "d3f9595b7cd2f185ff6174ee868c9b5008f2c765d6c73db185abcd72e16c2bae"
+    },
+    {
+      "path": "src/components/rareui/NotificationBell.tsx",
+      "sha256": "f0d809ef946f0650683d7417f21b1e1b4ac8665f65897bb46f93b093cce0b46a"
+    },
+    {
+      "path": "src/components/tool-ui/code-diff/code-diff.tsx",
+      "sha256": "83ea2dcccacae85d45a4a26d5aade71905119024f36517a7eeb013ba541b9d96"
+    },
+    {
+      "path": "src/components/tool-ui/plan-view.tsx",
+      "sha256": "f82327d5132542f8af6d54919a5fffdd5b084b27bf2fea8cfb43e9e675e3f650"
+    },
+    {
+      "path": "src/components/tool-ui/run-surfaces.ts",
+      "sha256": "58948321c262926d43a1308b56298766814975afc76fa9aa1cf3682c76064057"
+    },
+    {
+      "path": "src/components/tool-ui/RunMutationDiffs.tsx",
+      "sha256": "0547fdae010a688c20dea9b2919b3e571ec94c8277d6097966c30851cdb84985"
+    },
+    {
+      "path": "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "sha256": "d6b8ad5d31718e345ffd7564eefb469952c144af29146a66891c6bd6753667d2"
+    },
+    {
+      "path": "src/components/tool-ui/shared/file-line-stats.tsx",
+      "sha256": "4241518c61a32e7faa1c8b0c531bf1f3c964cf7937bd9106b1db17a8e998e57d"
+    },
+    {
+      "path": "src/components/tool-ui/terminal/terminal.tsx",
+      "sha256": "58021878725c2ce067ff7bfd0765981c4172f221e52006ccccda9cce697f08c1"
+    },
+    {
+      "path": "src/components/ui/collapsible.tsx",
+      "sha256": "7e284c52a5823ceb18678a75560b888d9e1628678956ab27ec793934d1d206a1"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "71313070d5142b7231aab44182b6eabb2a645aa66836e30e925fe296e827b3c0"
+    },
+    {
+      "path": "src/pages/Chat/ComposerGitStrip.tsx",
+      "sha256": "111dae16b692cb76d18a80ab417dd84db794ecb72360201d19f8b14a01342a51"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "add8bd99f425f53612deb0c4973cb307a97ec5657c8c986ab2769cadb5ab08c6"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "2c30a80ecfc59623e7c6b782aa429ddc4e29f7c2938845e989f5dbb445efa0fd"
+    },
+    {
+      "path": "src/pages/Chat/task-visualization.ts",
+      "sha256": "0426426563e9152ac981749e6d4e4a041fa39c8e6ecf1ad8428c64539ec6cb20"
+    },
+    {
+      "path": "src/styles/codex-composer-material.css",
+      "sha256": "b11877d95e17ce3337464b583d306e68722a54c2e5345e423854581e7361b79e"
+    },
+    {
+      "path": "src/styles/codex-composer-menu.css",
+      "sha256": "a8fc10dc0f2094a35215f7731b41cd6abc65b822599830c9f89f67bfb31ef156"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "sha256": "fad51b8bbb11d93fe6675c26e03a279c53bfb9b489b008071014a8ccaea8f982"
+    },
+    {
+      "path": "src/styles/codex-responsive.css",
+      "sha256": "554682957397fd652b5f5c1e7b9f2cd0fa98f890b267d818c584b482e339846d"
+    },
+    {
+      "path": "src/styles/codex-session-activity.css",
+      "sha256": "6dfa2b1243425f943afee1614045e3dbb946dffae47d90f4eee826cb0c7d389a"
+    },
+    {
+      "path": "src/styles/codex-sidebar.css",
+      "sha256": "7d1da0d6a18724a69befbff72c4e2ee031b7eb253490196f974571cf20514a4d"
+    },
+    {
+      "path": "tests/e2e/chat-composer-git-strip.spec.ts",
+      "sha256": "8606e0b899f2577b6b78b9c90c86cd69b6cc9c08a916f2423a1560c5022b2b6b"
+    },
+    {
+      "path": "tests/e2e/chat-file-changes.spec.ts",
+      "sha256": "321e2922151b3ed8065e94d551e8ffba24a1711f63ed91c9ae95f3ed9a090e7e"
+    },
+    {
+      "path": "tests/e2e/chat-turn-summary-collapse.spec.ts",
+      "sha256": "31b0523facf7950edcfc4933eaa82f97dcf9abfb124957f6f83189c5ea655d17"
+    },
+    {
+      "path": "tests/e2e/chat-user-message-actions.spec.ts",
+      "sha256": "e157926943fa81780cf07cffdc6e9cdbf653836285d3ecd0a103fad70c0e1fca"
+    },
+    {
+      "path": "tests/e2e/chat-user-message-actions.spec.ts-snapshots/user-message-actions-hover-dark-win32.png",
+      "sha256": "30a8fcd5e3c9f2c3db5083bc5ac4b87320132dd2d2be1dec9e804edce9b0a8c1"
+    },
+    {
+      "path": "tests/e2e/chat-user-message-actions.spec.ts-snapshots/user-message-editor-dark-win32.png",
+      "sha256": "2d7b88a216d5d9e4a285f6afe1cc6cab495cc80befe97e3ea77e7670eba00ae3"
+    },
+    {
+      "path": "tests/e2e/orb-visual-verify.spec.ts",
+      "sha256": "6b28a4ee49d1ae67d55cdbbcc9662bc1696517bf16332772236a1f86071036e9"
+    },
+    {
+      "path": "tests/e2e/rareui-interactions.spec.ts",
+      "sha256": "2e139f2a40828e0ef2171f922f672265b4c36676d3ff675993af1db50094ce82"
+    },
+    {
+      "path": "tests/e2e/session-activity-background-read.spec.ts",
+      "sha256": "9682cb7cd83d196de9444ae51828b6468fab2ee1f7823f93d9661d6237b07fcf"
+    },
+    {
+      "path": "tests/e2e/sidebar-session-family-connectors.spec.ts",
+      "sha256": "5716264e40865bf279aca0a07e8361f3ae85c9d31b9e86b056934a8c6a8bd379"
+    },
+    {
+      "path": "tests/e2e/sidebar-session-row-polish.spec.ts",
+      "sha256": "3a7e37e1eaf04b856591e99aad24fd0a19a8cf2cad6b11971cb5aa0fdc1a0f09"
+    },
+    {
+      "path": "tests/e2e/sidebar-settings-fakecoding.spec.ts",
+      "sha256": "daf6d9efce7389913c36b784df5db51721027d31843a650282d07d8634ed2665"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "sha256": "b0c7d8f444814dcfa8f8a1ca9ba81ced692eaac33ba2ee1d0955148ba12b8a27"
+    },
+    {
+      "path": "tests/unit/chat-render-reachability.test.tsx",
+      "sha256": "b5a87fc26a7a7be34f536f64c222a4bf1b9bfc107d245fdc12cb36c7123fb844"
+    },
+    {
+      "path": "tests/unit/composer-git-strip.test.tsx",
+      "sha256": "c886457d7d83e0bf8a04a3174ed63cccabd21f9bdae13522c469371d3fa2876c"
+    },
+    {
+      "path": "tests/unit/execution-graph-card-badge.test.tsx",
+      "sha256": "ddf716ca6e4ed6fff5249e9c9c38697816e7edf8c320ad3f758e41c797e4f1b1"
+    },
+    {
+      "path": "tests/unit/orb-status.test.tsx",
+      "sha256": "acd0d4f5a686a58075a45966b9cf23686fb470e1bcaea5cda7a9c2ab8916b020"
+    },
+    {
+      "path": "tests/unit/rareui-interactions.test.tsx",
+      "sha256": "338132eb427004a13d7cef9c9d3244c7e7d3fc5d05cb6c8a38e779bcab67abd7"
+    },
+    {
+      "path": "tests/unit/run-surface-promotion.test.ts",
+      "sha256": "2bf62f9a1ae643db730e83c4900f671d23315ad8330ee2ffae771d65afe82633"
+    },
+    {
+      "path": "tests/unit/task-visualization.test.ts",
+      "sha256": "78416767feaae8fe02cc7ecf62016a662b90fc4c88063340020b15d7470b9175"
+    },
+    {
+      "path": "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "sha256": "86e3bb292835338c1ac21d2f7c6ae02b4ddcb4a063352a122ea0587776d3bd9c"
+    }
+  ],
+  "checks": [
+    {
+      "name": "focused-unit",
+      "status": "passed",
+      "result": "170 tests in 10 files"
+    },
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "result": "Web and test TypeScript projects; 2026-11-20"
+    },
+    {
+      "name": "i18n-lint",
+      "status": "passed",
+      "result": "Passed for en, zh, ja and ru; 2026-11-20"
+    },
+    {
+      "name": "eslint-changed-typescript",
+      "status": "passed",
+      "result": "Passed with 0 errors; 2026-11-20"
+    },
+    {
+      "name": "vite-build",
+      "status": "passed",
+      "result": "Renderer, Electron main and preload build passed; 2026-11-20"
+    },
+    {
+      "name": "electron-e2e",
+      "status": "passed",
+      "result": "9 tests in 3 specs passed: sidebar settings, sidebar session activity and Rare UI activity bell; 2026-11-20"
+    },
+    {
+      "name": "responsive-composer-review-bar",
+      "status": "passed",
+      "result": "390px: branch and unique file count remain visible; review action becomes icon-only; no horizontal overflow"
+    },
+    {
+      "name": "responsive-session-status-rail",
+      "status": "passed",
+      "result": "390px overlay fits the viewport and keeps its content within the rail"
+    },
+    {
+      "name": "ordered-live-output",
+      "status": "passed",
+      "result": "Interleaved tool and command rows preserve start order; one running CallChip remains; terminal lines wrap in wide and narrow captures"
+    },
+    {
+      "name": "harness-validate",
+      "status": "passed",
+      "result": "Passed for chat-agent-ui-hierarchy-20261119; 2026-11-20"
+    },
+    {
+      "name": "harness-run-dry",
+      "status": "passed",
+      "result": "Passed for chat-agent-ui-hierarchy-20261119; 2026-11-20"
+    },
+    {
+      "name": "sidebar-status-unit",
+      "status": "passed",
+      "result": "38 tests across orb-status, activity bell and sidebar render-containment tests; 2026-11-20"
+    },
+    {
+      "name": "electron-e2e-prior-chat-output",
+      "status": "passed",
+      "result": "15 tests in 4 specs from the preceding chat-output UI pass; 2026-11-20"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "activity-bell-completed-light.png",
+      "sha256": "f1bbadb723b42a4ebf79b8d42654f1cc0a0fd01aa2e669fc6b0e6f2664fe1a7c"
+    },
+    {
+      "path": "activity-bell-running-light.png",
+      "sha256": "1ac4538a91cf97f6299f868c1f98ccb9badce280599f22ce12e7a7b0e5bfbd28"
+    },
+    {
+      "path": "composer-git-layout-narrow.png",
+      "sha256": "33d9f241bdc7a77f5d5ef7d6138130e06f5594837e732d7ad20966826b84c836"
+    },
+    {
+      "path": "composer-review-bar.png",
+      "sha256": "4158bc2231bbdc52e250995d0f2d0cd0248de5cc03057d9da19c4206e064b2b7"
+    },
+    {
+      "path": "conversation-dark.png",
+      "sha256": "d1478dd2d44b0a6c61c094067d1e317cce0548a0c84707d052e8d7563e4ea631"
+    },
+    {
+      "path": "conversation-light.png",
+      "sha256": "27155cf6314980b8b35eefed90cc1798544d9bf419c9eae1495a1cb207c2dc79"
+    },
+    {
+      "path": "conversation-narrow.png",
+      "sha256": "5d6b77d50ec6c32a7e5b8b90e2cf75c4915c41cf226d62c9fcd5906b08f446cb"
+    },
+    {
+      "path": "file-diff-narrow.png",
+      "sha256": "411e5165650c348217fce09dd74e1fbda6bb46ae10454f94e07361780e208662"
+    },
+    {
+      "path": "ordered-run-output-narrow.png",
+      "sha256": "a40a2b30ec172099ab39a0d4f3959d28f9f9fe8003f887f058b90e4d4744860d"
+    },
+    {
+      "path": "ordered-run-output-wide.png",
+      "sha256": "134bcf71c0408b71ad2f47d97de4d687241a8d45172c3e0a1f01242f33afba0f"
+    },
+    {
+      "path": "runtime-approval-inline.png",
+      "sha256": "31bf60722e52bffd86291930ff7b165b6338154a3483a61918496f3416b8c847"
+    },
+    {
+      "path": "session-status-rail-narrow.png",
+      "sha256": "3fadf5257188aa432c9f90003d8af2e11f78bd8d7472bd6ea7020b0d0c9e4848"
+    },
+    {
+      "path": "sidebar-collapsed-running-dark.png",
+      "sha256": "ab5b1b16e1340567270d60b205247b827b74eaf3e55a1fddd3f562bdefdc824e"
+    },
+    {
+      "path": "sidebar-summary.png",
+      "sha256": "de01482f585ad254eaf8459b2733ed0129f1f7b230dfac0f13a5d17335a6259e"
+    }
+  ],
+  "candidateSourceHashAlgorithm": "SHA-256 of sorted path<TAB>sha256 lines joined with LF"
+}

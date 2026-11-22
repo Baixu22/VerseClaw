@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\artifact-panel-store-ts.json",
+  "sourceSha256": "5a68c3f6bf4bed82ef25d4a40056781bc67bd116dacf8d06ff1e670c33d3fbd6",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 8,
+    "numPassedTests": 8,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563186250,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state opens every capability through WorkspacePanelIntent without duplicate tabs",
+            "status": "passed",
+            "title": "opens every capability through WorkspacePanelIntent without duplicate tabs",
+            "duration": 3.6270000000004075,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state hides and restores the same tabs and selection until explicitly reset",
+            "status": "passed",
+            "title": "hides and restores the same tabs and selection until explicitly reset",
+            "duration": 1.7012999999997191,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state migrates legacy state { activeTab: 'changes' } to review",
+            "status": "passed",
+            "title": "migrates legacy state { activeTab: 'changes' } to review",
+            "duration": 1.2133999999996377,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state migrates legacy state { activeTab: 'preview' } to files",
+            "status": "passed",
+            "title": "migrates legacy state { activeTab: 'preview' } to files",
+            "duration": 0.32670000000052823,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state migrates legacy state { workspaceView: 'web' } to browser",
+            "status": "passed",
+            "title": "migrates legacy state { workspaceView: 'web' } to browser",
+            "duration": 0.4426999999996042,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state migrates legacy state { workspaceView: 'git' } to review",
+            "status": "passed",
+            "title": "migrates legacy state { workspaceView: 'git' } to review",
+            "duration": 0.35710000000017317,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state falls back to Files for unrecognized persisted tab values",
+            "status": "passed",
+            "title": "falls back to Files for unrecognized persisted tab values",
+            "duration": 0.3216000000002168,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel canonical workspace state"
+            ],
+            "fullName": "artifact panel canonical workspace state forces terminal intents to the bottom at 960px",
+            "status": "passed",
+            "title": "forces terminal intents to the bottom at 960px",
+            "duration": 0.2699000000002343,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563191486,
+        "endTime": 1794563191495.27,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/artifact-panel-store.test.ts"
+      }
+    ]
+  }
+}

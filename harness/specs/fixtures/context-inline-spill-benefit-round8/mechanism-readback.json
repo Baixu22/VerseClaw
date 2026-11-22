@@ -1,0 +1,351 @@
+{
+  "schema": "G7Round8MechanismReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-13T10:47:41.018Z",
+  "variants": [
+    {
+      "variant": "mechanism-anchor",
+      "source": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\mechanism-anchor\\2026-11-13T10-14-30-241Z-deterministic",
+      "runsSha256": "5cc9dba1131e6b79f0189fb760f4baf427149a24eac2bddc31d2079adb25aa25",
+      "resultSha256": "1b6003e995e65ebf3a2d29691aa59cb41a4bba1712a38006abd34b64b19416bd",
+      "stats": {
+        "baseline-no-reference": {
+          "arm": "baseline-no-reference",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 0,
+          "recallOkRate": 0,
+          "meanTurns": 1,
+          "meanMainContextChars": 1091.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recall_not_attempted": 6,
+            "none": 2
+          }
+        },
+        "reference-visible": {
+          "arm": "reference-visible",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.25,
+          "meanMainContextChars": 18059.75,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "recall-stable": {
+          "arm": "recall-stable",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.25,
+          "meanMainContextChars": 18462,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "retention-off": {
+          "arm": "retention-off",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 4,
+          "meanMainContextChars": 18857.5,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recalled_text_evicted": 6,
+            "none": 2
+          }
+        }
+      },
+      "modelAutonomyEvaluated": false,
+      "liveBenefitEvaluated": false,
+      "tokenBudgetEvaluated": false
+    },
+    {
+      "variant": "mechanism-navigation",
+      "source": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\mechanism-navigation\\2026-11-13T10-14-30-247Z-deterministic",
+      "runsSha256": "956efd569ce2600c9771c8138093f58afba45358fd49ee7f35fbad16b37ecc95",
+      "resultSha256": "ba0a0cdaeb08cf0d9510fc7623a9315991b8dca31e7b6097cbd4698541900fc9",
+      "stats": {
+        "baseline-no-reference": {
+          "arm": "baseline-no-reference",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 0,
+          "recallOkRate": 0,
+          "meanTurns": 1,
+          "meanMainContextChars": 1612.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recall_not_attempted": 6,
+            "none": 2
+          }
+        },
+        "reference-visible": {
+          "arm": "reference-visible",
+          "runs": 8,
+          "pass": 4,
+          "successRate": 0.5,
+          "wilson95": [
+            0.21521606221387757,
+            0.7847839377861224
+          ],
+          "evidenceSuccessRate": 0.3333333333333333,
+          "controlSuccessRate": 1,
+          "passAtK": 0.3333333333333333,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.75,
+          "meanMainContextChars": 18819.5,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 4,
+            "answer_mismatch": 4
+          }
+        },
+        "recall-stable": {
+          "arm": "recall-stable",
+          "runs": 8,
+          "pass": 4,
+          "successRate": 0.5,
+          "wilson95": [
+            0.21521606221387757,
+            0.7847839377861224
+          ],
+          "evidenceSuccessRate": 0.3333333333333333,
+          "controlSuccessRate": 1,
+          "passAtK": 0.3333333333333333,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.75,
+          "meanMainContextChars": 19300.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 4,
+            "answer_mismatch": 4
+          }
+        },
+        "retention-off": {
+          "arm": "retention-off",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 4,
+          "meanMainContextChars": 19384.5,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recalled_text_evicted": 6,
+            "none": 2
+          }
+        }
+      },
+      "modelAutonomyEvaluated": false,
+      "liveBenefitEvaluated": false,
+      "tokenBudgetEvaluated": false
+    },
+    {
+      "variant": "mechanism-navigation-fixed",
+      "source": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\mechanism-navigation-fixed\\2026-11-13T10-23-23-978Z-deterministic",
+      "runsSha256": "8f7a4bf62fb27beeec2044a0561084f48679ce02ff99f8624296e802984989a6",
+      "resultSha256": "3836be44f06fa7a75f9291106da999c1b1f2ed974f6aee2c22efe0f957c8e722",
+      "stats": {
+        "baseline-no-reference": {
+          "arm": "baseline-no-reference",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 0,
+          "recallOkRate": 0,
+          "meanTurns": 1,
+          "meanMainContextChars": 1612.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recall_not_attempted": 6,
+            "none": 2
+          }
+        },
+        "reference-visible": {
+          "arm": "reference-visible",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.25,
+          "meanMainContextChars": 18608.5,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "recall-stable": {
+          "arm": "recall-stable",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.25,
+          "meanMainContextChars": 19010.75,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "retention-off": {
+          "arm": "retention-off",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 4,
+          "meanMainContextChars": 19384.5,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recalled_text_evicted": 6,
+            "none": 2
+          }
+        }
+      },
+      "modelAutonomyEvaluated": false,
+      "liveBenefitEvaluated": false,
+      "tokenBudgetEvaluated": false
+    }
+  ],
+  "repair": "Remove the word-boundary requirement: the frozen corpus concatenates the marker after log letters. Field location and navigation use current visible input only."
+}

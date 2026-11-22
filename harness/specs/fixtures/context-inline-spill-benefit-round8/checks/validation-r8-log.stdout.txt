@@ -1,0 +1,5 @@
+f8d41ddb2 fix(context-eval): label deterministic recall origins accurately
+3e875f462 eval(context): freeze source labels for scripted and live recall evidence
+a5972fdc9 fix(context-eval): guide recall from visible call metadata and field locations
+486f078ab eval(context): freeze visible archive navigation and completion rules
+1a12ad0cd eval(context): retain G7 budget repair and seventh-round NO_GO

@@ -1,0 +1,492 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-message-tsx.json",
+  "sourceSha256": "f84bb029617a38db9af3c9208078a47bde8e53e55075de179d800b8d91024bfb",
+  "result": {
+    "numTotalTestSuites": 9,
+    "numPassedTestSuites": 9,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 37,
+    "numPassedTests": 37,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563251859,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe renders assistant text without an avatar or a reserved avatar column",
+            "status": "passed",
+            "title": "renders assistant text without an avatar or a reserved avatar column",
+            "duration": 158.20880000000034,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe keeps attachment-only assistant replies visible even when process attachments are suppressed",
+            "status": "passed",
+            "title": "keeps attachment-only assistant replies visible even when process attachments are suppressed",
+            "duration": 9.065499999999702,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe keeps image artifacts visible alongside reply text when process attachments are suppressed",
+            "status": "passed",
+            "title": "keeps image artifacts visible alongside reply text when process attachments are suppressed",
+            "duration": 9.621799999999894,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe shows an explicit loading state for image artifacts before preview hydration finishes",
+            "status": "passed",
+            "title": "shows an explicit loading state for image artifacts before preview hydration finishes",
+            "duration": 21.714500000000044,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe shows an unavailable state after image preview hydration gives up",
+            "status": "passed",
+            "title": "shows an unavailable state after image preview hydration gives up",
+            "duration": 9.76760000000013,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe keeps message-ref image artifacts visible alongside reply text when process attachments are suppressed",
+            "status": "passed",
+            "title": "keeps message-ref image artifacts visible alongside reply text when process attachments are suppressed",
+            "duration": 8.631800000000112,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe keeps html artifacts visible when process attachments are suppressed",
+            "status": "passed",
+            "title": "keeps html artifacts visible when process attachments are suppressed",
+            "duration": 134.8756999999996,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe hides generic tool-result markdown attachments when process attachments are suppressed",
+            "status": "passed",
+            "title": "hides generic tool-result markdown attachments when process attachments are suppressed",
+            "duration": 7.211599999999635,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe keeps attached SKILL.md visible when process attachments are suppressed",
+            "status": "passed",
+            "title": "keeps attached SKILL.md visible when process attachments are suppressed",
+            "duration": 9.946100000000115,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe keeps pdf and spreadsheet artifacts visible when process attachments are suppressed",
+            "status": "passed",
+            "title": "keeps pdf and spreadsheet artifacts visible when process attachments are suppressed",
+            "duration": 11.872399999999288,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe derives preview cards from assistant text paths when attachments are missing",
+            "status": "passed",
+            "title": "derives preview cards from assistant text paths when attachments are missing",
+            "duration": 126.02880000000005,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe derives skill directory cards from assistant text paths",
+            "status": "passed",
+            "title": "derives skill directory cards from assistant text paths",
+            "duration": 125.95100000000002,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe keeps unicode Windows skill directory paths as cards",
+            "status": "passed",
+            "title": "keeps unicode Windows skill directory paths as cards",
+            "duration": 124.82720000000063,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe shows SKILL.md as a previewable file card instead of a folder",
+            "status": "passed",
+            "title": "shows SKILL.md as a previewable file card instead of a folder",
+            "duration": 146.79889999999978,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe does not show cards for hallucinated missing paths",
+            "status": "passed",
+            "title": "does not show cards for hallucinated missing paths",
+            "duration": 7.426400000000285,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage attachment dedupe"
+            ],
+            "fullName": "ChatMessage attachment dedupe continues hiding non-preview process attachments when process attachments are suppressed",
+            "status": "passed",
+            "title": "continues hiding non-preview process attachments when process attachments are suppressed",
+            "duration": 4.807099999999991,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage range readiness"
+            ],
+            "fullName": "ChatMessage range readiness keeps its boundary action disabled until the owner scope is ready",
+            "status": "passed",
+            "title": "keeps its boundary action disabled until the owner scope is ready",
+            "duration": 20.223899999999958,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage LaTeX rendering"
+            ],
+            "fullName": "ChatMessage LaTeX rendering renders inline `$...$` math with KaTeX",
+            "status": "passed",
+            "title": "renders inline `$...$` math with KaTeX",
+            "duration": 24.356400000000576,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage LaTeX rendering"
+            ],
+            "fullName": "ChatMessage LaTeX rendering renders display `$$...$$` math as a block",
+            "status": "passed",
+            "title": "renders display `$$...$$` math as a block",
+            "duration": 21.848899999999958,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage LaTeX rendering"
+            ],
+            "fullName": "ChatMessage LaTeX rendering renders `\\(...\\)` inline math (OpenAI-style escaping)",
+            "status": "passed",
+            "title": "renders `\\(...\\)` inline math (OpenAI-style escaping)",
+            "duration": 26.894000000000233,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage LaTeX rendering"
+            ],
+            "fullName": "ChatMessage LaTeX rendering renders `\\[...\\]` block math (OpenAI-style escaping)",
+            "status": "passed",
+            "title": "renders `\\[...\\]` block math (OpenAI-style escaping)",
+            "duration": 12.810599999999795,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage LaTeX rendering"
+            ],
+            "fullName": "ChatMessage LaTeX rendering does not rewrite `\\(` inside code fences",
+            "status": "passed",
+            "title": "does not rewrite `\\(` inside code fences",
+            "duration": 7.256899999999405,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage word wrapping"
+            ],
+            "fullName": "ChatMessage word wrapping does not apply break-all to the assistant prose wrapper",
+            "status": "passed",
+            "title": "does not apply break-all to the assistant prose wrapper",
+            "duration": 3.367699999999786,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage word wrapping"
+            ],
+            "fullName": "ChatMessage word wrapping does not apply break-all to user message text",
+            "status": "passed",
+            "title": "does not apply break-all to user message text",
+            "duration": 4.188600000000406,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage word wrapping"
+            ],
+            "fullName": "ChatMessage word wrapping leaves inline code styling to the ported Codex recipe",
+            "status": "passed",
+            "title": "leaves inline code styling to the ported Codex recipe",
+            "duration": 4.658800000000156,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage word wrapping"
+            ],
+            "fullName": "ChatMessage word wrapping wraps fenced code block contents instead of overflowing horizontally",
+            "status": "passed",
+            "title": "wraps fenced code block contents instead of overflowing horizontally",
+            "duration": 5.92450000000008,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage reply styling"
+            ],
+            "fullName": "ChatMessage reply styling renders assistant replies as plain Markdown without a rounded bubble wrapper",
+            "status": "passed",
+            "title": "renders assistant replies as plain Markdown without a rounded bubble wrapper",
+            "duration": 3.8311000000003332,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage reply styling"
+            ],
+            "fullName": "ChatMessage reply styling keeps user messages in the blue rounded bubble",
+            "status": "passed",
+            "title": "keeps user messages in the blue rounded bubble",
+            "duration": 3.69170000000031,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage image copy"
+            ],
+            "fullName": "ChatMessage image copy copies image bytes instead of the media URL text when an image attachment is present",
+            "status": "passed",
+            "title": "copies image bytes instead of the media URL text when an image attachment is present",
+            "duration": 91.60040000000026,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Tool UI rendering"
+            ],
+            "fullName": "ChatMessage Tool UI rendering renders fenced Tool UI plan payloads on demand and removes the raw JSON block",
+            "status": "passed",
+            "title": "renders fenced Tool UI plan payloads on demand and removes the raw JSON block",
+            "duration": 130.76419999999962,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Tool UI rendering"
+            ],
+            "fullName": "ChatMessage Tool UI rendering renders Tool UI option-list tool calls and emits a structured response",
+            "status": "passed",
+            "title": "renders Tool UI option-list tool calls and emits a structured response",
+            "duration": 52.26839999999993,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Tool UI rendering"
+            ],
+            "fullName": "ChatMessage Tool UI rendering parses relaxed Tool UI wrapper arrays from component-specific fences",
+            "status": "passed",
+            "title": "parses relaxed Tool UI wrapper arrays from component-specific fences",
+            "duration": 36.269099999999526,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Tool UI rendering"
+            ],
+            "fullName": "ChatMessage Tool UI rendering converts Markdown plan checklists into plan cards",
+            "status": "passed",
+            "title": "converts Markdown plan checklists into plan cards",
+            "duration": 22.86700000000019,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Tool UI rendering"
+            ],
+            "fullName": "ChatMessage Tool UI rendering converts Markdown question and options blocks into question flow cards",
+            "status": "passed",
+            "title": "converts Markdown question and options blocks into question flow cards",
+            "duration": 7.319700000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Tool UI rendering"
+            ],
+            "fullName": "ChatMessage Tool UI rendering converts Markdown preferences tables into preferences panel cards",
+            "status": "passed",
+            "title": "converts Markdown preferences tables into preferences panel cards",
+            "duration": 84.3119000000006,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Tool UI rendering"
+            ],
+            "fullName": "ChatMessage Tool UI rendering keeps ordinary JSON code fences visible when they are not Tool UI payloads",
+            "status": "passed",
+            "title": "keeps ordinary JSON code fences visible when they are not Tool UI payloads",
+            "duration": 9.48700000000008,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ChatMessage Fork action identity and availability"
+            ],
+            "fullName": "ChatMessage Fork action identity and availability keeps a missing boundary visible and disabled, and never bypasses busy message actions",
+            "status": "passed",
+            "title": "keeps a missing boundary visible and disabled, and never bypasses busy message actions",
+            "duration": 24.54149999999936,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563256916,
+        "endTime": 1794563258432.5415,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-message.test.tsx"
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "driven_by": "agent",
+  "source": "real Electron terminal/permissions services and persisted store",
+  "requestIds": [
+    "approval-mwqbzhcd-4cidfm",
+    "approval-mwqbziul-nddwkv"
+  ],
+  "approvals": [
+    {
+      "id": "approval-mwqbziul-nddwkv",
+      "workspaceId": "permission-ux",
+      "sessionKey": "agent:main:main",
+      "runId": null,
+      "mode": "acceptEdits",
+      "source": "terminal",
+      "requestedAt": 1795260898605,
+      "status": "approved",
+      "risk": "network",
+      "command": "curl --help",
+      "cwd": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer\\permission-workspace",
+      "requestHash": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer\\permission-workspace:curl --help",
+      "reason": "Accept-edits mode requires approval for high-risk commands",
+      "resolvedAt": 1795260899767
+    },
+    {
+      "id": "approval-mwqbzhcd-4cidfm",
+      "workspaceId": "permission-ux",
+      "sessionKey": "agent:main:main",
+      "runId": null,
+      "mode": "acceptEdits",
+      "source": "terminal",
+      "requestedAt": 1795260896653,
+      "status": "denied",
+      "risk": "network",
+      "command": "curl --version",
+      "cwd": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer\\permission-workspace",
+      "requestHash": "D:\\tmp\\ui-ux-20261121-01a1fdaa\\e2e-closure-results\\chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer\\permission-workspace:curl --version",
+      "reason": "Accept-edits mode requires approval for high-risk commands",
+      "resolvedAt": 1795260898515
+    }
+  ]
+}

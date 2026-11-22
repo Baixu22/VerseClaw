@@ -1,0 +1,545 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/git-ui-20261121-01a1fdaa/results-01",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "changed",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "git-ui-consistency.spec.ts",
+      "file": "git-ui-consistency.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Git surfaces retain complete content and clear actions in light",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 16931,
+                  "error": {
+                    "message": "Error: locator.click: Error: strict mode violation: getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools3')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n",
+                    "stack": "Error: locator.click: Error: strict mode violation: getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools3')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts:64:76",
+                    "location": {
+                      "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts",
+                      "column": 76,
+                      "line": 64
+                    },
+                    "snippet": "  62 |    await expect(panel.getByTestId('workspace-git-commit-row')).toContainText('Keep workspace decisions');\n  63 |    await panel.getByTestId('workspace-git-history').locator('summary').click();\n> 64 |    await panel.getByTestId('workspace-git-tool-drawer').locator('summary').click();\n     |                                                                            ^\n  65 |    const tabs=panel.getByTestId('workspace-git-tool-tabs');\n  66 |    const protectedRow=panel.getByTestId('workspace-git-worktree-row').filter({hasText:'codex/active-review'});\n  67 |    await expect(protectedRow.getByRole('button',{name:'Remove',exact:true})).toBeDisabled();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts",
+                        "column": 76,
+                        "line": 64
+                      },
+                      "message": "Error: locator.click: Error: strict mode violation: getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools3')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n\n  62 |    await expect(panel.getByTestId('workspace-git-commit-row')).toContainText('Keep workspace decisions');\n  63 |    await panel.getByTestId('workspace-git-history').locator('summary').click();\n> 64 |    await panel.getByTestId('workspace-git-tool-drawer').locator('summary').click();\n     |                                                                            ^\n  65 |    const tabs=panel.getByTestId('workspace-git-tool-tabs');\n  66 |    const protectedRow=panel.getByTestId('workspace-git-worktree-row').filter({hasText:'codex/active-review'});\n  67 |    await expect(protectedRow.getByRole('button',{name:'Remove',exact:true})).toBeDisabled();\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts:64:76"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-21T13:55:12.205Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\git-ui-consistency-Git-sur-d1df4--and-clear-actions-in-light\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\git-ui-consistency-Git-sur-d1df4--and-clear-actions-in-light\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\git-ui-consistency-Git-sur-d1df4--and-clear-actions-in-light\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts",
+                    "column": 76,
+                    "line": 64
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e8e3b619e8b60bb22cb8-c9eaf7c296e5fc8eeab2",
+          "file": "git-ui-consistency.spec.ts",
+          "line": 50,
+          "column": 6
+        },
+        {
+          "title": "Git surfaces retain complete content and clear actions in dark",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11915,
+                  "error": {
+                    "message": "Error: locator.click: Error: strict mode violation: getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools3')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n",
+                    "stack": "Error: locator.click: Error: strict mode violation: getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools3')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts:64:76",
+                    "location": {
+                      "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts",
+                      "column": 76,
+                      "line": 64
+                    },
+                    "snippet": "  62 |    await expect(panel.getByTestId('workspace-git-commit-row')).toContainText('Keep workspace decisions');\n  63 |    await panel.getByTestId('workspace-git-history').locator('summary').click();\n> 64 |    await panel.getByTestId('workspace-git-tool-drawer').locator('summary').click();\n     |                                                                            ^\n  65 |    const tabs=panel.getByTestId('workspace-git-tool-tabs');\n  66 |    const protectedRow=panel.getByTestId('workspace-git-worktree-row').filter({hasText:'codex/active-review'});\n  67 |    await expect(protectedRow.getByRole('button',{name:'Remove',exact:true})).toBeDisabled();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts",
+                        "column": 76,
+                        "line": 64
+                      },
+                      "message": "Error: locator.click: Error: strict mode violation: getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools3')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n\n  62 |    await expect(panel.getByTestId('workspace-git-commit-row')).toContainText('Keep workspace decisions');\n  63 |    await panel.getByTestId('workspace-git-history').locator('summary').click();\n> 64 |    await panel.getByTestId('workspace-git-tool-drawer').locator('summary').click();\n     |                                                                            ^\n  65 |    const tabs=panel.getByTestId('workspace-git-tool-tabs');\n  66 |    const protectedRow=panel.getByTestId('workspace-git-worktree-row').filter({hasText:'codex/active-review'});\n  67 |    await expect(protectedRow.getByRole('button',{name:'Remove',exact:true})).toBeDisabled();\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts:64:76"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-21T13:55:30.139Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\git-ui-consistency-Git-sur-1c64d-t-and-clear-actions-in-dark\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\git-ui-consistency-Git-sur-1c64d-t-and-clear-actions-in-dark\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\git-ui-consistency-Git-sur-1c64d-t-and-clear-actions-in-dark\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\git-ui-consistency.spec.ts",
+                    "column": 76,
+                    "line": 64
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e8e3b619e8b60bb22cb8-15113ff8d22372c3d771",
+          "file": "git-ui-consistency.spec.ts",
+          "line": 50,
+          "column": 6
+        }
+      ]
+    },
+    {
+      "title": "session-worktree-storage.spec.ts",
+      "file": "session-worktree-storage.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real repository, isolated worktree, storage command and settings in light/dark/narrow layouts",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27898,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('session-worktree-trigger')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('session-worktree-trigger')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('session-worktree-trigger')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('session-worktree-trigger')\u001b[22m\n\n    at openWorktrees (D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\session-worktree-storage.spec.ts:23:25)\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\session-worktree-storage.spec.ts:49:5",
+                    "location": {
+                      "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\session-worktree-storage.spec.ts",
+                      "column": 25,
+                      "line": 23
+                    },
+                    "snippet": "  21 |     await parent.focus(); await parent.press('Enter');\n  22 |   }\n> 23 |   await expect(trigger).toBeVisible(); await trigger.focus(); await trigger.press('Enter');\n     |                         ^\n  24 | }\n  25 |\n  26 | test('real repository, isolated worktree, storage command and settings in light/dark/narrow layouts', async ({ launchElectronApp }, testInfo) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\session-worktree-storage.spec.ts",
+                        "column": 25,
+                        "line": 23
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('session-worktree-trigger')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('session-worktree-trigger')\u001b[22m\n\n\n  21 |     await parent.focus(); await parent.press('Enter');\n  22 |   }\n> 23 |   await expect(trigger).toBeVisible(); await trigger.focus(); await trigger.press('Enter');\n     |                         ^\n  24 | }\n  25 |\n  26 | test('real repository, isolated worktree, storage command and settings in light/dark/narrow layouts', async ({ launchElectronApp }, testInfo) => {\n    at openWorktrees (D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\session-worktree-storage.spec.ts:23:25)\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\session-worktree-storage.spec.ts:49:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-21T13:55:42.898Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\session-worktree-storage.spec.ts",
+                    "column": 25,
+                    "line": 23
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8582c5067f0ab6cc5353-4229dee4b702021f86c7",
+          "file": "session-worktree-storage.spec.ts",
+          "line": 26,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "workspace-git-panel.spec.ts",
+      "file": "workspace-git-panel.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Workspace Git panel",
+          "file": "workspace-git-panel.spec.ts",
+          "line": 253,
+          "column": 6,
+          "specs": [
+            {
+              "title": "renders status, diff, auth guidance, and approval-blocked write actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11417,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools31')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools31')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts:550:43",
+                        "location": {
+                          "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                          "column": 43,
+                          "line": 550
+                        },
+                        "snippet": "  548 |\n  549 |       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');\n> 550 |       await toolDrawer.locator('summary').click();\n      |                                           ^\n  551 |       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');\n  552 |       await expect(toolTabs.getByRole('button', { name: 'Worktree' })).toBeVisible();\n  553 |       await expect(toolTabs.getByRole('button', { name: 'Stash' })).toBeVisible();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                            "column": 43,
+                            "line": 550
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools31')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n\n  548 |\n  549 |       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');\n> 550 |       await toolDrawer.locator('summary').click();\n      |                                           ^\n  551 |       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');\n  552 |       await expect(toolTabs.getByRole('button', { name: 'Worktree' })).toBeVisible();\n  553 |       await expect(toolTabs.getByRole('button', { name: 'Stash' })).toBeVisible();\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts:550:43"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-21T13:56:11.570Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-7e8c3-roval-blocked-write-actions\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-7e8c3-roval-blocked-write-actions\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-7e8c3-roval-blocked-write-actions\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                        "column": 43,
+                        "line": 550
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "cd46aa8099670fc3d070-d363d2c9a0281b25b50f",
+              "file": "workspace-git-panel.spec.ts",
+              "line": 254,
+              "column": 7
+            },
+            {
+              "title": "creates a draft GitHub PR with explicit base and head through approval",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11639,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools31GH')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools31GH')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts:836:43",
+                        "location": {
+                          "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                          "column": 43,
+                          "line": 836
+                        },
+                        "snippet": "  834 |       await expect(gitPanel).toBeVisible();\n  835 |       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');\n> 836 |       await toolDrawer.locator('summary').click();\n      |                                           ^\n  837 |       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');\n  838 |       await expect(toolTabs).toBeVisible();\n  839 |       await toolTabs.getByRole('button', { name: 'PR' }).click();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                            "column": 43,
+                            "line": 836
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools31GH')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n\n  834 |       await expect(gitPanel).toBeVisible();\n  835 |       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');\n> 836 |       await toolDrawer.locator('summary').click();\n      |                                           ^\n  837 |       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');\n  838 |       await expect(toolTabs).toBeVisible();\n  839 |       await toolTabs.getByRole('button', { name: 'PR' }).click();\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts:836:43"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-21T13:56:23.813Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-8dfb0-e-and-head-through-approval\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-8dfb0-e-and-head-through-approval\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-8dfb0-e-and-head-through-approval\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                        "column": 43,
+                        "line": 836
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "cd46aa8099670fc3d070-d2f212c305450aba8a2c",
+              "file": "workspace-git-panel.spec.ts",
+              "line": 653,
+              "column": 7
+            },
+            {
+              "title": "anchors audit partial failure, truncation, and drive-root worktree approval",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11585,
+                      "error": {
+                        "message": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools1')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n",
+                        "stack": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools1')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts:1035:43",
+                        "location": {
+                          "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                          "column": 43,
+                          "line": 1035
+                        },
+                        "snippet": "  1033 |       await expect(gitPanel).toBeVisible();\n  1034 |       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');\n> 1035 |       await toolDrawer.locator('summary').click();\n       |                                           ^\n  1036 |       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');\n  1037 |       await toolTabs.getByRole('button', { name: 'Worktree' }).click();\n  1038 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                            "column": 43,
+                            "line": 1035
+                          },
+                          "message": "Error: locator.click: Error: strict mode violation: getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary') resolved to 2 elements:\n    1) <summary class=\"flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2\">…</summary> aka getByText('Repository tools1')\n    2) <summary>…</summary> aka getByTestId('workspace-git-create-worktree').locator('summary')\n\nCall log:\n\u001b[2m  - waiting for getByTestId('artifact-panel').getByTestId('workspace-git-panel').getByTestId('workspace-git-tool-drawer').locator('summary')\u001b[22m\n\n\n  1033 |       await expect(gitPanel).toBeVisible();\n  1034 |       const toolDrawer = gitPanel.getByTestId('workspace-git-tool-drawer');\n> 1035 |       await toolDrawer.locator('summary').click();\n       |                                           ^\n  1036 |       const toolTabs = gitPanel.getByTestId('workspace-git-tool-tabs');\n  1037 |       await toolTabs.getByRole('button', { name: 'Worktree' }).click();\n  1038 |\n    at D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts:1035:43"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-21T13:56:36.344Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-7f9d8-rive-root-worktree-approval\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-7f9d8-rive-root-worktree-approval\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\git-ui-20261121-01a1fdaa\\results-01\\workspace-git-panel-Worksp-7f9d8-rive-root-worktree-approval\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\ClawX-work\\chat-ui-hierarchy-20261119-01a1f3aa\\tests\\e2e\\workspace-git-panel.spec.ts",
+                        "column": 43,
+                        "line": 1035
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "cd46aa8099670fc3d070-01ba5bc2dc43379689cc",
+              "file": "workspace-git-panel.spec.ts",
+              "line": 859,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-21T13:55:09.513Z",
+    "duration": 99527.634,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}

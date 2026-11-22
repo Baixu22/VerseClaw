@@ -1,0 +1,46 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import assert from 'node:assert/strict';
+const [dir,wireFile,outFile]=process.argv.slice(2);
+const summary=JSON.parse(readFileSync(join(dir,'result.json'),'utf8'));
+const records=JSON.parse(readFileSync(join(dir,'runs.json'),'utf8')).records;
+const arms=Object.keys(summary.design.arms);
+const evidence=new Set(summary.design.evidenceTasks);
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+const pct=(a,q)=>[...a].sort((a,b)=>a-b)[Math.floor(q*(a.length-1))];
+const wilson=(pass,n)=>{const z=1.959963984540054,p=pass/n,d=1+z*z/n,c=(p+z*z/(2*n))/d,h=z*Math.sqrt((p*(1-p)+z*z/(4*n))/n)/d;return [Math.max(0,c-h),Math.min(1,c+h)]};
+const mc=(b,c)=>{const n=b+c;if(!n)return 1;let sum=1,v=1;for(let i=1;i<=Math.min(b,c);i++){v=v*(n-i+1)/i;sum+=v}return Math.min(1,2*sum/2**n)};
+const same=(a,b,p)=>{if(typeof a==='number' && typeof b==='number'){assert(Math.abs(a-b)<1e-8,p+': '+a+' != '+b)}else if(Array.isArray(a)){a.forEach((x,i)=>same(x,b[i],p+'.'+i))}else if(a && typeof a==='object'){Object.keys(a).forEach(k=>same(a[k],b[k],p+'.'+k))}else assert.equal(a,b,p)};
+const stats={};
+for(const arm of arms){const rows=records.filter(r=>r.arm===arm),ev=rows.filter(r=>evidence.has(r.fixtureId)),control=rows.filter(r=>!evidence.has(r.fixtureId));const pass=rows.filter(r=>r.success).length;stats[arm]={arm,runs:rows.length,pass,successRate:pass/rows.length,wilson95:wilson(pass,rows.length),evidenceSuccessRate:ev.filter(r=>r.success).length/ev.length,controlSuccessRate:control.filter(r=>r.success).length/control.length,passAtK:[...evidence].filter(id=>rows.filter(r=>r.fixtureId===id).every(r=>r.success)).length/evidence.size,recallAttemptRate:ev.filter(r=>r.recallAttempted).length/ev.length,recallOkRate:ev.filter(r=>r.recallOk).length/ev.length,meanTurns:mean(rows.map(r=>r.turns)),meanMainContextChars:mean(rows.map(r=>r.mainContextChars)),meanInputTokens:mean(rows.map(r=>r.inputTokens)),meanOutputTokens:mean(rows.map(r=>r.outputTokens)),meanTotalTokens:mean(rows.map(r=>r.totalTokens)),p50LatencyMs:pct(rows.map(r=>r.latencyMs),.5),p95LatencyMs:pct(rows.map(r=>r.latencyMs),.95),failureClasses:rows.reduce((a,r)=>{a[r.failureClass??'none']=(a[r.failureClass??'none']||0)+1;return a},{})};same(stats[arm],summary.stats[arm],arm)}
+const comparisons={};
+for(const other of ['baseline-no-reference','retention-off','reference-visible']){const v={both:0,onlyA:0,onlyB:0,neither:0};for(const a of records.filter(r=>r.arm==='recall-stable')){const b=records.find(r=>r.arm===other&&r.fixtureId===a.fixtureId&&r.repetition===a.repetition);assert(b);v[a.success?(b.success?'both':'onlyA'):(b.success?'onlyB':'neither')]++}v.p=mc(v.onlyA,v.onlyB);const key='recall-stable_vs_'+(other==='baseline-no-reference'?'baseline':other);comparisons[key]=v;same(v,summary.comparisons[key],key)}
+const stable=stats['recall-stable'],ref=stats['reference-visible'],off=stats['retention-off'];const growth=stable.meanMainContextChars-off.meanMainContextChars,tokenGrowth=ref.meanTotalTokens?(stable.meanTotalTokens-ref.meanTotalTokens)/ref.meanTotalTokens:0;
+const evidenceComparisons={};
+if(summary.evidenceComparisons){
+ for(const other of ['baseline-no-reference','retention-off','reference-visible']){
+  const value={both:0,onlyA:0,onlyB:0,neither:0};
+  for(const a of records.filter(r=>r.arm==='recall-stable'&&evidence.has(r.fixtureId))){
+   const b=records.find(r=>r.arm===other&&r.fixtureId===a.fixtureId&&r.repetition===a.repetition);assert(b);
+   value[a.success?(b.success?'both':'onlyA'):(b.success?'onlyB':'neither')]++;
+  }
+  value.p=mc(value.onlyA,value.onlyB);
+  const key='recall-stable_vs_'+(other==='baseline-no-reference'?'baseline':other);
+  evidenceComparisons[key]=value;same(value,summary.evidenceComparisons[key],key+'.evidence');
+ }
+}
+const gatePairs=summary.evidenceComparisons?evidenceComparisons:comparisons;
+const b3Evidence=gatePairs['recall-stable_vs_retention-off'];
+const decisions={b1_mechanism_and_autonomy:stable.recallAttemptRate>=.8&&stable.recallOkRate>=.95,b2_task_benefit:stable.evidenceSuccessRate-stats['baseline-no-reference'].evidenceSuccessRate>=.3&&gatePairs['recall-stable_vs_baseline'].p<.05,b3_retention_benefit:stable.evidenceSuccessRate>off.evidenceSuccessRate&&b3Evidence.onlyA>=1&&b3Evidence.onlyB===0,b4_non_inferiority:stable.evidenceSuccessRate>=ref.evidenceSuccessRate-.05,b5_no_fabrication:stable.controlSuccessRate===1,b6_budget:growth<=16000&&tokenGrowth<=.25,contextGrowthChars:growth,tokenGrowthPct:tokenGrowth};same(decisions,summary.decision,'decision');
+const facts={driven_by:'agent',actor:summary.actor,realHumanEvidence:false,mode:summary.mode,records:records.length,allSummaryNumbersRecomputed:true,stats,comparisons,evidenceComparisons,decisions,wire:null};
+if(wireFile!=='-'){
+ const wires=readFileSync(wireFile,'utf8').trim().split(/\r?\n/).filter(Boolean).map(JSON.parse);assert.equal(wires.length,records.reduce((s,r)=>s+r.turns,0));let cursor=0;const perRun=[];const oracle={ 'deploy-token':'DEPLOY_TOKEN_7f31ab','db-passport':'DB_PASSPORT_9c02de','cache-seed':'CACHE_SEED_44aa10','signing-key':'SIGNING_KEY_b71c55','tenant-id':'TENANT_ID_3d9e77','migration-hash':'MIGRATION_HASH_a1f4c8'};
+ for(const r of records){const calls=wires.slice(cursor,cursor+r.turns);cursor+=r.turns;let finalRaw=null;let input=0,output=0,total=0;let modelRecalls=0,maxParallel=0;for(let i=0;i<calls.length;i++){const w=calls[i],b=JSON.parse(w.response||'{}');const rawCalls=(b.output||[]).filter(x=>x.type==='function_call'&&x.name==='context_archive_recall');modelRecalls+=rawCalls.length;maxParallel=Math.max(maxParallel,rawCalls.length);for(const denied of rawCalls.slice(1)){assert(r.toolCalls.some(t=>t.call_id===denied.call_id&&t.failure_code==='parallel_recall_limit'&&t.ok===false),'parallel call was not rejected')};input+=Number(b.usage?.input_tokens||0);output+=Number(b.usage?.output_tokens||0);total+=Number(b.usage?.total_tokens||0);same(b.usage??null,r.providerCalls[i].usage,'usage');assert.equal(String(b.output_text??''),r.providerCalls[i].text);if(!(b.output||[]).some(x=>x.type==='function_call'))finalRaw=String(b.output_text??'');if(r.arm==='baseline-no-reference')for(const value of Object.values(oracle))assert(!JSON.stringify(w.request).includes(value),'baseline oracle leak')}
+ assert.equal(input,r.inputTokens);assert.equal(output,r.outputTokens);assert.equal(total,r.totalTokens);assert.equal(modelRecalls,r.toolCalls.length);if(finalRaw!==null){let parsed={ok:false,value:null};try{const p=JSON.parse(finalRaw.slice(finalRaw.indexOf('{'),finalRaw.lastIndexOf('}')+1));if(p.value===null||typeof p.value==='string')parsed={ok:true,value:p.value}}catch{}same(parsed,r.finalAnswer,'answer');assert.equal(parsed.ok&&parsed.value===(oracle[r.fixtureId]??null),r.success)}
+ const last=calls.at(-1).request;const val=oracle[r.fixtureId];const lastPrompt=last.input[0].content;const history=JSON.stringify(last.input.slice(1));perRun.push({arm:r.arm,fixtureId:r.fixtureId,repetition:r.repetition,modelRecalls,maxParallel,rawRequestChars:JSON.stringify(last).length,reportedMainContextChars:r.mainContextChars,oracleInFinalPrompt:!!val&&lastPrompt.includes(val),oracleInUnprojectedHistory:!!val&&history.includes(val),incomplete:calls.filter(w=>JSON.parse(w.response||'{}').status==='incomplete').length,firstRequest:JSON.stringify(calls[0].request)});
+ }
+ const pairChecks=perRun.filter(r=>r.arm==='recall-stable').map(r=>{const off=perRun.find(o=>o.arm==='retention-off'&&o.fixtureId===r.fixtureId&&o.repetition===r.repetition);return{fixtureId:r.fixtureId,repetition:r.repetition,byteIdentical:r.firstRequest===off.firstRequest}});
+ facts.wire={providerCalls:wires.length,rawUsageAndAnswersMatch:true,baselineOracleLeaks:0,parallelRecallsRejected:records.flatMap(r=>r.toolCalls).filter(t=>t.failure_code==='parallel_recall_limit').length,maxParallel:Math.max(...perRun.map(r=>r.maxParallel)),runsAboveThreeModelRecalls:perRun.filter(r=>r.modelRecalls>3).length,incompleteResponses:perRun.reduce((s,r)=>s+r.incomplete,0),providerCallP50LatencyMs:pct(records.flatMap(r=>r.providerCalls.map(c=>c.latency_ms)),.5),providerCallP95LatencyMs:pct(records.flatMap(r=>r.providerCalls.map(c=>c.latency_ms)),.95),providerCallLatencyByArm:Object.fromEntries(arms.map(a=>{const calls=records.filter(r=>r.arm===a).flatMap(r=>r.providerCalls.map(c=>c.latency_ms));return [a,{calls:calls.length,p50:pct(calls,.5),p95:pct(calls,.95),total:calls.reduce((s,x)=>s+x,0)}]})),initialPairInputs:pairChecks,perRun:perRun.map(({firstRequest,...r})=>r)};
+}
+writeFileSync(outFile,JSON.stringify(facts,null,2)+'\n');console.log(JSON.stringify({mode:summary.mode,records:records.length,allSummaryNumbersRecomputed:true,providerCalls:facts.wire?.providerCalls,decisions}));
+

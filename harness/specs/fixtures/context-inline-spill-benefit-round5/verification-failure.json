@@ -1,0 +1,18 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/windows-inline-closeout",
+  "command": [
+    "node",
+    "verify-run.mjs",
+    "live",
+    "<verification-output>"
+  ],
+  "exitCode": 1,
+  "expected": "rejected dirty candidate; recomputed B1-B7 before assertion",
+  "stdoutSha256": "fe5390107fcad646edec4a418eba94c6d8d365ae5f7566f6bce4317243e96ee0",
+  "stderrSha256": "af5d61b58acd55c537da2f99adcbd03c1f38517a5be7d3c138fe10268c7985e1",
+  "stdoutTail": "{\"mode\":\"live\",\"records\":96,\"allSummaryNumbersRecomputed\":true,\"decisions\":{\"b1_mechanism_and_autonomy\":true,\"b2_task_benefit\":false,\"b3_retention_benefit\":false,\"b4_non_inferiority\":false,\"b5_no_fabrication\":true,\"b6_budget\":false,\"contextGrowthChars\":2553.6666666666642,\"tokenGrowthPct\":0.9487643210501924}}\n",
+  "stderrTail": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: primary fourth-round runs must use the clean candidate\n\ntrue !== false\n\n    at file:///C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round5/verify-run.mjs:17:8\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: true,\n  expected: false,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.22.1\n",
+  "B7CleanCandidate": false,
+  "resultPreserved": true
+}

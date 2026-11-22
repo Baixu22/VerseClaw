@@ -1,0 +1,120 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\artifact-panel-tsx.json",
+  "sourceSha256": "a62c7ccd0ad9662a90fb424fffab883e508a07c37cb6958bc994a578743a47ba",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 6,
+    "numPassedTests": 6,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563201526,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "ArtifactPanel"
+            ],
+            "fullName": "ArtifactPanel opens canonical workspace entries from the restrained launcher",
+            "status": "passed",
+            "title": "opens canonical workspace entries from the restrained launcher",
+            "duration": 243.63880000000063,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ArtifactPanel"
+            ],
+            "fullName": "ArtifactPanel keeps canonical tabs mounted and switches the active content",
+            "status": "passed",
+            "title": "keeps canonical tabs mounted and switches the active content",
+            "duration": 103.8105999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ArtifactPanel"
+            ],
+            "fullName": "ArtifactPanel uses draggable macOS chrome while keeping tab controls interactive",
+            "status": "passed",
+            "title": "uses draggable macOS chrome while keeping tab controls interactive",
+            "duration": 11.870100000000093,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ArtifactPanel"
+            ],
+            "fullName": "ArtifactPanel collapses the panel when the final tab is closed without ending its capability",
+            "status": "passed",
+            "title": "collapses the panel when the final tab is closed without ending its capability",
+            "duration": 14.830800000000636,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ArtifactPanel"
+            ],
+            "fullName": "ArtifactPanel closes the workspace while retaining its selected tab and content",
+            "status": "passed",
+            "title": "closes the workspace while retaining its selected tab and content",
+            "duration": 12.24539999999979,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "ArtifactPanel"
+            ],
+            "fullName": "ArtifactPanel dismisses the portalled tab menu when the toolbar hides the retained panel",
+            "status": "passed",
+            "title": "dismisses the portalled tab menu when the toolbar hides the retained panel",
+            "duration": 32.60580000000027,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563208371,
+        "endTime": 1794563208790.6057,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/artifact-panel.test.tsx"
+      }
+    ]
+  }
+}

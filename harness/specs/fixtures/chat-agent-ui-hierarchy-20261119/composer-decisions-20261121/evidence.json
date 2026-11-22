@@ -1,0 +1,379 @@
+{
+  "date": "2026-11-21",
+  "driven_by": "agent",
+  "actor": "Codex",
+  "worktree": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa",
+  "branch": "codex/chat-ui-hierarchy-20261119",
+  "baseline": "47303b18996f94ec7fd9afbc89ba1dac0910e66d",
+  "uncommitted": true,
+  "result": {
+    "uiJourneys": "PASS",
+    "visualReview": "PASS",
+    "unit": {
+      "total": 193,
+      "passed": 193,
+      "failed": 0
+    },
+    "electron": {
+      "unique": 12,
+      "passed": 12
+    },
+    "webTypecheck": "PASS",
+    "build": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 1
+    },
+    "i18n": "PASS",
+    "harness": "PASS",
+    "comms": "PASS",
+    "providerCalls": 0
+  },
+  "priority": [
+    "runtime exec approval",
+    "workspace permission",
+    "question/option/preferences/plan/model confirmation in request order"
+  ],
+  "sourceHashes": [
+    {
+      "file": "src/components/chat/ComposerDecisionSurface.tsx",
+      "sha256": "7bbd5544cb77ee963273b93ddbcd98ca718b4e62c6edd1e3ec0c7c7a64fea3cf"
+    },
+    {
+      "file": "src/pages/Chat/ComposerRequestDock.tsx",
+      "sha256": "346060f224fda31a33b702f9e9db3d4d83756d9bb3c92d49451f2d5ac6daa711"
+    },
+    {
+      "file": "src/components/runtime-approvals/RuntimeApprovalPrompt.tsx",
+      "sha256": "4aea875ca3271db45e6ef8479d1ddad59d802e75c218c05e7530622ef401ddf5"
+    },
+    {
+      "file": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "e68ddc067234e5629197072a92fc7c64a6bb9433e95342500c5c84bbb1156ec0"
+    },
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "sha256": "6de5ff0943afab521f7d451512125763adeff131178e067562adaec20c03ce3b"
+    },
+    {
+      "file": "src/components/tool-ui/PendingRunApprovals.tsx",
+      "sha256": "bcd9498a51a2e73b981c49bd2ccd87b8f8011edb4ab529726f46ea6f58ad4dbd"
+    },
+    {
+      "file": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "4eadaac9c05b1b8f67fc2c9c2da5c4ca477a2b65672e4dbdfe9a5081930da327"
+    },
+    {
+      "file": "src/components/tool-ui/approval-card/schema.ts",
+      "sha256": "c673650743722311cea311245cd55e95a5cc979cd146e4f30d65865b3cf6f602"
+    },
+    {
+      "file": "src/components/tool-ui/approval-card/approval-card.tsx",
+      "sha256": "3c0d89da9e5aa6e9077b15cbf5b48152bfbe787611adcee55e58da7c42e7d71d"
+    },
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "sha256": "a3bc458e33873832d6dfd1f3544d811a828d35e6927eb9bac317cb59ca4b355b"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "sha256": "fc71940132fa7f94134182b34547e2d2dba9487110b8dfdb3c38e7d31cb1ceb3"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "sha256": "9a0642651736ab35b46d5c6615a5a897684ff3dad4de6cf7f02071764c8ddc49"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "sha256": "e7a0271cc0bbc729108a39bbaad2d7f36950c5a9bcbca7e95ccf4a64c50d51da"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "sha256": "d028835c45dc3da5554fd8a1fcff204f23f0a6b58f52b5222ead1cc5c92de1bb"
+    },
+    {
+      "file": "tests/unit/runtime-approval-prompt.test.tsx",
+      "sha256": "877e923c5c94402dab13619f8ddc543f361e35a86754debd9a27ca01f4a84313"
+    },
+    {
+      "file": "tests/e2e/chat-runtime-ux-acceptance.spec.ts",
+      "sha256": "74d729fedbccbf09171084a78b3a130387829b9264c5810c28bb2bf8a3aede00"
+    },
+    {
+      "file": "tests/e2e/runtime-approval-bridge.spec.ts",
+      "sha256": "132fad12bfb06bf2e4c76dbe9c55dcc58f4baa8d02ce70d54b291b88a0aebbbd"
+    }
+  ],
+  "builds": [
+    {
+      "file": "dist/index.html",
+      "sha256": "f963d6e1ca3ba697ab1b5a47420057210926dee820a7b50656548579187ea2d7"
+    },
+    {
+      "file": "dist/.vite/manifest.json",
+      "sha256": "4f92ff2bd9b5856b9557ac943c2a40ed63dcaf57962b2c27384957cf930b5559"
+    },
+    {
+      "file": "dist-electron/main/index.js",
+      "sha256": "b53613be11ca16a1a10fe1ee32b17e5b51d8769359c636d35839a21cf9807da9"
+    },
+    {
+      "file": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ],
+  "tests": [
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "success and error use matching outline bounds in session rows and activity",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:19:28.965Z",
+      "durationMs": 17148,
+      "report": "e2e-final.json",
+      "attachments": [
+        "status-bounds.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "real host command gate persists approve and deny decisions selected in the composer",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:19:46.138Z",
+      "durationMs": 13849,
+      "report": "e2e-final.json",
+      "attachments": [
+        "real-host-permission-receipt.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "options preferences and model confirmations use the same decision surface",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:20:00.002Z",
+      "durationMs": 13573,
+      "report": "e2e-final.json",
+      "attachments": [
+        "shared-surface-style.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "reasoning retains every line and folded process leaves no empty transcript gap",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:20:13.593Z",
+      "durationMs": 13263,
+      "report": "e2e-final.json",
+      "attachments": [
+        "reasoning-geometry.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "plan and questions stay at the composer, submit once, preserve drafts and survive scroll",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:23:16.022Z",
+      "durationMs": 19989,
+      "report": "e2e-question.json",
+      "attachments": [
+        "request-receipts.json"
+      ]
+    },
+    {
+      "file": "chat-runtime-ux-acceptance.spec.ts",
+      "title": "host approval stays visible across turns and retains retry state and request identity",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:20:40.257Z",
+      "durationMs": 12636,
+      "report": "e2e-final.json",
+      "attachments": [
+        "permission-receipt.json"
+      ]
+    },
+    {
+      "file": "chat-tool-ui-interaction-flow.spec.ts",
+      "title": "one question stays visible as the terminal reply is replaced by history",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:21:20.664Z",
+      "durationMs": 11718,
+      "report": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-tool-ui-interaction-flow.spec.ts",
+      "title": "option-list: select option, send response, verify user message and mock assistant reply",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:20:52.924Z",
+      "durationMs": 14928,
+      "report": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "chat-tool-ui-interaction-flow.spec.ts",
+      "title": "question-flow: navigate steps, send response, verify user message and mock assistant reply",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:21:07.868Z",
+      "durationMs": 12785,
+      "report": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "runtime-approval-bridge.spec.ts",
+      "title": "covers the composer without a modal and restores its draft after approval",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:21:32.401Z",
+      "durationMs": 12022,
+      "report": "e2e-final.json",
+      "attachments": [
+        "runtime-approval-geometry-light.json",
+        "runtime-approval-geometry-dark.json",
+        "runtime-approval-geometry-narrow.json",
+        "runtime-approval-geometry-zoom150.json"
+      ]
+    },
+    {
+      "file": "runtime-approval-bridge.spec.ts",
+      "title": "answers a pending runtime approval from the conversation input area",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:21:44.434Z",
+      "durationMs": 10511,
+      "report": "e2e-final.json",
+      "attachments": []
+    },
+    {
+      "file": "runtime-approval-bridge.spec.ts",
+      "title": "offers only the decisions the runtime listed for the request",
+      "status": "passed",
+      "startedAt": "2026-11-21T12:21:54.954Z",
+      "durationMs": 11073,
+      "report": "e2e-final.json",
+      "attachments": []
+    }
+  ],
+  "runs": [
+    {
+      "file": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final.json",
+      "sha256": "159255928013bb7c07b1917f2006d5b53e402c3892d29cf661a2049a243404c4",
+      "stats": {
+        "startTime": "2026-11-21T12:19:26.730Z",
+        "duration": 160761.976,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-question.json",
+      "sha256": "c2fb6d7624a85ae4ec5e8644a015d7c9205a1ce5d1fd00c0ec91e138456d67cd",
+      "stats": {
+        "startTime": "2026-11-21T12:23:14.542Z",
+        "duration": 23295.77,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/runtime-priority-dark.png",
+      "title": "运行时审批 · 最高优先级",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-question-results/chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll/runtime-priority-dark.png",
+      "sha256": "692f3c32548b935166ff24243b3980eb6165ab0603ca4bf0e6c17ced407cdd50"
+    },
+    {
+      "file": "screenshots/question-dark.png",
+      "title": "提问 · 与审批共用输入区材质",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-question-results/chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll/question-dark.png",
+      "sha256": "013eee177adc22c3f13693e059b1ca8c465423def35667fbb09eea16df9e237e"
+    },
+    {
+      "file": "screenshots/plan-dark.png",
+      "title": "计划确认 · 同一标题和操作行",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-question-results/chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll/plan-dark.png",
+      "sha256": "b8cdc902a454a700b814151eccad8b29759a7013d35b6c0857b19af469433951"
+    },
+    {
+      "file": "screenshots/host-permission.png",
+      "title": "工作区权限 · 真实主机请求",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/chat-runtime-ux-acceptance-743d2-ns-selected-in-the-composer/real-host-approval.png",
+      "sha256": "62d761c25b4da6f93bb114300cd29bcbe89004b5166def3e2e9e7c70d3290868"
+    },
+    {
+      "file": "screenshots/plan-light.png",
+      "title": "计划确认 · 浅色",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-question-results/chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll/plan-light.png",
+      "sha256": "5dccafac7204cd522591959e15a91bd76717fbceff0822801660f9a6a261c7e2"
+    },
+    {
+      "file": "screenshots/question-375.png",
+      "title": "提问 · 375 px",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-question-results/chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll/question-375.png",
+      "sha256": "48e07455af5ea4c8b09f459885fcce89d1c02746a442b920595a0f3dcf6d0cf8"
+    },
+    {
+      "file": "screenshots/question-640.png",
+      "title": "提问 · 640 px",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-question-results/chat-runtime-ux-acceptance-fd948-e-drafts-and-survive-scroll/question-640.png",
+      "sha256": "c6e2a2e09145f69381b14e6eaecf65d658617a486e8351711be8cac142e90673"
+    },
+    {
+      "file": "screenshots/options-dark.png",
+      "title": "选项 · 菜单行选中样式",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/chat-runtime-ux-acceptance-c2ff9-e-the-same-decision-surface/surface-option-list-dark.png",
+      "sha256": "8c16aaf8c31702932cad2ceda0f0a71751a953f6b629ff95e7f81eae276610b5"
+    },
+    {
+      "file": "screenshots/preferences-dark.png",
+      "title": "偏好 · 共用决策面板",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/chat-runtime-ux-acceptance-c2ff9-e-the-same-decision-surface/surface-preferences-panel-dark.png",
+      "sha256": "c83b96b84355576da648e8bf1f35d6e2a59b5fb9b5e7c2e52f0d47ad81b249ac"
+    },
+    {
+      "file": "screenshots/confirmation-dark.png",
+      "title": "模型确认 · 共用决策面板",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/chat-runtime-ux-acceptance-c2ff9-e-the-same-decision-surface/surface-approval-dark.png",
+      "sha256": "fc30f1cbac173dc99de4ae645867dd6210abdf86436cc46ecadbed29b2ce54ef"
+    },
+    {
+      "file": "screenshots/runtime-light.png",
+      "title": "运行时审批 · 浅色",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval/runtime-approval-page-light.png",
+      "sha256": "aa7b516757d06f607252dd6d502f9f6c39e5902348ceb5499a4528ea6c6db4b8"
+    },
+    {
+      "file": "screenshots/runtime-narrow.png",
+      "title": "运行时审批 · 窄屏",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval/runtime-approval-page-narrow.png",
+      "sha256": "1d87d20c03d653adc1de770f568d510e16931e7dc06f01f0e6008cd44d5cb5fc"
+    },
+    {
+      "file": "screenshots/runtime-zoom150.png",
+      "title": "运行时审批 · 150% 缩放",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval/runtime-approval-zoom150.png",
+      "sha256": "e0bb40bdaf06905b35c3863c7c72d105c07321e5461fb652bd7020746d5b94df"
+    },
+    {
+      "file": "screenshots/permission-retry.png",
+      "title": "权限提交失败 · 原位重试",
+      "source": "D:/tmp/ui-decision-20261121-01a1fdaa/e2e-final-results/chat-runtime-ux-acceptance-83572--state-and-request-identity/permission-retry.png",
+      "sha256": "030e8cd91226e31884fad794d798e8cb2ed745bc9ab18096ce04ea3e2326a7b7"
+    }
+  ],
+  "evidenceTypes": {
+    "realHostPermission": "Production terminal gate generated requests; UI decisions persisted and read back.",
+    "runtimeApproval": "Real Electron + IPC request fixtures.",
+    "conversation": "Real Electron renderer + controlled transcript and response fixtures.",
+    "ego": "Real browser interactions; screenshot timeout preserved, final visuals captured in Electron."
+  },
+  "previousFailures": [
+    {
+      "path": "D:/tmp/ui-decision-20261121-01a1fdaa/unit-01.json",
+      "reason": "A status query matched both pending count and busy text; assertion now targets the busy text."
+    }
+  ],
+  "previousEvidence": "D:/ClawX-work/chat-ui-hierarchy-20261119-01a1f3aa/harness/specs/fixtures/chat-agent-ui-hierarchy-20261119/ux-acceptance-20261121/report.md",
+  "knownRepositoryCheck": "Full Node/test typechecks previously failed due to missing vendored runtime dependencies; no new whole-repository pass claimed.",
+  "verifiedAt": "2026-11-21T12:26:06.841Z"
+}

@@ -42,7 +42,7 @@ describe('run surface promotion', () => {
     const surfaces = promoteRunSurfaces({ runState: state });
 
     expect(surfaces.terminals).toHaveLength(1);
-    expect(surfaces.terminals[0]).toMatchObject({ command: 'pnpm test', cwd: '/repo', status: 'completed' });
+    expect(surfaces.terminals[0]).toMatchObject({ command: 'pnpm test', cwd: '/repo', status: 'completed', eventOrder: 0 });
     expect(surfaces.promotedStepIds.has('cmd-1')).toBe(true);
   });
 
@@ -192,6 +192,24 @@ describe('run surface promotion', () => {
       expect(surfaces.promotedStepIds.has('call-a')).toBe(true);
       expect(surfaces.promotedStepIds.has('call-b')).toBe(false);
     });
+  });
+
+  it('keeps the previous plan and the failed call diagnostics across live and history', () => {
+    const proposal = (id: string) => ({ type: 'tool.started' as const, toolCallId: id, name: 'update_plan', args: PLAN_ARGS });
+    const failed = { type: 'tool.completed' as const, toolCallId: 'bad', name: 'update_plan', isError: true, result: { status: 'error', error: 'TASK_CLAIM_REQUIRED' } };
+    const history = [{ role: 'assistant', content: [{ type: 'toolCall', id: 'bad', name: 'update_plan', arguments: PLAN_ARGS }] }];
+    const receipt = { role: 'toolResult', toolCallId: 'bad', details: failed.result };
+    for (const state of [null, runState([proposal('bad')]), runState([proposal('bad'), failed])]) {
+      const actual = promoteRunSurfaces({ runState: state, segmentMessages: [...history, receipt] });
+      expect(actual.plan).toBeNull();
+      expect(actual.promotedStepIds.has('bad')).toBe(false);
+    }
+    const folded = { ...history[0], _toolResults: [{ toolCallId: 'bad', isError: true, result: [] }] };
+    expect(promoteRunSurfaces({ runState: null, segmentMessages: [folded] }).plan).toBeNull();
+    const state = runState([proposal('good'), proposal('bad'), failed]);
+    const actual = promoteRunSurfaces({ runState: state, segmentMessages: history });
+    expect(actual.plan?.id).toBe('good');
+    expect(sanitizeGraphSteps(deriveRuntimeTaskSteps(state), actual.promotedStepIds)).toContainEqual(expect.objectContaining({ id: 'bad', status: 'error' }));
   });
 
   it('drops plan tool rows from message-derived graphs too', () => {

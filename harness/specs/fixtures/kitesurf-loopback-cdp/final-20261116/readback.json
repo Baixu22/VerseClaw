@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "ok": true,
+  "checkedAt": "2026-11-16T02:57:32.136Z",
+  "sourceFiles": 271,
+  "configurationFiles": 2,
+  "curatedFiles": 20,
+  "cli": 17,
+  "verifier": 39,
+  "packagePassed": 1132,
+  "specLifecycle": "completed",
+  "specHash": "5c51c21ac2b72576de535333ca9e368f46bbb8495a2a83a7b7d5647af6768f6a",
+  "runtimeEndpoint": "ws://127.0.0.1:46115/devtools/browser"
+}

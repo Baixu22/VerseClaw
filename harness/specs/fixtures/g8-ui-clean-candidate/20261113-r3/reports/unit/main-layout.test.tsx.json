@@ -1,0 +1,72 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\main-layout-tsx.json",
+  "sourceSha256": "7a7e734a45bf7571d9b632d63dec876d960b0ee89567259ce50c54c61bc31e65",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 2,
+    "numPassedTests": 2,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563343277,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "MainLayout platform layout"
+            ],
+            "fullName": "MainLayout platform layout uses a left/right shell on macOS with a top drag strip over content",
+            "status": "passed",
+            "title": "uses a left/right shell on macOS with a top drag strip over content",
+            "duration": 29.39670000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "MainLayout platform layout"
+            ],
+            "fullName": "MainLayout platform layout keeps a top titlebar column shell on Windows",
+            "status": "passed",
+            "title": "keeps a top titlebar column shell on Windows",
+            "duration": 2.469000000000051,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563344875,
+        "endTime": 1794563344906.469,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/main-layout.test.tsx"
+      }
+    ]
+  }
+}

@@ -1026,6 +1026,11 @@
       "resources": "Processes are running",
       "dirty": "Contains local files or changes",
       "unavailable": "Directory unavailable"
+    },
+    "filters": {
+      "all": "All",
+      "removable": "Removable",
+      "protected": "Protected"
     }
   }
 }

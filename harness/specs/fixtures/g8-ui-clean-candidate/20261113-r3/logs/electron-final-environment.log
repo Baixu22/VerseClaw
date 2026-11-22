@@ -1,0 +1,17 @@
+
+Running 5 tests using 1 worker
+
+[1A[2K(node:9244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:9244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/5] tests\e2e\session-activity-background-read.spec.ts:175:7 › Session activity background read state › unifies session process rows and the opened output pane
+[1A[2K[2/5] tests\e2e\session-activity-background-read.spec.ts:262:7 › Session activity background read state › shows the unknown state and its retry when the background read failed
+[1A[2K[3/5] tests\e2e\session-activity-background-read.spec.ts:298:7 › Session activity background read state › does not report a successful empty read as a failure
+[1A[2K[4/5] tests\e2e\session-activity-background-read.spec.ts:333:5 › opens an environment only after observed sources and respects a manual dismissal
+[1A[2K[5/5] tests\e2e\session-activity-background-read.spec.ts:399:5 › keeps environment summaries bounded and opens a worker only on demand
+[1A[2K  5 passed (1.5m)

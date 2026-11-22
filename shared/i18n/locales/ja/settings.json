@@ -1026,6 +1026,11 @@
       "resources": "プロセスが実行中",
       "dirty": "ローカルファイル・変更あり",
       "unavailable": "ディレクトリが利用不可"
+    },
+    "filters": {
+      "all": "すべて",
+      "removable": "削除可能",
+      "protected": "保護対象"
     }
   }
 }

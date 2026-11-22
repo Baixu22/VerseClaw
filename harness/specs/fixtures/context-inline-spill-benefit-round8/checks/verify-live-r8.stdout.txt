@@ -1,0 +1,5 @@
+{"mode":"live","records":96,"allSummaryNumbersRecomputed":true,"decisions":{"b1_mechanism_and_autonomy":false,"b2_task_benefit":true,"b3_retention_benefit":true,"b4_non_inferiority":false,"b5_no_fabrication":true,"b6_budget":false,"contextGrowthChars":-400.6666666666679,"tokenGrowthPct":0.25027526431088676}}
+{"mode":"live","records":96,"providerCalls":349,"initialPairs":24,"baselineLeaks":0,"historyFallbacks":0,"incomplete":0,"passed":true}
+{"output":"D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\verification\\live.json","acceptedCleanCandidate":true,"mode":"live","records":96,"providerCalls":349,"status":"no-benefit","verdict":"NO_GO","B7CleanCandidate":true}
+{"output":"D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\verification\\live.json","mode":"live","pressureEvents":149,"cleanCandidate":true,"status":"no-benefit","verdict":"NO_GO"}
+{"output":"D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\verification\\live.json","frames":349,"fieldLocations":34,"cleanCandidate":true,"status":"no-benefit","verdict":"NO_GO"}

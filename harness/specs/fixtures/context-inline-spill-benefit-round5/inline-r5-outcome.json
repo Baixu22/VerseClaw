@@ -1,0 +1,323 @@
+{
+  "schema": "ContextInlineSpillRound5Outcome/v1",
+  "driven_by": "agent",
+  "actor": "codex/windows-inline-closeout",
+  "recordedAt": "2026-11-12T17:07:36.275904+00:00",
+  "evaluationCommit": "6eee064950273b393240a647702d6ee5652bae35",
+  "verificationCommit": "811bdab408bef0dacd894a1e1b5cc6421523fef2",
+  "sourceSha256AtFreeze": {
+    "scripts/context-inline-spill-benefit-loop-eval.mts": "59b1b7c21001e45cf0172e56e5d64899d5acf67cca83629929b4180ea9f2a640",
+    "scripts/context-inline-spill-benefit-input.mts": "a6322b9f46306f6c586e2d984ee26416cd13b13ea599b2498a2486c18f570b2d",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "tests/unit/context-inline-spill-benefit-input.test.ts": "44f944a19372bfddc9a8d91278781d136b457af90d93c25c3983fe2a9f94aa93"
+  },
+  "candidate": {
+    "commit": "6eee064950273b393240a647702d6ee5652bae35",
+    "tree": "9368072986699d208b3618efe4733bef89fdc437",
+    "dirty": true
+  },
+  "candidateNote": "The live source was committed during the long run; the record correctly retains dirty=true from its start. This is a source-identity limitation, not a product pass.",
+  "runReceipt": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/checks/r5-live.json",
+  "decision": {
+    "status": "mechanism-only",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": false,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": 2553.6666666666642,
+    "tokenGrowthPct": 0.9487643210501924,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 5,
+      "successRate": 0.20833333333333334,
+      "wilson95": [
+        0.09244825352851857,
+        0.40470453253188665
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.8333333333333334,
+      "passAtK": 0,
+      "recallAttemptRate": 0.9444444444444444,
+      "recallOkRate": 0,
+      "meanTurns": 3.2083333333333335,
+      "meanMainContextChars": 1857.1666666666667,
+      "meanInputTokens": 2786.7083333333335,
+      "meanOutputTokens": 341.5,
+      "meanTotalTokens": 3128.2083333333335,
+      "p50LatencyMs": 10745.698,
+      "p95LatencyMs": 34411.163,
+      "failureClasses": {
+        "answer_mismatch": 17,
+        "recall_not_attempted": 1,
+        "none": 5,
+        "provider_transport_error": 1
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 9,
+      "successRate": 0.375,
+      "wilson95": [
+        0.21159367559548778,
+        0.5729003755732572
+      ],
+      "evidenceSuccessRate": 0.16666666666666666,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 5.333333333333333,
+      "meanMainContextChars": 19230.666666666668,
+      "meanInputTokens": 18343.833333333332,
+      "meanOutputTokens": 985.9583333333334,
+      "meanTotalTokens": 19329.791666666668,
+      "p50LatencyMs": 27921.328,
+      "p95LatencyMs": 66796.008,
+      "failureClasses": {
+        "recalled_text_evicted": 15,
+        "none": 9
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.958333333333333,
+      "meanMainContextChars": 64708.375,
+      "meanInputTokens": 36624.083333333336,
+      "meanOutputTokens": 1045.125,
+      "meanTotalTokens": 37669.208333333336,
+      "p50LatencyMs": 21020.744,
+      "p95LatencyMs": 46539.414,
+      "failureClasses": {
+        "recalled_text_evicted": 18,
+        "none": 6
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 7,
+      "successRate": 0.2916666666666667,
+      "wilson95": [
+        0.14914648196960875,
+        0.49167693664496637
+      ],
+      "evidenceSuccessRate": 0.05555555555555555,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.75,
+      "meanMainContextChars": 62154.708333333336,
+      "meanInputTokens": 33780.833333333336,
+      "meanOutputTokens": 969.2083333333334,
+      "meanTotalTokens": 34750.041666666664,
+      "p50LatencyMs": 21759.936,
+      "p95LatencyMs": 55126.677,
+      "failureClasses": {
+        "provider_transport_error": 1,
+        "recalled_text_evicted": 16,
+        "none": 7
+      }
+    }
+  },
+  "diagnostics": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r4-relay",
+    "pageArgumentCounts": {
+      "400": 2,
+      "600": 1,
+      "1200": 4,
+      "1500": 3,
+      "2000": 5,
+      "2142": 1,
+      "3000": 5,
+      "4000": 1,
+      "4399": 1,
+      "4403": 1,
+      "4412": 1,
+      "5500": 325,
+      "5910": 1,
+      "5912": 1,
+      "5918": 1,
+      "5977": 1,
+      "missing": 1
+    },
+    "responseStatuses": {
+      "completed": 436
+    },
+    "incompleteReasons": {},
+    "returnedModels": {
+      "space-bunny": 436
+    },
+    "completedMessageTextIgnoredByAdapter": [],
+    "byArm": {
+      "baseline-no-reference": {
+        "rawOracleHits": 0,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 53
+      },
+      "reference-visible": {
+        "rawOracleHits": 4,
+        "overProjectionBudgetCalls": 1,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 111
+      },
+      "recall-stable": {
+        "rawOracleHits": 0,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 98
+      },
+      "retention-off": {
+        "rawOracleHits": 1,
+        "overProjectionBudgetCalls": 0,
+        "oracleDroppedBeforeNextRequest": 0,
+        "modelRecalls": 93
+      }
+    },
+    "retentionPairs": {
+      "evidence": {
+        "pairs": 18,
+        "both": 0,
+        "onlyStable": 0,
+        "onlyOff": 1,
+        "neither": 17
+      },
+      "control": {
+        "pairs": 6,
+        "both": 6,
+        "onlyStable": 0,
+        "onlyOff": 0,
+        "neither": 0
+      }
+    },
+    "pageContract": {
+      "allToolDefinitionsIdentical": true,
+      "validSizeCalls": 350,
+      "invalidSizeCalls": 5,
+      "invalidSizeDiagnostics": 5,
+      "maxSerializedResultChars": 6072
+    },
+    "archiveSelection": {
+      "baseline-no-reference": {
+        "originalArchive": 0,
+        "otherArchive": 47,
+        "missingArchive": 6,
+        "successfulOriginal": 0,
+        "successfulOther": 0
+      },
+      "reference-visible": {
+        "originalArchive": 91,
+        "otherArchive": 20,
+        "missingArchive": 0,
+        "successfulOriginal": 88,
+        "successfulOther": 17
+      },
+      "recall-stable": {
+        "originalArchive": 48,
+        "otherArchive": 50,
+        "missingArchive": 0,
+        "successfulOriginal": 48,
+        "successfulOther": 50
+      },
+      "retention-off": {
+        "originalArchive": 51,
+        "otherArchive": 42,
+        "missingArchive": 0,
+        "successfulOriginal": 51,
+        "successfulOther": 38
+      }
+    },
+    "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
+  },
+  "probe": {
+    "driven_by": "agent",
+    "actor": "codex/windows-inline-closeout",
+    "kind": "minimal-output-completion-probe",
+    "runs": [
+      {
+        "effort": "low",
+        "httpStatus": 200,
+        "status": "completed",
+        "reasoning": {
+          "effort": "low",
+          "summary": "auto"
+        },
+        "outputText": "{\"value\":\"probe-ok\"}",
+        "incompleteDetails": null,
+        "error": null,
+        "usage": {
+          "cache_creation_input_tokens": 0,
+          "input_tokens": 170,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 9,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 179
+        }
+      }
+    ],
+    "credentialPersisted": false
+  },
+  "deterministic": {
+    "resultSha256": "c70000727e53f8b92c10ac602004402828487dab88f682bd2a83430bbb028ea4",
+    "runsSha256": "00f48c145fa1586236aea38d9381d546e7497b510debcbe6a8414088098339fc",
+    "archivesSha256": "6d8d86c3dc39b8d62ee48a0e02d60e6388d5d4a6661a310772b4ee907107b86b"
+  },
+  "live": {
+    "resultSha256": "95127e7b55121235068f73f63a85d346f61264b6d170ad90b05585d6470dd51c",
+    "runsSha256": "6f24c5af2fc6324bbf4c3d55ce1025188f7b3c5ef49da17e7dc1d70b7638a2e6",
+    "archivesSha256": "77451e3b1eda804e23078e4d7a8d89b06c15fa9a75c995b9fb3a8d4afa85fe89",
+    "archiveManifest": {
+      "driven_by": "agent",
+      "actor": "codex/windows-inline-closeout",
+      "count": 667,
+      "sha256": "77451e3b1eda804e23078e4d7a8d89b06c15fa9a75c995b9fb3a8d4afa85fe89"
+    }
+  },
+  "counts": {
+    "runs": 96,
+    "providerCalls": 438,
+    "completed": 436,
+    "incomplete": 0,
+    "stableEvidenceSuccess": 0,
+    "stableControlSuccess": 6
+  },
+  "cost": {
+    "status": "not-run",
+    "reason": "No billing rate/unit in provider responses."
+  },
+  "toolVerification": {
+    "recompute": "context-inline-spill-benefit-round5-recompute.mjs returned mechanism-only and matching B1-B7",
+    "rawInputReconstructionFailed": "The copied verifier first referenced a missing module; after correction it rejected the dirty candidate flag. This failure is retained and not relabelled as a passing B7 run."
+  },
+  "productDefaultChanged": false,
+  "releaseApproved": false,
+  "realHumanEvidence": false
+}

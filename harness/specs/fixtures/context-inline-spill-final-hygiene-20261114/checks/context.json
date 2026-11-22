@@ -1,0 +1,48 @@
+{
+  "schema": "G7FinalHygieneCommand/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "context",
+  "cwd": "C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "harness",
+    "context",
+    "--spec",
+    "harness/specs/tasks/inline-spill-final-hygiene-20261114.md"
+  ],
+  "startedAt": "2026-11-13T18:12:08.872Z",
+  "status": "finished",
+  "before": {
+    "commit": "e4d43e587634fe819b2d9784cdfc7c4c9e22b6c1",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "?? harness/specs/tasks/inline-spill-final-hygiene-20261114.md",
+    "tree": "73d550bde87326bdef9b2879f1a51566bb8a6d88"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T18:12:10.771Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "e4d43e587634fe819b2d9784cdfc7c4c9e22b6c1",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "?? harness/specs/tasks/inline-spill-final-hygiene-20261114.md",
+    "tree": "73d550bde87326bdef9b2879f1a51566bb8a6d88"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-final-hygiene-20261114-01a1d34c\\checks\\context.stdout.txt",
+      "bytes": 1690,
+      "sha256": "5f5f578c5347a6cf809610f55caeef4bbe6748b615efd985a47a4151d9dd9ebc"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-final-hygiene-20261114-01a1d34c\\checks\\context.stderr.txt",
+      "bytes": 229,
+      "sha256": "b41946d4c51f0ead50aa9e23705afee6a7397274ce7858eb503d2a58303ccd59"
+    }
+  }
+}

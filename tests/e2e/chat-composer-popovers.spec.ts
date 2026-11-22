@@ -195,24 +195,87 @@ for (const theme of ['light', 'dark'] as const) {
       await page.keyboard.press('Escape');
       for (const size of [{ width: 1280, height: 800 }, { width: 760, height: 560 }]) {
         await page.setViewportSize(size);
-        for (const [triggerId, menuId] of [
-          ['welcome-branch-trigger', 'welcome-branch-menu'],
-          ['session-worktree-trigger', 'session-worktree-menu'],
-          ['welcome-project-trigger', 'welcome-project-menu'],
-        ]) {
-          await page.getByTestId(triggerId).click();
-          const menu = page.getByTestId(menuId);
-          await expect(menu).toBeInViewport();
-          await expect(menu).toHaveCSS('backdrop-filter', 'none');
-          if (menuId === 'welcome-branch-menu') await expect(page.getByTestId('welcome-branch-item-main')).toBeVisible();
-          if (menuId === 'session-worktree-menu') await expect(page.getByTestId(triggerId)).toHaveAttribute('data-git-kind', 'worktree');
-          await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-${menuId}.png`) });
-          await page.keyboard.press('Escape');
-          await expect(menu).toHaveCount(0);
-        }
+        await expect(page.getByTestId('welcome-branch-trigger')).toHaveCount(0);
+        await page.getByTestId('welcome-project-trigger').click();
+        const projectMenu = page.getByTestId('welcome-project-menu');
+        await expect(projectMenu).toBeInViewport();
+        await expect(projectMenu).toHaveCSS('backdrop-filter', 'none');
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-welcome-project-menu.png`) });
+        const worktreeTrigger = projectMenu.getByTestId('session-worktree-trigger');
+        await expect(worktreeTrigger).toHaveAttribute('data-git-kind', 'worktree');
+        await worktreeTrigger.click();
+        const worktreeMenu = page.getByTestId('session-worktree-menu');
+        await expect(worktreeMenu).toBeInViewport();
+        await expect(worktreeMenu).toHaveAttribute('data-overlay-owner', 'welcome-project');
+        await expect.poll(() => worktreeMenu.evaluate((element) => element.parentElement?.id)).toBe('app-overlay-root');
+        await expect(worktreeMenu).toHaveCSS('backdrop-filter', 'none');
+        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'feature/cards' })).toBeDisabled();
+        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'D:/work/ClawX-main' })).toBeEnabled();
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-session-worktree-menu.png`) });
+        await worktreeMenu.getByTestId('session-worktree-create').click();
+        await worktreeMenu.getByTestId('session-worktree-branch').fill('codex/visible-worktree');
+        const submit = worktreeMenu.getByTestId('session-worktree-submit');
+        const initialOverflow = await worktreeMenu.evaluate((menu) => menu.scrollHeight - menu.clientHeight);
+        if (size.height >= 700) expect(initialOverflow).toBeLessThanOrEqual(1);
+        await submit.scrollIntoViewIfNeeded();
+        await expect(submit).toBeInViewport();
+        const geometry = await worktreeMenu.evaluate((menu) => {
+          const bounds = menu.getBoundingClientRect();
+          const action = menu.querySelector<HTMLElement>('[data-testid="session-worktree-submit"]')!.getBoundingClientRect();
+          return { x: bounds.x, y: bounds.y, right: bounds.right, bottom: bounds.bottom,
+            actionTop: action.top, actionBottom: action.bottom };
+        });
+        expect(geometry.x).toBeGreaterThanOrEqual(7);
+        expect(geometry.y).toBeGreaterThanOrEqual(7);
+        expect(geometry.right).toBeLessThanOrEqual(size.width - 7);
+        expect(geometry.bottom).toBeLessThanOrEqual(size.height - 7);
+        expect(geometry.actionTop).toBeGreaterThanOrEqual(geometry.y);
+        expect(geometry.actionBottom).toBeLessThanOrEqual(geometry.bottom + 1);
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-session-worktree-create.png`) });
+        await page.keyboard.press('Escape');
+        await expect(worktreeMenu).toHaveCount(0);
+        await expect(projectMenu).toBeVisible();
+        await expect(worktreeTrigger).toBeFocused();
+        await page.keyboard.press('Escape');
+        await expect(projectMenu).toHaveCount(0);
       }
     } finally {
       await closeElectronApp(app);
     }
   });
 }
+
+
+test('touch composer targets fit at 375px and the closed add menu skips its actions', async ({ launchElectronApp }) => {
+  const app = await launchElectronApp({ skipSetup: true });
+  try {
+    const page = await getStableWindow(app);
+    await page.setViewportSize({ width: 375, height: 812 });
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
+    await installIpcMocks(app, { gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 } });
+    await page.reload();
+    await expect.poll(() => page.getByTestId('sidebar').evaluate(el => Math.round(el.getBoundingClientRect().width))).toBeLessThanOrEqual(64);
+    const add = page.getByTestId('chat-composer-actions');
+    const first = page.getByTestId('chat-composer-action-attach-files');
+    const buttons = ['chat-composer-actions', 'chat-composer-permission-mode', 'chat-knowledge-scope-button', 'chat-model-picker-button', 'chat-composer-send'];
+    for (const id of buttons) {
+      const control = page.getByTestId(id);
+      await expect(control).toBeVisible();
+      const box = await control.evaluate(el => el.getBoundingClientRect().toJSON());
+      const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
+      expect(box.left).toBeGreaterThanOrEqual(-1);
+      expect(box.top).toBeGreaterThanOrEqual(-1);
+      expect(box.right).toBeLessThanOrEqual(viewport.width + 1);
+      expect(box.bottom).toBeLessThanOrEqual(viewport.height + 1);
+      expect(Math.min(box.width, box.height)).toBeGreaterThanOrEqual(44);
+    }
+    await add.focus(); await page.keyboard.press('Enter');
+    await expect(first).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(add).toBeFocused();
+    await expect(first.locator('..')).toHaveAttribute('inert', '');
+    await page.keyboard.press('Tab');
+    await expect(page.getByTestId('chat-composer-permission-mode')).toBeFocused();
+  } finally { await closeElectronApp(app); }
+});

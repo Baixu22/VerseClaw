@@ -1,6 +1,8 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RuntimeApprovalPrompt } from '@/components/runtime-approvals/RuntimeApprovalPrompt';
+import { ComposerRequestDock } from '@/pages/Chat/ComposerRequestDock';
+import { parseToolUiInteraction } from '@/components/tool-ui/agent-interactions';
 
 const mocks = vi.hoisted(() => ({
   list: vi.fn(),
@@ -66,6 +68,43 @@ beforeEach(() => {
 });
 
 describe('RuntimeApprovalPrompt', () => {
+  it('prioritizes runtime, then workspace permission, while retaining question selection and the draft', async () => {
+    const question = parseToolUiInteraction({ type: 'question-flow', id: 'question-priority',
+      steps: [{ id: 'target', title: 'Choose a target', options: [{ id: 'staging', label: 'Staging' }, { id: 'prod', label: 'Production' }] }] })!;
+    const approval = { id: 'workspace-priority', workspaceId: 'workspace', sessionKey: 'agent:main:main', source: 'terminal' as const,
+      risk: 'dangerous' as const, status: 'pending' as const, requestedAt: 1, command: 'node --test', reason: 'Run verification' };
+    const onDecision = vi.fn().mockResolvedValue(undefined);
+    const tree = (permission: boolean, questionPending = true) => (
+      <RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" requestPending={permission || questionPending}
+        requestContent={<ComposerRequestDock approvals={permission ? [approval] : []} interactions={questionPending ? [question] : []}
+          canSubmit onDecision={onDecision} onSubmit={vi.fn().mockResolvedValue(undefined)} />}>
+        <textarea data-testid="chat-composer-input" aria-label="Draft" defaultValue="Saved draft" />
+      </RuntimeApprovalPrompt>
+    );
+    const view = render(tree(false));
+    const input = screen.getByTestId('chat-composer-input');
+    const option = screen.getByTestId('chat-tool-ui-question-option-staging');
+    fireEvent.click(option);
+    expect(option).toHaveAttribute('aria-pressed', 'true');
+    expect(input).not.toBeVisible();
+    view.rerender(tree(true));
+    expect(option).not.toBeVisible();
+    expect(screen.getByTestId('chat-run-pending-approvals')).toBeVisible();
+    fireEvent.keyDown(screen.getByTestId('chat-run-pending-approvals').querySelector('[data-slot="approval-card"]')!, { key: 'Escape' });
+    expect(onDecision).not.toHaveBeenCalled();
+    await act(async () => mocks.requested.current?.(requestedEvent));
+    expect(screen.getByTestId('runtime-approval-prompt')).toBeVisible();
+    expect(screen.getByTestId('chat-composer-requests')).not.toBeVisible();
+    await act(async () => mocks.resolved.current?.({ approvalId: 'approval-1', decision: 'deny' }));
+    expect(screen.getByTestId('chat-run-pending-approvals')).toBeVisible();
+    view.rerender(tree(false));
+    expect(option).toBeVisible();
+    expect(option).toHaveAttribute('aria-pressed', 'true');
+    view.rerender(tree(false, false));
+    expect(input).toBeVisible();
+    expect(input).toHaveValue('Saved draft');
+  });
+
   it('replaces only the owning session composer and restores the same draft input', async () => {
     const composer = <textarea aria-label="Draft" defaultValue="Keep this draft" />;
     const { rerender } = render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main">{composer}</RuntimeApprovalPrompt>);
@@ -175,7 +214,7 @@ describe('RuntimeApprovalPrompt', () => {
     render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
     const allowAlways = await screen.findByTestId('runtime-approval-allow-always');
     fireEvent.click(allowAlways);
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Sending decision'));
+    await waitFor(() => expect(screen.getByText('Sending decision…')).toBeVisible());
     for (const decision of allowedDecisions) expect(screen.getByTestId(`runtime-approval-${decision}`)).toBeDisabled();
     fireEvent.click(screen.getByTestId('runtime-approval-allow-once'));
     expect(mocks.resolve).toHaveBeenCalledTimes(1);

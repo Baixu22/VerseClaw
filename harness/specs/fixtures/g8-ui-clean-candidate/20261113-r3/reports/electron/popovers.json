@@ -1,0 +1,586 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\results.json",
+  "sourceSha256": "b354174de8feccbeb263d209620731fa8c62bcc8fa448be541f016f7f1671f7f",
+  "result": {
+    "config": {
+      "configFile": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\playwright.config.ts",
+      "rootDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+      "forbidOnly": false,
+      "fullyParallel": false,
+      "globalSetup": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "globalTeardown": null,
+      "globalTimeout": 0,
+      "grep": {},
+      "grepInvert": null,
+      "maxFailures": 0,
+      "metadata": {
+        "actualWorkers": 1
+      },
+      "preserveOutput": "always",
+      "projects": [
+        {
+          "outputDir": "D:/tmp/g8-ui-r3-20261113-01a1d351/electron/final/popovers/output",
+          "repeatEach": 1,
+          "retries": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "id": "",
+          "name": "",
+          "testDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+          "testIgnore": [
+            "**/resource-lifecycle-soak.spec.ts",
+            "**/product-acceptance-space-bunny.spec.ts",
+            "**/product-acceptance-moyu.spec.ts"
+          ],
+          "testMatch": [
+            "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+          ],
+          "timeout": 90000
+        }
+      ],
+      "quiet": false,
+      "reporter": [
+        [
+          "line"
+        ],
+        [
+          "json"
+        ]
+      ],
+      "reportSlowTests": {
+        "max": 5,
+        "threshold": 300000
+      },
+      "shard": null,
+      "tags": [],
+      "updateSnapshots": "missing",
+      "updateSourceMethod": "patch",
+      "version": "1.59.0",
+      "workers": 1,
+      "webServer": null
+    },
+    "suites": [
+      {
+        "title": "chat-agent-effort.spec.ts",
+        "file": "chat-agent-effort.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Verse Claw combined model and reasoning settings",
+            "file": "chat-agent-effort.spec.ts",
+            "line": 25,
+            "column": 6,
+            "specs": [
+              {
+                "title": "opens the reasoning section in the shared menu, slides to max, and commits max",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 14097,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:54:53.919Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "combined-effort-max",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\attachments\\combined-effort-max-f829e1b23a1683f709274967b8b7dd1b7ca3f778.png"
+                          },
+                          {
+                            "name": "combined-model-effort-menu",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\attachments\\combined-model-effort-menu-6ccb4a3e8c14f0444a1a70b21336e2bb21bb2982.png"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "687b3160d69c83383da6-7706c8fb2ebf6f302d3b",
+                "file": "chat-agent-effort.spec.ts",
+                "line": 26,
+                "column": 7
+              },
+              {
+                "title": "keeps the reasoning slider inside the shared dropdown surface",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 10151,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:55:08.043Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "687b3160d69c83383da6-27a59b2d788480d3f4c6",
+                "file": "chat-agent-effort.spec.ts",
+                "line": 208,
+                "column": 7
+              },
+              {
+                "title": "does not commit when slider stays at the current value",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8721,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:55:18.210Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "687b3160d69c83383da6-bd6b138083e40507e387",
+                "file": "chat-agent-effort.spec.ts",
+                "line": 359,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "chat-composer-git-strip.spec.ts",
+        "file": "chat-composer-git-strip.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Chat composer Git strip",
+            "file": "chat-composer-git-strip.spec.ts",
+            "line": 212,
+            "column": 6,
+            "specs": [
+              {
+                "title": "identifies a linked worktree in the composer and session status (light)",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 9099,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:55:26.959Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "d7718b418ef73cd7bf41-e0ceae4104a9812f9b3c",
+                "file": "chat-composer-git-strip.spec.ts",
+                "line": 214,
+                "column": 9
+              },
+              {
+                "title": "identifies a linked worktree in the composer and session status (dark)",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8516,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:55:36.072Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "d7718b418ef73cd7bf41-d9607d0e30675df0de4a",
+                "file": "chat-composer-git-strip.spec.ts",
+                "line": 214,
+                "column": 9
+              },
+              {
+                "title": "renders runtime approval inline with the composer and Git strip",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8200,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:55:44.600Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "d7718b418ef73cd7bf41-3b0729461093dae15517",
+                "file": "chat-composer-git-strip.spec.ts",
+                "line": 239,
+                "column": 7
+              },
+              {
+                "title": "shows repository context and routes branch/worktree actions through host APIs",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 13404,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:55:52.815Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "d7718b418ef73cd7bf41-9d2f8b61b7d3f06765d7",
+                "file": "chat-composer-git-strip.spec.ts",
+                "line": 315,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "chat-composer-popovers.spec.ts",
+        "file": "chat-composer-popovers.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [
+          {
+            "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 90000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 20328,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [],
+                    "retry": 0,
+                    "startTime": "2026-11-13T09:56:06.249Z",
+                    "annotations": [],
+                    "attachments": [
+                      {
+                        "name": "menu-motion-frames",
+                        "contentType": "application/json",
+                        "body": "ewogICJvcGVuaW5nIjogWwogICAgewogICAgICAidGltZSI6IDYuOTAwMDAwMDA1OTYwNDY0NSwKICAgICAgImZpbHRlciI6ICJibHVyKDJweCkiLAogICAgICAib3BhY2l0eSI6IDAsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDksCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk4MDg4cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAwOTU2MDEzLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMy43MDAwMDAwMDI5ODAyMzIsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjg5NDAycHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjA1Mjk4ODksCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI2LjYwMDAwMDAwODk0MDY5NywKICAgICAgImZpbHRlciI6ICJibHVyKDEuNjQ4MjdweCkiLAogICAgICAib3BhY2l0eSI6IDAuMTc1ODYzLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzOC43MDAwMDAwMDI5ODAyMywKICAgICAgImZpbHRlciI6ICJibHVyKDEuNDE3MjFweCkiLAogICAgICAib3BhY2l0eSI6IDAuMjkxMzk2LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA1MS43MDAwMDAwMDI5ODAyMywKICAgICAgImZpbHRlciI6ICJibHVyKDEuMTk5NTRweCkiLAogICAgICAib3BhY2l0eSI6IDAuNDAwMjI5LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA2Ny4zMDAwMDAwMTE5MjA5MywKICAgICAgImZpbHRlciI6ICJibHVyKDAuOTMxMjQ0cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjUzNDM3OCwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogODAuMzAwMDAwMDExOTIwOTMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjc0NDE5OXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC42Mjc5LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA5NC41LAogICAgICAiZmlsdGVyIjogImJsdXIoMC41NzM5NTJweCkiLAogICAgICAib3BhY2l0eSI6IDAuNzEzMDI0LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMDYuNjAwMDAwMDA4OTQwNywKICAgICAgImZpbHRlciI6ICJibHVyKDAuNTIxNjdweCkiLAogICAgICAib3BhY2l0eSI6IDAuNzM5MTY1LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMjIuNDAwMDAwMDA1OTYwNDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjM3NDAzNXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC44MTI5ODMsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDEzNC44MDAwMDAwMTE5MjA5MywKICAgICAgImZpbHRlciI6ICJibHVyKDAuMTM5OTIzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjkzMDAzOSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTQ1LjIwMDAwMDAwMjk4MDIzLAogICAgICAiZmlsdGVyIjogImJsdXIoMC4wNjAwNjI3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjk2OTk2OSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTU1LjkwMDAwMDAwNTk2MDQ2LAogICAgICAiZmlsdGVyIjogImJsdXIoMC4wMjM5MTk0cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjk4ODA0LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNjQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjAwMzQyNjc5cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjk5ODI4NywKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTc0LjMwMDAwMDAxMTkyMDkzLAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTgzLjEwMDAwMDAwODk0MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxOTIsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMDIuMTAwMDAwMDA4OTQwNywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIwOS42MDAwMDAwMDg5NDA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjE2LjMwMDAwMDAxMTkyMDkzLAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjI1LjYwMDAwMDAwODk0MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMzUuMjAwMDAwMDAyOTgwMjMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyNDQuNzAwMDAwMDAyOTgwMjMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyNTUuNjAwMDAwMDA4OTQwNywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI2Ny4zMDAwMDAwMTE5MjA5MywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI3Ny4zMDAwMDAwMTE5MjA5MywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI5Mi41LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzAyLjEwMDAwMDAwODk0MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMjQuNzAwMDAwMDAyOTgwMjMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMzcuMzAwMDAwMDExOTIwOTMsCiAgICAgICJmaWx0ZXIiOiAibm9uZSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0KICBdLAogICJjbG9zaW5nIjogWwogICAgewogICAgICAidGltZSI6IDIzLjM5OTk5OTk5MTA1OTMwMywKICAgICAgImZpbHRlciI6ICJibHVyKDAuMjk4MDVweCkiLAogICAgICAib3BhY2l0eSI6IDAuODUwOTc1LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzYuMzk5OTk5OTkxMDU5MywKICAgICAgImZpbHRlciI6ICJibHVyKDAuMzc4MjkzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjgxMDg1NCwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDM4LjY5OTk5OTk4ODA3OTA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMC42MDYwNDdweCkiLAogICAgICAib3BhY2l0eSI6IDAuNjk2OTc2LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNjEuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDEuMDI1MnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC40ODczOTksCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA3MS4yOTk5OTk5OTcwMTk3NywKICAgICAgImZpbHRlciI6ICJibHVyKDEuMTUyMjNweCkiLAogICAgICAib3BhY2l0eSI6IDAuNDIzODg1LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogODMuMDk5OTk5OTk0MDM5NTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjMzMjY3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjMzMzY2NywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDk3LjA5OTk5OTk5NDAzOTU0LAogICAgICAiZmlsdGVyIjogImJsdXIoMS40OTQ1MnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4yNTI3MzksCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMTAuNTk5OTk5OTk0MDM5NTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjY0MDI1cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjE3OTg3NywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDEyNS42OTk5OTk5ODgwNzkwNywKICAgICAgImZpbHRlciI6ICJibHVyKDEuNjg0OTFweCkiLAogICAgICAib3BhY2l0eSI6IDAuMTU3NTQzLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTQwLAogICAgICAiZmlsdGVyIjogImJsdXIoMS44OTg3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjA1MDY1MjMsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNTUuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDEuOTIzOThweCkiLAogICAgICAib3BhY2l0eSI6IDAuMDM4MDExNSwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE2OSwKICAgICAgImZpbHRlciI6ICJibHVyKDJweCkiLAogICAgICAib3BhY2l0eSI6IDAsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfQogIF0KfQ=="
+                      }
+                    ]
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "684c93bd8c41b6c8b2fe-743937ce6b63a874d31d",
+            "file": "chat-composer-popovers.spec.ts",
+            "line": 13,
+            "column": 7
+          },
+          {
+            "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 90000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 38886,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [],
+                    "retry": 0,
+                    "startTime": "2026-11-13T09:56:26.592Z",
+                    "annotations": [],
+                    "attachments": [
+                      {
+                        "name": "menu-motion-frames",
+                        "contentType": "application/json",
+                        "body": "ewogICJvcGVuaW5nIjogWwogICAgewogICAgICAidGltZSI6IDEyLAogICAgICAiZmlsdGVyIjogImJsdXIoMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMCwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTUsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigycHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNi42MDAwMDAwMDg5NDA2OTcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjkyODgzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAzNTU4NTUsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDMxLAogICAgICAiZmlsdGVyIjogImJsdXIoMS42ODA3OHB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4xNTk2MTMsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDQ3LjI5OTk5OTk5NzAxOTc3LAogICAgICAiZmlsdGVyIjogImJsdXIoMS42MDA5NnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4xOTk1MjEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDYzLjYwMDAwMDAwODk0MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjI5ODg5cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjM1MDU1NSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogODAuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDAuODI4NDQ5cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjU4NTc3NSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogOTcuNzAwMDAwMDAyOTgwMjMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjcwODg4OXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC42NDU1NTYsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDExMi41LAogICAgICAiZmlsdGVyIjogImJsdXIoMC41NDE4NTVweCkiLAogICAgICAib3BhY2l0eSI6IDAuNzI5MDcyLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMzYuMTAwMDAwMDA4OTQwNywKICAgICAgImZpbHRlciI6ICJibHVyKDAuMTUyMTE4cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjkyMzk0MSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTUxLjYwMDAwMDAwODk0MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjA2OTIyMDRweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTY1MzksCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE2MC43MDAwMDAwMDI5ODAyMywKICAgICAgImZpbHRlciI6ICJibHVyKDAuMDE2MDIwMXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC45OTE5OSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTcxLjc5OTk5OTk5NzAxOTc3LAogICAgICAiZmlsdGVyIjogImJsdXIoMC4wMDA4MzYxOTdweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTk5NTgyLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxODMuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE5Mi4xMDAwMDAwMDg5NDA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjAxLjcwMDAwMDAwMjk4MDIzLAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjExLjUsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMjAsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMjguNDAwMDAwMDA1OTYwNDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMzcuMTAwMDAwMDA4OTQwNywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI1My4xMDAwMDAwMDg5NDA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjYwLjUsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyNzEuMTAwMDAwMDA4OTQwNywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI3Mi43OTk5OTk5OTcwMTk3NywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI3OC40MDAwMDAwMDU5NjA0NiwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI5MS42MDAwMDAwMDg5NDA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzAwLjUsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMDkuMjAwMDAwMDAyOTgwMjMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMTcuMjAwMDAwMDAyOTgwMjMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMjQuMjk5OTk5OTk3MDE5NzcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMzEuMjk5OTk5OTk3MDE5NzcsCiAgICAgICJmaWx0ZXIiOiAibm9uZSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0KICBdLAogICJjbG9zaW5nIjogWwogICAgewogICAgICAidGltZSI6IDE2Ljc5OTk5OTk5NzAxOTc2OCwKICAgICAgImZpbHRlciI6ICJibHVyKDAuMjUxNDQ3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjg3NDI3NywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI3Ljg5OTk5OTk5MTA1OTMwMywKICAgICAgImZpbHRlciI6ICJibHVyKDAuNDEwMzE0cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjc5NDg0MywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDM4Ljg5OTk5OTk5MTA1OTMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjYzOTc3N3B4KSIsCiAgICAgICJvcGFjaXR5IjogMC42ODAxMTEsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA1MS44OTk5OTk5OTEwNTkzLAogICAgICAiZmlsdGVyIjogImJsdXIoMC44NTIzODJweCkiLAogICAgICAib3BhY2l0eSI6IDAuNTczODA5LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNjcuNTk5OTk5OTk0MDM5NTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjExNzY2cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjQ0MTE3LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogODEuMDk5OTk5OTk0MDM5NTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjI5OTQ5cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjM1MDI1MywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDk2LjA5OTk5OTk5NDAzOTU0LAogICAgICAiZmlsdGVyIjogImJsdXIoMS41MTkwNnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4yNDA0NjgsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMDguNSwKICAgICAgImZpbHRlciI6ICJibHVyKDEuNjYwNzNweCkiLAogICAgICAib3BhY2l0eSI6IDAuMTY5NjM0LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTIzLjc5OTk5OTk5NzAxOTc3LAogICAgICAiZmlsdGVyIjogImJsdXIoMS43ODM1MnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4xMDgyMzgsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMzQuNzk5OTk5OTk3MDE5NzcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjg4MzE4cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjA1ODQwOTEsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk1NTZweCkiLAogICAgICAib3BhY2l0eSI6IDAuMDIyMTk5MywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE2MC4yOTk5OTk5OTcwMTk3NywKICAgICAgImZpbHRlciI6ICJibHVyKDEuOTk1MDZweCkiLAogICAgICAib3BhY2l0eSI6IDAuMDAyNDY3NTcsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNzIsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigycHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0KICBdCn0="
+                      }
+                    ]
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "684c93bd8c41b6c8b2fe-9bce6f88180b9264c4d4",
+            "file": "chat-composer-popovers.spec.ts",
+            "line": 13,
+            "column": 7
+          }
+        ]
+      },
+      {
+        "title": "chat-model-picker-tiers.spec.ts",
+        "file": "chat-model-picker-tiers.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Verse Claw direct chat model selection",
+            "file": "chat-model-picker-tiers.spec.ts",
+            "line": 12,
+            "column": 6,
+            "specs": [
+              {
+                "title": "selects directly and forwards the displayed model in the send payload",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 42371,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:57:06.247Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "3795fe33307d6dc02823-c52644500f6a9c781053",
+                "file": "chat-model-picker-tiers.spec.ts",
+                "line": 13,
+                "column": 7
+              },
+              {
+                "title": "restores the saved model and remembers explicit choices for new chats",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 21938,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:57:48.694Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "3795fe33307d6dc02823-1920f3118177b64c619e",
+                "file": "chat-model-picker-tiers.spec.ts",
+                "line": 190,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "chat-model-picker.spec.ts",
+        "file": "chat-model-picker.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Verse Claw chat model picker",
+            "file": "chat-model-picker.spec.ts",
+            "line": 6,
+            "column": 6,
+            "specs": [
+              {
+                "title": "selects a model directly and preserves the previous choice on save failure",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 18998,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T09:58:10.721Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "14a7e36374152ee4f474-77005cc8329464b91da4",
+                "file": "chat-model-picker.spec.ts",
+                "line": 7,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "stats": {
+      "startTime": "2026-11-13T09:54:52.376Z",
+      "duration": 218601.829,
+      "expected": 12,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+}

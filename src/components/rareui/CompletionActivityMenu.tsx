@@ -1,10 +1,10 @@
-import { AlertTriangle, BellDot, Check, ShieldAlert } from 'lucide-react';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { BellDot } from 'lucide-react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { useNavigate } from 'react-router-dom';
-import { NotificationBell, type NotificationBellLive, type NotificationBellTone } from './NotificationBell';
+import { NotificationBell, type NotificationBellAttention, type NotificationBellLive, type NotificationBellTone } from './NotificationBell';
 import { useCompletionActivityStore } from './completion-activity-store';
 import type { CompletionActivityNudge } from './completion-activity-store';
 import {
@@ -13,7 +13,7 @@ import {
   type CompletionActivity,
   type LiveSessionActivity,
 } from './completion-activity';
-import { OrbStatus } from '@/components/assistant-ui/orb-status';
+import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { useChatStore } from '@/stores/chat';
 import { useSettingsStore } from '@/stores/settings';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -34,10 +34,19 @@ function relativeTime(t: TFunction<'chat'>, at: number, now: number): string {
   return t('sidebar.searchRelativeDays', { count: Math.floor(hours / 24) });
 }
 
-function NudgeIcon({ kind }: { kind: CompletionActivityNudge['kind'] }) {
-  if (kind === 'action-required') return <ShieldAlert className="rare-activity-entry__icon text-amber-700 dark:text-amber-400" />;
-  if (kind === 'error') return <AlertTriangle className="rare-activity-entry__icon text-red-700 dark:text-red-400" />;
-  return <Check className="rare-activity-entry__icon text-green-700 dark:text-green-400" />;
+/**
+ * Entry glyphs are the session rows' own status glyphs: a finished turn shows
+ * the same settled check / cross the row shows, and a request that still needs
+ * you breathes like a waiting row. One status vocabulary across the app.
+ */
+const NUDGE_STATE: Record<CompletionActivityNudge['kind'], OrbStatusState> = {
+  completed: 'success',
+  error: 'error',
+  'action-required': 'waiting',
+};
+
+function NudgeIcon({ kind, label }: { kind: CompletionActivityNudge['kind']; label: string }) {
+  return <OrbStatus state={NUDGE_STATE[kind]} label={label} className="rare-activity-entry__icon size-3.5" />;
 }
 
 /**
@@ -46,8 +55,10 @@ function NudgeIcon({ kind }: { kind: CompletionActivityNudge['kind'] }) {
  */
 export const CompletionActivityMenu = memo(function CompletionActivityMenu({
   liveSessions = EMPTY_LIVE,
+  renderSession,
 }: {
   liveSessions?: LiveSessionActivity[];
+  renderSession?: (sessionKey: string, afterNavigate: () => void) => ReactNode;
 }) {
   const { t } = useTranslation('chat');
   const activities = useCompletionActivityStore((state) => state.activities);
@@ -101,6 +112,12 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
   const live: NotificationBellLive = liveSessions.some((session) => session.state === 'waiting')
     ? 'waiting'
     : liveSessions.length > 0 ? 'running' : 'idle';
+  const latestUnread = unreadEntries[0];
+  const attention: NotificationBellAttention | undefined = live !== 'idle' || !latestUnread
+    ? undefined
+    : latestUnread.kind === 'completed' ? 'success'
+      : latestUnread.kind === 'error' ? 'error' : 'waiting';
+  const attentionLabel = latestUnread ? t(`completionActivity.kind.${latestUnread.kind}`) : undefined;
   const runningCount = liveSessions.length;
   const summary = [
     runningCount > 0 ? t('completionActivity.summaryRunning', { count: runningCount }) : null,
@@ -138,10 +155,12 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
     if (!open) return;
     const onPointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
+      if (target instanceof Element && target.closest('.sidebar-session-context-menu')) return;
       if (panelRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
       closePanel();
     };
     const onKeyDown = (event: KeyboardEvent) => {
+      if (document.querySelector('.sidebar-session-context-menu')) return;
       if (event.key === 'Escape') {
         closePanel();
         triggerRef.current?.querySelector('button')?.focus();
@@ -195,7 +214,8 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
 
   const onPanelKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
-    const items = [...(panelRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])];
+    if (event.target instanceof HTMLInputElement) return;
+    const items = [...(panelRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"], .task-select') ?? [])];
     if (items.length === 0) return;
     event.preventDefault();
     const index = items.indexOf(document.activeElement as HTMLElement);
@@ -217,10 +237,15 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
             count={unreadCount}
             tone={tone}
             live={live}
+            attention={attention}
+            attentionLabel={attentionLabel}
+            liveLabel={t(`completionActivity.live.${live === 'waiting' ? 'waiting' : 'running'}`)}
             data-testid="chat-completion-bell"
             aria-label={runningCount > 0
               ? t('completionActivity.labelLive', { count: unreadCount, running: runningCount })
-              : t('completionActivity.label', { count: unreadCount })}
+              : attentionLabel
+                ? t('completionActivity.labelStatus', { status: attentionLabel, count: unreadCount })
+                : t('completionActivity.label', { count: unreadCount })}
             aria-haspopup="menu"
             aria-expanded={open}
             onClick={toggleOpen}
@@ -235,7 +260,7 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
           tabIndex={-1}
           aria-label={t('completionActivity.title')}
           data-testid="chat-completion-menu"
-          className="rare-completion-menu rare-activity-panel fixed z-[80]"
+          className="codex-sidebar rare-completion-menu rare-activity-panel fixed z-[50]"
           style={{ left: menuPosition.left, top: menuPosition.top, width: menuPosition.width }}
           onKeyDown={onPanelKeyDown}
         >
@@ -256,6 +281,8 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                 </div>
                 {liveSessions.map((session) => {
                   const stateLabel = t(`completionActivity.live.${session.state}`);
+                  const row = renderSession?.(session.sessionKey, closePanel);
+                  if (row) return <div key={session.sessionKey} data-testid="chat-activity-live-item" data-state={session.state}>{row}</div>;
                   return (
                     <button
                       key={session.sessionKey}
@@ -269,7 +296,7 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                       <OrbStatus
                         state={session.state === 'waiting' ? 'waiting' : 'streaming'}
                         label={stateLabel}
-                        className="size-4 shrink-0"
+                        className="size-3.5 shrink-0"
                       />
                       <span className="rare-activity-live__title">{session.label}</span>
                       <span className="rare-activity-live__meta">
@@ -289,7 +316,8 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                 </div>
                 {groups.map((group) => (
                   <div key={group.entries[0].id} className="rare-activity-group">
-                    <div className="rare-activity-group__head">{labelOf(group.sessionKey)}</div>
+                    {renderSession?.(group.sessionKey, closePanel)
+                      ?? <div className="rare-activity-group__head">{labelOf(group.sessionKey)}</div>}
                     {group.entries.map((entry) => {
                       const preview = entry.status && !MACHINE_STATUSES.has(entry.status)
                         ? entry.status
@@ -307,7 +335,7 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                           className="rare-completion-menu__item rare-activity-entry"
                           onClick={() => openNudge(entry)}
                         >
-                          <NudgeIcon kind={entry.kind} />
+                          <NudgeIcon kind={entry.kind} label={t(`completionActivity.kind.${entry.kind}`)} />
                           <span className="rare-activity-entry__body">
                             <span className="rare-completion-menu__preview rare-activity-entry__preview">{preview}</span>
                             <span className="rare-activity-entry__meta">
@@ -326,9 +354,9 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
                               )}
                             </span>
                           </span>
-                          {fresh && (
-                            <span className="rare-activity-entry__fresh" role="img" aria-label={t('completionActivity.fresh')} />
-                          )}
+                          {/* Fresh entries read in full ink, like an unread row title;
+                              no trailing dot competes with the status glyph. */}
+                          {fresh && <span className="sr-only">{t('completionActivity.fresh')}</span>}
                         </button>
                       );
                     })}
@@ -343,12 +371,9 @@ export const CompletionActivityMenu = memo(function CompletionActivityMenu({
               </div>
             )}
           </div>
-          <div className="rare-activity-panel__foot">
-            <span className="rare-activity-panel__foot-text">
-              <span className="rare-activity-panel__foot-state" data-testid="chat-completion-desktop-state">
-                {desktopNotificationsEnabled ? t('completionActivity.desktopOn') : t('completionActivity.desktopOff')}
-              </span>
-              <span className="rare-activity-panel__foot-desc">{t('completionActivity.desktopDescription')}</span>
+          <div className="rare-activity-panel__foot" title={t('completionActivity.desktopDescription')}>
+            <span className="rare-activity-panel__foot-state" data-testid="chat-completion-desktop-state">
+              {desktopNotificationsEnabled ? t('completionActivity.desktopOn') : t('completionActivity.desktopOff')}
             </span>
             <Switch
               data-testid="chat-completion-desktop-toggle"

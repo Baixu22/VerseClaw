@@ -17,6 +17,13 @@ import { PageTextExtractor } from './browser-control/page-text-extractor.ts';
 import { RuntimeReadToolExecutor } from './browser-control/runtime-read-tool-executor.ts';
 import { assertBrowserRuntime } from './runtime-compatibility.ts';
 import { assertTransferTimeoutMs } from './upstream-control.ts';
+import {
+  assertKitesurfLoopback,
+  assertKitesurfMethod,
+  connectKitesurfOverCDP,
+  isKitesurfVersion,
+  readCdpVersion,
+} from './kitesurf-cdp.ts';
 import type { createUpstreamPageControl } from './upstream-control.ts';
 import type { Page as UpstreamPage } from 'playwright';
 import type { SemanticGateway, attachSemanticBrowser, prepareSemanticBrowser } from './semantic-browser.ts';
@@ -87,6 +94,8 @@ import type {
   AgentBrowserFillByUidPayload,
   AgentBrowserEvaluatePayload,
   AgentBrowserEvaluateResult,
+  AgentBrowserPdfPayload,
+  AgentBrowserPdfResult,
   AgentBrowserRuntimeInspectGlobalsPayload,
   AgentBrowserRuntimeInspectGlobalsResult,
   AgentBrowserStatusResult,
@@ -122,6 +131,7 @@ type PlaywrightPage = {
   title: () => Promise<string>;
   evaluate: (expression: string) => Promise<unknown>;
   close: () => Promise<void>;
+  bringToFront?: () => Promise<void>;
   on: (event: string, handler: (...args: never[]) => void) => void;
   isClosed: () => boolean;
   mainFrame?: () => unknown;
@@ -213,6 +223,8 @@ type SessionState = {
   pageSignals?: Map<PlaywrightPage,PageSignals>;
   /** Detached browser kept alive across CLI processes (TF-0097). */
   persistent?: { pid: number; profileDir: string; endpoint: string; external?: boolean };
+  /** Loopback Kitesurf CDP. Methods outside the one-shot subset are refused. */
+  kitesurf?: boolean;
 };
 
 function observeNativeAction(state: SessionState, timeoutMs = 5000, after?: AgentBrowserClickPayload['after']) {
@@ -254,6 +266,10 @@ function observeNativeAction(state: SessionState, timeoutMs = 5000, after?: Agen
 }
 
 export type PlaywrightHostApiOptions = {
+  /** Select the complete Playwright runtime for the Kitesurf CDP adapter. */
+  kitesurf?: boolean;
+  /** Session identity reserved by the standalone Kitesurf control worker. */
+  kitesurfSessionId?: string;
   semanticGateway?: SemanticGateway;
   /** Host-owned exact origins; supported only by the upstream driver. */
   allowedOrigins?: readonly string[];
@@ -386,7 +402,7 @@ export async function createPlaywrightHostApi(
   if (options.upstream && options.persistent) throw new Error('E_UPSTREAM_CONFIG: persistent sessions are not enabled for this slice');
   if (options.transferTimeoutMs !== undefined && !options.upstream) throw new Error('E_UPSTREAM_CONFIG: transferTimeoutMs applies to the upstream transport only');
   const transferTimeoutMs = assertTransferTimeoutMs(options.transferTimeoutMs);
-  const playwright = options.upstream ? await import('playwright') : await import('playwright-core');
+  const playwright = options.upstream || options.kitesurf ? await import('playwright') : await import('playwright-core');
   const chromium = playwright.chromium as unknown as PlaywrightChromium;
   const sessions = new Map<string, SessionState>();
   const sessionAttachments = new Map<string, Promise<SessionState>>();
@@ -446,7 +462,7 @@ export async function createPlaywrightHostApi(
     for (const [id, state] of sessions) {
       // Dedicated upstream controls still own logs/transports after native disconnect.
       // Observation must not destroy the state needed by the existing close/retry path.
-      if (!options.upstream && !state.browser.isConnected()) sessions.delete(id);
+      if (!options.upstream && !state.kitesurf && !state.browser.isConnected()) sessions.delete(id);
     }
   }
 
@@ -559,26 +575,33 @@ export async function createPlaywrightHostApi(
    * browser recorded for that session id. This is what makes `vb nav --session`
    * work from a different process (TF-0097).
    */
-  async function ensureState(sessionId: string): Promise<SessionState> {
+  async function ensureState(sessionId: string, method = 'close'): Promise<SessionState> {
     const closing = sessionClosures.get(sessionId);
     if (closing) {
       await closing;
-      return ensureState(sessionId);
+      return ensureState(sessionId, method);
     }
     discardDisconnectedSessions();
     const existing = sessions.get(sessionId);
     if (existing) {
+      if (existing.kitesurf) assertKitesurfMethod(method);
       if (!existing.browser.isConnected()) return unknownSession(sessionId);
       return existing;
     }
     if (!options.persistent) return unknownSession(sessionId);
 
+    if (options.persistent) {
+      const record = await loadSessionRecord(sessionId, workspaceRoot);
+      if (record?.engine === 'kitesurf') assertKitesurfMethod(method);
+    }
     const attaching = sessionAttachments.get(sessionId);
     if (attaching) return attaching;
     const pending = restoreState(sessionId);
     sessionAttachments.set(sessionId, pending);
     try {
-      return await pending;
+      const state = await pending;
+      if (state.kitesurf) assertKitesurfMethod(method);
+      return state;
     } finally {
       sessionAttachments.delete(sessionId);
     }
@@ -597,6 +620,13 @@ export async function createPlaywrightHostApi(
   async function restoreState(sessionId: string): Promise<SessionState> {
     const record = await loadSessionRecord(sessionId, workspaceRoot);
     if (!record) return unknownSession(sessionId);
+    if (record.engine === 'kitesurf') {
+      assertKitesurfLoopback(record.endpoint);
+      if (!isKitesurfVersion(await readCdpVersion(record.endpoint))) {
+        throw new Error('E_KITESURF_ENDPOINT: persistent endpoint no longer identifies Kitesurf');
+      }
+      throw new Error('E_KITESURF_CONTROL: Kitesurf targets belong to their original WebSocket; use the live CLI control session');
+    }
     const remote = await chromium.connectOverCDP(record.endpoint);
     try {
       const pages = remote.contexts().flatMap(context => context.pages());
@@ -642,6 +672,7 @@ export async function createPlaywrightHostApi(
         observationWindowMissing: windowMismatch,
         },
         persistent: { pid: record.pid, profileDir: record.profileDir, endpoint: record.endpoint, external: record.external },
+        ...(record.engine === 'kitesurf' ? { kitesurf: true } : {}),
       };
       attachPageListeners(state.page,state.signals);
       sessions.set(sessionId, state);
@@ -773,6 +804,7 @@ export async function createPlaywrightHostApi(
       if (closedSessions.has(sessionId)) return { success: true };
       return unknownSession(sessionId);
     }
+    state.upstream?.abortPending();
     await state.semantic?.close();
     try { await state.page.close(); }
     catch (error) { if (state.browser.isConnected()) throw error; }
@@ -784,6 +816,20 @@ export async function createPlaywrightHostApi(
     return { success: true };
   }
 
+  const upstreamReads = {
+    readForms: async (payload: AgentBrowserSessionPayload & { selector?: string }) => {
+      const state = await ensureState(payload.sessionId, 'readForms');
+      if (!state.upstream) return notImplemented('readForms');
+      return { success: true, ...await state.upstream.forms(payload.selector) };
+    },
+    findElement: async (payload: AgentBrowserFindPayload): Promise<AgentBrowserFindResult> => {
+      const state = await ensureState(payload.sessionId, 'findElement');
+      if (!state.upstream) throw new Error('E_NOT_IMPLEMENTED: exact reference queries require the upstream backend');
+      const result = await state.upstream.findElement(payload);
+      await refreshLocation(state);
+      return { success: true, session: state.session, ...result, scope: { ...result.scope, sessionId: payload.sessionId } };
+    },
+  };
   const api = {
     open: async (payload: AgentBrowserOpenPayload = {}, request?: { signal?: AbortSignal }): Promise<AgentBrowserSessionResult> => {
       const signal = options.upstream ? request?.signal : undefined;
@@ -802,7 +848,15 @@ export async function createPlaywrightHostApi(
       const headless = options.defaultHeadless === false ? false : mode === 'headless';
       const externalEndpoint =
         payload.connectionMode === 'cdp' && payload.cdpEndpoint ? payload.cdpEndpoint : undefined;
-      const id = randomUUID();
+      if (payload.browser !== undefined && payload.browser !== 'kitesurf') {
+        throw new Error('E_ARG: browser must be "kitesurf"');
+      }
+      if (payload.browser === 'kitesurf' && !externalEndpoint) {
+        throw new Error('E_KITESURF_ENDPOINT: kitesurf requires `vb open --kitesurf --cdp <loopback>`; Chromium will not be launched');
+      }
+      if (payload.browser === 'kitesurf') assertKitesurfLoopback(externalEndpoint!);
+      let kitesurf = false;
+      const id = payload.browser === 'kitesurf' && !options.persistent ? options.kitesurfSessionId ?? randomUUID() : randomUUID();
       if (options.upstream && (!payload.url || mode !== 'headless' || payload.cdpEndpoint || payload.profile)) throw new Error('E_UPSTREAM_CONFIG: this slice requires a URL and a new headless session without external profile/CDP');
       // An explicit attach only exists on the persistent (detached CDP) path. In-process this driver
       // has none, so before this guard an endpoint was silently dropped and a managed browser was
@@ -813,7 +867,7 @@ export async function createPlaywrightHostApi(
         || payload.connectionMode === 'cdp'
         || payload.connectionMode === 'auto-connect'
         || payload.connectionMode === 'external-profile';
-      if (explicitAttach && !options.persistent) {
+      if (explicitAttach && !options.persistent && payload.browser !== 'kitesurf') {
         throw new Error(
           'E_ARG: explicit CDP/external attach needs persistent sessions; this in-process driver opens managed sessions only. Use `vb open --cdp`, or createStandaloneFacade({persistentSessions:true}) / createPlaywrightHostApi({persistent:true}).',
         );
@@ -849,7 +903,7 @@ export async function createPlaywrightHostApi(
 
       openingSessions += 1;
       try {
-        if (options.persistent) {
+        if (options.persistent || payload.browser === 'kitesurf') {
           // Detached Chromium + CDP so the session outlives this process (TF-0097).
           // An explicitly supplied endpoint is attached to instead of launched, and
           // is never killed on close (we do not own that browser).
@@ -874,9 +928,28 @@ export async function createPlaywrightHostApi(
             pid = launched.pid;
             await waitForCdpEndpoint(endpoint, 20_000, launched);
           }
-          browser = await chromium.connectOverCDP(endpoint);
-          const context = browser.contexts()[0] ?? (await browser.newContext());
-          page = context.pages()[0] ?? (await context.newPage());
+          if (externalEndpoint) {
+            try {
+              const identified = isKitesurfVersion(await readCdpVersion(endpoint));
+              if (payload.browser === 'kitesurf' && !identified) {
+                throw new Error('E_KITESURF_ENDPOINT: /json/version did not identify Kitesurf');
+              }
+              kitesurf = identified;
+            } catch (error) {
+              if (payload.browser === 'kitesurf') throw error;
+            }
+          }
+          browser = kitesurf
+            ? await connectKitesurfOverCDP(chromium as unknown as { connectOverCDP: (transport: unknown) => Promise<PlaywrightBrowser> }, endpoint)
+            : await chromium.connectOverCDP(endpoint);
+          const existingContext = browser.contexts()[0];
+          if (kitesurf && !existingContext) throw new Error('E_KITESURF_ENDPOINT: Kitesurf supplied no context; no replacement context was created');
+          const context = existingContext ?? (await browser.newContext());
+          page = context.pages()[0]!;
+          if (!page) {
+            if (kitesurf) throw new Error('E_KITESURF_ENDPOINT: Kitesurf supplied no page; no page or context was created');
+            page = await context.newPage();
+          }
           persistent = { pid, profileDir, endpoint, external: Boolean(externalEndpoint) };
         } else {
           semanticConfig = semanticGateway ? await (await import('./semantic-browser.ts')).prepareSemanticBrowser(semanticGateway) : undefined;
@@ -907,20 +980,35 @@ export async function createPlaywrightHostApi(
           windowStart: { network: 0, console: 0 },
           },
           ...(persistent ? { persistent } : {}),
+          ...(kitesurf ? { kitesurf: true } : {}),
         };
         attachPageListeners(state.page,state.signals);
         sessions.set(id, state);
-        if (options.upstream) {
+        if (options.upstream || state.kitesurf) {
           state.pageSignals=new Map([[page,state.signals]]);
-          (page as unknown as UpstreamPage).context().on('page',child=>{
-            const childPage=child as unknown as PlaywrightPage;
+          const observedPages = new WeakSet<PlaywrightPage>([page]);
+          const signalsForChild = (childPage: PlaywrightPage) => {
+            const existing = state.pageSignals!.get(childPage);
+            if (existing) return existing;
             const signals:PageSignals={consoleLines:[],network:[],captureEpoch:randomUUID(),networkCaptures:new Map(),netSeq:0,windowStart:{network:0,console:0},partialReason:'Page attached after its initial document response; earlier observations are unavailable'};
             state.pageSignals!.set(childPage,signals);
-            attachPageListeners(childPage,signals);
-            child.once('close',()=>state.pageSignals!.delete(childPage));
+            (childPage as unknown as UpstreamPage).once('close',()=>state.pageSignals!.delete(childPage));
+            return signals;
+          };
+          const ownerContext = (page as unknown as UpstreamPage).context();
+          ownerContext.on('console',message=>{
+            const owner = message.page() as unknown as PlaywrightPage | null;
+            if (!owner || observedPages.has(owner)) return;
+            const signals = signalsForChild(owner);
+            signals.consoleLines.push({type:message.type(),text:message.text()});
+          });
+          ownerContext.on('page',child=>{
+            const childPage=child as unknown as PlaywrightPage;
+            attachPageListeners(childPage,signalsForChild(childPage));
+            observedPages.add(childPage);
           });
           const { createUpstreamPageControl } = await import('./upstream-control.ts');
-          state.upstream = await createUpstreamPageControl(page as unknown as UpstreamPage, target!, workspaceRoot, () => api.close({ sessionId: id }), allowedOrigins,(owner,navigation)=>{
+          state.upstream = await createUpstreamPageControl(page as unknown as UpstreamPage, target ?? state.page.url(), workspaceRoot, () => api.close({ sessionId: id }), allowedOrigins,(owner,navigation)=>{
             const signals=state.pageSignals?.get(owner as unknown as PlaywrightPage);
             if(!signals)return;
             if(navigation.pending){signals.pendingNavigationId=navigation.id;signals.partialReason='Navigation is waiting for dialog completion';}
@@ -929,9 +1017,10 @@ export async function createPlaywrightHostApi(
               if(signals.partialReason==='Navigation is waiting for dialog completion')signals.partialReason=navigation.failed?'Navigation did not complete after the dialog response; inspect the current page':undefined;
             }
             if(state.page===(owner as unknown as PlaywrightPage)){state.session.url=owner.url();delete state.session.title;state.session.updatedAt=new Date().toISOString();}
-          },allowedUploadPaths,allowedDownloadPaths?.length?{allowedPaths:allowedDownloadPaths,directory:downloadsDirectory(id)}:undefined,transferTimeoutMs);
+          },allowedUploadPaths,allowedDownloadPaths?.length?{allowedPaths:allowedDownloadPaths,directory:downloadsDirectory(id)}:undefined,transferTimeoutMs,Boolean(state.kitesurf));
         }
         if (semanticConfig) state.semantic = await (await import('./semantic-browser.ts')).attachSemanticBrowser(browser as unknown as import('playwright').Browser, semanticConfig);
+        if (kitesurf) Object.assign(api, upstreamReads);
         signal?.throwIfAborted();
         let pendingDialog:AgentBrowserSessionResult['pendingDialog'];
         if (target) {
@@ -955,6 +1044,7 @@ export async function createPlaywrightHostApi(
             createdAt: session.createdAt,
             profileDir: persistent.profileDir,
             ...(persistent.external ? { external: true } : {}),
+            ...(kitesurf ? { engine: 'kitesurf' as const } : {}),
             ...(session.url ? { url: session.url } : {}),
             ...(session.title ? { title: session.title } : {}),
           }, workspaceRoot);
@@ -973,6 +1063,7 @@ export async function createPlaywrightHostApi(
                 schemaVersion: 1, id, pid: recovery.pid, endpoint: recovery.endpoint,
                 port: Number(new URL(recovery.endpoint).port), mode, createdAt: session.createdAt,
                 profileDir: recovery.profileDir, ...('external' in recovery && recovery.external ? { external: true } : {}),
+                ...(kitesurf ? { engine: 'kitesurf' as const } : {}),
               }, workspaceRoot);
             }
           } catch { recordError = '; recovery record could not be saved'; }
@@ -1015,12 +1106,12 @@ export async function createPlaywrightHostApi(
         signal?.removeEventListener('abort', abort);
         await abortClose;
         openingSessions -= 1;
-        await closeUnusedSharedBrowser(options.upstream ? id : undefined);
+        if (!kitesurf) await closeUnusedSharedBrowser(options.upstream ? id : undefined);
       }
     },
 
     navigate: async (payload: AgentBrowserNavigatePayload): Promise<AgentBrowserActionResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'navigate');
       const target = assertAgentBrowserNavigateUrl(payload.url);
       // The persisted window is the *current page*: everything from this
       // navigation on, so a later process judges this page, not the last one.
@@ -1039,7 +1130,7 @@ export async function createPlaywrightHostApi(
     },
 
     waitForSelector: async (payload: AgentBrowserSelectorPayload): Promise<AgentBrowserActionResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'waitForSelector');
       if (state.upstream) { await state.upstream.wait(payload.selector, payload.timeoutMs); return { success: true, session: state.session }; }
       await state.page.waitForSelector(payload.selector, {
         timeout: payload.timeoutMs ?? 5000,
@@ -1050,7 +1141,7 @@ export async function createPlaywrightHostApi(
     click: async (payload: AgentBrowserClickPayload): Promise<AgentBrowserActionResult> => {
       if (payload.after !== undefined && !['navigation','popup','download'].includes(payload.after)) throw new Error('E_ARG: unsupported after event');
       if (payload.timeoutMs !== undefined && (!Number.isFinite(payload.timeoutMs) || payload.timeoutMs <= 0 || payload.timeoutMs > 60000)) throw new Error('E_ARG: timeoutMs must be within (0,60000]');
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'click');
       const observer = observeNativeAction(state, payload.timeoutMs, payload.after);
       const {beforeExecute,afterExecute} = observer;
       const page = state.page as unknown as UpstreamPage;
@@ -1073,28 +1164,30 @@ export async function createPlaywrightHostApi(
       return { success:true, session:state.session, ...(fieldChange ? {fieldChange}:{}), observation:observer.capture() };
     },
 
-    ...(options.upstream ? { downloadFile: async (payload:AgentBrowserDownloadPayload):Promise<AgentBrowserDownloadResult> => {
-      const state=await ensureState(payload.sessionId),signals=state.signals;
+    downloadFile: async (payload:AgentBrowserDownloadPayload):Promise<AgentBrowserDownloadResult> => {
+      const state=await ensureState(payload.sessionId, 'downloadFile'),signals=state.signals;
+      if (!state.upstream) return notImplemented('downloadFile');
       const observer=observeNativeAction(state,payload.timeoutMs);
       try {
         const result=await state.upstream!.downloadFile(payload.selector,payload.path,payload.timeoutMs,()=>{signals.fileDownloadPending=true;observer.beforeExecute();});
         await refreshLocation(state);
         return {success:true,session:state.session,...result,observation:observer.capture()};
       } catch(error){throw observer.failure(error);}finally{signals.fileDownloadPending=false;observer.dispose();}
-    }}:{}),
+    },
 
-    ...(options.upstream ? { uploadFiles: async (payload:AgentBrowserUploadPayload):Promise<AgentBrowserUploadResult> => {
-      const state=await ensureState(payload.sessionId);
+    uploadFiles: async (payload:AgentBrowserUploadPayload):Promise<AgentBrowserUploadResult> => {
+      const state=await ensureState(payload.sessionId, 'uploadFiles');
+      if (!state.upstream) return notImplemented('uploadFiles');
       const observer=observeNativeAction(state,payload.timeoutMs);
       try {
         const result=await state.upstream!.uploadFiles(payload.selector,payload.paths,payload.timeoutMs,observer.beforeExecute);
         await refreshLocation(state);
         return {success:true,session:state.session,...result,observation:observer.capture()};
       } catch(error) {throw observer.failure(error);} finally {observer.dispose();}
-    }} : {}),
+    },
 
     type: async (payload: AgentBrowserTypePayload): Promise<AgentBrowserActionResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'type');
       const observer=observeNativeAction(state,payload.timeoutMs);
       let fieldChange:AgentBrowserActionResult['fieldChange'];
       try {
@@ -1118,11 +1211,12 @@ export async function createPlaywrightHostApi(
       if (payload.timeoutMs !== undefined && (!Number.isFinite(payload.timeoutMs) || payload.timeoutMs <= 0 || payload.timeoutMs > 60000)) throw new Error('E_ARG: timeoutMs must be within (0, 60000]');
       if ([payload.deltaX, payload.deltaY].some(delta => delta !== undefined && (!Number.isFinite(delta) || Math.abs(delta) > 10000)) || (payload.action !== 'scroll' && (payload.deltaX !== undefined || payload.deltaY !== undefined))) throw new Error('E_ARG: deltas are finite scroll-only values within +/-10000');
       if (payload.action === 'scroll' && !(payload.deltaX || payload.deltaY)) throw new Error('E_ARG: scroll requires a nonzero delta');
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'pointer');
       const observer = observeNativeAction(state,payload.timeoutMs);
       try {
       if (state.upstream) await state.upstream.pointer(payload,observer.beforeExecute);
       else {
+        await state.page.bringToFront?.();
         observer.beforeExecute();
         const options = { timeout: payload.timeoutMs ?? 5000 };
         const target = payload.selector ? state.page.locator(payload.selector) : undefined;
@@ -1143,7 +1237,7 @@ export async function createPlaywrightHostApi(
     drag: async (payload: AgentBrowserDragPayload): Promise<AgentBrowserActionResult> => {
       if ([payload.sourceSelector, payload.targetSelector].some(selector => typeof selector !== 'string' || !selector.trim())) throw new Error('E_ARG: drag requires sourceSelector and targetSelector');
       if (payload.timeoutMs !== undefined && (!Number.isFinite(payload.timeoutMs) || payload.timeoutMs <= 0 || payload.timeoutMs > 60000)) throw new Error('E_ARG: timeoutMs must be within (0, 60000]');
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'drag');
       const observer = observeNativeAction(state,payload.timeoutMs);
       try {
       if (state.upstream) await state.upstream.drag(payload.sourceSelector, payload.targetSelector, payload.timeoutMs,observer.beforeExecute);
@@ -1163,7 +1257,7 @@ export async function createPlaywrightHostApi(
 
     selectOption: async (payload: AgentBrowserSelectorPayload & { label: string }): Promise<AgentBrowserActionResult> => {
       if (typeof payload.label !== 'string') throw new Error('E_ARG: label must be a string');
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'selectOption');
       const observer=observeNativeAction(state,payload.timeoutMs);
       let fieldChange:AgentBrowserActionResult['fieldChange'];
       try {
@@ -1181,7 +1275,7 @@ export async function createPlaywrightHostApi(
     },
     setChecked: async (payload: AgentBrowserSelectorPayload & { checked: boolean }): Promise<AgentBrowserActionResult> => {
       if (typeof payload.checked !== 'boolean') throw new Error('E_ARG: checked must be a boolean');
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'setChecked');
       const observer=observeNativeAction(state,payload.timeoutMs);
       let fieldChange:AgentBrowserActionResult['fieldChange'];
       try {
@@ -1194,7 +1288,7 @@ export async function createPlaywrightHostApi(
     },
     selectValues: async (payload: AgentBrowserSelectorPayload & { values: string[] }): Promise<AgentBrowserActionResult> => {
       if (!Array.isArray(payload.values) || payload.values.length > 80 || payload.values.some(value => typeof value !== 'string') || new Set(payload.values).size !== payload.values.length) throw new Error('E_ARG: values must be up to 80 unique strings');
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'selectValues');
       const observer=observeNativeAction(state,payload.timeoutMs);
       let fieldChange:AgentBrowserActionResult['fieldChange'];
       try {
@@ -1210,7 +1304,7 @@ export async function createPlaywrightHostApi(
     },
     appendText: async (payload: AgentBrowserTypePayload): Promise<AgentBrowserActionResult> => {
       if (typeof payload.text !== 'string') throw new Error('E_ARG: text must be a string');
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'appendText');
       const observer=observeNativeAction(state,payload.timeoutMs);
       let fieldChange:AgentBrowserActionResult['fieldChange'];
       try {
@@ -1232,7 +1326,7 @@ export async function createPlaywrightHostApi(
       if (payload.selector !== undefined && (typeof payload.selector !== 'string' || !payload.selector.trim() || payload.fullPage)) {
         throw new Error('E_ARG: screenshot selector must be nonempty and cannot be combined with fullPage');
       }
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'screenshot');
       if (payload.selector !== undefined && !state.upstream) throw new Error('E_NOT_IMPLEMENTED: element screenshots require the upstream backend');
       const shot: { buffer: Buffer; capture?: AgentBrowserScreenshotResult['capture'] } = state.upstream
         ? await state.upstream.screenshot(payload)
@@ -1247,8 +1341,8 @@ export async function createPlaywrightHostApi(
       };
     },
 
-    ...(semanticGateway ? { semanticRead: async (payload: AgentBrowserSemanticPayload, request?: { signal?: AbortSignal }): Promise<AgentBrowserSemanticResult> => {
-      const state = await ensureState(payload.sessionId);
+    ...(semanticGateway || options.persistent || options.kitesurf ? { semanticRead: async (payload: AgentBrowserSemanticPayload, request?: { signal?: AbortSignal }): Promise<AgentBrowserSemanticResult> => {
+      const state = await ensureState(payload.sessionId, 'semanticRead');
       if (!state.semantic || !state.upstream) throw new Error('E_SEMANTIC_CONFIG: no semantic adapter for this session');
       try {
         const read = await state.upstream.semanticRead((page, remaining) => state.semantic!.read(page, { ...payload, timeoutMs: remaining() }, request?.signal), payload.timeoutMs);
@@ -1257,22 +1351,32 @@ export async function createPlaywrightHostApi(
         if (!state.browser.isConnected()) await api.close({ sessionId: payload.sessionId });
         throw error;
       }
-    } } : {}),
-    ...(options.upstream ? { readForms: async (payload: AgentBrowserSessionPayload & {selector?:string}) => {
-      const state = await ensureState(payload.sessionId);
-      return { success:true, ...await state.upstream!.forms(payload.selector) };
-    }, findElement: async (payload: AgentBrowserFindPayload): Promise<AgentBrowserFindResult> => {
-      const state = await ensureState(payload.sessionId);
-      if (!state.upstream) throw new Error('E_NOT_IMPLEMENTED: exact reference queries require the upstream backend');
-      const result = await state.upstream.findElement(payload);
-      await refreshLocation(state);
-      return { success: true, session: state.session, ...result, scope: { ...result.scope, sessionId: payload.sessionId } };
-    } } : {}),
+    },
+
+    } : {}),
+    pdf: async (payload: AgentBrowserPdfPayload): Promise<AgentBrowserPdfResult> => {
+      const state = await ensureState(payload.sessionId, 'pdf');
+      if (!state.kitesurf) return notImplemented('pdf');
+      const cdp = await (state.page as unknown as UpstreamPage).context().newCDPSession(state.page as unknown as UpstreamPage);
+      try {
+        const result = await cdp.send('Page.printToPDF', {
+          printBackground: payload.printBackground ?? true,
+          ...(payload.landscape !== undefined ? { landscape: payload.landscape } : {}),
+          ...(payload.scale !== undefined ? { scale: payload.scale } : {}),
+          ...(payload.paperWidth !== undefined ? { paperWidth: payload.paperWidth } : {}),
+          ...(payload.paperHeight !== undefined ? { paperHeight: payload.paperHeight } : {}),
+          ...(payload.margin ? { marginTop: payload.margin.top, marginBottom: payload.margin.bottom, marginLeft: payload.margin.left, marginRight: payload.margin.right } : {}),
+        });
+        const buffer = Buffer.from(result.data, 'base64');
+        return { success: true, dataUrl: `data:application/pdf;base64,${result.data}`, bytes: buffer.length, format: 'pdf' };
+      } finally { await cdp.detach(); }
+    },
+    ...(options.upstream || options.kitesurf ? upstreamReads : {}),
     takeSnapshot: async (payload: AgentBrowserTakeSnapshotPayload): Promise<AgentBrowserTakeSnapshotResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'takeSnapshot');
       if (payload.selector !== undefined && (typeof payload.selector !== 'string' || !payload.selector.trim())) throw new Error('E_ARG: snapshot selector must be nonempty');
       if ((payload.selector !== undefined || payload.paged || payload.cursor !== undefined) && !state.upstream) throw new Error('E_NOT_IMPLEMENTED: scoped/paged snapshots require upstream');
-      const html = await state.page.content();
+      const html = state.kitesurf ? String(await state.page.evaluate('document.documentElement.outerHTML')) : await state.page.content();
       const title = await state.page.title();
       const textLen = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().length;
       if (state.upstream) {
@@ -1333,7 +1437,7 @@ export async function createPlaywrightHostApi(
     evaluate: async (
       payload: AgentBrowserEvaluatePayload,
     ): Promise<AgentBrowserEvaluateResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'evaluate');
       const value = await state.page.evaluate(payload.expression);
       // TF-0108: arbitrary JS can navigate; keep the session identity honest.
       await refreshLocation(state);
@@ -1343,7 +1447,7 @@ export async function createPlaywrightHostApi(
     getConsoleMessages: async (
       payload: AgentBrowserConsoleMessagesPayload,
     ): Promise<AgentBrowserConsoleMessagesResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'getConsoleMessages');
       if (state.signals.observationWindowMissing) {
         return { success: false, content: '', error: 'current page observation window is unavailable after the live URL changed; navigate again to collect it' };
       }
@@ -1363,7 +1467,7 @@ export async function createPlaywrightHostApi(
     networkListRequests: async (
       payload: AgentBrowserNetworkListPayload,
     ): Promise<AgentBrowserNetworkListResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'networkListRequests');
       if (state.signals.observationWindowMissing) {
         return { success: false, requests: [], error: 'current page observation window is unavailable after the live URL changed; navigate again to collect it' };
       }
@@ -1387,7 +1491,7 @@ export async function createPlaywrightHostApi(
     networkWaitForRequests: async (
       payload: AgentBrowserNetworkWaitPayload,
     ): Promise<AgentBrowserNetworkWaitResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'networkWaitForRequests');
       const signals=state.signals, observedPage=state.page;
       const timeoutMs = Math.min(Math.max(Math.trunc(payload.timeoutMs ?? 5_000), 1), 30_000);
       const filter = payload.filter;
@@ -1491,7 +1595,7 @@ export async function createPlaywrightHostApi(
     saveCredential: () => notImplemented('saveCredential'),
     deleteCredential: () => notImplemented('deleteCredential'),
     clickByUid: async (payload: AgentBrowserClickByUidPayload): Promise<AgentBrowserActionResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'clickByUid');
       const selector = resolveRefSelector(payload.uid);
       await state.page.waitForSelector(selector, { timeout: 5000 });
       await state.page.click(selector, { timeout: 5000 });
@@ -1500,7 +1604,7 @@ export async function createPlaywrightHostApi(
     },
 
     fillByUid: async (payload: AgentBrowserFillByUidPayload): Promise<AgentBrowserActionResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'fillByUid');
       const selector = resolveRefSelector(payload.uid);
       if (payload.clear) {
         await state.page.fill(selector, '');
@@ -1519,7 +1623,7 @@ export async function createPlaywrightHostApi(
      * a bounded input primitive rather than "send any key string".
      */
     pressKey: async (payload: AgentBrowserPressKeyPayload): Promise<AgentBrowserActionResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'pressKey');
       const key = normalizeKeyName(payload.key);
       const observer=observeNativeAction(state,10000);
       let fieldChange: AgentBrowserActionResult['fieldChange'];
@@ -1555,7 +1659,7 @@ export async function createPlaywrightHostApi(
     networkGetRequestDetails: async (
       payload: AgentBrowserNetworkDetailPayload,
     ): Promise<AgentBrowserNetworkDetailResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'networkGetRequestDetails');
       const details: unknown[] = [];
       for (const id of payload.requestIds) {
         const row = state.signals.network.find((entry) => entry.id === id);
@@ -1590,33 +1694,33 @@ export async function createPlaywrightHostApi(
     networkFindParameterCandidates: () => notImplemented('networkFindParameterCandidates'),
     networkExtractJsCandidates: () => notImplemented('networkExtractJsCandidates'),
     newPage: async (payload:import('../types/host-api.ts').AgentBrowserNewPagePayload) => {
-      const state=await ensureState(payload.sessionId);
+      const state=await ensureState(payload.sessionId, 'newPage');
       if(!state.upstream)return notImplemented('newPage');
       return {success:true,...await state.upstream.newPage(payload.url,payload.background,(page,info)=>activatePage(state,page,info))};
     },
     listPages: async (payload: AgentBrowserSessionPayload) => {
-      const state=await ensureState(payload.sessionId);
+      const state=await ensureState(payload.sessionId, 'listPages');
       if(!state.upstream)return notImplemented('listPages');
       return {success:true,...await state.upstream.listPages()};
     },
     readDialogs: async (payload:AgentBrowserSessionPayload) => {
-      const state=await ensureState(payload.sessionId);
+      const state=await ensureState(payload.sessionId, 'readDialogs');
       if(!state.upstream)return notImplemented('readDialogs');
       return {success:true,...state.upstream.readDialogs()};
     },
     respondDialog: async (payload:import('../types/host-api.ts').AgentBrowserDialogResponsePayload) => {
-      const state=await ensureState(payload.sessionId);
+      const state=await ensureState(payload.sessionId, 'respondDialog');
       if(!state.upstream)return notImplemented('respondDialog');
       return {success:true,...await state.upstream.respondDialog(payload.dialogId,payload.accept,payload.promptText)};
     },
     selectPage: async (payload: import('../types/host-api.ts').AgentBrowserSelectPagePayload) => {
-      const state=await ensureState(payload.sessionId);
+      const state=await ensureState(payload.sessionId, 'selectPage');
       if(!state.upstream)return notImplemented('selectPage');
       const result=await state.upstream.selectPage(payload.pageId,(page,info)=>activatePage(state,page,info));
       return {success:true,...result};
     },
     closePage: async (payload:import('../types/host-api.ts').AgentBrowserClosePagePayload) => {
-      const state=await ensureState(payload.sessionId);
+      const state=await ensureState(payload.sessionId, 'closePage');
       if(!state.upstream)return notImplemented('closePage');
       return {success:true,...await state.upstream.closePage(payload.pageId,(page,info)=>activatePage(state,page,info))};
     },
@@ -1643,7 +1747,7 @@ export async function createPlaywrightHostApi(
     runtimeInspectGlobals: async (
       payload: AgentBrowserRuntimeInspectGlobalsPayload,
     ): Promise<AgentBrowserRuntimeInspectGlobalsResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'runtimeInspectGlobals');
       const executor = new RuntimeReadToolExecutor(
         {
           evaluate: async (params) => {
@@ -1689,7 +1793,7 @@ export async function createPlaywrightHostApi(
     extractPageText: async (
       payload: AgentBrowserExtractPageTextPayload,
     ): Promise<AgentBrowserExtractPageTextResult> => {
-      const state = await ensureState(payload.sessionId);
+      const state = await ensureState(payload.sessionId, 'extractPageText');
       // TF-0164: an explicit frame scope is served by the upstream control, which resolves the
       // same frame identity the snapshot stamps into its refs and refuses an unknown, detached or
       // unauthorized frame. The main frame (omitted or "main") keeps the existing path below.
@@ -1736,6 +1840,8 @@ export async function createPlaywrightHostApi(
     validate: () => notImplemented('validate'),
   };
 
+  const status: AgentBrowserStatusResult = api.status();
+  void status;
   return api as unknown as AgentBrowserHostApi;
 }
 

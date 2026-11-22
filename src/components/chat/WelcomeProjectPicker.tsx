@@ -57,7 +57,10 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelect,
   useEffect(() => {
     if (!open) return;
     const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) close();
+      const target = event.target as Node;
+      const nestedMenu = document.querySelector('[data-overlay-owner="welcome-project"]');
+      if (rootRef.current?.contains(target) || nestedMenu?.contains(target)) return;
+      close();
     };
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
@@ -67,6 +70,7 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelect,
     if (!open) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        if (document.querySelector('[data-overlay-owner="welcome-project"]')) return;
         close();
         triggerRef.current?.focus();
       }

@@ -111,3 +111,6 @@ Playwright test durations:
 - Typecheck is a major fixed cost; the Agent Dev parallel typecheck path preserves both node and web projects while reducing local wait time.
 - Playwright runtime remains the dominant full-local cost; keep pnpm agent-dev:deep-test:reuse on smoke E2E for daily diagnosis and use pnpm agent-dev:deep-test:reuse:full only when full E2E evidence is needed.
 - Vitest has full and fast paths now; keep host-api facade coverage in the fast path and do not treat node-only evidence as full unit proof.
+
+
+Merge provenance: the newer g5 report above retains its original verdict. Both branch reports remain available at 4f3c7ff8bffea595fa3c7acab69bb6746700d0b7:artifacts/agent-dev-deep-test/report.md and 910206880dae301b41aed03efb7e5ff1de1103fe:artifacts/agent-dev-deep-test/report.md. Deep-test history preserves the exact run union.

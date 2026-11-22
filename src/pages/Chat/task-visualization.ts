@@ -25,6 +25,9 @@ export interface TaskStep {
    */
   kind: 'tool' | 'system' | 'message';
   detail?: string;
+  /** First event in this run; later output updates keep the same transcript slot. */
+  eventOrder?: number;
+  inputDetail?: string;
   /** Wall-clock start when the runtime supplied one. */
   startedAt?: number;
   /** Completed duration when the runtime or command event supplied one. */
@@ -291,6 +294,7 @@ function attachTopology(steps: TaskStep[]): TaskStep[] {
         status: step.status,
         kind: 'system',
         detail: `Spawned branch for ${branchAgent}`,
+        eventOrder: step.eventOrder,
         depth: 2,
         parentId: step.id,
       });
@@ -423,11 +427,12 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
   const steps: TaskStep[] = [];
   const stepIndexById = new Map<string, number>();
   const toolStartedAt = new Map<string, number>();
+  let eventOrder = -1;
   const upsertStep = (step: TaskStep): void => {
     const existingIndex = stepIndexById.get(step.id);
     if (existingIndex == null) {
       stepIndexById.set(step.id, steps.length);
-      steps.push(step);
+      steps.push({ ...step, eventOrder });
       return;
     }
     const existing = steps[existingIndex];
@@ -440,6 +445,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
   };
 
   for (const event of runState.events) {
+    eventOrder++;
     switch (event.type) {
       case 'tool.started': {
         if (typeof event.ts === 'number') toolStartedAt.set(event.toolCallId, event.ts);
@@ -451,6 +457,7 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
           status: 'running',
           kind: 'tool',
           detail: runtimeDetail(event.args),
+          inputDetail: runtimeDetail(event.args),
           startedAt: event.ts,
           depth: 1,
           url,
@@ -559,13 +566,17 @@ export function deriveTaskSteps({
     toolCallId: string | undefined,
     toolName: string | undefined,
     result: unknown,
+    isError = false,
   ): void => {
     if (!toolCallId) return;
     const label = toolName || toolLabelsById.get(toolCallId) || toolCallId;
+    const failed = isError || (!!result && typeof result === 'object' && 'status' in result && result.status === 'error');
+    const callIndex = stepIndexById.get(toolCallId);
+    if (failed && callIndex != null) steps[callIndex] = { ...steps[callIndex], status: 'error' };
     upsertStep({
       id: `tool-result-${toolCallId}`,
       label: `Tool Result: ${label}`,
-      status: 'completed',
+      status: failed ? 'error' : 'completed',
       kind: 'system',
       detail: toolResultDetail(result),
       depth: 1,
@@ -585,7 +596,7 @@ export function deriveTaskSteps({
   for (const [messageIndex, message] of messages.entries()) {
     if (!message) continue;
     if (isToolResultRole(message.role)) {
-      appendToolResultStep(message.toolCallId, message.toolName, message.details ?? message.content);
+      appendToolResultStep(message.toolCallId, message.toolName, message.details ?? message.content, message.isError);
       continue;
     }
     if (message.role !== 'assistant') continue;
@@ -629,7 +640,7 @@ export function deriveTaskSteps({
     });
 
     for (const result of message._toolResults ?? []) {
-      appendToolResultStep(result.toolCallId, result.toolName, result.result);
+      appendToolResultStep(result.toolCallId, result.toolName, result.result, result.isError);
     }
   }
 

@@ -28,6 +28,39 @@ beforeEach(() => {
 });
 
 describe('session task and worker panels consume owner results', () => {
+  it('renders the worker transcript as a labeled conversation and keeps lifecycle detail collapsible', async () => {
+    state.history.mockResolvedValue({ success: true, sessionGeneration: 'child-generation', messages: [
+      { role: 'user', content: 'Inspect the workspace changes.' },
+      { role: 'assistant', content: 'I found two modified files.' },
+    ] });
+    render(<MemoryRouter><WorkspaceSubagentPanel childSessionKey="agent:main:child" /></MemoryRouter>);
+    const transcript = await screen.findByRole('log', { name: 'agentsPanel.transcriptLabel' });
+    expect(transcript.querySelector('[data-message-role="user"]')).toHaveTextContent('Inspect the workspace changes.');
+    expect(transcript.querySelector('[data-message-role="assistant"]')).toHaveTextContent('I found two modified files.');
+    const lifecycle = screen.getByTestId('workspace-subagent-details');
+    expect(lifecycle).not.toHaveAttribute('open');
+    fireEvent.click(lifecycle.querySelector('summary')!);
+    expect(lifecycle).toHaveAttribute('open');
+    expect(screen.getByLabelText('agentsPanel.dispatchLabel')).toBeInTheDocument();
+    expect(screen.getByTestId('workspace-subagent-dispatch')).toHaveTextContent('composer.send');
+  });
+
+  it('sends from the workspace session composer on Enter and preserves Shift+Enter', async () => {
+    state.sendWorker.mockResolvedValue({ success: true, phase: 'queued' });
+    render(<MemoryRouter><WorkspaceSubagentPanel childSessionKey="agent:main:child" /></MemoryRouter>);
+    await screen.findByText('Worker transcript');
+    const input = screen.getByTestId('workspace-subagent-dispatch-input');
+    fireEvent.change(input, { target: { value: 'Continue the task' } });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: true });
+    expect(input).toHaveValue('Continue the task');
+    expect(state.sendWorker).not.toHaveBeenCalled();
+    fireEvent.keyDown(input, { key: 'Enter', keyCode: 229, isComposing: true });
+    expect(state.sendWorker).not.toHaveBeenCalled();
+    fireEvent.keyDown(input, { key: 'Enter' });
+    await waitFor(() => expect(state.sendWorker).toHaveBeenCalledWith(expect.objectContaining({ message: 'Continue the task' })));
+    await waitFor(() => expect(screen.getByTestId('workspace-subagent-dispatch-input')).toHaveValue(''));
+  });
+
   it('shows and scrolls the actual transcript while its task owner is still loading', async () => {
     let resolveHistory: (result: unknown) => void = () => {};
     let resolveOwner: (result: unknown) => void = () => {};

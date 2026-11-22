@@ -1,8 +1,8 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Copy, ShieldQuestion } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { ComposerDecisionSurface } from '@/components/chat/ComposerDecisionSurface';
 import { useCopyToClipboard } from '@/components/tool-ui/shared/use-copy-to-clipboard';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
@@ -43,11 +43,15 @@ export function RuntimeApprovalPrompt({
   agentId,
   hero = false,
   children,
+  requestContent,
+  requestPending = false,
 }: {
   sessionKey: string;
   agentId?: string;
   hero?: boolean;
   children?: ReactNode;
+  requestContent?: ReactNode;
+  requestPending?: boolean;
 }) {
   const { t } = useTranslation('chat');
   const [pending, setPending] = useState<RuntimeApprovalRequestedEvent[]>([]);
@@ -55,8 +59,8 @@ export function RuntimeApprovalPrompt({
   const titleRef = useRef<HTMLHeadingElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
   const previousRequestRef = useRef<string | undefined>(undefined);
-  const titleId = useId();
-  const descriptionId = useId();
+  const requestRef = useRef<HTMLDivElement>(null);
+  const submitting = useRef(new Set<string>());
   const { copiedId, copy } = useCopyToClipboard();
 
   // The broadcast only covers requests raised while the renderer is listening;
@@ -88,13 +92,14 @@ export function RuntimeApprovalPrompt({
     : !entry.agentId || entry.agentId === agentId);
   const requestId = request?.approvalId;
   useLayoutEffect(() => {
-    if (requestId && (document.activeElement === document.body || inputRef.current?.contains(document.activeElement))) {
+    if (requestId && (document.activeElement === document.body || inputRef.current?.contains(document.activeElement) || requestRef.current?.contains(document.activeElement))) {
       titleRef.current?.focus({ preventScroll: true });
     } else if (!requestId && previousRequestRef.current && document.activeElement === document.body) {
-      inputRef.current?.querySelector('textarea')?.focus({ preventScroll: true });
+      const next = requestPending ? requestRef.current?.querySelector<HTMLElement>('h2') : inputRef.current?.querySelector('textarea');
+      next?.focus({ preventScroll: true });
     }
     previousRequestRef.current = requestId;
-  }, [requestId]);
+  }, [requestId, requestPending]);
 
   const decisions = [...(request?.allowedDecisions.length ? request.allowedDecisions : FALLBACK_DECISIONS)]
     .sort((left, right) => (DECISION_ORDER[left] ?? 1) - (DECISION_ORDER[right] ?? 1));
@@ -103,8 +108,9 @@ export function RuntimeApprovalPrompt({
   const error = requestId ? decisionsById[requestId]?.error : null;
 
   const decide = async (decision: string) => {
-    if (!request || busy) return;
+    if (!request || busy || submitting.current.has(request.approvalId)) return;
     const approvalId = request.approvalId;
+    submitting.current.add(approvalId);
     setDecisionsById((current) => ({ ...current, [approvalId]: { busy: true, error: null } }));
     try {
       const result = await hostApi.runtimeApprovals.resolve({
@@ -119,39 +125,34 @@ export function RuntimeApprovalPrompt({
     } catch (cause) {
       setDecisionsById((current) => ({ ...current, [approvalId]: { busy: false, error: cause instanceof Error ? cause.message : String(cause) } }));
     } finally {
+      submitting.current.delete(approvalId);
       setDecisionsById((current) => ({ ...current, [approvalId]: { ...current[approvalId], busy: false } }));
     }
   };
 
   return (
-    <div className="relative shrink-0" data-testid="chat-composer-slot">
-      <div ref={inputRef} hidden={Boolean(request)} inert={Boolean(request)}>
+    <div className="relative shrink-0" data-testid="chat-composer-slot" data-composer-decision-active={Boolean(request) || requestPending}>
+      <div ref={requestRef} hidden={Boolean(request)} inert={Boolean(request)}>{requestContent}</div>
+      <div ref={inputRef} hidden={Boolean(request) || requestPending} inert={Boolean(request) || requestPending}>
         {children}
       </div>
       {request && (
-      <div className={cn('codex-composer-host mx-auto w-full max-w-[768px] px-4 pb-5 pt-2', hero && 'codex-composer-host--hero')}>
-      <section
-        className="flex max-h-[min(60dvh,420px)] flex-col overflow-hidden rounded-[25px] border border-border bg-surface-modal shadow-lg"
-        aria-labelledby={titleId}
-        aria-describedby={descriptionId}
-        data-testid="runtime-approval-prompt"
-        data-session-key={request.sessionKey ?? sessionKey}
-      >
-        <div className="flex shrink-0 items-start gap-3 px-4 pb-2 pt-3">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-input text-muted-foreground" aria-hidden="true">
-            <ShieldQuestion className="h-4 w-4" />
-          </span>
-          <div className="min-w-0">
-            <h2 id={titleId} ref={titleRef} tabIndex={-1} className="font-sans text-sm font-semibold leading-5 tracking-normal outline-none">
-              {t('runtimeApprovals.title')}
-            </h2>
-            <p id={descriptionId} className="mt-1 text-xs leading-5 text-muted-foreground">
-              {t('runtimeApprovals.description')}
-            </p>
+      <ComposerDecisionSurface title={t('runtimeApprovals.title')} description={t('runtimeApprovals.description')}
+        icon={ShieldQuestion} titleRef={titleRef} hero={hero} testId="runtime-approval-prompt" kind="runtime-approval"
+        count={pending.filter(entry => entry.sessionKey ? entry.sessionKey === sessionKey : !entry.agentId || entry.agentId === agentId).length}
+        footer={<>
+          {error && <p className="composer-decision-error" role="alert">{error}</p>}
+          <div className="composer-decision-actions" aria-busy={busy}>
+            {decisions.map(decision => <Button key={decision} type="button" disabled={busy} onClick={() => void decide(decision)}
+              data-testid={`runtime-approval-${decision}`} variant={decision === 'allow-once' ? 'default' : 'ghost'}
+              className={decision === 'deny' ? 'composer-decision-deny mr-auto' : undefined}>
+              {DECISION_LABEL_KEYS[decision] ? t(DECISION_LABEL_KEYS[decision]) : decision}
+            </Button>)}
           </div>
-        </div>
-
-        <dl className="min-h-0 space-y-3 overflow-y-auto px-4 pb-3" data-testid="runtime-approval-details">
+          {busy && <p className="composer-decision-description text-right" role="status">{t('runtimeApprovals.busy')}</p>}
+        </>}
+      >
+        <dl className="space-y-3" data-testid="runtime-approval-details" data-session-key={request.sessionKey ?? sessionKey}>
           <div className="min-w-0">
             <dt className="flex items-center justify-between gap-2 text-xs font-medium text-muted-foreground">
               {t('runtimeApprovals.commandLabel')}
@@ -172,7 +173,7 @@ export function RuntimeApprovalPrompt({
                 tabIndex={0}
                 aria-label={t('runtimeApprovals.commandLabel')}
                 data-testid="runtime-approval-command"
-                className="max-h-32 overflow-auto overscroll-contain whitespace-pre rounded-lg border border-border/60 bg-surface-input px-3 py-2 font-mono text-xs leading-5 text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
+                className="composer-decision-command"
               >
                 {request.command || t('runtimeApprovals.unknownCommand')}
               </pre>
@@ -188,40 +189,7 @@ export function RuntimeApprovalPrompt({
           ) : null}
         </dl>
 
-        <div className="shrink-0 space-y-2 border-t border-border/70 px-4 py-3">
-          {error ? (
-            <p className="break-words text-xs leading-5 text-red-700 dark:text-red-400" role="alert">
-              {error}
-            </p>
-          ) : null}
-          <div className="flex flex-wrap items-center justify-end gap-2" aria-busy={busy}>
-            {decisions.map((decision) => {
-              const labelKey = DECISION_LABEL_KEYS[decision];
-              const deny = decision === 'deny';
-              return (
-                <Button
-                  key={decision}
-                  type="button"
-                  disabled={busy}
-                  onClick={() => void decide(decision)}
-                  data-testid={`runtime-approval-${decision}`}
-                  variant={decision === 'allow-once' ? 'default' : deny ? 'ghost' : 'outline'}
-                  className={deny ? 'mr-auto' : undefined}
-                >
-                  {labelKey ? t(labelKey) : decision}
-                </Button>
-              );
-            })}
-          </div>
-
-          {busy ? (
-            <p className="text-right text-xs text-muted-foreground" role="status">
-              {t('runtimeApprovals.busy')}
-            </p>
-          ) : null}
-        </div>
-      </section>
-      </div>
+      </ComposerDecisionSurface>
       )}
     </div>
   );

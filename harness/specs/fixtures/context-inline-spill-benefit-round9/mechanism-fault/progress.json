@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "completedRuns": 32,
+  "expectedRuns": 32,
+  "providerCalls": 104,
+  "lastRun": {
+    "arm": "retention-off",
+    "fixtureId": "control-absent-2",
+    "repetition": 0,
+    "success": true,
+    "failureClass": null
+  }
+}

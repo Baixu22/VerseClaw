@@ -43,6 +43,31 @@
   -webkit-backdrop-filter: none;
 }
 
+.codex-composer-git-strip {
+  container: composer-git-status / inline-size;
+  min-height: 32px;
+  padding: 2px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background-control-panel);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-text-foreground) 5%, transparent);
+}
+
+.codex-composer-git-strip[data-conflicts='true'] {
+  border-color: color-mix(in oklab, var(--color-text-warning) 32%, var(--color-border));
+}
+
+.codex-composer-git-strip .composer-git-review-button {
+  border-radius: var(--radius-md);
+  color: var(--color-text-foreground-secondary);
+  background: var(--color-background-button-secondary);
+}
+
+.codex-composer-git-strip .composer-git-review-button:hover:not(:disabled) {
+  color: var(--color-text-foreground);
+  background: var(--color-background-button-secondary-hover);
+}
+
 /* On near-black the rim has to be light to read as a lit edge; the ink-based
  * mix above resolves to something darker than the surface and disappears. */
 .dark .codex-composer-shell {
@@ -59,12 +84,174 @@
     var(--shadow-lg);
 }
 
+.codex-composer-actions-row {
+  min-height: 32px;
+  column-gap: 4px;
+}
+
 .codex-composer-shell[data-drag-over='true'] {
   border-color: var(--color-border-focus);
   box-shadow:
     0 0 0 4px var(--ccs-focus),
     inset 0 1px 0 var(--ccs-rim),
     var(--shadow-lg);
+}
+
+/* Approval, question and plan states share the composer's own input surface. */
+.composer-decision-host { position: relative; z-index: 10; flex-shrink: 0; }
+.composer-decision-panel {
+  --cd-accent: var(--color-text-foreground-secondary);
+  --cd-danger: color-mix(in oklab, var(--color-text-error) 45%, var(--color-text-foreground));
+  display: flex;
+  flex-direction: column;
+  max-height: min(60dvh, 480px);
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 25px;
+  color: var(--color-text-foreground);
+}
+.composer-decision-panel[data-decision-tone='warning'] {
+  --cd-accent: color-mix(in oklab, var(--color-text-warning) 78%, var(--color-text-foreground));
+}
+.composer-decision-panel[data-decision-tone='danger'] { --cd-accent: var(--cd-danger); }
+.composer-decision-panel:is([data-decision-tone='warning'], [data-decision-tone='danger']) {
+  --ccs-border: color-mix(in oklab, var(--cd-accent) 22%, var(--color-border));
+}
+.composer-decision-header {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px 18px 12px;
+}
+.composer-decision-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-top: -3px;
+  flex: none;
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--cd-accent) 9%, transparent);
+  color: var(--cd-accent);
+}
+.composer-decision-icon { width: 16px; height: 16px; flex: none; }
+.composer-decision-title {
+  margin: 0;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: normal;
+  outline: none;
+}
+.composer-decision-description { margin: 4px 0 0; font-size: 12px; line-height: 18px; color: var(--color-text-foreground-secondary); }
+.composer-decision-count { display: inline-flex; align-items: center; gap: 6px; flex: none; padding-top: 1px; white-space: nowrap; font-size: 11px; line-height: 18px; color: var(--color-text-foreground-secondary); font-variant-numeric: tabular-nums; }
+.composer-decision-panel:not([data-decision-tone='neutral']) .composer-decision-count::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--cd-accent);
+}
+.composer-decision-content { min-height: 0; padding: 0 18px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; }
+.composer-decision-content > dl { padding-bottom: 14px; }
+.composer-decision-tool { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.composer-decision-tool h3 { font-family: inherit; font-size: 14px; line-height: 21px; font-weight: 500; letter-spacing: normal; }
+.composer-decision-tool [data-testid='chat-tool-ui-question-flow'] > div:first-child { color: var(--color-text-foreground-secondary); }
+.composer-decision-tool [data-testid='chat-tool-ui-question-flow'] > div:first-child > div:first-child { font-size: 11px; line-height: 16px; text-transform: none; }
+.composer-decision-options { display: flex; flex-direction: column; gap: 4px; }
+.composer-decision-option {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 40px;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  text-align: left;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+.composer-decision-option:hover:not(:disabled) { background: var(--color-background-row-hover); }
+.composer-decision-option[aria-selected='true'],
+.composer-decision-option[aria-pressed='true'] { background: var(--color-background-button-secondary-hover); border-color: var(--color-border-light); }
+.composer-decision-option:active:not(:disabled) { background: var(--color-background-button-secondary-active); }
+.composer-decision-option:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+.composer-decision-option:disabled { opacity: 0.5; }
+.composer-decision-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex: none;
+  border: 1px solid var(--color-icon-tertiary);
+  border-radius: 5px;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+.composer-decision-choice[data-mode='single'] { border-radius: 50%; }
+.composer-decision-choice svg { opacity: 0; transition: opacity 140ms ease; }
+.composer-decision-choice[data-selected='true'] {
+  border-color: var(--color-text-foreground);
+  background: var(--color-text-foreground);
+  color: var(--ccs-surface);
+}
+.composer-decision-choice[data-selected='true'] svg { opacity: 1; }
+.composer-decision-approval { display: flex; flex-direction: column; gap: 12px; }
+.composer-decision-approval [role='separator'] { display: none; }
+.composer-decision-approval dl { display: grid; gap: 10px; font-size: 12px; line-height: 18px; }
+.composer-decision-metadata { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.composer-decision-metadata dd { text-align: left; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.composer-decision-preferences > div { padding: 8px 0; }
+.composer-decision-command { max-height: 160px; overflow: auto; overscroll-behavior: contain; white-space: pre-wrap; overflow-wrap: anywhere; border-radius: var(--radius-md); background: var(--color-background-elevated-secondary); padding: 10px 12px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; line-height: 18px; }
+.composer-decision-command:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+.composer-decision-footer {
+  flex: none;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin-top: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--color-border);
+  background: var(--ccs-surface);
+}
+.composer-decision-content .composer-decision-footer { margin-inline: -18px; }
+.composer-decision-panel .composer-decision-actions { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+.composer-decision-approval p { font-size: 12px; line-height: 18px; }
+.composer-decision-actions > button { width: auto; min-height: 32px; border-radius: 999px; padding: 6px 12px; font-size: 12px; line-height: 18px; font-weight: 500; box-shadow: none; transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease; }
+.composer-decision-actions > button:active { transform: none; scale: 1; }
+.composer-decision-approval .composer-decision-actions > button:first-child { margin-right: auto; background: transparent; }
+.composer-decision-deny,
+.composer-decision-approval .composer-decision-actions > button:first-child { color: var(--cd-danger); }
+.composer-decision-deny:hover:not(:disabled),
+.composer-decision-approval .composer-decision-actions > button:first-child:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--cd-danger) 9%, transparent);
+}
+.composer-decision-panel [data-destructive='true'] .composer-decision-actions > button:last-child {
+  color: var(--cd-danger);
+  background: color-mix(in oklab, var(--cd-danger) 8%, var(--ccs-surface));
+  border: 1px solid color-mix(in oklab, var(--cd-danger) 30%, transparent);
+}
+.composer-decision-panel [data-destructive='true'] .composer-decision-actions > button:last-child:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--cd-danger) 12%, var(--ccs-surface));
+}
+.composer-decision-panel button:disabled { cursor: default; }
+.composer-decision-error { margin: 8px 0; color: var(--color-text-error); font-size: 12px; line-height: 18px; overflow-wrap: anywhere; }
+.composer-decision-panel fieldset[hidden] { display: none; }
+[data-testid='chat-page']:has([data-composer-decision-active='true']) [data-testid='chat-task-tray'],
+[data-testid='chat-page']:has([data-composer-decision-active='true']) .codex-composer-git-strip { display: none; }
+@media (max-width: 480px) {
+  .composer-decision-header { gap: 8px; }
+  .composer-decision-count { max-width: 80px; white-space: normal; text-align: right; }
+  .composer-decision-metadata { grid-template-columns: 1fr; gap: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .composer-decision-option, .composer-decision-choice, .composer-decision-choice svg,
+  .composer-decision-actions > button { transition: none; }
 }
 
 /*

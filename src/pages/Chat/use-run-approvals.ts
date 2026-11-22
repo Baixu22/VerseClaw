@@ -72,8 +72,9 @@ export function useRunApprovals({
       if (cancelledRef.current) return;
       setApprovals(Array.isArray(result?.approvals) ? result.approvals : []);
     } catch {
-      if (cancelledRef.current) return;
-      setApprovals([]);
+      // Keep an actionable request through a transient read failure. The next
+      // successful host snapshot removes resolved requests; session filtering
+      // below keeps the previous session's requests out of the new composer.
     }
   }, [sessionKey, workspaceId]);
 

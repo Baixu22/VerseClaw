@@ -131,24 +131,6 @@
  * narrow app viewport the full model label would make the trailing send
  * control overflow, so the picker collapses to its familiar gauge icon while
  * retaining its accessible label/title and the full menu. */
-@media (max-width: 900px) {
-  .codex-composer-control-group {
-    flex-shrink: 1;
-  }
-
-  .codex-model-picker-trigger {
-    width: 32px;
-    max-width: 32px;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .codex-model-picker-label,
-  .codex-model-picker-chevron {
-    display: none;
-  }
-}
-
 .codex-composer-menu--model {
   right: 0;
   left: auto;
@@ -171,6 +153,13 @@
 }
 
 .codex-composer-popover[data-state='closed'] { pointer-events: none; }
+
+.codex-composer-menu.codex-composer-popover.codex-session-worktree-menu {
+  bottom: auto;
+  right: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
 
 .codex-composer-popover .codex-composer-menu__option {
   min-height: 48px;

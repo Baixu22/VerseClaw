@@ -167,7 +167,7 @@ type SidebarSessionStatusKind = 'running' | 'waiting' | 'completed' | 'error' | 
 
 type SidebarSessionStatus = {
   kind: SidebarSessionStatusKind;
-  matrixState: OrbStatusState;
+  statusState: OrbStatusState;
   labelKey: string;
   signature: string;
   dismissible: boolean;
@@ -258,7 +258,7 @@ function buildSidebarSessionStatus(input: {
     return null;
   }
 
-  const matrixStateByKind: Record<SidebarSessionStatusKind, OrbStatusState> = {
+  const statusStateByKind: Record<SidebarSessionStatusKind, OrbStatusState> = {
     running: 'streaming',
     waiting: 'waiting',
     completed: 'success',
@@ -268,7 +268,7 @@ function buildSidebarSessionStatus(input: {
 
   return {
     kind,
-    matrixState: matrixStateByKind[kind],
+    statusState: statusStateByKind[kind],
     labelKey: `sessionStatus.${kind}`,
     signature,
     dismissible: kind === 'completed',
@@ -310,6 +310,10 @@ const SessionRowMemo = memo(function SessionRow({
 }: SessionRowProps) {
   const { t } = useTranslation(['common', 'chat']);
   const sessionStatusLabel = sessionStatus ? t(`chat:${sessionStatus.labelKey}`) : '';
+  const preview = s.lastMessagePreview?.replace(/\s+/g, ' ').trim();
+  const summary = sessionStatus && sessionStatus.kind !== 'completed'
+    ? sessionStatusLabel
+    : preview && preview !== sessionLabel ? preview : undefined;
   const isSelected = isOnChat && currentSessionKey === s.key;
   /* Long titles scroll as a seamless loop while the row is hovered (or reached
      by keyboard); see use-title-marquee.ts. */
@@ -362,7 +366,7 @@ const SessionRowMemo = memo(function SessionRow({
   return (
     <Tooltip delayDuration={SESSION_TOOLTIP_DELAY_MS}>
     <SidebarRow
-      className="task-row"
+      className={cn('task-row', summary && 'task-row--summary')}
       hookKey={s.key}
       selected={isSelected}
       actionsClassName="task-hover-actions"
@@ -453,6 +457,7 @@ const SessionRowMemo = memo(function SessionRow({
           <span ref={titleClipRef} className="task-title__clip">
             <span ref={titleTextRef} className="task-title__text" data-text={sessionLabel}>{sessionLabel}</span>
           </span>
+          {summary && <span className="task-preview" data-testid={`sidebar-session-summary-${s.key}`}>{summary}</span>}
         </span>
         {isPinned && (
           <Pin
@@ -486,7 +491,7 @@ const SessionRowMemo = memo(function SessionRow({
               sessionStatus.dismissible && 'task-status-slot--dismissible',
             )}
           >
-            <OrbStatus state={sessionStatus.matrixState} label={sessionStatusLabel} className="size-3.5" />
+            <OrbStatus state={sessionStatus.statusState} label={sessionStatusLabel} className="size-3.5" />
           </span>
         )}
         </button>
@@ -1206,7 +1211,7 @@ export function Sidebar() {
     }))
   ), [decorateSessionEntry, sessionSort, workspaceSessionGroups]);
 
-  const renderSessionRow = useCallback((entry: SidebarSessionEntry) => {
+  const renderSessionRow = useCallback((entry: SidebarSessionEntry, afterNavigate?: () => void) => {
     const { session: s } = entry;
     const workspace = findWorkspaceForSession(s.key);
     const sessionBranch = (s as ChatSession & { branch?: string; gitBranch?: string }).branch
@@ -1235,7 +1240,7 @@ export function Sidebar() {
       onRenameKeyDown={handleRenameKeyDown}
       onSwitch={selectSidebarSession}
       onLoadHistory={loadHistory}
-      navigate={navigate}
+      navigate={afterNavigate ? (to) => { navigate(to); afterNavigate(); } : navigate}
       onDismissSessionStatus={handleDismissSessionStatus}
       onMarkRead={markSessionRead}
       onTogglePinned={toggleSessionPinned}
@@ -1326,13 +1331,20 @@ export function Sidebar() {
         {!sidebarCollapsed && (
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             <BrandLogo size="sidebar" />
-            <span className="truncate whitespace-nowrap text-[17px] font-semibold leading-6 text-foreground/90">
+            <span className="truncate whitespace-nowrap text-[15px] font-semibold leading-6 text-foreground/90">
               Verse
             </span>
           </div>
         )}
         <div className="sidebar-heading-actions ml-auto flex shrink-0 items-center gap-[2px]">
-          <CompletionActivityMenu liveSessions={liveSessionActivity} />
+          <CompletionActivityMenu
+            liveSessions={liveSessionActivity}
+            renderSession={(key, afterNavigate) => {
+              const entry = sidebarSessionEntries?.find((item) => item.session.key === key)
+                ?? sortedWorkspaceSessionGroups.flatMap((group) => group.sessions).find((item) => item.session.key === key);
+              return entry ? renderSessionRow(entry, afterNavigate) : null;
+            }}
+          />
           <button
             type="button"
             data-testid="sidebar-collapse-toggle"

@@ -1,0 +1,46 @@
+{
+  "schema": "G7MergeCommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "integration-typecheck",
+  "cwd": "C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "run",
+    "typecheck"
+  ],
+  "startedAt": "2026-11-13T15:17:52.822Z",
+  "status": "finished",
+  "before": {
+    "commit": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "",
+    "tree": "a0f8511b513554aa7ece4c99d65b4bd28e168225"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T15:18:26.862Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "",
+    "tree": "a0f8511b513554aa7ece4c99d65b4bd28e168225"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-typecheck.stdout.txt",
+      "bytes": 4170,
+      "sha256": "c12608d5b192c9ddd4a68abdbf54049995e6042b89df8a84aa33095337e86d25"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-typecheck.stderr.txt",
+      "bytes": 150,
+      "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+    }
+  }
+}

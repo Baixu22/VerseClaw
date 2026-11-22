@@ -1,0 +1,67 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "schema": "G7InlineSpillRound7Outcome/v1",
+  "recordedAt": "2026-11-13T09:44:33.844233+00:00",
+  "candidate": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/design.freeze.json",
+    "sha256": "8dcbc516bf3ff8c6380ffd7ebc055b6022b36b19a7850b54c46ed829f7597405",
+    "commit": "449192523851b3795ee6793751e78331831af047"
+  },
+  "decision": {
+    "status": "mechanism-only",
+    "verdict": "NO_GO",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": -105.875,
+    "tokenGrowthPct": -0.22563398895912926,
+    "b7_evidence": true
+  },
+  "providerRuns": 96,
+  "providerCalls": 416,
+  "failedBenefitGates": [
+    "b2_task_benefit",
+    "b4_non_inferiority"
+  ],
+  "verifierAcceptedCleanCandidate": true,
+  "originalRound5FilesPreserved": 32,
+  "round6EvidencePreserved": {
+    "files": 105,
+    "sha256": "bf1a231b46b2fbdb849368816bf210fa7c18f9c1cb22b97cd87f0f36ada14a69",
+    "verdict": "NO_GO"
+  },
+  "requiredChecks": {
+    "unit-r7-clean-final": 0,
+    "typecheck-r7-clean-final": 0,
+    "contract-r7-clean-final": 0,
+    "harness-validate-r7-clean-final": 0,
+    "harness-dry-run-r7-clean-final": 0,
+    "deterministic-r7-clean-final": 0,
+    "verify-deterministic-r7-clean-final": 0,
+    "completion-probe": 0,
+    "live": 0,
+    "verify-live-r7": 0
+  },
+  "taskForest": {
+    "status": "in_progress",
+    "progress": 80,
+    "updated": false,
+    "ownGraphAvailable": true,
+    "reason": "B1–B7 门禁未全过"
+  },
+  "productDefaultsChanged": false,
+  "productLocksChanged": false,
+  "releaseApproved": false
+}

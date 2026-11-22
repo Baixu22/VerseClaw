@@ -1,0 +1,2 @@
+Previous HEAD position was d46cce0dc fix(context-eval): keep original archive targets and tool log provenance
+HEAD is now at 89dff8ebd fix(context-eval): reject frozen input drift before runtime imports

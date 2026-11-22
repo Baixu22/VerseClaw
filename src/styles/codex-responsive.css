@@ -81,10 +81,44 @@
   }
 }
 
+@container composer-actions (max-width: 520px) {
+  .codex-composer-actions-row .codex-composer-control-group { flex-shrink: 1; }
+
+  .codex-model-picker-trigger {
+    width: 32px;
+    max-width: 32px;
+    min-height: 32px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .codex-model-picker-label,
+  .codex-model-picker-chevron { display: none; }
+}
+
+@container composer-git-status (max-width: 460px) {
+  .codex-composer-git-strip { gap: 4px; padding-inline: 4px; }
+  .composer-git-review-button { width: 30px; padding-inline: 0; }
+  .composer-git-review-label { display: none; }
+  .codex-composer-git-strip [data-testid='composer-git-change-count'] { font-size: 11px; }
+}
+
 @container chat-toolbar (max-width: 400px) {
   .chat-header-branch {
     display: none;
   }
+}
+
+/* Preserve the compact mouse toolbar; give touch input the full target. */
+@media (pointer: coarse) {
+  .codex-composer-actions-row, .codex-composer-control-group { gap: 8px; }
+  .codex-composer-actions-row :is(.pm-morph-slot, .pm-morph[data-open='false'], .pm-morph-plus, .composer-send-button, .codex-composer-control),
+  [data-testid='runtime-approval-prompt'] button,
+  [data-testid='chat-tool-ui-question-flow'] button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .pm-morph-menu button, .chat-plan-toggle { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -30,9 +30,11 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
 4. Returning from Settings restores the remembered application route and focus.
 5. Existing page functionality remains unchanged while shared page shells, compact controls, grayscale materials, migrated SVGs, and restrained motion provide the new visual language.
 6. Knowledge has Library and Review Queue as its two primary views. Inbox, Draft and Proposal records remain projections of the existing knowledge service. More > Maintenance and Source tools preserve advanced operations. Documents open in Preview; editing is explicit, and a 960px window shows only one editor pane. The Chat knowledge mode preserves local conversation checkpoints and returns to Library or governed review with its source context.
-7. Chat keeps process details in a wrapping, keyboard-accessible turn disclosure while the final answer stays visible. Tool rows use compact status-aware call chips, preview their target and duration, and reveal complete arguments on demand. File names and commands lead their headers; long diffs and command output use expandable previews, with complete retained content available to copy. File-change cards stay within the turn disclosure column, and unbroken code wraps in the preview rather than widening the conversation. Verify light, dark and narrow layouts with agent-driven Electron histories; see `tasks/chat-output-visual-hierarchy.md`.
+7. Chat keeps process details in a wrapping, keyboard-accessible turn disclosure while the final answer stays visible. Pending workspace approvals remain actionable outside that disclosure. Completed assistant replies have a compact action row aligned to their text, with copy, quote-to-composer and eligible fork actions; timestamp and token usage remain adjacent. Tool rows use compact status-aware call chips, preview their target and duration, and reveal complete arguments on demand. File names and commands lead their headers; long diffs and command output use expandable previews, with complete retained content available to copy. File-change cards stay within the turn disclosure column, and unbroken code wraps in the preview rather than widening the conversation. Verify light, dark and narrow layouts with agent-driven Electron histories; see `tasks/chat-output-visual-hierarchy.md`.
+   Runtime tool calls and command output share a start-ordered timeline. Tool arguments and the latest result occupy separate labelled sections. Running command rows keep the existing progress wash and reveal live output; completed rows start folded. The composer, review strip, toolbar and session status panel adapt to the conversation column and keep their controls within narrow windows.
    Replacement previews show both versions with explicit +/- markers on neutral surfaces. Command previews start at the latest output and preserve a reader's earlier scroll position while new output arrives; retention notices stay outside the scrolling region. Web-search tool results appear as a collapsible search pill with a left-to-right progress fill and landed sources as openable cards; the circular ring from the Rare UI reference is deliberately not used.
 8. Runtime command approvals replace the owning session's composer in place, with readable, copyable commands and reachable decisions at narrow widths and 150% zoom. The repository status strip and the approval/composer column share the same centered width. No modal or page overlay is opened; the transcript and other conversations remain usable. The input stays mounted but hidden and inert until approvals resolve, restoring its draft and attachments. Only decisions offered by the runtime can be submitted.
+9. Sidebar settings remain bottom-anchored with the session list visible or collapsed. Running and waiting status keeps its existing animation; completed and failed status uses a shared static semantic icon in session rows, activity entries and the activity bell. With no live run, the bell shows the latest unread event's icon and returns to the bell glyph when read.
 
 ## Validation
 
@@ -43,11 +45,12 @@ constrain the menu to available space with internal scrolling. Verify normal and
 reduced motion with `tests/e2e/chat-composer-popovers.spec.ts` and agent-driven
 Electron captures.
 
-Empty Chat uses one unboxed project / branch row below the composer. Branch selection
-uses the existing governed Git host routes, with search, explicit read failures and
-retry, detached HEAD support, and refreshed identity after checkout. The three
-starter actions live in a single Quick start disclosure; drafting hides this entry
-without shifting the composer. Conversation mode retains its full Git strip.
+Empty Chat uses an unboxed project picker below the composer, with worktree
+selection inside its menu. Observed file changes reveal a compact review bar
+above the input, with the current branch, unique file count and a direct review
+action. Its menu retains governed branch search, checkout and worktree actions.
+The three starter actions live in a single Quick start disclosure; drafting
+hides this entry without shifting the composer.
 
 Chat's assistant output has no avatar gutter. Progress text and the final answer
 share one reading column; active process details start folded and show only the
@@ -76,6 +79,8 @@ share the main Chat Markdown renderer. Reduced motion settles one pose.
 See `tasks/knowledge-bot-avatar.md` and `rules/knowledge-bot-runtime-state.md`.
 
 - `pnpm harness validate --spec harness/specs/tasks/windows-ui-v2-apple-motion.md`
+- Pending questions, plan proposals and workspace approvals replace the composer with one shared decision surface while history scrolls. Runtime approvals have priority. Acceptance follows priority interruption and restoration, selection, submission, retry and request-specific acknowledgement, and checks draft preservation, light/dark and narrow layouts.
+- `pnpm run test:e2e:run tests/e2e/chat-runtime-ux-acceptance.spec.ts tests/e2e/chat-long-task-control.spec.ts tests/e2e/runtime-approval-bridge.spec.ts`
 - `pnpm run typecheck`
 - `pnpm run build:vite`
 - `pnpm run test:e2e:run tests/e2e/windows-ui-v2.spec.ts tests/e2e/settings-drawer.spec.ts`

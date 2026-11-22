@@ -1,0 +1,3047 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "schema": "G7Round9CommandInventory/v1",
+  "commands": [
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "bookmark-unit-draft",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/context-inline-spill-benefit-bookmark.test.ts",
+        "tests/unit/context-inline-spill-benefit-navigation.test.ts",
+        "--maxWorkers=1"
+      ],
+      "startedAt": "2026-11-13T11:10:54.970Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:10:58.086Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\bookmark-unit-draft.stdout.txt",
+          "bytes": 238,
+          "sha256": "cdaf86c4aa7c712fe1a63d8db91c90a9be9501d885f507daa7e51b46a28024d1"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\bookmark-unit-draft.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "candidate-r9-log",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "log",
+        "-5",
+        "--oneline"
+      ],
+      "startedAt": "2026-11-13T11:37:36.206Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:37:36.648Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\candidate-r9-log.stdout.txt",
+          "bytes": 402,
+          "sha256": "577d0f21cd0d9e927a789bf1e3db72f4f76b456210407145d90da2f7151d8e58"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\candidate-r9-log.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "candidate-r9-status",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "startedAt": "2026-11-13T11:37:35.187Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:37:35.734Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\candidate-r9-status.stdout.txt",
+          "bytes": 53,
+          "sha256": "7dc2fed5fa3368f5672a68deb4d630ddd7bc42ffaa80e563c79fc076a7c3bce2"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\candidate-r9-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "commit-candidate-r9",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "commit",
+        "-m",
+        "fix(context-eval): recover original locators from visible question bookmarks"
+      ],
+      "startedAt": "2026-11-13T11:37:33.912Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "69884a18a614886ad1712331b860465cb9a644a7",
+        "tree": "2d44774394a1cece4a10c930d70db8595467dfca",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:37:34.746Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\commit-candidate-r9.stdout.txt",
+          "bytes": 426,
+          "sha256": "082ffe211cf179729721a5de06f748af28dc1d2d7ffdf5f6519b25b3a6c03fc5"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\commit-candidate-r9.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "commit-design-r9",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "commit",
+        "-m",
+        "eval(context): freeze bounded visible exec bookmark recovery"
+      ],
+      "startedAt": "2026-11-13T11:37:32.596Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:37:33.226Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "69884a18a614886ad1712331b860465cb9a644a7",
+        "tree": "2d44774394a1cece4a10c930d70db8595467dfca",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\commit-design-r9.stdout.txt",
+          "bytes": 449,
+          "sha256": "bb38e1140967dbab84044fcfa114bf068ecdf60ebff31d31f99b6357ea20833c"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\commit-design-r9.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "completion-probe",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/completion-probe.mjs"
+      ],
+      "startedAt": "2026-11-13T11:48:43.587Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:48:47.920Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\completion-probe.stdout.txt",
+          "bytes": 55,
+          "sha256": "e9e879074973122a5db46b39e97770eb12cff4f498e9f0854f9b2258e553a65c"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\completion-probe.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "context-r9",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "context",
+        "--spec",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round9.md"
+      ],
+      "startedAt": "2026-11-13T11:10:12.470Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:10:14.390Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\context-r9.stdout.txt",
+          "bytes": 1972,
+          "sha256": "5eb291f8cec29208b50ec2a156ceb459a4dcb5d4458ba05330c11a5e8df8772a"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\context-r9.stderr.txt",
+          "bytes": 233,
+          "sha256": "b7374529c62672515d2a419655ebbd5d2ad5521901a54da930c9efbf1d1ebb7b"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "contract-r9-candidate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "contract:check"
+      ],
+      "startedAt": "2026-11-13T11:39:08.102Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:39:47.495Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\contract-r9-candidate.stdout.txt",
+          "bytes": 23,
+          "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\contract-r9-candidate.stderr.txt",
+          "bytes": 34,
+          "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "contract-r9-draft",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "contract:check"
+      ],
+      "startedAt": "2026-11-13T11:35:11.449Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:35:42.608Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\contract-r9-draft.stdout.txt",
+          "bytes": 23,
+          "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\contract-r9-draft.stderr.txt",
+          "bytes": 34,
+          "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "deterministic-r9-candidate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "scripts/context-inline-spill-benefit-loop-eval.mts",
+        "--mode",
+        "deterministic",
+        "--out",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/deterministic",
+        "--repeats",
+        "1",
+        "--max-turns",
+        "8",
+        "--max-output-tokens",
+        "900",
+        "--strategy",
+        "bookmarked",
+        "--pressure-source",
+        "tool",
+        "--provider-timeout-ms",
+        "240000",
+        "--freeze",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/design.freeze.json",
+        "--actor",
+        "codex-g7-inline-spill-tf0749-01a1d34c"
+      ],
+      "startedAt": "2026-11-13T11:43:18.136Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:44:37.192Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\deterministic-r9-candidate.stdout.txt",
+          "bytes": 1465,
+          "sha256": "3d9fa5d6e987e279d4749117ddac2cbfafd281210d565d97632626c3a569c576"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\deterministic-r9-candidate.stderr.txt",
+          "bytes": 7008,
+          "sha256": "47457e9a007db485d376e9f86fa4e1ece1f0284103655fdfec529409f0336b45"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "dry-run-r9-candidate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round9.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-13T11:39:51.261Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:39:53.886Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\dry-run-r9-candidate.stdout.txt",
+          "bytes": 121,
+          "sha256": "957e40f6591f7b5e94100b8970b70b31500be8a329dc8a756acd0271a68e9e8b"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\dry-run-r9-candidate.stderr.txt",
+          "bytes": 249,
+          "sha256": "ad76f4660ca56280f0def02c40d46112b69417cf915381184ffcbb21f2671119"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "dry-run-r9-draft",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round9.md",
+        "--dry-run"
+      ],
+      "startedAt": "2026-11-13T11:35:14.615Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:35:17.036Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\dry-run-r9-draft.stdout.txt",
+          "bytes": 121,
+          "sha256": "957e40f6591f7b5e94100b8970b70b31500be8a329dc8a756acd0271a68e9e8b"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\dry-run-r9-draft.stderr.txt",
+          "bytes": 249,
+          "sha256": "ad76f4660ca56280f0def02c40d46112b69417cf915381184ffcbb21f2671119"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "freeze-r9",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/prepare-freeze.mts"
+      ],
+      "startedAt": "2026-11-13T11:37:30.427Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:37:31.911Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\freeze-r9.stdout.txt",
+          "bytes": 248,
+          "sha256": "73b4ed3a3be7ffaec08bedf0039e167f805408c94b9b635b889a53104bdadcf9"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\freeze-r9.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "harness-ci-r9",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "harness:ci"
+      ],
+      "startedAt": "2026-11-13T11:43:18.149Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:44:41.889Z",
+      "exitCode": 1,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\harness-ci-r9.stdout.txt",
+          "bytes": 19373,
+          "sha256": "01c1720a8370060a9b6a66dbf17daf86e414d3e606b39569e2a5f8a9ca5496bb"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\harness-ci-r9.stderr.txt",
+          "bytes": 3579,
+          "sha256": "6c62143a98c715fcfb4e7b4f8326a632041fef567f170602805626bda4cb919f"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "live",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "scripts/context-inline-spill-benefit-loop-eval.mts",
+        "--mode",
+        "live",
+        "--out",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/live",
+        "--repeats",
+        "3",
+        "--max-turns",
+        "8",
+        "--max-output-tokens",
+        "900",
+        "--strategy",
+        "bookmarked",
+        "--pressure-source",
+        "tool",
+        "--provider-timeout-ms",
+        "240000",
+        "--freeze",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/design.freeze.json",
+        "--actor",
+        "codex-g7-inline-spill-tf0749-01a1d34c"
+      ],
+      "startedAt": "2026-11-13T11:48:48.506Z",
+      "status": "interrupted-after-96-runs",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "originalReceiptStatus": "running",
+      "exitCode": null,
+      "exitCodeObserved": false,
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "mechanism-bookmark-fault",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "scripts/context-inline-spill-benefit-loop-eval.mts",
+        "--mode",
+        "deterministic",
+        "--out",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/mechanism-fault",
+        "--repeats",
+        "1",
+        "--max-turns",
+        "8",
+        "--max-output-tokens",
+        "900",
+        "--strategy",
+        "bookmarked",
+        "--pressure-source",
+        "tool",
+        "--provider-timeout-ms",
+        "240000",
+        "--deterministic-fault",
+        "first-checksum-uri",
+        "--actor",
+        "codex-g7-inline-spill-tf0749-01a1d34c"
+      ],
+      "startedAt": "2026-11-13T11:13:03.763Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:13:20.439Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\mechanism-bookmark-fault.stdout.txt",
+          "bytes": 1463,
+          "sha256": "074b3b9e2a5789c18bbb7466a0f93007064866d01b3bbf9a94954e9c8e1342c7"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\mechanism-bookmark-fault.stderr.txt",
+          "bytes": 7008,
+          "sha256": "807c2f7b22afd1f16aadb58349f1533ee6b4c5353cc2c7250fe9fc3aea12881d"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "mechanism-bookmark",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "scripts/context-inline-spill-benefit-loop-eval.mts",
+        "--mode",
+        "deterministic",
+        "--out",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/mechanism",
+        "--repeats",
+        "1",
+        "--max-turns",
+        "8",
+        "--max-output-tokens",
+        "900",
+        "--strategy",
+        "bookmarked",
+        "--pressure-source",
+        "tool",
+        "--provider-timeout-ms",
+        "240000",
+        "--actor",
+        "codex-g7-inline-spill-tf0749-01a1d34c"
+      ],
+      "startedAt": "2026-11-13T11:13:03.753Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:13:20.390Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\mechanism-bookmark.stdout.txt",
+          "bytes": 1461,
+          "sha256": "69afb78bd25bf185ed87d8de7caf8ee88f44fe01d434f50a6c241a02c61e31d2"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\mechanism-bookmark.stderr.txt",
+          "bytes": 7008,
+          "sha256": "47457e9a007db485d376e9f86fa4e1ece1f0284103655fdfec529409f0336b45"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "recover-aggregation-2",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/recover-aggregation.mts"
+      ],
+      "startedAt": "2026-11-13T12:46:28.966Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T12:46:37.757Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\recover-aggregation-2.stdout.txt",
+          "bytes": 250,
+          "sha256": "f8eeee76f0b34f90cac65c0966138f22a3137855a007c5380fe80f4e08959fa2"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\recover-aggregation-2.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "recover-aggregation",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/recover-aggregation.mts"
+      ],
+      "startedAt": "2026-11-13T12:40:41.198Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T12:40:44.695Z",
+      "exitCode": 1,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\recover-aggregation.stdout.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\recover-aggregation.stderr.txt",
+          "bytes": 1224,
+          "sha256": "93fb052c1122bfdfbbf53c52d66a0c9feab582006d2a82aa6a66ae6f4ff8fde8"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "retain-round8",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "cherry-pick",
+        "1fa907e237fe19caf457d35d55dfe00288cf28d1"
+      ],
+      "startedAt": "2026-11-13T11:25:43.827Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:25:45.150Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\retain-round8.stdout.txt",
+          "bytes": 24237,
+          "sha256": "b2a56888412b9a8b8437e63415f3e6608c227c0e6d3026e54cd35ed415c281ca"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\retain-round8.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "start-r9-log",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "log",
+        "-5",
+        "--oneline"
+      ],
+      "startedAt": "2026-11-13T11:07:52.125Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:07:52.602Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\start-r9-log.stdout.txt",
+          "bytes": 401,
+          "sha256": "db0034295088858ea233f815fcc8c0a7eae8eaefa095cf8002cad6ad62703bc5"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\start-r9-log.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "start-r9-status",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "startedAt": "2026-11-13T11:07:51.034Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:07:51.649Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+        "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\start-r9-status.stdout.txt",
+          "bytes": 53,
+          "sha256": "7dc2fed5fa3368f5672a68deb4d630ddd7bc42ffaa80e563c79fc076a7c3bce2"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\start-r9-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "typecheck-r9-candidate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-11-13T11:43:18.132Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:44:33.157Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\typecheck-r9-candidate.stdout.txt",
+          "bytes": 1534,
+          "sha256": "d9fd1216cf2a35dba6521d328e8c19c4cb87ff61dc54b5d42b5d408f93f72b03"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\typecheck-r9-candidate.stderr.txt",
+          "bytes": 150,
+          "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "typecheck-r9-draft",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-11-13T11:29:52.308Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:30:29.750Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\typecheck-r9-draft.stdout.txt",
+          "bytes": 1532,
+          "sha256": "761902a60a04aa92e69939436ed8a2ec56ad0322b31172a67d2c66c77e984733"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\typecheck-r9-draft.stderr.txt",
+          "bytes": 150,
+          "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "unit-r9-candidate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/context-inline-spill-benefit-bookmark.test.ts",
+        "tests/unit/context-inline-spill-benefit-navigation.test.ts",
+        "tests/unit/context-inline-spill-benefit-strategy.test.ts",
+        "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts",
+        "tests/unit/context-inline-spill-benefit-input.test.ts",
+        "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+        "tests/unit/context-inline-spill-retention.test.ts",
+        "tests/unit/context-inline-spill-eval-provider.test.ts",
+        "tests/unit/harness-spec-lifecycle.test.ts",
+        "--maxWorkers=1"
+      ],
+      "startedAt": "2026-11-13T11:39:08.094Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:40:09.018Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\unit-r9-candidate.stdout.txt",
+          "bytes": 249,
+          "sha256": "149f1127310cdc910b740e06c3b1cc8c596380783091e8977e66d825cf36ff32"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\unit-r9-candidate.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "unit-r9-draft",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/context-inline-spill-benefit-bookmark.test.ts",
+        "tests/unit/context-inline-spill-benefit-navigation.test.ts",
+        "tests/unit/context-inline-spill-benefit-strategy.test.ts",
+        "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts",
+        "tests/unit/context-inline-spill-benefit-input.test.ts",
+        "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+        "tests/unit/context-inline-spill-retention.test.ts",
+        "tests/unit/context-inline-spill-eval-provider.test.ts",
+        "tests/unit/harness-spec-lifecycle.test.ts",
+        "--maxWorkers=1"
+      ],
+      "startedAt": "2026-11-13T11:27:13.551Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:28:11.021Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\unit-r9-draft.stdout.txt",
+          "bytes": 248,
+          "sha256": "1de0966a898b90a13c52eb09ca152db45ab1b3289f000d6d7b4b2039588f2fe8"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\unit-r9-draft.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "validate-r9-candidate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round9.md"
+      ],
+      "startedAt": "2026-11-13T11:39:48.099Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:39:50.748Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\validate-r9-candidate.stdout.txt",
+          "bytes": 76,
+          "sha256": "7080f40004a1fa7ef4a57822903e308d7e6825ea382044b93f129182a89ecff9"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\validate-r9-candidate.stderr.txt",
+          "bytes": 235,
+          "sha256": "90ec3a9b3e39acf337a5b35e6686f18017a2e6dbe20be290458ca1476f60a495"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "validate-r9-draft",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round9.md"
+      ],
+      "startedAt": "2026-11-13T11:29:52.304Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:29:54.789Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\validate-r9-draft.stdout.txt",
+          "bytes": 76,
+          "sha256": "7080f40004a1fa7ef4a57822903e308d7e6825ea382044b93f129182a89ecff9"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\validate-r9-draft.stderr.txt",
+          "bytes": 235,
+          "sha256": "90ec3a9b3e39acf337a5b35e6686f18017a2e6dbe20be290458ca1476f60a495"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "validate-r9-final-draft",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round9.md"
+      ],
+      "startedAt": "2026-11-13T11:35:11.456Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T11:35:14.098Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+        "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\validate-r9-final-draft.stdout.txt",
+          "bytes": 76,
+          "sha256": "7080f40004a1fa7ef4a57822903e308d7e6825ea382044b93f129182a89ecff9"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\validate-r9-final-draft.stderr.txt",
+          "bytes": 235,
+          "sha256": "90ec3a9b3e39acf337a5b35e6686f18017a2e6dbe20be290458ca1476f60a495"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "verify-deterministic-r9",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "scripts/context-inline-spill-benefit-round9-verify.mts",
+        "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\deterministic\\2026-11-13T11-43-42-373Z-deterministic",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/verification/deterministic.json",
+        "--seal"
+      ],
+      "startedAt": "2026-11-13T11:46:32.130Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T11:46:39.931Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\verify-deterministic-r9.stdout.txt",
+          "bytes": 1213,
+          "sha256": "bff1c07fd0805b9fb32df0fb7d1254ae3c76502cc3d8494522669ef131389eb4"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\verify-deterministic-r9.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "verify-live-recovered-r9",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "scripts/context-inline-spill-benefit-round9-verify.mts",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/recovered/2026-11-13T11-48-49-224Z-live-2026-11-13T12-46-29-966Z",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/verification/live-recovered.json",
+        "--seal"
+      ],
+      "startedAt": "2026-11-13T12:53:31.370Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T12:53:38.081Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\verify-live-recovered-r9.stdout.txt",
+          "bytes": 1230,
+          "sha256": "2b9ccdaa88bd99175116dadb68156e9379e899ef15ecc48c13c4c32b36b3faa1"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\verify-live-recovered-r9.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sourceReceiptUnchanged": true
+    }
+  ],
+  "originalLiveExitCode": null,
+  "originalLiveExitObserved": false,
+  "closeoutCommands": [
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0749",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0749",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:24.124Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:24.885Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0749.stdout.txt",
+          "bytes": 6750,
+          "sha256": "5a91bfa90381eefe498ebf81a7fdec09bde9bdc587712557cbe8ab09a8bf9feb"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0749.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "5c518d5b8fcdcf0cbd38920f5f1bbf221c62ef4880558c8b49b43cfd6272d514"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0750",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0750",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:25.382Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:26.025Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0750.stdout.txt",
+          "bytes": 2533,
+          "sha256": "7647d3072a65366ae31f23adb3b665ca6a545e8adc9a8335a5a3cfd06135d7b0"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0750.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "98ad6f909f242d4b3d18c32b86b1a79b9d5d5e288c82710de89854f28e4d5275"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0751",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0751",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:26.528Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:27.188Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0751.stdout.txt",
+          "bytes": 3151,
+          "sha256": "68b07e01e3eb8392ed01db34d7dcfe318f0bffc5bb017a45f6d23dccdbcb7b47"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0751.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "d63fe5dcdf75ab2f5c87b587e88b74d803e9fdfa9ec494b629d86ad1b2ef47a5"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0752",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0752",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:27.739Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:28.558Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0752.stdout.txt",
+          "bytes": 2977,
+          "sha256": "dd92bd0c6847c6ce3bd6aa882432b6e185365821966ae6a78921ced52c0ddfb1"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0752.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "e9ae966f5fe6d75e25e60c4f159352136dd318cdc92967eb0012bbdd6cbf5081"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0753",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0753",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:29.097Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:29.731Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0753.stdout.txt",
+          "bytes": 3252,
+          "sha256": "c49fc4c04e27967649515935b32be9cf37f2a5ebe0c78c64f0efb25a64940fb3"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0753.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "b28237f592778ea512921bdf104732ce8583519df43d530e8006058261d40d1a"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0754",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0754",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:30.223Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:30.846Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0754.stdout.txt",
+          "bytes": 2734,
+          "sha256": "7c558b6d85a15ca0e575231cbed069de70264fd116368c98b4024a549f4441ba"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0754.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "241008b0957c8cdbcbecfb367df708accf6c870c2dfef3f63327ad337bf597f6"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0755",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0755",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:31.349Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:31.984Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0755.stdout.txt",
+          "bytes": 3870,
+          "sha256": "dd3b1d4fb6ca5c509e52ee5845547e30db3432b5ace04ab72921bfd9aea15abd"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0755.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "084677f0cc1a8e842888c65bc8b19ff54bfa3fcef731d594ae6abb2ba126f236"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-TF-0859",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0859",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:32:32.528Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:33.173Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0859.stdout.txt",
+          "bytes": 4670,
+          "sha256": "ee078f0ed4f6701565db010fcf38dde95f9bfef8cf83a5d8949ae8a818ed5014"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-TF-0859.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "444c789223d8fc201d6e27f3dfb9d2e8a0d63a60172d862bcf9b497889baec6c"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-candidate-current-status",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "startedAt": "2026-11-13T13:47:48.739Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:47:50.270Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-candidate-current-status.stdout.txt",
+          "bytes": 1280,
+          "sha256": "90ae5985dcbcbe98ad32466f9cb51387544c8b42015aa7d6cf87538161b7e5a9"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-candidate-current-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "ddd022c388cfa3f9519afa0c9e9617c1517a48ba0bcb5a30a474a2a507c77d5b"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-create-replay",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "-c",
+        "core.autocrlf=false",
+        "worktree",
+        "add",
+        "--detach",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/candidate-replay",
+        "27c1a91dd228369ca1427d2b30f39dd6222cee37"
+      ],
+      "startedAt": "2026-11-13T13:31:35.977Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:32:14.068Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-create-replay.stdout.txt",
+          "bytes": 102,
+          "sha256": "23d17e5dbf0a2e988dfa306401b466b33e8b6ca9a82967e46fa5ff6f9e46ce0e"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-create-replay.stderr.txt",
+          "bytes": 4655,
+          "sha256": "dfcfee54448962c7f01d5498e624989a23820aa4336b3cc64385c6d891b43c4e"
+        }
+      },
+      "receiptSha256": "b16033af6972da925bdf830826b23b05a0352b930acc0ddb7299b8272df226a1"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-doc-diff",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "diff",
+        "--",
+        "docs/modules/context-and-memory.md",
+        "docs/context-family/goal-progress.md"
+      ],
+      "startedAt": "2026-11-13T14:02:42.271Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T14:02:43.162Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-doc-diff.stdout.txt",
+          "bytes": 3518,
+          "sha256": "f6ced5b551a1750260bdea3cc9ed81f4ee288be774de13d863a58276cea85e4c"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-doc-diff.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "b714fc30bb7429eacbd329ac37b89b0f0a185da8a95adfb33eff6b11a02b23c0"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-export-readback",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/verify-task-forest-export.py",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/task-forest-export-readback.json"
+      ],
+      "startedAt": "2026-11-13T14:07:19.189Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T14:07:22.813Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-export-readback.stdout.txt",
+          "bytes": 134,
+          "sha256": "d07bd42f0571bab872488f54909a1c2b20ea87cca2b2483272f8359d7b033f1b"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-export-readback.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "d0345d2871abb382b764e1d5e1f45ba355bd8a8712960933d42d130f4c2c8bc3"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-forest-export",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "export",
+        "--workspace",
+        "D:/ClawX",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:53:37.805Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T14:02:34.635Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-export.stdout.txt",
+          "bytes": 76,
+          "sha256": "0bc4369e62e6eb26386957751a57728a1e8114c796f803af032d9994fd92396c"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-export.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "93064a2937470ed64eeed89f564c92dc88d8426fcd70f2fbd57692859b80008b"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-forest-node-readback",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0749",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:52:45.828Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:52:47.291Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-node-readback.stdout.txt",
+          "bytes": 10689,
+          "sha256": "e4f6c8bcac330798809dc3920a3b468837d64475d047fda46e417d789884e90a"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-node-readback.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "e426f67302b8670ec5db9bf674d388fcd10a234c7b158e24eaba9d30e5446769"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-forest-prevalidate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "validate",
+        "--workspace",
+        "D:/ClawX",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:49:03.555Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:49:04.532Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-prevalidate.stdout.txt",
+          "bytes": 17,
+          "sha256": "6d3b78682a468bfcc32a2749eae728991711175290e7dc55198c91eaf8f334f0"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-prevalidate.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "1e06f8584aff55373b07b75edb46925b556ffe2b51094ff28f8f3762eb950991"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-forest-validate",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "validate",
+        "--workspace",
+        "D:/ClawX",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:53:22.660Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:53:23.405Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-validate.stdout.txt",
+          "bytes": 17,
+          "sha256": "6d3b78682a468bfcc32a2749eae728991711175290e7dc55198c91eaf8f334f0"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-forest-validate.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "222b8e9ad57637aa51803accdb966da34c60e210c9789610b6126ee1af433d1a"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-integrity-archived-originals",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout-integrity.mjs",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/integrity-archived-originals.json",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/live-curated-verification.json"
+      ],
+      "startedAt": "2026-11-13T13:43:19.161Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:43:32.044Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-archived-originals.stdout.txt",
+          "bytes": 101,
+          "sha256": "b671f3084e693667359c4cddc526cad6a5a17cfe3dd60c117a5f646b6c33fcbc"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-archived-originals.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "b5d081d7aac595519bc9d336e37817ba8cf8c74469babb9e149ebedf20ef706f",
+      "sourceAtExecution": "recovery/closeout-integrity.mjs"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-integrity-before-proposal",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout-integrity.mjs",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/integrity-before-proposal.json",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/live-curated-verification.json"
+      ],
+      "startedAt": "2026-11-13T13:38:56.323Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:39:06.107Z",
+      "exitCode": 1,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-before-proposal.stdout.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-before-proposal.stderr.txt",
+          "bytes": 183,
+          "sha256": "6638d8ba09baba15584c79b3887703d9f3ef1a6ac4ded461d8394d47175a9b4b"
+        }
+      },
+      "receiptSha256": "28a093a64ed56b25c5d36ffce64aaee6ddf318e16816e4bbbffe996513a7257f",
+      "sourceAtExecution": "recovery/closeout-integrity.initial.mjs"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-integrity-raw-retention",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout-integrity.mjs",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/integrity-raw-retention.json",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/live-curated-verification.json"
+      ],
+      "startedAt": "2026-11-13T13:41:35.077Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:41:44.218Z",
+      "exitCode": 1,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-raw-retention.stdout.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-raw-retention.stderr.txt",
+          "bytes": 228,
+          "sha256": "1c598a1312d24d44e11276120d97f75e6dba77d292e1a5353a8ef6aa37e6f643"
+        }
+      },
+      "receiptSha256": "5bd503d7c1336436a805df6e581ab9702d7675a3fa0d9fe977d60eff26b19bc4",
+      "sourceAtExecution": "recovery/closeout-integrity.raw-retention-attempt.mjs"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-integrity-ready",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout-integrity.mjs",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/integrity-ready.json",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/live-curated-verification.json"
+      ],
+      "startedAt": "2026-11-13T13:48:53.774Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:49:05.871Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-ready.stdout.txt",
+          "bytes": 101,
+          "sha256": "7ceae50b656f5a77787914f985b25cece23e07fd272bbcb69a84287158f22b63"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-ready.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "b2444650b25e54b17a517c3c7f76ff0395d7386263d9faaa9d344637358f0f01",
+      "sourceAtExecution": "recovery/closeout-integrity.mjs"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-parent-before-apply",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0749",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:49:51.690Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:49:52.971Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-parent-before-apply.stdout.txt",
+          "bytes": 6750,
+          "sha256": "5a91bfa90381eefe498ebf81a7fdec09bde9bdc587712557cbe8ab09a8bf9feb"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-parent-before-apply.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "3ae01d8c16767de9c09be0751bf3a192a93a0340f99b55af0f10d64a6b6f5821"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-parent-fresh",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "show",
+        "TF-0749",
+        "--workspace",
+        "D:/ClawX",
+        "--json",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:49:05.232Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:49:06.270Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-parent-fresh.stdout.txt",
+          "bytes": 6750,
+          "sha256": "5a91bfa90381eefe498ebf81a7fdec09bde9bdc587712557cbe8ab09a8bf9feb"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-parent-fresh.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "c66f5dd5ad142ed0d704e0ee156932999a468c18e5d0200f5f33598c0aab3db9"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-proposal-apply",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "proposal-apply",
+        "TFP-g7-inline-spill-r9-close-20261113-01a1d34c",
+        "--yes",
+        "--workspace",
+        "D:/ClawX",
+        "--actor",
+        "codex-g7-inline-spill-tf0749-01a1d34c",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:49:54.142Z",
+      "status": "applied-node-observed-exit-unobserved",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "receiptSha256": "8c1bead1585a833c0bc593ce02be8dbfa38b0f8ec0c4ded6c3dc6d2493d8e7ba",
+      "sourceReceiptStatus": "running",
+      "exitCode": null,
+      "exitCodeObserved": false,
+      "proposalAppliedOnDisk": true,
+      "nodeReadback": "done/100"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-proposal-save",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "python",
+        "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+        "proposal-save",
+        "--proposal-file",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/closure-proposal-input.json",
+        "--workspace",
+        "D:/ClawX",
+        "--lock-timeout",
+        "10"
+      ],
+      "startedAt": "2026-11-13T13:49:49.418Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:49:50.756Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-proposal-save.stdout.txt",
+          "bytes": 72,
+          "sha256": "7d00b4ec769322d2bb59116271a8e384b88cc498e0de915ce42eebf7fbb15b04"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-proposal-save.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "286fa7943f6b484696003e40ce3473a55a63471de4c301081fb252bf6668fd35"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-read-applied",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--version"
+      ],
+      "startedAt": "2026-11-13T13:52:19.535Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:52:21.112Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-read-applied.stdout.txt",
+          "bytes": 7,
+          "sha256": "6ee4bf75063c8390f4c0ec761b3b3d3a3239a7c21ad7dbcf90f9f93293d1a777"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-read-applied.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "b45dc577d882107f805ed396e710c39992f0d40181873ec6cd8959fbedaf1588"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-replay-log",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\candidate-replay",
+      "command": [
+        "git",
+        "log",
+        "-5",
+        "--oneline"
+      ],
+      "startedAt": "2026-11-13T13:33:28.676Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T13:33:29.164Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-replay-log.stdout.txt",
+          "bytes": 402,
+          "sha256": "577d0f21cd0d9e927a789bf1e3db72f4f76b456210407145d90da2f7151d8e58"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-replay-log.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "6b8a799db8be6d24a9819dbaccb91673edbc2b5b6a9996785f6fcd6f342781ff"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-replay-status",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\candidate-replay",
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "startedAt": "2026-11-13T13:33:27.455Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T13:33:28.172Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-replay-status.stdout.txt",
+          "bytes": 20,
+          "sha256": "ba051334ebc33f3162a4fd5be48615e03c8dac8ec7977e7c2752dbc1cf981841"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-replay-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "51389d6c558a70c6bfa2b180aec585a99effe37fa2795489df8cc6201600ab50"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-stage-evidence",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "git",
+        "add",
+        "--",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9"
+      ],
+      "startedAt": "2026-11-13T13:47:52.181Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T13:47:54.840Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-stage-evidence.stdout.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-stage-evidence.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "3b0ba256e580c714ea011503e6b7659301d28e5f9921ffad947d71df33944132"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-verify-curated",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\candidate-replay",
+      "command": [
+        "node",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "scripts/context-inline-spill-benefit-round9-verify.mts",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/live",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/live-curated-verification.json"
+      ],
+      "startedAt": "2026-11-13T13:33:54.681Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "",
+        "dirty": false
+      },
+      "finishedAt": "2026-11-13T13:34:02.701Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "",
+        "dirty": false
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-verify-curated.stdout.txt",
+          "bytes": 1258,
+          "sha256": "c6ecf365a77208f3de24434649174c104754c3729e07e1eb03f6f4cf7f27febf"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-verify-curated.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "0329c3ffcf03a9e6b0abdebf1bee40db6d5451044440e3f2622840d288ddb97e"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-harness-final",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round9.md"
+      ],
+      "startedAt": "2026-11-13T14:10:27.699Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T14:10:31.536Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-harness-final.stdout.txt",
+          "bytes": 76,
+          "sha256": "7080f40004a1fa7ef4a57822903e308d7e6825ea382044b93f129182a89ecff9"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-harness-final.stderr.txt",
+          "bytes": 235,
+          "sha256": "90ec3a9b3e39acf337a5b35e6686f18017a2e6dbe20be290458ca1476f60a495"
+        }
+      },
+      "receiptSha256": "292e864f3baf7c6431c4d0bc1962c7029a3ac5684a4ed9c9a2f1656bd1a3d065"
+    },
+    {
+      "schema": "G7CommandReceipt/v1",
+      "driven_by": "agent",
+      "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+      "realHumanEvidence": false,
+      "name": "closeout-integrity-final",
+      "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+      "command": [
+        "node",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout-integrity.mjs",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/integrity-final.json",
+        "D:/tmp/g7-closeout-pass-r9-01a1d34c/closeout/live-curated-verification.json"
+      ],
+      "startedAt": "2026-11-13T14:12:18.413Z",
+      "status": "finished",
+      "temp": "D:/tmp",
+      "candidateAtStart": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "finishedAt": "2026-11-13T14:12:31.654Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "candidateAtEnd": {
+        "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+        "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+        "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+        "dirty": true
+      },
+      "logs": {
+        "stdout": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-final.stdout.txt",
+          "bytes": 101,
+          "sha256": "3e8c84f71df487ca9ec298aabe163352e5c9329d7011e80d531a0b53e481ebd6"
+        },
+        "stderr": {
+          "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\closeout-integrity-final.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "receiptSha256": "30a6dfe28e0c0f458b31984e0a49bfd4e5c39017dfb0bc6f02ea5170fb90303f",
+      "sourceAtExecution": "recovery/closeout-integrity.mjs"
+    }
+  ]
+}

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ApprovalCard } from '@/components/tool-ui/approval-card';
 import { approvalDisplayDetails, isExternalWriteApproval, isIrreversibleApproval } from '@/lib/permission-approval-display';
 import type { PermissionApprovalDecision, PermissionApprovalEvent } from '@shared/types/workspace';
 
 type PendingRunApprovalsProps = {
+  presentation?: 'card' | 'composer';
   approvals: PermissionApprovalEvent[];
   onDecision: (id: string, decision: PermissionApprovalDecision) => Promise<void>;
 };
@@ -12,19 +13,22 @@ type PendingRunApprovalsProps = {
 type ApprovalUiState = {
   busy: boolean;
   choice?: PermissionApprovalDecision;
+  error?: string;
 };
 
-export function PendingRunApprovals({ approvals, onDecision }: PendingRunApprovalsProps) {
+export function PendingRunApprovals({ approvals, onDecision, presentation = 'card' }: PendingRunApprovalsProps) {
   const { t } = useTranslation('chat');
   const [states, setStates] = useState<Record<string, ApprovalUiState>>({});
+  const submitting = useRef(new Set<string>());
 
   if (approvals.length === 0) return null;
 
   const decide = async (approval: PermissionApprovalEvent, decision: PermissionApprovalDecision) => {
-    if (states[approval.id]?.busy || states[approval.id]?.choice) return;
+    if (submitting.current.has(approval.id) || states[approval.id]?.choice) return;
+    submitting.current.add(approval.id);
     setStates((current) => ({
       ...current,
-      [approval.id]: { ...current[approval.id], busy: true },
+      [approval.id]: { ...current[approval.id], busy: true, error: undefined },
     }));
     try {
       await onDecision(approval.id, decision);
@@ -32,11 +36,13 @@ export function PendingRunApprovals({ approvals, onDecision }: PendingRunApprova
         ...current,
         [approval.id]: { busy: false, choice: decision },
       }));
-    } catch {
+    } catch (cause) {
       setStates((current) => ({
         ...current,
-        [approval.id]: { ...current[approval.id], busy: false },
+        [approval.id]: { ...current[approval.id], busy: false, error: cause instanceof Error ? cause.message : String(cause) },
       }));
+    } finally {
+      submitting.current.delete(approval.id);
     }
   };
 
@@ -68,8 +74,9 @@ export function PendingRunApprovals({ approvals, onDecision }: PendingRunApprova
 
         return (
           <div key={approval.id} className="space-y-1.5">
-            <fieldset disabled={state?.busy || Boolean(state?.choice)} className="min-w-0">
+            <fieldset disabled={state?.busy || Boolean(state?.choice)} className="min-w-0" aria-busy={state?.busy || undefined}>
               <ApprovalCard
+                presentation={presentation}
                 id={approval.id}
                 title={externalWrite ? t('toolUi.approval.host.externalWriteTitle') : t('toolUi.approval.host.title')}
                 description={externalWrite
@@ -88,6 +95,7 @@ export function PendingRunApprovals({ approvals, onDecision }: PendingRunApprova
                 className="max-w-none"
               />
             </fieldset>
+            {state?.error && <p className="px-1 text-xs text-red-700 dark:text-red-400" role="alert">{state.error}</p>}
             {state?.choice && (
               <p className="px-1 text-xs text-muted-foreground" role="status">
                 {t('toolUi.approval.host.retryRequired')}

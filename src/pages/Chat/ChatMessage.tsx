@@ -7,9 +7,10 @@ import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdo
  * surfaced via ExecutionGraphCard, not inside message bubbles.
  */
 import { useState, useCallback, useEffect, memo, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
-import { Copy, Check, X, ZoomIn, AlertCircle, Pencil, Send, GitFork, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
+import { Copy, Check, X, ZoomIn, AlertCircle, Pencil, Send, GitFork, Quote, ArrowUpToLine, ArrowDownToLine } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ActionBarPrimitive, MessageProvider, type ThreadMessage } from '@assistant-ui/react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -65,6 +66,7 @@ interface ChatMessageProps {
    * `reasoningOverride` — one owner per turn, and the card is it.
    */
   suppressReasoning?: boolean;
+  suppressComposerInteractions?: boolean;
   isStreaming?: boolean;
   /**
    * Reasoning to show instead of whatever the message itself carries. Used for
@@ -90,9 +92,11 @@ interface ChatMessageProps {
   workspaceRoot?: string | null;
   onSubmitInteractionResponse?: (text: string) => void;
   onDraftInteractionResponse?: (text: string) => void;
+  onQuoteResponse?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
   onResendUserMessage?: (text: string) => void;
   canResendUserMessage?: boolean;
+  canForkFromMessage?: boolean;
   /**
    * #180: fork from this message's owner transcript entry. Missing identity keeps
    * the action visible but disabled; it never falls back to a provider id or tip.
@@ -222,6 +226,7 @@ export const ChatMessage = memo(function ChatMessage({
   suppressProcessAttachments = false,
   suppressAssistantText = false,
   suppressReasoning = false,
+  suppressComposerInteractions = false,
   isStreaming = false,
   reasoningOverride,
   streamingTools = [],
@@ -229,6 +234,8 @@ export const ChatMessage = memo(function ChatMessage({
   workspaceRoot,
   onSubmitInteractionResponse,
   onDraftInteractionResponse,
+  onQuoteResponse,
+  canForkFromMessage = false,
   canSubmitInteractionResponse = true,
   onResendUserMessage,
   canResendUserMessage = true,
@@ -251,9 +258,11 @@ export const ChatMessage = memo(function ChatMessage({
       suppressAssistantText,
       suppressToolCards,
       suppressReasoning,
+      suppressComposerInteractions,
+      isStreaming,
       textOverride,
     }),
-    [isUser, message, suppressAssistantText, suppressReasoning, suppressToolCards, textOverride],
+    [isUser, isStreaming, message, suppressAssistantText, suppressReasoning, suppressToolCards, suppressComposerInteractions, textOverride],
   );
   const text = projection.displayText;
   const reasoning = suppressReasoning ? EMPTY_REASONING : reasoningOverride ?? projection.reasoning;
@@ -449,7 +458,7 @@ export const ChatMessage = memo(function ChatMessage({
       {/* Content */}
       <div
         className={cn(
-          'flex flex-col w-full min-w-0 space-y-2',
+          'flex flex-col w-full min-w-0 space-y-1.5',
           isUser && isEditingUserMessage ? 'max-w-full' : isUser ? 'max-w-[77%]' : 'max-w-full',
           isUser ? 'items-end' : 'items-start',
         )}
@@ -657,6 +666,12 @@ export const ChatMessage = memo(function ChatMessage({
             timestamp={message.timestamp}
             imageCopyTarget={imageCopyTarget}
             usage={showStreamStatus ? null : { message, liveUsage, isStreaming }}
+            onQuoteResponse={!isStreaming ? onQuoteResponse : undefined}
+            onFork={
+              canForkFromMessage && transcriptEntryId && onForkFromMessage && canResendUserMessage && !isStreaming
+                ? () => onForkFromMessage(transcriptEntryId)
+                : undefined
+            }
           />
         )}
       </div>
@@ -803,7 +818,7 @@ function resolvePrimaryImageCopyTarget(
   return null;
 }
 
-// ── Assistant hover bar (timestamp + copy, shown on group hover) ─
+// ── Assistant response actions ─
 
 function normalizeAssistantUiTimestamp(timestamp?: number): Date {
   if (!timestamp || !Number.isFinite(timestamp)) return new Date();
@@ -888,32 +903,41 @@ function AssistantHoverBar({
   timestamp,
   imageCopyTarget,
   usage,
+  onQuoteResponse,
+  onFork,
 }: {
   text: string;
   timestamp?: number;
   imageCopyTarget?: ImageCopyTarget | null;
+  onQuoteResponse?: (text: string) => void;
+  onFork?: () => void;
   usage?: {
     message: RawMessage;
     liveUsage?: ChatMessageProps['liveUsage'];
     isStreaming?: boolean;
   } | null;
 }) {
+  const { t } = useTranslation('chat');
   const [copied, setCopied] = useState(false);
 
   const copyContent = useCallback(async () => {
-    if (imageCopyTarget) {
-      const copiedImage = await copyImageToClipboard(imageCopyTarget);
-      if (copiedImage) {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-        return;
+    try {
+      if (imageCopyTarget) {
+        const copiedImage = await copyImageToClipboard(imageCopyTarget);
+        if (copiedImage) {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+          return;
+        }
       }
+      if (!text.trim()) return;
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error(t('messageActions.copyFailed'));
     }
-    if (!text.trim()) return;
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }, [text, imageCopyTarget]);
+  }, [text, imageCopyTarget, t]);
 
   return (
     <AssistantUiGhostActionBar
@@ -921,28 +945,74 @@ function AssistantHoverBar({
       text={text}
       timestamp={timestamp}
       testId="chat-assistant-message-actions"
-      className="flex h-6 w-full translate-y-0.5 items-center justify-between px-1 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+      className="flex h-6 w-fit max-w-full min-w-0 translate-y-0.5 items-center justify-start gap-1 px-1 opacity-0 transition-[opacity,transform] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 [@media(hover:none)]:!translate-y-0 [@media(hover:none)]:!opacity-100 motion-reduce:transition-none"
     >
-      <span className="flex min-w-0 items-center gap-1">
-        <span className="truncate text-xs text-muted-foreground">
-          {timestamp ? formatTimestamp(timestamp) : ''}
-        </span>
-        {usage && (
-          <TokenUsageBadge
-            message={usage.message}
-            liveUsage={usage.liveUsage}
-            isStreaming={usage.isStreaming}
-          />
+      <div className="flex shrink-0 items-center gap-0.5">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 text-muted-foreground/75"
+              onClick={copyContent}
+              aria-label={copied ? t('messageActions.copied') : t('messageActions.copy')}
+              data-testid="chat-assistant-message-copy"
+            >
+              {copied ? <Check className="h-3.5 w-3.5 text-green-700 dark:text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top">{copied ? t('messageActions.copied') : t('messageActions.copy')}</TooltipContent>
+        </Tooltip>
+        {onQuoteResponse && text.trim() && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground/75"
+                onClick={() => onQuoteResponse(text)}
+                aria-label={t('messageActions.quoteResponse')}
+                data-testid="chat-assistant-message-quote"
+              >
+                <Quote className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">{t('messageActions.quoteResponse')}</TooltipContent>
+          </Tooltip>
         )}
-      </span>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-6 w-6"
-        onClick={copyContent}
-      >
-        {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-      </Button>
+        {onFork && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground/75"
+                onClick={onFork}
+                aria-label={t('messageActions.forkFromResponse')}
+                data-testid="chat-assistant-message-fork"
+              >
+                <GitFork className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">{t('messageActions.forkFromResponse')}</TooltipContent>
+          </Tooltip>
+        )}
+      </div>
+      {(timestamp || usage) && (
+        <span className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
+          {timestamp ? <span className="truncate">{formatTimestamp(timestamp)}</span> : null}
+          {usage && (
+            <TokenUsageBadge
+              message={usage.message}
+              liveUsage={usage.liveUsage}
+              isStreaming={usage.isStreaming}
+            />
+          )}
+        </span>
+      )}
     </AssistantUiGhostActionBar>
   );
 }

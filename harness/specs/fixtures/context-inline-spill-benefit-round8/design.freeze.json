@@ -1,0 +1,233 @@
+{
+  "schema": "ContextInlineSpillRound8FrozenDesign/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-13T10:47:41.021Z",
+  "task": "TF-0749",
+  "purpose": "当前可见元数据的原归档分页与完整字段定位；同一四臂和冻结预算的clean候选收益复核",
+  "designBase": "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+  "designFrozenBeforeCandidateAndProviderCalls": true,
+  "provider": {
+    "baseUrl": "http://127.0.0.1:3065/v1",
+    "model": "space-bunny",
+    "credentialEnv": "CONTEXT_INLINE_SPILL_API_KEY",
+    "resourceEnv": "LOCAL3065_API_KEY"
+  },
+  "live": {
+    "repeats": 3,
+    "fixtures": 8,
+    "evidenceTasks": 6,
+    "controlTasks": 2,
+    "runs": 96,
+    "maxTurns": 8,
+    "maxRequests": 768,
+    "concurrency": 1,
+    "order": "fixture then baseline-no-reference/reference-visible/recall-stable/retention-off then repetition",
+    "temperature": 0,
+    "maxOutputTokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "strategy": "navigated",
+    "pressureSource": "tool",
+    "providerTimeoutMs": 240000,
+    "repetitionRationale": "原协议每任务每臂三次重复，报告18个证据配对和6个控制配对，保留全部失败且不追加挑选性样本"
+  },
+  "deterministic": {
+    "repeats": 1,
+    "runs": 32,
+    "maxTurns": 8,
+    "purpose": "同一生产投影和协议的脚本对照；模式固定为 deterministic，收益判定 inconclusive"
+  },
+  "completionProbe": {
+    "requests": 1,
+    "model": "space-bunny",
+    "maxOutputTokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "temperature": 0,
+    "expected": {
+      "status": "completed",
+      "value": "probe-ok"
+    },
+    "failurePolicy": "保留原始响应；预检失败停止 live 开跑，不增加预算或自动重试",
+    "providerTimeoutMs": 240000
+  },
+  "completionBehavior": {
+    "finalAnswer": "仅从无 function_call 的 provider output_text 解析 value；有效 JSON 且逐字符符合 oracle 才通过",
+    "incomplete": "记录 status/incomplete_details 与全部 usage，终止该次运行并判失败；不重试或增大预算",
+    "transportError": "保留响应/错误、延迟和失败，留在原固定样本分母；无自动重试",
+    "maxTurns": "8 次请求用完仍有 function_call 时判 loop_budget_exceeded",
+    "toolPolicy": "仅执行模型返回的 function_call；同响应第一个 recall 可执行，其余 parallel_recall_limit",
+    "toolInstruction": "取得精确值后停止；最多三次回读未得到精确值时返回 null；实际违约单独统计，不替模型完成",
+    "invalidPage": "沿用 invalid_arguments，访问归档前拒绝缺失/非整数/范围外 max_chars"
+  },
+  "projection": {
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500,
+    "assembly": "production-projection-only/function-protocol",
+    "stableOffInitialInput": "fixture/repetition 的完整首轮请求逐字节相同；后续调用及投影差异留档"
+  },
+  "archiveSelection": {
+    "originalTarget": "运行记录 archive.uri 与 archive.checksum 同时逐字符匹配调用参数；byte_length 提供时须匹配",
+    "otherArchive": "URI/checksum 未同时匹配原目标的非空 archive_uri",
+    "originalOracleHit": "originalTarget 且工具 ok=true 且原始工具结果 content 含当前证据 oracle；只用于诊断",
+    "pageCoverage": "用原归档中的 oracle 字符位置与返回 offset/content.length 判定是否覆盖；禁止把位置作为模型输入",
+    "taskScore": "仍仅按最终 value 判分；选择原目标、工具成功、deterministic 通过均不代替任务成功"
+  },
+  "tokenAccounting": {
+    "source": "每次 provider 原始 usage 的 input/output/total 原值，按运行累计",
+    "failedCalls": "失败留在样本分母；provider 未返回 usage 时 reported tokens 为 0 并单独报告 missingUsage",
+    "cost": "无 provider 计费 rate/unit 时 not-run；不推测价格",
+    "growthComparator": "mean total tokens recall-stable relative to reference-visible"
+  },
+  "thresholds": {
+    "authority": "harness/specs/rules/inline-spill-benefit-quantification.md",
+    "B1": {
+      "recallAttemptRateMin": 0.8,
+      "recallOkRateMin": 0.95
+    },
+    "B2": {
+      "evidenceSuccessDeltaMin": 0.3,
+      "mcnemarExactPStrictMax": 0.05,
+      "pairedSubset": "18 evidence fixture/repetition pairs; six control pairs reported separately"
+    },
+    "B3": {
+      "evidenceSuccessMustExceedRetentionOff": true,
+      "positivePairsMin": 1,
+      "reversePairsMax": 0,
+      "pairedSubset": "18 evidence fixture/repetition pairs; six control pairs reported separately"
+    },
+    "B4": {
+      "nonInferiorityMargin": 0.05
+    },
+    "B5": {
+      "stableControlSuccessRate": 1
+    },
+    "B6": {
+      "contextGrowthCharsMax": 16000,
+      "totalTokenGrowthFractionMax": 0.25
+    },
+    "B7": {
+      "allRawArtifactsReadable": true,
+      "allSha256Match": true,
+      "credentialHitsMax": 0,
+      "allNumbersRecomputable": true,
+      "cleanCommittedCandidateAcceptedByVerifier": true
+    }
+  },
+  "dirtyCandidatePolicy": {
+    "preflight": "开跑前 git status 全为空，记录真实 commit/tree/branch/dirty；否则 0 次 provider 请求并写拒绝回执",
+    "afterRun": "结束再记录 commit/tree/status；候选或源码漂移使 B7=false、NO_GO；保留全部已产生数据",
+    "verification": "从实际 git blob、冻结设计、逐次请求/响应/工具结果、归档和 SHA256 复验，不把 dirty 字段改为 false"
+  },
+  "recallStrategy": "模型自主发起function_call，当前input提供原归档分页建议和完整字段位置；不复制字段值、不比较oracle、不恢复被淘汰payload",
+  "protocolSectionsSha256": {
+    "arms": "4f50fed7d279cebcc647520a1b06efb04df96584753ac90b5df043bc1cfafe2e",
+    "corpus": "d3457e58aa3e39a777b371e41b76cd5253f380fa1845ee244edde508d2960f01",
+    "projection": "61a2d6aaf84c1e8110e4c31b55123cc575e480c0b9bb4f93b590bc807badb1da",
+    "request": "47bd0b55cfd1eb9dbf09fbbdee37a23c7fcde971423089272a682f34b9327fe8",
+    "pressure": "ebcdebef6367d4086e7e82ca619efbe643ac58980de53e20448abe6c2b704afe",
+    "navigation": "9e22e2fafa17cb366e448f95c1bc5f7ed3b5eaf16b699282377b4320035a2c96"
+  },
+  "unchangedSourcesSha256": {
+    "scripts/context-inline-spill-benefit-input.mts": "a6322b9f46306f6c586e2d984ee26416cd13b13ea599b2498a2486c18f570b2d",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "harness/specs/rules/inline-spill-benefit-quantification.md": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+    "openclaw_runtime/src/agents/archive-recall-retention.ts": "83683a7a03edcdcabbf1c85fc35c23154060122b98298871d93be0b055ccf4c7",
+    "openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation.ts": "09f8fd19439b7d44e79b098727998ac52167208891783c92d4cf6b18d6bb3646",
+    "openclaw_runtime/src/agents/embedded-agent-runner/context-truncation-notice.ts": "d2aed9e01c4dfe59628b5a190dfa4824449e5ada9b9e86285821c691b75eb3f6",
+    "openclaw_runtime/src/agents/agent-hooks/context-pruning/pruner.ts": "10ff98c53270eb1bcff2d066cc1e617901ebb4dbda3c0bd3632bb85c54a53e5c",
+    "openclaw_runtime/src/agents/agent-hooks/context-pruning/settings.ts": "a15ab581a6fb78ada15e183043c2e4bb15029b49acfbcdc4f91686fd7348b7cc",
+    "openclaw_runtime/src/agents/tools/context-agent-tools.ts": "3a2e59e7624dcc59880605123373aab9482dc2711665dbc12e50d25788b61e0b",
+    "openclaw_runtime/src/context-engine/registry/context-item-registry.ts": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164",
+    "pnpm-lock.yaml": "9a36ae57be4028d929b42b1461c67f3913fccdfb8e30c0bfe24b9379afab1ac4",
+    "openclaw_runtime/pnpm-lock.yaml": "663afb8ca136834971505684403b8c98a0665e20b20d6ba9eec4a69abbfa9b0e"
+  },
+  "round5PreservationSha256": "dcca0d522f4f9c4108112d7422b178ac47ed8d050daaf6972ce25adae3a70ee9",
+  "closure": "B1–B7 全满足、verifier 接受 clean 候选且 base_graph_hash 匹配才可提案；任一收益门失败保持 TF-0749 in_progress/80",
+  "productDefaultsChanged": false,
+  "productLocksChanged": false,
+  "releaseApproved": false,
+  "pressure": {
+    "source": "tool",
+    "messages": [
+      {
+        "role": "assistant",
+        "toolName": null,
+        "chars": 63,
+        "sha256": "dd18133f5e7f8b6565a60825b2896b0ed466938fc57a0c050068636ec8976c97"
+      },
+      {
+        "role": "user",
+        "toolName": null,
+        "chars": 54,
+        "sha256": "bd48af05ef0576e71e7b1bd4a53873dc64a744b80e0edd3c94a1c9cb4d0a1bd1"
+      },
+      {
+        "role": "toolResult",
+        "toolName": "exec",
+        "chars": 11405,
+        "sha256": "3e3bb83745f7490c02b815b7963d2db1454ba434308d75e2e297ae73ea2cfde2"
+      },
+      {
+        "role": "toolResult",
+        "toolName": "exec",
+        "chars": 9372,
+        "sha256": "f7338b350119df20a20f263a188067220c372cabafa4ddfeeddda6af3fd4a46a"
+      },
+      {
+        "role": "toolResult",
+        "toolName": "exec",
+        "chars": 9372,
+        "sha256": "f7338b350119df20a20f263a188067220c372cabafa4ddfeeddda6af3fd4a46a"
+      }
+    ],
+    "transferredLogChars": 11405,
+    "logPolicy": "原健康日志全部字节作为第三个exec观测保留，原两干扰工具输出及user/assistant回合节奏不变；工具总压力增加",
+    "diagnosticLegacySource": "../context-inline-spill-benefit-round7/mechanism/user",
+    "diagnosticReadbackSha256": "f632757eb3232ff4db2f1fb728f11cbf2814bf7d1ae577e950f7792e63a79506"
+  },
+  "toolDefinitionSha256": "7e176615d07b1161ebbafa3aef3c961d99933dedb14974556a65b12ad1f1f446",
+  "round5PreservationPath": "harness/specs/fixtures/context-inline-spill-benefit-round6/round5-preservation.json",
+  "round6Preservation": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round6",
+    "sha256": "bf1a231b46b2fbdb849368816bf210fa7c18f9c1cb22b97cd87f0f36ada14a69"
+  },
+  "navigation": {
+    "placement": "last user message in actual request.input",
+    "ruleSha256": "ad101f16cef5954297fe3ab4f171d1086a85fea7c10d5dcf9c5f4ef33ebf7dda",
+    "target": "earliest valid visible recall-call URI/checksum; before any call use the initial visible reference",
+    "offset": "visible returned offset+content.length; evicted page uses visible call offset+max_chars; visible tool failure repeats that page recommendation",
+    "field": "literal private_evidence marker with a complete newline-terminated value in a matching current projected output; preceding log letters are allowed",
+    "fieldOutput": "call_id and input index only; no value copy or oracle comparison",
+    "modelControl": "executor handles only actual returned calls; final value is parsed only from the final provider text",
+    "mechanismReadbackSha256": "77212e67c4edf05fb9c091016cb33f3e7f42a8d276721d2da04d4a80734d7dab"
+  },
+  "round7Preservation": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round7",
+    "sha256": "5ddc7f8860fd732a51dc678ce8f38be019c87ed234d5336219d8704ba83c9276",
+    "failedBenefitGates": [
+      "b2_task_benefit",
+      "b4_non_inferiority"
+    ]
+  },
+  "strategySourcesSha256": {
+    "scripts/context-inline-spill-benefit-loop-eval.mts": "9520141af63b71cea45e6a125de140480f203057a4c3e7f0b2e016c5fc1a8d4c",
+    "scripts/context-inline-spill-benefit-strategy.mts": "26c8ac79ee339843727aefc2d87982da1f1dbce17f5aae88900031c321770cb0",
+    "scripts/context-inline-spill-benefit-round6-verify.mjs": "577df27524ee0a45689d03e7d474426e3b878e86ddfd2e57db3c8eb28e4989db",
+    "scripts/context-inline-spill-benefit-round7-verify.mjs": "40b06cabaee478ddb5cfa48632f1a8943729a297d016a5ff80d41c9d6ef1bf66",
+    "scripts/context-inline-spill-benefit-round8-verify.mts": "5306c23442d219fed2ad79a16c926f298c41532385541536ac6cf47d0b4c61ea",
+    "tests/unit/context-inline-spill-benefit-navigation.test.ts": "c14620f8952a8556fffcd8a4f721fcaee0027eab49c5b8a69d3e41afaa2b145e",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round8.md": "0e292853d34e5b872e124c1f4883908503cfb532f40cf121fcade42d5d8b7f78",
+    "harness/specs/rules/inline-spill-eval-projected-input.md": "cbde3564b84910fec3daee160005876899530c843be87e9033b337d480740017",
+    "harness/specs/scenarios/context-family.md": "5958e4dd6623abac9dd5043da97e4cff1a6d9770d344b221d539d2ef0e2d2efa",
+    ".gitattributes": "7dfb07b6efee0a33046f29d931f9e2f29fa38a86050bff041356479519aafe4a"
+  }
+}

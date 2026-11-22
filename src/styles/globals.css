@@ -20,6 +20,7 @@
 @import './plus-menu-morph.css';
 @import './codex-welcome-hero.css';
 @import './codex-workspace-panel.css';
+@import './codex-git-surfaces.css';
 @import './codex-session-activity.css';
 @import './codex-setup-motion.css';
 @import './codex-responsive.css';
@@ -166,7 +167,7 @@
 
     /* Cross-platform FakeCoding material and motion primitives. */
     --material-canvas: 0 0% 100%;
-    --material-sidebar: 210 17% 98%;
+    --material-sidebar: 220 14% 96.5%;
     --material-panel: 0 0% 100%;
     --material-elevated: 0 0% 100%;
     --material-control: 210 14% 96%;
@@ -198,7 +199,7 @@
     /* Neutral light work surfaces. */
     --surface-modal: 0 0% 100%;
     --surface-input: 210 14% 96%;
-    --surface-sidebar: 210 17% 98%;
+    --surface-sidebar: 220 14% 96.5%;
 
     /* ── Verse Claw usage accents (light) ─────────────────────────────
      *
@@ -239,14 +240,14 @@
     --input: 210 10% 88%;
 
     --material-canvas: 0 0% 100%;
-    --material-sidebar: 210 17% 98%;
+    --material-sidebar: 220 14% 96.5%;
     --material-panel: 0 0% 100%;
     --material-elevated: 0 0% 100%;
     --material-control: 210 14% 96%;
 
     --surface-modal: 0 0% 100%;
     --surface-input: 210 14% 96%;
-    --surface-sidebar: 210 17% 98%;
+    --surface-sidebar: 220 14% 96.5%;
   }
 
   /* Dark hierarchy: frame, sidebar, reading surface, then raised controls. */
@@ -365,6 +366,17 @@
   [data-ui-version='v2'] [data-testid='main-content'] {
     background: hsl(var(--material-canvas));
     border-left-width: 0;
+  }
+
+  /* Three planes, two materials. The window frame (titlebar) and the sidebar
+   * are one chrome surface; the conversation is a card raised out of it, with
+   * its own rounded corner and a hairline edge that follows the curve. Before,
+   * all three met edge-to-edge in near-identical tones and read as one slab.
+   * Settings keeps its flat full-page shell (no app-content-stage-v2). */
+  [data-ui-version='v2'] .app-content-stage-v2 > [data-testid='main-content'] {
+    border-top: 1px solid var(--color-border);
+    border-left: 1px solid var(--color-border);
+    border-top-left-radius: var(--radius-xl);
   }
 
   [data-ui-version='v2'] [data-testid='main-content'] h1.font-serif:not(.chat-brand-heading),

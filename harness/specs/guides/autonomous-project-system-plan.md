@@ -36,10 +36,19 @@ appliesTo:
 | TF-0685 | S3 | 通过配置操作员管理模型、工具和系统开关的生效状态 | TF-0683、TF-0671、TF-0674 |
 | TF-0686 | M1 | 用既有上下文控制面维持负责人和执行会话的连续性 | TF-0677、TF-0556、TF-0558、TF-0640 |
 | TF-0687 | M2 | 把任务经验经验证晋升并支持撤销与退化回滚 | TF-0678、TF-0686、TF-0653、TF-0655 |
-| TF-0688 | V1 | 让目标到工具效果、成本和验收形成统一可查询追溯 | TF-0678、TF-0684、TF-0685 |
-| TF-0689 | V2 | 验证单项目与跨项目自治的真实质量和可恢复边界 | TF-0688、TF-0687、TF-0662 |
+| TF-0688 | V1 | 让目标到工具效果、成本和验收形成统一可查询追溯 | TF-0678、TF-0684、TF-0685、TF-0891 |
+| TF-0689 | V2 | 验证单项目与跨项目自治的真实质量和可恢复边界 | TF-0688、TF-0687、TF-0662、TF-0887、TF-0889、TF-0890、TF-0892 |
+| TF-0886 | P0 | 在任务拆解前接入有界预算 Research 探针、只读证据包与边际收益早停门禁 | TF-0673、TF-0674、TF-0679 |
+| TF-0887 | P5 | 交付 Ask/Plan/Autopilot 会话收敛协议与写前结构化计划确认闭环 | TF-0675、TF-0886、TF-0662 |
+| TF-0888 | P6 | 为波次调度器接入候选方案最优性评估与 CP-SAT/ILP/PDDL 有界求解适配层 | TF-0675、TF-0679、TF-0886 |
+| TF-0889 | P7 | 在既有完成权威内接入非模型自证的确定性形式化核验与反例诊断适配层 | TF-0678、TF-0672 |
+| TF-0890 | R5 | 交付远端分支与 Draft PR 异步受控委托、脱机后台推进及重连回执对账 | TF-0677、TF-0682、TF-0674 |
+| TF-0891 | V1a | 建立结果→验收→候选→执行→计划/Research→目标的逆向归因追溯底座 | TF-0678、TF-0673 |
+| TF-0892 | V2a | 交付方案最优率、资源浪费率、步骤冗余度与迭代收敛曲线度量套件 | TF-0891、TF-0888、TF-0889 |
 
 UI旧链保留0657→0658→0659→0660→0661→0662；新增0670→0657、0673→0658。当前自治计划唯一ready叶为TF-0670；其他支线的ready不受本计划影响。
+
+> 2026-11-22 增量注记：上段“当前自治计划唯一ready叶为TF-0670”为 2026-11-02 建图快照，非实时状态（提交史中 TF-0670..0674、TF-0675、TF-0677、TF-0678、TF-0679 已有实现或分支封存推进，已完成的 TF-0675 / TF-0678 不重开、不改历史结论；TF-0687 / TF-0688 / TF-0689 提交数仍为 0）。推理规划质量与形式化收敛新增子目标见 reasoning-planning-convergence-gap-plan（`harness/specs/guides/reasoning-planning-convergence-gap-plan.md`）。
 
 ## 目标与范围
 
@@ -93,6 +102,8 @@ UI旧链保留0657→0658→0659→0660→0661→0662；新增0670→0657、0673
 A1先固定合同；0657随之交付读模型。A2依赖现有0652的接入收敛；A2→A3→A4形成可信动作、验收和强任务绑定。0658在A4后提供项目入口与任务清单，0659→0660→0661→0662保留原顺序。
 
 A5探测实际宿主；R1在A2/A5后提供最小资源准入。P1在A4/0662后规划；P2依赖P1/A5/R1启动单项目单writer；P3续行；R2/R3分别补VB/VS，R4整合/回收；P4在P3/R4后完成项目闭环。S1只读总控可在0662/R1后交付，S2在P4/R4后扩大跨项目，S3受控配置。M1/M2复用上下文与RSI；V1追溯；V2同候选最终验收。
+
+2026-11-22 推理规划与收敛增量链（不重开已封存的 TF-0675 / TF-0678）：按“统一追溯 > 预算化 Research > 规划与形式化核验 > 长程验证”优先序，V1a（TF-0891）在 A4/P4 后先行打通单项目六级逆向归因底座并汇入 V1（TF-0688）；P0（TF-0886）在 A4/A5/R1 后提供规划前有界 Research 门禁；P5（TF-0887）与 P6（TF-0888）在 P1/P0 后分别补齐 Ask/Plan/Autopilot 写前确认协议与候选最优性/Solver Adapter；P7（TF-0889）在 A3/P4 后向既有 EvidenceVerifier 注入确定性形式化核验；R5（TF-0890）在 A5/P3/R4 后提供受控远端分支与 Draft PR 异步委托；V2a（TF-0892）在 V1a/P6/P7 后交付收敛质量度量套件并汇入 V2（TF-0689）。详细契约见 `harness/specs/guides/reasoning-planning-convergence-gap-plan.md`。
 
 DAG表达真实前置，不为了排版把无关工作串联。一个实施会话只推进一个ready叶子；本次仅将A1设ready，0657因新增A1前置转proposed，其他新叶子proposed。TF-0650/0663等其他支线状态保持。未来满足依赖时按优先级选择下一个叶子，不能把proposed视为已授权并发写。
 
@@ -712,9 +723,11 @@ DAG表达真实前置，不为了排版把无关工作串联。一个实施会�
 
 目的：用户看结果，agent能定位每一步的真实执行、资源与成本，不靠拼聊天记录恢复事实。
 
-骨架位置：L5 证据与失效 + UI投影。前置：P4、S2、S3。
+骨架位置：L5 证据与失效 + UI投影。前置：P4、S2、S3、V1a（TF-0891）。
 
-复用与必要写集：现有Observability/trajectory/receipt owner；shared/types/session-activity.ts；src/pages/Chat/SessionActivityPanel.tsx；现有TaskLedger/Evidence呈现。标为拟新增/按实际owner收窄的路径不是已存在文件。
+> 2026-11-22 现状注记（定义在案、实现为零）：经全仓提交史（`git log --all --grep`）核实，TF-0688 当前提交数为 0（零实现）。既有 `events.jsonl`、`observability-graph.ts` 与 TF-0867 产物保留仅为底层零件，尚未形成从交付结果逆向反查至目标的统一归因读面。为避免跨项目 S2/S3 阻塞最高优的单项目规划质量归因，已拆出前置子叶 **TF-0891 / V1a**（`autonomy-reverse-attribution-spine`）先行交付单项目六级逆向归因索引底座；TF-0688 承载以下四个可执行子项收口：① 消费 TF-0891 逆向归因底座；② 父子派发、修复重试与异步委托的唯一 attempt 费用去重及分段耗时（未知单价标 `unknown` 禁填 `0`）；③ 结果摘要→任务/规划报告→原始技术回执三层四语（`en/zh/ja/ru`）UI 展开；④ 会话删除与工作树回收下的受引用证据不灭性及篡改 `stale` 诊断（详见 `reasoning-planning-convergence-gap-plan.md` §5）。
+
+复用与必要写集：现有Observability/trajectory/receipt owner；shared/types/session-activity.ts；src/pages/Chat/SessionActivityPanel.tsx；现有TaskLedger/Evidence呈现；shared/task-system/reverse-attribution-index.ts（TF-0891 拟新增）。标为拟新增/按实际owner收窄的路径不是已存在文件。
 
 要求：
 
@@ -740,9 +753,11 @@ DAG表达真实前置，不为了排版把无关工作串联。一个实施会�
 
 目的：用同一候选的真实任务、故障与可复算指标证明减少了人工操作，而不是只证明页面存在。
 
-骨架位置：L1-L5 集成验收。前置：V1、M2、TF-0662。
+骨架位置：L1-L5 集成验收。前置：V1、M2、TF-0662、P5（TF-0887）、P7（TF-0889）、R5（TF-0890）、V2a（TF-0892）。
 
-复用与必要写集：现有AgentFirst被测对象/套件/评分注册入口；tests/e2e；harness/specs/fixtures/autonomous-project-system；README.md；README.zh-CN.md；README.ja-JP.md；README.ru-RU.md。标为拟新增/按实际owner收窄的路径不是已存在文件。
+> 2026-11-22 现状注记（定义在案、实现为零）：经全仓提交史（`git log --all --grep`）核实，TF-0689 当前提交数为 0（零实现；同阶段 TF-0687 亦为零提交）。局部脚本 `scripts/runtime-long-stability.mjs` 等不替代跨层长程自治实证。本节点直接承载长程自治真实质量缺口（不另造重复节点），接入度量子叶 **TF-0892 / V2a**（`autonomy-convergence-quality-metrics`），拆为四个可执行子项收口：① 冻结复杂多文件/10+ 依赖子任务基准样本与负控，分离脚本回放/真实模型/源码/安装包维度；② 执行复合故障与争抢注入矩阵（Provider 429 限流降级、多工作树/端口/同 profile 争抢、UI 关闭与宿主重启、R5 脱机委托重连、预算耗尽与错误记忆撤销）；③ 运行数小时至跨日长程 soak，调用 TF-0892 输出可行率 vs 最优率、迭代→成功率收敛曲线、资源浪费率、步骤冗余度及恢复 `p50/p95`；④ 独立 agent 盲审复算并封存未测边界（not-run）与残余风险账本，保持冻结产品锁不变（详见 `reasoning-planning-convergence-gap-plan.md` §5）。
+
+复用与必要写集：现有AgentFirst被测对象/套件/评分注册入口；tests/e2e；harness/specs/fixtures/autonomous-project-system；scripts/evaluate-convergence-quality.mjs（TF-0892 拟新增）；scripts/run-autonomy-long-horizon-soak.mjs（拟新增）；README.md；README.zh-CN.md；README.ja-JP.md；README.ru-RU.md。标为拟新增/按实际owner收窄的路径不是已存在文件。
 
 要求：
 

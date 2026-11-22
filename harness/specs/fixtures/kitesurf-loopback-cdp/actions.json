@@ -1,0 +1,525 @@
+{
+  "schema": "clawx.kitesurf-loopback-cdp-actions/v5",
+  "driven_by": "agent",
+  "actor": "codex",
+  "liveEngine": true,
+  "remoteBrowserRun": false,
+  "engine": "Kitesurf/0.0.1",
+  "sourceHashes": {
+    "packages/versebrowser/src/engine/kitesurf-cdp.ts": "992fb4ea7ef2f0311d8a05a6032a12cd615e63c808e817f3cbeba6530b070cb4",
+    "packages/versebrowser/src/engine/service.ts": "7eeb08edc22e388c7ac7d171d4eea1565fce8fb0411e0af128a15cb629963748",
+    "packages/versebrowser/src/engine/playwright-host-api.ts": "1820b67d2929104f1e43636b3ca708b846a4286a696ac8e5f3b0c4bc6fb843d1",
+    "packages/versebrowser/src/engine/persistent-sessions.ts": "b2ec309cf2b6f98ea634e98d39d6408a23119cfbb4aa2638278ae0638768b3c6",
+    "packages/versebrowser/src/cli.ts": "4b17db0f4c1ca180dd9fe16224af9e55fc544dc98da204e17c000c1615be0722",
+    "packages/versebrowser/src/types/host-api.ts": "faf159cc7468f04f8885fb01dcb2effc9bfd263b7522f935e6bc9c869eb53e29",
+    "packages/versebrowser/src/engine/kitesurf-session.ts": "d428d6875a6275fa47f838d492ca767f991f538a74e08752ca3b0efd659bae09",
+    "packages/versebrowser/src/engine/upstream-control.ts": "57100d6cf4a3e8cb3e9812e26f1fdb8a25178e18e143fa3dc73d109434162e7c",
+    "packages/versebrowser/src/engine/facade.ts": "580052b4ab742238d91c30dbb6bddec0667303b7c0992b1b68a88c82e17dc01c",
+    "packages/versebrowser/src/engine/driver-profile.ts": "c82907eb8ed7b7be1cc1508f8cc9a4841bb0a25248c37d2817b9f2ecaa321ea9",
+    "packages/versebrowser/src/evidence/output.ts": "5d3eb307c5f81a7b683856274e91b26b075f64cdfc00576b51746d8b3d013229",
+    "scripts/kitesurf-local-runtime.mjs": "4feefe23a1dd03399e5aabedac34d07c83d9204496a8e4b3fa2c15e6064f7554",
+    "pnpm-workspace.yaml": "09032c26656852712da8f0c25af16f9156162d67cba6fa633bef40f408298ff3",
+    "scripts/contract-check.mjs": "b1edfdceaaafab017d195462f0de36dcd768097d49e01beeb9e2a0dc9a4f6961",
+    "vitest.agent-dev.node.config.ts": "89cea603aaa5f854ac4a2bb4ff8e447c352e62a54bd22fc273a7dd2c4dcae301",
+    "scripts/typecheck-agent-dev.mjs": "04d3306e3685e453130d51f7e571984f562bc8d36cf108f4d2517ab3bace230b",
+    "tests/unit/typecheck-gate.test.ts": "23dd25334137fbcdcbe525ef5f96e7a58fa9049dc6198bedd10a5eb3ab821fc7"
+  },
+  "testSourceHash": "b50a77d79bdd6cb52c1d0af13512396fbbf3eb8624920377292c8fa985fe34aa",
+  "executedAt": "2026-11-16T02:28:56.636Z",
+  "checks": [
+    {
+      "name": "input-and-key-effects",
+      "ok": true,
+      "durationMs": 1822
+    },
+    {
+      "name": "checkbox-and-select-effects",
+      "ok": true,
+      "durationMs": 578
+    },
+    {
+      "name": "pointer-and-click-effects",
+      "ok": true,
+      "durationMs": 2165
+    },
+    {
+      "name": "drag-gesture-effects",
+      "ok": true,
+      "durationMs": 334
+    },
+    {
+      "name": "form-values-validation-and-redaction",
+      "ok": true,
+      "durationMs": 1902
+    },
+    {
+      "name": "label-ref-acts-on-exact-input",
+      "ok": true,
+      "durationMs": 918
+    },
+    {
+      "name": "test-id-ref-duplicate-and-stale-guards",
+      "ok": true,
+      "durationMs": 1224
+    },
+    {
+      "name": "fresh-facade-native-routing",
+      "ok": true,
+      "durationMs": 2376
+    },
+    {
+      "name": "script-and-console-observation",
+      "ok": true,
+      "durationMs": 51
+    },
+    {
+      "name": "runtime-readonly-unavailable-before-page-read",
+      "ok": true,
+      "durationMs": 19
+    },
+    {
+      "name": "network-details-body-and-redaction",
+      "ok": true,
+      "durationMs": 3008
+    },
+    {
+      "name": "multi-page-create-select-close-and-continue",
+      "ok": true,
+      "durationMs": 2203
+    },
+    {
+      "name": "same-origin-frame-and-foreign-scope-rejection",
+      "ok": true,
+      "durationMs": 132
+    },
+    {
+      "name": "unnamed-frame-identity",
+      "ok": true,
+      "durationMs": 349
+    },
+    {
+      "name": "snapshot-text-and-real-exports",
+      "ok": true,
+      "durationMs": 1071
+    },
+    {
+      "name": "public-egress-and-private-network-policy",
+      "ok": true,
+      "durationMs": 1324
+    },
+    {
+      "name": "control-auth-and-session-ownership",
+      "ok": true,
+      "durationMs": 34
+    },
+    {
+      "name": "file-ai-and-unknown-method-rejection",
+      "ok": true,
+      "durationMs": 60
+    },
+    {
+      "name": "dialog-limit-and-identity-guard",
+      "ok": true,
+      "durationMs": 78
+    },
+    {
+      "name": "action-timeout-closes-worker",
+      "ok": true,
+      "durationMs": 261
+    }
+  ],
+  "calls": [
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "waitForSelector",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "type",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "appendText",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "pressKey",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "setChecked",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "selectValues",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "selectOption",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "pointer",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "click",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "pointer",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "pointer",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "pointer",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "drag",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "readForms",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "findElement",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "type",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "findElement",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "findElement",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "findElement",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "click",
+      "outcome": "rejected"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "click",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "findElement",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "status",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "getConsoleMessages",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "runtimeInspectGlobals",
+      "outcome": "rejected"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "networkListRequests",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "networkWaitForRequests",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "networkListRequests",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "networkGetRequestDetails",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "listPages",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "newPage",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "listPages",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "selectPage",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "selectPage",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "selectPage",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "closePage",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "navigate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "listPages",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "extractPageText",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "extractPageText",
+      "outcome": "rejected"
+    },
+    {
+      "method": "selectPage",
+      "outcome": "rejected"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "listPages",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "extractPageText",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "takeSnapshot",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "extractPageText",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "screenshot",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "pdf",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "navigate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "extractPageText",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "networkListRequests",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "status",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "uploadFiles",
+      "outcome": "rejected"
+    },
+    {
+      "method": "downloadFile",
+      "outcome": "rejected"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "readDialogs",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "rejected"
+    },
+    {
+      "method": "respondDialog",
+      "outcome": "rejected"
+    },
+    {
+      "method": "readDialogs",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "evaluate",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "close",
+      "outcome": "fulfilled"
+    },
+    {
+      "method": "pointer",
+      "outcome": "rejected"
+    },
+    {
+      "method": "status",
+      "outcome": "rejected"
+    }
+  ],
+  "engineLimits": [
+    "Kitesurf confirm() is not implemented; unowned dialog ids are refused.",
+    "Kitesurf omits global property descriptors; bounded runtime inspection is refused before reading the page."
+  ]
+}

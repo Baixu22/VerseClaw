@@ -1,0 +1,430 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-13T09-05-58-153Z-live",
+  "mode": "live",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/design.freeze.json",
+    "sha256": "8dcbc516bf3ff8c6380ffd7ebc055b6022b36b19a7850b54c46ed829f7597405",
+    "commit": "449192523851b3795ee6793751e78331831af047"
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 3,
+    "maxTurns": 8,
+    "maxOutputTokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "strategy": "anchored",
+    "pressureSource": "tool",
+    "providerTimeoutMs": 240000,
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0.5,
+      "recallOkRate": 0,
+      "meanTurns": 2.125,
+      "meanMainContextChars": 1493.9583333333333,
+      "meanInputTokens": 1929.2083333333333,
+      "meanOutputTokens": 242.33333333333334,
+      "meanTotalTokens": 2171.5416666666665,
+      "p50LatencyMs": 5226.625,
+      "p95LatencyMs": 13034.508,
+      "failureClasses": {
+        "recall_not_attempted": 9,
+        "answer_mismatch": 9,
+        "none": 6
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 9,
+      "successRate": 0.375,
+      "wilson95": [
+        0.21159367559548778,
+        0.5729003755732572
+      ],
+      "evidenceSuccessRate": 0.16666666666666666,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 5.833333333333333,
+      "meanMainContextChars": 19520.958333333332,
+      "meanInputTokens": 21025.166666666668,
+      "meanOutputTokens": 1233.0416666666667,
+      "meanTotalTokens": 22258.208333333332,
+      "p50LatencyMs": 19453.721,
+      "p95LatencyMs": 42002.089,
+      "failureClasses": {
+        "none": 9,
+        "loop_budget_exceeded": 8,
+        "recalled_text_evicted": 7
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 7,
+      "successRate": 0.2916666666666667,
+      "wilson95": [
+        0.14914648196960875,
+        0.49167693664496637
+      ],
+      "evidenceSuccessRate": 0.05555555555555555,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.541666666666667,
+      "meanMainContextChars": 19562.25,
+      "meanInputTokens": 16303.375,
+      "meanOutputTokens": 932.625,
+      "meanTotalTokens": 17236,
+      "p50LatencyMs": 15357.19,
+      "p95LatencyMs": 27338.403,
+      "failureClasses": {
+        "recalled_text_evicted": 14,
+        "none": 7,
+        "loop_budget_exceeded": 3
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.833333333333333,
+      "meanMainContextChars": 19668.125,
+      "meanInputTokens": 17282.708333333332,
+      "meanOutputTokens": 1047,
+      "meanTotalTokens": 18329.708333333332,
+      "p50LatencyMs": 14566.062,
+      "p95LatencyMs": 31733.572,
+      "failureClasses": {
+        "recalled_text_evicted": 14,
+        "loop_budget_exceeded": 4,
+        "none": 6
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 6,
+      "onlyA": 1,
+      "onlyB": 0,
+      "neither": 17,
+      "p": 1
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 6,
+      "onlyA": 1,
+      "onlyB": 0,
+      "neither": 17,
+      "p": 1
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 6,
+      "onlyA": 1,
+      "onlyB": 3,
+      "neither": 14,
+      "p": 0.625
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 1,
+      "onlyB": 0,
+      "neither": 17,
+      "p": 1
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 1,
+      "onlyB": 0,
+      "neither": 17,
+      "p": 1
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 0,
+      "onlyA": 1,
+      "onlyB": 3,
+      "neither": 14,
+      "p": 0.625
+    }
+  },
+  "inputIntegrity": {
+    "assembly": "production-projection-only/function-protocol/r5-low-reasoning",
+    "mainContextCharsSource": "JSON.stringify(actual request.input).length",
+    "initialPairs": [
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "stableSha256": "bd8219b7912dd1b15e9b84157c6920fb5e69d101406f8a1fc46adc543ebbe0af",
+        "offSha256": "bd8219b7912dd1b15e9b84157c6920fb5e69d101406f8a1fc46adc543ebbe0af",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "stableSha256": "ca2989f3ca87373ce245dfcd40b3eab832f10f5a5af9beec1941a8d7ce4bdefa",
+        "offSha256": "ca2989f3ca87373ce245dfcd40b3eab832f10f5a5af9beec1941a8d7ce4bdefa",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "stableSha256": "226957f13a27ac3fb927e94241d9035c26e54f0d66540667794499257918946c",
+        "offSha256": "226957f13a27ac3fb927e94241d9035c26e54f0d66540667794499257918946c",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "stableSha256": "23e3b5fab096e5dfe5d72db68ee1c5526d2755648a9732c08613305f7eb1fa1f",
+        "offSha256": "23e3b5fab096e5dfe5d72db68ee1c5526d2755648a9732c08613305f7eb1fa1f",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "stableSha256": "cfd85302f1392c16dc21245980f50820455486d1c279b8f9f139b1e3bca80aca",
+        "offSha256": "cfd85302f1392c16dc21245980f50820455486d1c279b8f9f139b1e3bca80aca",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "stableSha256": "de924da0931f0c4814e5e00ceb053c37e9bef10d55ba60b0b9780de1e3268360",
+        "offSha256": "de924da0931f0c4814e5e00ceb053c37e9bef10d55ba60b0b9780de1e3268360",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "stableSha256": "0a122f4fa3968934df0917bfaafe4225f433078cd1b4804431462ed0a434bd29",
+        "offSha256": "0a122f4fa3968934df0917bfaafe4225f433078cd1b4804431462ed0a434bd29",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "stableSha256": "0bb1878aac74d15794cfb381ad298a5016a61b5cf31c845ca7b7d2a7bc016542",
+        "offSha256": "0bb1878aac74d15794cfb381ad298a5016a61b5cf31c845ca7b7d2a7bc016542",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "stableSha256": "34d51c0351c01d9adfa29ea6ce31b2d807e7d922db326afa115026e9779c0b94",
+        "offSha256": "34d51c0351c01d9adfa29ea6ce31b2d807e7d922db326afa115026e9779c0b94",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "stableSha256": "eab59845ebdae87f245652e41f5fc78a613f56ef196439d6f44194268c1ffd13",
+        "offSha256": "eab59845ebdae87f245652e41f5fc78a613f56ef196439d6f44194268c1ffd13",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "stableSha256": "32167f2ba19726b4208bc1c5b96ffbc0f8433924d1d900c8fc6aa90b6f31d825",
+        "offSha256": "32167f2ba19726b4208bc1c5b96ffbc0f8433924d1d900c8fc6aa90b6f31d825",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "stableSha256": "b82f743180134cc01c6e5c6bb0b18fb6bc009dfbbd4ceb05b7454b558b842e5d",
+        "offSha256": "b82f743180134cc01c6e5c6bb0b18fb6bc009dfbbd4ceb05b7454b558b842e5d",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "stableSha256": "473f4ba91295df018f18989cf649469cc68eb14e7d144523729c6b446e633cb2",
+        "offSha256": "473f4ba91295df018f18989cf649469cc68eb14e7d144523729c6b446e633cb2",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "stableSha256": "3e740f02c038eebbc632549d01188236429009da47cf4b066e3f9d86c9791535",
+        "offSha256": "3e740f02c038eebbc632549d01188236429009da47cf4b066e3f9d86c9791535",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "stableSha256": "55f0736618951f7e609babffc50279a73b6f747bb9d9720b627433bd9efd2c95",
+        "offSha256": "55f0736618951f7e609babffc50279a73b6f747bb9d9720b627433bd9efd2c95",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "stableSha256": "64de6d0747bef0d60e39a7c87e87f17e74342c5ab849fca2b5cfded325f8adda",
+        "offSha256": "64de6d0747bef0d60e39a7c87e87f17e74342c5ab849fca2b5cfded325f8adda",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "stableSha256": "5246a5eb7d8051b9479ac2cda6ab0239fe73ca7551f189f2048b5cecb3da3d58",
+        "offSha256": "5246a5eb7d8051b9479ac2cda6ab0239fe73ca7551f189f2048b5cecb3da3d58",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "stableSha256": "478520b7f99e82c61c19ba76819bcb69e3440f17ceb7e8c8f313d07f67e786fd",
+        "offSha256": "478520b7f99e82c61c19ba76819bcb69e3440f17ceb7e8c8f313d07f67e786fd",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "stableSha256": "1918005d45bd1e920e2376c81d6bb8a84eca995b16cb4d734aec6e25e79539ec",
+        "offSha256": "1918005d45bd1e920e2376c81d6bb8a84eca995b16cb4d734aec6e25e79539ec",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "stableSha256": "81862d8d592f88903da92b0895b4f3a5a8a0861364d8152c6d642c50d869f4e8",
+        "offSha256": "81862d8d592f88903da92b0895b4f3a5a8a0861364d8152c6d642c50d869f4e8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "stableSha256": "a76305b4662ffeb0387274ab6060809c56632d084895862501346598e8531f31",
+        "offSha256": "a76305b4662ffeb0387274ab6060809c56632d084895862501346598e8531f31",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "stableSha256": "9ca344713ccbdfb388d45c11747b917502e7e0f3a74ea37524ff4d1a3563b6d8",
+        "offSha256": "9ca344713ccbdfb388d45c11747b917502e7e0f3a74ea37524ff4d1a3563b6d8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "stableSha256": "f306e089740a1330cead966c2ad2e75e71585844769e843299e8f74a19e9d6f8",
+        "offSha256": "f306e089740a1330cead966c2ad2e75e71585844769e843299e8f74a19e9d6f8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "stableSha256": "69b26bbc8a3ef5f2b7b64e50b5dceb7526bc93e60b75341b4b1b6f6ff27e8799",
+        "offSha256": "69b26bbc8a3ef5f2b7b64e50b5dceb7526bc93e60b75341b4b1b6f6ff27e8799",
+        "byteIdentical": true
+      }
+    ],
+    "allInitialPairsByteIdentical": true,
+    "unprojectedOutputFallback": false
+  },
+  "decision": {
+    "status": "mechanism-only",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": -105.875,
+    "tokenGrowthPct": -0.22563398895912926,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

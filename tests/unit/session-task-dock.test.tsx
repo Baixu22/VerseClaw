@@ -236,7 +236,7 @@ describe("task handles", () => {
       { id: "1", label: "Read", status: "completed" },
       { id: "2", label: "Edit", status: "in_progress" },
     ] };
-    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan} onOpenTask={vi.fn()} />);
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan} runActive onOpenTask={vi.fn()} />);
     await screen.findByTestId("session-task-panel");
     expect(screen.getByTestId("session-task-title")).toHaveTextContent("conversation.plan");
     expect(screen.queryByTestId("session-task-id")).toBeNull();
@@ -270,10 +270,11 @@ describe("dock lifetime", () => {
     todos: statuses.map((status, index) => ({ id: String(index), label: `Step ${index}`, status })),
   });
   beforeEach(() => mocks.read.mockResolvedValue({ success: true, task: null, children: [] }));
-  it("stays resident while a plan has open steps, even after the run ends", async () => {
-    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan(["completed", "pending"])} runActive={false} />);
+  it("retires an incomplete run plan when its run ends", async () => {
+    const { rerender } = render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan(["completed", "in_progress"])} runActive />);
     expect(await screen.findByTestId("session-task-panel")).toBeVisible();
-    expect(screen.getByTestId("session-task-current")).toHaveTextContent("Step 1");
+    rerender(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan(["completed", "in_progress"])} runActive={false} />);
+    expect(screen.queryByTestId("session-task-panel")).toBeNull();
   });
   it("lets a finished plan leave with its run; the transcript keeps the record", async () => {
     const { rerender } = render(

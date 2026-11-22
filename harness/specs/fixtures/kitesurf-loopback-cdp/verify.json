@@ -1,0 +1,166 @@
+{
+  "schema": "clawx.kitesurf-loopback-cdp-verify/v1",
+  "ok": true,
+  "driven_by": "agent",
+  "actor": "codex",
+  "liveEngine": true,
+  "remoteBrowserRun": false,
+  "checks": [
+    {
+      "name": "schema",
+      "ok": true
+    },
+    {
+      "name": "agent attribution",
+      "ok": true
+    },
+    {
+      "name": "protocol receipt does not claim a real engine",
+      "ok": true
+    },
+    {
+      "name": "protocol test hash matches current assertions",
+      "ok": true
+    },
+    {
+      "name": "remote Browser Run not claimed",
+      "ok": true
+    },
+    {
+      "name": "desktop rejected before a window",
+      "ok": true
+    },
+    {
+      "name": "remote and non-kitesurf endpoints did not connect",
+      "ok": true
+    },
+    {
+      "name": "session recorded the kitesurf engine",
+      "ok": true
+    },
+    {
+      "name": "evaluate is served by the native engine",
+      "ok": true
+    },
+    {
+      "name": "screenshot ran on an explicit kitesurf session",
+      "ok": true
+    },
+    {
+      "name": "auto-detected kitesurf serves evaluate",
+      "ok": true
+    },
+    {
+      "name": "versionIdentity",
+      "ok": true
+    },
+    {
+      "name": "allLoopbackFamilies",
+      "ok": true
+    },
+    {
+      "name": "nativeProfileMatchesAdapter",
+      "ok": true
+    },
+    {
+      "name": "probedBeforeConnect",
+      "ok": true
+    },
+    {
+      "name": "statusSynchronous",
+      "ok": true
+    },
+    {
+      "name": "restoredUnsupportedActionBlockedBeforeConnect",
+      "ok": true
+    },
+    {
+      "name": "restoredIdentityRevalidated",
+      "ok": true
+    },
+    {
+      "name": "chromiumFallbackOnProbeFailure",
+      "ok": true
+    },
+    {
+      "name": "noChromiumResourcesCreated",
+      "ok": true
+    },
+    {
+      "name": "cliFlagForwarded",
+      "ok": true
+    },
+    {
+      "name": "cliAutoDetectForwarded",
+      "ok": true
+    },
+    {
+      "name": "file and AI capabilities stay separately gated",
+      "ok": true
+    },
+    {
+      "name": "real engine receipt is agent-driven",
+      "ok": true
+    },
+    {
+      "name": "real engine identity and pinned upstream",
+      "ok": true
+    },
+    {
+      "name": "live CLI executes the complete acceptance flow",
+      "ok": true
+    },
+    {
+      "name": "real action receipt contains asserted behavior rather than labels",
+      "ok": true
+    },
+    {
+      "name": "live receipt matches the same source",
+      "ok": true
+    },
+    {
+      "name": "real action receipt matches the same source",
+      "ok": true
+    },
+    {
+      "name": "real action test hash matches current assertions",
+      "ok": true
+    },
+    {
+      "name": "CLI verifier hash matches current assertions",
+      "ok": true
+    },
+    {
+      "name": "CLI executable hash matches the tested build",
+      "ok": true
+    },
+    {
+      "name": "desktop open rejects the kitesurf field",
+      "ok": true
+    },
+    {
+      "name": "native method list is present",
+      "ok": true
+    },
+    {
+      "name": "file and AI methods stay out of the native Kitesurf list",
+      "ok": true
+    },
+    {
+      "name": "unsupported bounded runtime inspection is not advertised",
+      "ok": true
+    },
+    {
+      "name": "every declared native method has an actual recorded call",
+      "ok": true
+    },
+    {
+      "name": "attach probes loopback and records the engine",
+      "ok": true
+    },
+    {
+      "name": "receipt hashes match the current source",
+      "ok": true
+    }
+  ]
+}

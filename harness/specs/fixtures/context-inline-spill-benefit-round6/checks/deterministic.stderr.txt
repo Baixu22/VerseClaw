@@ -1,0 +1,6 @@
+AssertionError [ERR_ASSERTION]: source differs from commit: scripts/context-inline-spill-benefit-scoring.mts
++ actual - expected
+
++ '71542a780e3b06371b5bda6d3eef8ce5047b5cea'
+- 'ab32c5e93284ebf53f3175ed6dd656d479350972'
+

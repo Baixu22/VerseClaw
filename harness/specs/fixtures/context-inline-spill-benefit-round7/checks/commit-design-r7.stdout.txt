@@ -1,0 +1,5 @@
+[codex/g7-inline-spill-tf0749-20261113 449192523] eval(context): freeze G7 archive anchoring and tool pressure design
+ 4 files changed, 395 insertions(+)
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round7/DESIGN.md
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round7/design.freeze.json
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism-readback.json

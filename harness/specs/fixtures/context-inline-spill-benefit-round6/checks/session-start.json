@@ -1,0 +1,28 @@
+{
+  "schema": "G7InlineSpillSessionStart/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "workspace": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "head": "fcfd0721129c935df94a501ee4858622c38fa497",
+  "branch": "codex/g7-inline-spill-tf0749-20261113",
+  "dirty": false,
+  "initialMissingPaths": [
+    "harness/specs/fixtures/coding-evaluation/TF-0775/candidate-artifacts/verseshell-evidence/run-e3-combined-failure/cleanup-barrier/cleanup/3f8749b5c937f227feb5c59070cfc99ec47990e0f3b9c1b72f146bc9da92b8d8.json",
+    "harness/specs/fixtures/coding-evaluation/TF-0775/candidate-artifacts/verseshell-evidence/run-e3-combined-success/cleanup-barrier/cleanup/2dc5bc096a9816cd8a71064e2becf82c075ad263f406f05f1008c03bf9ca34dd.json",
+    "harness/specs/fixtures/context-inline-spill/retention-final/deterministic/archives/01a1a1fa-2a5b-7643-86c3-10c9c052faa6/01a1a1fa-2a5b-7643-86c3-10c9c052faa6-observation-message-0-acbf9935d291e094.context-archive.json",
+    "harness/specs/fixtures/context-inline-spill/retention-final/deterministic/archives/01a1a1fa-2a5b-7643-86c3-10c9c052faa6/01a1a1fa-2a5b-7643-86c3-10c9c052faa6-observation-message-1-409107baf41abc9f.context-archive.json",
+    "harness/specs/fixtures/context-inline-spill/retention-final/live/archives/01a1a1fb-06c5-7271-8ecf-47a9debd04e3/01a1a1fb-06c5-7271-8ecf-47a9debd04e3-observation-message-0-60f197b578aa3f2e.context-archive.json",
+    "harness/specs/fixtures/context-inline-spill/retention-final/live/archives/01a1a1fb-06c5-7271-8ecf-47a9debd04e3/01a1a1fb-06c5-7271-8ecf-47a9debd04e3-observation-message-1-409107baf41abc9f.context-archive.json",
+    "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/long-session-completion-co-12137--fenced-batch-after-restart/attachments/completion-continuation-e2e-202d0131bcea391b83030f72435b255281687d8a.json",
+    "harness/specs/fixtures/session-delegation-status/20261110/journeys/u4-final-owner-replay/long-session-delegation-ad-f5568--durable-admission-receipts/attachments/delegation-admission-e2e-96259ab15c321331d556ff1d79a803aedad9aa09.json"
+  ],
+  "initialCheckoutCompletion": "core.longpaths=true then checkout-index only absent tracked paths",
+  "temp": "D:/tmp",
+  "base": "fcfd0721129c935df94a501ee4858622c38fa497",
+  "recordedAt": "2026-11-13T05:18:01.1998687Z",
+  "dependencyReuse": [
+    "C:/Users/27933/Desktop/clawx/ClawX/node_modules",
+    "C:/Users/27933/Desktop/clawx/ClawX/openclaw_runtime/node_modules"
+  ]
+}

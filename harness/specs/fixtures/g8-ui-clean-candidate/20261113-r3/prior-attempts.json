@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\prior-attempts.json",
+  "sourceSha256": "3fc5d697a590a1c454bb0fb07508a4ede7913afae8685ecc3e2c96f759c2d977",
+  "result": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "previousCandidate": "1fe17aabb6b2d3ac2c7676d152fe841f0a8b5d62",
+    "previousRoot": "D:\\tmp\\g8-ui-r2-20261113-01a1d351",
+    "reasonForNewCandidate": "Read approval parent and control bounds in one frame during viewport transitions.",
+    "files": [
+      {
+        "path": "D:\\tmp\\g8-ui-r2-20261113-01a1d351\\candidate.json",
+        "sha256": "8e3ec7b33a21499302fea2fdf655ad66fab93c87d106df4596143498ca80ed06"
+      },
+      {
+        "path": "D:\\tmp\\g8-ui-r2-20261113-01a1d351\\gates\\final-repository-ci.json",
+        "sha256": "7d15e70c99276b91b35818e8912366d33b6cb63d122a106db77ac97ff00f8c06"
+      },
+      {
+        "path": "D:\\tmp\\g8-ui-r2-20261113-01a1d351\\gates\\final-repository-ci.log",
+        "sha256": "1ad953bc50e62855936d9b9e2c4fef42a8258cf0d8fbee93eee017296ac82838"
+      },
+      {
+        "path": "D:\\tmp\\g8-ui-r2-20261113-01a1d351\\electron\\final\\output\\results.json",
+        "sha256": "284581cfe7410eb7257e165c31b6a8478eb7be2214cabf3c2a950d4bd1e15e8c"
+      },
+      {
+        "path": "D:\\tmp\\g8-ui-r2-20261113-01a1d351\\gates\\electron-final-output.json",
+        "sha256": "5715ac417216b62d820b443ffd1b253af6995f44bf5bb2a3d9cb8e90c910b869"
+      }
+    ]
+  }
+}

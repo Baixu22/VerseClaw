@@ -1,0 +1,54 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "ok": true,
+  "baselineExpectedFailures": [],
+  "executedAt": "2026-11-16T02:46:11.176Z",
+  "tests": [
+    {
+      "name": "production-source-drift",
+      "ok": true,
+      "expectedRejection": "receipt hashes match the current source"
+    },
+    {
+      "name": "runtime-launcher-drift",
+      "ok": true,
+      "expectedRejection": "receipt hashes match the current source"
+    },
+    {
+      "name": "workspace-config-drift",
+      "ok": true,
+      "expectedRejection": "receipt hashes match the current source"
+    },
+    {
+      "name": "protocol-assertion-drift",
+      "ok": true,
+      "expectedRejection": "protocol test hash matches current assertions"
+    },
+    {
+      "name": "live-assertion-drift",
+      "ok": true,
+      "expectedRejection": "real action test hash matches current assertions"
+    },
+    {
+      "name": "CLI-assertion-drift",
+      "ok": true,
+      "expectedRejection": "CLI verifier hash matches current assertions"
+    },
+    {
+      "name": "CLI-build-drift",
+      "ok": true,
+      "expectedRejection": "CLI executable hash matches the tested build"
+    },
+    {
+      "name": "unexecuted-native-call",
+      "ok": true,
+      "expectedRejection": "every declared native method has an actual recorded call"
+    },
+    {
+      "name": "partial-action-receipt",
+      "ok": true,
+      "expectedRejection": "real action receipt contains asserted behavior rather than labels"
+    }
+  ]
+}

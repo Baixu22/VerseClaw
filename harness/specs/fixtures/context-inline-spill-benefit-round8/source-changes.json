@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "schema": "G7Round8ChangedFiles/v1",
+  "base": "1a12ad0cd23ab5873e6865f73c8e51f62ec71595",
+  "sourcePaths": [
+    ".gitattributes",
+    "docs/context-family/goal-progress.md",
+    "docs/modules/context-and-memory.md",
+    "harness/specs/fixtures/context-inline-spill-benefit-round8/DESIGN.md",
+    "harness/specs/fixtures/context-inline-spill-benefit-round8/design.freeze.json",
+    "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism-readback.json",
+    "harness/specs/fixtures/context-inline-spill-benefit-round8/prior-designs/486f078ab/design.freeze.json",
+    "harness/specs/fixtures/context-inline-spill-benefit-round8/prior-designs/486f078ab/mechanism-readback.json",
+    "harness/specs/rules/inline-spill-eval-projected-input.md",
+    "harness/specs/scenarios/context-family.md",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round8.md",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "scripts/context-inline-spill-benefit-round6-verify.mjs",
+    "scripts/context-inline-spill-benefit-round7-verify.mjs",
+    "scripts/context-inline-spill-benefit-round8-verify.mts",
+    "scripts/context-inline-spill-benefit-strategy.mts",
+    "tests/unit/context-inline-spill-benefit-navigation.test.ts"
+  ]
+}

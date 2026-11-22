@@ -70,7 +70,7 @@ for (const theme of ['light', 'dark'] as const) {
       await expect(page.getByTestId(`chat-session-derived-${CHILD}`)).toHaveAttribute('data-derived', 'true');
       await expect(sessionMenu).toBeInViewport();
       expect(await sessionMenu.evaluate(element => getComputedStyle(element).opacity)).toBe('1');
-      expect(await sessionMenu.evaluate(element => getComputedStyle(element).backgroundColor)).toBe(theme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(40, 40, 40)');
+      expect(await sessionMenu.evaluate(element => getComputedStyle(element).backgroundColor)).toBe(theme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(61, 61, 59)');
       await page.mouse.move(8, 8);
       await page.evaluate(async () => {
         await Promise.all(document.getAnimations().map(animation => animation.finished.catch(() => {})));

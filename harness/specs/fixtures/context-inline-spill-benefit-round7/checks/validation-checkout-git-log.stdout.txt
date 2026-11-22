@@ -1,0 +1,5 @@
+d46cce0dc fix(context-eval): keep original archive targets and tool log provenance
+449192523 eval(context): freeze G7 archive anchoring and tool pressure design
+1a16bc17a eval(context): retain clean G7 rerun and NO_GO verdict
+eb93671ab eval(context): compare G7 source blobs without EOL filtering
+1ad696a8f eval(context): bind clean G7 candidates and replay raw evidence

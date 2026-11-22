@@ -185,7 +185,7 @@ test.describe('Verse Claw Tool UI interaction flow — option-list and question-
       await expect(userResponse).toContainText('simple');
 
       // ── Verify the mock assistant acknowledgement appears ──
-      await expect(page.locator('.prose').filter({ hasText: MOCK_ASSISTANT_ACK })).toBeVisible({ timeout: 30_000 });
+      await expect(page.locator('.prose').filter({ hasText: MOCK_ASSISTANT_ACK }).last()).toBeVisible({ timeout: 30_000 });
 
       // ── Verify chat.sendWithMedia was called with the response text ──
       await expect.poll(async () => app.evaluate(() => (
@@ -278,6 +278,10 @@ test.describe('Verse Claw Tool UI interaction flow — option-list and question-
       await expect(page.getByTestId('main-layout')).toBeVisible();
 
       // ── QuestionFlowCard: step 1 of 2 ──
+      const precedingChoice = page.getByTestId('chat-composer-requests').getByTestId('chat-tool-ui-option-list');
+      await expect(precedingChoice).toBeVisible();
+      await precedingChoice.getByTestId('chat-tool-ui-option-simple').click();
+      await precedingChoice.getByTestId('chat-tool-ui-action-send').click();
       // Only one question-flow card in the seeded history, so no text filter needed.
       const questionFlow = page.getByTestId('chat-tool-ui-question-flow');
       await expect(questionFlow).toBeVisible({ timeout: 30_000 });
@@ -311,6 +315,7 @@ test.describe('Verse Claw Tool UI interaction flow — option-list and question-
       const depthOption = questionFlow.getByTestId('chat-tool-ui-question-option-aggressive');
       await expect(depthOption).toBeVisible();
       await depthOption.click();
+      await expect(depthOption).toHaveAttribute('aria-pressed', 'true');
 
       // On the last step, ActionFooter replaces the Next button.
       const sendButton = questionFlow.getByTestId('chat-tool-ui-action-send');
@@ -328,7 +333,7 @@ test.describe('Verse Claw Tool UI interaction flow — option-list and question-
       await expect(userResponse).toContainText('aggressive');
 
       // ── Verify the mock assistant acknowledgement appears ──
-      await expect(page.locator('.prose').filter({ hasText: MOCK_ASSISTANT_ACK })).toBeVisible({ timeout: 30_000 });
+      await expect(page.locator('.prose').filter({ hasText: MOCK_ASSISTANT_ACK }).last()).toBeVisible({ timeout: 30_000 });
 
       // ── Verify chat.sendWithMedia was called ──
       await expect.poll(async () => app.evaluate(() => (
@@ -339,4 +344,67 @@ test.describe('Verse Claw Tool UI interaction flow — option-list and question-
       await closeElectronApp(app);
     }
   });
+});
+
+test('one question stays visible as the terminal reply is replaced by history', async ({ launchElectronApp }) => {
+  const runId = 'question-final-before-history';
+  const prompt = 'Ask me about paper.';
+  const content = toolUiBlock({
+    type: 'question-flow', id: 'paper-finish', steps: [{
+      id: 'finish', title: 'Which finish?', selectionMode: 'single',
+      options: [{ id: 'matte', label: 'Matte' }, { id: 'glossy', label: 'Glossy' }],
+    }],
+  });
+  const app = await launchElectronApp({ skipSetup: true });
+  try {
+    const mocks = (messages: unknown[]) => ({
+      gatewayStatus: { state: 'running' as const, port: 18789, gatewayReady: true },
+      gatewayRpcByMethod: {
+        'sessions.list': { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+        'chat.history': { messages },
+        'chat.send': { runId },
+      },
+      hostApi: {
+        [stableStringify(['providers', 'accounts', null])]: [{ id: 'question-provider', vendorId: 'openai', label: 'Question fixture', authMode: 'oauth_browser', enabled: true }],
+        [stableStringify(['providers', 'accountKeyInfo', null])]: [],
+        [stableStringify(['providers', 'vendors', null])]: [],
+        [stableStringify(['providers', 'getDefaultAccount', null])]: { accountId: 'question-provider' },
+        [stableStringify(['chat', 'sendWithMedia', null])]: { success: true, result: { runId } },
+      },
+    });
+    await installIpcMocks(app, mocks([]));
+    const page = await getStableWindow(app);
+    await page.reload();
+    const input = page.getByTestId('chat-composer-input');
+    await expect(input).toBeEnabled();
+    const at = Date.now();
+    await input.fill(prompt);
+    await page.getByTestId('chat-composer-send').click();
+    await expect(input).toHaveValue('');
+    const publish = (state: 'delta' | 'final', text = content) => app.evaluate(({ BrowserWindow }, payload) => {
+      BrowserWindow.getAllWindows()[0]?.webContents.send('gateway:chat-message', { message: payload });
+    }, { sessionKey: SESSION_KEY, runId, state, message: { role: 'assistant', content: text, timestamp: at + 1 } });
+    for (const length of [20, 45, 90, content.length - 2]) {
+      await publish('delta', `Preparing question ${length}\n${content.slice(0, length)}`);
+      await expect(page.getByText(`Preparing question ${length}`, { exact: true })).toBeVisible();
+      await expect(page.locator('pre').filter({ hasText: '"type"' })).toHaveCount(0);
+    }
+    await publish('delta');
+    const cards = page.getByTestId('chat-tool-ui-question-flow');
+    await expect(cards).toHaveCount(1);
+    await installIpcMocks(app, mocks([
+      { role: 'user', content: prompt, timestamp: at, __openclaw: { id: 'question-user' } },
+      {
+        role: 'assistant', stopReason: 'stop', timestamp: at + 1, __openclaw: { id: 'question-reply' },
+        content: [{ type: 'text', text: `${content}\n\nSaved in conversation history.` }],
+      },
+    ]));
+    await publish('final');
+    await expect(page.getByText('Saved in conversation history.')).toBeVisible();
+    await expect(cards).toHaveCount(1);
+    await cards.getByTestId('chat-tool-ui-question-option-matte').click();
+    await expect(cards.getByTestId('chat-tool-ui-action-send')).toBeEnabled();
+  } finally {
+    await closeElectronApp(app);
+  }
 });

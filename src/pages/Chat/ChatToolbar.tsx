@@ -40,6 +40,10 @@ type ChatToolbarProps = {
   continuityRecommendation?: SessionContinuityRecommendation;
 };
 
+/** Shared with the sidebar's `.icon-button`: 30px, radius-md, secondary ink, row-hover wash. */
+const CHROME_ICON = 'h-[30px] w-[30px] rounded-md text-[color:var(--color-text-foreground-secondary)] hover:bg-[var(--color-background-row-hover)] hover:text-foreground dark:hover:bg-[var(--color-background-row-hover)]';
+const CHROME_ICON_ACTIVE = 'bg-[var(--color-background-row-hover)] text-foreground';
+
 function formatCacheTokens(value: number): string {
   if (!Number.isFinite(value) || value <= 0) return '0';
   if (value < 1000) return `${Math.round(value)}`;
@@ -157,10 +161,7 @@ export function ChatToolbar({
               data-testid="chat-workspace-toggle"
               variant="ghost"
               size="icon"
-              className={cn(
-                'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
-                browserActive && 'bg-foreground/10 text-foreground',
-              )}
+              className={cn(CHROME_ICON, browserActive && CHROME_ICON_ACTIVE)}
               aria-expanded={browserActive}
               onClick={() => (browserActive || hasPanelTabs ? togglePanel() : openWorkspacePanel({ panel: 'files' }))}
               disabled={!currentAgent?.workspace}
@@ -180,10 +181,7 @@ export function ChatToolbar({
                 data-testid="chat-session-activity-toggle"
                 variant="ghost"
                 size="icon"
-                className={cn(
-                  'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
-                  sessionActivityOpen && 'bg-foreground/10 text-foreground',
-                )}
+                className={cn(CHROME_ICON, sessionActivityOpen && CHROME_ICON_ACTIVE)}
                 aria-label={t('sessionActivity.title')}
                 aria-expanded={sessionActivityOpen}
                 onClick={onToggleSessionActivity}
@@ -204,7 +202,7 @@ export function ChatToolbar({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button ref={moreTriggerRef} data-testid="chat-toolbar-more" variant="ghost" size="icon"
-              className="h-8 w-8" aria-label={t('toolbar.moreActions')} aria-haspopup="menu" aria-expanded={moreOpen}
+              className={cn(CHROME_ICON, moreOpen && CHROME_ICON_ACTIVE)} aria-label={t('toolbar.moreActions')} aria-haspopup="menu" aria-expanded={moreOpen}
               onClick={() => setMoreOpen(value => !value)}>
               <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
             </Button>

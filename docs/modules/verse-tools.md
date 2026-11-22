@@ -264,6 +264,12 @@ Host contract 可携带 VS receipt，但 `tool result exists` 不等于 effect �
 
 Engine 是 construction-time immutable policy，不是每次调用 runtime probe。选择 CLI engine 但不可用时，应 fail closed，不应静默切换到另一个后端。
 
+独立 CLI 使用 `vb open --kitesurf --cdp <loopback>` 接入本机 Kitesurf，支持 `127.0.0.1`、`localhost` 和 `[::1]`。连接前通过 `/json/version` 核对引擎身份；不带 `--kitesurf` 的本机端点若识别为 Kitesurf，也由同一控制进程持有 WebSocket。后续 `vb nav`、`snapshot`、`screenshot` 和 `verify` 保留同一页面与观察窗口。
+
+原生页面 JS、可访问性、输入、网络详情、表单、精确元素查询、多页与同源 frame 读取通过这条连接执行。`vb pdf --session <id>` 将当前页保存为工作区 PDF。网页请求由 Kitesurf 引擎发起，使用引擎所在环境的 DNS 和出站通路。Kitesurf 缺少全局属性描述符，运行时只读摘要明确返回 `E_CAPABILITY_UNAVAILABLE`；`confirm()` 也不可用。文件与模型操作继续使用独立授权。桌面托管会话由 `browser-window` 负责，在创建窗口前拒绝 `browser: 'kitesurf'`。普通 Chromium CDP 在版本探测失败时保持原行为。
+
+[本机运行与验收](../dev/kitesurf-loopback-cdp.md) 使用固定上游提交和已有系统代理，核对公网 HTTP 200、页面正文、私网拒绝及控制进程退出。已关闭会话的快照返回 `E_NO_SESSION`。
+
 ### 4.4 安全控制
 
 Browser 的默认安全边界：

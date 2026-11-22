@@ -1,0 +1,253 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-review.json",
+  "sourceSha256": "2d245f79ca0e78a3ef582ff98bbec5cd9ff2c927d33dadd933719c1683b34665",
+  "result": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "status": "reviewed",
+    "uniquePngs": 120,
+    "contactSheetsReviewed": 34,
+    "reviewedSheets": [
+      {
+        "name": "environment-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\environment-01.jpg",
+        "sha256": "b148ed0b2eb840cbca786c1e16d5e5b7554c3331ace1e6c445bd1f05c85fdc3c",
+        "reviewedAt": "2026-11-13T10:06:04.334038+00:00"
+      },
+      {
+        "name": "environment-02.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\environment-02.jpg",
+        "sha256": "863f1dd516d3d8ab447ac49f86b2796b67717f8720650b9c0b5e6cf71741f7ac",
+        "reviewedAt": "2026-11-13T10:06:04.335038+00:00"
+      },
+      {
+        "name": "environment-03.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\environment-03.jpg",
+        "sha256": "b4867dac2dc2aac10daf2d878ebc3534d2f967374516b978fa9545db0b760349",
+        "reviewedAt": "2026-11-13T10:06:04.336545+00:00"
+      },
+      {
+        "name": "popovers-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-01.jpg",
+        "sha256": "0acbc2aa9e47bb45fc01907039b25a67182c561c8e03cc961b79e250a6c6dc64",
+        "reviewedAt": "2026-11-13T10:06:04.337062+00:00"
+      },
+      {
+        "name": "popovers-02.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-02.jpg",
+        "sha256": "a8b8aef30ed744de7e60e2733840777bf70237731e69416161dc5a03150fc052",
+        "reviewedAt": "2026-11-13T10:06:04.337630+00:00"
+      },
+      {
+        "name": "popovers-03.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-03.jpg",
+        "sha256": "d3c2453085217e4dbc200469bd10fc4ce9fd961cdd78f4d29365da9815937e75",
+        "reviewedAt": "2026-11-13T10:06:04.338662+00:00"
+      },
+      {
+        "name": "popovers-04.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-04.jpg",
+        "sha256": "fb54e0e0f947945df3489ed6f03e436982c3fa72ff31c2077055c153155c10c9",
+        "reviewedAt": "2026-11-13T10:06:04.339704+00:00"
+      },
+      {
+        "name": "popovers-05.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-05.jpg",
+        "sha256": "661baf19ccc819a34bc1efe81b8addadec726aff0f4401f1ffc6995b52915b59",
+        "reviewedAt": "2026-11-13T10:06:04.340222+00:00"
+      },
+      {
+        "name": "popovers-06.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-06.jpg",
+        "sha256": "199f565dd20c3b05175d42b12327fa190f3b8e04ebdabe4c109a1d7b4d129b4f",
+        "reviewedAt": "2026-11-13T10:06:04.341258+00:00"
+      },
+      {
+        "name": "popovers-07.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-07.jpg",
+        "sha256": "7c78ccee1ea576004711bb05644522dbef9988b4394ae6ae6feeb7d350c36815",
+        "reviewedAt": "2026-11-13T10:06:04.341786+00:00"
+      },
+      {
+        "name": "popovers-08.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-08.jpg",
+        "sha256": "86e938becd6754f6cd2b15559c45b6b60ccef34da78b661f21636b99e253bd5e",
+        "reviewedAt": "2026-11-13T10:06:04.342307+00:00"
+      },
+      {
+        "name": "popovers-09.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-09.jpg",
+        "sha256": "483df96c4406675263033ad6a990aad248a5712ff69f43c723b05a33105cf17e",
+        "reviewedAt": "2026-11-13T10:06:04.342837+00:00"
+      },
+      {
+        "name": "popovers-10.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-10.jpg",
+        "sha256": "928570a0c1fe097b9ca0a4e1deec00530638cd22ae283b787286b326c51f2a9f",
+        "reviewedAt": "2026-11-13T10:06:04.343883+00:00"
+      },
+      {
+        "name": "popovers-11.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-11.jpg",
+        "sha256": "1c02f00dc8cd255974e24032f9162e090bb7f4ef879c7554921cae01b092687f",
+        "reviewedAt": "2026-11-13T10:06:04.344403+00:00"
+      },
+      {
+        "name": "popovers-12.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\popovers-12.jpg",
+        "sha256": "63264ee7fd662546dc28a105efb4c4c41f7a63ff50d01711fa19a8ac2e7d03b6",
+        "reviewedAt": "2026-11-13T10:06:04.345481+00:00"
+      },
+      {
+        "name": "output-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\output-01.jpg",
+        "sha256": "86fae58956fde7c0a1f8e15f5b78a271c6a0ffc0ebd6b48c3c6bae1aabdf97a1",
+        "reviewedAt": "2026-11-13T10:09:52.415035+00:00"
+      },
+      {
+        "name": "output-02.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\output-02.jpg",
+        "sha256": "7fdeb20c3cdfed45d258205fc14fd7696175708a5ba8d380feb897ddd7b3428e",
+        "reviewedAt": "2026-11-13T10:09:52.416068+00:00"
+      },
+      {
+        "name": "output-03.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\output-03.jpg",
+        "sha256": "6384399f5db8362eb40e8dff3c7a3e392e8c5538518b99a31cf9689130a9b800",
+        "reviewedAt": "2026-11-13T10:09:52.416582+00:00"
+      },
+      {
+        "name": "output-04.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\output-04.jpg",
+        "sha256": "0d7d7d20635feec9fd068fbfc08d8a280c745febb674b29bb8c8a6c555b7b14c",
+        "reviewedAt": "2026-11-13T10:09:52.416582+00:00"
+      },
+      {
+        "name": "output-05.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\output-05.jpg",
+        "sha256": "3281827f6adba1f1c34514b048ddc6a2f8e5df72f8affc9d0b54dc1f3e9b28ce",
+        "reviewedAt": "2026-11-13T10:09:52.417713+00:00"
+      },
+      {
+        "name": "output-06.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\output-06.jpg",
+        "sha256": "aab0e34f64dd1bff65bab166096527e2dc37e8f8dcb52ba35b8647b4a006be3c",
+        "reviewedAt": "2026-11-13T10:09:52.417713+00:00"
+      },
+      {
+        "name": "workspace-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\workspace-01.jpg",
+        "sha256": "3d340b4728b39894c587e3f58694a9b2d7c759f9da25d389dd96bd71b7d835d8",
+        "reviewedAt": "2026-11-13T10:09:52.417713+00:00"
+      },
+      {
+        "name": "yield-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\yield-01.jpg",
+        "sha256": "872aa769c67ce96f670eca785fba99a73bbf0db055fc0c20a3040bf3274b57da",
+        "reviewedAt": "2026-11-13T10:09:52.418998+00:00"
+      },
+      {
+        "name": "welcome-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\welcome-01.jpg",
+        "sha256": "f48699edb913efcbaeb764d29da3b610cc064a9350e9925d96156a86f63db401",
+        "reviewedAt": "2026-11-13T10:10:49.949242+00:00"
+      },
+      {
+        "name": "welcome-02.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\welcome-02.jpg",
+        "sha256": "a73c5389a39a50643d0f06d41c5298837db06ce2815f3a57a521c5039c34edbe",
+        "reviewedAt": "2026-11-13T10:10:49.949242+00:00"
+      },
+      {
+        "name": "claude-ui-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\claude-ui-01.jpg",
+        "sha256": "97ef10bc55ddde18f52e7318db0d509f08c4a78f08752154c060092fc8f207a4",
+        "reviewedAt": "2026-11-13T10:12:01.615228+00:00"
+      },
+      {
+        "name": "claude-ui-02.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\claude-ui-02.jpg",
+        "sha256": "f6f05ce62b9d2e983b6cc1555dfb84e654610914fce7895b3e4bc4cfb91fb486",
+        "reviewedAt": "2026-11-13T10:12:01.616229+00:00"
+      },
+      {
+        "name": "claude-ui-03.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\claude-ui-03.jpg",
+        "sha256": "91c4a403229380fbbb73304a1af706595ec6a5bc023efb9c6e8528e7bceeea93",
+        "reviewedAt": "2026-11-13T10:12:01.616229+00:00"
+      },
+      {
+        "name": "claude-ui-04.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\claude-ui-04.jpg",
+        "sha256": "18cda4d23227f4307e1f44871cfc364cb4254923440260b412fc849c88e1f2ad",
+        "reviewedAt": "2026-11-13T10:12:01.616229+00:00"
+      },
+      {
+        "name": "claude-ui-05.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\claude-ui-05.jpg",
+        "sha256": "ae87f14e52994c450685badcaa20947828361baf8607e68c35e631549e73e015",
+        "reviewedAt": "2026-11-13T10:12:55.317036+00:00"
+      },
+      {
+        "name": "claude-ui-06.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\claude-ui-06.jpg",
+        "sha256": "b9b70ee59a6ac4582315a0c8f45864707fc7bb22e6cf6c8ff5395b6dac20a9fe",
+        "reviewedAt": "2026-11-13T10:12:55.317036+00:00"
+      },
+      {
+        "name": "ui-material-rules-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\ui-material-rules-01.jpg",
+        "sha256": "5cceed86692a705b09d339269df8098d1c3d3c69f8055878573bc7d4864f6e6b",
+        "reviewedAt": "2026-11-13T10:12:55.317553+00:00"
+      },
+      {
+        "name": "ui-material-rules-02.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\ui-material-rules-02.jpg",
+        "sha256": "bc3e448a1a5cbcb52cb0c55b1989c6d77e469e4135db5cc3c798f8e8b26ab5a9",
+        "reviewedAt": "2026-11-13T10:12:55.317553+00:00"
+      },
+      {
+        "name": "agent-dev-quality-01.jpg",
+        "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\agent-dev-quality-01.jpg",
+        "sha256": "aa051d57e2c968dadc621addfc627876e4ef4a22302da696c1229adf757baec2",
+        "reviewedAt": "2026-11-13T10:15:48.421561+00:00"
+      }
+    ],
+    "method": "Decoded the original PNGs, viewed every contact sheet, and checked the current Electron assertions, motion samples and synchronous approval geometry.",
+    "observations": [
+      "已加载的正文、进度说明、工具摘要与最终答复沿同一阅读列排列，收起和展开的过程信息均可辨识。",
+      "模型、权限、知识和项目菜单在浅深色及窄窗中保留清晰表面；长模型名在列表内部滚动，在输入栏折行显示。",
+      "项目菜单内的分支、工作树与当前项标记可辨识，文件变更入口与输入区保持对齐。",
+      "环境卡及工具空间中的运行输出、来源、变更和子任务层次清晰；长命令及 diff 的预览和展开入口可辨识。",
+      "审批卡在浅色、深色、窄窗与150%缩放中保持边界和操作空间；同帧几何记录验证了原有内边距要求。",
+      "侧栏、标题栏、活动图标、会话菜单与迁移对话框的当前截图已回读；设置页的主题与基础控件维持一致材质。"
+    ],
+    "motionReadback": [
+      {
+        "theme": "light",
+        "openingFrames": 32,
+        "closingFrames": 12,
+        "settledFilter": "none",
+        "settledOpacity": 1,
+        "allClosingFramesInert": true,
+        "allClosingFramesIgnorePointer": true
+      },
+      {
+        "theme": "dark",
+        "openingFrames": 31,
+        "closingFrames": 13,
+        "settledFilter": "none",
+        "settledOpacity": 1,
+        "allClosingFramesInert": true,
+        "allClosingFramesIgnorePointer": true
+      }
+    ],
+    "imageIndex": "visual-final/index.json"
+  }
+}

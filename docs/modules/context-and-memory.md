@@ -547,6 +547,58 @@ reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验�
 第三轮实测已完成：96次运行/360次provider调用，24对初始请求相同，原始历史回退和oracle泄漏均为0。`decision.status=mechanism-only`；recall-stable证据0/18，token相对reference-visible增长59.61%。原评分器B3=true仅来自一个控制任务差异，不表示证据还原收益。53次响应因900输出token预算返回incomplete，下一步需处理评测页预算与模型工具说明的适配，详见[第三轮交付记录](../../harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md)。
 
 2026-11-08 从封存请求、响应与归档重新复算，两轮 84 份证据清单和 1605 个归档均通过。收益判定为 NO-GO，TF-0749 保持 in_progress/80：B2/B4/B5/B6 未通过，第三轮证据任务的保留正向配对为 0。本轮新增 provider 调用为 0；完整复算与页适配实验设计见[收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。
+2026-11-13 第五轮低推理对照已执行：96 次运行、438 次 provider 调用，436 次 completed、0 次 incomplete。stable 证据 0/18、控制 6/6，B1/B5 通过，B2/B3/B4/B6 失败；token 相对 reference-visible 增长 94.88%，判定 mechanism-only/NO_GO。原始记录保留 dirty 候选身份限制和 2 次 transport error，详见[第五轮真实收益证据](../../harness/specs/fixtures/context-inline-spill-benefit-round5/REPORT.md)。TF-0749 的收益目标未因此完成。
+
+第六轮按[clean 候选复核任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round6.md)
+执行。冻结设计先于候选单独提交，保持 900 输出 token、低推理、8 轮、5500 字符页
+和原 B1–B7 阈值。`--freeze` 在 provider 请求前拒绝 dirty、预算变更和源码漂移，
+结束后再次绑定 commit/tree 与源码；逐调用记录、归档和 SHA256 可由
+`scripts/context-inline-spill-benefit-round6-verify.mjs <run-directory> <output.json> --seal`
+复验。B2/B3 使用证据任务配对，控制配对与原目标归档选择单独报告。
+`incomplete` 的 token 全部记录并判该次运行失败，8 轮耗尽记 `loop_budget_exceeded`。
+冻结设计与第五轮原始字节封存包位于
+`harness/specs/fixtures/context-inline-spill-benefit-round6/`。
+
+第六轮 clean 候选 `eb93671ab` 已完成 96 次运行、399 次调用：394 completed、5 transport error、0 incomplete。
+stable 证据 3/18、控制 6/6，证据保留正向配对 3、反向 0；B3/B4/B5/B7 通过，B1/B2/B6 失败，
+判定 no-benefit/NO_GO。成功回读率 17/18（94.44%）低于 95%，任务收益 McNemar p=0.25，
+总 token 相对 reference-visible 增长 87.78%。verifier 接受 clean 候选并核验 555 个归档；
+详见[第六轮收益复核](../../harness/specs/fixtures/context-inline-spill-benefit-round6/REPORT.md)。
+
+第七轮按[原归档锚定与工具压力修复](../../harness/specs/tasks/inline-spill-real-benefit-eval-round7.md)
+推进。评测显式选择 `--strategy anchored --pressure-source tool --provider-timeout-ms 240000`：
+初始可见 exec 归档的 URI/checksum 用于连续翻页，健康检查日志保留原字节并作为工具观测
+进入生产投影，user/assistant 回合节奏保留。模型、四臂、语料、页尺寸、输出预算与
+B1–B7 阈值保持原值。deterministic 来源对照先验证机制，真实收益由独立冻结后的
+clean 候选实测及 `context-inline-spill-benefit-round7-verify.mjs` 复核。
+
+第七轮 clean 候选 `89dff8ebd` 完成96次运行、416次调用，全部completed。
+stable证据1/18、控制6/6；B1/B3/B5/B6/B7通过，B2/B4失败，判定mechanism-only/NO_GO。
+token相对reference减少22.56%，但原归档选择仍有39次原目标、49次其他归档，原工具content命中1次。
+本轮结果与原始失败单独封存，见[第七轮收益复核](../../harness/specs/fixtures/context-inline-spill-benefit-round7/REPORT.md)。
+
+第八轮按[可见归档导航任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round8.md)推进。
+`--strategy navigated`从当前请求的可见引用或首个recall参数确定原归档，按可见页长度或
+被淘汰页的请求参数给出下一页建议。完整private_evidence字段只给出可见调用位置，
+模型读取当前工具内容并自行输出最终value。导航没有oracle或原始工具历史参数；四臂
+同用提示，原页/输出预算、模型、压力字节和B1–B7阈值保持原值。
+
+第八轮clean候选f8d41ddb2完成96次/349次调用，全部completed，stable证据14/18、reference16/18、控制6/6。
+B2/B3/B5/B7通过，B1/B4/B6失败；成功回读17/18，token增幅25.027526%超过25%，判定NO_GO。
+模型曾把URI文件名16位摘要扩写成64位checksum并沿用错误目标。原始失败保留于[第八轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round8/REPORT.md)。
+
+第九轮按[可见书签恢复任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round9.md)推进。
+最初可见exec引用的URI/checksum作为最多512字符的书签放入既有agent问题，当前投影
+持续提供这份元数据，使模型可从错误首次URI恢复。书签不包含payload或字段值，
+执行器继续使用模型返回的原始参数；生产默认和全部收益阈值保持原值。
+
+第九轮 clean 候选 `27c1a91dd228369ca1427d2b30f39dd6222cee37` 完成96次真实运行、324份completed响应。稳定证据17/18、reference13/18、baseline与retention-off0/18，控制6/6；保留正向17、反向0，总token相对reference下降5.694417567%。B1–B7全部通过，同候选clean检出的未改动verifier接受归集证据。
+
+TF-0749已按严格收益条件收口为done/100，七个子节点验收回读完成。原汇总退出码未观测，
+冻结源码恢复没有新增provider调用或修改模型输出；原第五至第八轮失败与dirty拒绝均保留。
+本轮产物标记`driven_by: agent`、`actor: codex-g7-inline-spill-tf0749-01a1d34c`、
+`realHumanEvidence: false`；完整证据见[第九轮收益报告](../../harness/specs/fixtures/context-inline-spill-benefit-round9/REPORT.md)。
+
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 

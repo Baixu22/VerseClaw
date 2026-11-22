@@ -35,13 +35,13 @@ pathPatterns:
    closes it.
 4. Choose Archive. The row leaves the list and a toast offers Undo, which
    restores it. Delete still asks for confirmation.
-5. Start a run in any conversation. The header bell gently swings from side to
-   side; waiting for approval or input turns it amber. Open it: the swing pauses,
-   and running conversations appear with elapsed time above recent completions,
-   errors and approval requests. Escape closes the panel and returns focus.
+5. Start a run in any conversation. The header bell turns into the same status
+   orb the conversation row shows (running, or waiting for approval/input). Open
+   it: running conversations appear with elapsed time above recent completions,
+   errors and approval requests, each with the row's status glyph. Escape closes
+   the panel and returns focus.
 6. Collapse the sidebar. The sidebar toggle sits above the bell, with both
-   controls centered. The activity panel stays inside the window; reduced
-   motion keeps the bell still.
+   controls centered. The activity panel stays inside the window.
 7. Open a conversation title. Search is focused; source and derived conversations
    are shown in the same picker. Switching out and back preserves each draft.
 8. Open More to use a checkpoint, fork or handoff. Execution migration opens a

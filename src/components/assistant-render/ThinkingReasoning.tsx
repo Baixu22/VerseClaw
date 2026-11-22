@@ -71,7 +71,7 @@ export function ThinkingReasoning({
     if (!el) return;
     if (streaming) el.scrollTop = el.scrollHeight;
     syncFades();
-  }, [items.length, expanded, streaming, syncFades]);
+  }, [items, expanded, streaming, syncFades]);
 
   if (items.length === 0) return null;
 
@@ -123,7 +123,7 @@ export function ThinkingReasoning({
           measuring it, which keeps variable-length reasoning smooth. */}
       <div
         className={cn(
-          'grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          'grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
           expanded ? 'grid-rows-[1fr] opacity-100' : 'pointer-events-none grid-rows-[0fr] opacity-0',
         )}
       >
@@ -144,7 +144,7 @@ export function ThinkingReasoning({
             {items.map((item) => (
               <p
                 key={item.id}
-                className="m-0 line-clamp-2 text-[13px] font-[425] leading-5 tracking-[-0.005em] text-muted-foreground/80 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300"
+                className="m-0 shrink-0 whitespace-pre-wrap break-words text-[13px] font-[425] leading-5 tracking-[-0.005em] text-muted-foreground motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300"
               >
                 {item.summary}
               </p>

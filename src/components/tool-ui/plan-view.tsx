@@ -96,6 +96,7 @@ export function ToolUiPlanView({
   showTitle = true,
   testId = 'chat-tool-ui-plan',
   collapsed: controlledCollapsed,
+  defaultCollapsed = false,
   onCollapsedChange,
   showProgress = true,
 }: {
@@ -107,11 +108,12 @@ export function ToolUiPlanView({
   showTitle?: boolean;
   testId?: string;
   collapsed?: boolean;
+  defaultCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
   showProgress?: boolean;
 }) {
   const { t } = useTranslation('chat');
-  const [localCollapsed, setLocalCollapsed] = useState(false);
+  const [localCollapsed, setLocalCollapsed] = useState(defaultCollapsed);
   const collapsed = controlledCollapsed ?? localCollapsed;
   const [expandedList, setExpandedList] = useState(false);
 
@@ -130,7 +132,7 @@ export function ToolUiPlanView({
       <button
         type="button"
         className={cn(
-          'flex min-w-0 items-center gap-2 self-stretch rounded-sm py-0.5 text-left',
+          'chat-plan-toggle flex min-w-0 items-center gap-2 self-stretch rounded-sm py-0.5 text-left',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         )}
         aria-expanded={!collapsed}

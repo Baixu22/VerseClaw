@@ -1,0 +1,473 @@
+{
+  "date": "2026-11-20",
+  "actor": "codex",
+  "driven_by": "agent",
+  "base": "47303b18996f94ec7fd9afbc89ba1dac0910e66d",
+  "model": "hy4flash-free",
+  "route": "127.0.0.1:3065/v1/responses",
+  "providerCalls": [
+    {
+      "run": "live-61fy1J",
+      "slot": 1,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "278ad671c5b412e322494a5c7dd204e1d8425b08dff9129b7ae1b0bfde4c3298"
+    },
+    {
+      "run": "live-61fy1J",
+      "slot": 2,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "2b33f5cd4bc5a1f19d315198ef46b105e4cc081fc831ee363b923fcafd67bc23"
+    },
+    {
+      "run": "live-61fy1J",
+      "slot": 3,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "9b4bc74a6b286bc8c83061b0ffbfb35795b67d320938443a39bc8d80d05d4fa4"
+    },
+    {
+      "run": "live-60Wycb",
+      "slot": 1,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "fb23267e2e5b1f73c847a9b2714748eff82a4fdbe6629abd7d391f189c97c7d3"
+    },
+    {
+      "run": "live-60Wycb",
+      "slot": 2,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "6f656638afe9de99e16b766aa1be10a6c3256c678193860b2415f862d248dfee"
+    },
+    {
+      "run": "live-60Wycb",
+      "slot": 3,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "225b0f32d4e900754d26297d43ed30072babd49a919301c7e5bd6200cb19c6b2"
+    },
+    {
+      "run": "live-60Wycb",
+      "slot": 4,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "d71edf2cf184528ab51f9e4dfc670c00b7daeed230b5e5dfc61f64769ce8d36e"
+    },
+    {
+      "run": "live-60Wycb",
+      "slot": 5,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "63a81288cd1cc667c763ffe61adbf4ad22890f1eafdf74fbda99d3c953e78507"
+    },
+    {
+      "run": "live-60Wycb",
+      "slot": 6,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "1503da53ecb2e1cbfabd4b102af1d5f5bdc33fd0ed9eea98cf67e6f3ac42eb5c"
+    },
+    {
+      "run": "live-60Wycb",
+      "slot": 7,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "8f6aeb918325cc3007d78dac3ab4da2946f7d6c4634acf6e7596d4a3cd1a9fd0"
+    },
+    {
+      "run": "approval-Z45qc4",
+      "slot": 1,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "e31dbe6e9171e87e392046ff0a0b1caffc49a4c08f9a940af0aa17e9b656a2a2"
+    },
+    {
+      "run": "live-n3yrdj",
+      "slot": 1,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "6fee6c33958b10f5c0795aab3661370d562e6dd58a2ea075b5cd87ef27e3c9d8"
+    },
+    {
+      "run": "model-permission-lH2Jh9",
+      "slot": 1,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "f10150ac057947b71204fb7cc5b6c698ca91b9af413a8e0f87919f386fe4499c"
+    },
+    {
+      "run": "model-permission-lH2Jh9",
+      "slot": 2,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "89070be01cbe4d3b8b24a0cead182381e1e777f06c8d4bd16e89f1766cc6dbd4"
+    },
+    {
+      "run": "model-permission-lH2Jh9",
+      "slot": 3,
+      "status": 200,
+      "completedEvent": true,
+      "phase": "returned",
+      "sha256": "3222d4fce87ead13b9da06a248edcc5663c55eab92396c573f27421d2cb1c46b"
+    }
+  ],
+  "directSmoke": {
+    "status": 200,
+    "match": "runtime-smoke-ok"
+  },
+  "candidateSources": {
+    "src/components/ui/plus-menu-morph.tsx": "b4d77b68f8608f792c41d03d3d49e9641875d8ff1ace22818e0e3c23015dbe2b",
+    "src/components/tool-ui/agent-interactions.tsx": "69a077a07c8dee498d0138707fef7bcd0f416ac06c349645451410e9398b87f3",
+    "src/components/tool-ui/plan-view.tsx": "2b2e070b08cf90891650d9c85a9f26b51a30f30fbe679e7fe7b33666d876b6b5",
+    "src/pages/Chat/ChatInput.tsx": "261e5a1bbdb1323fcdf8cc403637753b9cefaeabc90dad1d6268b239460fc41b",
+    "src/pages/Chat/execution-projection.ts": "23304419c2640b888eb74cb8f849560e8c3a48beb08d6f0ca05f08e59d4d7b3e",
+    "src/pages/Chat/index.tsx": "d33b009336b81fbf0757d4d0a8276a0f83207e4754b960d3c4b4e0621385f8c9",
+    "src/pages/Chat/task-visualization.ts": "0d6d9bcdb3d7f0f43598196ac1d37b5540982693c8896b3cd3be46648eb5d877",
+    "src/pages/Chat/run-surface-promotion.ts": "a199eed6504465c5b61da68afbf7c38b2062800f218cd3ffc2956df9d1f78a53",
+    "src/stores/chat/helpers.ts": "f1881ec41e535263b7a2e5d9c2aec28f94b37889ea169fd1b500a86414f4cb83",
+    "src/stores/settings.ts": "c0d4de1236d83343da573d2f54aa20b8a8149e4e498145f16318fff838ec1377",
+    "src/styles/codex-responsive.css": "e600e1fe901909748921bb6d8e3ea730ea51fc050afa5738307574b9ac217c3f",
+    "shared/chat/types.ts": "245509babc590cc3f43aaf324e24fdb5e515d7c540e51c4efb915627eec6fcd6"
+  },
+  "runtimeBinary": {
+    "path": "D:/ClawX/openclaw_runtime/dist/entry.js",
+    "sha256": "d5dfcea43c0815ad81e04010b71cf78cf87e26cf2f45a1ff9bd75fd0b8e45cd8"
+  },
+  "runtimeRequestedApproval": {
+    "requestId": "e4355c91-1b00-46a5-8233-1ecd650aa5b3",
+    "decision": "deny",
+    "cleared": true,
+    "command": "node --version",
+    "source": "separate runtime RPC client",
+    "layouts": [
+      {
+        "w": 1280,
+        "h": 800,
+        "role": null,
+        "hiddenInput": true,
+        "decisions": [
+          {
+            "id": "runtime-approval-deny",
+            "x": 426.5,
+            "y": 735.3333740234375,
+            "right": 482.2604179382324,
+            "bottom": 767.3333740234375
+          },
+          {
+            "id": "runtime-approval-allow-once",
+            "x": 1038.7708740234375,
+            "y": 735.3333740234375,
+            "right": 1129.1667098999023,
+            "bottom": 767.3333740234375
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "w": 375,
+        "h": 812,
+        "role": null,
+        "hiddenInput": true,
+        "decisions": [
+          {
+            "id": "runtime-approval-deny",
+            "x": 97.33333587646484,
+            "y": 747.3333740234375,
+            "right": 153.09375381469727,
+            "bottom": 779.3333740234375
+          },
+          {
+            "id": "runtime-approval-allow-once",
+            "x": 252.27084350585938,
+            "y": 747.3333740234375,
+            "right": 342.6666793823242,
+            "bottom": 779.3333740234375
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "w": 812,
+        "h": 375,
+        "role": null,
+        "hiddenInput": true,
+        "decisions": [
+          {
+            "id": "runtime-approval-deny",
+            "x": 97.33333587646484,
+            "y": 310.66668701171875,
+            "right": 153.09375381469727,
+            "bottom": 342.66668701171875
+          },
+          {
+            "id": "runtime-approval-allow-once",
+            "x": 688.9375,
+            "y": 310.66668701171875,
+            "right": 779.3333358764648,
+            "bottom": 342.66668701171875
+          }
+        ],
+        "overflow": 0
+      }
+    ]
+  },
+  "modelOriginatedApprovalDecision": null,
+  "question": {
+    "selected": "Pear",
+    "acknowledged": true,
+    "touch": {
+      "pressed": "true",
+      "width": 235.33334350585938,
+      "overflow": 0
+    },
+    "duplicateCardsInFruitTurn": 2,
+    "distinctPersistedFruitQuestionMessages": 1,
+    "freshPaperTurnCounts": [
+      1,
+      1,
+      1
+    ]
+  },
+  "plan": {
+    "successfulToolCall": "chatcmpl-tool-bd5ffb3615c77270",
+    "status": "updated",
+    "steps": [
+      {
+        "step": "Draft pear label text and layout concept",
+        "status": "in_progress"
+      },
+      {
+        "step": "Review the draft for clarity and compliance",
+        "status": "pending"
+      }
+    ],
+    "rejectedHistoryAfterReload": {
+      "questions": 1,
+      "plans": 0,
+      "dockPlans": 0,
+      "failedReceipt": true
+    }
+  },
+  "responsive": {
+    "source": "ego-browser / candidate build / mock chat fixture",
+    "samples": [
+      {
+        "viewport": [
+          1280,
+          800
+        ],
+        "dark": false,
+        "coarse": false,
+        "reduced": true,
+        "overflow": 0,
+        "buttons": [
+          {
+            "id": "chat-composer-actions",
+            "name": "添加",
+            "w": 32,
+            "h": 32,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-permission-mode",
+            "name": "权限模式",
+            "w": 90,
+            "h": 32,
+            "inside": true
+          },
+          {
+            "id": "chat-knowledge-scope-button",
+            "name": "知识范围",
+            "w": 120,
+            "h": 32,
+            "inside": true
+          },
+          {
+            "id": "chat-model-picker-button",
+            "name": "模型 / 思考强度",
+            "w": 168,
+            "h": 34,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-send",
+            "name": "发送",
+            "w": 32,
+            "h": 32,
+            "inside": true
+          }
+        ]
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "dark": true,
+        "coarse": true,
+        "reduced": true,
+        "overflow": 0,
+        "buttons": [
+          {
+            "id": "chat-composer-actions",
+            "name": "添加",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-permission-mode",
+            "name": "权限模式",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-knowledge-scope-button",
+            "name": "知识范围",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-model-picker-button",
+            "name": "模型 / 思考强度",
+            "w": 168,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-send",
+            "name": "发送",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          }
+        ]
+      },
+      {
+        "viewport": [
+          375,
+          812
+        ],
+        "dark": false,
+        "coarse": true,
+        "reduced": true,
+        "overflow": 0,
+        "buttons": [
+          {
+            "id": "chat-composer-actions",
+            "name": "添加",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-permission-mode",
+            "name": "权限模式",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-knowledge-scope-button",
+            "name": "知识范围",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-model-picker-button",
+            "name": "模型 / 思考强度",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-send",
+            "name": "发送",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          }
+        ]
+      },
+      {
+        "viewport": [
+          812,
+          375
+        ],
+        "dark": true,
+        "coarse": true,
+        "reduced": true,
+        "overflow": 0,
+        "buttons": [
+          {
+            "id": "chat-composer-actions",
+            "name": "添加",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-permission-mode",
+            "name": "权限模式",
+            "w": 90,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-knowledge-scope-button",
+            "name": "知识范围",
+            "w": 120,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-model-picker-button",
+            "name": "模型 / 思考强度",
+            "w": 168,
+            "h": 44,
+            "inside": true
+          },
+          {
+            "id": "chat-composer-send",
+            "name": "发送",
+            "w": 44,
+            "h": 44,
+            "inside": true
+          }
+        ]
+      }
+    ]
+  },
+  "regression": {
+    "vitestTests": 95,
+    "electronCases": 3,
+    "electronStates": "mock gateway/IPC for approval and question regression; live results recorded separately"
+  },
+  "captures": {
+    "approval-375-dark.png": "d28515294839d58ba48a0bf55569f3fd4d48935880f97dd64fc0ec97deada4d0",
+    "approval-landscape.png": "019ab16332a961f0069c7e6430776424c41567078cf44d4e212b64d9fa4bef13",
+    "question-desktop.png": "7b72c346e40127c2530a9a4d8e70ba41cbd2ad0183a94ce41867628073629b52",
+    "plan-desktop.png": "3e87dab1ee2fb3ed3e693f1fa9124c977124cf91d52203404bd14fb015dd24f9",
+    "question-duplicate-375.png": "da475eaba74cecbc04aa34066ef76d5fa228bb4d611e14f3272647c6b66579ff",
+    "composer-375-touch.png": "08da5e821f3e3b44864cf9fd59d448b19ed0af53ad2688dfad001108a5444790"
+  }
+}

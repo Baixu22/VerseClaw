@@ -1,0 +1,4 @@
+{"mode":"deterministic","records":32,"allSummaryNumbersRecomputed":true,"decisions":{"b1_mechanism_and_autonomy":true,"b2_task_benefit":true,"b3_retention_benefit":true,"b4_non_inferiority":true,"b5_no_fabrication":true,"b6_budget":true,"contextGrowthChars":-395.5,"tokenGrowthPct":0}}
+{"mode":"deterministic","records":32,"providerCalls":92,"initialPairs":8,"baselineLeaks":0,"historyFallbacks":0,"incomplete":0,"passed":true}
+{"output":"D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\verification\\deterministic-final.json","acceptedCleanCandidate":true,"mode":"deterministic","records":32,"providerCalls":92,"status":"inconclusive","verdict":"NO_GO","B7CleanCandidate":true}
+{"output":"D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\verification\\deterministic-final.json","mode":"deterministic","pressureEvents":42,"cleanCandidate":true,"status":"inconclusive","verdict":"NO_GO"}

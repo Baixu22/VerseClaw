@@ -56,6 +56,8 @@ export type PersistentSessionRecord = {
   profileDir: string;
   /** True when the browser belongs to somebody else (attached via `--cdp`). */
   external?: boolean;
+  /** Set when the attached endpoint identified itself as Kitesurf. */
+  engine?: 'kitesurf';
   /** Native page identity selected by open; stable across CDP reattachments. */
   targetId?: string;
   url?: string;
@@ -99,6 +101,7 @@ export async function loadSessionRecord(sessionId: string, workspaceRoot?: strin
       typeof parsed.createdAt === 'string' && Number.isFinite(Date.parse(parsed.createdAt)) &&
       typeof parsed.profileDir === 'string' && parsed.profileDir.length > 0 &&
       (parsed.external === undefined || typeof parsed.external === 'boolean') &&
+      (parsed.engine === undefined || parsed.engine === 'kitesurf') &&
       (parsed.targetId === undefined || (typeof parsed.targetId === 'string' && parsed.targetId.trim().length > 0 && parsed.targetId.length <= 256)) &&
       (parsed.url === undefined || typeof parsed.url === 'string') &&
       (parsed.title === undefined || typeof parsed.title === 'string') ? parsed : null;

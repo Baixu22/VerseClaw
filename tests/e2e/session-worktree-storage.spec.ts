@@ -15,8 +15,7 @@ async function invoke(page: Page, module: string, action: string, payload?: unkn
 async function openWorktrees(page: Page) {
   const trigger = page.getByTestId('session-worktree-trigger');
   if (!await trigger.isVisible()) {
-    const parent = page.getByTestId('welcome-project-trigger')
-      .or(page.getByTestId('chat-header-environment-project').getByRole('button').first()).filter({ visible: true }).first();
+    const parent = page.getByTestId('welcome-project-trigger');
     await expect(parent).toBeVisible();
     await parent.focus(); await parent.press('Enter');
   }

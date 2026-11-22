@@ -111,7 +111,7 @@ export async function resolveAuthorizedBrowserTarget(input: string, origins: Rea
   return { url, ...addresses[0]! };
 }
 
-export async function createUpstreamPageControl(page: Page, url: string, workspaceRoot: string, closeOwnedSession?: () => Promise<unknown>, allowedOrigins?: readonly string[], onNavigationState?: (owner:Page,state:{id:string;pending:boolean;failed?:boolean})=>void, allowedUploadPaths?: readonly string[], downloadOptions?:{allowedPaths:readonly string[];directory:string}, transferTimeoutMs: number = DEFAULT_TRANSFER_TIMEOUT_MS) {
+export async function createUpstreamPageControl(page: Page, url: string, workspaceRoot: string, closeOwnedSession?: () => Promise<unknown>, allowedOrigins?: readonly string[], onNavigationState?: (owner:Page,state:{id:string;pending:boolean;failed?:boolean})=>void, allowedUploadPaths?: readonly string[], downloadOptions?:{allowedPaths:readonly string[];directory:string}, transferTimeoutMs: number = DEFAULT_TRANSFER_TIMEOUT_MS, nativeCdp = false) {
   const transferBudgetMs = assertTransferTimeoutMs(transferTimeoutMs);
   /**
    * Why the controlled transport dropped a request. Playwright can only report its own
@@ -125,11 +125,15 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
   }
   if ((createConnection as typeof createConnection & { versebrowserFilesVersion?: number }).versebrowserFilesVersion !== 1) throw new Error('E_UPSTREAM_PATCH: buffered file chooser patch missing; run npm run patch:upstream');
   if ((createConnection as typeof createConnection & { versebrowserDownloadsVersion?: number }).versebrowserDownloadsVersion !== 1) throw new Error('E_UPSTREAM_PATCH: manual download patch missing; run npm run patch:upstream');
-  const initial = new URL(assertAgentBrowserNavigateUrl(url, { allowLocalDocuments: false }));
-  if (allowedOrigins === undefined && !['127.0.0.1', '[::1]'].includes(initial.hostname)) throw new Error('E_UPSTREAM_ORIGIN: experimental slice only supports literal loopback development URLs');
-  const origins = authorizedBrowserOrigins(allowedOrigins ?? [initial.origin]);
-  if (!origins.has(initial.origin)) throw new Error('E_UPSTREAM_ORIGIN: initial origin is not authorized');
+  const initial = new URL(nativeCdp && url === 'about:blank' ? url : assertAgentBrowserNavigateUrl(url, { allowLocalDocuments: false }));
+  if (!nativeCdp && allowedOrigins === undefined && !['127.0.0.1', '[::1]'].includes(initial.hostname)) throw new Error('E_UPSTREAM_ORIGIN: experimental slice only supports literal loopback development URLs');
+  const origins = nativeCdp ? undefined : authorizedBrowserOrigins(allowedOrigins ?? [initial.origin]);
+  if (!nativeCdp && !origins!.has(initial.origin)) throw new Error('E_UPSTREAM_ORIGIN: initial origin is not authorized');
   const context = page.context();
+  if (nativeCdp) {
+    const native = page as Page & { content: () => Promise<string> };
+    native.content = () => page.evaluate('document.documentElement.outerHTML');
+  }
   const filePath = (value: string) => {
     if (typeof value !== 'string' || !value.trim() || value.includes('\0')) throw new Error('E_ARG: file paths must be nonempty file paths');
     return assertInsideRoot(workspaceRoot, resolve(workspaceRoot, value), 'file path');
@@ -228,7 +232,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       ownsSlot = true;
       signal.throwIfAborted();
         // Resolve once; the socket lookup below must return only this validated IP.
-        const resolved = await Promise.race([resolveAuthorizedBrowserTarget(target, origins),new Promise<never>((_,reject)=>{
+        const resolved = await Promise.race([resolveAuthorizedBrowserTarget(target, origins!),new Promise<never>((_,reject)=>{
           abortRead=()=>reject(signal.reason);signal.addEventListener('abort',abortRead,{once:true});
         })]);
         signal.throwIfAborted();
@@ -250,7 +254,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
           if (status >= 300 && status < 400) {
             if (allowedOrigins === undefined || !canRedirect) throw new Error('redirects not enabled for this scope');
             const location = response.headers.location;
-            if (!location || !origins.has(new URL(assertAgentBrowserNavigateUrl(new URL(location,resolved.url).href,{allowLocalDocuments:false})).origin)) throw new Error('E_UPSTREAM_ORIGIN: redirect origin is not authorized');
+            if (!location || !origins!.has(new URL(assertAgentBrowserNavigateUrl(new URL(location,resolved.url).href,{allowLocalDocuments:false})).origin)) throw new Error('E_UPSTREAM_ORIGIN: redirect origin is not authorized');
           }
           if (Number(response.headers['content-length']) > bodyLimit) throw new Error('response exceeds slice limit');
           const chunks: Uint8Array[] = [];
@@ -282,7 +286,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       if (ownsSlot) { activeRequests--; waitingRequests.shift()?.(); }
     }
   }
-  await context.route('**/*', async route => {
+  if (!nativeCdp) await context.route('**/*', async route => {
     try {
       const request=route.request();
       let canRedirect=false;
@@ -328,11 +332,11 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
     guardedPages.add(targetPage);
     targetPage.once('close',()=>guardedPages.delete(targetPage));
   }
-  await attachRedirectGuard(page);
-  await context.routeWebSocket('**/*', socket => socket.close());
+  if (!nativeCdp) await attachRedirectGuard(page);
+  if (!nativeCdp) await context.routeWebSocket('**/*', socket => socket.close());
   const config: Parameters<typeof createConnection>[0] & { vbLogSink: typeof vbLogSink; vbPreserveFocus: boolean; vbFilePayloads: typeof vbFilePayloads; vbManualDownloads: boolean } = {
     vbPreserveFocus: true, vbManualDownloads: true,
-    browser: { isolated: false, initScript: [] }, network: { allowedOrigins: [], blockedOrigins: [] },
+    browser: { isolated: false, initScript: [] }, ...(nativeCdp ? {} : { network: { allowedOrigins: [], blockedOrigins: [] } }),
     webmcp: false, capabilities: ['vision'], imageResponses: 'omit', saveSession: false, snapshot: { mode: 'none' },
     outputDir, vbLogSink, vbFilePayloads,
   };
@@ -538,6 +542,29 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       for (const [token, ref] of nextRefs) refs.set(token, ref);
       return items;
   }
+  /** Bind each snapshot ref to a pinned DOM node once, including duplicate labels. */
+  async function referencesFor(remaining: () => number, fields: ElementHandle[], selector?: string, paged = false) {
+    const key = `__vbReference_${randomUUID().replaceAll('-', '')}`;
+    try {
+      await Promise.all(fields.map((field, index) => field.evaluate((element, { key, index }) => {
+        (element as unknown as Record<string, unknown>)[key] = index;
+      }, { key, index })));
+      const items = await snapshot(remaining, selector, paged);
+      const matches = await Promise.all(items.map(async item => {
+        const index = await locator(`[data-vb-ref="${item.ref}"]`).evaluate((element, key) => {
+          const index = (element as unknown as Record<string, unknown>)[key];
+          return typeof index === 'number' ? index : null;
+        }, key, { timeout: remaining() });
+        return index === null ? undefined : [index, item] as const;
+      }));
+      remaining();
+      return new Map(matches.filter((match): match is readonly [number, InteractiveElement] => match !== undefined));
+    } finally {
+      await Promise.all(fields.map(field => field.evaluate((element, key) => {
+        delete (element as unknown as Record<string, unknown>)[key];
+      }, key).catch(() => undefined)));
+    }
+  }
   /**
    * TF-0164: child frames of one page.
    *
@@ -555,7 +582,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       if (position === 0) return undefined;
       const frameUrl = frame.url();
       let authorized: boolean;
-      try { authorized = origins.has(new URL(frameUrl).origin); } catch { authorized = false; }
+      try { authorized = nativeCdp || origins!.has(new URL(frameUrl).origin); } catch { authorized = false; }
       return { frameId: `f${position}`, index: position, url: redactSensitiveUrl(frameUrl), name: redactSecretsInText(frame.name()).slice(0, 120), authorized };
     }).filter((frame): frame is NonNullable<typeof frame> => frame !== undefined);
   }
@@ -599,6 +626,10 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       return inventory;
   }
   async function navigateDocument(target:Page,url:string,waitUntil:'load'|'domcontentloaded',timeout:number):Promise<{pendingDialog?:AgentBrowserPendingDialogNavigation}> {
+    if (nativeCdp) {
+      await target.goto(url, { waitUntil, timeout });
+      return {};
+    }
     const describe=(owner:Page,record:{id:string},started:boolean)=>({dialogId:record.id,pageId:pageIds.get(owner)!,requestedUrl:redactSensitiveUrl(url),navigationStarted:started});
     const existing=[...dialogs][0];
     if(existing)return {pendingDialog:describe(existing[0],existing[1],false)};
@@ -729,7 +760,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
     selectPage: (pageId:string,onSelected?:PageSelected) => serial(remaining=>selectOwnedPage(pageId,remaining,onSelected)),
     newPage: (url?:string,background=false,onSelected?:PageSelected) => serial(async remaining=>{
       if(typeof background!=='boolean')throw new Error('E_ARG: background must be boolean');
-      if(url!==undefined && !origins.has(new URL(assertAgentBrowserNavigateUrl(url,{allowLocalDocuments:false})).origin))throw new Error('E_UPSTREAM_ORIGIN: new page origin is not authorized');
+      if(!nativeCdp && url!==undefined && !origins!.has(new URL(assertAgentBrowserNavigateUrl(url,{allowLocalDocuments:false})).origin))throw new Error('E_UPSTREAM_ORIGIN: new page origin is not authorized');
       if(closed || context.pages().length===0)throw new Error('E_UPSTREAM_CLOSED: open a session before creating another page');
       const previous=identity;
       let created:Page|undefined;
@@ -737,7 +768,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
         await call('browser_tabs',{action:'list'},remaining());
         created=await context.newPage();
         const createdPageId=pageIds.get(created)!;
-        await attachRedirectGuard(created);
+        if (!nativeCdp) await attachRedirectGuard(created);
         const navigation=url===undefined?{}:await navigateDocument(created,url,'load',remaining());
         const inventory=await selectOwnedPage(background?previous:createdPageId,remaining,onSelected);
         return {...inventory,createdPageId,...navigation};
@@ -757,7 +788,9 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       // Close the pinned Page object; a shifting upstream index could close a sibling.
       await candidate.close();
       if(!candidate.isClosed())throw new Error('E_PAGE_CLOSE: page closure was not confirmed');
-      const inventory=!wasActive&&!page.isClosed()?await selectOwnedPage(identity,remaining,onSelected):await pageInventory();
+      const remainingPage = [...pageIds].find(([candidate, id]) => id !== pageId && !candidate.isClosed())?.[1];
+      if (nativeCdp && wasActive && remainingPage) await selectOwnedPage(remainingPage, remaining, onSelected);
+      const inventory=await pageInventory();
       return {...inventory,closedPageId:pageId};
     }),
     downloadFile: (selector:string, destination:string, timeoutMs=5000, beforeExecute?:()=>void) => serial(async remaining => {
@@ -932,19 +965,13 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       if (fields.length > 40) { await Promise.all(fields.map(field => field.dispose())); throw new Error('E_OUTPUT_BUDGET: more than40 form fields; narrow region'); }
       const observedDocument = documentRevision;
       try {
-        const items = await snapshot(remaining, selector, true);
+        const references = await referencesFor(remaining, fields, selector, true);
         const records = [];
-        for (const field of fields) {
+        for (const [index, field] of fields.entries()) {
           remaining();
           const facts = await field.evaluate(readFormFieldDetails);
           const state = await field.evaluate(readFieldState, REDACTED);
-          let ref: string | null = null;
-          for (const item of items) {
-            const candidate = await locator(`[data-vb-ref="${item.ref}"]`).elementHandle({timeout:remaining()});
-            if (!candidate) continue;
-            try { if (await candidate.ownerFrame() === page.mainFrame() && await candidate.evaluate((element, expected)=>element===expected, field)) { ref=item.ref; break; } }
-            finally { await candidate.dispose(); }
-          }
+          const ref = references.get(index)?.ref ?? null;
           const { sourceUrl: _sourceUrl, ...fieldFacts } = facts;
           if (fieldFacts.validity) fieldFacts.validity = Object.fromEntries(Object.entries(fieldFacts.validity).filter(([key,value])=>key==='valid'||value));
           records.push({ ...fieldFacts, ...state, ref, referenceStatus: ref ? 'available' : 'not-in-snapshot', validityFormat: 'valid-and-true-flags' });
@@ -997,16 +1024,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       const handle = await matches!.elementHandle({ timeout: remaining() });
       if (!handle) throw new Error('E_STALE_REF: query target disappeared; observe again');
       try {
-        const items = await snapshot(remaining, matches!.toString());
-        let found: InteractiveElement | undefined;
-        for (const item of items) {
-          remaining();
-          const candidate = await locator(`[data-vb-ref="${item.ref}"]`).elementHandle({ timeout: remaining() });
-          if (!candidate) continue;
-          try {
-            if (await candidate.ownerFrame() === page.mainFrame() && await candidate.evaluate((element, expected) => element === expected, handle)) { found = item; break; }
-          } finally { await candidate.dispose(); }
-        }
+        const found = (await referencesFor(remaining, [handle], matches!.toString())).get(0);
         if (observedDocument !== documentRevision || !await matches!.evaluate((element, expected) => element === expected && element.isConnected, handle, { timeout: remaining() })) {
           throw new Error('E_STALE_REF: query target changed during observation; observe again');
         }
@@ -1034,6 +1052,14 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       try { return await observeFieldAction(locator(selector), remaining(), async () => {
         await locator(selector).focus({ timeout: remaining() });
         await locator(selector).evaluate(assertFieldFocused, undefined, { timeout: remaining() });
+        if (nativeCdp) {
+          if (!await locator(selector).isEditable({ timeout: remaining() })) throw new Error('E_FIELD_READONLY: field is not editable');
+          // Kitesurf cannot select existing email-input text before Input.insertText.
+          await locator(selector).evaluate(element => {
+            if ('value' in element) (element as HTMLInputElement).value = '';
+            else if ((element as HTMLElement).isContentEditable) element.textContent = '';
+          }, undefined, { timeout: remaining() });
+        }
         await call('browser_type', { target: resolved, text }, remaining());
       }); }
       finally { refs.clear(); }
@@ -1139,7 +1165,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
     }, timeoutMs),
     navigate: (url: string, waitUntil: 'load' | 'domcontentloaded') => serial(async remaining => {
       assertPage(true);
-      if (!origins.has(new URL(assertAgentBrowserNavigateUrl(url, { allowLocalDocuments: false })).origin)) throw new Error('E_UPSTREAM_ORIGIN: navigation origin is not authorized');
+        if (!nativeCdp && !origins!.has(new URL(assertAgentBrowserNavigateUrl(url, { allowLocalDocuments: false })).origin)) throw new Error('E_UPSTREAM_ORIGIN: navigation origin is not authorized');
       refs.clear();
       return navigateDocument(page,url,waitUntil,remaining());
     }, navigationDeadlineMs(transferBudgetMs)),
@@ -1175,7 +1201,7 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       const authorizeFrame = (frame: Frame) => {
         let origin: string;
         try { origin = new URL(frame.url()).origin; } catch { throw new Error(`E_UPSTREAM_ORIGIN: frame origin is not authorized`); }
-        if (!origins.has(origin)) throw new Error(`E_UPSTREAM_ORIGIN: frame origin ${redactSensitiveUrl(frame.url())} is not authorized`);
+        if (!nativeCdp && !origins!.has(origin)) throw new Error(`E_UPSTREAM_ORIGIN: frame origin ${redactSensitiveUrl(frame.url())} is not authorized`);
       };
       // A snapshot ref carries its own scope, so a read driven by a ref targets the frame that owns
       // it. That is what makes the snapshot scope and the read scope the same scope.
@@ -1210,7 +1236,17 @@ export async function createUpstreamPageControl(page: Page, url: string, workspa
       if (owner !== page || observed !== documentRevision || generation !== pageGeneration) {
         throw new Error(`E_FRAME_SCOPE: page changed during the frame text read; observe again`);
       }
-      const text = await scope.evaluate((selector: string | null) => {
+      const text = nativeCdp ? await (async () => {
+        const frame = await scope.frameElement();
+        try {
+          return await frame.evaluate((element, selector) => {
+            const document = (element as HTMLIFrameElement).contentDocument;
+            if (!document) throw new Error('E_FRAME_SCOPE: frame text requires a same-origin document');
+            const target = selector ? document.querySelector(selector) : document.body;
+            return target ? String(target.textContent ?? '').replace(/\s+/g, ' ').trim() : '';
+          }, options.selector ?? null);
+        } finally { await frame.dispose(); }
+      })() : await scope.evaluate((selector: string | null) => {
         // Running inside the frame: document here IS that frame's document.
         const target = selector ? document.querySelector(selector) : document.body;
         return target ? String(target.textContent ?? '').replace(/\s+/g, ' ').trim() : '';

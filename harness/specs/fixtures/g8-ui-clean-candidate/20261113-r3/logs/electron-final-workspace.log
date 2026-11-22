@@ -1,0 +1,14 @@
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:30776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:30776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests\e2e\chat-artifact-panel.spec.ts:265:5 › keeps the conversation column in place until the workspace panel expands
+[1A[2K[2/2] tests\e2e\chat-artifact-panel.spec.ts:366:5 › reaps an owned Windows child before closing the Electron pipe
+[1A[2K  2 passed (20.8s)

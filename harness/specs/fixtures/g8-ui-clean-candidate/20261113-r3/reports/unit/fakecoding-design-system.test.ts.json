@@ -1,0 +1,156 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\fakecoding-design-system-ts.json",
+  "sourceSha256": "6a8e891421f900022ae17bce62600d836eb4741e2a34e0c8b1cdfea461c138a2",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 9,
+    "numPassedTests": 9,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563325373,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract keeps shared actions compact, grayscale, and free of press-scale feedback",
+            "status": "passed",
+            "title": "keeps shared actions compact, grayscale, and free of press-scale feedback",
+            "duration": 2.4121000000000095,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract uses neutral light and dark work-surface tokens without a decorative main gradient",
+            "status": "passed",
+            "title": "uses neutral light and dark work-surface tokens without a decorative main gradient",
+            "duration": 1.0769000000000233,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract defaults the shared page shell to a 28px normal heading with 34px line height and zero letter spacing",
+            "status": "passed",
+            "title": "defaults the shared page shell to a 28px normal heading with 34px line height and zero letter spacing",
+            "duration": 0.44469999999989795,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract keeps shared badges and switches compact and grayscale by default",
+            "status": "passed",
+            "title": "keeps shared badges and switches compact and grayscale by default",
+            "duration": 0.5068999999999733,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract uses opaque compact work surfaces for cards, textareas, and sheets",
+            "status": "passed",
+            "title": "uses opaque compact work surfaces for cards, textareas, and sheets",
+            "duration": 0.7449000000000296,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract limits shared overlay and shell motion to short opacity or necessary movement",
+            "status": "passed",
+            "title": "limits shared overlay and shell motion to short opacity or necessary movement",
+            "duration": 1.6238000000000739,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract scales every corner radius through the single 1.25x ladder",
+            "status": "passed",
+            "title": "scales every corner radius through the single 1.25x ladder",
+            "duration": 0.8453000000000657,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract resolves every floating surface to one elevated role",
+            "status": "passed",
+            "title": "resolves every floating surface to one elevated role",
+            "duration": 1.5480999999999767,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "FakeCoding design-system contract"
+            ],
+            "fullName": "FakeCoding design-system contract keeps the fixed sidebar to three business links plus the New task command",
+            "status": "passed",
+            "title": "keeps the fixed sidebar to three business links plus the New task command",
+            "duration": 0.9664999999999964,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563326267,
+        "endTime": 1794563326277.9666,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/fakecoding-design-system.test.ts"
+      }
+    ]
+  }
+}

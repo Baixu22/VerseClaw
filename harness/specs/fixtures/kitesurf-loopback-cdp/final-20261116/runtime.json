@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "available": true,
+  "endpoint": "ws://127.0.0.1:46115/devtools/browser",
+  "linuxProcessId": 555,
+  "upstreamRevision": "4a2903813a22b08d4f3cc64a4b35339d0293a5d1",
+  "engineResourceHashes": {
+    "/home/bai/tmp/kitesurf-upstream-20261114/packages/page-script/dist/page-script.js": "bd77d59623f44dba92ca7f95a57f1f9279142b533e78b4db5841a9864584594b",
+    "/home/bai/tmp/kitesurf-upstream-20261114/packages/core/pkg/kitesurf_core_bg.wasm": "182ca845a68c9a5511313f61df1b1e919289b43f5771a3ca2a487a497bd5ba1a"
+  },
+  "version": {
+    "Browser": "Kitesurf/0.0.1",
+    "Protocol-Version": "1.3",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+    "V8-Version": "12.0.0",
+    "WebKit-Version": "537.36",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:46115/devtools/browser"
+  },
+  "observedAt": "2026-11-16T02:57:31.3895243Z",
+  "controlWorkers": [],
+  "privateNetworkEnabled": false,
+  "remoteBrowserRun": false
+}

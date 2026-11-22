@@ -67,6 +67,7 @@ export interface RawMessage {
   _toolResults?: Array<{
     toolCallId?: string;
     toolName?: string;
+    isError?: boolean;
     result: unknown;
   }>;
 }
@@ -197,6 +198,8 @@ export type ChatResendUserMessageInput = {
  * the prior 8-positional-arg signature; callers pass only the fields they need.
  */
 export type SendOptions = {
+  /** Send a reply to a displayed question immediately through ordinary chat.send. */
+  respondToInteraction?: boolean;
   workspaceId?: string | null;
   targetSessionKey?: string;
   expectedSessionGeneration?: string;

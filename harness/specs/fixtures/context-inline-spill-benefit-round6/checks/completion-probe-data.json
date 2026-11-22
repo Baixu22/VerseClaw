@@ -1,0 +1,33 @@
+{
+  "schema": "G7CompletionProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "dirty": false
+  },
+  "designSha256": "74fa9962f10ad1af65a79569dc6c51f6c49757fb45835c2cc9f3c7174a853e6d",
+  "request": {
+    "model": "space-bunny",
+    "input": [
+      {
+        "role": "user",
+        "content": "Return only {\"value\":\"probe-ok\"}."
+      }
+    ],
+    "max_output_tokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "temperature": 0
+  },
+  "startedAt": "2026-11-13T06:16:23.794Z",
+  "httpStatus": 200,
+  "rawResponse": "{\"background\":false,\"completed_at\":1794550586,\"created_at\":1794550591,\"error\":null,\"id\":\"01a1d38cd2ba75e6899d944dd8b1a0b8\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":900,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"id\":\"rs_ccc237ed62a766c1a5a3b3ad40864fb1\",\"summary\":[{\"text\":\"We need must return exact.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"{\\\"value\\\":\\\"probe-ok\\\"}\",\"type\":\"output_text\"}],\"id\":\"msg_606ae31cb60cb839c85e71fbe213a46f\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"{\\\"value\\\":\\\"probe-ok\\\"}\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":\"low\",\"summary\":\"auto\"},\"status\":\"completed\",\"store\":false,\"temperature\":0,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"cache_creation_input_tokens\":0,\"input_tokens\":164,\"input_tokens_details\":{\"cached_tokens\":0},\"output_tokens\":16,\"output_tokens_details\":{\"reasoning_tokens\":6},\"total_tokens\":180},\"user\":null}",
+  "passed": true,
+  "latencyMs": 2349.6603,
+  "finishedAt": "2026-11-13T06:16:26.146Z"
+}

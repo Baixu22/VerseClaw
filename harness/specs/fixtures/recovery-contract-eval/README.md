@@ -13,3 +13,6 @@
 历史redispatch-proof.json、historical-readback-correction.json保留为开发过程记录。它们的旧窗口/旧user-input评分及独立execution_phases描述不用于当前通过声明；撤回原因在最终包的epoch-disposition与metadata中。
 
 TaskFlow已统一工具相位和生命周期写者；RecoveryAuthority仍是主会话只读shadow，生产决策仍经phase恢复器。TF-0715四个其他owner尚未接入，不能称五入口统一、通用external-effect exactly-once或GA。默认writer=legacy、shadow=off、event-log replay=false。
+
+2026-11-12 独立评审接力见 [review-20261112](review-20261112/README.md)：TF-0709、TF-0713、TF-0717 已通过当前实现与干净候选复核；TF-0711 仍因结构一致的两次 legacy 复跑未成立而保持 review_needed。
+

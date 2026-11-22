@@ -1402,5 +1402,24 @@
         ]
       }
     }
+  },
+  "mergeProvenance": {
+    "sources": [
+      {
+        "branch": "g5",
+        "commit": "4f3c7ff8bffea595fa3c7acab69bb6746700d0b7",
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "sha256": "d2ffb2acd670d3d965327b1119be1f168204191bb8056905e6d59b51578fb2b7"
+      },
+      {
+        "branch": "main",
+        "commit": "910206880dae301b41aed03efb7e5ff1de1103fe",
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "sha256": "2d44fcee33d27bace1dbad5ca363d6f0d6cd19ea4e30bfcfb50880b0c9e777c4"
+      }
+    ],
+    "priorMainGeneratedAt": "2026-11-16T02:42:54.520Z",
+    "priorMainDecision": null,
+    "policy": "Keep the newer g5 measurement intact; main source remains addressable by immutable Git blob and deep-test history union."
   }
 }

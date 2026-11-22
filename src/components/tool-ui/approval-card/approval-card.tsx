@@ -38,9 +38,7 @@ function ApprovalCardReceipt({
 }: ApprovalCardReceiptProps) {
   const { t } = useTranslation("chat");
   const isApproved = choice === "approved";
-  const displayLabel = actionLabel ?? t(isApproved
-    ? "toolUi.approval.receipt.approved"
-    : "toolUi.approval.receipt.denied");
+  const displayLabel = actionLabel ?? t(`approvals.status.${choice}`);
 
   return (
     <div
@@ -91,11 +89,12 @@ export function ApprovalCard({
   choice,
   onConfirm,
   onCancel,
+  presentation = 'card',
 }: ApprovalCardProps) {
   const { t } = useTranslation("chat");
   const resolvedVariant = variant ?? "default";
-  const resolvedConfirmLabel = confirmLabel ?? t("toolUi.approval.approve");
-  const resolvedCancelLabel = cancelLabel ?? t("toolUi.approval.deny");
+  const resolvedConfirmLabel = confirmLabel ?? t("toolUi.approval.host.approve");
+  const resolvedCancelLabel = cancelLabel ?? t("toolUi.approval.host.deny");
   const Icon = icon ? getLucideIcon(icon) : null;
 
   const handleAction = React.useCallback(
@@ -111,12 +110,12 @@ export function ApprovalCard({
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && presentation !== 'composer') {
         event.preventDefault();
         onCancel?.();
       }
     },
-    [onCancel],
+    [onCancel, presentation],
   );
 
   const isDestructive = resolvedVariant === "destructive";
@@ -154,14 +153,16 @@ export function ApprovalCard({
           )}
           data-slot="approval-card"
           data-tool-ui-id={id}
-          role="dialog"
+          role={presentation === 'composer' ? 'region' : 'dialog'}
+          data-presentation={presentation}
+          data-destructive={isDestructive}
           aria-labelledby={`${id}-title`}
           aria-describedby={description ? `${id}-description` : undefined}
           onKeyDown={handleKeyDown}
         >
-          <div className="bg-surface-modal flex w-full flex-col gap-3 rounded-md border border-border/70 p-3">
+          <div className={presentation === 'composer' ? 'composer-decision-approval' : 'bg-surface-modal flex w-full flex-col gap-3 rounded-md border border-border/70 p-3'}>
             <div className="flex items-start gap-3">
-              {Icon && (
+              {Icon && presentation !== 'composer' && (
                 <span
                   className={cn(
                     "flex size-9 shrink-0 items-center justify-center rounded-md",
@@ -173,10 +174,10 @@ export function ApprovalCard({
                   {React.createElement(Icon, { className: "size-5" })}
                 </span>
               )}
-              <div className="flex flex-1 flex-col gap-1">
+              <div className="flex min-w-0 flex-1 flex-col gap-1 break-words [overflow-wrap:anywhere]">
                 <h2
                   id={`${id}-title`}
-                  className="text-base font-semibold leading-tight"
+                  className={presentation === 'composer' ? 'sr-only' : 'text-base font-semibold leading-tight'}
                 >
                   {title}
                 </h2>
@@ -196,21 +197,21 @@ export function ApprovalCard({
                 <Separator />
                 <dl className="flex flex-col gap-2 text-sm">
                   {metadata.map((item, index) => (
-                    <div key={index} className="flex justify-between gap-4">
+                    <div key={index} className={presentation === 'composer' ? 'composer-decision-metadata' : 'flex justify-between gap-4'}>
                       <dt className="text-muted-foreground shrink-0">
                         {item.key}
                       </dt>
-                      <dd className="min-w-0 truncate">{item.value}</dd>
+                      <dd className="min-w-0 whitespace-pre-wrap break-words text-right [overflow-wrap:anywhere]">{item.value}</dd>
                     </div>
                   ))}
                 </dl>
               </>
             )}
-            <div className="@container/actions ml-auto w-full max-w-[50%]">
+            <div className={presentation === 'composer' ? 'composer-decision-footer' : '@container/actions ml-auto w-full sm:max-w-[50%]'}>
               <ActionButtons
                 actions={actions}
                 onAction={handleAction}
-                className="grid grid-cols-2 gap-2"
+                className={presentation === 'composer' ? 'composer-decision-actions' : 'grid grid-cols-2 gap-2'}
               />
             </div>
           </div>

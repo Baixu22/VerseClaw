@@ -1,0 +1,83 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "schema": "G7InlineSpillRound9Outcome/v1",
+  "recordedAt": "2026-11-13T13:24:15.700680+00:00",
+  "candidate": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/design.freeze.json",
+    "sha256": "72a5e7d4d8c6bc74b1d35340b01c0aca5508c39b3bf3448cc33ba42014436241",
+    "commit": "69884a18a614886ad1712331b860465cb9a644a7"
+  },
+  "decision": {
+    "status": "task-benefit-verified",
+    "verdict": "GO",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": -530.125,
+    "tokenGrowthPct": -0.05694417567357514,
+    "b7_evidence": true
+  },
+  "providerRuns": 96,
+  "providerCalls": 324,
+  "verifierAcceptedCleanCandidate": true,
+  "round8EvidencePreserved": {
+    "files": 212,
+    "sha256": "01a595ef65e4cfbcc8dfbc171107a5fb258c94cf66e274cabded166a82446384",
+    "verdict": "NO_GO",
+    "failedBenefitGates": [
+      "b1_mechanism_and_autonomy",
+      "b4_non_inferiority",
+      "b6_budget"
+    ]
+  },
+  "recovery": {
+    "originalExitCodeObserved": false,
+    "originalExitCode": null,
+    "aggregationRecoveredFromFrozenSource": true,
+    "providerCallsAdded": 0,
+    "modelOutputsChanged": false
+  },
+  "taskForest": {
+    "status": "done",
+    "progress": 100,
+    "updated": true,
+    "proposalId": "TFP-g7-inline-spill-r9-close-20261113-01a1d34c",
+    "baseGraphHash": "d79786ec178ab2e3aea8832cdc3f8a434e328effea0db8a9a64d8cd67401a18e",
+    "verification": "task-forest-closeout.json",
+    "originalApplicationExitCode": null,
+    "originalApplicationExitCodeObserved": false,
+    "validationExitCode": 0,
+    "exportStatus": "finished",
+    "exportExitCode": 0,
+    "currentAndLastHtmlFrameMatch": true
+  },
+  "productDefaultsChanged": false,
+  "productLocksChanged": false,
+  "releaseApproved": false,
+  "fullHarnessCI": {
+    "exitCode": 1,
+    "priorTestsPassed": 59,
+    "stopStep": "repo:duplicates:check",
+    "unapprovedDuplicateGroups": 6,
+    "laterCommandsNotRun": [
+      "docs:policy:validate",
+      "catalogs:check",
+      "agent-dev:audit",
+      "repo:evidence:check",
+      "repo:test-coverage:check"
+    ],
+    "log": "checks/harness-ci-r9.stderr.txt"
+  }
+}

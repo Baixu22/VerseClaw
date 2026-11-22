@@ -20,22 +20,21 @@
 .rare-delete-button, .rare-notification-bell { position: relative; display: inline-grid; place-items: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; color: var(--color-text-foreground-secondary); transition: background-color 140ms ease-out, color 140ms ease-out; }
 .rare-delete-button:hover, .rare-delete-button:focus-visible { color: var(--color-text-error); background: var(--color-background-row-hover); }
 /* ---------------------------------------------------------------- activity bell
- * The bell answers three questions at a glance, each from real state:
- *   - is anything running?    the bell swings gently; waiting is amber
- *   - how much is new?        a numeric badge, coloured by the most severe entry
- *   - did something just ask? the bell swings once
+ * The bell answers two questions at a glance, each from real state:
+ *   - is anything running?    the bell gives way to the session rows' own
+ *                             status orb (running / waiting), never a private
+ *                             swing or corner dot
+ *   - how much is new?        a small count, coloured by the most severe entry
  * -------------------------------------------------------------------------- */
-.rare-notification-bell { width: 30px; height: 30px; border-radius: var(--radius-sm); }
+.rare-notification-bell { width: 30px; height: 30px; border-radius: var(--radius-md); color: var(--color-text-foreground-secondary); }
 .rare-notification-bell:hover, .rare-notification-bell[aria-expanded='true'] { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
 .rare-notification-bell:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
 .rare-notification-bell > svg { position: relative; z-index: 1; }
-.rare-notification-bell[data-live='running'] { color: var(--color-text-foreground); }
-.rare-notification-bell[data-live='waiting'] { color: var(--color-text-warning); }
-.rare-notification-bell__waiting { position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-warning); box-shadow: 0 0 0 2px hsl(var(--surface-sidebar)); pointer-events: none; }
+.rare-notification-bell__orb { position: relative; z-index: 1; }
 .rare-notification-bell__count {
   position: absolute;
-  top: -3px;
-  right: -4px;
+  top: 1px;
+  right: 0;
   z-index: 2;
   display: inline-flex;
   min-width: 14px;
@@ -45,12 +44,12 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 999px;
-  /* Separate the badge from the bell silhouette. */
+  /* Separate the badge from the glyph with the chrome it sits on. */
   box-shadow: 0 0 0 2px hsl(var(--surface-sidebar));
-  background: var(--color-text-foreground);
+  background: var(--color-text-foreground-secondary);
   color: hsl(var(--surface-sidebar));
   font-size: 9.5px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
@@ -81,23 +80,24 @@
 }
 @keyframes rare-activity-panel-in { from { opacity: 0; transform: translateY(-4px) scale(0.985); } }
 .rare-activity-panel__head { display: flex; align-items: baseline; gap: 8px; padding: 12px 14px 4px; }
-.rare-activity-panel__title { font-size: 13px; font-weight: 600; }
+.rare-activity-panel__title { font-size: 13px; font-weight: 500; }
 .rare-activity-panel__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 6px 6px; scrollbar-width: thin; }
 .rare-activity-section + .rare-activity-section { margin-top: 4px; padding-top: 4px; border-top: 1px solid color-mix(in srgb, var(--color-text-foreground) 7%, transparent); }
 .rare-activity-section__label { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 8px; color: var(--color-text-foreground-tertiary); font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
-.rare-activity-section__count { display: inline-grid; min-width: 16px; height: 16px; padding: 0 5px; place-items: center; border-radius: 999px; background: color-mix(in srgb, var(--cdx-blue-300, #339cff) 14%, transparent); color: var(--cdx-blue-300, #339cff); font-size: 10px; font-variant-numeric: tabular-nums; letter-spacing: 0; }
-.rare-activity-live { display: flex; width: 100%; height: 34px; align-items: center; gap: 10px; padding: 0 8px; border-radius: var(--radius-lg); outline: none; text-align: left; transition: background-color 100ms ease; }
+.rare-activity-section__count { color: var(--color-text-foreground-tertiary); font-weight: 500; font-variant-numeric: tabular-nums; }
+.rare-activity-live { display: flex; width: 100%; height: 32px; align-items: center; gap: 8px; padding: 0 8px; border-radius: var(--radius-lg); outline: none; text-align: left; transition: background-color 100ms ease; }
 .rare-activity-live:hover, .rare-activity-live:focus-visible { background: var(--color-background-row-hover); }
-.rare-activity-live__title { flex: 1; min-width: 0; overflow: hidden; font-size: 13px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
-.rare-activity-live__meta { flex: none; color: var(--cdx-blue-300, #339cff); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.rare-activity-live__title { flex: 1; min-width: 0; overflow: hidden; font-size: 13px; font-weight: 450; text-overflow: ellipsis; white-space: nowrap; }
+.rare-activity-live__meta { flex: none; color: var(--color-text-foreground-tertiary); font-size: 11.5px; font-variant-numeric: tabular-nums; }
 .rare-activity-live[data-state='waiting'] .rare-activity-live__meta { color: var(--color-text-warning); font-weight: 500; }
 /* Icons hang in a 22px gutter so every line of text in the feed (session
  * headings, previews, times) shares one left edge. */
 .rare-activity-group + .rare-activity-group { margin-top: 2px; }
-.rare-activity-group__head { overflow: hidden; padding: 6px 8px 1px 30px; color: var(--color-text-foreground); font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.rare-activity-group__head { overflow: hidden; padding: 6px 8px 1px 30px; color: var(--color-text-foreground-secondary); font-size: 12px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .rare-activity-entry { width: 100%; padding: 5px 8px 6px; border-radius: var(--radius-lg); outline: none; text-align: left; cursor: pointer; transition: background-color 100ms ease; }
 .rare-activity-entry:hover, .rare-activity-entry:focus-visible { background: var(--color-background-row-hover); }
 .rare-activity-entry__icon { width: 14px; height: 14px; flex: none; margin-top: 2px; }
+/* Fresh = unread: the preview carries full ink, like an unread session title. */
 .rare-activity-entry__body { flex: 1; min-width: 0; }
 .rare-activity-entry__preview { color: var(--color-text-foreground-secondary); font-size: 12.5px; line-height: 18px; }
 .rare-activity-entry[data-fresh='true'] .rare-activity-entry__preview { color: var(--color-text-foreground); }
@@ -105,15 +105,12 @@
 .rare-activity-entry__kind { font-weight: 600; }
 .rare-activity-entry__kind[data-kind='error'] { color: var(--color-text-error); }
 .rare-activity-entry__kind[data-kind='action-required'] { color: var(--color-text-warning); }
-.rare-activity-entry__fresh { flex: none; width: 6px; height: 6px; margin-top: 6px; border-radius: 999px; background: var(--cdx-blue-300, #339cff); }
 .rare-activity-empty { display: grid; justify-items: center; gap: 4px; padding: 22px 16px 18px; text-align: center; }
 .rare-activity-empty__icon { width: 20px; height: 20px; margin-bottom: 4px; color: var(--color-text-foreground-tertiary); }
 .rare-activity-empty__title { font-size: 13px; font-weight: 600; }
 .rare-activity-empty__desc { max-width: 248px; color: var(--color-text-foreground-tertiary); font-size: 12px; line-height: 17px; }
-.rare-activity-panel__foot { display: flex; align-items: center; gap: 12px; padding: 10px 14px 11px; border-top: 1px solid color-mix(in srgb, var(--color-text-foreground) 7%, transparent); }
-.rare-activity-panel__foot-text { display: grid; flex: 1; min-width: 0; gap: 1px; }
-.rare-activity-panel__foot-state { font-size: 12.5px; font-weight: 500; }
-.rare-activity-panel__foot-desc { color: var(--color-text-foreground-tertiary); font-size: 11px; line-height: 15px; }
+.rare-activity-panel__foot { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-top: 1px solid color-mix(in srgb, var(--color-text-foreground) 7%, transparent); }
+.rare-activity-panel__foot-state { flex: 1; min-width: 0; color: var(--color-text-foreground-secondary); font-size: 12px; }
 @media (prefers-reduced-motion: reduce) {
   .rare-notification-bell > svg { transform: none !important; }
   .rare-notification-bell__count-digit, .rare-activity-panel { animation: none; }

@@ -1,0 +1,41 @@
+{
+  "schema": "G7Round9TaskForestCloseout/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "observedAt": "2026-11-13T14:10:26.594Z",
+  "node": "TF-0749",
+  "status": "done",
+  "progress": 100,
+  "proposalId": "TFP-g7-inline-spill-r9-close-20261113-01a1d34c",
+  "proposalPath": "D:/ClawX/.agent-workbench/task-forest/proposals/TFP-g7-inline-spill-r9-close-20261113-01a1d34c.json",
+  "proposalStatus": "applied",
+  "baseGraphHash": "d79786ec178ab2e3aea8832cdc3f8a434e328effea0db8a9a64d8cd67401a18e",
+  "allowStaleUsed": false,
+  "nodeReadback": {
+    "receipt": "D:/tmp/g7-closeout-pass-r9-01a1d34c/checks/closeout-forest-node-readback.json",
+    "exitCode": 0,
+    "stdoutSha256": "e4f6c8bcac330798809dc3920a3b468837d64475d047fda46e417d789884e90a"
+  },
+  "validation": {
+    "receipt": "D:/tmp/g7-closeout-pass-r9-01a1d34c/checks/closeout-forest-validate.json",
+    "exitCode": 0
+  },
+  "originalApplication": {
+    "exitCodeObserved": false,
+    "exitCode": null,
+    "sourceReceiptStatus": "running",
+    "proposalAppliedOnDisk": true,
+    "nodeDoneObserved": true
+  },
+  "export": {
+    "status": "finished",
+    "exitCode": 0,
+    "path": "D:/ClawX/.agent-workbench/task-forest/exports/task-forest.html",
+    "readback": "verification/task-forest-export-readback.json",
+    "htmlSha256": "83997cc37780aff591adc21790d53bf6a7bf802e3fa2c8b416f8a2007055ac60",
+    "currentAndLastHtmlFrameMatch": true,
+    "lastFrameType": "current_snapshot",
+    "lastFrameSaved": true
+  }
+}

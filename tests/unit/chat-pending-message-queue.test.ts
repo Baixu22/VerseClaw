@@ -91,6 +91,34 @@ describe('chat pending message queue', () => {
     expect(hostApiFetchMock).not.toHaveBeenCalled();
   });
 
+  it('delivers a displayed question response immediately without long-task inputMode', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    hostApiFetchMock.mockResolvedValue({ success: true, result: { runId: 'answer-1' } });
+    useChatStore.setState({ messages: [], pendingMessages: [], sending: true, activeRunId: 'run-1',
+      currentSessionKey: 'agent:main:main', currentAgentId: 'main' });
+    await useChatStore.getState().sendMessage('Tool UI response:\n{"type":"question-flow","id":"q-1"}', { respondToInteraction: true });
+    expect(useChatStore.getState().pendingMessages).toHaveLength(0);
+    const payload = JSON.parse(hostApiFetchMock.mock.calls[0][1].body);
+    expect(payload.sessionKey).toBe('agent:main:main');
+    expect(payload.inputMode).toBeUndefined();
+    expect(payload.respondToInteraction).toBeUndefined();
+  });
+
+  it('does not report a model outage while the current runtime is waiting for permission', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    hostApiFetchMock.mockResolvedValue({ success: true, result: { runId: 'waiting-1' } });
+    useChatStore.setState({ messages: [], pendingMessages: [], runtimeRuns: {}, sending: false, activeRunId: null,
+      error: null, runError: null, currentSessionKey: 'agent:main:main', currentAgentId: 'main' });
+    await useChatStore.getState().sendMessage('Verify the build');
+    useChatStore.getState().handleRuntimeEvent({ type: 'run.started', runId: 'waiting-1', sessionKey: 'agent:main:main', startedAt: Date.now() });
+    useChatStore.getState().handleRuntimeEvent({ type: 'approval.updated', runId: 'waiting-1', sessionKey: 'agent:main:main', itemId: 'permission-1', phase: 'pending' });
+    await vi.advanceTimersByTimeAsync(150_000);
+    expect(useChatStore.getState().runError).toBeNull();
+    expect(useChatStore.getState().error).toBeNull();
+    expect(useChatStore.getState().sending).toBe(true);
+    useChatStore.getState().handleRuntimeEvent({ type: 'run.ended', runId: 'waiting-1', sessionKey: 'agent:main:main', status: 'completed', endedAt: Date.now() });
+  });
+
   it('drains queued messages and sends them after the run ends', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
