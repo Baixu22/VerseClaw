@@ -15,6 +15,10 @@ requiredRules:
   - ui-motion-material-system
   - docs-sync
   - disk-temp-policy
+requiredProfiles:
+  - fast
+  - comms
+  - e2e
 touchedAreas:
   - src/pages/Chat/index.tsx
   - src/pages/Chat/ChatInput.tsx
