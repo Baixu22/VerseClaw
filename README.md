@@ -36,6 +36,8 @@ Session navigation restores the visible message and draft. Background work updat
 
 Message Fork requires a recorded transcript boundary and shows why the action is unavailable. Suggestions to continue elsewhere use the existing editable Handoff preview; a new conversation is created only by its explicit action.
 
+During a long task, **Send options** offers queueing, guidance and stop-then-send with a description of each outcome. Branching opens a conversation for your next message; summary handoff previews editable content before **Create and send**. Context organization and handoff sources keep technical details collapsed. [Conversation controls](docs/dev/chat-continuity-controls.md).
+
 Handoff becomes available when the session identity finishes loading. Pending sidebar handoffs wait for that identity, and previews remain bound to the current session generation.
 If activation is interrupted, retrying keeps the original child session and checks its generation before sending.
 

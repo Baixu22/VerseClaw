@@ -2184,7 +2184,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     : continuityPreflight.handoff.disabled ? t('composer.handoff.disabledActiveRun') : undefined;
   const forkDisabled = continuityPreflight.fork.disabled;
   const forkDisabledReason = forkDisabled
-    ? t(continuityRunActive ? 'composer.fork.disabledActiveRun' : 'composer.fork.disabledGateway')
+    ? t(continuityPreflight.fork.reasons.includes('active_run') ? 'composer.fork.disabledActiveRun' : 'composer.fork.disabledGateway')
     : undefined;
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
@@ -4034,10 +4034,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           {handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating' && (
             <p className="chat-continuity-note">{t('composer.handoff.savedDraft')}</p>
           )}
-          {((handoffResult?.sources.length ?? 0) > 0 || (handoffResult?.warnings.length ?? 0) > 0) && (
+          {((handoffResult?.sources?.length ?? 0) > 0 || (handoffResult?.warnings?.length ?? 0) > 0) && (
             <details className="chat-continuity-details" data-testid="chat-handoff-details">
               <summary>{t('composer.handoff.sources')}
-                {(handoffResult?.warnings.length ?? 0) > 0 && <span className="ml-2">{t('composer.handoff.sourceWarnings', { count: handoffResult?.warnings.length })}</span>}
+                {(handoffResult?.warnings?.length ?? 0) > 0 && <span className="ml-2">{t('composer.handoff.sourceWarnings', { count: handoffResult?.warnings?.length })}</span>}
               </summary>
               <ul className="chat-continuity-sources">
                 {(handoffResult?.sources ?? []).map((source) => <li key={source.id}>
