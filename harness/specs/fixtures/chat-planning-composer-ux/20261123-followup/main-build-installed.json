@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-task-ux",
+  "sourceCommit": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+  "installedAt": "2026-11-23T10:26:51.931166+00:00",
+  "target": "D:\\ClawX",
+  "backup": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\previous-main-build",
+  "trees": [
+    {
+      "path": "dist",
+      "filesVerified": 1402,
+      "manifestSha256": "31841638ad781704426d844a8a2ed57adad771cbcb34b0edd47fa58072bd7055"
+    },
+    {
+      "path": "dist-electron",
+      "filesVerified": 10,
+      "manifestSha256": "954a6511990f615c2dcb3f6116e1e7a93e9a58ec1abc5a24cf195f534388067d"
+    }
+  ],
+  "entries": [
+    {
+      "path": "dist/index.html",
+      "sha256": "e284d0ac888fdb26c8193f12d3152d80bb0965167016ea000c03655fbf1b3154"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "98a16bc204c7245f95b521188f3a9d45060f44e33a5c371c0c424b03cb76ee09"
+    },
+    {
+      "path": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ]
+}

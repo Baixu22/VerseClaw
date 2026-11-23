@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "dataSource": "agent-fixed Task and typed Runtime events",
+  "steps": {
+    "initialTaskReadRecoveryPreservesDraft": true,
+    "settingsDoNotChangeParameters": true,
+    "explicitCostProfileVisible": true,
+    "runCompletionDoesNotAcceptTask": true,
+    "hiddenPausedTaskReappearsWithDraft": true,
+    "ownerAcceptanceFoldsReceipt": true,
+    "roundSendStopResume": true,
+    "approvalPreservesDraft": true,
+    "connectionFailureVisible": true,
+    "fourLocalesAndNarrowThemes": true
+  },
+  "shots": [
+    {
+      "name": "task-unavailable-light-1280",
+      "sha256": "c51d448dee2d4498d7218cbf29375e1349b5ed30fea25df12acf3cdb7525f9ff",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "rest-light-1280",
+      "sha256": "60cb8c3c502566ef71391109a2d1bb9020c28c19c1460d395a886d4352e210fa",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-light-1280",
+      "sha256": "19a84095604d90a2110a26df9981cc77684f6bbcfd56931c68c7805e26d04864",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-options-light-1280",
+      "sha256": "99f3542bfa7eb415addd340d70ffa7da57699acc29aed4043707d1514c40012f",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-light-1280",
+      "sha256": "02a233df65651e9789ea359de489ce53f89603dec107bb9f1b77027527af70c4",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-expanded-dark-960",
+      "sha256": "c27a2d5172c040859e0abf131b976e259dbbfef150596c9decbd6dd0e9e6a584",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "task-paused-dark-960",
+      "sha256": "46836a77fe61ff92287a42cd8eccdf2ddefe79271b344680385f01493d5aeb10",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "accepted-dark-960",
+      "sha256": "4d6408109018fdbb648d22098de4324f7dc63a60663992db545506c3da36a4a0",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-ready-dark-960",
+      "sha256": "c8b8d3e05c28d8e3853286cd4bcf6e0254cf8b5e04eecd1ac6054c931cf6f027",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-running-dark-960",
+      "sha256": "0c391e49b8b0ebcfa72aa914f1fe93431734b9a96cbe530ab419e681a8d681fc",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-paused-dark-960",
+      "sha256": "8a437dfe9c4b350045499b75f6192e195a41b0e91bac35070bc9a216e83c9feb",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "approval-dark-960",
+      "sha256": "b2d26f847d5ac00ef4216e3cec05eb1d81c3d1bdeb03ffd846477e5135903c09",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "disconnected-dark-960",
+      "sha256": "e5234d56acaad1dbaa24a1f636d2a2d24743ac14b1a0c335cf3e14f573739e4b",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-zh-dark-960",
+      "sha256": "bd98167bab065044a8c9b0f76bce5defd3009303a1c1e7d4a3e1adef60b56480",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ja-dark-960",
+      "sha256": "43fd75f8516f216f76d7d8c219e99a056d3d1afcd0b6957be5c01d51e34d7700",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ru-dark-960",
+      "sha256": "eea4f8cf69ad90e4f548bbce89fdb92b732e769cd7e0d540ea4bf3d750d13064",
+      "width": 961,
+      "height": 801
+    }
+  ],
+  "enclosure": {
+    "widthDifference": 0,
+    "gap": 0
+  },
+  "actionStyles": {
+    "ready": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "running": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "paused": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    }
+  },
+  "defaultAnchorCount": 5,
+  "pageErrors": []
+}

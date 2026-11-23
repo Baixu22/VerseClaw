@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "driven_by": "agent",
+  "actor": "codex-task-ux",
+  "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+  "unitTests": 161,
+  "electronJourneys": 5,
+  "carbonAdditionalRequests": 0,
+  "mainBuildInstalled": true,
+  "priorDesign": "../20261123/DESIGN-GUIDANCE.md",
+  "rawRoot": "D:\\tmp\\task-ux-followup-20261123-01a203cc"
+}

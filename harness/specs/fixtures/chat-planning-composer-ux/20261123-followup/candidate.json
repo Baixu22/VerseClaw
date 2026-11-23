@@ -1,0 +1,104 @@
+{
+  "commit": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+  "baseCommit": "9822f8420",
+  "driven_by": "agent",
+  "dirty": false,
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "2a95e575fc48ac4ca86a53f1683e71f802a44633",
+      "sha256": "fc2114bfcb2204f005ce2f681458b5f496ed7754ea07769f5e47bab1b2f25dee"
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "56adacf22bad0d5316b35813b876e76c86838a6d",
+      "sha256": "f79d5195b038d1c4a7390b3ec2913b94e0b14cc21d7ea1d87a068ee43225681d"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "7f94d30a8bff1e13bca0578c3eb83ac47d67c3e8",
+      "sha256": "50b252fa4a9938703ad158dca81726ca26334ea67d89c246fcec0d18018e7840"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "gitBlob": "6bca0e7389ad3d81e2a91e0a316dee6cb74a0951",
+      "sha256": "9f987016a8b3b6e2f7389b03e6f8ff17325361d46483ebf5bb22daf5ac071351"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "gitBlob": "4d4d45257cf77573ed738ed7e61726cd9ec0e814",
+      "sha256": "3a71e557a3937871dbb447930f4f76e2326582cce7a5f63a618a6fb0c32ca176"
+    },
+    {
+      "path": "harness/specs/rules/ui-motion-material-system.md",
+      "gitBlob": "ee238dc497f4cf7dec66a421788eabeec0569435",
+      "sha256": "4608a3aef13f46446efcfbdec2749484c0fcd75e61e76c6bbd38105c576256d4"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "gitBlob": "b6de87f661058257c8ab400316f1950107b700e9",
+      "sha256": "fecc6aea86c8216a64bcd31cd818721eec4f7166dbbeea6b9019ba6f027ad395"
+    },
+    {
+      "path": "harness/specs/tasks/chat-planning-composer-ux-20261123.md",
+      "gitBlob": "aa06447b306a88291eaf05f3621c388c00169d13",
+      "sha256": "8de26f2932cee1b000585fbe55a505cdc09ea1b026a52039e114f1a2b0298772"
+    },
+    {
+      "path": "src/lib/model-brand.ts",
+      "gitBlob": "98dd6e9d9231fc4359b99e6dd11054caee2974dd",
+      "sha256": "06e48121f7d11fa1db6a2f9f6881e39421f48db0edd353764976d34a3b5d00eb"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "gitBlob": "0a699ca7d317e1f663f20a4ab04abb9022702c98",
+      "sha256": "57f23b9dfcad531ae455930e902eb1ecf5036bccd11a87dc5c187a7471ec7bc8"
+    },
+    {
+      "path": "src/pages/Chat/SessionTaskDock.tsx",
+      "gitBlob": "3584142288e5ea620bd572a17c17d5b6d3e70d0d",
+      "sha256": "e84cf92b2f846948bf8793afbf500af4a174afb9b348736ede1c03fad1eb7bd5"
+    },
+    {
+      "path": "src/styles/codex-composer-material.css",
+      "gitBlob": "efc32df73d08bd9b6d033838fe71e36a60e9a235",
+      "sha256": "abc3619dc01e05566a83dd823ba069d4d5455847b4ec725716e8b79b7852a7b1"
+    },
+    {
+      "path": "tests/e2e/chat-composer-popovers.spec.ts",
+      "gitBlob": "c35ca08c44b7840ddeb5c819534b3c3544f925d5",
+      "sha256": "d8356cdb24f2f36c02e3c2066add66c0926c57534d4ef4b9e0937ca616330ccb"
+    },
+    {
+      "path": "tests/e2e/chat-planning-composer-ux.spec.ts",
+      "gitBlob": "fd71c0fff578f55a8bfac05df98b18b5c8e81ad5",
+      "sha256": "8c5d387e18ed616116bc8c39a62b1d40800fcf4aac23b4699f0770b3e658a1f2"
+    },
+    {
+      "path": "tests/unit/model-brand.test.ts",
+      "gitBlob": "2ba50772bb7bebbc3feaede530f7b3db88947cdc",
+      "sha256": "5152cc31794517b57be1363c8001831700490e535c40f1512d33c09435b80139"
+    },
+    {
+      "path": "tests/unit/session-task-dock.test.tsx",
+      "gitBlob": "bd52a61d69d22e6e68346fae630847643d2ef551",
+      "sha256": "89d42484543548502a1c2a383862bb65c0ef86eaac4abd1a195e18897975dee0"
+    }
+  ],
+  "firstChecksCommit": "026d9d941d126d6eabfa666424e75650bb496781",
+  "finalProductionChange": "TaskDock completion folds before committing the render; persisted preference uses the effect.",
+  "buildOutputs": [
+    {
+      "path": "dist/index.html",
+      "sha256": "e284d0ac888fdb26c8193f12d3152d80bb0965167016ea000c03655fbf1b3154"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "98a16bc204c7245f95b521188f3a9d45060f44e33a5c371c0c424b03cb76ee09"
+    },
+    {
+      "path": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ]
+}

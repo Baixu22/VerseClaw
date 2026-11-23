@@ -1,0 +1,224 @@
+{
+  "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+  "driven_by": "agent",
+  "stats": {
+    "startTime": "2026-11-23T10:22:26.376Z",
+    "duration": 94251.98400000001,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+      "status": "expected"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+      "status": "expected"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "touch composer targets fit at 375px and the closed add menu skips its actions",
+      "status": "expected"
+    },
+    {
+      "file": "chat-long-task-control.spec.ts",
+      "title": "shows recovery status and drains queued follow-up through Host API",
+      "status": "expected"
+    },
+    {
+      "file": "chat-planning-composer-ux.spec.ts",
+      "title": "conversation planning, settings and decisions share a compact input surface",
+      "status": "expected"
+    }
+  ],
+  "cleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-9gHba1",
+    "ledgerEntries": 25,
+    "checks": [
+      {
+        "pid": 20428,
+        "creationTime": 1795429347670,
+        "status": "exited"
+      },
+      {
+        "pid": 356,
+        "creationTime": 1795429355826,
+        "status": "exited"
+      },
+      {
+        "pid": 28796,
+        "creationTime": 1795429356141,
+        "status": "exited"
+      },
+      {
+        "pid": 15356,
+        "creationTime": 1795429368069,
+        "status": "exited"
+      },
+      {
+        "pid": 2340,
+        "creationTime": 1795429371943,
+        "status": "exited"
+      },
+      {
+        "pid": 5956,
+        "creationTime": 1795429372078,
+        "status": "exited"
+      },
+      {
+        "pid": 33788,
+        "creationTime": 1795429384116,
+        "status": "exited"
+      },
+      {
+        "pid": 28152,
+        "creationTime": 1795429388198,
+        "status": "exited"
+      },
+      {
+        "pid": 3404,
+        "creationTime": 1795429388322,
+        "status": "exited"
+      },
+      {
+        "pid": 23308,
+        "creationTime": 1795429390306,
+        "status": "exited"
+      },
+      {
+        "pid": 32524,
+        "creationTime": 1795429394020,
+        "status": "exited"
+      },
+      {
+        "pid": 10768,
+        "creationTime": 1795429394138,
+        "status": "exited"
+      },
+      {
+        "pid": 24896,
+        "creationTime": 1795429412753,
+        "status": "exited"
+      },
+      {
+        "pid": 3556,
+        "creationTime": 1795429416521,
+        "status": "exited"
+      },
+      {
+        "pid": 30964,
+        "creationTime": 1795429416638,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 20428,
+          "creationTime": 1795429347670,
+          "status": "exited"
+        },
+        {
+          "pid": 356,
+          "creationTime": 1795429355826,
+          "status": "exited"
+        },
+        {
+          "pid": 28796,
+          "creationTime": 1795429356141,
+          "status": "exited"
+        },
+        {
+          "pid": 15356,
+          "creationTime": 1795429368069,
+          "status": "exited"
+        },
+        {
+          "pid": 2340,
+          "creationTime": 1795429371943,
+          "status": "exited"
+        },
+        {
+          "pid": 5956,
+          "creationTime": 1795429372078,
+          "status": "exited"
+        },
+        {
+          "pid": 33788,
+          "creationTime": 1795429384116,
+          "status": "exited"
+        },
+        {
+          "pid": 28152,
+          "creationTime": 1795429388198,
+          "status": "exited"
+        },
+        {
+          "pid": 3404,
+          "creationTime": 1795429388322,
+          "status": "exited"
+        },
+        {
+          "pid": 23308,
+          "creationTime": 1795429390306,
+          "status": "exited"
+        },
+        {
+          "pid": 32524,
+          "creationTime": 1795429394020,
+          "status": "exited"
+        },
+        {
+          "pid": 10768,
+          "creationTime": 1795429394138,
+          "status": "exited"
+        },
+        {
+          "pid": 24896,
+          "creationTime": 1795429412753,
+          "status": "exited"
+        },
+        {
+          "pid": 3556,
+          "creationTime": 1795429416521,
+          "status": "exited"
+        },
+        {
+          "pid": 30964,
+          "creationTime": 1795429416638,
+          "status": "exited"
+        }
+      ]
+    ],
+    "owned": [],
+    "remaining": [],
+    "survivors": [],
+    "detectedPendingLaunches": 0,
+    "pendingLaunches": 0,
+    "status": "passed"
+  },
+  "sourceGuard": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "74e2c6109c605dea55afc04b5e70cc4b3792a3cea8171f9842499f7cacac7512",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "74e2c6109c605dea55afc04b5e70cc4b3792a3cea8171f9842499f7cacac7512",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

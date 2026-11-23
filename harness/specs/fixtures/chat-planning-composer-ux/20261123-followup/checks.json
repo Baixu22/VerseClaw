@@ -1,0 +1,295 @@
+{
+  "commands": [
+    {
+      "label": "unit-r1",
+      "candidate": "026d9d941d126d6eabfa666424e75650bb496781",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/session-task-state-guidance.test.tsx",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "tests/unit/model-brand.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/task-ux-followup-20261123-01a203cc/unit-r1.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:14:32.186431+00:00",
+      "durationSeconds": 36.679,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\unit-r1.stdout.log",
+        "sha256": "146c6262669c970abe504b3b1d4f8cdbe3ae655860fab69bfee2bfb0b74d1308"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\unit-r1.stderr.log",
+        "sha256": "dde7b1692ab7b8ab16f9184f332042e99209de97747f7d87de1697b4cd9670ef"
+      }
+    },
+    {
+      "label": "task-unit-r2",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/task-ux-followup-20261123-01a203cc/task-unit-r2.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:20:34.132463+00:00",
+      "durationSeconds": 6.363,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\task-unit-r2.stdout.log",
+        "sha256": "ed27370b282795609d1ac8db288335ee960a612fcf9ed0e9bc000c4ed6a7d302"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\task-unit-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "typecheck-r1",
+      "candidate": "026d9d941d126d6eabfa666424e75650bb496781",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:15:46.647943+00:00",
+      "durationSeconds": 168.336,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\typecheck-r1.stdout.log",
+        "sha256": "d5863a1aace63bc1264916ffe23cd25de5b6a4cd72cae3dd7b28e7c175921849"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\typecheck-r1.stderr.log",
+        "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+      }
+    },
+    {
+      "label": "typecheck-web-r2",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck:web"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:21:01.035836+00:00",
+      "durationSeconds": 12.836,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\typecheck-web-r2.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\typecheck-web-r2.stderr.log",
+        "sha256": "4c6a5db0241dc9cb197b5cfb6af63ed04a35ec305fe459bfa8e886e2bcd904a4"
+      }
+    },
+    {
+      "label": "lint-r2",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "eslint",
+        "src/lib/model-brand.ts",
+        "src/pages/Chat/ChatInput.tsx",
+        "src/pages/Chat/SessionTaskDock.tsx",
+        "tests/unit/model-brand.test.ts",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/e2e/chat-planning-composer-ux.spec.ts",
+        "tests/e2e/chat-composer-popovers.spec.ts",
+        "--max-warnings=120"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:20:57.593581+00:00",
+      "durationSeconds": 3.369,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\lint-r2.stdout.log",
+        "sha256": "cd8cf3761742228ff6baaed2c13a397ca9495f7501b36b515a478ddeb8d4be70"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\lint-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "build-r1",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "node",
+        "--max-old-space-size=3072",
+        "./node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:21:13.943090+00:00",
+      "durationSeconds": 53.385,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\build-r1.stdout.log",
+        "sha256": "75f9f99112f0bca2e5eb73a3526bfd8cbe9edd69d8913252ac280ace4dacca3e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\build-r1.stderr.log",
+        "sha256": "e1a9a27f53954e834fe2ed05817addfa1cde77ef5debe9f021f984fbc4292129"
+      }
+    },
+    {
+      "label": "e2e-r1",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/chat-planning-composer-ux.spec.ts",
+        "tests/e2e/chat-composer-popovers.spec.ts",
+        "tests/e2e/chat-long-task-control.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/task-ux-followup-20261123-01a203cc/e2e-r1"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:22:24.891507+00:00",
+      "durationSeconds": 95.786,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\e2e-r1.stdout.log",
+        "sha256": "c5b41b5872b2fe01e243014c204c06d032c5ede04648c177d281128437810506"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\e2e-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "i18n-r1",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "i18n:lint"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:25:10.516267+00:00",
+      "durationSeconds": 0.994,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\i18n-r1.stdout.log",
+        "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\i18n-r1.stderr.log",
+        "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+      }
+    },
+    {
+      "label": "contract-r1",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "contract:check"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:25:11.593406+00:00",
+      "durationSeconds": 2.065,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\contract-r1.stdout.log",
+        "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\contract-r1.stderr.log",
+        "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+      }
+    },
+    {
+      "label": "error-boundary-r1",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "node",
+        "scripts/check-error-governance.mjs"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:25:13.729867+00:00",
+      "durationSeconds": 0.141,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\error-boundary-r1.stdout.log",
+        "sha256": "b69fabbb723043cb997b7f39ea62a303fa0afffdf96886e8fe19bc9017c81d32"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\error-boundary-r1.stderr.log",
+        "sha256": "6ceb21b30b2fea53e7698519e6eb2474321a341dfa535827543f8fa0d1b3520b"
+      }
+    },
+    {
+      "label": "harness-r2",
+      "candidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/chat-planning-composer-ux-20261123.md"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:25:57.896203+00:00",
+      "durationSeconds": 0.63,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\harness-r2.stdout.log",
+        "sha256": "589b187762df502b78624b8e7730f962e2f71bf13807e198cc5cf6e89b01720d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\task-ux-followup-20261123-01a203cc\\harness-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 3,
+    "policy": "package.json lint:check allows 120 warnings"
+  },
+  "typeCoverage": "Full node/web/test check on the first candidate; final web check after the internal TaskDock state refinement. No exported or test types changed."
+}
