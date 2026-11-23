@@ -21,24 +21,23 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelect 
   const profiles = useWorkspacesStore(state => state.profiles);
   const activeWorkspace = useWorkspacesStore(state => state.activeWorkspace);
   const switchWorkspace = useWorkspacesStore(state => state.switchWorkspace);
-  const popover = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true });
-  const { open, setOpen } = popover;
+  const { open, setOpen, triggerRef, layerRef, style } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true });
   const overlay = useOverlayPortalContainer();
   const close = useCallback(() => setOpen(false), [setOpen]);
-  useDismissOnOutside({ open, onDismiss: close, onEscape: () => { close(); popover.triggerRef.current?.focus(); }, refs: [popover.triggerRef, popover.layerRef] });
+  useDismissOnOutside({ open, onDismiss: close, onEscape: () => { close(); triggerRef.current?.focus(); }, refs: [triggerRef, layerRef] });
   useEffect(() => {
     if (!open) return;
-    const frame = requestAnimationFrame(() => popover.layerRef.current?.querySelector<HTMLButtonElement>('button')?.focus());
+    const frame = requestAnimationFrame(() => layerRef.current?.querySelector<HTMLButtonElement>('button')?.focus());
     return () => cancelAnimationFrame(frame);
-  }, [open, popover.layerRef]);
+  }, [open, layerRef]);
   const displayName = activeWorkspace?.name || basenameFromPath(activeWorkspace?.rootPath) || t('workspace.chooseNew');
   return <span className="composer-context-project">
-    <button ref={popover.triggerRef} type="button" className="composer-context-chip" aria-expanded={open} aria-haspopup="menu"
+    <button ref={triggerRef} type="button" className="composer-context-chip" aria-expanded={open} aria-haspopup="menu"
       aria-label={t('welcome.changeProject', { projectName: displayName })} title={activeWorkspace?.rootPath}
       disabled={disabled} data-testid="welcome-project-trigger" onClick={() => setOpen(!open)}>
       <Folder aria-hidden="true" /><span>{displayName}</span>
     </button>
-    {open && createPortal(<div ref={popover.layerRef} style={popover.style} className="composer-context-menu composer-context-project-menu">
+    {open && createPortal(<div ref={layerRef} style={style} className="composer-context-menu composer-context-project-menu">
       <WorkspacePickerMenu profiles={profiles} activeWorkspaceId={activeWorkspace?.id}
         onSelect={id => { close(); if (id !== activeWorkspace?.id) void Promise.resolve((onSelect ?? switchWorkspace)(id)).catch(toastUserError); }}
         onPickFolder={onPickFolder ? () => { close(); return onPickFolder(); } : undefined}

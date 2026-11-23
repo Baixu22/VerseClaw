@@ -49,8 +49,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const [branchesOpen, setBranchesOpen] = useState(false);
   const [created, setCreated] = useState<GitWorktree | null>(null);
   const branchInput = useRef<HTMLInputElement>(null);
-  const popover = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true });
-  const { open, setOpen } = popover;
+  const { open, setOpen, triggerRef, layerRef, style } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true });
   const overlay = useOverlayPortalContainer();
   const current = data?.scope === scope ? data.snapshot : null;
   const linked = current ? isLinkedWorktreePath(current.trees, current.status.repoRoot) : false;
@@ -92,17 +91,17 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
     return () => { alive.current = false; requestId.current++; off(); onBusyChange?.(false); };
   }, [refresh, refreshSignal, sessionKey, onBusyChange]);
   useDismissOnOutside({ open, onDismiss: () => setOpen(false), onEscape: () => {
-    setOpen(false); popover.triggerRef.current?.focus();
-  }, refs: [popover.triggerRef, popover.layerRef] });
+    setOpen(false); triggerRef.current?.focus();
+  }, refs: [triggerRef, layerRef] });
   useEffect(() => {
     if (!open) return;
-    const frame = requestAnimationFrame(() => popover.layerRef.current?.focus());
+    const frame = requestAnimationFrame(() => layerRef.current?.focus());
     return () => cancelAnimationFrame(frame);
-  }, [open, popover.layerRef]);
+  }, [open, layerRef]);
 
   const show = (anchor: HTMLButtonElement, showBranches = false) => {
-    const differentAnchor = popover.triggerRef.current !== anchor;
-    popover.triggerRef.current = anchor;
+    const differentAnchor = triggerRef.current !== anchor;
+    triggerRef.current = anchor;
     setOpen(!open || differentAnchor || showBranches);
     setBranchesOpen(showBranches); setError(null);
     void refresh();
@@ -171,7 +170,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
           aria-haspopup="dialog" aria-expanded={open} onClick={event => show(event.currentTarget)}><MoreHorizontal aria-hidden="true" /></button>
       </>}
     </div>
-    {open && createPortal(<div ref={popover.layerRef} style={popover.style} className="composer-context-menu" role="dialog" tabIndex={-1}
+    {open && createPortal(<div ref={layerRef} style={style} className="composer-context-menu" role="dialog" tabIndex={-1}
       aria-label={t('executionSettings')} data-testid="session-worktree-menu">
       <p className="composer-context-label">{t('executionSettings')}</p>
       {disabled && <p className="composer-context-hint" role="status">{t('runningHint')}</p>}
