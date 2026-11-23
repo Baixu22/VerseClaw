@@ -31,6 +31,7 @@ touchedAreas:
   - shared/i18n/locales/*/settings.json
   - shared/i18n/locales/*/chat.json
   - tests/unit/session-workspace-picker.test.tsx
+  - tests/unit/chat-render-reachability.test.tsx
   - tests/unit/welcome-project-picker.test.tsx
   - tests/unit/composer-git-strip.test.tsx
   - tests/e2e/chat-execution-context.spec.ts

@@ -128,7 +128,7 @@ describe('composer execution settings', () => {
     const view = render(<SessionWorkspacePicker {...props}><div className="session-task-panel">Current task</div></SessionWorkspacePicker>);
     await waitFor(() => expect(screen.getByTestId('composer-context-branch')).toBeVisible());
     fireEvent.click(screen.getByTestId('composer-context-branch'));
-    expect(screen.getByTestId('session-worktree-menu')).toBeVisible();
+    await waitFor(() => expect(screen.getByTestId('session-worktree-menu')).toBeVisible());
     view.rerender(<SessionWorkspacePicker {...props} setupVisible={false}><div className="session-task-panel">Current task</div></SessionWorkspacePicker>);
     expect(screen.queryByTestId('composer-context-row')).toBeNull();
     expect(screen.queryByTestId('session-worktree-menu')).toBeNull();

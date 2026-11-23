@@ -1131,6 +1131,7 @@ describe('live plan display ownership', () => {
     });
     await mountChat();
     expect(await screen.findByTestId('session-task-count')).toHaveTextContent('1/2');
+    expect(screen.queryByTestId('composer-context-row')).toBeNull();
     expect(screen.queryByTestId('session-task-current')).toBeNull();
     fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
