@@ -1,0 +1,63 @@
+{
+  "schema": "G3TypecheckPrerequisiteEvidence/v1",
+  "at": "2026-11-23T15:43:41.833027+00:00",
+  "node": "TF-0818",
+  "state": "SOURCE_COMMITTED_REVIEW_CLEAN_FOCUSED_PASSED",
+  "codeCommit": "6f56e7e883eb64e00e8edbcf376d40371bf298d9",
+  "reviewCommit": "6ecd04dc97c19e800f79fdb8f3c53346de382fa7",
+  "tree": "a2942598f086b4aa33618235c229f7181331a880",
+  "sourceFingerprint": "dcc436bee0f72fce9bc9e63055673aece4e5e6fd427428fc5c930cdf719b6c1e",
+  "changes": [
+    "Build VerseBrowser before bridge/cache/compiler work",
+    "Stop and report real prerequisite failures",
+    "Include browser source and build configuration in cache fingerprint",
+    "Report current prerequisite phases once on cache hits"
+  ],
+  "focusedRegression": {
+    "cases": 1,
+    "scenarioChecks": [
+      "cold declaration generation",
+      "real test TS2322 hard failure",
+      "cache miss and hit",
+      "missing dist regenerated before cache reuse",
+      "browser source drift invalidates cached verdict",
+      "test source drift invalidates cached verdict",
+      "runtime source drift invalidates cached verdict",
+      "failed prerequisite stops remaining phases"
+    ],
+    "passed": true,
+    "elapsedMs": 18406,
+    "peakJobPrivateCommitMiB": 572.68
+  },
+  "review": {
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "helperFindings": 0,
+    "rawFindings": 0,
+    "elapsedMs": 54328,
+    "peakJobPrivateCommitMiB": 152.66
+  },
+  "syntaxPassed": true,
+  "lintPassed": true,
+  "actualDiffHarnessPassed": true,
+  "harnessDryRunPassed": true,
+  "candidate": {
+    "root": "D:\\tmp\\g3-typecheck-prerequisite-20261123-r29\\candidate",
+    "commit": "6f56e7e883eb64e00e8edbcf376d40371bf298d9",
+    "tree": "a2942598f086b4aa33618235c229f7181331a880",
+    "clean": true,
+    "sourceInputsVerified": 23
+  },
+  "nativePlan": {
+    "path": "D:\\tmp\\g3-typecheck-prerequisite-20261123-r29\\native-plan.json",
+    "sha256": "8b54e12e292cdaa378031632b7377557473e6539478663e206eba81d40ac5d6a",
+    "state": "READY_NOT_STARTED",
+    "thresholdMs": 45000,
+    "includesPrerequisiteTime": true
+  },
+  "originalRecords": 77,
+  "credentialValueMatches": 0,
+  "gaVerdict": "NO_GO",
+  "actor": "codex/g3-typecheck-r29",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "G3TypecheckPrerequisiteCommit/v1",
+  "at": "2026-11-23T15:40:35.510705+00:00",
+  "codeCommit": "6f56e7e883eb64e00e8edbcf376d40371bf298d9",
+  "reviewCommit": "6ecd04dc97c19e800f79fdb8f3c53346de382fa7",
+  "tree": "a2942598f086b4aa33618235c229f7181331a880",
+  "sourceFingerprint": "dcc436bee0f72fce9bc9e63055673aece4e5e6fd427428fc5c930cdf719b6c1e",
+  "changedFiles": 8,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "helperFindings": 0,
+  "rawFindings": 0,
+  "reviewElapsedMs": 54328,
+  "reviewPeakJobPrivateCommitMiB": 152.66,
+  "focusedIntegrationRegressionPassed": 1,
+  "scenarioChecks": 8,
+  "protectedUserFileAndIndexUnchanged": true,
+  "pushed": false,
+  "formalFullTypes": "PENDING_NEW_CANDIDATE_SERIAL_GRANT",
+  "formalThresholdMs": 45000,
+  "actor": "codex/g3-typecheck-r29",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}
