@@ -9,7 +9,7 @@
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
  */
-import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
+import { Fragment, useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Archive,
@@ -36,6 +36,7 @@ import {
   Loader2,
   ListEnd,
   MessageSquarePlus,
+  MessagesSquare,
   Paperclip,
   PencilLine,
   Plus,
@@ -264,7 +265,7 @@ const DELIVERY_MODE_OPTIONS: ReadonlyArray<{
 
 function formatDeliveryShortcut(shortcut: DeliveryShortcut, isMac: boolean): string {
   const mod = isMac ? '⌘' : 'Ctrl';
-  if (shortcut === 'enter') return '↵';
+  if (shortcut === 'enter') return 'Enter';
   return shortcut === 'mod-enter' ? `${mod} ↵` : `${mod} ⇧ ↵`;
 }
 
@@ -3840,7 +3841,7 @@ export function ChatInput({
                       )}
                       {onForkSession && (
                         <ComposerActionButton
-                          icon={GitBranchPlus}
+                          icon={MessagesSquare}
                           label={t('composer.actions.fork')}
                           testId="chat-composer-action-fork"
                           disabled={forkDisabled || forkBusy}
@@ -4462,12 +4463,13 @@ export function ChatInput({
                 >
                   <div className="codex-composer-menu__label">{t('composer.intervention.sendDraft')}</div>
                   {DELIVERY_MODE_OPTIONS.map(({ mode, icon: Icon, labelKey, hintKey, shortcut }) => (
+                    <Fragment key={mode}>
+                    {mode === 'interrupt' && <div role="separator" className="composer-delivery-divider" />}
                     <button
-                      key={mode}
                       type="button"
                       role="menuitem"
                       data-testid={`chat-intervention-${mode}`}
-                      className={cn('codex-composer-menu__item codex-composer-menu__option composer-delivery-option', mode === 'interrupt' && 'composer-delivery-option--interrupt')}
+                      className="codex-composer-menu__item codex-composer-menu__option composer-delivery-option"
                       disabled={!canSendDuringRun}
                       onClick={() => void handleRunningSend(mode)}
                     >
@@ -4482,6 +4484,7 @@ export function ChatInput({
                         ? <kbd className="composer-kbd">{formatDeliveryShortcut(shortcut, isMacPlatform)}</kbd>
                         : <span aria-hidden="true" />}
                     </button>
+                    </Fragment>
                   ))}
                 </ComposerPopover>
               </>

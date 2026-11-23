@@ -1677,12 +1677,12 @@
         },
         "fork": {
           "label": "Branch conversation",
-          "description": "Copy the context and open a branch; you send the next message.",
+          "description": "Copy context into a new conversation; you send the next message.",
           "argumentHint": ""
         },
         "handoff": {
           "label": "Continue with a summary",
-          "description": "Review a summary, then create and send to a new conversation.",
+          "description": "Review the summary, then create and send.",
           "argumentHint": ""
         },
         "new": {
@@ -1832,7 +1832,7 @@
       "expectedEffect": "The next model request should carry less transcript pressure while preserving objectives, decisions, open tasks, failed attempts, touched files, constraints, and review items.",
       "instructionsLabel": "Anything to preserve? (optional)",
       "instructionsPlaceholder": "For example: agreed decisions, constraints and unfinished work",
-      "confirm": "Organize context",
+      "confirm": "Start organizing",
       "cancel": "Cancel",
       "unknown": "Unknown",
       "unavailable": "Compression unavailable",
@@ -2038,8 +2038,8 @@
           }
         }
       },
-      "forkDescription": "Copy the context and open a branch; you send the next message.",
-      "handoffDescription": "Review a summary, then create and send to a new conversation.",
+      "forkDescription": "Copy context into a new conversation; you send the next message.",
+      "handoffDescription": "Review the summary, then create and send.",
       "compactDescription": "Summarize earlier messages in this conversation to free context space.",
       "details": "More details",
       "forkPreparing": "Opening conversation branch…",
@@ -2064,7 +2064,7 @@
       "tooltip": "Summarize progress and continue the task in a new conversation.",
       "disabledActiveRun": "Available after the current run finishes",
       "dialogTitle": "Continue with a summary",
-      "dialogDescription": "Review the summary below. Create and send opens a new conversation and sends this content to continue the work.",
+      "dialogDescription": "Review the summary. Create and send opens a new conversation and sends this content as its first message.",
       "draftLabel": "Continuation message",
       "create": "Create and send",
       "cancel": "Cancel",
@@ -2078,7 +2078,8 @@
       "sourceMissing": "Unavailable",
       "creating": "Creating and sending…",
       "resumeSend": "Resume and send",
-      "savedDraft": "Recovery uses the saved content and keeps the same delivery record."
+      "savedDraft": "Recovery uses the saved content and keeps the same delivery record.",
+      "pressureHint": "Context space is running low."
     },
     "runLogReplay": "From run log (not the session transcript)",
     "workspaceActions": "Workspace actions",
@@ -2169,18 +2170,18 @@
     },
     "workModeRecommendedPermission": "Recommended: {{mode}}",
     "intervention": {
-      "menu": "Delivery options",
+      "menu": "Send options",
       "guide": "Guide current run",
-      "guideTooltip": "Pass this guidance to the current task",
+      "guideTooltip": "Guide the current task",
       "longTaskRequired": "Interrupt and guidance require an active long task.",
       "reviseGoal": "Revise goal",
-      "reviseGoalTooltip": "Save a checkpoint and restart with this message as the new goal",
+      "reviseGoalTooltip": "Restart with this message as the goal",
       "queueDefault": "Running: Enter queues this message",
       "queue": "Send after this run",
-      "queueTooltip": "Process this message after the current run finishes",
+      "queueTooltip": "After the current run",
       "interrupt": "Stop and send",
-      "interruptTooltip": "Save progress, stop this run, then process this message",
-      "sendDraft": "Send this message"
+      "interruptTooltip": "Save progress, stop, then send",
+      "sendDraft": "Send this draft now"
     },
     "rollbackPlan": {
       "title": "Recovery assist",

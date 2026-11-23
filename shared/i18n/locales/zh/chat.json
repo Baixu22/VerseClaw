@@ -1663,12 +1663,12 @@
         },
         "fork": {
           "label": "分支继续",
-          "description": "复制上下文后打开；由你发送下一条消息。",
+          "description": "复制当前上下文打开新会话，由你发送下一条。",
           "argumentHint": ""
         },
         "handoff": {
           "label": "摘要接力",
-          "description": "先检查摘要，再创建并发送到新会话。",
+          "description": "检查可编辑摘要，确认后新建并发送。",
           "argumentHint": ""
         },
         "new": {
@@ -2024,8 +2024,8 @@
           }
         }
       },
-      "forkDescription": "复制上下文后打开；由你发送下一条消息。",
-      "handoffDescription": "先检查摘要，再创建并发送到新会话。",
+      "forkDescription": "复制当前上下文打开新会话，由你发送下一条。",
+      "handoffDescription": "检查可编辑摘要，确认后新建并发送。",
       "compactDescription": "在当前会话总结早期消息，腾出上下文空间。",
       "details": "更多详情",
       "forkPreparing": "正在打开会话分支…",
@@ -2050,7 +2050,7 @@
       "tooltip": "整理进度，在新会话中继续任务。",
       "disabledActiveRun": "当前运行结束后可用",
       "dialogTitle": "摘要接力",
-      "dialogDescription": "检查下方摘要。“创建并发送”会打开新会话，并发送这段内容继续工作。",
+      "dialogDescription": "检查下方摘要，“创建并发送”会打开新会话并首发此内容。",
       "draftLabel": "接力内容",
       "create": "创建并发送",
       "cancel": "取消",
@@ -2064,7 +2064,8 @@
       "sourceMissing": "未提供",
       "creating": "正在创建并发送…",
       "resumeSend": "恢复并发送",
-      "savedDraft": "恢复时使用已保存的内容，保留同一次发送记录。"
+      "savedDraft": "恢复时使用已保存的内容，保留同一次发送记录。",
+      "pressureHint": "上下文空间较紧。"
     },
     "runLogReplay": "来自运行日志(非会话原文)",
     "workspaceActions": "工作区操作",
@@ -2157,16 +2158,16 @@
     "intervention": {
       "menu": "发送方式",
       "guide": "加入当前运行",
-      "guideTooltip": "将补充要求交给当前任务处理",
+      "guideTooltip": "把补充要求交给当前任务",
       "longTaskRequired": "中断和引导需要活动的长任务。",
       "reviseGoal": "修改目标",
-      "reviseGoalTooltip": "保存检查点，并以这条消息作为新目标重新开始",
+      "reviseGoalTooltip": "以这条消息作为新目标重新开始",
       "queueDefault": "运行中：Enter 默认排队",
       "queue": "结束后发送",
-      "queueTooltip": "当前运行结束后处理这条消息",
+      "queueTooltip": "当前运行结束后处理",
       "interrupt": "停止后发送",
-      "interruptTooltip": "保存进度，停止当前运行，再处理这条消息",
-      "sendDraft": "发送这条消息"
+      "interruptTooltip": "保存进度，停止后处理新消息",
+      "sendDraft": "立即发送此草稿"
     },
     "rollbackPlan": {
       "title": "恢复辅助",

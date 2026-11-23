@@ -26,6 +26,7 @@ touchedAreas:
   - src/components/chat/ChatContextPressure.tsx
   - src/components/chat/ComposerPopover.tsx
   - src/styles/codex-composer-shell.css
+  - src/styles/codex-tokens.css
   - shared/i18n/locales/*/chat.json
   - tests/unit/chat-input.test.tsx
   - tests/unit/chat-toolbar.test.tsx

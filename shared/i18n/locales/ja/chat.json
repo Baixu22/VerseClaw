@@ -1663,12 +1663,12 @@
         },
         "fork": {
           "label": "会話を分岐",
-          "description": "文脈をコピーして分岐を開きます。次のメッセージは自分で送信します。",
+          "description": "文脈を新しい会話にコピーします。次のメッセージは自分で送信します。",
           "argumentHint": ""
         },
         "handoff": {
           "label": "要約で引き継ぐ",
-          "description": "要約を確認してから、新しい会話を作成して送信します。",
+          "description": "要約を確認し、新しい会話を作成して送信します。",
           "argumentHint": ""
         },
         "new": {
@@ -2024,8 +2024,8 @@
           }
         }
       },
-      "forkDescription": "文脈をコピーして分岐を開きます。次のメッセージは自分で送信します。",
-      "handoffDescription": "要約を確認してから、新しい会話を作成して送信します。",
+      "forkDescription": "文脈を新しい会話にコピーします。次のメッセージは自分で送信します。",
+      "handoffDescription": "要約を確認し、新しい会話を作成して送信します。",
       "compactDescription": "以前のメッセージを要約して文脈の空きを増やします。",
       "details": "詳細を表示",
       "forkPreparing": "会話の分岐を開いています…",
@@ -2050,7 +2050,7 @@
       "tooltip": "進捗を要約して新しい会話で作業を続けます。",
       "disabledActiveRun": "現在の実行が完了すると利用できます",
       "dialogTitle": "要約で引き継ぐ",
-      "dialogDescription": "下の要約を確認してください。「作成して送信」で新しい会話を開き、この内容を送信して作業を続けます。",
+      "dialogDescription": "要約を確認してください。「作成して送信」で新しい会話を開き、この内容を最初のメッセージとして送信します。",
       "draftLabel": "引き継ぎ内容",
       "create": "作成して送信",
       "cancel": "キャンセル",
@@ -2064,7 +2064,8 @@
       "sourceMissing": "未取得",
       "creating": "作成して送信中…",
       "resumeSend": "再開して送信",
-      "savedDraft": "復旧には保存済みの内容を使い、同じ送信記録を保持します。"
+      "savedDraft": "復旧には保存済みの内容を使い、同じ送信記録を保持します。",
+      "pressureHint": "文脈の空きが少なくなっています。"
     },
     "runLogReplay": "実行ログから(セッションの原文ではありません)",
     "workspaceActions": "ワークスペース操作",
@@ -2157,16 +2158,16 @@
     "intervention": {
       "menu": "送信方法",
       "guide": "実行中の処理をガイド",
-      "guideTooltip": "現在のタスクに追加の指示を渡します",
+      "guideTooltip": "現在のタスクに追加指示を渡す",
       "longTaskRequired": "割り込みとガイドには実行中の長期タスクが必要です。",
       "reviseGoal": "目標を修正",
-      "reviseGoalTooltip": "チェックポイントを保存し、このメッセージを新しい目標として再開",
+      "reviseGoalTooltip": "この内容を新しい目標にして再開",
       "queueDefault": "実行中: Enter でキュー",
       "queue": "実行後に送信",
-      "queueTooltip": "現在の実行が終わってから処理します",
+      "queueTooltip": "現在の実行が終わってから処理",
       "interrupt": "停止して送信",
-      "interruptTooltip": "進捗を保存して実行を停止し、このメッセージを処理します",
-      "sendDraft": "このメッセージを送信"
+      "interruptTooltip": "進捗を保存し、停止してから処理",
+      "sendDraft": "この下書きを今すぐ送信"
     },
     "rollbackPlan": {
       "title": "復旧支援",

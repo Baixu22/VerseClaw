@@ -73,6 +73,16 @@ it('clears a recovered cache warning even when the session retains its risk hist
   expect(screen.queryByTestId('chat-prompt-cache-status')).toBeNull();
 });
 
+it('offers summary handoff before branching and recommends it only under context pressure', () => {
+  const props = { onHandoffSession: vi.fn(), onForkSession: vi.fn() };
+  const view = render(toolbar({ ...props, continuityRecommendation: { action: 'handoff', reason: 'high_pressure', disabled: false } }));
+  const handoff = screen.getByTestId('chat-session-handoff');
+  expect(handoff.compareDocumentPosition(screen.getByTestId('chat-session-fork')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(screen.getByTestId('chat-session-handoff-recommended')).toBeInTheDocument();
+  view.rerender(toolbar({ ...props, continuityRecommendation: { action: 'handoff', reason: 'recovery_checkpoint', disabled: false } }));
+  expect(screen.queryByTestId('chat-session-handoff-recommended')).not.toBeInTheDocument();
+});
+
 it('keeps the environment control reachable while workspace tabs are open', () => {
   fixture.panel.open = true;
   const toggle = vi.fn();

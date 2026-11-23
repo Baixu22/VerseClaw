@@ -404,6 +404,7 @@
   --color-chat-tray-hover: #e2e2dd;
   --color-chat-tray-border: rgb(0 0 0 / 0.06);
   --color-chat-menu: #fcfcfa;
+  --color-chat-control-surface: #fcfcfc;
   --color-chat-menu-hover: #f0f0ec;
   --color-chat-primary: #1f1f1d;
   --color-chat-primary-text: #ffffff;
@@ -446,6 +447,7 @@
   --color-chat-tray-hover: #363633;
   --color-chat-tray-border: rgb(255 255 255 / 0.04);
   --color-chat-menu: #333331;
+  --color-chat-control-surface: #242424;
   --color-chat-menu-hover: #3e3e3b;
   --color-chat-primary: #f3f3f1;
   --color-chat-primary-text: #1f1f1d;

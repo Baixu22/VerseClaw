@@ -2079,11 +2079,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         toast.error(result.error || t('composer.longTaskControl.drainFailed'));
         return;
       }
-      if (result.drained) {
-        toast.success(t('composer.longTaskControl.drainSuccess', {
-          count: result.messageCount ?? 0,
-        }));
-      } else {
+      if (!result.drained) {
         toast.message(t(`composer.longTaskControl.reason.${result.reason ?? 'empty_queue'}`, {
           defaultValue: result.reason ?? t('composer.longTaskControl.reason.empty_queue'),
         }));
@@ -4008,18 +4004,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             {t('composer.handoff.dialogTitle')}
           </DialogTitle>
           <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            {continuityPreflight.handoff.reasons.includes('high_pressure') && (
+              <span data-testid="chat-handoff-recommendation-note">{t('composer.handoff.pressureHint')} </span>
+            )}
             {t('composer.handoff.dialogDescription')}
           </DialogDescription>
-          {continuityRecommendation.action === 'handoff' && !continuityRecommendation.disabled && (
-            <div
-              className="chat-continuity-note"
-              data-testid="chat-handoff-recommendation-note"
-            >
-              {t(`composer.continuity.dialogHint.${continuityRecommendation.reason}`, {
-                defaultValue: t('composer.continuity.dialogHint.default'),
-              })}
-            </div>
-          )}
           <Label className="block text-sm font-medium text-foreground" htmlFor="chat-handoff-draft">
             {t('composer.handoff.draftLabel')}
           </Label>

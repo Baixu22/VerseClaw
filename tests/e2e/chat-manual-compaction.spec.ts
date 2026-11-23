@@ -182,6 +182,8 @@ test.describe('Verse Claw chat manual compaction', () => {
       await expect(page.getByTestId('chat-compaction-truncated')).toContainText('3');
       await expect(page.getByTestId('chat-compaction-dialog').getByText('64k / 128k tokens', { exact: true })).toHaveCount(1);
       await page.evaluate(() => document.documentElement.classList.add('dark'));
+      await expect(page.getByTestId('chat-compaction-dialog')).toHaveCSS('opacity', '1');
+      await expect(page.getByTestId('chat-compaction-dialog')).toHaveCSS('background-color', 'rgb(36, 36, 36)');
       await page.screenshot({ path: testInfo.outputPath('compact-dark.png') });
       await page.setViewportSize({ width: 480, height: 800 });
       await expect(page.getByTestId('chat-compaction-confirm')).toBeInViewport();
