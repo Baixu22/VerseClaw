@@ -7,9 +7,10 @@ import { codingObservability } from "../context-engine/coding-observability.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { checkFileFreshness } from "../context-engine/factstore/freshness.js";
 import { getToolParamsRecord } from "./agent-tools.params.js";
-import type { AnyAgentTool } from "./agent-tools.types.js";
+import type { WriteToolOptions } from "./sessions/tools/write.js";
 import {
   getSessionReadHash,
+  hashFileContent,
   hashFileOnDisk,
   resolveWorkspaceFile,
 } from "./session-read-hashes.js";
@@ -23,6 +24,12 @@ export type StaleWriteGuardOptions = {
   /** Override for tests. */
   readDiskHash?: (absolutePath: string) => string | undefined;
 };
+
+// Preserve original errors/codes while identifying admission with no file effect.
+const admissionRejections = new WeakSet<object>();
+export function isWriteAdmissionRejection(error: unknown): boolean {
+  return error !== null && typeof error === "object" && admissionRejections.has(error);
+}
 
 export class StaleWriteError extends Error {
   readonly code = "STALE_WRITE";
@@ -96,38 +103,62 @@ export function shouldBlockStaleWrite(params: {
   return { block: true, relPath: rel, reason: "stale-since-read" };
 }
 
-export function wrapToolWithStaleWriteGuard(
-  tool: AnyAgentTool,
+export function createStaleWriteGuard(
   options: StaleWriteGuardOptions,
-): AnyAgentTool {
+  readFile: (absolutePath: string) => Promise<Buffer | string>,
+  statFile?: NonNullable<WriteToolOptions["operations"]>["statFile"],
+): WriteToolOptions["beforeWrite"] {
   if (options.enabled !== true) {
-    return tool;
+    return undefined;
   }
-  return {
-    ...tool,
-    execute: async (toolCallId, args, signal, onUpdate) => {
+  return async (absolutePath, args) => {
+    try {
       const record = getToolParamsRecord(args);
       const filePath = typeof record?.path === "string" ? record.path : undefined;
       if (filePath) {
+        const relPath = toFactRelPath(filePath, options.workspaceRoot);
+        let diskHash: string | undefined;
+        if (relPath && getSessionReadHash(options.sessionId, relPath)) {
+          if (options.readDiskHash) {
+            diskHash = options.readDiskHash(absolutePath);
+          } else {
+            try {
+              diskHash = hashFileContent(await readFile(absolutePath));
+            } catch (error) {
+              const code =
+                error && typeof error === "object" && "code" in error ? error.code : undefined;
+              // Remote bridges can report a process exit code. Only their scoped
+              // stat's explicit absence can turn that read failure into a create.
+              if (
+                code !== "ENOENT" &&
+                code !== "not-found" &&
+                !(statFile && (await statFile(absolutePath)) === null)
+              )
+                throw error;
+            }
+          }
+        }
         const decision = shouldBlockStaleWrite({
           workspaceRoot: options.workspaceRoot,
           filePath,
           sessionId: options.sessionId,
           factStore: options.factStore,
-          readDiskHash: options.readDiskHash,
+          readDiskHash: () => diskHash,
         });
         if (decision.block) {
           // TASK-P1-07: explicit override path (force/allowStaleWrite) — still counts as allowance for metrics.
           if (isStaleWriteOverrideRequested(args)) {
             codingObservability.recordStaleAllowance();
-            return tool.execute(toolCallId, args, signal, onUpdate);
+            return;
           }
           codingObservability.recordStaleBlock();
           throw new StaleWriteError(decision.relPath ?? filePath);
         }
         codingObservability.recordStaleAllowance();
       }
-      return tool.execute(toolCallId, args, signal, onUpdate);
-    },
+    } catch (error) {
+      if (error !== null && typeof error === "object") admissionRejections.add(error);
+      throw error;
+    }
   };
 }

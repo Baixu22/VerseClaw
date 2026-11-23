@@ -39,6 +39,10 @@ appliesTo:
 
 ## Lease Ordering
 
+- Full-file stale-write admission runs after the native file mutation lease is
+  acquired and before mkdir/write. Journal being disabled does not bypass it.
+  A rejected stale write contributes no unapplied undo step.
+
 - A per-file batch lease is acquired in path-sorted order during preflight,
   before any mutation. Overlapping concurrent patches are serialized, not
   interleaved.
@@ -58,6 +62,9 @@ appliesTo:
   retained and the `recoveryRef` points to them.
 - Crash recovery can detect a prepared-but-uncommitted entry after a simulated
   restart because the journal sidecar records the write intent.
+- Recovery sequence allocation reserves filenames of all retained snapshots
+  and sidecars, including malformed or missing metadata. Preparing a new entry
+  must not overwrite an orphan preimage or an existing sidecar.
 
 ## Producer-Boundary Coordination
 

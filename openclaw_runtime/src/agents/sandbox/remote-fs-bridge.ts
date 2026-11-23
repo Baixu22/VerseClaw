@@ -509,7 +509,11 @@ class RemoteShellSandboxFsBridge implements SandboxFsBridge {
       args: [containerPath],
       signal,
     });
-    return result.stdout.toString("utf8").trim() === "1";
+    const marker = result.stdout.toString("utf8").trim();
+    if (marker === "1") return true;
+    if (marker === "0") return false;
+    // Unknown probe output cannot authorize a create by pretending the file is absent.
+    throw new Error("Sandbox existence probe returned invalid output");
   }
 
   private async resolveCanonicalPath(params: {

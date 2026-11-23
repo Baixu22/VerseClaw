@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { codingObservability } from "../../context-engine/coding-observability.js";
@@ -9,7 +10,11 @@ import {
   recordSessionReadHash,
   __resetSessionReadHashes,
 } from "../session-read-hashes.js";
-import { StaleWriteError, wrapToolWithStaleWriteGuard } from "../stale-write-guard.js";
+import {
+  StaleWriteError,
+  createStaleWriteGuard,
+  type StaleWriteGuardOptions,
+} from "../stale-write-guard.js";
 
 function makeWriteTool(execute: AnyAgentTool["execute"]): AnyAgentTool {
   return {
@@ -19,6 +24,22 @@ function makeWriteTool(execute: AnyAgentTool["execute"]): AnyAgentTool {
     parameters: {},
     execute,
   } as AnyAgentTool;
+}
+
+function wrapToolWithStaleWriteGuard(
+  tool: AnyAgentTool,
+  options: StaleWriteGuardOptions,
+): AnyAgentTool {
+  const beforeWrite = createStaleWriteGuard(options, readFile);
+  if (!beforeWrite) return tool;
+  return {
+    ...tool,
+    execute: async (id, args, signal, update) => {
+      const input = args as { path: string };
+      await beforeWrite(path.resolve(options.workspaceRoot, input.path), args);
+      return tool.execute(id, args, signal, update);
+    },
+  };
 }
 
 describe("stale-write-guard (C2-2)", () => {

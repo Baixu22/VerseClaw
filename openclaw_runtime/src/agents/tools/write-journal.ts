@@ -2,12 +2,7 @@
  * C2-8: write-journal snapshots + undo_write tool.
  * Fail-open: journal failures never block the write path.
  */
-import {
-  existsSync,
-  readdirSync,
-  readFileSync,
-  statSync,
-} from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { Type } from "typebox";
 import { getToolParamsRecord } from "../agent-tools.params.js";
@@ -31,7 +26,17 @@ import type {
   RemoteForgeErrorV1,
 } from "../../../../shared/types/remote-forge.js";
 
-import { getOrCreateWriteJournal, journalEntryId, journalDirFor, snapshotBeforeWrite, snapshotPreparedWrite, undoLastWrites as undoJournalWrites, type WriteJournalEntry } from "./write-journal-core.js";
+import {
+  discardWriteJournalEntries,
+  getOrCreateWriteJournal,
+  journalEntryId,
+  journalDirFor,
+  snapshotBeforeWrite,
+  snapshotPreparedWrite,
+  undoLastWrites as undoJournalWrites,
+  type WriteJournalEntry,
+} from "./write-journal-core.js";
+import { isWriteAdmissionRejection } from "../stale-write-guard.js";
 export * from "./write-journal-core.js";
 
 /** Preserve the original workspace path policy at the existing tool entrypoint. */
@@ -228,11 +233,12 @@ export function wrapToolWithWriteJournal(
                 : path.resolve(options.workspaceRoot, filePath),
             );
       const release = await acquirePatchBatchLocks(lockTargets);
+      const snapshots: WriteJournalEntry[] = [];
       try {
-        const snapshots: WriteJournalEntry[] = [];
-        const confinedRoot = options.workspaceOnly && paths.length > 0
-          ? await fsRoot(options.workspaceRoot)
-          : undefined;
+        const confinedRoot =
+          options.workspaceOnly && paths.length > 0
+            ? await fsRoot(options.workspaceRoot)
+            : undefined;
         for (const filePath of paths) {
           const metadata = {
             workspaceRoot: options.workspaceRoot,
@@ -249,11 +255,16 @@ export function wrapToolWithWriteJournal(
             const relative = toRelativeWorkspacePath(options.workspaceRoot, filePath);
             let prior: Buffer | undefined;
             try {
-              prior = (await confinedRoot.read(relative)).buffer;
+              prior = (await confinedRoot.read(path.resolve(confinedRoot.rootReal, relative)))
+                .buffer;
             } catch (error) {
               if (!(error instanceof FsSafeError && error.code === "not-found")) throw error;
             }
-            entry = snapshotPreparedWrite({ ...metadata, hadPrior: prior !== undefined, ...(prior !== undefined ? { priorContent: prior } : {}) });
+            entry = snapshotPreparedWrite({
+              ...metadata,
+              hadPrior: prior !== undefined,
+              ...(prior !== undefined ? { priorContent: prior } : {}),
+            });
           } else {
             entry = snapshotBeforeWrite(metadata);
           }
@@ -285,7 +296,11 @@ export function wrapToolWithWriteJournal(
               })()
             : prevDetails;
         const patchLineage = toolCallId
-          ? bindPatchArtifactLineage({ details: detailsForLineage, snapshots, requestId: toolCallId })
+          ? bindPatchArtifactLineage({
+              details: detailsForLineage,
+              snapshots,
+              requestId: toolCallId,
+            })
           : {};
         return {
           ...result,
@@ -303,6 +318,11 @@ export function wrapToolWithWriteJournal(
             },
           },
         };
+      } catch (error) {
+        // Native admission rejected before mkdir/write; retaining these
+        // snapshots would add an undo step for an effect that never happened.
+        if (isWriteAdmissionRejection(error)) discardWriteJournalEntries(snapshots);
+        throw error;
       } finally {
         release();
       }
@@ -333,25 +353,37 @@ export function createUndoWriteTool(options: {
     }),
     execute: async (_id, args) => {
       const record = getToolParamsRecord(args) ?? {};
-      if (record.steps !== undefined && (typeof record.steps !== "number" || !Number.isFinite(record.steps) || record.steps < 1)) {
+      if (
+        record.steps !== undefined &&
+        (typeof record.steps !== "number" || !Number.isFinite(record.steps) || record.steps < 1)
+      ) {
         throw new Error("steps must be a finite positive number");
       }
       const steps = Math.max(1, Math.floor(typeof record.steps === "number" ? record.steps : 1));
-      const journal = getOrCreateWriteJournal(options.workspaceRoot, options.sessionId?.trim() || "default");
+      const journal = getOrCreateWriteJournal(
+        options.workspaceRoot,
+        options.sessionId?.trim() || "default",
+      );
       const selected = journal.entries.slice(-steps).toReversed();
       const release = await acquirePatchBatchLocks(selected.map((entry) => entry.absPath));
       let outcome: Awaited<ReturnType<typeof undoLastWrites>>;
       try {
         // Empty selection is a no-op, not permission to undo a later new write.
-        outcome = selected.length === 0
-          ? { restored: [], errors: [], journalDir: journal.rootDir, remainingEntries: journal.entries.length }
-          : await undoLastWrites({
-              workspaceRoot: options.workspaceRoot,
-              sessionId: options.sessionId,
-              steps: selected.length,
-              workspaceOnly: options.workspaceOnly,
-              expectedEntries: selected.map(({ seq, relPath }) => ({ seq, relPath })),
-            });
+        outcome =
+          selected.length === 0
+            ? {
+                restored: [],
+                errors: [],
+                journalDir: journal.rootDir,
+                remainingEntries: journal.entries.length,
+              }
+            : await undoLastWrites({
+                workspaceRoot: options.workspaceRoot,
+                sessionId: options.sessionId,
+                steps: selected.length,
+                workspaceOnly: options.workspaceOnly,
+                expectedEntries: selected.map(({ seq, relPath }) => ({ seq, relPath })),
+              });
       } finally {
         release();
       }
