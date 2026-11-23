@@ -41,7 +41,7 @@ describe('agent dev scenario composer', () => {
       'gateway-connecting',
       'knowledge-drafts',
       'observability-trace-errors',
-      'transport-fallback-chain',
+      'typed-ipc-gateway-unavailable',
       'skill-execution-timeout',
       'multi-agent-handoff',
       'knowledge-conflict-merge',
@@ -52,13 +52,13 @@ describe('agent dev scenario composer', () => {
 
   it('composes P0/P1 diagnostic scenarios from the shared registry', () => {
     const result = composeAgentDevScenario(
-      'transport-fallback-chain+channel-reconnect-storm',
+      'typed-ipc-gateway-unavailable+channel-reconnect-storm',
       { streamDelay: '500', errorAt: '3' },
     );
 
     expect(result.route).toBe('/settings/channels');
     expect(result.seed).toMatchObject({
-      transportFallback: ['ws', 'http', 'ipc'],
+      hostTransport: 'ipc',
       channelReconnects: 8,
       streamDelay: '500',
       errorAt: '3',

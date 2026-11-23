@@ -30,6 +30,18 @@ function deferred<T>() {
 }
 
 describe('cron store fetchJobs dedupe', () => {
+  it('retains the last snapshot on a failed refresh and accepts a real empty list', async () => {
+    const { useCronStore } = await import('@/stores/cron');
+    useCronStore.setState({ jobs: [{ id: 'retained' } as never], error: null });
+    hostApiFetchMock.mockRejectedValueOnce(new Error('Gateway offline'));
+    await useCronStore.getState().fetchJobs();
+    expect(useCronStore.getState().jobs.map(job => job.id)).toEqual(['retained']);
+    expect(useCronStore.getState().error).toContain('Gateway offline');
+    hostApiFetchMock.mockResolvedValueOnce([]);
+    await useCronStore.getState().fetchJobs();
+    expect(useCronStore.getState().jobs).toEqual([]);
+    expect(useCronStore.getState().error).toBeNull();
+  });
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();

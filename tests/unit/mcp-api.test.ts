@@ -94,9 +94,10 @@ vi.mock('@electron/utils/channel-config', () => ({
   syncSourceRuntimeMcpConfig: vi.fn(async () => undefined),
 }));
 
-vi.mock('@electron/utils/config-mutex', () => ({
-  withConfigLock: async <T>(fn: () => Promise<T>) => fn(),
-}));
+vi.mock('@electron/utils/config-mutex', async (importOriginal) => {
+  const original = await importOriginal<typeof import('@electron/utils/config-mutex')>();
+  return { withConfigLock: <T>(fn: () => Promise<T>) => original.withConfigLock(fn, { lockTargetPath: null }) };
+});
 
 vi.mock('@electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: vi.fn(async () => ({ id: 'workspace-a', rootPath: 'D:/tmp/mcp-workspace-a', agentId: 'main', activeSessionKey: 'agent:main:main', permissionMode: 'fullAccess' })),
@@ -118,6 +119,31 @@ function gatewayRoute(invoke: () => Promise<unknown>) {
 }
 
 describe('mcp api registry', () => {
+  it('serializes concurrent creates, disables and failed rollback across API instances', async () => {
+    const { createMcpApi } = await import('@electron/services/mcp-api');
+    const { writeOpenClawConfig } = await import('@electron/utils/channel-config');
+    const api = createMcpApi(), second = createMcpApi();
+    await Promise.all([api.createServer({ name: 'Alpha', transport: 'stdio', command: 'node', scope: 'global' }),
+      second.createServer({ name: 'Beta', transport: 'stdio', command: 'node', scope: 'global' })]);
+    await Promise.all([api.updateServer({ id: 'alpha', enabled: false }), second.updateServer({ id: 'beta', enabled: false })]);
+    expect((await api.listServers()).servers.filter(s => ['alpha', 'beta'].includes(s.id)).map(s => s.enabled)).toEqual([false, false]);
+    vi.mocked(writeOpenClawConfig).mockRejectedValueOnce(new Error('fixture mirror failure'));
+    const results = await Promise.allSettled([api.updateServer({ id: 'alpha', name: 'Must rollback' }), second.updateServer({ id: 'beta', name: 'Must persist' })]);
+    expect(results.map(r => r.status)).toEqual(['rejected', 'fulfilled']);
+    expect((await api.listServers()).servers.find(s => s.id === 'alpha')?.name).toBe('Alpha');
+    expect((await api.listServers()).servers.find(s => s.id === 'beta')?.name).toBe('Must persist');
+  });
+
+  it('retains masked headers and exposure on an ordinary edit', async () => {
+    const { createMcpApi } = await import('@electron/services/mcp-api');
+    const api = createMcpApi();
+    const result = await api.createServer({ name: 'Secret', transport: 'http', url: 'https://example.invalid/mcp',
+      scope: 'global', headers: { Authorization: 'Bearer FIXTURE' }, exposure: { agents: ['restricted'] }, networkPolicy: 'enabled' });
+    const returned = result.servers.find(s => s.id === 'secret')!;
+    await api.updateServer({ ...returned, name: 'Renamed' });
+    expect((storeState.servers.find(s => (s as { id: string }).id === 'secret') as { headers: unknown }).headers).toEqual({ Authorization: 'Bearer FIXTURE' });
+    expect((await api.resolveForContext({ agentId: 'other' })).servers.some(s => s.id === 'secret')).toBe(false);
+  });
   beforeEach(() => {
     storeState.servers = [];
     storeState.envSecrets = {};

@@ -313,7 +313,7 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'component.host-api-transport-owner', label: 'Host API transport owner', disposition: 'internal', owner: 'host-api-transport-owner', implementationNodeId: 'TF-0508', currentMode: 'baseline', targetDefaultMode: 'internal',
     ...internal('Typed renderer-to-Main transport infrastructure; not a user capability.'),
-    currentConsumers: ['renderer host calls', 'WS/HTTP/IPC fallback'], evidenceRefs: UI_EVIDENCE,
+    currentConsumers: ['typed renderer host IPC calls', 'Main-owned Gateway WebSocket'], evidenceRefs: UI_EVIDENCE,
     coverage: { authorityComponentIds: ['host-api-transport-owner'] },
   }),
   entry({

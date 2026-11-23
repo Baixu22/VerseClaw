@@ -6,7 +6,7 @@
 import type { ChannelType } from './channel';
 import type { CronCoordinatorGateState, CronCoordinatorScope } from '../long-session-followup-scope';
 
-export type CronJobDeliveryMode = 'none' | 'announce';
+export type CronJobDeliveryMode = 'none' | 'announce' | 'webhook';
 export type CronJobSource = 'gateway' | 'config-fallback';
 
 export interface CronJobRuntimeGuarantee {
@@ -17,6 +17,7 @@ export interface CronJobRuntimeGuarantee {
 }
 
 export interface CronJobDelivery {
+  [key: string]: unknown;
   mode: CronJobDeliveryMode;
   channel?: ChannelType | string;
   to?: string;

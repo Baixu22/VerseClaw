@@ -1,4 +1,5 @@
 import type { ProviderAccount, ProviderVendorInfo, ProviderWithKeyInfo } from '@/lib/providers';
+import { runtimeAccountProviderKey } from '@shared/providers/runtime-identity';
 
 export interface ConfiguredModelOption {
   modelRef: string;
@@ -16,20 +17,7 @@ export interface RuntimeProviderOption {
 }
 
 export function resolveRuntimeProviderKey(account: ProviderAccount): string {
-  if (account.authMode === 'oauth_browser') {
-    if (account.vendorId === 'openai') return 'openai-codex';
-  }
-
-  if (account.vendorId === 'custom' || account.vendorId === 'ollama') {
-    const suffix = account.id.replace(/-/g, '').slice(0, 8);
-    return `${account.vendorId}-${suffix}`;
-  }
-
-  if (account.vendorId === 'minimax-portal-cn') {
-    return 'minimax-portal';
-  }
-
-  return account.vendorId;
+  return runtimeAccountProviderKey(account);
 }
 
 export function splitModelRef(modelRef: string | null | undefined): { providerKey: string; modelId: string } | null {

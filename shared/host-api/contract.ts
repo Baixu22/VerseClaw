@@ -4831,7 +4831,7 @@ export type KnowledgeGovernanceReceipt = {
   contentDigest: string;
   idempotencyKey: string;
   status: 'committed' | 'failed';
-  committedAt: string;
+  committedAt?: string;
   evidenceRefs: string[];
   compensation?: KnowledgeGovernanceCompensation;
 };

@@ -131,10 +131,10 @@ function rememberHostApiCall(call: AgentDevHostApiCall): void {
 function findFixture(config: AgentDevReplayConfig, request: ReplayableHostRequest): AgentDevHostApiFixture | null {
   const fixtures = Array.isArray(config.fixtures) ? config.fixtures : [];
   const exact = stableStringify([request.module, request.action, request.payload ?? null]);
-  const fallback = stableStringify([request.module, request.action, null]);
   return fixtures.find((fixture) => (
     stableStringify([fixture.module, fixture.action, fixture.payload ?? null]) === exact
-      || stableStringify([fixture.module, fixture.action, null]) === fallback
+  )) ?? fixtures.find((fixture) => (
+    fixture.module === request.module && fixture.action === request.action && fixture.payload == null
   )) ?? null;
 }
 

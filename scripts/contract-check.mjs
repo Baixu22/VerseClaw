@@ -13,7 +13,7 @@ const REQUIRED_AGENT_DEV_SCENARIOS = [
   'gateway-connecting',
   'knowledge-drafts',
   'observability-trace-errors',
-  'transport-fallback-chain',
+  'typed-ipc-gateway-unavailable',
   'skill-execution-timeout',
   'multi-agent-handoff',
   'knowledge-conflict-merge',

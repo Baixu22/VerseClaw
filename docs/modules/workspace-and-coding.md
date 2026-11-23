@@ -24,6 +24,8 @@
 
 Workspace 不是 Git worktree 的同义词；一个 workspace 可以是普通目录。Git worktree 是更窄的可选隔离实现。
 
+Git 写操作捕获请求开始时的 Workspace，并将其传递给路径校验、权限检查、命令执行和结果状态回读。操作等待期间切换活动项目，已发起的操作仍属于原项目。
+
 ## 2. 用户入口与面板
 
 Workspace 主要在 Chat 旁边的 workspace panel 中，而 `/browser` 与 `/code-review` 是兼容入口，会导航回 Chat 并打开对应 panel。

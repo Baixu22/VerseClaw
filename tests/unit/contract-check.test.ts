@@ -90,7 +90,7 @@ export const AGENT_DEV_SCENARIOS = [
   { id: 'gateway-connecting', route: '/', description: '', seed: {} },
   { id: 'knowledge-drafts', route: '/', description: '', seed: {} },
   { id: 'observability-trace-errors', route: '/', description: '', seed: {} },
-  { id: 'transport-fallback-chain', route: '/', description: '', seed: {} },
+  { id: 'typed-ipc-gateway-unavailable', route: '/', description: '', seed: {} },
   { id: 'skill-execution-timeout', route: '/', description: '', seed: {} },
   { id: 'multi-agent-handoff', route: '/', description: '', seed: {} },
   { id: 'knowledge-conflict-merge', route: '/', description: '', seed: {} },

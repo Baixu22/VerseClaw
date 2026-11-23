@@ -99,6 +99,73 @@ describe('git api', () => {
     } finally { await rm(base, { recursive: true, force: true }); }
   });
 
+  it.each([
+    ['stage', { paths: ['artifact.txt'] }, 'add'],
+    ['unstage', { paths: ['artifact.txt'] }, 'restore'],
+    ['checkoutBranch', { name: 'feature/owner' }, 'checkout'],
+    ['createBranch', { name: 'feature/owner' }, 'checkout'],
+  ] as const)('keeps %s and its returned status on the captured workspace', async (action, payload, command) => {
+    const original = workspace();
+    const other = { ...workspace('plan'), id: 'workspace-B', rootPath: join(tmpdir(), 'unrelated-workspace') };
+    const calls: Array<{ args: string[]; cwd: string }> = [];
+    execFileMock.mockImplementation((_command: string, args: string[], options: { cwd: string }, callback: (...args: unknown[]) => void) => {
+      calls.push({ args, cwd: options.cwd });
+      if (isRepoRootProbe(args)) activeWorkspace.profile = other;
+      callback(null, isRepoRootProbe(args) ? `${options.cwd}\n` : args[0] === 'status' ? '# branch.head owner\0' : '', '');
+    });
+    const { createGitApi } = await import('@electron/services/git-api');
+    const result = await createGitApi()[action](payload as never);
+    expect(result).toMatchObject({ success: true, status: { workspaceRoot: original.rootPath, branch: 'owner' } });
+    expect(calls.some((call) => call.args[0] === command)).toBe(true);
+    expect(calls.every((call) => call.cwd === original.rootPath)).toBe(true);
+  });
+
+  it('keeps revert classification and approval bound to the original workspace after a switch', async () => {
+    const original = workspace();
+    const other = { ...workspace(), id: 'workspace-B', rootPath: join(tmpdir(), 'unrelated-workspace') };
+    let switchWorkspace = false;
+    const calls: Array<{ args: string[]; cwd: string }> = [];
+    execFileMock.mockImplementation((_command: string, args: string[], options: { cwd: string }, callback: (...args: unknown[]) => void) => {
+      calls.push({ args, cwd: options.cwd });
+      if (isRepoRootProbe(args) && switchWorkspace) activeWorkspace.profile = other;
+      callback(null, isRepoRootProbe(args) ? `${options.cwd}\n` : args[0] === 'status' ? '# branch.head main\0? artifact.txt\0' : '', '');
+    });
+    const { createGitApi, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const api = createGitApi();
+    const approval = await api.revertFile({ path: 'artifact.txt' });
+    await createPermissionsApi().decideApproval({ id: approval.approval!.id, decision: 'approved' });
+    clearGitStatusCacheForTest();
+    calls.length = 0;
+    switchWorkspace = true;
+    expect(await api.revertFile({ path: 'artifact.txt', approvalId: approval.approval!.id })).toMatchObject({ success: true });
+    expect(calls.some((call) => call.args[0] === 'clean')).toBe(true);
+    expect(calls.every((call) => call.cwd === original.rootPath)).toBe(true);
+  });
+
+  it.each(['push', 'rebase'] as const)('keeps %s approval grading and execution on the same workspace', async (action) => {
+    const original = workspace();
+    let switchWorkspace = false;
+    const calls: Array<{ args: string[]; cwd: string }> = [];
+    execFileMock.mockImplementation((_command: string, args: string[], options: { cwd: string }, callback: (...args: unknown[]) => void) => {
+      calls.push({ args, cwd: options.cwd });
+      if (switchWorkspace && isRepoRootProbe(args)) activeWorkspace.profile = { ...workspace(), id: 'workspace-B', rootPath: join(tmpdir(), 'unrelated-workspace') };
+      callback(null, isRepoRootProbe(args) ? `${options.cwd}\n` : args[0] === 'status' ? '# branch.head main\0' : '', '');
+    });
+    const { createGitApi, clearGitStatusCacheForTest } = await import('@electron/services/git-api');
+    const { createPermissionsApi } = await import('@electron/services/permissions-api');
+    const api = createGitApi();
+    const payload = action === 'push' ? { remote: 'origin' } : { ref: 'origin/main' };
+    const first = await api[action](payload as never);
+    await createPermissionsApi().decideApproval({ id: first.approval!.id, decision: 'approved' });
+    clearGitStatusCacheForTest();
+    calls.length = 0;
+    switchWorkspace = true;
+    expect(await api[action]({ ...payload, approvalId: first.approval!.id } as never)).toMatchObject({ success: true });
+    expect(calls.some(call => call.args[0] === action)).toBe(true);
+    expect(calls.every(call => call.cwd === original.rootPath)).toBe(true);
+  });
+
   it('coalesces concurrent status reads and reuses a fresh cached status', async () => {
     let statusCalls = 0;
     let repoProbeCalls = 0;

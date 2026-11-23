@@ -633,7 +633,7 @@ export const AUTHORITY_COMPONENTS: readonly ComponentAuthorityDefinition[] = [
     id: 'host-api-transport-owner',
     label: 'Host API transport owner',
     domains: ['ui-transport', 'permission'],
-    purpose: 'Owns the renderer-to-Main typed transport and the fixed WS -> HTTP -> IPC fallback; it does not own domain data.',
+    purpose: 'Owns typed renderer-to-Main IPC requests; Main owns the Gateway WebSocket and domain services own their data.',
     ownedDataTypes: ['ui.host-request'],
     scopes: ['workspace', 'session', 'action'],
     allowedReads: ['permission.authorization-decision', 'task.fact', 'context.request-envelope', 'browser.task-projection', 'retired.surface-class'],

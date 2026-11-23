@@ -37,6 +37,14 @@ function status(id: string, hasKey = true): ProviderWithKeyInfo {
 }
 
 describe('model option helpers', () => {
+  it.each(['custom', 'ollama'] as const)('preserves imported %s account identity and fully qualified models', (vendorId) => {
+    const id = `${vendorId}-12345678`;
+    for (const model of ['fixture-model', `${id}/fixture-model`]) {
+      const value = account({ id, vendorId, model });
+      expect(resolveRuntimeProviderKey(value)).toBe(id);
+      expect(buildConfiguredModelOptions([value], [status(id)], id)[0].modelRef).toBe(`${id}/fixture-model`);
+    }
+  });
   it('formats model refs using only the text after the provider prefix', () => {
     expect(formatModelRefLabel('openrouter/openai/gpt-5.5')).toBe('openai/gpt-5.5');
     expect(formatModelRefLabel('custom-alpha1234/model-alpha')).toBe('model-alpha');

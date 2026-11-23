@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
@@ -21,6 +20,7 @@ import { getAllSettings } from '../utils/store';
 import { runOpenClawDoctor, runOpenClawDoctorFix } from '../utils/openclaw-doctor';
 import { createSettingsApi } from './settings-api';
 import { isRecord } from './payload-utils';
+import { AtomicWriteError, readJsonStrict, withFileLock, writeJsonAtomic } from '../utils/durable-store';
 
 const MAX_TASKS = 200;
 const ALLOWED_SETTINGS_KEYS = new Set<keyof RemoteTaskSettingsPatch>([
@@ -155,23 +155,17 @@ function normalizeTask(value: unknown): RemoteTaskRecord | null {
 }
 
 async function loadTasks(): Promise<RemoteTaskRecord[]> {
-  try {
-    const raw = await readFile(getRemoteTaskFile(), 'utf8');
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map(normalizeTask).filter((task): task is RemoteTaskRecord => task != null);
-  } catch {
-    return [];
+  const parsed = await readJsonStrict<unknown>(getRemoteTaskFile(), { fallback: [] });
+  if (!Array.isArray(parsed)) throw new AtomicWriteError('Remote task store must contain an array', 'CORRUPT');
+  const tasks = parsed.map(normalizeTask);
+  if (tasks.some(task => task === null)) {
+    throw new AtomicWriteError('Remote task store contains an invalid task', 'CORRUPT');
   }
+  return tasks as RemoteTaskRecord[];
 }
 
 async function saveTasks(tasks: RemoteTaskRecord[]): Promise<void> {
-  const dir = getRemoteTaskDir();
-  await mkdir(dir, { recursive: true });
-  const file = getRemoteTaskFile();
-  const tmp = `${file}.tmp`;
-  await writeFile(tmp, JSON.stringify(tasks.slice(0, MAX_TASKS), null, 2), 'utf8');
-  await rename(tmp, file);
+  await writeJsonAtomic(getRemoteTaskFile(), tasks.slice(0, MAX_TASKS));
 }
 
 function snapshot(tasks: RemoteTaskRecord[]): RemoteTaskSnapshot {
@@ -185,13 +179,15 @@ async function updateTask(
   id: string,
   updater: (task: RemoteTaskRecord) => RemoteTaskRecord,
 ): Promise<RemoteTaskRecord> {
-  const tasks = await loadTasks();
-  const index = tasks.findIndex((task) => task.id === id);
-  if (index < 0) throw new Error('Remote task not found');
-  const updated = updater(tasks[index]);
-  tasks[index] = updated;
-  await saveTasks(tasks);
-  return updated;
+  return withFileLock(getRemoteTaskFile(), async () => {
+    const tasks = await loadTasks();
+    const index = tasks.findIndex((task) => task.id === id);
+    if (index < 0) throw new Error('Remote task not found');
+    const updated = updater(tasks[index]);
+    tasks[index] = updated;
+    await saveTasks(tasks);
+    return updated;
+  });
 }
 
 export async function buildRemoteTaskPreview(task: RemoteTaskRecord): Promise<RemoteTaskPreview> {
@@ -230,8 +226,10 @@ export function createRemoteTasksApi(ctx: { gatewayManager: GatewayManager }): C
         approvedAt: null,
         completedAt: null,
       };
-      const tasks = [task, ...(await loadTasks())].slice(0, MAX_TASKS);
-      await saveTasks(tasks);
+      await withFileLock(getRemoteTaskFile(), async () => {
+        const tasks = [task, ...(await loadTasks())].slice(0, MAX_TASKS);
+        await saveTasks(tasks);
+      });
       return { success: true, task };
     },
 
@@ -261,12 +259,15 @@ export function createRemoteTasksApi(ctx: { gatewayManager: GatewayManager }): C
     reject: async (payload: RemoteTaskIdPayload) => {
       const id = requireString(payload?.id, 'id');
       const updatedAt = nowIso();
-      const task = await updateTask(id, (current) => ({
-        ...current,
-        status: 'rejected',
-        updatedAt,
-        completedAt: updatedAt,
-      }));
+      const task = await updateTask(id, (current) => {
+        if (current.status === 'running') throw new Error('Remote task is already running');
+        return {
+          ...current,
+          status: 'rejected',
+          updatedAt,
+          completedAt: updatedAt,
+        };
+      });
       return { success: true, task };
     },
 
@@ -275,6 +276,9 @@ export function createRemoteTasksApi(ctx: { gatewayManager: GatewayManager }): C
       let task = await updateTask(id, (current) => {
         if (current.status === 'pendingApproval') {
           throw new Error('Remote task requires approval');
+        }
+        if (current.status === 'running') {
+          throw new Error('Remote task is already running; reconcile the existing execution before retrying');
         }
         if (current.status === 'completed' || current.status === 'rejected') {
           return current;

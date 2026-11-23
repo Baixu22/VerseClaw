@@ -82,26 +82,33 @@ export function createKnowledgeSourceSync(input: {
         if (!entry.isFile()) continue;
         const name = relative(root, path).replaceAll('\\', '/');
         if (!input.patterns.some(pattern => matchesGlob(process.platform === 'win32' ? name.toLowerCase() : name, process.platform === 'win32' ? pattern.toLowerCase() : pattern))) continue;
-        const info = await lstat(path);
-        if (info.isSymbolicLink()) continue;
-        if (info.size === 0 || info.size > maxBytes) throw new Error(`Knowledge source is empty or exceeds its byte budget: ${name}`);
-        const canonical = await realpath(path);
-        if (!inside(canonicalRoot, canonical)) throw new Error('Source path escapes watched root');
-        totalBytes += info.size;
-        if (totalBytes > 16 * 1024 * 1024) { complete = false; return; }
-        const handle = await open(path, 'r');
         try {
-          const before = await handle.stat();
-          if (before.size === 0 || before.size > maxBytes) throw new Error(`Knowledge source is empty or exceeds its byte budget: ${name}`);
-          if (!before.isFile() || before.dev !== info.dev || before.ino !== info.ino) { complete = false; continue; }
-          const bytes = await handle.readFile();
-          const after = await handle.stat();
-          if (before.size !== after.size || before.mtimeMs !== after.mtimeMs || bytes.length !== after.size) { complete = false; continue; }
-          if (bytes.includes(0)) throw new Error(`Knowledge source is not text: ${name}`);
-          const body = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
-          if (!body.trim()) throw new Error(`Knowledge source has no content: ${name}`);
-          current.set(name, { snapshot: { digest: hash(bytes), updatedAt: after.mtime.toISOString(), bytes: bytes.length }, body });
-        } finally { await handle.close(); }
+          const info = await lstat(path);
+          if (info.isSymbolicLink()) continue;
+          if (info.size === 0 || info.size > maxBytes) throw new Error(`Knowledge source is empty or exceeds its byte budget: ${name}`);
+          const canonical = await realpath(path);
+          if (!inside(canonicalRoot, canonical)) throw new Error('Source path escapes watched root');
+          totalBytes += info.size;
+          if (totalBytes > 16 * 1024 * 1024) { complete = false; return; }
+          const handle = await open(path, 'r');
+          try {
+            const before = await handle.stat();
+            if (before.size === 0 || before.size > maxBytes) throw new Error(`Knowledge source is empty or exceeds its byte budget: ${name}`);
+            if (!before.isFile() || before.dev !== info.dev || before.ino !== info.ino) { complete = false; continue; }
+            const bytes = await handle.readFile();
+            const after = await handle.stat();
+            if (before.size !== after.size || before.mtimeMs !== after.mtimeMs || bytes.length !== after.size) { complete = false; continue; }
+            if (bytes.includes(0)) throw new Error(`Knowledge source is not text: ${name}`);
+            const body = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
+            if (!body.trim()) throw new Error(`Knowledge source has no content: ${name}`);
+            current.set(name, { snapshot: { digest: hash(bytes), updatedAt: after.mtime.toISOString(), bytes: bytes.length }, body });
+          } finally { await handle.close(); }
+        } catch (error) {
+          // Preserve unreadable files' cursors and suppress withdrawal inference,
+          // while allowing independent readable files to advance.
+          complete = false;
+          input.onError(error);
+        }
       }
     }
     await walk(root);

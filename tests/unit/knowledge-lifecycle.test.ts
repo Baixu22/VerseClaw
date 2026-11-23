@@ -1,9 +1,10 @@
-import { mkdirSync, rmSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import type { KnowledgeChangeOperation } from '../../shared/host-api/contract';
+import { GovernanceStore } from '../../openclaw_runtime/src/knowledge/governance-store';
 
 vi.mock('electron', () => ({
   shell: { openPath: vi.fn(async () => '') },
@@ -39,15 +40,80 @@ describe('KS-08 memory-wiki lifecycle Main RPC wiring', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     closeOpenClawStateDatabaseForTest();
     rmSync(root, { recursive: true, force: true });
+  });
+
+  it.each(['draft', 'proposal', 'journal'])('resumes committed Wiki effects after the %s persistence window fails', async (failure) => {
+    let revision = 1, calls = 0;
+    const rpc = vi.fn(async (method: string) => {
+      if (method === 'wiki.lifecycleMetadata') return { revision, status: 'active' };
+      if (method === 'wiki.update') { calls++; revision++; return { changed: true, revision, pagePath: 'notes/target.md' }; }
+      throw Error(method);
+    });
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: { rpc } as never });
+    const draft = (await api.createDraft({ title: 'Recovery', body: 'Updated content', type: 'procedure', sourceIds: [], createdBy: 'agent' })).draft!;
+    const proposal = (await api.proposeChange({ operation: 'update', targetPageIds: ['notes/target.md'], draftId: draft.id, reason: 'repair', diff: '+ updated' })).proposal!;
+    await api.reviewDraft({ id: draft.id, action: 'approve' });
+    const candidateOriginal = GovernanceStore.prototype.saveCandidate;
+    const proposalOriginal = GovernanceStore.prototype.saveProposal;
+    let failed = false;
+    vi.spyOn(GovernanceStore.prototype, 'saveCandidate').mockImplementation(function (this: GovernanceStore, record) {
+      if (!failed && failure === 'draft' && record.status === 'applied') { failed = true; throw Error('fixture metadata failure'); }
+      return candidateOriginal.call(this, record);
+    });
+    vi.spyOn(GovernanceStore.prototype, 'saveProposal').mockImplementation(function (this: GovernanceStore, record) {
+      if (!failed && failure === 'proposal' && record.status === 'applied') { failed = true; throw Error('fixture metadata failure'); }
+      const result = proposalOriginal.call(this, record);
+      if (!failed && failure === 'journal' && record.status === 'applied') { failed = true; throw Error('fixture metadata failure'); }
+      return result;
+    });
+    await expect(api.applyReviewedChange({ id: proposal.id })).rejects.toThrow('fixture metadata failure');
+    expect(calls).toBe(1); expect(revision).toBe(2);
+    const recovered = await api.applyReviewedChange({ id: proposal.id });
+    expect(recovered).toMatchObject({ success: true, draft: { status: 'applied' }, proposal: { status: 'applied' }, receipt: { status: 'committed', subjectRevision: '2' } });
+    expect(calls).toBe(1);
+  });
+
+  it('excludes uncommitted intent journals from governance receipts', async () => {
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+    const dir = join(root, 'knowledge', 'operations'); mkdirSync(dir, { recursive: true });
+    for (const state of ['intent', 'wiki_committed', 'json_committed', 'failed']) {
+      writeFileSync(join(dir, `${state}.json`), JSON.stringify({ schema: 'knowledge-governance-operation.v1', operationId: state, kind: 'review_apply',
+        proposalId: 'absent', draftId: 'absent', idempotencyKey: state, state, operation: 'update', subjectId: 'fixture.md', contentDigest: 'fixture', updatedAt: '2026-11-23T00:00:00Z' }));
+    }
+    const result = await api.listGovernanceReceipts();
+    expect(result.receipts.map(item => item.idempotencyKey).sort()).toEqual(['failed', 'json_committed', 'wiki_committed']);
+    expect(result.receipts.find(item => item.idempotencyKey === 'failed')?.status).toBe('failed');
+    expect(result.receipts.find(item => item.idempotencyKey === 'failed')?.committedAt).toBeUndefined();
+    expect(result.receipts.filter(item => item.status === 'committed').every(item => item.committedAt)).toBe(true);
+  });
+
+  it.each(['archived', 'revoked'])('restores %s pages using metadata revision instead of denied content', async status => {
+    const rpc = vi.fn(async (method: string, payload: unknown) => {
+      if (method === 'wiki.get') return { status: 'denied', reason: status };
+      if (method === 'wiki.lifecycleMetadata') return { revision: 7, status };
+      if (method === 'wiki.restore') { expect(payload).toMatchObject({ expectedRevision: 7 }); return { changed: true, revision: 8, status: 'active' }; }
+      throw Error(method);
+    });
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: { rpc } as never });
+    const draft = (await api.createDraft({ title: 'Restore', body: 'Restore reviewed page', type: 'procedure', sourceIds: [], createdBy: 'agent' })).draft!;
+    const proposal = (await api.proposeChange({ operation: 'restore', targetPageIds: ['notes/target.md'], draftId: draft.id, reason: 'restore' })).proposal!;
+    expect(proposal.expectedRevision).toBe(7);
+    await api.reviewDraft({ id: draft.id, action: 'approve' });
+    expect((await api.applyReviewedChange({ id: proposal.id })).success).toBe(true);
+    expect(rpc.mock.calls.some(([method]) => method === 'wiki.get')).toBe(false);
   });
 
   for (const operation of LIFECYCLE_OPS) {
     it(`routes ${operation} through wiki.${operation} with expectedRevision CAS and EffectReceipt`, async () => {
       const gatewayManager = {
         rpc: vi.fn(async (method: string) => {
-          if (method === 'wiki.get') return { revision: 1, status: 'active', path: 'notes/target.md' };
+          if (method === 'wiki.lifecycleMetadata') return { revision: 1, status: 'active', path: 'notes/target.md' };
           if (method === `wiki.${operation}`) return { changed: true, revision: 2, status: operation === 'delete' ? 'deleted' : 'active' };
           throw new Error(`unexpected rpc ${method}`);
         }),
@@ -117,7 +183,7 @@ describe('KS-08 memory-wiki lifecycle Main RPC wiring', () => {
     let wikiRevision = 1;
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
-        if (method === 'wiki.get') return { revision: wikiRevision, path: 'notes/target.md' };
+        if (method === 'wiki.lifecycleMetadata') return { revision: wikiRevision, path: 'notes/target.md' };
         if (method.startsWith('wiki.')) throw new Error('lifecycle RPC must not run for stale revision');
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -150,7 +216,7 @@ describe('KS-08 memory-wiki lifecycle Main RPC wiring', () => {
   it('rejects the same lifecycle idempotency key with a different draft digest', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
-        if (method === 'wiki.get') return { revision: 1, path: 'notes/target.md' };
+        if (method === 'wiki.lifecycleMetadata') return { revision: 1, path: 'notes/target.md' };
         throw new Error(`unexpected rpc ${method}`);
       }),
     };

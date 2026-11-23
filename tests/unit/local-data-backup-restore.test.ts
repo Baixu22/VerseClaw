@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createWriteStream, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync } from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createWriteStream, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync, existsSync, symlinkSync } from 'node:fs';
+import fs from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, posix } from 'node:path';
 import { createRequire } from 'node:module';
@@ -128,7 +129,7 @@ describe('backup restore safety', () => {
   let assetRoot: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'clawx-restore-test-'));
+    dir = realpathSync(mkdtempSync(join(tmpdir(), 'clawx-restore-test-')));
     // A POSIX-style root keeps archive encoding platform-independent (the
     // `posix/` branch), so these tests assert restore semantics rather than
     // Windows path formatting.
@@ -136,6 +137,7 @@ describe('backup restore safety', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     rmSync(dir, { recursive: true, force: true });
   });
 
@@ -145,6 +147,48 @@ describe('backup restore safety', () => {
       content,
     };
   }
+
+  it.each(['before-preview', 'after-preview'])('rejects a destination junction inserted %s', async (when) => {
+    const allowed = join(dir, 'allowed');
+    const outside = join(dir, 'outside');
+    mkdirSync(allowed);
+    mkdirSync(outside);
+    const linked = join(allowed, 'linked');
+    const target = join(linked, 'restored.txt');
+    const archivePath = await makeArchive(dir, {
+      name: 'junction.tar.gz',
+      manifest: { schemaVersion: 1, createdAt: '2026-11-23T00:00:00Z', assets: [{ kind: 'workspace', sourcePath: allowed }] },
+      entries: [entryFor(target, 'must stay inside')],
+    });
+    if (when === 'before-preview') {
+      symlinkSync(outside, linked, process.platform === 'win32' ? 'junction' : 'dir');
+      const preview = await previewRestore(archivePath);
+      expect(preview.counts).toEqual({ create: 0, skipped: 0, rejected: 1 });
+      expect(preview.entries[0].reason).toMatch(/symbolic link|junction/);
+    } else {
+      const readFile = fs.readFile.bind(fs);
+      vi.spyOn(fs, 'readFile').mockImplementationOnce(async (...args) => {
+        symlinkSync(outside, linked, process.platform === 'win32' ? 'junction' : 'dir');
+        return readFile(...args);
+      });
+    }
+    const result = await restoreBackupArchive(archivePath);
+    expect(result.success).toBe(false);
+    expect(result.written).toEqual([]);
+    expect(existsSync(join(outside, 'restored.txt'))).toBe(false);
+  });
+
+  it('creates regular nested destinations and preserves their contents on a second restore', async () => {
+    const target = join(dir, 'new-state', 'agents', 'main', 'session.jsonl');
+    const archivePath = await makeArchive(dir, {
+      name: 'regular.tar.gz',
+      manifest: { schemaVersion: 1, createdAt: '2026-11-23T00:00:00Z', assets: [{ kind: 'state', sourcePath: join(dir, 'new-state') }] },
+      entries: [entryFor(target, 'restored session')],
+    });
+    expect(await restoreBackupArchive(archivePath)).toMatchObject({ success: true, written: [target] });
+    expect(readFileSync(target, 'utf8')).toBe('restored session');
+    expect(await restoreBackupArchive(archivePath)).toMatchObject({ success: true, written: [], skipped: [target] });
+  });
 
   it('reports a missing archive instead of throwing', async () => {
     const preview = await previewRestore(join(dir, 'nope.tar.gz'));

@@ -1,5 +1,6 @@
 // Runtime capabilities consumed by the host's chat knowledge adapter.
 export { getMemoryWikiPage } from "./src/query.js";
+export { applyMemoryWikiMutation, normalizeMemoryWikiMutationInput, readMemoryWikiLifecycleMetadata } from "./src/apply.js";
 export { ingestMemoryWikiSource } from "./src/ingest.js";
 export { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
 export { createMemoryWikiEmbeddingService } from "./src/retrieval-embeddings.js";

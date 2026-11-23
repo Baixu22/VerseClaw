@@ -26,6 +26,19 @@ type SkillEntry = SkillConfigUpdates & Record<string, unknown>;
 interface SkillStoreDocument {
     entries?: Record<string, SkillEntry>;
     runtimeMigrated?: boolean;
+    removedManagedSkills?: string[];
+}
+
+/** User removal survives startup reconciliation; an explicit install clears it. */
+export async function setManagedSkillRemoved(slug: string, removed: boolean): Promise<void> {
+    await withConfigLock(async () => {
+        const store = await getSkillStore();
+        const values = store.get('removedManagedSkills') ?? [];
+        if (!Array.isArray(values) || values.some(value => typeof value !== 'string')) throw new Error('Invalid managed skill removal preferences');
+        const next = new Set<string>(values);
+        if (removed) next.add(slug); else next.delete(slug);
+        store.set('removedManagedSkills', [...next]);
+    });
 }
 
 interface PreinstalledSkillSpec {
@@ -445,74 +458,79 @@ async function tryReadMarker(markerPath: string): Promise<PreinstalledMarker | n
  * - If marker exists with a different version, skip by default to avoid overwriting edits.
  */
 export async function ensurePreinstalledSkillsInstalled(): Promise<void> {
-    const skills = await readPreinstalledManifest();
-    if (skills.length === 0) {
-        return;
-    }
-
-    const sourceRoot = resolvePreinstalledSkillsSourceRoot();
-    if (!sourceRoot) {
-        logger.warn('Preinstalled skills source root not found; skipping preinstall.');
-        return;
-    }
-    const lockVersions = await readPreinstalledLockVersions(sourceRoot);
-
-    const targetRoot = getOpenClawSkillsDir();
-    await mkdir(targetRoot, { recursive: true });
-    const toEnable: string[] = [];
-
-    for (const spec of skills) {
-        const sourceDir = join(sourceRoot, spec.slug);
-        const sourceManifest = join(sourceDir, 'SKILL.md');
-        if (!existsSync(sourceManifest)) {
-            logger.warn(`Preinstalled skill source missing SKILL.md, skipping: ${sourceDir}`);
-            continue;
+    return withConfigLock(async () => {
+        const skills = await readPreinstalledManifest();
+        if (skills.length === 0) {
+            return;
         }
 
-        const targetDir = join(targetRoot, spec.slug);
-        const targetManifest = join(targetDir, 'SKILL.md');
-        const markerPath = join(targetDir, PREINSTALLED_MARKER_NAME);
-        const desiredVersion = lockVersions.get(spec.slug)
-            || (spec.version || 'unknown').trim()
-            || 'unknown';
-        const marker = await tryReadMarker(markerPath);
+        const sourceRoot = resolvePreinstalledSkillsSourceRoot();
+        if (!sourceRoot) {
+            logger.warn('Preinstalled skills source root not found; skipping preinstall.');
+            return;
+        }
+        const lockVersions = await readPreinstalledLockVersions(sourceRoot);
 
-        if (existsSync(targetManifest)) {
-            if (!marker) {
-                logger.info(`Skipping user-managed skill: ${spec.slug}`);
+        const targetRoot = getOpenClawSkillsDir();
+        await mkdir(targetRoot, { recursive: true });
+        const toEnable: string[] = [];
+
+        const removed = (await getSkillStore()).get('removedManagedSkills') ?? [];
+        if (!Array.isArray(removed) || removed.some(value => typeof value !== 'string')) throw new Error('Invalid managed skill removal preferences');
+        for (const spec of skills) {
+            if (removed.includes(spec.slug)) continue;
+            const sourceDir = join(sourceRoot, spec.slug);
+            const sourceManifest = join(sourceDir, 'SKILL.md');
+            if (!existsSync(sourceManifest)) {
+                logger.warn(`Preinstalled skill source missing SKILL.md, skipping: ${sourceDir}`);
                 continue;
             }
-            if (marker.version === desiredVersion) {
+
+            const targetDir = join(targetRoot, spec.slug);
+            const targetManifest = join(targetDir, 'SKILL.md');
+            const markerPath = join(targetDir, PREINSTALLED_MARKER_NAME);
+            const desiredVersion = lockVersions.get(spec.slug)
+                || (spec.version || 'unknown').trim()
+                || 'unknown';
+            const marker = await tryReadMarker(markerPath);
+
+            if (existsSync(targetManifest)) {
+                if (!marker) {
+                    logger.info(`Skipping user-managed skill: ${spec.slug}`);
+                    continue;
+                }
+                if (marker.version === desiredVersion) {
+                    continue;
+                }
+                logger.info(`Skipping preinstalled skill update for ${spec.slug} (local marker version=${marker.version}, desired=${desiredVersion})`);
                 continue;
             }
-            logger.info(`Skipping preinstalled skill update for ${spec.slug} (local marker version=${marker.version}, desired=${desiredVersion})`);
-            continue;
-        }
 
-        try {
-            await mkdir(targetDir, { recursive: true });
-            await cpAsyncSafe(sourceDir, targetDir);
-            const markerPayload: PreinstalledMarker = {
-                source: 'verse-claw-preinstalled',
-                slug: spec.slug,
-                version: desiredVersion,
-                installedAt: new Date().toISOString(),
-            };
-            await writeFile(markerPath, `${JSON.stringify(markerPayload, null, 2)}\n`, 'utf-8');
-            if (spec.autoEnable) {
-                toEnable.push(spec.slug);
+            try {
+                await mkdir(targetDir, { recursive: true });
+                await cpAsyncSafe(sourceDir, targetDir);
+                const markerPayload: PreinstalledMarker = {
+                    source: 'verse-claw-preinstalled',
+                    slug: spec.slug,
+                    version: desiredVersion,
+                    installedAt: new Date().toISOString(),
+                };
+                await writeFile(markerPath, `${JSON.stringify(markerPayload, null, 2)}\n`, 'utf-8');
+                if (spec.autoEnable) {
+                    toEnable.push(spec.slug);
+                }
+                logger.info(`Installed preinstalled skill: ${spec.slug} -> ${targetDir}`);
+            } catch (error) {
+                logger.warn(`Failed to install preinstalled skill ${spec.slug}:`, error);
             }
-            logger.info(`Installed preinstalled skill: ${spec.slug} -> ${targetDir}`);
-        } catch (error) {
-            logger.warn(`Failed to install preinstalled skill ${spec.slug}:`, error);
         }
-    }
 
-    if (toEnable.length > 0) {
-        try {
-            await setSkillsEnabled(toEnable, true);
-        } catch (error) {
-            logger.warn('Failed to auto-enable preinstalled skills:', error);
+        if (toEnable.length > 0) {
+            try {
+                await setSkillsEnabled(toEnable, true);
+            } catch (error) {
+                logger.warn('Failed to auto-enable preinstalled skills:', error);
+            }
         }
-    }
+    });
 }

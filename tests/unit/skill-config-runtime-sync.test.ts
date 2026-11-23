@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const state = vi.hoisted(() => ({
   root: '', config: {} as Record<string, unknown>,
   legacy: {} as Record<string, unknown>, migrated: false,
-  read: vi.fn(), write: vi.fn(),
+  read: vi.fn(), write: vi.fn(), removed: [] as string[],
 }));
 vi.mock('@electron/utils/paths', () => ({
   getDataDir: () => state.root,
@@ -14,15 +14,15 @@ vi.mock('@electron/utils/paths', () => ({
   getOpenClawDir: () => join(state.root, 'runtime'),
   getOpenClawResolvedDir: () => join(state.root, 'runtime'),
   getOpenClawConfigPath: () => join(state.root, 'openclaw.json'),
-  getResourcesDir: () => '',
+  getResourcesDir: () => join(state.root, 'resources'),
 }));
 vi.mock('@electron/utils/channel-config', () => ({
   readOpenClawConfig: () => state.read(),
   writeOpenClawConfig: (value: unknown) => state.write(value),
 }));
 vi.mock('electron-store', () => ({ default: class {
-  get(key: string) { return key === 'entries' ? structuredClone(state.legacy) : state.migrated; }
-  set(key: string, value: unknown) { if (key === 'runtimeMigrated') state.migrated = value === true; }
+  get(key: string) { return key === 'entries' ? structuredClone(state.legacy) : key === 'removedManagedSkills' ? state.removed : state.migrated; }
+  set(key: string, value: unknown) { if (key === 'runtimeMigrated') state.migrated = value === true; if (key === 'removedManagedSkills') state.removed = value as string[]; }
 } }));
 
 async function api() { return import('@electron/utils/skill-config'); }
@@ -34,7 +34,7 @@ describe('runtime-owned skill configuration', () => {
   beforeEach(() => {
     vi.resetModules(); vi.clearAllMocks();
     state.root = mkdtempSync(join(tmpdir(), 'skill-canonical-'));
-    state.config = {}; state.legacy = {}; state.migrated = false;
+    state.config = {}; state.legacy = {}; state.migrated = false; state.removed = [];
     state.read.mockImplementation(async () => structuredClone(state.config));
     state.write.mockImplementation(async (config: Record<string, unknown>) => { state.config = structuredClone(config); });
   });
@@ -51,6 +51,25 @@ describe('runtime-owned skill configuration', () => {
     const restarted = await api();
     expect(await restarted.getSkillConfig('legacy')).toBeUndefined();
     expect(state.config).toMatchObject({ skills: { limits: { maxSkillsInPrompt: 20 } }, agents: { list: [] } });
+  });
+
+  it('keeps an explicitly removed preinstalled skill absent after restart and permits reinstall', async () => {
+    const resources = join(state.root, 'resources');
+    mkdirSync(join(resources, 'skills'), { recursive: true });
+    mkdirSync(join(resources, 'preinstalled-skills', 'pdf'), { recursive: true });
+    writeFileSync(join(resources, 'skills', 'preinstalled-manifest.json'), JSON.stringify({ skills: [{ slug: 'pdf', version: '1', autoEnable: true }] }));
+    writeFileSync(join(resources, 'preinstalled-skills', 'pdf', 'SKILL.md'), '# Fixture PDF');
+    const initial = await api();
+    await initial.ensurePreinstalledSkillsInstalled();
+    const target = join(state.root, 'verse-claw-skills', 'pdf');
+    expect(existsSync(target)).toBe(true); expect((await initial.getSkillConfig('pdf'))?.enabled).toBe(true);
+    await initial.setManagedSkillRemoved('pdf', true);
+    rmSync(target, { recursive: true, force: true }); await initial.removeSkillConfig('pdf');
+    vi.resetModules();
+    const restarted = await api(); await restarted.ensurePreinstalledSkillsInstalled();
+    expect(existsSync(target)).toBe(false); expect(await restarted.getSkillConfig('pdf')).toBeUndefined();
+    await restarted.setManagedSkillRemoved('pdf', false); await restarted.ensurePreinstalledSkillsInstalled();
+    expect(existsSync(target)).toBe(true);
   });
 
   it('updates the canonical entries and discovers only the existing managed root', async () => {

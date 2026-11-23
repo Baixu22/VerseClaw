@@ -101,6 +101,24 @@ function isInside(child: string, parent: string): boolean {
   return Boolean(rel) && !rel.startsWith('..') && !path.isAbsolute(rel);
 }
 
+/** Reject link redirection in existing destination components, including dangling links. */
+async function assertRestoreDestination(target: string, roots: string[]): Promise<void> {
+  if (!roots.some((root) => isInside(target, root))) {
+    throw new Error('target escapes the manifest asset roots');
+  }
+  let current = path.parse(target).root;
+  for (const part of path.relative(current, target).split(path.sep)) {
+    current = path.join(current, part);
+    const info = await fs.lstat(current).catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    });
+    if (!info) continue;
+    if (info.isSymbolicLink()) throw new Error(`restore destination contains a symbolic link or junction: ${current}`);
+    if (current !== target && !info.isDirectory()) throw new Error(`restore destination ancestor is not a directory: ${current}`);
+  }
+}
+
 function validateManifest(value: unknown): { manifest: BackupManifest | null; error?: string } {
   if (!value || typeof value !== 'object') return { manifest: null, error: 'manifest is not an object' };
   const obj = value as Record<string, unknown>;
@@ -266,13 +284,14 @@ export async function previewRestore(archivePath: string): Promise<RestorePrevie
     }
 
     const target = path.resolve(decoded);
-    // Path-traversal defence: the decoded target must stay inside a declared asset.
-    if (!roots.some((root) => isInside(target, root))) {
+    try {
+      await assertRestoreDestination(target, roots);
+    } catch (error) {
       entries.push({
         archivePath: file.archivePath,
         targetPath: target,
         action: 'rejected',
-        reason: 'target escapes the manifest asset roots',
+        reason: error instanceof Error ? error.message : String(error),
       });
       continue;
     }
@@ -330,20 +349,20 @@ export async function restoreBackupArchive(
     if (entry.action === 'skip-existing') result.skipped.push(entry.targetPath);
   }
 
-  if (!preview.manifest) {
+  if (!preview.valid || !preview.manifest) {
     result.errors.push('archive manifest is missing or invalid; nothing was restored');
     return result;
   }
 
   if (dryRun) {
-    result.success = true;
+    result.success = result.rejected.length === 0;
     return result;
   }
 
   const tar = require('tar') as typeof import('tar');
   const toCreate = preview.entries.filter((e) => e.action === 'create');
   if (toCreate.length === 0) {
-    result.success = true;
+    result.success = result.rejected.length === 0;
     return result;
   }
 
@@ -368,13 +387,16 @@ export async function restoreBackupArchive(
         result.errors.push(`payload missing from archive: ${entry.archivePath}`);
         throw new Error('restore payload missing');
       }
+      const roots = preview.manifest.assets.map((asset) => path.resolve(asset.sourcePath));
+      await assertRestoreDestination(entry.targetPath, roots);
       await fs.mkdir(path.dirname(entry.targetPath), { recursive: true });
+      await assertRestoreDestination(entry.targetPath, roots);
       // wx: never clobber, even if the target appeared since the preview.
       await fs.writeFile(entry.targetPath, data, { flag: 'wx', mode: 0o600 });
       result.written.push(entry.targetPath);
     }
 
-    result.success = true;
+    result.success = result.rejected.length === 0;
   } catch (error) {
     result.errors.push(String(error));
     // Roll back everything we created in this run.
