@@ -407,6 +407,11 @@
   --color-chat-menu-hover: #f0f0ec;
   --color-chat-primary: #1f1f1d;
   --color-chat-primary-text: #ffffff;
+  --color-chat-primary-hover: #333331;
+  --color-chat-disabled: #e4e4df;
+  --color-chat-disabled-text: #94948e;
+  --color-chat-failure-border: #dfdfda;
+  --color-chat-failure: #c93b3b;
   --color-chat-foreground: #1f1f1d;
   --color-chat-secondary: #6e6e68;
   --color-chat-placeholder: #8c8c86;
@@ -442,8 +447,13 @@
   --color-chat-tray-border: rgb(255 255 255 / 0.04);
   --color-chat-menu: #333331;
   --color-chat-menu-hover: #3e3e3b;
-  --color-chat-primary: #f2f2f0;
+  --color-chat-primary: #f3f3f1;
   --color-chat-primary-text: #1f1f1d;
+  --color-chat-primary-hover: #ffffff;
+  --color-chat-disabled: #454542;
+  --color-chat-disabled-text: #8a8a84;
+  --color-chat-failure-border: #4a4a47;
+  --color-chat-failure: #e56464;
   --color-chat-foreground: #ecece9;
   --color-chat-secondary: #9a9a95;
   --color-chat-placeholder: #8a8a85;

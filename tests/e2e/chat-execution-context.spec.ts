@@ -96,7 +96,21 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await app.evaluate(() => (globalThis as unknown as { __executionFixture: { release: (() => void) | null } }).__executionFixture.release?.());
     await expect(progress).toHaveAttribute('data-failed', 'true');
     await expect(progress).toContainText('Read-only workspace mode');
+    const retry = page.getByTestId('worktree-creation-retry');
+    await page.mouse.move(20, 80);
+    await expect(retry).toHaveCSS('background-color', 'rgb(243, 243, 241)');
+    await expect(retry).toHaveCSS('color', 'rgb(31, 31, 29)');
+    await expect(progress).toHaveCSS('border-top-color', 'rgb(74, 74, 71)');
     await page.screenshot({ path: info.outputPath('worktree-permission-failure.png') });
+    await retry.hover(); await expect(retry).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await page.evaluate(() => document.documentElement.classList.remove('dark'));
+    await page.mouse.move(20, 80);
+    await expect(retry).toHaveCSS('background-color', 'rgb(31, 31, 29)');
+    await expect(retry).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(progress).toHaveCSS('border-top-color', 'rgb(223, 223, 218)');
+    await page.screenshot({ path: info.outputPath('worktree-permission-failure-light.png') });
+    await retry.hover(); await expect(retry).toHaveCSS('background-color', 'rgb(51, 51, 49)');
+    await page.evaluate(() => document.documentElement.classList.add('dark'));
     await invoke(page, 'workspaces', 'update', { id: active.id, permissionMode: 'acceptEdits' });
     await page.getByTestId('worktree-creation-retry').click();
     await expect(progress).toHaveAttribute('data-stage', 'creating');
@@ -140,7 +154,15 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await expect(page.getByTestId('session-worktree-submit')).toBeDisabled();
     await expect(page.getByTestId('session-worktree-option-0')).toBeDisabled();
     await expect(input).toHaveValue('Draft protected while running');
+    await expect(create).toHaveCSS('opacity', '1');
+    await expect(create).toHaveCSS('background-color', 'rgb(69, 69, 66)');
+    await expect(create).toHaveCSS('color', 'rgb(138, 138, 132)');
     await page.screenshot({ path: info.outputPath('running-switch-disabled.png') });
+    await page.evaluate(() => document.documentElement.classList.remove('dark'));
+    await expect(create).toHaveCSS('opacity', '1');
+    await expect(create).toHaveCSS('background-color', 'rgb(228, 228, 223)');
+    await expect(create).toHaveCSS('color', 'rgb(148, 148, 142)');
+    await page.screenshot({ path: info.outputPath('running-switch-disabled-light.png') });
     report.runningGuard = true; report.errors = errors; expect(errors).toEqual([]);
     await writeFile(info.outputPath('execution-context.json'), JSON.stringify(report, null, 2));
   } finally {
