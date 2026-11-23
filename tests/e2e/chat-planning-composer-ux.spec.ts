@@ -179,6 +179,8 @@ test('conversation planning, settings and decisions share a compact input surfac
     const actionStyles: Record<string, unknown> = {};
     const captureAction = async (state: string) => {
       await expect(action).toHaveAttribute('data-send-state', state);
+      await page.mouse.move(20, 120);
+      await expect(action).toHaveCSS('background-color', 'rgb(255, 255, 255)');
       const style = await action.evaluate(element => {
         const box = element.getBoundingClientRect(), css = getComputedStyle(element);
         return { width: box.width, height: box.height, radius: css.borderRadius, background: css.backgroundColor, color: css.color };
@@ -229,6 +231,7 @@ test('conversation planning, settings and decisions share a compact input surfac
       await expect(page.getByTestId('chat-knowledge-profile')).toHaveCount(0);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
       expect(overflow).toBe(false);
+      await expect(page.locator('[data-sonner-toast]')).toHaveCount(0, { timeout: 10000 });
       await capture(`rest-${language}-dark-960`);
     }
     steps.fourLocalesAndNarrowThemes = true;
