@@ -1522,9 +1522,19 @@ export class AgentBrowserService {
         grant: boundaryExecutor.getCurrentGrantContext(),
       }),
     );
+    const readFullAccess = async <T>(read: () => Promise<T>): Promise<T> => {
+      const binding = record.fullAccessBinding;
+      if (!this.hasFullAccessBinding(record, binding, networkRecorder)) throw new Error('Full access approval changed');
+      const value = await read();
+      if (!this.hasFullAccessBinding(record, binding, networkRecorder)) throw new Error('Full access approval changed');
+      return value;
+    };
     const fullAccessExecutor = new FullAccessToolExecutor(
-      connection,
-      networkRecorder,
+      { evaluate: (params) => readFullAccess(() => connection.evaluate(params)) },
+      {
+        isEnabled: () => networkRecorder.isEnabled,
+        getDetails: (ids, options) => readFullAccess(() => networkRecorder.getDetails(ids, options)),
+      },
       () => {
         this.refreshRuntimeModeExpiry(record);
         const origin = getOriginFromUrl(webContents.getURL());
@@ -2069,8 +2079,10 @@ export class AgentBrowserService {
     const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
     const requestIds = normalizeRequestIds(payload.requestIds);
     const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const binding = record.fullAccessBinding;
     const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
-    return { details: revealRaw ? details : details.map(redactNetworkRequestDetail) };
+    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
+    return { details: keepRaw ? details : details.map(redactNetworkRequestDetail) };
   }
 
   /**
@@ -2090,9 +2102,11 @@ export class AgentBrowserService {
     const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
     const filter = normalizeNetworkWaitFilter(payload.filter);
     const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const binding = record.fullAccessBinding;
     const requests = await recorder.waitForRequests(filter, { redacted: !revealRaw });
+    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
     return {
-      requests: requests.map((meta) => toListMeta(revealRaw ? meta : redactNetworkRequestMeta(meta))),
+      requests: requests.map((meta) => toListMeta(keepRaw ? meta : redactNetworkRequestMeta(meta))),
     };
   }
 
@@ -2104,8 +2118,10 @@ export class AgentBrowserService {
     const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
     const requestIds = normalizeRequestIds(payload.requestIds);
     const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const binding = record.fullAccessBinding;
     const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
-    return { comparison: compareNetworkRequests(details) };
+    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
+    return { comparison: compareNetworkRequests(keepRaw ? details : details.map(redactNetworkRequestDetail)) };
   }
 
   /**
@@ -2469,8 +2485,12 @@ export class AgentBrowserService {
    * normal_restricted / controlled_enhanced 模式下永远返回 false（脱敏）。
    */
   private canRevealRaw(record: AgentBrowserRecord, redacted: boolean | undefined): boolean {
-    if (redacted !== false) return false;
+    if (redacted !== false || !this.isEnabled() || record.closing || this.sessions.get(record.session.id) !== record) return false;
     return this.isFullAccess(record);
+  }
+
+  private hasFullAccessBinding(record: AgentBrowserRecord, binding: AgentBrowserRecord['fullAccessBinding'], recorder: BrowserNetworkRecorder): boolean {
+    return recorder.isEnabled && binding !== undefined && record.fullAccessBinding === binding && this.canRevealRaw(record, false);
   }
 
   private requireWindow(record: AgentBrowserRecord): AgentBrowserWindow {

@@ -34,6 +34,8 @@ from an earlier run cannot change the successor or remove its cancellation contr
 Full access binds the actual tab and exact origin at approval time. Moving to another
 origin or tab invalidates that binding; debugger attachment and caller payloads cannot
 replace it. Unredacted network reads use the same binding as full-access tools.
+Asynchronous reads retain the captured approval until their result is returned.
+Revocation, expiry or a replacement approval prevents an earlier read from returning raw data.
 
 A replay draft is consumed synchronously before network dispatch. Concurrent calls,
 timeouts and unknown outcomes cannot reuse it. JS, SourceMap and replay fetches use

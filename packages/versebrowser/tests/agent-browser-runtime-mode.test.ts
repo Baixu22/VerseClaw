@@ -19,7 +19,7 @@ import { AgentBrowserService } from '../src/engine/service';
 class FakeDebugger extends EventEmitter {
   readonly attach = vi.fn(async (_version: string) => undefined);
   readonly detach = vi.fn(async () => undefined);
-  readonly sendCommand = vi.fn(async (method: string, _params?: Record<string, unknown>) => {
+  readonly sendCommand = vi.fn(async (method: string, _params?: Record<string, unknown>): Promise<unknown> => {
     if (method === 'Accessibility.getFullAXTree') {
       return {
         nodes: [
@@ -222,6 +222,93 @@ describe('agent browser runtime mode', () => {
       const denied = await service.networkGetRequestDetails({ sessionId: session.id, requestIds: ['private-request'], redacted: false });
       expect(JSON.stringify(denied)).not.toContain('fixture-secret');
     } finally { await service.close(session.id); }
+  });
+
+  it('redacts a pending network wait when another origin supplies the matching request', async () => {
+    const { service, windows } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
+    service.setEnabled(true);
+    try {
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      await service.takeSnapshot({ sessionId: session.id });
+      const waiting = service.networkWaitForRequests({ sessionId: session.id, redacted: false, filter: { urlIncludes: '/pending', timeoutMs: 500 } });
+      await service.navigate({ sessionId: session.id, url: 'https://other.example/' });
+      windows[0].webContents.debugger.emit('message', {}, 'Network.requestWillBeSent', {
+        requestId: 'pending-request', request: { url: 'https://other.example/pending?token=pending-fixture-secret', method: 'GET', headers: { Authorization: 'Bearer pending-fixture-secret' } },
+      });
+      const result = await waiting;
+      expect(result.requests).toHaveLength(1);
+      expect(JSON.stringify(result)).not.toContain('pending-fixture-secret');
+    } finally {
+      await service.close(session.id);
+    }
+  });
+
+  it.each(['networkGetRequestDetails', 'fullAccessGetNetworkDetails'] as const)('keeps %s bound to the original approval while its body read is pending', async (method) => {
+    const { service, windows } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
+    service.setEnabled(true);
+    let releaseBody: ((body: unknown) => void) | undefined;
+    let pending: Promise<unknown> | undefined;
+    try {
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      await service.takeSnapshot({ sessionId: session.id });
+      const debuggerApi = windows[0].webContents.debugger;
+      debuggerApi.emit('message', {}, 'Network.requestWillBeSent', {
+        requestId: 'pending-body', request: { url: 'https://approved.example/body', method: 'GET', headers: { Authorization: 'Bearer pending-fixture-secret' } },
+      });
+      debuggerApi.sendCommand.mockImplementationOnce(() => new Promise(resolve => { releaseBody = resolve; }));
+      pending = service[method]({ sessionId: session.id, requestIds: ['pending-body'], redacted: false });
+      await vi.waitFor(() => expect(releaseBody).toBeTypeOf('function'));
+      await service.navigate({ sessionId: session.id, url: 'https://other.example/' });
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      releaseBody!({ body: '{"token":"pending-fixture-secret"}' });
+      const result = await pending;
+      expect(JSON.stringify(result)).not.toContain('pending-fixture-secret');
+      if (method === 'fullAccessGetNetworkDetails') expect(result).toMatchObject({ isError: true });
+    } finally {
+      releaseBody?.({ body: '' });
+      await pending;
+      await service.close(session.id);
+    }
+  });
+
+  it.each(['navigation', 'renewal', 'revocation', 'expiry', 'disable', 'reattachment'] as const)('withholds a pending storage result after approval %s', async (change) => {
+    const { service, windows } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
+    service.setEnabled(true);
+    let releaseValue: ((value: unknown) => void) | undefined;
+    let pending: Promise<unknown> | undefined;
+    let restoreClock: (() => void) | undefined;
+    try {
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true, expiresInMs: 10_000 });
+      await service.takeSnapshot({ sessionId: session.id });
+      windows[0].webContents.debugger.sendCommand.mockImplementationOnce(() => new Promise(resolve => { releaseValue = resolve; }));
+      pending = service.fullAccessReadStorage({ sessionId: session.id });
+      await vi.waitFor(() => expect(releaseValue).toBeTypeOf('function'));
+      if (change === 'navigation') await service.navigate({ sessionId: session.id, url: 'https://other.example/' });
+      if (change === 'renewal') await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      if (change === 'revocation') await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'normal_restricted', userApproval: true });
+      if (change === 'expiry') {
+        const now = Date.now();
+        const clock = vi.spyOn(Date, 'now').mockReturnValue(now + 20_000);
+        restoreClock = () => clock.mockRestore();
+      }
+      if (change === 'disable' || change === 'reattachment') service.setEnabled(false);
+      if (change === 'reattachment') {
+        service.setEnabled(true);
+        await service.takeSnapshot({ sessionId: session.id });
+      }
+      releaseValue!({ result: { value: { token: 'pending-fixture-secret' } } });
+      const result = await pending;
+      expect(result).toMatchObject({ isError: true });
+      expect(JSON.stringify(result)).not.toContain('pending-fixture-secret');
+    } finally {
+      releaseValue?.({ result: { value: {} } });
+      await pending;
+      restoreClock?.();
+      await service.close(session.id);
+    }
   });
 
   it('open 默认 normal_restricted 模式', async () => {
