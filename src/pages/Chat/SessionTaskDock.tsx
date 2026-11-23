@@ -84,8 +84,9 @@ function useSessionTask(workspaceId: string | null, sessionKey: string, active: 
   const scope = JSON.stringify([workspaceId, sessionKey]);
   const [view, setView] = useState<{
     scope: string;
-    snapshot: TaskSessionSnapshot;
+    snapshot: TaskSessionSnapshot | null;
     stale: boolean;
+    loading: boolean;
   } | null>(null);
   const [refresh, setRefresh] = useState(0);
   useEffect(() => {
@@ -101,6 +102,9 @@ function useSessionTask(workspaceId: string | null, sessionKey: string, active: 
         return;
       }
       inFlight = true;
+      setView((old) => old?.scope === scope
+        ? { ...old, loading: true }
+        : { scope, snapshot: null, stale: false, loading: true });
       try {
         const result = await hostApi.taskLedger.sessionTask({ workspaceId, sessionKey });
         if (!result.success) throw new Error("Task status unavailable");
@@ -111,10 +115,12 @@ function useSessionTask(workspaceId: string | null, sessionKey: string, active: 
               task?.claim ? [task.claim.sessionKey] : [],
             ),
           ]);
-          setView({ scope, snapshot: result, stale: false });
+          setView({ scope, snapshot: result, stale: false, loading: false });
         }
       } catch {
-        if (!disposed) setView((old) => (old?.scope === scope ? { ...old, stale: true } : null));
+        if (!disposed) setView((old) => ({
+          scope, snapshot: old?.scope === scope ? old.snapshot : null, stale: true, loading: false,
+        }));
       } finally {
         inFlight = false;
         if (queued && !disposed) {
@@ -153,7 +159,8 @@ function useSessionTask(workspaceId: string | null, sessionKey: string, active: 
     scope,
     snapshot: active && view?.scope === scope ? view.snapshot : null,
     stale: active && view?.scope === scope && view.stale,
-    retry: () => setRefresh((value) => value + 1),
+    loading: active && view?.scope === scope && view.loading,
+    retry: () => { if (!view?.loading) setRefresh((value) => value + 1); },
   };
 }
 
@@ -229,7 +236,7 @@ export function SessionTaskDock({
   onOpenTask?: (taskNodeId: string) => void;
 }) {
   const { t, i18n } = useTranslation("taskLedger");
-  const { scope, snapshot, stale, retry } = useSessionTask(
+  const { scope, snapshot, stale, loading, retry } = useSessionTask(
     workspaceId,
     sessionKey,
     hasConversation || projectEntry,
@@ -254,11 +261,23 @@ export function SessionTaskDock({
   const planTodos = plan?.todos ?? [];
   const planVisible = planTodos.length > 0 && runActive;
   const taskId = task?.contract.taskNodeId ?? (planVisible && plan ? `plan:${plan.id}` : "");
+  if (stale && !taskId) return (
+    <section data-testid="session-task-dock" data-placement="composer" data-state="unavailable" data-mode="collapsed" aria-label={t('conversation.task')}>
+      <div data-testid="session-task-panel" role="status" className="flex min-h-9 items-center gap-2 rounded-t-xl border border-b-0 border-border bg-background px-3 text-xs text-amber-700 dark:text-amber-400">
+        <RefreshCw className={cn('size-3.5 shrink-0', loading && 'motion-safe:animate-spin')} aria-hidden="true" />
+        <span className="min-w-0 flex-1" data-testid="session-task-status">{t('conversation.stale')}</span>
+        <button type="button" data-testid="session-task-retry" onClick={retry} disabled={loading}
+          className="shrink-0 rounded px-1.5 py-1 hover:bg-black/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 dark:hover:bg-white/10">
+          {t('conversation.refresh')}
+        </button>
+      </div>
+    </section>
+  );
   if ((!hasConversation && !projectPlan) || !taskId) return null;
   return (
     <TaskDockBody
       key={`${scope}:${taskId}`}
-      {...{ scope, taskId, task, stale, retry, runActive, onOpenTask, t, controlStatus }}
+      {...{ scope, taskId, task, stale, loading, retry, runActive, onOpenTask, t, controlStatus }}
       plan={planVisible ? plan : null}
       locale={i18n.language}
       childrenTasks={projectPlan?.children ?? snapshot?.children ?? []}
@@ -431,6 +450,7 @@ function TaskDockBody({
   projectPlan,
   plan,
   stale,
+  loading,
   retry,
   runActive,
   controlStatus,
@@ -446,6 +466,7 @@ function TaskDockBody({
   projectPlan?: ProjectPlanSnapshot;
   plan?: RunPlanSurface | null;
   stale: boolean;
+  loading: boolean;
   retry: () => void;
   runActive: boolean;
   controlStatus?: LongTaskControlStatus | null;
@@ -660,8 +681,8 @@ function TaskDockBody({
               {status}
               {hasDefinedPlan && <span className="text-muted-foreground/70"> · {completed}/{total}</span>}
             </span>
-            {stale && <button type="button" data-testid="session-task-retry" onClick={retry}
-              className="shrink-0 rounded px-1.5 py-1 text-xs text-amber-700 hover:bg-black/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:text-amber-400 dark:hover:bg-white/10">
+            {stale && <button type="button" data-testid="session-task-retry" onClick={retry} disabled={loading}
+              className="shrink-0 rounded px-1.5 py-1 text-xs text-amber-700 hover:bg-black/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 dark:text-amber-400 dark:hover:bg-white/10">
               {t('conversation.refresh')}
             </button>}
             {state === 'paused' && (task?.checkpoint?.unresolved.length ?? 0) > 0 && openTask && (

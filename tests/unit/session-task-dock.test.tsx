@@ -60,6 +60,47 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 describe("quiet conversation task dock", () => {
+  it.each(['rejected', 'unsuccessful'])("shows an initial %s read and keeps retry in place until the owner responds", async (failure) => {
+    if (failure === 'rejected') mocks.read.mockRejectedValueOnce(new Error('owner unavailable'));
+    else mocks.read.mockResolvedValueOnce({ success: false });
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
+    expect(await screen.findByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.stale);
+    expect(screen.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'unavailable');
+    expect(screen.queryByTestId('session-task-menu')).toBeNull();
+    let finish!: (value: TaskSessionSnapshot & { success: true }) => void;
+    mocks.read.mockReturnValueOnce(new Promise(resolve => { finish = resolve; }));
+    fireEvent.click(screen.getByTestId('session-task-retry'));
+    await waitFor(() => expect(screen.getByTestId('session-task-retry')).toBeDisabled());
+    fireEvent.click(screen.getByTestId('session-task-retry'));
+    expect(mocks.read).toHaveBeenCalledTimes(2);
+    expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.stale);
+    await act(async () => { finish(result('recovered')); });
+    expect(await screen.findByTestId('session-task-title')).toHaveTextContent('Deliver recovered');
+    expect(screen.queryByTestId('session-task-retry')).toBeNull();
+    expect(mocks.command).not.toHaveBeenCalled();
+  });
+
+  it('returns to an empty surface when a retry confirms there is no task', async () => {
+    mocks.read.mockRejectedValueOnce(new Error('owner unavailable'));
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
+    await screen.findByTestId('session-task-retry');
+    mocks.read.mockResolvedValueOnce({ success: true, task: null, children: [] });
+    fireEvent.click(screen.getByTestId('session-task-retry'));
+    await waitFor(() => expect(screen.queryByTestId('session-task-dock')).toBeNull());
+  });
+
+  it('keeps a late initial failure in its original session', async () => {
+    let fail!: (error: Error) => void;
+    mocks.read.mockReturnValueOnce(new Promise((_resolve, reject) => { fail = reject; }));
+    const { rerender } = render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
+    mocks.read.mockResolvedValueOnce(result('new-session'));
+    rerender(<SessionTaskDock workspaceId="w" sessionKey="b" hasConversation />);
+    expect(await screen.findByTestId('session-task-title')).toHaveTextContent('Deliver new-session');
+    await act(async () => { fail(new Error('old owner failed')); });
+    expect(screen.queryByTestId('session-task-retry')).toBeNull();
+    expect(screen.getByTestId('session-task-title')).toHaveTextContent('Deliver new-session');
+  });
+
   it("keeps a blank conversation free of task controls and performs no task lookup", () => {
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation={false} />);
     expect(screen.queryByTestId("session-task-dock")).toBeNull();
@@ -305,6 +346,23 @@ describe("dock lifetime", () => {
 });
 
 describe('live run and durable task scales', () => {
+  it('reveals a hidden task when paused and opens its blockers without sending a task command', async () => {
+    const openTask = vi.fn();
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation onOpenTask={openTask} />);
+    await screen.findByTestId('session-task-title');
+    openMenu(); fireEvent.click(screen.getByTestId('session-task-close'));
+    const paused = result('a');
+    paused.task.contract.state = 'paused';
+    paused.task.checkpoint!.unresolved = ['Verify the pending artifact'];
+    mocks.read.mockResolvedValue(paused);
+    fireEvent(window, new Event('focus'));
+    expect(await screen.findByTestId('session-task-blockers')).toBeVisible();
+    expect(screen.getByTestId('session-task-dock')).toHaveAttribute('data-mode', 'collapsed');
+    fireEvent.click(screen.getByTestId('session-task-blockers'));
+    expect(openTask).toHaveBeenCalledWith('a');
+    expect(mocks.command).not.toHaveBeenCalled();
+  });
+
   it('shows current run steps under the durable objective and restores durable steps after the run', async () => {
     const root = result('durable-goal');
     const child = task('durable-child');

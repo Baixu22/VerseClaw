@@ -29,6 +29,8 @@ touchedAreas:
   - src/components/assistant-render/TurnSummaryCard.tsx
   - src/styles/codex-composer-shell.css
   - src/styles/codex-composer-menu.css
+  - src/styles/codex-composer-material.css
+  - harness/specs/rules/ui-motion-material-system.md
   - shared/i18n/locales/*/chat.json
   - shared/i18n/locales/*/taskLedger.json
   - tests/unit/chat-input.test.tsx
@@ -50,7 +52,7 @@ touchedAreas:
   - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/fixtures/chat-planning-composer-ux/20261123/**
 expectedUserBehavior:
-  - 底栏模型名称简短显示，完整名称和路由仍可从提示及列表查看。
+  - 底栏保留模型原名，仅在宽度不足时单行省略，完整名称和路由仍可从提示及列表查看。
   - 发送、停止和继续使用统一圆形按钮，深色主题采用浅色圆底和深色图标。
   - 知识模式、来源和检索方案从一个入口设置，额外调用档位有可见标签。
   - 输入框与任务条共享内容宽度，目标、当前步骤和状态形成稳定的一行。
@@ -58,6 +60,7 @@ expectedUserBehavior:
   - 本轮步骤完成后，持久任务仍使用任务 owner 的验收状态。
   - 自动读取、队列和恢复继续沿现有服务运行；正常 checkpoint 与干预记录按需查看。
   - 审批、故障、失败和非零待处理队列在默认界面可见并可操作。
+  - 任务首次读取失败提供就地刷新；刷新期间保持反馈与草稿，过期会话的返回不影响当前任务。
 acceptance:
   - Carbon 实际查看当前候选对应的 Electron 图片，设计指导及调用用量有盘上回执。
   - 默认输入底栏不再并排出现独立 Off 和 Local 选择框，知识设置仍可通过键盘访问。

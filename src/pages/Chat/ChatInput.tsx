@@ -121,7 +121,7 @@ import { BorderBeam } from 'border-beam';
 import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
 import { ComposerPopover } from '@/components/chat/ComposerPopover';
 import { ModelBrandIcon } from '@/components/chat/ModelBrandIcon';
-import { compactModelName, describeModelRef } from '@/lib/model-brand';
+import { describeModelRef } from '@/lib/model-brand';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { SmokyDissolve } from '@/components/ui/smoky-dissolve';
 import MaterialFileTypeIcon from '@lobehub/ui/es/MaterialFileTypeIcon/index';
@@ -4293,7 +4293,7 @@ export function ChatInput({
                   }}
                 >
                   <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
-                  <span className="codex-model-picker-label" data-testid="chat-model-picker-label">{compactModelName(effectiveModelDisplay.name)}</span>
+                  <span className="codex-model-picker-label" data-testid="chat-model-picker-label">{effectiveModelDisplay.name}</span>
                   <span
                     data-testid="chat-agent-effort-button"
                     className={cn(

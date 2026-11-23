@@ -44,7 +44,7 @@ Requirements:
 - Reduced-motion replaces large movement and spring behavior with short opacity/color transitions.
 - Color, opacity, and necessary movement transitions stay within 120-180ms.
 - Translucent materials are not stacked without an opaque or sufficiently frosted separation layer.
-- Composer menus and their containing input use opaque surfaces. Model names wrap fully, and linked-worktree identity comes from the host worktree list. Validate card opacity with contrasting-underlay screenshot comparisons in both themes.
+- Composer menus and their containing input use opaque surfaces. Model names wrap fully in the selection list; the composer preserves the name and truncates overflow on one line. Linked-worktree identity comes from the host worktree list. Validate card opacity with contrasting-underlay screenshot comparisons in both themes.
 - Modal scrims and large drawers must not use `backdrop-filter` while hardware acceleration is unavailable.
 - Settings navigation selection must not use layout-projection animation; preserve the selected material with compositor-friendly opacity or color transitions.
 - Chat layout and message consumers do not subscribe to changing overlay state. The retired visual-version switch must not return through a separate context or fallback branch.

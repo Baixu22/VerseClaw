@@ -37,7 +37,7 @@
 .codex-composer-chevron.is-open { transform: rotate(180deg); }
 
 /* ── Model trigger ────────────────────────────────────────────────────────
- * Brand mark · short name · effort flame · chevron. The name is the last
+ * Brand mark · model name · effort flame · chevron. The name is the last
  * segment of the model id, so router prefixes no longer eat the width; the
  * full ref and provider live in the tooltip and the menu. */
 .codex-model-picker-trigger {
@@ -55,8 +55,9 @@
   font-weight: 500;
   line-height: 1.35;
   text-align: left;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .codex-model-picker-trigger .codex-execution-settings__effort-shortcut {

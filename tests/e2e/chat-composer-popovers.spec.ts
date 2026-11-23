@@ -119,13 +119,20 @@ for (const theme of ['light', 'dark'] as const) {
             await longName.scrollIntoViewIfNeeded();
             expect(await longName.evaluate((element) => element.scrollHeight <= element.clientHeight + 1 && element.scrollWidth <= element.clientWidth + 1)).toBe(true);
             await expect(page.getByTestId('chat-model-picker-label')).toBeVisible();
-            expect(await page.getByTestId('chat-model-picker-label').evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+            await expect(page.getByTestId('chat-model-picker-label')).toHaveCSS('white-space', 'nowrap');
             await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-model-options.png`) });
             await longName.click();
             await expect(menu).toHaveCount(0);
-            await expect(page.getByTestId('chat-model-picker-label')).toHaveText('qwen3-coder-480b-a35b-i…');
+            await expect(page.getByTestId('chat-model-picker-label')).toHaveText(modelNames[2].split('/').at(-1)!);
             expect(await page.getByTestId('chat-model-picker-button').getAttribute('title')).toContain(modelNames[2]);
             await expect(page.getByTestId('chat-model-picker-label')).toBeVisible();
+            const labelBox = await page.getByTestId('chat-model-picker-label').evaluate(element => {
+              const css = getComputedStyle(element);
+              return { height: element.getBoundingClientRect().height, lineHeight: parseFloat(css.lineHeight),
+                overflow: css.overflow, ellipsis: css.textOverflow, clipped: element.scrollWidth > element.clientWidth };
+            });
+            expect(labelBox.height).toBeLessThanOrEqual(labelBox.lineHeight + 1);
+            expect(labelBox).toMatchObject({ overflow: 'hidden', ellipsis: 'ellipsis', clipped: true });
             await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-selected-long-model.png`) });
           }
         }

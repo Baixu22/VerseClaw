@@ -70,13 +70,13 @@ test('conversation planning, settings and decisions share a compact input surfac
     await app.evaluate((_electron, initial) => {
       const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
       const original = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: any) => Promise<unknown>> })._invokeHandlers.get('host:invoke')!;
-      const state = { readback: initial, gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 }, taskReads: [] as unknown[], parameterWrites: [] as unknown[] };
+      const state = { readback: initial, failTaskReads: true, gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 }, taskReads: [] as unknown[], parameterWrites: [] as unknown[] };
       (globalThis as unknown as { __chatUxFixture: typeof state }).__chatUxFixture = state;
       ipcMain.removeHandler('host:invoke');
       ipcMain.handle('host:invoke', async (event, request) => {
         if (request.module === 'taskLedger' && request.action === 'sessionTask') {
           state.taskReads.push(request.payload);
-          return { id: request.id, ok: true, data: state.readback };
+          return { id: request.id, ok: true, data: state.failTaskReads ? { success: false } : state.readback };
         }
         if (request.module === 'gateway' && request.action === 'status') return { id: request.id, ok: true, data: state.gatewayStatus };
         if (['setPermissionMode', 'setKnowledgeScope', 'updateModel', 'updateAgentModel'].includes(request.action)) state.parameterWrites.push({ module: request.module, action: request.action });
@@ -102,6 +102,16 @@ test('conversation planning, settings and decisions share a compact input surfac
     const selectMode = async (value: string) => { await revealOptions(); await page.getByTestId('chat-knowledge-interaction').selectOption(value); };
     const selectProfile = async (value: string) => { await revealOptions(); await page.getByTestId('chat-knowledge-profile').selectOption(value); };
 
+    const input = page.getByTestId('chat-composer-input');
+    await expect(page.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'unavailable');
+    await input.fill('任务状态恢复时保留这段草稿');
+    await capture('task-unavailable-light-1280');
+    await app.evaluate(() => { (globalThis as unknown as { __chatUxFixture: { failTaskReads: boolean } }).__chatUxFixture.failTaskReads = false; });
+    await page.getByTestId('session-task-retry').click();
+    await expect(page.getByTestId('session-task-title')).toHaveText(task.contract.objective);
+    await expect(input).toHaveValue('任务状态恢复时保留这段草稿');
+    await input.fill('');
+    steps.initialTaskReadRecoveryPreservesDraft = true;
     await expect(page.getByTestId('session-task-panel')).toBeVisible();
     await expect(page.getByTestId('session-task-container')).toHaveAttribute('data-state', 'empty');
     await expect(page.getByTestId('session-tasks-toggle')).toHaveCount(0);
@@ -111,7 +121,8 @@ test('conversation planning, settings and decisions share a compact input surfac
     expect(anchors).toBeLessThanOrEqual(5);
     await capture('rest-light-1280');
     const modelBefore = await page.getByTestId('chat-model-picker-label').textContent();
-    expect(modelBefore).toBe('Sonnet 4.6');
+    expect(modelBefore).toBe('claude-sonnet-4-6');
+    expect(await page.getByTestId('chat-model-picker-label').evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     await expect(page.getByTestId('chat-model-picker-button')).toHaveAttribute('title', 'anthropic/claude-sonnet-4-6');
     const permissionBefore = await page.getByTestId('chat-composer-permission-mode').textContent();
     await openKnowledge();
@@ -166,6 +177,18 @@ test('conversation planning, settings and decisions share a compact input surfac
     await runtime(app, { type: 'run.ended', runId, sessionKey, ts: at + 5, status: 'completed', endedAt: at + 5 });
     await expect(page.getByTestId('session-task-dock')).toHaveAttribute('data-step-source', 'task');
     await expect(page.getByTestId('session-task-status')).toContainText('In progress');
+    await page.getByTestId('session-task-menu').click();
+    await page.getByTestId('session-task-close').click();
+    await input.fill('任务暂停时保留这段草稿');
+    await app.evaluate((_electron, value) => { (globalThis as unknown as { __chatUxFixture: { readback: TaskSessionSnapshot } }).__chatUxFixture.readback = value; },
+      { ...readback, task: { ...task, contract: { ...task.contract, state: 'paused' as const }, checkpoint: { ...task.checkpoint!, unresolved: ['核对仍未完成的产物'] } } });
+    await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+    await expect(page.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'paused');
+    await expect(page.getByTestId('session-task-blockers')).toBeVisible();
+    await expect(input).toHaveValue('任务暂停时保留这段草稿');
+    await capture('task-paused-dark-960');
+    await page.getByTestId('session-task-title').click();
+    steps.hiddenPausedTaskReappearsWithDraft = true;
     await app.evaluate((_electron, value) => { (globalThis as unknown as { __chatUxFixture: { readback: TaskSessionSnapshot } }).__chatUxFixture.readback = value; },
       { ...readback, task: { ...task, contract: { ...task.contract, state: 'done' as const, revision: 2 }, checkpoint: { ...task.checkpoint!, completed: ['验收记录已核对'], nextAction: '' } } });
     await page.evaluate(() => window.dispatchEvent(new Event('focus')));
@@ -173,7 +196,6 @@ test('conversation planning, settings and decisions share a compact input surfac
     await expect(page.getByTestId('session-task-details')).toHaveCount(0);
     await capture('accepted-dark-960');
     steps.ownerAcceptanceFoldsReceipt = true;
-    const input = page.getByTestId('chat-composer-input');
     await input.fill('保留这段尚未发送的跟进');
     const action = page.getByTestId('chat-composer-send');
     const actionStyles: Record<string, unknown> = {};
