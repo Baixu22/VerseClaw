@@ -364,6 +364,18 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
     return proxy.resolveAddresses(hostname);
   }
 
+  protected override async fetchBrowserResource(session: ReturnType<ModuleAgentBrowserService['list']>[number], url: string, init?: RequestInit): Promise<Response> {
+    const owner = this.networkSessions.get(session.id);
+    const pending = owner && this.networkProfiles.get(owner.profile);
+    const proxy = await pending;
+    if (!owner || !proxy) throw new Error('Browser network owner is unavailable');
+    await assertBrowserRequestAllowed(url, { ...owner, sessionId: session.id }, proxy.resolveAddresses);
+    if (this.networkSessions.get(session.id) !== owner || this.networkProfiles.get(owner.profile) !== pending) {
+      throw new Error('Browser network owner changed');
+    }
+    return proxy.fetch(url, init);
+  }
+
   protected override browserWindowDestroyed(sessionId: string): void {
     const owner = this.networkSessions.get(sessionId);
     if (owner) void this.networkProfiles.get(owner.profile)?.then(proxy => proxy.revokeConnections()).catch(() => undefined);

@@ -6,9 +6,11 @@ import {
   AgentBrowserTaskService,
   recoverTasksAfterRestart,
   type AgentBrowserTask,
+  type AgentBrowserTaskExecutionResult,
+  type AgentBrowserTaskProgress,
 } from '../src/engine/task-service';
 
-function passedExecution(task: AgentBrowserTask, runId = 'run-1') {
+function passedExecution(task: AgentBrowserTask, runId = task.runId!) {
   const steps = task.steps.map((step) => ({ ...step, status: 'passed' as const }));
   const successCriteria = task.successCriteria ?? { kind: 'text-includes' as const, value: 'ok' };
   return {
@@ -27,6 +29,63 @@ function passedExecution(task: AgentBrowserTask, runId = 'run-1') {
 }
 
 describe('agent browser task service', () => {
+  it.each(['progress', 'success', 'error', 'paused-success'] as const)('ignores old %s after cancellation and immediate retry', async (late) => {
+    const pending: Array<{
+      task: AgentBrowserTask; signal: AbortSignal; report: (progress: AgentBrowserTaskProgress) => void;
+      resolve: (value: AgentBrowserTaskExecutionResult) => void; reject: (error: Error) => void;
+    }> = [];
+    const service = new AgentBrowserTaskService({ execute: (task, signal, report) => new Promise((resolve, reject) => {
+      pending.push({ task, signal, report, resolve, reject });
+    }) });
+    const task = service.create({ name: 'Retry', objective: 'Retry safely', profile: 'default', mode: 'headless', url: 'https://example.com' });
+    service.approve(task.id);
+    const first = service.run(task.id);
+    service.cancel(task.id);
+    expect(pending[0].signal.aborted).toBe(true);
+    await service.retry(task.id);
+    service.approve(task.id);
+    const second = service.run(task.id);
+    try {
+      const before = service.get(task.id);
+      if (late === 'progress') pending[0].report({ runId: pending[0].task.runId, steps: [], counters: { totalSteps: 0, passedSteps: 0, failedSteps: 0 } });
+      if (late === 'error') pending[0].reject(new Error('old abort finished'));
+      else pending[0].resolve(passedExecution(pending[0].task));
+      await first;
+      expect(service.get(task.id)).toEqual(before);
+      expect(pending[1].signal.aborted).toBe(false);
+      if (late === 'paused-success') service.pause(task.id);
+      else service.cancel(task.id);
+      expect(pending[1].signal.aborted).toBe(true);
+    } finally {
+      pending[0].resolve(passedExecution(pending[0].task));
+      pending[1].resolve(passedExecution(pending[1].task));
+      await Promise.all([first, second]);
+    }
+  });
+
+  it('aborts a paused executor and fences its result after resume and approval', async () => {
+    const runs: Array<{ task: AgentBrowserTask; signal: AbortSignal; finish: (value: AgentBrowserTaskExecutionResult) => void }> = [];
+    const service = new AgentBrowserTaskService({ execute: (task, signal) => new Promise(resolve => runs.push({ task, signal, finish: resolve })) });
+    const task = service.create({ name: 'Pause', objective: 'Resume safely', profile: 'default', mode: 'headless', url: 'https://example.com' });
+    service.approve(task.id);
+    const first = service.run(task.id);
+    service.pause(task.id);
+    expect(runs[0].signal.aborted).toBe(true);
+    service.resume(task.id);
+    service.approve(task.id);
+    const second = service.run(task.id);
+    try {
+      runs[0].finish(passedExecution(runs[0].task));
+      await first;
+      expect(service.get(task.id)).toMatchObject({ status: 'running', runId: runs[1].task.runId });
+      service.cancel(task.id);
+      expect(runs[1].signal.aborted).toBe(true);
+    } finally {
+      for (const run of runs) run.finish(passedExecution(run.task));
+      await Promise.all([first, second]);
+    }
+  });
+
   const tempRoots: string[] = [];
 
   afterEach(async () => {
@@ -58,7 +117,7 @@ describe('agent browser task service', () => {
     await expect(service.run(task.id)).resolves.toMatchObject({
       status: 'completed',
       sessionId: 'session-1',
-      runId: 'run-1',
+      runId: expect.any(String),
       statusExplain: 'Completed successfully.',
     });
     expect(execute).toHaveBeenCalledOnce();
@@ -163,7 +222,9 @@ describe('agent browser task service', () => {
       retryCount: 1,
     });
     service.approve(task.id);
-    await expect(service.run(task.id)).resolves.toMatchObject({ status: 'completed', runId: 'run-2' });
+    const completed = await service.run(task.id);
+    expect(completed).toMatchObject({ status: 'completed', runId: expect.any(String) });
+    expect(completed.runId).toBe(execute.mock.calls[1][0].runId);
   });
 
   it('approval gate: waitForApproval blocks run until approve', async () => {
@@ -183,7 +244,9 @@ describe('agent browser task service', () => {
     });
     await expect(service.run(task.id)).rejects.toThrow('waiting for approval');
     expect(service.approve(task.id)).toMatchObject({ status: 'queued' });
-    await expect(service.run(task.id)).resolves.toMatchObject({ status: 'completed', runId: 'run-ok' });
+    const completed = await service.run(task.id);
+    expect(completed).toMatchObject({ status: 'completed', runId: expect.any(String) });
+    expect(completed.runId).toBe(execute.mock.calls[0][0].runId);
     expect(execute).toHaveBeenCalledOnce();
   });
 

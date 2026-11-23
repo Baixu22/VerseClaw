@@ -1,8 +1,8 @@
 /**
  * 同源 Source Map 读取器 — 抄写自 browser-ai-assistant-master/src/background/browserControl/sameOriginSourceMapFetcher.ts
  * 适配点：仅 import 路径（../../shared/utils/text → ../core/text；
- * ./sourceMapFetchGuards → ./source-map-fetch-guards）。逻辑零改动。
- * 使用 Node 18+ 全局 fetch（Electron 主进程可用）。
+ * ./sourceMapFetchGuards → ./source-map-fetch-guards），保留读取和校验逻辑。
+ * 网络读取由所属浏览器会话注入，缺少网络 owner 时拒绝回源。
  */
 import { truncateText } from '../../core/text.ts';
 import {
@@ -21,7 +21,7 @@ const DEFAULT_TIMEOUT_MS = 8000;
 export class SameOriginSourceMapFetcher {
   private readonly fetcher: typeof fetch;
 
-  constructor(fetcher: typeof fetch = fetch) {
+  constructor(fetcher: typeof fetch = async () => { throw new Error('Browser network owner is unavailable'); }) {
     this.fetcher = fetcher;
   }
 

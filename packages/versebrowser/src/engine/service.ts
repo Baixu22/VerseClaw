@@ -99,7 +99,9 @@ import { BrowserDebuggerConnection } from './browser-control/browser-debugger-co
 import { BrowserControlSnapshotManager } from './browser-control/snapshot-manager.ts';
 import { AgentBrowserTabManager } from './browser-control/tab-manager.ts';
 import { JsSourceToolExecutor } from './browser-control/js-source-tool-executor.ts';
+import { SameOriginJsFetcher } from './browser-control/same-origin-js-fetcher.ts';
 import { SourceMapToolExecutor } from './browser-control/source-map-tool-executor.ts';
+import { SameOriginSourceMapFetcher } from './browser-control/same-origin-source-map-fetcher.ts';
 import { RuntimeReadToolExecutor } from './browser-control/runtime-read-tool-executor.ts';
 import { ReplayToolExecutor } from './browser-control/replay-tool-executor.ts';
 import { BrowserConsoleRecorder } from './browser-control/console-recorder.ts';
@@ -133,6 +135,7 @@ type AgentBrowserRecord = {
   engine: 'browser-window' | 'agent-browser-cli';
   runtimeMode: AgentBrowserRuntimeMode;
   runtimeExpiresAt?: number;
+  fullAccessBinding?: { tabId: number; origin: string };
   /** P1-7：多标签页管理器，仅 browser-window 引擎可用。 */
   tabManager?: AgentBrowserTabManager;
   closing?: Promise<void>;
@@ -513,6 +516,10 @@ export class AgentBrowserService {
 
   /** Host transport configuration runs before any window or destination request. */
   protected async prepareBrowserSession(_session: AgentBrowserSession, _partition: string): Promise<void> {}
+
+  protected async fetchBrowserResource(_session: AgentBrowserSession, _url: string, _init?: RequestInit): Promise<Response> {
+    throw new Error('Browser network owner is unavailable');
+  }
   protected browserWindowDestroyed(_sessionId: string): void {}
   protected resolveBrowserAddresses(_profile: string, hostname: string, lookupAddresses: (hostname: string) => Promise<Array<{ address: string; family: number }>>) {
     return lookupAddresses(hostname);
@@ -796,6 +803,7 @@ export class AgentBrowserService {
       window.webContents.setWebRTCIPHandlingPolicy('disable_non_proxied_udp');
       // P1-7：初始化多标签页管理器，注册主窗口为首页
       const record = this.sessions.get(session.id)!;
+      this.watchFullAccessNavigation(record, window.webContents);
       window.webContents.once('destroyed', () => {
         this.browserWindowDestroyed(session.id);
         if (!this.closingSessions.has(session.id) && this.sessions.has(session.id)) void this.close(session.id).catch(() => {});
@@ -804,6 +812,7 @@ export class AgentBrowserService {
       record.tabManager = new AgentBrowserTabManager({
         createWindow: (options) => {
           const page = this.createWindow(options);
+          this.watchFullAccessNavigation(record, page.webContents);
           page.webContents.setWebRTCIPHandlingPolicy('disable_non_proxied_udp');
           page.webContents.once('destroyed', () => {
             this.browserWindowDestroyed(session.id);
@@ -1481,19 +1490,31 @@ export class AgentBrowserService {
     );
     const networkRecorder = new BrowserNetworkRecorder(connection);
     networkRecorder.start(webContents.id);
+    const resourceFetcher: typeof fetch = async (input, init) => {
+      if (record.closing || this.sessions.get(record.session.id) !== record || record.window?.webContents !== webContents) {
+        throw new Error('Browser resource request owner changed');
+      }
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+      if (getOriginFromUrl(url) !== getOriginFromUrl(webContents.getURL())) {
+        throw new Error('Browser resource request origin changed');
+      }
+      return this.fetchBrowserResource(record.session, url, init);
+    };
     const jsSourceExecutor = new JsSourceToolExecutor({
       recorder: networkRecorder,
+      fetcher: new SameOriginJsFetcher(resourceFetcher),
       getCurrentPageUrl: async () => webContents.getURL(),
     });
     const sourceMapExecutor = new SourceMapToolExecutor({
       recorder: networkRecorder,
+      fetcher: new SameOriginSourceMapFetcher(resourceFetcher),
       jsSourceIndex: jsSourceExecutor.getIndex(),
       getCurrentPageUrl: async () => webContents.getURL(),
     });
     const runtimeReadExecutor = new RuntimeReadToolExecutor(connection, () => this.getRuntimeReadAuthorization(record));
     const replayExecutor = new ReplayToolExecutor(
       networkRecorder,
-      fetch,
+      resourceFetcher,
       () => ({
         tabId: webContents.id,
         origin: getOriginFromUrl(webContents.getURL()),
@@ -1510,8 +1531,8 @@ export class AgentBrowserService {
         return {
           tabId: webContents.id,
           origin,
-          expectedTabId: webContents.id,
-          expectedOrigin: origin,
+          expectedTabId: record.fullAccessBinding?.tabId,
+          expectedOrigin: record.fullAccessBinding?.origin,
           fullAccess: this.isFullAccess(record),
           expiresAt: record.runtimeExpiresAt,
         };
@@ -1546,11 +1567,26 @@ export class AgentBrowserService {
    * runtimeMode 不持久化，刷新/过期即回退，符合 P0-3 适配要点 5。
    */
   private refreshRuntimeModeExpiry(record: AgentBrowserRecord): void {
+    const binding = record.fullAccessBinding;
+    const contents = record.window?.webContents;
+    if (binding && (contents?.id !== binding.tabId || getOriginFromUrl(contents.getURL()) !== binding.origin)) {
+      record.fullAccessBinding = undefined;
+    }
     if (record.runtimeExpiresAt !== undefined && record.runtimeExpiresAt <= Date.now()) {
       record.runtimeMode = 'normal_restricted';
       record.runtimeExpiresAt = undefined;
+      record.fullAccessBinding = undefined;
       record.session = { ...record.session, runtimeMode: 'normal_restricted' };
     }
+  }
+
+  private watchFullAccessNavigation(record: AgentBrowserRecord, contents: AgentBrowserWebContents): void {
+    contents.on('did-start-navigation', (_event, url, _isInPlace, isMainFrame) => {
+      const binding = record.fullAccessBinding;
+      if (isMainFrame && binding?.tabId === contents.id && getOriginFromUrl(url) !== binding.origin) {
+        record.fullAccessBinding = undefined;
+      }
+    });
   }
 
   /**
@@ -1657,6 +1693,7 @@ export class AgentBrowserService {
       // 降级回 normal_restricted：清理 grant context 与过期时间
       record.runtimeMode = 'normal_restricted';
       record.runtimeExpiresAt = undefined;
+      record.fullAccessBinding = undefined;
       record.session = { ...record.session, runtimeMode: 'normal_restricted' };
       const control = this.browserControlStates.get(record.session.id);
       control?.boundaryExecutor.clearGrantContext();
@@ -1666,10 +1703,18 @@ export class AgentBrowserService {
       };
     }
 
+    let fullAccessBinding: AgentBrowserRecord['fullAccessBinding'];
+    if (targetMode === 'full_access') {
+      const contents = this.requireWindow(record).webContents;
+      const origin = getOriginFromUrl(contents.getURL());
+      if (!origin || !/^https?:\/\//u.test(origin)) throw new Error('Full access requires an active HTTP(S) page');
+      fullAccessBinding = { tabId: contents.id, origin };
+    }
     const expiresInMs = typeof payload.expiresInMs === 'number' && Number.isFinite(payload.expiresInMs)
       ? Math.max(10_000, Math.min(3_600_000, Math.floor(payload.expiresInMs)))
       : undefined;
     record.runtimeMode = targetMode;
+    record.fullAccessBinding = fullAccessBinding;
     record.runtimeExpiresAt = expiresInMs !== undefined ? Date.now() + expiresInMs : undefined;
     record.session = {
       ...record.session,
@@ -1694,6 +1739,7 @@ export class AgentBrowserService {
   private async refresh(record: AgentBrowserRecord): Promise<AgentBrowserSession> {
     const window = this.requireWindow(record);
     const webContents = window.webContents;
+    this.refreshRuntimeModeExpiry(record);
     record.session = {
       ...record.session,
       url: webContents.getURL(),
@@ -2331,7 +2377,7 @@ export class AgentBrowserService {
    */
   private isFullAccess(record: AgentBrowserRecord): boolean {
     this.refreshRuntimeModeExpiry(record);
-    return record.runtimeMode === 'full_access';
+    return record.runtimeMode === 'full_access' && record.fullAccessBinding !== undefined;
   }
 
   /**
@@ -2341,6 +2387,7 @@ export class AgentBrowserService {
   private revokeFullAccessRuntime(record: AgentBrowserRecord): void {
     record.runtimeMode = 'normal_restricted';
     record.runtimeExpiresAt = undefined;
+    record.fullAccessBinding = undefined;
     record.session = { ...record.session, runtimeMode: 'normal_restricted' };
     const control = this.browserControlStates.get(record.session.id);
     control?.boundaryExecutor.clearGrantContext();
@@ -2423,8 +2470,7 @@ export class AgentBrowserService {
    */
   private canRevealRaw(record: AgentBrowserRecord, redacted: boolean | undefined): boolean {
     if (redacted !== false) return false;
-    this.refreshRuntimeModeExpiry(record);
-    return record.runtimeMode === 'full_access';
+    return this.isFullAccess(record);
   }
 
   private requireWindow(record: AgentBrowserRecord): AgentBrowserWindow {

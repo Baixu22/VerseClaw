@@ -83,6 +83,43 @@ function prepareDraft(executor: ReplayToolExecutor): string {
 }
 
 describe('请求重放沙箱执行器', () => {
+  it('claims a draft before dispatch so concurrent sends have one network effect', async () => {
+    let finish!: (response: Response) => void;
+    const fetcher = vi.fn(() => new Promise<Response>(resolve => { finish = resolve; }));
+    let grant: BoundaryGrantContext | undefined;
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const draftId = prepareDraft(executor);
+    grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    const first = executor.sendRequest({ draftId });
+    try {
+      expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+      expect(fetcher).toHaveBeenCalledOnce();
+    } finally { finish(new Response('{}')); await first; }
+    expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+    expect(fetcher).toHaveBeenCalledOnce();
+  });
+
+  it.each(['connection reset', 'AbortError'])('keeps a %s send consumed when the outcome is unknown', async (failure) => {
+    const fetcher = vi.fn(async () => { throw Object.assign(new Error(failure), { name: failure }); });
+    let grant: BoundaryGrantContext | undefined;
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const draftId = prepareDraft(executor);
+    grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    await expect(executor.sendRequest({ draftId })).rejects.toThrow(failure);
+    expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+    expect(fetcher).toHaveBeenCalledOnce();
+  });
+
+  it.each([{ tabId: 8 }, { origin: 'https://other.example' }, { expiresAt: 0 }])('rejects a mismatched or expired grant %j', async (override) => {
+    const fetcher = vi.fn(async () => new Response('{}'));
+    let grant: BoundaryGrantContext | undefined;
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const draftId = prepareDraft(executor);
+    grant = createGrant({ ...override, scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it('prepare 只生成草案且未确认时不能发送', async () => {
     const fetcher = vi.fn(async () => new Response('{}')) as unknown as typeof fetch;
     const executor = createExecutor({ fetcher });

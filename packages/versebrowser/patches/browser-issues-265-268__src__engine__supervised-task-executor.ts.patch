@@ -1,0 +1,67 @@
+--- a/src/engine/supervised-task-executor.ts
++++ b/src/engine/supervised-task-executor.ts
+@@ -15,6 +15,8 @@
+   AgentBrowserService,
+   'openSupervised' | 'assertSupervisedRequestSafe' | 'navigate' | 'waitForSelector' | 'click' | 'evaluate' | 'close' | 'isEnabled' | 'setEnabled'
+ >;
++
++const runtimeUsers = new WeakMap<BrowserTaskRuntime, { count: number; restoreDisabled: boolean }>();
+ 
+ type LookupAddress = { address: string; family: number };
+ export type BrowserTaskLookup = (hostname: string) => Promise<LookupAddress[]>;
+@@ -208,8 +210,13 @@
+     await options.assertSandboxAllowed();
+     signal.throwIfAborted();
+ 
+-    const runtimeWasEnabled = options.service.isEnabled();
+-    if (!runtimeWasEnabled) options.service.setEnabled(true);
++    let runtimeUse = runtimeUsers.get(options.service);
++    if (!runtimeUse) {
++      runtimeUse = { count: 0, restoreDisabled: !options.service.isEnabled() };
++      if (runtimeUse.restoreDisabled) options.service.setEnabled(true);
++      runtimeUsers.set(options.service, runtimeUse);
++    }
++    runtimeUse.count += 1;
+     let sessionId: string | undefined;
+     let keepSession = false;
+     const steps = cloneSteps(task.steps);
+@@ -226,14 +233,14 @@
+         throw new AgentBrowserSupervisedTaskError('RUNTIME_DISABLED', 'Browser control was disabled during task execution');
+       }
+     };
+-    const closeOnAbort = () => {
+-      if (!sessionId) return;
+-      try {
+-        options.service.close(sessionId);
+-      } catch {
+-        // The session may already be closed by a concurrent user action.
+-      }
++    let closing: Promise<void> | undefined;
++    const closeOwnedSession = () => {
++      if (!sessionId) return Promise.resolve();
++      const id = sessionId;
++      closing ??= Promise.resolve().then(() => options.service.close(id));
++      return closing;
+     };
++    const closeOnAbort = () => { void closeOwnedSession().catch(() => undefined); };
+     signal.addEventListener('abort', closeOnAbort, { once: true });
+ 
+     try {
+@@ -390,8 +397,15 @@
+       };
+     } finally {
+       signal.removeEventListener('abort', closeOnAbort);
+-      if ((!keepSession || signal.aborted) && sessionId) closeOnAbort();
+-      if (!runtimeWasEnabled && options.service.isEnabled()) options.service.setEnabled(false);
++      try {
++        if ((!keepSession || signal.aborted) && sessionId) await closeOwnedSession();
++      } finally {
++        runtimeUse.count -= 1;
++        if (runtimeUse.count === 0) {
++          runtimeUsers.delete(options.service);
++          if (runtimeUse.restoreDisabled && options.service.isEnabled()) options.service.setEnabled(false);
++        }
++      }
+     }
+   };
+ }

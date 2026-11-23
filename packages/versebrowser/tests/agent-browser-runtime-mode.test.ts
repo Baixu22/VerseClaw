@@ -53,11 +53,12 @@ class FakeDebugger extends EventEmitter {
 }
 
 class FakeWebContents extends EventEmitter {
+  static nextId = 1;
   setWebRTCIPHandlingPolicy() {}
   url = '';
   title = '';
   readonly debugger = new FakeDebugger();
-  readonly id = 1;
+  readonly id = FakeWebContents.nextId++;
 
   getURL() {
     return this.url;
@@ -107,6 +108,12 @@ class FakeWindow {
     this.shown = true;
   }
 
+  hide() { this.shown = false; }
+  isVisible() { return this.shown; }
+  isMinimized() { return false; }
+  restore() {}
+  focus() {}
+
   setBounds() {}
 }
 
@@ -124,6 +131,99 @@ function createService(): { service: AgentBrowserService; windows: FakeWindow[] 
 }
 
 describe('agent browser runtime mode', () => {
+  it('binds full access to the approved origin and requires reapproval after leaving it', async () => {
+    const { service, windows } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/a', mode: 'headless' });
+    service.setEnabled(true);
+    try {
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      await service.takeSnapshot({ sessionId: session.id });
+      await service.navigate({ sessionId: session.id, url: 'https://approved.example/b' });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBeUndefined();
+      await service.navigate({ sessionId: session.id, url: 'https://other.example/' });
+      const before = windows[0].webContents.debugger.sendCommand.mock.calls.length;
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+      expect(windows[0].webContents.debugger.sendCommand.mock.calls).toHaveLength(before);
+      await service.navigate({ sessionId: session.id, url: 'https://approved.example/a' });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBeUndefined();
+    } finally { await service.close(session.id); }
+  });
+
+  it('does not transfer approval to a new tab, back to the old tab, or after closing an approved tab', async () => {
+    const { service } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
+    service.setEnabled(true);
+    try {
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      await service.takeSnapshot({ sessionId: session.id });
+      const pages = await service.newPage({ sessionId: session.id, url: 'https://approved.example/second' });
+      await service.takeSnapshot({ sessionId: session.id });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+      await service.selectPage({ sessionId: session.id, pageId: '0' });
+      await service.takeSnapshot({ sessionId: session.id });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+      await service.selectPage({ sessionId: session.id, pageId: pages.activePageId! });
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      await service.takeSnapshot({ sessionId: session.id });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBeUndefined();
+      await service.closePage({ sessionId: session.id, pageId: pages.activePageId! });
+      await service.takeSnapshot({ sessionId: session.id });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+    } finally { await service.close(session.id); }
+  });
+
+  it('does not mint full access from the open payload or debugger reattachment', async () => {
+    const { service } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless', runtimeMode: 'full_access' });
+    service.setEnabled(true);
+    try {
+      await service.takeSnapshot({ sessionId: session.id });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      service.setEnabled(false);
+      service.setEnabled(true);
+      await service.takeSnapshot({ sessionId: session.id });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBeUndefined();
+      await service.navigate({ sessionId: session.id, url: 'https://other.example/' });
+      service.setEnabled(false);
+      service.setEnabled(true);
+      await service.takeSnapshot({ sessionId: session.id });
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+    } finally { await service.close(session.id); }
+  });
+
+  it('revokes the origin binding on browser-driven navigation before the next service call', async () => {
+    const { service, windows } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
+    service.setEnabled(true);
+    try {
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      await service.takeSnapshot({ sessionId: session.id });
+      windows[0].webContents.emit('did-start-navigation', {}, 'https://other.example/', false, true);
+      expect((await service.fullAccessReadStorage({ sessionId: session.id })).isError).toBe(true);
+    } finally { await service.close(session.id); }
+  });
+
+  it('uses the same approval binding for unredacted network data', async () => {
+    const { service, windows } = createService();
+    const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
+    service.setEnabled(true);
+    try {
+      await service.requestModeUpgrade({ sessionId: session.id, targetMode: 'full_access', userApproval: true });
+      await service.takeSnapshot({ sessionId: session.id });
+      windows[0].webContents.debugger.emit('message', {}, 'Network.requestWillBeSent', {
+        requestId: 'private-request', request: { url: 'https://approved.example/api?token=fixture-secret', method: 'GET', headers: { Authorization: 'Bearer fixture-secret' } },
+      });
+      const approved = await service.networkGetRequestDetails({ sessionId: session.id, requestIds: ['private-request'], redacted: false });
+      expect(JSON.stringify(approved)).toContain('fixture-secret');
+      await service.navigate({ sessionId: session.id, url: 'https://other.example/' });
+      const denied = await service.networkGetRequestDetails({ sessionId: session.id, requestIds: ['private-request'], redacted: false });
+      expect(JSON.stringify(denied)).not.toContain('fixture-secret');
+    } finally { await service.close(session.id); }
+  });
+
   it('open 默认 normal_restricted 模式', async () => {
     const { service } = createService();
     const opened = await service.open({ url: 'example.com', profile: 'Test' });

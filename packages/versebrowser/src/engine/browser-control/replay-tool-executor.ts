@@ -169,13 +169,16 @@ export class ReplayToolExecutor {
       name: REPLAY_SEND_REQUEST_TOOL_NAME,
       arguments: { draftId: args.draftId },
     });
-    if (!grant?.grants.includes('send_single_confirmed_replay_request_without_credentials') || grant.scopeKey !== scopeKey) {
+    if (!grant?.grants.includes('send_single_confirmed_replay_request_without_credentials') || grant.scopeKey !== scopeKey
+      || !grant.id || grant.tabId !== draft.tabId || grant.origin !== draft.origin
+      || !Number.isFinite(grant.expiresAt) || grant.expiresAt <= Date.now()) {
       return { content: '发送请求重放前必须先通过用户边界确认。', isError: true };
     }
     if (this.sendCount >= MAX_SENDS) {
       return { content: `单轮最多发送 ${MAX_SENDS} 次请求重放。`, isError: true };
     }
     this.sendCount += 1;
+    // Claim before the first await; a failed or unknown send still consumes this draft.
     draft.confirmedGrantId = grant.id;
     const result = await this.performFetch(draft);
     draft.sendResult = result;
@@ -266,7 +269,7 @@ export class ReplayToolExecutor {
     if (!draft || draft.tabId !== context.tabId || draft.origin !== context.origin) {
       return undefined;
     }
-    if (!allowSent && draft.sendResult) {
+    if (!allowSent && draft.confirmedGrantId !== undefined) {
       return undefined;
     }
     return draft;
