@@ -1,0 +1,658 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "dataSource": "agent-fixed Task and typed Runtime events",
+  "steps": {
+    "initialTaskReadRecoveryPreservesDraft": true,
+    "settingsDoNotChangeParameters": true,
+    "explicitCostProfileVisible": true,
+    "runCompletionDoesNotAcceptTask": true,
+    "hiddenPausedTaskReappearsWithDraft": true,
+    "ownerAcceptanceFoldsReceipt": true,
+    "roundSendStopResume": true,
+    "approvalPreservesDraft": true,
+    "connectionFailureVisible": true,
+    "fourLocalesAndNarrowThemes": true
+  },
+  "shots": [
+    {
+      "name": "task-unavailable-light-1280",
+      "sha256": "98d35f412bddc5322ad1fc933699b30103d6a7d6c7172b760ae3c74f33082545",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "rest-light-1280",
+      "sha256": "facf440052924fc8c7beacd752a1c9717c4170bd42497e1f3bc04bb28cf414a0",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-light-1280",
+      "sha256": "b58e898b10f915d3ddb773352f0b80aa8ade9389aa8ebb485d88b8ef8e57c2f3",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-options-light-1280",
+      "sha256": "76b13e9a7514f32a2d1a041f424aa9aa1310aff72696769d0d6a5df8b3017906",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-light-1280",
+      "sha256": "4f2086097a52267e6e87673402832f08f10f0bfeee86e33c6accd2ba8e9a0f9f",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-expanded-dark-960",
+      "sha256": "820a4a30ad4822f11e351727942400270177abaa015f1ea0b63bc96b1d2a26ed",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "task-paused-dark-960",
+      "sha256": "458a306d49457857c0c33e34e215fb7022de7098e60790761ac5ee7bd3bdd460",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "accepted-dark-960",
+      "sha256": "65d0f65ad22d5123c24bf4ffa6dbeffcf02392d27b935ed4785c0022e1005a6f",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-ready-dark-960",
+      "sha256": "d8386633b798d2418b1e68a9039e65ea6bca4f648276068bff740c1147db485c",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-running-dark-960",
+      "sha256": "1d77b8af945fb40576616321cfe4b25703b2cf5ef6de70f1838f1b990fe1c712",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-paused-dark-960",
+      "sha256": "0ae47bc1c54a34632cb154223fa423d05e572d77fc0ef8bd5bd914e65ab4c7e6",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "approval-dark-960",
+      "sha256": "85fa7f3cd48b2d7157ae0fb35e8d92fc17405399ee0c0eda80caf76bef028dc5",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "disconnected-dark-960",
+      "sha256": "7884ea2e374eae86c1122650f01e1ab1eebaaa6f0f2c7f0518a42a0921edecd7",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-zh-dark-960",
+      "sha256": "80c5dc2a72106e2a868b3f45951eed41595a1e0cb8c8b74057fb20dbf2108ba4",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ja-dark-960",
+      "sha256": "38834a6eb1bf897da611fcfc1fe35681eab0137ba8c8805808e9e36ce22ffd2e",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ru-dark-960",
+      "sha256": "dab5786862b69bc7f5274941ed20a77c24c84231018c358acf08a1b2a0731305",
+      "width": 961,
+      "height": 801
+    }
+  ],
+  "materials": [
+    {
+      "name": "task-unavailable-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "16px",
+        "shadow": "rgba(24, 24, 22, 0.06) 0px 1px 2px 0px, rgba(24, 24, 22, 0.06) 0px 6px 16px -4px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(246, 246, 243)",
+        "border": "rgb(96, 102, 108) rgb(96, 102, 108) rgb(228, 228, 222)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(244, 244, 241)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "16px",
+        "shadow": "rgba(24, 24, 22, 0.06) 0px 1px 2px 0px, rgba(24, 24, 22, 0.06) 0px 6px 16px -4px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(246, 246, 243)",
+        "border": "rgb(26, 28, 31) rgb(26, 28, 31) rgb(228, 228, 222)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(244, 244, 241)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "knowledge-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "16px",
+        "shadow": "rgba(24, 24, 22, 0.06) 0px 1px 2px 0px, rgba(24, 24, 22, 0.06) 0px 6px 16px -4px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(246, 246, 243)",
+        "border": "rgb(26, 28, 31) rgb(26, 28, 31) rgb(228, 228, 222)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(244, 244, 241)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "knowledge-options-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "16px",
+        "shadow": "rgba(24, 24, 22, 0.06) 0px 1px 2px 0px, rgba(24, 24, 22, 0.06) 0px 6px 16px -4px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(246, 246, 243)",
+        "border": "rgb(26, 28, 31) rgb(26, 28, 31) rgb(228, 228, 222)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(244, 244, 241)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "running-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgb(189, 189, 181)",
+        "radius": "16px",
+        "shadow": "rgba(24, 24, 22, 0.06) 0px 1px 2px 0px, rgba(24, 24, 22, 0.06) 0px 6px 16px -4px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(246, 246, 243)",
+        "border": "rgb(26, 28, 31) rgb(26, 28, 31) rgb(228, 228, 222)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(244, 244, 241)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "running-expanded-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(239, 241, 243) rgb(239, 241, 243) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "task-paused-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "accepted-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(243, 245, 247)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "action-ready-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(138, 139, 136)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "action-running-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "action-paused-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(243, 245, 247)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(70, 70, 67)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "approval-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(243, 245, 247)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(70, 70, 67)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "disconnected-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(243, 245, 247)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(70, 70, 67)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-zh-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-ja-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-ru-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "0px 0px 16px 16px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgb(53, 53, 51)",
+        "border": "rgb(92, 92, 87)",
+        "radius": "16px",
+        "shadow": "rgba(0, 0, 0, 0.36) 0px 1px 2px 0px, rgba(0, 0, 0, 0.32) 0px 8px 20px -6px",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgb(39, 39, 37)",
+        "border": "rgb(243, 245, 247) rgb(243, 245, 247) rgb(62, 62, 59)",
+        "radius": "16px 16px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    }
+  ],
+  "enclosure": {
+    "widthDifference": 0,
+    "gap": -3.0517578125e-05
+  },
+  "actionStyles": {
+    "ready": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "running": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "paused": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    }
+  },
+  "defaultAnchorCount": 5,
+  "pageErrors": []
+}

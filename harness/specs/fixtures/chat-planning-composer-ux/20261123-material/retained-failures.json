@@ -1,0 +1,104 @@
+{
+  "rawRoot": "D:\\tmp\\carbon-chat-material-20261123-01a203cc",
+  "commands": [
+    {
+      "label": "e2e-r1.command.json",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/chat-planning-composer-ux.spec.ts",
+        "tests/e2e/chat-composer-popovers.spec.ts",
+        "tests/e2e/chat-long-task-control.spec.ts",
+        "tests/e2e/chat-layout-cdp.spec.ts",
+        "tests/e2e/beam-composer-verify.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/carbon-chat-material-20261123-01a203cc/e2e-r1"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T11:00:25.702416+00:00",
+      "durationSeconds": 125.126,
+      "exitCode": 1,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\e2e-r1.stdout.log",
+        "sha256": "5a2462095d2d4904e8cbece9e3e02c952f22f8fea8804e2fbec05de10965eb23"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\e2e-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "e2e-r2.command.json",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/chat-planning-composer-ux.spec.ts",
+        "tests/e2e/chat-layout-cdp.spec.ts",
+        "tests/e2e/beam-composer-verify.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/carbon-chat-material-20261123-01a203cc/e2e-r2"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T11:04:50.537479+00:00",
+      "durationSeconds": 67.575,
+      "exitCode": 1,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\e2e-r2.stdout.log",
+        "sha256": "452188e9affbd05135ca87156bc42a42ba91aa49f88180aa578f050750aa699d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\e2e-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "unit-r1.command.json",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/chat-message.test.tsx",
+        "tests/unit/chat-user-message-display.test.ts",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/carbon-chat-material-20261123-01a203cc/unit-r1.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:54:07.865803+00:00",
+      "durationSeconds": 42.184,
+      "exitCode": 1,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\unit-r1.stdout.log",
+        "sha256": "271f0c17bff3b8dd5cc28dea836ddadea333c1d7c0cd86dd441d16dcfe4759d1"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\unit-r1.stderr.log",
+        "sha256": "fc8488f9c358b30a611aff07970b9aa9360626543d8a4877c424da5bf6505175"
+      }
+    }
+  ],
+  "resolution": [
+    "Updated assertions for the Carbon-approved card and collapsed task presentation.",
+    "Bound the run fixture to the active session and waited for its history.",
+    "Aligned the model control with the 32px controls; handled physical-pixel border quantization.",
+    "Refreshed the legacy layout assertions against the existing permission and More menus."
+  ]
+}

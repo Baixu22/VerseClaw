@@ -1,0 +1,238 @@
+{
+  "commands": [
+    {
+      "label": "unit-render-r2",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/carbon-chat-material-20261123-01a203cc/unit-render-r2.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:55:19.096621+00:00",
+      "durationSeconds": 9.382,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\unit-render-r2.stdout.log",
+        "sha256": "fdf72e960e22e67a1cab1ef947ad88c6af70b22c69d49d4b9743c2127a4c5be8"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\unit-render-r2.stderr.log",
+        "sha256": "dde7b1692ab7b8ab16f9184f332042e99209de97747f7d87de1697b4cd9670ef"
+      }
+    },
+    {
+      "label": "unit-style-r2",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/chat-message.test.tsx",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/carbon-chat-material-20261123-01a203cc/unit-style-r2.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:59:04.095142+00:00",
+      "durationSeconds": 12.775,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\unit-style-r2.stdout.log",
+        "sha256": "6f0f1e6a8c6db81cbc8f4b15317bd3e044c9fcdc322594a2abf7fe85be2b9470"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\unit-style-r2.stderr.log",
+        "sha256": "6c2188be6d314c9de0082223e3da2036b3d5f61935f05e2f944b2ea0b02ac8da"
+      }
+    },
+    {
+      "label": "typecheck-r1",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:55:28.551148+00:00",
+      "durationSeconds": 183.7,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\typecheck-r1.stdout.log",
+        "sha256": "a61d38386562ca73c9e789dd4fc9a232935e0c5609cfb4836253aeae43439b00"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\typecheck-r1.stderr.log",
+        "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+      }
+    },
+    {
+      "label": "typecheck-test-final",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck:test"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T11:09:34.105263+00:00",
+      "durationSeconds": 143.448,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\typecheck-test-final.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\typecheck-test-final.stderr.log",
+        "sha256": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57"
+      }
+    },
+    {
+      "label": "lint-r1",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "eslint",
+        "src/pages/Chat/ChatInput.tsx",
+        "src/pages/Chat/ChatMessage.tsx",
+        "src/pages/Chat/SessionTaskDock.tsx",
+        "src/pages/Chat/index.tsx",
+        "tests/unit/session-task-dock.test.tsx",
+        "tests/unit/chat-message.test.tsx",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "tests/e2e/chat-planning-composer-ux.spec.ts",
+        "tests/e2e/beam-composer-verify.spec.ts",
+        "tests/e2e/chat-layout-cdp.spec.ts",
+        "--max-warnings=120"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T10:59:16.941566+00:00",
+      "durationSeconds": 5.869,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\lint-r1.stdout.log",
+        "sha256": "c037e1924ebbf7971bd11ab8bbc79e3391994d5fbbe0fb9b3944d999d771641e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\lint-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "build-r2",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "node",
+        "--max-old-space-size=3072",
+        "./node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T11:03:14.394663+00:00",
+      "durationSeconds": 48.631,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\build-r2.stdout.log",
+        "sha256": "9c08f55e9d24003c5bf29628186ab40730a3ce5e56423944fcc436a120cf94b7"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\build-r2.stderr.log",
+        "sha256": "e1a9a27f53954e834fe2ed05817addfa1cde77ef5debe9f021f984fbc4292129"
+      }
+    },
+    {
+      "label": "i18n-r1",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "i18n:lint"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T11:00:08.311485+00:00",
+      "durationSeconds": 0.968,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\i18n-r1.stdout.log",
+        "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\i18n-r1.stderr.log",
+        "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+      }
+    },
+    {
+      "label": "harness-r1",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/chat-planning-composer-ux-20261123.md"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T11:00:09.358731+00:00",
+      "durationSeconds": 0.721,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\harness-r1.stdout.log",
+        "sha256": "589b187762df502b78624b8e7730f962e2f71bf13807e198cc5cf6e89b01720d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\harness-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "e2e-layout-r3",
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/chat-layout-cdp.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/carbon-chat-material-20261123-01a203cc/e2e-layout-r3"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T11:07:57.042396+00:00",
+      "durationSeconds": 17.887,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\e2e-layout-r3.stdout.log",
+        "sha256": "1a31fcfce03fdb846fbd98e0cf4d8a770314d5f4d3e7036195127ad5bd305263"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-chat-material-20261123-01a203cc\\e2e-layout-r3.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "existingWarnings": 5
+  },
+  "typeCoverage": "Full node/web/test on 6e0f8605b; later production change is CSS padding only. Final test-project types are checked again on the delivered tests."
+}
