@@ -64,7 +64,9 @@ finishing the run steps preserves the task owner's acceptance status. Archived
 plans remain in their turn disclosure. Knowledge scope, invocation mode and
 retrieval profile share one menu, with non-local profiles labelled on the input.
 Normal checkpoint records open on demand, while queues, read failures and
-connection errors stay directly visible. Verify these states with
+connection errors stay directly visible. An initial task read failure offers
+inline refresh, preserves the draft and never replaces another session's task.
+Verify these states with
 `tests/e2e/chat-planning-composer-ux.spec.ts`.
 
 

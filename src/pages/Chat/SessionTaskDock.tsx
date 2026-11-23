@@ -478,7 +478,6 @@ function TaskDockBody({
   const container = useRef<HTMLElement>(null);
   const change = (next: Mode) => {
     setMode(next);
-    saveMode(scope, taskId, next);
     if (next === "hidden" || mode === "hidden")
       requestAnimationFrame(() =>
         container.current?.querySelector<HTMLButtonElement>("[data-dock-focus]")?.focus(),
@@ -528,14 +527,12 @@ function TaskDockBody({
     ? undefined
     : (steps.find((step) => step.status === "in_progress") ??
       steps.find((step) => step.status === "pending"));
-  const finishedPreviously = useRef(false);
-  useEffect(() => {
-    if (finished && !finishedPreviously.current && mode === 'expanded') {
-      setMode('collapsed');
-      saveMode(scope, taskId, 'collapsed');
-    }
-    finishedPreviously.current = finished;
-  }, [finished, mode, scope, taskId]);
+  const [finishedPreviously, setFinishedPreviously] = useState(false);
+  if (finished !== finishedPreviously) {
+    setFinishedPreviously(finished);
+    if (finished && mode === 'expanded') setMode('collapsed');
+  }
+  useEffect(() => saveMode(scope, taskId, mode), [mode, scope, taskId]);
   const displayMode = tone === 'warn' && mode === 'hidden' ? 'collapsed' : mode;
   const expanded = displayMode === "expanded";
   const updated = task ? formatRelativeTime(task.contract.updatedAt, locale) : "";

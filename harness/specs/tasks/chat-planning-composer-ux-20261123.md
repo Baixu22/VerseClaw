@@ -51,6 +51,7 @@ touchedAreas:
   - harness/specs/tasks/chat-planning-composer-ux-20261123.md
   - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/fixtures/chat-planning-composer-ux/20261123/**
+  - harness/specs/fixtures/chat-planning-composer-ux/20261123-followup/**
 expectedUserBehavior:
   - 底栏保留模型原名，仅在宽度不足时单行省略，完整名称和路由仍可从提示及列表查看。
   - 发送、停止和继续使用统一圆形按钮，深色主题采用浅色圆底和深色图标。
@@ -85,6 +86,7 @@ docs:
     - README.zh-CN.md
     - README.ja-JP.md
     - harness/specs/fixtures/chat-planning-composer-ux/20261123/REPORT.md
+    - harness/specs/fixtures/chat-planning-composer-ux/20261123-followup/REPORT.md
 ---
 
 当前主线已有任务体系资源。本次聚焦会话规划与输入区，沿用现有 Host、任务归属、发送和知识服务。布局与信息显隐由 renderer 负责，任务完成继续以 Task Ledger owner 为准。截图和交互由 agent 驱动。
