@@ -350,7 +350,7 @@ test.describe('Chat page layout CDP checks', () => {
         };
       });
       expect(actionMenuMetrics.borderRadius).toBe('20px');
-      expect(actionMenuMetrics.backdropFilter).toBe('none');
+      expect(actionMenuMetrics.backdropFilter).toContain('blur(8px)');
       expect(actionMenuMetrics.maxHeight).toBe('320px');
       expect(Math.abs(actionMenuMetrics.width - actionMenuMetrics.shellWidth)).toBeLessThanOrEqual(1);
       // The fan and the panel both carry an attach action — assert the panel one.
@@ -376,7 +376,7 @@ test.describe('Chat page layout CDP checks', () => {
       });
       expect(dropdownMetrics.borderRadius).toBe('20px');
       expect(dropdownMetrics.backdropFilter).toBe('none');
-      await expect(permissionOption).toHaveCSS('min-height', '47px');
+      await expect(permissionOption).toHaveCSS('min-height', '52px');
       await expect(permissionOption).toHaveCSS('border-radius', '12.5px');
       await expect(permissionOption.locator('svg')).toHaveCount(2);
       await expect(permissionOption).toContainText(/risk|风险/);
