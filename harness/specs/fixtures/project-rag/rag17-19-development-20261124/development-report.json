@@ -1,0 +1,153 @@
+{
+  "schema": "G2Rag171819DevelopmentReport/v1",
+  "actor": "codex-g2-r47",
+  "driven_by": "agent",
+  "sourceCommit": "6fddc5c7b01afcbdd1d9257dd1c45aee535bb911",
+  "sourceTree": "6c0b088b7d799f29ad7fb1f86591bd06435a711c",
+  "sourceBase": "5d45cf79f769a1a3d8f994f965e5d63d24d5c40c",
+  "generatedAt": "2026-11-23T20:58:55.461Z",
+  "ownerInstruction": "现在先暂缓验收，优先完成代码开发",
+  "worktree": "D:/ClawX-work/g2-rag16-relay-20261119",
+  "branch": "codex/g2-rag16-relay-20261119",
+  "developmentStatus": "implemented-targeted-checks-passed",
+  "formalAcceptance": "paused-by-owner",
+  "productModelRequests": 0,
+  "changes": [
+    "RAG-17新增持久化检索诊断、弱反馈、owner原始证据核验、显式CAS策略晋级与回滚，以及admin候选评测。",
+    "RAG-18新增独立编译器校验进程、编译输入/输出来源绑定、多平台Node下载及交付/升级检查。",
+    "RAG-19新增冻结查询与任务执行器、实际生命周期soak和最终证据读回；部分任务队列保存原件并返回失败。",
+    "三份README、工作包与规格同步；离线操作文档纳入源码保留清单。"
+  ],
+  "validation": {
+    "focusedUnitAssertions": {
+      "passed": 144,
+      "failed": 0,
+      "root": 142,
+      "owner": 2,
+      "distinctKeys": 144
+    },
+    "targetedTypechecks": {
+      "passed": 4,
+      "scopes": [
+        "Main",
+        "Web",
+        "plugin",
+        "tests"
+      ]
+    },
+    "staticChecks": {
+      "passed": 8
+    },
+    "frozenReferenceCodeTasks": {
+      "passed": 20,
+      "evidence": "frozen-code-oracle.json",
+      "productModelRequests": 0
+    },
+    "harnessCi": {
+      "success": false,
+      "completedStages": 10,
+      "totalStages": 12,
+      "stage10": "agent-dev:audit",
+      "blockers": [
+        {
+          "id": "evidence-stale:workbench",
+          "message": "artifacts/agent-dev-workbench/evidence.json is 42.42h old, beyond the 24h freshness window."
+        },
+        {
+          "id": "evidence-stale:deep-test",
+          "message": "artifacts/agent-dev-deep-test/report.json is 42.52h old, beyond the 24h freshness window."
+        },
+        {
+          "id": "evidence-stale:deep-test-history",
+          "message": "artifacts/agent-dev-deep-test/history.json is 42.52h old, beyond the 24h freshness window."
+        },
+        {
+          "id": "evidence-stale:quality",
+          "message": "artifacts/agent-dev-quality/report.json is 42.52h old, beyond the 24h freshness window."
+        }
+      ],
+      "remainingLightweightChecks": "repo:evidence:check and repo:test-coverage:check passed separately"
+    },
+    "sourceRetention": true,
+    "documentContractChecks": 9,
+    "substantiveFinalIndependentReview": "pending: WorkBuddy R3 returned a placeholder with confidence 0.01"
+  },
+  "pending": [
+    {
+      "node": "TF-0893",
+      "program": "RAG-16",
+      "action": "恢复验收后，为新候选准备匹配的25门Executor/Verifier计划和资源grant；保留旧候选原件。"
+    },
+    {
+      "node": "TF-0894",
+      "program": "RAG-17",
+      "action": "执行当前候选的检索诊断、策略导入/回滚Electron旅程和完整冻结评测。"
+    },
+    {
+      "node": "TF-0895",
+      "program": "RAG-18",
+      "action": "运行五平台实际安装包、模型/容量、离线重启、升级及回滚矩阵。"
+    },
+    {
+      "node": "TF-0896",
+      "program": "RAG-19",
+      "action": "完成18叶同候选读回、240查询、540配对任务、72小时soak和工程双角色证据。"
+    }
+  ],
+  "preservedFirstFailures": [
+    {
+      "path": "D:\\tmp\\g2-r47-20261124\\development-expanded-r1.json",
+      "sha256": "666e968b00cfa69316bb714ae52b9e573e26c3fe5e36689b23c9b889c4cc348a"
+    },
+    {
+      "path": "D:\\tmp\\g2-r47-20261124\\development-expanded-r2.json",
+      "sha256": "2742055f2173643d6ef34bb37feacb2094724892bdd4288b35f0de8918cd5c9e"
+    },
+    {
+      "path": "D:\\tmp\\g2-r47-20261124\\types-tests-r1.log",
+      "sha256": "89a41582a02259fd6d5fb6b4a136129c5f37ce2c1b63a0b9d7c5b62adcaf0d80"
+    },
+    {
+      "path": "D:\\tmp\\g2-r47-20261124\\types-tests-r2.log",
+      "sha256": "b941ab636ac5c52e8593b702fca07e8d70168a10a285f0a1b5c176359f349d55"
+    },
+    {
+      "path": "D:\\tmp\\g2-r47-20261124\\oracle-driver-first-failure.json",
+      "sha256": "7c889fc3841e1ecbe8d44dfd64a76823262bed1d93750174e8ee5926872584c2"
+    },
+    {
+      "path": "D:\\tmp\\g2-r47-20261124\\policy-preview-r1.json",
+      "sha256": "0b30c8fb54d3bd9e9795254f01d4cf5f4599ab9d791af36df2bc0f9e930c0209"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "source-inputs.json",
+      "sha256": "92a3525e333cf610aeb4a054bd6a3145855b9d19d5d62e175da09e8896183b20"
+    },
+    {
+      "path": "root-unit.json",
+      "sha256": "1145c12fb0201feed31bc93e6fe4c3d46f1b9a6941b4f6c1ac374a8beca40c64"
+    },
+    {
+      "path": "owner-unit.json",
+      "sha256": "5476a26827b83370d5df1f9a1439f0d71f734f3879bc3735a6618801fb2a2075"
+    },
+    {
+      "path": "frozen-code-oracle.json",
+      "sha256": "7bc2df9dc8e3543845f93f85765228500e9da07ca195d52c455fb78000af7eb6"
+    },
+    {
+      "path": "checks-readback.json",
+      "sha256": "7548a62c4b0b867691e08f647fba46618377f1b451f9894dbce7d434540c4993"
+    },
+    {
+      "path": "document-contract-readback.json",
+      "sha256": "99efa652470fbb6528b028450c298c7847b359314ce512d7aebd039bb521f301"
+    },
+    {
+      "path": "review-readback.json",
+      "sha256": "4d66fc0178fc1b8be46786ce0e988bafaeb5d060b496e0927cac02a41947ddab"
+    }
+  ]
+}

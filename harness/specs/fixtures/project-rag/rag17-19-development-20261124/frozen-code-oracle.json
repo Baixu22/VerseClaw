@@ -1,0 +1,133 @@
+{
+  "actor": "codex-g2-r47",
+  "driven_by": "agent",
+  "scope": "pinned reference code and historical platform path semantics",
+  "modelRequests": 0,
+  "corpusDigest": "sha256:cc014f31e4ea67093a6dfe62f97591dec95956571b27c7d021b1677323379841",
+  "node": "v24.22.1",
+  "hostPlatform": "win32",
+  "durationMs": 1794,
+  "checks": [
+    {
+      "taskId": "t-code-owner-version",
+      "platform": "win32",
+      "passed": true,
+      "cases": 8
+    },
+    {
+      "taskId": "t-code-wiki-read-policy",
+      "platform": "win32",
+      "passed": true,
+      "cases": 6
+    },
+    {
+      "taskId": "t-code-host-knowledge-scope",
+      "platform": "win32",
+      "passed": true,
+      "cases": 5
+    },
+    {
+      "taskId": "t-code-bounded-page-read",
+      "platform": "win32",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "taskId": "t-code-source-set-limit",
+      "platform": "win32",
+      "passed": true,
+      "cases": 6
+    },
+    {
+      "taskId": "t-code-cjk-tokenizer",
+      "platform": "win32",
+      "passed": true,
+      "cases": 6
+    },
+    {
+      "taskId": "t-code-memory-temporal",
+      "platform": "win32",
+      "passed": true,
+      "cases": 8
+    },
+    {
+      "taskId": "t-code-host-deadline",
+      "platform": "win32",
+      "passed": true,
+      "cases": 5
+    },
+    {
+      "taskId": "t-code-host-action-timeouts",
+      "platform": "win32",
+      "passed": true,
+      "cases": 5
+    },
+    {
+      "taskId": "t-code-development-commands",
+      "platform": "win32",
+      "passed": true,
+      "cases": 1
+    },
+    {
+      "taskId": "t-code-session-continuity",
+      "platform": "win32",
+      "passed": true,
+      "cases": 6
+    },
+    {
+      "taskId": "t-code-workspace-preflight",
+      "platform": "win32",
+      "passed": true,
+      "cases": 7
+    },
+    {
+      "taskId": "t-code-provider-accounts",
+      "platform": "win32",
+      "passed": true,
+      "cases": 5
+    },
+    {
+      "taskId": "t-code-usage-aggregation",
+      "platform": "win32",
+      "passed": true,
+      "cases": 7
+    },
+    {
+      "taskId": "t-code-knowledge-governance",
+      "platform": "win32",
+      "passed": true,
+      "cases": 6
+    },
+    {
+      "taskId": "t-code-local-embedding-model",
+      "platform": "win32",
+      "passed": true,
+      "cases": 1
+    },
+    {
+      "taskId": "t-code-existing-semantic-provider",
+      "platform": "win32",
+      "passed": true,
+      "cases": 7
+    },
+    {
+      "taskId": "t-code-role-memory-store",
+      "platform": "win32",
+      "passed": true,
+      "cases": 7
+    },
+    {
+      "taskId": "t-code-file-path-boundary",
+      "platform": "win32",
+      "passed": true,
+      "cases": 5
+    },
+    {
+      "taskId": "t-code-task-working-context",
+      "platform": "win32",
+      "passed": true,
+      "cases": 1
+    }
+  ],
+  "status": "passed"
+}

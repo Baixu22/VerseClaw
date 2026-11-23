@@ -1,0 +1,165 @@
+{
+  "schema": "G2DevelopmentReviewReadback/v1",
+  "actor": "codex-g2-r47",
+  "driven_by": "agent",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "sourceCommit": "6fddc5c7b01afcbdd1d9257dd1c45aee535bb911",
+  "finalReviewedSnapshot": "fbd9850f4c84dc373354baaa21be1ccd76ba3d57",
+  "round1": {
+    "review": {
+      "findings": [
+        {
+          "body": "UNCHANGED",
+          "category": "bug",
+          "code_location": {
+            "file_path": "README.md",
+            "line": 313
+          },
+          "confidence": 0.99,
+          "priority": "P3",
+          "title": "placeholder"
+        }
+      ],
+      "overall_confidence": 0.1,
+      "overall_correctness": "patch is incorrect",
+      "overall_explanation": "placeholder"
+    },
+    "disposition": {
+      "actor": "codex-g2-r47",
+      "driven_by": "agent",
+      "status": "invalid-review-result",
+      "source": "review-r1.json",
+      "overallConfidence": 0.1,
+      "findingTitle": "placeholder",
+      "findingBody": "UNCHANGED",
+      "acceptedFindings": 0,
+      "reason": "The response does not describe a code defect or completed inspection. It cannot supply the required fresh closeout review.",
+      "next": "Rerun the same WorkBuddy model and preserve the original result."
+    },
+    "result": "invalid-placeholder; original retained locally"
+  },
+  "round2": {
+    "review": {
+      "findings": [
+        {
+          "body": "`knowledgeApi.observabilityOperation` sends every untyped input field through to the owner RPC. `promote` only requires an `operationId`; the Main service now selects the package path, but the Gateway handler still accepts the `evidenceRoot`, manifest name and digest from its request. A backend/admin caller able to reach the Gateway can invoke `wiki.observability.promote` with an arbitrary directory and manifest name, bypassing Main's bounded file selection and the intended “Main selects the package, owner verifies it” boundary. The verifier bounds paths and output, but the file selection and trust boundary are not enforced at the Gateway. Require the Gateway promotion API to receive an opaque Main-issued package handle or reject caller-supplied roots, and keep the selected path in Main-owned state.",
+          "category": "security",
+          "code_location": {
+            "file_path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+            "line": 177
+          },
+          "confidence": 0.89,
+          "priority": "P1",
+          "title": "Gateway promotion still accepts caller-controlled evidence root"
+        },
+        {
+          "body": "The offline verifier is supposed to prove the complete 240-query and 540-task cohort. `verifyOfflineRagPolicyPackage` reads the report pins and recomputes fields, but it only requires `evaluateOfflineRagReport` to succeed and then validates every entry in `execution.runs`; it never checks that the raw report contains 540 distinct task slots or that `execution.runs` is complete. `evaluateOfflineRagReport` rejects fewer than 540 report rows, but `verifyOfflineRagPolicyPackage` does not compare `evaluation.taskSlots`/`missingSlots` to the verifier's `execution.runs`, nor does it require all 540 attempts to be present. A package can pass the verifier with a report that omits trial rows while the execution file contains only a subset, and the promotion decision may still be calculated from the report summary. Require exactly 540 execution attempts keyed to the frozen slots and fail when `execution.complete` is false.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "scripts/lib/project-rag-promotion.mjs",
+            "line": 108
+          },
+          "confidence": 0.83,
+          "priority": "P1",
+          "title": "Offline policy verification does not enforce the full 540-slot execution"
+        },
+        {
+          "body": "`knowledge-rag-task-runner.ts` declares a 540-slot cohort but treats any `failureClass` other than `agent` as an infrastructure stop. It still writes the partial `task-executions.json` with `complete: attempts.length === 540` and then exits successfully because the main promise resolves. The readback path only calls `evaluateRagTaskPromotion` and checks that the promotion status is not `insufficient-evidence`; a partial execution can therefore be sealed as a task artifact and later promoted if the evaluator treats the subset as sufficient. The failure must set a non-zero process exit and the task-executions contract must reject `complete: false` before any promotion/readback.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "scripts/knowledge-rag-task-runner.ts",
+            "line": 133
+          },
+          "confidence": 0.86,
+          "priority": "P1",
+          "title": "Partial task cohort can be sealed and promoted"
+        },
+        {
+          "body": "`verifyOfflineRagPolicyPackage` validates that `queryCaptures.length === 480` but does not reject duplicate query/arm keys before using them. It maintains a local `queryIds` set only for duplicate checks, while the report contains one entry per query and the capture summary lookup can be satisfied by a captured subset. The 480 count is not enough to prove that every frozen query is represented; a package can reuse the same raw capture or omit several query IDs while keeping the total length. Add exact set equality against the frozen query IDs and require each query/arm pair to be present exactly once.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "scripts/lib/project-rag-promotion.mjs",
+            "line": 57
+          },
+          "confidence": 0.78,
+          "priority": "P1",
+          "title": "Raw query capture verifier checks count but not exact query coverage"
+        },
+        {
+          "body": "`project-rag-promotion.mjs` accepts the report's `queries` rows without checking that every required query appears exactly once against the frozen query set. It checks `input.queries.length === 240` and uses a `seen` set, but the seen set is only used for duplicate detection; the subsequent aggregation can accept a set of 240 unknown or partially different query IDs if each ID is syntactically valid. This allows a forged report with full count but incomplete/incorrect query identity to influence aggregate metrics. Compare the set of report query IDs with the frozen 240 IDs before computing metrics.",
+          "category": "bug",
+          "code_location": {
+            "file_path": "scripts/lib/project-rag-promotion.mjs",
+            "line": 42
+          },
+          "confidence": 0.8,
+          "priority": "P1",
+          "title": "Offline report count check does not prove complete query identity"
+        }
+      ],
+      "overall_confidence": 0.86,
+      "overall_correctness": "patch is incorrect",
+      "overall_explanation": "The change adds the intended diagnostics, policy promotion, packaging, and acceptance scaffolding, but the owner-side promotion path still trusts a Gateway caller-supplied evidence root and the offline cohort verification has completeness gaps. The task runner also writes a partial cohort as a successful artifact. These are actionable correctness and trust-boundary defects in the new implementation; they should be fixed before treating the policy import or acceptance path as safe."
+    },
+    "disposition": {
+      "actor": "codex-g2-r47",
+      "driven_by": "agent",
+      "review": "review-r2.json",
+      "findings": [
+        {
+          "index": 0,
+          "status": "rejected",
+          "reason": "The Gateway method is backend-only and operator.admin; generic renderer RPC rejects this bridge. Backend/admin is the intended trusted selection authority, and the owner independently validates fixed artifacts, paths, candidate digest and original grades. No unprivileged caller or caller-supplied metric bypass was demonstrated. The boundary is documented at the dispatch."
+        },
+        {
+          "index": 1,
+          "status": "partially-accepted",
+          "reason": "evaluateRagTaskPromotion already rejects non-540, unknown and duplicate slots as insufficient-evidence; the package refuses that verdict. Added an explicit complete=true and 540-array check to reject contradictory completion metadata at the package boundary."
+        },
+        {
+          "index": 2,
+          "status": "accepted-fixed",
+          "reason": "A partial cohort did return exit 0. The driver now preserves task-executions.json and sets exitCode=1 when fewer than 540 slots complete."
+        },
+        {
+          "index": 3,
+          "status": "rejected",
+          "reason": "480 entries require page/full arms, unique queryId:arm keys, and gradeRagQuery requires each ID in the frozen gold. Those invariants imply exact two-arm coverage of all 240 frozen IDs."
+        },
+        {
+          "index": 4,
+          "status": "rejected",
+          "reason": "evaluateOfflineRagReport requires 240 entries and asserts queries.find(id) exists and the ID is not in seen. Unknown and duplicate IDs are already rejected, giving exact coverage of the frozen 240 IDs."
+        }
+      ]
+    }
+  },
+  "round3": {
+    "review": {
+      "findings": [],
+      "overall_confidence": 0.01,
+      "overall_correctness": "patch is correct",
+      "overall_explanation": "placeholder"
+    },
+    "exitCode": 0,
+    "result": "placeholder; substantive-final-review-pending"
+  },
+  "documentationAgent": {
+    "actor": "codex-g2-r47",
+    "driven_by": "agent",
+    "scope": "bounded documentation/source contract verification",
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "status": "provider-error",
+    "upstreamStatus": 400,
+    "errorCode": "InferHub.ModelArts.81001.400",
+    "reason": "The provider rejected the rich message content at index 8; text/image_url/video_url are supported.",
+    "sourceChanges": 0
+  },
+  "inheritedCredentialScan": {
+    "actor": "codex-g2-r47",
+    "driven_by": "agent",
+    "scope": "source bytes against inherited credential values",
+    "matches": [],
+    "passed": true
+  }
+}

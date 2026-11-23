@@ -1,0 +1,154 @@
+{
+  "schema": "G2DriverDocumentationReadback/v1",
+  "actor": "codex-g2-r47",
+  "driven_by": "agent",
+  "method": "direct source/caller and recorded regression readback",
+  "sourceCommit": "6fddc5c7b01afcbdd1d9257dd1c45aee535bb911",
+  "document": {
+    "path": "docs/dev/project-rag/OFFLINE-DRIVERS.md",
+    "sha256": "a3b494a2803b14b79d1697f485ee9aa8c3536aa2448be2d4b7e4c8d5fbc2d29a"
+  },
+  "checks": [
+    {
+      "claim": "查询执行器固定240查询的page/full两臂，并把full候选与实际owner策略digest绑定。",
+      "sources": [
+        {
+          "path": "scripts/knowledge-rag-query-runner.ts",
+          "sha256": "5763863265b355d64cadd042235459c64f8bda3391df77585dd400f4438f99cb"
+        },
+        {
+          "path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+          "sha256": "c14a58a12d6fc303ea2b1b000165cdfb8ef09df6db6a3636b508cb5a9dc89004"
+        }
+      ],
+      "tests": "owner-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "任务执行器固定540槽位、三profile策略digest、原预算和独立participant目录；部分队列保留产物并exit 1。",
+      "sources": [
+        {
+          "path": "scripts/knowledge-rag-task-runner.ts",
+          "sha256": "89b0cb0ce5d117e7232cbccd4ca5d61a575f7186ee5d3c5bdafb69dcbe603af1"
+        },
+        {
+          "path": "tests/unit/project-rag-acceptance-readback.test.ts",
+          "sha256": "5f31da4a5cf327d6e33b4b23cd4924254ea7efd383d4104d1d476b584909e049"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "封包重新读回240查询、480捕获和complete=true的540原始任务，核对实验及原始capture。",
+      "sources": [
+        {
+          "path": "scripts/knowledge-rag-policy.ts",
+          "sha256": "ac94eb0cd588a787709081c87684751e2d63d813c9305883a3fc3c72c9df102f"
+        },
+        {
+          "path": "scripts/lib/project-rag-promotion.mjs",
+          "sha256": "7f0704135bc3cddc51da5407e9deadf00e3401e30ee43eb2674c137ffa8e7329"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "Main文件选择传入文件名/digest；owner独立核验并使用CAS晋级和回滚；renderer通用代理拒绝内部方法。",
+      "sources": [
+        {
+          "path": "electron/services/knowledge-api.ts",
+          "sha256": "a01d7a90fa787303ca6711abe23511491171b653cdacf2ed0b10c09d798eb482"
+        },
+        {
+          "path": "electron/services/gateway-api.ts",
+          "sha256": "825f4eb8c4c9d4ac8dca9ad27989c8ccd614ebfea97a61f53419e8108d7ebe4c"
+        },
+        {
+          "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval/observability-service.ts",
+          "sha256": "04bc457442fa1a5e13d811c892faeb62c50a1651c1060a99d74618929bd02478"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "运行时校验器在Node子进程内执行，UTF-8总输出上限256KiB，120秒终止和130秒硬退出。",
+      "sources": [
+        {
+          "path": "openclaw_runtime/src/knowledge/retrieval/offline-policy-package.ts",
+          "sha256": "16de17511cb3a6f0d00b0ab27f721eba8aeba2369acd8ff874b59d0546d00dc8"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "独立校验器包含编译器及实际编译输入/输出哈希；打包校验干净候选及Node 24.16.0资产绑定。",
+      "sources": [
+        {
+          "path": "scripts/build-rag-policy-verifier.mjs",
+          "sha256": "ab2cedc19af59d8d6a50db4663d0be726ed58f0147d3967460f15566f283d546"
+        },
+        {
+          "path": "scripts/lib/project-rag-package.mjs",
+          "sha256": "f70ce31587c1e98f1da2267c2db3bba6a9d676f28cbcf338f3a63e2305acb275"
+        },
+        {
+          "path": "scripts/download-bundled-node.mjs",
+          "sha256": "930da01e8f979df9a6c6fd53912e501cf6b82a3ee53d36eb93e2fe64c73cb26e"
+        },
+        {
+          "path": "scripts/release-integrity-manifest.mjs",
+          "sha256": "1bbd01c4dea5a036045a165a45e2bd98b675460175ed676551970731d2e59882"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "probe分别记录SQLite/FTS、SDK、portable/ANN读写和未运行的模型/容量；upgrade-check读取安装目标空间与owner版本。",
+      "sources": [
+        {
+          "path": "scripts/knowledge-rag-package.ts",
+          "sha256": "9f9c0d59185a8e65b391600d5b479183b7f753788533d3771201d6627a7f8e93"
+        },
+        {
+          "path": "scripts/lib/project-rag-package.mjs",
+          "sha256": "f70ce31587c1e98f1da2267c2db3bba6a9d676f28cbcf338f3a63e2305acb275"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "soak验证实际72小时墙钟/单调时间、八项生命周期步骤、序号、唯一探针与失败原件。",
+      "sources": [
+        {
+          "path": "scripts/knowledge-rag-acceptance.ts",
+          "sha256": "c2dca52ab478494475d55467740f05731259d1e98e7264925c62346648e2428e"
+        },
+        {
+          "path": "scripts/lib/project-rag-acceptance.mjs",
+          "sha256": "2a8b2018e55919b07e822bcaef2783420f3b2463eb96b2d359fd5d047140f2bd"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    },
+    {
+      "claim": "最终readback核对18叶、五平台、20k/100k容量、三个策略包、540任务和工程双角色证据。",
+      "sources": [
+        {
+          "path": "scripts/lib/project-rag-acceptance.mjs",
+          "sha256": "2a8b2018e55919b07e822bcaef2783420f3b2463eb96b2d359fd5d047140f2bd"
+        }
+      ],
+      "tests": "root-unit.json",
+      "result": "matched"
+    }
+  ],
+  "contractIndependentAgent": "provider-error; no contract verdict received",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash"
+}
