@@ -34,7 +34,7 @@ export function inferToolActivityKind(name: string): ToolActivityKind {
   if (/(web_fetch|browse|fetch_url|open_url|navigate|visit)/.test(tool)) return 'web';
   if (/(edit|patch|replace|modify)/.test(tool)) return 'edit';
   if (/(write|create_file|save_file)/.test(tool)) return 'write';
-  if (/(read|view_file|open_file|list_files|file_stat)/.test(tool)) return 'read';
+  if (/(read|view_file|file_view|open_file|list_files|file_list|file_stat|file_hash)/.test(tool)) return 'read';
   if (/(exec|bash|shell|command|terminal|process|run)/.test(tool)) return 'command';
   return 'other';
 }
@@ -53,6 +53,17 @@ export function toolActivityTarget(step: Pick<TaskStep, 'target' | 'inputDetail'
   } catch {
     return text.replace(/\s+/g, ' ').trim();
   }
+}
+
+export function toolActivityKind(step: Pick<TaskStep, 'label' | 'inputDetail' | 'detail'>): ToolActivityKind {
+  const kind = inferToolActivityKind(step.label);
+  if (kind === 'web' && /browser|browse/i.test(step.label)) {
+    try {
+      const input = JSON.parse(step.inputDetail ?? step.detail ?? '{}');
+      if (input?.action === 'search') return 'search';
+    } catch { /* Keep the named tool's category when its arguments are partial. */ }
+  }
+  return kind;
 }
 
 function timestamp(value: unknown): number | undefined {
@@ -130,7 +141,7 @@ export function buildToolActivityGroups(
   for (const item of timeline) {
     const step = 'step' in item ? item.step : undefined;
     const terminal = 'terminal' in item ? item.terminal : undefined;
-    const id = terminal?.toolCallId ?? step?.id;
+    const id = terminal?.toolCallId ?? terminal?.id ?? step?.id;
     if (step?.kind === 'tool' || terminal) {
       const at = timestamp(step?.startedAt ?? terminal?.startedAt);
       const index = (id ? callAnchors.get(id) : undefined)
@@ -151,7 +162,7 @@ export function buildToolActivityGroups(
     if (step) group.steps.push({ ...step, eventOrder: item.order }); else group.terminals.push({ ...terminal!, eventOrder: item.order });
     if (step?.kind === 'tool' || terminal || (step?.kind === 'system' && !id.startsWith('tool-result-'))) {
       group.entries.push({ id: callId, name: terminal?.command ?? step!.label,
-        kind: terminal ? 'command' : inferToolActivityKind(step!.label),
+        kind: terminal ? 'command' : toolActivityKind(step!),
         target: terminal?.command ?? toolActivityTarget(step!),
         running: card.active && (terminal?.status === 'running' || step?.status === 'running'),
         order: step?.eventOrder ?? terminal?.eventOrder ?? item.order });

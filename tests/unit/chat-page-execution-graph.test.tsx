@@ -710,7 +710,7 @@ describe('Chat execution graph lifecycle', () => {
       expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
 
-    expect(activityToggle()).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByText('Worker failed before acceptance: max children reached')).toBeInTheDocument();
     expect(screen.getByText('Review worker limits or permissions before retrying ordinary orchestration.')).toBeInTheDocument();
     expect(screen.getByText('Explicitly start Task Loop only if a governed long-run retry is needed')).toBeInTheDocument();

@@ -10,7 +10,7 @@ import type { TaskStep } from './task-visualization';
 import { CallChip, inferCallChipIcon } from '@/components/tool-ui/shared/call-chip';
 import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
 import type { RunTerminalSurface } from '@/components/tool-ui/run-surfaces';
-import { inferToolActivityKind, toolActivityTarget, type ToolActivityKind } from './tool-activity-groups';
+import { toolActivityKind, toolActivityTarget, type ToolActivityKind } from './tool-activity-groups';
 
 interface ExecutionGraphCardProps {
   agentLabel: string;
@@ -183,7 +183,7 @@ function StepDetailRow({
 
   if (isTool) {
     if (appearance === 'activity') {
-      const kind = inferToolActivityKind(step.label);
+      const kind = toolActivityKind(step);
       const target = toolActivityTarget({ ...step, inputDetail: inputDetail ?? step.inputDetail }) ?? displayLabel;
       const running = showRunning && runActive;
       const animate = running && step.id === currentToolId;
