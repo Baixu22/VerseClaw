@@ -1,0 +1,283 @@
+{
+  "schema": "CodingWriteFixVerification/v1",
+  "driven_by": "agent",
+  "actor": "coding-write-fixes-269-271",
+  "date": "2026-11-24",
+  "status": "passed",
+  "issues": [
+    269,
+    270,
+    271
+  ],
+  "baselineCommit": "da3b066ca8cdd01f0eefc21a49a7fb8c9f8dbc40",
+  "scope": "stale admission after owner waits, Host hardlink denial with existing-file metadata preserved, journal preimage retention",
+  "environment": {
+    "platform": "win32",
+    "fsSafeVersion": "0.3.0",
+    "electronVersion": "40.8.4",
+    "dependencyMode": "reused installed dependencies",
+    "sandboxErrorCases": "agent-driven backend reply simulation with real host filesystem fixtures",
+    "electronExecutableSha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+  },
+  "before": {
+    "runtimeFailedRegressions": 5,
+    "runtimeReceiptSha256": "418d8bb2800c7373e5da69f00d01fe98b5828f127246a72a389866031035494f",
+    "atomicReplaceHostFailedRegressions": 2,
+    "hostReceiptSha256": "09b7f14c9d0bcd774bfe2cb5d1bda85cdddeaa048b4fd969c5a70253b48a35d9",
+    "literalHostFailedRegressions": 2,
+    "literalHostReceiptSha256": "8912e5919aba73fe4015492ab0ff0421a2f3369011755fda6c839929ada01e4c",
+    "nativeBoundaryFailedRegressions": 3,
+    "nativeBoundaryReceiptSha256": "008df02e4d04c2d27cdbed701a0edb02c046d492447f746e02b8143eab45ba7b",
+    "largeFreshWriteFailedRegressions": 1,
+    "largeFreshWriteReceiptSha256": "5733898a4b67be9f0a14581f8360ddd07639d3a054cfb95a60cb5020527ad32b"
+  },
+  "tests": {
+    "runtime": {
+      "receipt": "runtime-closeout-tests.json",
+      "sha256": "e5998ed9712759ca36005374b3bee7e66b6fe100e0835435050d206e61097591",
+      "success": true,
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "files": [
+        "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+        "openclaw_runtime/src/agents/stale-write-guard.false-block.test.ts",
+        "openclaw_runtime/src/agents/tools/coding-write-admission.test.ts",
+        "openclaw_runtime/src/agents/tools/stale-write-guard.test.ts",
+        "openclaw_runtime/src/agents/tools/write-journal.test.ts"
+      ]
+    },
+    "host": {
+      "receipt": "host-files-r3-tests.json",
+      "sha256": "38f6002f45d2d8b4ce952f1432af6de324e7b1cf45e5ef4a3616a174346bf443",
+      "success": true,
+      "total": 11,
+      "passed": 11,
+      "failed": 0,
+      "files": [
+        "tests/unit/files-permissions-api.test.ts",
+        "tests/unit/path-broker-resolved.test.ts"
+      ]
+    },
+    "electron": {
+      "total": 1,
+      "passed": 1,
+      "unexpected": 0,
+      "flaky": 0,
+      "receiptSha256": "a4e4792b502b296c7f5fe53e59243d23f2990b202338d1bb55ab043b559315d5",
+      "lane": "single-coding-development-case",
+      "maxWorkers": 1,
+      "maxElectronApps": 1,
+      "sourceMutationGuard": "passed",
+      "processCleanup": "passed",
+      "admission": {
+        "processProbeFreeBytes": 4135763968,
+        "heavy": [],
+        "freeBytes": 4222881792,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+        "lane": "single-coding-development-case",
+        "minimumFreeBytes": 2147483648,
+        "formalSharedMinimumFreeBytes": 4294967296,
+        "formalSharedAcceptance": false,
+        "maxWorkers": 1,
+        "maxElectronApps": 1
+      }
+    },
+    "totalPassed": 77
+  },
+  "typechecks": {
+    "main": "passed",
+    "renderer": "passed",
+    "tests": "passed",
+    "initialReceiptSha256": "00a5dc95a1e5f878f22c91d1533bf221b93bb24c7b76b1aba3b004b344a8cfb8",
+    "revisedMainAndTestsReceiptSha256": "2e7ae5aff38c8cb94e8b5285973fc1fb568e7550e94d8c04f3db515c0980613e"
+  },
+  "builds": {
+    "electronAndRenderer": "passed",
+    "runtimeAndGatewayStartup": "passed"
+  },
+  "checks": {
+    "hostLint": "passed",
+    "runtimeLint": "passed",
+    "hostApiContract": "passed",
+    "commsReplayAndCompare": "passed",
+    "harnessValidation": "passed",
+    "harnessDryRun": "passed"
+  },
+  "reviews": [
+    {
+      "scope": "native-write",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "reviewArtifactCommit": "70c3806e39836e9fee29b8cc8fb067af00c0b5e4",
+      "reviewArtifactTree": "ee7798b4d8cf05ffeecd90187821a2581f7d984b",
+      "reviewedPaths": [
+        "openclaw_runtime/src/agents/agent-tools.ts",
+        "openclaw_runtime/src/agents/agent-tools.read.ts",
+        "openclaw_runtime/src/agents/stale-write-guard.ts",
+        "openclaw_runtime/src/agents/sessions/tools/write.ts",
+        "openclaw_runtime/src/agents/tools/write-journal.ts",
+        "openclaw_runtime/src/agents/tools/coding-write-admission.test.ts",
+        "openclaw_runtime/src/agents/tools/stale-write-guard.test.ts",
+        "openclaw_runtime/src/agents/sandbox/remote-fs-bridge.ts"
+      ],
+      "responseSha256": "83d5778e8123f1d52bb40103e59f21395805e070aae36746a5cfcb0c644a35ec",
+      "acceptedUnresolvedFindings": 0
+    },
+    {
+      "scope": "journal-storage",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "reviewArtifactCommit": "70c3806e39836e9fee29b8cc8fb067af00c0b5e4",
+      "reviewArtifactTree": "ee7798b4d8cf05ffeecd90187821a2581f7d984b",
+      "reviewedPaths": [
+        "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+        "openclaw_runtime/src/agents/tools/write-journal.test.ts"
+      ],
+      "responseSha256": "7b848bce1aab47a10cb7d4026fdb1c922ebd1ebed3810f082fe885e05d70fc0c",
+      "acceptedUnresolvedFindings": 0
+    },
+    {
+      "scope": "host-save",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "reviewArtifactCommit": "70c3806e39836e9fee29b8cc8fb067af00c0b5e4",
+      "reviewArtifactTree": "ee7798b4d8cf05ffeecd90187821a2581f7d984b",
+      "reviewedPaths": [
+        "electron/services/files-api.ts",
+        "tests/unit/files-permissions-api.test.ts",
+        "tests/e2e/coding-file-save-boundary.spec.ts"
+      ],
+      "responseSha256": "a57889df9dbae2c35bf3b3a4d6cbcca9cb02255366d6bb08276b7897ee4080cb",
+      "acceptedUnresolvedFindings": 0
+    }
+  ],
+  "reviewFindingsFixed": [
+    "preserve original inode/security metadata",
+    "save without parent creation rights",
+    "preserve literal tilde targets"
+  ],
+  "sourceBindings": [
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "sha256": "e264f16f2dd8589fd0b843e08c3080e2f2511bdd9d67f61b7c6e619e05c686d8",
+      "gitBlob": "66f5d948385783ce4729aa39fea713035b026e6f"
+    },
+    {
+      "path": "electron/services/files-api.ts",
+      "sha256": "36d1eaef547d9ac27e6c10c95d628fcbe4872c68690720fee67663938f6da366",
+      "gitBlob": "aa6963df8a240320b74c8ecc3d57f6ddf2004003"
+    },
+    {
+      "path": "harness/specs/rules/coding-mutation-consistency-boundary.md",
+      "sha256": "4086f141b523f4ddc5126a8d5111fa0bc03989ee0c6f3f9b2be2fe81d033aecf",
+      "gitBlob": "9288d104bdccfa7253c9c076fd8a7e34b1290819"
+    },
+    {
+      "path": "harness/specs/tasks/coding-write-issues-269-271.md",
+      "sha256": "813c292d06a905d6970922f6862c7a40094790988924db78e24fe6c512bb67b1",
+      "gitBlob": "53e17ffdd1c14b53ddccef4d3b85f20e59d226f8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.read.ts",
+      "sha256": "5ed1a24c304f49500f60223acf356f35f2fe30631fd43200c62bd16351baba3d",
+      "gitBlob": "cb4b9d392bfea2eb5dd67a5d63c5c47b4d6b9570"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "sha256": "59435cbfd33cb88894dd5b47af9b516f13f5a8482900ef55938d0cbb6ecdd503",
+      "gitBlob": "fabb629a4c48ec447b0ee89ab9249ef9b2bedf0f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sandbox/remote-fs-bridge.ts",
+      "sha256": "6cb4b8d6622e9d6a4fc553f3bd1d5f6d85aa12965f9c12f53eee203d9d18af21",
+      "gitBlob": "5512beed9562ee5ecbc63dec92255f0ab5c24349"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/write.ts",
+      "sha256": "dac273aea78afdd4dcbf27cb3094095f1ca141bf7e358a4cda279fa76d41b9ef",
+      "gitBlob": "c4145969d58d0bd335963cda3b6a5093d647b64b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/stale-write-guard.ts",
+      "sha256": "9db0b0e960f07cc503bc9042abbee7e15982420924554579ca010ae38850a3f4",
+      "gitBlob": "5c5cd6557efa6b55ba23f4267ecf1bad31b9f580"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/coding-write-admission.test.ts",
+      "sha256": "107668e27084cbf11f6669f1c9345281cfedb7a4716df3688f4fdd13f873ee0f",
+      "gitBlob": "d88673fea9ff7e3eb9cd817de79442a0f039b0cb"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/stale-write-guard.test.ts",
+      "sha256": "b14632aa5b4f6f060d8a30e5c40f7aa4bdbc5801dc278c17ddfaccdb4087971c",
+      "gitBlob": "4fa58297f739171108b9516a6c64bbacb10417b5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+      "sha256": "6176205d974616e98a01f8099e0b77d5d982733beeaebad6482bf7c8a543ac8d",
+      "gitBlob": "c74066ae87b5d187f2c9599dceb26df71fbfcc26"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal.test.ts",
+      "sha256": "2de03de3188bb51ff8aec6d75adf5eb2c84a2f5e6ecad1a9c24d2ed72f0b8c94",
+      "gitBlob": "cbec5f92ad23e1e0f0c0bb7f2cc38ce3fff36ea7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "sha256": "29488a50ef150dda58f259d86e121473d19a6eb1b2c9ac457861b01dfdf97158",
+      "gitBlob": "734e2c0266442642dcfc6b3f1cda3896a82ceddf"
+    },
+    {
+      "path": "tests/e2e/coding-file-save-boundary.spec.ts",
+      "sha256": "bb272849a53a066e31d48b3e5ca7c1e7d481da62557df6a5c68e57c9dd55b90a",
+      "gitBlob": "9e768f10b0f4e480d1b5346032daa7b8d2f265bd"
+    },
+    {
+      "path": "tests/unit/files-permissions-api.test.ts",
+      "sha256": "4b69bbc5ab3bb738db35d61e42bd1d21d675f2a18e5a07f49a5793a4d01aef60",
+      "gitBlob": "6f38cb944d009b86c6700ae4767a2dd63ad73c57"
+    }
+  ],
+  "externalRunArchive": "coding-write-fixes-20261124-01a208d0",
+  "rawLogHashes": [
+    {
+      "name": "contract.log",
+      "sha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+    },
+    {
+      "name": "comms-replay.log",
+      "sha256": "3180a410c6076acee01c3a49a5dbe561791e53f0294df2cb09535d8e39771871"
+    },
+    {
+      "name": "comms-compare.log",
+      "sha256": "a2122e2f45dfc780c78807b8e812823d8ce1c89437d3f488972bbd7d986351f2"
+    },
+    {
+      "name": "harness-validate-closeout.log",
+      "sha256": "a6b397d6c1df7ea25cccb484f5d37f3595f9e3b33304f700cd0dce2921b749ef"
+    },
+    {
+      "name": "harness-plan-r2.log",
+      "sha256": "afffea0e2aaf1ac52863f0d5a3397a349e69b16f2eb5cc6a91a0b3e8840af44a"
+    },
+    {
+      "name": "host-lint-r3.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "runtime-lint-closeout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "vite-final.log",
+      "sha256": "d1c3280dd4bd3bbbcb129862ae02c9bcb7e7744c250dc24d123069af66381619"
+    },
+    {
+      "name": "runtime-build-closeout.log",
+      "sha256": "4a0f99e72c535adcaba7730010cb049ac0851487d5afd43be088c2b1c33f9a2f"
+    },
+    {
+      "name": "electron-coding-final.log",
+      "sha256": "1e26e02ebac024b29aef78e366bcab97cbd20b8b7fed33541b27748b78acf8f4"
+    }
+  ]
+}

@@ -79,6 +79,8 @@ const defaultWriteOperations: WriteOperations = {
 export interface WriteToolOptions {
   /** Custom operations for file writing. Default: local filesystem */
   operations?: WriteOperations;
+  /** Admission after the file mutation lease, before any directory or file effect. */
+  beforeWrite?: (absolutePath: string, args: unknown) => Promise<void>;
 }
 
 type WriteToolFileStat = {
@@ -399,7 +401,7 @@ export function createWriteToolDefinition(
     parameters: writeSchema,
     async execute(
       toolCallId,
-      { path, content }: { path: string; content: string },
+      args: { path: string; content: string },
       signal?: AbortSignal,
       onUpdate?,
       ctx?,
@@ -407,58 +409,66 @@ export function createWriteToolDefinition(
       void toolCallId;
       void onUpdate;
       void ctx;
+      const { path, content } = args;
       const absolutePath = resolveToCwd(path, cwd);
       const dir = dirname(absolutePath);
-      return withFileMutationQueue(absolutePath, async () => {
-        const byteLength = Buffer.byteLength(content, "utf8");
-        const precheck = await readOriginalWriteState(absolutePath, content, ops);
-        try {
-          if (signal?.aborted) {
-            throw new Error("Operation aborted");
-          }
-          await ops.mkdir(dir);
-          if (signal?.aborted) {
-            throw new Error("Operation aborted");
-          }
-          await ops.writeFile(absolutePath, content);
-          if (signal?.aborted) {
-            throw new Error("Operation aborted");
-          }
-          return {
-            content: [
-              {
-                type: "text" as const,
-                text: `Successfully wrote ${byteLength} bytes to ${path}`,
+      return withFileMutationQueue(
+        absolutePath,
+        async () => {
+          // A caller can wait here after outer validation. Recheck while this
+          // owner still holds the lease, before mkdir/write can apply an effect.
+          await options?.beforeWrite?.(absolutePath, args);
+          const byteLength = Buffer.byteLength(content, "utf8");
+          const precheck = await readOriginalWriteState(absolutePath, content, ops);
+          try {
+            if (signal?.aborted) {
+              throw new Error("Operation aborted");
+            }
+            await ops.mkdir(dir);
+            if (signal?.aborted) {
+              throw new Error("Operation aborted");
+            }
+            await ops.writeFile(absolutePath, content);
+            if (signal?.aborted) {
+              throw new Error("Operation aborted");
+            }
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: `Successfully wrote ${byteLength} bytes to ${path}`,
+                },
+              ],
+              details: {
+                versegit_basis: createVerseGitWriteBasis({
+                  path,
+                  content,
+                  beforeSha256: precheck.beforeSha256 ?? null,
+                }),
+                working_memory: {
+                  result_summary: `Wrote ${path}: ${byteLength} bytes`.slice(0, 100),
+                  significance: "high",
+                },
               },
-            ],
-            details: {
-              versegit_basis: createVerseGitWriteBasis({
-                path,
-                content,
-                beforeSha256: precheck.beforeSha256 ?? null,
-              }),
-              working_memory: {
-                result_summary: `Wrote ${path}: ${byteLength} bytes`.slice(0, 100),
-                significance: "high",
-              },
-            },
-          };
-        } catch (error: unknown) {
-          const recovered = await recoverSuccessfulWrite({
-            absolutePath,
-            content,
-            error,
-            ops,
-            path,
-            precheck,
-            signal,
-          });
-          if (recovered) {
-            return recovered;
+            };
+          } catch (error: unknown) {
+            const recovered = await recoverSuccessfulWrite({
+              absolutePath,
+              content,
+              error,
+              ops,
+              path,
+              precheck,
+              signal,
+            });
+            if (recovered) {
+              return recovered;
+            }
+            throw error;
           }
-          throw error;
-        }
-      }, { signal });
+        },
+        { signal },
+      );
     },
     renderCall(args, theme, context) {
       const renderArgs = args as

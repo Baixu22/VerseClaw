@@ -1,6 +1,7 @@
 import { app, nativeImage } from 'electron';
 import crypto from 'node:crypto';
-import { basename, extname, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, extname, join, relative, resolve, sep } from 'node:path';
+import { FsSafeError, root as fsRoot } from '../../openclaw_runtime/src/infra/fs-safe';
 import type {
   FilePreviewTreeNode,
   FilePreviewTreeOptions,
@@ -470,9 +471,26 @@ export function createFilesApi(): CompleteHostServiceRegistry['files'] {
           return { ok: false, error: 'notFound' };
         }
         if (!stat.isFile()) return { ok: false, error: 'notFound' };
-        await fsP.writeFile(real, body.content, 'utf8');
+        const workspaceRoot = workspace ? await realpathOrResolve(workspace.rootPath) : undefined;
+        const writeRoot = workspaceRoot && isPathInside(real, workspaceRoot) ? workspaceRoot : dirname(real);
+        const guarded = await fsRoot(writeRoot);
+        // Keep the canonical target literal: fs-safe expands relative ~ segments.
+        // The verified handle preserves the inode, ACLs and existing readers.
+        const opened = await guarded.openWritable(real, { mkdir: false, writeMode: 'replace' });
+        try {
+          await opened.handle.writeFile(body.content, 'utf8');
+        } finally {
+          await opened.handle.close();
+        }
         return { ok: true };
       } catch (err) {
+        if (err instanceof FsSafeError) {
+          if (err.code === 'not-found' || err.code === 'not-file') return { ok: false, error: 'notFound' };
+          if (err.code === 'outside-workspace') return { ok: false, error: 'outsideSandbox' };
+          if (['path-alias', 'hardlink', 'symlink', 'path-mismatch', 'invalid-path', 'denied-path'].includes(err.code)) {
+            return { ok: false, error: 'unsafePath' };
+          }
+        }
         if (err instanceof PathBrokerError) {
           return { ok: false, error: err.code };
         }
