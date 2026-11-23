@@ -1130,7 +1130,8 @@ describe('live plan display ownership', () => {
           { type: 'tool.started', toolCallId: 'live-plan-tool', name: 'update_plan', args: { plan: [{ step: 'Read current sources', status: 'completed' }, { step: 'Write focused patch', status: 'in_progress' }] }, ts: 1_700_000_000_002 }] } },
     });
     await mountChat();
-    expect(await screen.findByTestId('session-task-current')).toHaveTextContent('Write focused patch');
+    expect(await screen.findByTestId('session-task-count')).toHaveTextContent('1/2');
+    expect(screen.queryByTestId('session-task-current')).toBeNull();
     fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.queryByTestId('chat-run-plan')).toBeNull();
