@@ -94,7 +94,10 @@ test('conversation planning, settings and decisions share a compact input surfac
         await expect(shell).toHaveCSS('background-color', dark ? 'rgb(53, 53, 51)' : 'rgb(255, 255, 255)');
         await expect(shell).toHaveCSS('backdrop-filter', 'none');
         await expect(page.locator('.codex-composer-stack')).toHaveCSS('border-radius', '16px');
-        await expect(page.locator('.codex-composer-stack')).toHaveCSS('border-top-width', '1px');
+        const border = await page.locator('.codex-composer-stack').evaluate(element => ({
+          width: parseFloat(getComputedStyle(element).borderTopWidth), ratio: devicePixelRatio,
+        }));
+        expect(border.width).toBeCloseTo(Math.max(1, Math.floor(border.ratio)) / border.ratio, 4);
         await expect(shell).toHaveCSS('border-top-width', '0px');
       }
       await expect(bubble).toHaveCSS('background-color', dark ? 'rgb(54, 54, 52)' : 'rgb(244, 244, 241)');

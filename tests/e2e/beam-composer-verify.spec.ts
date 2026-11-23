@@ -2,7 +2,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
 
-const sessionKey = 'agent:main:material';
+const sessionKey = 'agent:main:main';
 const key = (module: string, action: string) => JSON.stringify([module, action, null]);
 
 test('composer keeps a solid surface while running and leaves slash menus reachable', async ({ launchElectronApp }, info) => {
@@ -15,7 +15,7 @@ test('composer keeps a solid surface while running and leaves slash menus reacha
       gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 },
       gatewayRpcByMethod: {
         'sessions.list': { sessions: [{ key: sessionKey, sessionId: 'material-generation', displayName: 'Material check' }] },
-        'chat.history': { sessionKey, messages: [{ id: 'material-user', role: 'user', content: 'Keep the input clear.', timestamp: Date.now() }] },
+        'chat.history': { sessionKey, sessionId: 'material-generation', messages: [{ id: 'material-user', role: 'user', content: 'Keep the input clear.', timestamp: Date.now() }] },
         '*': {},
       },
       hostApi: {
@@ -28,6 +28,7 @@ test('composer keeps a solid surface while running and leaves slash menus reacha
     const shell = page.getByTestId('chat-composer-shell');
     const input = page.getByTestId('chat-composer-input');
     await expect(input).toBeVisible();
+    await expect(page.getByTestId('chat-user-message-bubble')).toHaveText('Keep the input clear.');
     await expect(page.getByTestId('chat-composer-beam')).toHaveCount(0);
     const event: ChatRuntimeEvent = { type: 'run.started', sessionKey, runId: 'material-run', startedAt: Date.now(), ts: Date.now() };
     await app.evaluate(({ BrowserWindow }, value) => {

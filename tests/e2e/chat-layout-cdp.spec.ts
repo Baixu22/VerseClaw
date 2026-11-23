@@ -339,7 +339,7 @@ test.describe('Chat page layout CDP checks', () => {
       const actionMenuMetrics = await actionMenu.evaluate((element) => {
         const style = getComputedStyle(element);
         const rect = element.getBoundingClientRect();
-        const shell = element.closest('[data-testid="chat-composer-shell"]');
+        const shell = element.closest('.codex-composer-stack');
         const shellRect = shell?.getBoundingClientRect();
         return {
           borderRadius: style.borderRadius,
@@ -350,7 +350,7 @@ test.describe('Chat page layout CDP checks', () => {
         };
       });
       expect(actionMenuMetrics.borderRadius).toBe('20px');
-      expect(actionMenuMetrics.backdropFilter).toContain('blur(8px)');
+      expect(actionMenuMetrics.backdropFilter).toBe('none');
       expect(actionMenuMetrics.maxHeight).toBe('320px');
       expect(Math.abs(actionMenuMetrics.width - actionMenuMetrics.shellWidth)).toBeLessThanOrEqual(1);
       // The fan and the panel both carry an attach action — assert the panel one.
@@ -374,23 +374,15 @@ test.describe('Chat page layout CDP checks', () => {
           backdropFilter: style.backdropFilter,
         };
       });
-      expect(dropdownMetrics.borderRadius).toBe('15px');
-      expect(dropdownMetrics.backdropFilter).toContain('blur(8px)');
+      expect(dropdownMetrics.borderRadius).toBe('20px');
+      expect(dropdownMetrics.backdropFilter).toBe('none');
       await expect(permissionOption).toHaveCSS('min-height', '47px');
       await expect(permissionOption).toHaveCSS('border-radius', '12.5px');
       await expect(permissionOption.locator('svg')).toHaveCount(2);
       await expect(permissionOption).toContainText(/risk|风险/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu');
       await page.evaluate(() => document.documentElement.classList.add('dark'));
-      // The shell animates background-color (transition duration 180ms). A fixed
-      // wait races that transition under load and samples a mid-tween frame
-      // (e.g. oklab(0.31… / 0.93)); poll until the surface settles on the dark
-      // token: gray-800 (#212121) mixed at 96%, i.e. oklab(0.24… / 0.96).
-      await expect
-        .poll(() => composerShell.evaluate((element) => getComputedStyle(element).backgroundColor))
-        .toMatch(/oklab\(0\.24\d*\s.*\/\s*0\.96\)/);
-      const darkComposerBackground = await composerShell.evaluate((element) => getComputedStyle(element).backgroundColor);
-      expect(darkComposerBackground).toMatch(/oklab\(0\.24/);
+      await expect(composerShell).toHaveCSS('background-color', 'rgb(53, 53, 51)');
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu-dark');
       await page.evaluate(() => document.documentElement.classList.remove('dark'));
       await page.getByTestId('chat-composer-input').fill('/');
