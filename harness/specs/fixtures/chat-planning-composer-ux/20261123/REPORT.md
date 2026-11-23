@@ -15,3 +15,5 @@ Carbon 实际查看 7 张图片，提供首轮设计和一次复核，3 项复�
 ![最终会话界面](images/after-rest-zh-dark-960.png)
 
 原始失败、完整日志与回执保留在 `D:/tmp/chat-ux-20261123-01a203cc`。全仓 Agent Dev CI 延续上轮记录，本次验收聚焦会话 UI。运行 `python verify.py` 可核对候选记录、验收数据与文件哈希。
+
+主目录 `D:/ClawX/dist` 与 `dist-electron` 已同步这份实际验证过的构建，入口文件哈希一致。旧产物保留在 `D:/tmp/chat-ux-20261123-01a203cc/previous-main-build`。

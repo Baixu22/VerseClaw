@@ -1,0 +1,22 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "sourceCommit": "c7c2cb33431d22e805a35a09f15bb04394f6965e",
+  "installedAt": "2026-11-23T09:59:26.4971004Z",
+  "target": "D:\\ClawX",
+  "backup": "D:\\tmp\\chat-ux-20261123-01a203cc\\previous-main-build",
+  "entries": [
+    {
+      "path": "dist/index.html",
+      "sha256": "55e12c451e263173592ec3c750a37a09163ef6fd6ef25745854309350d2bf52d"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "98a16bc204c7245f95b521188f3a9d45060f44e33a5c371c0c424b03cb76ee09"
+    },
+    {
+      "path": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ]
+}
