@@ -1,0 +1,403 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidate": {
+    "commit": "c24f8b35e40d9d6d174e4fd034f3170ed8f02890",
+    "tree": "116e061f40c156208a74bed6d16767f17c1c00ee",
+    "dirty": false
+  },
+  "buildSourceCommit": "7c1624a339d940abfe3a16ed675fcc8161ea4ea6",
+  "unitPassed": 53,
+  "electronUiPassed": 5,
+  "uiCases": [
+    {
+      "file": "chat-execution-context.spec.ts",
+      "title": "execution tray creates a real worktree in two clicks and restores the original draft",
+      "passed": true,
+      "run": "e2e-r3"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+      "passed": true,
+      "run": "e2e-neighbors-r1"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+      "passed": true,
+      "run": "e2e-neighbors-r1"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "touch composer targets fit at 375px and the closed add menu skips its actions",
+      "passed": true,
+      "run": "e2e-neighbors-r1"
+    },
+    {
+      "file": "chat-planning-composer-ux.spec.ts",
+      "title": "conversation planning, settings and decisions share a compact input surface",
+      "passed": true,
+      "run": "e2e-planning-r2"
+    }
+  ],
+  "runtimeRecoveryPassed": true,
+  "runtimeCases": [
+    {
+      "file": "session-fork-intent.spec.ts",
+      "title": "U3 plain model advice needs explicit Handoff preview and cancellation creates no child",
+      "passed": true
+    },
+    {
+      "file": "session-fork-intent.spec.ts",
+      "title": "U3 rejects question Fork without an assistant ancestor and disables missing-entry projections",
+      "passed": true
+    }
+  ],
+  "runtimeCommands": [
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/session-fork-intent.spec.ts",
+        "--grep",
+        "U3",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/chat-startup-context-20261123-01a203cc/runtime-recovery"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:31:23.648593+00:00",
+      "durationSeconds": 69.994,
+      "exitCode": 1,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\runtime-recovery.stdout.log",
+        "sha256": "cc115590f801258cf5fd0e5246566de2b570d808041cc1e072c1686afe48e063"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\runtime-recovery.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/session-fork-intent.spec.ts",
+        "--grep",
+        "U3 rejects",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/chat-startup-context-20261123-01a203cc/runtime-fork-r2"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:35:30.193687+00:00",
+      "durationSeconds": 57.543,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\runtime-fork-r2.stdout.log",
+        "sha256": "72851b67d47d09d8a5b541fbd256d9ed942481b21767df1341ddc8f0126713fc"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\runtime-fork-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "checks": {
+    "unit-final": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/session-workspace-picker.test.tsx",
+        "tests/unit/chat-render-reachability.test.tsx",
+        "tests/unit/composer-git-strip.test.tsx",
+        "tests/unit/chat-workspace-session-target.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/chat-startup-context-20261123-01a203cc/unit-final.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:26:16.977447+00:00",
+      "durationSeconds": 58.964,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\unit-final.stdout.log",
+        "sha256": "75f7c3ab9392851c72aa60c33beda8de111da4a383deae427dff55b5952548e9"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\unit-final.stderr.log",
+        "sha256": "dde7b1692ab7b8ab16f9184f332042e99209de97747f7d87de1697b4cd9670ef"
+      }
+    },
+    "typecheck-final": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:24:07.598527+00:00",
+      "durationSeconds": 233.125,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\typecheck-final.stdout.log",
+        "sha256": "29de526f93726dd402957c9b69a8aa5593dac77a887cdd3d315290a05912e630"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\typecheck-final.stderr.log",
+        "sha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a"
+      }
+    },
+    "build": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "node",
+        "--max-old-space-size=3072",
+        "./node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T14:36:08.733632+00:00",
+      "durationSeconds": 43.219,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\build.stdout.log",
+        "sha256": "f009df9bbfb3df08f0e8047725dd3a45bab7849cc213e83bdd137beb854b507d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\build.stderr.log",
+        "sha256": "af6a2917aa01b6d8c458daa122480ffd933fe4a7a7ad817cc7eccd6067ae2d0f"
+      }
+    },
+    "e2e-r3": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/chat-execution-context.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/chat-startup-context-20261123-01a203cc/e2e-r3"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:10:19.623933+00:00",
+      "durationSeconds": 31.249,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\e2e-r3.stdout.log",
+        "sha256": "d52a22d6c652a4db8541873bf2d060dd66fdbaf5c395d15ded220c4fb2122504"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\e2e-r3.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "e2e-planning-r2": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/chat-planning-composer-ux.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:/tmp/chat-startup-context-20261123-01a203cc/e2e-planning-r2"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:24:07.599994+00:00",
+      "durationSeconds": 42.709,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\e2e-planning-r2.stdout.log",
+        "sha256": "677996e24bd8db6b61089c38d2d7eb63d769322b63f7d23db37be4233a0c52b3"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\e2e-planning-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "harness-scoped": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/chat-execution-context-20261123.md",
+        "--since",
+        "f8d38f3b6"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:18:12.203915+00:00",
+      "durationSeconds": 9.584,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\harness-scoped.stdout.log",
+        "sha256": "419166de8c878db76564253d77ed8b28bb5ba44cad5bd896aa52d24f566b6f9c"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\harness-scoped.stderr.log",
+        "sha256": "adb9657db29b229f200579beaa53b40d4eea5a368d3cbd3784c77d794bf7f284"
+      }
+    },
+    "harness-flow-r2": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/chat-execution-context-20261123.md",
+        "--since",
+        "f8d38f3b6",
+        "--dry-run"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:24:07.599994+00:00",
+      "durationSeconds": 2.755,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\harness-flow-r2.stdout.log",
+        "sha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\harness-flow-r2.stderr.log",
+        "sha256": "a5a972cc264b19ed5a7063c94c156d0423b2130926ce81fca2a9f357a4166ac1"
+      }
+    },
+    "i18n-final": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "i18n:lint"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:24:10.475901+00:00",
+      "durationSeconds": 1.39,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\i18n-final.stdout.log",
+        "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\i18n-final.stderr.log",
+        "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+      }
+    },
+    "comms-replay-final": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:24:11.977380+00:00",
+      "durationSeconds": 1.135,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\comms-replay-final.stdout.log",
+        "sha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\comms-replay-final.stderr.log",
+        "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+      }
+    },
+    "comms-compare-final": {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T15:24:13.211564+00:00",
+      "durationSeconds": 1.237,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\comms-compare-final.stdout.log",
+        "sha256": "aabede57ab5dbf255726fffe68201d93a5244f28026eaf568495241229810c37"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\chat-startup-context-20261123-01a203cc\\comms-compare-final.stderr.log",
+        "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+      }
+    }
+  },
+  "sourceBindings": [
+    {
+      "path": "src/components/chat/SessionWorkspacePicker.tsx",
+      "sha256": "22ad71b27524858aa1fb70a34797c829d4f7a1118d989ab8a377fefff5ab86ab"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "78eef1c8fd5baadcfd86bc1c8bdc4477f002be4f3f866bddd7a46900fe67093f"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "sha256": "7a523e36a48d29a1d1ef3f2294678b223a4a38c319c59fecde46be5ec554ba5a"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "e67f9a9abfe5bdae595d34fb2bdd246745329f7dd24ef0506b97ebffe6d0d2db"
+    },
+    {
+      "path": "tests/e2e/chat-execution-context.spec.ts",
+      "sha256": "3d9072c260f16c5467833aaad6717509c6b2a540293259543adacdca8bae4921"
+    },
+    {
+      "path": "tests/e2e/chat-planning-composer-ux.spec.ts",
+      "sha256": "72cccff0f39bbf03bb3992aed19c814036d799d6c3653c8f130128b44bb8c67c"
+    },
+    {
+      "path": "harness/specs/tasks/chat-execution-context-20261123.md",
+      "sha256": "e5f294a3e9ef65d6a951c1da92bae361074bbefecec41dd9af65bdf8121c5ea1"
+    }
+  ],
+  "buildFilesVerified": 1412,
+  "electronRuntime": {
+    "path": "D:/tmp/electron-40.8.4/dist/electron.exe",
+    "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+  },
+  "preservedFailures": [
+    "D:\\tmp\\chat-startup-context-20261123-01a203cc\\e2e-r1.command.json",
+    "D:\\tmp\\chat-startup-context-20261123-01a203cc\\e2e-r2.command.json",
+    "D:\\tmp\\chat-startup-context-20261123-01a203cc\\e2e-neighbors-r1.command.json",
+    "D:\\tmp\\chat-startup-context-20261123-01a203cc\\harness-flow.command.json",
+    "D:\\tmp\\chat-startup-context-20261123-01a203cc\\runtime-recovery.command.json"
+  ],
+  "rawArchive": "D:\\tmp\\chat-startup-context-20261123-01a203cc"
+}
