@@ -1,6 +1,11 @@
 {
   "schema": "G3EvidenceReadback/v1",
-  "records": 96,
-  "matched": 96,
-  "credentialValueHits": 0
+  "records": 171,
+  "matched": 171,
+  "sourceInputsMatched": 18,
+  "rawFindings": 0,
+  "helperFindings": 0,
+  "credentialValueHits": 0,
+  "codeCommit": "eaf7e65fe530d7dbaedabd13bddf5c50fdb1334e",
+  "gaVerdict": "NO_GO"
 }

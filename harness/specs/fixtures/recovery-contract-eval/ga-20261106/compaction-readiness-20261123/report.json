@@ -1,8 +1,8 @@
 {
   "schema": "G3CompactionReadinessEvidence/v1",
-  "stage": "focused_checks_complete_review_pending",
+  "stage": "focused_checks_and_independent_review_complete",
   "baseCommit": "9080b5aed6e37ff24576546c580a3bebb794301b",
-  "sourceCommit": null,
+  "sourceCommit": "eaf7e65fe530d7dbaedabd13bddf5c50fdb1334e",
   "sourceFingerprint": "7f4d8e61b43d21e804888fe5157a650a73370246fb7437d63ee7d8ce8cc9d013",
   "sources": [
     {
@@ -558,6 +558,381 @@
       "file": "g3-window-request-r22.json",
       "sha256": "4cf1c2bbbe6263491781f9d8a2a3a8d9ac8fa69928f3eca1ce3105b80c600537",
       "bytes": 3552
+    },
+    {
+      "file": "source-r23-r1-manifest.json",
+      "sha256": "f27f7ae475332141d0a58d38276dc351e3e6b857c4f609c253f06fc82e706e7e",
+      "bytes": 8126
+    },
+    {
+      "file": "source-r22-r3-manifest.json",
+      "sha256": "7c2c4c6c7e45739f54af8eb06798f6cf96c6513e8fd461f62d509f82b7588c07",
+      "bytes": 8013
+    },
+    {
+      "file": "source-commit-r22-final.json",
+      "sha256": "1cc305152a80372aa0088cb4c9e169e34a530db82d080d7f6eba2225e7baa146",
+      "bytes": 803
+    },
+    {
+      "file": "review-interrupted-deepseek-r3.json",
+      "sha256": "2456c6ad9b90ed14490dc668cf479709ec557f3901b8fda4308eafe2bb14ba51",
+      "bytes": 756
+    },
+    {
+      "file": "review-driver-r22-deepseek-r3.json",
+      "sha256": "9a392b7df966405e1fea7e5764ff4595458887744ca74172c8828acf470209b4",
+      "bytes": 1796
+    },
+    {
+      "file": "review-validation-r22-r3.json",
+      "sha256": "f43250f0c3d0153b69abc8dad75586b2e6685758ebbeb5e0d64cc57cd920280e",
+      "bytes": 5833
+    },
+    {
+      "file": "autoreview-r22-deepseek-r5-result.json",
+      "sha256": "3825845a65037d6d90e571a1e6fc1dcaea28412bfd168cad053e1f6c30bd027c",
+      "bytes": 792
+    },
+    {
+      "file": "autoreview-r22-deepseek-r5-result.txt",
+      "sha256": "add11a339c6c3153848ec65c22f26e0b569631fe11733d1725de61f0fa4cce3e",
+      "bytes": 757
+    },
+    {
+      "file": "autoreview-r22-deepseek-r5.stdout.log",
+      "sha256": "e9c09e82a06aef059b0df157381b080eb6cc758632387bbcb753238defdb3851",
+      "bytes": 2004
+    },
+    {
+      "file": "autoreview-r22-deepseek-r5.stderr.log",
+      "sha256": "007678c342489bb85a458fa3f6b78c328ed8298cbe9c1f664a38ee0c8d8d6789",
+      "bytes": 413
+    },
+    {
+      "file": "review-end-r22-deepseek-r5.json",
+      "sha256": "358622c4d75bbfd414039e4d7de06dce825c5ef0042e8360afa0979cf41062e7",
+      "bytes": 581
+    },
+    {
+      "file": "review-driver-r22-deepseek-r5.json",
+      "sha256": "98eba746d91c4320ceca4f7bd2ca31417e4f5e56088cd1950c144460d210ce59",
+      "bytes": 1796
+    },
+    {
+      "file": "review-driver-r22-deepseek-r5.raw-model.json",
+      "sha256": "f9f715d2075b718e198b814e77cc33ba30bfdc0da8dd7e03713749e5950b5e37",
+      "bytes": 787
+    },
+    {
+      "file": "review-driver-r22-deepseek-r5.codex-events.jsonl",
+      "sha256": "b03d674d0393c2eb2f3d85fbc97979e816dc302fe7c0421d713e10075928cb95",
+      "bytes": 1749
+    },
+    {
+      "file": "review-driver-r22-deepseek-r5.codex-stderr.log",
+      "sha256": "7531dc24513259d3730012811a28b358293cc613e0f93c8f6958cf99164aa30f",
+      "bytes": 362
+    },
+    {
+      "file": "review-driver-r22-deepseek-r5.prompt.txt",
+      "sha256": "5917a168def76a07768ac998729902f7b54ae7fface864ca4392c24914c5827e",
+      "bytes": 365199
+    },
+    {
+      "file": "harness-gateway-startup-performance-r22-r3.json",
+      "sha256": "0fb3351177d096cb0350695530d549f6af81effe22642484590101dd3ee0c699",
+      "bytes": 996
+    },
+    {
+      "file": "harness-gateway-startup-performance-r22-r3.stdout.log",
+      "sha256": "90e604756acf8bf93dc91143bbeab120e66dcc9ce7b3cc43ad8c14301ebe9833",
+      "bytes": 119
+    },
+    {
+      "file": "harness-gateway-startup-performance-r22-r3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "harness-recovery-authority-gated-r22-r3.json",
+      "sha256": "054b993cd3cd244ce40e754fee45f81731ff99e3e290d82a4ca7b5672682d3c6",
+      "bytes": 990
+    },
+    {
+      "file": "harness-recovery-authority-gated-r22-r3.stdout.log",
+      "sha256": "5578feaed780329c219f5984e66d94e61384a901e50b9ad93605aa5cc9544855",
+      "bytes": 116
+    },
+    {
+      "file": "harness-recovery-authority-gated-r22-r3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "comms-replay-r22-r3.json",
+      "sha256": "f382f87f19c320e48b5ead7a83a8ce51830fcf96a8c9596422bbe3fee65fd462",
+      "bytes": 821
+    },
+    {
+      "file": "comms-replay-r22-r3.stdout.log",
+      "sha256": "ef8afa4618061946a9e8a73d78094658e666fa14d6b970cbfd6ca3ea6dc17ae1",
+      "bytes": 157
+    },
+    {
+      "file": "comms-replay-r22-r3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "comms-compare-r22-r3.json",
+      "sha256": "6d59a1c5dbb307aca09b0033dfc9b2ab4b9ca5d6217c17383c7685acab81dc12",
+      "bytes": 822
+    },
+    {
+      "file": "comms-compare-r22-r3.stdout.log",
+      "sha256": "dc7518b4827fd0231853a19c9e8e9a63420af64a2fcfaf30eb833f3e3795ef1e",
+      "bytes": 3482
+    },
+    {
+      "file": "comms-compare-r22-r3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "harness-gateway-startup-performance-r23-r1.json",
+      "sha256": "b97acbc5242c56bcc96c917ccf09d502a0aad8527eda1bd30bee8f08a6752e24",
+      "bytes": 995
+    },
+    {
+      "file": "harness-gateway-startup-performance-r23-r1.stdout.log",
+      "sha256": "90e604756acf8bf93dc91143bbeab120e66dcc9ce7b3cc43ad8c14301ebe9833",
+      "bytes": 119
+    },
+    {
+      "file": "harness-gateway-startup-performance-r23-r1.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "harness-recovery-authority-gated-r23-r1.json",
+      "sha256": "7af2738220c8eaf0184ce3480f31dfa0de81de82ce58c35350511355ec831800",
+      "bytes": 991
+    },
+    {
+      "file": "harness-recovery-authority-gated-r23-r1.stdout.log",
+      "sha256": "5578feaed780329c219f5984e66d94e61384a901e50b9ad93605aa5cc9544855",
+      "bytes": 116
+    },
+    {
+      "file": "harness-recovery-authority-gated-r23-r1.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "review-hold-r22.json",
+      "sha256": "aae83429834b4e1ab8801634cca586bc00dfd065399f3d048e05f6070849fcc8",
+      "bytes": 6676
+    },
+    {
+      "file": "review-hold-r22-SHA256SUMS",
+      "sha256": "f6f171e7713dde78d815950ff74cb276efa243d72802bdd187c9f8c7797c582f",
+      "bytes": 2985
+    },
+    {
+      "file": "review-end-r22-gpt-r1.json",
+      "sha256": "b47a5a5c866e7b0e3a2e8644297cb23108aa397c37443c8c231e6b2cf1a80f80",
+      "bytes": 2994
+    },
+    {
+      "file": "autoreview-r22-gpt-r1.stdout.log",
+      "sha256": "003594a327135a53777e4ba099054d85ad3991325364f543e6aa7f4bc6396878",
+      "bytes": 380
+    },
+    {
+      "file": "autoreview-r22-gpt-r1.stderr.log",
+      "sha256": "85ecf7a4253f6217c26988902b92766685e7bb5a0ac9a5ab3d39ad95f7a045cd",
+      "bytes": 5149
+    },
+    {
+      "file": "review-driver-r22-gpt-r1.json",
+      "sha256": "5a481eeeb5771aea50b7aab36a9b21079db34b84ce757d7632e70313d0d19cfb",
+      "bytes": 1751
+    },
+    {
+      "file": "review-driver-r22-gpt-r1.raw-model.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "review-driver-r22-gpt-r1.codex-events.jsonl",
+      "sha256": "72a1bb9215155227baa620ec40a094a3862a61d264f981cfa4fee3617ff30bc4",
+      "bytes": 2918
+    },
+    {
+      "file": "review-driver-r22-gpt-r1.codex-stderr.log",
+      "sha256": "c2585a4d3db988f9dcb31fd1d1b7be6fc568557044ed6547536e2eb63045a1eb",
+      "bytes": 2561
+    },
+    {
+      "file": "review-driver-r22-gpt-r1.prompt.txt",
+      "sha256": "8cb9059a1c2aac8559f3acbec23d5641b45718bb573b6c8ef581c96e4b8bf834",
+      "bytes": 346667
+    },
+    {
+      "file": "review-end-r22-deepseek-r4.json",
+      "sha256": "bcdcd3e8ab1b89ed43b63993146de1628f9bb6705f7485ad71762b99316eebf1",
+      "bytes": 3974
+    },
+    {
+      "file": "autoreview-r22-deepseek-r4.stdout.log",
+      "sha256": "4b2e72f8fd205a71f03266aa4ed772ad30e9553d246b785a66f8082cc9ccfb31",
+      "bytes": 440
+    },
+    {
+      "file": "autoreview-r22-deepseek-r4.stderr.log",
+      "sha256": "4b98b66ac68510cc4c6631250ffa5ab4e811afc23b6344db934742fce2fe93fb",
+      "bytes": 6329
+    },
+    {
+      "file": "review-driver-r22-deepseek-r4.json",
+      "sha256": "323ca4ee62ac45bfb0b0e597f1cac5302ad274fb70fc428ea16b6e372024d353",
+      "bytes": 1796
+    },
+    {
+      "file": "review-driver-r22-deepseek-r4.raw-model.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "review-driver-r22-deepseek-r4.codex-events.jsonl",
+      "sha256": "25819bf95d6efcad30d2199b210a49857e3690439724abf9bd0e0ec22f8a5191",
+      "bytes": 3744
+    },
+    {
+      "file": "review-driver-r22-deepseek-r4.codex-stderr.log",
+      "sha256": "fe4e3624d640e7b4eb47049119d119529f928533c258d60b1e534a2d9ef9f566",
+      "bytes": 3151
+    },
+    {
+      "file": "review-driver-r22-deepseek-r4.prompt.txt",
+      "sha256": "8cb9059a1c2aac8559f3acbec23d5641b45718bb573b6c8ef581c96e4b8bf834",
+      "bytes": 346667
+    },
+    {
+      "file": "review-end-r22-gpt-r2.json",
+      "sha256": "22ffb0d1474cb550f42bd2fe6cf4f239850a3ea25be7dfbd989271ab62a07666",
+      "bytes": 2994
+    },
+    {
+      "file": "autoreview-r22-gpt-r2.stdout.log",
+      "sha256": "88cf5f2fc3eee6a182371062561d89b0210bde11eb6a54176a87ce53c205d22c",
+      "bytes": 380
+    },
+    {
+      "file": "autoreview-r22-gpt-r2.stderr.log",
+      "sha256": "f5d1aa02a1336b6d71d7c0c5cea556209e56532a46256556e7f211e54de03d18",
+      "bytes": 5149
+    },
+    {
+      "file": "review-driver-r22-gpt-r2.json",
+      "sha256": "7343f4154819911cc20ce72b8c3eb67a767ac5f57a8ac1fb5ac0e9577734cf25",
+      "bytes": 1751
+    },
+    {
+      "file": "review-driver-r22-gpt-r2.raw-model.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "review-driver-r22-gpt-r2.codex-events.jsonl",
+      "sha256": "ea9251e50cba8e6700087b5bf6885905690d2286b976a93f9e50432b08665ba0",
+      "bytes": 2918
+    },
+    {
+      "file": "review-driver-r22-gpt-r2.codex-stderr.log",
+      "sha256": "6e3439551ad74b80eeee1f52e9330cee3385705bee1c31a0a31228cc48694f31",
+      "bytes": 2561
+    },
+    {
+      "file": "review-driver-r22-gpt-r2.prompt.txt",
+      "sha256": "8cb9059a1c2aac8559f3acbec23d5641b45718bb573b6c8ef581c96e4b8bf834",
+      "bytes": 346667
+    },
+    {
+      "file": "autoreview-r22-deepseek-r1.stdout.log",
+      "sha256": "72c368cf162bbd3486cc16476794e2b767fa8064a3ffda9a55c016ed46973302",
+      "bytes": 233
+    },
+    {
+      "file": "autoreview-r22-deepseek-r5.json",
+      "sha256": "90f519737eeb726d2784e46f6599c991bb21f4e33818a474d42c7cadcca99c04",
+      "bytes": 916
+    },
+    {
+      "file": "continuation-readback-r23.json",
+      "sha256": "2e3538cf543ffd3f25c67d13899806ec82cbf8059cfd9f406dc234f7c2e57a2d",
+      "bytes": 10288
+    },
+    {
+      "file": "final-sealer-preparation-r23.json",
+      "sha256": "c75b0e580d79af4c872f447d0a5c8edb00f1740a27055d258f970bb5a1fa6b3a",
+      "bytes": 1093
+    },
+    {
+      "file": "evidence-git-checksum-red-r23.json",
+      "sha256": "76f856635e604da967fdd4d8091daa0be1d8b22386132a457535762847f356d9",
+      "bytes": 1867
+    },
+    {
+      "file": "evidence-git-checksum-green-r23.json",
+      "sha256": "0db136d4573845f8373258b93926591c9beffe1bfd76bbeb1023d559bbba382a",
+      "bytes": 1470
+    },
+    {
+      "file": "review-validation-r23.json",
+      "sha256": "2c04507bfdd74a084f32fa3de5da3b5badb877b34f43c11b8f319b6e5d1045af",
+      "bytes": 8771
+    },
+    {
+      "file": "review-notes-r23.md",
+      "sha256": "57d6ae3622203a309c48f8278d18cb14e43bb393e65fba06fb45ba11a77440cd",
+      "bytes": 4760
+    },
+    {
+      "file": "review-inputs-r23.json",
+      "sha256": "d35fafb801cd358042cd235647109e32761f9a9552d4fda121a4e00bfc7ab7fe",
+      "bytes": 1806
+    },
+    {
+      "file": "sealer-writer-regression-r23.json",
+      "sha256": "1d2ea39eaaf671ba10f5a827d266e8c3e45f9d082dd8bc16c99e247f4aaeec09",
+      "bytes": 1018
+    },
+    {
+      "file": "sealer-writer-regression-r23-r2.json",
+      "sha256": "0577a8f60f4a3464a77803b941a2226fcce712c0938e8920d8564b433351eaa9",
+      "bytes": 1018
+    },
+    {
+      "file": "sealer-writer-regression-r23-r3.json",
+      "sha256": "e9ee566633e654c93e24e7feb021b3cac9909bdcf4eb58ad7f94b578acee1dfa",
+      "bytes": 1018
+    },
+    {
+      "file": "review-working-directory-regression-r23.json",
+      "sha256": "0f8f08ee5fcdbecc233d4b978542f619e4dc743f570c532df2d72dbe458b90df",
+      "bytes": 936
+    },
+    {
+      "file": "harness-readback-r23.json",
+      "sha256": "4a2acc373944747a4853baf3b3859761d12f14593dee4c858be94d3ddc7e7766",
+      "bytes": 2393
+    },
+    {
+      "file": "review-terminal-readback-r24.json",
+      "sha256": "c8e1e656e7052114b29da3b81487ffa8af5ec57722fc7190d4a1e53d7a9f5b44",
+      "bytes": 1178
     }
   ],
   "focusedTests": {
@@ -594,12 +969,13 @@
       "configured global agent for fork and both parent-hook paths",
       "tracked evidence README/report/hash files"
     ],
-    "correctedReview": "pending"
+    "correctedReview": "PASS; helper and raw findings both zero",
+    "finalRequestedModel": "ccs-workbuddy/deepseek-v4.1-flash"
   },
   "nativeAcceptance": "PENDING_SERIAL_WINDOW",
   "gaVerdict": "NO_GO",
   "credentialScan": {
-    "environmentValuesChecked": 14,
+    "knownValuesChecked": 8,
     "hits": 0
   },
   "driven_by": "agent",
