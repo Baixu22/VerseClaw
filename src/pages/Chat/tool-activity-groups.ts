@@ -91,7 +91,7 @@ export function buildToolActivityGroups(
     const tools = extractToolUse(message);
     const resultText = message.details ?? message.content;
     if (isToolResultRole(message.role) && message.toolCallId && typeof resultText === 'string') rawResults.set(message.toolCallId, resultText);
-    for (const result of message._toolResults ?? []) if (typeof result.result === 'string') rawResults.set(result.toolCallId, result.result);
+    for (const result of message._toolResults ?? []) if (result.toolCallId && typeof result.result === 'string') rawResults.set(result.toolCallId, result.result);
     if (message.role === 'assistant' && !isInternalProcessNarration(extractText(message))
       && (card.active || index !== card.replyIndex || tools.length > 0)) {
       anchor = index;
