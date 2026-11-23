@@ -1,0 +1,28 @@
+{
+  "schema": "ProjectRagResearchElectron/v1",
+  "actor": "rag16-electron",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "providerKind": "scripted-local-fixture",
+  "status": "pass",
+  "steps": {
+    "normalTurnCannotAcquirePlanningBudget": true,
+    "realMultiRoundEvidence": true,
+    "frozenTotalBudget": true,
+    "completeQuestionScopePreserved": true,
+    "realDcsBudgetReadback": true,
+    "plannerPreservesLinkedDepth": true,
+    "planningReservationViolationStopsCalls": true,
+    "usageViolationPrecedesMalformedOutput": true,
+    "ownerCancellationWithPartialEvidence": true,
+    "pendingUsageRemainsUnknown": true,
+    "lateModelCannotResume": true,
+    "draftPreserved": true,
+    "transportFailureReasonPreserved": true,
+    "realConflictingSources": true,
+    "scopeAndPermissionForgeryDenied": true,
+    "ownerRevisionRecheckedOnDelivery": true,
+    "localRollbackPreservesScope": true,
+    "normalChatUsesOwnerEvidence": true
+  }
+}

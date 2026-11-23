@@ -1,0 +1,130 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "dataSource": "agent-fixed Task and typed Runtime events",
+  "steps": {
+    "settingsDoNotChangeParameters": true,
+    "explicitCostProfileVisible": true,
+    "runCompletionDoesNotAcceptTask": true,
+    "ownerAcceptanceFoldsReceipt": true,
+    "roundSendStopResume": true,
+    "approvalPreservesDraft": true,
+    "connectionFailureVisible": true,
+    "fourLocalesAndNarrowThemes": true
+  },
+  "shots": [
+    {
+      "name": "rest-light-1280",
+      "sha256": "ee2d70b79a989e1fb1c2fb485fcf9c6573ff636ef7642452fc2bade83d16b052",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-light-1280",
+      "sha256": "697c34bd304f73b8e19c0ca42e9f2d85f035c25ac9f07a2321ebfffc2b155fab",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-options-light-1280",
+      "sha256": "c8c2f4b7fe483bf42287402a20675c44776db828c844393619a9e0624e2ee713",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-light-1280",
+      "sha256": "77fc9f90bc8584a971868e9383507a6bd7efe0371002e16655437ef6e3c9eaed",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-expanded-dark-960",
+      "sha256": "0472d7fccc0f7bf138e62b17f7508b43ac7b40478d2c6001c2ec64c519b65e60",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "accepted-dark-960",
+      "sha256": "89e3a9992d0525904279b22171a6bb2cbd73216e41ec4ecb79fc5397f75994c9",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-ready-dark-960",
+      "sha256": "0c6a086f4beed853530c47209295b1c2039222f711bcd3a930482178747fc248",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-running-dark-960",
+      "sha256": "815604e3595621fb57eabe98b53c483ef4b275ce7b6f40c1bac7a83ecee4b79d",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-paused-dark-960",
+      "sha256": "1adea695839cd7593598344f1000978792a9e7ae83d129a9944caffe200a25d8",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "approval-dark-960",
+      "sha256": "b2d26f847d5ac00ef4216e3cec05eb1d81c3d1bdeb03ffd846477e5135903c09",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "disconnected-dark-960",
+      "sha256": "456861702eba92275225affe033174448260bb03a756518dc00bc392b4a7d1f3",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-zh-dark-960",
+      "sha256": "eb0b7ce2ece115c9dc6af0d2c34a0912a784307ff053ea14a60ada05cd3442cd",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ja-dark-960",
+      "sha256": "6065309a207b09443cfc6d5ab25707b5dae646401e606defec2cab5e13acfbbd",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ru-dark-960",
+      "sha256": "a02c7154f85cd3368b7779343f9d69592900603dbc62709d96c03bfad91df21a",
+      "width": 961,
+      "height": 801
+    }
+  ],
+  "enclosure": {
+    "widthDifference": 0,
+    "gap": 0
+  },
+  "actionStyles": {
+    "ready": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "running": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "paused": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    }
+  },
+  "defaultAnchorCount": 5,
+  "pageErrors": []
+}

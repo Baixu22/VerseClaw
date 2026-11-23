@@ -1,0 +1,27 @@
+{
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "providerKind": "scripted-local-fixture",
+  "status": "pass",
+  "steps": {
+    "offOrdinarySend": true,
+    "orthogonalModesAndInspect": true,
+    "dismissPreservesDraft": true,
+    "actualRetainedUsageAndBudgetDrop": true,
+    "autoReadExactOwner": true,
+    "normalQueuedAutoRead": true,
+    "mediaWithEvidence": true,
+    "cancelAndLateResponse": true,
+    "profileChangeFencesOldResponse": true,
+    "scopeChangeFencesOldResponse": true,
+    "queryChangePreservesUnsentDraft": true,
+    "lateInspectFenced": true,
+    "sessionSwitchFencesOldResponse": true,
+    "providerTimeoutDoesNotHoldSend": true,
+    "missingIndexDoesNotHoldSend": true,
+    "currentVersionAndOwnerDenial": true,
+    "workspaceSwitchFencesOldResponse": true
+  },
+  "sourceRevisionAttempts": 2
+}

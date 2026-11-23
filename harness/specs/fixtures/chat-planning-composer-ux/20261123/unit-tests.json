@@ -1,0 +1,1316 @@
+{
+  "tests": 218,
+  "passed": 218,
+  "failed": 0,
+  "cases": [
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence hydrates the composer from draftValue and reports draft edits",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence clears the parent draft after sending",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence keeps the new conversation draft when an old task-loop upgrade finishes",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence surfaces Task Loop upgrade for complex project work without auto-sending",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence sends the selected knowledge scope with the composer payload",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence changes knowledge invocation mode from the knowledge menu",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence shows suggest-mode knowledge candidates and attaches them only after user action",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence dismisses knowledge preflight for the same input and still sends if routing fails",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence searches and attaches specific knowledge references before sending",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence does not render or send Work Mode",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens the slash menu, filters commands, and selects with Enter",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands filters slash commands by command prefix without matching descriptions",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands closes the slash menu with Escape",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands keeps unknown slash commands in the composer instead of sending",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens wiki search from slash command and attaches selected context",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands changes knowledge scope from slash commands without sending",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands runs steward audit slash command without sending a chat prompt",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands falls back to a review prompt when no code review hook is provided",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands creates a ledger node and best-effort links the current session",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens Mission Control guidance through the Agents route",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens the compaction dialog from /compact",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands runs the existing fork callback from /fork",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands shows the generation reason and refuses every disabled handoff control",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight confirms a local skill enable action before sending trusted metadata",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight cancels a capability action without sending or changing configuration",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight confirms MCP JSON registration and injects reload results",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight blocks high-risk MCP JSON before registration",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /new starts a fresh session through the onNewSession prop",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /resume switches to the session matching the keyword",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /resume without args shows a hint instead of switching",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /rename renames the current session",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /archive archives the current session",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /delete permanently deletes the current session after confirmation",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /clear resets the local message view through the store action",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /copy copies the last assistant response as markdown",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /copy shows a hint when there is no assistant response",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands keeps long-task modes out of ordinary Chat and queues the running draft locally",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands sends revise-goal from the delivery menu of a /loop session",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status keeps passive message and token counts out of the composer footer",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status offers Stop beside Send while a draft is pending, and /loop delivery modes from one menu",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status binds Mod+Enter to guide and Mod+Shift+Enter to interrupt, leaving Shift+Enter a newline",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status queues the draft immediately when the running primary control is clicked",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status pauses the run with one click when there is no composer draft",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status renders a persisted pause as a resume action",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status omits the context status when no context data is available",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status opens the manual compaction dialog from /compact and confirms with extra instructions",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status closes a compaction dialog when switching conversations",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status cancels a delayed compaction confirmation after leaving and returning to a conversation",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status preserves the new conversation dialog when an old compaction completes",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status dismisses a pending cache-risk confirmation when its conversation is left",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status no longer renders compaction diagnostics in the composer status line",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status keeps compaction diagnostics hidden in basic mode while preserving send payload",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status refuses /compact while the session is sending",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status keeps compact unavailable until its session generation is ready",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput direct model selection selects directly, remembers the preference and never writes agent defaults",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput direct model selection keeps the previous model and preference after a rejected save",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput direct model selection does not close another conversation menu when the previous save finishes",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting hides the @agent picker when only one agent is configured",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting uses native textarea rendering when no skill token is present",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting lets the user select an agent target and sends it with the message",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting disables the input while gateway is running but not yet ready",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting shows gateway readiness as a read-only composer status while starting",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting routes permission mode changes through the direct permission menu",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting falls back to read-only when a persisted workspace has an invalid permission mode",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting routes workspace folder and new session actions through the permission menu",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps @agent targeting separate from switching the workspace agent",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps skill access in the slash palette instead of a toolbar trigger",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting groups non-primary composer actions inside the add menu",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps Office actions visible and routes to setup when no enabled Office skill is available",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting inserts an office action as a skill token plus a prompt template",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting inserts the selected skill from a slash query and prefixes sends",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps a leading selected skill token on the normal send path",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting removes the full inline skill token with one backspace",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting skips across the inline skill block with arrow keys",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting adds left spacing when inserting a skill after adjacent text",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting allows inserting the same skill multiple times as separate blocks",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting opens the artifact preview panel when the inline skill token is clicked",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting stages dropped folders via disk path instead of buffer upload",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation preserves a changed draft and ignores a late Auto-read result",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation cancels an optional Auto-read and completes the requested plain send once",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation does not reopen source inspection after a profile change",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation queues ordinary follow-ups when long-task interventions are unavailable",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation dispatches a running draft once while a before-send hook is pending",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation preserves an edited draft when an earlier before-send hook finishes",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation routes Auto-read before a running plain send",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation routes Auto-read before a running queue send",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation routes Auto-read before a running guide send",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation uses the long-task queue only when a checkpoint names the owned root",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "compact composer context keeps retrieval controls inside one menu and identifies an explicitly selected higher-cost profile",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "compact composer context keeps normal checkpoint records quiet and reachable from More",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "compact composer context shows nonzero queue and warnings in the input and preserves the drain action",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Run-log replay provenance badge renders the translated badge instead of the raw i18n key",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a tool-only assistant turn",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a mixed text + tool_use turn whose text was folded into the graph",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a question the run is blocked on, with no final reply yet",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders one fenced question while the same reply is both streaming and in history",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment still hides a plain tool call that has no card renderer",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface replays an update_plan tool call from history into the turn summary",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface does not also render the plan as a message card",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface omits the execution graph entirely when every row was promoted",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals surfaces a pending host approval in the transcript",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals renders exactly one approval card when a tool call also parses as one",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals surfaces a pending approval even when no turn produced an activity card",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals keeps an undecided approval visible after the next run starts",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals forces the turn summary open while an approval is pending",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning shows reasoning from a message thinking block",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps reasoning on a turn whose narration text was folded away",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning hides reasoning entirely while the process fold is shut",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps thought counts out of the compact header while retaining reasoning details",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning merges reasoning from every message in the run segment into one panel",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps progress text visible when a referenced attachment fails to materialize",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning shows live reasoning from the runtime run while streaming",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Generated file ownership shows a diffable file as a diff only, never also as a chip",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Generated file ownership still chips a file the diff projection cannot render",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn summary contents badges labels contents while collapsed, then shows them when opened",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn summary contents badges keeps a pending approval visible while process details open and close",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn disclosure survives the optimistic→server id swap keeps the turn open after the trigger message id changes",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "live plan display ownership keeps the active plan in the task strip while process details open",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps a blank conversation free of task controls and performs no task lookup",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock docks beside the composer, collapsed to the current step, and hides from its menu without cancelling",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock ignores an old session response and preserves the new task when calls finish out of order",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock refreshes after the matching task tool completes, without reopening a hidden task",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps the last task marked stale when the owner is unavailable and recovers without changing ownership",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock reveals a new task without inheriting the previous task's hidden preference",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock shows the goal once and uses checkpoint facts as steps without inventing a percentage",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock derives progress from known child tasks and retains the parent acceptance state",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles shortens UUIDs like a commit and keeps short owner IDs whole",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles copies the full task ID from its menu without showing IDs in the task strip",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles reports a copy failure instead of claiming success",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles opens the task and each child task in the ledger by their own IDs",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles offers no ID or ledger actions for a run plan that has no durable task",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles supports arrow keys and Escape in the menu, returning focus to its trigger",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime retires an incomplete run plan when its run ends",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime keeps a finished plan active until its run settles, then leaves the transcript record",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime folds a finished durable task to a one-line receipt instead of removing its ID",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales shows current run steps under the durable objective and restores durable steps after the run",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales folds an accepted task once and permits opening the receipt again",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales reveals a stale status and retry action even when its healthy display was hidden",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 project and Ledger causes names an unbound coordinator without activating the default session",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 project and Ledger causes keeps an archived coordinator distinct from an unbound coordinator",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 project and Ledger causes normalizes a permission rejection, hides selection and refreshes the same owner after a held read",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 project and Ledger causes keeps a late permission rejection scoped to its original workspace",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 dependency navigation uses the existing task owner shows unfinished titles and states, focuses the prerequisite, then calls the original claim action",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 dependency navigation uses the existing task owner reads one unfiltered page per click and keeps only the exact dependency before focusing it",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 dependency navigation uses the existing task owner keeps an absent dependency blocked after exhausting pages and allows a new read",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 dependency navigation uses the existing task owner keeps a failed dependency read unresolved and retries the same owner cursor",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "U2 dependency navigation uses the existing task owner discards an in-flight dependency read when the workspace changes",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "session-task-state-guidance.test.tsx",
+      "name": "provides all new state messages and title interpolation in four locales",
+      "status": "passed",
+      "run": "unit-final-r1"
+    },
+    {
+      "file": "fp-p1-scripted-usage.test.ts",
+      "name": "scripted provider usage receipts preserves explicit usage and ordinary defaults with stream=false",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "fp-p1-scripted-usage.test.ts",
+      "name": "scripted provider usage receipts preserves explicit usage and ordinary defaults with stream=true",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller freezes the total scope, deadline, token/cost/query/model/graph ceilings before work",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller rejects a larger or invalid ceiling {\"maxRounds\":4}",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller rejects a larger or invalid ceiling {\"maxQueries\":9}",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller rejects a larger or invalid ceiling {\"maxPlanningModelCalls\":3}",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller rejects a larger or invalid ceiling {\"maxCostUsd\":null}",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller rejects a larger or invalid ceiling {\"maxEvidenceTokens\":5001}",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller rejects a larger or invalid ceiling {\"graphMaxHops\":3}",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller preserves all 8 distinct clauses within the frozen question limit",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller preserves all 9 distinct clauses within the frozen question limit",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller preserves all 200 distinct clauses within the frozen question limit",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller deduplicates clauses before applying the question limit and keeps a nonempty fallback",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller does not complete a request whose ninth question has no coverage",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller decomposes the root, follows a genuine evidence gap, and stops at quoted coverage",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller stops repeated normalized queries without another retrieval or model call",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller stops no-new-evidence even when the planner suggested another query",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller shares eight distinct query slots across three rounds and limits planning to two calls",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller honors a tighter shared query ceiling before a second round",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller retains an entire conflict group or drops the whole group at the evidence budget",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller keeps conflicts visible and prevents a covered verdict from closing a conflict",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller rejects forged quotations, source IDs and changed frozen questions",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller does not cover a question from a quote dropped by DCS",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller recomputes final coverage and atomic conflict groups after a narrower DCS budget",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller publishes the production DCS projection and removes dropped source-dependent output",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller invalidates an old owner pin and all dependent inference instead of mixing revisions",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller keeps owner denials sticky across later fallback queries",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller clears source-derived output after an owner scope change",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller bounds owner links to two hops, ignores external and escaping paths, and returns graph truncation",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller charges both new link endpoints against a tighter graph-node budget",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller preserves queued link depth when the planner repeats concepts/b.md",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller preserves queued link depth when the planner repeats   CONCEPTS/B.MD  ",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller cancels a non-cooperative owner wait and preserves already admitted partial evidence",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller stops at the original deadline without allowing an uncooperative owner to finish late",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller keeps pending planning usage unknown after cancelled and ignores late settlement",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller keeps pending planning usage unknown after deadline and ignores late settlement",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller keeps pending planning usage unknown after scope-changed and ignores late settlement",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller retains an unknown provider liability and reports partial even when coverage is sufficient",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller stops after planning returns invalid tokens usage and retains the reservation",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller stops after planning returns invalid cost usage and retains the reservation",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller stops after planning returns invalid negative usage and retains the reservation",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "bounded Project RAG Research controller publishes independent progress snapshots rather than a mutable shared result",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract uses the frozen owner selection for retrieval and DCS-bound budgeted planning",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract rejects a caller-supplied scope, tool permission or budget before any retrieval",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract does not restart a duplicate request ID or expose/cancel it to another selection",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract requires a provider reservation receipt and keeps the admitted sources partial when it is missing",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract stops invalid tokens usage before malformed planning text can hide it",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract stops invalid cost usage before malformed planning text can hide it",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract rejects a stale owner snapshot on status delivery without returning its evidence",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract preserves an active Research request after a status verification timeout without exposing unchecked evidence",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract rechecks the owner after reading bytes and keeps a revoked request empty",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "Research Main owner and Host contract delivers the snapshot whose evidence was checked when planning finishes during a poll",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "reports error recovery with evidence=true from the last owner snapshot",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "reports error recovery with evidence=false from the last owner snapshot",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "reports timeout recovery with evidence=true from the last owner snapshot",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "reports timeout recovery with evidence=false from the last owner snapshot",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "reports cancelled recovery with evidence=true from the last owner snapshot",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "reports cancelled recovery with evidence=false from the last owner snapshot",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "preserves a terminal owner-change result during transport recovery",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "never republishes cached evidence when cancellation readback loses the owner",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "name": "returns cancellation without cached evidence when the owner has no final snapshot",
+      "status": "passed",
+      "run": "fixes-unit-r1"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity resolves openrouter/deepseek/deepseek-r1 by model family before provider",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity resolves custom-account/x-ai/grok-4-fast-reasoning by model family before provider",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity resolves openrouter/anthropic/claude-sonnet-4 by model family before provider",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity resolves custom-test/gemini-2.5-pro by model family before provider",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity resolves openrouter/qwen/qwen3-coder-480b by model family before provider",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity resolves ollama-1234abcd/default by model family before provider",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity resolves custom-1234abcd/default by model family before provider",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity preserves a complete long model name and its routing namespace",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    },
+    {
+      "file": "model-brand.test.ts",
+      "name": "composer model identity uses short composer labels while retaining full model identities",
+      "status": "passed",
+      "run": "send-model-unit-r2"
+    }
+  ],
+  "driven_by": "agent"
+}

@@ -1,0 +1,69 @@
+{
+  "rawRoot": "D:\\tmp\\chat-ux-20261123-01a203cc",
+  "records": [
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\e2e-final-r1.command.json",
+      "exitCode": 1,
+      "sha256": "26a344fed5743d2e1bc7a2f65b49a644c6f9244ddda7a0f202bc9cb5cc0d900a"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\e2e-final-r2.command.json",
+      "exitCode": 1,
+      "sha256": "45bad6493f8ed7c37adbbd4244f70b07867527ef483cc6731256e24080063cb5"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\e2e-owner-design-r1.command.json",
+      "exitCode": 1,
+      "sha256": "e18780a1602f578645ad59ac28810d8590abe8676ddceea4b5dd4b81f4a8d533"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\e2e-ui-r1.command.json",
+      "exitCode": 1,
+      "sha256": "8384127160278c81e406ac31e8e2c42841e8a4453e9b8e57ceead5b25f9a6c2e"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\e2e-ui-r2.command.json",
+      "exitCode": 1,
+      "sha256": "6b6309d0c3075a8ac7f175f7a659b6bb7e8024f5a7a10c38b78742170758d3ff"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\harness-r1.command.json",
+      "exitCode": 1,
+      "sha256": "30c0243d1f5e3b350db7159db54ec6b44a26e27a0099f40bfd00e36558af3690"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\send-model-unit-r1.command.json",
+      "exitCode": 1,
+      "sha256": "0ad86853561a244bc7e6279af29704fdc1f08e118da5e80778641d00dbf18c38"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\typecheck-r1.command.json",
+      "exitCode": 1,
+      "sha256": "9046f7ab50f87c556ad9eebd53aad56a7236e4da60968168d85802fd204c5e4d"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\typecheck-r2.command.json",
+      "exitCode": 1,
+      "sha256": "15571f10f3e92e787d4c7367eb35cf7e6a34247289b8823e3a38fa4ffb4002a9"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\typecheck-send-model-r1.command.json",
+      "exitCode": 1,
+      "sha256": "1ca29fdbbe7f094de4cd80fd52cfd31e7b999a8ff804a5f47dfad83ea5cf334f"
+    },
+    {
+      "receipt": "D:\\tmp\\chat-ux-20261123-01a203cc\\unit-r1.command.json",
+      "exitCode": 1,
+      "sha256": "a1825750b36f513b9934a4f3ba9f745d8ba685c7b81130d15ca85e46c5ea2815"
+    }
+  ],
+  "resolvedBy": [
+    "new menu interaction paths",
+    "canonical task evidence path",
+    "scripted usage passthrough",
+    "bounded user retry of a cold local source read",
+    "resting-state screenshot after hover ends",
+    "Lucide icon type"
+  ],
+  "driven_by": "agent"
+}

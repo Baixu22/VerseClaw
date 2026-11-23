@@ -1,0 +1,21 @@
+{
+  "schema": "ChatPlanningComposerAcceptance/v1",
+  "status": "passed",
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "candidate": "18041f4083293f4030937e7498b12ddc97a6d88e",
+  "unitTests": 218,
+  "electronJourneys": 8,
+  "carbonReportedTokens": 61425,
+  "carbonRequests": 4,
+  "changes": [
+    "one knowledge settings entry",
+    "durable goal plus current run plan",
+    "quiet normal diagnostics, visible actionable failures",
+    "compact model names",
+    "round send/stop/resume controls"
+  ],
+  "rawEvidence": "D:\\tmp\\chat-ux-20261123-01a203cc",
+  "images": "images",
+  "fullRepositoryCi": "Not run by this UI task; prior Agent Dev baseline findings remain recorded in task-system-ui-consolidation/20261122/baseline-ci.json"
+}

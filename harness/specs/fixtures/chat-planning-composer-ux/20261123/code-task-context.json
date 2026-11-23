@@ -1,0 +1,20 @@
+{
+  "schema": "ProjectRagCodeTaskElectron/v1",
+  "actor": "rag15-electron",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "providerKind": "scripted-local-fixture",
+  "status": "pass",
+  "steps": {
+    "missingTaskDegraded": true,
+    "taskHintReadOnly": true,
+    "crossWorkspaceDenied": true,
+    "normalChatExactGraph": true,
+    "twoHopBound": true,
+    "incomingScanBudget": true,
+    "taskAbsentFromCodeChunks": true,
+    "staleEdgeDenied": true,
+    "taskHintRollback": true,
+    "taskRevisionPinDenied": true
+  }
+}

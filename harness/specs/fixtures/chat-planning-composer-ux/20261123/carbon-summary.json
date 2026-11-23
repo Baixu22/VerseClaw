@@ -1,0 +1,9 @@
+{
+  "rounds": 2,
+  "totalReportedTokens": 61425,
+  "requests": 4,
+  "imageReads": 7,
+  "finalRefinementsImplemented": true,
+  "followupButtonReferences": "owner-references.json",
+  "driven_by": "agent"
+}

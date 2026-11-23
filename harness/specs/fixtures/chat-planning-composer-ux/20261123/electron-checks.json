@@ -1,0 +1,647 @@
+{
+  "latestCases": [
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+      "status": "expected",
+      "run": "e2e-owner-design-r1",
+      "commit": "c7c2cb33431d22e805a35a09f15bb04394f6965e"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+      "status": "expected",
+      "run": "e2e-owner-design-r1",
+      "commit": "c7c2cb33431d22e805a35a09f15bb04394f6965e"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "touch composer targets fit at 375px and the closed add menu skips its actions",
+      "status": "expected",
+      "run": "e2e-owner-design-r1",
+      "commit": "c7c2cb33431d22e805a35a09f15bb04394f6965e"
+    },
+    {
+      "file": "chat-planning-composer-ux.spec.ts",
+      "title": "conversation planning, settings and decisions share a compact input surface",
+      "status": "expected",
+      "run": "e2e-delivery",
+      "commit": "18041f4083293f4030937e7498b12ddc97a6d88e"
+    },
+    {
+      "file": "project-rag-chat-modes.spec.ts",
+      "title": "Project RAG chat modes retain real owner evidence and bound optional reads",
+      "status": "expected",
+      "run": "e2e-owner-design-r1",
+      "commit": "c7c2cb33431d22e805a35a09f15bb04394f6965e"
+    },
+    {
+      "file": "project-rag-research.spec.ts",
+      "title": "Project RAG discovers exact code relationships and reads the current task through normal Chat",
+      "status": "expected",
+      "run": "e2e-final-r2",
+      "commit": "0d49dcbe57a17faeddfaa2851f70090d0303e583"
+    },
+    {
+      "file": "project-rag-research.spec.ts",
+      "title": "Project RAG Research follows evidence gaps and shows bounded progress, cancellation and partial results",
+      "status": "expected",
+      "run": "e2e-final-r2",
+      "commit": "0d49dcbe57a17faeddfaa2851f70090d0303e583"
+    },
+    {
+      "file": "chat-long-task-control.spec.ts",
+      "title": "shows recovery status and drains queued follow-up through Host API",
+      "status": "expected",
+      "run": "e2e-owner-design-r1",
+      "commit": "c7c2cb33431d22e805a35a09f15bb04394f6965e"
+    }
+  ],
+  "passed": 8,
+  "failed": 0,
+  "runs": [
+    {
+      "label": "e2e-final-r2",
+      "commit": "0d49dcbe57a17faeddfaa2851f70090d0303e583",
+      "stats": {
+        "startTime": "2026-11-23T09:18:02.251Z",
+        "duration": 305862.17,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-EcFamI",
+        "ledgerEntries": 36,
+        "checks": [
+          {
+            "pid": 22224,
+            "creationTime": 1795425483728,
+            "status": "exited"
+          },
+          {
+            "pid": 34424,
+            "creationTime": 1795425492428,
+            "status": "exited"
+          },
+          {
+            "pid": 2388,
+            "creationTime": 1795425492741,
+            "status": "replaced"
+          },
+          {
+            "pid": 26168,
+            "creationTime": 1795425505061,
+            "status": "exited"
+          },
+          {
+            "pid": 23480,
+            "creationTime": 1795425508851,
+            "status": "exited"
+          },
+          {
+            "pid": 29532,
+            "creationTime": 1795425508963,
+            "status": "exited"
+          },
+          {
+            "pid": 9408,
+            "creationTime": 1795425520634,
+            "status": "exited"
+          },
+          {
+            "pid": 19008,
+            "creationTime": 1795425524588,
+            "status": "exited"
+          },
+          {
+            "pid": 23232,
+            "creationTime": 1795425524701,
+            "status": "exited"
+          },
+          {
+            "pid": 9672,
+            "creationTime": 1795425526817,
+            "status": "exited"
+          },
+          {
+            "pid": 37080,
+            "creationTime": 1795425530878,
+            "status": "exited"
+          },
+          {
+            "pid": 27308,
+            "creationTime": 1795425530987,
+            "status": "exited"
+          },
+          {
+            "pid": 36588,
+            "creationTime": 1795425537364,
+            "status": "exited"
+          },
+          {
+            "pid": 20608,
+            "creationTime": 1795425541444,
+            "status": "exited"
+          },
+          {
+            "pid": 35112,
+            "creationTime": 1795425541575,
+            "status": "exited"
+          },
+          {
+            "pid": 25496,
+            "creationTime": 1795425555087,
+            "status": "exited"
+          },
+          {
+            "pid": 28828,
+            "creationTime": 1795425660036,
+            "status": "exited"
+          },
+          {
+            "pid": 4572,
+            "creationTime": 1795425665474,
+            "status": "exited"
+          },
+          {
+            "pid": 24080,
+            "creationTime": 1795425665604,
+            "status": "exited"
+          },
+          {
+            "pid": 15348,
+            "creationTime": 1795425721882,
+            "status": "exited"
+          },
+          {
+            "pid": 22336,
+            "creationTime": 1795425728284,
+            "status": "exited"
+          },
+          {
+            "pid": 24312,
+            "creationTime": 1795425728450,
+            "status": "exited"
+          }
+        ],
+        "processObservations": [
+          [
+            {
+              "pid": 22224,
+              "creationTime": 1795425483728,
+              "status": "exited"
+            },
+            {
+              "pid": 34424,
+              "creationTime": 1795425492428,
+              "status": "exited"
+            },
+            {
+              "pid": 2388,
+              "creationTime": 1795425492741,
+              "status": "replaced"
+            },
+            {
+              "pid": 26168,
+              "creationTime": 1795425505061,
+              "status": "exited"
+            },
+            {
+              "pid": 23480,
+              "creationTime": 1795425508851,
+              "status": "exited"
+            },
+            {
+              "pid": 29532,
+              "creationTime": 1795425508963,
+              "status": "exited"
+            },
+            {
+              "pid": 9408,
+              "creationTime": 1795425520634,
+              "status": "exited"
+            },
+            {
+              "pid": 19008,
+              "creationTime": 1795425524588,
+              "status": "exited"
+            },
+            {
+              "pid": 23232,
+              "creationTime": 1795425524701,
+              "status": "exited"
+            },
+            {
+              "pid": 9672,
+              "creationTime": 1795425526817,
+              "status": "exited"
+            },
+            {
+              "pid": 37080,
+              "creationTime": 1795425530878,
+              "status": "exited"
+            },
+            {
+              "pid": 27308,
+              "creationTime": 1795425530987,
+              "status": "exited"
+            },
+            {
+              "pid": 36588,
+              "creationTime": 1795425537364,
+              "status": "exited"
+            },
+            {
+              "pid": 20608,
+              "creationTime": 1795425541444,
+              "status": "exited"
+            },
+            {
+              "pid": 35112,
+              "creationTime": 1795425541575,
+              "status": "exited"
+            },
+            {
+              "pid": 25496,
+              "creationTime": 1795425555087,
+              "status": "exited"
+            },
+            {
+              "pid": 28828,
+              "creationTime": 1795425660036,
+              "status": "exited"
+            },
+            {
+              "pid": 4572,
+              "creationTime": 1795425665474,
+              "status": "exited"
+            },
+            {
+              "pid": 24080,
+              "creationTime": 1795425665604,
+              "status": "exited"
+            },
+            {
+              "pid": 15348,
+              "creationTime": 1795425721882,
+              "status": "exited"
+            },
+            {
+              "pid": 22336,
+              "creationTime": 1795425728284,
+              "status": "exited"
+            },
+            {
+              "pid": 24312,
+              "creationTime": 1795425728450,
+              "status": "exited"
+            }
+          ]
+        ],
+        "owned": [],
+        "remaining": [],
+        "survivors": [],
+        "detectedPendingLaunches": 0,
+        "pendingLaunches": 0,
+        "status": "passed"
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "8152cb602e11e004c0a8ed036e872b9556785ff7c9a5c28382b26838d2ef45e8",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "8152cb602e11e004c0a8ed036e872b9556785ff7c9a5c28382b26838d2ef45e8",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "e2e-owner-design-r1",
+      "commit": "c7c2cb33431d22e805a35a09f15bb04394f6965e",
+      "stats": {
+        "startTime": "2026-11-23T09:41:09.071Z",
+        "duration": 180963.638,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-oZwLog",
+        "ledgerEntries": 31,
+        "checks": [
+          {
+            "pid": 38356,
+            "creationTime": 1795426870436,
+            "status": "exited"
+          },
+          {
+            "pid": 23088,
+            "creationTime": 1795426878629,
+            "status": "exited"
+          },
+          {
+            "pid": 18020,
+            "creationTime": 1795426878938,
+            "status": "exited"
+          },
+          {
+            "pid": 33788,
+            "creationTime": 1795426891520,
+            "status": "exited"
+          },
+          {
+            "pid": 2500,
+            "creationTime": 1795426895636,
+            "status": "exited"
+          },
+          {
+            "pid": 33756,
+            "creationTime": 1795426895763,
+            "status": "exited"
+          },
+          {
+            "pid": 29308,
+            "creationTime": 1795426907716,
+            "status": "exited"
+          },
+          {
+            "pid": 30544,
+            "creationTime": 1795426911832,
+            "status": "exited"
+          },
+          {
+            "pid": 4452,
+            "creationTime": 1795426911961,
+            "status": "exited"
+          },
+          {
+            "pid": 17488,
+            "creationTime": 1795426914416,
+            "status": "exited"
+          },
+          {
+            "pid": 38280,
+            "creationTime": 1795426918265,
+            "status": "exited"
+          },
+          {
+            "pid": 31196,
+            "creationTime": 1795426918380,
+            "status": "exited"
+          },
+          {
+            "pid": 17808,
+            "creationTime": 1795426936829,
+            "status": "exited"
+          },
+          {
+            "pid": 24440,
+            "creationTime": 1795426941478,
+            "status": "exited"
+          },
+          {
+            "pid": 25504,
+            "creationTime": 1795426941607,
+            "status": "exited"
+          },
+          {
+            "pid": 30824,
+            "creationTime": 1795426948212,
+            "status": "exited"
+          },
+          {
+            "pid": 20344,
+            "creationTime": 1795426952152,
+            "status": "exited"
+          },
+          {
+            "pid": 32236,
+            "creationTime": 1795426952272,
+            "status": "exited"
+          },
+          {
+            "pid": 2180,
+            "creationTime": 1795426965686,
+            "status": "exited"
+          }
+        ],
+        "processObservations": [
+          [
+            {
+              "pid": 38356,
+              "creationTime": 1795426870436,
+              "status": "exited"
+            },
+            {
+              "pid": 23088,
+              "creationTime": 1795426878629,
+              "status": "exited"
+            },
+            {
+              "pid": 18020,
+              "creationTime": 1795426878938,
+              "status": "exited"
+            },
+            {
+              "pid": 33788,
+              "creationTime": 1795426891520,
+              "status": "exited"
+            },
+            {
+              "pid": 2500,
+              "creationTime": 1795426895636,
+              "status": "exited"
+            },
+            {
+              "pid": 33756,
+              "creationTime": 1795426895763,
+              "status": "exited"
+            },
+            {
+              "pid": 29308,
+              "creationTime": 1795426907716,
+              "status": "exited"
+            },
+            {
+              "pid": 30544,
+              "creationTime": 1795426911832,
+              "status": "exited"
+            },
+            {
+              "pid": 4452,
+              "creationTime": 1795426911961,
+              "status": "exited"
+            },
+            {
+              "pid": 17488,
+              "creationTime": 1795426914416,
+              "status": "exited"
+            },
+            {
+              "pid": 38280,
+              "creationTime": 1795426918265,
+              "status": "exited"
+            },
+            {
+              "pid": 31196,
+              "creationTime": 1795426918380,
+              "status": "exited"
+            },
+            {
+              "pid": 17808,
+              "creationTime": 1795426936829,
+              "status": "exited"
+            },
+            {
+              "pid": 24440,
+              "creationTime": 1795426941478,
+              "status": "exited"
+            },
+            {
+              "pid": 25504,
+              "creationTime": 1795426941607,
+              "status": "exited"
+            },
+            {
+              "pid": 30824,
+              "creationTime": 1795426948212,
+              "status": "exited"
+            },
+            {
+              "pid": 20344,
+              "creationTime": 1795426952152,
+              "status": "exited"
+            },
+            {
+              "pid": 32236,
+              "creationTime": 1795426952272,
+              "status": "exited"
+            },
+            {
+              "pid": 2180,
+              "creationTime": 1795426965686,
+              "status": "exited"
+            }
+          ]
+        ],
+        "owned": [],
+        "remaining": [],
+        "survivors": [],
+        "detectedPendingLaunches": 0,
+        "pendingLaunches": 0,
+        "status": "passed"
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "d39d37db756eb4352f546fa4d5782ea245383dc636f4d0c2b974e38158dd8390",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "d39d37db756eb4352f546fa4d5782ea245383dc636f4d0c2b974e38158dd8390",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "e2e-delivery",
+      "commit": "18041f4083293f4030937e7498b12ddc97a6d88e",
+      "stats": {
+        "startTime": "2026-11-23T09:44:56.662Z",
+        "duration": 28124.951999999997,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-MGie1J",
+        "ledgerEntries": 5,
+        "checks": [
+          {
+            "pid": 32740,
+            "creationTime": 1795427097795,
+            "status": "exited"
+          },
+          {
+            "pid": 19868,
+            "creationTime": 1795427101515,
+            "status": "exited"
+          },
+          {
+            "pid": 28868,
+            "creationTime": 1795427101627,
+            "status": "exited"
+          }
+        ],
+        "processObservations": [
+          [
+            {
+              "pid": 32740,
+              "creationTime": 1795427097795,
+              "status": "exited"
+            },
+            {
+              "pid": 19868,
+              "creationTime": 1795427101515,
+              "status": "exited"
+            },
+            {
+              "pid": 28868,
+              "creationTime": 1795427101627,
+              "status": "exited"
+            }
+          ]
+        ],
+        "owned": [],
+        "remaining": [],
+        "survivors": [],
+        "detectedPendingLaunches": 0,
+        "pendingLaunches": 0,
+        "status": "passed"
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "d39d37db756eb4352f546fa4d5782ea245383dc636f4d0c2b974e38158dd8390",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "d39d37db756eb4352f546fa4d5782ea245383dc636f4d0c2b974e38158dd8390",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "driven_by": "agent",
+  "candidatePolicy": "Latest result per named journey. Research service journeys ran before the later model-label and circular-button presentation change; their source/runtime owner is unchanged. Final UI images and action states use the delivery commit."
+}
