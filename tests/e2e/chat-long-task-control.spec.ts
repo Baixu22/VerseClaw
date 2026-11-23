@@ -13,7 +13,7 @@ function stableStringify(value: unknown): string {
 }
 
 test.describe('Verse Claw chat long-task recovery controls', () => {
-  test('shows recovery status and drains queued follow-up through Host API', async ({ launchElectronApp }) => {
+  test('shows recovery status and drains queued follow-up through Host API', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -366,11 +366,19 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       await expect(page.getByTestId('chat-intervention-interrupt')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-queue')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-revise-goal')).toBeVisible();
+      await expect(page.getByTestId('chat-intervention-menu-trigger')).not.toHaveText('');
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+      await page.screenshot({ path: testInfo.outputPath('delivery-dark.png') });
+      await page.setViewportSize({ width: 480, height: 800 });
+      await expect(page.getByTestId('chat-intervention-guide')).toBeInViewport();
+      await expect(page.getByTestId('chat-intervention-interrupt')).toBeInViewport();
+      await page.screenshot({ path: testInfo.outputPath('delivery-narrow-dark.png') });
+      await page.setViewportSize({ width: 1280, height: 900 });
       await page.keyboard.press('Escape');
       await expect(page.getByTestId('chat-intervention-controls')).toHaveCount(0);
       /* The button's label lives on `aria-label` (the visible hint is a
          Tooltip, not a `title` attribute). */
-      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Queue');
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Send after this run');
       await page.getByTestId('chat-composer-send').click();
       await expect.poll(async () => (
         (await app.evaluate(() => (

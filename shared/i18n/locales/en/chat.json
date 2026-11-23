@@ -1440,9 +1440,9 @@
       "knowledge": "Search knowledge",
       "model": "Model",
       "more": "More",
-      "compact": "Compact session",
-      "fork": "Fork session",
-      "handoff": "Handoff session"
+      "compact": "Organize context",
+      "fork": "Branch conversation",
+      "handoff": "Continue with a summary"
     },
     "office": {
       "excel": "Excel",
@@ -1671,18 +1671,18 @@
           "argumentHint": "[task title]"
         },
         "compact": {
-          "label": "Compact session",
-          "description": "Open the current-session compression dialog.",
+          "label": "Organize context",
+          "description": "Summarize earlier messages in this conversation to free context space.",
           "argumentHint": ""
         },
         "fork": {
-          "label": "Fork session",
-          "description": "Branch the current chat through the existing fork flow.",
+          "label": "Branch conversation",
+          "description": "Copy the context and open a branch; you send the next message.",
           "argumentHint": ""
         },
         "handoff": {
-          "label": "Handoff session",
-          "description": "Prepare an editable continuation draft in a new session.",
+          "label": "Continue with a summary",
+          "description": "Review a summary, then create and send to a new conversation.",
           "argumentHint": ""
         },
         "new": {
@@ -1823,16 +1823,16 @@
       "compressTooltip": "Compress the current session history",
       "viewEvidence": "View compression evidence",
       "viewEvidenceTooltip": "Review compression evidence before continuing",
-      "dialogTitle": "Compress Current Session",
-      "dialogDescription": "This will summarize older chat history for the active session after confirmation. Long-task state stays in Task Ledger and Context Pack references.",
+      "dialogTitle": "Organize context",
+      "dialogDescription": "Summarize earlier messages while keeping the recent conversation.",
       "tokenUsage": "Token usage",
       "hiddenMessages": "Hidden messages",
       "lastCompaction": "Last compression",
       "neverCompacted": "Never",
       "expectedEffect": "The next model request should carry less transcript pressure while preserving objectives, decisions, open tasks, failed attempts, touched files, constraints, and review items.",
-      "instructionsLabel": "Extra compression instructions",
-      "instructionsPlaceholder": "Optional: tell the summarizer what must be preserved.",
-      "confirm": "Compress current session",
+      "instructionsLabel": "Anything to preserve? (optional)",
+      "instructionsPlaceholder": "For example: agreed decisions, constraints and unfinished work",
+      "confirm": "Organize context",
       "cancel": "Cancel",
       "unknown": "Unknown",
       "unavailable": "Compression unavailable",
@@ -1866,7 +1866,7 @@
         "noUnverifiedClaims": "No unverified claims reported.",
         "noReviewNeeded": "No review items reported.",
         "prepareRecovery": "Prepare recovery context",
-        "forkSession": "Fork/branch session",
+        "forkSession": "Branch conversation",
         "close": "Close",
         "qualityScore": "Score {{score}}%",
         "qualityCoverage": "Evidence {{evidence}}% · fields {{fields}}% · recovery {{tokens}} tokens",
@@ -1881,7 +1881,8 @@
         "no_session": "No active session",
         "no_transcript": "Transcript not found",
         "gateway_unavailable": "Gateway unavailable"
-      }
+      },
+      "truncatedNotice": "{{count}} messages are truncated in the current context. Organization uses the available history."
     },
     "contextPressure": {
       "title": "Session context",
@@ -2036,15 +2037,22 @@
             "description": "The continuation draft could not be prepared."
           }
         }
-      }
+      },
+      "forkDescription": "Copy the context and open a branch; you send the next message.",
+      "handoffDescription": "Review a summary, then create and send to a new conversation.",
+      "compactDescription": "Summarize earlier messages in this conversation to free context space.",
+      "details": "More details",
+      "forkPreparing": "Opening conversation branch…",
+      "handoffPreparing": "Preparing continuation summary…"
     },
     "fork": {
-      "action": "Fork to new conversation",
-      "tooltip": "Create a new conversation branch from this transcript",
+      "action": "Branch conversation",
+      "tooltip": "Copy this context and continue in a new conversation.",
       "disabledActiveRun": "Available after the current run finishes",
       "toastCreated": "Forked conversation created",
       "toastFailed": "Failed to fork conversation",
-      "boundaryNote": "Copies the conversation up to this point plus provider/model/thinking settings and workspace UI state. Task Ledger, memory, and knowledge contents are not copied."
+      "boundaryNote": "Copies the conversation up to this point plus provider/model/thinking settings and workspace UI state. Task Ledger, memory, and knowledge contents are not copied.",
+      "disabledGateway": "Available when the connection returns"
     },
     "compactRange": {
       "toastCompacted": "Summarized the selected range",
@@ -2052,18 +2060,25 @@
       "toastFailedDescription": "The range could not be summarized; nothing was changed."
     },
     "handoff": {
-      "action": "Handoff to new conversation",
-      "tooltip": "Prepare a continuation draft in a new session",
+      "action": "Continue with a summary",
+      "tooltip": "Summarize progress and continue the task in a new conversation.",
       "disabledActiveRun": "Available after the current run finishes",
-      "dialogTitle": "Handoff to New Conversation",
-      "dialogDescription": "Review and edit this continuation draft. Create and send opens a new session and submits the draft as its first message. If delivery is unconfirmed, the saved draft remains available for verification and recovery.",
-      "draftLabel": "Handoff draft",
+      "dialogTitle": "Continue with a summary",
+      "dialogDescription": "Review the summary below. Create and send opens a new conversation and sends this content to continue the work.",
+      "draftLabel": "Continuation message",
       "create": "Create and send",
       "cancel": "Cancel",
       "toastPrepareFailed": "Failed to prepare handoff",
       "toastCreateFailed": "Failed to create handoff session",
       "toastCreated": "Handoff session created",
-      "ledgerSummary": "Handoff session created from {{source}}"
+      "ledgerSummary": "Handoff session created from {{source}}",
+      "sources": "Context sources",
+      "sourceWarnings": "{{count}} notices",
+      "sourceReady": "Included",
+      "sourceMissing": "Unavailable",
+      "creating": "Creating and sending…",
+      "resumeSend": "Resume and send",
+      "savedDraft": "Recovery uses the saved content and keeps the same delivery record."
     },
     "runLogReplay": "From run log (not the session transcript)",
     "workspaceActions": "Workspace actions",
@@ -2155,16 +2170,17 @@
     "workModeRecommendedPermission": "Recommended: {{mode}}",
     "intervention": {
       "menu": "Delivery options",
-      "guide": "Guide",
-      "guideTooltip": "Add to the current run at its next step, without stopping it",
+      "guide": "Guide current run",
+      "guideTooltip": "Pass this guidance to the current task",
       "longTaskRequired": "Interrupt and guidance require an active long task.",
       "reviseGoal": "Revise goal",
       "reviseGoalTooltip": "Save a checkpoint and restart with this message as the new goal",
       "queueDefault": "Running: Enter queues this message",
-      "queue": "Queue",
-      "queueTooltip": "Send after the current run finishes",
-      "interrupt": "Interrupt & send",
-      "interruptTooltip": "Save a checkpoint, stop the run, and restart from this message"
+      "queue": "Send after this run",
+      "queueTooltip": "Process this message after the current run finishes",
+      "interrupt": "Stop and send",
+      "interruptTooltip": "Save progress, stop this run, then process this message",
+      "sendDraft": "Send this message"
     },
     "rollbackPlan": {
       "title": "Recovery assist",
@@ -2944,17 +2960,17 @@
     "sourceChanged": "The source session changed. Open the preview again."
   },
   "handoffRecovery": {
-    "resume": "Resume with the saved draft",
+    "resume": "Resume handoff",
     "check": "Check delivery",
-    "openChild": "Open child session",
+    "openChild": "Open continuation",
     "phase": {
-      "creating": "Handoff creation needs reconciliation",
-      "ready": "Child created · first turn not sent",
-      "sending": "First turn is being submitted",
-      "accepted": "First turn accepted · transcript not confirmed",
-      "sent": "First turn recorded",
-      "failed": "First turn rejected · draft retained",
-      "unknown": "First-turn delivery unknown · check before retrying"
+      "creating": "Checking the new conversation",
+      "ready": "Conversation ready; continue to send",
+      "sending": "Sending continuation message",
+      "accepted": "Received; confirming the record",
+      "sent": "Continuation message recorded",
+      "failed": "Delivery failed; content saved",
+      "unknown": "Delivery unconfirmed; check its status first"
     }
   },
   "delegationStages": {

@@ -18,6 +18,7 @@ import type { LiveTokenUsage, WorkspaceContextRange } from '@/../shared/types/wo
 export type ChatContextPressureProps = {
   liveUsage?: LiveTokenUsage | null;
   contextRange?: WorkspaceContextRange | null;
+  hideUsage?: boolean;
 };
 
 function formatCompactNumber(value: number): string {
@@ -77,7 +78,7 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-function ChatContextPressureImpl({ liveUsage, contextRange }: ChatContextPressureProps) {
+function ChatContextPressureImpl({ liveUsage, contextRange, hideUsage = false }: ChatContextPressureProps) {
   const { t } = useTranslation('chat');
   const pressure = resolveContextPressure({ liveUsage, contextRange });
 
@@ -102,7 +103,7 @@ function ChatContextPressureImpl({ liveUsage, contextRange }: ChatContextPressur
       role="group"
       aria-label={t('composer.contextPressure.title')}
     >
-      <Row label={t('composer.contextPressure.title')} value={limit} />
+      {!hideUsage && <Row label={t('composer.contextPressure.title')} value={limit} />}
       {pressure.cacheReadTokens != null && (
         <Row
           label={t('composer.contextPressure.cacheRead')}

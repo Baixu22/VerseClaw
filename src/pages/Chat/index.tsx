@@ -2183,6 +2183,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const handoffDisabledReason = !controlGeneration ? t('operationGenerationUnavailable')
     : continuityPreflight.handoff.disabled ? t('composer.handoff.disabledActiveRun') : undefined;
   const forkDisabled = continuityPreflight.fork.disabled;
+  const forkDisabledReason = forkDisabled
+    ? t(continuityRunActive ? 'composer.fork.disabledActiveRun' : 'composer.fork.disabledGateway')
+    : undefined;
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
 
@@ -3440,6 +3443,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             checkpointsDisabled={sending || pendingFinal}
             onForkSession={handleForkSession}
             forkDisabled={forkDisabled}
+            forkDisabledReason={forkDisabledReason}
             forkBusy={forkBusy}
             onHandoffSession={handlePrepareHandoff}
             handoffDisabled={handoffDisabled}
@@ -3453,21 +3457,25 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       {projectWorkspaceId && <div data-testid="project-coordinator-entry" className="relative px-4 pt-1 text-xs text-muted-foreground">
         {t('projectEntry.coordinator', { name: activeWorkspace?.name ?? '' })}
       </div>}
+      {(forkBusy || handoffBusy) && <div className="chat-continuity-progress" role="status" data-testid="chat-continuity-progress">
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        {t(forkBusy ? 'composer.continuity.forkPreparing' : 'composer.continuity.handoffPreparing')}
+      </div>}
       {handoffOperation && !handoffBusy && handoffOperation.phase !== 'sent' && <section data-testid="handoff-recovery" data-phase={handoffOperation.phase}
-        className="relative flex min-w-0 flex-wrap items-center gap-2 border-b border-border/40 px-4 py-1 text-xs">
+        className="chat-continuity-recovery">
         <span role="status">{t(`handoffRecovery.phase.${handoffOperation.phase}`)}</span>
-        {['creating', 'ready', 'failed'].includes(handoffOperation.phase) && <button type="button" data-testid="handoff-recovery-resume" className="underline"
+        {['creating', 'ready', 'failed'].includes(handoffOperation.phase) && <button type="button" data-testid="handoff-recovery-resume"
           onClick={() => { handoffIntentIdRef.current = handoffOperation.id; setHandoffDraft(handoffOperation.draftInput); setHandoffDialogOpen(true); }}>
           {t('handoffRecovery.resume')}
         </button>}
-        <button type="button" data-testid="handoff-recovery-check" className="underline" onClick={() => {
+        <button type="button" data-testid="handoff-recovery-check" onClick={() => {
           const visit = useChatStore.getState().viewRevision;
           if (activeWorkspace?.id) void hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id, sessionKey: currentSessionKey,
             operationId: handoffOperation.id, reconcile: true }).then((result) => {
               if (isCurrentControlScope() && useChatStore.getState().viewRevision === visit) setHandoffOperation(result.operation);
             });
         }}>{t('handoffRecovery.check')}</button>
-        {handoffOperation.sessionKey !== currentSessionKey && handoffOperation.sessionGeneration && <button type="button" className="underline"
+        {handoffOperation.sessionKey !== currentSessionKey && handoffOperation.sessionGeneration && <button type="button"
           onClick={() => { void openFamilySession(handoffOperation.sessionKey); }}>{t('handoffRecovery.openChild')}</button>}
       </section>}
 
@@ -3925,6 +3933,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         onNewSession={handleCreateNewSession}
         onForkSession={handleForkSession}
         forkDisabled={forkDisabled}
+        forkDisabledReason={forkDisabledReason}
         forkBusy={forkBusy}
         onHandoffSession={handlePrepareHandoff}
         handoffDisabled={handoffDisabled}
@@ -3973,12 +3982,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         />}
       </Suspense>
       <Dialog open={questionFork !== null} onOpenChange={(open) => { if (!open) setQuestionFork(null); }}>
-        <DialogContent data-testid="question-fork-dialog" className="max-w-xl bg-surface-modal">
+        <DialogContent data-testid="question-fork-dialog" className="chat-continuity-dialog max-w-xl">
           <DialogTitle>{t('questionFork.title')}</DialogTitle>
           <DialogDescription>{t('questionFork.description')}</DialogDescription>
           <Textarea data-testid="question-fork-draft" aria-label={t('questionFork.question')} value={questionFork?.draft ?? ''}
-            onChange={(event) => setQuestionFork((value) => value ? { ...value, draft: event.target.value } : null)} className="min-h-32 bg-surface-input" />
-          <div className="flex justify-end gap-2">
+            onChange={(event) => setQuestionFork((value) => value ? { ...value, draft: event.target.value } : null)} className="chat-continuity-editor min-h-32" />
+          <div className="chat-continuity-footer">
             <Button variant="ghost" onClick={() => setQuestionFork(null)}>{t('common:actions.cancel')}</Button>
             <Button data-testid="question-fork-create" disabled={forkBusy || !questionFork?.draft.trim()} onClick={() => {
               if (!questionFork || questionFork.sourceSessionKey !== currentSessionKey || questionFork.generation !== currentSession.sessionId) {
@@ -3989,10 +3998,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           </div>
         </DialogContent>
       </Dialog>
-      <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
+      <Dialog open={handoffDialogOpen} onOpenChange={(open) => { if (!handoffCreating) setHandoffDialogOpen(open); }}>
         <DialogContent
-          className="max-w-3xl rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
+          className="chat-continuity-dialog chat-handoff-dialog max-w-2xl"
           data-testid="chat-handoff-dialog"
+          aria-busy={handoffCreating}
         >
           <DialogTitle className="font-serif text-xl font-normal tracking-tight text-foreground">
             {t('composer.handoff.dialogTitle')}
@@ -4002,7 +4012,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           </DialogDescription>
           {continuityRecommendation.action === 'handoff' && !continuityRecommendation.disabled && (
             <div
-              className="mt-3 rounded-md border border-black/5 bg-black/5 px-3 py-2 text-xs text-muted-foreground dark:border-white/10 dark:bg-white/10"
+              className="chat-continuity-note"
               data-testid="chat-handoff-recommendation-note"
             >
               {t(`composer.continuity.dialogHint.${continuityRecommendation.reason}`, {
@@ -4010,35 +4020,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
               })}
             </div>
           )}
-          <div className="mt-4 flex flex-wrap gap-2">
-            {(handoffResult?.sources ?? []).map((source) => (
-              <Tooltip key={source.id}>
-                <TooltipTrigger asChild>
-              <span
-                className={cn(
-                  'inline-flex items-center rounded-md border px-2 py-1 text-xs',
-                  source.available
-                    ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
-                    : 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400',
-                )}
-              >
-                {source.label}
-              </span>
-                </TooltipTrigger>
-                {(source.summary || source.warning) && (
-                  <TooltipContent side="top" className="max-w-xs text-xs">{source.summary || source.warning}</TooltipContent>
-                )}
-              </Tooltip>
-            ))}
-          </div>
-          {(handoffResult?.warnings?.length ?? 0) > 0 && (
-            <div className="mt-3 rounded-md border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-300">
-              {(handoffResult?.warnings ?? []).slice(0, 4).map((warning) => (
-                <div key={warning}>{warning}</div>
-              ))}
-            </div>
-          )}
-          <Label className="mt-4 block text-sm font-medium text-foreground" htmlFor="chat-handoff-draft">
+          <Label className="block text-sm font-medium text-foreground" htmlFor="chat-handoff-draft">
             {t('composer.handoff.draftLabel')}
           </Label>
           <Textarea
@@ -4047,9 +4029,26 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             value={handoffDraft}
             readOnly={handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating'}
             onChange={(event) => setHandoffDraft(event.target.value)}
-            className="mt-2 min-h-[340px] resize-y bg-surface-input font-mono text-xs"
+            className="chat-continuity-editor chat-handoff-editor"
           />
-          <div className="mt-5 flex justify-end gap-2">
+          {handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating' && (
+            <p className="chat-continuity-note">{t('composer.handoff.savedDraft')}</p>
+          )}
+          {((handoffResult?.sources.length ?? 0) > 0 || (handoffResult?.warnings.length ?? 0) > 0) && (
+            <details className="chat-continuity-details" data-testid="chat-handoff-details">
+              <summary>{t('composer.handoff.sources')}
+                {(handoffResult?.warnings.length ?? 0) > 0 && <span className="ml-2">{t('composer.handoff.sourceWarnings', { count: handoffResult?.warnings.length })}</span>}
+              </summary>
+              <ul className="chat-continuity-sources">
+                {(handoffResult?.sources ?? []).map((source) => <li key={source.id}>
+                  <span>{source.label}</span><span>{t(source.available ? 'composer.handoff.sourceReady' : 'composer.handoff.sourceMissing')}</span>
+                  {(source.summary || source.warning) && <p>{source.warning || source.summary}</p>}
+                </li>)}
+              </ul>
+              {(handoffResult?.warnings ?? []).map((warning) => <p className="chat-continuity-note" key={warning}>{warning}</p>)}
+            </details>
+          )}
+          <div className="chat-continuity-footer">
             <Button
               type="button"
               variant="ghost"
@@ -4065,7 +4064,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
               disabled={handoffCreating || !handoffDraft.trim()}
             >
               {handoffCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('composer.handoff.create')}
+              {t(handoffCreating ? 'composer.handoff.creating'
+                : handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating'
+                  ? 'composer.handoff.resumeSend' : 'composer.handoff.create')}
             </Button>
           </div>
         </DialogContent>

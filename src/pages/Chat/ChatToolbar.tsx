@@ -32,6 +32,7 @@ type ChatToolbarProps = {
   checkpointsDisabled?: boolean;
   onForkSession?: () => void | Promise<void>;
   forkDisabled?: boolean;
+  forkDisabledReason?: string;
   forkBusy?: boolean;
   onHandoffSession?: () => void | Promise<void>;
   handoffDisabled?: boolean;
@@ -77,6 +78,7 @@ export function ChatToolbar({
   checkpointsDisabled,
   onForkSession,
   forkDisabled,
+  forkDisabledReason,
   forkBusy,
   onHandoffSession,
   handoffDisabled,
@@ -230,17 +232,16 @@ export function ChatToolbar({
             disabled={checkpointsDisabled} onClick={() => { setMoreOpen(false); onCheckpoints(); }}>
             <ListChecks className="h-4 w-4" aria-hidden="true" />{t('filePreview.checkpoints.title')}
           </button>}
-          {onForkSession && <button type="button" role="menuitem" data-testid="chat-session-fork" className="codex-header-menu__item"
+          {onForkSession && <button type="button" role="menuitem" data-testid="chat-session-fork" className="codex-header-menu__item chat-continuity-menu-item" title={forkDisabledReason}
             disabled={forkDisabled || forkBusy} onClick={() => { setMoreOpen(false); void onForkSession(); }}>
             {forkBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <GitBranchPlus className="h-4 w-4" aria-hidden="true" />}
-            <span className="flex-1">{t('composer.fork.action')}</span>
-            {recommendedAction === 'fork' && <span data-testid="chat-session-fork-recommended" className="text-2xs text-muted-foreground">{t('composer.continuity.recommended')}</span>}
+            <span className="min-w-0 flex-1"><span>{t('composer.fork.action')}</span><small>{forkDisabledReason ?? t('composer.continuity.forkDescription')}</small></span>
           </button>}
-          {onHandoffSession && <button type="button" role="menuitem" data-testid="chat-session-handoff" className="codex-header-menu__item"
+          {onHandoffSession && <button type="button" role="menuitem" data-testid="chat-session-handoff" className="codex-header-menu__item chat-continuity-menu-item"
             disabled={handoffDisabled || handoffBusy} title={handoffDisabledReason}
             onClick={() => { setMoreOpen(false); void onHandoffSession(); }}>
             {handoffBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" aria-hidden="true" />}
-            <span className="flex-1">{t('composer.handoff.action')}</span>
+            <span className="min-w-0 flex-1"><span>{t('composer.handoff.action')}</span><small>{handoffDisabledReason ?? t('composer.continuity.handoffDescription')}</small></span>
             {recommendedAction === 'handoff' && <span data-testid="chat-session-handoff-recommended" className="text-2xs text-muted-foreground">{t('composer.continuity.recommended')}</span>}
           </button>}
           {(onCheckpoints || onForkSession || onHandoffSession) && <hr className="codex-header-menu__sep" />}

@@ -1440,9 +1440,9 @@
       "knowledge": "ナレッジを検索",
       "model": "モデル",
       "more": "その他",
-      "compact": "セッションを圧縮",
-      "fork": "セッションを分岐",
-      "handoff": "セッションを引き継ぎ"
+      "compact": "文脈を整理",
+      "fork": "会話を分岐",
+      "handoff": "要約で引き継ぐ"
     },
     "office": {
       "excel": "Excel",
@@ -1657,18 +1657,18 @@
           "argumentHint": "[task title]"
         },
         "compact": {
-          "label": "セッション圧縮",
-          "description": "現在セッションの圧縮ダイアログを開きます。",
+          "label": "文脈を整理",
+          "description": "以前のメッセージを要約して文脈の空きを増やします。",
           "argumentHint": ""
         },
         "fork": {
-          "label": "セッションを Fork",
-          "description": "既存の Fork フローで現在のチャットを新しい会話に分岐します。",
+          "label": "会話を分岐",
+          "description": "文脈をコピーして分岐を開きます。次のメッセージは自分で送信します。",
           "argumentHint": ""
         },
         "handoff": {
-          "label": "セッションを Handoff",
-          "description": "新しいセッションに編集可能な継続下書きを準備します。",
+          "label": "要約で引き継ぐ",
+          "description": "要約を確認してから、新しい会話を作成して送信します。",
           "argumentHint": ""
         },
         "new": {
@@ -1809,16 +1809,16 @@
       "compressTooltip": "現在のセッション履歴を圧縮",
       "viewEvidence": "圧縮エビデンスを表示",
       "viewEvidenceTooltip": "続行前に圧縮エビデンスを確認",
-      "dialogTitle": "現在のセッションを圧縮",
-      "dialogDescription": "確認後、アクティブなセッションの古いチャット履歴を要約します。長期タスクの状態は Task Ledger と Context Pack の参照に残ります。",
+      "dialogTitle": "文脈を整理",
+      "dialogDescription": "以前のメッセージを要約し、最近の会話を保持します。",
       "tokenUsage": "トークン使用量",
       "hiddenMessages": "非表示メッセージ",
       "lastCompaction": "前回の圧縮",
       "neverCompacted": "未実行",
       "expectedEffect": "次のモデルリクエストでは transcript の負荷を下げつつ、目的、決定、未完了タスク、失敗した試行、触れたファイル、制約、レビュー項目を保持します。",
-      "instructionsLabel": "追加の圧縮指示",
-      "instructionsPlaceholder": "任意: 必ず残すべき内容を指定します。",
-      "confirm": "現在のセッションを圧縮",
+      "instructionsLabel": "特に残したい内容（任意）",
+      "instructionsPlaceholder": "例：決定事項、制約、未完了の作業",
+      "confirm": "整理を開始",
       "cancel": "キャンセル",
       "unknown": "不明",
       "unavailable": "圧縮は利用できません",
@@ -1852,7 +1852,7 @@
         "noUnverifiedClaims": "未検証の主張は報告されていません。",
         "noReviewNeeded": "レビュー項目は報告されていません。",
         "prepareRecovery": "復旧コンテキストを準備",
-        "forkSession": "Fork/branch session",
+        "forkSession": "会話を分岐",
         "close": "閉じる",
         "qualityScore": "スコア {{score}}%",
         "qualityCoverage": "エビデンス {{evidence}}% · フィールド {{fields}}% · 復旧 {{tokens}} tokens",
@@ -1867,7 +1867,8 @@
         "no_session": "アクティブなセッションがありません",
         "no_transcript": "Transcript が見つかりません",
         "gateway_unavailable": "Gateway を利用できません"
-      }
+      },
+      "truncatedNotice": "現在の文脈では {{count}} 件のメッセージが切り詰められています。参照可能な履歴を使って整理します。"
     },
     "contextPressure": {
       "title": "セッションコンテキスト",
@@ -2022,15 +2023,22 @@
             "description": "継続用の下書きを準備できませんでした。"
           }
         }
-      }
+      },
+      "forkDescription": "文脈をコピーして分岐を開きます。次のメッセージは自分で送信します。",
+      "handoffDescription": "要約を確認してから、新しい会話を作成して送信します。",
+      "compactDescription": "以前のメッセージを要約して文脈の空きを増やします。",
+      "details": "詳細を表示",
+      "forkPreparing": "会話の分岐を開いています…",
+      "handoffPreparing": "引き継ぎ要約を準備しています…"
     },
     "fork": {
-      "action": "新しい会話へ Fork",
-      "tooltip": "この transcript から新しい会話ブランチを作成します",
+      "action": "会話を分岐",
+      "tooltip": "現在の文脈を引き継いで新しい会話を開きます。",
       "disabledActiveRun": "現在の実行が完了すると利用できます",
       "toastCreated": "Fork 会話を作成しました",
       "toastFailed": "会話の Fork に失敗しました",
-      "boundaryNote": "ここまでの会話と、プロバイダー/モデル/思考の設定、ワークスペースの UI 状態をコピーします。タスク台帳・メモリ・ナレッジの内容はコピーされません。"
+      "boundaryNote": "ここまでの会話と、プロバイダー/モデル/思考の設定、ワークスペースの UI 状態をコピーします。タスク台帳・メモリ・ナレッジの内容はコピーされません。",
+      "disabledGateway": "接続が復旧すると利用できます"
     },
     "compactRange": {
       "toastCompacted": "選択した範囲を要約しました",
@@ -2038,18 +2046,25 @@
       "toastFailedDescription": "範囲を要約できませんでした。変更はありません。"
     },
     "handoff": {
-      "action": "新しい会話へ Handoff",
-      "tooltip": "新しいセッションに引き継ぎ草稿を準備します",
+      "action": "要約で引き継ぐ",
+      "tooltip": "進捗を要約して新しい会話で作業を続けます。",
       "disabledActiveRun": "現在の実行が完了すると利用できます",
-      "dialogTitle": "新しい会話へ Handoff",
-      "dialogDescription": "引き継ぎ草稿を確認・編集してください。「作成して送信」で新しいセッションを開き、草稿を最初のメッセージとして送信します。送信結果が未確認の場合は、照合と復旧のために草稿を保持します。",
-      "draftLabel": "Handoff 草稿",
+      "dialogTitle": "要約で引き継ぐ",
+      "dialogDescription": "下の要約を確認してください。「作成して送信」で新しい会話を開き、この内容を送信して作業を続けます。",
+      "draftLabel": "引き継ぎ内容",
       "create": "作成して送信",
       "cancel": "キャンセル",
       "toastPrepareFailed": "Handoff の準備に失敗しました",
       "toastCreateFailed": "Handoff セッションの作成に失敗しました",
       "toastCreated": "Handoff セッションを作成しました",
-      "ledgerSummary": "{{source}} から作成した Handoff セッション"
+      "ledgerSummary": "{{source}} から作成した Handoff セッション",
+      "sources": "参照した情報",
+      "sourceWarnings": "{{count}} 件の注意事項",
+      "sourceReady": "含まれます",
+      "sourceMissing": "未取得",
+      "creating": "作成して送信中…",
+      "resumeSend": "再開して送信",
+      "savedDraft": "復旧には保存済みの内容を使い、同じ送信記録を保持します。"
     },
     "runLogReplay": "実行ログから(セッションの原文ではありません)",
     "workspaceActions": "ワークスペース操作",
@@ -2141,16 +2156,17 @@
     "workModeRecommendedPermission": "推奨: {{mode}}",
     "intervention": {
       "menu": "送信方法",
-      "guide": "誘導",
-      "guideTooltip": "実行を止めずに、次のステップで現在の実行に追加",
+      "guide": "実行中の処理をガイド",
+      "guideTooltip": "現在のタスクに追加の指示を渡します",
       "longTaskRequired": "割り込みとガイドには実行中の長期タスクが必要です。",
       "reviseGoal": "目標を修正",
       "reviseGoalTooltip": "チェックポイントを保存し、このメッセージを新しい目標として再開",
       "queueDefault": "実行中: Enter でキュー",
-      "queue": "キュー",
-      "queueTooltip": "現在の実行が終わってから送信",
-      "interrupt": "中断して送信",
-      "interruptTooltip": "チェックポイントを保存して実行を止め、このメッセージから再開"
+      "queue": "実行後に送信",
+      "queueTooltip": "現在の実行が終わってから処理します",
+      "interrupt": "停止して送信",
+      "interruptTooltip": "進捗を保存して実行を停止し、このメッセージを処理します",
+      "sendDraft": "このメッセージを送信"
     },
     "rollbackPlan": {
       "title": "復旧支援",
@@ -2944,17 +2960,17 @@
     "sourceChanged": "参照元が変更されました。プレビューを開き直してください。"
   },
   "handoffRecovery": {
-    "resume": "保存済みの下書きで再開",
+    "resume": "引き継ぎを再開",
     "check": "送信状況を確認",
-    "openChild": "子セッションを開く",
+    "openChild": "引き継ぎ会話を開く",
     "phase": {
-      "creating": "引き継ぎの作成を確認してください",
-      "ready": "子セッション作成済み · 初回送信前",
-      "sending": "初回メッセージを送信中",
-      "accepted": "初回送信を受付済み · 記録は未確認",
-      "sent": "初回メッセージ記録済み",
-      "failed": "初回送信は拒否されました · 下書き保持済み",
-      "unknown": "初回送信の結果が不明です · 再試行前に確認してください"
+      "creating": "新しい会話を確認中",
+      "ready": "会話の準備ができました。送信できます",
+      "sending": "引き継ぎ内容を送信中",
+      "accepted": "受信済み。記録を確認中",
+      "sent": "引き継ぎ内容を記録しました",
+      "failed": "送信失敗。内容は保存済みです",
+      "unknown": "送信結果が未確認です。先に状況を確認してください"
     }
   },
   "delegationStages": {

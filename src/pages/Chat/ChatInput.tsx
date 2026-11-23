@@ -174,6 +174,7 @@ interface ChatInputProps {
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
   forkDisabled?: boolean;
+  forkDisabledReason?: string;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
   handoffDisabledReason?: string;
@@ -1021,6 +1022,7 @@ export function ChatInput({
   onForkSession,
   onHandoffSession,
   forkDisabled = false,
+  forkDisabledReason,
   forkBusy = false,
   handoffDisabled = false,
   handoffDisabledReason,
@@ -3829,6 +3831,7 @@ export function ChatInput({
                           label={t('composer.actions.compact')}
                           testId="chat-composer-action-compact"
                           disabled={compactDisabled}
+                          description={compactDisabledReason ?? t('composer.continuity.compactDescription')}
                           onClick={() => {
                             setActionMenuOpen(false);
                             setCompactionDialogOpen(true);
@@ -3841,7 +3844,8 @@ export function ChatInput({
                           label={t('composer.actions.fork')}
                           testId="chat-composer-action-fork"
                           disabled={forkDisabled || forkBusy}
-                          title={t('composer.fork.boundaryNote')}
+                          title={forkDisabledReason ?? t('composer.fork.boundaryNote')}
+                          description={forkDisabledReason ?? t('composer.continuity.forkDescription')}
                           onClick={() => {
                             setActionMenuOpen(false);
                             void onForkSession();
@@ -3855,7 +3859,7 @@ export function ChatInput({
                           testId="chat-composer-action-handoff"
                           disabled={handoffDisabled || handoffBusy}
                           title={handoffDisabledReason}
-                          description={handoffDisabledReason}
+                          description={handoffDisabledReason ?? t('composer.continuity.handoffDescription')}
                           onClick={() => {
                             setActionMenuOpen(false);
                             void onHandoffSession();
@@ -4436,6 +4440,7 @@ export function ChatInput({
                     });
                   }}
                 >
+                  <span>{t('composer.intervention.menu')}</span>
                   <ChevronDown className="h-3.5 w-3.5" />
                 </button>
                 <ComposerPopover
@@ -4455,14 +4460,14 @@ export function ChatInput({
                     items[(index + step + items.length) % items.length]?.focus();
                   }}
                 >
-                  <div className="codex-composer-menu__label">{t('composer.intervention.menu')}</div>
+                  <div className="codex-composer-menu__label">{t('composer.intervention.sendDraft')}</div>
                   {DELIVERY_MODE_OPTIONS.map(({ mode, icon: Icon, labelKey, hintKey, shortcut }) => (
                     <button
                       key={mode}
                       type="button"
                       role="menuitem"
                       data-testid={`chat-intervention-${mode}`}
-                      className="codex-composer-menu__item codex-composer-menu__option composer-delivery-option"
+                      className={cn('codex-composer-menu__item codex-composer-menu__option composer-delivery-option', mode === 'interrupt' && 'composer-delivery-option--interrupt')}
                       disabled={!canSendDuringRun}
                       onClick={() => void handleRunningSend(mode)}
                     >
@@ -4669,10 +4674,11 @@ export function ChatInput({
           </div>
         </DialogContent>
       </Dialog>
-      <Dialog open={compactionDialogOpen} onOpenChange={setCompactionDialogOpen}>
+      <Dialog open={compactionDialogOpen} onOpenChange={(open) => { if (!compactionBusy) setCompactionDialogOpen(open); }}>
         <DialogContent
-          className="max-w-lg rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
+          className="chat-continuity-dialog max-w-lg"
           data-testid="chat-compaction-dialog"
+          aria-busy={compactionBusy}
         >
           <DialogTitle className="font-serif text-xl font-normal tracking-tight text-foreground">
             {t('composer.compaction.dialogTitle')}
@@ -4680,9 +4686,7 @@ export function ChatInput({
           <DialogDescription className="mt-2 text-sm text-muted-foreground">
             {t('composer.compaction.dialogDescription')}
           </DialogDescription>
-          <ChatContextPressure liveUsage={liveUsage} contextRange={contextRange} />
-          <div className="mt-4 grid gap-2 text-sm">
-            <div className="flex items-center justify-between gap-4 rounded-md bg-surface-input px-3 py-2">
+          <div className="chat-continuity-metric">
               <span className="text-muted-foreground">{t('composer.compaction.tokenUsage')}</span>
               <span className="font-medium text-foreground">
                 {compactionUsedTokens != null
@@ -4694,22 +4698,11 @@ export function ChatInput({
                     : t('composer.tokenUsage', { tokens: formatCompactNumber(compactionUsedTokens) })
                   : t('composer.compaction.unknown')}
               </span>
-            </div>
-            <div className="flex items-center justify-between gap-4 rounded-md bg-surface-input px-3 py-2">
-              <span className="text-muted-foreground">{t('composer.compaction.hiddenMessages')}</span>
-              <span className="font-medium text-foreground">{compactionHiddenCount}</span>
-            </div>
-            <div className="flex items-center justify-between gap-4 rounded-md bg-surface-input px-3 py-2">
-              <span className="text-muted-foreground">{t('composer.compaction.lastCompaction')}</span>
-              <span className="font-medium text-foreground">
-                {compactionLastDate || t('composer.compaction.neverCompacted')}
-              </span>
-            </div>
           </div>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            {t('composer.compaction.expectedEffect')}
-          </p>
-          <label className="mt-4 block text-sm font-medium text-foreground" htmlFor="chat-compaction-instructions">
+          {compactionHiddenCount > 0 && <p className="chat-continuity-note" data-testid="chat-compaction-truncated">
+            {t('composer.compaction.truncatedNotice', { count: compactionHiddenCount })}
+          </p>}
+          <label className="block text-sm font-medium text-foreground" htmlFor="chat-compaction-instructions">
             {t('composer.compaction.instructionsLabel')}
           </label>
           <Textarea
@@ -4718,9 +4711,16 @@ export function ChatInput({
             value={compactionInstructions}
             onChange={(event) => setCompactionInstructions(event.target.value)}
             placeholder={t('composer.compaction.instructionsPlaceholder')}
-            className="mt-2 min-h-24 resize-none bg-surface-input"
+            className="chat-continuity-editor min-h-24 resize-none"
           />
-          <div className="mt-5 flex justify-end gap-2">
+          <details className="chat-continuity-details" data-testid="chat-compaction-details">
+            <summary>{t('composer.continuity.details')}</summary>
+            <p className="my-2 text-xs">{t('composer.compaction.lastCompaction')}: {compactionLastDate || t('composer.compaction.neverCompacted')}</p>
+            <ChatContextPressure liveUsage={liveUsage} contextRange={contextRange} hideUsage />
+            <p className="mt-2 text-xs">{t('composer.compaction.expectedEffect')}</p>
+          </details>
+          {compactDisabledReason && <p className="chat-continuity-note" role="status">{compactDisabledReason}</p>}
+          <div className="chat-continuity-footer">
             <Button
               type="button"
               variant="ghost"
@@ -4737,7 +4737,7 @@ export function ChatInput({
               disabled={compactDisabled || compactionBusy}
             >
               {compactionBusy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('composer.compaction.confirm')}
+              {t(compactionBusy ? 'composer.compaction.inProgress' : 'composer.compaction.confirm')}
             </Button>
           </div>
         </DialogContent>
@@ -4801,8 +4801,8 @@ function ComposerActionButton({
         <Icon className="h-4 w-4" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="inline truncate text-sm text-foreground">{label}</span>
-        {description && <span className="ml-2 inline truncate text-xs font-normal text-muted-foreground">{description}</span>}
+        <span className="block text-sm text-foreground">{label}</span>
+        {description && <span className="mt-0.5 block text-xs font-normal leading-relaxed text-muted-foreground">{description}</span>}
       </span>
     </button>
   );
