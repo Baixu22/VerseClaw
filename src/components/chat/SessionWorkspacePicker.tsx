@@ -17,10 +17,11 @@ type Snapshot = { status: GitRepositoryStatus; trees: GitWorktree[]; branches: B
 const newBranchName = () => `codex/task-${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 4)}`;
 
 /** The composer owns one execution picker; Git effects remain in the Host API. */
-export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, refreshSignal = 0,
+export function SessionWorkspacePicker({ disabled = false, setupVisible = true, onSelect, onChanged, refreshSignal = 0,
   onSelectProject, onPickFolder, onBeforeChange, onBusyChange, onProgressChange, sessionKey, children,
 }: {
   disabled?: boolean;
+  setupVisible?: boolean;
   onSelect: (tree: GitWorktree) => Promise<void>;
   onChanged?: () => void;
   refreshSignal?: number;
@@ -33,11 +34,12 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   children?: ReactNode;
 }) {
   const { t } = useTranslation('settings', { keyPrefix: 'storage' });
+  const { t: chatT } = useTranslation('chat');
   const workspace = useWorkspacesStore(state => state.activeWorkspace);
   const workspaceId = workspace?.id, workspaceRoot = workspace?.rootPath;
   const scope = JSON.stringify([workspaceId, workspaceRoot, sessionKey]);
   const scopeRef = useRef(scope); scopeRef.current = scope;
-  const disabledRef = useRef(disabled); disabledRef.current = disabled;
+  const disabledRef = useRef(disabled); disabledRef.current = disabled || !setupVisible;
   const alive = useRef(true);
   const requestId = useRef(0);
   const operation = useRef<string | null>(null);
@@ -49,6 +51,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const [base, setBase] = useState('');
   const [advanced, setAdvanced] = useState(false);
   const [branchesOpen, setBranchesOpen] = useState(false);
+  const [branchSearch, setBranchSearch] = useState('');
   const [created, setCreated] = useState<GitWorktree | null>(null);
   const createdRef = useRef<GitWorktree | null>(null);
   const attemptRef = useRef<{ branch: string; startPoint: string } | null>(null);
@@ -59,7 +62,8 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const overlay = useOverlayPortalContainer();
   const current = data?.scope === scope ? data.snapshot : null;
   const linked = current ? isLinkedWorktreePath(current.trees, current.status.repoRoot) : false;
-  const canMutate = Boolean(current?.status.isRepository && !disabled && !busy && !loading);
+  const canMutate = Boolean(setupVisible && current?.status.isRepository && !disabled && !busy && !loading);
+  const filteredBranches = current?.branches.filter(item => item.name.toLowerCase().includes(branchSearch.trim().toLowerCase())) ?? [];
   const isCurrent = (owner: string) => {
     const active = useWorkspacesStore.getState().activeWorkspace;
     return alive.current && scopeRef.current === owner && active?.id === workspaceId && pathEquals(active?.rootPath, workspaceRoot);
@@ -100,21 +104,27 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
     setOpen(false); triggerRef.current?.focus();
   }, refs: [triggerRef, layerRef] });
   useEffect(() => {
+    if (!setupVisible) setOpen(false);
+  }, [setupVisible, setOpen]);
+  useEffect(() => {
     if (!open) return;
-    const frame = requestAnimationFrame(() => layerRef.current?.focus());
+    const frame = requestAnimationFrame(() => {
+      const search = layerRef.current?.querySelector<HTMLInputElement>('[data-testid="composer-context-branch-search"]');
+      (search ?? layerRef.current)?.focus();
+    });
     return () => cancelAnimationFrame(frame);
-  }, [open, layerRef]);
+  }, [open, branchesOpen, layerRef]);
 
   const show = (anchor: HTMLButtonElement, showBranches = false) => {
     const differentAnchor = triggerRef.current !== anchor;
     triggerRef.current = anchor;
-    setOpen(!open || differentAnchor || showBranches);
+    setOpen(!open || differentAnchor);
     if (!open) setAdvanced(false);
-    setBranchesOpen(showBranches); setError(null);
+    setBranchesOpen(showBranches); setBranchSearch(''); setError(null);
     void refresh();
   };
   const run = async (kind: string, action: (owner: string) => Promise<void>) => {
-    if (operation.current || disabled || loading || !current) return;
+    if (operation.current || disabledRef.current || loading || !current) return;
     const owner = scope;
     operation.current = owner; setBusy(kind); setError(null); onBusyChange?.(true);
     try {
@@ -150,7 +160,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
       onStay: () => { stayRef.current = true; publishProgress(stageRef.current); }, onRetry: create, onDismiss: dismissProgress });
   };
   const create = () => {
-    if (operation.current || disabled || loading || !current) return;
+    if (operation.current || disabledRef.current || loading || !current) return;
     attemptRef.current ??= { branch: branch.trim(), startPoint: base.trim() || current.status.branch || 'HEAD' };
     stayRef.current = false;
     publishProgress('saving');
@@ -182,17 +192,17 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const switchBranch = (name: string) => void run('branch', async owner => {
     const result = await hostApi.git.checkoutBranch({ name });
     if (!result.success) throw new Error(result.reason || result.stderr || t('operationFailed'));
-    if (isCurrent(owner)) { onChanged?.(); setBranchesOpen(false); }
+    if (isCurrent(owner)) { onChanged?.(); setOpen(false); triggerRef.current?.focus(); }
   });
 
-  return <div className="composer-execution-tray" data-testid="composer-execution-tray">
+  return <div className="composer-execution-tray" data-testid="composer-execution-tray" data-setup-visible={setupVisible}>
     {children}
-    {created && !busy && <div className="composer-context-ready" data-testid="worktree-creation-ready">
+    {setupVisible && created && !busy && <div className="composer-context-ready" data-testid="worktree-creation-ready">
       <Check aria-hidden="true" /><span>{t('creation.ready')}</span>
       <button type="button" disabled={disabled} onClick={create}>{t('openCreated')}</button>
       <button type="button" onClick={() => { setCreated(null); createdRef.current = null; attemptRef.current = null; setBranch(newBranchName()); }} aria-label={t('creation.dismissReady')}>×</button>
     </div>}
-    <div className="composer-context-row" data-testid="composer-context-row">
+    {setupVisible && <div className="composer-context-row" data-testid="composer-context-row">
       <WelcomeProjectPicker disabled={disabled || Boolean(busy)} onSelect={onSelectProject} onPickFolder={onPickFolder} />
       {workspace && <>
         {linked && <button type="button" className="composer-context-chip composer-context-location" data-testid="session-worktree-trigger"
@@ -201,23 +211,32 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
           <FolderGit2 aria-hidden="true" /><span>{t('worktree')}</span>
         </button>}
         {current?.status.isRepository && <button type="button" className="composer-context-chip composer-context-branch"
-          data-testid="composer-context-branch" title={current.status.branch || 'HEAD'} aria-haspopup="dialog" aria-expanded={open && branchesOpen}
+          data-testid="composer-context-branch" title={current.status.branch || 'HEAD'} aria-label={chatT('welcome.branchPickerTitle')} aria-haspopup="dialog" aria-expanded={open && branchesOpen}
           onClick={event => show(event.currentTarget, true)}>
           <GitBranch aria-hidden="true" /><span>{current.status.branch || 'HEAD'}</span>
           {!current.status.clean && <i className="composer-context-dirty" aria-label={t('uncommittedChanges')} />}
+          <ChevronDown aria-hidden="true" />
         </button>}
         <button type="button" className="composer-context-more" data-testid="composer-context-more" aria-label={t('executionSettings')}
           aria-haspopup="dialog" aria-expanded={open} onClick={event => show(event.currentTarget)}><MoreHorizontal aria-hidden="true" /></button>
       </>}
-    </div>
-    {open && createPortal(<div ref={layerRef} style={style} className="composer-context-menu" role="dialog" tabIndex={-1}
-      aria-label={t('executionSettings')} data-testid="session-worktree-menu">
-      <p className="composer-context-label">{t('executionSettings')}</p>
+    </div>}
+    {setupVisible && open && createPortal(<div ref={layerRef} style={style} className="composer-context-menu" role="dialog" tabIndex={-1}
+      aria-label={branchesOpen ? chatT('welcome.branchPickerTitle') : t('executionSettings')} data-testid="session-worktree-menu"
+      onKeyDown={event => {
+        if (!branchesOpen || !['ArrowDown', 'ArrowUp'].includes(event.key)) return;
+        const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[data-branch-option]:not(:disabled)'));
+        if (!items.length) return;
+        event.preventDefault();
+        const index = items.indexOf(document.activeElement as HTMLButtonElement);
+        items[index < 0 ? (event.key === 'ArrowDown' ? 0 : items.length - 1) : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+      }}>
+      <p className="composer-context-label">{branchesOpen ? t('branches') : t('executionSettings')}</p>
       {disabled && <p className="composer-context-hint" role="status">{t('runningHint')}</p>}
       {!current && <button type="button" className="composer-context-option" disabled={loading} onClick={() => void refresh()}>
         {loading ? <Loader2 className="motion-safe:animate-spin" /> : <RefreshCw />}<span>{t(loading ? 'loadingDirectory' : 'refresh')}</span>
       </button>}
-      {current?.status.isRepository && <>
+      {!branchesOpen && current?.status.isRepository && <>
         <div className="composer-context-create">
           <GitBranchPlus aria-hidden="true" />
           <div className="min-w-0 flex-1"><span className="block">{t('createWorktree')}</span><span className="composer-context-hint block truncate" title={branch}>{branch}</span></div>
@@ -237,7 +256,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
         </form>}
       </>}
       {error && <p className="composer-context-error" role="alert">{error}</p>}
-      {current && <>
+      {!branchesOpen && current && <>
         {!current.status.isRepository && <p className="composer-context-hint">{t('notGit')}</p>}
         <div className="composer-context-divider" />
         <p className="composer-context-label">{t('environment')}</p>
@@ -252,16 +271,24 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
         </div>
         {current.status.isRepository && <>
           <div className="composer-context-divider" />
-          <button type="button" className="composer-context-option" data-testid="composer-context-branches-toggle" aria-expanded={branchesOpen} onClick={() => setBranchesOpen(!branchesOpen)}>
+          <button type="button" className="composer-context-option" data-testid="composer-context-branches-toggle" aria-expanded={branchesOpen} onClick={() => { setBranchesOpen(true); setBranchSearch(''); }}>
             <GitBranch aria-hidden="true" /><span className="flex-1">{t('branches')}</span><span className="max-w-28 truncate composer-context-hint">{current.status.branch || 'HEAD'}</span><ChevronDown className={cn(branchesOpen && 'rotate-180')} />
           </button>
-          {branchesOpen && <div className="composer-context-branches" data-testid="composer-context-branches">
-            {current.branches.map(item => <button key={item.name} type="button" className="composer-context-option" disabled={!canMutate || item.current}
-              data-testid={`composer-context-checkout-${item.name.replace(/[^a-z0-9._/-]+/gi, '-')}`} onClick={() => switchBranch(item.name)}>
-              <span className="min-w-0 flex-1 truncate">{item.name}</span>{item.current && <Check aria-hidden="true" />}
-            </button>)}
-          </div>}
         </>}
+      </>}
+      {branchesOpen && <>
+        <div className="composer-context-form">
+          <input data-testid="composer-context-branch-search" aria-label={chatT('welcome.branchSearch')} placeholder={chatT('welcome.branchSearch')}
+            value={branchSearch} onChange={event => setBranchSearch(event.target.value)} />
+        </div>
+        <div className="composer-context-branches" data-testid="composer-context-branches">
+          {filteredBranches.map(item => <button key={item.name} type="button" className="composer-context-option" disabled={!canMutate || item.current}
+            title={item.name} data-branch-option aria-current={item.current || undefined}
+            data-testid={`composer-context-checkout-${item.name.replace(/[^a-z0-9._/-]+/gi, '-')}`} onClick={() => switchBranch(item.name)}>
+            <GitBranch aria-hidden="true" /><span className="min-w-0 flex-1 truncate">{item.name}</span>{item.current && <Check aria-hidden="true" />}
+          </button>)}
+          {current && !loading && filteredBranches.length === 0 && <p className="composer-context-hint p-2">{chatT('welcome.branchEmpty')}</p>}
+        </div>
       </>}
     </div>, overlay ?? document.body)}
   </div>;

@@ -2660,6 +2660,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const pendingImageGeneration = executionProjection.pendingImageGeneration;
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
+  const showStartupSetup = isEmpty && !inputRunActive && !composerPaused
+    && !currentSession.hasActiveRun && !(currentSession.messageCount ?? 0)
+    && !Object.values(runtimeRuns).some(run => run.sessionKey === currentSessionKey && run.startedAt != null);
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
     if ((!inputRunActive && !useChatStore.getState().sending) || pauseComposerPendingRef.current) return;
@@ -3893,12 +3896,13 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         ) : undefined}
         contextContent={(
           <SessionWorkspacePicker key={`${activeWorkspaceId}:${currentSessionKey}`} sessionKey={currentSessionKey}
+            setupVisible={showStartupSetup}
             disabled={inputRunActive} onSelect={handleSwitchWorktreeWorkspace} onSelectProject={handleSwitchWorkspace}
             onPickFolder={handlePickWorkspaceFolder} onBeforeChange={persistCurrentWorkspaceSessionState}
             onBusyChange={setExecutionBusy} onProgressChange={setWorktreeProgress} refreshSignal={gitRevision} onChanged={handleGitChanged}>
-            {(!isEmpty || projectWorkspaceId) && (
+            {(!isEmpty || inputRunActive || projectWorkspaceId) && (
               <div data-testid="chat-task-tray">
-                <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
+                <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty || inputRunActive}
                   projectEntry={Boolean(projectWorkspaceId)} plan={userRunCards.findLast((card) => card.active)?.surfaces.plan ?? null}
                   runActive={inputRunActive} controlStatus={longTaskControlStatus} onOpenTask={handleOpenSessionTask} />
               </div>

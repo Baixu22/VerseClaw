@@ -481,8 +481,9 @@
   border-bottom-color: var(--color-chat-tray-border);
 }
 .composer-execution-tray .session-task-details { max-height: 176px; overflow-y: auto; }
-.composer-context-row { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; min-width: 0; }
-.composer-execution-tray:has(.session-task-panel) .composer-context-row { height: 32px; }
+.composer-execution-tray:not(:has(.composer-context-row, .session-task-panel, .worktree-creation-ready)) { display: none; }
+.composer-context-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; min-height: 36px; padding: 4px 12px; min-width: 0; }
+.composer-execution-tray:has(.session-task-panel) .composer-context-row { min-height: 32px; }
 .composer-context-chip {
   display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 200px;
   height: 28px; padding: 0 5px; border: 0; border-radius: 8px;
@@ -494,7 +495,7 @@
 .composer-context-more { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: transparent; }
 .composer-context-chip:hover:not(:disabled), .composer-context-more:hover, .composer-context-more[aria-expanded='true'] { background: var(--color-chat-tray-hover); }
 .composer-context-location { flex-shrink: 0; }
-.composer-context-branch { color: var(--color-chat-secondary); max-width: 220px; }
+.composer-context-branch { color: var(--color-chat-secondary); max-width: 220px; margin-left: auto; }
 .composer-context-dirty { flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .composer-context-menu {
   width: min(304px, calc(100vw - 16px)); overflow-y: auto; overscroll-behavior: contain; padding: 10px;
@@ -541,7 +542,7 @@
   .composer-context-branch { max-width: 114px; }
   .composer-context-branch > span { max-width: 88px; }
 }
-@media (max-width: 459px) { .composer-context-branch { display: none; } }
+@media (max-width: 459px) { .composer-context-location > span { display: none; } }
 
 .worktree-progress-title { display: flex; align-items: center; gap: 8px; margin: 0 12px -10px; padding: 8px 14px 18px; border-radius: 16px 16px 0 0; background: var(--color-chat-tray); color: var(--color-chat-secondary); font-size: 13px; }
 .worktree-progress-title svg { width: 16px; height: 16px; flex: none; }

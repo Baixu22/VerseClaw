@@ -112,9 +112,30 @@ describe('composer execution settings', () => {
   it('opens branches directly in the same panel and invokes the existing checkout action', async () => {
     mount(); await waitFor(() => expect(screen.getByTestId('composer-context-branch')).toBeVisible());
     fireEvent.click(screen.getByTestId('composer-context-branch'));
+    const search = screen.getByTestId('composer-context-branch-search');
+    await waitFor(() => expect(search).toHaveFocus());
+    expect(screen.queryByTestId('session-worktree-submit')).toBeNull();
+    fireEvent.change(search, { target: { value: 'feature/' } });
+    expect(screen.queryByTestId('composer-context-checkout-main')).toBeNull();
     const next = screen.getByTestId('composer-context-checkout-feature/next');
     await waitFor(() => expect(next).toBeEnabled()); fireEvent.click(next);
     await waitFor(() => expect(mocks.checkout).toHaveBeenCalledWith({ name: 'feature/next' }));
     expect(mocks.before).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('session-worktree-menu')).toBeNull();
+  });
+  it('closes startup controls when the conversation starts while keeping its task row mounted', async () => {
+    const props = { sessionKey: 'chat-a', onSelect: mocks.select };
+    const view = render(<SessionWorkspacePicker {...props}><div className="session-task-panel">Current task</div></SessionWorkspacePicker>);
+    await waitFor(() => expect(screen.getByTestId('composer-context-branch')).toBeVisible());
+    fireEvent.click(screen.getByTestId('composer-context-branch'));
+    expect(screen.getByTestId('session-worktree-menu')).toBeVisible();
+    view.rerender(<SessionWorkspacePicker {...props} setupVisible={false}><div className="session-task-panel">Current task</div></SessionWorkspacePicker>);
+    expect(screen.queryByTestId('composer-context-row')).toBeNull();
+    expect(screen.queryByTestId('session-worktree-menu')).toBeNull();
+    expect(screen.getByText('Current task')).toBeVisible();
+    expect(mocks.checkout).not.toHaveBeenCalled();
+    view.rerender(<SessionWorkspacePicker {...props}><div className="session-task-panel">Current task</div></SessionWorkspacePicker>);
+    expect(screen.getByTestId('composer-context-branch')).toBeVisible();
+    expect(screen.queryByTestId('session-worktree-menu')).toBeNull();
   });
 });

@@ -133,6 +133,7 @@ test('conversation planning, settings and decisions share a compact input surfac
     const selectProfile = async (value: string) => { await revealOptions(); await page.getByTestId('chat-knowledge-profile').selectOption(value); };
 
     const input = page.getByTestId('chat-composer-input');
+    await expect(page.getByTestId('composer-context-row')).toHaveCount(0);
     await expect(page.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'unavailable');
     await input.fill('任务状态恢复时保留这段草稿');
     await capture('task-unavailable-light-1280');

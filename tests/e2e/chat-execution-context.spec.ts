@@ -82,6 +82,9 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     expect((await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);
     report.originalDraftRestored = true;
     await page.getByTestId('composer-context-branch').click();
+    await expect(page.getByTestId('session-worktree-submit')).toHaveCount(0);
+    await page.getByTestId('composer-context-branch-search').fill('alternate');
+    await expect(page.getByTestId('composer-context-checkout-main')).toHaveCount(0);
     await page.getByTestId('composer-context-checkout-feature/alternate').click();
     await expect(page.getByTestId('composer-context-branch')).toHaveText('feature/alternate');
     expect(git('branch', '--show-current')).toBe('feature/alternate');
@@ -136,7 +139,14 @@ test('execution tray creates a real worktree in two clicks and restores the orig
         await page.setViewportSize({ width, height: 800 });
         await expect(page.getByTestId('session-worktree-trigger')).toBeInViewport();
         await expect(page.getByTestId('composer-context-more')).toBeInViewport();
+        await expect(page.getByTestId('composer-context-branch')).toBeInViewport({ ratio: 1 });
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await page.getByTestId('composer-context-branch').click();
+        await expect(page.getByTestId('composer-context-branch-search')).toBeFocused();
+        await expect(page.getByTestId('composer-context-branches')).toBeInViewport({ ratio: 1 });
+        await page.screenshot({ path: info.outputPath(`${theme}-${width}-startup-branches.png`) });
+        await page.keyboard.press('Escape');
+        await expect(page.getByTestId('composer-context-branch')).toBeFocused();
         await page.getByTestId('composer-context-more').click();
         await expect(menu).toBeInViewport(); await expect(menu).toHaveCSS('border-radius', '18px');
         await expect(page.getByTestId('session-worktree-submit')).toBeInViewport();
@@ -151,26 +161,37 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     }
     await page.setViewportSize({ width: 960, height: 800 });
     await input.fill('Draft protected while running');
+    await page.getByTestId('composer-context-branch').click();
+    await expect(menu).toBeVisible();
     await app.evaluate(({ BrowserWindow }, key) => {
       for (const window of BrowserWindow.getAllWindows()) window.webContents.send('chat:runtime-event', { type: 'run.started', sessionKey: key, runId: 'tray-running', ts: Date.now(), startedAt: Date.now() });
     }, active.activeSessionKey);
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running-with-draft');
-    await page.getByTestId('composer-context-more').click();
-    await expect(page.getByTestId('session-worktree-submit')).toBeDisabled();
-    await expect(page.getByTestId('session-worktree-option-0')).toBeDisabled();
+    await expect(page.getByTestId('composer-context-row')).toHaveCount(0);
+    await expect(menu).toHaveCount(0);
     await expect(input).toHaveValue('Draft protected while running');
-    await expect(create).toHaveCSS('opacity', '1');
-    await expect(create).toHaveCSS('background-color', 'rgb(69, 69, 66)');
-    await expect(create).toHaveCSS('color', 'rgb(138, 138, 132)');
-    await page.screenshot({ path: info.outputPath('running-switch-disabled.png') });
+    await page.screenshot({ path: info.outputPath('running-setup-hidden-dark.png') });
     await page.evaluate(() => document.documentElement.classList.remove('dark'));
     await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', 'rgb(247, 247, 245)');
     await expect(page.getByTestId('chat-composer-shell')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-    await expect(create).toHaveCSS('opacity', '1');
-    await expect(create).toHaveCSS('background-color', 'rgb(228, 228, 223)');
-    await expect(create).toHaveCSS('color', 'rgb(148, 148, 142)');
-    await page.screenshot({ path: info.outputPath('running-switch-disabled-light.png') });
-    report.runningGuard = true; report.errors = errors; expect(errors).toEqual([]);
+    await expect(page.getByTestId('composer-context-row')).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath('running-setup-hidden-light.png') });
+    await installIpcMocks(app, { gatewayRpcByMethod: {
+      'chat.history': { messages: [{ id: 'startup-used', role: 'user', content: 'This conversation has started', timestamp: Date.now() }] },
+    } });
+    await app.evaluate(({ BrowserWindow }, key) => {
+      for (const window of BrowserWindow.getAllWindows()) window.webContents.send('chat:runtime-event', { type: 'run.ended', sessionKey: key, runId: 'tray-running', status: 'completed', ts: Date.now(), endedAt: Date.now() });
+    }, active.activeSessionKey);
+    await page.reload();
+    await expect(page.getByTestId('chat-user-message-bubble')).toContainText('This conversation has started');
+    await expect(page.getByTestId('composer-context-row')).toHaveCount(0);
+    await expect(page.getByTestId('composer-execution-tray')).toBeHidden();
+    await installIpcMocks(app, { gatewayRpcByMethod: { 'chat.history': { messages: [] } } });
+    await page.getByTestId('sidebar-new-chat').click();
+    await expect(page.getByTestId('composer-context-row')).toBeVisible();
+    await expect(page.getByTestId('composer-context-branch')).toBeVisible();
+    await page.screenshot({ path: info.outputPath('new-session-startup-restored.png') });
+    report.runningGuard = true; report.startupOnly = true; report.branchSearch = true; report.errors = errors; expect(errors).toEqual([]);
     await writeFile(info.outputPath('execution-context.json'), JSON.stringify(report, null, 2));
   } finally {
     const calls = await app.evaluate(() => (globalThis as unknown as { __executionFixture?: { calls: unknown[] } }).__executionFixture?.calls ?? []).catch(() => []);
