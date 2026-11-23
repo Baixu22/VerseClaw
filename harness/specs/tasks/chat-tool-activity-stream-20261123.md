@@ -28,6 +28,7 @@ touchedAreas:
   - src/components/assistant-render/ToolActivityGroup.tsx
   - src/components/assistant-render/TurnSummaryCard.tsx
   - src/components/chat/ComposerDecisionSurface.tsx
+  - src/components/runtime-approvals/RuntimeApprovalPrompt.tsx
   - src/styles/codex-conversation.css
   - src/components/tool-ui/RunTerminalSurfaces.tsx
   - src/components/tool-ui/run-surfaces.ts

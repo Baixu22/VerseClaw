@@ -3341,7 +3341,7 @@ export function ChatInput({
   );
 
   return (
-    <RuntimeApprovalPrompt sessionKey={currentSessionKey} agentId={currentAgentId} hero={hero} requestContent={requestContent} requestPending={requestPending}>
+    <RuntimeApprovalPrompt sessionKey={currentSessionKey} agentId={currentAgentId} hero={hero} requestContent={requestContent} requestPending={requestPending} leadingContent={leadingContent}>
     <div
       ref={composerHostRef}
       className={cn(
@@ -3355,7 +3355,6 @@ export function ChatInput({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {leadingContent}
       <div className="codex-composer-stack w-full">
         {contextContent}
         {/* The stack owns the shared task/input frame; menus remain unclipped. */}
