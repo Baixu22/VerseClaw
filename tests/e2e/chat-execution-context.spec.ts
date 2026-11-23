@@ -1,0 +1,103 @@
+import { execFileSync } from 'node:child_process';
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { Page } from '@playwright/test';
+import { closeElectronApp, expect, getStableWindow, installIpcMocks, publishGatewayStatus, test } from './fixtures/electron';
+
+async function invoke(page: Page, module: string, action: string, payload?: unknown) {
+  return page.evaluate(async request => {
+    const response = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), ...request }) as { ok: boolean; data: Record<string, unknown>; error?: { message: string } };
+    if (!response.ok) throw new Error(response.error?.message);
+    return response.data;
+  }, { module, action, payload });
+}
+
+test('execution tray creates a real worktree in two clicks and restores the original draft', async ({ launchElectronApp }, info) => {
+  test.setTimeout(240000);
+  const scratch = join(process.cwd(), '.tmp'); await mkdir(scratch, { recursive: true });
+  const directory = await mkdtemp(join(scratch, 'execution-tray-'));
+  const root = join(directory, 'project'); await mkdir(root);
+  const git = (...args: string[]) => execFileSync('git', args, { cwd: root, windowsHide: true, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  git('init', '-b', 'main'); git('config', 'user.name', 'UI Acceptance'); git('config', 'user.email', 'ui@example.invalid');
+  await writeFile(join(root, 'README.md'), '# Execution tray fixture\n');
+  git('add', '.'); git('commit', '-m', 'Initial fixture'); git('branch', 'feature/alternate');
+  const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'dark', env: { GIT_CEILING_DIRECTORIES: scratch } });
+  const report: Record<string, unknown> = { driven_by: 'agent', actor: 'codex-ui', git: 'real', workspace: 'real', gateway: 'mocked idle transport' };
+  try {
+    await installIpcMocks(app, { gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 },
+      gatewayRpcByMethod: { 'sessions.list': { sessions: [] }, 'chat.history': { messages: [] }, '*': {} },
+      hostApi: { '["agents","list",null]': { success: true, agents: [{ id: 'main', name: 'Main' }], defaultAgentId: 'main' } },
+    });
+    const page = await getStableWindow(app);
+    const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+    const initial = await invoke(page, 'workspaces', 'create', { rootPath: root, name: 'ClawX', agentId: 'main', activeSessionKey: 'agent:main:execution-tray', permissionMode: 'acceptEdits' });
+    const original = initial.activeWorkspace as { id: string; activeSessionKey: string };
+    await page.reload(); await publishGatewayStatus(app, { state: 'running', gatewayReady: true, port: 18789 });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    const input = page.getByTestId('chat-composer-input');
+    await expect(page.getByTestId('composer-context-branch')).toHaveText('main');
+    await input.fill('Keep this original draft');
+    await page.getByTestId('composer-context-more').click();
+    const menu = page.getByTestId('session-worktree-menu');
+    await expect(menu).toBeVisible();
+    await expect(page.getByTestId('session-worktree-branch')).toHaveCount(0);
+    const create = page.getByTestId('session-worktree-submit'); await expect(create).toBeEnabled();
+    await page.screenshot({ path: info.outputPath('dark-default-execution.png') });
+    await create.click();
+    await expect(menu).toHaveCount(0);
+    await expect(page.getByTestId('session-worktree-trigger')).toHaveAttribute('data-git-kind', 'worktree');
+    const active = (await invoke(page, 'workspaces', 'getActive')).activeWorkspace as { id: string; rootPath: string; activeSessionKey: string };
+    expect(active.id).not.toBe(original.id); expect(active.activeSessionKey).not.toBe(original.activeSessionKey);
+    await expect(input).toHaveValue('');
+    expect(await readFile(join(active.rootPath, 'README.md'), 'utf8')).toContain('Execution tray fixture');
+    const branch = execFileSync('git', ['branch', '--show-current'], { cwd: active.rootPath, encoding: 'utf8', windowsHide: true }).trim();
+    expect(branch).toMatch(/^codex\/task-/); expect(git('worktree', 'list', '--porcelain')).toContain(branch);
+    report.created = { path: active.rootPath, branch, session: active.activeSessionKey, clicks: 2 };
+    await input.fill('Worktree draft');
+    await page.getByTestId('composer-context-more').click(); await page.getByTestId('session-worktree-option-0').click();
+    await expect(page.getByTestId('session-worktree-trigger')).toHaveAttribute('data-git-kind', 'local');
+    await expect(input).toHaveValue('Keep this original draft');
+    expect((await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);
+    report.originalDraftRestored = true;
+    await page.getByTestId('composer-context-branch').click();
+    await page.getByTestId('composer-context-checkout-feature/alternate').click();
+    await expect(page.getByTestId('composer-context-branch')).toHaveText('feature/alternate');
+    expect(git('branch', '--show-current')).toBe('feature/alternate');
+    await page.keyboard.press('Escape');
+    await page.getByTestId('composer-context-more').click(); await page.getByTestId('session-worktree-option-1').click();
+    await expect(input).toHaveValue('Worktree draft');
+    report.existingDraftRestored = true;
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(value => document.documentElement.classList.toggle('dark', value === 'dark'), theme);
+      for (const width of [1280, 600, 375]) {
+        await page.setViewportSize({ width, height: 800 });
+        await expect(page.getByTestId('session-worktree-trigger')).toBeInViewport();
+        await expect(page.getByTestId('composer-context-more')).toBeInViewport();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await page.getByTestId('composer-context-more').click();
+        await expect(menu).toBeInViewport(); await expect(menu).toHaveCSS('border-radius', '18px');
+        await expect(page.getByTestId('session-worktree-submit')).toBeInViewport();
+        await page.screenshot({ path: info.outputPath(`${theme}-${width}-execution-menu.png`) });
+        await page.getByTestId('session-worktree-create').click();
+        await expect(page.getByTestId('session-worktree-branch')).toBeVisible();
+        await page.screenshot({ path: info.outputPath(`${theme}-${width}-advanced.png`) });
+        await page.getByTestId('session-worktree-create').click();
+        await page.keyboard.press('Escape');
+        await expect(page.getByTestId('composer-context-more')).toBeFocused();
+      }
+    }
+    await page.setViewportSize({ width: 960, height: 800 });
+    await input.fill('Draft protected while running');
+    await app.evaluate(({ BrowserWindow }, key) => {
+      for (const window of BrowserWindow.getAllWindows()) window.webContents.send('chat:runtime-event', { type: 'run.started', sessionKey: key, runId: 'tray-running', ts: Date.now(), startedAt: Date.now() });
+    }, active.activeSessionKey);
+    await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running-with-draft');
+    await page.getByTestId('composer-context-more').click();
+    await expect(page.getByTestId('session-worktree-submit')).toBeDisabled();
+    await expect(page.getByTestId('session-worktree-option-0')).toBeDisabled();
+    await expect(input).toHaveValue('Draft protected while running');
+    await page.screenshot({ path: info.outputPath('running-switch-disabled.png') });
+    report.runningGuard = true; report.errors = errors; expect(errors).toEqual([]);
+    await writeFile(info.outputPath('execution-context.json'), JSON.stringify(report, null, 2));
+  } finally { await closeElectronApp(app); }
+});

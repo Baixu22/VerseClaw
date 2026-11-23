@@ -1,6 +1,5 @@
 /* Opaque conversation cards share a single frame and restrained contact shadow. */
-.codex-composer-shell,
-.codex-composer-stack {
+.codex-composer-shell {
   --ccs-surface: var(--color-chat-composer);
   --ccs-border: var(--color-chat-composer-border);
   --ccs-focus: var(--color-border-focus);
@@ -12,26 +11,10 @@
   -webkit-backdrop-filter: none;
 }
 
-/* Child backgrounds follow the shared radius; overflow stays visible for the
- * existing anchored menus. Only the task's scrolling body clips its content. */
-.codex-composer-stack > .codex-composer-shell {
-  border: 0;
-  box-shadow: none;
-}
-.codex-composer-stack:has([data-testid='session-task-panel']) > .codex-composer-shell {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-.codex-composer-stack:focus-within,
-.codex-composer-shell:focus-within {
-  border-color: var(--color-chat-composer-focus);
-}
-.codex-composer-stack:has([data-drag-over='true']),
-.codex-composer-shell[data-drag-over='true'] {
-  border-color: var(--color-border-focus);
-  outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
-}
+.codex-composer-stack { position: relative; }
+.codex-composer-shell { position: relative; z-index: 2; padding: 14px 16px 12px; }
+.codex-composer-shell:focus-within { border-color: var(--color-chat-composer-focus); }
+.codex-composer-shell[data-drag-over='true'] { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
 
 .chat-user-message-card {
   padding: 9px 14px;
@@ -411,3 +394,81 @@
 .codex-composer-attachments:not(:has(> .smoky-dissolve-root:not([data-smoky-state='dissolving']))) {
   padding-bottom: 0;
 }
+
+/* Execution location and task progress share one inset tray behind the input. */
+[data-testid='chat-page'] { background: var(--color-chat-canvas); }
+.composer-execution-tray {
+  position: relative;
+  z-index: 1;
+  margin: 0 12px -10px;
+  padding-bottom: 10px;
+  border: 1px solid var(--color-chat-tray-border);
+  border-radius: 16px 16px 0 0;
+  background: var(--color-chat-tray);
+  color: var(--color-chat-foreground);
+}
+.composer-execution-tray .session-task-panel {
+  background: transparent;
+  border-bottom-color: var(--color-chat-tray-border);
+}
+.composer-execution-tray .session-task-details { max-height: 176px; overflow-y: auto; }
+.composer-context-row { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; min-width: 0; }
+.composer-execution-tray:has(.session-task-panel) .composer-context-row { height: 32px; }
+.composer-context-chip {
+  display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 200px;
+  height: 28px; padding: 0 5px; border: 0; border-radius: 8px;
+  color: inherit; background: transparent; font-size: 13px; white-space: nowrap;
+}
+.composer-context-chip > span { overflow: hidden; text-overflow: ellipsis; }
+.composer-context-chip > svg, .composer-context-more > svg { width: 16px; height: 16px; flex: none; }
+.composer-context-project { display: inline-flex; min-width: 0; }
+.composer-context-more { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: transparent; }
+.composer-context-chip:hover:not(:disabled), .composer-context-more:hover, .composer-context-more[aria-expanded='true'] { background: var(--color-chat-tray-hover); }
+.composer-context-location { flex-shrink: 0; }
+.composer-context-branch { color: var(--color-chat-secondary); max-width: 220px; }
+.composer-context-dirty { flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.composer-context-menu {
+  width: min(304px, calc(100vw - 16px)); overflow-y: auto; overscroll-behavior: contain; padding: 10px;
+  border: 1px solid var(--color-chat-tray-border); border-radius: 18px;
+  background: var(--color-chat-menu); color: var(--color-chat-foreground); box-shadow: var(--shadow-chat-menu);
+  font-size: 13px; line-height: 20px;
+}
+.composer-context-menu svg { width: 16px; height: 16px; flex: none; }
+.composer-context-label { margin: 0; padding: 3px 6px; font-size: 12px; color: var(--color-chat-secondary); }
+.composer-context-hint { font-size: 11px; line-height: 16px; color: var(--color-chat-secondary); }
+.composer-context-create { display: flex; align-items: center; gap: 6px; min-height: 42px; padding: 0 3px; }
+.composer-context-primary {
+  display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 4px;
+  height: 28px; padding: 0 10px; border: 0; border-radius: 999px;
+  background: var(--color-chat-primary); color: var(--color-chat-primary-text); font-size: 12px; white-space: nowrap;
+}
+.composer-context-customize { display: flex; align-items: center; gap: 3px; margin: 0 0 4px auto; padding: 2px 4px; font-size: 11px; color: var(--color-chat-secondary); }
+.composer-context-customize svg { width: 12px; height: 12px; }
+.composer-context-form { display: grid; gap: 8px; padding: 6px 4px 10px; }
+.composer-context-form label { display: grid; gap: 3px; font-size: 12px; }
+.composer-context-form :is(input,select) { height: 30px; min-width: 0; width: 100%; padding: 3px 8px; border-radius: 7px; border: 1px solid var(--color-chat-composer-border); background: var(--color-chat-tray); color: var(--color-chat-foreground); outline: none; }
+.composer-context-form :is(input,select):focus { border-color: var(--color-chat-composer-focus); }
+.composer-context-option { display: flex; align-items: center; gap: 8px; min-height: 38px; width: 100%; border-radius: 10px; padding: 6px; text-align: left; }
+.composer-context-option:hover:not(:disabled) { background: var(--color-chat-menu-hover); }
+.composer-context-divider { height: 1px; margin: 6px 0; background: var(--color-chat-tray-border); }
+.composer-context-directories, .composer-context-branches { max-height: 152px; overflow-y: auto; overscroll-behavior: contain; }
+.composer-context-error { margin: 6px 4px; color: var(--color-chat-error); font-size: 12px; overflow-wrap: anywhere; }
+.composer-context-menu button:disabled, .composer-context-chip:disabled { opacity: 0.45; cursor: default; }
+.composer-context-menu :is(button, input, select):focus-visible, .composer-context-row button:focus-visible { outline: 1px solid var(--color-chat-composer-focus); outline-offset: 1px; }
+.composer-context-project-menu > .codex-header-menu { position: static; width: 100%; min-width: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.composer-context-project-menu .codex-header-menu__item:hover { background: var(--color-chat-menu-hover); }
+.composer-change-summary { display: flex; padding: 0 14px 3px; font-size: 12px; color: var(--color-chat-secondary); }
+.composer-change-summary button { display: inline-flex; gap: 5px; align-items: center; border-radius: 5px; padding: 2px 4px; }
+.composer-change-summary button:hover { background: var(--color-chat-tray-hover); }
+.codex-composer-shell textarea::placeholder { color: var(--color-chat-placeholder); }
+.codex-composer-shell [data-testid='chat-composer-actions'] { background: transparent; box-shadow: none; }
+.codex-composer-shell .pm-morph[data-open='false'] { background: transparent; box-shadow: none; }
+@media (max-width: 639px) {
+  .composer-execution-tray { margin-inline: 8px; }
+  .composer-context-row { gap: 3px; padding-inline: 8px; }
+  .composer-context-project .composer-context-chip { max-width: 110px; }
+  .composer-context-project .composer-context-chip > span { max-width: 84px; }
+  .composer-context-branch { max-width: 114px; }
+  .composer-context-branch > span { max-width: 88px; }
+}
+@media (max-width: 459px) { .composer-context-branch { display: none; } }

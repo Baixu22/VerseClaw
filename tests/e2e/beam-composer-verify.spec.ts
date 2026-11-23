@@ -38,9 +38,9 @@ test('composer keeps a solid surface while running and leaves slash menus reacha
     await expect(page.getByTestId('chat-composer-beam')).toHaveCount(0);
     for (const dark of [true, false]) {
       await page.evaluate(value => document.documentElement.classList.toggle('dark', value), dark);
-      await expect(shell).toHaveCSS('background-color', dark ? 'rgb(53, 53, 51)' : 'rgb(255, 255, 255)');
+      await expect(shell).toHaveCSS('background-color', dark ? 'rgb(56, 56, 54)' : 'rgb(255, 255, 255)');
       await expect(shell).toHaveCSS('backdrop-filter', 'none');
-      await expect(shell).toHaveCSS('border-radius', '16px');
+      await expect(shell).toHaveCSS('border-radius', '22px');
       await input.fill('/');
       const menu = page.getByTestId('chat-slash-command-menu');
       await expect(menu).toBeVisible();

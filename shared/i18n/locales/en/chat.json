@@ -1293,7 +1293,8 @@
         "empty": "No commits",
         "aheadBehind": "Ahead / behind current branch"
       }
-    }
+    },
+    "switchBusy": "This chat is running. Stop it or wait before switching."
   },
   "taskPanel": {
     "eyebrow": "Run View",

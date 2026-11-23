@@ -1293,7 +1293,8 @@
         "empty": "暂无提交",
         "aheadBehind": "领先 / 落后当前分支"
       }
-    }
+    },
+    "switchBusy": "会话运行中，停止或完成后可切换。"
   },
   "taskPanel": {
     "eyebrow": "运行视图",

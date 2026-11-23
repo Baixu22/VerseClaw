@@ -128,8 +128,6 @@ import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileDiff, projectRunProcesses, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
 import { useRunApprovals } from './use-run-approvals';
-import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
-import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -384,20 +382,14 @@ function getHeaderSessionDotState(input: {
 
 function ProjectSessionHeader({
   showProject = true,
-  workspaceId,
   projectName,
   projectPath,
-  workspaceProfiles,
-  switchWorkspace,
-  pickWorkspaceFolder,
   sessions,
   currentSessionKey,
   sessionLabels,
   workspaceSessionKeys,
   switchSession,
   renameSession,
-  onSelectWorktree,
-  worktreeSwitchDisabled = false,
   derivation,
   onRefresh,
   runtimeRuns,
@@ -419,8 +411,6 @@ function ProjectSessionHeader({
   workspaceSessionKeys: string[];
   switchSession: (key: string) => void;
   renameSession: (key: string, label: string) => Promise<void>;
-  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
-  worktreeSwitchDisabled?: boolean;
   derivation?: SessionDerivation;
   onRefresh: () => void;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
@@ -436,7 +426,6 @@ function ProjectSessionHeader({
   const [sessionSearch, setSessionSearch] = useState('');
   const [renaming, setRenaming] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
   const { triggerRef: sessionTriggerRef, layerRef: sessionLayerRef, setOpen: setSessionMenuOpen, style: sessionMenuStyle } = usePopover<HTMLButtonElement>({ align: 'left', gap: 4 });
   const overlayContainer = useOverlayPortalContainer();
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
@@ -470,7 +459,7 @@ function ProjectSessionHeader({
       if (target instanceof Node && (rootRef.current?.contains(target) || sessionLayerRef.current?.contains(target))) return;
       setOpen(null);
     };
-    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); (open === 'session' ? sessionTriggerRef : projectTriggerRef).current?.focus(); } };
+    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); sessionTriggerRef.current?.focus(); } };
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKey);
     return () => { document.removeEventListener('pointerdown', handlePointerDown); document.removeEventListener('keydown', handleKey); };
@@ -521,41 +510,9 @@ function ProjectSessionHeader({
   return (
     <div ref={rootRef} className="chat-project-session-header flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
       {showProject && <div className="chat-header-environment-project relative order-1 min-w-0" data-testid="chat-header-environment-project">
-        {/* Project selection stays secondary to the task header. */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-        <button
-          ref={projectTriggerRef}
-          type="button"
-          className={cn('chat-header-dropdown-trigger chat-header-project-trigger inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs font-normal text-muted-foreground hover:text-foreground', open === 'workspace' && 'is-open')}
-          aria-haspopup="menu"
-          aria-expanded={open === 'workspace'}
-          onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
-        >
-          <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <span className="truncate">{projectName}</span>
-          <ChevronDown className="chat-header-session-chevron h-3 w-3 shrink-0 opacity-60" />
-        </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{projectPath}</TooltipContent>
-        </Tooltip>
-        {open === 'workspace' && (
-          <WorkspacePickerMenu
-            profiles={workspaceProfiles}
-            activeWorkspaceId={workspaceId}
-            onSelect={(id) => {
-              setOpen(null);
-              return switchWorkspace(id);
-            }}
-            onPickFolder={() => {
-              setOpen(null);
-              return pickWorkspaceFolder();
-            }}
-            extraActions={onSelectWorktree ? <SessionWorkspacePicker embedded disabled={worktreeSwitchDisabled} onSelect={async tree => { setOpen(null); await onSelectWorktree(tree); }} /> : undefined}
-            menuTestId="chat-header-workspace-menu"
-            className="chat-header-project-menu"
-          />
-        )}
+        <span className="inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs text-muted-foreground" title={projectPath}>
+          <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{projectName}</span>
+        </span>
       </div>}
       {showProject && <span className="chat-header-separator order-1 text-muted-foreground/30" aria-hidden="true">/</span>}
       <div className="relative order-2 min-w-0 max-w-[360px]">
@@ -1012,6 +969,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     return () => { if (controlScopeRef.current === controlScope) controlScopeRef.current = null; };
   }, [controlScope]);
   const [composerDraft, setComposerDraft] = useState('');
+  const [executionBusy, setExecutionBusy] = useState(false);
   const composerDraftRevision = useRef(0);
   const draftEditedSessionsRef = useRef(new Set<string>());
   const [composerPaused, setComposerPaused] = useState(false);
@@ -1280,17 +1238,20 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, resetSessionView, t, workspaceProfiles]);
   const handleSwitchWorktreeWorkspace = async (worktree: GitWorktree) => {
     const source = useChatStore.getState();
+    const sourceWorkspaceId = useWorkspacesStore.getState().activeWorkspaceId;
     const isCurrent = () => {
       const current = useChatStore.getState();
-      return !current.sending && !current.pendingFinal && current.currentSessionKey === source.currentSessionKey
+      return useWorkspacesStore.getState().activeWorkspaceId === sourceWorkspaceId
+        && !current.sending && !current.pendingFinal && current.currentSessionKey === source.currentSessionKey
         && current.viewRevision === source.viewRevision;
     };
-    if (inputRunActive || !isCurrent()) return;
+    if (inputRunActive || !isCurrent()) throw new Error(t('workspace.switchBusy'));
     await persistCurrentWorkspaceSessionState({ activeSessionKey: source.currentSessionKey, sessionKey: source.currentSessionKey });
-    if (!isCurrent()) return;
-    const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
+    if (!isCurrent()) throw new Error(t('workspace.switchBusy'));
+    const existing = useWorkspacesStore.getState().profiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
     const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: worktree.branch || basenameFromPath(worktree.path), agentId: currentAgentId, activeSessionKey: createFreshWorkspaceSessionKey(currentAgentId), activate: false });
-    if (profile && isCurrent()) await handleSwitchWorkspace(profile.id);
+    if (!profile || !isCurrent()) throw new Error(t('workspace.switchBusy'));
+    await handleSwitchWorkspace(profile.id);
   };
   useEffect(() => {
     const previousSessionKey = lastObservedSessionKeyRef.current;
@@ -3433,8 +3394,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 workspaceSessionKeys={Object.keys(activeWorkspace?.sessionStates ?? {})}
                 switchSession={(key) => { void openFamilySession(key); }}
                 renameSession={renameSession}
-                onSelectWorktree={handleSwitchWorktreeWorkspace}
-                worktreeSwitchDisabled={inputRunActive}
                 derivation={sessionActivitySnapshot?.derivation}
                 onRefresh={() => { void loadSessions(); }}
                 runtimeRuns={runtimeRuns}
@@ -3923,11 +3882,14 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       <ChatInput
         leadingContent={activeWorkspace && !isEmpty ? (
           <div className="mb-1 empty:hidden">
-            <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
+            <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} summaryOnly active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
           </div>
         ) : undefined}
         contextContent={(
-          <>
+          <SessionWorkspacePicker key={`${activeWorkspaceId}:${currentSessionKey}`} sessionKey={currentSessionKey}
+            disabled={inputRunActive} onSelect={handleSwitchWorktreeWorkspace} onSelectProject={handleSwitchWorkspace}
+            onPickFolder={handlePickWorkspaceFolder} onBeforeChange={persistCurrentWorkspaceSessionState}
+            onBusyChange={setExecutionBusy} refreshSignal={gitRevision} onChanged={handleGitChanged}>
             {(!isEmpty || projectWorkspaceId) && (
               <div data-testid="chat-task-tray">
                 <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
@@ -3935,7 +3897,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                   runActive={inputRunActive} controlStatus={longTaskControlStatus} onOpenTask={handleOpenSessionTask} />
               </div>
             )}
-          </>
+          </SessionWorkspacePicker>
         )}
         requestPending={pendingApprovals.length > 0 || composerInteractions.length > 0}
         requestContent={(
@@ -3943,7 +3905,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             canSubmit={isGatewayRunning} onDecision={handleApprovalDecision} onSubmit={handleSubmitInteractionResponse} />
         )}
         onSend={handleSendMessage}
-        disabled={!isGatewayRunning}
+        disabled={!isGatewayRunning || executionBusy}
         sending={inputRunActive}
         paused={composerPaused}
         onPauseSession={handlePauseComposerSession}
@@ -3986,14 +3948,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         * together centre the group without the composer leaving its slot. */}
       {isEmpty && (
         <>
-          <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
-            <WelcomeScreen
-              onPickFolder={handlePickWorkspaceFolder}
-              onSelectProject={handleSwitchWorkspace}
-              onSelectWorktree={handleSwitchWorktreeWorkspace}
-              disabled={inputRunActive}
-            />
-          </div>
           <div className={cn('codex-welcome-chips-host relative', sendingAnimation && 'codex-welcome-chips--sending')}>
             <WelcomeChips
               onSend={handleSendMessage}
@@ -4378,7 +4332,6 @@ type WelcomeScreenProps = {
   onSend: (text: string) => void | Promise<unknown>;
   onPickFolder?: () => void | Promise<unknown>;
   onSelectProject?: (workspaceId: string) => void | Promise<unknown>;
-  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   disabled?: boolean;
 };
 
@@ -4449,13 +4402,7 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
 }
 
 /** The empty conversation names its project without exposing Git configuration. */
-function WelcomeScreen({ disabled = false, onPickFolder, onSelectProject, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'>) {
-  const activeWorkspace = useWorkspacesStore(state=>state.activeWorkspace);
-  if (!activeWorkspace) return null;
-  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelect={onSelectProject} onSelectWorktree={onSelectWorktree}/></div></div>;
-}
 
-/** Optional starters share one disclosure; its reserved row keeps drafting stable. */
 function WelcomeChips({
   disabled = false,
   onSend,

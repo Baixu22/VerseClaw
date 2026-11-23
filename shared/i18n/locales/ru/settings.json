@@ -1031,7 +1031,17 @@
       "all": "Все",
       "removable": "Можно удалить",
       "protected": "Защищённые"
-    }
+    },
+    "executionSettings": "Настройки выполнения",
+    "localDirectory": "Локальная папка",
+    "uncommittedChanges": "Незакоммиченные изменения",
+    "runningHint": "Чат выполняется. Остановите его или дождитесь завершения.",
+    "loadingDirectory": "Загрузка рабочих папок…",
+    "openCreated": "Открыть дерево",
+    "customizeWorktree": "Имя / исходная ветка",
+    "mainDirectory": "Основная папка",
+    "branches": "Ветка",
+    "notGit": "В этой папке Git не инициализирован."
   },
   "embedding": {
     "title": "Модель эмбеддингов для поиска по проекту",

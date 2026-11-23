@@ -91,16 +91,16 @@ test('conversation planning, settings and decisions share a compact input surfac
       const shell = page.getByTestId('chat-composer-shell');
       const bubble = page.getByTestId('chat-user-message-bubble').first();
       if (await shell.isVisible()) {
-        await expect(shell).toHaveCSS('background-color', dark ? 'rgb(53, 53, 51)' : 'rgb(255, 255, 255)');
+        await expect(shell).toHaveCSS('background-color', dark ? 'rgb(56, 56, 54)' : 'rgb(255, 255, 255)');
         await expect(shell).toHaveCSS('backdrop-filter', 'none');
-        await expect(page.locator('.codex-composer-stack')).toHaveCSS('border-radius', '16px');
-        const border = await page.locator('.codex-composer-stack').evaluate(element => ({
+        await expect(shell).toHaveCSS('border-radius', '22px');
+        await expect(page.getByTestId('composer-execution-tray')).toHaveCSS('border-top-left-radius', '16px');
+        const border = await shell.evaluate(element => ({
           width: parseFloat(getComputedStyle(element).borderTopWidth), ratio: devicePixelRatio,
         }));
         expect(border.width).toBeCloseTo(Math.max(1, Math.floor(border.ratio)) / border.ratio, 4);
-        await expect(shell).toHaveCSS('border-top-width', '0px');
       }
-      await expect(bubble).toHaveCSS('background-color', dark ? 'rgb(54, 54, 52)' : 'rgb(244, 244, 241)');
+      await expect(bubble).toHaveCSS('background-color', dark ? 'rgb(54, 54, 52)' : 'rgb(237, 237, 234)');
       await expect(bubble).toHaveCSS('border-radius', '12px');
       await expect(bubble).toHaveCSS('padding', '9px 14px');
       await expect(bubble).toHaveCSS('backdrop-filter', 'none');
@@ -203,7 +203,8 @@ test('conversation planning, settings and decisions share a compact input surfac
       const input = document.querySelector('[data-testid="chat-composer-shell"]')!.getBoundingClientRect();
       return { widthDifference: Math.abs(taskPanel.width - input.width), gap: input.top - taskPanel.bottom };
     });
-    expect(enclosure.widthDifference).toBeLessThan(1); expect(Math.abs(enclosure.gap)).toBeLessThan(1);
+    expect(enclosure.widthDifference).toBeGreaterThan(20); expect(enclosure.widthDifference).toBeLessThan(28);
+    expect(enclosure.gap).toBeGreaterThan(28); expect(enclosure.gap).toBeLessThan(35);
     const completedPlan = plan.map(item => ({ ...item, status: 'completed' }));
     await runtime(app, { type: 'tool.started', runId, sessionKey, ts: at + 4, toolCallId: 'ux-plan-final', name: 'update_plan', args: { plan: completedPlan } });
     await runtime(app, { type: 'tool.completed', runId, sessionKey, ts: at + 5, toolCallId: 'ux-plan-final', name: 'update_plan', result: { success: true } });

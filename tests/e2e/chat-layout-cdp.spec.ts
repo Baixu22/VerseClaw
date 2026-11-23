@@ -184,7 +184,7 @@ test.describe('Chat page layout CDP checks', () => {
           height: rect.height,
         };
       });
-      expect(composerMetrics.borderRadius).toBe('16px');
+      expect(composerMetrics.borderRadius).toBe('22px');
       expect(composerMetrics.minHeight).toBe('98px');
       expect(composerMetrics.width).toBeLessThanOrEqual(736);
 
@@ -382,7 +382,7 @@ test.describe('Chat page layout CDP checks', () => {
       await expect(permissionOption).toContainText(/risk|风险/);
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu');
       await page.evaluate(() => document.documentElement.classList.add('dark'));
-      await expect(composerShell).toHaveCSS('background-color', 'rgb(53, 53, 51)');
+      await expect(composerShell).toHaveCSS('background-color', 'rgb(56, 56, 54)');
       await captureLayoutScreenshot(page, testInfo, 'chat-layout-permission-menu-dark');
       await page.evaluate(() => document.documentElement.classList.remove('dark'));
       await page.getByTestId('chat-composer-input').fill('/');

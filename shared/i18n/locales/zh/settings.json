@@ -1031,7 +1031,17 @@
       "all": "全部",
       "removable": "可移除",
       "protected": "受保护"
-    }
+    },
+    "executionSettings": "执行设置",
+    "localDirectory": "本地目录",
+    "uncommittedChanges": "有未提交改动",
+    "runningHint": "会话运行中，停止或完成后可切换。",
+    "loadingDirectory": "正在读取工作目录…",
+    "openCreated": "打开工作树",
+    "customizeWorktree": "改名 / 起点",
+    "mainDirectory": "本地主目录",
+    "branches": "分支",
+    "notGit": "当前目录未初始化 Git。"
   },
   "embedding": {
     "title": "项目检索向量模型",

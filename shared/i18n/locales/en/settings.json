@@ -1031,7 +1031,17 @@
       "all": "All",
       "removable": "Removable",
       "protected": "Protected"
-    }
+    },
+    "executionSettings": "Execution settings",
+    "localDirectory": "Local folder",
+    "uncommittedChanges": "Uncommitted changes",
+    "runningHint": "This chat is running. Stop it or wait before switching.",
+    "loadingDirectory": "Loading working directories…",
+    "openCreated": "Open worktree",
+    "customizeWorktree": "Name / starting branch",
+    "mainDirectory": "Main checkout",
+    "branches": "Branch",
+    "notGit": "This folder is not a Git repository."
   },
   "embedding": {
     "title": "Project search embeddings",
