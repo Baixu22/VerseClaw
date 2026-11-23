@@ -29,6 +29,10 @@ Agent-authored features should be reproducible through composable `devScenario` 
 4. Query parameters other than `devScenario` become override metadata.
 5. Workbench reads the same shared registry.
 
+## Typecheck readiness
+
+A fresh or dependency-linked checkout runs the embedded VerseBrowser build before the Node/Web/Test type gates. Cached runs regenerate missing declarations and invalidate prior successful checks when the browser package changes. Failed preparation produces a failed report before any compiler graph is started.
+
 ## Validation
 
 - `pnpm test tests/unit/agent-dev-scenario-composer.test.ts`

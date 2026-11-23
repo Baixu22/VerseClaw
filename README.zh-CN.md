@@ -262,7 +262,7 @@ VerseBrowser：安装、开发和构建会自动编译内嵌模块。81 个契�
 | `pnpm dev` | 准备资源/runtime 并启动 Electron 开发 |
 | `pnpm run build:vite` | 构建 renderer 与 Electron bundles |
 | `pnpm run build:runtime` | 构建嵌入式 runtime 并做 Gateway startup smoke |
-| `pnpm run typecheck` | node/web/test 全量类型检查 |
+| `pnpm run typecheck` | 先生成 VerseBrowser 声明，再执行 node/web/test 全量类型检查 |
 | `pnpm run lint:check` | 只检查 lint，不改文件 |
 | `pnpm test` | 根测试组与选定回归 |
 | `pnpm run test:recovery:light` | 单 worker 验证 Harness 按需加载与字节码缓存中断恢复 |

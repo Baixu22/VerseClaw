@@ -263,7 +263,7 @@ Common commands:
 | `pnpm dev` | Prepare resources/runtime and start Electron development |
 | `pnpm run build:vite` | Build renderer and Electron bundles |
 | `pnpm run build:runtime` | Build embedded runtime and smoke-test Gateway startup |
-| `pnpm run typecheck` | Full node/web/test typecheck |
+| `pnpm run typecheck` | Rebuild VerseBrowser declarations, then check all node/web/test types |
 | `pnpm run lint:check` | Lint without modifying files |
 | `pnpm test` | Root test groups and selected regressions |
 | `pnpm run test:recovery:light` | Focused harness loading and interrupted bytecode-cache checks with one worker |

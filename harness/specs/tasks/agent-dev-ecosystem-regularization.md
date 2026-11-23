@@ -12,6 +12,9 @@ requiredRules:
   - agent-dev-conformance-evidence
   - renderer-main-boundary
   - docs-sync
+residualPaths:
+  # Preserve the owner's concurrent reviewer-model policy edit.
+  - AGENTS.md
 touchedAreas:
   - package.json
   - pnpm-lock.yaml
@@ -63,7 +66,7 @@ Regularize Agent Dev feature development so scaffolds, contracts, scenarios, i18
 ## Acceptance
 
 - `pnpm contract:check` passes.
-- `pnpm exec vitest run tests/unit/typecheck-gate.test.ts` proves that real test type errors fail the gate and invalidate cached results after test or runtime dependency edits.
+- `pnpm exec vitest run tests/unit/typecheck-gate.test.ts` proves declaration generation before node/web/test checks, missing declaration recovery on cache hits, browser/test/runtime source cache invalidation, and hard failure when prerequisite compilation or test types fail.
 - `pnpm i18n:lint` passes.
 - `pnpm test tests/unit/agent-dev-scenario-composer.test.ts tests/unit/agent-dev-schemas.test.ts tests/unit/agent-dev-regularization.test.ts tests/unit/contract-check.test.ts tests/unit/i18n-lint.test.ts` passes.
 - `pnpm agent-dev:workbench` writes `artifacts/agent-dev-workbench/index.html`.

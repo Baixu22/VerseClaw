@@ -260,7 +260,7 @@ VerseBrowser: インストール・開発・ビルド時に組み込みモジュ
 | `pnpm dev` | Resource/runtime を準備し Electron 開発起動 |
 | `pnpm run build:vite` | Renderer / Electron bundle build |
 | `pnpm run build:runtime` | Embedded runtime build + Gateway startup smoke |
-| `pnpm run typecheck` | node/web/test full typecheck |
+| `pnpm run typecheck` | VerseBrowser 宣言を生成してから node/web/test 全型チェック |
 | `pnpm run lint:check` | Lint のみ。file は変更しない |
 | `pnpm test` | Root test group と selected regression |
 | `pnpm run test:recovery:light` | 単一 worker で Harness の遅延読み込みと中断後のバイトコードキャッシュを検証 |
