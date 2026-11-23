@@ -55,7 +55,10 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const current = data?.scope === scope ? data.snapshot : null;
   const linked = current ? isLinkedWorktreePath(current.trees, current.status.repoRoot) : false;
   const canMutate = Boolean(current?.status.isRepository && !disabled && !busy && !loading);
-  const isCurrent = (owner: string) => alive.current && scopeRef.current === owner;
+  const isCurrent = (owner: string) => {
+    const active = useWorkspacesStore.getState().activeWorkspace;
+    return alive.current && scopeRef.current === owner && active?.id === workspaceId && pathEquals(active.rootPath, workspaceRoot);
+  };
 
   const refresh = useCallback(async () => {
     if (!workspaceId || !workspaceRoot) return;

@@ -33,6 +33,7 @@ for (const theme of ['light', 'dark'] as const) {
           '["workspaces","list",null]': { profiles: [workspace], activeWorkspaceId: workspace.id, activeWorkspace: workspace },
           '["git","status",null]': { success: true, status: { isRepository: true, workspaceRoot: workspace.rootPath, repoRoot: workspace.rootPath, branch: 'feature/cards', detached: false, clean: true, hasConflicts: false, ahead: 0, behind: 0, stagedCount: 0, unstagedCount: 0, untrackedCount: 0, conflictedCount: 0, changes: [] } },
           '["git","branches",null]': { success: true, branches: [{ name: 'feature/cards', current: true }, { name: 'main', current: false }] },
+          '["git","branches",null]': { success: true, branches: [{ name: 'main', current: false }, { name: 'feature/cards', current: true }] },
           '["git","worktrees",null]': { success: true, worktrees: [{ path: 'D:/work/ClawX-main', branch: 'main', head: 'abcdef1' }, { path: workspace.rootPath, branch: 'feature/cards', head: '1234567' }] },
         },
       });
@@ -209,16 +210,17 @@ for (const theme of ['light', 'dark'] as const) {
         await expect(projectMenu).toBeInViewport();
         await expect(projectMenu).toHaveCSS('backdrop-filter', 'none');
         await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-welcome-project-menu.png`) });
-        const worktreeTrigger = projectMenu.getByTestId('session-worktree-trigger');
+        await page.keyboard.press('Escape');
+        const worktreeTrigger = page.getByTestId('session-worktree-trigger');
         await expect(worktreeTrigger).toHaveAttribute('data-git-kind', 'worktree');
         await worktreeTrigger.click();
         const worktreeMenu = page.getByTestId('session-worktree-menu');
         await expect(worktreeMenu).toBeInViewport();
-        await expect(worktreeMenu).toHaveAttribute('data-overlay-owner', 'welcome-project');
+        await expect(projectMenu).toHaveCount(0);
         await expect.poll(() => worktreeMenu.evaluate((element) => element.parentElement?.id)).toBe('app-overlay-root');
         await expect(worktreeMenu).toHaveCSS('backdrop-filter', 'none');
-        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'feature/cards' })).toBeDisabled();
-        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'D:/work/ClawX-main' })).toBeEnabled();
+        await expect(worktreeMenu.getByTestId('session-worktree-option-1')).toBeDisabled();
+        await expect(worktreeMenu.getByTestId('session-worktree-option-0')).toBeEnabled();
         await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-session-worktree-menu.png`) });
         await worktreeMenu.getByTestId('session-worktree-create').click();
         await worktreeMenu.getByTestId('session-worktree-branch').fill('codex/visible-worktree');
@@ -242,9 +244,7 @@ for (const theme of ['light', 'dark'] as const) {
         await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-session-worktree-create.png`) });
         await page.keyboard.press('Escape');
         await expect(worktreeMenu).toHaveCount(0);
-        await expect(projectMenu).toBeVisible();
         await expect(worktreeTrigger).toBeFocused();
-        await page.keyboard.press('Escape');
         await expect(projectMenu).toHaveCount(0);
       }
     } finally {
