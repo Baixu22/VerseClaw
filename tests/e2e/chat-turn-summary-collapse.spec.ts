@@ -164,33 +164,34 @@ test.describe('Verse Claw chat turn summary collapse', () => {
           });
         }
       }, identity);
-      const toggle = page.getByTestId('chat-turn-summary-toggle');
+      const toggle = page.getByTestId('chat-tool-activity-toggle');
       await expect(toggle).toHaveAttribute('aria-expanded', 'false');
       await expect(page.getByText(history[1].content, { exact: true })).toBeVisible();
       await expect(page.getByTestId('chat-assistant-avatar')).toHaveCount(0);
       await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
       await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
-      await expect(page.getByTestId('chat-turn-summary-badge-tools')).toHaveText('1 tool call');
-      const activity = page.getByTestId('chat-turn-current-activity');
-      await expect(activity.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
-      const progress = activity.getByTestId('chat-call-chip-progress');
-      await expect.poll(() => progress.evaluate(element => getComputedStyle(element).transform)).not.toBe('matrix(0, 0, 0, 1, 0, 0)');
+      await expect(page.getByTestId('chat-tool-activity-label')).toContainText('Message.tsx');
+      const activity = page.getByTestId('chat-tool-activity-group');
+      await expect(activity).toHaveAttribute('data-status', 'running');
+      const progress = activity.getByTestId('ai-element-shimmer');
+      const initialPosition = await progress.evaluate(element => getComputedStyle(element).backgroundPosition);
+      await expect.poll(() => progress.evaluate(element => getComputedStyle(element).backgroundPosition)).not.toBe(initialPosition);
       for (const variant of [{ name: 'light', width: 1280 }, { name: 'dark', width: 1280 }, { name: 'narrow', width: 640 }]) {
         await page.setViewportSize({ width: variant.width, height: 900 });
         await page.evaluate(dark => {
           document.documentElement.classList.toggle('dark', dark);
           document.documentElement.classList.toggle('light', !dark);
         }, variant.name === 'dark');
-        const summary = page.getByTestId('chat-turn-summary-card');
+        const summary = activity;
         expect(await summary.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
         await page.screenshot({ path: testInfo.outputPath(`compact-output-${variant.name}.png`), animations: 'disabled' });
       }
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await expect(progress).toHaveCSS('transition-property', 'none');
+      await expect(progress).toHaveCSS('animation-name', 'none');
       await toggle.press('Enter');
       await expect(page.getByTestId('chat-execution-graph')).toBeVisible();
-      await expect(activity).toHaveCount(0);
-      await expect(page.getByTestId('chat-call-chip')).toHaveCount(1);
+      await expect(toggle.getByTestId('ai-element-shimmer')).toHaveCount(0);
+      await expect(activity.getByTestId('ai-element-shimmer')).toHaveCount(1);
       await toggle.press('Enter');
       await expect(activity).toBeVisible();
       await app.evaluate(({ BrowserWindow }, identity) => {
@@ -200,7 +201,8 @@ test.describe('Verse Claw chat turn summary collapse', () => {
           });
         }
       }, identity);
-      await expect(activity).toHaveCount(0);
+      await expect(activity).toHaveAttribute('data-status', 'completed');
+      await expect(activity.getByTestId('ai-element-shimmer')).toHaveCount(0);
       await expect(toggle).toHaveAttribute('aria-expanded', 'false');
       await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
       await expect(page.getByTestId('chat-assistant-avatar')).toHaveCount(0);
@@ -234,23 +236,24 @@ test.describe('Verse Claw chat turn summary collapse', () => {
         }
       }, { identity, events });
 
-      const summaryToggle = page.getByTestId('chat-turn-summary-toggle');
+      const summaryToggle = page.getByTestId('chat-tool-activity-toggle');
       await expect(summaryToggle).toHaveAttribute('aria-expanded', 'false');
-      await expect(page.getByTestId('chat-turn-current-activity').getByTestId('chat-call-chip')).toHaveCount(1);
+      await expect(page.getByTestId('chat-tool-activity-group').getByTestId('ai-element-shimmer')).toHaveCount(1);
       await summaryToggle.click();
 
       const rows = page.locator('[data-testid="chat-execution-graph"] [data-testid="chat-execution-step"], [data-testid="chat-execution-graph"] [data-testid="chat-execution-timeline-terminal"]');
-      await expect(rows).toHaveText([/read_file/, /pnpm test/, /write_file/]);
-      const readStep = page.getByTestId('chat-execution-step-toggle').filter({ hasText: 'read_file' });
+      await expect(rows).toHaveText([/src\/one.ts/, /pnpm test/, /src\/two.ts/]);
+      const readStep = page.getByTestId('chat-execution-step-toggle').filter({ hasText: 'src/one.ts' });
       await readStep.click();
       const readDetail = page.getByRole('region', { name: 'read_file' });
       await expect(readDetail).toContainText('src/one.ts');
       await expect(readDetail).toContainText('Source loaded');
 
       const commandToggle = page.getByTestId('chat-run-terminal-toggle');
-      await expect(commandToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(commandToggle).toHaveAttribute('aria-expanded', 'false');
+      await commandToggle.click();
       await expect(page.getByTestId('terminal-output')).toContainText('PASS unit tests');
-      await expect(page.getByTestId('chat-execution-graph').locator('[data-testid="chat-call-chip"][data-status="running"]')).toHaveCount(1);
+      await expect(page.getByTestId('chat-execution-graph').getByTestId('ai-element-shimmer')).toHaveCount(1);
       await page.setViewportSize({ width: 1136, height: 720 });
       await page.screenshot({ path: testInfo.outputPath('ordered-run-output-wide.png'), animations: 'disabled' });
       await page.setViewportSize({ width: 390, height: 720 });
@@ -317,19 +320,25 @@ test.describe('Verse Claw chat turn summary collapse', () => {
       await page.getByTestId('chat-turn-summary-toggle').focus();
       await page.keyboard.press('Enter');
       await expect(page.getByTestId('chat-turn-summary-details')).toBeVisible();
-      await expect(page.getByTestId('chat-execution-graph')).toBeVisible();
+      const groups = page.getByTestId('chat-tool-activity-group');
+      await expect(groups).toHaveCount(2);
+      await groups.nth(0).getByTestId('chat-tool-activity-toggle').click();
+      await groups.nth(1).getByTestId('chat-tool-activity-toggle').click();
+      await expect(page.getByTestId('chat-execution-graph')).toHaveCount(2);
       await expect(page.getByTestId('chat-execution-graph').getByText('Main Agent execution', { exact: true })).toHaveCount(0);
       const diagnostics = page.getByTestId('chat-coding-run-evidence');
       if (await diagnostics.count()) {
         await expect(diagnostics).not.toHaveAttribute('open');
         expect(await diagnostics.evaluate(element => element === element.parentElement?.lastElementChild)).toBe(true);
       }
-      const readStep = page.getByTestId('chat-execution-step-toggle').filter({ hasText: 'read_file' });
+      const readStep = page.getByTestId('chat-execution-step-toggle').filter({ hasText: '/workspace/src/components/conversation/execution/details/app.ts' });
       await expect(readStep).toContainText('/workspace/src/components/conversation/execution/details/app.ts');
       await expect(readStep).not.toContainText('"limit"');
       await readStep.click();
       await expect(page.getByRole('region', { name: 'read_file' })).toContainText('"limit": 200');
       await summary.screenshot({ path: testInfo.outputPath('turn-process-expanded.png') });
+      await groups.nth(0).getByTestId('chat-tool-activity-toggle').click();
+      await groups.nth(1).getByTestId('chat-tool-activity-toggle').click();
       await page.getByTestId('chat-turn-summary-toggle').click();
       await expect(page.getByTestId('chat-execution-graph')).toHaveCount(0);
       await expect(page.getByTestId('chat-message-4').getByText('Repo inspection is complete.')).toBeVisible();
