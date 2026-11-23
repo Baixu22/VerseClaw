@@ -124,7 +124,7 @@ test('U3 rejects question Fork without an assistant ancestor and disables missin
     await expect(firstRow).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('chat-composer-input').fill('U3 source draft remains here');
     await instrumentSessionChainHost(app);
-    await page.getByText('U3_FIRST_QUESTION', { exact: true }).hover();
+    await firstRow.getByText('U3_FIRST_QUESTION', { exact: true }).hover();
     await firstRow.getByTestId('chat-user-message-fork').click();
     const locale = JSON.parse(await readFile('shared/i18n/locales/en/chat.json', 'utf8'));
     await expect(page.getByText(locale.questionFork.noAncestor, { exact: true })).toBeVisible();
@@ -180,7 +180,7 @@ test('U3 rejects question Fork without an assistant ancestor and disables missin
       const labels=JSON.parse(await readFile(`shared/i18n/locales/${language}/chat.json`,'utf8'));
       await hostInvoke(app,'settings','set',{key:'language',value:language});await page.reload();
       await expect(page.locator('html')).toHaveAttribute('lang',language);
-      await page.getByText('U3_NO_ENTRY',{exact:true}).hover();
+      await userRow(page,'U3_NO_ENTRY').getByText('U3_NO_ENTRY',{exact:true}).hover();
       // Missing owner identity remains visible and disabled, with a readable reason.
       const missingAction=userRow(page,'U3_NO_ENTRY').getByTestId('chat-user-message-fork');
       await expect(missingAction).toBeVisible();await expect(missingAction).toBeDisabled();
