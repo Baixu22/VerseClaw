@@ -34,6 +34,8 @@ touchedAreas:
   - tests/unit/session-task-dock.test.tsx
   - tests/unit/session-task-state-guidance.test.tsx
   - tests/unit/chat-render-reachability.test.tsx
+  - tests/unit/fp-p1-scripted-usage.test.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
   - tests/e2e/chat-planning-composer-ux.spec.ts
   - tests/e2e/chat-composer-popovers.spec.ts
   - tests/e2e/chat-long-task-control.spec.ts

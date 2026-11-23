@@ -9,6 +9,7 @@ import { allocatePort, buildMockProviderConfig, MOCK_MODEL_ID, startScriptedLlm 
 import type { TaskContextHintV1, RelationshipExpansionV1 } from '../../shared/knowledge/code-task-context';
 import type { TaskView, TaskContractInput } from '../../shared/task-system/types';
 import type { ResearchResultV1 } from '../../shared/knowledge/research';
+import { canonicalPath } from '../../shared/task-system/identity';
 
 type Json = Record<string, unknown>;
 async function initWorkspaceGit(workspace: string): Promise<void> {
@@ -107,7 +108,7 @@ test('Project RAG discovers exact code relationships and reads the current task 
     const before = await currentTask();
     const currentHint = await host<{ hint: TaskContextHintV1 }>(page, 'taskLedger', 'contextHint', { workspaceId: owner.id, sessionKey: owner.activeSessionKey });
     expect(currentHint.hint).toMatchObject({ status: 'available', taskNodeId: taskId, revision: 1, constraints: taskContract.constraints });
-    expect(currentHint.hint.evidenceRefs).toContainEqual({ path: 'artifact.txt', sha256: createHash('sha256').update(artifact).digest('hex') });
+    expect(currentHint.hint.evidenceRefs).toContainEqual({ path: canonicalPath(join(workspace, 'artifact.txt')), sha256: createHash('sha256').update(artifact).digest('hex') });
     expect(await currentTask()).toEqual(before); receipt.taskHint = currentHint; steps.taskHintReadOnly = true;
     await expect(host(page, 'taskLedger', 'contextHint', { workspaceId: 'another-workspace', sessionKey: owner.activeSessionKey })).rejects.toThrow(/workspace/i);
     steps.crossWorkspaceDenied = true;

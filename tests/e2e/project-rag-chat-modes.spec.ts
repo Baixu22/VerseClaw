@@ -95,9 +95,10 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     await expect(composer).toBeVisible({ timeout: 30000 });
     await openKnowledgeSettings();
     await expect(mode).toHaveValue('off'); await expect(profile).toHaveValue('local');
+    await page.keyboard.press('Escape');
     await composer.fill('RAG11 Off plain send'); await composer.press('Enter');
+    await expect.poll(() => wire.some(text => text.includes('RAG11 Off plain send')), { timeout: 90000 }).toBe(true);
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 90000 });
-    expect(wire.some(text => text.includes('RAG11 Off plain send'))).toBe(true);
     await expect(page.getByTestId('chat-used-knowledge')).toHaveCount(0);
     steps.offOrdinarySend = true;
     await selectProfile('quality'); await expect(mode).toHaveValue('off');

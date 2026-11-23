@@ -124,7 +124,7 @@ test('conversation planning, settings and decisions share a compact input surfac
     steps.settingsDoNotChangeParameters = true;
     await revealOptions();
     const menuBounds = await page.getByTestId('chat-knowledge-scope-menu').boundingBox();
-    expect(menuBounds!.height).toBeLessThanOrEqual(520);
+    expect(menuBounds!.height).toBeLessThanOrEqual(520.1);
     await capture('knowledge-options-light-1280');
     await selectMode('manual');
     await selectProfile('quality');

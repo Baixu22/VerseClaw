@@ -116,7 +116,12 @@ export type ScriptedLlmRequest = {
   }>;
 };
 
-type ScriptedResponse = { toolCall?: ToolCallSpec; text?: string; rateLimited?: boolean };
+type ScriptedResponse = {
+  toolCall?: ToolCallSpec;
+  text?: string;
+  rateLimited?: boolean;
+  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+};
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
@@ -216,7 +221,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
           issued: action.toolCall ? action.toolCall.id : `text:${action.text?.slice(0, 40)}`,
         });
 
-        const usage = SCRIPTED_LLM_USAGE;
+        const usage = action.usage ?? SCRIPTED_LLM_USAGE;
         const finishReason = action.toolCall ? 'tool_calls' : 'stop';
 
         if (parsed.stream) {

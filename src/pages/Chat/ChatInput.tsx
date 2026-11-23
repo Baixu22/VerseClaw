@@ -4284,9 +4284,11 @@ export function ChatInput({
                   aria-label={`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}
                   aria-expanded={modelPickerOpen}
                   disabled={inputDisabled || sending}
-                  onClick={() => {
+                  onClick={(event) => {
+                    const effortShortcut = (event.target as Element).closest('[data-testid="chat-agent-effort-button"]');
                     closeComposerPopovers();
-                    setModelPickerOpen(!modelPickerOpen);
+                    setModelPickerOpen(effortShortcut ? true : !modelPickerOpen);
+                    if (effortShortcut) setExecutionSettingsSection('effort');
                   }}
                 >
                   <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
