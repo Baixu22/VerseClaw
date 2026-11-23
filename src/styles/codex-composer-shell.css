@@ -494,6 +494,7 @@
 .worktree-progress-footer button:focus-visible { outline: 1px solid var(--color-chat-composer-focus); outline-offset: 1px; }
 .worktree-progress-footer button:disabled { opacity: 0.5; }
 .worktree-progress-footer .worktree-progress-primary { background: var(--color-chat-primary); color: var(--color-chat-primary-text); }
+.worktree-progress-footer .worktree-progress-primary:hover { background: var(--color-chat-primary); filter: brightness(0.94); }
 .composer-context-ready { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 12px; color: var(--color-chat-secondary); }
 .composer-context-ready svg { width: 14px; height: 14px; }
 .composer-context-ready button { padding: 3px 6px; border-radius: 6px; color: var(--color-chat-foreground); }

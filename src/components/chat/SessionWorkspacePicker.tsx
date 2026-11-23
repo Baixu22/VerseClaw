@@ -55,7 +55,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const stayRef = useRef(false);
   const stageRef = useRef<WorktreeCreationProgressState['stage']>('saving');
   const branchInput = useRef<HTMLInputElement>(null);
-  const { open, setOpen, triggerRef, layerRef, style } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true });
+  const { open, setOpen, triggerRef, layerRef, style } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true, preferredSide: 'top' });
   const overlay = useOverlayPortalContainer();
   const current = data?.scope === scope ? data.snapshot : null;
   const linked = current ? isLinkedWorktreePath(current.trees, current.status.repoRoot) : false;
@@ -109,6 +109,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
     const differentAnchor = triggerRef.current !== anchor;
     triggerRef.current = anchor;
     setOpen(!open || differentAnchor || showBranches);
+    if (!open) setAdvanced(false);
     setBranchesOpen(showBranches); setError(null);
     void refresh();
   };
@@ -128,7 +129,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
         const message = cause instanceof Error ? cause.message : t('operationFailed');
         setError(message);
         if (kind === 'create') publishProgress(stageRef.current, message);
-        if (kind === 'create' && !created) {
+        if (kind === 'create' && !createdRef.current) {
           setAdvanced(true);
           requestAnimationFrame(() => branchInput.current?.focus());
         }
@@ -225,7 +226,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
           </button>
         </div>
         <button type="button" className="composer-context-customize" data-testid="session-worktree-create" aria-expanded={advanced}
-          onClick={() => setAdvanced(!advanced)} disabled={Boolean(busy)}>{t('customizeWorktree')}<ChevronDown className={cn(advanced && 'rotate-180')} /></button>
+          onClick={() => setAdvanced(!advanced)} disabled={Boolean(busy) || Boolean(created)}>{t('customizeWorktree')}<ChevronDown className={cn(advanced && 'rotate-180')} /></button>
         {advanced && <form className="composer-context-form" onSubmit={event => { event.preventDefault(); if (canMutate && branch.trim()) create(); }}
           onKeyDown={event => { if (event.key === 'Enter' && (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229)) event.preventDefault(); }}>
           <label>{t('branchName')}<input ref={branchInput} value={branch} onChange={event => { setBranch(event.target.value); setCreated(null); createdRef.current = null; attemptRef.current = null; }} disabled={Boolean(busy)} data-testid="session-worktree-branch" /></label>

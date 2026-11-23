@@ -21,7 +21,7 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelect 
   const profiles = useWorkspacesStore(state => state.profiles);
   const activeWorkspace = useWorkspacesStore(state => state.activeWorkspace);
   const switchWorkspace = useWorkspacesStore(state => state.switchWorkspace);
-  const { open, setOpen, triggerRef, layerRef, style } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true });
+  const { open, setOpen, triggerRef, layerRef, style } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true, preferredSide: 'top' });
   const overlay = useOverlayPortalContainer();
   const close = useCallback(() => setOpen(false), [setOpen]);
   useDismissOnOutside({ open, onDismiss: close, onEscape: () => { close(); triggerRef.current?.focus(); }, refs: [triggerRef, layerRef] });

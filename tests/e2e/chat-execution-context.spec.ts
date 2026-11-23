@@ -94,12 +94,22 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await expect(page.getByTestId('worktree-creation-stay')).toBeDisabled();
     await page.screenshot({ path: info.outputPath('worktree-stay-progress.png') });
     await app.evaluate(() => (globalThis as unknown as { __executionFixture: { release: (() => void) | null } }).__executionFixture.release?.());
+    await expect(progress).toHaveAttribute('data-failed', 'true');
+    await expect(progress).toContainText('Read-only workspace mode');
+    await page.screenshot({ path: info.outputPath('worktree-permission-failure.png') });
+    await invoke(page, 'workspaces', 'update', { id: active.id, permissionMode: 'acceptEdits' });
+    await page.getByTestId('worktree-creation-retry').click();
+    await expect(progress).toHaveAttribute('data-stage', 'creating');
+    await expect(progress).toHaveAttribute('data-failed', 'false');
+    await page.getByTestId('worktree-creation-stay').click();
+    await app.evaluate(() => (globalThis as unknown as { __executionFixture: { release: (() => void) | null } }).__executionFixture.release?.());
     await expect(progress).toHaveCount(0);
     await expect(input).toHaveValue('Worktree draft');
     await expect(page.getByTestId('worktree-creation-ready')).toBeVisible();
     expect((await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(active.id);
     expect(git('worktree', 'list', '--porcelain').match(/^worktree /gm)).toHaveLength(3);
     report.createWithoutSwitching = true;
+    report.permissionFailureRetried = true;
     await page.getByTestId('worktree-creation-ready').getByRole('button', { name: 'Dismiss worktree notice' }).click();
     for (const theme of ['light', 'dark']) {
       await page.evaluate(value => document.documentElement.classList.toggle('dark', value === 'dark'), theme);

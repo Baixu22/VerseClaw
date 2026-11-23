@@ -23,6 +23,7 @@ touchedAreas:
   - src/components/chat/SessionWorkspacePicker.tsx
   - src/components/chat/WorktreeCreationProgress.tsx
   - src/components/chat/WelcomeProjectPicker.tsx
+  - src/components/settings/primitives/usePopover.ts
   - src/pages/Chat/ComposerGitStrip.tsx
   - src/pages/Chat/index.tsx
   - src/styles/codex-composer-shell.css
@@ -30,6 +31,7 @@ touchedAreas:
   - shared/i18n/locales/*/settings.json
   - shared/i18n/locales/*/chat.json
   - tests/unit/session-workspace-picker.test.tsx
+  - tests/unit/welcome-project-picker.test.tsx
   - tests/unit/composer-git-strip.test.tsx
   - tests/e2e/chat-execution-context.spec.ts
   - tests/e2e/chat-composer-popovers.spec.ts
