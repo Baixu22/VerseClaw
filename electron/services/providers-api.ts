@@ -420,6 +420,8 @@ async function updateAccount(payload: ProviderPayload<'updateAccount'>, gatewayM
     }
     const hasPatchChanges = hasObjectChanges(existing as unknown as Record<string, unknown>, updates as Record<string, unknown>);
     if (!hasPatchChanges && apiKey === undefined) {
+      // A prior save may have committed locally before runtime synchronization failed.
+      await syncUpdatedProviderToRuntime(providerAccountToConfig(existing), undefined, gatewayManager);
       return { success: true, noChange: true, account: existing };
     }
     const account = await providerService.updateAccount(accountId, updates, apiKey);
@@ -473,16 +475,13 @@ async function setDefaultAccount(payload: ProviderPayload<'setDefaultAccount'>, 
   const accountId = getAccountId(payload, 'setDefaultAccount');
   try {
     const currentDefault = await providerService.getDefaultAccountId();
-    if (currentDefault === accountId) {
-      return { success: true, noChange: true };
-    }
-    await providerService.setDefaultAccount(accountId);
+    if (currentDefault !== accountId) await providerService.setDefaultAccount(accountId);
     const outcome = await syncDefaultProviderToRuntime(accountId, gatewayManager);
     if (outcome.degraded) {
       console.warn(`[providers] Default account saved but runtime sync degraded: ${outcome.reason}`);
       return { success: true, degraded: true, reason: outcome.reason };
     }
-    return { success: true };
+    return { success: true, ...(currentDefault === accountId ? { noChange: true } : {}) };
   } catch (error) {
     return { success: false, error: String(error) };
   }

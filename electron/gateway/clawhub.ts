@@ -6,7 +6,8 @@ import fs from 'fs';
 import path from 'path';
 import { shell } from 'electron';
 import { getOpenClawConfigDir, getOpenClawSkillsDir, ensureDir } from '../utils/paths';
-import { removeSkillConfig } from '../utils/skill-config';
+import { removeSkillConfig, setManagedSkillRemoved } from '../utils/skill-config';
+import { withConfigLock } from '../utils/config-mutex';
 
 export interface MarketplaceSearchParams {
     query: string;
@@ -101,7 +102,9 @@ export class ClawHubService {
      */
     async install(params: MarketplaceInstallParams): Promise<void> {
         if (this.marketplaceProvider) {
-            return this.marketplaceProvider.install(params);
+            await this.marketplaceProvider.install(params);
+            await setManagedSkillRemoved(params.slug, false);
+            return;
         }
         throw new Error('Marketplace install is disabled');
     }
@@ -110,37 +113,40 @@ export class ClawHubService {
      * Uninstall a managed skill and remove its stored config.
      */
     async uninstall(params: ClawHubUninstallParams): Promise<void> {
-        const fsPromises = fs.promises;
-        const slug = params.slug?.trim();
-        if (!slug || !/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(slug)) {
-            throw new Error('Invalid managed skill slug');
-        }
-        const skillsRoot = path.resolve(getOpenClawSkillsDir());
-        const skillDir = path.resolve(skillsRoot, slug);
-        if (path.dirname(skillDir) !== skillsRoot) throw new Error('Invalid managed skill path');
-        if (fs.existsSync(skillDir)) {
-            console.log(`Deleting skill directory: ${skillDir}`);
-            await fsPromises.rm(skillDir, { recursive: true, force: true });
-        }
-
-        const lockFile = path.join(this.workDir, '.clawhub', 'lock.json');
-        if (fs.existsSync(lockFile)) {
-            try {
-                const lockData = JSON.parse(fs.readFileSync(lockFile, 'utf8')) as {
-                    skills?: Record<string, unknown>;
-                };
-                if (lockData.skills && lockData.skills[params.slug]) {
-                    console.log(`Removing ${params.slug} from lock.json`);
-                    delete lockData.skills[params.slug];
-                    await fsPromises.writeFile(lockFile, JSON.stringify(lockData, null, 2));
-                }
-            } catch (err) {
-                console.error('Failed to update ClawHub lock file:', err);
+        return withConfigLock(async () => {
+            const fsPromises = fs.promises;
+            const slug = params.slug?.trim();
+            if (!slug || !/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(slug)) {
+                throw new Error('Invalid managed skill slug');
             }
-        }
+            const skillsRoot = path.resolve(getOpenClawSkillsDir());
+            const skillDir = path.resolve(skillsRoot, slug);
+            if (path.dirname(skillDir) !== skillsRoot) throw new Error('Invalid managed skill path');
+            await setManagedSkillRemoved(slug, true);
+            if (fs.existsSync(skillDir)) {
+                console.log(`Deleting skill directory: ${skillDir}`);
+                await fsPromises.rm(skillDir, { recursive: true, force: true });
+            }
 
-        const removed = await removeSkillConfig(slug);
-        if (!removed.success) throw new Error(removed.error || 'Failed to remove skill config');
+            const lockFile = path.join(this.workDir, '.clawhub', 'lock.json');
+            if (fs.existsSync(lockFile)) {
+                try {
+                    const lockData = JSON.parse(fs.readFileSync(lockFile, 'utf8')) as {
+                        skills?: Record<string, unknown>;
+                    };
+                    if (lockData.skills && lockData.skills[params.slug]) {
+                        console.log(`Removing ${params.slug} from lock.json`);
+                        delete lockData.skills[params.slug];
+                        await fsPromises.writeFile(lockFile, JSON.stringify(lockData, null, 2));
+                    }
+                } catch (err) {
+                    console.error('Failed to update ClawHub lock file:', err);
+                }
+            }
+
+            const removed = await removeSkillConfig(slug);
+            if (!removed.success) throw new Error(removed.error || 'Failed to remove skill config');
+        });
     }
 
     /**

@@ -7,7 +7,7 @@ import {
   verifyInstalledSkillIntegrity,
 } from '../gateway/skill-installer';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
-import { getAllSkillConfigs, getSkillConfig, updateSkillConfig, updateSkillConfigs } from '../utils/skill-config';
+import { getAllSkillConfigs, getSkillConfig, updateSkillConfig, updateSkillConfigs, setManagedSkillRemoved } from '../utils/skill-config';
 import {
   collectQuickAccessSkills,
   filterEnabledQuickAccessSkills,
@@ -239,6 +239,7 @@ export function createSkillsApi({
         );
         const saved = await updateSkillConfig(slug, { enabled: true });
         if (!saved.success) throw new Error(saved.error || 'Failed to enable installed skill');
+        await setManagedSkillRemoved(slug, false);
         return { success: true, result: null };
       } catch (error) {
         return { success: false, error: errorMessage(error) };

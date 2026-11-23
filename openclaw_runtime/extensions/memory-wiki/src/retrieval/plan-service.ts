@@ -62,20 +62,7 @@ export async function retrieveMemoryWiki(input: {
     });
   const initialRerankStatus = input.rerank?.status(input.identity);
   const remoteRerankDenied = input.allowRemote === false && initialRerankStatus?.mode === "remote";
-  const initialContext =
-    !remoteRerankDenied && initialRerankStatus?.mode === "remote" && initialRerankStatus.providerRef
-      ? createMemoryWikiReadContext({
-          config: input.config,
-          appConfig: input.appConfig,
-          identity: {
-            ...input.identity,
-            egressProviderRefs: [
-              ...(input.identity.egressProviderRefs ?? []),
-              initialRerankStatus.providerRef,
-            ],
-          },
-        })
-      : context();
+  const initialContext = context();
   const namespaceId = memoryWikiNamespaceId(input.config);
   const generations = (): RetrievalGeneration[] => {
     const result: RetrievalGeneration[] = [];
@@ -295,7 +282,7 @@ export async function retrieveMemoryWiki(input: {
       const reason =
         matchOwnerReadPin(page.ownerSnapshot, hit.sourceRef) ??
         evaluateOwnerReadSnapshot(page.ownerSnapshot, currentContext, { signal }) ??
-        (rerankProviderRef
+        (rerank && rerankProviderRef
           ? evaluateOwnerReadSnapshot(page.ownerSnapshot, currentContext, {
               stage: "rerank",
               providerRef: rerankProviderRef,

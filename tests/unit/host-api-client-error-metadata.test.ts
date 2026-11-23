@@ -20,6 +20,31 @@ afterEach(() => {
   (window as unknown as { verseClaw?: unknown }).verseClaw = undefined;
 });
 
+describe('host replay payload identity (#238)', () => {
+  it.each([true, false])('prefers the exact payload regardless of fixture order (generic first=%s)', async (genericFirst) => {
+    const generic = { module: 'sessions', action: 'history', result: { messages: ['generic'] } };
+    const wrong = { ...generic, payload: { sessionKey: 'A' }, result: { messages: ['A'] } };
+    const exact = { ...generic, payload: { limit: 20, sessionKey: 'B' }, result: { messages: ['B'] } };
+    Object.assign((window as unknown as { __CLAWX_TEST__: object }).__CLAWX_TEST__, {
+      hostApiReplay: { mode: 'replay', fixtures: genericFirst ? [generic, wrong, exact] : [wrong, exact, generic] },
+    });
+    const { invokeHost } = await import('@/lib/host-api-client');
+    expect(await invokeHost('sessions', 'history', { sessionKey: 'B', limit: 20 })).toEqual(exact.result);
+    expect(await invokeHost('sessions', 'history', { sessionKey: 'C' })).toEqual(generic.result);
+    expect(hostInvoke).not.toHaveBeenCalled();
+  });
+
+  it('uses the real bridge when only a mismatched payload fixture exists', async () => {
+    Object.assign((window as unknown as { __CLAWX_TEST__: object }).__CLAWX_TEST__, {
+      hostApiReplay: { mode: 'replay', fixtures: [{ module: 'sessions', action: 'history', payload: { sessionKey: 'A' }, result: { messages: ['A'] } }] },
+    });
+    hostInvoke.mockResolvedValue({ id: 'real-B', ok: true, data: { messages: ['B'] } });
+    const { invokeHost } = await import('@/lib/host-api-client');
+    expect(await invokeHost('sessions', 'history', { sessionKey: 'B' })).toEqual({ messages: ['B'] });
+    expect(hostInvoke).toHaveBeenCalledOnce();
+  });
+});
+
 describe('host-api-client structured error preservation (#118)', () => {
   it('preserves the Main code, request id and structured details', async () => {
     hostInvoke.mockResolvedValueOnce({

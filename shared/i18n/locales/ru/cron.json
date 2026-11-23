@@ -149,6 +149,8 @@
         "useCustomCron": "Использовать свой cron",
         "deliveryTitle": "Доставка",
         "deliveryDescription": "Выберите, остаётся ли эта задача в Verse Claw или отправляется на внешний канал.",
+        "deliveryModeWebhook": "Webhook",
+        "webhookPreserved": "Доставка Webhook на {{target}} сохранена. Для замены выберите другой режим.",
         "deliveryModeNone": "Только в Verse Claw",
         "deliveryModeNoneDesc": "Выполнить задачу и сохранить результат в приложении.",
         "deliveryModeAnnounce": "Внешний канал",

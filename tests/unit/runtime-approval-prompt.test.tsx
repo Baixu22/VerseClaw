@@ -17,6 +17,7 @@ vi.mock('@/lib/host-api', () => ({
 
 vi.mock('@/lib/host-events', () => ({
   hostEvents: {
+    onGatewayStatus: () => () => {},
     onRuntimeApprovalRequested: (handler: (event: unknown) => void) => {
       mocks.requested.current = handler;
       return () => {};
@@ -57,7 +58,7 @@ const requestedEvent = {
   sessionKey: 'agent:main:main',
   allowedDecisions: ['allow-once', 'deny'],
   createdAtMs: 1,
-  expiresAtMs: 2,
+  expiresAtMs: Date.now() + 60_000,
 };
 
 beforeEach(() => {
@@ -68,6 +69,35 @@ beforeEach(() => {
 });
 
 describe('RuntimeApprovalPrompt', () => {
+  it('expires without a resolved event and preserves the draft', async () => {
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main"><textarea defaultValue="Saved draft" /></RuntimeApprovalPrompt>);
+    await act(async () => mocks.requested.current?.({ ...requestedEvent, expiresAtMs: Date.now() + 40 }));
+    expect(screen.getByTestId('runtime-approval-prompt')).toBeVisible();
+    await waitFor(() => expect(screen.queryByTestId('runtime-approval-prompt')).toBeNull());
+    expect(screen.getByRole('textbox')).toBeVisible();
+    expect(screen.getByRole('textbox')).toHaveValue('Saved draft');
+  });
+
+  it('does not revive a resolved request from a late initial snapshot', async () => {
+    let complete!: (value: unknown) => void;
+    mocks.list.mockImplementationOnce(() => new Promise(resolve => { complete = resolve; }));
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main"><textarea defaultValue="Saved draft" /></RuntimeApprovalPrompt>);
+    await act(async () => mocks.requested.current?.(requestedEvent));
+    await act(async () => mocks.resolved.current?.({ approvalId: requestedEvent.approvalId }));
+    await act(async () => complete({ pending: [requestedEvent] }));
+    expect(screen.queryByTestId('runtime-approval-prompt')).toBeNull();
+    await act(async () => mocks.requested.current?.({ ...requestedEvent, approvalId: 'new-approval' }));
+    expect(screen.getByTestId('runtime-approval-prompt')).toBeVisible();
+  });
+
+  it('reconciles an expired-id failure against an empty owner snapshot', async () => {
+    mocks.resolve.mockResolvedValue({ success: false, error: 'unknown or expired approval id' });
+    render(<RuntimeApprovalPrompt sessionKey="agent:main:main"><textarea defaultValue="Saved draft" /></RuntimeApprovalPrompt>);
+    await act(async () => mocks.requested.current?.(requestedEvent));
+    fireEvent.click(screen.getByTestId('runtime-approval-deny'));
+    await waitFor(() => expect(screen.queryByTestId('runtime-approval-prompt')).toBeNull());
+    expect(screen.getByRole('textbox')).toBeVisible();
+  });
   it('prioritizes runtime, then workspace permission, while retaining question selection and the draft', async () => {
     const question = parseToolUiInteraction({ type: 'question-flow', id: 'question-priority',
       steps: [{ id: 'target', title: 'Choose a target', options: [{ id: 'staging', label: 'Staging' }, { id: 'prod', label: 'Production' }] }] })!;
@@ -261,6 +291,7 @@ describe('RuntimeApprovalPrompt', () => {
 
   it('keeps the prompt open and surfaces the reason when the runtime rejects the decision', async () => {
     mocks.resolve.mockResolvedValue({ success: false, error: 'Read-only mode does not allow Gateway mutations' });
+    mocks.list.mockResolvedValue({ pending: [requestedEvent] });
     render(<RuntimeApprovalPrompt sessionKey="agent:main:main" agentId="main" />);
     await act(async () => {
       mocks.requested.current?.(requestedEvent);

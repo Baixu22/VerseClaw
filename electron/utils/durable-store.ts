@@ -52,7 +52,7 @@ export {
 } from './atomic-write';
 
 import { access } from 'node:fs/promises';
-import { readJsonAtomic, writeJsonAtomic, withFileLock } from './atomic-write';
+import { backupPathFor, readJsonAtomic, writeJsonAtomic, withFileLock } from './atomic-write';
 
 /**
  * Durability-presence check.
@@ -65,8 +65,9 @@ export async function durableFileExists(filePath: string): Promise<boolean> {
   try {
     await access(filePath);
     return true;
-  } catch {
-    return false;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+    throw error;
   }
 }
 
@@ -85,13 +86,13 @@ export async function readJsonStrict<T>(
   options?: { fallback?: T },
 ): Promise<T> {
   const exists = await durableFileExists(filePath);
-  if (!exists) {
+  if (!exists && !await durableFileExists(backupPathFor(filePath))) {
     if (options && 'fallback' in options) return options.fallback as T;
     // No fallback supplied and the file is absent: surface it as a read error
     // rather than inventing an empty object.
     return readJsonAtomic<T>(filePath).then((r) => r.data);
   }
-  const result = await readJsonAtomic<T>(filePath, options);
+  const result = await readJsonAtomic<T>(filePath);
   return result.data;
 }
 

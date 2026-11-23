@@ -1899,6 +1899,7 @@ type GovernanceOperationJournalEntry = {
   createdAt: string;
   updatedAt: string;
   error?: string;
+  ownerResult?: Record<string, unknown>;
 };
 
 async function readOperationJournal(operationId: string): Promise<GovernanceOperationJournalEntry | null> {
@@ -1943,6 +1944,7 @@ function receiptFromOperationJournal(
   proposal: KnowledgeChangeProposal | null,
   draft: KnowledgeDraft | null,
 ): KnowledgeGovernanceReceipt | null {
+  if (!['wiki_committed', 'json_committed', 'failed'].includes(entry.state)) return null;
   const operation = entry.operation ?? proposal?.operation;
   const owner = entry.owner ?? 'memory-wiki';
   const subjectId = entry.subjectId ?? proposal?.targetPageIds?.[0] ?? draft?.sourceIds[0];
@@ -1961,7 +1963,7 @@ function receiptFromOperationJournal(
     contentDigest: entry.contentDigest,
     idempotencyKey: entry.idempotencyKey,
     status: entry.state === 'failed' ? 'failed' : 'committed',
-    committedAt: entry.updatedAt,
+    ...(entry.state !== 'failed' ? { committedAt: entry.updatedAt } : {}),
     evidenceRefs: [entry.proposalId, entry.draftId],
     compensation: entry.compensation ?? compensationForOperation(operation),
   };
@@ -1979,7 +1981,7 @@ async function listOperationReceipts(): Promise<KnowledgeGovernanceReceipt[]> {
     const receipt = receiptFromOperationJournal(entry, proposal, draft);
     if (receipt) receipts.push(receipt);
   }
-  return receipts.sort((left, right) => right.committedAt.localeCompare(left.committedAt));
+  return receipts.sort((left, right) => (right.committedAt ?? '').localeCompare(left.committedAt ?? ''));
 }
 
 function proposalIdempotencyKey(proposal: KnowledgeChangeProposal, draft: KnowledgeDraft): string {
@@ -3740,7 +3742,11 @@ export function createKnowledgeApi({
     if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) return;
     for (const config of configs) {
       if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) break;
-      await startWatching(config);
+      try {
+        await startWatching(config);
+      } catch (error) {
+        logger.warn('[knowledge] source watcher initialization failed', config.id, sanitizeUiErrorText(error));
+      }
     }
   }).catch(error => logger.warn('[knowledge] source watcher initialization failed', error));
   function disposeOwnedWatches() {
@@ -3788,7 +3794,11 @@ export function createKnowledgeApi({
     if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) return;
     for (const config of configs) {
       if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) break;
-      await startConnector(config);
+      try {
+        await startConnector(config);
+      } catch (error) {
+        logger.warn('[knowledge] connector initialization failed', config.id, sanitizeUiErrorText(error));
+      }
     }
   }).catch(error => logger.warn('[knowledge] connector initialization failed', sanitizeUiErrorText(error)));
   let connectorSettingsQueue: Promise<unknown> = Promise.resolve();
@@ -4733,10 +4743,8 @@ export function createKnowledgeApi({
       if (operation !== 'create') {
         const targetLookup = targetPageIds[0]!;
         try {
-          const wikiPage = await rpc<Record<string, unknown>>('wiki.get', {
+          const wikiPage = await rpc<Record<string, unknown>>('wiki.lifecycleMetadata', {
             lookup: targetLookup,
-            lineCount: 1,
-            corpus: 'wiki',
           }, 10_000);
           const revision = wikiPage?.revision;
           if (typeof revision === 'number' && Number.isInteger(revision) && revision > 0) {
@@ -4744,7 +4752,7 @@ export function createKnowledgeApi({
           } else if (!wikiPage) {
             return { success: false, error: `target wiki page not found: ${targetLookup}` };
           } else {
-            expectedWikiRevision = 1;
+            return { success: false, error: `target wiki lifecycle revision unavailable: ${targetLookup}` };
           }
         } catch (error) {
           return { success: false, error: sanitizeUiErrorText(error) };
@@ -4835,7 +4843,13 @@ export function createKnowledgeApi({
       const idempotencyKey = proposalIdempotencyKey(proposal, draft);
       const operationId = operationJournalId(proposal, draft);
       const journal = await readOperationJournal(operationId);
-      if (proposal.status === 'applied') {
+      const recovering = (journal?.state === 'wiki_committed' || journal?.state === 'json_committed')
+        && journal.contentDigest === currentDigest && journal.idempotencyKey === idempotencyKey
+        && journal.proposalId === proposal.id && journal.draftId === draft.id;
+      if (journal && (journal.state === 'wiki_committed' || journal.state === 'json_committed') && !recovering) {
+        return applyConflict('stale_digest', 'committed operation does not match the reviewed change', resolvedBundle);
+      }
+      if (proposal.status === 'applied' && (!recovering || journal?.state === 'json_committed')) {
         if (proposal.contentDigest !== currentDigest) {
           return { success: false, error: 'idempotency conflict: applied proposal digest differs', proposal, draft, reviewBundle: resolvedBundle };
         }
@@ -4850,13 +4864,13 @@ export function createKnowledgeApi({
           ...(existingReceipt ? { receipt: existingReceipt, compensation: existingReceipt.compensation } : {}),
         };
       }
-      if (proposal.status !== 'approved') {
+      if (proposal.status !== 'approved' && !(recovering && proposal.status === 'applied')) {
         return applyConflict('not_approved', 'proposal must be approved by the user before apply', resolvedBundle);
       }
       if (getString(proposal.reviewedDigest) && proposal.reviewedDigest !== currentDigest) {
         return applyConflict('stale_digest', 'draft content changed after review approval', resolvedBundle);
       }
-      if (draft.status !== 'approved') {
+      if (draft.status !== 'approved' && !(recovering && draft.status === 'applied')) {
         return applyConflict('draft_not_approved', 'approved draft is required before apply', resolvedBundle);
       }
       if (getString(proposal.workspaceId) !== undefined && proposal.workspaceId !== draft.workspaceId) {
@@ -4864,7 +4878,9 @@ export function createKnowledgeApi({
       }
 
       let targetWikiRevision: number | undefined;
-      if (proposal.operation === 'create') {
+      if (recovering) {
+        targetWikiRevision = journal?.subjectRevision ? Number(journal.subjectRevision) : undefined;
+      } else if (proposal.operation === 'create') {
         if (typeof proposal.expectedRevision === 'number' && proposal.expectedRevision !== draft.revision) {
           return applyConflict('stale_revision', 'draft revision changed after review approval', resolvedBundle, draft.revision);
         }
@@ -4878,10 +4894,8 @@ export function createKnowledgeApi({
         }
         let currentWikiPage: Record<string, unknown> | null;
         try {
-          currentWikiPage = await rpc<Record<string, unknown>>('wiki.get', {
+          currentWikiPage = await rpc<Record<string, unknown>>('wiki.lifecycleMetadata', {
             lookup: targetLookup,
-            lineCount: 1,
-            corpus: 'wiki',
           }, 10_000) as Record<string, unknown> | null;
         } catch {
           currentWikiPage = null;
@@ -4889,9 +4903,10 @@ export function createKnowledgeApi({
         if (!currentWikiPage) {
           return applyConflict('target_not_found', `target wiki page not found: ${targetLookup}`, resolvedBundle);
         }
-        targetWikiRevision = typeof currentWikiPage.revision === 'number' && currentWikiPage.revision > 0
-          ? currentWikiPage.revision
-          : 1;
+        if (!Number.isInteger(currentWikiPage.revision) || Number(currentWikiPage.revision) <= 0) {
+          return applyConflict('target_not_found', 'target wiki lifecycle revision unavailable', resolvedBundle);
+        }
+        targetWikiRevision = Number(currentWikiPage.revision);
         if (typeof proposal.expectedRevision === 'number' && proposal.expectedRevision !== targetWikiRevision) {
           return applyConflict('stale_revision', 'target wiki page revision changed after review approval', resolvedBundle, targetWikiRevision);
         }
@@ -4980,8 +4995,8 @@ export function createKnowledgeApi({
       }
 
       let wikiResult: Record<string, unknown>;
-      if (journal?.state === 'wiki_committed' || journal?.state === 'json_committed') {
-        wikiResult = {};
+      if (recovering) {
+        wikiResult = journal?.ownerResult ?? (targetWikiRevision ? { revision: targetWikiRevision } : {});
       } else {
         try {
           if (proposal.operation === 'create') {
@@ -5008,6 +5023,7 @@ export function createKnowledgeApi({
           await writeOperationJournal({
             ...baseEntry,
             state: 'wiki_committed',
+            ownerResult: wikiResult,
             updatedAt: nowIso(),
             ...(typeof wikiResult.revision === 'number' ? { subjectRevision: String(wikiResult.revision) } : {}),
           });
@@ -5036,7 +5052,7 @@ export function createKnowledgeApi({
         status: 'applied',
         appliedAt: timestamp,
         updatedAt: timestamp,
-        revision: (draft.revision ?? 1) + 1,
+        revision: draft.status === 'applied' ? draft.revision : (draft.revision ?? 1) + 1,
       };
       const appliedProposal: KnowledgeChangeProposal = {
         ...proposal,
@@ -5048,12 +5064,13 @@ export function createKnowledgeApi({
       const finalEntry: GovernanceOperationJournalEntry = {
         ...baseEntry,
         state: 'json_committed',
+        ownerResult: wikiResult,
         updatedAt: nowIso(),
         compensation: compensationForOperation(proposal.operation),
         ...(typeof wikiResult.revision === 'number' ? { subjectRevision: String(wikiResult.revision) } : {}),
       };
-      await writeDraft(appliedDraft);
-      await writeProposal(appliedProposal);
+      if (draft.status !== 'applied') await writeDraft(appliedDraft);
+      if (proposal.status !== 'applied') await writeProposal(appliedProposal);
       await writeOperationJournal(finalEntry);
       await appendAudit({
         type: 'reviewed_change_applied',

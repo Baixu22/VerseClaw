@@ -65,6 +65,7 @@ export function formatUsageDay(timestamp: string): string {
   const date = new Date(timestamp);
   if (Number.isNaN(date.getTime())) return timestamp;
   return new Intl.DateTimeFormat(undefined, {
+    year: 'numeric',
     month: 'short',
     day: 'numeric',
   }).format(date);
@@ -87,7 +88,9 @@ export function groupUsageHistory(
     const label = groupBy === 'model'
       ? (entry.model || 'Unknown')
       : formatUsageDay(entry.timestamp);
-    const current = grouped.get(label) ?? {
+    const sortKey = groupBy === 'day' ? getUsageDaySortKey(entry.timestamp) : label.toLowerCase();
+    const key = groupBy === 'day' ? String(sortKey) : label;
+    const current = grouped.get(key) ?? {
       label,
       totalTokens: 0,
       inputTokens: 0,
@@ -95,7 +98,7 @@ export function groupUsageHistory(
       cacheTokens: 0,
       cacheReadTokens: 0,
       cacheWriteTokens: 0,
-      sortKey: groupBy === 'day' ? getUsageDaySortKey(entry.timestamp) : label.toLowerCase(),
+      sortKey,
     };
     current.totalTokens += entry.totalTokens;
     current.inputTokens += entry.inputTokens;
@@ -103,7 +106,7 @@ export function groupUsageHistory(
     current.cacheTokens += entry.cacheReadTokens + entry.cacheWriteTokens;
     current.cacheReadTokens += entry.cacheReadTokens;
     current.cacheWriteTokens += entry.cacheWriteTokens;
-    grouped.set(label, current);
+    grouped.set(key, current);
   }
 
   const sorted = Array.from(grouped.values()).sort((a, b) => {

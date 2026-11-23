@@ -22,7 +22,7 @@ const requestedFrame = {
   sessionKey: 'agent:main:main',
   allowedDecisions: ['allow-once', 'deny'],
   createdAtMs: 1,
-  expiresAtMs: 2,
+  expiresAtMs: Date.now() + 600_000,
 };
 
 test.describe('Runtime approval bridge', () => {

@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   applyMemoryWikiMutation,
   normalizeMemoryWikiMutationInput,
+  readMemoryWikiLifecycleMetadata,
 } from "./apply.js";
 import type { ResolvedMemoryWikiConfig } from "./config.js";
 import { resolveMemoryWikiConfig, getMemoryWikiPage } from "../runtime-api.js";
@@ -109,8 +110,8 @@ describe("memory-wiki lifecycle owner mutations (KS-08)", () => {
     expect(result.status).toBe("archived");
     expect(result.revision).toBe(2);
     const readBack = await getMemoryWikiPage({ config, lookup });
-    expect(readBack?.status).toBe("archived");
-    expect(readBack?.revision).toBe(2);
+    expect(readBack?.status).toBe("denied");
+    expect(await readMemoryWikiLifecycleMetadata(config, lookup)).toMatchObject({ status: "archived", revision: 2 });
   });
 
   it("revoke sets revoked status and stale CAS is rejected", async () => {
@@ -125,7 +126,8 @@ describe("memory-wiki lifecycle owner mutations (KS-08)", () => {
     });
     expect(result.status).toBe("revoked");
     const readBack = await getMemoryWikiPage({ config, lookup });
-    expect(readBack?.status).toBe("revoked");
+    expect(readBack?.status).toBe("denied");
+    expect(await readMemoryWikiLifecycleMetadata(config, lookup)).toMatchObject({ status: "revoked", revision: 2 });
 
     await expect(applyMemoryWikiMutation({
       config,

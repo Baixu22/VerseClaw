@@ -843,7 +843,7 @@ async function withGitOperation(
       return { success: false, blocked: true, reason: 'UI_CLEANUP_TARGET_CHANGED; entry=/settings/storage; refresh the owning session' };
     const removal = current.removeUiWorktree(ctx.repoRoot, payload.removalTarget, current.profiles, current.identity);
     if (removal.success) invalidateGitStatusCache(ctx.repoRoot);
-    return { ...removal, status: removal.success ? await readCurrentGitStatus().catch(() => undefined) : undefined };
+    return { ...removal, status: removal.success ? await readCurrentGitStatus(ctx.workspace).catch(() => undefined) : undefined };
   }
   const result = await git(args, ctx.workspaceRoot);
   if (result.exitCode === 0) invalidateGitStatusCache(ctx.repoRoot);
@@ -852,7 +852,7 @@ async function withGitOperation(
     stdout: result.stdout,
     stderr: result.stderr,
     exitCode: result.exitCode,
-    status: result.exitCode === 0 ? await readCurrentGitStatus().catch(() => undefined) : undefined,
+    status: result.exitCode === 0 ? await readCurrentGitStatus(ctx.workspace).catch(() => undefined) : undefined,
   };
 }
 
@@ -1397,7 +1397,7 @@ async function applyGitPatch(payload: GitApplyPatchPayload, journaled = false): 
           exitCode: result.exitCode,
           stdout: trimOutput(result.stdout),
           stderr: trimOutput(result.stderr),
-          status: result.exitCode === 0 ? await readCurrentGitStatus().catch(() => undefined) : undefined,
+          status: result.exitCode === 0 ? await readCurrentGitStatus(ctx.workspace).catch(() => undefined) : undefined,
         };
       } finally {
         await rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
@@ -1411,10 +1411,10 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const blocked = await enforcePermission({ workspace, action: 'init', risk: 'write', command: 'git init', paths: [workspace.rootPath] });
       if (blocked) return blocked;
       const existing = await git(['rev-parse', '--show-toplevel'], workspace.rootPath);
-      if (existing.exitCode === 0) return { success: true, status: await readCurrentGitStatus() };
+      if (existing.exitCode === 0) return { success: true, status: await readCurrentGitStatus(workspace) };
       const result = await git(['init'], workspace.rootPath);
       invalidateGitStatusCache(workspace.rootPath);
-      return { success: result.exitCode === 0, ...result, status: result.exitCode === 0 ? await readCurrentGitStatus() : undefined };
+      return { success: result.exitCode === 0, ...result, status: result.exitCode === 0 ? await readCurrentGitStatus(workspace) : undefined };
     },
     capabilities: async () => {
       const workspace = requireWorkspace(await getActiveWorkspaceProfile());
@@ -1440,7 +1440,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const mode = isRecord(payload) && payload.mode === 'staged' ? 'staged' : 'unstaged';
       const args = mode === 'staged' ? ['diff', '--cached'] : ['diff'];
       const result = await git(args, ctx.workspaceRoot);
-      const changes = (await readCurrentGitStatus()).changes;
+      const changes = (await readCurrentGitStatus(ctx.workspace)).changes;
       const tooLarge = result.stdout.length > MAX_PATCH_CHARS;
       const patch = trimOutput(result.stdout, MAX_PATCH_CHARS);
       return {
@@ -1456,7 +1456,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const ctx = await requireRepoContext();
       const path = resolveGitPath(ctx, payload.path);
       const mode: GitDiffMode = payload.mode === 'staged' ? 'staged' : 'unstaged';
-      const status = await readCurrentGitStatus().catch(() => null);
+      const status = await readCurrentGitStatus(ctx.workspace).catch(() => null);
       const change = status?.changes.find((entry) => entry.path === path.gitPath);
       const isUntracked = mode === 'unstaged' && change?.untracked === true;
 
@@ -1619,25 +1619,26 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const ctx = await requireRepoContext();
       const paths = normalizePaths(payload.paths).map((entry) => resolveGitPath(ctx, entry).gitPath);
       if (paths.length === 0) throw new Error('paths are required');
-      return withGitOperation('stage', 'write', ['add', '--', ...paths], { approvalId: payload.approvalId, paths });
+      return withGitOperation('stage', 'write', ['add', '--', ...paths], { approvalId: payload.approvalId, paths, context: ctx });
     },
     unstage: async (payload: GitPathsPayload) => {
       const ctx = await requireRepoContext();
       const paths = normalizePaths(payload.paths).map((entry) => resolveGitPath(ctx, entry).gitPath);
       if (paths.length === 0) throw new Error('paths are required');
-      return withGitOperation('unstage', 'write', ['restore', '--staged', '--', ...paths], { approvalId: payload.approvalId, paths });
+      return withGitOperation('unstage', 'write', ['restore', '--staged', '--', ...paths], { approvalId: payload.approvalId, paths, context: ctx });
     },
     revertFile: async (payload: GitPathPayload) => {
       const ctx = await requireRepoContext();
       const rawPath = normalizeString(payload.path);
       if (!rawPath) throw new Error('path is required');
       const path = resolveGitPath(ctx, rawPath);
-      const status = await readCurrentGitStatus().catch(() => null);
+      const status = await readCurrentGitStatus(ctx.workspace).catch(() => null);
       const change = status?.changes.find((entry) => entry.path === path.gitPath);
       const args = change?.untracked
         ? ['clean', '-f', '--', path.gitPath]
         : ['restore', '--source=HEAD', '--staged', '--worktree', '--', path.gitPath];
       return withGitOperation('revertFile', 'dangerous', args, {
+        context: ctx,
         approvalId: payload.approvalId,
         paths: [path.gitPath],
       });
@@ -1669,7 +1670,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
           stderr: result.stderr,
           exitCode: result.exitCode,
           commit: head?.stdout.trim() || undefined,
-        status: result.exitCode === 0 ? await readCurrentGitStatus().catch(() => undefined) : undefined,
+        status: result.exitCode === 0 ? await readCurrentGitStatus(ctx.workspace).catch(() => undefined) : undefined,
         };
       } finally {
         await rm(tempDir, { recursive: true, force: true });
@@ -1763,7 +1764,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const name = normalizeString(payload.name);
       if (!name) throw new Error('name is required');
       await ensureValidBranchName(ctx, name);
-      return withGitOperation('checkoutBranch', 'write', ['checkout', name], { approvalId: payload.approvalId });
+      return withGitOperation('checkoutBranch', 'write', ['checkout', name], { approvalId: payload.approvalId, context: ctx });
     },
     createBranch: async (payload: GitBranchCreatePayload) => {
       const ctx = await requireRepoContext();
@@ -1773,7 +1774,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const args = payload.checkout === false ? ['branch', name] : ['checkout', '-b', name];
       const startPoint = normalizeString(payload.startPoint);
       if (startPoint) args.push(startPoint);
-      return withGitOperation('createBranch', 'write', args, { approvalId: payload.approvalId });
+      return withGitOperation('createBranch', 'write', args, { approvalId: payload.approvalId, context: ctx });
     },
     stashList: async () => {
       const ctx = await requireRepoContext();
@@ -1890,6 +1891,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       return withGitOperation('pull', 'dangerous', args, { approvalId: body.approvalId });
     },
     push: async (payload) => {
+      const ctx = await requireRepoContext();
       const body = (isRecord(payload) ? payload : {}) as GitPushPayload;
       const args = ['push'];
       if (body.setUpstream) args.push('-u');
@@ -1897,8 +1899,9 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       const branch = normalizeString(body.branch);
       if (remote) args.push(remote);
       if (branch) args.push(branch);
-      const currentBranch = (await readCurrentGitStatus().catch(() => undefined))?.branch;
+      const currentBranch = (await readCurrentGitStatus(ctx.workspace).catch(() => undefined))?.branch;
       return withGitOperation('push', 'dangerous', args, {
+        context: ctx,
         approvalId: body.approvalId,
         grading: gradePushTarget({ remote, branch, currentBranch }),
       });
@@ -1913,11 +1916,13 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       return withGitOperation('merge', 'dangerous', args, { approvalId: payload.approvalId });
     },
     rebase: async (payload: GitRebasePayload) => {
+      const ctx = await requireRepoContext();
       const ref = normalizeString(payload.ref);
       if (!ref) throw new Error('ref is required');
       if (!isSafeGitRef(ref)) throw new Error(`Invalid git ref: ${ref}`);
-      const currentBranch = (await readCurrentGitStatus().catch(() => undefined))?.branch;
+      const currentBranch = (await readCurrentGitStatus(ctx.workspace).catch(() => undefined))?.branch;
       return withGitOperation('rebase', 'dangerous', ['rebase', ref], {
+        context: ctx,
         approvalId: payload.approvalId,
         grading: [
           `Rebase rewrites ${currentBranch ? `${currentBranch}'s` : 'the current branch'} commits onto ${ref}, so existing commit hashes change.`,
@@ -2082,7 +2087,7 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
       if (blocked) return blocked;
       // Reuse an existing open PR for the head branch (Open SWE 422 parity)
       // instead of failing with a duplicate-PR error.
-      const headForLookup = head || (await readCurrentGitStatus().catch(() => null))?.branch;
+      const headForLookup = head || (await readCurrentGitStatus(ctx.workspace).catch(() => null))?.branch;
       if (headForLookup) {
         const existingList = await gh(['pr', 'list', '--head', headForLookup, '--state', 'open', '--json', 'number,title,state,author,headRefName,baseRefName,url,isDraft,updatedAt'], ctx.workspaceRoot);
         if (existingList.exitCode === 0) {

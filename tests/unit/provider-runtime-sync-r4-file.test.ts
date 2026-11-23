@@ -7,6 +7,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { providerRequestAuthHeaders, providerRequestAuthQuery, resolveProviderRequestAuth } from '@openclaw/provider-request-auth';
 
 const testConfigDir = mkdtempSync(path.join(os.tmpdir(), 'clawx-r4-file-'));
 process.env.OPENCLAW_CONFIG_DIR = testConfigDir;
@@ -79,6 +80,39 @@ afterAll(() => {
 });
 
 describe('R4 provider sync file-level E2E', () => {
+  it.each([
+    { mode: 'query' as const, parameterName: 'token' },
+    { mode: 'custom-header' as const, headerName: 'X-API-Key' },
+    { mode: 'bearer' as const },
+  ])('clears persisted $mode overrides when updated to none, including without a supplied key', async (requestAuth) => {
+    const provider = {
+      id: `none-${requestAuth.mode}`, name: 'Auth transition', type: 'custom' as const,
+      baseUrl: 'https://example.invalid/v1', apiProtocol: 'openai-completions' as const,
+      model: 'auth-model', enabled: true,
+      createdAt: '2026-11-23T00:00:00Z', updatedAt: '2026-11-23T00:00:00Z', requestAuth,
+    };
+    mocks.getDefaultProvider.mockResolvedValue(null);
+    mocks.getAllProviders.mockResolvedValue([]);
+    const runtimeKey = syncModule.getOpenClawProviderKey(provider.type, provider.id);
+    for (const key of ['fixture-only-old-key', '']) {
+      await syncModule.syncSavedProviderToRuntime(provider, 'fixture-only-old-key');
+      for (const configFile of ['openclaw.json', 'agents/main/agent/models.json']) {
+        const before = JSON.parse(await readFile(path.join(testConfigDir, configFile), 'utf8'));
+        expect((before.models?.providers ?? before.providers)[runtimeKey].request.auth).toBeDefined();
+      }
+      await syncModule.syncUpdatedProviderToRuntime({ ...provider, requestAuth: { mode: 'none' } }, key);
+      for (const configFile of ['openclaw.json', 'agents/main/agent/models.json']) {
+        const after = JSON.parse(await readFile(path.join(testConfigDir, configFile), 'utf8'));
+        const entry = (after.models?.providers ?? after.providers)[runtimeKey];
+        expect(entry.request?.auth, configFile).toBeUndefined();
+        const resolved = resolveProviderRequestAuth({ authHeader: entry.authHeader, auth: entry.request?.auth });
+        expect(providerRequestAuthHeaders(resolved)).toBeUndefined();
+        expect(providerRequestAuthQuery(resolved)).toBeUndefined();
+        expect(resolved.injectAuthorizationHeader).toBe(false);
+      }
+    }
+  });
+
   it.each([true, false])('preserves declared reasoning=%s when selecting and updating the default provider', async (reasoning) => {
     const provider = {
       id: `${reasoning ? 'reasoning' : 'plain'}-profile`,

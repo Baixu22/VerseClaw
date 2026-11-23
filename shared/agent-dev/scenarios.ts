@@ -81,12 +81,12 @@ export const AGENT_DEV_SCENARIOS = [
     tags: ['observability', 'trace'],
   },
   {
-    id: 'transport-fallback-chain',
+    id: 'typed-ipc-gateway-unavailable',
     route: '/',
-    description: 'Transport path exercises WS to HTTP to IPC fallback metadata.',
-    seed: { transportFallback: ['ws', 'http', 'ipc'], gatewayStatus: { state: 'degraded', gatewayReady: true } },
+    description: 'Typed IPC remains available while the Main-owned Gateway connection is unavailable.',
+    seed: { hostTransport: 'ipc', gatewayStatus: { state: 'error', gatewayReady: false } },
     slices: ['gatewayStatus', 'transport'],
-    tags: ['gateway', 'transport', 'fallback'],
+    tags: ['gateway', 'transport', 'error'],
   },
   {
     id: 'skill-execution-timeout',

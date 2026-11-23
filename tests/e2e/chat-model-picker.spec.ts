@@ -4,7 +4,7 @@ const alphaModelRef = 'custom-alpha123/model-alpha';
 const betaModelRef = 'custom-beta5678/provider/model-beta';
 
 test.describe('Verse Claw chat model picker', () => {
-  test('selects a model directly and preserves the previous choice on save failure', async ({ launchElectronApp }) => {
+  test('selects an imported account model and preserves the previous choice on save failure', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -105,7 +105,7 @@ test.describe('Verse Claw chat model picker', () => {
                 updatedAt: now,
               },
               {
-                id: 'beta5678',
+                id: 'custom-beta5678',
                 vendorId: 'custom',
                 label: 'Beta',
                 authMode: 'api_key',
@@ -121,13 +121,13 @@ test.describe('Verse Claw chat model picker', () => {
           if (request?.module === 'providers' && request.action === 'list') {
             return makeResponse(request.id, [
               { id: 'alpha1234', type: 'custom', name: 'Alpha', enabled: true, hasKey: true, keyMasked: 'sk-***', createdAt: now, updatedAt: now },
-              { id: 'beta5678', type: 'custom', name: 'Beta', enabled: true, hasKey: true, keyMasked: 'sk-***', createdAt: now, updatedAt: now },
+              { id: 'custom-beta5678', type: 'custom', name: 'Beta', enabled: true, hasKey: true, keyMasked: 'sk-***', createdAt: now, updatedAt: now },
             ]);
           }
           if (request?.module === 'providers' && request.action === 'accountKeyInfo') {
             return makeResponse(request.id, [
               { accountId: 'alpha1234', hasKey: true, keyMasked: 'sk-***' },
-              { accountId: 'beta5678', hasKey: true, keyMasked: 'sk-***' },
+              { accountId: 'custom-beta5678', hasKey: true, keyMasked: 'sk-***' },
             ]);
           }
           if (request?.module === 'providers' && request.action === 'vendors') {

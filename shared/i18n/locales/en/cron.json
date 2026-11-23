@@ -166,6 +166,8 @@
         "useCustomCron": "Use custom cron",
         "deliveryTitle": "Delivery",
         "deliveryDescription": "Choose whether this task stays in Verse Claw or is pushed to an external channel.",
+        "deliveryModeWebhook": "Webhook",
+        "webhookPreserved": "Webhook delivery to {{target}} is preserved. Select another delivery mode to replace it.",
         "deliveryModeNone": "In Verse Claw only",
         "deliveryModeNoneDesc": "Run the task and keep the result in the app.",
         "deliveryModeAnnounce": "External channel",

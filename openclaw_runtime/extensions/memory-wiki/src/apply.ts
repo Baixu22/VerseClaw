@@ -1,5 +1,6 @@
 // Memory Wiki plugin module implements apply behavior.
 import path from "node:path";
+import { lstat } from "node:fs/promises";
 import {
   replaceManagedMarkdownBlock,
   withTrailingNewline,
@@ -23,6 +24,7 @@ import {
   type QueryableWikiPage,
 } from "./query.js";
 import { initializeMemoryWikiVault } from "./vault.js";
+import { withWikiMutationLock } from "./mutation-lock.js";
 
 const GENERATED_START = "<!-- openclaw:wiki:generated:start -->";
 const GENERATED_END = "<!-- openclaw:wiki:generated:end -->";
@@ -327,9 +329,12 @@ async function applyCreateSynthesisMutation(params: {
 }): Promise<{ changed: boolean; pagePath: string; pageId: string }> {
   const slug = slugifyWikiSegment(params.mutation.title);
   const pagePath = path.join("syntheses", `${slug}.md`).replace(/\\/g, "/");
-  const root = await fsRoot(params.config.vault.path);
-  const existing = await root.readText(pagePath).catch(() => "");
-  const parsed = parseWikiMarkdown(existing);
+  const existing = await lstat(path.join(params.config.vault.path, pagePath)).catch((error: NodeJS.ErrnoException) => {
+    if (error.code === "ENOENT") return null;
+    throw error;
+  });
+  if (existing) throw new Error(`create_conflict: wiki page already exists: ${pagePath}`);
+  const parsed = parseWikiMarkdown("");
   const pageId =
     (typeof parsed.frontmatter.id === "string" && parsed.frontmatter.id.trim()) ||
     `synthesis.${slug}`;
@@ -370,6 +375,7 @@ function buildUpdatedFrontmatter(params: {
 }): Record<string, unknown> {
   const frontmatter: Record<string, unknown> = {
     ...params.original,
+    revision: wikiPageRevision(params.original) + 1,
     updatedAt: new Date().toISOString(),
   };
   if (params.mutation.sourceIds) {
@@ -712,30 +718,40 @@ export async function applyMemoryWikiMutation(params: {
   config: ResolvedMemoryWikiConfig;
   mutation: ApplyMemoryWikiMutation;
 }): Promise<ApplyMemoryWikiMutationResult> {
-  await initializeMemoryWikiVault(params.config);
-  const result: LifecycleMutationResult =
-    params.mutation.op === "create_synthesis"
-      ? await applyCreateSynthesisMutation({
-          config: params.config,
-          mutation: params.mutation,
-        })
-      : params.mutation.op === "update_metadata"
-        ? await applyUpdateMetadataMutation({
+  return withWikiMutationLock(params.config.vault.path, async () => {
+    await initializeMemoryWikiVault(params.config);
+    const result: LifecycleMutationResult =
+      params.mutation.op === "create_synthesis"
+        ? await applyCreateSynthesisMutation({
             config: params.config,
             mutation: params.mutation,
           })
-        : await applyLifecycleMutation({
-            config: params.config,
-            mutation: params.mutation,
-          });
-  const compile = await compileMemoryWikiVault(params.config);
-  return {
-    changed: result.changed,
-    operation: params.mutation.op,
-    pagePath: result.pagePath,
-    ...(result.pageId ? { pageId: result.pageId } : {}),
-    ...(result.status ? { status: result.status } : {}),
-    ...(typeof result.revision === "number" ? { revision: result.revision } : {}),
-    compile,
-  };
+        : params.mutation.op === "update_metadata"
+          ? await applyUpdateMetadataMutation({
+              config: params.config,
+              mutation: params.mutation,
+            })
+          : await applyLifecycleMutation({
+              config: params.config,
+              mutation: params.mutation,
+            });
+    const compile = await compileMemoryWikiVault(params.config);
+    return {
+      changed: result.changed,
+      operation: params.mutation.op,
+      pagePath: result.pagePath,
+      ...(result.pageId ? { pageId: result.pageId } : {}),
+      ...(result.status ? { status: result.status } : {}),
+      ...(typeof result.revision === "number" ? { revision: result.revision } : {}),
+      compile,
+    };
+  });
+}
+
+/** Lifecycle metadata is exposed only by the operator.write Gateway route. */
+export async function readMemoryWikiLifecycleMetadata(config: ResolvedMemoryWikiConfig, lookup: string) {
+  const page = await resolveRequiredWritablePage({ config, lookup });
+  const parsed = parseWikiMarkdown(page.raw);
+  return { lookup: page.relativePath, pageId: page.id, revision: assertExpectedWikiRevision(page, parsed, undefined),
+    status: typeof parsed.frontmatter.status === "string" ? parsed.frontmatter.status : "active" };
 }

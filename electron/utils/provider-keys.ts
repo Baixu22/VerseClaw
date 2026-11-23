@@ -1,3 +1,5 @@
+import { runtimeProviderKey, runtimeAccountProviderKey } from '../../shared/providers/runtime-identity';
+
 const MULTI_INSTANCE_PROVIDER_TYPES = new Set(['custom', 'ollama']);
 
 export const OPENCLAW_PROVIDER_KEY_MINIMAX = 'minimax-portal';
@@ -22,21 +24,7 @@ const PROVIDER_KEY_ALIASES: Record<string, string> = {
 };
 
 export function getOpenClawProviderKeyForType(type: string, providerId: string): string {
-  if (MULTI_INSTANCE_PROVIDER_TYPES.has(type)) {
-    // If the providerId is already a runtime key (e.g. re-seeded from openclaw.json
-    // as "custom-XXXXXXXX"), return it directly to avoid double-hashing.
-    const prefix = `${type}-`;
-    if (providerId.startsWith(prefix)) {
-      const tail = providerId.slice(prefix.length);
-      if (tail.length === 8 && !tail.includes('-')) {
-        return providerId;
-      }
-    }
-    const suffix = providerId.replace(/-/g, '').slice(0, 8);
-    return `${type}-${suffix}`;
-  }
-
-  return PROVIDER_KEY_ALIASES[type] ?? type;
+  return runtimeProviderKey(type, providerId);
 }
 
 export function isMultiInstanceProviderType(type: string): boolean {
@@ -67,10 +55,7 @@ export function resolveOpenClawProviderKey(account: {
   id: string;
   authMode?: string;
 }): string {
-  if (account.authMode === 'oauth_browser' && account.vendorId === 'openai') {
-    return OPENAI_CODEX_RUNTIME_PROVIDER_KEY;
-  }
-  return getOpenClawProviderKeyForType(account.vendorId, account.id);
+  return runtimeAccountProviderKey(account);
 }
 
 /**

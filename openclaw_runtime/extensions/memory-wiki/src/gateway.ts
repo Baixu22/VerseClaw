@@ -3,7 +3,7 @@ import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
 import { normalizeSourceRefV2, resolveDefaultAgentId } from "openclaw/plugin-sdk/memory-host-core";
 import { readPositiveIntegerParam } from "openclaw/plugin-sdk/param-readers";
 import type { OpenClawConfig, OpenClawPluginApi } from "../api.js";
-import { applyMemoryWikiMutation, normalizeMemoryWikiMutationInput } from "./apply.js";
+import { applyMemoryWikiMutation, normalizeMemoryWikiMutationInput, readMemoryWikiLifecycleMetadata } from "./apply.js";
 import { compileMemoryWikiVault } from "./compile.js";
 import {
   WIKI_SEARCH_BACKENDS,
@@ -700,6 +700,16 @@ export function registerMemoryWikiGatewayMethods(params: {
     ["wiki.delete", "delete"],
     ["wiki.restore", "restore"],
   ] as const;
+  api.registerGatewayMethod(
+    "wiki.lifecycleMetadata",
+    async ({ params: requestParams, respond }) => {
+      try {
+        const lookup = readStringParam(requestParams, "lookup", { required: true });
+        respond(true, await readMemoryWikiLifecycleMetadata(config, lookup));
+      } catch (error) { respondError(respond, error); }
+    },
+    { scope: WRITE_SCOPE },
+  );
   for (const [method, op] of wikiLifecycleMethods) {
     api.registerGatewayMethod(
       method,

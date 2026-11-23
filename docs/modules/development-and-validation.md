@@ -213,6 +213,10 @@ pnpm run harness:ci
 
 Agent Dev 是本地诊断/仿真控制面，不是产品运行时 authority。
 
+Host API 回放先按 module、action 和完整 payload 精确匹配，再使用同路由且未指定 payload 的通用 fixture。只有不同 payload 的 fixture 时，调用继续走原 Host bridge。
+
+当前通信契约为 Renderer → typed `host:invoke` IPC → Main → Gateway WebSocket。Agent Dev 的 `typed-ipc-gateway-unavailable` 场景显示 Gateway 不可用时的状态，当前目录不再宣称 WS→HTTP→IPC 降级链。
+
 | 命令 | 用途 |
 |---|---|
 | `pnpm agent-dev:make <page\|e2e\|host-route\|skill\|channel\|plugin\|scenario> <name>` | 生成约定骨架 |

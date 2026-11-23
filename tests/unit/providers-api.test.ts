@@ -40,6 +40,7 @@ vi.mock('@electron/services/providers/provider-validation', () => ({
 
 vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
   syncSavedProviderToRuntime: vi.fn(),
+  syncUpdatedProviderToRuntime: vi.fn(),
   syncDefaultProviderToRuntime: vi.fn(),
   deleteProviderFromRuntime: vi.fn(),
 }));
@@ -55,6 +56,26 @@ describe('providers-api secret broker boundary (P1-001)', () => {
       { accountId: 'acct-1', hasKey: true, keyMasked: 'sk-***' },
     ]);
     providerServiceMock.hasAccountApiKey.mockResolvedValue(true);
+  });
+
+  it('retries runtime sync after a saved account update or default switch failed', async () => {
+    const { createProvidersApi } = await import('@electron/services/providers-api');
+    const { syncDefaultProviderToRuntime, syncUpdatedProviderToRuntime } = await import('@electron/services/providers/provider-runtime-sync');
+    let defaultId = 'before';
+    let saved = { id: 'after', vendorId: 'custom', model: 'before-model' };
+    providerServiceMock.getDefaultAccountId.mockImplementation(async () => defaultId);
+    providerServiceMock.setDefaultAccount.mockImplementation(async id => { defaultId = id; });
+    providerServiceMock.getAccount.mockImplementation(async () => saved);
+    providerServiceMock.updateAccount.mockImplementation(async (_id, patch) => { saved = { ...saved, ...patch }; return saved; });
+    vi.mocked(syncDefaultProviderToRuntime).mockRejectedValueOnce(new Error('temporary sync failure')).mockResolvedValue({ degraded: false });
+    vi.mocked(syncUpdatedProviderToRuntime).mockRejectedValueOnce(new Error('temporary sync failure')).mockResolvedValue(undefined);
+    const api = createProvidersApi({ gatewayManager: {} as never, mainWindow: {} as never });
+    expect((await api.setDefaultAccount({ accountId: 'after' })).success).toBe(false);
+    expect((await api.setDefaultAccount({ accountId: 'after' })).success).toBe(true);
+    expect(syncDefaultProviderToRuntime).toHaveBeenCalledTimes(2);
+    expect((await api.updateAccount({ accountId: 'after', updates: { model: 'after-model' } })).success).toBe(false);
+    expect((await api.updateAccount({ accountId: 'after', updates: { model: 'after-model' } })).success).toBe(true);
+    expect(syncUpdatedProviderToRuntime).toHaveBeenCalledTimes(2);
   });
 
   it('exposes hasKey status surfaces but not plaintext getApiKey handlers', async () => {

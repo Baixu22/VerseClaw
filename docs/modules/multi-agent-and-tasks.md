@@ -287,6 +287,8 @@ Routing Memo 默认/internal：
 - submitCompletion（同 task/candidate/generation 的 approved verifier 与 applied effect receipt 准入后，才写既有 `status_changed`）；
 - exportHtml。
 
+离线 HTML 的 Tree、DAG、History、Review 视图将任务标题、描述、标识和事件内容作为文本显示；搜索重绘保持同一转义规则。
+
 节点类型：
 
 - goal

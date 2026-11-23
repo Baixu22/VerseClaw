@@ -48,6 +48,31 @@ async function readOpenClawJson(): Promise<Record<string, unknown>> {
 }
 
 describe('channel credential normalization and duplicate checks', () => {
+  it('saves a non-default account repeatedly without manufacturing a default account', async () => {
+    const { saveChannelConfig } = await import('@electron/utils/channel-config');
+    await saveChannelConfig('telegram', { botToken: 'TEST_ONLY_BOT_TOKEN', allowedUsers: '123' }, 'bot-a');
+    await saveChannelConfig('telegram', { botToken: 'TEST_ONLY_BOT_TOKEN', allowedUsers: '456' }, 'bot-a');
+    const config = await readOpenClawJson() as { channels: { telegram: { accounts: Record<string, { allowFrom: string[] }> } } };
+    expect(Object.keys(config.channels.telegram.accounts)).toEqual(['bot-a']);
+    expect(config.channels.telegram.accounts['bot-a'].allowFrom).toContain('456');
+    const duplicate = await saveChannelConfig('telegram', { botToken: 'TEST_ONLY_BOT_TOKEN' }, 'bot-b').catch(error => error);
+    expect(String(duplicate)).toContain('already bound');
+    expect(String(duplicate)).not.toContain('TEST_ONLY_BOT_TOKEN');
+  });
+
+  it('retains masked channel secrets while accepting explicit replacement and clearing', async () => {
+    const { saveChannelConfig, getChannelFormValues } = await import('@electron/utils/channel-config');
+    await saveChannelConfig('feishu', { appId: 'fixture-app', appSecret: 'TEST_ONLY_SECRET' });
+    const form = await getChannelFormValues('feishu');
+    await saveChannelConfig('feishu', { ...form, appId: 'renamed-app' });
+    const secret = async () => ((await readOpenClawJson()).channels as { feishu: { accounts: { default: { appSecret: string } } } }).feishu.accounts.default.appSecret;
+    expect(await secret()).toBe('TEST_ONLY_SECRET');
+    await saveChannelConfig('feishu', { appSecret: 'REPLACED_SECRET' });
+    expect(await secret()).toBe('REPLACED_SECRET');
+    await saveChannelConfig('feishu', { appSecret: '' });
+    expect(await secret()).toBe('');
+    await expect(saveChannelConfig('feishu', { appSecret: '????invalid' })).rejects.toThrow('masked channel credential');
+  });
   beforeEach(async () => {
     vi.resetAllMocks();
     vi.resetModules();

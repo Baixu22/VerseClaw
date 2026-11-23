@@ -506,7 +506,8 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
   const [useCustom, setUseCustom] = useState(() => !!job && !schedulePresets.some((preset) => preset.value === getInitialCronSchedule(job)));
   const [scheduleChanged, setScheduleChanged] = useState(false);
   const [enabled, setEnabled] = useState(job?.enabled ?? true);
-  const [deliveryMode, setDeliveryMode] = useState<'none' | 'announce'>(job?.delivery?.mode === 'announce' ? 'announce' : 'none');
+  const [deliveryMode, setDeliveryMode] = useState(job?.delivery?.mode ?? 'none');
+  const [deliveryChanged, setDeliveryChanged] = useState(false);
   const [deliveryChannel, setDeliveryChannel] = useState(job?.delivery?.channel || '');
   const [deliveryTarget, setDeliveryTarget] = useState(job?.delivery?.to || '');
   const [selectedDeliveryAccountId, setSelectedDeliveryAccountId] = useState(job?.delivery?.accountId || '');
@@ -552,7 +553,8 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
       setUseCustom(!!job && !schedulePresets.some((preset) => preset.value === getInitialCronSchedule(job)));
       setScheduleChanged(false);
       setEnabled(job?.enabled ?? true);
-      setDeliveryMode(job?.delivery?.mode === 'announce' ? 'announce' : 'none');
+      setDeliveryMode(job?.delivery?.mode ?? 'none');
+      setDeliveryChanged(false);
       setDeliveryChannel(job?.delivery?.channel || '');
       setDeliveryTarget(job?.delivery?.to || '');
       setSelectedDeliveryAccountId(job?.delivery?.accountId || '');
@@ -773,7 +775,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
 
     setSaving(true);
     try {
-      const finalDelivery = deliveryMode === 'announce'
+      const finalDelivery = job && !deliveryChanged ? job.delivery ?? { mode: 'none' as const } : deliveryMode === 'announce'
         ? {
           mode: 'announce' as const,
           channel: effectiveDeliveryChannel.trim(),
@@ -784,7 +786,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
         }
         : { mode: 'none' as const };
 
-      if (finalDelivery.mode === 'announce') {
+      if ((!job || deliveryChanged) && finalDelivery.mode === 'announce') {
         if (!finalDelivery.channel) {
           toast.error(t('toast.channelRequired'));
           return;
@@ -1283,7 +1285,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
                 type="button"
                 variant={deliveryMode === 'none' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setDeliveryMode('none')}
+                onClick={() => { setDeliveryChanged(true); setDeliveryMode('none'); }}
                 className={cn(
                   'justify-start h-auto min-h-12 rounded-xl px-4 py-3 text-left whitespace-normal',
                   deliveryMode === 'none'
@@ -1300,7 +1302,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
                 type="button"
                 variant={deliveryMode === 'announce' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setDeliveryMode('announce')}
+                onClick={() => { setDeliveryChanged(true); setDeliveryMode('announce'); }}
                 className={cn(
                   'justify-start h-auto min-h-12 rounded-xl px-4 py-3 text-left whitespace-normal',
                   deliveryMode === 'announce'
@@ -1315,6 +1317,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
               </Button>
             </div>
 
+            {deliveryMode === 'webhook' && <p className="text-xs text-muted-foreground">{t('dialog.webhookPreserved', { target: job?.delivery?.to ?? '' })}</p>}
             {deliveryMode === 'announce' && (
               <div className="space-y-3 rounded-2xl border border-black/5 dark:border-white/5 bg-transparent p-4 shadow-sm">
                 <div className="space-y-2">
@@ -1325,6 +1328,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
                     id="delivery-channel"
                     value={effectiveDeliveryChannel}
                     onValueChange={(value) => {
+                      setDeliveryChanged(true);
                       setDeliveryChannel(value);
                       setSelectedDeliveryAccountId('');
                       setDeliveryTarget('');
@@ -1361,6 +1365,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
                       id="delivery-account"
                       value={effectiveDeliveryAccountId}
                       onValueChange={(value) => {
+                        setDeliveryChanged(true);
                         setSelectedDeliveryAccountId(value);
                         setDeliveryTarget('');
                       }}
@@ -1384,7 +1389,7 @@ function TaskDialog({ open, job, configuredChannels, onClose, onSave }: TaskDial
                   <SelectField
                     id="delivery-target-select"
                     value={deliveryTarget}
-                    onValueChange={(value) => setDeliveryTarget(value)}
+                    onValueChange={(value) => { setDeliveryChanged(true); setDeliveryTarget(value); }}
                     disabled={loadingChannelTargets || availableTargetOptions.length === 0}
                     placeholder={loadingChannelTargets ? t('dialog.loadingTargets') : t('dialog.selectDeliveryTarget')}
                   >
@@ -1822,7 +1827,7 @@ function CronJobDetailsPanel({
   const wakeLabel = job.runtime?.wakeMode === 'next-heartbeat'
     ? t('assurance.nextHeartbeat')
     : (job.runtime?.wakeMode || t('assurance.unknown'));
-  const deliveryModeLabel = job.delivery?.mode === 'announce' || job.target
+  const deliveryModeLabel = job.delivery?.mode === 'webhook' ? t('dialog.deliveryModeWebhook') : job.delivery?.mode === 'announce' || job.target
     ? t('dialog.deliveryModeAnnounce')
     : t('dialog.deliveryModeNone');
   const prompt = isBrowserAutomation && browserAutomation
@@ -2212,9 +2217,10 @@ export function Cron() {
   const handleSave = useCallback(async (input: CronJobCreateInput) => {
     if (editingJob) {
       const { schedule: nextSchedule, ...rest } = input;
+      if (JSON.stringify(rest.delivery) === JSON.stringify(editingJob.delivery ?? { mode: 'none' })) delete rest.delivery;
       const initial = getInitialCronSchedule(editingJob);
       // Omitting an untouched schedule also preserves Gateway timezone and every/at fields.
-      await updateJob(editingJob.id, nextSchedule === initial ? rest : input);
+      await updateJob(editingJob.id, nextSchedule === initial ? rest : { ...rest, schedule: nextSchedule });
     } else {
       await createJob(input);
     }
