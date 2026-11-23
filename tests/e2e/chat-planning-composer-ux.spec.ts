@@ -201,12 +201,15 @@ test('conversation planning, settings and decisions share a compact input surfac
     await expect(page.locator('.session-task-spinner')).toHaveCSS('animation-name', 'none');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     const enclosure = await page.evaluate(() => {
-      const taskPanel = document.querySelector('[data-testid="session-task-panel"]')!.getBoundingClientRect();
+      const taskElement = document.querySelector('[data-testid="session-task-panel"]')!;
+      const taskPanel = taskElement.getBoundingClientRect();
       const input = document.querySelector('[data-testid="chat-composer-shell"]')!.getBoundingClientRect();
-      return { widthDifference: Math.abs(taskPanel.width - input.width), gap: input.top - taskPanel.bottom };
+      return { widthDifference: Math.abs(taskPanel.width - input.width), gap: input.top - taskPanel.bottom,
+        sharedTray: Boolean(taskElement.closest('.composer-execution-tray')) };
     });
     expect(enclosure.widthDifference).toBeGreaterThan(20); expect(enclosure.widthDifference).toBeLessThan(28);
-    expect(enclosure.gap).toBeGreaterThan(28); expect(enclosure.gap).toBeLessThan(35);
+    expect(enclosure.sharedTray).toBe(true);
+    expect(enclosure.gap).toBeGreaterThanOrEqual(0); expect(enclosure.gap).toBeLessThan(2);
     const completedPlan = plan.map(item => ({ ...item, status: 'completed' }));
     await runtime(app, { type: 'tool.started', runId, sessionKey, ts: at + 4, toolCallId: 'ux-plan-final', name: 'update_plan', args: { plan: completedPlan } });
     await runtime(app, { type: 'tool.completed', runId, sessionKey, ts: at + 5, toolCallId: 'ux-plan-final', name: 'update_plan', result: { success: true } });
