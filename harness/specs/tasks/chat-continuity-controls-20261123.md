@@ -24,6 +24,7 @@ touchedAreas:
   - src/pages/Chat/ChatToolbar.tsx
   - src/pages/Chat/index.tsx
   - src/components/chat/ChatContextPressure.tsx
+  - src/components/chat/ComposerPopover.tsx
   - src/styles/codex-composer-shell.css
   - shared/i18n/locales/*/chat.json
   - tests/unit/chat-input.test.tsx
@@ -32,6 +33,7 @@ touchedAreas:
   - tests/e2e/chat-manual-compaction.spec.ts
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts
+  - tests/e2e/chat-composer-popovers.spec.ts
   - docs/dev/chat-continuity-controls.md
   - README*.md
   - harness/specs/tasks/chat-continuity-controls-20261123.md

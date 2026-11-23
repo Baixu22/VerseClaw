@@ -25,6 +25,9 @@ function Surface({ align = 'left', inline = false, maxHeight, className, childre
       const rect = anchor.getBoundingClientRect();
       const column = anchor.closest('[data-testid="chat-conversation-column"]');
       const bounds = column?.getBoundingClientRect();
+      const leftEdge = Math.max(8, (bounds?.left ?? 0) + 8);
+      const rightEdge = Math.min(window.innerWidth - 8, (bounds?.right ?? window.innerWidth) - 8);
+      panel.style.maxWidth = `${Math.max(0, rightEdge - leftEdge)}px`;
       const toolbar = column?.querySelector('[data-testid="chat-toolbar-shell"]')?.getBoundingClientRect();
       const top = Math.max(8, (toolbar?.bottom ?? bounds?.top ?? 0) + 8);
       const bottom = Math.min(window.innerHeight, bounds?.bottom ?? window.innerHeight) - 8;
@@ -36,7 +39,7 @@ function Surface({ align = 'left', inline = false, maxHeight, className, childre
       panel.style.bottom = side === 'top' ? 'calc(100% + 8px)' : 'auto';
       panel.style.top = side === 'bottom' ? 'calc(100% + 8px)' : 'auto';
       const desiredLeft = align === 'right' ? rect.right - panel.offsetWidth : rect.left;
-      const left = Math.max((bounds?.left ?? 0) + 8, Math.min(desiredLeft, (bounds?.right ?? window.innerWidth) - panel.offsetWidth - 8));
+      const left = Math.max(leftEdge, Math.min(desiredLeft, rightEdge - panel.offsetWidth));
       panel.style.left = `${left - rect.left}px`;
       panel.style.right = 'auto';
       panel.style.transformOrigin = `${align} ${side === 'top' ? 'bottom' : 'top'}`;
@@ -45,6 +48,9 @@ function Surface({ align = 'left', inline = false, maxHeight, className, childre
     const observer = new ResizeObserver(place);
     observer.observe(anchor);
     observer.observe(panel);
+    // Sidebar and artifact panels can move the anchor without resizing it.
+    const column = anchor.closest('[data-testid="chat-conversation-column"]');
+    if (column) observer.observe(column);
     window.addEventListener('resize', place);
     window.addEventListener('scroll', place, true);
     return () => {

@@ -98,3 +98,5 @@ See `tasks/knowledge-bot-avatar.md` and `rules/knowledge-bot-runtime-state.md`.
 - `pnpm run test:e2e:run tests/e2e/windows-ui-v2.spec.ts tests/e2e/settings-drawer.spec.ts`
 
 The execution context refinement in `tasks/chat-execution-context-20261123.md` moves project, directory and branch actions into one inset tray above the 22px composer. Task progress shares this tray. New worktrees use generated branch names with optional custom settings; current drafts are saved before switching.
+
+The conversation controls in `tasks/chat-continuity-controls-20261123.md` explain the effect of queue, guide, interrupt, branch and summary handoff. Continuation drafts take priority over collapsed sources; compaction shows one usage reading. Menus stay within the conversation column as the sidebar or artifact panel changes its width.

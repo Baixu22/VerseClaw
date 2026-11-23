@@ -376,7 +376,8 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       await page.evaluate(() => document.documentElement.classList.add('dark'));
       await page.screenshot({ path: testInfo.outputPath('delivery-dark.png') });
       await page.setViewportSize({ width: 480, height: 800 });
-      await expect(page.getByTestId('chat-intervention-guide')).toBeInViewport();
+      await expect(page.getByTestId('chat-intervention-controls')).toBeInViewport({ ratio: 1 });
+      await expect(page.getByTestId('chat-intervention-guide')).toBeInViewport({ ratio: 1 });
       await expect(page.getByTestId('chat-intervention-interrupt')).toBeInViewport();
       await page.screenshot({ path: testInfo.outputPath('delivery-narrow-dark.png') });
       await page.setViewportSize({ width: 1280, height: 900 });
