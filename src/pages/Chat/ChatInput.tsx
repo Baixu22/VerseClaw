@@ -121,7 +121,7 @@ import { BorderBeam } from 'border-beam';
 import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
 import { ComposerPopover } from '@/components/chat/ComposerPopover';
 import { ModelBrandIcon } from '@/components/chat/ModelBrandIcon';
-import { describeModelRef } from '@/lib/model-brand';
+import { compactModelName, describeModelRef } from '@/lib/model-brand';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { SmokyDissolve } from '@/components/ui/smoky-dissolve';
 import MaterialFileTypeIcon from '@lobehub/ui/es/MaterialFileTypeIcon/index';
@@ -227,7 +227,7 @@ type ComposerSendState =
   | 'paused';
 
 type ComposerSendStateMeta = {
-  icon: ComponentType<{ className?: string }>;
+  icon: LucideIcon;
   iconClassName: string;
   disabled: boolean;
   labelKey: string;
@@ -4282,6 +4282,7 @@ export function ChatInput({
                   data-testid="chat-model-picker-button"
                   className={cn('codex-composer-control codex-model-picker-trigger', modelPickerOpen && 'is-active')}
                   aria-label={`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}
+                  title={effectiveModelRef ?? effectiveModelLabel}
                   aria-expanded={modelPickerOpen}
                   disabled={inputDisabled || sending}
                   onClick={(event) => {
@@ -4292,7 +4293,7 @@ export function ChatInput({
                   }}
                 >
                   <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
-                  <span className="codex-model-picker-label" data-testid="chat-model-picker-label">{effectiveModelDisplay.name}</span>
+                  <span className="codex-model-picker-label" data-testid="chat-model-picker-label">{compactModelName(effectiveModelDisplay.name)}</span>
                   <span
                     data-testid="chat-agent-effort-button"
                     className={cn(
@@ -4399,7 +4400,7 @@ export function ChatInput({
                       onClick={() => void onPauseSession?.()}
                       aria-label={t('composer.stop')}
                     >
-                      <Square className="h-3 w-3 fill-current" />
+                      <Square className="h-3 w-3 fill-current" strokeWidth={0} aria-hidden="true" />
                     </button>
                   </span>
                 </TooltipTrigger>
@@ -4413,18 +4414,17 @@ export function ChatInput({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex">
-              <Button
+              <button
+                type="button"
                 onClick={handlePrimaryComposerAction}
                 disabled={sendButtonMeta.disabled}
-                size="icon"
                 data-testid="chat-composer-send"
                 data-send-state={composerSendState}
                 className="composer-send-button"
-                variant="ghost"
                 aria-label={t(sendButtonMeta.labelKey)}
               >
-                <SendButtonIcon className={sendButtonMeta.iconClassName} />
-              </Button>
+                <SendButtonIcon className={sendButtonMeta.iconClassName} strokeWidth={composerSendState === 'running' || composerSendState === 'paused' ? 0 : 1.6} aria-hidden="true" />
+              </button>
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top" collisionPadding={8}>

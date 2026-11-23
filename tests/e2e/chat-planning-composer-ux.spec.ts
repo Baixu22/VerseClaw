@@ -49,7 +49,7 @@ test('conversation planning, settings and decisions share a compact input surfac
         'chat.history': { sessionKey, sessionId: 'chat-ux-generation', messages: [
           { id: 'ux-user', role: 'user', content: '请把任务规划和会话操作整理得更清楚。', timestamp: at },
           { id: 'ux-answer', role: 'assistant', content: '先整理当前步骤，完成后核对任务结果。', timestamp: at + 1 },
-        ] }, '*': {},
+        ] }, 'chat.abort': { aborted: true, runIds: ['chat-ux-controls'] }, '*': {},
       },
       hostApi: {
         [key('agents', 'list')]: { success: true, agents: [{ id: 'main', name: 'main', canonicalSessionKey: sessionKey }], defaultAgentId: 'main', defaultModelRef: 'anthropic/claude-sonnet-4-6' },
@@ -111,6 +111,8 @@ test('conversation planning, settings and decisions share a compact input surfac
     expect(anchors).toBeLessThanOrEqual(5);
     await capture('rest-light-1280');
     const modelBefore = await page.getByTestId('chat-model-picker-label').textContent();
+    expect(modelBefore).toBe('Sonnet 4.6');
+    await expect(page.getByTestId('chat-model-picker-button')).toHaveAttribute('title', 'anthropic/claude-sonnet-4-6');
     const permissionBefore = await page.getByTestId('chat-composer-permission-mode').textContent();
     await openKnowledge();
     await expect(page.getByTestId('chat-knowledge-interaction')).toHaveValue('off');
@@ -173,6 +175,30 @@ test('conversation planning, settings and decisions share a compact input surfac
     steps.ownerAcceptanceFoldsReceipt = true;
     const input = page.getByTestId('chat-composer-input');
     await input.fill('保留这段尚未发送的跟进');
+    const action = page.getByTestId('chat-composer-send');
+    const actionStyles: Record<string, unknown> = {};
+    const captureAction = async (state: string) => {
+      await expect(action).toHaveAttribute('data-send-state', state);
+      const style = await action.evaluate(element => {
+        const box = element.getBoundingClientRect(), css = getComputedStyle(element);
+        return { width: box.width, height: box.height, radius: css.borderRadius, background: css.backgroundColor, color: css.color };
+      });
+      expect(style.width).toBeCloseTo(style.height, 1);
+      expect(style.radius).toBe('50%');
+      expect(style.background).toBe('rgb(255, 255, 255)');
+      actionStyles[state] = style;
+      await capture(`action-${state}-dark-960`);
+    };
+    await captureAction('ready');
+    await input.fill('');
+    await runtime(app, { type: 'run.started', runId: 'chat-ux-controls', sessionKey, ts: Date.now(), startedAt: Date.now() });
+    await captureAction('running');
+    await action.click();
+    await captureAction('paused');
+    await action.click();
+    await expect(action).toHaveAttribute('data-send-state', 'idle');
+    await input.fill('保留这段尚未发送的跟进');
+    steps.roundSendStopResume = true;
     await app.evaluate(({ BrowserWindow }, value) => BrowserWindow.getAllWindows()[0].webContents.send('runtime-approvals:requested', {
       approvalId: 'ux-approval', sessionKey: value, agentId: 'main', command: 'node --test', cwd: 'D:/tmp/chat-ux-fixture',
       allowedDecisions: ['allow-once', 'deny'], createdAtMs: Date.now(), expiresAtMs: Date.now() + 60000,
@@ -207,6 +233,6 @@ test('conversation planning, settings and decisions share a compact input surfac
     }
     steps.fourLocalesAndNarrowThemes = true;
     expect(pageErrors).toEqual([]);
-    await writeFile(info.outputPath('chat-ux-journey.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-chat-ux', dataSource: 'agent-fixed Task and typed Runtime events', steps, shots, enclosure, defaultAnchorCount: anchors, pageErrors }, null, 2));
+    await writeFile(info.outputPath('chat-ux-journey.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-chat-ux', dataSource: 'agent-fixed Task and typed Runtime events', steps, shots, enclosure, actionStyles, defaultAnchorCount: anchors, pageErrors }, null, 2));
   } finally { await closeElectronApp(app); }
 });

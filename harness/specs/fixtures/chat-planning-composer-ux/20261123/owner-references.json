@@ -1,0 +1,20 @@
+[
+  {
+    "state": "send",
+    "path": "images/owner-reference-send.png",
+    "sha256": "4cfdabdbe42fd37bae2ba8f2565d950edcb21d83509eafb9b965e2630814fe1b",
+    "source": "user image attachment"
+  },
+  {
+    "state": "stop",
+    "path": "images/owner-reference-stop.png",
+    "sha256": "0246b8251dfadc4ca2c6054890af8a7d7f2ce7c9dcd464252ae189cc9b5ce9d6",
+    "source": "user image attachment"
+  },
+  {
+    "state": "resume",
+    "path": "images/owner-reference-resume.png",
+    "sha256": "d2b7ea662348ad5d1e2cbfb6717bfb40f59397aa391fb4fc77a82373b1e86d8a",
+    "source": "user image attachment"
+  }
+]

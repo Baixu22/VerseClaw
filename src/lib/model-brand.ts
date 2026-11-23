@@ -131,3 +131,14 @@ export function describeModelRef(modelRef: string | null | undefined): ModelDisp
   const namespace = segments.join('/');
   return { name, source: namespace ? `${provider} · ${namespace}` : provider };
 }
+
+/** Compact display only; model selection and requests retain the complete ref. */
+export function compactModelName(name: string): string {
+  const base = name.replace(/:free$/i, '').replace(/[-_]\d{8}$/, '');
+  const claude = /^claude-(sonnet|opus|haiku)-(\d+(?:[.-]\d+)*)$/i.exec(base);
+  const label = claude
+    ? `${claude[1][0].toUpperCase()}${claude[1].slice(1).toLowerCase()} ${claude[2].replaceAll('-', '.')}`
+    : base.replace(/^deepseek[-_]/i, 'DeepSeek ').replace(/^gpt-/i, 'GPT-').replace(/^gemini-/i, 'Gemini ');
+  const characters = Array.from(label);
+  return characters.length > 24 ? `${characters.slice(0, 23).join('')}…` : label;
+}

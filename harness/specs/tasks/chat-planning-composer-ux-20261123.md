@@ -22,6 +22,7 @@ requiredProfiles:
   - comms
 touchedAreas:
   - src/pages/Chat/**
+  - src/lib/model-brand.ts
   - src/components/chat/ComposerPopover.tsx
   - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
   - src/components/tool-ui/plan-view.tsx
@@ -35,6 +36,7 @@ touchedAreas:
   - tests/unit/session-task-state-guidance.test.tsx
   - tests/unit/chat-render-reachability.test.tsx
   - tests/unit/fp-p1-scripted-usage.test.ts
+  - tests/unit/model-brand.test.ts
   - tests/e2e/fixtures/fp-p1-harness.ts
   - tests/e2e/chat-planning-composer-ux.spec.ts
   - tests/e2e/chat-composer-popovers.spec.ts
@@ -48,6 +50,8 @@ touchedAreas:
   - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/fixtures/chat-planning-composer-ux/20261123/**
 expectedUserBehavior:
+  - 底栏模型名称简短显示，完整名称和路由仍可从提示及列表查看。
+  - 发送、停止和继续使用统一圆形按钮，深色主题采用浅色圆底和深色图标。
   - 知识模式、来源和检索方案从一个入口设置，额外调用档位有可见标签。
   - 输入框与任务条共享内容宽度，目标、当前步骤和状态形成稳定的一行。
   - 持久目标与本轮计划并存时，本轮步骤可查看且只保留一个实时规划入口。

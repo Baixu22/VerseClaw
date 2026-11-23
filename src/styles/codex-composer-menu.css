@@ -110,7 +110,7 @@
 }
 
 .codex-model-picker-trigger {
-  max-width: min(180px, 24vw);
+  max-width: min(160px, 24vw);
 }
 
 .codex-execution-settings__effort-shortcut {

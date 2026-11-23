@@ -123,7 +123,8 @@ for (const theme of ['light', 'dark'] as const) {
             await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-model-options.png`) });
             await longName.click();
             await expect(menu).toHaveCount(0);
-            await expect(page.getByTestId('chat-model-picker-label')).toHaveText(modelNames[2].split('/').at(-1)!);
+            await expect(page.getByTestId('chat-model-picker-label')).toHaveText('qwen3-coder-480b-a35b-i…');
+            expect(await page.getByTestId('chat-model-picker-button').getAttribute('title')).toContain(modelNames[2]);
             await expect(page.getByTestId('chat-model-picker-label')).toBeVisible();
             await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-selected-long-model.png`) });
           }
