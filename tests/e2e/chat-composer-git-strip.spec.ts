@@ -90,6 +90,11 @@ async function installComposerGitMocks(
 ) {
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+    gatewayRpcByMethod: {
+      'sessions.list': { sessions: [{ key: SESSION_KEY, sessionId: 'git-strip-fixture', displayName: 'main' }] },
+      'chat.history': { messages },
+      '*': {},
+    },
     gatewayRpc: {
       [stableStringify(['sessions.list', {}])]: {
         success: true,

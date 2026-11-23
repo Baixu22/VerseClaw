@@ -216,7 +216,7 @@ test.describe('Tool UI execution surfaces', () => {
         await diskSpaceNotice.locator('xpath=ancestor::*[@data-sonner-toast][1]').getByRole('button').click();
       }
 
-      const message = approval.locator('xpath=ancestor::*[starts-with(@data-testid,"chat-message-")][1]');
+      const message = terminal.locator('xpath=ancestor::*[starts-with(@data-testid,"chat-message-")][1]');
       await page.setViewportSize({ width: 1280, height: 1400 });
       await page.evaluate(() => {
         document.documentElement.classList.remove('dark');
