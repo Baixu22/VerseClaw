@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { transformWithEsbuild } from "vite";
 import { resolveDefaultAgentId } from "../../openclaw_runtime/src/agents/agent-scope";
+import type { ChatAbortControllerEntry } from "../../openclaw_runtime/src/gateway/chat-abort";
 import { resolveSessionStoreAgentId } from "../../openclaw_runtime/src/gateway/session-store-key";
 import {
   normalizeAgentId,
@@ -28,7 +29,7 @@ const identity = {
 };
 const params = {
   cfg: {},
-  context: { chatAbortControllers: new Map() },
+  context: { chatAbortControllers: new Map<string, ChatAbortControllerEntry>() },
   requestedKey: canonicalKey,
   canonicalKey,
   sessionId: identity.expectedSessionId,
@@ -40,8 +41,16 @@ describe("manual compaction admission readiness", () => {
   it.each(["tracked", "embedded", "permit", "fence", "idle"] as const)(
     "checks %s and becomes idle after release",
     async (kind) => {
-      const context = { chatAbortControllers: new Map() };
-      if (kind === "tracked") context.chatAbortControllers.set("run", { sessionKey: canonicalKey });
+      const context = { chatAbortControllers: new Map<string, ChatAbortControllerEntry>() };
+      if (kind === "tracked") {
+        context.chatAbortControllers.set("run", {
+          controller: new AbortController(),
+          sessionId: identity.expectedSessionId,
+          sessionKey: canonicalKey,
+          startedAtMs: 0,
+          expiresAtMs: 60_000,
+        });
+      }
       runs.active.mockReturnValue(kind === "embedded");
       const release =
         kind === "permit"
@@ -63,8 +72,18 @@ describe("manual compaction admission readiness", () => {
 
   it("keeps invisible run projection separate from admission safety", () => {
     const context = {
-      chatAbortControllers: new Map([
-        ["run", { sessionKey: canonicalKey, controlUiVisible: false }],
+      chatAbortControllers: new Map<string, ChatAbortControllerEntry>([
+        [
+          "run",
+          {
+            controller: new AbortController(),
+            sessionId: identity.expectedSessionId,
+            sessionKey: canonicalKey,
+            startedAtMs: 0,
+            expiresAtMs: 60_000,
+            controlUiVisible: false,
+          },
+        ],
       ]),
     };
     const release = sessionAdmissionRegistry.acquirePermit(identity, "embedded-agent");
