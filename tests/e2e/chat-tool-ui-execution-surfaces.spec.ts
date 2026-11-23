@@ -224,7 +224,7 @@ test.describe('Tool UI execution surfaces', () => {
       });
       await message.scrollIntoViewIfNeeded();
 
-      const approvalSurface = approval.locator('[data-slot="approval-card"] > div').first();
+      const approvalSurface = page.getByTestId('chat-composer-requests');
       const terminalSurface = terminal.locator('[data-slot="terminal"] > div').first();
       const codeDiffSurface = codeDiff.locator('[data-slot="code-diff"] > div').first();
       const progressSurface = progress.locator('[data-slot="progress-tracker"] > div').first();

@@ -2748,25 +2748,7 @@
     "docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md",
     "docs/dev/project-rag/EVALUATION-CONTRACT.md",
     "docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md",
-    "docs/dev/project-rag/RESEARCH-CONTRACT.md",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/build-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/build-final-r1.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/comms-compare-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/comms-compare-final-r1.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/comms-replay-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/comms-replay-final-r1.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/contract-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/contract-final-r1.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/harness-final-r2.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/harness-final-r2.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/harness-flow-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/harness-flow-final-r1.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/i18n-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/i18n-final-r1.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/typecheck-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/typecheck-final-r1.stdout.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/unit-final-r1.stderr.log",
-    "harness/specs/fixtures/chat-continuity-controls/20261123/logs/unit-final-r1.stdout.log"
+    "docs/dev/project-rag/RESEARCH-CONTRACT.md"
   ],
   "artifactBatches": {}
 }
