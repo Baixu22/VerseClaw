@@ -328,8 +328,8 @@ test.describe('Chat composer Git strip', () => {
         agentId: 'main',
         sessionKey: SESSION_KEY,
         allowedDecisions: ['allow-once', 'allow-always', 'deny'],
-        createdAtMs: 1,
-        expiresAtMs: 2,
+        createdAtMs: Date.now(),
+        expiresAtMs: Date.now() + 60000,
       });
 
       const prompt = page.getByTestId('runtime-approval-prompt');

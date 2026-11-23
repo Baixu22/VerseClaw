@@ -280,7 +280,7 @@ test.describe('Tool UI execution surfaces', () => {
       await testInfo.attach('tool-ui-execution-narrow', { path: narrowPath, contentType: 'image/png' });
       expect((await terminal.boundingBox())?.width ?? 0).toBeLessThanOrEqual(760);
       const overflowChecks = await Promise.all(
-        [approval, terminal, codeDiff, progress, webSearch].map((surface) => surface.evaluate(
+        [approvalSurface, terminal, codeDiff, progress, webSearch].map((surface) => surface.evaluate(
           (element) => element.scrollWidth <= element.clientWidth + 1,
         )),
       );
