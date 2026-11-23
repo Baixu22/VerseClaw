@@ -162,13 +162,14 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await page.setViewportSize({ width: 960, height: 800 });
     await input.fill('Draft protected while running');
     await page.getByTestId('composer-context-branch').click();
-    await expect(menu).toBeVisible();
+    await expect(page.getByTestId('composer-context-branches')).toBeVisible();
     await app.evaluate(({ BrowserWindow }, key) => {
       for (const window of BrowserWindow.getAllWindows()) window.webContents.send('chat:runtime-event', { type: 'run.started', sessionKey: key, runId: 'tray-running', ts: Date.now(), startedAt: Date.now() });
     }, active.activeSessionKey);
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running-with-draft');
     await expect(page.getByTestId('composer-context-row')).toHaveCount(0);
     await expect(menu).toHaveCount(0);
+    await expect(page.getByTestId('composer-context-branches')).toHaveCount(0);
     await expect(input).toHaveValue('Draft protected while running');
     await page.screenshot({ path: info.outputPath('running-setup-hidden-dark.png') });
     await page.evaluate(() => document.documentElement.classList.remove('dark'));
