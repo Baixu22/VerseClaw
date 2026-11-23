@@ -1,0 +1,796 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\playwright.config.ts",
+    "rootDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/carbon-continuity-ux-20261123-01a203cc/e2e-final-r1",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-composer-popovers.spec.ts",
+      "file": "chat-composer-popovers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15818,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-23T13:31:03.571Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "menu-motion-frames",
+                      "contentType": "application/json",
+                      "body": "ewogICJvcGVuaW5nIjogWwogICAgewogICAgICAidGltZSI6IDcuNTk5OTk5OTk3NzY0ODI2LAogICAgICAiZmlsdGVyIjogImJsdXIoMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMCwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTEuODk5OTk5OTk4NTA5ODg0LAogICAgICAiZmlsdGVyIjogImJsdXIoMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMCwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjUuMzk5OTk5OTk4NTA5ODg0LAogICAgICAiZmlsdGVyIjogImJsdXIoMS42OTYxNnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4xNTE5MTgsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDM5Ljg5OTk5OTk5ODUwOTg4NCwKICAgICAgImZpbHRlciI6ICJibHVyKDEuMzg2ODNweCkiLAogICAgICAib3BhY2l0eSI6IDAuMzA2NTg3LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA1My4wOTk5OTk5OTc3NjQ4MjYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjE3MDk3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjQxNDUxNywKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNjUuMTk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjk2ODUzMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC41MTU3MzQsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDc4LjU5OTk5OTk5Nzc2NDgzLAogICAgICAiZmlsdGVyIjogImJsdXIoMC43ODAxMTlweCkiLAogICAgICAib3BhY2l0eSI6IDAuNjA5OTQsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDkyLjMwMDAwMDAwMDc0NTA2LAogICAgICAiZmlsdGVyIjogImJsdXIoMC42MDY3MTdweCkiLAogICAgICAib3BhY2l0eSI6IDAuNjk2NjQyLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMDYuNjk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjQwMDk0N3B4KSIsCiAgICAgICJvcGFjaXR5IjogMC43OTk1MjcsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDExOS4zOTk5OTk5OTg1MDk4OCwKICAgICAgImZpbHRlciI6ICJibHVyKDAuMjY4ODI4cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjg2NTU4NiwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTMxLjU5OTk5OTk5Nzc2NDgzLAogICAgICAiZmlsdGVyIjogImJsdXIoMC4xNTgzNzJweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTIwODE0LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNDQuMzAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjA3MzcyNDdweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTYzMTM4LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNTQuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDAuMDMyODQ3NHB4KSIsCiAgICAgICJvcGFjaXR5IjogMC45ODM1NzYsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE2NC4zOTk5OTk5OTg1MDk4OCwKICAgICAgImZpbHRlciI6ICJibHVyKDAuMDAxNDc4NDNweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTk5MjYxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNzMuMzk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxODQuMzAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxOTEuMzAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxOTIuNjk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxOTguMTk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMDUuODAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMTEuODk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMTguMzAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMjQuODk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMzIsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMzguMzk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyNDQuNTk5OTk5OTk3NzY0ODMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyNTAuMzk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyNTYuNTk5OTk5OTk3NzY0OCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI2Mi41LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjY5LjUsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyNzUuMTk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyODEuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI4Ny44MDAwMDAwMDA3NDUwNiwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI5My44OTk5OTk5OTg1MDk5LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjk5LjU5OTk5OTk5Nzc2NDgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMDUuNTk5OTk5OTk3NzY0OCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDMxMC42OTk5OTk5OTkyNTQ5NCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDMxNy41LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzIyLjA5OTk5OTk5Nzc2NDgsCiAgICAgICJmaWx0ZXIiOiAibm9uZSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0KICBdLAogICJjbG9zaW5nIjogWwogICAgewogICAgICAidGltZSI6IDkuNjk5OTk5OTk5MjU0OTQyLAogICAgICAiZmlsdGVyIjogImJsdXIoMC4wOTU3ODI5cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjk1MjEwOSwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDEyLjYwMDAwMDAwMTQ5MDExNiwKICAgICAgImZpbHRlciI6ICJibHVyKDAuMTc4NDU4cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjkxMDc3MSwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIyLjYwMDAwMDAwMTQ5MDExNiwKICAgICAgImZpbHRlciI6ICJibHVyKDAuMzQyMTk1cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjgyODkwMiwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDM4LjY5OTk5OTk5OTI1NDk0LAogICAgICAiZmlsdGVyIjogImJsdXIoMC42NDY4MzlweCkiLAogICAgICAib3BhY2l0eSI6IDAuNjc2NTgsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA0Ni44OTk5OTk5OTg1MDk4ODQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjc5MjAwNnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC42MDM5OTcsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA1Ny4xMDAwMDAwMDE0OTAxMTYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjkyOTUyNnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC41MzUyMzcsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA2Ny4xOTk5OTk5OTkyNTQ5NCwKICAgICAgImZpbHRlciI6ICJibHVyKDEuMTI1MjJweCkiLAogICAgICAib3BhY2l0eSI6IDAuNDM3MzkxLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNzguMzAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjI0NzIzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjM3NjM4MywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDkwLjM5OTk5OTk5ODUwOTg4LAogICAgICAiZmlsdGVyIjogImJsdXIoMS4zMDY0NXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4zNDY3NzQsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMDIuODAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjU3MjYxcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjIxMzY5NiwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDExNC4xMDAwMDAwMDE0OTAxMiwKICAgICAgImZpbHRlciI6ICJibHVyKDEuNzA4NHB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4xNDU4MDEsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMjguNjAwMDAwMDAxNDkwMTIsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjgyMzA4cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjA4ODQ2MDgsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNDAuMzAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjg1NzA3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjA3MTQ2NjEsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNTIuNjk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk3NDMzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAxMjgzNjMsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNjQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk5OTc5cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAwMDEwNTM5OSwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE3NC4zOTk5OTk5OTg1MDk4OCwKICAgICAgImZpbHRlciI6ICJibHVyKDJweCkiLAogICAgICAib3BhY2l0eSI6IDAsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "684c93bd8c41b6c8b2fe-743937ce6b63a874d31d",
+          "file": "chat-composer-popovers.spec.ts",
+          "line": 13,
+          "column": 7
+        },
+        {
+          "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14979,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-23T13:31:19.404Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "menu-motion-frames",
+                      "contentType": "application/json",
+                      "body": "ewogICJvcGVuaW5nIjogWwogICAgewogICAgICAidGltZSI6IDYuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDJweCkiLAogICAgICAib3BhY2l0eSI6IDAsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDkuMDk5OTk5OTk3NzY0ODI2LAogICAgICAiZmlsdGVyIjogImJsdXIoMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMCwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTAuMTk5OTk5OTk5MjU0OTQyLAogICAgICAiZmlsdGVyIjogImJsdXIoMS45MzcwOHB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4wMzE0NTk0LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMi4zOTk5OTk5OTg1MDk4ODQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjY4NjU0cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjE1NjczMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzMuNjk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjUzMDExcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjIzNDk0NiwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNDUuMzk5OTk5OTk4NTA5ODg0LAogICAgICAiZmlsdGVyIjogImJsdXIoMS4zMDU4NXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4zNDcwNzcsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDU3LjMwMDAwMDAwMDc0NTA2LAogICAgICAiZmlsdGVyIjogImJsdXIoMS4wOTQ4OXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC40NTI1NTcsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDY5LjMwMDAwMDAwMDc0NTA2LAogICAgICAiZmlsdGVyIjogImJsdXIoMC44OTc1MjJweCkiLAogICAgICAib3BhY2l0eSI6IDAuNTUxMjM5LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA4MC42OTk5OTk5OTkyNTQ5NCwKICAgICAgImZpbHRlciI6ICJibHVyKDAuNzE0NDk3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjY0Mjc1MSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogOTEuMzk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjYwMTQzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjY5OTI4NSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTAyLjU5OTk5OTk5Nzc2NDgzLAogICAgICAiZmlsdGVyIjogImJsdXIoMC40NDQ5NzhweCkiLAogICAgICAib3BhY2l0eSI6IDAuNzc3NTExLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMTMuMzk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjM0OTk5M3B4KSIsCiAgICAgICJvcGFjaXR5IjogMC44MjUwMDMsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDEyNC41LAogICAgICAiZmlsdGVyIjogImJsdXIoMC4yMjU0OTRweCkiLAogICAgICAib3BhY2l0eSI6IDAuODg3MjUzLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNDIsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjA5NjEyOTNweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTUxOTM1LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNzEuMzAwMDAwMDAwNzQ1MDYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjAwNjcwNTQxcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjk5NjY0NywKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTc0LjA5OTk5OTk5Nzc2NDgzLAogICAgICAiZmlsdGVyIjogImJsdXIoMC4wMDEwNTYxM3B4KSIsCiAgICAgICJvcGFjaXR5IjogMC45OTk0NzIsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE4Ny42OTk5OTk5OTkyNTQ5NCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE5Ni4zOTk5OTk5OTg1MDk4OCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIwNi4wOTk5OTk5OTc3NjQ4MywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIxNS41OTk5OTk5OTc3NjQ4MywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIyMy4zMDAwMDAwMDA3NDUwNiwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIzMC44MDAwMDAwMDA3NDUwNiwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIzOS4xOTk5OTk5OTkyNTQ5NCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI0OC41LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjU1Ljg5OTk5OTk5ODUwOTg4LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjY3LjY5OTk5OTk5OTI1NDk0LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjc2LjE5OTk5OTk5OTI1NDk0LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjgzLjY5OTk5OTk5OTI1NDk0LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjkxLjA5OTk5OTk5Nzc2NDgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyOTcuMTk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMDIuODk5OTk5OTk4NTA5OSwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDMxMC41LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzE3LjA5OTk5OTk5Nzc2NDgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwcHgpIiwKICAgICAgIm9wYWNpdHkiOiAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAzMjksCiAgICAgICJmaWx0ZXIiOiAibm9uZSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0KICBdLAogICJjbG9zaW5nIjogWwogICAgewogICAgICAidGltZSI6IDcuMzk5OTk5OTk4NTA5ODg0LAogICAgICAiZmlsdGVyIjogImJsdXIoMC4wNDIxNzA3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjk3ODkxNSwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDkuMDk5OTk5OTk3NzY0ODI2LAogICAgICAiZmlsdGVyIjogImJsdXIoMC4xMjYyNjlweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTM2ODY1LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjAuMTk5OTk5OTk5MjU0OTQyLAogICAgICAiZmlsdGVyIjogImJsdXIoMC4yOTIyNTVweCkiLAogICAgICAib3BhY2l0eSI6IDAuODUzODcyLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzAuMTk5OTk5OTk5MjU0OTQyLAogICAgICAiZmlsdGVyIjogImJsdXIoMC40NDk1MTNweCkiLAogICAgICAib3BhY2l0eSI6IDAuNzc1MjQzLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzkuMTk5OTk5OTk5MjU0OTQsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjUyNjc1NXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC43MzY2MjIsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA0OC42OTk5OTk5OTkyNTQ5NCwKICAgICAgImZpbHRlciI6ICJibHVyKDAuODE3Mjk3cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjU5MTM1MSwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDY1Ljg5OTk5OTk5ODUwOTg4LAogICAgICAiZmlsdGVyIjogImJsdXIoMS4wODU2N3B4KSIsCiAgICAgICJvcGFjaXR5IjogMC40NTcxNjQsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiA3Ny41OTk5OTk5OTc3NjQ4MywKICAgICAgImZpbHRlciI6ICJibHVyKDEuMjdweCkiLAogICAgICAib3BhY2l0eSI6IDAuMzY1MDAxLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogODcuNzk5OTk5OTk3MDE5NzcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjM4Mzk5cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjMwODAwNCwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDk5LjA5OTk5OTk5Nzc2NDgzLAogICAgICAiZmlsdGVyIjogImJsdXIoMS41NDMxNXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4yMjg0MjQsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMTAuMDk5OTk5OTk3NzY0ODMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjY4MThweCkiLAogICAgICAib3BhY2l0eSI6IDAuMTU5MTAxLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTIwLjA5OTk5OTk5Nzc2NDgzLAogICAgICAiZmlsdGVyIjogImJsdXIoMS43NjQ0MnB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4xMTc3OTEsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMzIuMDk5OTk5OTk3NzY0ODMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjg2ODIxcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjA2NTg5MjYsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNDQuMzk5OTk5OTk4NTA5ODgsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk0NTU2cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAyNzIyMTQsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNTYuMjk5OTk5OTk3MDE5NzcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk5MTA1cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAwNDQ3NDYyLAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTY4LjE5OTk5OTk5OTI1NDk0LAogICAgICAiZmlsdGVyIjogImJsdXIoMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMCwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "684c93bd8c41b6c8b2fe-9bce6f88180b9264c4d4",
+          "file": "chat-composer-popovers.spec.ts",
+          "line": 13,
+          "column": 7
+        },
+        {
+          "title": "touch composer targets fit at 375px and the closed add menu skips its actions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6103,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-23T13:31:34.391Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "684c93bd8c41b6c8b2fe-84f9f1ee0f8de86ee80c",
+          "file": "chat-composer-popovers.spec.ts",
+          "line": 255,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "chat-long-task-control.spec.ts",
+      "file": "chat-long-task-control.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat long-task recovery controls",
+          "file": "chat-long-task-control.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows recovery status and drains queued follow-up through Host API",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9958,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:31:40.508Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3cb4d783502f7cd164d0-01c6cb579545a798f43b",
+              "file": "chat-long-task-control.spec.ts",
+              "line": 16,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-manual-compaction.spec.ts",
+      "file": "chat-manual-compaction.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat manual compaction",
+          "file": "chat-manual-compaction.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opens confirmation dialog and calls the session compaction Host API",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7329,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:31:50.477Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b42b4a4135bedb2d56bf-879a0bc20dc846c887d0",
+              "file": "chat-manual-compaction.spec.ts",
+              "line": 16,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-session-fork.spec.ts",
+      "file": "chat-session-fork.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat session fork",
+          "file": "chat-session-fork.spec.ts",
+          "line": 274,
+          "column": 6,
+          "specs": [
+            {
+              "title": "creates and selects a forked session with inherited history and copied draft without auto-send",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6917,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:31:57.818Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "469235f3ba5119c45ccc-818da0817bfe83fd7041",
+              "file": "chat-session-fork.spec.ts",
+              "line": 275,
+              "column": 7
+            },
+            {
+              "title": "offers handoff preparation when fork fails because the parent is too large",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7608,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:32:04.744Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "469235f3ba5119c45ccc-e752573bf0385797801b",
+              "file": "chat-session-fork.spec.ts",
+              "line": 522,
+              "column": 7
+            },
+            {
+              "title": "disables fork entry points while a run is active",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7622,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:32:12.360Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "469235f3ba5119c45ccc-532773eade3f791995bb",
+              "file": "chat-session-fork.spec.ts",
+              "line": 620,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-session-handoff.spec.ts",
+      "file": "chat-session-handoff.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat session handoff",
+          "file": "chat-session-handoff.spec.ts",
+          "line": 227,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps a sidebar handoff intent until a cold session generation hydrates",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9887,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:32:20.006Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-e9f27d78f0aed1513777",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 228,
+              "column": 7
+            },
+            {
+              "title": "keeps the current handoff draft when an old conversation responds late",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7516,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:32:29.905Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-4a62e5add0c6a545b1b9",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 292,
+              "column": 7
+            },
+            {
+              "title": "previews, edits, creates and sends the reviewed handoff with a recoverable child draft",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25825,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:32:37.430Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-ff58fda1ce765e081161",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 368,
+              "column": 7
+            },
+            {
+              "title": "disables handoff entry points while a run is active",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5967,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:33:03.264Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-1e9e6be2e7438056fb00",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 579,
+              "column": 7
+            },
+            {
+              "title": "refuses a relay once the handoff depth limit is reached (#179)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6705,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:33:09.237Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-6ea6bd43dd0fce65f4bd",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 648,
+              "column": 7
+            },
+            {
+              "title": "keeps the editable draft and session when creation rejects changed ancestry",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7682,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-23T13:33:15.950Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-4393de2a350b071ae1b6",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 693,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "session-fork-intent.spec.ts",
+      "file": "session-fork-intent.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "U3 rejects question Fork without an assistant ancestor and disables missing-entry projections",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 120627,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate\n    at modelTurn (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:32:3)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:112:26",
+                    "location": {
+                      "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                      "column": 3,
+                      "line": 32
+                    },
+                    "snippet": "  30 |   if (!sent.success || !sent.result?.runId) throw new Error('U3 turn not acknowledged: ' + JSON.stringify(sent));\n  31 |   let receipt: unknown;\n> 32 |   await expect.poll(async () => {\n     |   ^\n  33 |     const read = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });\n  34 |     receipt = read; return read.status;\n  35 |   }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe('ok');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                        "column": 3,
+                        "line": 32
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate\n\n  30 |   if (!sent.success || !sent.result?.runId) throw new Error('U3 turn not acknowledged: ' + JSON.stringify(sent));\n  31 |   let receipt: unknown;\n> 32 |   await expect.poll(async () => {\n     |   ^\n  33 |     const read = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });\n  34 |     receipt = read; return read.status;\n  35 |   }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe('ok');\n    at modelTurn (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:32:3)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:112:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-23T13:33:23.650Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-final-r1\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-final-r1\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-final-r1\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                    "column": 3,
+                    "line": 32
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "96ce1f7a0b5535599643-684788fdd5d623715e36",
+          "file": "session-fork-intent.spec.ts",
+          "line": 98,
+          "column": 5
+        },
+        {
+          "title": "U3 plain model advice needs explicit Handoff preview and cancellation creates no child",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 108210,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate\n    at modelTurn (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:32:3)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:224:21",
+                    "location": {
+                      "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                      "column": 3,
+                      "line": 32
+                    },
+                    "snippet": "  30 |   if (!sent.success || !sent.result?.runId) throw new Error('U3 turn not acknowledged: ' + JSON.stringify(sent));\n  31 |   let receipt: unknown;\n> 32 |   await expect.poll(async () => {\n     |   ^\n  33 |     const read = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });\n  34 |     receipt = read; return read.status;\n  35 |   }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe('ok');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                        "column": 3,
+                        "line": 32
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate\n\n  30 |   if (!sent.success || !sent.result?.runId) throw new Error('U3 turn not acknowledged: ' + JSON.stringify(sent));\n  31 |   let receipt: unknown;\n> 32 |   await expect.poll(async () => {\n     |   ^\n  33 |     const read = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });\n  34 |     receipt = read; return read.status;\n  35 |   }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe('ok');\n    at modelTurn (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:32:3)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:224:21"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-23T13:35:24.835Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-final-r1\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-final-r1\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-final-r1\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                    "column": 3,
+                    "line": 32
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "96ce1f7a0b5535599643-8e65a6d37cde3ceaf026",
+          "file": "session-fork-intent.spec.ts",
+          "line": 206,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-23T13:31:02.447Z",
+    "duration": 372078.41,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

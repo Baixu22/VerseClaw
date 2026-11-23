@@ -1,0 +1,36 @@
+{
+  "driven_by": "agent",
+  "sourceCommit": "bd447aadd",
+  "testCandidate": "d641eb33c",
+  "sourceFiles": [
+    {
+      "name": "menu",
+      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-prototype-r3\\chat-session-handoff-Verse-88301-h-a-recoverable-child-draft\\continuity-menu-dark.png",
+      "sha256": "0fad22d7a6eca1bc7d4351c2ffbcda23369f04848bb994970f8829f87a95790e"
+    },
+    {
+      "name": "handoff-dark",
+      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-prototype-r3\\chat-session-handoff-Verse-88301-h-a-recoverable-child-draft\\handoff-narrow-dark.png",
+      "sha256": "661e7586a6f41cbee94cd59eb3273a2728135e9ca512bdeb8f3bb27913977d32"
+    },
+    {
+      "name": "handoff-zh",
+      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-prototype-r3\\chat-session-handoff-Verse-88301-h-a-recoverable-child-draft\\handoff-zh-narrow.png",
+      "sha256": "d7f6ec0af6bbbb78d4aa15b712535282cda30163856ddc9038be5ae18350dbf5"
+    },
+    {
+      "name": "context",
+      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-prototype-r1\\chat-manual-compaction-Ver-3e94c-session-compaction-Host-API\\compact-narrow-dark.png",
+      "sha256": "d4f708634b826e5d84f1d2d42d4cc427a59442b83b1201da5c5a570eb8a436a1"
+    },
+    {
+      "name": "delivery",
+      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-prototype-r3\\chat-long-task-control-Ver-d5599--follow-up-through-Host-API\\delivery-narrow-dark.png",
+      "sha256": "90f2b6b393d7f564b95db82138495bcdca24a5d80cc5afd3c2eae8ba94641de0"
+    }
+  ],
+  "transformations": {
+    "01-session-menu.png": "crop right 560px, y35..630",
+    "02-handoff.png": "pair original en dark and zh light, no scaling"
+  }
+}

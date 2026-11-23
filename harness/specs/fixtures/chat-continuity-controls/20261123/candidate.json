@@ -1,0 +1,103 @@
+{
+  "commit": "90dde376e2d378991267af2d886d4a2f57264c23",
+  "baseCommit": "eac8b36c29a1cc1a85a34a587fee99e9fd2b4c76",
+  "dirty": false,
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "fddbf44e3f1c03624fa532a096f1ce2cfc64515e"
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "d2f7349d5e9a2d2c6d22c7fcfe72208cb7c80389"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "444c7deb847f8c1d7b56f86b0f83efbf3661ae89"
+    },
+    {
+      "path": "docs/dev/chat-continuity-controls.md",
+      "gitBlob": "ded12a6a8cf6b8af911561c87788d22512b6409c"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "gitBlob": "bfe2b4af40b994dae213601e08e8c7090412ce56"
+    },
+    {
+      "path": "harness/specs/tasks/chat-continuity-controls-20261123.md",
+      "gitBlob": "c0aad4b3acb908d56174e891462f057db9e9ba61"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "gitBlob": "a89232c61191a4364e84292401121f54a5c6eb14"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "gitBlob": "c49a024de9e76559e1b0fd3655d5fca915f7af79"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "gitBlob": "46d1fb8af6b73fd978b4992b8f5d99fd69671642"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "gitBlob": "43a8b528fda2349123ba62960b63f7350a60c04e"
+    },
+    {
+      "path": "src/components/chat/ChatContextPressure.tsx",
+      "gitBlob": "93d0cc0fbbf539f9d343d84f12c294fcf80c6094"
+    },
+    {
+      "path": "src/components/chat/ComposerPopover.tsx",
+      "gitBlob": "3d2914dc5ffbfbf5a641c5a6888555e88bb10182"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "gitBlob": "5fe85d5b4c6bc6f824872073f599cd9ef1a844cd"
+    },
+    {
+      "path": "src/pages/Chat/ChatToolbar.tsx",
+      "gitBlob": "b52046fb0fc95e46a94e47ec4e75f25cf84ac7a6"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "gitBlob": "8ed1f3b0471e709830ab954cb6f90c389f650998"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "gitBlob": "ef0b7f44008cc99aa9b82303471465c731562bfd"
+    },
+    {
+      "path": "src/styles/codex-tokens.css",
+      "gitBlob": "f908e25b97e7c5aafda031407ce11810851fa670"
+    },
+    {
+      "path": "tests/e2e/chat-long-task-control.spec.ts",
+      "gitBlob": "74c7a15feb3ee645f9aaa0beed00eaf49db5c7e6"
+    },
+    {
+      "path": "tests/e2e/chat-manual-compaction.spec.ts",
+      "gitBlob": "0a0c018bd377c3dd1792aac77c513d734dee75e2"
+    },
+    {
+      "path": "tests/e2e/chat-session-fork.spec.ts",
+      "gitBlob": "b8882160b7545a15ede146edfa1995ea68d55633"
+    },
+    {
+      "path": "tests/e2e/chat-session-handoff.spec.ts",
+      "gitBlob": "948cb667e16e18ea70979f3adc06f3134184a56a"
+    },
+    {
+      "path": "tests/e2e/session-fork-intent.spec.ts",
+      "gitBlob": "325155adfec2e83ffbb71ce0e90a8ad7494ad46a"
+    },
+    {
+      "path": "tests/unit/chat-input.test.tsx",
+      "gitBlob": "5f49efbab85688c60b92f26015b94f48d86ef31e"
+    },
+    {
+      "path": "tests/unit/chat-toolbar.test.tsx",
+      "gitBlob": "c6260dc964879732005571f98196afcb61af7267"
+    }
+  ]
+}

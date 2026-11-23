@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "validate" "--spec" "harness/specs/tasks/chat-continuity-controls-20261123.md"
+$ node src/cli.mjs "--" "validate" "--spec" "harness/specs/tasks/chat-continuity-controls-20261123.md"

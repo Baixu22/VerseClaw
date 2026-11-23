@@ -1,0 +1,696 @@
+{
+  "passed": 138,
+  "tests": 138,
+  "cases": [
+    {
+      "title": "resolveContextPressure prefers live usage over the static range",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "resolveContextPressure falls back to the range when live usage is absent",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "resolveContextPressure reports no max when the range has no ceiling",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "resolveContextPressure never divides by a zero ceiling",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "resolveContextPressure passes hit rates and cost straight through, independently",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "ChatContextPressure renders nothing when nothing has been measured yet",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "ChatContextPressure shows used/max when both are known",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "ChatContextPressure shows used alone when the ceiling is unknown",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "ChatContextPressure renders a row per available metric and skips the rest",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "ChatContextPressure omits cache and rate rows when the runtime did not report them",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "ChatContextPressure exposes an accessible group label",
+      "status": "passed",
+      "file": "chat-context-pressure.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence hydrates the composer from draftValue and reports draft edits",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence clears the parent draft after sending",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence keeps the new conversation draft when an old task-loop upgrade finishes",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence surfaces Task Loop upgrade for complex project work without auto-sending",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence sends the selected knowledge scope with the composer payload",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence changes knowledge invocation mode from the knowledge menu",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence shows suggest-mode knowledge candidates and attaches them only after user action",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence dismisses knowledge preflight for the same input and still sends if routing fails",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence searches and attaches specific knowledge references before sending",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput draft persistence does not render or send Work Mode",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands opens the slash menu, filters commands, and selects with Enter",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands filters slash commands by command prefix without matching descriptions",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands closes the slash menu with Escape",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands keeps unknown slash commands in the composer instead of sending",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands opens wiki search from slash command and attaches selected context",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands changes knowledge scope from slash commands without sending",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands runs steward audit slash command without sending a chat prompt",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands falls back to a review prompt when no code review hook is provided",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands creates a ledger node and best-effort links the current session",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands opens Mission Control guidance through the Agents route",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands opens the compaction dialog from /compact",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands runs the existing fork callback from /fork",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash commands shows the generation reason and refuses every disabled handoff control",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput capability action preflight confirms a local skill enable action before sending trusted metadata",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput capability action preflight cancels a capability action without sending or changing configuration",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput capability action preflight confirms MCP JSON registration and injects reload results",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput capability action preflight blocks high-risk MCP JSON before registration",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /new starts a fresh session through the onNewSession prop",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /resume switches to the session matching the keyword",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /resume without args shows a hint instead of switching",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /rename renames the current session",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /archive archives the current session",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /delete permanently deletes the current session after confirmation",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /clear resets the local message view through the store action",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /copy copies the last assistant response as markdown",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands /copy shows a hint when there is no assistant response",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands keeps long-task modes out of ordinary Chat and queues the running draft locally",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput slash session lifecycle commands sends revise-goal from the delivery menu of a /loop session",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status keeps passive message and token counts out of the composer footer",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status offers Stop beside Send while a draft is pending, and /loop delivery modes from one menu",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status binds Mod+Enter to guide and Mod+Shift+Enter to interrupt, leaving Shift+Enter a newline",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status queues the draft immediately when the running primary control is clicked",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status pauses the run with one click when there is no composer draft",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status renders a persisted pause as a resume action",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status omits the context status when no context data is available",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status opens the manual compaction dialog from /compact and confirms with extra instructions",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status closes a compaction dialog when switching conversations",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status cancels a delayed compaction confirmation after leaving and returning to a conversation",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status preserves the new conversation dialog when an old compaction completes",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status dismisses a pending cache-risk confirmation when its conversation is left",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status no longer renders compaction diagnostics in the composer status line",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status keeps compaction diagnostics hidden in basic mode while preserving send payload",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status refuses /compact while the session is sending",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput read-only context status keeps compact unavailable until its session generation is ready",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput direct model selection selects directly, remembers the preference and never writes agent defaults",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput direct model selection keeps the previous model and preference after a rejected save",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput direct model selection does not close another conversation menu when the previous save finishes",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting hides the @agent picker when only one agent is configured",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting uses native textarea rendering when no skill token is present",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting lets the user select an agent target and sends it with the message",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting disables the input while gateway is running but not yet ready",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting shows gateway readiness as a read-only composer status while starting",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting routes permission mode changes through the direct permission menu",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting falls back to read-only when a persisted workspace has an invalid permission mode",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting routes workspace folder and new session actions through the permission menu",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting keeps @agent targeting separate from switching the workspace agent",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting keeps skill access in the slash palette instead of a toolbar trigger",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting groups non-primary composer actions inside the add menu",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting keeps Office actions visible and routes to setup when no enabled Office skill is available",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting inserts an office action as a skill token plus a prompt template",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting inserts the selected skill from a slash query and prefixes sends",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting keeps a leading selected skill token on the normal send path",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting removes the full inline skill token with one backspace",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting skips across the inline skill block with arrow keys",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting adds left spacing when inserting a skill after adjacent text",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting allows inserting the same skill multiple times as separate blocks",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting opens the artifact preview panel when the inline skill token is clicked",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "ChatInput agent targeting stages dropped folders via disk path instead of buffer upload",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation preserves a changed draft and ignores a late Auto-read result",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation cancels an optional Auto-read and completes the requested plain send once",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation does not reopen source inspection after a profile change",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation queues ordinary follow-ups when long-task interventions are unavailable",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation dispatches a running draft once while a before-send hook is pending",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation preserves an edited draft when an earlier before-send hook finishes",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation routes Auto-read before a running plain send",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation routes Auto-read before a running queue send",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation routes Auto-read before a running guide send",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "RAG-11 composer cancellation uses the long-task queue only when a checkpoint names the owned root",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "compact composer context keeps retrieval controls inside one menu and identifies an explicitly selected higher-cost profile",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "compact composer context keeps normal checkpoint records quiet and reachable from More",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "compact composer context shows nonzero queue and warnings in the input and preserves the drain action",
+      "status": "passed",
+      "file": "chat-input.test.tsx"
+    },
+    {
+      "title": "chat session continuity helpers recommends Fork by default when the session is idle",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "chat session continuity helpers recommends Handoff when Gateway is unavailable",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "chat session continuity helpers reports continuity health as healthy, risky, or blocked",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "chat session continuity helpers recommends Handoff for high context pressure or truncated context",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "chat session continuity helpers marks both continuity actions disabled while a run is active",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "chat session continuity helpers recommends Handoff when a recovery checkpoint is available",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "chat session continuity helpers recommends Handoff when recovery context warnings are present",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "chat session continuity helpers classifies actionable failure modes",
+      "status": "passed",
+      "file": "chat-session-continuity.test.ts"
+    },
+    {
+      "title": "keeps migration open after dismissing More, then returns focus without starting a migration",
+      "status": "passed",
+      "file": "chat-toolbar.test.tsx"
+    },
+    {
+      "title": "keeps guarded lifecycle actions in More and supports keyboard dismissal",
+      "status": "passed",
+      "file": "chat-toolbar.test.tsx"
+    },
+    {
+      "title": "clears a recovered cache warning even when the session retains its risk history",
+      "status": "passed",
+      "file": "chat-toolbar.test.tsx"
+    },
+    {
+      "title": "offers summary handoff before branching and recommends it only under context pressure",
+      "status": "passed",
+      "file": "chat-toolbar.test.tsx"
+    },
+    {
+      "title": "keeps the environment control reachable while workspace tabs are open",
+      "status": "passed",
+      "file": "chat-toolbar.test.tsx"
+    },
+    {
+      "title": "durable handoff owner retains one pending child while source resources remain unresolved without a writer binding",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner binds the task selected in the existing composer before dispatching chat effects",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner keeps the same pending child when the source starts a run during creation",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner confirms runtime ancestry, saves the child draft and reuses one child across duplicate creation requests",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner creates independent children for different intent IDs and replays each ID without creating again",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner recovers a lost creation reply from the same runtime child after reconstructing Main services",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner keeps creation pending when the lifecycle owner is unavailable",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner pins the child generation before activation and rejects a removed or reset child during recovery",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner rejects a changed source generation or draft without creating a second child",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner records acknowledgement separately and confirms the exact persisted first-turn identity",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner reconciles a lost send reply from the exact runtime transcript after restart",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner retains an unknown delivery and prevents silent resends even when the text matches",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner allows an explicitly retried pre-effect rejection with the same child and send key",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner does not reuse a first-send key with a different compiled payload",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner fences child transcript reads against wrong parents and reset races",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner sends to the selected worker through the existing permission route and rejects stale parent generations",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true}",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true,\"steered\":true}",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner reports a definite runtime worker rejection as rejected: INVALID_REQUEST",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner reports a definite runtime worker rejection as rejected: -32600",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner reports a definite runtime worker rejection as rejected: -32602",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner keeps a lost worker response unknown until delivery evidence is available",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    },
+    {
+      "title": "durable handoff owner recovers a lost worker acknowledgement from the exact persisted intervention key",
+      "status": "passed",
+      "file": "session-handoff-recovery.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "originalRun": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-prototype-r1.stdout.log",
+  "stats": {
+    "startTime": "2026-11-23T13:09:53.463Z",
+    "duration": 74026.15,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "failures": [
+    {
+      "title": "shows recovery status and drains queued follow-up through Host API",
+      "file": "chat-long-task-control.spec.ts",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 39557,
+          "errors": [
+            {
+              "location": {
+                "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-long-task-control.spec.ts",
+                "column": 60,
+                "line": 351
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-composer-send')\nExpected: \u001b[32m\"running\"\u001b[39m\nReceived: \u001b[31m\"idle\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-composer-send')\u001b[22m\n\u001b[2m    18 × locator resolved to <button disabled type=\"button\" aria-label=\"Send\" data-send-state=\"idle\" class=\"composer-send-button\" data-testid=\"chat-composer-send\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"idle\"\u001b[22m\n\n\n  349 |        * spec used to hit under full-suite load.\n  350 |        */\n> 351 |       await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'running');\n      |                                                            ^\n  352 |       /*\n  353 |        * A draft typed during a run swaps the lone Stop for a quiet Stop beside\n  354 |        * the Send/Queue pill. In a /loop session the pill carries a chevron that\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-long-task-control.spec.ts:351:60"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "previews, edits, creates and sends the reviewed handoff with a recoverable child draft",
+      "file": "chat-session-handoff.spec.ts",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 23326,
+          "errors": [
+            {
+              "location": {
+                "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-session-handoff.spec.ts",
+                "column": 61,
+                "line": 510
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-handoff-dialog')\nExpected: \u001b[32m\"rgb(25\u001b[7m5\u001b[27m, 25\u001b[7m5\u001b[27m, 25\u001b[7m5\u001b[27m)\"\u001b[39m\nReceived: \u001b[31m\"rgb(25\u001b[7m2\u001b[27m, 25\u001b[7m2\u001b[27m, 25\u001b[7m0\u001b[27m)\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-handoff-dialog')\u001b[22m\n\u001b[2m    18 × locator resolved to <div role=\"dialog\" tabindex=\"-1\" id=\"radix-_r_11_\" data-state=\"open\" aria-busy=\"false\" aria-labelledby=\"radix-_r_12_\" aria-describedby=\"radix-_r_13_\" data-testid=\"chat-handoff-dialog\" class=\"verse-claw-dialog-content chat-continuity-dialog chat-handoff-dialog max-w-2xl\">…</div>\u001b[22m\n\u001b[2m       - unexpected value \"rgb(252, 252, 250)\"\u001b[22m\n\n\n  508 |       await page.screenshot({ path: testInfo.outputPath('handoff-narrow-dark.png') });\n  509 |       await page.evaluate(() => document.documentElement.classList.remove('dark'));\n> 510 |       await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('background-color', 'rgb(255, 255, 255)');\n      |                                                             ^\n  511 |       await page.screenshot({ path: testInfo.outputPath('handoff-narrow-light.png') });\n  512 |       await page.setViewportSize({ width: 1280, height: 900 });\n  513 |       await page.getByTestId('chat-handoff-details').locator('summary').click();\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-session-handoff.spec.ts:510:61"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "resolution": [
+    "Long-task fixture now supplies authoritative session generation and reloads before interaction",
+    "Light menu expectation aligned with the actual token before Carbon refinement"
+  ],
+  "laterStatus": "Final run passed"
+}

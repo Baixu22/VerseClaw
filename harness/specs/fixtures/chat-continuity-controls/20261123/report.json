@@ -1,0 +1,13 @@
+{
+  "status": "ui-passed",
+  "runtimeExtraStatus": "blocked-before-model-call",
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "candidate": "90dde376e2d378991267af2d886d4a2f57264c23",
+  "buildSourceCommit": "9d3ba34bb7ab842fd44cda11b17aa57875ebd745",
+  "unitTests": 138,
+  "electronJourneys": 14,
+  "carbonTokens": 31418,
+  "carbonRequests": 2,
+  "createdAt": "2026-11-23T13:47:19.389173+00:00"
+}
