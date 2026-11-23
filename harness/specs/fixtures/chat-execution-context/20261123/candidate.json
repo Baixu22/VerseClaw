@@ -1,0 +1,174 @@
+{
+  "commit": "69663b2543f171c8cf8c4ff220c877b33835322a",
+  "baseCommit": "725991f9b",
+  "dirty": false,
+  "driven_by": "agent",
+  "buildCommit": "22d328d854bcd07d203360abfd4c941241e9151b",
+  "productionSourcesMatchBuild": true,
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "7c5f9cb3647a476a6a8cf4b8108c8870a6d4f605",
+      "sha256": "e5073173adc4e5ca9ec7c8cb9ff71faad93302c4a871e293f79d348d9de3703d"
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "6915ad44a33deb61d4fdc46659d7c1144cc94d3b",
+      "sha256": "473241c3ac57a923687ccfeecb1ba7be009b437d7843019a6dd61e022fb583a0"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "3ab55ed751bb53d0a45f8c7ca600e3cf100a2b93",
+      "sha256": "bb8c9b78392c9a6f13a51ec332c99bdf87ec6c8249ef4e958467def4a6d0ba84"
+    },
+    {
+      "path": "docs/dev/chat-execution-context.md",
+      "gitBlob": "74fcbb364504aa2e135d256d5afc1b755f8c21cc",
+      "sha256": "bd172dd5cdc992329b4c92c2947c1c8583d8ce3c58796270dc8fae519a69a613"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "gitBlob": "3394374266917474a00ed6facfa7ceba95f1c8c6",
+      "sha256": "4d09e8f2b23dbe7c7dd31292b48d4cb96ff3daa61fd36c6bdc5edd0e35391ed6"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "gitBlob": "0ea1b26498e4dfface5e71d8966d98d80a4e2646",
+      "sha256": "4a9f1155cf00f187eb85824a93acd7fa64a51844e14272b12ebd59f8ae540273"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "gitBlob": "d0684bb7ec575c9eeed5402e9bff7f7c4f7443eb",
+      "sha256": "ad2b729a1fdcf45999b92a912f31d8c61f4dfe6ef84319f2183f2b93740621dd"
+    },
+    {
+      "path": "harness/specs/tasks/chat-execution-context-20261123.md",
+      "gitBlob": "a7b0fb9f8e1fba01aa23e5d2948ebae1755c5d43",
+      "sha256": "3eac7e295898e6fc6d29cb1f75f3a43d437544e74b9377e85a67a3982310a60b"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "gitBlob": "9864b7fe03ef0c80abe9c0dfcc56a368604b8299",
+      "sha256": "7a5c2431c27b704f04cd4a53f36c8f4f203919eaa06ec31b8d97c38afb0e8f72"
+    },
+    {
+      "path": "shared/i18n/locales/en/settings.json",
+      "gitBlob": "ac2000a2fe514dea82322dc5433b4a67244c419d",
+      "sha256": "80536191eb1f975bcf592b7b0cb7345a25ab1d3fa33df9dccb2ae8a1e51deb6e"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "gitBlob": "56d7c7d06745ce79ecbabbe79f29f32cdfa4f833",
+      "sha256": "34034de98f622423a1c5c3a656231528d71810755c4946c5bf488347a1cac6b7"
+    },
+    {
+      "path": "shared/i18n/locales/ja/settings.json",
+      "gitBlob": "64e434d078406d1d09753688f8b1eda0be84bf9b",
+      "sha256": "872d551fc706cdd7723911e8b356292d0a2fcde24103b5d2757f128b4f653c09"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "gitBlob": "f4a21b90d4df0b70107acd14b8ebb73bc2b164d6",
+      "sha256": "265d210444010bec396271a1a9412d34f144a6ee6ee1c65561e54c8fa7b8d74a"
+    },
+    {
+      "path": "shared/i18n/locales/ru/settings.json",
+      "gitBlob": "eab396620208be6784caa8bc7f28748db4507cf6",
+      "sha256": "7f05a18e87ca989b99e19bc3dfc7b8314dbc3200068817b50ce7dd94a324e5cc"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "gitBlob": "68e960a783f6d0942cf940c3af16d6bc7b786cd0",
+      "sha256": "725c0fc7448d9ce53b34be5f4745075264a892bf2b51f582f1fc20cdbdfc9a13"
+    },
+    {
+      "path": "shared/i18n/locales/zh/settings.json",
+      "gitBlob": "3cafb150a014e909848b36efffef7c3494681f37",
+      "sha256": "3d9c94ddd0371375f89811383c9aa297419acba585da501c4891750f91f1515c"
+    },
+    {
+      "path": "src/components/chat/SessionWorkspacePicker.tsx",
+      "gitBlob": "1b261648aff57f5fd85ff37915cfcf4b58f934f2",
+      "sha256": "be0c059e2b3d07664a1b8131ae001ae62fa6e85c22444f2742802d326d555c54"
+    },
+    {
+      "path": "src/components/chat/WelcomeProjectPicker.tsx",
+      "gitBlob": "a591096dbeab7d0d9b3b380c3f3f411667e41c19",
+      "sha256": "06de3150d5580d89ce535a3d91aa959645b746e7de2149d2ea5d05c475f54920"
+    },
+    {
+      "path": "src/components/chat/WorktreeCreationProgress.tsx",
+      "gitBlob": "e2e62a68bcba1ab839922e4724a701aa3ee6e448",
+      "sha256": "710d51bd7824a8fa87893484b6ea13b4997d139aa032d5a96b82df289f1115c5"
+    },
+    {
+      "path": "src/components/settings/primitives/usePopover.ts",
+      "gitBlob": "49fe0a129c907725ce71ac14a77161a3e963fbe2",
+      "sha256": "c77942448fefef0b7253486402b5b40cc6fd8c9ef98efc3cdef6b9fb6c15a668"
+    },
+    {
+      "path": "src/pages/Chat/ComposerGitStrip.tsx",
+      "gitBlob": "5968e517e72f6aceecdd7b7dd59529f563d78d4d",
+      "sha256": "d231f5bdd3fbd634ed50dc3fae27ef13cbe54d046e66953d0303f30a6dce04df"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "gitBlob": "93ee1ffe2e1035f8a0b887656e7fe23d6e754a53",
+      "sha256": "a02d5fc9f78403dadafe8f929b20d1ff85cabc60281da03398e015d0956dc1ae"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "gitBlob": "b8642d982de426761846f04eca17799bb7295f85",
+      "sha256": "55dc884e5521744973e11640f3f4de95d8e31ab7640f17e4507dece48a05466e"
+    },
+    {
+      "path": "src/styles/codex-tokens.css",
+      "gitBlob": "e907497eac4aa1a35420afeffac174a26069e828",
+      "sha256": "8d13a4f1e743c91c76d93412bbac11e80b7c15c1a282f042d5c000c24a65dc6c"
+    },
+    {
+      "path": "tests/e2e/beam-composer-verify.spec.ts",
+      "gitBlob": "55f233a2280f05c724dd1415e2dddf32d9710876",
+      "sha256": "694297653ac96a69ca088d8225686527d73223e5ca8666c2dbb42777b01de012"
+    },
+    {
+      "path": "tests/e2e/chat-composer-popovers.spec.ts",
+      "gitBlob": "8d1864376e456d9023a66ea7afa5c36fe912a055",
+      "sha256": "7c12ff8822b54fc2be7f007b61a2c5bb77c6dde11130ce5515d5a17c950f1856"
+    },
+    {
+      "path": "tests/e2e/chat-execution-context.spec.ts",
+      "gitBlob": "4ebc5fda327bf858ca85fabcaa87c3012074c445",
+      "sha256": "5f0d3c13eee64118658b266c9aae3534840c65d004fdccf8caa49a4ef552f616"
+    },
+    {
+      "path": "tests/e2e/chat-layout-cdp.spec.ts",
+      "gitBlob": "9372de4c9f88b8f1b3a0aa22a5d120facef1208e",
+      "sha256": "db9ad978dfda8eb6547cc4c775821c2074b40ea3b8a0a1091428d91cbf0d7060"
+    },
+    {
+      "path": "tests/e2e/chat-planning-composer-ux.spec.ts",
+      "gitBlob": "467d44372eb497dabae5f9538010f0271312aed2",
+      "sha256": "e12f8cc5c186ee290dc5a2a9380080ada9d6a3b228d5f9b0eac4fd05708e0663"
+    },
+    {
+      "path": "tests/unit/session-workspace-picker.test.tsx",
+      "gitBlob": "468ee3b88c652ad43e624e8e358c54a0783bf413",
+      "sha256": "c42b0b84deb1afaf00e598371232eab37a02162c9c2640ab9fc4e5daba6286c5"
+    }
+  ],
+  "buildOutputs": [
+    {
+      "path": "dist/index.html",
+      "sha256": "6cf3bc5e45fd1df0e6cb1eeeeeed0bcb2f29636417a127a8455a905c27c97709"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "98a16bc204c7245f95b521188f3a9d45060f44e33a5c371c0c424b03cb76ee09"
+    },
+    {
+      "path": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ui",
+  "git": "real",
+  "workspace": "real",
+  "gateway": "mocked idle transport",
+  "created": {
+    "path": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project-codex-task-mwt8xak4-6b00",
+    "branch": "codex/task-mwt8xak4-6b00",
+    "session": "agent:main:session-1795437155833-ce9dhe",
+    "clicks": 2
+  },
+  "originalDraftRestored": true,
+  "existingDraftRestored": true,
+  "createWithoutSwitching": true,
+  "permissionFailureRetried": true,
+  "runningGuard": true,
+  "errors": []
+}

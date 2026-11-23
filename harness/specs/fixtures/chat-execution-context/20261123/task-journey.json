@@ -1,0 +1,658 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "dataSource": "agent-fixed Task and typed Runtime events",
+  "steps": {
+    "initialTaskReadRecoveryPreservesDraft": true,
+    "settingsDoNotChangeParameters": true,
+    "explicitCostProfileVisible": true,
+    "runCompletionDoesNotAcceptTask": true,
+    "hiddenPausedTaskReappearsWithDraft": true,
+    "ownerAcceptanceFoldsReceipt": true,
+    "roundSendStopResume": true,
+    "approvalPreservesDraft": true,
+    "connectionFailureVisible": true,
+    "fourLocalesAndNarrowThemes": true
+  },
+  "shots": [
+    {
+      "name": "task-unavailable-light-1280",
+      "sha256": "a089469d259ce00b75ae601589fab33fa3836a6b79191178c04e43ed21522260",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "rest-light-1280",
+      "sha256": "e933dd47d13411c4f703d40e64dad1a4eb2e357810d8c32c9096e3f27ab06069",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-light-1280",
+      "sha256": "50b08e310ecffce81766ea3615012ae8eb01ae686330da6cdce4cbea8da15278",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "knowledge-options-light-1280",
+      "sha256": "c236e021a4297f3a65cadf8021c0a40f56375b7c5dcda60838d7c42edb1d7838",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-light-1280",
+      "sha256": "6dfa78ab43faefe7e76e124fcbb70406dad4ce6848c876c7d9ed747339ebdb25",
+      "width": 1281,
+      "height": 801
+    },
+    {
+      "name": "running-expanded-dark-960",
+      "sha256": "f94b51dc62e50078e3887d5ef896246f290fb8b5463d434bebc98d3a269c5f14",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "task-paused-dark-960",
+      "sha256": "dd76e7a28052c5680f9994b1f8e19bcf97a54a0050878a1784f715d10b883c72",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "accepted-dark-960",
+      "sha256": "b5b44a104f6f35824f4ab68cf7b8e74f05d6449dfcf77fe39434d0d3efc9bcdd",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-ready-dark-960",
+      "sha256": "6bb27d5f5c09f73693817bbe26bbc87d7fea1c5787eeb1627e5d46dba4f8ad32",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-running-dark-960",
+      "sha256": "5057e56cd49d4a9241667fc5b5e187c96fc99e510b864ed0bd8b26c8bb5410ca",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "action-paused-dark-960",
+      "sha256": "75679911aa2fdb0da18d7fa0db562ee602ef637f03a665a587cef664aedf27b7",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "approval-dark-960",
+      "sha256": "ddc22e76a5a8597b2c24ee7c30364cefe7dbd73f95cc2d09b647a10bed8a120d",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "disconnected-dark-960",
+      "sha256": "af67c4a8a68096ac8daee79ec734af3518b49a39bbdc80905368ef7161f082ce",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-zh-dark-960",
+      "sha256": "72c52885da28afe4dc7a733924e0a054ff44dd4ad73c3f05a36847ce2b04f13f",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ja-dark-960",
+      "sha256": "aba9e977e7bd91180d5ae3eba8941242f7336ee54e0c3681013781ba514197b3",
+      "width": 961,
+      "height": 801
+    },
+    {
+      "name": "rest-ru-dark-960",
+      "sha256": "2f1ed86a01b5a675d869b1b3295b491aed5ef34098ab33c29cdfbe9c7e7f6a30",
+      "width": 961,
+      "height": 801
+    }
+  ],
+  "materials": [
+    {
+      "name": "task-unavailable-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgba(0, 0, 0, 0.18)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.04) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(227, 230, 232)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(96, 102, 108) rgb(96, 102, 108) rgba(0, 0, 0, 0.06)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(237, 237, 234)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgba(0, 0, 0, 0.18)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.04) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(227, 230, 232)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(31, 31, 29) rgb(31, 31, 29) rgba(0, 0, 0, 0.06)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(237, 237, 234)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "knowledge-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgba(0, 0, 0, 0.18)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.04) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(227, 230, 232)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(31, 31, 29) rgb(31, 31, 29) rgba(0, 0, 0, 0.06)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(237, 237, 234)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "knowledge-options-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgba(0, 0, 0, 0.18)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.04) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(227, 230, 232)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(31, 31, 29) rgb(31, 31, 29) rgba(0, 0, 0, 0.06)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(237, 237, 234)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "running-light-1280",
+      "dark": false,
+      "shell": {
+        "background": "rgb(255, 255, 255)",
+        "border": "rgba(0, 0, 0, 0.18)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.04) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(227, 230, 232)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(31, 31, 29) rgb(31, 31, 29) rgba(0, 0, 0, 0.06)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(237, 237, 234)",
+        "border": "rgb(226, 226, 220)",
+        "radius": "12px",
+        "shadow": "rgba(24, 24, 22, 0.04) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "running-expanded-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.15)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(235, 235, 232) rgb(235, 235, 232) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "task-paused-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.15)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "accepted-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.07)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "action-ready-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.12)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "action-running-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.15)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "action-paused-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.07)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "approval-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.07)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "disconnected-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.106)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-zh-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.15)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-ja-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.15)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    },
+    {
+      "name": "rest-ru-dark-960",
+      "dark": true,
+      "shell": {
+        "background": "rgb(56, 56, 54)",
+        "border": "rgba(255, 255, 255, 0.15)",
+        "radius": "22px",
+        "shadow": "rgba(0, 0, 0, 0.18) 0px 2px 10px 0px",
+        "backdropFilter": "none"
+      },
+      "frame": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(59, 59, 63)",
+        "radius": "0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "task": {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "rgb(236, 236, 233) rgb(236, 236, 233) rgba(255, 255, 255, 0.04)",
+        "radius": "22px 22px 0px 0px",
+        "shadow": "none",
+        "backdropFilter": "none"
+      },
+      "message": {
+        "background": "rgb(54, 54, 52)",
+        "border": "rgb(71, 71, 67)",
+        "radius": "12px",
+        "shadow": "rgba(0, 0, 0, 0.26) 0px 1px 2px 0px",
+        "backdropFilter": "none"
+      }
+    }
+  ],
+  "enclosure": {
+    "widthDifference": 25.33331298828125,
+    "gap": 32.666656494140625
+  },
+  "actionStyles": {
+    "ready": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "running": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    },
+    "paused": {
+      "width": 32,
+      "height": 32,
+      "radius": "50%",
+      "background": "rgb(255, 255, 255)",
+      "color": "rgb(45, 45, 43)"
+    }
+  },
+  "defaultAnchorCount": 5,
+  "pageErrors": []
+}

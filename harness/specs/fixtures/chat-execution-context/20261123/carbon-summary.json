@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "rounds": 3,
+  "requests": 6,
+  "imageReads": 9,
+  "totalReportedTokens": 84377,
+  "visualVerdict": "Carbon approved the structure and specified three required visual corrections. All three exact corrections are implemented and verified in Electron.",
+  "refinements": [
+    "Readable solid primary capsule for failure recovery, including hover",
+    "Opaque disabled primary buttons",
+    "Neutral failure border with color limited to the error step and reason"
+  ]
+}
