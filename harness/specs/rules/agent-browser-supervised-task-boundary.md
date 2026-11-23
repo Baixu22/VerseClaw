@@ -36,6 +36,8 @@ origin or tab invalidates that binding; debugger attachment and caller payloads 
 replace it. Unredacted network reads use the same binding as full-access tools.
 Asynchronous reads retain the captured approval until their result is returned.
 Revocation, expiry or a replacement approval prevents an earlier read from returning raw data.
+The captured recorder must still own the current control session; debugger detachment
+or replacement cannot validate a late result from the earlier connection.
 
 A replay draft is consumed synchronously before network dispatch. Concurrent calls,
 timeouts and unknown outcomes cannot reuse it. JS, SourceMap and replay fetches use

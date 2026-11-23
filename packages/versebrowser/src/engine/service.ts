@@ -1469,8 +1469,9 @@ export class AgentBrowserService {
     // 使 NetworkRecorder / SnapshotManager 等能收到 Network.* / Page.* 事件。
     connection.installEventListener();
     connection.installDetachListener(() => {
-      // 内部状态清理已在 installDetachListener 中完成；
-      // 此处可触发 service 层清理 browserControlStates（当前由 setEnabled/lifecycle 管理）。
+      if (this.browserControlStates.get(record.session.id)?.connection === connection) {
+        this.browserControlStates.delete(record.session.id);
+      }
     });
 
     const snapshotManager = new BrowserControlSnapshotManager(connection, async () => ({
@@ -2490,7 +2491,8 @@ export class AgentBrowserService {
   }
 
   private hasFullAccessBinding(record: AgentBrowserRecord, binding: AgentBrowserRecord['fullAccessBinding'], recorder: BrowserNetworkRecorder): boolean {
-    return recorder.isEnabled && binding !== undefined && record.fullAccessBinding === binding && this.canRevealRaw(record, false);
+    return this.browserControlStates.get(record.session.id)?.networkRecorder === recorder
+      && recorder.isEnabled && binding !== undefined && record.fullAccessBinding === binding && this.canRevealRaw(record, false);
   }
 
   private requireWindow(record: AgentBrowserRecord): AgentBrowserWindow {

@@ -273,7 +273,7 @@ describe('agent browser runtime mode', () => {
     }
   });
 
-  it.each(['navigation', 'renewal', 'revocation', 'expiry', 'disable', 'reattachment'] as const)('withholds a pending storage result after approval %s', async (change) => {
+  it.each(['navigation', 'renewal', 'revocation', 'expiry', 'disable', 'reattachment', 'debugger-detach'] as const)('withholds a pending storage result after approval %s', async (change) => {
     const { service, windows } = createService();
     const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
     service.setEnabled(true);
@@ -297,6 +297,10 @@ describe('agent browser runtime mode', () => {
       if (change === 'disable' || change === 'reattachment') service.setEnabled(false);
       if (change === 'reattachment') {
         service.setEnabled(true);
+        await service.takeSnapshot({ sessionId: session.id });
+      }
+      if (change === 'debugger-detach') {
+        windows[0].webContents.debugger.emit('detach', {}, 'canceled_by_user');
         await service.takeSnapshot({ sessionId: session.id });
       }
       releaseValue!({ result: { value: { token: 'pending-fixture-secret' } } });

@@ -202,9 +202,9 @@
       "sourceNormalization": "lf",
       "originalRawSha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
       "originalLfSha256": "f8382356e892f130d99310ab73a97560485033c306af0b405ddc12b95bb3ebfc",
-      "patchedSha256": "8c160a008b6f9956921e6a9309ac8730159480500c26b2c1118ea38fbaf77608",
+      "patchedSha256": "6633f400f2de060d5586b84a075c8efd2397d90dec283bc5404709fcb9ff1d7b",
       "patchPath": "packages/versebrowser/patches/vb-engine-policy__src__engine__service.ts.patch",
-      "patchSha256": "d3e67cb88d44c641f8157fe50ed3ab3aa03b943070e12a0b197c90b82f9e57b5",
+      "patchSha256": "f37421cc0361060f1331168749d81af53ee7ade809efeaca87a5f5095f128761",
       "reason": "Preserve the existing host, lifecycle and driver adaptations; bind full access to its approved tab and origin, and route resource fetches through the host network owner.",
       "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
     },
