@@ -131,11 +131,11 @@ test('shows the current white shimmer once, preserves folding and settles runtim
   try {
     await seed(app, history);
     const page = await getStableWindow(app); await page.reload();
-    await event(app, { type: 'run.started', startedAt: at - 5000, ts: at - 5000 });
-    await event(app, { type: 'tool.started', toolCallId: 'live-read', name: 'read_file', args: { path: 'src/config.ts' }, ts: at - 4400 });
-    await event(app, { type: 'tool.completed', toolCallId: 'live-read', name: 'read_file', result: 'CONFIG_RESULT\n', ts: at - 4000 });
-    await event(app, { type: 'tool.started', toolCallId: 'live-command', name: 'exec_command', args: { command }, ts: at - 3000 });
-    await event(app, { type: 'command.output', toolCallId: 'live-command', itemId: 'live-command:output', command, output: 'Collecting checks…\n', phase: 'chunk', status: 'running', ts: at - 2500 });
+    await expect(page.getByText('配置已读取，正在运行检查并观察输出。', { exact: true })).toBeVisible();
+    const liveAt = Date.now();
+    await event(app, { type: 'run.started', startedAt: liveAt, ts: liveAt });
+    await event(app, { type: 'tool.started', toolCallId: 'live-command', name: 'exec_command', args: { command }, ts: liveAt + 1 });
+    await event(app, { type: 'command.output', toolCallId: 'live-command', itemId: 'live-command:output', command, output: 'Collecting checks…\n', phase: 'chunk', status: 'running', ts: liveAt + 2 });
     const groups = page.getByTestId('chat-tool-activity-group');
     await expect(groups).toHaveCount(2);
     const current = groups.nth(1);
@@ -158,10 +158,10 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await current.getByTestId('chat-tool-activity-toggle').click();
     await event(app, { type: 'command.output', toolCallId: 'live-command', itemId: 'live-command:output', command,
-      output: 'Collecting checks…\n  COMPLETE_RESULT: 18 checks passed.\n', phase: 'end', status: 'completed', exitCode: 0, ts: at - 1000 });
-    await event(app, { type: 'tool.completed', toolCallId: 'live-command', name: 'exec_command', result: 'COMPLETE_RESULT: 18 checks passed.', ts: at - 1000 });
-    await seed(app, [...history, { id: 'live-final', role: 'assistant', content: '最终答复：读取和检查均已完成。', timestamp: at }]);
-    await event(app, { type: 'run.ended', status: 'completed', endedAt: at, ts: at });
+      output: 'Collecting checks…\n  COMPLETE_RESULT: 18 checks passed.\n', phase: 'end', status: 'completed', exitCode: 0, ts: Date.now() });
+    await event(app, { type: 'tool.completed', toolCallId: 'live-command', name: 'exec_command', result: 'COMPLETE_RESULT: 18 checks passed.', ts: Date.now() });
+    await seed(app, [...history, { id: 'live-final', role: 'assistant', content: '最终答复：读取和检查均已完成。', timestamp: Date.now() }]);
+    await event(app, { type: 'run.ended', status: 'completed', endedAt: Date.now(), ts: Date.now() });
     await expect(current).toHaveAttribute('data-status', 'completed');
     await expect(current.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCount(0);

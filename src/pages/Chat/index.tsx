@@ -3559,7 +3559,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       )}
 
       {/* Messages Area */}
-      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
+      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden py-3">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
         {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef}
           onSelect={scrollToMessageIndex} firstVisibleIndex={messageViewport.firstVisibleIndex} />}
