@@ -184,7 +184,7 @@ test.describe('Chat page layout CDP checks', () => {
           height: rect.height,
         };
       });
-      expect(composerMetrics.borderRadius).toBe('25px');
+      expect(composerMetrics.borderRadius).toBe('16px');
       expect(composerMetrics.minHeight).toBe('98px');
       expect(composerMetrics.width).toBeLessThanOrEqual(736);
 

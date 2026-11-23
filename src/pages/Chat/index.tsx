@@ -3921,13 +3921,13 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </div>
       )}
       <ChatInput
+        leadingContent={activeWorkspace && !isEmpty ? (
+          <div className="mb-1 empty:hidden">
+            <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
+          </div>
+        ) : undefined}
         contextContent={(
           <>
-            {activeWorkspace && !isEmpty && (
-              <div className="mb-1 empty:hidden">
-                <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
-              </div>
-            )}
             {(!isEmpty || projectWorkspaceId) && (
               <div data-testid="chat-task-tray">
                 <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}

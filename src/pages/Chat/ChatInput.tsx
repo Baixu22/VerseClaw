@@ -116,8 +116,6 @@ import { normalizeWorkspacePermissionMode } from '@shared/types/workspace';
 import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
-import { useResolvedTheme } from '@/lib/theme';
-import { BorderBeam } from 'border-beam';
 import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
 import { ComposerPopover } from '@/components/chat/ComposerPopover';
 import { ModelBrandIcon } from '@/components/chat/ModelBrandIcon';
@@ -166,6 +164,7 @@ interface ChatInputProps {
   requestPending?: boolean;
   /** Repository context and live task progress share the composer width. */
   contextContent?: ReactNode;
+  leadingContent?: ReactNode;
   draftValue?: string;
   onDraftChange?: (value: string) => void;
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
@@ -1011,6 +1010,7 @@ export function ChatInput({
   requestContent,
   requestPending,
   contextContent,
+  leadingContent,
   draftValue,
   onDraftChange,
   workspace,
@@ -1040,7 +1040,6 @@ export function ChatInput({
   onConfirmTaskLoopUpgrade,
   className,
 }: ChatInputProps) {
-  const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
   const [input, setInput] = useState(() => draftValue ?? '');
   const [runStarting, setRunStarting] = useState(false);
@@ -3352,41 +3351,19 @@ export function ChatInput({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
+      {leadingContent}
       <div className="codex-composer-stack w-full">
         {contextContent}
-        {/* Input Container */}
-        {/* Geometry stays here (asserted by chat-layout-cdp.spec.ts); surface,
-          * border and elevation come from .codex-composer-shell so the card and
-          * the menus that open out of it read from the same tokens.
-          *
-          * BorderBeam: animated sunset beam that runs along the INNER edge of
-          * the composer while a run is active (`sending`). It sits as an
-          * absolutely-positioned overlay inside the shell (not wrapping it), so
-          * the library's overflow:hidden clips the glow to the rounded inner
-          * wall — an inner ring, not an outer halo — and the slash/action
-          * menus, being siblings, are never clipped by it. */}
+        {/* The stack owns the shared task/input frame; menus remain unclipped. */}
         <div
           data-testid="chat-composer-shell"
           data-drag-over={dragOver ? 'true' : undefined}
           className={cn(
-            'relative rounded-[25px] px-3 pb-1.5 pt-2.5 min-h-[98px]',
+            'relative min-h-[98px] p-3',
             'transition-[border-color,box-shadow,background-color,transform] duration-180',
             'codex-composer-shell',
           )}
         >
-          <BorderBeam
-            size="sm"
-            colorVariant="sunset"
-            strength={0.3}
-            theme={resolvedTheme}
-            borderRadius={25}
-            active={sending}
-            className="codex-composer-beam"
-            data-testid="chat-composer-beam"
-            style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-          >
-            <span aria-hidden />
-          </BorderBeam>
           {showInlineComposerStatus && (
             <div className="relative mb-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-border/50 pb-2 text-xs text-muted-foreground" data-testid="chat-composer-feedback">
               {!isGatewayUsable && (

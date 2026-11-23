@@ -1,46 +1,94 @@
-/*
- * codex-composer-shell.css — the resting look of the composer card.
- *
- * WHY A STYLESHEET AND NOT UTILITIES. The shell previously carried a ~40-class
- * Tailwind string with two hand-written shadow stacks (one per theme) inlined
- * twice. Every literal in it was a one-off: the blur, the saturation, the
- * shadow geometry and the dark-mode surface (#2d2d2d) existed nowhere else in
- * the token layer, so the composer drifted away from the menus that open out of
- * it. Moving colour/elevation here lets both read from codex-tokens.css.
- *
- * WHAT STAYS IN THE MARKUP. Geometry — radius 25px, min-height 98px, padding —
- * remains as utilities on the element. Those three are asserted directly by
- * tests/e2e/chat-layout-cdp.spec.ts, and keeping them where the assertion can
- * see them keeps the contract legible. This file only claims surface, border,
- * elevation and the focus/drag states.
- *
- * THE TOP RIM. The reference card is lit from above: its border is a gradient
- * that is brightest at the top edge and fades out by the midpoint. A gradient
- * border needs the padding-box/border-box two-layer trick, which fights the
- * translucent surface underneath. The inset hairline below buys the same
- * read — an edge that catches light at the top — for one declaration, and is
- * how the rest of the system already draws lit edges.
- *
- * DRAG STATE is a data attribute rather than a conditional class because these
- * rules are unlayered and would otherwise win against Tailwind's `border-*`
- * utilities regardless of what the component passed.
- */
-
-.codex-composer-shell {
-  --ccs-surface: var(--color-background-elevated-primary-opaque);
-  --ccs-border: var(--color-border);
-  --ccs-rim: color-mix(in oklab, var(--color-text-foreground) 6%, transparent);
-  --ccs-focus: color-mix(in oklab, var(--color-border-focus) 12%, transparent);
-
+/* Opaque conversation cards share a single frame and restrained contact shadow. */
+.codex-composer-shell,
+.codex-composer-stack {
+  --ccs-surface: var(--color-chat-composer);
+  --ccs-border: var(--color-chat-composer-border);
+  --ccs-focus: var(--color-border-focus);
   border: 1px solid var(--ccs-border);
+  border-radius: var(--radius-chat-composer);
   background: var(--ccs-surface);
-  box-shadow:
-    inset 0 1px 0 var(--ccs-rim),
-    var(--shadow-lg);
-  /* Nested backdrop filters can composite transcript text through an opaque
-   * child menu on software rendering. The solid sheet needs no backdrop. */
+  box-shadow: var(--shadow-chat-composer);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+
+/* Child backgrounds follow the shared radius; overflow stays visible for the
+ * existing anchored menus. Only the task's scrolling body clips its content. */
+.codex-composer-stack > .codex-composer-shell {
+  border: 0;
+  box-shadow: none;
+}
+.codex-composer-stack:has([data-testid='session-task-panel']) > .codex-composer-shell {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.codex-composer-stack:focus-within,
+.codex-composer-shell:focus-within {
+  border-color: var(--color-chat-composer-focus);
+}
+.codex-composer-stack:has([data-drag-over='true']),
+.codex-composer-shell[data-drag-over='true'] {
+  border-color: var(--color-border-focus);
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.chat-user-message-card {
+  padding: 9px 14px;
+  border: 1px solid var(--color-chat-message-border);
+  border-radius: var(--radius-chat-message);
+  background: var(--color-chat-message);
+  color: var(--color-chat-message-text);
+  box-shadow: var(--shadow-chat-message);
+}
+
+.session-task-panel {
+  overflow: hidden;
+  border: 0;
+  border-bottom: 1px solid var(--color-chat-task-divider);
+  border-radius: var(--radius-chat-composer) var(--radius-chat-composer) 0 0;
+  background: var(--color-chat-task);
+}
+.session-task-row { min-height: 36px; padding: 0 14px; }
+.session-task-details { border-top: 1px solid var(--color-chat-task-inner-divider); }
+.session-task-toggle:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px var(--color-border-focus);
+}
+.session-task-glyph { width: 14px; height: 14px; flex: none; color: var(--color-chat-pending); }
+.session-task-glyph[data-tone='active'] { color: var(--color-chat-running); }
+.session-task-glyph[data-tone='done'] { color: var(--color-chat-complete); }
+.session-task-glyph[data-tone='warn'] { color: var(--color-chat-paused); }
+.session-task-glyph[data-tone='error'] { color: var(--color-chat-error); }
+.session-task-spinner {
+  display: inline-block;
+  border: 1.5px solid var(--color-chat-pending);
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.session-task-action {
+  min-height: 22px;
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border: 1px solid var(--color-chat-action-border);
+  border-radius: 6px;
+  background: var(--color-chat-composer);
+  color: var(--color-chat-action-text);
+  font-size: 12px;
+  line-height: 18px;
+}
+.session-task-action--blocker {
+  border-color: var(--color-chat-blocker-border);
+  background: var(--color-chat-blocker);
+  color: var(--color-chat-blocker-text);
+}
+.session-task-action:hover:not(:disabled) { filter: brightness(0.96); }
+.session-task-action:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+.session-task-action:disabled { opacity: 0.5; }
+@media (prefers-reduced-motion: reduce) {
+  .session-task-spinner { animation: none; border-style: double; }
 }
 
 .codex-composer-git-strip {
@@ -68,45 +116,9 @@
   background: var(--color-background-button-secondary-hover);
 }
 
-/* On near-black the rim has to be light to read as a lit edge; the ink-based
- * mix above resolves to something darker than the surface and disappears. */
-.dark .codex-composer-shell {
-  --ccs-surface: var(--color-background-control-panel);
-  --ccs-rim: color-mix(in oklab, var(--gray-0) 8%, transparent);
-}
-
-/* Textarea focus should not tint the whole composer. Keep the shell visually
- * stable while preserving the separate drag-over treatment below. */
-.codex-composer-shell:focus-within {
-  border-color: var(--ccs-border);
-  box-shadow:
-    inset 0 1px 0 var(--ccs-rim),
-    var(--shadow-lg);
-}
-
 .codex-composer-actions-row {
   min-height: 32px;
   column-gap: 4px;
-}
-
-/* A visible task strip shares the input enclosure. A hidden strip restores the
- * normal rounded composer, and the input remains the raised surface. */
-.codex-composer-stack:has([data-testid='session-task-panel']) .codex-composer-shell {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-.codex-composer-stack:has([data-testid='session-task-panel']) .codex-composer-beam {
-  border-top-left-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-}
-
-.codex-composer-shell[data-drag-over='true'] {
-  border-color: var(--color-border-focus);
-  box-shadow:
-    0 0 0 4px var(--ccs-focus),
-    inset 0 1px 0 var(--ccs-rim),
-    var(--shadow-lg);
 }
 
 /* Approval, question and plan states share the composer's own input surface. */
@@ -119,7 +131,7 @@
   max-height: min(60dvh, 480px);
   min-width: 0;
   overflow: hidden;
-  border-radius: 25px;
+  border-radius: var(--radius-chat-composer);
   color: var(--color-text-foreground);
 }
 .composer-decision-panel[data-decision-tone='warning'] {

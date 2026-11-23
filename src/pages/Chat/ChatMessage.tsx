@@ -1271,13 +1271,7 @@ function UserMessageEditor({
   );
 }
 
-/*
- * User bubble. Reference (FakeCoding web/src/components/Conversation.tsx:1110):
- *   `bg-token-foreground/5 max-w-[77%] rounded-2xl px-3 py-2 text-left`
- * — a flat 5% ink wash with no border and no shadow, 12px/8px padding rather
- * than 16px/10px. The v2 branch keeps its tinted glass treatment because that
- * is a deliberate Windows-material divergence, but adopts the same geometry.
- */
+/** Sent text uses an opaque card with the conversation's own material tokens. */
 function UserMessageBubble({
   text,
 }: {
@@ -1285,10 +1279,7 @@ function UserMessageBubble({
 }) {
   return (
     <div
-      className={cn(
-        'relative min-w-0 overflow-hidden rounded-2xl px-3 py-2 text-left text-foreground transition-colors duration-150',
-        'border border-primary/10 bg-primary/[0.07] backdrop-blur-sm dark:border-primary/15 dark:bg-primary/10',
-      )}
+      className="chat-user-message-card relative min-w-0 overflow-hidden text-left transition-colors duration-150"
       data-testid="chat-user-message-bubble"
     >
       <p className="whitespace-pre-wrap break-words text-[14px] font-[445] leading-[22px]">{text}</p>

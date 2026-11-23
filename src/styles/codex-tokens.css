@@ -396,6 +396,57 @@
   --color-overlay-backdrop: color-mix(in oklab, var(--gray-1000) 60%, transparent);
 }
 
+/* Conversation materials approved by Carbon from the current Electron images.
+ * These roles apply to the composer and task dock without changing page chrome. */
+:root {
+  --color-chat-composer: #ffffff;
+  --color-chat-composer-border: #dcdcd6;
+  --color-chat-composer-focus: #bdbdb5;
+  --color-chat-task: #f6f6f3;
+  --color-chat-task-divider: #e4e4de;
+  --color-chat-task-inner-divider: #eaeae5;
+  --color-chat-running: #3b6fd4;
+  --color-chat-pending: #8a8a84;
+  --color-chat-complete: #2e7d52;
+  --color-chat-paused: #b76e14;
+  --color-chat-error: #c24136;
+  --color-chat-blocker: #fff6e8;
+  --color-chat-blocker-border: #e5c185;
+  --color-chat-blocker-text: #9a580a;
+  --color-chat-action-border: #d6d6d0;
+  --color-chat-action-text: #181816;
+  --color-chat-message: #f4f4f1;
+  --color-chat-message-border: #e2e2dc;
+  --color-chat-message-text: #181816;
+  --shadow-chat-composer: 0 1px 2px rgb(24 24 22 / 0.06), 0 6px 16px -4px rgb(24 24 22 / 0.06);
+  --shadow-chat-message: 0 1px 2px rgb(24 24 22 / 0.04);
+  --radius-chat-composer: 16px;
+  --radius-chat-message: 12px;
+}
+.dark {
+  --color-chat-composer: #353533;
+  --color-chat-composer-border: #464643;
+  --color-chat-composer-focus: #5c5c57;
+  --color-chat-task: #272725;
+  --color-chat-task-divider: #3e3e3b;
+  --color-chat-task-inner-divider: #333330;
+  --color-chat-running: #6e9bf0;
+  --color-chat-pending: #8e8e88;
+  --color-chat-complete: #58b37c;
+  --color-chat-paused: #e09f3e;
+  --color-chat-error: #e26d63;
+  --color-chat-blocker: #3a3020;
+  --color-chat-blocker-border: #6b532b;
+  --color-chat-blocker-text: #f0b85b;
+  --color-chat-action-border: #52524e;
+  --color-chat-action-text: #ecece9;
+  --color-chat-message: #363634;
+  --color-chat-message-border: #474743;
+  --color-chat-message-text: #ededeb;
+  --shadow-chat-composer: 0 1px 2px rgb(0 0 0 / 0.36), 0 8px 20px -6px rgb(0 0 0 / 0.32);
+  --shadow-chat-message: 0 1px 2px rgb(0 0 0 / 0.26);
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
  * Composer geometry. Hardcoded constants — do not improvise per-component.
  * ────────────────────────────────────────────────────────────────────────── */

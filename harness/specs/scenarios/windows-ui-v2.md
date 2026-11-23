@@ -59,7 +59,7 @@ on demand. Errors, approval requests and questions remain visible. The shared
 summary owns the live status so a second Thinking row does not compete with it.
 
 Live planning has one primary entry in the task strip attached to the composer.
-The durable objective remains visible while current run steps open below it;
+The solid task/input frame has a 16px radius. The collapsed row shows the objective, neutral count and necessary actions; current steps open below it. State uses a small muted icon, without a progress ring or border beam. Sent messages use opaque 12px cards with a fine border and contact shadow;
 finishing the run steps preserves the task owner's acceptance status. Archived
 plans remain in their turn disclosure. Knowledge scope, invocation mode and
 retrieval profile share one menu, with non-local profiles labelled on the input.
