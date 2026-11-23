@@ -105,6 +105,8 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await retry.hover(); await expect(retry).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await page.evaluate(() => document.documentElement.classList.remove('dark'));
     await page.mouse.move(20, 80);
+    await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', 'rgb(247, 247, 245)');
+    await expect(progress).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(retry).toHaveCSS('background-color', 'rgb(31, 31, 29)');
     await expect(retry).toHaveCSS('color', 'rgb(255, 255, 255)');
     await expect(progress).toHaveCSS('border-top-color', 'rgb(223, 223, 218)');
@@ -127,6 +129,8 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await page.getByTestId('worktree-creation-ready').getByRole('button', { name: 'Dismiss worktree notice' }).click();
     for (const theme of ['light', 'dark']) {
       await page.evaluate(value => document.documentElement.classList.toggle('dark', value === 'dark'), theme);
+      await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', theme === 'dark' ? 'rgb(33, 33, 31)' : 'rgb(247, 247, 245)');
+      await expect(page.getByTestId('chat-composer-shell')).toHaveCSS('background-color', theme === 'dark' ? 'rgb(56, 56, 54)' : 'rgb(255, 255, 255)');
       for (const width of [1280, 600, 375]) {
         await page.setViewportSize({ width, height: 800 });
         await expect(page.getByTestId('session-worktree-trigger')).toBeInViewport();
@@ -159,6 +163,8 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await expect(create).toHaveCSS('color', 'rgb(138, 138, 132)');
     await page.screenshot({ path: info.outputPath('running-switch-disabled.png') });
     await page.evaluate(() => document.documentElement.classList.remove('dark'));
+    await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', 'rgb(247, 247, 245)');
+    await expect(page.getByTestId('chat-composer-shell')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(create).toHaveCSS('opacity', '1');
     await expect(create).toHaveCSS('background-color', 'rgb(228, 228, 223)');
     await expect(create).toHaveCSS('color', 'rgb(148, 148, 142)');
