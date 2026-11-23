@@ -44,4 +44,10 @@ describe('tool activity disclosure', () => {
     expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'true');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
   });
+  it('keeps a failed group static while exposing its attention state', () => {
+    render(<Harness group={{ ...model(true), status: 'error' }} />);
+    expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('Needs attention');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
+  });
 });
