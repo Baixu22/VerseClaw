@@ -2,14 +2,14 @@ import { useLayoutEffect, useRef } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion, type HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-type Props = HTMLMotionProps<'div'> & { open: boolean; align?: 'left' | 'right'; inline?: boolean };
+type Props = HTMLMotionProps<'div'> & { open: boolean; align?: 'left' | 'right'; inline?: boolean; maxHeight?: number };
 
 /** The composer's small menus share the add menu's blur/slide, including exit. */
 export function ComposerPopover({ open, ...props }: Props) {
   return <AnimatePresence>{open && <Surface {...props} />}</AnimatePresence>;
 }
 
-function Surface({ align = 'left', inline = false, className, children, style, ...props }: Omit<Props, 'open'>) {
+function Surface({ align = 'left', inline = false, maxHeight, className, children, style, ...props }: Omit<Props, 'open'>) {
   const ref = useRef<HTMLDivElement>(null);
   const present = useIsPresent();
   const reducedMotion = useReducedMotion();
@@ -32,7 +32,7 @@ function Surface({ align = 'left', inline = false, className, children, style, .
       const below = Math.max(0, bottom - rect.bottom - 8);
       const side = above >= Math.min(panel.scrollHeight, 260) || above >= below ? 'top' : 'bottom';
       panel.dataset.side = side;
-      panel.style.maxHeight = `${side === 'top' ? above : below}px`;
+      panel.style.maxHeight = `${Math.min(side === 'top' ? above : below, maxHeight ?? Infinity)}px`;
       panel.style.bottom = side === 'top' ? 'calc(100% + 8px)' : 'auto';
       panel.style.top = side === 'bottom' ? 'calc(100% + 8px)' : 'auto';
       const desiredLeft = align === 'right' ? rect.right - panel.offsetWidth : rect.left;
@@ -52,7 +52,7 @@ function Surface({ align = 'left', inline = false, className, children, style, .
       window.removeEventListener('resize', place);
       window.removeEventListener('scroll', place, true);
     };
-  }, [align, inline]);
+  }, [align, inline, maxHeight]);
 
   return (
     <motion.div

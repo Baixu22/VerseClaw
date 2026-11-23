@@ -1549,6 +1549,7 @@ export function ChatInput({
     || interventionNeedsAttention
     || (longTaskControlStatus?.warnings?.length ?? 0) > 0;
   const knowledgeReadNeedsAttention = ['error', 'timeout', 'partial'].includes(knowledgeReadReason);
+  const quietKnowledgeOptions = knowledgeScope === 'none' && knowledgeProfile === 'local';
   const slashInput = useMemo(() => parseSlashInput(input), [input]);
   const slashItems = useMemo<SlashPaletteItem[]>(() => {
     if (!slashInput.active) return [];
@@ -4107,7 +4108,7 @@ export function ChatInput({
                   {t('composer.knowledgeScopeTitle')} · {t(`composer.knowledgeScope.${knowledgeScope}`)} · {t(`composer.knowledgeProfile.${knowledgeProfile}`)}
                 </TooltipContent>
               </Tooltip>
-                <ComposerPopover open={knowledgePickerOpen}
+                <ComposerPopover open={knowledgePickerOpen} maxHeight={520}
                   className="codex-composer-menu--approval codex-composer-menu--knowledge"
                   data-testid="chat-knowledge-scope-menu"
                   role="dialog" aria-label={t('composer.knowledgeScopeTitle')}
@@ -4139,7 +4140,12 @@ export function ChatInput({
                     </button>
                     );
                   })}
-                  <div className="space-y-3 border-t border-border px-2.5 py-3" data-testid="chat-knowledge-settings">
+                  <details open={!quietKnowledgeOptions} className="border-t border-border" data-testid="chat-knowledge-options">
+                    <summary data-testid="chat-knowledge-options-toggle"
+                      className={cn('cursor-pointer rounded px-2.5 py-2 text-xs text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring', !quietKnowledgeOptions && 'hidden')}>
+                      {t('composer.knowledgeInteraction.label')} · {t('composer.knowledgeInteraction.off')} · {t('composer.knowledgeProfile.local')}
+                    </summary>
+                    <div className="grid grid-cols-2 gap-2 px-2.5 py-2.5" data-testid="chat-knowledge-settings">
                     <label className="block text-xs text-muted-foreground">
                       {t('composer.knowledgeInteraction.label')}
                       <select data-testid="chat-knowledge-interaction" aria-label={t('composer.knowledgeInteraction.label')}
@@ -4161,11 +4167,12 @@ export function ChatInput({
                 {(['local','quality','research'] as const).map(profile => <option key={profile} value={profile}>{t(`composer.knowledgeProfile.${profile}`)}</option>)}
               </select>
                     </label>
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <div className="col-span-2 flex flex-wrap items-center gap-2 text-xs">
                       {(knowledgeRoutingBusy || knowledgeSearching) && <button type="button" data-testid="chat-knowledge-menu-cancel" onClick={handleCancelKnowledgeRead} className="ml-1 text-tiny text-muted-foreground">{t('composer.knowledgeRead.cancel')}</button>}
               {knowledgeReadReason && <span role="status" data-testid="chat-knowledge-read-status" className="ml-1 text-tiny text-muted-foreground">{t(`composer.knowledgeRead.${knowledgeReadReason}`)}</span>}
                     </div>
-                  </div>
+                    </div>
+                  </details>
                   <div className="codex-composer-menu__divider" />
                   <button
                     type="button"
@@ -4185,7 +4192,9 @@ export function ChatInput({
                       <b>{t('composer.knowledgeRuntimeLessons.title')}</b>
                       <small>{t('composer.knowledgeRuntimeLessons.description')}</small>
                     </span>
-                    <span className="codex-composer-menu__check" data-hidden={runtimeLessonsSourceEnabled ? undefined : 'true'}><Check /></span>
+                    <span className="inline-flex shrink-0 items-center text-xs text-muted-foreground" data-testid="chat-runtime-lessons-state">
+                      {runtimeLessonsSourceEnabled ? <Check className="size-4" aria-hidden="true" /> : t('composer.knowledgeInteraction.off')}
+                    </span>
                   </button>
                   <div className="codex-composer-menu__label codex-composer-menu__label--divider">
                     <span>{t('composer.knowledgeAttach.title')}</span>
@@ -4206,6 +4215,7 @@ export function ChatInput({
                           }
                         }}
                         placeholder={t('composer.knowledgeAttach.placeholder')}
+                        aria-label={t('composer.knowledgeAttach.placeholder')}
                         className="w-full bg-transparent text-meta outline-none placeholder:text-muted-foreground/70"
                         data-testid="chat-knowledge-search-input"
                       />
@@ -4229,9 +4239,7 @@ export function ChatInput({
                         {knowledgeSearchError}
                       </div>
                     ) : knowledgeRows.length === 0 ? (
-                      <div className="rounded-xl px-3 py-3 text-xs leading-5 text-muted-foreground">
-                        {t('composer.knowledgeAttach.empty')}
-                      </div>
+                      knowledgeSearchResult && <p className="px-3 py-2 text-xs leading-5 text-muted-foreground">{t('composer.knowledgeAttach.empty')}</p>
                     ) : (
                       knowledgeRows.map((row, index) => {
                         const reference = knowledgeReferenceFromRow(row, knowledgeCorpus);

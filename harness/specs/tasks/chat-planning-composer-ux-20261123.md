@@ -22,6 +22,7 @@ requiredProfiles:
   - comms
 touchedAreas:
   - src/pages/Chat/**
+  - src/components/chat/ComposerPopover.tsx
   - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
   - src/components/tool-ui/plan-view.tsx
   - src/components/assistant-render/TurnSummaryCard.tsx
@@ -34,6 +35,7 @@ touchedAreas:
   - tests/unit/session-task-state-guidance.test.tsx
   - tests/unit/chat-render-reachability.test.tsx
   - tests/e2e/chat-planning-composer-ux.spec.ts
+  - tests/e2e/chat-composer-popovers.spec.ts
   - tests/e2e/chat-long-task-control.spec.ts
   - tests/e2e/project-rag-chat-modes.spec.ts
   - tests/e2e/project-rag-research.spec.ts
@@ -64,7 +66,7 @@ requiredTests:
   - pnpm run contract:check
   - pnpm run i18n:lint
   - pnpm run build:vite
-  - pnpm run test:e2e:run tests/e2e/chat-planning-composer-ux.spec.ts tests/e2e/chat-long-task-control.spec.ts tests/e2e/project-rag-chat-modes.spec.ts tests/e2e/project-rag-research.spec.ts --workers=1
+  - pnpm run test:e2e:run tests/e2e/chat-planning-composer-ux.spec.ts tests/e2e/chat-composer-popovers.spec.ts tests/e2e/chat-long-task-control.spec.ts tests/e2e/project-rag-chat-modes.spec.ts tests/e2e/project-rag-research.spec.ts --workers=1
 docs:
   required: true
   files:

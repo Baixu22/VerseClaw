@@ -5,7 +5,7 @@ import type { ElectronApplication } from '@playwright/test';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
 import type { TaskId } from '../../shared/types/identity-scope';
 import type { TaskSessionSnapshot, TaskView } from '../../shared/task-system/types';
-import { test, expect, closeElectronApp, getStableWindow, installIpcMocks, pinWindowContentSize } from './fixtures/electron';
+import { test, expect, closeElectronApp, getStableWindow, installIpcMocks, pinWindowContentSize, publishGatewayStatus } from './fixtures/electron';
 
 const sessionKey = 'agent:main:chat-ux';
 const workspaceId = 'chat-ux-project';
@@ -64,7 +64,7 @@ test('conversation planning, settings and decisions share a compact input surfac
         [key('taskLedger', 'sessionTask')]: readback,
         [key('sessions', 'longTaskControlStatus')]: { success: true, available: true, queueCount: 0, warnings: [] },
         [key('runtimeApprovals', 'list')]: { success: true, pending: [] },
-        [key('runtimeApprovals', 'decide')]: { success: true },
+        [key('runtimeApprovals', 'resolve')]: { success: true },
       },
     });
     await app.evaluate((_electron, initial) => {
@@ -95,6 +95,13 @@ test('conversation planning, settings and decisions share a compact input surfac
       if (await trigger.getAttribute('aria-expanded') !== 'true') await trigger.click();
       await expect(page.getByTestId('chat-knowledge-scope-menu')).toHaveAttribute('data-state', 'open');
     };
+    const revealOptions = async () => {
+      await openKnowledge();
+      if (!(await page.getByTestId('chat-knowledge-interaction').isVisible())) await page.getByTestId('chat-knowledge-options-toggle').click();
+    };
+    const selectMode = async (value: string) => { await revealOptions(); await page.getByTestId('chat-knowledge-interaction').selectOption(value); };
+    const selectProfile = async (value: string) => { await revealOptions(); await page.getByTestId('chat-knowledge-profile').selectOption(value); };
+
     await expect(page.getByTestId('session-task-panel')).toBeVisible();
     await expect(page.getByTestId('session-task-container')).toHaveAttribute('data-state', 'empty');
     await expect(page.getByTestId('session-tasks-toggle')).toHaveCount(0);
@@ -115,13 +122,16 @@ test('conversation planning, settings and decisions share a compact input surfac
     const openingWrites = await app.evaluate(() => (globalThis as unknown as { __chatUxFixture: { parameterWrites: unknown[] } }).__chatUxFixture.parameterWrites);
     expect(openingWrites).toEqual([]);
     steps.settingsDoNotChangeParameters = true;
-    await openKnowledge();
-    await page.getByTestId('chat-knowledge-interaction').selectOption('manual');
-    await page.getByTestId('chat-knowledge-profile').selectOption('quality');
+    await revealOptions();
+    const menuBounds = await page.getByTestId('chat-knowledge-scope-menu').boundingBox();
+    expect(menuBounds!.height).toBeLessThanOrEqual(520);
+    await capture('knowledge-options-light-1280');
+    await selectMode('manual');
+    await selectProfile('quality');
     await expect(page.getByTestId('chat-knowledge-paid-profile')).toHaveText('Quality');
-    await page.getByTestId('chat-knowledge-profile').selectOption('local');
-    await page.getByTestId('chat-knowledge-interaction').selectOption('suggest');
-    await page.getByTestId('chat-knowledge-interaction').selectOption('off');
+    await selectProfile('local');
+    await selectMode('suggest');
+    await selectMode('off');
     await page.keyboard.press('Escape');
     steps.explicitCostProfileVisible = true;
     const runId = 'chat-ux-run';
@@ -173,16 +183,16 @@ test('conversation planning, settings and decisions share a compact input surfac
     await page.getByTestId('runtime-approval-deny').click();
     await expect(input).toBeVisible(); await expect(input).toHaveValue('保留这段尚未发送的跟进');
     steps.approvalPreservesDraft = true;
-    await app.evaluate(({ BrowserWindow }) => {
+    await app.evaluate(() => {
       (globalThis as unknown as { __chatUxFixture: { gatewayStatus: { state: string; gatewayReady: boolean; port: number } } }).__chatUxFixture.gatewayStatus = { state: 'stopped', gatewayReady: false, port: 18789 };
-      BrowserWindow.getAllWindows()[0].webContents.send('gateway:status', { state: 'stopped', port: 18789 });
     });
+    await publishGatewayStatus(app, { state: 'stopped', port: 18789 });
     await expect(page.getByTestId('chat-composer-connection-settings')).toBeVisible(); await expect(input).toHaveValue('保留这段尚未发送的跟进');
     await capture('disconnected-dark-960');
-    await app.evaluate(({ BrowserWindow }) => {
+    await app.evaluate(() => {
       (globalThis as unknown as { __chatUxFixture: { gatewayStatus: { state: string; gatewayReady: boolean; port: number } } }).__chatUxFixture.gatewayStatus = { state: 'running', gatewayReady: true, port: 18789 };
-      BrowserWindow.getAllWindows()[0].webContents.send('gateway:status', { state: 'running', gatewayReady: true, port: 18789 });
     });
+    await publishGatewayStatus(app, { state: 'running', gatewayReady: true, port: 18789 });
     steps.connectionFailureVisible = true;
     for (const [language, label] of [['zh', '中文'], ['ja', '日本語'], ['ru', 'Русский']] as const) {
       await page.getByTestId('sidebar-nav-settings').click();

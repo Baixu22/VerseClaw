@@ -271,7 +271,7 @@ export function SessionTaskDock({
 type Tone = "active" | "done" | "cancelled" | "warn" | "idle";
 
 /** Semantic status colours with progress only when the step count is known. */
-function StatusGlyph({ tone, progress }: { tone: Tone; progress: number | null }) {
+function StatusGlyph({ tone, progress, running }: { tone: Tone; progress: number | null; running: boolean }) {
   if (tone === "done") {
     return <Check className="h-3.5 w-3.5 shrink-0 text-emerald-700 dark:text-emerald-400" aria-hidden="true" />;
   }
@@ -302,7 +302,7 @@ function StatusGlyph({ tone, progress }: { tone: Tone; progress: number | null }
   if (tone === "active") {
     return (
       <span
-        className="h-3.5 w-3.5 shrink-0 rounded-full border-[1.5px] border-blue-500/20 border-t-blue-700 motion-safe:animate-spin dark:border-t-blue-400"
+        className={cn('h-3.5 w-3.5 shrink-0 rounded-full border-[1.5px] border-blue-500/20 border-t-blue-700 dark:border-t-blue-400', running && 'motion-safe:animate-spin')}
         aria-hidden="true"
       />
     );
@@ -581,6 +581,7 @@ function TaskDockBody({
       data-state={state ?? (active ? "doing" : "ready")}
       data-mode={displayMode}
       data-step-source={hasRunPlan ? 'run-plan' : 'task'}
+      data-activity={runActive ? 'running' : 'idle'}
       aria-label={t("conversation.task")}
     >
       {displayMode === "hidden" ? (
@@ -593,7 +594,7 @@ function TaskDockBody({
           aria-label={t("conversation.reopen")}
           title={title}
         >
-          <StatusGlyph tone={tone} progress={progress} />
+          <StatusGlyph tone={tone} progress={progress} running={runActive} />
           <span>{t("conversation.task")}</span>
           <span aria-hidden="true" className="truncate tabular-nums">
             · {status}
@@ -615,7 +616,7 @@ function TaskDockBody({
                 onClick={() => change(expanded ? "collapsed" : "expanded")}
                 title={title}
               >
-                <StatusGlyph tone={tone} progress={progress} />
+                <StatusGlyph tone={tone} progress={progress} running={runActive} />
                 <h2
                   className={cn(
                     "min-w-0 flex-1 truncate text-[13px] font-medium tracking-tight",

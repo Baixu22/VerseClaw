@@ -682,3 +682,9 @@
     max-width: 112px;
   }
 }
+
+/* Knowledge options stay within the viewport and expose explicit toggle state. */
+.codex-composer-menu--knowledge { overflow-y: auto; }
+.codex-composer-menu--knowledge [data-testid='chat-knowledge-runtime-lessons-toggle'] {
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+}

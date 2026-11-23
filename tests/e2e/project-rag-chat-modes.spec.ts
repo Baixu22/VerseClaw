@@ -85,8 +85,12 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
       if (await trigger.getAttribute('aria-expanded') !== 'true') await trigger.click();
       await expect(page!.getByTestId('chat-knowledge-scope-menu')).toHaveAttribute('data-state', 'open');
     };
-    const selectMode = async (value: string) => { await openKnowledgeSettings(); await mode.selectOption(value); };
-    const selectProfile = async (value: string) => { await openKnowledgeSettings(); await profile.selectOption(value); };
+    const revealKnowledgeOptions = async () => {
+      await openKnowledgeSettings();
+      if (!(await mode.isVisible())) await page!.getByTestId('chat-knowledge-options-toggle').click();
+    };
+    const selectMode = async (value: string) => { await revealKnowledgeOptions(); await mode.selectOption(value); };
+    const selectProfile = async (value: string) => { await revealKnowledgeOptions(); await profile.selectOption(value); };
 
     await expect(composer).toBeVisible({ timeout: 30000 });
     await openKnowledgeSettings();
