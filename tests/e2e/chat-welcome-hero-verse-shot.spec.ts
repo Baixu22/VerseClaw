@@ -19,6 +19,7 @@ import {
   test,
 } from './fixtures/electron';
 import { evidencePath } from './fixtures/evidence-root';
+import type { GitRepositoryStatus } from '../../shared/types/git';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -49,15 +50,15 @@ const WORKSPACES = [
   makeWorkspace('ws-verse', 'verseshell', 'D:\\work\\verseshell', 100),
 ];
 
-// The context row only renders a branch chip when git reports a repository.
-// Long enough on purpose: the row's 24-char truncation is part of what the
-// screenshot is meant to show.
+// The workspace status projection reads the same complete Git contract as the composer.
 const GIT_STATUS = {
   success: true,
   status: {
     isRepository: true,
     branch: 'codex/ui-polish-verse-hero',
     detached: false,
+    ahead: 0,
+    behind: 0,
     clean: false,
     hasConflicts: false,
     stagedCount: 2,
@@ -66,8 +67,16 @@ const GIT_STATUS = {
     conflictedCount: 0,
     repoRoot: 'D:\\work\\ClawX',
     workspaceRoot: 'D:\\work\\ClawX',
+    changes: [
+      { path: 'src/app.ts', absolutePath: 'D:/work/ClawX/src/app.ts', status: 'M ', staged: true, unstaged: false, untracked: false, conflicted: false, bucket: 'staged' },
+      { path: 'src/layout.ts', absolutePath: 'D:/work/ClawX/src/layout.ts', status: 'M ', staged: true, unstaged: false, untracked: false, conflicted: false, bucket: 'staged' },
+      { path: 'src/chat.ts', absolutePath: 'D:/work/ClawX/src/chat.ts', status: ' M', staged: false, unstaged: true, untracked: false, conflicted: false, bucket: 'unstaged' },
+      { path: 'src/workspace.ts', absolutePath: 'D:/work/ClawX/src/workspace.ts', status: ' M', staged: false, unstaged: true, untracked: false, conflicted: false, bucket: 'unstaged' },
+      { path: 'README.md', absolutePath: 'D:/work/ClawX/README.md', status: ' M', staged: false, unstaged: true, untracked: false, conflicted: false, bucket: 'unstaged' },
+      { path: 'notes.txt', absolutePath: 'D:/work/ClawX/notes.txt', status: '??', staged: false, unstaged: false, untracked: true, conflicted: false, bucket: 'untracked' },
+    ],
   },
-};
+} satisfies { success: boolean; status: GitRepositoryStatus };
 
 function mocks() {
   return {

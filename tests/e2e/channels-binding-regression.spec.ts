@@ -117,7 +117,8 @@ test.describe('Channels binding regression', () => {
     await page.getByRole('button', { name: /Save & Connect|dialog\.saveAndConnect/ }).click();
     await expect(page.getByText(/Configure Feishu \/ Lark|dialog\.configureTitle/)).toBeHidden();
 
-    const newAccountRow = page.locator('div.rounded-xl').filter({ hasText: newAccountId }).first();
+    // The channel group also contains the account ID; its nested account card owns this binding.
+    const newAccountRow = page.locator('div.rounded-xl').filter({ hasText: newAccountId }).last();
     await expect(newAccountRow).toBeVisible();
     // The agent binding control migrated from a native <select> to a Radix
     // Select: the trigger is a combobox showing the bound agent's name, and the

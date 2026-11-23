@@ -4,6 +4,7 @@
  * specific XML suffix corruption seen in path arguments.
  */
 import type { AnyAgentTool } from "./agent-tools.types.js";
+import { recordEditNotApplied } from "./file-mutation-outcome.js";
 
 export type RequiredParamGroup = {
   keys: readonly string[];
@@ -194,14 +195,24 @@ export function wrapToolParamValidation(
   return {
     ...tool,
     execute: async (toolCallId, params, signal, onUpdate) => {
-      const record = getToolParamsRecord(params);
-      const pathKeys = resolveMalformedXmlArgValuePathKeys(requiredParamGroups);
-      const normalizedParams =
-        record && pathKeys.length > 0
-          ? stripMalformedXmlArgValueSuffixFromKeys(record, pathKeys)
-          : params;
-      if (requiredParamGroups?.length) {
-        assertRequiredParams(getToolParamsRecord(normalizedParams), requiredParamGroups, tool.name);
+      let normalizedParams: unknown;
+      try {
+        const record = getToolParamsRecord(params);
+        const pathKeys = resolveMalformedXmlArgValuePathKeys(requiredParamGroups);
+        normalizedParams =
+          record && pathKeys.length > 0
+            ? stripMalformedXmlArgValueSuffixFromKeys(record, pathKeys)
+            : params;
+        if (requiredParamGroups?.length) {
+          assertRequiredParams(
+            getToolParamsRecord(normalizedParams),
+            requiredParamGroups,
+            tool.name,
+          );
+        }
+      } catch (error) {
+        if (tool.name === "edit") throw recordEditNotApplied(error, toolCallId, "edit-parameters");
+        throw error;
       }
       return tool.execute(toolCallId, normalizedParams, signal, onUpdate);
     },

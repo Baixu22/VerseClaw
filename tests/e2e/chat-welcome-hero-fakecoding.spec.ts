@@ -91,31 +91,6 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
               },
             },
           },
-          [stableStringify(['git', 'status', null])]: {
-            success: true,
-            status: {
-              isRepository: true,
-              branch: 'main',
-              detached: false,
-              workspaceRoot: 'D:\\work\\ClawX',
-              ahead: 0,
-              behind: 0,
-              clean: true,
-              hasConflicts: false,
-              changes: [],
-              stagedCount: 0,
-              unstagedCount: 0,
-              untrackedCount: 0,
-              conflictedCount: 0,
-            },
-          },
-          [stableStringify(['git', 'branches', null])]: {
-            success: true,
-            branches: [
-              { name: 'main', current: true },
-              { name: 'feature/ui-polish', current: false },
-            ],
-          },
         },
       });
 
@@ -148,7 +123,7 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       await expect(trigger).toHaveCSS('cursor', 'pointer');
       await expect(trigger).toHaveCSS('border-radius', '10px');
 
-      // The project and branch controls share a compact 32px environment group.
+      // The project control occupies the welcome state's compact environment group.
       const triggerBox = await trigger.evaluate((element) => {
         const style = getComputedStyle(element);
         return {
@@ -207,11 +182,7 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       expect(Math.abs(placement.gap - 8)).toBeLessThanOrEqual(1);
       expect(Math.abs(placement.centreDelta)).toBeLessThanOrEqual(1);
 
-      const branchTrigger = page.getByTestId('welcome-branch-trigger');
-      await expect(branchTrigger).toBeVisible();
-      await branchTrigger.click();
-      await expect(page.getByTestId('welcome-branch-menu')).toBeVisible();
-      await expect(page.getByTestId('welcome-branch-item-feature-ui-polish')).toBeVisible();
+      await expect(page.getByTestId('welcome-branch-trigger')).toHaveCount(0);
 
       // Escape closes without changing the workspace.
       await page.keyboard.press('Escape');

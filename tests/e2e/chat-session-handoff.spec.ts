@@ -1,4 +1,5 @@
 import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { installWorkspaceOwnerMocks, readWorkspaceOwnerMocks } from './fixtures/workspace-owner';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
 const HANDOFF_DRAFT = [
@@ -49,7 +50,7 @@ const activeWorkspace = {
       sessionKey: MAIN_SESSION_KEY,
     },
   },
-  permissionMode: 'acceptEdits',
+  permissionMode: 'acceptEdits' as const,
   createdAt: 1,
   updatedAt: 1,
   lastOpenedAt: 1,
@@ -246,24 +247,14 @@ test.describe('Verse Claw chat session handoff', () => {
           [stableStringify(['/api/chat/sessions', 'GET'])]: { ok: true, data: { status: 200, ok: true, json: { success: true, result: { sessions } } } },
         },
       });
-      await app.evaluate(({ ipcMain }, { sourceKey, workspace }) => {
+      await installWorkspaceOwnerMocks(app, isolationWorkspace, [MAIN_SESSION_KEY, otherKey]);
+      await app.evaluate(({ ipcMain }, { sourceKey }) => {
         const original = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers.get('host:invoke');
         const state = { requested: false, release: () => {} };
         (globalThis as typeof globalThis & { __handoffIsolation?: typeof state }).__handoffIsolation = state;
         ipcMain.removeHandler('host:invoke');
         ipcMain.handle('host:invoke', async (event, request: { id?: string; module?: string; action?: string;
-          payload?: { sessionKey?: string; activeSessionKey?: string; state?: Record<string, unknown> } }) => {
-          if (request.module === 'workspaces' && request.action === 'saveState') {
-            const key = request.payload?.sessionKey ?? request.payload?.activeSessionKey ?? workspace.activeSessionKey;
-            const sessionStates = workspace.sessionStates as Record<string, Record<string, unknown>>;
-            sessionStates[key] = { ...sessionStates[key], ...request.payload?.state };
-            if (request.payload?.activeSessionKey) workspace.activeSessionKey = request.payload.activeSessionKey;
-            return { id: request.id, ok: true, data: { success: true } };
-          }
-          if (request.module === 'workspaces' && ['list', 'getActive'].includes(request.action ?? '')) {
-            return { id: request.id, ok: true, data: { success: true, profiles: [workspace],
-              activeWorkspaceId: workspace.id, activeWorkspace: workspace } };
-          }
+          payload?: { sessionKey?: string } }) => {
           if (request.module === 'sessions' && request.action === 'prepareHandoff') {
             const old = request.payload?.sessionKey === sourceKey;
             if (old) {
@@ -274,7 +265,7 @@ test.describe('Verse Claw chat session handoff', () => {
           }
           return original?.(event, request);
         });
-      }, { sourceKey: MAIN_SESSION_KEY, workspace: isolationWorkspace });
+      }, { sourceKey: MAIN_SESSION_KEY });
       const page = await getStableWindow(app);
       await page.reload();
       await expect(page.getByTestId('chat-composer-input')).toBeVisible();
@@ -284,6 +275,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await expect.poll(() => app.evaluate(() => (globalThis as typeof globalThis & { __handoffIsolation?: { requested: boolean } }).__handoffIsolation?.requested)).toBe(true);
       await page.getByTestId(`sidebar-session-${otherKey}`).click();
       await expect(page.getByTestId(`sidebar-session-${otherKey}`).locator('xpath=ancestor::div[contains(@class, "sidebar-row")][1]')).toHaveClass(/\bselected\b/);
+      await expect.poll(async () => (await readWorkspaceOwnerMocks(app)).profile.agentBindings?.main.sessionKey).toBe(otherKey);
       await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
       await expect(page.getByTestId('chat-session-handoff')).toBeEnabled();
       await page.getByTestId('chat-session-handoff').click();

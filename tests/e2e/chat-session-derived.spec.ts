@@ -1,4 +1,6 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { installWorkspaceOwnerMocks, readWorkspaceOwnerMocks } from './fixtures/workspace-owner';
+import { hostInvoke } from './fixtures/fp-p1-harness';
 
 const PARENT_SESSION_KEY = 'agent:main:main';
 const CHILD_SESSION_KEY = 'agent:main:fork-1711111111111';
@@ -116,7 +118,7 @@ function derivedSessionMocks() {
       },
       // Non-main sessions get a label hydrated from their first user message;
       // that fetch uses the 1000-message page.
-      [stableStringify(['chat.history', { sessionKey: CHILD_SESSION_KEY, limit: 1000 }])]: {
+      [stableStringify(['chat.history', { sessionKey: CHILD_SESSION_KEY, limit: 1000, maxChars: 500000 }])]: {
         success: true,
         result: { messages: childHistory },
       },
@@ -165,9 +167,6 @@ function derivedSessionMocks() {
         activeWorkspaceId: WORKSPACE_ID,
         activeWorkspace: parentWorkspace,
       },
-      [stableStringify(['workspaces', 'saveState', { id: WORKSPACE_ID, sessionKey: PARENT_SESSION_KEY, state: {} }])]: {
-        success: true,
-      },
       [stableStringify(['usage', 'contextRange', {
         sessionKey: PARENT_SESSION_KEY,
         modelRef: null,
@@ -203,18 +202,18 @@ function derivedSessionMocks() {
 }
 
 test.describe('Verse Claw derived-session listing', () => {
-  test('lists the sessions derived from the current one and switches to the child', async ({ launchElectronApp }) => {
+  test('lists derived sessions and opens the child after its workspace association is established', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
       await installIpcMocks(app, derivedSessionMocks());
+      await installWorkspaceOwnerMocks(app, parentWorkspace, [PARENT_SESSION_KEY, CHILD_SESSION_KEY]);
       const page = await getStableWindow(app);
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page.getByText(PARENT_ASSISTANT_TEXT)).toBeVisible({ timeout: 30_000 });
-      // The child row is not part of the workspace's known sessions, so it can
-      // only appear through the derived-session section.
+      // The parent transcript stays active until its associated derived child is selected.
       await expect(page.getByText(CHILD_MARKER_TEXT)).toHaveCount(0);
 
       await page.getByTestId('chat-header-session-name').click();
@@ -228,6 +227,21 @@ test.describe('Verse Claw derived-session listing', () => {
       await expect(childRow).toContainText('fork-1711111111111');
       await expect(childRow).toContainText(CHILD_SESSION_KEY);
 
+      await childRow.click();
+
+      // Runtime lineage alone does not authorize a workspace/session selection.
+      await expect(page.getByText('The project coordinator association is unavailable.')).toBeVisible();
+      await expect(page.getByText(PARENT_ASSISTANT_TEXT)).toBeVisible();
+      await expect(page.getByText(CHILD_MARKER_TEXT)).toHaveCount(0);
+      const unassociated = await readWorkspaceOwnerMocks(app);
+      expect(unassociated.profile.activeSessionKey).toBe(PARENT_SESSION_KEY);
+      expect(unassociated.saveCalls.some((call) => call.activeSessionKey === CHILD_SESSION_KEY)).toBe(false);
+
+      // The declared owner associates this existing child before the user retries the selection.
+      await hostInvoke(app, 'workspaces', 'saveState', { id: WORKSPACE_ID, sessionKey: CHILD_SESSION_KEY, state: {} });
+      await page.reload();
+      await expect(page.getByText(PARENT_ASSISTANT_TEXT)).toBeVisible({ timeout: 30_000 });
+      await page.getByTestId('chat-header-session-name').click();
       await childRow.click();
 
       // The child's transcript page (limit 200) is fetched and rendered; the
@@ -244,9 +258,23 @@ test.describe('Verse Claw derived-session listing', () => {
           const params = (payload.params ?? {}) as Record<string, unknown>;
           return payload.method === 'chat.history'
             && params.sessionKey === childKey
-            && params.limit === 200;
+            && params.limit === 200
+            && params.maxChars === 500000;
         });
       }, CHILD_SESSION_KEY), { timeout: 30_000 }).toBe(true);
+      await page.reload();
+      await expect(page.getByText(CHILD_MARKER_TEXT)).toBeVisible({ timeout: 30_000 });
+      const owner = await readWorkspaceOwnerMocks(app);
+      expect(owner.saveCalls).toContainEqual(expect.objectContaining({
+        id: WORKSPACE_ID, activeSessionKey: CHILD_SESSION_KEY, sessionKey: CHILD_SESSION_KEY,
+      }));
+      expect(owner.profile.activeSessionKey).toBe(CHILD_SESSION_KEY);
+      expect(owner.profile.agentBindings?.main?.sessionKey).toBe(CHILD_SESSION_KEY);
+      expect(owner.readCalls).toContainEqual(expect.objectContaining({ action: 'list', activeSessionKey: CHILD_SESSION_KEY }));
+      await testInfo.attach('derived-session-workspace-owner', {
+        body: JSON.stringify({ driven_by: 'agent', actor: 'codex-g2-derived-session-e2e', owner }, null, 2),
+        contentType: 'application/json',
+      });
     } finally {
       await closeElectronApp(app);
     }

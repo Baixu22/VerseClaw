@@ -14,15 +14,13 @@ import {
   formatSyntaxCheckFailed,
   recordSyntaxCheckMetric,
 } from "./post-write-parse-check.js";
-import {
-  attachDiagToResult,
-  diagnoseFileWithTimeout,
-} from "./post-write-diag.js";
+import { attachDiagToResult, diagnoseFileWithTimeout } from "./post-write-diag.js";
 import { extractPatchTargetPaths } from "./tools/write-journal.js";
 import { toFactRelPath } from "./fact-rel-path.js";
 import { detectTestRunner, formatTestRunnerDetection } from "./test-runner-detect.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
+import { deferWriteVerification } from "./write-verification-context.js";
 
 export type WriteSideEffectsOptions = {
   workspaceRoot: string;
@@ -119,7 +117,8 @@ function normalizeTestExecutionResult(params: {
   const resultRecord = asRecord(params.result);
   const details = asRecord(resultRecord?.details);
   const status = details?.status;
-  const aggregated = typeof details?.aggregated === "string" ? details.aggregated : resultText(params.result);
+  const aggregated =
+    typeof details?.aggregated === "string" ? details.aggregated : resultText(params.result);
   const outputTail = boundedTail(aggregated);
   const base = {
     command: params.command,
@@ -182,9 +181,7 @@ async function executeDetectedTests(params: {
   // "auto": post-write verification is enabled only when a runner was actually
   // detected (which is the only path that reaches this function). Explicit
   // false always disables; explicit true always runs.
-  const enabled =
-    options.autoVerifyEnabled === true ||
-    options.autoVerifyEnabled === "auto";
+  const enabled = options.autoVerifyEnabled === true || options.autoVerifyEnabled === "auto";
   if (!enabled) {
     return {
       status: "disabled",
@@ -241,23 +238,21 @@ function formatTestExecution(
 function collectTargetPaths(toolName: string, args: unknown, result: unknown): string[] {
   const record = getToolParamsRecord(args);
   if (toolName === "apply_patch") {
-    const fromArgs =
-      typeof record?.input === "string" ? extractPatchTargetPaths(record.input) : [];
+    const fromArgs = typeof record?.input === "string" ? extractPatchTargetPaths(record.input) : [];
     if (fromArgs.length > 0) {
       return fromArgs;
     }
     const details =
       result && typeof result === "object" && "details" in result
-        ? (result as { details?: { summary?: { added?: string[]; modified?: string[]; deleted?: string[] } } })
-            .details
+        ? (
+            result as {
+              details?: { summary?: { added?: string[]; modified?: string[]; deleted?: string[] } };
+            }
+          ).details
         : undefined;
     const summary = details?.summary;
     if (summary) {
-      return [
-        ...(summary.added ?? []),
-        ...(summary.modified ?? []),
-        ...(summary.deleted ?? []),
-      ];
+      return [...(summary.added ?? []), ...(summary.modified ?? []), ...(summary.deleted ?? [])];
     }
     return [];
   }
@@ -288,12 +283,10 @@ export function wrapToolWithWriteSideEffects(
   tool: AnyAgentTool,
   options: WriteSideEffectsOptions,
 ): AnyAgentTool {
-  const parseOnWrite =
-    options.parseOnWriteEnabled !== false && Boolean(options.materializer);
+  const parseOnWrite = options.parseOnWriteEnabled !== false && Boolean(options.materializer);
   const syntaxCheck = options.syntaxCheckEnabled !== false;
   const diagEnabled = options.diagEnabled !== false;
-  const verifyConsume =
-    options.verifyConsumeEnabled !== false && Boolean(options.factStore);
+  const verifyConsume = options.verifyConsumeEnabled !== false && Boolean(options.factStore);
   const testRunnerDetect = options.testRunnerDetectEnabled !== false;
   if (!parseOnWrite && !syntaxCheck && !diagEnabled && !verifyConsume && !testRunnerDetect) {
     return tool;
@@ -414,50 +407,56 @@ export function wrapToolWithWriteSideEffects(
         }
       }
 
-      // FP-P1-04 verify段: say which test command applies — or why none
-      // does. A skip must be explainable, never silence that reads as "passed".
-      if (testRunnerDetect) {
-        try {
-          const detection = detectTestRunner(options.workspaceRoot, {
-            changedPaths: paths,
-            customCommand: options.autoVerifyCommand,
-          });
-          const execution = detection.detected
-            ? await executeDetectedTests({ detection, options, toolCallId, signal })
-            : undefined;
-          const prev =
-            nextResult.details &&
-            typeof nextResult.details === "object" &&
-            !Array.isArray(nextResult.details)
-              ? (nextResult.details as Record<string, unknown>)
-              : {};
-          nextResult = {
-            ...nextResult,
-            details: {
-              ...prev,
-              verify_tests: {
-                ...detection,
-                ...(execution ? { execution } : {}),
-                rendered:
-                  detection.detected && execution
-                    ? formatTestExecution(detection, execution)
-                    : formatTestRunnerDetection(detection),
+      const finishVerification = async (settledResult: typeof nextResult) => {
+        let finalResult = settledResult;
+        // FP-P1-04 verify段: say which test command applies — or why none
+        // does. A skip must be explainable, never silence that reads as "passed".
+        if (testRunnerDetect) {
+          try {
+            const detection = detectTestRunner(options.workspaceRoot, {
+              changedPaths: paths,
+              customCommand: options.autoVerifyCommand,
+            });
+            const execution = detection.detected
+              ? await executeDetectedTests({ detection, options, toolCallId, signal })
+              : undefined;
+            const prev =
+              finalResult.details &&
+              typeof finalResult.details === "object" &&
+              !Array.isArray(finalResult.details)
+                ? (finalResult.details as Record<string, unknown>)
+                : {};
+            finalResult = {
+              ...finalResult,
+              details: {
+                ...prev,
+                verify_tests: {
+                  ...detection,
+                  ...(execution ? { execution } : {}),
+                  rendered:
+                    detection.detected && execution
+                      ? formatTestExecution(detection, execution)
+                      : formatTestRunnerDetection(detection),
+                },
               },
-            },
-          };
-          codingObservability.recordTestRunnerDetect(detection.detected);
-        } catch {
-          // fail-open: detection must never break a successful write
+            };
+            codingObservability.recordTestRunnerDetect(detection.detected);
+          } catch {
+            // fail-open: detection must never break a successful write
+          }
         }
-      }
 
-      // FP-P1-04 diff段 + verify段 visibility. `details` is stripped from chat
-      // history by the gateway projection (chat-display-projection.ts deletes
-      // it), so evidence that only lives there never reaches the user — an
-      // `edit` would render as nothing but "Successfully replaced 1 block(s)".
-      // `content` survives the projection, so append it there.
-      nextResult = appendCodingEvidenceToContent(nextResult);
-      return nextResult;
+        // FP-P1-04 diff段 + verify段 visibility. `details` is stripped from chat
+        // history by the gateway projection (chat-display-projection.ts deletes
+        // it), so evidence that only lives there never reaches the user — an
+        // `edit` would render as nothing but "Successfully replaced 1 block(s)".
+        // `content` survives the projection, so append it there.
+        return appendCodingEvidenceToContent(finalResult);
+      };
+      if (deferWriteVerification((result) => finishVerification(result as typeof nextResult))) {
+        return nextResult;
+      }
+      return finishVerification(nextResult);
     },
   };
 }

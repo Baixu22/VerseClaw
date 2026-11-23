@@ -22,6 +22,8 @@ Runtime-managed worktree ownership, creation stages and merge intent persist in 
 
 Managed tool effects combine task claims, session generations and durable checkout writers with the existing merge, freeze and cleanup owners. Writers persist between calls; unknown effects and background processes require owner reconciliation. The [writer contract](harness/specs/guides/checkout-writer-ownership.md) describes transfer, recovery and external-write boundaries.
 
+Automatic tests run after successful mutation receipts settle, through the authorized exec pipeline. An edit rejected before file-write dispatch records its owner's not-applied receipt, so corrected input can continue in the same task.
+
 Chat can continue the same conversation and task in another configured checkout. Migration retains the objective and artifact references, verifies source drain and target ownership, and resumes an interrupted transfer from its saved operation.
 
 Session navigation restores the visible message and draft. Background work updates its own status while hovered or focused family rows stay in place. Empty projects, permission failures and dependency waits show specific reasons and existing next actions; dispatch plans remain separate from current queue observations.

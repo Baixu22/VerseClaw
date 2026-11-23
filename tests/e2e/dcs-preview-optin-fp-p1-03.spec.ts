@@ -14,7 +14,7 @@
  * This also closes the FP-P0-04 residual "E2E asserted control-plane returns,
  * not the Settings DOM".
  */
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -166,11 +166,21 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
       await expect(page.getByTestId('settings-dcs-preview-ack-trail')).toHaveText(
         'saved → pending-restart → restarting → runtime-acknowledged → applied',
       );
+      const runtimeAck = await hostInvoke<Record<string, unknown>>(app, 'gateway', 'rpc', {
+        method: 'runtime.flags.ack', params: {}, timeoutMs: 30_000,
+      });
+      const userRuntime = JSON.parse(await readFile(join(openclawDir, 'openclaw.json'), 'utf8')).runtime;
+      const isolatedRuntime = JSON.parse(await readFile(join(sourceStateDir, 'openclaw.json'), 'utf8')).runtime;
+      const observationPath = test.info().outputPath('dcs-preview-applied-observation.json');
+      await writeFile(observationPath, JSON.stringify({ driven_by: 'agent', actor: 'codex-dcs-preview-observer',
+        candidate: process.env.CLAWX_E2E_CANDIDATE ?? 'dirty-development',
+        recordedAt: new Date().toISOString(), userRuntime, isolatedRuntime, runtimeAck,
+      }, null, 2));
+      await test.info().attach('dcs-preview-applied-observation', { path: observationPath, contentType: 'application/json' });
       for (const key of [
         'dcs.contextViewTools.enabled',
         'runtime.contextBlock.working_memory.enabled',
         'runtime.contextBlock.tool_registry.enabled',
-        'runtime.coding.staleWriteGuard.enabled',
       ]) {
         // FP-P1-10 adds an adjacent provenance badge (for example, "from env").
         // The effective flag remains the behavioral contract; keep the locator
@@ -179,6 +189,10 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
           `${key}: true`,
         );
       }
+      await expect(page.getByTestId('settings-dcs-preview-effective-runtime.coding.staleWriteGuard.enabled'))
+        .toContainText('runtime.coding.staleWriteGuard.enabled: false');
+      expect((runtimeAck.flagAttribution as Record<string, { origin?: string }> | undefined)
+        ?.['runtime.coding.staleWriteGuard.enabled']?.origin).toBe('default');
 
       console.log('[fp-p1-03-on]', await ack.getAttribute('data-ack-state'));
 
@@ -210,7 +224,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
       expect(probe?.wouldChangeTurn).toBe(false);
 
       // FP-P1-10: the child must say WHY each flag has its value. After the
-      // preview switch is turned off, the four combo flags are `false` — but
+      // preview switch is turned off, the three combo flags are `false` — but
       // "false because the operator wrote false" and "false because nobody set
       // it" are different operational situations, and `configSource` (a single
       // file path) could never tell them apart.
@@ -231,7 +245,7 @@ test.describe('FP-P1-03 DCS Coding Preview switch (real Settings DOM + real chil
       // `default`. This is the assertion that would fail if attribution were
       // faked by just echoing the value.
       expect(attribution?.['runtime.contextBlock.working_memory.enabled']?.origin).toBe('config');
-      expect(attribution?.['runtime.coding.staleWriteGuard.enabled']?.origin).toBe('config');
+      expect(attribution?.['runtime.coding.staleWriteGuard.enabled']?.origin).toBe('default');
       // FP-P1-10 UI: the origin is shown next to the value, not just in the ack.
       // FP-P1-10 UI: origin badges render beside each value when the ack carries
       // attribution. Recorded, not asserted-hard: the badge depends on the

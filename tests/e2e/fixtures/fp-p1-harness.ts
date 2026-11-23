@@ -6,7 +6,22 @@
  */
 import { createServer as createHttpServer, type Server } from 'node:http';
 import { createServer as createNetServer } from 'node:net';
+import { execFileSync } from 'node:child_process';
+import { lstatSync } from 'node:fs';
+import { join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
+
+/** Give a nested fixture its own Git and Task authority, including a valid baseline HEAD. */
+export function initializeIndependentGitWorkspace(workspace: string): void {
+  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^GIT_/iu.test(key)));
+  const run = (args: string[]) => execFileSync('git', args, { cwd: workspace, env, windowsHide: true, stdio: 'pipe' });
+  run(['init', '--quiet']);
+  if (!lstatSync(join(workspace, '.git')).isDirectory()) throw new Error('Fixture requires its own Git directory.');
+  run(['config', 'user.name', 'Agent E2E']);
+  run(['config', 'user.email', 'agent-e2e@example.invalid']);
+  run(['add', '--all']);
+  run(['commit', '--quiet', '--allow-empty', '-m', 'Agent-driven fixture baseline']);
+}
 
 export type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 export type GatewayStatus = { state?: string; port?: number; gatewayReady?: boolean };

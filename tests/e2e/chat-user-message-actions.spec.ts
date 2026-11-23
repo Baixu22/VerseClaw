@@ -1,7 +1,11 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import { installWorkspaceOwnerMocks, readWorkspaceOwnerMocks } from './fixtures/workspace-owner';
 
 const SESSION_KEY = 'agent:main:main';
 const WORKSPACE_ID = 'workspace-user-message-actions';
+const FORK_SESSION_KEY = 'agent:main:fork-user-message-question';
+const FORK_QUESTION_TEXT = '基于已有上下文，解释下一步。';
+const EDITED_TRANSCRIPT_ENTRY_ID = 'user-message-actions-edited-entry';
 const USER_MESSAGE_TEXT = '连接测试';
 const UPDATED_MESSAGE_TEXT = '连接测试，更新一下';
 const OLD_ASSISTANT_TEXT = '旧回复应在重发前被移除。';
@@ -36,6 +40,12 @@ const workspace = {
 
 const seededHistory = [
   {
+    id: 'assistant-message-actions-prior-context',
+    role: 'assistant',
+    content: '上下文已准备，继续提问。',
+    timestamp: (FIXED_TIME_MS - 1000) / 1000,
+  },
+  {
     id: 'user-message-actions-seed',
     role: 'user',
     content: USER_MESSAGE_TEXT,
@@ -50,7 +60,7 @@ const seededHistory = [
 ];
 
 function chatMessageActionMocks() {
-  const contextRange = {
+  const contextRange = (messageCount: number) => ({
     success: true,
     range: {
       sessionKey: SESSION_KEY,
@@ -58,13 +68,13 @@ function chatMessageActionMocks() {
       maxTokens: 8000,
       usedTokens: 0,
       visibleMessageStartIndex: 0,
-      visibleMessageEndIndex: 1,
-      retainedMessageCount: 2,
+      visibleMessageEndIndex: messageCount - 1,
+      retainedMessageCount: messageCount,
       truncatedMessageCount: 0,
       summarizedMessageCount: 0,
       status: 'bestEffort',
     },
-  };
+  });
 
   return {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
@@ -140,27 +150,39 @@ function chatMessageActionMocks() {
       [stableStringify(['usage', 'contextRange', {
         sessionKey: SESSION_KEY,
         modelRef: null,
+        messageCount: 3,
+        usedTokens: null,
+      }])]: contextRange(3),
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
+        messageCount: 3,
+        usedTokens: 0,
+      }])]: contextRange(3),
+      [stableStringify(['usage', 'contextRange', {
+        sessionKey: SESSION_KEY,
+        modelRef: null,
         messageCount: 2,
         usedTokens: null,
-      }])]: contextRange,
+      }])]: contextRange(2),
       [stableStringify(['usage', 'contextRange', {
         sessionKey: SESSION_KEY,
         modelRef: null,
         messageCount: 2,
         usedTokens: 0,
-      }])]: contextRange,
+      }])]: contextRange(2),
       [stableStringify(['usage', 'contextRange', {
         sessionKey: SESSION_KEY,
         modelRef: null,
         messageCount: 1,
         usedTokens: null,
-      }])]: contextRange,
+      }])]: contextRange(1),
       [stableStringify(['usage', 'contextRange', {
         sessionKey: SESSION_KEY,
         modelRef: null,
         messageCount: 1,
         usedTokens: 0,
-      }])]: contextRange,
+      }])]: contextRange(1),
       [stableStringify(['sessions', 'truncate', {
         agentId: 'main',
         messageId: 'user-message-actions-seed',
@@ -171,7 +193,7 @@ function chatMessageActionMocks() {
         messageId: 'user-message-actions-seed',
         truncated: true,
         removedMessageCount: 2,
-        retainedLineCount: 1,
+        retainedLineCount: 2,
       },
       [stableStringify(['chat', 'sendWithMedia', null])]: {
         success: true,
@@ -236,11 +258,77 @@ test.describe('Verse Claw user message hover actions', () => {
 
     try {
       await installIpcMocks(app, chatMessageActionMocks());
+      await installWorkspaceOwnerMocks(app, workspace, [SESSION_KEY, FORK_SESSION_KEY]);
+      await app.evaluate(({ ipcMain }, seed) => {
+        const originalHostInvoke = (ipcMain as unknown as {
+          _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+        })._invokeHandlers?.get('host:invoke');
+        let transcript = seed.history;
+        let childTranscript: typeof transcript = [];
+        let forked = false;
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event: unknown, request: {
+          id?: string; module?: string; action?: string; payload?: Record<string, unknown>;
+        }) => {
+          const payload = request.payload ?? {};
+          const respond = (data: unknown) => {
+            (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: unknown[] })
+              .__verseClawE2eHostCalls?.push({ module: request.module, action: request.action, payload });
+            return { id: request.id, ok: true, data };
+          };
+          if (request.module === 'sessions' && request.action === 'truncate') {
+            if (payload.sessionKey !== seed.parentKey || payload.messageId !== seed.history[1].id) {
+              return { id: request.id, ok: false, error: { code: 'INVALID_ARGUMENT', message: 'Unexpected transcript boundary.' } };
+            }
+            transcript = [seed.history[0]];
+            return respond({ success: true, sessionKey: seed.parentKey, messageId: seed.history[1].id,
+              truncated: true, removedMessageCount: 2, retainedLineCount: 2 });
+          }
+          if (request.module === 'chat' && request.action === 'sendWithMedia' && payload.sessionKey === seed.parentKey) {
+            if (payload.message !== seed.updatedText) {
+              return { id: request.id, ok: false, error: { code: 'INVALID_ARGUMENT', message: 'Unexpected edited message.' } };
+            }
+            transcript = [seed.history[0], { id: seed.editedEntryId, role: 'user', content: seed.updatedText, timestamp: seed.timestamp },
+              { id: 'assistant-message-actions-edited-ack', role: 'assistant', content: seed.ack, timestamp: seed.timestamp + 1 }];
+            return respond({ success: true, result: { runId: 'run-user-message-actions', source: 'mock',
+              message: { content: [{ type: 'text', text: seed.ack }] } } });
+          }
+          if (request.module === 'sessions' && request.action === 'fork') {
+            if (payload.sessionKey !== seed.parentKey || payload.workspaceId !== seed.workspaceId
+              || payload.fromLeafId !== seed.editedEntryId) {
+              return respond({ success: false, error: 'Question fork fixture requires its bound parent and transcript entry.' });
+            }
+            const boundary = transcript.findIndex((entry) => entry.id === seed.editedEntryId);
+            if (boundary < 0) return respond({ success: false, error: 'The fixture transcript does not contain this entry.' });
+            const ancestor = transcript.slice(0, boundary).findLastIndex((entry) => entry.role === 'assistant');
+            if (ancestor < 0) return respond({ success: false, error: 'The fixture transcript has no preceding assistant.' });
+            childTranscript = transcript.slice(0, ancestor + 1);
+            forked = true;
+            return respond({ success: true, sessionKey: seed.childKey });
+          }
+          if (request.module === 'gateway' && request.action === 'rpc') {
+            const params = payload.params as Record<string, unknown> | undefined;
+            if (forked && payload.method === 'sessions.list') {
+              return respond({ sessions: [{ key: seed.parentKey, displayName: 'main' },
+                { key: seed.childKey, displayName: 'Question branch', parentSessionKey: seed.parentKey, forkedFromParent: true }] });
+            }
+            if (payload.method === 'chat.history' && params?.sessionKey === seed.parentKey) {
+              return respond({ messages: transcript });
+            }
+            if (forked && payload.method === 'chat.history' && params?.sessionKey === seed.childKey) {
+              return respond({ messages: childTranscript });
+            }
+          }
+          return originalHostInvoke?.(event, request) ?? respond({});
+        });
+      }, { workspaceId: WORKSPACE_ID, parentKey: SESSION_KEY, childKey: FORK_SESSION_KEY,
+        history: seededHistory, updatedText: UPDATED_MESSAGE_TEXT, editedEntryId: EDITED_TRANSCRIPT_ENTRY_ID,
+        ack: MOCK_ASSISTANT_ACK, timestamp: (FIXED_TIME_MS + 2000) / 1000 });
       const page = await getStableWindow(app);
       await page.setViewportSize({ width: 1136, height: 520 });
       await openSeededChat(page);
 
-      const messageRow = page.getByTestId('chat-message-0');
+      const messageRow = page.locator('[id^="chat-message-"]').filter({ hasText: USER_MESSAGE_TEXT });
       const messageBubble = page.getByTestId('chat-user-message-bubble');
       const messageText = messageRow.locator('p').filter({ hasText: USER_MESSAGE_TEXT });
       await expect(messageText).toBeVisible({ timeout: 30_000 });
@@ -251,10 +339,10 @@ test.describe('Verse Claw user message hover actions', () => {
       await expect(actions).toHaveCSS('opacity', '1');
       await expect(page.getByTestId('chat-user-message-copy')).toHaveAttribute('aria-label', '复制消息');
       await expect(page.getByTestId('chat-user-message-edit')).toHaveAttribute('aria-label', '编辑');
-      // #180: the hover bar also offers a per-message fork point.
+      // The message action opens a question draft in a derived conversation.
       await expect(page.getByTestId('chat-user-message-fork')).toHaveAttribute(
         'aria-label',
-        '从此处分叉',
+        '在新会话中提问',
       );
       const bubbleBox = await messageBubble.boundingBox();
       const actionsBox = await actions.boundingBox();
@@ -353,10 +441,17 @@ test.describe('Verse Claw user message hover actions', () => {
         }),
       }));
 
-      // #180: the hover action forks from *this* message — the host call must
-      // carry the message's transcript entry id as `fromLeafId`.
+      // The question draft keeps this message's transcript entry as its fork boundary.
+      await openSeededChat(page);
+      await expect(messageText).toContainText(UPDATED_MESSAGE_TEXT);
       await messageText.hover();
       await page.getByTestId('chat-user-message-fork').click();
+      const questionDialog = page.getByTestId('question-fork-dialog');
+      const questionDraft = page.getByTestId('question-fork-draft');
+      await expect(questionDialog).toBeVisible();
+      await expect(questionDraft).toHaveValue(UPDATED_MESSAGE_TEXT);
+      await questionDraft.fill(FORK_QUESTION_TEXT);
+      await page.getByTestId('question-fork-create').click();
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & {
           __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> }>;
@@ -372,17 +467,46 @@ test.describe('Verse Claw user message hover actions', () => {
         action: 'fork',
         payload: expect.objectContaining({
           sessionKey: SESSION_KEY,
-          // The action must name a concrete transcript entry. Which entry it is
-          // depends on the flow above (the edit/resend rebuilds the message), so
-          // the assertion pins the shape — the exact forwarding is unit-tested
-          // in tests/unit/workspace-session.test.ts.
+          // The reload reads the edited entry's fixed backend identity.
           fromLeafId: expect.any(String),
         }),
       }));
       const forkLeafId = (forkCall as { payload?: { fromLeafId?: string } } | null)?.payload?.fromLeafId;
       expect(forkLeafId?.trim()).not.toBe('');
+      expect(forkLeafId).toBe(EDITED_TRANSCRIPT_ENTRY_ID);
+      await expect(questionDialog).toBeHidden();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(FORK_QUESTION_TEXT);
+      await openSeededChat(page);
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(FORK_QUESTION_TEXT);
+      await expect(page.getByText('上下文已准备，继续提问。')).toBeVisible();
+      await expect(page.getByText(UPDATED_MESSAGE_TEXT, { exact: true })).toHaveCount(0);
+      const finalHostCalls = await app.evaluate(() => (
+        (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: Record<string, unknown> }> })
+          .__verseClawE2eHostCalls ?? []
+      ));
+      expect(finalHostCalls).toContainEqual(expect.objectContaining({
+        module: 'workspaces', action: 'saveState',
+        payload: expect.objectContaining({ id: WORKSPACE_ID, sessionKey: FORK_SESSION_KEY,
+          state: expect.objectContaining({ draftInput: FORK_QUESTION_TEXT }) }),
+      }));
+      expect(finalHostCalls).toContainEqual(expect.objectContaining({
+        module: 'gateway', action: 'rpc', payload: expect.objectContaining({ method: 'chat.history',
+          params: expect.objectContaining({ sessionKey: FORK_SESSION_KEY, limit: 200, maxChars: 500000 }) }),
+      }));
+      const owner = await readWorkspaceOwnerMocks(app);
+      expect(owner.profile.activeSessionKey).toBe(FORK_SESSION_KEY);
+      expect(owner.profile.agentBindings?.main?.sessionKey).toBe(FORK_SESSION_KEY);
+      expect(owner.profile.sessionStates?.[FORK_SESSION_KEY]?.draftInput).toBe(FORK_QUESTION_TEXT);
+      expect(owner.readCalls).toContainEqual(expect.objectContaining({ action: 'list', activeSessionKey: FORK_SESSION_KEY }));
+      await expect(page.getByText(MOCK_ASSISTANT_ACK)).toHaveCount(0);
       await testInfo.attach('user-message-actions-host-calls', {
-        body: JSON.stringify(hostCalls, null, 2),
+        body: JSON.stringify(finalHostCalls, null, 2),
+        contentType: 'application/json',
+      });
+      await testInfo.attach('question-fork-owner', {
+        body: JSON.stringify({ driven_by: 'agent', actor: 'codex-g2-question-fork-e2e',
+          parentSessionKey: SESSION_KEY, childSessionKey: FORK_SESSION_KEY, forkLeafId,
+          draft: FORK_QUESTION_TEXT, forkCall, owner }, null, 2),
         contentType: 'application/json',
       });
     } finally {

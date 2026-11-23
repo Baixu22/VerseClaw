@@ -1,4 +1,5 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import type { LongTaskControlStatus } from '../../shared/types/long-task-control';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
 
@@ -521,6 +522,38 @@ test.describe('Verse Claw chat run state events', () => {
             activeWorkspace: COMPOSER_WORKSPACE,
           },
           [stableStringify(['workspaces', 'saveState', null])]: { success: true },
+          [stableStringify(['sessions', 'longTaskControlStatus', {
+            sessionKey: MAIN_SESSION_KEY,
+            agentId: 'main',
+          }])]: {
+            success: true,
+            available: true,
+            queueCount: 0,
+            latestCheckpoint: {
+              id: 'checkpoint-composer-state',
+              sessionKey: MAIN_SESSION_KEY,
+              workspaceId: COMPOSER_WORKSPACE_ID,
+              taskLedgerRootId: 'task-composer-state',
+              trigger: 'queue_drain',
+              status: 'active',
+              checkpoint: {
+                schemaVersion: 1,
+                taskLedgerRootId: 'task-composer-state',
+                trigger: 'queue_drain',
+                openBlockers: [],
+                decisions: [],
+                deviations: [],
+                filesTouched: [],
+                testsRun: [],
+                reviewNeededItems: [],
+                evidenceRefs: [{ type: 'session', ref: MAIN_SESSION_KEY }],
+                createdAt: new Date(1).toISOString(),
+              },
+              createdAt: 1,
+              updatedAt: 1,
+            },
+            warnings: [],
+          } satisfies LongTaskControlStatus & { success: true },
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: { status: 200, ok: true, json: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } },

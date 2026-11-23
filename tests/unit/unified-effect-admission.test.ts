@@ -19,6 +19,10 @@ import { admitManagedProcess, resetManagedProcessCapacity } from '../../openclaw
 import { toToolDefinitions } from '../../openclaw_runtime/src/agents/agent-tool-definition-adapter';
 import { wrapToolWithBeforeToolCallHook } from '../../openclaw_runtime/src/agents/agent-tools.before-tool-call';
 import { returnPersistentTaskWriter } from '../../openclaw_runtime/src/agents/persistent-task-delegation';
+import { wrapToolWithWriteSideEffects } from '../../openclaw_runtime/src/agents/write-side-effects';
+import { createEditTool } from '../../openclaw_runtime/src/agents/sessions/tools/edit';
+import { REQUIRED_PARAM_GROUPS, wrapToolParamValidation } from '../../openclaw_runtime/src/agents/agent-tools.params';
+import { wrapToolWorkspaceRootGuard } from '../../openclaw_runtime/src/agents/agent-tools.read';
 
 const bridge=vi.hoisted(()=>({call:vi.fn()}));
 const sessionGenerations=vi.hoisted(()=>new Map<string,string>());
@@ -62,6 +66,86 @@ afterEach(async()=>{
 });
 
 describe('joint task and checkout effect boundary',()=>{
+ it.each([false,true])('settles owned mismatch and empty edits before the next edit (params wrapped: %s)',async paramsWrapped=>{
+  const context=execution('edit-rejection'),claim=start(context),file=join(root,'result.txt');writeFileSync(file,'before');
+  const base=createEditTool(root);const tool=paramsWrapped?wrapToolParamValidation(base as never,REQUIRED_PARAM_GROUPS.edit):base;
+  const invalidPath={path:null as unknown as string,edits:[{oldText:'before',newText:'after'}]};
+  await expect(invoke(context,'invalid-path',()=>tool.execute('invalid-path',invalidPath),'edit',invalidPath)).rejects.toThrow();
+  const guarded=wrapToolWorkspaceRootGuard(tool as never,root);
+  const outside={path:'../outside.txt',edits:[{oldText:'before',newText:'after'}]};
+  await expect(invoke(context,'outside-edit',()=>guarded.execute('outside-edit',outside),'edit',outside)).rejects.toThrow(/escapes/);
+  const empty={path:'result.txt',edits:[]};
+  await expect(invoke(context,'empty-edit',()=>tool.execute('empty-edit',empty),'edit',empty)).rejects.toThrow();
+  const bad={path:'result.txt',edits:[{oldText:'missing',newText:'after'}]};
+  await expect(invoke(context,'bad-edit',()=>tool.execute('bad-edit',bad),'edit',bad)).rejects.toThrow('Could not find the exact text');
+  expect(readFileSync(file,'utf8')).toBe('before');
+  const ledger=openExecutionTaskStore(root);try{
+    expect(ledger.operation(claim,`${context.runId}:bad-edit`).state).toBe('reconciled');
+    for(const [call,owner] of [['invalid-path',paramsWrapped?'edit-parameters':'edit-file-operations'],['empty-edit',paramsWrapped?'edit-parameters':'edit-file-operations'],['outside-edit','edit-workspace-guard'],['bad-edit','edit-file-operations']]){
+      expect(ledger.operation(claim,`${context.runId}:${call}`).receipt?.owner).toBe(owner);
+    }
+  }finally{ledger.close();}
+  expect(resolveExecutionCheckout(root).service.writer(null)!.operations.every(operation=>operation.receipt?.outcome==='not-applied')).toBe(true);
+  const good={path:'result.txt',edits:[{oldText:'before',newText:'after'}]};
+  await invoke(context,'good-edit',()=>tool.execute('good-edit',good),'edit',good);
+  expect(readFileSync(file,'utf8')).toBe('after');
+ });
+ it('reconciles a non-Error rejection before write dispatch',async()=>{
+  const context=execution('edit-read-rejection'),claim=start(context);writeFileSync(join(root,'result.txt'),'before');
+  const tool=createEditTool(root,{operations:{access:async()=>{},readFile:async()=>{throw 'read rejected';},writeFile:async()=>{throw new Error('must not write');}}});
+  const args={path:'result.txt',edits:[{oldText:'before',newText:'after'}]};
+  await expect(invoke(context,'read-rejection',()=>tool.execute('read-rejection',args),'edit',args)).rejects.toThrow('read rejected');
+  const ledger=openExecutionTaskStore(root);try{
+    const operation=ledger.operation(claim,`${context.runId}:read-rejection`);
+    expect(operation.state).toBe('reconciled');
+    expect(operation.receipt?.owner).toBe('edit-file-operations');
+  }finally{ledger.close();}
+ });
+ it('keeps a dispatched edit failure unknown even when its error claims not-applied',async()=>{
+  const context=execution('edit-unknown');start(context);const file=join(root,'result.txt');writeFileSync(file,'before');
+  const tool=createEditTool(root,{operations:{access:async()=>{},readFile:async p=>readFileSync(p),writeFile:async p=>{
+    writeFileSync(p,'partial');throw Object.assign(new Error('write acknowledgement lost'),{outcome:'not_applied'});
+  }}});
+  const args={path:'result.txt',edits:[{oldText:'before',newText:'after'}]};
+  await expect(invoke(context,'partial-edit',()=>tool.execute('partial-edit',args),'edit',args)).rejects.toThrow('write acknowledgement lost');
+  expect(readFileSync(file,'utf8')).toBe('partial');
+  expect(resolveExecutionCheckout(root).service.writer(null)!.state).toBe('draining');
+ });
+ it('retains unknown when a dispatched edit loses unchanged file bytes',async()=>{
+  const context=execution('edit-tail-loss'),claim=start(context);const file=join(root,'result.txt');writeFileSync(file,'before\nkeep\n');
+  const tool=createEditTool(root,{operations:{access:async()=>{},readFile:async p=>readFileSync(p),writeFile:async p=>{
+    writeFileSync(p,'after\n');throw new Error('acknowledgement lost');
+  }}});
+  const args={path:'result.txt',edits:[{oldText:'before',newText:'after'}]};
+  await expect(invoke(context,'tail-loss',()=>tool.execute('tail-loss',args),'edit',args)).rejects.toThrow('acknowledgement lost');
+  expect(readFileSync(file,'utf8')).toBe('after\n');
+  const ledger=openExecutionTaskStore(root);try{expect(ledger.operation(claim,`${context.runId}:tail-loss`).state).toBe('unknown');}finally{ledger.close();}
+  expect(resolveExecutionCheckout(root).service.writer(null)!.state).toBe('draining');
+ });
+ it.each([false,true])('runs canonical verification after mutation settlement (hook wrapped: %s)',async wrapped=>{
+  const context=execution(wrapped?'verified-hook':'verified-raw');start(context);
+  const intruder=execution('verification-intruder');start(intruder);
+  writeFileSync(join(root,'package.json'),JSON.stringify({scripts:{test:'node verify.cjs'}}));
+  const calls=vi.fn(async()=>{writeFileSync(join(root,'result.txt'),'after');return{content:[{type:'text',text:'written'}],details:{diff:'- before\n+ after'}};});
+  const forbidden=vi.fn(async()=>({}));
+  const verified=vi.fn(async(params:{toolCallId:string;command:string})=>invoke(context,params.toolCallId,async()=>{
+    const writer=resolveExecutionCheckout(root).service.writer(null)!;
+    expect(writer.operations[0].state).toBe('settled');
+    await expect(invoke(intruder,'intrude',forbidden)).rejects.toThrow(/writer_busy/);
+    writeFileSync(join(root,'verified.txt'),readFileSync(join(root,'result.txt'),'utf8'));
+    return{content:[{type:'text',text:'VERIFIED'}],details:{status:'completed',exitCode:0}};
+  },'exec',{command:params.command}));
+  const tool=wrapToolWithWriteSideEffects({name:'write',description:'fixture',parameters:{type:'object',properties:{}},execute:calls} as never,{
+    workspaceRoot:root,parseOnWriteEnabled:false,syntaxCheckEnabled:false,diagEnabled:false,verifyConsumeEnabled:false,
+    autoVerifyEnabled:true,executeTestCommand:verified,
+  });
+  const selected=wrapped?wrapToolWithBeforeToolCallHook(tool,context):tool;
+  const result=await toToolDefinitions([selected],context)[0].execute('mutation',{path:'result.txt',content:'after'},undefined,undefined,{} as never);
+  expect((result.details as {verify_tests:{execution:{status:string}}}).verify_tests.execution.status).toBe('passed');
+  expect(readFileSync(join(root,'verified.txt'),'utf8')).toBe('after');
+  expect(calls).toHaveBeenCalledTimes(1);expect(verified).toHaveBeenCalledTimes(1);expect(forbidden).not.toHaveBeenCalled();
+  expect(resolveExecutionCheckout(root).service.writer(null)!.operations.every(operation=>operation.state==='settled')).toBe(true);
+ });
  it('retains one writer between tool calls and refuses another task before touching its file',async()=>{
   const first=execution('one'),second=execution('two');start(first);start(second);
   const file=join(root,'result.txt');

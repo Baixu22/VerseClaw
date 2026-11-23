@@ -154,10 +154,12 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
             latestCheckpoint: {
               id: 'ltcp-e2e',
               sessionKey: MAIN_SESSION_KEY,
+              taskLedgerRootId: 'task-long-task-e2e',
               trigger: 'queue_drain',
               status: 'active',
               checkpoint: {
                 schemaVersion: 1,
+                taskLedgerRootId: 'task-long-task-e2e',
                 trigger: 'queue_drain',
                 openBlockers: [],
                 decisions: [],

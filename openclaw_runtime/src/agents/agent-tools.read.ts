@@ -37,6 +37,7 @@ import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { createEditTool, createLsTool, createReadTool, createWriteTool } from "./sessions/index.js";
 import { sanitizeToolResultImages } from "./tool-images.js";
+import { recordEditNotApplied } from "./file-mutation-outcome.js";
 
 export {
   REQUIRED_PARAM_GROUPS,
@@ -762,65 +763,74 @@ export function wrapToolWorkspaceRootGuardWithOptions(
   return {
     ...tool,
     execute: async (toolCallId, args, signal, onUpdate) => {
-      const record = getToolParamsRecord(args);
-      let normalizedRecord: Record<string, unknown> | undefined;
-      for (const key of pathParamKeys) {
-        const rawFilePath = record?.[key];
-        if (typeof rawFilePath !== "string" || !rawFilePath.trim()) {
-          continue;
-        }
-        const filePath = stripMalformedXmlArgValueSuffix(rawFilePath);
-        if (!filePath.trim()) {
-          throw malformedXmlArgValuePathError(key);
-        }
-        if (filePath !== rawFilePath && record) {
-          normalizedRecord ??= { ...record };
-          normalizedRecord[key] = filePath;
-        }
-        let guardedRoot = root;
-        let workspaceMapping: ReturnType<typeof mapContainerPathToRoot> | undefined;
-        let sandboxPath = filePath;
-        for (const mount of [...(options?.additionalContainerMounts ?? [])].toSorted(
-          (a, b) => b.containerRoot.length - a.containerRoot.length,
-        )) {
-          const mountMapping = mapContainerPathToRoot({
-            filePath,
-            root: mount.hostRoot,
-            containerRoot: mount.containerRoot,
-          });
-          if (mountMapping.matched) {
-            guardedRoot = path.resolve(mount.hostRoot);
-            sandboxPath = mountMapping.filePath;
-            break;
+      let delegated = false;
+      const executeGuarded = async () => {
+        const record = getToolParamsRecord(args);
+        let normalizedRecord: Record<string, unknown> | undefined;
+        for (const key of pathParamKeys) {
+          const rawFilePath = record?.[key];
+          if (typeof rawFilePath !== "string" || !rawFilePath.trim()) {
+            continue;
+          }
+          const filePath = stripMalformedXmlArgValueSuffix(rawFilePath);
+          if (!filePath.trim()) {
+            throw malformedXmlArgValuePathError(key);
+          }
+          if (filePath !== rawFilePath && record) {
+            normalizedRecord ??= { ...record };
+            normalizedRecord[key] = filePath;
+          }
+          let guardedRoot = root;
+          let workspaceMapping: ReturnType<typeof mapContainerPathToRoot> | undefined;
+          let sandboxPath = filePath;
+          for (const mount of [...(options?.additionalContainerMounts ?? [])].toSorted(
+            (a, b) => b.containerRoot.length - a.containerRoot.length,
+          )) {
+            const mountMapping = mapContainerPathToRoot({
+              filePath,
+              root: mount.hostRoot,
+              containerRoot: mount.containerRoot,
+            });
+            if (mountMapping.matched) {
+              guardedRoot = path.resolve(mount.hostRoot);
+              sandboxPath = mountMapping.filePath;
+              break;
+            }
+          }
+          if (guardedRoot === root) {
+            workspaceMapping = mapContainerPathToRoot({
+              filePath,
+              root,
+              containerRoot: options?.containerWorkdir,
+            });
+            sandboxPath = workspaceMapping.filePath;
+          }
+          const additionalRoots =
+            guardedRoot === root && !workspaceMapping?.matched
+              ? (options?.additionalRoots ?? [])
+              : [];
+          let sandboxResult: Awaited<ReturnType<typeof assertSandboxPathWithinAnyRoot>>;
+          try {
+            sandboxResult = await assertSandboxPathWithinAnyRoot({
+              filePath: sandboxPath,
+              roots: [guardedRoot, ...additionalRoots],
+            });
+          } catch (error) {
+            throw withWorkspaceSafeTempHint(error);
+          }
+          if (options?.normalizeGuardedPathParams && record) {
+            normalizedRecord ??= { ...record };
+            normalizedRecord[key] = sandboxResult.resolved;
           }
         }
-        if (guardedRoot === root) {
-          workspaceMapping = mapContainerPathToRoot({
-            filePath,
-            root,
-            containerRoot: options?.containerWorkdir,
-          });
-          sandboxPath = workspaceMapping.filePath;
-        }
-        const additionalRoots =
-          guardedRoot === root && !workspaceMapping?.matched
-            ? (options?.additionalRoots ?? [])
-            : [];
-        let sandboxResult: Awaited<ReturnType<typeof assertSandboxPathWithinAnyRoot>>;
-        try {
-          sandboxResult = await assertSandboxPathWithinAnyRoot({
-            filePath: sandboxPath,
-            roots: [guardedRoot, ...additionalRoots],
-          });
-        } catch (error) {
-          throw withWorkspaceSafeTempHint(error);
-        }
-        if (options?.normalizeGuardedPathParams && record) {
-          normalizedRecord ??= { ...record };
-          normalizedRecord[key] = sandboxResult.resolved;
-        }
-      }
-      return tool.execute(toolCallId, normalizedRecord ?? args, signal, onUpdate);
+        delegated = true;
+        return tool.execute(toolCallId, normalizedRecord ?? args, signal, onUpdate);
+      };
+      return executeGuarded().catch((error: unknown) => {
+        if (!delegated && tool.name === "edit")
+          throw recordEditNotApplied(error, toolCallId, "edit-workspace-guard");
+        throw error;
+      });
     },
   };
 }

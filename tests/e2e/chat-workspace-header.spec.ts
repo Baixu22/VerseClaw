@@ -4,6 +4,7 @@ import { join } from 'node:path';
 
 const SESSION_KEY = 'agent:main:main';
 const OTHER_SESSION_KEY = 'agent:main:other-project';
+const SOURCE_DRAFT = 'Keep this draft with the original workspace conversation.';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -164,7 +165,11 @@ test.describe('Verse Claw chat workspace header', () => {
         }
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
-      await expect(page.getByTestId('chat-current-session-status')).toHaveAttribute('data-state', 'streaming');
+      await page.getByTestId('chat-header-session-name').click();
+      const currentHeaderSession = page.locator(`.codex-header-menu [data-hook-key="${SESSION_KEY}"]`);
+      await expect(currentHeaderSession.locator(':scope > [data-state]')).toHaveAttribute('data-state', 'streaming');
+      await page.getByTestId('chat-header-session-name').click();
+      await expect(currentHeaderSession).toHaveCount(0);
       await expect(page.getByTestId('assistant-stream-status-dot')).toHaveAttribute('data-state', 'thinking');
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
 
@@ -305,11 +310,12 @@ test.describe('Verse Claw chat workspace header', () => {
         const originalHostInvoke = (ipcMain as unknown as {
           _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
         })._invokeHandlers?.get('host:invoke');
+        let activeWorkspace = params.workspace;
         const calls = {
           workspaceUpdate: [] as Record<string, unknown>[],
           workspaceSaveState: [] as Record<string, unknown>[],
+          workspace: activeWorkspace,
         };
-        let activeWorkspace = params.workspace;
         const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
         const buildSnapshot = () => ({
           success: true,
@@ -355,10 +361,18 @@ test.describe('Verse Claw chat workspace header', () => {
               updatedAt: Date.now(),
               lastOpenedAt: Date.now(),
             };
+            calls.workspace = activeWorkspace;
             return respond(request.id, buildSnapshot());
           }
           if (request.module === 'workspaces' && request.action === 'saveState') {
-            calls.workspaceSaveState.push(request.payload ?? {});
+            const payload = request.payload ?? {};
+            calls.workspaceSaveState.push(payload);
+            const target = typeof payload.sessionKey === 'string' ? payload.sessionKey : activeWorkspace.activeSessionKey;
+            const previous = activeWorkspace.sessionStates as Record<string, Record<string, unknown>>;
+            const sessionStates = { ...activeWorkspace.sessionStates, [target]: { ...previous[target], ...(payload.state as Record<string, unknown> | undefined) } };
+            activeWorkspace = { ...activeWorkspace, sessionStates,
+              state: (sessionStates as typeof previous)[activeWorkspace.activeSessionKey] ?? {} };
+            calls.workspace = activeWorkspace;
             return respond(request.id, { success: true });
           }
           if (request.module === 'workspaces' && request.action === 'list') {
@@ -378,6 +392,12 @@ test.describe('Verse Claw chat workspace header', () => {
         });
       }, { workspace: WORKSPACE, otherWorkspace: OTHER_WORKSPACE });
 
+      await page.getByTestId('chat-composer-input').fill(SOURCE_DRAFT);
+      await expect.poll(() => app.evaluate((_, draft) => (
+        (globalThis as typeof globalThis & {
+          __workspaceNewChatCalls?: { workspaceSaveState: Array<{ sessionKey?: string; state?: { draftInput?: string } }> };
+        }).__workspaceNewChatCalls?.workspaceSaveState.some((call) => call.sessionKey === 'agent:main:main' && call.state?.draftInput === draft) ?? false
+      ), SOURCE_DRAFT)).toBe(true);
       await page.getByTestId('sidebar-new-chat').click();
 
       await expect.poll(async () => app.evaluate(() => (
@@ -391,12 +411,15 @@ test.describe('Verse Claw chat workspace header', () => {
           __workspaceNewChatCalls?: {
             workspaceUpdate: Record<string, unknown>[];
             workspaceSaveState: Record<string, unknown>[];
+            workspace: { activeSessionKey: string; sessionStates: Record<string, { draftInput?: string }> };
           };
         }).__workspaceNewChatCalls
       ));
-      expect(calls?.workspaceSaveState[0]).toEqual(expect.objectContaining({
+      expect(calls?.workspaceSaveState.find((call) => call.sessionKey === SESSION_KEY
+        && (call.state as { draftInput?: string } | undefined)?.draftInput === SOURCE_DRAFT)).toEqual(expect.objectContaining({
         id: WORKSPACE.id,
         sessionKey: SESSION_KEY,
+        state: expect.objectContaining({ draftInput: SOURCE_DRAFT }),
       }));
       expect(calls?.workspaceUpdate[0]).toEqual(expect.objectContaining({
         id: WORKSPACE.id,
@@ -405,6 +428,9 @@ test.describe('Verse Claw chat workspace header', () => {
       }));
       expect(calls?.workspaceUpdate[0]?.sessionKey).toEqual(expect.stringMatching(/^agent:main:session-\d+-[a-z0-9]+$/));
       expect(calls?.workspaceUpdate[0]?.activeSessionKey).toBe(calls?.workspaceUpdate[0]?.sessionKey);
+      expect(calls?.workspace.activeSessionKey).toBe(calls?.workspaceUpdate[0]?.sessionKey);
+      expect(calls?.workspace.sessionStates[SESSION_KEY].draftInput).toBe(SOURCE_DRAFT);
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('');
     } finally {
       await closeElectronApp(app);
     }

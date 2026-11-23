@@ -68,6 +68,7 @@ touchedAreas:
   - ".gitattributes"
   - "scripts/repository-artifacts.json"
   - "README*.md"
+  - "harness/specs/guides/checkout-writer-ownership.md"
   - "tests/unit/knowledge-evidence-qa.test.ts"
   - "tests/unit/autonomy-provider-spend.test.ts"
   - "tests/unit/component-authority-manifest.test.ts"
@@ -94,12 +95,43 @@ touchedAreas:
   - "eslint.config.mjs"
   - "openclaw_runtime/src/agents/execution-checkout-admission.ts"
   - "openclaw_runtime/src/agents/execution-checkout-tools.ts"
+  - "openclaw_runtime/src/agents/write-side-effects.ts"
+  - "openclaw_runtime/src/agents/write-verification-context.ts"
+  - "openclaw_runtime/src/agents/file-mutation-outcome.ts"
+  - "openclaw_runtime/src/agents/agent-tools.params.ts"
+  - "openclaw_runtime/src/agents/agent-tools.read.ts"
+  - "openclaw_runtime/src/agents/sessions/tools/edit.ts"
+  - "openclaw_runtime/src/agents/sessions/tools/edit.outcome.test.ts"
+  - "openclaw_runtime/src/agents/agent-tools.auto-verify.test.ts"
   - "openclaw_runtime/src/agents/persistent-task-acceptance.ts"
   - "openclaw_runtime/src/gateway/server-methods/chat.ts"
   - "src/components/layout/SessionFolderTree.tsx"
   - "src/hooks/use-message-viewport.ts"
   - "tests/e2e/chat-viewport-budget.spec.ts"
   - "tests/e2e/project-rag-owner-read.spec.ts"
+  - "tests/e2e/chat-composer-git-strip.spec.ts"
+  - "tests/e2e/channels-binding-regression.spec.ts"
+  - "tests/e2e/autonomy-resource-admission.spec.ts"
+  - "tests/e2e/coding-loop-fp-p1-04.spec.ts"
+  - "tests/e2e/dcs-preview-optin-fp-p1-03.spec.ts"
+  - "tests/e2e/dcs-production-wiring-w5.spec.ts"
+  - "tests/e2e/error-i18n.spec.ts"
+  - "tests/e2e/chat-long-task-control.spec.ts"
+  - "tests/e2e/chat-run-state-events.spec.ts"
+  - "tests/e2e/chat-welcome-hero-verse-shot.spec.ts"
+  - "tests/e2e/chat-welcome-hero-fakecoding.spec.ts"
+  - "tests/e2e/chat-workspace-header.spec.ts"
+  - "tests/e2e/chat-user-message-actions.spec.ts"
+  - "tests/e2e/chat-user-message-actions.spec.ts-snapshots/user-message-actions-hover-dark-win32.png"
+  - "tests/e2e/chat-user-message-actions.spec.ts-snapshots/user-message-editor-dark-win32.png"
+  - "tests/e2e/ai-elements-rendering.spec.ts-snapshots/ai-elements-chat-light-win32.png"
+  - "tests/e2e/ai-elements-rendering.spec.ts-snapshots/ai-elements-chat-dark-win32.png"
+  - "tests/e2e/chat-assistant-rendering-visual.spec.ts-snapshots/assistant-render-chat-desktop-light-win32.png"
+  - "tests/e2e/chat-assistant-rendering-visual.spec.ts-snapshots/assistant-render-chat-desktop-dark-win32.png"
+  - "tests/e2e/chat-assistant-rendering-visual.spec.ts-snapshots/assistant-render-chat-narrow-light-win32.png"
+  - "tests/e2e/chat-session-derived.spec.ts"
+  - "tests/e2e/chat-session-handoff.spec.ts"
+  - "tests/e2e/fixtures/workspace-owner.ts"
   - "tests/e2e/session-task-state-guidance.spec.ts"
   - "tests/e2e/session-worker-task-journey.spec.ts"
   - "tests/unit/execution-migration-process.test.ts"
@@ -299,6 +331,34 @@ Knowledge身份复验使用sessions.describe的identityOnly投影，直接从同
 运行时能力夹具显式提供空频道目录，与其唯一的core exec工具一致。能力profile、ack、权限、隔离、digest与生成回执仍使用原实现和19项断言；夹具生成不再重复扫描已安装插件目录，原30秒用例上限保持。
 
 频道账号夹具等待新增账号按钮完成加载后再操作，随后按原13项用例验证凭据保留、刷新与恢复行为；用例时限保持。
+
+Composer和欢迎页夹具提供与摘要计数一致的完整Git文件集合，仓库操作场景显式提供已有对话；账号绑定定位到账户自身卡片。显式长任务干预夹具提供同一checkpoint和Task Ledger root绑定，普通聊天继续由既有待发队列处理。消息操作夹具包含前序助手上下文，在模拟后台保存编辑后的固定转录ID并重新加载后，验证问题草稿确认、精确分叉边界及子会话草稿恢复，复制、编辑、发送和截图门槛继续验证。派生会话夹具核对所属workspace的明确session关联、精确状态保存请求、所有者回读及完整历史参数；共用夹具按声明的workspace和session范围处理保存并拒绝无效身份。
+
+R1资源准入旅程在释放Provider等待和关闭进程前保存实际请求、调用记录、subagent registry与Provider Spend表。成功和失败路径均保留这份agent驱动观察，读取错误逐项登记；原排队、费用结算、身份拒绝、原生停止断言及用例时限保持。
+
+Coding Loop在清理前保留完整脚本Provider回执、实际Git根与runtime工作区配置。DCS Preview保存已应用时的用户配置、子进程配置和effective ack；W5保存context_write的实际schema与拒绝/接受回执。这些观察用于核对原失败，生产调用和原行为断言保持。
+
+工作区页头旅程从当前会话菜单读取streaming状态。新对话前由真实输入框写入来源草稿，再核对实际saveState、来源状态保留与新会话身份，避免把空状态的合法免写误判为失败。欢迎页沿当前统一任务页头合同仅展示项目选择，项目菜单几何与Escape检查保持；分支和worktree操作由Composer Git旅程验证。
+
+Composer Git的收起入口只展示文件计数，分支、同步状态和仓库路径在展开面板中核对；审批替换输入区域，Git入口位于其下方，原对齐容差保持。会话菜单使用当前触发器关闭。用户消息截图按当前消息行与折叠执行摘要、无网格背景核对，保留原截图字节及128像素阈值后由当前Electron重新生成。
+
+R1临时工作区建立独立Git目录和baseline HEAD，阻止嵌套目录继承开发仓库的Task数据库。Coding Loop将完整测试文件提交到独立基线，并通过真实workspaces.create绑定所用会话；W5在调用模型前绑定所选工作区和实际session。Preview只切换当前三个组合flag，staleWriteGuard保持false/default并继续核对其来源，原guard默认值、模型预算和用例时限保持。
+
+Coding Loop与W5通过真实Task API保存合同并选择当前会话的任务，发送时携带明确workspaceId。首个工具副作用由生产准入逻辑取得claim；W5保存首回合任务ID并在后续回合前后核对同一任务，丢失绑定时直接失败。断线用例在恢复本地Provider响应后验证下一轮工具执行与助手回复。原角色白名单、operation拒绝、写入/撤销与非破坏读取断言保持。
+
+自动验证在实际写入的Task和checkout回执结算后执行，仍调用最终权限链中的canonical exec。私有异步作用域只调整可信验证回调的顺序，写入失败不执行验证；未知写入、其他任务竞争、exec拒绝与禁用策略继续按原生产边界处理。原FP完整旅程与joint effect回归同时核对真实结果。
+
+Edit文件owner在writeFile尚未派发的拒绝路径记录不可序列化的not-applied回执，绑定toolCallId；Task/checkout原子边界据此结算已知无写入失败并允许后续编辑。writeFile已派发后抛错仍unknown，模型参数或普通错误上的outcome字段不能替代owner回执。
+
+写入派发后的丢失回执仅能由完整期望Buffer与实际读回字节完全一致时恢复成功；丢失未改动尾部、编码/BOM差异或读回不可用继续保持unknown。UTF-8/UTF-16LE回归放在独立edit.outcome.test.ts，原冻结edit.test.ts字节不变。
+
+派发后抛错使用保留name/stack/errno/cause的新Error identity，先前派发前拒绝返回的同一Error对象与重复callId不能重放旧WeakMap证明；独立回归核对部分写入仍无not-applied证明。
+
+Node 24的原生stack访问器读取接收对象内部状态，派发后Error复制先固定原堆栈文本，并保留原可配置、可枚举和写入能力；其他own descriptors继续复制。复用Error/callId的同一独立实文件回归同时核对原错误位置、code、errno、cause和unknown结果，原冻结edit.test.ts保持。
+
+迟到handoff回执旅程复用工作区owner夹具，切换后回读agent binding与所选会话一致。桌面浅色、暗色与窄屏渲染基线按同候选的实际截图核对当前纯色画布与任务页头空间；旧PNG原字节和摘要保留，原截图阈值与完整交互断言继续运行，更新基线后严格回放。
+
+Error i18n旅程在解锁开发者模式后使用保留的Image Generation本地路由；三段错误文案、责任说明、下一步和错误编号继续经过实际页面及host-api错误出口核对。
 
 Runtime共用Vitest配置按Markdown包的公开exports登记源码入口，子路径优先于包根路径；干净未构建检出中的DCS/agent测试可直接加载ir等模块。
 

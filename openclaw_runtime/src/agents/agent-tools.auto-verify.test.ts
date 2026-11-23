@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { createOpenClawCodingTools } from "./agent-tools.js";
+import { openExecutionTaskStore } from "./execution-task-authority.js";
 
 const roots: string[] = [];
 
@@ -24,11 +26,21 @@ async function executeWrite(params: {
   workspaceRoot: string;
   config: Record<string, unknown>;
 }): Promise<Record<string, unknown>> {
+  const sessionKey = "agent:main:main";
+  const sessionId = "fp-p2-05-session";
+  const runId = `fp-p2-05-${randomUUID()}`;
+  const store = openExecutionTaskStore(params.workspaceRoot);
+  try {
+    store.start({ contract: { objective: "Verify canonical automatic test execution", target: "result.txt",
+      constraints: ["Preserve exec policy decisions"], acceptance: [{ id: "exec-policy", description: "Canonical exec verdict",
+        verification: { kind: "owner-receipt", owner: "coding-tools-test" } }] } }, sessionKey, sessionId, runId);
+  } finally { store.close(); }
   const tools = createOpenClawCodingTools({
     workspaceDir: params.workspaceRoot,
     cwd: params.workspaceRoot,
-    sessionId: "fp-p2-05-session",
-    sessionKey: "agent:main:main",
+    sessionId,
+    sessionKey,
+    runId,
     config: params.config as never,
   });
   const write = tools.find((tool) => tool.name === "write");

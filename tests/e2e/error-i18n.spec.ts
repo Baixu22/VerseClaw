@@ -144,8 +144,7 @@ async function openDeveloperSection(page: Page): Promise<void> {
 
 async function openImageGeneration(page: Page): Promise<void> {
   await page.getByTestId('settings-back-button').click();
-  await page.getByTestId('sidebar-footer-menu-trigger').click();
-  await page.getByTestId('sidebar-more-image-generation').click();
+  await page.evaluate(() => { window.location.hash = '#/image-generation'; });
   await expect(page.getByTestId('image-generation-settings')).toBeVisible();
 }
 

@@ -1,9 +1,48 @@
 import { DatabaseSync } from 'node:sqlite';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import type { Server } from 'node:http';
 import { join } from 'node:path';
+import type { ElectronApplication, TestInfo } from '@playwright/test';
 import type { GatewayStatus } from '../../shared/types/gateway';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { buildMockProviderConfig, hostInvoke, SCRIPTED_LLM_USAGE, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { buildMockProviderConfig, hostInvoke, initializeIndependentGitWorkspace, SCRIPTED_LLM_USAGE, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
+
+function observeProviderRequests(server: Server): Array<{ at: number; body: string }> {
+  const requests: Array<{ at: number; body: string }> = [];
+  server.on('request', request => {
+    if (!request.url?.includes('/chat/completions')) return;
+    let body = '';
+    request.on('data', data => { body += data; });
+    request.on('end', () => { requests.push({ at: Date.now(), body }); });
+  });
+  return requests;
+}
+
+async function captureR1OwnerState(
+  app: ElectronApplication, sourceState: string, testInfo: TestInfo, observed: Record<string, unknown>,
+): Promise<void> {
+  const owner: Record<string, unknown> = {};
+  const captureErrors: Record<string, string> = {};
+  try {
+    const db = new DatabaseSync(join(sourceState, 'state/openclaw.sqlite'), { readOnly: true });
+    try {
+      for (const table of ['subagent_runs', 'provider_spend_calls', 'provider_spend_allocations']) {
+        try { owner[table] = db.prepare(`SELECT * FROM ${table}`).all(); }
+        catch (error) { captureErrors[table] = String(error); }
+      }
+    } finally { db.close(); }
+  } catch (error) { captureErrors.database = String(error); }
+  let gateway: GatewayStatus | undefined;
+  try { gateway = await hostInvoke<GatewayStatus>(app, 'gateway', 'status'); }
+  catch (error) { captureErrors.gateway = String(error); }
+  const path = testInfo.outputPath('r1-terminal-owner-observation.json');
+  await writeFile(path, JSON.stringify({
+    driven_by: 'agent', actor: 'codex-r1-electron-observer',
+    candidate: process.env.CLAWX_E2E_CANDIDATE ?? 'dirty-development',
+    recordedAt: new Date().toISOString(), gateway, owner, captureErrors, ...observed,
+  }, null, 2));
+  await testInfo.attach('r1-terminal-owner-observation', { path, contentType: 'application/json' });
+}
 
 for (const handoffMode of ['off', 'on'] as const) {
 test(`R1 real Host/Gateway queues conflicting waves until the prior provider run terminates (handoff ${handoffMode})`, async ({ launchElectronApp, homeDir, userDataDir }, testInfo) => {
@@ -11,20 +50,16 @@ test(`R1 real Host/Gateway queues conflicting waves until the prior provider run
   let releaseFirst!: () => void;
   const barrier = new Promise<void>(resolve => { releaseFirst = resolve; });
   const calls: Array<{ worker: string; at: number }> = [];
-  const requests: Array<{ at: number; body: string }> = [];
   const llm = await startScriptedLlm(async text => {
     const worker = text.includes('R1-FIRST-WORKER') ? 'first' : text.includes('R1-SECOND-WORKER') ? 'second' : 'other';
     calls.push({ worker, at: Date.now() });
     if (worker === 'first') await barrier;
     return { text: '## Summary\nOWNER-FROZEN-R1-SIGNAL\n## Verification\nAgent-driven controlled provider receipt.' };
   });
-  llm.server.on('request', request => {
-    if (!request.url?.includes('/chat/completions')) return;
-    let body = ''; request.on('data', data => { body += data; });
-    request.on('end', () => { requests.push({ at: Date.now(), body }); });
-  });
+  const requests = observeProviderRequests(llm.server);
   const workspace = join(homeDir, 'r1-workspace');
   await mkdir(workspace, { recursive: true });
+  initializeIndependentGitWorkspace(workspace);
   const config = buildMockProviderConfig(llm.port, workspace);
   const runtime = config.runtime as Record<string, unknown>;
   runtime.orchestration = { ...(runtime.orchestration as Record<string, unknown> ?? {}), handoffArtifacts: handoffMode };
@@ -149,6 +184,8 @@ test(`R1 real Host/Gateway queues conflicting waves until the prior provider run
         && row.outcome?.status === 'ok' && Number.isFinite(row.endedAt))).toHaveLength(2);
     } finally { retained.close(); }
   } finally {
+    try { await captureR1OwnerState(app, sourceState, testInfo, { handoffMode, calls, requests, providerLog: llm.log, anomalies: llm.anomalies }); }
+    catch (error) { console.error('[r1-owner-observation]', String(error)); }
     releaseFirst();
     await closeElectronApp(app);
     llm.server.closeAllConnections();
@@ -170,8 +207,10 @@ test(`R1 provider owner prevents concurrent host overspend and reconciles actual
     if (marker === 'first') await gate;
     return { text: `## Summary\nSPEND-${marker}-RECEIPT\n## Verification\nAgent-driven scope receipt; no source edits requested.` };
   });
+  const requests = observeProviderRequests(llm.server);
   const workspace = join(homeDir, 'r1-budget-workspace');
   await mkdir(workspace, { recursive: true });
+  initializeIndependentGitWorkspace(workspace);
   const config = buildMockProviderConfig(llm.port, workspace);
   const spendPolicy = spendMode === 'USD'
     ? { host: { maxTokens: 500000, maxCostUsd: 0.3 }, project: { maxTokens: 500000, maxCostUsd: 1 }, session: { maxTokens: 500000, maxCostUsd: 0.5 } }
@@ -258,6 +297,13 @@ test(`R1 provider owner prevents concurrent host overspend and reconciles actual
       for (const runId of child.spawnedRunIds) expect(db.prepare('SELECT scope_key FROM provider_spend_allocations INNER JOIN provider_spend_calls USING (call_id) WHERE run_id = ?').all(runId)).toHaveLength(3);
     }
     finally { db.close(); }
-  } finally { release(); await closeElectronApp(app); llm.server.closeAllConnections(); await new Promise<void>(resolve => llm.server.close(() => resolve())); }
+  } finally {
+    try { await captureR1OwnerState(app, sourceState, testInfo, { spendMode, calls, requests, providerLog: llm.log, anomalies: llm.anomalies }); }
+    catch (error) { console.error('[r1-owner-observation]', String(error)); }
+    release();
+    await closeElectronApp(app);
+    llm.server.closeAllConnections();
+    await new Promise<void>(resolve => llm.server.close(() => resolve()));
+  }
 });
 }

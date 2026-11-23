@@ -7,6 +7,10 @@ import { DatabaseSync } from 'node:sqlite';
 import type { ElectronApplication } from '@playwright/test';
 import { startQaMockOpenAiServer } from '../../openclaw_runtime/extensions/qa-lab/src/providers/mock-openai/server';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { initializeIndependentGitWorkspace } from './fixtures/fp-p1-harness';
+import { createSessionChainTask } from './fixtures/session-task-chain';
+import type { TaskView } from '../../shared/task-system/types';
+import { createHostDeadline } from '../../shared/host-api/host-deadline';
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type ProviderRequest = Record<string, unknown>;
@@ -162,7 +166,8 @@ async function seedOpenClaw(
   await writeFile(join(sourceStateDir, 'openclaw.json'), serialized, 'utf8');
 }
 
-async function hostInvoke<T>(app: ElectronApplication, module: string, action: string, payload: Record<string, unknown> | null = null): Promise<T> {
+async function hostInvoke<T>(app: ElectronApplication, module: string, action: string, payload: Record<string, unknown> | null = null, timeoutMs?: number): Promise<T> {
+  const deadline = timeoutMs === undefined ? undefined : createHostDeadline({ stage: 'renderer', timeoutMs });
   const response = await app.evaluate(async (_electron, request) => {
     const { ipcMain, BrowserWindow } = process.mainModule!.require('electron') as typeof import('electron');
     const handler = (ipcMain as unknown as { _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers?.get('host:invoke');
@@ -175,7 +180,7 @@ async function hostInvoke<T>(app: ElectronApplication, module: string, action: s
       senderFrame: { url: typeof sender.getURL === 'function' ? sender.getURL() : '' },
     };
     return await handler(event, { id: `w5-${Date.now()}-${Math.random()}`, ...request });
-  }, { module, action, payload }) as HostResponse<T>;
+  }, { module, action, payload, ...(deadline ? { deadline } : {}) }) as HostResponse<T>;
   if (!response.ok) {
     const code = response.error?.code ?? 'HOST';
     throw new Error(`[${code}] ${response.error?.message ?? `host invoke failed: ${module}.${action}`}`);
@@ -302,22 +307,34 @@ async function runAgent(
   app: ElectronApplication,
   sessionKey: string,
   message: string,
-): Promise<Record<string, unknown>> {
-  // Exercise the real embedded-agent tool loop through the Main-owned Gateway
-  // RPC boundary. The host controlUi action intentionally never returns tokens.
-  const run = await hostInvoke<AgentRunResult>(app, 'gateway', 'rpc', {
-    method: 'chat.send',
-    params: {
-      message,
-      agentId: 'main',
-      sessionKey,
-      deliver: false,
-      promptMode: 'full',
-      timeoutMs: 240_000,
-      idempotencyKey: `dcs-w5-${Date.now()}-${Math.random()}`,
-    },
-    timeoutMs: 30_000,
-  });
+  expectedTaskNodeId?: string,
+): Promise<{ runId: string; status: string; stopReason?: string; taskNodeId: string }> {
+  const active = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'getActive');
+  const workspaceId = active.activeWorkspace.id;
+  await hostInvoke(app, 'workspaces', 'update', { id: workspaceId,
+    agentId: 'main', activeSessionKey: sessionKey, sessionKey });
+  const selected = await hostInvoke<{ task: TaskView | null }>(app, 'taskLedger', 'sessionTask', { workspaceId, sessionKey });
+  if (expectedTaskNodeId !== undefined) {
+    expect(selected.task?.contract.taskNodeId, 'The later turn must retain the first task binding').toBe(expectedTaskNodeId);
+  }
+  let taskNodeId = selected.task?.contract.taskNodeId;
+  if (!taskNodeId) {
+    const task = await createSessionChainTask(app, workspaceId, `dcs-w5-task:${sessionKey}`, {
+      objective: 'Verify context tool admission, agent notes and non-destructive reads',
+      target: 'agent-notes', constraints: ['Keep notes in the assigned session', 'Preserve the configured DCS flags'],
+      acceptance: [{ id: 'context-tools', description: 'Real context tool and notes receipts',
+        verification: { kind: 'owner-receipt', owner: 'context-tools', requires: ['context_read', 'context_write', 'context_search'] } }],
+    });
+    taskNodeId = task.contract.taskNodeId;
+    await hostInvoke(app, 'workspaces', 'selectSessionTask', { workspaceId, sessionKey, taskNodeId });
+  }
+  // Main forwards the persisted workspace and task owner to the real Gateway tool loop.
+  const sent = await hostInvoke<{ success: boolean; result?: AgentRunResult; error?: string }>(app, 'chat', 'sendWithMedia', {
+    workspaceId, sessionKey, message, deliver: false,
+    idempotencyKey: `dcs-w5-${Date.now()}-${Math.random()}`,
+  }, 240_000);
+  expect(sent.success, JSON.stringify(sent)).toBe(true);
+  const run = sent.result!;
   expect(run.runId, JSON.stringify(run)).toBeTruthy();
 
   const wait = await hostInvoke<AgentWaitResult>(app, 'gateway', 'rpc', {
@@ -326,7 +343,9 @@ async function runAgent(
     timeoutMs: 250_000,
   });
   expect(wait.status, JSON.stringify(wait)).toBe('ok');
-  return { runId: run.runId, status: wait.status, stopReason: wait.stopReason };
+  const current = await hostInvoke<{ task: TaskView | null }>(app, 'taskLedger', 'sessionTask', { workspaceId, sessionKey });
+  expect(current.task?.contract.taskNodeId, 'The completed turn must keep its admitted task').toBe(taskNodeId);
+  return { runId: run.runId!, status: wait.status!, stopReason: wait.stopReason, taskNodeId };
 }
 
 function readContextRows(userDataDir: string): ContextBlockRow[] {
@@ -412,6 +431,7 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
     test.setTimeout(420_000);
     const provider = await startQaMockOpenAiServer();
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-w5-off-'));
+    initializeIndependentGitWorkspace(workspaceDir);
     await seedOpenClaw(homeDir, userDataDir, workspaceDir, `${provider.baseUrl}/v1`, false);
     const previousSekb = process.env.OPENCLAW_SEKB_ENABLED;
     const previousOpenAiKey = process.env.OPENAI_API_KEY;
@@ -458,6 +478,7 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
     test.setTimeout(480_000);
     const provider = await startQaMockOpenAiServer();
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-w5-on-'));
+    initializeIndependentGitWorkspace(workspaceDir);
     await seedOpenClaw(homeDir, userDataDir, workspaceDir, `${provider.baseUrl}/v1`, true);
     const previousSekb = process.env.OPENCLAW_SEKB_ENABLED;
     const previousOpenAiKey = process.env.OPENAI_API_KEY;
@@ -473,7 +494,7 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
       await hostInvoke(app, 'workspaces', 'create', { name: 'DCS W5 On', rootPath: workspaceDir, permissionMode: 'fullAccess' });
       await restartGatewayForW5(app, gatewayPort);
       const sessionKey = await createSession(app, 'dcs-w5-on');
-      await runAgent(app, sessionKey, MAIN_PROMPT);
+      const firstRun = await runAgent(app, sessionKey, MAIN_PROMPT);
 
       let providerRequests = await readProviderRequests(provider.baseUrl);
       const metrics = toolMetrics(providerRequests);
@@ -491,6 +512,13 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
       const toolOutputs = toolOutputStrings.map(parseToolOutput).filter((output): output is Record<string, unknown> => output !== null);
       const rejectedWrite = toolOutputs.find((output) => output.accepted === false);
       const acceptedWrite = toolOutputs.find((output) => output.accepted === true && output.role === 'implementer');
+      const observationPath = test.info().outputPath('dcs-w5-context-write-observation.json');
+      await writeFile(observationPath, JSON.stringify({ driven_by: 'agent', actor: 'codex-dcs-w5-observer',
+        candidate: process.env.CLAWX_E2E_CANDIDATE ?? 'dirty-development',
+        recordedAt: new Date().toISOString(), firstRun, providerRequests, toolOutputStrings,
+        contextWriteSchema: getToolSchema(providerRequests, 'context_write'),
+      }, null, 2));
+      await test.info().attach('dcs-w5-context-write-observation', { path: observationPath, contentType: 'application/json' });
       expect(rejectedWrite?.reason).toBe("invalid operation 'delete' (expected append|replace|clear)");
       expect(acceptedWrite?.whitelist).toEqual(['planner', 'architect', 'implementer']);
       expect(toolOutputStrings.join('\n')).toContain(NOTE_MARKER);
@@ -503,7 +531,8 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
       expect(rows.filter((row) => row.source_system === 'agent-notes').every((row) => row.block_type === 'notes')).toBe(true);
 
       const before = rows.filter((row) => row.block_type === 'notes');
-      await runAgent(app, sessionKey, READ_ONLY_PROMPT);
+      const laterRun = await runAgent(app, sessionKey, READ_ONLY_PROMPT, firstRun.taskNodeId);
+      expect(laterRun.taskNodeId).toBe(firstRun.taskNodeId);
       providerRequests = await readProviderRequests(provider.baseUrl);
       const after = readContextRows(userDataDir).filter((row) => row.block_type === 'notes');
       expect(after).toEqual(before);
@@ -525,6 +554,7 @@ test.describe('DCS W5 production wiring via real Windows Electron Gateway', () =
     test.setTimeout(300_000);
     const provider = await startQaMockOpenAiServer();
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-w5-sync-'));
+    initializeIndependentGitWorkspace(workspaceDir);
     // User-facing config has DCS flags enabled; isolated config starts without runtime.
     await seedUserOpenClawOnly(homeDir, workspaceDir, `${provider.baseUrl}/v1`, true);
     await seedIsolatedWithoutRuntime(userDataDir, workspaceDir, `${provider.baseUrl}/v1`);

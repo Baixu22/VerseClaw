@@ -14,7 +14,7 @@ import { Type } from "typebox";
 import { renderDiff } from "../../modes/interactive/components/diff.js";
 import { adaptUnifiedDiffToGitPatchArtifacts } from "../../../../../shared/remote-forge/unified-diff-adapter.js";
 import { createRemoteForgeErrorV1 } from "../../../../../shared/remote-forge/error-envelope.js";
-import type { AgentTool } from "../../runtime/index.js";
+import type { AgentTool, AgentToolResult } from "../../runtime/index.js";
 import type { ToolDefinition } from "../extensions/types.js";
 import {
   applyEditsToNormalizedContent,
@@ -37,6 +37,7 @@ import type { EditToolDetails, EditToolInput } from "./tool-contracts.js";
 import { createVerseGitEditBasis } from "./versegit-tool-basis.js";
 import { wrapToolDefinition } from "./tool-definition-wrapper.js";
 import { decodeTextFile, encodeTextFile } from "./text-file-codec.js";
+import { recordEditNotApplied } from "../../file-mutation-outcome.js";
 
 type EditPreview = EditDiffResult | EditDiffError;
 
@@ -137,43 +138,26 @@ function validateEditInput(input: EditToolInput): { path: string; edits: Edit[] 
   return { path: input.path, edits: input.edits };
 }
 
-function removeExactOccurrences(content: string, needle: string): string {
-  return needle.length > 0 ? content.split(needle).join("") : content;
+function cloneDispatchedEditError(error: Error): Error {
+  const copy = new Error(error.message);
+  Object.defineProperty(copy, "name", { value: error.name, writable: true, configurable: true });
+  const properties = Object.getOwnPropertyDescriptors(error);
+  const stack = properties.stack;
+  // V8's stack accessor reads the receiver's private stack. Preserve the
+  // original failure location before attaching the properties to a new Error.
+  if (stack && ("get" in stack || "set" in stack)) {
+    properties.stack = {
+      value: error.stack,
+      writable: typeof stack.set === "function",
+      enumerable: stack.enumerable,
+      configurable: stack.configurable,
+    };
+  }
+  Object.defineProperties(copy, properties);
+  return copy;
 }
 
-function didEditLikelyApply(params: {
-  originalContent: string;
-  currentContent: string;
-  edits: Edit[];
-}): boolean {
-  if (params.edits.length === 0) {
-    return false;
-  }
-  const normalizedOriginal = normalizeToLF(params.originalContent);
-  const normalizedCurrent = normalizeToLF(params.currentContent);
-  if (normalizedOriginal === normalizedCurrent) {
-    return false;
-  }
-
-  let withoutInsertedNewText = normalizedCurrent;
-  for (const edit of params.edits) {
-    const normalizedNew = normalizeToLF(edit.newText);
-    if (normalizedNew.length > 0 && !normalizedCurrent.includes(normalizedNew)) {
-      return false;
-    }
-    withoutInsertedNewText = removeExactOccurrences(withoutInsertedNewText, normalizedNew);
-  }
-
-  return params.edits.every(
-    (edit) => !withoutInsertedNewText.includes(normalizeToLF(edit.oldText)),
-  );
-}
-
-function appendMismatchHint(
-  error: Error,
-  currentContent: string,
-  editOldTexts: string[],
-): Error {
+function appendMismatchHint(error: Error, currentContent: string, editOldTexts: string[]): Error {
   const snippet =
     currentContent.length <= EDIT_MISMATCH_HINT_LIMIT
       ? currentContent
@@ -181,13 +165,13 @@ function appendMismatchHint(
   const similar = editOldTexts
     .map((oldText) => findSimilarLines(currentContent, oldText))
     .filter((hint) => hint.length > 0);
-  const similarHint = similar.length > 0
-    ? `\n\nDid you mean to match some of these actual lines?\n${[...new Set(similar)].join("\n\n")}`
-    : "";
-  const enhanced = new Error(
-    `${error.message}\nCurrent file contents:\n${snippet}${similarHint}`,
-    { cause: error },
-  );
+  const similarHint =
+    similar.length > 0
+      ? `\n\nDid you mean to match some of these actual lines?\n${[...new Set(similar)].join("\n\n")}`
+      : "";
+  const enhanced = new Error(`${error.message}\nCurrent file contents:\n${snippet}${similarHint}`, {
+    cause: error,
+  });
   enhanced.stack = error.stack;
   return enhanced;
 }
@@ -399,128 +383,145 @@ export function createEditToolDefinition(
     async execute(toolCallId, input: EditToolInput, signal?: AbortSignal, onUpdate?, ctx?) {
       void onUpdate;
       void ctx;
-      const { path, edits } = validateEditInput(input);
-      const absolutePath = resolveToCwd(path, cwd);
+      let writeStarted = false;
+      let expectedBytes: Buffer | undefined;
+      const executeEdit = async (): Promise<AgentToolResult<EditToolDetails | undefined>> => {
+        const { path, edits } = validateEditInput(input);
+        const absolutePath = resolveToCwd(path, cwd);
+        return withFileMutationQueue(
+          absolutePath,
+          async () => {
+            if (signal?.aborted) {
+              throw new Error("Operation aborted");
+            }
 
-      return withFileMutationQueue(absolutePath, async () => {
-        if (signal?.aborted) {
-          throw new Error("Operation aborted");
-        }
+            try {
+              await ops.access(absolutePath);
+            } catch (error: unknown) {
+              const errorMessage =
+                error instanceof Error && "code" in error
+                  ? `Error code: ${String(error.code)}`
+                  : String(error);
+              throw new Error(`Could not edit file: ${path}. ${errorMessage}.`, {
+                cause: error,
+              });
+            }
 
-        try {
-          await ops.access(absolutePath);
-        } catch (error: unknown) {
-          const errorMessage =
-            error instanceof Error && "code" in error
-              ? `Error code: ${String(error.code)}`
-              : String(error);
-          throw new Error(`Could not edit file: ${path}. ${errorMessage}.`, {
-            cause: error,
-          });
-        }
+            const buffer = await ops.readFile(absolutePath);
+            const decoded = decodeTextFile(buffer, path);
+            const rawContent = decoded.text;
+            try {
+              if (signal?.aborted) {
+                throw new Error("Operation aborted");
+              }
 
-        const buffer = await ops.readFile(absolutePath);
-        const decoded = decodeTextFile(buffer, path);
-        const rawContent = decoded.text;
-        try {
-          if (signal?.aborted) {
-            throw new Error("Operation aborted");
-          }
-
-          const { text: content } = stripBom(rawContent);
-          const originalEndings = captureLineEndings(content);
-          const normalizedContent = normalizeToLF(content);
-          const { baseContent, newContent } = applyEditsToNormalizedContent(
-            normalizedContent,
-            edits,
-            path,
-          );
-          const finalContent = restoreLineEndings(newContent, originalEndings);
-          const encoded =
-            decoded.encoding === "utf8"
-              ? finalContent
-              : decoded.encoding === "utf8-bom"
-                ? `\uFEFF${finalContent}`
-                : encodeTextFile(finalContent, decoded.encoding);
-          await ops.writeFile(absolutePath, encoded);
-          if (signal?.aborted) {
-            throw new Error("Operation aborted");
-          }
-
-          const diffResult = generateDiffString(baseContent, newContent);
-          const patch = generateUnifiedPatch(path, baseContent, newContent);
-          const projection = adaptUnifiedDiffToGitPatchArtifacts({
-            patch,
-            sourceCompleteness: "complete",
-            ...(toolCallId ? { lineage: { requestId: toolCallId } } : {}),
-          });
-          return {
-            content: [
-              {
-                type: "text",
-                text: `Successfully replaced ${edits.length} block(s) in ${path}.`,
-              },
-            ],
-            details: {
-              versegit_basis: createVerseGitEditBasis({
+              const { text: content } = stripBom(rawContent);
+              const originalEndings = captureLineEndings(content);
+              const normalizedContent = normalizeToLF(content);
+              const { baseContent, newContent } = applyEditsToNormalizedContent(
+                normalizedContent,
+                edits,
                 path,
-                beforeBuffer: buffer,
-                afterContent: encoded,
-                firstChangedLine: diffResult.firstChangedLine,
-              }),
-              diff: diffResult.diff,
-              patch,
-              patchArtifacts: projection.artifacts,
-              ...(projection.kind === "unavailable"
-                ? {
+              );
+              const finalContent = restoreLineEndings(newContent, originalEndings);
+              const encoded =
+                decoded.encoding === "utf8"
+                  ? finalContent
+                  : decoded.encoding === "utf8-bom"
+                    ? `\uFEFF${finalContent}`
+                    : encodeTextFile(finalContent, decoded.encoding);
+              expectedBytes =
+                typeof encoded === "string" ? Buffer.from(encoded, "utf8") : Buffer.from(encoded);
+              writeStarted = true;
+              await ops.writeFile(absolutePath, encoded);
+              if (signal?.aborted) {
+                throw new Error("Operation aborted");
+              }
+
+              const diffResult = generateDiffString(baseContent, newContent);
+              const patch = generateUnifiedPatch(path, baseContent, newContent);
+              const projection = adaptUnifiedDiffToGitPatchArtifacts({
+                patch,
+                sourceCompleteness: "complete",
+                ...(toolCallId ? { lineage: { requestId: toolCallId } } : {}),
+              });
+              return {
+                content: [
+                  {
+                    type: "text",
+                    text: `Successfully replaced ${edits.length} block(s) in ${path}.`,
+                  },
+                ],
+                details: {
+                  versegit_basis: createVerseGitEditBasis({
+                    path,
+                    beforeBuffer: buffer,
+                    afterContent: encoded,
+                    firstChangedLine: diffResult.firstChangedLine,
+                  }),
+                  diff: diffResult.diff,
+                  patch,
+                  patchArtifacts: projection.artifacts,
+                  ...(projection.kind === "unavailable"
+                    ? {
+                        patchArtifactError: createRemoteForgeErrorV1({
+                          code: "incomplete_response",
+                          requestId: toolCallId,
+                        }),
+                      }
+                    : {}),
+                  firstChangedLine: diffResult.firstChangedLine,
+                  working_memory: {
+                    result_summary: `Edited ${path}: ${edits.length} block(s)`.slice(0, 100),
+                    significance: "high",
+                  },
+                },
+              };
+            } catch (error: unknown) {
+              const originalError =
+                error instanceof Error ? error : new Error(String(error), { cause: error });
+              // A prior rejected invocation may have returned this same Error object.
+              const normalizedError = writeStarted
+                ? cloneDispatchedEditError(originalError)
+                : originalError;
+              const currentBytes = await ops.readFile(absolutePath).catch(() => undefined);
+              const currentContent = currentBytes?.toString("utf8") ?? rawContent;
+              if (writeStarted && expectedBytes && currentBytes?.equals(expectedBytes)) {
+                return {
+                  content: [
+                    {
+                      type: "text",
+                      text: `Successfully replaced ${edits.length} block(s) in ${path}.`,
+                    },
+                  ],
+                  details: {
+                    diff: "",
+                    patch: "",
+                    patchArtifacts: [],
                     patchArtifactError: createRemoteForgeErrorV1({
                       code: "incomplete_response",
                       requestId: toolCallId,
                     }),
-                  }
-                : {}),
-              firstChangedLine: diffResult.firstChangedLine,
-              working_memory: {
-                result_summary: `Edited ${path}: ${edits.length} block(s)`.slice(0, 100),
-                significance: "high",
-              },
-            },
-          };
-        } catch (error: unknown) {
-          const normalizedError = error instanceof Error ? error : new Error(String(error));
-          const currentContent = await ops
-            .readFile(absolutePath)
-            .then((current) => current.toString("utf-8"))
-            .catch(() => rawContent);
-          if (didEditLikelyApply({ originalContent: rawContent, currentContent, edits })) {
-            return {
-              content: [
-                {
-                  type: "text",
-                  text: `Successfully replaced ${edits.length} block(s) in ${path}.`,
-                },
-              ],
-              details: {
-                diff: "",
-                patch: "",
-                patchArtifacts: [],
-                patchArtifactError: createRemoteForgeErrorV1({
-                  code: "incomplete_response",
-                  requestId: toolCallId,
-                }),
-              },
-            };
-          }
-          if (normalizedError.message.includes(EDIT_MISMATCH_MESSAGE)) {
-            throw appendMismatchHint(
-              normalizedError,
-              currentContent,
-              edits.map((edit) => edit.oldText),
-            );
-          }
-          throw normalizedError;
-        }
-      }, { signal });
+                  },
+                };
+              }
+              if (normalizedError.message.includes(EDIT_MISMATCH_MESSAGE)) {
+                throw appendMismatchHint(
+                  normalizedError,
+                  currentContent,
+                  edits.map((edit) => edit.oldText),
+                );
+              }
+              throw normalizedError;
+            }
+          },
+          { signal },
+        );
+      };
+      return executeEdit().catch((error: unknown) => {
+        if (!writeStarted) throw recordEditNotApplied(error, toolCallId);
+        throw error;
+      });
     },
     renderCall(args, theme, context) {
       const component = getEditCallRenderComponent(context.state, context.lastComponent);

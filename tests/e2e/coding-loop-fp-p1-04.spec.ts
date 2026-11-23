@@ -25,6 +25,8 @@ import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+import { initializeIndependentGitWorkspace } from './fixtures/fp-p1-harness';
+import { createSessionChainTask } from './fixtures/session-task-chain';
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type GatewayStatus = { state?: string; port?: number; gatewayReady?: boolean };
@@ -613,12 +615,14 @@ function measuredProjectionChars(
 
 async function sendTurn(
   app: ElectronApplication,
+  workspaceId: string,
   log: LlmRequestLog[],
   message: string,
   finalMarker: string,
   trace: string[] = [],
 ): Promise<void> {
   const sendResult = await hostInvoke<Record<string, unknown>>(app, 'chat', 'sendWithMedia', {
+    workspaceId,
     sessionKey: 'agent:main:main',
     message,
     idempotencyKey: `fp-p1-04-${Date.now()}-${Math.random()}`,
@@ -643,6 +647,20 @@ async function sendTurn(
     providerTrace: trace.slice(-40),
   }).slice(0, 4000));
   throw new Error(`turn did not reach its final response: ${message}`);
+}
+
+async function selectCodingLoopTask(app: ElectronApplication, workspaceId: string): Promise<void> {
+  const task = await createSessionChainTask(app, workspaceId, 'fp-p1-04-coding-task', {
+    objective: 'Exercise real coding diffs, verification, undo and explicit failure outcomes',
+    target: 'util.js',
+    constraints: ['Keep changes inside the independent fixture workspace', 'Retain snapshots after failed undo'],
+    acceptance: [{ id: 'coding-loop', description: 'Real coding tool and journal receipts',
+      verification: { kind: 'owner-receipt', owner: 'coding-tools',
+        requires: ['read', 'edit', 'write', 'exec', 'undo_write'], files: ['util.js', 'summary.txt'] } }],
+  });
+  await hostInvoke(app, 'workspaces', 'selectSessionTask', {
+    workspaceId, sessionKey: 'agent:main:main', taskNodeId: task.contract.taskNodeId,
+  });
 }
 
 async function writeScriptedConfig(params: {
@@ -707,6 +725,31 @@ async function writeScriptedConfig(params: {
   await writeFile(join(sourceStateDir, 'openclaw.json'), serialized, 'utf8');
 }
 
+async function captureCodingLoopObservation(
+  homeDir: string, userDataDir: string, workspaceDir: string, llm: { log: LlmRequestLog[]; trace: string[] },
+): Promise<void> {
+  const configs: Record<string, unknown> = {};
+  for (const [name, path] of Object.entries({
+    user: join(homeDir, '.openclaw/openclaw.json'),
+    isolated: join(userDataDir, 'openclaw-source-state/openclaw.json'),
+  })) {
+    try {
+      const config = JSON.parse(await readFile(path, 'utf8'));
+      configs[name] = { runtime: config.runtime, workspace: config.agents?.defaults?.workspace };
+    } catch (error) { configs[name] = { readError: String(error) }; }
+  }
+  let gitIdentity: string;
+  try { gitIdentity = execFileSync('git', ['rev-parse', '--show-toplevel', 'HEAD'], { cwd: workspaceDir, encoding: 'utf8' }); }
+  catch (error) { gitIdentity = String(error); }
+  const path = test.info().outputPath('fp-p1-04-owner-observation.json');
+  await writeFile(path, JSON.stringify({ driven_by: 'agent', actor: 'codex-fp-p1-04-observer',
+    candidate: process.env.CLAWX_E2E_CANDIDATE ?? 'dirty-development', recordedAt: new Date().toISOString(),
+    workspaceDir, gitIdentity, gitEnvKeys: Object.keys(process.env).filter(key => key.startsWith('GIT_')),
+    configs, providerLog: llm.log, providerTrace: llm.trace,
+  }, null, 2));
+  await test.info().attach('fp-p1-04-owner-observation', { path, contentType: 'application/json' });
+}
+
 test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () => {
   test('read → edit/write rich diffs → verify → undo, plus explicit failure paths', async ({
     homeDir,
@@ -731,11 +774,6 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
     // agent's edit as a true before/after diff (MonacoDiffViewer) only when
     // git state exists. Commit the buggy baseline so the fixed file diff is
     // visible after the run.
-    execFileSync('git', ['init', '--quiet'], { cwd: workspaceDir });
-    execFileSync('git', ['config', 'user.email', 'fp-p1-04@example.invalid'], { cwd: workspaceDir });
-    execFileSync('git', ['config', 'user.name', 'FP-P1-04'], { cwd: workspaceDir });
-    execFileSync('git', ['add', '.'], { cwd: workspaceDir });
-    execFileSync('git', ['commit', '--quiet', '-m', 'baseline'], { cwd: workspaceDir });
     await writeFile(
       join(workspaceDir, 'auto-verify.cjs'),
       [
@@ -755,13 +793,19 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       'utf8',
     );
 
+    initializeIndependentGitWorkspace(workspaceDir);
     await writeScriptedConfig({ homeDir, userDataDir, workspaceDir, llmPort: llm.port });
 
     const app = await launchElectronApp({ skipSetup: true });
     try {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+      const workspace = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'create', { name: 'FP-P1-04 coding', rootPath: workspaceDir,
+        agentId: 'main', activeSessionKey: 'agent:main:main', permissionMode: 'fullAccess' });
+      const workspaceId = workspace.activeWorkspace.id;
+      await page.reload();
       await startGateway(app);
+      await selectCodingLoopTask(app, workspaceId);
       // The production Compass producer requires a legacy pre-reply payload that
       // this scripted provider does not create before its first request. Seed one
       // explicitly labelled Block in the real child state DB; working memory and
@@ -769,7 +813,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       seedCompassKnowledgeFixture(userDataDir);
 
       // ---- T1: happy loop ----
-      await sendTurn(app, llm.log, 'FIX-THE-BUG in util.js: add() subtracts.', 'Fixed add()', llm.trace);
+      await sendTurn(app, workspaceId, llm.log, 'FIX-THE-BUG in util.js: add() subtracts.', 'Fixed add()', llm.trace);
       const fixed = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(fixed).toContain('return a + b;');
       // read really returned the file to the model:
@@ -985,7 +1029,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       }
 
       // ---- T2: undo restores pre-edit content ----
-      await sendTurn(app, llm.log, 'UNDO-THE-CHANGE please.', 'Undo outcome', llm.trace);
+      await sendTurn(app, workspaceId, llm.log, 'UNDO-THE-CHANGE please.', 'Undo outcome', llm.trace);
       const reverted = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(reverted).toBe(BUGGY);
       expect(await readFile(join(workspaceDir, 'summary.txt'), 'utf8')).toBe(SUMMARY_BEFORE);
@@ -1001,7 +1045,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       expect(undoResult.replace(/\s+/g, '')).toContain('"ok":true');
 
       // ---- T3: failure paths are explicit, not silent ----
-      await sendTurn(app, llm.log, 'FAILURE-PATHS demo.', 'Both failure paths', llm.trace);
+      await sendTurn(app, workspaceId, llm.log, 'FAILURE-PATHS demo.', 'Both failure paths', llm.trace);
       const missResult = toolResultFor(llm.log, 'callreadmiss');
       const badEditResult = toolResultFor(llm.log, 'calleditbad');
 
@@ -1015,7 +1059,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       expect(await readFile(join(workspaceDir, 'util.js'), 'utf8')).toBe(BUGGY);
 
       // ---- T4: partial-undo is a reported failure with the journal retained ----
-      await sendTurn(app, llm.log, 'EDIT-AGAIN please.', 'Edited again', llm.trace);
+      await sendTurn(app, workspaceId, llm.log, 'EDIT-AGAIN please.', 'Edited again', llm.trace);
       const afterEditAgain = await readFile(join(workspaceDir, 'util.js'), 'utf8');
       expect(afterEditAgain).toContain('return a * b;');
       const editAgainResult = toolResultFor(llm.log, 'calleditagain');
@@ -1032,7 +1076,7 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       const newestPre = preFiles.sort().at(-1)!;
       await unlink(join(sessionDirNow, newestPre));
 
-      await sendTurn(app, llm.log, 'UNDO-AFTER-SABOTAGE now.', 'Second undo outcome', llm.trace);
+      await sendTurn(app, workspaceId, llm.log, 'UNDO-AFTER-SABOTAGE now.', 'Second undo outcome', llm.trace);
       const undo2Result = toolResultFor(llm.log, 'callundotwo');
 
       console.log('[fp-p1-04-t4]', JSON.stringify({ undo2Result: undo2Result.slice(0, 300) }));
@@ -1048,6 +1092,8 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       const metasAfter = (await readdir(sessionDirNow)).filter((name) => name.endsWith('.meta.json'));
       expect(metasAfter.length).toBeGreaterThan(0);
     } finally {
+      try { await captureCodingLoopObservation(homeDir, userDataDir, workspaceDir, llm); }
+      catch (error) { console.error('[fp-p1-04-owner-observation]', String(error)); }
       // Diagnostic: the child's own log explains a stalled turn far better than
       // the harness can from outside.
       try {
@@ -1076,7 +1122,8 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
     launchElectronApp,
   }) => {
     test.setTimeout(600_000);
-    const llm = await startScriptedLlm({ abortFinalResponse: true });
+    const providerFault = { abortFinalResponse: true };
+    const llm = await startScriptedLlm(providerFault);
     const workspaceBase = process.env.CLAWX_E2E_RUN_ROOT
       ? join(process.env.CLAWX_E2E_RUN_ROOT, 'fp-p1-04-workspace')
       : tmpdir();
@@ -1085,16 +1132,23 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
     await writeFile(join(workspaceDir, 'util.js'), BUGGY, 'utf8');
     await writeFile(join(workspaceDir, 'summary.txt'), SUMMARY_BEFORE, 'utf8');
 
+    initializeIndependentGitWorkspace(workspaceDir);
     await writeScriptedConfig({ homeDir, userDataDir, workspaceDir, llmPort: llm.port });
 
     const app = await launchElectronApp({ skipSetup: true });
     try {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
+      const workspace = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'create', { name: 'FP-P1-04 disconnect', rootPath: workspaceDir,
+        agentId: 'main', activeSessionKey: 'agent:main:main', permissionMode: 'fullAccess' });
+      const workspaceId = workspace.activeWorkspace.id;
+      await page.reload();
       await startGateway(app);
+      await selectCodingLoopTask(app, workspaceId);
       seedCompassKnowledgeFixture(userDataDir);
 
       await hostInvoke<Record<string, unknown>>(app, 'chat', 'sendWithMedia', {
+        workspaceId,
         sessionKey: 'agent:main:main',
         message: 'FIX-THE-BUG in util.js: add() subtracts.',
         idempotencyKey: `fp-p1-04-abort-${Date.now()}`,
@@ -1119,7 +1173,14 @@ test.describe('FP-P1-04 coding loop (real agent turn, scripted local LLM)', () =
       const afterAbort = await page.getByTestId('chat-message-layout').innerText();
       // No success-looking completion text from the aborted final response.
       expect(afterAbort).not.toContain('Fixed add() and rewrote summary.txt');
+      const abortedResponses = llm.abortedFinalResponses;
+      providerFault.abortFinalResponse = false;
+      await sendTurn(app, workspaceId, llm.log, 'FAILURE-PATHS after the disconnected reply.', 'Both failure paths', llm.trace);
+      await expect(page.getByTestId('chat-message-layout')).toContainText('Both failure paths reported explicit errors.');
+      expect(llm.abortedFinalResponses).toBe(abortedResponses);
     } finally {
+      try { await captureCodingLoopObservation(homeDir, userDataDir, workspaceDir, llm); }
+      catch (error) { console.error('[fp-p1-04-owner-observation]', String(error)); }
       try {
         await closeElectronApp(app);
       } finally {

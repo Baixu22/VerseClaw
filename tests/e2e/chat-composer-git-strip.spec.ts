@@ -1,4 +1,5 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
+import type { GitRepositoryStatus } from '../../shared/types/git';
 
 const SESSION_KEY = 'agent:main:main';
 const WORKSPACE_ID = 'workspace-composer-git';
@@ -41,13 +42,13 @@ const workspace = {
 const worktreeWorkspace = {
   ...workspace,
   id: 'workspace-demo-feature-existing',
-  name: 'demo-feature-existing',
+  name: 'feature/existing',
   rootPath: '/workspace/demo-feature-existing',
   state: {},
   sessionStates: {},
 };
 
-const gitStatus = {
+const gitStatus: GitRepositoryStatus = {
   isRepository: true,
   workspaceRoot: '/workspace/demo',
   repoRoot: '/workspace/demo',
@@ -62,7 +63,11 @@ const gitStatus = {
   unstagedCount: 1,
   untrackedCount: 1,
   conflictedCount: 0,
-  changes: [],
+  changes: [
+    { path: 'src/app.ts', absolutePath: '/workspace/demo/src/app.ts', status: 'M ', staged: true, unstaged: false, untracked: false, conflicted: false, bucket: 'staged' },
+    { path: 'README.md', absolutePath: '/workspace/demo/README.md', status: ' M', staged: false, unstaged: true, untracked: false, conflicted: false, bucket: 'unstaged' },
+    { path: 'notes.txt', absolutePath: '/workspace/demo/notes.txt', status: '??', staged: false, unstaged: false, untracked: true, conflicted: false, bucket: 'untracked' },
+  ],
 };
 
 const branches = [
@@ -243,7 +248,8 @@ test.describe('Chat composer Git strip', () => {
       await page.screenshot({ path: testInfo.outputPath('runtime-approval-inline-with-git.png') });
       await prompt.screenshot({ path: testInfo.outputPath('runtime-approval-inline-prompt.png') });
       const currentStripBox = (await strip.boundingBox())!;
-      expect(promptBox.y).toBeGreaterThan(currentStripBox.y);
+      const currentPromptBox = (await prompt.boundingBox())!;
+      expect(currentStripBox.y).toBeGreaterThanOrEqual(currentPromptBox.y + currentPromptBox.height - 1);
 
       await page.getByTestId('runtime-approval-deny').click();
       await expect(prompt).toHaveCount(0);
@@ -259,7 +265,58 @@ test.describe('Chat composer Git strip', () => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
-      await installComposerGitMocks(app);
+      await installComposerGitMocks(app, [
+        {
+          role: 'user',
+          content: [{ type: 'text', text: 'Check the workspace.' }],
+          timestamp: fixedTimestamp,
+        },
+      ]);
+      await app.evaluate(({ ipcMain }, seed) => {
+        const original = (ipcMain as unknown as {
+          _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+        })._invokeHandlers?.get('host:invoke');
+        let created: typeof seed.worktree | null = null;
+        let switched = false;
+        const snapshot = () => ({ success: true, profiles: created ? [seed.source, created] : [seed.source],
+          activeWorkspaceId: switched && created ? created.id : seed.source.id,
+          activeWorkspace: switched && created ? created : seed.source });
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event, request: {
+          id?: string; module?: string; action?: string; payload?: Record<string, unknown>;
+        }) => {
+          if (request.module !== 'workspaces' || !['create', 'switch', 'list', 'getActive'].includes(request.action ?? '')) {
+            return original?.(event, request);
+          }
+          const payload = request.payload ?? {};
+          const record = () => (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: unknown[] })
+            .__verseClawE2eHostCalls?.push({ module: request.module, action: request.action, payload });
+          const reject = () => ({ id: request.id, ok: false,
+            error: { code: 'INVALID_ARGUMENT', message: 'Worktree fixture requires its declared workspace identity.' } });
+          if (request.action === 'create') {
+            if (payload.rootPath !== seed.worktree.rootPath || payload.name !== seed.worktree.name || payload.agentId !== 'main'
+              || typeof payload.activeSessionKey !== 'string' || !/^agent:main:session-\d+-[a-z0-9]+$/.test(payload.activeSessionKey)) return reject();
+            record();
+            created = { ...seed.worktree, activeSessionKey: payload.activeSessionKey,
+              agentBindings: { main: { workspaceId: seed.worktree.id, agentId: 'main', sessionKey: payload.activeSessionKey } },
+              sessionStates: { [payload.activeSessionKey]: {} } };
+            switched = true;
+            (globalThis as typeof globalThis & { __composerWorktreeWorkspace?: typeof created }).__composerWorktreeWorkspace = created;
+            return { id: request.id, ok: true, data: snapshot() };
+          }
+          if (request.action === 'switch') {
+            if (!created || payload.id !== created.id) return reject();
+            record(); switched = true;
+            return { id: request.id, ok: true, data: snapshot() };
+          }
+          if (!created) return original?.(event, request);
+          if (Object.keys(payload).length) return reject();
+          record();
+          const data = snapshot();
+          return { id: request.id, ok: true, data: request.action === 'getActive'
+            ? { success: true, activeWorkspaceId: data.activeWorkspaceId, activeWorkspace: data.activeWorkspace } : data };
+        });
+      }, { source: workspace, worktree: worktreeWorkspace });
       const page = await getStableWindow(app);
       await page.setViewportSize({ width: 1280, height: 820 });
       try {
@@ -271,10 +328,7 @@ test.describe('Chat composer Git strip', () => {
       await expect(page.getByTestId('chat-page')).toBeVisible();
       const strip = page.getByTestId('composer-git-strip');
       await expect(strip).toBeVisible({ timeout: 30_000 });
-      await expect(strip).toContainText('feature/current');
-      await expect(strip).toContainText('3 changes');
-      await expect(strip).toContainText('ahead 2 / behind 1');
-      await expect(strip).toContainText('demo');
+      await expect(strip).toContainText('3 files changed');
 
       const composerShell = page.getByTestId('chat-composer-shell');
       await expect(composerShell).toBeVisible();
@@ -295,6 +349,10 @@ test.describe('Chat composer Git strip', () => {
       await page.getByTestId('composer-git-trigger').click();
       const menu = page.getByTestId('composer-git-menu');
       await expect(menu).toBeVisible();
+      await expect(menu).toContainText('feature/current');
+      await expect(menu).toContainText('3 changes');
+      await expect(menu).toContainText('ahead 2 / behind 1');
+      await expect(menu).toContainText('demo');
       const menuBounds = await page.getByTestId('composer-git-menu').boundingBox();
       expect(menuBounds).toBeTruthy();
       expect(menuBounds!.y).toBeGreaterThanOrEqual(0);
@@ -350,8 +408,21 @@ test.describe('Chat composer Git strip', () => {
       await expect(page.getByTestId('artifact-panel')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('workspace-git-panel')).toBeVisible({ timeout: 30_000 });
 
+      const savedDraft = 'Keep this draft when switching to the existing worktree.';
+      await page.getByTestId('chat-composer-input').fill(savedDraft);
+      await expect.poll(() => app.evaluate((_, draft) => (
+        (globalThis as typeof globalThis & {
+          __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: { id?: string; sessionKey?: string; state?: { draftInput?: string } } }>;
+        }).__verseClawE2eHostCalls?.some((call) => call.module === 'workspaces' && call.action === 'saveState'
+          && call.payload?.id === 'workspace-composer-git' && call.payload.sessionKey === 'agent:main:main'
+          && call.payload.state?.draftInput === draft) ?? false
+      ), savedDraft)).toBe(true);
       await page.getByTestId('composer-git-trigger').click();
       await page.getByTestId('composer-git-switch-worktree-/workspace/demo-feature-existing').click();
+      const switchCalls = await app.evaluate(() => (
+        (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: unknown[] }).__verseClawE2eHostCalls ?? []
+      ));
+      await testInfo.attach('composer-git-worktree-calls', { body: JSON.stringify(switchCalls), contentType: 'application/json' });
       await expect.poll(async () => app.evaluate(() => (
         (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> })
           .__verseClawE2eHostCalls ?? []
@@ -362,16 +433,18 @@ test.describe('Chat composer Git strip', () => {
           payload: expect.objectContaining({
             id: WORKSPACE_ID,
             sessionKey: SESSION_KEY,
+            state: expect.objectContaining({ draftInput: savedDraft }),
           }),
         }),
         expect.objectContaining({
           module: 'workspaces',
           action: 'create',
-          payload: {
+          payload: expect.objectContaining({
             agentId: 'main',
-            name: 'demo-feature-existing',
+            name: 'feature/existing',
             rootPath: '/workspace/demo-feature-existing',
-          },
+            activeSessionKey: expect.stringMatching(/^agent:main:session-\d+-[a-z0-9]+$/),
+          }),
         }),
         expect.objectContaining({
           module: 'workspaces',
