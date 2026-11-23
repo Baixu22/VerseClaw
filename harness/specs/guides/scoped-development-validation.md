@@ -116,3 +116,12 @@ The generated fixtures exercise the production loader with one root-owned metada
 view, channel aliases, per-request disablement, setup fallback, read failures and
 root switching/eviction. Fresh runtime builds and authenticated Electron recovery
 measurements provide the subsequent startup evidence.
+
+For G3 compaction readiness, run
+`node node_modules/vitest/vitest.mjs run tests/unit/gateway-compaction-readiness.test.ts --maxWorkers=1 --no-file-parallelism`.
+This focused lane exercises the production busy predicate with real admission
+permits/fences and the real readback polling helper with a controlled clock.
+It checks canonical agent/generation isolation, remaining-budget use and stale
+generation rejection. The existing runtime handler regression also reads status
+before its busy-write rejection and after permit/fence release. Fresh candidate
+builds and the unchanged frozen live-provider workload supply native acceptance.

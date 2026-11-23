@@ -51,7 +51,7 @@ import {
   installQueueDrainCallback,
   chatHandlers,
 } from "./chat.js";
-import { hasTrackedActiveSessionRun } from "./session-active-runs.js";
+import { hasTrackedActiveSessionRun, isSessionBusyForManualCompaction } from "./session-active-runs.js";
 import { emitSessionsChanged } from "./session-change-event.js";
 import {
   countLongTaskQueuedMessages,
@@ -79,7 +79,6 @@ import {
   resolveRequestedGlobalAgentId,
   resolveGatewaySessionTargetFromKey,
   interruptSessionRunIfActive,
-  isSessionBusyForManualCompaction,
   compressionArtifactFromCheckpoint,
   estimateProjectionTokens,
   loadSessionsRuntimeModule,
@@ -607,8 +606,7 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       return;
     }
     const identity = { agentId, canonicalSessionKey: canonicalKey, expectedSessionId: sessionId };
-    const admission = sessionAdmissionRegistry.snapshot(identity);
-    if (admission?.active || admission?.fenced || isSessionBusyForManualCompaction({
+    if (isSessionBusyForManualCompaction({
       context, cfg, requestedKey: key, canonicalKey, agentId, sessionId,
     })) {
       respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "Session is active or fenced; restore after the current operation finishes."));

@@ -29,8 +29,8 @@ vi.mock("../session-utils.js", async (importOriginal) => {
   };
 });
 
-vi.mock("./sessions.shared.js", async (importOriginal) => {
-  const original = await importOriginal<typeof import("./sessions.shared.js")>();
+vi.mock("./session-active-runs.js", async (importOriginal) => {
+  const original = await importOriginal<typeof import("./session-active-runs.js")>();
   return {
     ...original,
     isSessionBusyForManualCompaction: () => false,

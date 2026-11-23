@@ -11,6 +11,17 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/gateway/server-methods/session-active-runs.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.shared.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-lineage.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-reject.test.ts
+  - tests/unit/gateway-compaction-readiness.test.ts
+  - tests/e2e/recovery-longsession-eval.spec.ts
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/compaction-readiness-20261123/**
   - openclaw_runtime/src/plugins/bundled-channel-runtime.ts
   - openclaw_runtime/src/channels/plugins/bundled.ts
   - tests/unit/gateway-bundled-channel-metadata.test.ts
@@ -303,11 +314,14 @@ requiredRules:
   - runtime-lifecycle-governance-boundary
   - recovery-authority-owner-admission
 expectedUserBehavior:
+  - Manual compaction stays unavailable while the current session generation has an active admission permit or lifecycle fence, and becomes available after release.
   - Initial and updated compaction summaries preserve active user-designated statements verbatim, including their labels, wording, and punctuation.
   - An explicit authority gate makes all five existing recovery owners consult the same decision policy before mutation or continuation.
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/gateway-compaction-readiness.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
   - tests/unit/gateway-bundled-channel-metadata.test.ts
   - scripts/gateway-plugin-loader-cache.test.mjs
   - scripts/gateway-workspace-alias.test.mjs
@@ -374,6 +388,8 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Global-session fork admission, child ownership and parent command hooks resolve the selected agent or the configured default through the existing session-store resolver; canonical scoped keys retain their encoded agent.
+  - Compaction status, compact, transcript restore and checkpoint restore share one generation-bound busy predicate. Automated long-session readbacks wait for the same generation within the existing turn budget; ranged compaction carries expectedSessionId and retains generation-mismatch rejection before mutation.
   - Bundled channel enumeration and ID lookup share one metadata view in the existing root-owned load context. Plugin identities retain sorted enumeration and alias ownership, setup hints retain their fallback, and channel/plugin disablement is evaluated for each request. Failed reads remain retryable, empty results remain cached, and root switching or eviction uses the corresponding context. Registry refresh and Gateway teardown clear metadata, loaded entries and their loader caches through the existing lifecycle owner.
   - Clearing native plugin aliases copies and rewrites only entries containing a selected parent root. Unrelated owners retain their arrays and resolution order; selected owners are removed, empty aliases are deleted, and repeated cleanup leaves survivors untouched. CJS and ESM parent boundaries retain their existing resolution behavior.
   - Plugin loader cache entries use caller-supplied aliases directly. An omitted native mode uses the existing Node/Bun and built-dist policy; an omitted alias map retains cached default SDK configuration. Content keys, filename and explicit scope precedence, source-mode loader reuse, and native alias installation on cache hits retain their existing behavior. A tiny ESM projection links the production SDK import declaration to its real exported policy functions and detects missing imports and exports.

@@ -67,6 +67,14 @@ Renderer code must not own transport selection, direct IPC channels, direct Gate
 
 Renderer code must not create direct Gateway WebSocket connections. Gateway frame diagnostics must be emitted by Main-process Gateway logging.
 
+Manual compaction status and writes use the same generation-bound admission check.
+Active runs and lifecycle fences keep compression unavailable until release.
+Automated readbacks wait within their existing turn budget and pin the mutation
+to the observed session generation so a replacement session rejects stale work.
+
+Global session keys use the selected agent or the captured configuration's default
+for admission, fork child ownership and parent command-hook workspace resolution.
+
 Provider readiness must recognize resolvable environment SecretRefs in Main without persisting their values. Missing variables, incompatible secret provider sources, and allowlist exclusions must remain unavailable; renderer receives only the existing masked key status.
 
 Channel/plugin migration behavior is also part of this scenario when Verse Claw rewrites OpenClaw config before Gateway launch. Upgrades must preserve single-owner channel registration for migrated plugin-backed channels such as Feishu/Lark.

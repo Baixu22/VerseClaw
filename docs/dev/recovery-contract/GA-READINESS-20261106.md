@@ -133,3 +133,5 @@ Goal-wake 在原 `task_runs.progress_summary` 中保存统一对账决定。原 
 此前实测见 [恢复评测](FINAL-20261105.zh-CN.md) 与 [后续验证](FOLLOWUP-20261106.zh-CN.md)。最新节点证据完成后收录在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/`。
 
 2026-11-19 已修复恢复热路径中的重复文件权限写入。同一 POSIX 所有者或 Windows 原生权限匹配时跳过重复 `chmod`，不同 POSIX 所有者继续核对原修改权限；特殊位、只读转换和描述符身份仍在写入前检查。12 项回归、32.700 秒无缓存类型、runtime 重建与启动检查、目标 Harness 和固定 DeepSeek 独立复核通过。九对交替样本的每批 500 次追加中位耗时从 186.479 ms 降至 74.757 ms。精选原件见[文件追加验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/append-permissions-20261119/README.md)。当前 GA 为 **NO_GO**，干净候选的完整恢复指标和发布门禁继续执行。
+
+2026-11-23，G3 r22 对齐压缩状态与写入侧的就绪判断。已有会话忙碌模块统一检查同一 agent、canonical key 和物理会话代次的活跃 run、admission permit 与 fence。恢复采样在原 240 秒 turn 预算内等待同代次就绪，范围压缩固定 seeded expectedSessionId。global 会话的 fork、parent reset 与命令 hook 采用所选 agent 或配置的默认 agent；原回退错误已通过三个负对照复现并修正。16 项定向回归通过，覆盖释放后的可用状态、agent/代次隔离、剩余预算、代次替换和生命周期 caller 的 agent 选择。原 f2 候选的实时失败与指标原件保留，新候选的完整类型、构建和冻结 live-provider 验收按共享串行窗口执行。节点 TF-0818 保持 in_progress，GA 为 **NO_GO**。本批证据见[压缩就绪验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/compaction-readiness-20261123/README.md)。

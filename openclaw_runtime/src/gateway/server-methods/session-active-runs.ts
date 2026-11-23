@@ -1,6 +1,10 @@
-// Session active-run helpers decide whether session operations should treat a
-// session as busy based on Control UI-visible active chat/agent runs.
+// Session operations share visible-run projection and generation-specific busy checks.
+import { resolveDefaultAgentId } from "../../agents/agent-scope.js";
+import { isEmbeddedAgentRunActive } from "../../agents/embedded-agent-runner/runs.js";
+import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
+import { sessionAdmissionRegistry } from "../../sessions/session-admission-registry.js";
+import { resolveSessionStoreAgentId } from "../session-store-key.js";
 import type { GatewayRequestContext } from "./types.js";
 
 /**
@@ -83,4 +87,36 @@ export function hasTrackedActiveSessionRun(params: {
         params.defaultAgentId,
       ),
   );
+}
+
+// Admission permits can outlive the assistant's terminal event. Status and
+// mutation callers must inspect the same physical generation before compaction.
+export function isSessionBusyForManualCompaction(params: {
+  context: Partial<Pick<GatewayRequestContext, "chatAbortControllers">>;
+  cfg: OpenClawConfig;
+  requestedKey: string;
+  canonicalKey: string;
+  agentId?: string;
+  sessionId?: string;
+}): boolean {
+  const hasTrackedRun = hasTrackedActiveSessionRun({
+    context: params.context,
+    requestedKey: params.requestedKey,
+    canonicalKey: params.canonicalKey,
+    agentId: params.agentId,
+    defaultAgentId: resolveDefaultAgentId(params.cfg),
+  });
+  const hasEmbeddedRun =
+    typeof params.sessionId === "string" && params.sessionId
+      ? isEmbeddedAgentRunActive(params.sessionId)
+      : false;
+  const admission =
+    typeof params.sessionId === "string" && params.sessionId
+      ? sessionAdmissionRegistry.snapshot({
+          agentId: params.agentId ?? resolveSessionStoreAgentId(params.cfg, params.canonicalKey),
+          canonicalSessionKey: params.canonicalKey,
+          expectedSessionId: params.sessionId,
+        })
+      : undefined;
+  return hasTrackedRun || hasEmbeddedRun || Boolean(admission?.active || admission?.fenced);
 }

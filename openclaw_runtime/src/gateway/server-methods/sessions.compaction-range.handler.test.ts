@@ -93,7 +93,7 @@ afterEach(() => {
   rmSync(directory, { recursive: true, force: true });
 });
 
-async function invoke(method: "sessions.compact" | "sessions.compactRange" | "sessions.compaction.restore", params: Record<string, unknown>, busy = false) {
+async function invoke(method: "sessions.compact" | "sessions.compactRange" | "sessions.compaction.restore" | "sessions.compactionStatus", params: Record<string, unknown>, busy = false) {
   const { calls, respond } = makeRespond();
   await sessionsCompactionHandlers[method]!({
     params: { key, ...params }, respond, client: null, isWebchatConnect: () => false,
@@ -445,6 +445,8 @@ describe("U5 compaction generation effects", () => {
     const held = kind === "fence" ? await sessionAdmissionRegistry.fence(identity) : undefined;
     const release = kind === "permit" ? sessionAdmissionRegistry.acquirePermit(identity, "embedded-agent") : undefined;
     try {
+      expect(await invoke("sessions.compactionStatus", {}, kind === "run"))
+        .toMatchObject([{ ok: true, payload: { canCompact: false, inProgress: true, reason: "active_run" } }]);
       expect(await invoke("sessions.compactRange", { fromLeafId: "e1", expectedSessionId: sessionId }, kind === "run"))
         .toMatchObject([{ ok: false, error: { code: "UNAVAILABLE" } }]);
       expect(diskState()).toEqual(before);
@@ -454,6 +456,8 @@ describe("U5 compaction generation effects", () => {
       release?.();
       held?.release();
     }
+    expect(await invoke("sessions.compactionStatus", {}))
+      .toMatchObject([{ ok: true, payload: { canCompact: true, inProgress: false } }]);
   });
 
   it("retains the real legacy maxLines file operation for the current generation", async () => {

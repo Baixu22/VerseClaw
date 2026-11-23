@@ -365,4 +365,8 @@ ACP 在统一恢复模式下将原请求、运行时身份、输出边界和已�
 
 ensure/status 身份写入的 ACK 丢失后，按原 ACP 行与当前 Session 世代确认已提交结果。Goal-wake 通过同一 authority 对账原 durable helper 与 task，校验 nonce 和 Session epoch，先保存 task 终态再清理文件；重启后沿既有 Mission CAS 推进待处理 wait，保持原 helper 身份。
 
+当前会话的运行任务和生命周期操作结束后，手动压缩恢复可用。
+
+global 会话的分支和命令 hook 使用所选 agent，未指定时采用配置的默认 agent。
+
 初次和更新的压缩摘要以完整原句逐字保留用户指定的有效事实。[2026-11-16 恢复验收](harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-candidate-6115256e-20261116/REPORT.zh-CN.md)记录了 505 项通过的回归、120/120 项事实保真和 15/15 个正确故障终态；两轮 legacy 的 15 槽全部匹配。GA 为 NO_GO：恢复 P50/P95 为 17.439/83.204 秒，构建耗时和源码行数门禁失败。

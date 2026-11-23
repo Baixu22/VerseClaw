@@ -3,7 +3,10 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { freemem, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import type { ElectronApplication } from "@playwright/test";
-import type { WorkspaceSnapshotResult } from "../../shared/host-api/contract";
+import type {
+  SessionCompactionStatusResult,
+  WorkspaceSnapshotResult,
+} from "../../shared/host-api/contract";
 import { getStableWindow, test, expect } from "./fixtures/electron";
 import { allocatePort, buildMockProviderConfig, hostInvoke } from "./fixtures/fp-p1-harness";
 import { buildRecoveryContractManifest } from "../../shared/recovery-contract-eval";
@@ -48,6 +51,7 @@ async function turn(
 ) {
   const before = new Set(readRecoveryDisk(stateDir, key).entries.map((entry) => entry.id));
   await hostInvoke(app, "chat", "sendWithMedia", { sessionKey: key, message, idempotencyKey: id });
+  const deadline = Date.now() + 240_000;
   const terminal = (entry: { id: string; message?: { role?: string; stopReason?: string } }) =>
     !before.has(entry.id) &&
     entry.message?.role === "assistant" &&
@@ -56,13 +60,40 @@ async function turn(
     () => readRecoveryDisk(stateDir, key),
     (d) => d.main?.status !== "running" && d.branch.some(terminal),
     "settled assistant result",
-    240_000,
+    Math.max(0, deadline - Date.now()),
   );
   const entry = disk.branch.findLast(terminal);
   if (!entry) throw new Error("assistant result missing");
   if (entry.message.stopReason !== "stop")
     throw new Error(entry.message.errorMessage ?? "assistant turn failed");
-  return { text: text(entry.message), entryId: entry.id, disk };
+  const sessionId = disk.main?.sessionId;
+  if (!sessionId) throw new Error("settled session generation missing");
+  // A terminal answer can precede admission cleanup. Use the remaining turn
+  // budget to wait for the same generation before any lifecycle boundary.
+  const ready = await eventually(
+    async () => ({
+      status: await hostInvoke<SessionCompactionStatusResult>(app, "sessions", "compactionStatus", {
+        sessionKey: key,
+        agentId: "main",
+      }),
+      disk: readRecoveryDisk(stateDir, key),
+    }),
+    (value) =>
+      value.disk.main?.sessionId === sessionId &&
+      value.status.success &&
+      value.status.available &&
+      value.status.canCompact &&
+      !value.status.inProgress,
+    "same-generation compaction readiness",
+    Math.max(0, deadline - Date.now()),
+  );
+  return {
+    text: text(entry.message),
+    entryId: entry.id,
+    sessionId,
+    disk: ready.disk,
+    readiness: ready.status,
+  };
 }
 
 test.describe("long-session recovery evaluation", () => {
@@ -158,12 +189,23 @@ test.describe("long-session recovery evaluation", () => {
         const boundaryStarted = Date.now();
         let boundary: Record<string, unknown> = { family: pair.family };
         if (pair.family === "compression") {
-          await turn(
+          const tail = await turn(
             app!,
             stateDir,
             sessionKey,
             "Checkpoint boundary marker. Reply only ACK; do not repeat earlier facts.",
             `${pair.id}-tail`,
+          );
+          expect(tail.sessionId, "compaction source generation must remain current").toBe(
+            seeded.sessionId,
+          );
+          artifacts.push(
+            persistEvidence(evidenceDir, "compaction-ready.json", {
+              sessionId: tail.sessionId,
+              status: tail.readiness,
+              driven_by: "agent",
+              actor: "recovery-quality-owner",
+            }),
           );
           const result = await hostInvoke<{
             success?: boolean;
@@ -172,6 +214,7 @@ test.describe("long-session recovery evaluation", () => {
           }>(app!, "sessions", "compactRange", {
             sessionKey,
             agentId: "main",
+            expectedSessionId: seeded.sessionId,
             toLeafId: seeded.entryId,
             customInstructions:
               "Preserve the accepted objective, constraint, decision and next-action statements verbatim. Discard archived discussion.",
