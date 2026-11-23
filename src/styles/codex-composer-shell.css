@@ -432,6 +432,7 @@
   border: 1px solid var(--color-chat-tray-border); border-radius: 18px;
   background: var(--color-chat-menu); color: var(--color-chat-foreground); box-shadow: var(--shadow-chat-menu);
   font-size: 13px; line-height: 20px;
+  outline: none;
 }
 .composer-context-menu svg { width: 16px; height: 16px; flex: none; }
 .composer-context-label { margin: 0; padding: 3px 6px; font-size: 12px; color: var(--color-chat-secondary); }

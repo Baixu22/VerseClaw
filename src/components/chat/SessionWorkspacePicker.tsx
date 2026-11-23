@@ -57,7 +57,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const canMutate = Boolean(current?.status.isRepository && !disabled && !busy && !loading);
   const isCurrent = (owner: string) => {
     const active = useWorkspacesStore.getState().activeWorkspace;
-    return alive.current && scopeRef.current === owner && active?.id === workspaceId && pathEquals(active.rootPath, workspaceRoot);
+    return alive.current && scopeRef.current === owner && active?.id === workspaceId && pathEquals(active?.rootPath, workspaceRoot);
   };
 
   const refresh = useCallback(async () => {
@@ -94,6 +94,11 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   useDismissOnOutside({ open, onDismiss: () => setOpen(false), onEscape: () => {
     setOpen(false); popover.triggerRef.current?.focus();
   }, refs: [popover.triggerRef, popover.layerRef] });
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => popover.layerRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [open, popover.layerRef]);
 
   const show = (anchor: HTMLButtonElement, showBranches = false) => {
     const differentAnchor = popover.triggerRef.current !== anchor;
@@ -166,7 +171,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
           aria-haspopup="dialog" aria-expanded={open} onClick={event => show(event.currentTarget)}><MoreHorizontal aria-hidden="true" /></button>
       </>}
     </div>
-    {open && createPortal(<div ref={popover.layerRef} style={popover.style} className="composer-context-menu" role="dialog"
+    {open && createPortal(<div ref={popover.layerRef} style={popover.style} className="composer-context-menu" role="dialog" tabIndex={-1}
       aria-label={t('executionSettings')} data-testid="session-worktree-menu">
       <p className="composer-context-label">{t('executionSettings')}</p>
       {disabled && <p className="composer-context-hint" role="status">{t('runningHint')}</p>}

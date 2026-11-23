@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Folder } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +26,11 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelect 
   const overlay = useOverlayPortalContainer();
   const close = useCallback(() => setOpen(false), [setOpen]);
   useDismissOnOutside({ open, onDismiss: close, onEscape: () => { close(); popover.triggerRef.current?.focus(); }, refs: [popover.triggerRef, popover.layerRef] });
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => popover.layerRef.current?.querySelector<HTMLButtonElement>('button')?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [open, popover.layerRef]);
   const displayName = activeWorkspace?.name || basenameFromPath(activeWorkspace?.rootPath) || t('workspace.chooseNew');
   return <span className="composer-context-project">
     <button ref={popover.triggerRef} type="button" className="composer-context-chip" aria-expanded={open} aria-haspopup="menu"

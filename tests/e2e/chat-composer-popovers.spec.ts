@@ -33,7 +33,6 @@ for (const theme of ['light', 'dark'] as const) {
           '["workspaces","list",null]': { profiles: [workspace], activeWorkspaceId: workspace.id, activeWorkspace: workspace },
           '["git","status",null]': { success: true, status: { isRepository: true, workspaceRoot: workspace.rootPath, repoRoot: workspace.rootPath, branch: 'feature/cards', detached: false, clean: true, hasConflicts: false, ahead: 0, behind: 0, stagedCount: 0, unstagedCount: 0, untrackedCount: 0, conflictedCount: 0, changes: [] } },
           '["git","branches",null]': { success: true, branches: [{ name: 'feature/cards', current: true }, { name: 'main', current: false }] },
-          '["git","branches",null]': { success: true, branches: [{ name: 'main', current: false }, { name: 'feature/cards', current: true }] },
           '["git","worktrees",null]': { success: true, worktrees: [{ path: 'D:/work/ClawX-main', branch: 'main', head: 'abcdef1' }, { path: workspace.rootPath, branch: 'feature/cards', head: '1234567' }] },
         },
       });
