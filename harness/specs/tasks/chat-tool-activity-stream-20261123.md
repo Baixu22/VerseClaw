@@ -37,6 +37,7 @@ touchedAreas:
   - tests/unit/tool-activity-group.test.tsx
   - tests/unit/task-visualization.test.ts
   - tests/unit/tool-ui-run-surfaces.test.ts
+  - tests/unit/runtime-approval-prompt.test.tsx
   - tests/unit/chat-page-execution-graph.test.tsx
   - tests/unit/chat-render-reachability.test.tsx
   - tests/e2e/chat-tool-activity-stream.spec.ts
