@@ -90,6 +90,7 @@ test('conversation planning, settings and decisions share a compact input surfac
       const dark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
       const shell = page.getByTestId('chat-composer-shell');
       const bubble = page.getByTestId('chat-user-message-bubble').first();
+      await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', dark ? 'rgb(33, 33, 31)' : 'rgb(247, 247, 245)');
       if (await shell.isVisible()) {
         await expect(shell).toHaveCSS('background-color', dark ? 'rgb(56, 56, 54)' : 'rgb(255, 255, 255)');
         await expect(shell).toHaveCSS('backdrop-filter', 'none');

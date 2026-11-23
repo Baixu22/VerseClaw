@@ -396,7 +396,7 @@
 }
 
 /* Execution location and task progress share one inset tray behind the input. */
-[data-testid='chat-page'] { background: var(--color-chat-canvas); }
+[data-testid='chat-page'].bg-background { background: var(--color-chat-canvas); }
 .composer-execution-tray {
   position: relative;
   z-index: 1;
