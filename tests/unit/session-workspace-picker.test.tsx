@@ -59,6 +59,7 @@ describe('composer execution settings', () => {
     mocks.select.mockImplementation(async () => { order.push('open'); });
     mount(); await open();
     const button = screen.getByTestId('session-worktree-submit');
+    expect(screen.queryByTestId('session-worktree-trigger')).toBeNull();
     await waitFor(() => expect(button).toBeEnabled());
     expect(screen.queryByTestId('session-worktree-branch')).toBeNull();
     fireEvent.click(button);

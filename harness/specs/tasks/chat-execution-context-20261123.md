@@ -34,6 +34,10 @@ touchedAreas:
   - tests/unit/welcome-project-picker.test.tsx
   - tests/unit/composer-git-strip.test.tsx
   - tests/e2e/chat-execution-context.spec.ts
+  - tests/e2e/chat-worktree-session-navigation.spec.ts
+  - tests/e2e/session-worktree-storage.spec.ts
+  - tests/e2e/chat-workspace-header.spec.ts
+  - tests/e2e/chat-welcome-hero-fakecoding.spec.ts
   - tests/e2e/chat-composer-popovers.spec.ts
   - tests/e2e/chat-planning-composer-ux.spec.ts
   - tests/e2e/chat-layout-cdp.spec.ts
@@ -46,6 +50,7 @@ touchedAreas:
   - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/fixtures/chat-execution-context/20261123/**
 expectedUserBehavior:
+  - 默认本地执行不显示重复的本地按钮；工作树创建和切换从更多进入，仅链接工作树显示工作树入口。
   - 项目、目录、分支和执行设置位于输入框上方，任务行并入同一个托盘；空会话底部及页眉不再嵌套工作树入口。
   - 打开执行设置后可直接创建并打开工作树，默认分支唯一生成，改名和起点按需展开。
   - 已有目录和分支从同一浮层切换，当前草稿先保存，进入新目录时输入为空，切回时恢复原会话与草稿。

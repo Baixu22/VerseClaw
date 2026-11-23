@@ -195,11 +195,11 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
     <div className="composer-context-row" data-testid="composer-context-row">
       <WelcomeProjectPicker disabled={disabled || Boolean(busy)} onSelect={onSelectProject} onPickFolder={onPickFolder} />
       {workspace && <>
-        <button type="button" className="composer-context-chip composer-context-location" data-testid="session-worktree-trigger"
-          data-git-kind={!current ? 'unknown' : linked ? 'worktree' : 'local'} aria-haspopup="dialog" aria-expanded={open}
+        {linked && <button type="button" className="composer-context-chip composer-context-location" data-testid="session-worktree-trigger"
+          data-git-kind="worktree" aria-haspopup="dialog" aria-expanded={open}
           onClick={event => show(event.currentTarget)} title={workspaceRoot}>
-          {linked ? <FolderGit2 aria-hidden="true" /> : <HardDrive aria-hidden="true" />}<span>{t(linked ? 'worktree' : current?.status.isRepository === false ? 'localDirectory' : 'local')}</span>
-        </button>
+          <FolderGit2 aria-hidden="true" /><span>{t('worktree')}</span>
+        </button>}
         {current?.status.isRepository && <button type="button" className="composer-context-chip composer-context-branch"
           data-testid="composer-context-branch" title={current.status.branch || 'HEAD'} aria-haspopup="dialog" aria-expanded={open && branchesOpen}
           onClick={event => show(event.currentTarget, true)}>

@@ -143,7 +143,7 @@ test('checkout, transcript, children and drafts follow the selected conversation
     await page.getByTestId('sidebar-session-' + keys.main).click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Main draft immediately before switching');
     await expect(page.getByTestId('chat-header-branch')).toContainText('main');
-    await page.getByTestId('session-worktree-trigger').click();
+    await page.getByTestId('composer-context-more').click();
     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'feature/alternate' }).click();
     await expect(page.getByTestId('chat-header-session-name')).toContainText('Earlier worktree review');
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Older draft');

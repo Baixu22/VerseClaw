@@ -76,8 +76,9 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     report.created = { path: active.rootPath, branch, session: active.activeSessionKey, clicks: 2 };
     await input.fill('Worktree draft');
     await page.getByTestId('composer-context-more').click(); await page.getByTestId('session-worktree-option-0').click();
-    await expect(page.getByTestId('session-worktree-trigger')).toHaveAttribute('data-git-kind', 'local');
+    await expect(page.getByTestId('session-worktree-trigger')).toHaveCount(0);
     await expect(input).toHaveValue('Keep this original draft');
+    await page.screenshot({ path: info.outputPath('main-directory-without-local-button.png') });
     expect((await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);
     report.originalDraftRestored = true;
     await page.getByTestId('composer-context-branch').click();
