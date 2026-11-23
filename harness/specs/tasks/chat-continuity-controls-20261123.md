@@ -35,6 +35,7 @@ touchedAreas:
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts
   - tests/e2e/chat-composer-popovers.spec.ts
+  - tests/e2e/session-fork-intent.spec.ts
   - docs/dev/chat-continuity-controls.md
   - README*.md
   - harness/specs/tasks/chat-continuity-controls-20261123.md

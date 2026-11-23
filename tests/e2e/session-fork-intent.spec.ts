@@ -31,8 +31,10 @@ async function modelTurn(app: ElectronApplication, project: { workspaceId: strin
   let receipt: unknown;
   await expect.poll(async () => {
     const read = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });
-    receipt = read; return read.status;
-  }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe('ok');
+    receipt = read; return read.status !== 'timeout';
+  }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe(true);
+  await writeFile(test.info().outputPath(`run-${sent.result.runId}.json`), JSON.stringify(receipt, null, 2));
+  expect(receipt).toMatchObject({ status: 'ok' });
   await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>(
     app, 'sessions.describe', { key: project.sessionKey })).session.hasActiveRun).toBe(false);
   return { sent, receipt };
