@@ -222,7 +222,7 @@ describe("quiet conversation task dock", () => {
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation/>);
     expect(await screen.findByRole('progressbar')).toHaveAttribute('aria-valuenow','50');
     expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.states.doing);
-    expect(screen.getByTestId('session-task-status')).toHaveTextContent('1/2');
+    expect(screen.getByTestId('session-task-count')).toHaveTextContent('1/2');
   });
 });
 

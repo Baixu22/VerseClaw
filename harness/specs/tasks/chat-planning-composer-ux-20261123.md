@@ -35,6 +35,7 @@ touchedAreas:
   - shared/i18n/locales/*/chat.json
   - shared/i18n/locales/*/taskLedger.json
   - tests/unit/chat-input.test.tsx
+  - tests/unit/chat-message.test.tsx
   - tests/unit/session-task-dock.test.tsx
   - tests/unit/session-task-state-guidance.test.tsx
   - tests/unit/chat-render-reachability.test.tsx
