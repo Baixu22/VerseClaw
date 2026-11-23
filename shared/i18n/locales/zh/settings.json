@@ -1128,5 +1128,32 @@
       "dense-unavailable": "此方案的 embedding 或向量检索不可用。",
       "rerank-unavailable": "此方案的重排不可用。"
     }
+  },
+  "retrievalDiagnostics": {
+    "title": "检索诊断",
+    "description": "查看近期检索回执并导入已评测的排序策略。反馈记录偏好，不自动调整排序。",
+    "refresh": "读取近期回执",
+    "importPolicy": "导入已评测策略",
+    "samples": "近期回执",
+    "p95": "P95 延迟（毫秒）",
+    "unknownUsage": "用量未知回执",
+    "calibration": "校准状态",
+    "unknown": "未知",
+    "rollback": "恢复上一策略",
+    "receiptSummary": "{{sources}} 个来源 · {{milliseconds}} 毫秒 · 费用 {{cost}} 美元",
+    "attach": "有用",
+    "dismiss": "无用",
+    "failed": "检索诊断或策略操作未能完成。",
+    "calibrationStates": {
+      "unavailable": "尚无校准",
+      "current": "当前有效",
+      "drifted": "来源或索引已变化"
+    },
+    "decisions": {
+      "promoted": "已启用通过评测的策略",
+      "held": "策略暂缓：评测要求尚未满足",
+      "rolled-back": "已恢复上一策略"
+    },
+    "modelUsage": "实测模型用量：{{tokens}} tokens · {{cost}} 美元"
   }
 }

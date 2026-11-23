@@ -472,6 +472,11 @@ export function createGatewayApi(
       if (!method) {
         throw new Error('Invalid gateway RPC method');
       }
+      // The knowledge service recomputes evaluation and supplies trusted scope;
+      // generic renderer RPC must not forge a promotion or DCS/model receipt.
+      if (method.startsWith('wiki.observability.') || method === 'wiki.retrieval.evaluate') {
+        return { success: false, rejectedBeforeDispatch: true, error: 'Use the knowledge diagnostics Host API' };
+      }
       if (['memory.readSource', 'sekb.readSource', 'sekb.retrieve', 'sekb.recordExposure'].includes(method)) {
         return { success: false, rejectedBeforeDispatch: true, error: 'Memory owner reads use the knowledge service' };
       }

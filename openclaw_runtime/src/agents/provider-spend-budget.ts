@@ -653,6 +653,7 @@ export function providerSpendForRun(runId: string, options: DatabaseOptions = {}
   ).rows.filter((row) => row.state !== "cancelled");
   return {
     calls: rows.length,
+    modelRefs: [...new Set(rows.map((row) => `${row.provider}/${row.model}`))].sort(),
     reservedTokens: rows.reduce((sum, row) => sum + row.reserved_tokens, 0),
     reservedCostUsd: rows.some((row) => row.reserved_cost_micros === null)
       ? null

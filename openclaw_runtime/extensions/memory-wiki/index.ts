@@ -1,4 +1,6 @@
 // Memory Wiki plugin entrypoint registers its OpenClaw integration.
+import { relative } from "node:path";
+import { getWatcherHub } from "openclaw/plugin-sdk/knowledge-retrieval";
 import { definePluginEntry } from "./api.js";
 import { registerWikiCli } from "./src/cli.js";
 import { memoryWikiConfigSchema, resolveMemoryWikiConfig } from "./src/config.js";
@@ -13,6 +15,7 @@ import { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
 import { createMemoryWikiEmbeddingService } from "./src/retrieval-embeddings.js";
 import { createMemoryWikiVectorService } from "./src/retrieval/vector-service.js";
 import { createMemoryWikiRerankService } from "./src/retrieval-rerank.js";
+import { createMemoryWikiObservabilityService } from "./src/retrieval/observability-service.js";
 import {
   configureMemoryWikiSourceSyncStateStore,
   createMemoryWikiSourceSyncStateStore,
@@ -76,11 +79,77 @@ export default definePluginEntry({
       appConfig: api.config,
       openKeyedStore: api.runtime.state.openKeyedStore,
     });
-    api.registerService({ id: "wiki-retrieval-rerank", start: () => rerank.start(), stop: () => rerank.close() });
+    api.registerService({
+      id: "wiki-retrieval-rerank",
+      start: () => rerank.start(),
+      stop: () => rerank.close(),
+    });
     api.registerService({
       id: "wiki-vector-projection",
       start: () => vector.start(),
       stop: () => vector.stop(),
+    });
+    const observability = createMemoryWikiObservabilityService({
+      config,
+      appConfig: api.config,
+      projection,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+    });
+    let diagnosticsWatcher: { close(): void } | undefined;
+    let diagnosticsMaintenance: ReturnType<typeof setInterval> | undefined;
+    api.registerService({
+      id: "wiki-retrieval-observability",
+      start: async () => {
+        await observability
+          .pruneExpired()
+          .catch((error) => api.logger.warn(`Retrieval retention unavailable: ${String(error)}`));
+        diagnosticsMaintenance = setInterval(
+          () => {
+            void observability
+              .pruneExpired()
+              .catch((error) =>
+                api.logger.warn(`Retrieval retention unavailable: ${String(error)}`),
+              );
+          },
+          60 * 60 * 1000,
+        );
+        diagnosticsMaintenance.unref();
+        diagnosticsWatcher = getWatcherHub().subscribeDirectory(
+          config.vault.path,
+          (_event, filename) => {
+            const subject = filename
+              ? relative(
+                  config.vault.path,
+                  filename.startsWith(config.vault.path)
+                    ? filename
+                    : `${config.vault.path}/${filename}`,
+                ).replaceAll("\\", "/")
+              : null;
+            if (
+              subject !== null &&
+              !/^(entities|concepts|sources|syntheses|reports)\/.*\.md$/.test(subject)
+            )
+              return;
+            void observability
+              .invalidate(subject)
+              .catch((error) =>
+                api.logger.warn(`Retrieval receipt cleanup unavailable: ${String(error)}`),
+              );
+          },
+          (error) => {
+            api.logger.warn(`Retrieval receipt watcher unavailable: ${error.message}`);
+            void observability.invalidate(null).catch(() => undefined);
+          },
+          { recursive: true, persistent: false },
+        );
+      },
+      stop: async () => {
+        if (diagnosticsMaintenance) clearInterval(diagnosticsMaintenance);
+        diagnosticsMaintenance = undefined;
+        diagnosticsWatcher?.close();
+        diagnosticsWatcher = undefined;
+        await observability.idle();
+      },
     });
     registerMemoryWikiGatewayMethods({
       api,
@@ -90,6 +159,7 @@ export default definePluginEntry({
       embedding,
       vector,
       rerank,
+      observability,
     });
     api.registerTool(createWikiStatusTool(config, api.config), { name: "wiki_status" });
     api.registerTool(createWikiLintTool(config, api.config), { name: "wiki_lint" });

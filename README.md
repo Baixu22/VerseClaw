@@ -310,3 +310,9 @@ Conversation tasks are managed by the agent. Identified work appears in one task
 
 - Knowledge Librarian offers source-only and open answers. Exact quotes and version/range pins are checked separately from agent-driven claim support; citations reopen the owner-verified raw range. General knowledge and inference have no fabricated citations.
 - Chat offers Off, Manual, Suggest and Auto-read independently of Local, Quality and Research retrieval profiles. Preflight can inspect the current source before attaching it; each sent turn shows its retained DCS evidence and estimates. Optional reads are cancellable and bounded, and ordinary follow-ups preserve evidence through the send queue. See the [chat interaction contract](docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md).
+
+Retrieval diagnostics in Knowledge settings show reference-only receipts, measured latency and unknown usage. Evaluated ranking policies are imported from the frozen offline cohort and can be rolled back; feedback never changes ranking automatically.
+
+Policy imports reopen original query/task artifacts in the owner’s bounded Node verifier and check the actual ranking-policy digest. See the [offline execution guide](docs/dev/project-rag/OFFLINE-DRIVERS.md) for plans and evidence layout.
+
+Packaged retrieval verifies its delivered file manifest before Runtime startup. Offline tooling checks native SQLite/vector availability, upgrade compatibility and candidate-bound evaluation receipts; the dedicated packaged and soak runners retain actual failures and elapsed time.

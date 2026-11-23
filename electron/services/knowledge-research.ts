@@ -155,7 +155,8 @@ export function createKnowledgeResearchApi(options: {
             ].join('\n');
             const outputTokens = Math.min(1024, Math.floor(maxTokens / 3));
             const output = await runKnowledgeModel(gatewayManager, prompt, 'Knowledge Research planner', Math.max(1, plan.budget.deadlineAtMs - Date.now()),
-              { sessionKey: scope.identity.agentSessionKey, workspaceId: scope.identity.workspaceId, workspaceDir: scope.identity.workspaceDir, references },
+              { sessionKey: scope.identity.agentSessionKey, workspaceId: scope.identity.workspaceId, workspaceDir: scope.identity.workspaceDir, references,
+                retrievalRequestId: plan.requestId, ownerSessionId: scope.identity.sessionId },
               { signal, budget: { maxInputTokens: maxTokens - outputTokens, maxOutputTokens: outputTokens, maxCostUsd, maxCalls: 1 },
                 validateSpend: spend => { if (spend) validateResearchPlanningUsage(spend, maxTokens, maxCostUsd); } });
             await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, scope), signal);

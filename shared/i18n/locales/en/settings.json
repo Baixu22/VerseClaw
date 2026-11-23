@@ -1128,5 +1128,32 @@
       "dense-unavailable": "Embedding or vector retrieval is unavailable for this profile.",
       "rerank-unavailable": "Reranking is unavailable for this profile."
     }
+  },
+  "retrievalDiagnostics": {
+    "title": "Retrieval diagnostics",
+    "description": "Review recent retrieval receipts and import an evaluated ranking policy. Feedback records preferences without changing ranking.",
+    "refresh": "Load recent receipts",
+    "importPolicy": "Import evaluated policy",
+    "samples": "Recent receipts",
+    "p95": "P95 latency (ms)",
+    "unknownUsage": "Receipts with unknown usage",
+    "calibration": "Calibration",
+    "unknown": "Unknown",
+    "rollback": "Restore previous policy",
+    "receiptSummary": "{{sources}} sources · {{milliseconds}} ms · cost {{cost}} USD",
+    "attach": "Useful",
+    "dismiss": "Not useful",
+    "failed": "Retrieval diagnostics or the policy operation could not be completed.",
+    "calibrationStates": {
+      "unavailable": "Unavailable",
+      "current": "Current",
+      "drifted": "Source/index changed"
+    },
+    "decisions": {
+      "promoted": "Evaluated policy activated",
+      "held": "Policy held: evaluation requirements were not met",
+      "rolled-back": "Previous policy restored"
+    },
+    "modelUsage": "Measured model usage: {{tokens}} tokens · {{cost}} USD"
   }
 }

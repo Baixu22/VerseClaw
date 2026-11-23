@@ -3579,6 +3579,7 @@
     "docs/dev/project-rag/RETRIEVAL-PLAN-CONTRACT.md",
     "docs/dev/project-rag/SOURCE-CHUNK-CONTRACT.md",
     "docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md",
+    "docs/dev/project-rag/OFFLINE-DRIVERS.md",
     "docs/dev/project-rag/WORK-PACKAGES.md",
     "docs/dev/project-rag/program.v2.json",
     "docs/dev/prompt-cache-capability-reconciliation-20261012.md",

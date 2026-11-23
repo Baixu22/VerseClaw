@@ -1,17 +1,31 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: in_progress
 id: project-rag-observability-offline-promotion
 title: 完成检索可观测性和离线策略晋级
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-17
 intent: 持续发现质量与成本回退，同时防止反馈形成未审核的自学习。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: 5d45cf79f769a1a3d8f994f965e5d63d24d5c40c
 touchedAreas:
+  - "shared/knowledge/**"
+  - "shared/host-api/contract.ts"
+  - "shared/host-api/host-action-timeouts.ts"
+  - "src/lib/host-api/knowledge/**"
+  - "src/components/settings/Knowledge*"
+  - "shared/i18n/locales/*/settings.json"
+  - "electron/services/knowledge*.ts"
+  - "electron/services/gateway-api.ts"
+  - "openclaw_runtime/extensions/memory-wiki/**"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "openclaw_runtime/src/agents/provider-spend-budget.ts"
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "electron/services/observability*.ts"
   - "scripts/knowledge-*.ts"
+  - "scripts/lib/project-rag-promotion.*"
+  - "scripts/knowledge-rag-policy-verifier.mjs"
+  - "src/components/settings/KnowledgeRetrievalDiagnostics.tsx"
   - "harness/specs/fixtures/project-rag/**"
   - "src/pages/Knowledge/**"
   - "shared/dcs/prod-flags-catalog.ts"
@@ -32,7 +46,37 @@ touchedAreas:
   - "README*.md"
   - "tests/unit/knowledge-api.test.ts"
   - "tests/unit/project-rag-receipts-promotion.test.ts"
+  - "tests/unit/project-rag-offline-package.test.ts"
+  - "tests/unit/host-action-timeouts.test.ts"
+  - "tests/unit/gateway-permissions-api.test.ts"
+  - "tests/unit/project-rag-observability-store.test.ts"
   - "tests/e2e/project-rag-settings-operations.spec.ts"
+residualPaths:
+  - "electron/gateway/config-sync.ts"
+  - "package.json"
+  - "playwright.config.ts"
+  - "playwright.rag-packaged.config.ts"
+  - "scripts/after-pack.cjs"
+  - "scripts/build-openclaw-runtime.mjs"
+  - "scripts/build-rag-policy-verifier.mjs"
+  - "scripts/bundle-openclaw-runtime.mjs"
+  - "scripts/download-bundled-node.mjs"
+  - "scripts/lib/project-rag-acceptance.d.mts"
+  - "scripts/lib/project-rag-acceptance.mjs"
+  - "scripts/lib/project-rag-code-oracle.d.mts"
+  - "scripts/lib/project-rag-code-oracle.mjs"
+  - "scripts/lib/project-rag-corpus.mjs"
+  - "scripts/lib/project-rag-package.d.mts"
+  - "scripts/lib/project-rag-package.mjs"
+  - "scripts/lib/project-rag-process.d.mts"
+  - "scripts/lib/project-rag-process.mjs"
+  - "scripts/lib/project-rag-query-grade.d.mts"
+  - "scripts/lib/project-rag-query-grade.mjs"
+  - "scripts/release-integrity-manifest.mjs"
+  - "scripts/verify-bundled-node.mjs"
+  - "tests/e2e/project-rag-packaged-smoke.spec.ts"
+  - "tests/unit/project-rag-acceptance-readback.test.ts"
+  - "tests/unit/project-rag-package-manifest.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -42,7 +86,9 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
-  - "tests/unit/knowledge-api.test.ts"
+  - "pnpm exec vitest run tests/unit/knowledge-api.test.ts tests/unit/project-rag-receipts-promotion.test.ts tests/unit/gateway-permissions-api.test.ts tests/unit/project-rag-observability-store.test.ts tests/unit/project-rag-offline-package.test.ts tests/unit/host-action-timeouts.test.ts --maxWorkers=1 --cache=false"
+  - "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs extensions/memory-wiki/retrieval-policy-evaluation.test.ts"
+  - "pnpm exec playwright test tests/e2e/project-rag-settings-operations.spec.ts --workers=1 --retries=0"
 plannedTests:
   - "tests/unit/project-rag-receipts-promotion.test.ts"
 plannedE2E:
@@ -74,3 +120,7 @@ docs:
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
 回滚：回到上一冻结policy并停止新增诊断采集；保留必要审计。
+
+检索回执沿现有 memory-wiki SQLite plugin state 持久化，只保存 refs/digests/status/usage。未知费用与token保留null；来源撤销/修改会使收据失效并删除弱反馈。Main选取策略包文件，owner在有界Node校验器中读回240查询、540任务原件和实际执行的策略digest，重算统计后原子比较当前policy digest并晋级。backend/admin的wiki.retrieval.evaluate沿同一owner读取与预算路径执行manual候选评测，普通wiki.retrieve拒绝策略覆盖。重复操作内容相异拒绝，回滚保留前一policy；排序候选、重排、来源数和最终条数保持既有profile上限。
+
+本次所有者指示优先完成RAG17～19代码、暂缓完整验收。residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收仍按自身新增测试和接口要求执行，正式状态待实际证据收口。

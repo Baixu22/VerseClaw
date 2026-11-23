@@ -310,3 +310,9 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 
 - 知识助手支持仅依据来源与 open 回答。原文引句、版本范围和 agent 驱动的语义支持分别核验；引用点击后重验 owner 权限并定位原文范围，一般知识与推断保持空引用。
 - Chat 支持关闭、手动、建议和自动读取，检索方案可独立选择本地、质量或研究。Preflight 可查看当前原文再附加；发送后显示 DCS 实际保留的知识及用量估算。按需读取支持取消和限时等待，普通排队消息保留已选证据，见[聊天交互合同](docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md)。
+
+知识设置中的检索诊断展示仅含引用的回执、实际延迟及未知用量。排序策略从固定离线评测结果导入并支持回滚，反馈不会自动调整排序。
+
+策略导入由 owner 在有界 Node 校验器中重新读取查询和任务原件，并核对实际执行的排序策略 digest。计划参数与证据目录见[离线执行指南](docs/dev/project-rag/OFFLINE-DRIVERS.md)。
+
+安装包中的检索组件在 Runtime 启动前核验交付文件清单。离线工具检查原生 SQLite/向量能力、升级兼容性和候选绑定评测回执，独立安装包与稳定性驱动保留实际失败及耗时。

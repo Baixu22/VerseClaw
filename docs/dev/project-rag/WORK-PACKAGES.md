@@ -416,6 +416,8 @@
 4. 回滚能恢复前一policy，不改变owner确认权限、scope和产品锁。
 5. 本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。
 
+RAG-17 运行入口：Settings > Knowledge 的检索诊断读取当前workspace的最近回执。导入文件由 `scripts/knowledge-rag-policy.ts` 生成；Main选取文件，owner在独立Node中读回冻结v4的240查询、540任务产物和实际策略digest，核验质量/成本/安全门槛后原子晋级。来源修改与撤销删除相关回执和弱反馈；策略回滚使用同一SQLite原子更新入口。`wiki.retrieval.evaluate`提供backend/admin候选评测，沿现有来源与预算路径执行manual检索。`openclaw/plugin-sdk/knowledge-retrieval`公开排序政策及回执类型，插件通过既有state owner保存。诊断写入不可扩大检索期限，记录失败通过receiptStatus返回。执行参数与证据布局见[离线驱动](OFFLINE-DRIVERS.md)。
+
 ### RAG-18 完成跨平台安装、离线运行与升级回滚
 
 让目标系统在实际发布平台可安装、可恢复、可持续维护。
@@ -434,6 +436,8 @@
 3. 有网首次安装、签名/校验、离线重启、低空间、半安装、模型更换、旧binary读取和增量schema回滚通过。
 4. 正式升级不整库覆盖、不丢governance/SEKB/Task Ledger资料；所有临时输出遵守D盘策略。
 5. 本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。
+
+RAG-18 交付入口：bundle和afterPack在目标依赖清理后写入 `retrieval-artifact-manifest.json`，source Runtime在安装包启动前读取相同清单。`scripts/knowledge-rag-package.ts probe`在隔离目录实际执行SQLite/FTS、公开SDK及portable/ANN读写，保留原生目标；`upgrade-check`只读前后包与owner数据库版本，返回空间和回滚兼容判定。`playwright.rag-packaged.config.ts`只运行实际安装包的离线重启旅程，默认开发E2E不收集需要外部安装包的spec。
 
 ### RAG-19 验收长期版本的完整能力、稳定性与任务收益
 
@@ -460,3 +464,7 @@
 模型、native包、平台runner和运行预算在对应节点启动时从现有授权资源解析；一次请求必要的endpoint后由agent自动执行。任何缺失执行、未知使用量或未运行平台都保留具体状态，不能补成成功。
 
 最终采用240-query与60-task协议。RAG-19只有在所有必交付能力、失败路径、跨平台容量、72小时稳定性和配对任务效果证据满足ADR门槛后完成。发布权限由仓库所有者单独处理，常规开发、证据和节点收口无需等待真人操作。
+
+RAG-19执行工具：`scripts/knowledge-rag-task-runner.ts`逐槽物化隔离任务，固定产品adapter及其摘要后运行原540槽位，独立oracle留在participant目录之外；`scripts/knowledge-rag-query-runner.ts`按冻结查询集合运行page/full两臂并以owner/version/raw span计算排名。两驱动只接收已固定且实现真实产品调用、预算和用量回执的argv适配器；缺省适配器、provider binding、held-out release或实测用量时拒绝执行/晋级。`scripts/knowledge-rag-acceptance.ts soak`可复用索引生命周期probe，保存每次实际进程结果并执行原72小时观察；`readback`核验所有同候选叶子、原生平台、容量、收益、soak和完整工程双角色证据。
+
+开发和正式验收状态由本地Task Forest保存。以上工具的存在不替代实际运行结果；跨平台、真实模型和72小时产物在对应执行完成后登记。

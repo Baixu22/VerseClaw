@@ -1,4 +1,22 @@
 /** Owner-bound source normalization, structural projection and citation verification. */
+export { verifyOfflineRagPolicyPackage } from "../knowledge/retrieval/offline-policy-package.js";
+export {
+  defaultRetrievalPolicy,
+  normalizeRetrievalPolicy,
+  retrievalPolicyDigest,
+  evaluateOfflineRetrievalPromotion,
+} from "../knowledge/retrieval/policy.js";
+export type {
+  RetrievalPolicyV1,
+  RetrievalReceiptV1,
+  RetrievalSloV1,
+  OfflinePolicyPromotionV1,
+  OfflineRetrievalEvaluationV1,
+  RetrievalObservabilitySnapshotV1,
+  KnowledgePolicyPromotionPayload,
+  KnowledgePolicyRollbackPayload,
+  KnowledgeRetrievalFeedbackPayload,
+} from "../../../shared/knowledge/observability.js";
 export { readNativeMemorySource } from "../memory/native-memory-source.js";
 export { boundOwnerReadSnapshot } from "../runtime-core/knowledge-owner-read.js";
 export {

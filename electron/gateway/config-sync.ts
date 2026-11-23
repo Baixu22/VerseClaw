@@ -1062,6 +1062,10 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
     if (!existsSync(fsPath(runtimePkgPath))) {
       throw new Error(`OpenClaw source runtime not found at: ${openclawDir}`);
     }
+    if (app.isPackaged) {
+      const { verifyRetrievalArtifactManifest } = await import('../../scripts/lib/project-rag-package.mjs');
+      verifyRetrievalArtifactManifest(openclawDir, { target: `${process.platform}-${process.arch}` });
+    }
     const sourceEntryScript = entryScript;
     if (sourceEntryScript.endsWith('.ts')) {
       const tsxCliPath = getOpenClawRuntimeTsxCliPath();

@@ -33,7 +33,16 @@ import type { MemoryWikiVectorService } from "./retrieval/vector-service.js";
 import type { MemoryWikiRerankService } from "./retrieval-rerank.js";
 import { retrieveMemoryWiki } from "./retrieval/plan-service.js";
 import { memoryWikiNamespaceId } from "./owner-read.js";
-import type { RetrievalCapabilitySnapshotV1 } from "openclaw/plugin-sdk/knowledge-retrieval";
+import {
+  normalizeRetrievalPolicy,
+  type RetrievalCapabilitySnapshotV1,
+} from "openclaw/plugin-sdk/knowledge-retrieval";
+import type {
+  KnowledgePolicyPromotionPayload,
+  KnowledgePolicyRollbackPayload,
+  KnowledgeRetrievalFeedbackPayload,
+} from "openclaw/plugin-sdk/knowledge-retrieval";
+import type { MemoryWikiObservabilityService } from "./retrieval/observability-service.js";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -135,8 +144,72 @@ export function registerMemoryWikiGatewayMethods(params: {
   embedding?: MemoryWikiEmbeddingService;
   vector?: MemoryWikiVectorService;
   rerank?: MemoryWikiRerankService;
+  observability?: MemoryWikiObservabilityService;
 }) {
   const { api, config, appConfig } = params;
+  if (params.observability) {
+    const diagnostics = params.observability;
+    api.registerGatewayMethod(
+      "wiki.observability.correlate",
+      async ({ params: request, respond, client }) => {
+        try {
+          const identity = readIdentity(request, client);
+          if (
+            !identity ||
+            !request.input ||
+            typeof request.input !== "object" ||
+            Array.isArray(request.input) ||
+            JSON.stringify(request.input).length > 128000
+          )
+            throw new Error("Invalid backend retrieval correlation");
+          await diagnostics.correlate(
+            identity,
+            request.input as Parameters<typeof diagnostics.correlate>[1],
+          );
+          respond(true, { success: true });
+        } catch (error) {
+          respondError(respond, error);
+        }
+      },
+      { scope: WRITE_SCOPE },
+    );
+    for (const [name, access] of [
+      ["status", READ_SCOPE],
+      ["feedback", WRITE_SCOPE],
+      ["promote", ADMIN_SCOPE],
+      ["rollback", ADMIN_SCOPE],
+    ] as const) {
+      api.registerGatewayMethod(
+        `wiki.observability.${name}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity)
+              throw new Error("Retrieval observability requires a backend-owned identity");
+            if (
+              name !== "status" &&
+              (!request.input || typeof request.input !== "object" || Array.isArray(request.input))
+            )
+              throw new Error("Invalid retrieval observability request");
+            if (name === "feedback")
+              await diagnostics.feedback(
+                identity,
+                request.input as KnowledgeRetrievalFeedbackPayload,
+              );
+            // Backend/admin callers select evidence; the owner regrades it before publication.
+            if (name === "promote")
+              await diagnostics.promote(identity, request.input as KnowledgePolicyPromotionPayload);
+            if (name === "rollback")
+              await diagnostics.rollback(identity, request.input as KnowledgePolicyRollbackPayload);
+            respond(true, await diagnostics.snapshot(identity));
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: access },
+      );
+    }
+  }
   api.registerGatewayMethod(
     "wiki.operations.config",
     async ({ params: request, respond, client }) => {
@@ -210,68 +283,79 @@ export function registerMemoryWikiGatewayMethods(params: {
     },
     { scope: READ_SCOPE },
   );
-  api.registerGatewayMethod(
-    "wiki.retrieve",
-    async ({ params: request, respond, client }) => {
-      try {
-        const identity = readIdentity(request, client);
-        if (!identity) throw new Error("Retrieval requires a backend-owned identity");
-        if (typeof request.query !== "string") throw new Error("Retrieval query must be a string");
-        for (const key of ["profile", "mode"] as const) {
-          if (request[key] !== undefined && (typeof request[key] !== "string" || !request[key]))
-            throw new Error(`Invalid retrieval ${key}`);
+  for (const evaluation of [false, true])
+    api.registerGatewayMethod(
+      evaluation ? "wiki.retrieval.evaluate" : "wiki.retrieve",
+      async ({ params: request, respond, client }) => {
+        try {
+          const identity = readIdentity(request, client);
+          if (!identity) throw new Error("Retrieval requires a backend-owned identity");
+          if (typeof request.query !== "string")
+            throw new Error("Retrieval query must be a string");
+          for (const key of ["profile", "mode"] as const) {
+            if (request[key] !== undefined && (typeof request[key] !== "string" || !request[key]))
+              throw new Error(`Invalid retrieval ${key}`);
+          }
+          const refs = Array.isArray(request.sourceRefs)
+            ? request.sourceRefs.map(normalizeSourceRefV2)
+            : [];
+          if (
+            request.sourceRefs !== undefined &&
+            (!Array.isArray(request.sourceRefs) || refs.some((ref) => !ref))
+          )
+            throw new Error("Invalid retrieval source pins");
+          if (
+            request.deadlineAtMs !== undefined &&
+            (typeof request.deadlineAtMs !== "number" || !Number.isFinite(request.deadlineAtMs))
+          )
+            throw new Error("Invalid retrieval deadline");
+          if (request.allowRemote !== undefined && typeof request.allowRemote !== "boolean")
+            throw new Error("Invalid retrieval egress restriction");
+          const profile = readEnumParam(request, "profile", [
+            "local",
+            "quality",
+            "research",
+          ] as const);
+          const mode = readEnumParam(request, "mode", [
+            "off",
+            "manual",
+            "suggest",
+            "auto-read",
+          ] as const);
+          if (!evaluation && request.policy !== undefined)
+            throw new Error("Online retrieval uses the active owner policy");
+          if (evaluation && mode !== undefined && mode !== "manual")
+            throw new Error("Policy evaluation requires manual retrieval");
+          const evaluationPolicy = evaluation
+            ? normalizeRetrievalPolicy(request.policy)
+            : undefined;
+          respond(
+            true,
+            await retrieveMemoryWiki({
+              config,
+              appConfig,
+              identity,
+              query: readStringParam(request, "query") ?? "",
+              profile,
+              mode: evaluation ? "manual" : mode,
+              evaluationPolicy,
+              explicitRefs: refs.filter((ref) => ref !== undefined),
+              deadlineAtMs: request.deadlineAtMs as number | undefined,
+              allowRemote: request.allowRemote as boolean | undefined,
+              requestId: readStringParam(request, "requestId"),
+              projection: params.projection,
+              embedding: params.embedding,
+              vector: params.vector,
+              rerank: params.rerank,
+              observability: params.observability,
+            }),
+          );
+        } catch (error) {
+          respondError(respond, error);
         }
-        const refs = Array.isArray(request.sourceRefs)
-          ? request.sourceRefs.map(normalizeSourceRefV2)
-          : [];
-        if (
-          request.sourceRefs !== undefined &&
-          (!Array.isArray(request.sourceRefs) || refs.some((ref) => !ref))
-        )
-          throw new Error("Invalid retrieval source pins");
-        if (
-          request.deadlineAtMs !== undefined &&
-          (typeof request.deadlineAtMs !== "number" || !Number.isFinite(request.deadlineAtMs))
-        )
-          throw new Error("Invalid retrieval deadline");
-        if (request.allowRemote !== undefined && typeof request.allowRemote !== "boolean")
-          throw new Error("Invalid retrieval egress restriction");
-        const profile = readEnumParam(request, "profile", [
-          "local",
-          "quality",
-          "research",
-        ] as const);
-        const mode = readEnumParam(request, "mode", [
-          "off",
-          "manual",
-          "suggest",
-          "auto-read",
-        ] as const);
-        respond(
-          true,
-          await retrieveMemoryWiki({
-            config,
-            appConfig,
-            identity,
-            query: readStringParam(request, "query") ?? "",
-            profile,
-            mode,
-            explicitRefs: refs.filter((ref) => ref !== undefined),
-            deadlineAtMs: request.deadlineAtMs as number | undefined,
-            allowRemote: request.allowRemote as boolean | undefined,
-            requestId: readStringParam(request, "requestId"),
-            projection: params.projection,
-            embedding: params.embedding,
-            vector: params.vector,
-            rerank: params.rerank,
-          }),
-        );
-      } catch (error) {
-        respondError(respond, error);
-      }
-    },
-    { scope: READ_SCOPE },
-  );
+      },
+      { scope: evaluation ? ADMIN_SCOPE : READ_SCOPE },
+    );
   if (params.vector) {
     const vector = params.vector;
     for (const operation of [

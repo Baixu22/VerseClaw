@@ -689,11 +689,9 @@ exports.default = async function afterPack(context) {
     resourcesDir = join(appOutDir, 'resources');
   }
 
-  if (platform === 'win32') {
-    const { verifyBundledNode } = await import('./verify-bundled-node.mjs');
-    const node = verifyBundledNode(resourcesDir, arch);
-    console.log(`[after-pack] Node ${node.version} satisfies runtime ${node.required}; binary digest verified.`);
-  }
+  const { verifyBundledNode } = await import('./verify-bundled-node.mjs');
+  const node = verifyBundledNode(resourcesDir, arch, platform);
+  console.log(`[after-pack] Node ${node.version} satisfies runtime ${node.required}; binary digest verified.`);
 
   const openclawRoot = join(resourcesDir, 'openclaw');
   const dest = join(openclawRoot, 'node_modules');
@@ -1047,6 +1045,14 @@ exports.default = async function afterPack(context) {
   // after electron-builder has copied all resources. This is intentionally
   // outside OpenClaw cleanup roots so LICENSE/NOTICE/SOURCE/BUILD cannot be pruned.
   await verifyVerseShellBundle(resourcesDir, platform, arch);
+  const { sealRetrievalArtifactManifest } = await import('./lib/project-rag-package.mjs');
+  if (require('node:child_process').execFileSync('git', ['status', '--porcelain'], {
+    cwd: join(__dirname, '..'), encoding: 'utf8', windowsHide: true,
+  }).trim()) throw new Error('Retrieval package sealing requires a clean source candidate');
+  const candidate = require('node:child_process').execFileSync('git', ['rev-parse', 'HEAD'], {
+    cwd: join(__dirname, '..'), encoding: 'utf8', windowsHide: true,
+  }).trim();
+  sealRetrievalArtifactManifest(join(resourcesDir, 'openclaw-runtime'), { candidate, platform, arch });
 
   // 7. [Windows only] Ensure NSIS templates are patched (also done pre-build in package:win).
   if (platform === 'win32') {

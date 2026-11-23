@@ -15,6 +15,8 @@
 import 'zx/globals';
 import { ELECTRON_MAIN_RUNTIME_PACKAGES, isLocalRuntimeArtifact } from './openclaw-bundle-config.mjs';
 import { collectRuntimeDependencyPackages, copyRuntimeTree } from './copy-runtime-package.mjs';
+import { sealRetrievalArtifactManifest } from './lib/project-rag-package.mjs';
+import { execFileSync as execGit } from 'node:child_process';
 
 const ROOT = path.resolve(__dirname, '..');
 const RUNTIME_ROOT = path.join(ROOT, 'openclaw_runtime');
@@ -567,6 +569,14 @@ if (missingRuntimePackages.length > 0) {
 }
 
 // === Summary ===
+if (execGit('git', ['status', '--porcelain'], { cwd: ROOT, encoding: 'utf8' }).trim()) {
+  throw new Error('Retrieval delivery sealing requires a clean source candidate');
+}
+sealRetrievalArtifactManifest(OUTPUT, {
+  candidate: execGit('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(),
+  platform: process.platform,
+  arch: process.arch,
+});
 const totalSize = getDirSize(OUTPUT);
 echo``;
 echo`✅ Bundle complete: ${OUTPUT}`;

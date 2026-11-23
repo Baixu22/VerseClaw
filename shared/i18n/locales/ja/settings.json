@@ -1128,5 +1128,32 @@
       "dense-unavailable": "このプロファイルの埋め込みまたはベクトル検索を利用できません。",
       "rerank-unavailable": "このプロファイルの再ランキングを利用できません。"
     }
+  },
+  "retrievalDiagnostics": {
+    "title": "検索診断",
+    "description": "最近の検索記録を確認し、評価済みの順位付けポリシーを読み込みます。フィードバックは順位を自動変更しません。",
+    "refresh": "最近の記録を取得",
+    "importPolicy": "評価済みポリシーを読込",
+    "samples": "最近の記録",
+    "p95": "P95 遅延（ミリ秒）",
+    "unknownUsage": "使用量不明の記録",
+    "calibration": "校正状態",
+    "unknown": "不明",
+    "rollback": "前のポリシーに戻す",
+    "receiptSummary": "ソース {{sources}} 件 · {{milliseconds}} ms · 費用 {{cost}} USD",
+    "attach": "役に立つ",
+    "dismiss": "役に立たない",
+    "failed": "検索診断またはポリシー操作を完了できませんでした。",
+    "calibrationStates": {
+      "unavailable": "未校正",
+      "current": "有効",
+      "drifted": "ソースまたは索引が変更"
+    },
+    "decisions": {
+      "promoted": "評価済みポリシーを有効化",
+      "held": "ポリシーを保留：評価条件未達",
+      "rolled-back": "前のポリシーを復元"
+    },
+    "modelUsage": "実測モデル使用量：{{tokens}} tokens · {{cost}} USD"
   }
 }

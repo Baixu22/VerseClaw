@@ -2,10 +2,13 @@ import { createHash } from "node:crypto";
 import {
   createRetrievalPlan,
   runRetrievalPlan,
+  RETRIEVAL_PROFILES,
+  waitForRetrievalOperation,
   type RetrievalHit,
   type RetrievalMode,
   type RetrievalProfile,
   type RetrievalGeneration,
+  type RetrievalPolicyV1,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   evaluateOwnerReadSnapshot,
@@ -24,6 +27,7 @@ import type { MemoryWikiProjectionService } from "../retrieval-index.js";
 import type { MemoryWikiEmbeddingService } from "../retrieval-embeddings.js";
 import type { MemoryWikiVectorService } from "./vector-service.js";
 import type { MemoryWikiRerankService } from "../retrieval-rerank.js";
+import type { MemoryWikiObservabilityService } from "./observability-service.js";
 
 type WikiCandidate = {
   lookup: string;
@@ -53,7 +57,11 @@ export async function retrieveMemoryWiki(input: {
   vector?: MemoryWikiVectorService;
   rerank?: MemoryWikiRerankService;
   requestId?: string;
+  observability?: MemoryWikiObservabilityService;
+  /** A backend evaluation uses bounded candidate parameters without publishing them. */
+  evaluationPolicy?: RetrievalPolicyV1;
 }) {
+  const startedAt = Date.now();
   const context = () =>
     createMemoryWikiReadContext({
       config: input.config,
@@ -108,6 +116,23 @@ export async function retrieveMemoryWiki(input: {
     );
   };
   const initialGenerations = generations();
+  const profile = input.profile ?? input.config.retrieval.profile;
+  const policyDeadline = Math.min(
+    input.deadlineAtMs ?? Infinity,
+    startedAt + RETRIEVAL_PROFILES[profile].deadlineMs,
+  );
+  const policySignal = AbortSignal.any([
+    ...(input.signal ? [input.signal] : []),
+    AbortSignal.timeout(Math.max(1, policyDeadline - Date.now())),
+  ]);
+  const selectedPolicy =
+    input.evaluationPolicy ??
+    (input.observability
+      ? await waitForRetrievalOperation(
+          input.observability.policy(input.identity, profile),
+          policySignal,
+        )
+      : undefined);
   const scopeKey = (value: typeof initialContext) =>
     JSON.stringify([
       value.principalId,
@@ -119,14 +144,16 @@ export async function retrieveMemoryWiki(input: {
     ]);
   const plan = createRetrievalPlan({
     query: input.query,
-    profile: input.profile ?? input.config.retrieval.profile,
+    profile,
     mode: input.mode,
     explicitRefs: input.explicitRefs,
     namespaceIds: [memoryWikiNamespaceId(input.config)],
-    deadlineAtMs: input.deadlineAtMs,
+    deadlineAtMs: policyDeadline,
+    now: startedAt,
     requestId: input.requestId,
     admissionContextId: initialContext.contextId,
     generations: initialGenerations,
+    policy: selectedPolicy,
   });
   const rerankProviderRef =
     !remoteRerankDenied && initialRerankStatus?.mode === "remote"
@@ -340,6 +367,22 @@ export async function retrieveMemoryWiki(input: {
       .filter((hit) => hit.rankSignals.lanes.some((lane) => lane.lane === "exact"))
       .map((hit) => hit.sourceRef.subjectId),
   );
+  if (input.observability) {
+    try {
+      const remaining = plan.budget.deadlineAtMs - Date.now();
+      if (remaining <= 0) throw new Error("Retrieval receipt deadline exhausted");
+      result.receiptId = await waitForRetrievalOperation(
+        input.observability.record(input.identity, result, startedAt),
+        AbortSignal.any([
+          ...(input.signal ? [input.signal] : []),
+          AbortSignal.timeout(Math.min(100, remaining)),
+        ]),
+      );
+      result.receiptStatus = "recorded";
+    } catch {
+      result.receiptStatus = "unavailable";
+    }
+  }
   return {
     ...result,
     results: result.results.map((hit) => {

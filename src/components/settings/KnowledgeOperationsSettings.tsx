@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { KnowledgeRetrievalDiagnostics } from './KnowledgeRetrievalDiagnostics';
 import { hostApi } from "@/lib/host-api";
 import { useWorkspacesStore } from "@/stores/workspaces";
 import {
@@ -301,6 +302,7 @@ export function KnowledgeOperationsSettings() {
           {t("operations.restarting")}
         </p>
       )}
+      <KnowledgeRetrievalDiagnostics />
       {error && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {t("operations.failed")}

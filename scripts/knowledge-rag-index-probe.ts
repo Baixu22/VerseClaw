@@ -9,7 +9,7 @@ import { createPluginStateKeyedStoreForTests, closeOpenClawStateDatabaseForTest 
 import { closeTrackedSqliteHandlesUnder } from '../openclaw_runtime/src/infra/node-sqlite';
 
 async function main() {
-  const output = process.argv[2]; assert(output, 'Pass a receipt path');
+  const output = process.argv[2] ?? process.env.RAG_SOAK_PROBE_REPORT; assert(output, 'Pass a receipt path');
   const root = await mkdtemp(join(tmpdir(), 'rag04-index-probe-'));
   const previousStateDir = process.env.OPENCLAW_STATE_DIR;
   process.env.OPENCLAW_STATE_DIR = join(root, 'state-root');
@@ -60,13 +60,25 @@ async function main() {
       chunks: db.prepare('SELECT count(*) AS count FROM knowledge_index_chunks').get() }; }
     finally { db.close(); }
     assert.equal(counts.generations?.count, 0); assert.equal(counts.chunks?.count, 0);
-    assert.equal(errors.filter(message => !message.includes('cancelled')).length, 0);
-    const receipt = { schema: 'ProjectRagIndexLifecycleProbe/v1', actor: 'codex/project-rag-index-probe', driven_by: 'agent',
+    assert.equal(errors.filter(message => message !== 'Projection worker cancelled').length, 0);
+    const receipt = { schema: 'ProjectRagIndexLifecycleProbe/v1', actor: 'codex/project-rag-index-probe', driven_by: 'agent', executedAt: Date.now(),
       candidate: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
       fixtureOrigin: 'agent-authored-Wiki-owner', selectionStorage: 'real-plugin-SQLite', status: 'pass', initial, resumed, deleted, counts,
       steps: { explicitEnable: true, nativeWorkerPublished: true, editReplaced: true, restartRestoredSqliteSelection: true,
-        sourceIdentityStable: true, changedGenerationRejected: true, aclRejected: true, deleteAndCleanupComplete: true }, errors };
-    await mkdir(dirname(resolve(output)), { recursive: true }); await writeFile(resolve(output), JSON.stringify(receipt, null, 2) + '\n');
+        sourceIdentityStable: true, changedGenerationRejected: true, aclRejected: true, deleteAndCleanupComplete: true },
+      errors: errors.filter(message => message !== 'Projection worker cancelled'),
+      expectedCancellations: errors.filter(message => message === 'Projection worker cancelled') };
+    const soak = process.env.RAG_SOAK_PROBE_REPORT ? {
+      ...receipt, schema: 'ProjectRagSoakProbe/v1',
+      status: receipt.status === 'pass' && Object.values(receipt.steps).every(Boolean)
+        && receipt.errors.length === 0 ? 'passed' : 'failed',
+      lostJobs: Number(!receipt.steps.restartRestoredSqliteSelection),
+      duplicatePublications: Math.max(0, initial.sources.filter(source => source.activeGeneration).length - 1)
+        + Math.max(0, resumed.sources.filter(source => source.activeGeneration).length - 1),
+      revocationLeaks: Number(!receipt.steps.aclRejected) + Number(!receipt.steps.deleteAndCleanupComplete),
+      pendingJobs: deleted.jobs.filter(job => job.state === 'pending' || job.state === 'leased').length,
+    } : receipt;
+    await mkdir(dirname(resolve(output)), { recursive: true }); await writeFile(resolve(output), JSON.stringify(soak, null, 2) + '\n', { flag: 'wx' });
     console.log(JSON.stringify({ status: receipt.status, counts, output: resolve(output) }));
   } finally {
     for (const service of running) await service.stop();

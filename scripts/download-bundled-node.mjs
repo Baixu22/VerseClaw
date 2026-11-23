@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 
 import 'zx/globals';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { downloadVerifiedAssetToFile } from './lib/verified-download.mjs';
 import { getReleaseAsset, getReleaseComponent } from './release-integrity-manifest.mjs';
 
@@ -18,10 +18,16 @@ const TARGETS = {
     filename: `node-v${NODE_VERSION}-win-arm64.zip`,
     sourceDir: `node-v${NODE_VERSION}-win-arm64`,
   },
+  'darwin-x64': { filename: `node-v${NODE_VERSION}-darwin-x64.tar.gz`, sourceDir: `node-v${NODE_VERSION}-darwin-x64` },
+  'darwin-arm64': { filename: `node-v${NODE_VERSION}-darwin-arm64.tar.gz`, sourceDir: `node-v${NODE_VERSION}-darwin-arm64` },
+  'linux-x64': { filename: `node-v${NODE_VERSION}-linux-x64.tar.xz`, sourceDir: `node-v${NODE_VERSION}-linux-x64` },
+  'linux-arm64': { filename: `node-v${NODE_VERSION}-linux-arm64.tar.xz`, sourceDir: `node-v${NODE_VERSION}-linux-arm64` },
 };
 
 const PLATFORM_GROUPS = {
   win: ['win32-x64', 'win32-arm64'],
+  mac: ['darwin-x64', 'darwin-arm64'],
+  linux: ['linux-x64', 'linux-arm64'],
 };
 
 async function setupTarget(id) {
@@ -32,20 +38,17 @@ async function setupTarget(id) {
   }
 
   const targetDir = path.join(OUTPUT_BASE, id);
-  const tempDir = path.join(ROOT_DIR, 'temp_node_extract');
-  const archivePath = path.join(ROOT_DIR, target.filename);
+  if (os.platform() === 'win32') { process.env.TEMP = 'D:/tmp'; process.env.TMP = 'D:/tmp'; }
+  await fs.ensureDir(os.tmpdir());
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'clawx-node-'));
+  const archivePath = path.join(tempDir, target.filename);
   const integrityAsset = getReleaseAsset('node', target.filename);
   const downloadUrl = integrityAsset.url;
 
   echo(chalk.blue`\n📦 Setting up Node.js for ${id}...`);
 
-  // Only remove the target binary, not the entire directory,
-  // to avoid deleting uv.exe or other binaries placed by other download scripts.
-  const outputNode = path.join(targetDir, 'node.exe');
-  if (await fs.pathExists(outputNode)) {
-    await fs.remove(outputNode);
-  }
-  await fs.remove(tempDir);
+  const binaryName = id.startsWith('win32-') ? 'node.exe' : 'node';
+  const outputNode = path.join(targetDir, binaryName);
   await fs.ensureDir(targetDir);
   await fs.ensureDir(tempDir);
 
@@ -54,26 +57,23 @@ async function setupTarget(id) {
     await downloadVerifiedAssetToFile(integrityAsset, archivePath);
 
     echo`📂 Extracting...`;
-    if (os.platform() === 'win32') {
+    if (!target.filename.endsWith('.zip')) {
+      const { execFileSync } = await import('node:child_process');
+      execFileSync('tar', ['-xf', archivePath, '-C', tempDir], { stdio: 'inherit', windowsHide: true });
+    } else if (os.platform() === 'win32') {
       const { execFileSync } = await import('child_process');
       const psCommand = `Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('${archivePath.replace(/'/g, "''")}', '${tempDir.replace(/'/g, "''")}')`;
-      execFileSync('powershell.exe', ['-NoProfile', '-Command', psCommand], { stdio: 'inherit' });
+      execFileSync('powershell.exe', ['-NoProfile', '-Command', psCommand], { stdio: 'inherit', windowsHide: true });
     } else {
       await $`unzip -q -o ${archivePath} -d ${tempDir}`;
     }
 
-    const expectedNode = path.join(tempDir, target.sourceDir, 'node.exe');
-    if (await fs.pathExists(expectedNode)) {
-      await fs.move(expectedNode, outputNode, { overwrite: true });
-    } else {
-      echo(chalk.yellow`🔍 node.exe not found in expected directory, searching...`);
-      const files = await glob('**/node.exe', { cwd: tempDir, absolute: true });
-      if (files.length > 0) {
-        await fs.move(files[0], outputNode, { overwrite: true });
-      } else {
-        throw new Error('Could not find node.exe in extracted files.');
-      }
-    }
+    const expectedNode = path.join(tempDir, target.sourceDir, ...(binaryName === 'node' ? ['bin'] : []), binaryName);
+    if (!await fs.pathExists(expectedNode)) throw new Error('Pinned Node archive lacks its declared executable');
+    const staged = outputNode + '.pending-' + randomUUID();
+    await fs.copy(expectedNode, staged, { overwrite: false, errorOnExist: true });
+    if (binaryName === 'node') await fs.chmod(staged, 0o755);
+    await fs.rename(staged, outputNode);
 
     echo(chalk.green`✅ Success: ${outputNode}`);
     await fs.writeJson(path.join(targetDir, 'node-runtime.json'), {
@@ -82,7 +82,8 @@ async function setupTarget(id) {
       sha256: createHash('sha256').update(await fs.readFile(outputNode)).digest('hex'),
     }, { spaces: 2 });
   } finally {
-    await fs.remove(archivePath);
+    if (path.dirname(path.resolve(tempDir)) !== path.resolve(os.tmpdir()) || !path.basename(tempDir).startsWith('clawx-node-'))
+      throw new Error('Node temporary cleanup escaped its owned directory');
     await fs.remove(tempDir);
   }
 }
@@ -91,7 +92,7 @@ const downloadAll = argv.all;
 const platform = argv.platform;
 
 if (downloadAll) {
-  echo(chalk.cyan`🌐 Downloading Node.js binaries for all Windows targets...`);
+  echo(chalk.cyan`🌐 Downloading Node.js binaries for all release targets...`);
   for (const id of Object.keys(TARGETS)) {
     await setupTarget(id);
   }
@@ -109,13 +110,10 @@ if (downloadAll) {
 } else {
   const currentId = `${os.platform()}-${os.arch()}`;
   if (TARGETS[currentId]) {
-    echo(chalk.cyan`💻 Detected Windows system: ${currentId}`);
+    echo(chalk.cyan`💻 Detected system: ${currentId}`);
     await setupTarget(currentId);
   } else {
-    echo(chalk.cyan`🎯 Defaulting to Windows multi-arch Node.js download`);
-    for (const id of PLATFORM_GROUPS.win) {
-      await setupTarget(id);
-    }
+    throw new Error(`Unsupported Node target: ${currentId}`);
   }
 }
 

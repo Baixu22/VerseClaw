@@ -106,7 +106,9 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 }
 
 describe('gateway permission approval flow', () => {
-  it.each(['memory.readSource', 'sekb.readSource', 'sekb.retrieve', 'sekb.recordExposure'])('rejects %s owner bridge before renderer RPC dispatch', async method => {
+  it.each(['memory.readSource', 'sekb.readSource', 'sekb.retrieve', 'sekb.recordExposure',
+    'wiki.observability.status', 'wiki.observability.feedback', 'wiki.observability.promote',
+    'wiki.observability.rollback', 'wiki.observability.correlate', 'wiki.retrieval.evaluate'])('rejects %s owner bridge before renderer RPC dispatch', async method => {
     activeWorkspace.profile = workspace('fullAccess');
     const gatewayManager = { getStatus: vi.fn(() => ({ state: 'running' })), rpc: vi.fn(async () => ({})) };
     const backpressure = { run: vi.fn((method, params, timeoutMs, run) => run(method, params, timeoutMs)) };

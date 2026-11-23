@@ -1,14 +1,22 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: in_progress
 id: project-rag-long-term-acceptance
 title: 验收长期版本的完整能力、稳定性与任务收益
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-19
 intent: 证明长期目标已经交付，并结束临时并行实现。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: 5d45cf79f769a1a3d8f994f965e5d63d24d5c40c
 touchedAreas:
+  - "scripts/lib/project-rag-acceptance.*"
+  - "scripts/lib/project-rag-query-grade.*"
+  - "scripts/lib/project-rag-process.*"
+  - "scripts/lib/project-rag-code-oracle.*"
+  - "scripts/lib/project-rag-corpus.mjs"
+  - "scripts/lib/project-rag-package.*"
+  - "scripts/lib/project-rag-promotion.*"
+  - "playwright.rag-packaged.config.ts"
   - "scripts/knowledge-*.ts"
   - "harness/specs/fixtures/project-rag/**"
   - "docs/dev/project-rag/**"
@@ -35,6 +43,48 @@ touchedAreas:
   - "tests/e2e/project-rag-chat-modes.spec.ts"
   - "tests/e2e/project-rag-research.spec.ts"
   - "tests/e2e/project-rag-packaged-smoke.spec.ts"
+residualPaths:
+  - "electron/gateway/config-sync.ts"
+  - "electron/services/gateway-api.ts"
+  - "electron/services/knowledge-api.ts"
+  - "electron/services/knowledge-evidence-qa.ts"
+  - "electron/services/knowledge-research.ts"
+  - "openclaw_runtime/extensions/memory-wiki/index.ts"
+  - "openclaw_runtime/extensions/memory-wiki/retrieval-observability-api.ts"
+  - "openclaw_runtime/extensions/memory-wiki/retrieval-policy-evaluation.test.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/gateway.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval/observability-service.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts"
+  - "openclaw_runtime/src/agents/provider-spend-budget.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "package.json"
+  - "playwright.config.ts"
+  - "scripts/after-pack.cjs"
+  - "scripts/build-openclaw-runtime.mjs"
+  - "scripts/build-rag-policy-verifier.mjs"
+  - "scripts/bundle-openclaw-runtime.mjs"
+  - "scripts/download-bundled-node.mjs"
+  - "scripts/knowledge-rag-policy-verifier.mjs"
+  - "scripts/release-integrity-manifest.mjs"
+  - "scripts/verify-bundled-node.mjs"
+  - "shared/host-api/contract.ts"
+  - "shared/host-api/host-action-timeouts.ts"
+  - "shared/i18n/locales/en/settings.json"
+  - "shared/i18n/locales/ja/settings.json"
+  - "shared/i18n/locales/ru/settings.json"
+  - "shared/i18n/locales/zh/settings.json"
+  - "shared/knowledge/observability.ts"
+  - "shared/knowledge/retrieval.ts"
+  - "src/components/settings/KnowledgeOperationsSettings.tsx"
+  - "src/components/settings/KnowledgeRetrievalDiagnostics.tsx"
+  - "src/lib/host-api/knowledge/library.ts"
+  - "tests/e2e/project-rag-settings-operations.spec.ts"
+  - "tests/unit/gateway-permissions-api.test.ts"
+  - "tests/unit/host-action-timeouts.test.ts"
+  - "tests/unit/project-rag-observability-store.test.ts"
+  - "tests/unit/project-rag-offline-package.test.ts"
+  - "tests/unit/project-rag-package-manifest.test.ts"
+  - "tests/unit/project-rag-receipts-promotion.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -44,9 +94,9 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
-  - "tests/unit/knowledge-retrieval.test.ts"
-  - "tests/unit/knowledge-evidence-qa.test.ts"
-  - "tests/unit/harness-specs.test.ts"
+  - "pnpm exec vitest run tests/unit/knowledge-retrieval.test.ts tests/unit/knowledge-evidence-qa.test.ts tests/unit/harness-specs.test.ts tests/unit/project-rag-acceptance-readback.test.ts --maxWorkers=1 --cache=false"
+  - "pnpm exec playwright test tests/e2e/project-rag-chat-modes.spec.ts tests/e2e/project-rag-research.spec.ts --workers=1 --retries=0"
+  - "pnpm exec playwright test --config playwright.rag-packaged.config.ts --workers=1 --retries=0"
 plannedTests:
   - "tests/unit/project-rag-acceptance-readback.test.ts"
 plannedE2E:
@@ -81,3 +131,9 @@ docs:
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
 回滚：保持前一已验证profile与所有者服务，记录未达标项，修复后新版本重测。
+
+最终读回入口scripts/knowledge-rag-acceptance.ts读取同候选各叶接线/失败路径、五平台原生探针、20k/100k容量、完整三臂测量、工程双角色和实际72小时soak。原始540槽位沿既有ProjectRagAttemptReceipt/v1、独立grader、experiment及negative safety证据逐hash验证。soak以墙钟和单调时钟共同累计，探针断档、候选变化、丢作业、重复发布或撤销泄漏均保留失败；不能用缩短时长或修改时间戳代替。
+
+任务队列执行入口scripts/knowledge-rag-task-runner.ts绑定原540槽位、固定argv adapter及输入digest，生成与oracle隔离的participant工作区；每槽执行后独立重新分级并追加唯一attempt，原期限内捕获实际费用/用量，缺证据或基础设施错误立即停队列。中断、超时和无产物保持原状态，不覆盖旧跑次；实际provider资源仅在明确执行命令时消费。
+
+本次所有者指示优先完成RAG17～19代码、暂缓完整验收。residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收仍按自身新增测试和接口要求执行，正式状态待实际证据收口。

@@ -5,6 +5,7 @@ import type { Page } from "@playwright/test";
 import { closeElectronApp, expect, getStableWindow, test } from "./fixtures/electron";
 import { allocatePort, buildMockProviderConfig } from "./fixtures/fp-p1-harness";
 import type { KnowledgeOperationsResult } from "../../shared/knowledge/operations";
+import type { KnowledgeObservabilityResult } from "../../shared/knowledge/observability";
 
 type Json = Record<string, unknown>;
 async function host<T = Json>(
@@ -156,6 +157,32 @@ test("Project RAG operations manage canonical config, pause, recovery, revocatio
     });
     expect(JSON.stringify(retrieved)).toContain("RAG12_UI_UPDATED_WHILE_STOPPED");
     steps.resumeUpdatedOwnerBytes = true;
+    const diagnostics = () => host<KnowledgeObservabilityResult>(page, "knowledge", "observabilityStatus");
+    await page.getByTestId("retrieval-diagnostics-refresh").click();
+    await expect(page.getByTestId("retrieval-samples")).toHaveText("1");
+    const observed = (await diagnostics()).observability!;
+    expect(observed.receipts).toHaveLength(1);
+    expect(observed.receipts[0].usage.costUsd).toBeNull();
+    expect(JSON.stringify(observed)).not.toContain("RAG12_UI_UPDATED_WHILE_STOPPED");
+    const feedbackId = "rag17-feedback-once";
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const feedback = await host<KnowledgeObservabilityResult>(page, "knowledge", "retrievalFeedback", {
+        operationId: feedbackId, receiptId: observed.receipts[0].receiptId, action: "attach",
+      });
+      expect(feedback.success).toBe(true);
+      expect(feedback.observability?.receipts[0].feedback.attach).toBe(1);
+      expect(feedback.observability?.policies).toEqual(observed.policies);
+    }
+    const conflicting = await host<KnowledgeObservabilityResult>(page, "knowledge", "retrievalFeedback", {
+      operationId: feedbackId, receiptId: observed.receipts[0].receiptId, action: "dismiss",
+    });
+    expect(conflicting.success).toBe(false);
+    const unsealed = await host<KnowledgeObservabilityResult>(page, "knowledge", "policyPromote", {
+      operationId: "rag17-reject-unsealed", expectedPolicyDigest: observed.policies[0].digest,
+      candidate: { ...observed.policies[0].active, version: "unsealed/v1" }, evaluation: {},
+    });
+    expect(unsealed.success).toBe(false);
+    steps.retrievalReceiptsAndWeakFeedback = true;
 
     await writeFile(file, raw(4, "RAG12_UI_UPDATED_WHILE_STOPPED", "acl:\n  read: [someone-else]\n"));
     const revoked = await host(page, "knowledge", "retrieve", {
@@ -165,6 +192,10 @@ test("Project RAG operations manage canonical config, pause, recovery, revocatio
     expect((revoked.retrieval as { results: unknown[] }).results).toHaveLength(0);
     receipt.revoked = revoked;
     steps.revocationRejected = true;
+    const afterRevocation = await diagnostics();
+    expect(afterRevocation.success).toBe(true);
+    expect(afterRevocation.observability?.receipts.every(row => row.sources.length === 0)).toBe(true);
+    steps.receiptsRevokedWithSource = true;
     await unlink(file);
     await page.getByTestId("index-reconcile").click();
     await page.getByTestId("index-cleanup").click();

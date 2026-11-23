@@ -30,7 +30,9 @@ export type RetrievalPlanV2 = {
   planId: string;
   requestId: string;
   admissionContextId: string | null;
-  policyVersion: 'project-rag-rrf/v2';
+  policyVersion: string;
+  policyDigest?: string;
+  rrfK?: number;
   mode: RetrievalMode;
   profile: RetrievalProfile;
   intent: RetrievalIntent;
@@ -88,4 +90,6 @@ export type RetrievalResultV2<T> = {
   fallbackReasons: string[];
   rerank?: RerankResultV1;
   snapshotStatus: 'current' | 'changed';
+  receiptId?: string;
+  receiptStatus?: 'recorded' | 'unavailable';
 };

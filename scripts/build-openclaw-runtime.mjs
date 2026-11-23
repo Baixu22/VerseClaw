@@ -51,6 +51,7 @@ if (!isTargetedOnlyBuild) {
   runNodeScript(join(RUNTIME_ROOT, 'scripts', 'runtime-postbuild.mjs'), [], RUNTIME_ROOT);
   runNodeScript(join(RUNTIME_ROOT, 'scripts', 'bundled-plugin-assets.mjs'), ['--phase', 'copy'], RUNTIME_ROOT);
   runNodeScript(join(ROOT, 'scripts', 'smoke-openclaw-runtime.mjs'), [], ROOT);
+  runNodeScript(join(ROOT, 'scripts', 'build-rag-policy-verifier.mjs'), [], ROOT);
   process.exit(0);
 }
 

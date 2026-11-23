@@ -9,7 +9,7 @@ import { waitForRetrievalOperation } from '../../openclaw_runtime/src/knowledge/
 import type { ModelRequestBudget } from '../../openclaw_runtime/src/agents/command/shared-types';
 import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
 
-export type KnowledgeModelSpend = { calls: number; reservedTokens: number; reservedCostUsd: number | null; actualTokens: number | null; actualCostUsd: number | null };
+export type KnowledgeModelSpend = { calls: number; reservedTokens: number; reservedCostUsd: number | null; actualTokens: number | null; actualCostUsd: number | null; modelRefs?: string[] };
 
 export type KnowledgeConversationTurn = { role: 'user' | 'assistant'; content: string };
 export type KnowledgeQaClaim = { kind: 'source' | 'general' | 'inference'; text: string; citations: Array<{ sourceId: string; quote: string }> };
@@ -161,7 +161,8 @@ export function applyKnowledgeSupportReview(claims: AnswerClaimV1[], review: Kno
 /** Reuses the existing model-only Gateway path; the session has no tool authority. */
 export async function runKnowledgeModel(
   gateway: GatewayManager, prompt: string, label: string, timeoutMs = 60_000,
-  knowledge?: { sessionKey: string; workspaceId?: string; workspaceDir?: string; references: ChatKnowledgeReference[] },
+  knowledge?: { sessionKey: string; workspaceId?: string; workspaceDir?: string; references: ChatKnowledgeReference[];
+    retrievalRequestId?: string; ownerSessionId?: string },
   options?: { signal: AbortSignal; budget: ModelRequestBudget; validateSpend?: (spend: KnowledgeModelSpend | undefined) => void },
 ): Promise<{ text: string; runId: string; retainedEvidence?: RetainedEvidenceManifestV1; providerSpend?: KnowledgeModelSpend }> {
   const requestId = randomUUID();
@@ -223,6 +224,14 @@ export async function runKnowledgeModel(
       text = typeof last?.content === 'string' ? last.content : Array.isArray(last?.content) ? last.content.filter(p => p?.type === 'text').map(p => p.text ?? '').join('') : '';
     }
     if (!text.trim() || text.length > 100_000) throw Error('Knowledge model returned no bounded answer');
+    if (retainedEvidence && knowledge?.retrievalRequestId && knowledge.ownerSessionId) {
+      // This correlation uses the actual Gateway response, never renderer usage or citation claims.
+      void gateway.rpc('wiki.observability.correlate', {
+        readIdentity: { agentSessionKey: knowledge.sessionKey, sessionId: knowledge.ownerSessionId,
+          workspaceId: knowledge.workspaceId, workspaceDir: knowledge.workspaceDir },
+        input: { requestId: knowledge.retrievalRequestId, runId, retainedEvidence, providerSpend: wait.providerSpend },
+      }, 1000).catch(() => undefined);
+    }
     return { text, runId, ...(retainedEvidence ? { retainedEvidence } : {}),
       ...(wait.providerSpend ? { providerSpend: wait.providerSpend as KnowledgeModelSpend } : {}) };
   } finally {

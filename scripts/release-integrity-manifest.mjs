@@ -79,6 +79,22 @@ export const RELEASE_INTEGRITY_MANIFEST = {
           33185819,
           '14834611d4c6b3c06054e7007732b90474c16e0b32f395e05b55a571ef71c6d2',
         ),
+        'node-v24.16.0-darwin-arm64.tar.gz': asset(
+          'https://nodejs.org/dist/v24.16.0/node-v24.16.0-darwin-arm64.tar.gz', 51873536,
+          '39189dab4eeb15706c424af0ac08a3044c9e48f7db12a7d77f6b7aafc7dd5df6',
+        ),
+        'node-v24.16.0-darwin-x64.tar.gz': asset(
+          'https://nodejs.org/dist/v24.16.0/node-v24.16.0-darwin-x64.tar.gz', 53063476,
+          '298b4c7b3cb80765c8703e42b90324a4ece3b6634947b89e769c3c980ab55185',
+        ),
+        'node-v24.16.0-linux-arm64.tar.xz': asset(
+          'https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-arm64.tar.xz', 30390352,
+          '524659219d6a207a7400f2bde15d19ba060ffbe0d32a8643319ad67e3bb64c78',
+        ),
+        'node-v24.16.0-linux-x64.tar.xz': asset(
+          'https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz', 31428548,
+          'd804845d34eddc21dc1092b519d643ef40b1f58ec5dec5c22b1f4bd8fabde6c9',
+        ),
       },
     },
     ossutil: {

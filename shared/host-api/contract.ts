@@ -2,6 +2,7 @@ import type { RawMessage } from '../chat/types';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from '../knowledge/embedding';
 import type { KnowledgeVectorStatusResult } from '../knowledge/vector';
 import type { ProjectRagConfigInput, KnowledgeOperationsResult, KnowledgeOperationsConfigureResult, KnowledgeIndexResult } from '../knowledge/operations';
+import type { KnowledgeObservabilityResult, KnowledgePolicyImportPayload, KnowledgePolicyRollbackPayload, KnowledgeRetrievalFeedbackPayload } from '../knowledge/observability';
 import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../knowledge/rerank';
 import type { RetainedEvidenceManifestV1 } from '../knowledge/packing';
 import type { AnswerClaimV1, KnowledgeAnswerMode } from '../knowledge/answer';
@@ -6295,6 +6296,10 @@ export type HostApiContract = {
     validateArtifact: (payload: WorkProviderValidateArtifactPayload) => WorkProviderValidateArtifactResult;
   };
   knowledge: {
+    observabilityStatus: () => KnowledgeObservabilityResult;
+    retrievalFeedback: (payload: KnowledgeRetrievalFeedbackPayload) => KnowledgeObservabilityResult;
+    policyPromote: (payload: KnowledgePolicyImportPayload) => KnowledgeObservabilityResult;
+    policyRollback: (payload: KnowledgePolicyRollbackPayload) => KnowledgeObservabilityResult;
     operationsStatus: () => KnowledgeOperationsResult;
     operationsConfigure: (payload: ProjectRagConfigInput) => KnowledgeOperationsConfigureResult;
     indexEnable: () => KnowledgeIndexResult;
