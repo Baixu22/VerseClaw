@@ -120,6 +120,8 @@ import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistan
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { CodingRunEvidence } from '@/components/assistant-render/CodingRunEvidence';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
+import { ToolActivityGroup } from '@/components/assistant-render/ToolActivityGroup';
+import { attachToolActivityArtifacts, buildToolActivityGroups, type ToolActivityGroupModel } from './tool-activity-groups';
 import { extractAssistantReasoning, type AssistantReasoning } from '@/components/assistant-render/model';
 import { ComposerRequestDock } from './ComposerRequestDock';
 import { collectComposerInteractions } from './composer-interactions';
@@ -181,6 +183,7 @@ type ChatMessageRenderRow = {
   suppressReasoning: boolean;
   textOverride?: string;
   runCards: UserRunCard[];
+  toolGroups: ToolActivityGroupModel[];
 };
 
 type KnowledgeAdvisorySource = {
@@ -3021,6 +3024,16 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     ...(sending ? [buildStreamingRenderMessage({ stream: streamState, streamingReplyText, streamingTimestamp })] : []),
   ], interactionSend?.sessionKey === currentSessionKey ? interactionSend.text : undefined),
   [messages, sending, streamState, streamingReplyText, streamingTimestamp, interactionSend, currentSessionKey]);
+  const toolGroupsByRun = useMemo(() => new Map(userRunCards.map(card => [card.runKey,
+    buildToolActivityGroups(card, messages, [], [], new Set(composerInteractions.map(interaction => interaction.id)), `${turnDisclosureKey(currentSessionKey, card)}:${currentSession.sessionId ?? 'legacy'}`),
+  ])), [userRunCards, messages, composerInteractions, currentSessionKey, currentSession.sessionId]);
+  const toolGroupsByAnchor = useMemo(() => {
+    const groups = new Map<number, ToolActivityGroupModel[]>();
+    for (const runGroups of toolGroupsByRun.values()) for (const group of runGroups) {
+      groups.set(group.anchorIndex, [...(groups.get(group.anchorIndex) ?? []), group]);
+    }
+    return groups;
+  }, [toolGroupsByRun]);
   const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => {
     let hasAssistantForkAncestor = false;
     const liveReplyText = visibleStreamingText?.trim();
@@ -3062,7 +3075,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         suppressReasoning,
         textOverride,
       });
-      const hidden = isInternalMessage(msg) && !hasUserFacingMedia
+      const toolGroups = toolGroupsByAnchor.get(idx) ?? [];
+      const hidden = toolGroups.length > 0 ? false : isInternalMessage(msg) && !hasUserFacingMedia
         ? true
         : !projection.hasRenderableContent;
 
@@ -3077,6 +3091,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         suppressReasoning,
         textOverride,
         runCards: userRunCardsByTriggerIndex.get(idx) ?? [],
+        toolGroups,
       };
     });
   }, [
@@ -3088,12 +3103,23 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     userRunCardsByTriggerIndex,
     userRunCards,
     visibleStreamingText,
+    toolGroupsByAnchor,
   ]);
   const visibleMessageRows = useMemo(() => messageRenderRows.filter(row => !row.hidden), [messageRenderRows]);
   const getMessageScrollElement = useCallback(() => scrollElementRef.current, []);
   const messageViewport = useMessageViewport(visibleMessageRows, getMessageScrollElement,
     `${currentSessionKey}:${currentSession.sessionId ?? ''}`, getAgentResourceLimits().maxDomRenderMessages,
     preserveReadingPosition ? savedReadingPosition : undefined);
+  useEffect(() => {
+    const element = scrollElementRef.current;
+    const column = element?.closest<HTMLElement>('[data-testid="chat-conversation-column"]');
+    if (!element || !column) return;
+    const update = () => column.style.setProperty('--conversation-scrollbar-width', `${Math.max(0, element.offsetWidth - element.clientWidth)}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [currentSessionKey]);
   const scrollToMessageIndex = messageViewport.scrollToIndex;
   const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
     const rows = visibleMessageRows;
@@ -3301,6 +3327,19 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     }
     return map;
   }, [filesByRun, diffsByRun]);
+  const toolGroupsWithArtifacts = useMemo(() => new Map(userRunCards.flatMap(card =>
+    attachToolActivityArtifacts(toolGroupsByRun.get(card.runKey) ?? [], chipFilesByRun.get(card.triggerIndex) ?? [], diffsByRun.get(card.triggerIndex) ?? [])
+      .map(group => [group.id, group] as const),
+  )), [userRunCards, toolGroupsByRun, chipFilesByRun, diffsByRun]);
+  const handleOpenGeneratedFile = useCallback((file: GeneratedFile) => {
+    const target = generatedFileToTarget(file);
+    if (isHtmlPreviewExt(file.ext)) {
+      openWorkspacePanel({ panel: 'files', filePath: target.filePath });
+      return;
+    }
+    useArtifactPanel.getState().setFocusedFile(target);
+    openWorkspacePanel({ panel: 'review', view: 'changes', filePath: target.filePath });
+  }, [openWorkspacePanel]);
 
   // Derive WorkArtifacts from generated files (docx/xlsx/pdf/html/csv/md)
   const artifacts = useMemo(() => {
@@ -3531,7 +3570,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             the scroll column's padding (`codex-conversation-inset`) and the
             overlay layer takes none at all. */}
         <div
-          className="relative mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col gap-4 xl:items-stretch"
+          className="relative mx-auto flex h-full min-h-0 w-full flex-col gap-4 xl:items-stretch"
           data-testid="chat-message-layout"
         >
           <div
@@ -3546,7 +3585,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
               className={cn(
                 "mx-auto space-y-4",
                 // Preserve the centred input layout before the first message.
-                isEmpty ? "h-full w-full max-w-[820px]" : "max-w-[820px]",
+                isEmpty ? "h-full w-full max-w-[820px]" : "chat-conversation-measure",
               )}
             >
               {messageAreaLoading ? (
@@ -3637,6 +3676,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         const chipFiles = chipFilesByRun.get(card.triggerIndex) ?? [];
                         const diffSurfaces = diffsByRun.get(card.triggerIndex) ?? [];
                         const cardApprovals = approvalsByRunKey.get(runKey) ?? [];
+                        const hasToolGroups = (toolGroupsByRun.get(runKey)?.length ?? 0) > 0;
+                        const hasCurrentTool = toolGroupsByRun.get(runKey)?.some(group => group.current) ?? false;
                         /* A live run streams its thinking on the runtime run, not
                          * on a message — so the active card reads the stream and
                          * every settled card reads its own segment. */
@@ -3655,39 +3696,40 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                          * tools, no files — the common DeepSeek shape) otherwise
                          * had no card at all, and its thinking would have had
                          * nowhere to go once the message stopped rendering it. */
-                        const hasActivity = card.active
-                          || card.steps.length > 0
+                        const hasActivity = (card.active && !hasCurrentTool)
+                          || (!hasToolGroups && card.steps.length > 0)
                           || cardReasoning.length > 0
-                          || generatedFiles.length > 0
+                          || (!hasToolGroups && generatedFiles.length > 0)
                           || card.orchestrations.length > 0
-                          || card.surfaces.terminals.length > 0
+                          || (!hasToolGroups && card.surfaces.terminals.length > 0)
                           || card.surfaces.plan != null
                           || cardApprovals.length > 0
-                          || Boolean(card.traceId);
+                          || (!hasToolGroups && Boolean(card.traceId));
                         if (!hasActivity) return null;
 
                         return (
                           <div key={`run-${currentSessionKey}:${card.triggerIndex}`}>
                             <TurnSummaryCard
+                              showStatusIndicator={!hasCurrentTool}
                               waitingForInput={card.active && (composerInteractions.length > 0 || cardApprovals.length > 0)}
                               status={card.status}
                               startedAt={card.startedAt}
                               endedAt={card.endedAt}
                               expanded={expanded}
-                              activity={activeTool ? (
+                              activity={!hasToolGroups && activeTool ? (
                                 <ExecutionGraphCard agentLabel={card.agentLabel} steps={[activeTool]} active compact />
-                              ) : activeTerminal ? (
+                              ) : !hasToolGroups && activeTerminal ? (
                                 <CallChip name={activeTerminal.command} icon="terminal" status="running" showTimer={false} />
                               ) : undefined}
                               reasoning={cardReasoning}
                               reasoningStreaming={card.active && assistantStreamStatus?.state === 'thinking'}
                               summary={{
-                                tools: card.steps.filter((step) => step.kind === 'tool').length,
+                                tools: hasToolGroups ? 0 : card.steps.filter((step) => step.kind === 'tool').length,
                                 thoughts: cardReasoning.length,
                                 plan: card.active ? 0 : card.surfaces.plan?.todos.length ?? 0,
-                                files: new Set([...chipFiles.map((file) => file.filePath), ...diffSurfaces.map((diff) => diff.filePath)]).size,
+                                files: hasToolGroups ? 0 : new Set([...chipFiles.map((file) => file.filePath), ...diffSurfaces.map((diff) => diff.filePath)]).size,
                                 agents: card.orchestrations.length,
-                                terminals: card.surfaces.terminals.length,
+                                terminals: hasToolGroups ? 0 : card.surfaces.terminals.length,
                                 approvals: cardApprovals.length,
                               }}
                               onExpandedChange={(next) =>
@@ -3708,30 +3750,16 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                   testId="chat-run-plan"
                                 />
                               )}
-                              {chipFiles.length > 0 && (
+                              {!hasToolGroups && chipFiles.length > 0 && (
                                 <GeneratedFilesPanel
                                   files={chipFiles}
-                                  onOpen={(file) => {
-                                    const target = generatedFileToTarget(file);
-                                    if (isHtmlPreviewExt(file.ext)) {
-                                      openWorkspacePanel({ panel: 'files', filePath: target.filePath });
-                                      return;
-                                    }
-                                    // Prefer the captured edit diff (receipt
-                                    // carries old/new snippets + baseline) over
-                                    // the git panel: runtime-generated files
-                                    // live in the agent workspace, not the
-                                    // app workspace, so git state may not
-                                    // cover them.
-                                    useArtifactPanel.getState().setFocusedFile(target);
-                                    openWorkspacePanel({ panel: 'review', view: 'changes', filePath: target.filePath });
-                                  }}
+                                  onOpen={handleOpenGeneratedFile}
                                 />
                               )}
-                              {diffSurfaces.length > 0 && (
+                              {!hasToolGroups && diffSurfaces.length > 0 && (
                                 <RunMutationDiffs surfaces={diffSurfaces} />
                               )}
-                              <ExecutionGraphCard
+                              {!hasToolGroups && <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}
                                 steps={card.steps.filter((step) => !composerInteractions.some((interaction) => interaction.id === step.id))}
@@ -3753,7 +3781,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                     },
                                   }));
                                 }}
-                              />
+                              />}
                               {card.orchestrations.map((orchestration) => (
                                 <TeamOrchestrationCard
                                   key={`team-orchestration-${orchestration.id}`}
@@ -3761,12 +3789,25 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                   embedded
                                 />
                               ))}
-                              {card.codingRunView && (
+                              {!hasToolGroups && card.codingRunView && (
                                 <CodingRunEvidence codingRun={card.codingRunView} />
                               )}
                             </TurnSummaryCard>
                           </div>
                         );
+                      })}
+                      {row.toolGroups.map(baseGroup => {
+                        const group = toolGroupsWithArtifacts.get(baseGroup.id) ?? baseGroup;
+                        const key = `${currentSessionKey}:tool-group:${group.id}`;
+                        return <ToolActivityGroup key={key} group={group} expanded={runActivityExpandedOverrides[key] ?? false}
+                          onExpandedChange={next => setRunActivityExpandedOverrides(previous => ({ ...previous, [key]: next }))}
+                          expandedStepIds={new Set(Object.entries(runActivityStepDetailsExpanded[key] ?? runActivityStepDetailsExpanded[group.runKey] ?? {}).filter(([, value]) => value).map(([id]) => id))}
+                          onStepExpandedChange={(id, next) => setRunActivityStepDetailsExpanded(previous => ({ ...previous,
+                            [key]: { ...(previous[key] ?? previous[group.runKey] ?? {}), [id]: next } }))}>
+                          {group.files.length > 0 && <GeneratedFilesPanel files={group.files} onOpen={handleOpenGeneratedFile} />}
+                          {group.diffs.length > 0 && <RunMutationDiffs surfaces={group.diffs} />}
+                          {group.codingRunView && <CodingRunEvidence codingRun={group.codingRunView} />}
+                        </ToolActivityGroup>;
                       })}
                     </div>
                     );

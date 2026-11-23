@@ -212,8 +212,8 @@ describe('Run-log replay provenance badge', () => {
 
 /** Expand the turn summary only when the current preference left it closed. */
 function expandTurnSummary() {
-  const toggle = screen.queryByTestId('chat-turn-summary-toggle');
-  if (toggle?.getAttribute('aria-expanded') === 'false') fireEvent.click(toggle);
+  const toggles = [...screen.queryAllByTestId('chat-tool-activity-toggle'), ...screen.queryAllByTestId('chat-turn-summary-toggle')];
+  for (const toggle of toggles) if (toggle.getAttribute('aria-expanded') === 'false') fireEvent.click(toggle);
 }
 
 const WEATHER_INPUT = { location: 'Tokyo', temperature: 21, condition: 'sunny' };
@@ -1092,13 +1092,13 @@ describe('Turn disclosure survives the optimistic→server id swap', () => {
     });
     await mountChat();
 
-    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('chat-tool-activity-toggle')).toBeInTheDocument());
 
     // A finished turn folds by default; the user opens it.
-    const toggle = screen.getByTestId('chat-turn-summary-toggle');
+    const toggle = screen.getByTestId('chat-tool-activity-toggle');
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-tool-activity-details')).toBeInTheDocument();
 
     // The Gateway echo swaps the optimistic user message for the persisted one:
     // same position, same text/timestamp, different id.
@@ -1114,9 +1114,9 @@ describe('Turn disclosure survives the optimistic→server id swap', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true'),
+      expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'true'),
     );
-    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-tool-activity-details')).toBeInTheDocument();
   });
 });
 

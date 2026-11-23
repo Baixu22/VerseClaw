@@ -52,11 +52,13 @@ action. Its menu retains governed branch search, checkout and worktree actions.
 The three starter actions live in a single Quick start disclosure; drafting
 hides this entry without shifting the composer.
 
-Chat's assistant output has no avatar gutter. Progress text and the final answer
-share one reading column; active process details start folded and show only the
-current tool's existing progress animation. Completed passive tool records open
-on demand. Errors, approval requests and questions remain visible. The shared
-summary owns the live status so a second Thinking row does not compete with it.
+Chat output has no avatar gutter and shares the available conversation width
+with the input. Adjacent operations form a folded group after their progress
+explanation. The current action and target use a semantic operation icon and a
+white shimmer; expansion moves the animation into that operation's detail row.
+Calls, late results and command output keep their original group. Completed
+records remain static and preserve manual disclosure. Final replies, delivered
+resources, errors and pending requests remain accessible.
 
 Live planning has one primary entry in the task strip attached to the composer.
 The solid task/input frame has a 16px radius. The collapsed row shows the objective, neutral count and necessary actions; current steps open below it. State uses a small muted icon, without a progress ring or border beam. Sent messages use opaque 12px cards with a fine border and contact shadow;

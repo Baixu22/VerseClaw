@@ -3082,5 +3082,28 @@
     "pending": "最終知識記録を待機中",
     "dropped": "選択資料 {{count}} 件は未保持",
     "selectionUnavailable": "選択資料の比較は利用不可"
+  },
+  "toolActivity": {
+    "running": {
+      "read": "読み取り中",
+      "write": "書き込み中",
+      "edit": "編集中",
+      "search": "検索中",
+      "web": "ウェブページを開いています",
+      "command": "実行中",
+      "other": "ツールを使用中"
+    },
+    "completed": {
+      "read": "ファイルを読み取りました",
+      "write": "ファイルを書き込みました",
+      "edit": "ファイルを編集しました",
+      "search": "検索しました",
+      "web": "ウェブページを開きました",
+      "command": "コマンドを実行しました",
+      "other": "ツールを使用しました"
+    },
+    "failed": "対応が必要です：{{action}}",
+    "stopped": "操作を停止しました",
+    "pendingResult": "ツールの結果はまだありません"
   }
 }

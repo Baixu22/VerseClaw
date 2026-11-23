@@ -10,6 +10,7 @@ export type RunTerminalSurface = {
   type: 'terminal';
   id: string;
   eventOrder?: number;
+  startedAt?: number;
   toolCallId?: string;
   command: string;
   cwd?: string;
@@ -127,7 +128,7 @@ function terminalDisplayOutput(output: string): Pick<RunTerminalSurface, 'output
 export function projectCommandSurfaces(runState: ChatRuntimeRunState | null | undefined): RunTerminalSurface[] {
   if (!runState) return [];
 
-  const tools = new Map<string, { command?: string; cwd?: string; order: number }>();
+  const tools = new Map<string, { command?: string; cwd?: string; order: number; startedAt?: number }>();
   const surfaces = new Map<string, RunTerminalSurface & { rawOutput: string }>();
 
   for (const [order, event] of runState.events.entries()) {
@@ -135,6 +136,7 @@ export function projectCommandSurfaces(runState: ChatRuntimeRunState | null | un
       const args = asRecord(event.args);
       tools.set(event.toolCallId, {
         order,
+        startedAt: event.ts,
         command: nonEmptyString(args?.command) ?? nonEmptyString(args?.cmd),
         cwd: nonEmptyString(args?.cwd),
       });
@@ -156,6 +158,7 @@ export function projectCommandSurfaces(runState: ChatRuntimeRunState | null | un
       type: 'terminal',
       id,
       eventOrder: existing?.eventOrder ?? tool?.order ?? order,
+      startedAt: existing?.startedAt ?? tool?.startedAt ?? event.ts,
       toolCallId: event.toolCallId ?? existing?.toolCallId,
       command,
       cwd: event.cwd ?? existing?.cwd ?? tool?.cwd,

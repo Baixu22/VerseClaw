@@ -3082,5 +3082,28 @@
     "pending": "Awaiting final knowledge receipt",
     "dropped": "{{count}} selected sources not retained",
     "selectionUnavailable": "Selection comparison unavailable"
+  },
+  "toolActivity": {
+    "running": {
+      "read": "Reading",
+      "write": "Writing",
+      "edit": "Editing",
+      "search": "Searching",
+      "web": "Opening webpage",
+      "command": "Running",
+      "other": "Using a tool"
+    },
+    "completed": {
+      "read": "Read files",
+      "write": "Wrote files",
+      "edit": "Edited files",
+      "search": "Searched",
+      "web": "Opened webpages",
+      "command": "Ran commands",
+      "other": "Used tools"
+    },
+    "failed": "Needs attention: {{action}}",
+    "stopped": "Stopped operations",
+    "pendingResult": "Tool result unavailable"
   }
 }

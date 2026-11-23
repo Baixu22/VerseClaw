@@ -50,6 +50,81 @@
   overflow-wrap: anywhere;
 }
 
+/* Transcript and composer use the available conversation column. */
+.chat-conversation-measure {
+  --conversation-gutter: 16px;
+  width: 100%;
+  max-width: none;
+  padding-inline: var(--conversation-gutter);
+}
+.codex-composer-host.chat-conversation-measure {
+  padding-inline-end: calc(var(--conversation-gutter) + var(--conversation-scrollbar-width, 0px));
+}
+@media (min-width: 768px) {
+  .chat-conversation-measure { --conversation-gutter: 32px; }
+}
+[data-testid='chat-scroll-container'].rareui-has-turn-rail { padding-inline-start: 0; }
+[data-testid='chat-conversation-column']:has(.rareui-has-turn-rail) .chat-conversation-measure {
+  padding-inline-start: calc(var(--conversation-gutter) + 30px);
+}
+@media (min-width: 1181px) {
+  [data-testid='chat-conversation-column']:has([data-testid='chat-scroll-container'][data-rail='expanded']) .codex-composer-host:not(.codex-composer-host--hero) {
+    width: calc(100% - 316px);
+    margin-inline-start: 0;
+    margin-inline-end: 316px;
+  }
+}
+
+.tool-activity-group { min-width: 0; color: var(--color-chat-secondary); font-size: 14px; line-height: 22px; }
+.tool-activity-toggle, .tool-activity-step-toggle {
+  display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%;
+  min-height: 28px; padding: 2px 0; border: 0; border-radius: 4px; background: transparent;
+  color: inherit; font: inherit; text-align: start; cursor: pointer;
+}
+.tool-activity-toggle { width: fit-content; }
+.tool-activity-toggle:hover, .tool-activity-step-toggle:hover { color: var(--color-chat-foreground); }
+.tool-activity-toggle:focus-visible, .tool-activity-step-toggle:focus-visible {
+  outline: 1px solid var(--color-chat-secondary); outline-offset: 3px;
+}
+.tool-activity-label, .tool-activity-step-label { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tool-activity-label { flex: 0 1 auto; }
+.tool-activity-step-label { flex: 1; }
+.tool-activity-chevron { flex: none; width: 14px; height: 14px; opacity: .65; transition: transform 150ms ease-out; }
+.tool-activity-toggle .tool-activity-chevron { transform: rotate(-90deg); }
+.tool-activity-toggle .tool-activity-chevron.is-expanded { transform: none; }
+.tool-activity-group[data-status='error'] .tool-activity-toggle { color: hsl(var(--destructive)); }
+.tool-activity-icon { position: relative; display: inline-flex; width: 16px; height: 16px; flex: none; }
+.tool-activity-icon svg { display: block; width: 16px; height: 16px; }
+.tool-activity-icon .tool-activity-icon-glint {
+  position: absolute; inset: 0; color: var(--color-chat-foreground);
+  mask-image: linear-gradient(90deg, transparent, #fff, transparent);
+  mask-repeat: no-repeat; mask-size: 60% 100%;
+  animation: tool-activity-icon-reveal 1s ease-out both;
+}
+@keyframes tool-activity-icon-reveal {
+  0% { mask-position: -150% 0; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { mask-position: 250% 0; opacity: 0; }
+}
+.tool-activity-group .tool-activity-shimmer {
+  display: inline; background-image: linear-gradient(110deg, var(--color-chat-secondary) 20%, var(--color-chat-foreground) 50%, var(--color-chat-secondary) 80%);
+  background-size: 200% 100%; color: transparent;
+}
+.tool-activity-details { min-width: 0; margin: 8px 0 0 7px; border-inline-start: 1px solid var(--color-chat-tray-border); padding: 0 0 2px 20px; }
+.tool-activity-details [data-testid='chat-execution-step'] { gap: 0; }
+.tool-activity-step { min-width: 0; width: 100%; }
+.tool-activity-step-toggle { width: 100%; }
+.tool-activity-terminal > button { color: inherit; }
+.tool-activity-error { flex: none; font-size: 12px; color: hsl(var(--destructive)); }
+.tool-activity-details [data-testid='chat-run-terminals'] { margin-block: 0; }
+.tool-activity-details [data-testid='chat-execution-step-detail'] { margin-inline-start: 24px; }
+@media (prefers-reduced-motion: reduce) {
+  .tool-activity-group .tool-activity-shimmer { animation: none; background: none; color: inherit; }
+  .tool-activity-icon-glint { display: none !important; }
+  .tool-activity-chevron { transition: none; }
+}
+
 .codex-markdown > :first-child {
   margin-top: 0;
 }

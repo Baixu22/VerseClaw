@@ -1,6 +1,6 @@
 import { Activity, ChevronRight, GitBranch, Link as LinkIcon, Wrench, XCircle } from 'lucide-react';
 import { MessageSquare } from '@/components/icons/codex-icons';
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { Shimmer } from '@/components/ai-elements/shimmer';
@@ -10,6 +10,7 @@ import type { TaskStep } from './task-visualization';
 import { CallChip, inferCallChipIcon } from '@/components/tool-ui/shared/call-chip';
 import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
 import type { RunTerminalSurface } from '@/components/tool-ui/run-surfaces';
+import { inferToolActivityKind, toolActivityTarget, type ToolActivityKind } from './tool-activity-groups';
 
 interface ExecutionGraphCardProps {
   agentLabel: string;
@@ -21,6 +22,9 @@ interface ExecutionGraphCardProps {
   expandedStepIds?: ReadonlySet<string>;
   onStepExpandedChange?: (stepId: string, expanded: boolean) => void;
   terminals?: RunTerminalSurface[];
+  appearance?: 'chip' | 'activity';
+  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean) => ReactNode;
+  currentToolId?: string;
 }
 
 const TOOL_ROW_EXTRA_INDENT_PX = 0;
@@ -32,6 +36,10 @@ function StepDetailRow({
   expanded: controlledExpanded,
   onExpandedChange,
   inputDetail,
+  appearance = 'chip',
+  renderToolIcon,
+  currentToolId,
+  runActive = false,
 }: {
   step: TaskStep;
   result?: TaskStep;
@@ -39,6 +47,10 @@ function StepDetailRow({
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
   inputDetail?: string;
+  appearance?: 'chip' | 'activity';
+  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean) => ReactNode;
+  currentToolId?: string;
+  runActive?: boolean;
 }) {
   const { t } = useTranslation('chat');
   const detailId = useId();
@@ -170,6 +182,30 @@ function StepDetailRow({
   ) : null;
 
   if (isTool) {
+    if (appearance === 'activity') {
+      const kind = inferToolActivityKind(step.label);
+      const target = toolActivityTarget({ ...step, inputDetail: inputDetail ?? step.inputDetail }) ?? displayLabel;
+      const running = showRunning && runActive;
+      const animate = running && step.id === currentToolId;
+      const action = showRunning && !runActive ? t('toolActivity.pendingResult')
+        : t(`toolActivity.${running ? 'running' : 'completed'}.${kind}`);
+      return (
+        <div className="tool-activity-step" data-testid="chat-tool-activity-step" data-status={step.status}>
+          <button type="button" className="tool-activity-step-toggle" data-testid="chat-execution-step-toggle"
+            onClick={toggleExpanded} aria-expanded={hasDetail ? expanded : undefined}
+            aria-controls={hasDetail && expanded ? detailId : undefined} aria-label={`${displayLabel}, ${statusLabel}`} title={target}>
+            {renderToolIcon?.(kind, animate)}
+            <span className="tool-activity-step-label">
+              {animate ? <Shimmer className="tool-activity-shimmer">{action}{target ? ` ${target}` : ''}</Shimmer>
+                : <span>{action}{target ? ` ${target}` : ''}</span>}
+            </span>
+            {showError && <span className="tool-activity-error">{statusLabel}</span>}
+            {hasDetail && <ChevronRight aria-hidden="true" className={cn('tool-activity-chevron', expanded && 'rotate-90')} />}
+          </button>
+          {riskBadge}{urlLink}{detail}
+        </div>
+      );
+    }
     return (
       <div className="group/execution-step min-w-0 flex-1">
         <div className="relative flex min-w-0 items-start gap-1.5">
@@ -269,6 +305,9 @@ export function ExecutionGraphCard({
   expandedStepIds,
   onStepExpandedChange,
   terminals = [],
+  appearance = 'chip',
+  renderToolIcon,
+  currentToolId,
 }: ExecutionGraphCardProps) {
   const { t } = useTranslation('chat');
   const shouldShowTrailingThinking = active && !suppressThinking;
@@ -323,7 +362,8 @@ export function ExecutionGraphCard({
           if (item.kind === 'terminal') {
             return (
               <div key={`terminal:${item.surface.id}`} className="relative mt-0.5" data-testid="chat-execution-timeline-terminal">
-                <RunTerminalSurfaces surfaces={[item.surface]} />
+                <RunTerminalSurfaces surfaces={[item.surface]} appearance={appearance} renderToolIcon={renderToolIcon}
+                  currentToolId={currentToolId} activityActive={active} />
               </div>
             );
           }
@@ -359,6 +399,10 @@ export function ExecutionGraphCard({
                   expanded={expandedStepIds?.has(step.id)}
                   onExpandedChange={(expanded) => onStepExpandedChange?.(step.id, expanded)}
                   inputDetail={step.inputDetail}
+                  appearance={appearance}
+                  renderToolIcon={renderToolIcon}
+                  currentToolId={currentToolId}
+                  runActive={active}
                 />
               </div>
             </div>

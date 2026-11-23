@@ -3347,7 +3347,8 @@ export function ChatInput({
       className={cn(
         'codex-composer-host',
         hero && 'codex-composer-host--hero',
-        'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2',
+        'mx-auto w-full pb-5 pt-2',
+        hero ? 'max-w-[768px] px-4' : 'chat-conversation-measure',
         className,
       )}
       onDragOver={handleDragOver}

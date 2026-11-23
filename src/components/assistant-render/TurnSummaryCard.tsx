@@ -87,6 +87,7 @@ export function TurnSummaryCard({
   reasoning,
   reasoningStreaming = false,
   waitingForInput = false,
+  showStatusIndicator = true,
   onExpandedChange,
   children,
 }: {
@@ -104,6 +105,7 @@ export function TurnSummaryCard({
   /** True while thinking is still arriving — keeps the stream open + shimmering. */
   reasoningStreaming?: boolean;
   waitingForInput?: boolean;
+  showStatusIndicator?: boolean;
   onExpandedChange: (expanded: boolean) => void;
   children: ReactNode;
 }) {
@@ -143,7 +145,7 @@ export function TurnSummaryCard({
         contentClassName="flex min-w-0 flex-col gap-1.5"
         title={
           <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5">
-            {status === 'running' && !activity && !expanded && (
+            {showStatusIndicator && status === 'running' && !activity && !expanded && (
               <span data-testid="chat-turn-summary-orb"><OrbStatus state={waitingForInput ? 'waiting' : 'working'} size={20} label={label} /></span>
             )}
             <span className={cn(status === 'error' && 'text-destructive')}>{label}</span>

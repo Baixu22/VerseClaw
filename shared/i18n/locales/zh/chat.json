@@ -3082,5 +3082,28 @@
     "pending": "等待最终知识用量收据",
     "dropped": "{{count}} 个已选来源未保留",
     "selectionUnavailable": "已选来源对照不可用"
+  },
+  "toolActivity": {
+    "running": {
+      "read": "正在读取",
+      "write": "正在写入",
+      "edit": "正在编辑",
+      "search": "正在搜索",
+      "web": "正在访问网页",
+      "command": "正在运行",
+      "other": "正在调用工具"
+    },
+    "completed": {
+      "read": "读取了文件",
+      "write": "写入了文件",
+      "edit": "编辑了文件",
+      "search": "进行了搜索",
+      "web": "访问了网页",
+      "command": "运行了命令",
+      "other": "调用了工具"
+    },
+    "failed": "操作需处理：{{action}}",
+    "stopped": "操作已停止",
+    "pendingResult": "尚未收到工具结果"
   }
 }
