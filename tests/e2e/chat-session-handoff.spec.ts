@@ -525,6 +525,23 @@ test.describe('Verse Claw chat session handoff', () => {
         .toHaveValue(/Verified archive recall restored the last compacted observation/);
       await page.getByTestId('chat-handoff-details').locator('summary').click();
 
+      await page.keyboard.press('Escape');
+      await page.setViewportSize({ width: 480, height: 800 });
+      for (const [language, name] of [['zh', '中文'], ['ja', '日本語'], ['ru', 'Русский'], ['en', 'English']] as const) {
+        await page.getByTestId('sidebar-nav-settings').click();
+        await page.getByTestId('settings-language-select').click();
+        await page.getByRole('option', { name, exact: true }).click();
+        await page.evaluate(() => { location.hash = '#/'; });
+        await expect(page.getByTestId('chat-composer-input')).toBeVisible();
+        await page.getByTestId('chat-toolbar-more').click();
+        await expect(page.getByTestId('chat-session-handoff')).toBeInViewport({ ratio: 1 });
+        await page.getByTestId('chat-session-handoff').click();
+        await expect(page.getByTestId('chat-handoff-draft')).toHaveValue(HANDOFF_DRAFT);
+        await expect(page.getByTestId('chat-handoff-create')).toBeInViewport({ ratio: 1 });
+        await page.screenshot({ path: testInfo.outputPath(`handoff-${language}-narrow.png`) });
+        if (language !== 'en') await page.keyboard.press('Escape');
+      }
+
       const editedDraft = `${HANDOFF_DRAFT}\n\nContinue by running the targeted tests.`;
       await page.getByTestId('chat-handoff-draft').fill(editedDraft);
       await page.getByTestId('chat-handoff-create').click();
