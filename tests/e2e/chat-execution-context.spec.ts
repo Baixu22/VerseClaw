@@ -14,7 +14,7 @@ async function invoke(page: Page, module: string, action: string, payload?: unkn
 
 test('execution tray creates a real worktree in two clicks and restores the original draft', async ({ launchElectronApp }, info) => {
   test.setTimeout(240000);
-  const scratch = join(process.cwd(), '.tmp'); await mkdir(scratch, { recursive: true });
+  const scratch = process.env.CLAWX_E2E_FIXTURE_ROOT ?? join(process.cwd(), '.tmp'); await mkdir(scratch, { recursive: true });
   const directory = await mkdtemp(join(scratch, 'execution-tray-'));
   const root = join(directory, 'project'); await mkdir(root);
   const git = (...args: string[]) => execFileSync('git', args, { cwd: root, windowsHide: true, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
@@ -33,6 +33,21 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     const initial = await invoke(page, 'workspaces', 'create', { rootPath: root, name: 'ClawX', agentId: 'main', activeSessionKey: 'agent:main:execution-tray', permissionMode: 'acceptEdits' });
     const original = initial.activeWorkspace as { id: string; activeSessionKey: string };
     await page.reload(); await publishGatewayStatus(app, { state: 'running', gatewayReady: true, port: 18789 });
+    await app.evaluate(({ ipcMain }) => {
+      const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: { module: string; action: string }) => Promise<unknown>> })._invokeHandlers;
+      const original = handlers.get('host:invoke')!;
+      const state = { release: null as (() => void) | null, calls: [] as unknown[] };
+      (globalThis as unknown as { __executionFixture: typeof state }).__executionFixture = state;
+      ipcMain.removeHandler('host:invoke');
+      ipcMain.handle('host:invoke', async (event, request) => {
+        if (request.module === 'git' && request.action === 'worktreeAdd') {
+          await new Promise<void>(resolve => { state.release = resolve; });
+          state.release = null;
+          const result = await original(event, request); state.calls.push(result); return result;
+        }
+        return original(event, request);
+      });
+    });
     await page.setViewportSize({ width: 1280, height: 800 });
     const input = page.getByTestId('chat-composer-input');
     await expect(page.getByTestId('composer-context-branch')).toHaveText('main');
@@ -45,6 +60,12 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await page.screenshot({ path: info.outputPath('dark-default-execution.png') });
     await create.click();
     await expect(menu).toHaveCount(0);
+    const progress = page.getByTestId('worktree-creation-progress');
+    await expect(progress).toHaveAttribute('data-stage', 'creating');
+    await expect(input).toBeHidden();
+    await expect(progress.getByRole('progressbar')).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath('worktree-creating-progress.png') });
+    await app.evaluate(() => (globalThis as unknown as { __executionFixture: { release: (() => void) | null } }).__executionFixture.release?.());
     await expect(page.getByTestId('session-worktree-trigger')).toHaveAttribute('data-git-kind', 'worktree');
     const active = (await invoke(page, 'workspaces', 'getActive')).activeWorkspace as { id: string; rootPath: string; activeSessionKey: string };
     expect(active.id).not.toBe(original.id); expect(active.activeSessionKey).not.toBe(original.activeSessionKey);
@@ -67,6 +88,19 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await page.getByTestId('composer-context-more').click(); await page.getByTestId('session-worktree-option-1').click();
     await expect(input).toHaveValue('Worktree draft');
     report.existingDraftRestored = true;
+    await page.getByTestId('composer-context-more').click(); await create.click();
+    await expect(progress).toHaveAttribute('data-stage', 'creating');
+    await page.getByTestId('worktree-creation-stay').click();
+    await expect(page.getByTestId('worktree-creation-stay')).toBeDisabled();
+    await page.screenshot({ path: info.outputPath('worktree-stay-progress.png') });
+    await app.evaluate(() => (globalThis as unknown as { __executionFixture: { release: (() => void) | null } }).__executionFixture.release?.());
+    await expect(progress).toHaveCount(0);
+    await expect(input).toHaveValue('Worktree draft');
+    await expect(page.getByTestId('worktree-creation-ready')).toBeVisible();
+    expect((await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(active.id);
+    expect(git('worktree', 'list', '--porcelain').match(/^worktree /gm)).toHaveLength(3);
+    report.createWithoutSwitching = true;
+    await page.getByTestId('worktree-creation-ready').getByRole('button', { name: 'Dismiss worktree notice' }).click();
     for (const theme of ['light', 'dark']) {
       await page.evaluate(value => document.documentElement.classList.toggle('dark', value === 'dark'), theme);
       for (const width of [1280, 600, 375]) {
@@ -99,5 +133,9 @@ test('execution tray creates a real worktree in two clicks and restores the orig
     await page.screenshot({ path: info.outputPath('running-switch-disabled.png') });
     report.runningGuard = true; report.errors = errors; expect(errors).toEqual([]);
     await writeFile(info.outputPath('execution-context.json'), JSON.stringify(report, null, 2));
-  } finally { await closeElectronApp(app); }
+  } finally {
+    const calls = await app.evaluate(() => (globalThis as unknown as { __executionFixture?: { calls: unknown[] } }).__executionFixture?.calls ?? []).catch(() => []);
+    await writeFile(info.outputPath('worktree-host-results.json'), JSON.stringify(calls, null, 2));
+    await closeElectronApp(app);
+  }
 });

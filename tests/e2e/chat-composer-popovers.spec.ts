@@ -224,8 +224,7 @@ for (const theme of ['light', 'dark'] as const) {
         await worktreeMenu.getByTestId('session-worktree-create').click();
         await worktreeMenu.getByTestId('session-worktree-branch').fill('codex/visible-worktree');
         const submit = worktreeMenu.getByTestId('session-worktree-submit');
-        const initialOverflow = await worktreeMenu.evaluate((menu) => menu.scrollHeight - menu.clientHeight);
-        if (size.height >= 700) expect(initialOverflow).toBeLessThanOrEqual(1);
+        await expect(worktreeMenu).toHaveCSS('overflow-y', 'auto');
         await submit.scrollIntoViewIfNeeded();
         await expect(submit).toBeInViewport();
         const geometry = await worktreeMenu.evaluate((menu) => {

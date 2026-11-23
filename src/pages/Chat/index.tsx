@@ -129,6 +129,7 @@ import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileDiff, projectRunProcesses, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
 import { useRunApprovals } from './use-run-approvals';
 import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
+import { WorktreeCreationProgress, type WorktreeCreationProgressState } from '@/components/chat/WorktreeCreationProgress';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -970,6 +971,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [controlScope]);
   const [composerDraft, setComposerDraft] = useState('');
   const [executionBusy, setExecutionBusy] = useState(false);
+  const [worktreeProgress, setWorktreeProgress] = useState<WorktreeCreationProgressState | null>(null);
   const composerDraftRevision = useRef(0);
   const draftEditedSessionsRef = useRef(new Set<string>());
   const [composerPaused, setComposerPaused] = useState(false);
@@ -3889,7 +3891,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           <SessionWorkspacePicker key={`${activeWorkspaceId}:${currentSessionKey}`} sessionKey={currentSessionKey}
             disabled={inputRunActive} onSelect={handleSwitchWorktreeWorkspace} onSelectProject={handleSwitchWorkspace}
             onPickFolder={handlePickWorkspaceFolder} onBeforeChange={persistCurrentWorkspaceSessionState}
-            onBusyChange={setExecutionBusy} refreshSignal={gitRevision} onChanged={handleGitChanged}>
+            onBusyChange={setExecutionBusy} onProgressChange={setWorktreeProgress} refreshSignal={gitRevision} onChanged={handleGitChanged}>
             {(!isEmpty || projectWorkspaceId) && (
               <div data-testid="chat-task-tray">
                 <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
@@ -3899,10 +3901,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             )}
           </SessionWorkspacePicker>
         )}
-        requestPending={pendingApprovals.length > 0 || composerInteractions.length > 0}
+        requestPending={pendingApprovals.length > 0 || composerInteractions.length > 0 || Boolean(worktreeProgress)}
         requestContent={(
-          <ComposerRequestDock key={currentSessionKey} approvals={pendingApprovals} interactions={composerInteractions}
+          pendingApprovals.length > 0 || composerInteractions.length > 0 ? <ComposerRequestDock key={currentSessionKey} approvals={pendingApprovals} interactions={composerInteractions}
             canSubmit={isGatewayRunning} onDecision={handleApprovalDecision} onSubmit={handleSubmitInteractionResponse} />
+            : worktreeProgress ? <WorktreeCreationProgress progress={worktreeProgress} hero={isEmpty} /> : null
         )}
         onSend={handleSendMessage}
         disabled={!isGatewayRunning || executionBusy}

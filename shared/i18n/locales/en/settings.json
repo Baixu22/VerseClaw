@@ -1041,7 +1041,23 @@
     "customizeWorktree": "Name / starting branch",
     "mainDirectory": "Main checkout",
     "branches": "Branch",
-    "notGit": "This folder is not a Git repository."
+    "notGit": "This folder is not a Git repository.",
+    "creation": {
+      "title": "Creating worktree",
+      "saving": "Save conversation",
+      "creating": "Create worktree",
+      "opening": "Open conversation",
+      "details": "More details",
+      "branch": "Branch",
+      "directory": "Directory",
+      "stay": "Stay in this conversation",
+      "staying": "Stay here after creation",
+      "return": "Return to conversation",
+      "open": "Open worktree",
+      "retry": "Retry creation",
+      "ready": "Worktree ready",
+      "dismissReady": "Dismiss worktree notice"
+    }
   },
   "embedding": {
     "title": "Project search embeddings",

@@ -1041,7 +1041,23 @@
     "customizeWorktree": "改名 / 起点",
     "mainDirectory": "本地主目录",
     "branches": "分支",
-    "notGit": "当前目录未初始化 Git。"
+    "notGit": "当前目录未初始化 Git。",
+    "creation": {
+      "title": "正在创建工作树",
+      "saving": "保存会话",
+      "creating": "创建工作树",
+      "opening": "打开会话",
+      "details": "更多详情",
+      "branch": "分支",
+      "directory": "目录",
+      "stay": "留在当前会话",
+      "staying": "创建后留在当前会话",
+      "return": "返回会话",
+      "open": "打开工作树",
+      "retry": "重试创建",
+      "ready": "工作树已就绪",
+      "dismissReady": "关闭工作树提示"
+    }
   },
   "embedding": {
     "title": "项目检索向量模型",

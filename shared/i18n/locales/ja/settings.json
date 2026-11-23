@@ -1041,7 +1041,23 @@
     "customizeWorktree": "名前 / 開始ブランチ",
     "mainDirectory": "メインディレクトリ",
     "branches": "ブランチ",
-    "notGit": "このフォルダーは Git リポジトリではありません。"
+    "notGit": "このフォルダーは Git リポジトリではありません。",
+    "creation": {
+      "title": "作業ツリーを作成中",
+      "saving": "会話を保存",
+      "creating": "作業ツリーを作成",
+      "opening": "会話を開く",
+      "details": "詳細",
+      "branch": "ブランチ",
+      "directory": "ディレクトリ",
+      "stay": "この会話に留まる",
+      "staying": "作成後もここに留まる",
+      "return": "会話に戻る",
+      "open": "作業ツリーを開く",
+      "retry": "作成を再試行",
+      "ready": "作業ツリーの準備完了",
+      "dismissReady": "通知を閉じる"
+    }
   },
   "embedding": {
     "title": "プロジェクト検索の埋め込みモデル",

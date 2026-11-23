@@ -1,6 +1,8 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GitOperationResult } from '@shared/types/git';
+import { useState } from 'react';
+import { WorktreeCreationProgress, type WorktreeCreationProgressState } from '@/components/chat/WorktreeCreationProgress';
 const mocks = vi.hoisted(() => ({
   status: vi.fn(), trees: vi.fn(), branches: vi.fn(), add: vi.fn(), checkout: vi.fn(), select: vi.fn(), before: vi.fn(),
   state: { activeWorkspace: { id: 'main', name: 'Demo', rootPath: 'D:/demo' }, profiles: [], switchWorkspace: vi.fn() },
@@ -30,6 +32,26 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 describe('composer execution settings', () => {
+  it('shows real creation stages and can retain the new tree without switching the conversation', async () => {
+    let finish!: (result: GitOperationResult) => void;
+    mocks.add.mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    function Harness() {
+      const [progress, setProgress] = useState<WorktreeCreationProgressState | null>(null);
+      return <><SessionWorkspacePicker sessionKey="chat-a" onSelect={mocks.select} onBeforeChange={mocks.before} onProgressChange={setProgress} />
+        {progress && <WorktreeCreationProgress progress={progress} />}</>;
+    }
+    render(<Harness />); await open();
+    await waitFor(() => expect(screen.getByTestId('session-worktree-submit')).toBeEnabled());
+    fireEvent.click(screen.getByTestId('session-worktree-submit'));
+    await waitFor(() => expect(screen.getByTestId('worktree-creation-progress')).toHaveAttribute('data-stage', 'creating'));
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    fireEvent.click(screen.getByTestId('worktree-creation-stay'));
+    expect(screen.getByTestId('worktree-creation-stay')).toBeDisabled();
+    await act(async () => { finish({ success: true, worktree: { path: 'D:/created', branch: 'codex/created' } }); });
+    expect(screen.queryByTestId('worktree-creation-progress')).toBeNull();
+    expect(screen.getByTestId('worktree-creation-ready')).toBeVisible();
+    expect(mocks.select).not.toHaveBeenCalled();
+  });
   it('creates with two clicks and no typed configuration, saving before Git and opening the returned path', async () => {
     const order: string[] = [];
     mocks.before.mockImplementation(async () => { order.push('save'); });

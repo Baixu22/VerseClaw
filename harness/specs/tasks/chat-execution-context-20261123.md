@@ -21,6 +21,7 @@ requiredProfiles:
   - comms
 touchedAreas:
   - src/components/chat/SessionWorkspacePicker.tsx
+  - src/components/chat/WorktreeCreationProgress.tsx
   - src/components/chat/WelcomeProjectPicker.tsx
   - src/pages/Chat/ComposerGitStrip.tsx
   - src/pages/Chat/index.tsx
@@ -48,6 +49,7 @@ expectedUserBehavior:
   - 已有目录和分支从同一浮层切换，当前草稿先保存，进入新目录时输入为空，切回时恢复原会话与草稿。
   - 创建中禁用重复请求与发送，运行中禁止目录和分支切换，晚到结果不跳转其他会话。
   - 已创建但打开失败时可以重试打开同一目录，失败原因原位显示。
+  - 新建时输入框原位展示真实保存、创建与打开阶段；可选择创建后留在当前会话，失败时重试或恢复原草稿。
   - 输入区22px圆角，托盘16px圆角，实色灰阶和轻描边，窄窗保持单行入口。
 acceptance:
   - Carbon真实查看参考图和候选截图并给出设计与复核，用量可回读。

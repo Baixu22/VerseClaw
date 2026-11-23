@@ -473,3 +473,29 @@
   .composer-context-branch > span { max-width: 88px; }
 }
 @media (max-width: 459px) { .composer-context-branch { display: none; } }
+
+.worktree-progress-title { display: flex; align-items: center; gap: 8px; margin: 0 12px -10px; padding: 8px 14px 18px; border-radius: 16px 16px 0 0; background: var(--color-chat-tray); color: var(--color-chat-secondary); font-size: 13px; }
+.worktree-progress-title svg { width: 16px; height: 16px; flex: none; }
+.worktree-progress-card { padding: 16px 18px; }
+.worktree-progress-card[data-failed='true'] { border-color: color-mix(in oklab, var(--color-chat-error) 35%, transparent); }
+.worktree-progress-stages { display: grid; gap: 8px; }
+.worktree-progress-stages li { display: flex; align-items: center; gap: 8px; min-height: 20px; font-size: 14px; line-height: 20px; color: var(--color-chat-foreground); }
+.worktree-progress-stages svg { width: 16px; height: 16px; flex: none; }
+.worktree-progress-stages li[data-complete='true'] { color: var(--color-chat-secondary); }
+.worktree-progress-stages li[data-pending='true'] { color: var(--color-chat-placeholder); }
+.worktree-progress-stages li[data-error='true'], .worktree-progress-error { color: var(--color-chat-error); }
+.worktree-progress-error { margin-top: 10px; font-size: 12px; overflow-wrap: anywhere; }
+.worktree-progress-details { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 12px; padding: 10px 12px; margin-top: 12px; border-radius: 12px; background: var(--color-chat-tray); font-family: var(--font-mono); font-size: 12px; }
+.worktree-progress-details dd { overflow-wrap: anywhere; }
+.worktree-progress-footer { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; font-size: 12px; color: var(--color-chat-secondary); }
+.worktree-progress-footer button { display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; padding: 5px 10px; }
+.worktree-progress-footer svg { width: 14px; height: 14px; }
+.worktree-progress-footer button:hover:not(:disabled) { background: var(--color-chat-tray-hover); }
+.worktree-progress-footer button:focus-visible { outline: 1px solid var(--color-chat-composer-focus); outline-offset: 1px; }
+.worktree-progress-footer button:disabled { opacity: 0.5; }
+.worktree-progress-footer .worktree-progress-primary { background: var(--color-chat-primary); color: var(--color-chat-primary-text); }
+.composer-context-ready { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 12px; color: var(--color-chat-secondary); }
+.composer-context-ready svg { width: 14px; height: 14px; }
+.composer-context-ready button { padding: 3px 6px; border-radius: 6px; color: var(--color-chat-foreground); }
+.composer-context-ready button:first-of-type { margin-left: auto; }
+.composer-context-ready button:hover { background: var(--color-chat-tray-hover); }

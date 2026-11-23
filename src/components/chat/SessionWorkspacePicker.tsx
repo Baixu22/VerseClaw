@@ -11,13 +11,14 @@ import { useDismissOnOutside, usePopover } from '@/components/settings/primitive
 import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { WelcomeProjectPicker } from './WelcomeProjectPicker';
+import type { WorktreeCreationProgressState } from './WorktreeCreationProgress';
 
 type Snapshot = { status: GitRepositoryStatus; trees: GitWorktree[]; branches: Branch[] };
 const newBranchName = () => `codex/task-${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 4)}`;
 
 /** The composer owns one execution picker; Git effects remain in the Host API. */
 export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, refreshSignal = 0,
-  onSelectProject, onPickFolder, onBeforeChange, onBusyChange, sessionKey, children,
+  onSelectProject, onPickFolder, onBeforeChange, onBusyChange, onProgressChange, sessionKey, children,
 }: {
   disabled?: boolean;
   onSelect: (tree: GitWorktree) => Promise<void>;
@@ -27,6 +28,7 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   onPickFolder?: () => void | Promise<unknown>;
   onBeforeChange?: () => Promise<void>;
   onBusyChange?: (busy: boolean) => void;
+  onProgressChange?: (progress: WorktreeCreationProgressState | null) => void;
   sessionKey: string;
   children?: ReactNode;
 }) {
@@ -48,6 +50,10 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
   const [advanced, setAdvanced] = useState(false);
   const [branchesOpen, setBranchesOpen] = useState(false);
   const [created, setCreated] = useState<GitWorktree | null>(null);
+  const createdRef = useRef<GitWorktree | null>(null);
+  const attemptRef = useRef<{ branch: string; startPoint: string } | null>(null);
+  const stayRef = useRef(false);
+  const stageRef = useRef<WorktreeCreationProgressState['stage']>('saving');
   const branchInput = useRef<HTMLInputElement>(null);
   const { open, setOpen, triggerRef, layerRef, style } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6, fitViewport: true });
   const overlay = useOverlayPortalContainer();
@@ -88,8 +94,8 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
     const off = hostEvents.onChatRuntimeEvent(event => {
       if (event.sessionKey === sessionKey && ['run.ended', 'patch.completed'].includes(event.type)) void refresh();
     });
-    return () => { alive.current = false; requestId.current++; off(); onBusyChange?.(false); };
-  }, [refresh, refreshSignal, sessionKey, onBusyChange]);
+    return () => { alive.current = false; requestId.current++; off(); onBusyChange?.(false); onProgressChange?.(null); };
+  }, [refresh, refreshSignal, sessionKey, onBusyChange, onProgressChange]);
   useDismissOnOutside({ open, onDismiss: () => setOpen(false), onEscape: () => {
     setOpen(false); triggerRef.current?.focus();
   }, refs: [triggerRef, layerRef] });
@@ -112,11 +118,16 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
     operation.current = owner; setBusy(kind); setError(null); onBusyChange?.(true);
     try {
       await onBeforeChange?.();
-      if (!isCurrent(owner) || disabledRef.current) return;
+      if (!isCurrent(owner) || disabledRef.current) {
+        if (isCurrent(owner) && kind === 'create') dismissProgress();
+        return;
+      }
       await action(owner);
     } catch (cause) {
       if (isCurrent(owner)) {
-        setError(cause instanceof Error ? cause.message : t('operationFailed'));
+        const message = cause instanceof Error ? cause.message : t('operationFailed');
+        setError(message);
+        if (kind === 'create') publishProgress(stageRef.current, message);
         if (kind === 'create' && !created) {
           setAdvanced(true);
           requestAnimationFrame(() => branchInput.current?.focus());
@@ -128,18 +139,41 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
       }
     }
   };
-  const create = () => void run('create', async owner => {
-    let tree = created;
+  const dismissProgress = () => {
+    onProgressChange?.(null);
+    requestAnimationFrame(() => document.querySelector<HTMLTextAreaElement>('[data-testid="chat-composer-input"]')?.focus());
+  };
+  const publishProgress = (stage: WorktreeCreationProgressState['stage'], failure?: string) => {
+    stageRef.current = stage;
+    onProgressChange?.({ stage, branch: attemptRef.current?.branch ?? branch, path: createdRef.current?.path, error: failure, stay: stayRef.current,
+      onStay: () => { stayRef.current = true; publishProgress(stageRef.current); }, onRetry: create, onDismiss: dismissProgress });
+  };
+  const create = () => {
+    if (operation.current || disabled || loading || !current) return;
+    attemptRef.current ??= { branch: branch.trim(), startPoint: base.trim() || current.status.branch || 'HEAD' };
+    stayRef.current = false;
+    publishProgress('saving');
+    if (onProgressChange) setOpen(false);
+    void run('create', async owner => {
+    let tree = createdRef.current;
     if (!tree) {
-      const result = await hostApi.git.worktreeAdd({ branch: branch.trim(), startPoint: base.trim() || current!.status.branch || 'HEAD', checkoutNewBranch: true });
+      publishProgress('creating');
+      const result = await hostApi.git.worktreeAdd({ ...attemptRef.current!, checkoutNewBranch: true });
       if (!result.success || !result.worktree) throw new Error(result.reason || result.stderr || t('operationFailed'));
       tree = result.worktree;
       if (!isCurrent(owner)) return;
+      createdRef.current = tree;
       setCreated(tree);
     }
+    if (stayRef.current) { dismissProgress(); return; }
+    publishProgress('opening');
     await onSelect(tree);
-    if (isCurrent(owner)) { setOpen(false); setCreated(null); setBranch(newBranchName()); setAdvanced(false); }
-  });
+    if (isCurrent(owner)) {
+      dismissProgress(); setOpen(false); setCreated(null); createdRef.current = null; attemptRef.current = null;
+      setBranch(newBranchName()); setAdvanced(false);
+    }
+    });
+  };
   const switchTree = (tree: GitWorktree) => void run('switch', async owner => {
     await onSelect(tree);
     if (isCurrent(owner)) setOpen(false);
@@ -152,6 +186,11 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
 
   return <div className="composer-execution-tray" data-testid="composer-execution-tray">
     {children}
+    {created && !busy && <div className="composer-context-ready" data-testid="worktree-creation-ready">
+      <Check aria-hidden="true" /><span>{t('creation.ready')}</span>
+      <button type="button" disabled={disabled} onClick={create}>{t('openCreated')}</button>
+      <button type="button" onClick={() => { setCreated(null); createdRef.current = null; attemptRef.current = null; setBranch(newBranchName()); }} aria-label={t('creation.dismissReady')}>×</button>
+    </div>}
     <div className="composer-context-row" data-testid="composer-context-row">
       <WelcomeProjectPicker disabled={disabled || Boolean(busy)} onSelect={onSelectProject} onPickFolder={onPickFolder} />
       {workspace && <>
@@ -189,8 +228,8 @@ export function SessionWorkspacePicker({ disabled = false, onSelect, onChanged, 
           onClick={() => setAdvanced(!advanced)} disabled={Boolean(busy)}>{t('customizeWorktree')}<ChevronDown className={cn(advanced && 'rotate-180')} /></button>
         {advanced && <form className="composer-context-form" onSubmit={event => { event.preventDefault(); if (canMutate && branch.trim()) create(); }}
           onKeyDown={event => { if (event.key === 'Enter' && (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229)) event.preventDefault(); }}>
-          <label>{t('branchName')}<input ref={branchInput} value={branch} onChange={event => { setBranch(event.target.value); setCreated(null); }} disabled={Boolean(busy)} data-testid="session-worktree-branch" /></label>
-          <label>{t('baseBranch')}<select value={base || current.status.branch || 'HEAD'} onChange={event => setBase(event.target.value)} disabled={Boolean(busy)} data-testid="session-worktree-base">
+          <label>{t('branchName')}<input ref={branchInput} value={branch} onChange={event => { setBranch(event.target.value); setCreated(null); createdRef.current = null; attemptRef.current = null; }} disabled={Boolean(busy)} data-testid="session-worktree-branch" /></label>
+          <label>{t('baseBranch')}<select value={base || current.status.branch || 'HEAD'} onChange={event => { setBase(event.target.value); attemptRef.current = null; }} disabled={Boolean(busy)} data-testid="session-worktree-base">
             <option value="HEAD">HEAD</option>{current.branches.map(item => <option key={item.name} value={item.name}>{item.name}</option>)}
           </select></label>
           <p className="composer-context-hint">{t('committedOnly')}</p>
