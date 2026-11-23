@@ -27,6 +27,62 @@
     {
       "path": "tests/unit/gateway-startup-orchestrator.test.ts",
       "reason": "P1 #98 regression coverage changed this file after the evidence run; historical snapshot is annotated instead of rewritten."
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "2a82bb08d234d5ea9d8e8c165545ab980f6fefb9",
+      "originalSha256": "5736231625a97323811d31b82393a83dca14f8df30e95ae47fe8b30f1aa28769",
+      "verifiedCurrentSha256": "1db9c63aae8aacc528f065e77aeeb9eed15d26e0f0354c115adfc65fa73a4334",
+      "latestChangeCommit": "e09f0511d094cf04843735dbffec0072c7e9fe9c"
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "2a82bb08d234d5ea9d8e8c165545ab980f6fefb9",
+      "originalSha256": "97298d0c986b86ba8ce4e2981c739588ce22a196b9de76537c4380549fb6c0a8",
+      "verifiedCurrentSha256": "7816d9174f17bc7c295102c83551eebb98de1fa1c7d5db02b931a82c0d16dc12",
+      "latestChangeCommit": "e09f0511d094cf04843735dbffec0072c7e9fe9c"
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.md",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "2a82bb08d234d5ea9d8e8c165545ab980f6fefb9",
+      "originalSha256": "31069e371b447aa35ed4e987678cc3ef759f32217d06ff0a0080dbe2e1fb43cc",
+      "verifiedCurrentSha256": "e2fded4f3aa1bba41b0701b233b1aaa91e2b5a095c64cee978b1b5a9287c9853",
+      "latestChangeCommit": "e09f0511d094cf04843735dbffec0072c7e9fe9c"
+    },
+    {
+      "path": "artifacts/agent-dev-quality/report.json",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "2a82bb08d234d5ea9d8e8c165545ab980f6fefb9",
+      "originalSha256": "6f1fed486e0e2412b052191ad1d1fe5d15cc5d2533ba963d7d1a174ab1e63a73",
+      "verifiedCurrentSha256": "217dbd40535c63185de9a77a481ec4e13d751f3b7a92e5ab8fbc28979c497d5a",
+      "latestChangeCommit": "e09f0511d094cf04843735dbffec0072c7e9fe9c"
+    },
+    {
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "2a82bb08d234d5ea9d8e8c165545ab980f6fefb9",
+      "originalSha256": "a167506399be35283fc68a836f69d2ada6c9afbaaa89b73fb6cc7ae9e537efba",
+      "verifiedCurrentSha256": "a2f695b21750413358747edd30ca65da0bc3e08c98866d6589ff50284aad1a72",
+      "latestChangeCommit": "e09f0511d094cf04843735dbffec0072c7e9fe9c"
+    },
+    {
+      "path": "electron/gateway/manager.ts",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "2a82bb08d234d5ea9d8e8c165545ab980f6fefb9",
+      "originalSha256": "26f466b00c0c1554d0bcb1ef4d458531e794acefb3bcab3f8d430a8e02e75e07",
+      "verifiedCurrentSha256": "b18ff654165bc64154963ccdc04ad196f51ef4e3fc40feef56fdfbf61b5915f0",
+      "latestChangeCommit": "e8dfb7e1af0707f5dbf1602baf2d794a6265145a"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 2a82bb08d234d5ea9d8e8c165545ab980f6fefb9; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "2a82bb08d234d5ea9d8e8c165545ab980f6fefb9",
+      "originalSha256": "1a2de40c07b4e16b5a600c4527bf9317265317b0c992ba6b8ad97eb6e776246a",
+      "verifiedCurrentSha256": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+      "latestChangeCommit": "3a264409fb31dd2bd2e772ac7f837c241c28d3b0"
     }
   ]
 }
