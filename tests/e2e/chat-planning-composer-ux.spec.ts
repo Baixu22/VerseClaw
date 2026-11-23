@@ -193,6 +193,7 @@ test('conversation planning, settings and decisions share a compact input surfac
     await page.keyboard.press('Enter');
     await expect(page.getByTestId('session-task-steps')).toContainText(plan[1].step);
     await expect(page.getByTestId('session-task-id')).toHaveCount(0);
+    await input.click();
     await capture('running-expanded-dark-960');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect(page.locator('.session-task-spinner')).toHaveCSS('animation-name', 'none');
