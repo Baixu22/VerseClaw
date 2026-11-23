@@ -534,6 +534,10 @@ function translate(key: string, vars?: Record<string, unknown>): string {
       return 'Inspect';
     case 'composer.knowledgeRoute.dismiss':
       return 'Dismiss';
+    case 'composer.feedback.suggestedKnowledge':
+      return `Relevant sources: ${String(vars?.count ?? 0)}`;
+    case 'composer.feedback.connecting':
+      return 'Connecting… Your draft is kept.';
     case 'composer.knowledgePreflight.title':
       return 'Knowledge Preflight';
     case 'composer.knowledgePreflight.summary':
@@ -988,7 +992,7 @@ describe('ChatInput draft persistence', () => {
     );
 
     openKnowledgeMenuFromActions();
-    fireEvent.click(screen.getByTestId('chat-knowledge-mode-auto-read'));
+    fireEvent.change(screen.getByTestId('chat-knowledge-interaction'), { target: { value: 'auto-read' } });
 
     expect(onKnowledgeModeChange).toHaveBeenCalledWith('auto-read');
   });
@@ -1037,9 +1041,9 @@ describe('ChatInput draft persistence', () => {
     });
 
     const suggestion = await screen.findByTestId('chat-knowledge-suggestion', {}, { timeout: 2000 });
-    expect(suggestion).toHaveTextContent('Knowledge Preflight');
-    expect(suggestion).toHaveTextContent('0 related docs, 1 prior pitfalls, 0 rules may apply.');
+    expect(suggestion).toHaveTextContent('Relevant sources: 1');
     fireEvent.click(within(suggestion).getByTestId('chat-knowledge-suggestion-open'));
+    expect(screen.getByTestId('chat-knowledge-preflight-inspect')).toHaveTextContent('0 related docs, 1 prior pitfalls, 0 rules may apply.');
     expect(screen.getByTestId('chat-knowledge-preflight-group-pitfalls')).toHaveTextContent('Prior pitfalls');
     expect(screen.getByTestId('chat-knowledge-preflight-inspect')).toHaveTextContent('Why: project knowledge intent detected');
 
@@ -1107,7 +1111,7 @@ describe('ChatInput draft persistence', () => {
       target: { value: 'Use previous project knowledge about renderer boundaries before coding' },
     });
     const suggestion = await screen.findByTestId('chat-knowledge-suggestion', {}, { timeout: 2000 });
-    expect(suggestion).toHaveTextContent('1 rules may apply');
+    expect(suggestion).toHaveTextContent('Relevant sources: 1');
     fireEvent.click(within(suggestion).getByTestId('chat-knowledge-suggestion-dismiss'));
     expect(screen.queryByTestId('chat-knowledge-suggestion')).not.toBeInTheDocument();
 
@@ -2541,6 +2545,8 @@ describe('ChatInput agent targeting', () => {
 
     renderChatInput(onSend);
 
+    openComposerActionMenu();
+    fireEvent.click(screen.getByTestId('chat-composer-action-more'));
     fireEvent.click(screen.getByLabelText('Choose agent'));
     fireEvent.click(screen.getByText('Research'));
 
@@ -2628,7 +2634,8 @@ describe('ChatInput agent targeting', () => {
     renderChatInput();
 
     expect(screen.getByTestId('chat-composer-input')).toBeDisabled();
-    expect(screen.getByText(/gateway starting \| port: 18789/i)).toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-feedback')).toHaveTextContent('Connecting');
+    expect(screen.queryByTestId('chat-composer-connection-settings')).toBeNull();
   });
 
   it('routes permission mode changes through the direct permission menu', async () => {
@@ -2708,7 +2715,7 @@ describe('ChatInput agent targeting', () => {
       onSwitchAgent,
     });
 
-    expect(screen.getByTestId('chat-composer-agent')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-composer-agent')).toBeNull();
     fireEvent.click(screen.getByTestId('chat-composer-permission-mode'));
     fireEvent.click(await screen.findByTestId('chat-composer-switch-agent-research'));
 
@@ -2767,7 +2774,7 @@ describe('ChatInput agent targeting', () => {
 
     const textbox = screen.getByRole('textbox') as HTMLTextAreaElement;
 
-    expect(screen.getByTestId('chat-composer-agent')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-composer-agent')).toBeNull();
     expect(screen.queryByTestId('chat-composer-skill')).not.toBeInTheDocument();
     expect(textbox).toHaveAttribute('placeholder', 'Message...  / for commands and skills');
 
@@ -3316,6 +3323,7 @@ describe('RAG-11 composer cancellation', () => {
     renderChatInput(vi.fn(), { knowledgeScope: 'wiki', knowledgeMode: 'suggest', draftValue: 'Project deployment knowledge for this source' });
     fireEvent.click(await screen.findByTestId('chat-knowledge-suggestion-open'));
     fireEvent.click(screen.getByTestId('chat-knowledge-inspect-source'));
+    fireEvent.click(screen.getByTestId('chat-knowledge-scope-button'));
     fireEvent.change(screen.getByTestId('chat-knowledge-profile'), { target: { value: 'quality' } });
     await act(async () => finish({ success: true, content: 'Late body' }));
     expect(screen.queryByTestId('chat-knowledge-source-inspector')).not.toBeInTheDocument();
@@ -3391,5 +3399,45 @@ describe('RAG-11 composer cancellation', () => {
     fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter' });
     await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
     expect(send.mock.calls[0][1].inputMode).toBe('queue');
+  });
+});
+
+describe('compact composer context', () => {
+  beforeEach(() => { setProviderReady(); hostApiFetchMock.mockResolvedValue({ success: true }); });
+
+  it('keeps retrieval controls inside one menu and identifies an explicitly selected higher-cost profile', () => {
+    const onScope = vi.fn(), onMode = vi.fn();
+    renderChatInput(vi.fn(), { knowledgeScope: 'wiki', knowledgeMode: 'manual', onKnowledgeScopeChange: onScope, onKnowledgeModeChange: onMode });
+    expect(screen.queryByTestId('chat-knowledge-interaction')).toBeNull();
+    expect(screen.queryByTestId('chat-knowledge-profile')).toBeNull();
+    expect(screen.getByTestId('chat-knowledge-scope-button')).toHaveAttribute('data-profile', 'local');
+    expect(screen.queryByTestId('chat-knowledge-paid-profile')).toBeNull();
+    fireEvent.click(screen.getByTestId('chat-knowledge-scope-button'));
+    expect(screen.getByTestId('chat-knowledge-interaction')).toHaveValue('manual');
+    expect(screen.getByTestId('chat-knowledge-profile')).toHaveValue('local');
+    fireEvent.change(screen.getByTestId('chat-knowledge-profile'), { target: { value: 'quality' } });
+    expect(screen.getByTestId('chat-knowledge-scope-button')).toHaveAttribute('data-profile', 'quality');
+    expect(screen.getByTestId('chat-knowledge-paid-profile')).toBeVisible();
+    expect(onScope).not.toHaveBeenCalled(); expect(onMode).not.toHaveBeenCalled();
+  });
+
+  it('keeps normal checkpoint records quiet and reachable from More', () => {
+    renderChatInput(vi.fn(), { longTaskControlStatus: LOOP_SESSION_STATUS });
+    expect(screen.queryByTestId('chat-composer-feedback')).toBeNull();
+    openComposerActionMenu(); fireEvent.click(screen.getByTestId('chat-composer-action-more'));
+    fireEvent.click(screen.getByTestId('chat-long-task-details').querySelector('summary')!);
+    expect(screen.getByTestId('chat-long-task-checkpoint')).toBeVisible();
+  });
+
+  it('shows nonzero queue and warnings in the input and preserves the drain action', () => {
+    const onDrain = vi.fn(async () => undefined);
+    renderChatInput(vi.fn(), { longTaskControlStatus: { ...LOOP_SESSION_STATUS, queueCount: 2, warnings: ['Verify the retained result'] }, onDrainQueuedFollowup: onDrain });
+    const shell = screen.getByTestId('chat-composer-shell');
+    expect(within(shell).getByTestId('chat-long-task-queue-count')).toBeVisible();
+    const warning = within(shell).getByTestId('chat-long-task-warnings');
+    fireEvent.click(warning.querySelector('summary')!);
+    expect(within(warning).getByText('Verify the retained result')).toBeVisible();
+    fireEvent.click(screen.getByTestId('chat-long-task-drain'));
+    expect(onDrain).toHaveBeenCalledTimes(1);
   });
 });

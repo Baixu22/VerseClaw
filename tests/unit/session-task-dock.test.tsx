@@ -192,30 +192,29 @@ describe("task handles", () => {
     expect(shortTaskId("TF-0042")).toBe("TF-0042");
     expect(shortTaskId("a-very-long-custom-task-id")).toBe("a-very-lon…");
   });
-  it("copies the full task ID from the chip and the menu", async () => {
+  it("copies the full task ID from its menu without showing IDs in the task strip", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     mocks.read.mockResolvedValue(result(uuid));
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
     await screen.findByTestId('session-task-panel');
     fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
-    const chip = await screen.findByTestId("session-task-id");
-    expect(chip).toHaveTextContent(`#${uuid.slice(0, 8)}`);
-    expect(chip).toHaveAttribute("title", expect.stringContaining(uuid));
-    fireEvent.click(chip);
+    expect(screen.queryByTestId('session-task-id')).toBeNull();
+    openMenu();
+    const copy = screen.getByTestId('session-task-menu-copy');
+    expect(copy).toHaveTextContent(`#${uuid.slice(0, 8)}`);
+    expect(copy).toHaveAttribute('title', uuid);
+    fireEvent.click(copy);
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(uuid));
     await waitFor(() => expect(mocks.toastSuccess).toHaveBeenCalledWith(taskLedgerEn.conversation.idCopied.replace('{{id}}', shortTaskId(uuid))));
-    openMenu();
-    fireEvent.click(screen.getByTestId("session-task-menu-copy"));
-    await waitFor(() => expect(writeText).toHaveBeenCalledTimes(2));
   });
   it("reports a copy failure instead of claiming success", async () => {
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined });
     mocks.read.mockResolvedValue(result(uuid));
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
     await screen.findByTestId('session-task-panel');
-    fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
-    fireEvent.click(await screen.findByTestId("session-task-id"));
+    openMenu();
+    fireEvent.click(screen.getByTestId('session-task-menu-copy'));
     expect(mocks.toastError).toHaveBeenCalledWith(taskLedgerEn.conversation.copyFailed);
     expect(mocks.toastSuccess).not.toHaveBeenCalled();
   });
@@ -281,11 +280,12 @@ describe("dock lifetime", () => {
     rerender(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan(["completed", "in_progress"])} runActive={false} />);
     expect(screen.queryByTestId("session-task-panel")).toBeNull();
   });
-  it("lets a finished plan leave with its run; the transcript keeps the record", async () => {
+  it("keeps a finished plan active until its run settles, then leaves the transcript record", async () => {
     const { rerender } = render(
       <SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan(["completed", "completed"])} runActive />,
     );
-    expect(await screen.findByTestId("session-task-dock")).toHaveAttribute("data-state", "done");
+    expect(await screen.findByTestId("session-task-dock")).toHaveAttribute("data-state", "doing");
+    expect(screen.getByTestId("session-task-run-finished")).toHaveTextContent(taskLedgerEn.conversation.runStepsComplete);
     expect(screen.queryByTestId("session-task-current")).toBeNull();
     rerender(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan(["completed", "completed"])} runActive={false} />);
     expect(screen.queryByTestId("session-task-dock")).toBeNull();
@@ -301,5 +301,56 @@ describe("dock lifetime", () => {
     expect(screen.getByTestId('session-task-menu-copy')).toBeInTheDocument();
     expect(screen.queryByTestId("session-task-current")).toBeNull();
     expect(screen.queryByTestId("session-task-details")).toBeNull();
+  });
+});
+
+describe('live run and durable task scales', () => {
+  it('shows current run steps under the durable objective and restores durable steps after the run', async () => {
+    const root = result('durable-goal');
+    const child = task('durable-child');
+    mocks.read.mockResolvedValue({ ...root, children: [child] });
+    const plan: RunPlanSurface = { id: 'live-plan', todos: [
+      { id: 'read', label: 'Read current files', status: 'completed' },
+      { id: 'verify', label: 'Verify the live patch', status: 'in_progress' },
+    ] };
+    const { rerender } = render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan} runActive />);
+    await waitFor(() => expect(screen.getByTestId('session-task-title')).toHaveTextContent(root.task.contract.objective));
+    expect(screen.getByTestId('session-task-current')).toHaveTextContent('Verify the live patch');
+    fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
+    expect(screen.getByTestId('session-task-step-label')).toHaveTextContent(taskLedgerEn.conversation.runSteps);
+    expect(screen.getByTestId('session-task-steps')).toHaveTextContent('Verify the live patch');
+    const finishedPlan = { ...plan, todos: plan.todos.map(todo => ({ ...todo, status: 'completed' as const })) };
+    rerender(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={finishedPlan} runActive />);
+    expect(screen.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'doing');
+    expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.states.doing);
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
+    rerender(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={finishedPlan} runActive={false} />);
+    expect(screen.getByTestId('session-task-steps')).toHaveTextContent(child.contract.objective);
+    expect(screen.queryByText('Verify the live patch')).toBeNull();
+  });
+
+  it('folds an accepted task once and permits opening the receipt again', async () => {
+    mocks.read.mockResolvedValue(result('owner-task'));
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
+    await screen.findByTestId('session-task-title');
+    fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
+    const accepted = result('owner-task'); accepted.task.contract.state = 'done';
+    mocks.read.mockResolvedValue(accepted);
+    fireEvent(window, new Event('focus'));
+    await waitFor(() => expect(screen.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'done'));
+    expect(screen.queryByTestId('session-task-details')).toBeNull();
+    fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
+    expect(screen.getByTestId('session-task-details')).toBeInTheDocument();
+  });
+
+  it('reveals a stale status and retry action even when its healthy display was hidden', async () => {
+    mocks.read.mockResolvedValue(result('owner-task'));
+    render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation />);
+    await screen.findByTestId('session-task-title');
+    openMenu(); fireEvent.click(screen.getByTestId('session-task-close'));
+    mocks.read.mockRejectedValue(new Error('owner read unavailable'));
+    fireEvent(window, new Event('focus'));
+    expect(await screen.findByTestId('session-task-retry')).toBeVisible();
+    expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.stale);
   });
 });

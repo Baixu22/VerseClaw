@@ -126,6 +126,10 @@ function SessionTaskScopeChip({
         <SheetTrigger asChild>{toggle}</SheetTrigger>
         <SheetContent side="bottom" aria-describedby={undefined} data-testid="session-task-drawer">
           <SheetTitle>{title}</SheetTitle>
+          <div className="my-2 flex items-center gap-3 text-xs">
+            <button type="button" disabled={loading} onClick={onRefresh} aria-label={t('summary.refresh')} className="rounded hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">{t('summary.refresh')}</button>
+            <Link to={ledgerPath} className="rounded hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">{t('summary.open')}</Link>
+          </div>
           {list}
         </SheetContent>
       </Sheet> : toggle}
@@ -135,7 +139,7 @@ function SessionTaskScopeChip({
       {/* Secondary actions stay reachable for pointer and keyboard but only
         * claim attention when the scope needs it. */}
       <span className={cn('inline-flex items-center transition-opacity duration-150',
-        attention ? 'opacity-100' : 'opacity-0 group-hover/task-scope:opacity-100 group-focus-within/task-scope:opacity-100')}>
+        attention ? 'opacity-100' : 'opacity-0 group-hover/task-scope:opacity-100 group-focus-within/task-scope:opacity-100')} aria-hidden={expanded || undefined} inert={expanded} style={expanded ? { visibility: 'hidden' } : undefined}>
         <button type="button" aria-label={t('summary.refresh')} title={t('summary.refresh')} onClick={onRefresh} disabled={loading}
           className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 dark:hover:bg-white/10">
           <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} aria-hidden="true" />
@@ -251,6 +255,11 @@ export function TaskLedgerSummaryPanel({
     const statusText = loading && !snapshot ? t('summary.loading')
       : status === 'unavailable' ? unavailableText : t(`summary.scope.${status}`);
     const scopeTitle = t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks');
+    if (hideWhenEmpty && status === 'empty' && !loading) {
+      return <section data-testid="session-task-container" data-state="empty" aria-label={scopeTitle} className="sr-only">
+        <span role="status">{statusText}</span>
+      </section>;
+    }
     /* Only states that ask something of the user are spelled out on the chip;
      * a linked or still-empty scope reads from its count alone. */
     const attention = !(loading && !snapshot) && (status === 'unavailable' || status === 'stale');

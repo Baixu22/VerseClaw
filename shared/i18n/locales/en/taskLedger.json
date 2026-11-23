@@ -206,7 +206,11 @@
     "openStep": "Open \"{{title}}\" in Task Ledger",
     "showSteps": "Show steps",
     "hideSteps": "Hide steps",
-    "updated": "Updated {{time}}"
+    "updated": "Updated {{time}}",
+    "runSteps": "This run’s steps",
+    "runStepsProgress": "This run: {{completed}} of {{total}} steps",
+    "runStepsComplete": "Run steps finished",
+    "viewBlockers": "View blockers"
   },
   "trace": {
     "open": "Task report",

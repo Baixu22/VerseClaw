@@ -310,8 +310,12 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page.getByTestId('chat-long-task-queue-count')).toBeVisible({ timeout: 30_000 });
+      await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-more').click();
+      await page.getByTestId('chat-long-task-details').locator('summary').click();
       await expect(page.getByTestId('chat-long-task-checkpoint')).toBeVisible();
       await expect(page.getByTestId('chat-long-task-intervention')).toBeVisible();
+      await page.keyboard.press('Escape');
       await expect(page.getByTestId('chat-long-task-warnings')).toBeVisible();
       // Long-task control stays in Chat; recovery recommendations do not. The
       // recovery rail moved to Settings > Session & Recovery.

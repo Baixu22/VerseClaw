@@ -2320,6 +2320,14 @@
       "bytes": "候选正文 {{bytes}} 字节",
       "fallback": "正在使用来源检索回退",
       "partial": "检索结果部分可用"
+    },
+    "feedback": {
+      "history": "运行记录",
+      "disconnected": "连接不可用，草稿已保留",
+      "connectionSettings": "打开设置",
+      "interventionFailed": "上次调整未成功",
+      "suggestedKnowledge": "找到 {{count}} 条相关知识",
+      "connecting": "正在连接，草稿已保留"
     }
   },
   "historyBuckets": {

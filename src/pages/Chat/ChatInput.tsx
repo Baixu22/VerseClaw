@@ -63,6 +63,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
 import { readKnowledgeResearch } from '@/lib/knowledge-research';
 import { KnowledgeResearchProgress } from './KnowledgeResearchProgress';
+import { LongTaskControlDetails } from './LongTaskControlDetails';
 import type { ResearchResultV1 } from '@shared/knowledge/research';
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import { boundedKnowledgeRead, knowledgeRequestKey } from '@/lib/knowledge-interaction';
@@ -163,6 +164,8 @@ interface ChatInputProps {
   hero?: boolean;
   requestContent?: ReactNode;
   requestPending?: boolean;
+  /** Repository context and live task progress share the composer width. */
+  contextContent?: ReactNode;
   draftValue?: string;
   onDraftChange?: (value: string) => void;
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
@@ -348,7 +351,6 @@ const PERMISSION_MODE_ICONS: Record<WorkspacePermissionMode, PermissionModeIcon>
   fullAccess: CodexShieldAlert as unknown as PermissionModeIcon,
 };
 const KNOWLEDGE_SCOPES: WorkspaceKnowledgeScope[] = ['none', 'memory', 'wiki', 'all'];
-const KNOWLEDGE_MODES: KnowledgeInvocationMode[] = ['manual', 'suggest', 'auto-read'];
 
 const SLASH_COMMANDS = [
   { id: 'wiki', group: 'knowledge', kind: 'wikiSearch', aliases: ['knowledge', 'kb'] },
@@ -1008,6 +1010,7 @@ export function ChatInput({
   hero = false,
   requestContent,
   requestPending,
+  contextContent,
   draftValue,
   onDraftChange,
   workspace,
@@ -1046,7 +1049,6 @@ export function ChatInput({
   const [actionMenuOpen, setActionMenuOpen] = useState(false);
   const [morphOpen, setMorphOpen] = useState(false);
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [deliveryMenuOpen, setDeliveryMenuOpen] = useState(false);
   const [executionSettingsSection, setExecutionSettingsSection] = useState<'effort' | null>(null);
@@ -1130,7 +1132,6 @@ export function ChatInput({
   const composerTransitionTimerRef = useRef<number | null>(null);
   const actionMenuRef = useRef<HTMLDivElement>(null);
   const workspaceMenuRef = useRef<HTMLDivElement>(null);
-  const pickerRef = useRef<HTMLDivElement>(null);
   const modelPickerRef = useRef<HTMLDivElement>(null);
   const deliveryMenuRef = useRef<HTMLDivElement>(null);
   const knowledgePickerRef = useRef<HTMLDivElement>(null);
@@ -1166,6 +1167,14 @@ export function ChatInput({
     setKnowledgeSearchError(null);
     setInspectedKnowledge(null);
   }, []);
+  const handleCancelKnowledgeRead = useCallback(() => {
+    if (knowledgeResearch?.phase !== 'finished' && knowledgeSearching && knowledgeProfile === 'research') {
+      knowledgeReadController.current?.abort();
+    } else {
+      cancelKnowledgeRead();
+    }
+    setKnowledgeReadReason('cancelled');
+  }, [cancelKnowledgeRead, knowledgeProfile, knowledgeResearch?.phase, knowledgeSearching]);
   useEffect(() => {
     cancelKnowledgeRead();
     setKnowledgeReadReason('');
@@ -1192,10 +1201,6 @@ export function ChatInput({
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
-  );
-  const currentAgentName = useMemo(
-    () => currentAgent?.name ?? currentAgentId,
-    [currentAgent, currentAgentId],
   );
   useEffect(() => {
     setExecutionEffortPreview(currentAgent?.reasoningEffort ?? 'auto');
@@ -1282,6 +1287,7 @@ export function ChatInput({
   const chatComposerStatusComponents = rendererExtensionRegistry.getChatComposerStatusComponents();
   const isGatewayUsable = gatewayStatus.state === 'running' && gatewayStatus.gatewayReady !== false;
   const historyLoading = useChatStore((state) => state.loading);
+  const connectionPending = gatewayStatus.state === 'starting' || (gatewayStatus.state === 'running' && !isGatewayUsable);
   const inputDisabled = disabled || !isGatewayUsable;
   const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
@@ -1514,7 +1520,6 @@ export function ChatInput({
   const closeComposerPopovers = useCallback(() => {
     setActionMenuOpen(false);
     setMorphOpen(false);
-    setPickerOpen(false);
     setModelPickerOpen(false);
     setKnowledgePickerOpen(false);
     setWorkspaceMenuOpen(false);
@@ -1539,10 +1544,11 @@ export function ChatInput({
   }, [compactionUnavailableReason, compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
+  const interventionNeedsAttention = ['failed', 'rejected'].includes(longTaskControlStatus?.latestIntervention?.status ?? '');
   const hasLongTaskControlDetails = queuedFollowupCount > 0
-    || Boolean(longTaskControlStatus?.latestCheckpoint?.trigger)
-    || Boolean(longTaskControlStatus?.latestIntervention)
+    || interventionNeedsAttention
     || (longTaskControlStatus?.warnings?.length ?? 0) > 0;
+  const knowledgeReadNeedsAttention = ['error', 'timeout', 'partial'].includes(knowledgeReadReason);
   const slashInput = useMemo(() => parseSlashInput(input), [input]);
   const slashItems = useMemo<SlashPaletteItem[]>(() => {
     if (!slashInput.active) return [];
@@ -2000,26 +2006,23 @@ export function ChatInput({
     if (!targetAgentId) return;
     if (targetAgentId === currentAgentId) {
       setTargetAgentId(null);
-      setPickerOpen(false);
       return;
     }
     if (!(agents ?? []).some((agent) => agent.id === targetAgentId)) {
       setTargetAgentId(null);
-      setPickerOpen(false);
     }
   }, [agents, currentAgentId, targetAgentId]);
 
   useEffect(() => {
-    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
+    if (!actionMenuOpen && !workspaceMenuOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
     const handlePointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
       const insideActionMenu = actionMenuRef.current?.contains(target);
       const insideWorkspaceMenu = workspaceMenuRef.current?.contains(target);
-      const insideAgentPicker = pickerRef.current?.contains(target);
       const insideModelPicker = modelPickerRef.current?.contains(target);
       const insideKnowledgePicker = knowledgePickerRef.current?.contains(target);
       const insideDeliveryMenu = deliveryMenuRef.current?.contains(target);
-      if (!insideActionMenu && !insideWorkspaceMenu && !insideAgentPicker && !insideModelPicker && !insideKnowledgePicker && !insideDeliveryMenu) {
+      if (!insideActionMenu && !insideWorkspaceMenu && !insideModelPicker && !insideKnowledgePicker && !insideDeliveryMenu) {
         closeComposerPopovers();
       }
     };
@@ -2027,14 +2030,14 @@ export function ChatInput({
     return () => {
       document.removeEventListener('mousedown', handlePointerDown);
     };
-  }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
+  }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, workspaceMenuOpen]);
 
   useEffect(() => {
     if (!modelPickerOpen) setExecutionSettingsSection(null);
   }, [modelPickerOpen]);
 
   useEffect(() => {
-    if (!actionMenuOpen && !workspaceMenuOpen && !pickerOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
+    if (!actionMenuOpen && !workspaceMenuOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       closeComposerPopovers();
@@ -2044,7 +2047,7 @@ export function ChatInput({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, pickerOpen, workspaceMenuOpen]);
+  }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, workspaceMenuOpen]);
 
   useEffect(() => {
     setQuickSkills([]);
@@ -2057,7 +2060,6 @@ export function ChatInput({
     setSlashMenuDismissed(false);
     if (parseSlashInput(value).active) {
       setActionMenuOpen(false);
-      setPickerOpen(false);
       setModelPickerOpen(false);
       setWorkspaceMenuOpen(false);
       setKnowledgePickerOpen(false);
@@ -2105,7 +2107,6 @@ export function ChatInput({
     setSlashMenuDismissed(true);
     setSlashSelectedIndex(0);
     setActionMenuOpen(false);
-    setPickerOpen(false);
     setModelPickerOpen(false);
     setWorkspaceMenuOpen(false);
     setKnowledgePickerOpen(false);
@@ -2425,6 +2426,8 @@ export function ChatInput({
     || chatComposerStatusComponents.length > 0
     || pendingMessages.length > 0
     || hasLongTaskControlDetails
+    || knowledgeReadNeedsAttention
+    || ((knowledgeRoutingBusy || knowledgeSearching) && !knowledgePickerOpen)
     || hasFailedAttachments;
 
   const completeSend = useCallback(async (
@@ -2508,7 +2511,6 @@ export function ChatInput({
         );
       }
       setTargetAgentId(null);
-      setPickerOpen(false);
       setKnowledgePickerOpen(false);
       return true;
     } finally {
@@ -2589,7 +2591,6 @@ export function ChatInput({
       setKnowledgeSearchResult(null);
       setKnowledgeSearchError(null);
       setKnowledgePickerOpen(true);
-      setPickerOpen(false);
       setModelPickerOpen(false);
       setWorkspaceMenuOpen(false);
       if (onKnowledgeScopeChange) {
@@ -2627,7 +2628,6 @@ export function ChatInput({
       }
       clearComposer();
       setKnowledgePickerOpen(true);
-      setPickerOpen(false);
       setModelPickerOpen(false);
       setWorkspaceMenuOpen(false);
       toast.message(t('composer.slashCommands.toasts.scopeOpened'));
@@ -3043,7 +3043,6 @@ export function ChatInput({
             plan: resolution.actions,
             results: [],
           });
-          setPickerOpen(false);
           setModelPickerOpen(false);
           setWorkspaceMenuOpen(false);
           setKnowledgePickerOpen(false);
@@ -3247,7 +3246,6 @@ export function ChatInput({
         }
       }
       if (e.key === 'Escape') {
-        setPickerOpen(false);
         setModelPickerOpen(false);
         setWorkspaceMenuOpen(false);
         setKnowledgePickerOpen(false);
@@ -3353,7 +3351,8 @@ export function ChatInput({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className="w-full">
+      <div className="codex-composer-stack w-full">
+        {contextContent}
         {/* Input Container */}
         {/* Geometry stays here (asserted by chat-layout-cdp.spec.ts); surface,
           * border and elevation come from .codex-composer-shell so the card and
@@ -3387,6 +3386,67 @@ export function ChatInput({
           >
             <span aria-hidden />
           </BorderBeam>
+          {showInlineComposerStatus && (
+            <div className="relative mb-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-border/50 pb-2 text-xs text-muted-foreground" data-testid="chat-composer-feedback">
+              {!isGatewayUsable && (
+                <span className="inline-flex min-w-0 items-center gap-2" role="status">
+                  <span className={cn('size-1.5 shrink-0 rounded-full', connectionPending ? 'bg-blue-500' : 'bg-red-500')} aria-hidden="true" />
+                  {t(connectionPending ? 'composer.feedback.connecting' : 'composer.feedback.disconnected')}
+                  {!connectionPending && <button type="button" className="shrink-0 rounded hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    data-testid="chat-composer-connection-settings" onClick={() => navigate('/settings')}>
+                    {t('composer.feedback.connectionSettings')}
+                  </button>}
+                </span>
+              )}
+              {chatComposerStatusComponents.map((Component, index) => <Component key={index} gatewayStatus={gatewayStatus} />)}
+              {(pendingMessages.length > 0 || queuedFollowupCount > 0) && (
+                <span data-testid={queuedFollowupCount > 0 ? 'chat-long-task-queue-count' : undefined}>
+                  <span data-testid={pendingMessages.length > 0 ? 'chat-pending-messages-count' : undefined} role="status">
+                    {t('composer.queueCount', { count: pendingMessages.length + queuedFollowupCount })}
+                  </span>
+                </span>
+              )}
+              {(longTaskControlStatus?.warnings.length ?? 0) > 0 && (
+                <details className="min-w-0 text-amber-700 dark:text-amber-400" data-testid="chat-long-task-warnings">
+                  <summary className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                    {t('composer.longTaskControl.warnings', { count: longTaskControlStatus?.warnings.length })}
+                  </summary>
+                  <ul className="space-y-1 break-words py-1">{longTaskControlStatus?.warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul>
+                </details>
+              )}
+              {interventionNeedsAttention && <span className="text-red-700 dark:text-red-400" role="status">{t('composer.feedback.interventionFailed')}</span>}
+              {(knowledgeRoutingBusy || knowledgeSearching) && !knowledgePickerOpen && (
+                <button type="button" data-testid="chat-knowledge-cancel" onClick={handleCancelKnowledgeRead}
+                  className="rounded text-xs text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                  {t('composer.knowledgeRead.cancel')}
+                </button>
+              )}
+              {knowledgeReadNeedsAttention && (
+                <button type="button" className="min-w-0 rounded text-amber-700 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:text-amber-400"
+                  data-testid="chat-knowledge-read-attention" onClick={() => { closeComposerPopovers(); setKnowledgePickerOpen(true); }}>
+                  {t(`composer.knowledgeRead.${knowledgeReadReason}`)} · {t('composer.knowledgeRoute.inspect')}
+                </button>
+              )}
+              {queuedFollowupCount > 0 && onDrainQueuedFollowup && (
+                <Tooltip>
+                  <TooltipTrigger asChild><span className="inline-flex">
+                    <Button type="button" variant="ghost" size="sm" data-testid="chat-long-task-drain" disabled={sending || queueDrainBusy}
+                      onClick={() => void onDrainQueuedFollowup()} className="h-6 rounded-md px-1.5 text-xs" aria-label={t('composer.longTaskControl.drainNow')}>
+                      {queueDrainBusy && <Loader2 className="mr-1 size-3.5 animate-spin" aria-hidden="true" />}
+                      {t('composer.longTaskControl.drainNow')}
+                    </Button>
+                  </span></TooltipTrigger>
+                  <TooltipContent side="top">{t(sending ? 'composer.longTaskControl.drainActiveRun' : 'composer.longTaskControl.drainTooltip')}</TooltipContent>
+                </Tooltip>
+              )}
+              {hasFailedAttachments && (
+                <Button variant="link" size="sm" data-testid="chat-composer-retry-attachments" className="h-auto p-0 text-xs"
+                  onClick={() => { setAttachments((prev) => prev.filter((att) => att.status !== 'error')); void pickFiles(); }}>
+                  {t('composer.retryFailedAttachments')}
+                </Button>
+              )}
+            </div>
+          )}
           {attachments.length > 0 && (
             <div
               className="codex-composer-attachments relative flex flex-wrap gap-2 pb-3"
@@ -3462,19 +3522,13 @@ export function ChatInput({
 
           {suggestedKnowledgeRefs.length > 0 && selectedKnowledgeRefs.length === 0 && (
             <div
-              className="mb-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-2 text-meta text-emerald-700 dark:text-emerald-400"
+              className="mb-2 border-b border-border/50 px-1 py-2 text-xs text-muted-foreground"
               data-testid="chat-knowledge-suggestion"
             >
               <div className="flex flex-wrap items-center gap-2" data-testid="chat-knowledge-preflight">
                 <BookOpen className="h-3.5 w-3.5 shrink-0" />
-                <span className="font-semibold text-foreground">{t('composer.knowledgePreflight.title')}</span>
-                <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                  {t('composer.knowledgePreflight.summary', {
-                    docs: suggestedKnowledgeCounts.docs,
-                    pitfalls: suggestedKnowledgeCounts.pitfalls,
-                    rules: suggestedKnowledgeCounts.rules,
-                    runtimeLessons: suggestedKnowledgeCounts.runtime_lessons,
-                  })}
+                <span className="min-w-0 flex-1 truncate text-foreground">
+                  {t('composer.feedback.suggestedKnowledge', { count: suggestedKnowledgeRefs.length })}
                 </span>
                 {knowledgeRoutingBusy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                 <button
@@ -3490,6 +3544,7 @@ export function ChatInput({
                   className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-tiny font-semibold hover:bg-emerald-500/10"
                   onClick={() => setKnowledgePreflightExpanded((open) => !open)}
                   data-testid="chat-knowledge-suggestion-open"
+                  aria-expanded={knowledgePreflightExpanded}
                 >
                   <Eye className="h-3 w-3" />
                   {t('composer.knowledgeRoute.inspect')}
@@ -3505,7 +3560,8 @@ export function ChatInput({
                 </button>
               </div>
               {knowledgePreflightExpanded && (
-                <div className="mt-2 grid gap-2 border-t border-emerald-500/15 pt-2" data-testid="chat-knowledge-preflight-inspect">
+                <div className="mt-2 grid gap-2 border-t border-border/50 pt-2" data-testid="chat-knowledge-preflight-inspect">
+                  <p className="text-xs text-muted-foreground">{t('composer.knowledgePreflight.summary', suggestedKnowledgeCounts)}</p>
                   {suggestedKnowledgeGroups.map((group) => (
                     <div key={group.key} className="rounded-md bg-background/60 p-2 dark:bg-white/[0.04]" data-testid={`chat-knowledge-preflight-group-${group.key}`}>
                       <div className="flex items-center justify-between gap-2">
@@ -3652,7 +3708,6 @@ export function ChatInput({
                   setMorphOpen(next);
                   if (next) {
                     setWorkspaceMenuOpen(false);
-                    setPickerOpen(false);
                     setModelPickerOpen(false);
                     setKnowledgePickerOpen(false);
                     setActionMenuOpen(false);
@@ -3741,6 +3796,18 @@ export function ChatInput({
                       busy={taskSelectionBusy || sending}
                       onSelect={setActiveTaskNodeId}
                     />
+                    {showAgentPicker && (
+                      <details data-testid="chat-composer-agent-menu">
+                        <summary data-testid="chat-composer-agent" aria-label={t('composer.pickAgent')} className="codex-composer-menu__item flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                          <AtSign className="size-4" aria-hidden="true" />{t('composer.pickAgent')}
+                        </summary>
+                        {mentionableAgents.map((agent) => (
+                          <AgentPickerItem key={agent.id} agent={agent} selected={agent.id === targetAgentId}
+                            onSelect={() => { setTargetAgentId(agent.id); setActionMenuOpen(false); textareaRef.current?.focus(); }} />
+                        ))}
+                      </details>
+                    )}
+                    <LongTaskControlDetails status={longTaskControlStatus} />
                   </ComposerActionGroup>
 
                   <ComposerActionGroup title={t('composer.actions.skills')} testId="chat-composer-action-group-skills">
@@ -4002,99 +4069,43 @@ export function ChatInput({
               </div>
             )}
 
-            {showAgentPicker && (
-              <div ref={pickerRef} className="relative shrink-0">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  data-testid="chat-composer-agent"
-                  className={cn(
-                    'codex-composer-control w-8 justify-center px-0',
-                    (pickerOpen || selectedTarget) && 'is-active'
-                  )}
-                  onClick={() => {
-                    closeComposerPopovers();
-                    setPickerOpen(!pickerOpen);
-                  }}
-                  disabled={inputDisabled || sending}
-                  aria-label={t('composer.pickAgent')}
-                  aria-expanded={pickerOpen}
-                  aria-haspopup="dialog"
-                >
-                  <AtSign className="h-3.5 w-3.5" />
-                </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" collisionPadding={8}>{t('composer.pickAgent')}</TooltipContent>
-                </Tooltip>
-                  <ComposerPopover open={pickerOpen} className="codex-composer-menu--approval" data-testid="chat-composer-agent-menu" role="dialog" aria-label={t('composer.pickAgent')}>
-                    <div className="codex-composer-menu__label">
-                      {t('composer.agentPickerTitle', { currentAgent: currentAgentName })}
-                    </div>
-                    <div className="max-h-64 overflow-y-auto">
-                      {mentionableAgents.map((agent) => (
-                        <AgentPickerItem
-                          key={agent.id}
-                          agent={agent}
-                          selected={agent.id === targetAgentId}
-                          onSelect={() => {
-                            setTargetAgentId(agent.id);
-                            setPickerOpen(false);
-                            textareaRef.current?.focus();
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </ComposerPopover>
-              </div>
-            )}
-
             <div ref={knowledgePickerRef} className="relative shrink-0">
-              <select data-testid="chat-knowledge-interaction" aria-label={t('composer.knowledgeInteraction.label')}
-                value={knowledgeScope === 'none' ? 'off' : knowledgeMode} disabled={inputDisabled}
-                onChange={async event => {
-                  cancelKnowledgeRead();
-                  const mode = event.target.value;
-                  if (mode === 'off') { await onKnowledgeScopeChange?.('none'); setSelectedKnowledgeRefs([]); }
-                  else { if (knowledgeScope === 'none') await onKnowledgeScopeChange?.('wiki'); await onKnowledgeModeChange?.(mode as KnowledgeInvocationMode); }
-                }} className="rounded-md border border-border bg-surface-input px-1 py-1 text-tiny text-foreground">
-                {(['off','manual','suggest','auto-read'] as const).map(mode => <option key={mode} value={mode}>{t(`composer.knowledgeInteraction.${mode}`)}</option>)}
-              </select>
-              <select data-testid="chat-knowledge-profile" aria-label={t('composer.knowledgeProfile.label')} value={knowledgeProfile}
-                onChange={event => setKnowledgeProfile(event.target.value as RetrievalProfile)} disabled={inputDisabled}
-                className="ml-1 rounded-md border border-border bg-surface-input px-1 py-1 text-tiny text-foreground">
-                {(['local','quality','research'] as const).map(profile => <option key={profile} value={profile}>{t(`composer.knowledgeProfile.${profile}`)}</option>)}
-              </select>
-              {(knowledgeRoutingBusy || knowledgeSearching) && <button type="button" data-testid="chat-knowledge-cancel" onClick={() => { if (knowledgeResearch?.phase !== 'finished' && knowledgeSearching && knowledgeProfile === 'research') knowledgeReadController.current?.abort(); else cancelKnowledgeRead(); setKnowledgeReadReason('cancelled'); }} className="ml-1 text-tiny text-muted-foreground">{t('composer.knowledgeRead.cancel')}</button>}
-              {knowledgeReadReason && <span role="status" data-testid="chat-knowledge-read-status" className="ml-1 text-tiny text-muted-foreground">{t(`composer.knowledgeRead.${knowledgeReadReason}`)}</span>}
               <Tooltip>
                 <TooltipTrigger asChild>
               <button
                 type="button"
                 className={cn(
-                  'codex-composer-control codex-knowledge-trigger max-w-[152px]',
+                  'codex-composer-control codex-knowledge-trigger max-w-[190px]',
                   (knowledgePickerOpen || knowledgeScope !== 'none' || selectedKnowledgeRefs.length > 0)
                     && 'is-active',
                 )}
                 data-testid="chat-knowledge-scope-button"
-                aria-label={t('composer.knowledgeScopeTitle')}
+                aria-label={`${t('composer.knowledgeScopeTitle')}: ${t(`composer.knowledgeScope.${knowledgeScope}`)} · ${t(`composer.knowledgeInteraction.${knowledgeScope === 'none' ? 'off' : knowledgeMode}`)} · ${t(`composer.knowledgeProfile.${knowledgeProfile}`)}`}
                 aria-expanded={knowledgePickerOpen}
-                disabled={inputDisabled || sending}
+                data-profile={knowledgeProfile}
+                disabled={inputDisabled}
                 onClick={() => {
                   const nextOpen = !knowledgePickerOpen;
                   closeComposerPopovers();
                   setKnowledgePickerOpen(nextOpen);
                 }}
               >
-                <BookOpen className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{t(`composer.knowledgeScope.${knowledgeScope}`)}</span>
+                {knowledgeRoutingBusy || knowledgeSearching
+                  ? <Loader2 className="size-3.5 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                  : <BookOpen className="size-3.5 shrink-0" aria-hidden="true" />}
+                <span className="min-w-0 truncate leading-5">
+                  {t(`composer.knowledgeScope.${knowledgeScope}`)}
+                  {knowledgeScope !== 'none' && <span className="font-normal"> · {t(`composer.knowledgeInteraction.${knowledgeMode}`)}</span>}
+                </span>
+                {knowledgeScope !== 'none' && knowledgeProfile !== 'local' && (
+                  <span className="shrink-0 text-amber-700 dark:text-amber-400" data-testid="chat-knowledge-paid-profile">{t(`composer.knowledgeProfile.${knowledgeProfile}`)}</span>
+                )}
                 <ChevronDown className={cn('codex-composer-chevron', knowledgePickerOpen && 'is-open')} />
               </button>
                 </TooltipTrigger>
-                <TooltipContent side="top" collisionPadding={8}>{t('composer.knowledgeScopeTitle')}</TooltipContent>
+                <TooltipContent side="top" collisionPadding={8}>
+                  {t('composer.knowledgeScopeTitle')} · {t(`composer.knowledgeScope.${knowledgeScope}`)} · {t(`composer.knowledgeProfile.${knowledgeProfile}`)}
+                </TooltipContent>
               </Tooltip>
                 <ComposerPopover open={knowledgePickerOpen}
                   className="codex-composer-menu--approval codex-composer-menu--knowledge"
@@ -4115,8 +4126,6 @@ export function ChatInput({
                         cancelKnowledgeRead();
                         setSelectedKnowledgeRefs([]);
                         void onKnowledgeScopeChange?.(scope);
-                        setKnowledgePickerOpen(false);
-                        textareaRef.current?.focus();
                       }}
                     >
                       <span className="codex-composer-menu__icon">
@@ -4130,28 +4139,32 @@ export function ChatInput({
                     </button>
                     );
                   })}
-                  <div className="codex-composer-menu__label codex-composer-menu__label--divider">
-                    <span>{t('composer.knowledgeModeTitle')}</span>
-                  </div>
-                  <div className="codex-composer-segmented">
-                    {KNOWLEDGE_MODES.map((mode) => {
-                      const isActive = mode === knowledgeMode;
-                      return (
-                        <button
-                          key={mode}
-                          type="button"
-                          className={cn(isActive && 'is-active')}
-                          aria-pressed={isActive}
-                          data-testid={`chat-knowledge-mode-${mode}`}
-                          onClick={() => {
-                            void onKnowledgeModeChange?.(mode);
-                            textareaRef.current?.focus();
-                          }}
-                        >
-                          {t(`composer.knowledgeMode.${mode}`)}
-                        </button>
-                      );
-                    })}
+                  <div className="space-y-3 border-t border-border px-2.5 py-3" data-testid="chat-knowledge-settings">
+                    <label className="block text-xs text-muted-foreground">
+                      {t('composer.knowledgeInteraction.label')}
+                      <select data-testid="chat-knowledge-interaction" aria-label={t('composer.knowledgeInteraction.label')}
+                value={knowledgeScope === 'none' ? 'off' : knowledgeMode} disabled={inputDisabled}
+                onChange={async event => {
+                  cancelKnowledgeRead();
+                  const mode = event.target.value;
+                  if (mode === 'off') { await onKnowledgeScopeChange?.('none'); setSelectedKnowledgeRefs([]); }
+                  else { if (knowledgeScope === 'none') await onKnowledgeScopeChange?.('wiki'); await onKnowledgeModeChange?.(mode as KnowledgeInvocationMode); }
+                }} className="mt-1 h-8 w-full rounded-md border border-border bg-surface-input px-2 text-xs leading-5 text-foreground">
+                {(['off','manual','suggest','auto-read'] as const).map(mode => <option key={mode} value={mode}>{t(`composer.knowledgeInteraction.${mode}`)}</option>)}
+              </select>
+                    </label>
+                    <label className="block text-xs text-muted-foreground">
+                      {t('composer.knowledgeProfile.label')}
+                      <select data-testid="chat-knowledge-profile" aria-label={t('composer.knowledgeProfile.label')} value={knowledgeProfile}
+                onChange={event => setKnowledgeProfile(event.target.value as RetrievalProfile)} disabled={inputDisabled}
+                className="mt-1 h-8 w-full rounded-md border border-border bg-surface-input px-2 text-xs leading-5 text-foreground">
+                {(['local','quality','research'] as const).map(profile => <option key={profile} value={profile}>{t(`composer.knowledgeProfile.${profile}`)}</option>)}
+              </select>
+                    </label>
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      {(knowledgeRoutingBusy || knowledgeSearching) && <button type="button" data-testid="chat-knowledge-menu-cancel" onClick={handleCancelKnowledgeRead} className="ml-1 text-tiny text-muted-foreground">{t('composer.knowledgeRead.cancel')}</button>}
+              {knowledgeReadReason && <span role="status" data-testid="chat-knowledge-read-status" className="ml-1 text-tiny text-muted-foreground">{t(`composer.knowledgeRead.${knowledgeReadReason}`)}</span>}
+                    </div>
                   </div>
                   <div className="codex-composer-menu__divider" />
                   <button
@@ -4276,12 +4289,8 @@ export function ChatInput({
                       'codex-execution-settings__effort-shortcut',
                       executionEffortPreview === 'max' && 'is-max',
                     )}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      closeComposerPopovers();
-                      setModelPickerOpen(true);
-                      setExecutionSettingsSection('effort');
-                    }}
+                    title={currentEffortLabel}
+                    aria-hidden="true"
                   >
                     <Flame className="h-3.5 w-3.5 shrink-0" />
                   </span>
@@ -4488,145 +4497,6 @@ export function ChatInput({
             </div>
             </div>
           </div>
-        </div>
-        <div
-          hidden={!showInlineComposerStatus}
-          className={cn(
-            'mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 text-tiny text-muted-foreground/60',
-            !showInlineComposerStatus && 'hidden',
-          )}
-        >
-          {(!isGatewayUsable || chatComposerStatusComponents.length > 0) && (
-            <div className="flex min-w-0 items-center gap-1.5">
-              <div className={cn(
-                "w-1.5 h-1.5 rounded-full",
-                isGatewayUsable ? "bg-green-500/80" : "bg-red-500/80",
-              )} />
-              <span className="truncate">
-                {t('composer.gatewayStatus', {
-                  state: isGatewayUsable
-                    ? t('composer.gatewayConnected')
-                    : gatewayStatus.state === 'running'
-                      ? 'starting'
-                      : gatewayStatus.state,
-                  port: gatewayStatus.port,
-                  pid: gatewayStatus.pid ? `| pid: ${gatewayStatus.pid}` : '',
-                })}
-              </span>
-              {chatComposerStatusComponents.map((Component, index) => (
-                <Component key={`${index}`} gatewayStatus={gatewayStatus} />
-              ))}
-            </div>
-          )}
-          {(pendingMessages.length > 0 || hasLongTaskControlDetails) && (
-            <div
-              className="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1.5 text-right"
-              data-testid="chat-composer-context-status"
-            >
-              {pendingMessages.length > 0 && (
-                <Badge
-                  variant="outline"
-                  className="h-6 rounded-md border-sky-500/30 bg-sky-500/10 px-2 text-[11px] font-medium text-sky-700 dark:text-sky-400"
-                  data-testid="chat-pending-messages-count"
-                >
-                  {t('composer.queueCount', { count: pendingMessages.length })}
-                </Badge>
-              )}
-              {longTaskControlStatus && (
-                <>
-                  {queuedFollowupCount > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md border-amber-500/30 bg-amber-500/10 px-2 text-[11px] font-medium text-amber-700 dark:text-amber-400"
-                      data-testid="chat-long-task-queue-count"
-                    >
-                      {t('composer.longTaskControl.queued', { count: queuedFollowupCount })}
-                    </Badge>
-                  )}
-                  {longTaskControlStatus.latestCheckpoint?.trigger && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md px-2 text-[11px] font-medium text-muted-foreground"
-                      data-testid="chat-long-task-checkpoint"
-                    >
-                      {t('composer.longTaskControl.checkpoint', {
-                        trigger: t(`composer.longTaskControl.trigger.${longTaskControlStatus.latestCheckpoint.trigger}`, {
-                          defaultValue: longTaskControlStatus.latestCheckpoint.trigger,
-                        }),
-                      })}
-                    </Badge>
-                  )}
-                  {longTaskControlStatus.latestIntervention && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md px-2 text-[11px] font-medium text-muted-foreground"
-                      data-testid="chat-long-task-intervention"
-                    >
-                      {t('composer.longTaskControl.intervention', {
-                        mode: longTaskControlStatus.latestIntervention.mode
-                          ? t(`composer.longTaskControl.mode.${longTaskControlStatus.latestIntervention.mode}`, { defaultValue: longTaskControlStatus.latestIntervention.mode })
-                          : t('composer.longTaskControl.mode.unknown'),
-                        status: t(`composer.longTaskControl.status.${longTaskControlStatus.latestIntervention.status}`, {
-                          defaultValue: longTaskControlStatus.latestIntervention.status,
-                        }),
-                      })}
-                    </Badge>
-                  )}
-                  {(longTaskControlStatus.warnings?.length ?? 0) > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="h-6 rounded-md border-amber-500/30 px-2 text-[11px] font-medium text-amber-700 dark:text-amber-400"
-                      data-testid="chat-long-task-warnings"
-                    >
-                      {t('composer.longTaskControl.warnings', { count: longTaskControlStatus.warnings?.length ?? 0 })}
-                    </Badge>
-                  )}
-                  {queuedFollowupCount > 0 && onDrainQueuedFollowup && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="inline-flex">
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            data-testid="chat-long-task-drain"
-                            disabled={sending || queueDrainBusy}
-                            onClick={() => void onDrainQueuedFollowup()}
-                            className="h-6 w-6 rounded-md text-muted-foreground transition-colors hover:text-foreground"
-                            aria-label={t('composer.longTaskControl.drainNow')}
-                          >
-                            {queueDrainBusy ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <MessageSquarePlus className="h-3.5 w-3.5" />
-                            )}
-                          </Button>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-xs text-xs">
-                        {sending
-                          ? t('composer.longTaskControl.drainActiveRun')
-                          : t('composer.longTaskControl.drainTooltip')}
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-          {hasFailedAttachments && (
-            <Button
-              variant="link"
-              size="sm"
-              className="h-auto p-0 text-tiny"
-              onClick={() => {
-                setAttachments((prev) => prev.filter((att) => att.status !== 'error'));
-                void pickFiles();
-              }}
-            >
-              {t('composer.retryFailedAttachments')}
-            </Button>
-          )}
         </div>
       </div>
       <Dialog open={Boolean(inspectedKnowledge)} onOpenChange={open => { if (!open) setInspectedKnowledge(null); }}>

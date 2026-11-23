@@ -206,7 +206,11 @@
     "openStep": "在任务账本中打开「{{title}}」",
     "showSteps": "展开步骤",
     "hideSteps": "收起步骤",
-    "updated": "{{time}}更新"
+    "updated": "{{time}}更新",
+    "runSteps": "本轮步骤",
+    "runStepsProgress": "本轮步骤：已完成 {{completed}} / {{total}}",
+    "runStepsComplete": "本轮步骤已完成",
+    "viewBlockers": "查看阻塞"
   },
   "trace": {
     "open": "任务追溯报告",

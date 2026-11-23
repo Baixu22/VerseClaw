@@ -2320,6 +2320,14 @@
       "bytes": "Candidate body {{bytes}} bytes",
       "fallback": "Using source search fallback",
       "partial": "Partial retrieval"
+    },
+    "feedback": {
+      "history": "Run details",
+      "disconnected": "Connection unavailable. Your draft is kept.",
+      "connectionSettings": "Open settings",
+      "interventionFailed": "The last adjustment did not succeed",
+      "suggestedKnowledge": "Relevant sources: {{count}}",
+      "connecting": "Connecting… Your draft is kept."
     }
   },
   "historyBuckets": {

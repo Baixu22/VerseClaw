@@ -1,25 +1,13 @@
 /**
- * SessionTaskDock — the conversation's task tray, anchored above the composer.
- *
- * Placement and timing follow the reference desktop client: a task's steps sit
- * at the foot of the conversation, beside the input, for as long as the task is
- * running, and fold into a one-line receipt once it has finished. Nothing is
- * drawn before the task owner reports a task or the run publishes a plan, so an
- * ordinary chat stays quiet; a finished plan leaves with its run, because the
- * turn summary in the transcript keeps the record.
- *
- * The surface is deliberately restrained — a hairline card with neutral glyphs
- * and the current step inline — but carries the task's own handles: its ID
- * (click to copy), a link into the Task Ledger, child-task IDs, and a menu for
- * fold / refresh / hide.
- *
- * Presentation only: folding, hiding or copying never changes task ownership
- * or execution. Claim, release and cancel stay with the Task Ledger owner.
+ * The conversation task strip shares the composer enclosure. Its durable goal
+ * stays visible while current run steps open on demand; archived plans remain
+ * in the transcript. Task acceptance comes from the ledger owner.
+ * IDs and readback metadata live in the menu. Display preferences retain their
+ * session scope; stale owner reads reveal a retry action.
  */
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import {
-  AlertTriangle,
   Check,
   ChevronDown,
   CircleSlash,
@@ -44,6 +32,8 @@ import { formatRelativeTime } from "@/lib/git-ui";
 import { cn } from "@/lib/utils";
 import type { ProjectPlanSnapshot, TaskSessionSnapshot, TaskView } from "@shared/task-system/types";
 import type { RunPlanSurface } from "./run-surface-promotion";
+import type { LongTaskControlStatus } from '@shared/types/long-task-control';
+import { LongTaskControlDetails } from './LongTaskControlDetails';
 
 type Mode = "collapsed" | "expanded" | "hidden";
 type Translate = ReturnType<typeof useTranslation<"taskLedger">>["t"];
@@ -224,6 +214,7 @@ export function SessionTaskDock({
   projectEntry = false,
   plan,
   runActive = false,
+  controlStatus,
   onOpenTask,
 }: {
   workspaceId: string | null;
@@ -233,6 +224,7 @@ export function SessionTaskDock({
   plan?: RunPlanSurface | null;
   /** A run is streaming in this session; a finished plan stays until it ends. */
   runActive?: boolean;
+  controlStatus?: LongTaskControlStatus | null;
   /** Opens a durable task (or one of its children) in the Task Ledger. */
   onOpenTask?: (taskNodeId: string) => void;
 }) {
@@ -266,8 +258,8 @@ export function SessionTaskDock({
   return (
     <TaskDockBody
       key={`${scope}:${taskId}`}
-      {...{ scope, taskId, task, stale, retry, runActive, onOpenTask, t }}
-      plan={task ? null : plan}
+      {...{ scope, taskId, task, stale, retry, runActive, onOpenTask, t, controlStatus }}
+      plan={planVisible ? plan : null}
       locale={i18n.language}
       childrenTasks={projectPlan?.children ?? snapshot?.children ?? []}
       projectPlan={projectPlan}
@@ -278,7 +270,7 @@ export function SessionTaskDock({
 
 type Tone = "active" | "done" | "cancelled" | "warn" | "idle";
 
-/** Neutral glyphs; colour is reserved for a finished check and for warnings. */
+/** Semantic status colours with progress only when the step count is known. */
 function StatusGlyph({ tone, progress }: { tone: Tone; progress: number | null }) {
   if (tone === "done") {
     return <Check className="h-3.5 w-3.5 shrink-0 text-emerald-700 dark:text-emerald-400" aria-hidden="true" />;
@@ -344,12 +336,8 @@ type MenuItem = {
   run: () => void;
 };
 
-/**
- * The dock's secondary actions. A small anchored menu rather than a row of
- * icon buttons, so the card itself only carries the title, the ID and the
- * state — the restrained part — and everything else is one keystroke away.
- */
-function TaskMenu({ t, items }: { t: Translate; items: MenuItem[] }) {
+/** Secondary handles and readback metadata open without widening the task strip. */
+function TaskMenu({ t, items, metadata }: { t: Translate; items: MenuItem[]; metadata?: string }) {
   const popover = usePopover<HTMLButtonElement>({ align: "right", gap: 6, minWidth: 208 });
   const overlayContainer = useOverlayPortalContainer();
   const { open, setOpen, triggerRef, layerRef } = popover;
@@ -408,6 +396,7 @@ function TaskMenu({ t, items }: { t: Translate; items: MenuItem[] }) {
             onKeyDown={onKeyDown}
             className="flex flex-col gap-0.5 rounded-xl border border-border/70 bg-surface-modal p-1 text-[13px] shadow-lg motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-150"
           >
+            {metadata && <p className="border-b border-border px-2 py-1.5 text-xs text-muted-foreground" data-testid="session-task-updated">{metadata}</p>}
             {items.map((item) => (
               <button
                 key={item.key}
@@ -422,7 +411,7 @@ function TaskMenu({ t, items }: { t: Translate; items: MenuItem[] }) {
                 }}
                 className="flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-left text-foreground/90 outline-none transition-colors hover:bg-black/5 focus-visible:bg-black/5 dark:hover:bg-white/10 dark:focus-visible:bg-white/10"
               >
-                <span className="text-muted-foreground">{item.icon}</span>
+                <span className="text-muted-foreground" aria-hidden="true">{item.icon}</span>
                 <span className="min-w-0 flex-1 truncate">{item.label}</span>
               </button>
             ))}
@@ -444,6 +433,7 @@ function TaskDockBody({
   stale,
   retry,
   runActive,
+  controlStatus,
   onOpenTask,
   locale,
   t,
@@ -458,6 +448,7 @@ function TaskDockBody({
   stale: boolean;
   retry: () => void;
   runActive: boolean;
+  controlStatus?: LongTaskControlStatus | null;
   onOpenTask?: (taskNodeId: string) => void;
   locale: string;
   t: Translate;
@@ -472,7 +463,10 @@ function TaskDockBody({
         container.current?.querySelector<HTMLButtonElement>("[data-dock-focus]")?.focus(),
       );
   };
-  const steps: DockStep[] = childrenTasks.length
+  const hasRunPlan = Boolean(plan?.todos.length);
+  const steps: DockStep[] = hasRunPlan
+    ? plan!.todos
+    : childrenTasks.length
     ? childrenTasks.map(childStep)
     : task
       ? checkpointSteps(task)
@@ -481,18 +475,19 @@ function TaskDockBody({
   const title = task?.contract.objective ?? plan?.title ?? t("conversation.plan");
   const state =
     task?.contract.state ??
-    (steps.length && steps.every((step) => isSettled(step.status)) ? "done" : undefined);
+    (runActive ? "doing" : steps.length && steps.every((step) => isSettled(step.status)) ? "done" : undefined);
   const complete = state === "done";
   const finished = complete || state === "cancelled";
   const completed = steps.filter((step) => step.status === "completed").length;
   const total = steps.length;
-  const hasDefinedPlan = childrenTasks.length > 0 || (!task && total > 0);
-  const progress = complete ? 100 : hasDefinedPlan ? Math.round((completed / total) * 100) : null;
+  const hasDefinedPlan = hasRunPlan || childrenTasks.length > 0 || (!task && total > 0);
+  const progress = hasDefinedPlan ? Math.round((completed / total) * 100) : complete ? 100 : null;
   const active =
     !stale &&
     !finished &&
     (state === "doing" ||
       state === "review" ||
+      runActive ||
       (!state && (runActive || steps.some((step) => step.status === "in_progress"))));
   const tone: Tone = stale || state === "paused" || state === "cancelling"
     ? "warn"
@@ -508,11 +503,20 @@ function TaskDockBody({
     : state
       ? t(`conversation.states.${state}`)
       : t("conversation.progress");
-  const current = finished
+  const current = finished && !hasRunPlan
     ? undefined
     : (steps.find((step) => step.status === "in_progress") ??
       steps.find((step) => step.status === "pending"));
-  const expanded = mode === "expanded";
+  const finishedPreviously = useRef(false);
+  useEffect(() => {
+    if (finished && !finishedPreviously.current && mode === 'expanded') {
+      setMode('collapsed');
+      saveMode(scope, taskId, 'collapsed');
+    }
+    finishedPreviously.current = finished;
+  }, [finished, mode, scope, taskId]);
+  const displayMode = tone === 'warn' && mode === 'hidden' ? 'collapsed' : mode;
+  const expanded = displayMode === "expanded";
   const updated = task ? formatRelativeTime(task.contract.updatedAt, locale) : "";
   const openTask = durableId && onOpenTask ? () => onOpenTask(durableId) : undefined;
   const menuItems: MenuItem[] = [
@@ -523,7 +527,8 @@ function TaskDockBody({
           {
             key: "copy",
             testId: "session-task-menu-copy",
-            label: t("conversation.copyId"),
+            label: `${t("conversation.copyId")} · #${shortTaskId(durableId)}`,
+            hint: durableId,
             icon: <Copy className="h-3.5 w-3.5" />,
             run: () => copyTaskId(durableId, t),
           },
@@ -558,26 +563,27 @@ function TaskDockBody({
           },
         ]
       : []),
-    {
+    ...(tone !== 'warn' ? [{
       key: "hide",
       testId: "session-task-close",
       label: t("conversation.hide"),
       hint: t("conversation.hideHint"),
       icon: <EyeOff className="h-3.5 w-3.5" />,
       run: () => change("hidden"),
-    },
+    }] : []),
   ];
   return (
     <section
       ref={container}
-      className="relative w-full shrink-0 pb-1.5 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-200"
+      className="relative w-full shrink-0 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200"
       data-testid="session-task-dock"
       data-placement="composer"
       data-state={state ?? (active ? "doing" : "ready")}
-      data-mode={mode}
+      data-mode={displayMode}
+      data-step-source={hasRunPlan ? 'run-plan' : 'task'}
       aria-label={t("conversation.task")}
     >
-      {mode === "hidden" ? (
+      {displayMode === "hidden" ? (
         <button
           type="button"
           data-dock-focus
@@ -596,15 +602,15 @@ function TaskDockBody({
         </button>
       ) : (
         <div
-          className="relative overflow-hidden rounded-lg border border-border bg-background"
+          className="relative overflow-hidden rounded-t-xl border border-b-0 border-border bg-background"
           data-testid="session-task-panel"
         >
-          <div className="flex min-w-0 items-center gap-1.5 py-1.5 pl-3 pr-1.5">
+          <div className="flex min-h-9 min-w-0 items-center gap-1.5 pl-3 pr-1.5">
             <div className="min-w-0 flex-1" data-testid="session-task-plan">
               <button
                 type="button"
                 data-dock-focus
-                className="flex w-full min-w-0 items-center gap-2 rounded-md py-0.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex min-h-8 w-full min-w-0 items-center gap-2 rounded-md text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 aria-expanded={expanded}
                 onClick={() => change(expanded ? "collapsed" : "expanded")}
                 title={title}
@@ -612,13 +618,24 @@ function TaskDockBody({
                 <StatusGlyph tone={tone} progress={progress} />
                 <h2
                   className={cn(
-                    "min-w-0 truncate text-[13px] font-medium tracking-tight",
+                    "min-w-0 flex-1 truncate text-[13px] font-medium tracking-tight",
                     finished ? "text-muted-foreground" : "text-foreground",
                   )}
                   data-testid="session-task-title"
                 >
                   {title}
                 </h2>
+                {!expanded && current && (
+                  <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground" data-testid="session-task-current">
+                    <span className="mr-1">{t(current.status === 'in_progress' ? 'conversation.current' : 'conversation.next')}</span>
+                    {current.label}
+                  </span>
+                )}
+                {!expanded && hasRunPlan && completed === total && !complete && (
+                  <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground" data-testid="session-task-run-finished">
+                    {t('conversation.runStepsComplete')}
+                  </span>
+                )}
                 <ChevronDown
                   className={cn(
                     "h-3.5 w-3.5 shrink-0 text-muted-foreground/70 transition-transform duration-200",
@@ -628,50 +645,39 @@ function TaskDockBody({
                 />
               </button>
             </div>
-            {durableId && expanded && (
-              <button
-                type="button"
-                data-testid="session-task-id"
-                onClick={() => copyTaskId(durableId, t)}
-                aria-label={t("conversation.copyIdNamed", { id: durableId })}
-                title={`${durableId}\n${t("conversation.copyId")}`}
-                className="hidden shrink-0 rounded-md px-1 font-mono text-[11px] tabular-nums text-muted-foreground/80 transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex dark:hover:bg-white/10"
-              >
-                #{shortTaskId(durableId)}
-              </button>
-            )}
             <span
               className={cn(
                 "shrink-0 whitespace-nowrap px-1 text-xs tabular-nums",
-                tone === "warn" ? "text-amber-700 dark:text-amber-400" : "text-muted-foreground",
+                tone === 'warn' ? 'text-amber-700 dark:text-amber-400'
+                  : tone === 'active' ? 'text-blue-700 dark:text-blue-400'
+                  : tone === 'done' ? 'text-emerald-700 dark:text-emerald-400'
+                  : 'text-muted-foreground',
               )}
               data-testid="session-task-status"
-              title={hasDefinedPlan ? t("conversation.stepsProgress", { completed, total }) : undefined}
+              title={hasDefinedPlan ? t(hasRunPlan ? 'conversation.runStepsProgress' : 'conversation.stepsProgress', { completed, total }) : undefined}
             >
               {status}
               {hasDefinedPlan && <span className="text-muted-foreground/70"> · {completed}/{total}</span>}
             </span>
-            <TaskMenu t={t} items={menuItems} />
+            {stale && <button type="button" data-testid="session-task-retry" onClick={retry}
+              className="shrink-0 rounded px-1.5 py-1 text-xs text-amber-700 hover:bg-black/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:text-amber-400 dark:hover:bg-white/10">
+              {t('conversation.refresh')}
+            </button>}
+            {state === 'paused' && (task?.checkpoint?.unresolved.length ?? 0) > 0 && openTask && (
+              <button type="button" data-testid="session-task-blockers" onClick={openTask}
+                className="shrink-0 rounded px-1.5 py-1 text-xs text-amber-700 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:text-amber-400">
+                {t('conversation.viewBlockers')}
+              </button>
+            )}
+            <TaskMenu t={t} items={menuItems} metadata={updated ? t('conversation.updated', { time: updated }) : undefined} />
           </div>
-          {!expanded && current && (
-            <button
-              type="button"
-              data-testid="session-task-current"
-              onClick={() => change("expanded")}
-              className="-mt-1 flex w-full min-w-0 items-center gap-2 pb-2 pl-[34px] pr-3 text-left text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-            >
-              <span className="shrink-0 text-muted-foreground/70">
-                {t(current.status === "in_progress" ? "conversation.current" : "conversation.next")}
-              </span>
-              <span className="min-w-0 truncate">{current.label}</span>
-            </button>
-          )}
           {expanded && (
             <div
               className="border-t border-black/[0.06] px-3 pb-2 pt-1.5 text-xs text-muted-foreground motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200 dark:border-white/[0.07]"
               data-testid="session-task-details"
             >
               {projectPlan && <ProjectPlanDetails plan={projectPlan} t={t} />}
+              {hasRunPlan && <p className="py-1 font-medium text-foreground" data-testid="session-task-step-label">{t('conversation.runSteps')}</p>}
               {steps.length > 0 ? (
                 <ol
                   className="max-h-[min(30vh,220px)] space-y-0.5 overflow-y-auto overscroll-contain pr-1"
@@ -691,7 +697,7 @@ function TaskDockBody({
                       <span
                         className={cn(
                           "min-w-0 flex-1 text-[13px] leading-5",
-                          step.status === "completed" && "text-muted-foreground/70",
+                          step.status === "completed" && "text-muted-foreground",
                           step.status === "in_progress" && "text-foreground",
                           step.status === "pending" && "text-muted-foreground",
                           step.status === "cancelled" && "text-muted-foreground/50 line-through",
@@ -707,14 +713,12 @@ function TaskDockBody({
                             onClick={() => onOpenTask(step.taskNodeId!)}
                             title={`${step.taskNodeId}\n${t("conversation.openInLedger")}`}
                             aria-label={t("conversation.openStep", { title: step.label })}
-                            className="mt-0.5 shrink-0 rounded px-1 font-mono text-[11px] text-muted-foreground/70 transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
+                            className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:hover:bg-white/10"
                           >
-                            #{shortTaskId(step.taskNodeId)}
+                            <ExternalLink className="size-3" aria-hidden="true" />
                           </button>
                         ) : (
-                          <span className="mt-0.5 shrink-0 font-mono text-[11px] text-muted-foreground/60" title={step.taskNodeId}>
-                            #{shortTaskId(step.taskNodeId)}
-                          </span>
+                          null
                         ))}
                     </li>
                   ))}
@@ -722,21 +726,11 @@ function TaskDockBody({
               ) : (
                 <p className="py-1">{t(complete ? "conversation.accepted" : "conversation.waitingForPlan")}</p>
               )}
-              {(updated || task?.referenceOnly || (task && task.pendingOperations > 0) || stale || openTask) && (
-                <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground/80">
-                  {updated && <span data-testid="session-task-updated">{t("conversation.updated", { time: updated })}</span>}
+              <LongTaskControlDetails status={controlStatus} />
+              {(task?.referenceOnly || (task && task.pendingOperations > 0) || openTask) && (
+                <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   {task?.referenceOnly && <span>{t("conversation.observing")}</span>}
                   {task && task.pendingOperations > 0 && <span>{t("conversation.settling")}</span>}
-                  {stale && (
-                    <button
-                      type="button"
-                      onClick={retry}
-                      className="inline-flex items-center gap-1 rounded text-amber-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-amber-400"
-                    >
-                      <AlertTriangle className="h-3 w-3" aria-hidden="true" />
-                      {t("conversation.refresh")}
-                    </button>
-                  )}
                   {openTask && (
                     <button
                       type="button"

@@ -2320,6 +2320,14 @@
       "bytes": "候補本文 {{bytes}} バイト",
       "fallback": "資料検索の代替経路を使用中",
       "partial": "検索結果は一部利用可能"
+    },
+    "feedback": {
+      "history": "実行記録",
+      "disconnected": "接続できません。下書きは保持されます。",
+      "connectionSettings": "設定を開く",
+      "interventionFailed": "前回の調整は成功しませんでした",
+      "suggestedKnowledge": "{{count}} 件の関連情報",
+      "connecting": "接続中です。下書きは保持されます。"
     }
   },
   "historyBuckets": {

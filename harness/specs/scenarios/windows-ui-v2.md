@@ -58,6 +58,16 @@ current tool's existing progress animation. Completed passive tool records open
 on demand. Errors, approval requests and questions remain visible. The shared
 summary owns the live status so a second Thinking row does not compete with it.
 
+Live planning has one primary entry in the task strip attached to the composer.
+The durable objective remains visible while current run steps open below it;
+finishing the run steps preserves the task owner's acceptance status. Archived
+plans remain in their turn disclosure. Knowledge scope, invocation mode and
+retrieval profile share one menu, with non-local profiles labelled on the input.
+Normal checkpoint records open on demand, while queues, read failures and
+connection errors stay directly visible. Verify these states with
+`tests/e2e/chat-planning-composer-ux.spec.ts`.
+
+
 Session status and process output share the conversation's neutral surfaces and
 compact text states. Successful calls settle quietly, matched call/result rows
 share one disclosure, and diagnostics follow the useful work. Process history

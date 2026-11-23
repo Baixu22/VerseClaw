@@ -89,6 +89,18 @@
   column-gap: 4px;
 }
 
+/* A visible task strip shares the input enclosure. A hidden strip restores the
+ * normal rounded composer, and the input remains the raised surface. */
+.codex-composer-stack:has([data-testid='session-task-panel']) .codex-composer-shell {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.codex-composer-stack:has([data-testid='session-task-panel']) .codex-composer-beam {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
 .codex-composer-shell[data-drag-over='true'] {
   border-color: var(--color-border-focus);
   box-shadow:

@@ -129,7 +129,7 @@ vi.mock('@/hooks/use-stick-to-bottom-instant', () => ({
 }));
 vi.mock('@/hooks/use-min-loading', () => ({ useMinLoading: () => false }));
 vi.mock('@/pages/Chat/ChatToolbar', () => ({ ChatToolbar: () => null }));
-vi.mock('@/pages/Chat/ChatInput', () => ({ ChatInput: ({ requestContent }: { requestContent?: React.ReactNode }) => <div data-testid="chat-composer-slot">{requestContent}</div> }));
+vi.mock('@/pages/Chat/ChatInput', () => ({ ChatInput: ({ requestContent, contextContent }: { requestContent?: React.ReactNode; contextContent?: React.ReactNode }) => <div data-testid="chat-composer-slot">{contextContent}{requestContent}</div> }));
 
 beforeEach(() => {
   HTMLElement.prototype.scrollTo = vi.fn();
@@ -1117,5 +1117,23 @@ describe('Turn disclosure survives the optimistic→server id swap', () => {
       expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true'),
     );
     expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+  });
+});
+
+describe('live plan display ownership', () => {
+  it('keeps the active plan in the task strip while process details open', async () => {
+    await seedWorkspace();
+    await seedChat({ sending: true, activeRunId: 'live-plan-run',
+      messages: [{ role: 'user', content: 'Implement the focused patch', timestamp: 1_700_000_000_000 }],
+      runtimeRuns: { 'live-plan-run': { runId: 'live-plan-run', sessionKey: 'agent:main:main', status: 'running', startedAt: 1_700_000_000_001, assistantText: '',
+        events: [{ type: 'run.started', ts: 1_700_000_000_001 },
+          { type: 'tool.started', toolCallId: 'live-plan-tool', name: 'update_plan', args: { plan: [{ step: 'Read current sources', status: 'completed' }, { step: 'Write focused patch', status: 'in_progress' }] }, ts: 1_700_000_000_002 }] } },
+    });
+    await mountChat();
+    expect(await screen.findByTestId('session-task-current')).toHaveTextContent('Write focused patch');
+    fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
+    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    expect(screen.queryByTestId('chat-run-plan')).toBeNull();
+    expect(screen.getAllByText('Write focused patch')).toHaveLength(1);
   });
 });

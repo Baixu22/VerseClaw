@@ -206,7 +206,11 @@
     "openStep": "Открыть «{{title}}» в журнале задач",
     "showSteps": "Показать шаги",
     "hideSteps": "Скрыть шаги",
-    "updated": "Обновлено {{time}}"
+    "updated": "Обновлено {{time}}",
+    "runSteps": "Шаги текущего запуска",
+    "runStepsProgress": "Текущий запуск: {{completed}} из {{total}} шагов",
+    "runStepsComplete": "Шаги запуска завершены",
+    "viewBlockers": "Посмотреть препятствия"
   },
   "trace": {
     "open": "Отчёт о выполнении задачи",

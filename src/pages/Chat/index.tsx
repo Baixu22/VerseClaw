@@ -2883,15 +2883,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     [messages, sessionActivityRuns, currentSessionKey, activeRunId],
   );
 
-  /**
-   * Is the owning turn summary currently showing its full plan?
-   *
-   * The transcript's TurnSummaryCard is the plan's single renderer; the session
-   * rail's plan section must YIELD while that copy is on screen, or every todo
-   * title renders twice (tests/unit/chat-render-reachability.test.tsx pins
-   * "exactly once"). Collapsed summary → the rail's section is the only full
-   * view and stays.
-   */
+  /** Live steps belong to the composer strip; archived plans and execution
+   * records stay in their owning turn's disclosure. */
   const isTurnSummaryExpanded = useCallback((card: UserRunCard) => {
     const defaultExpanded = card.status === 'error'
       || card.status === 'aborted'
@@ -3723,7 +3716,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                               summary={{
                                 tools: card.steps.filter((step) => step.kind === 'tool').length,
                                 thoughts: cardReasoning.length,
-                                plan: card.surfaces.plan?.todos.length ?? 0,
+                                plan: card.active ? 0 : card.surfaces.plan?.todos.length ?? 0,
                                 files: new Set([...chipFiles.map((file) => file.filePath), ...diffSurfaces.map((diff) => diff.filePath)]).size,
                                 agents: card.orchestrations.length,
                                 terminals: card.surfaces.terminals.length,
@@ -3736,7 +3729,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                 }))
                               }
                             >
-                              {card.surfaces.plan && (
+                              {card.surfaces.plan && !card.active && (
                                 <ToolUiPlanView
                                   title={t('task.steps')}
                                   showTitle
@@ -3927,21 +3920,23 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           </Button>
         </div>
       )}
-      {/* Task tray: the running task stays docked beside the input until it
-        * finishes (then folds to a one-line receipt); nothing renders while the
-        * session has neither a durable task nor a live plan. */}
-      {(!isEmpty || projectWorkspaceId) && (
-        <div className="relative mx-auto w-full max-w-[768px] px-4" data-testid="chat-task-tray">
-          <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
-            projectEntry={Boolean(projectWorkspaceId)} plan={userRunCards.findLast((card) => card.active)?.surfaces.plan ?? null} runActive={inputRunActive} onOpenTask={handleOpenSessionTask} />
-        </div>
-      )}
-      {activeWorkspace && !isEmpty && (
-        <div className="relative mx-auto w-full max-w-[768px] px-4">
-          <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active={!isEmpty} sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
-        </div>
-      )}
       <ChatInput
+        contextContent={(
+          <>
+            {activeWorkspace && !isEmpty && (
+              <div className="mb-1 empty:hidden">
+                <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
+              </div>
+            )}
+            {(!isEmpty || projectWorkspaceId) && (
+              <div data-testid="chat-task-tray">
+                <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
+                  projectEntry={Boolean(projectWorkspaceId)} plan={userRunCards.findLast((card) => card.active)?.surfaces.plan ?? null}
+                  runActive={inputRunActive} controlStatus={longTaskControlStatus} onOpenTask={handleOpenSessionTask} />
+              </div>
+            )}
+          </>
+        )}
         requestPending={pendingApprovals.length > 0 || composerInteractions.length > 0}
         requestContent={(
           <ComposerRequestDock key={currentSessionKey} approvals={pendingApprovals} interactions={composerInteractions}

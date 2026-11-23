@@ -323,9 +323,17 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await expect(page.getByTestId(`provider-card-${account.id}`).getByText('Configured', { exact: true })).toBeVisible({ timeout: 30000 });
     await page.evaluate(() => { window.location.hash = '#/'; });
     const composer = page.getByTestId('chat-composer-input'), profile = page.getByTestId('chat-knowledge-profile'), mode = page.getByTestId('chat-knowledge-interaction');
+    const openKnowledgeSettings = async () => {
+      const trigger = page!.getByTestId('chat-knowledge-scope-button');
+      if (await trigger.getAttribute('aria-expanded') !== 'true') await trigger.click();
+      await expect(page!.getByTestId('chat-knowledge-scope-menu')).toHaveAttribute('data-state', 'open');
+    };
+    const selectMode = async (value: string) => { await openKnowledgeSettings(); await mode.selectOption(value); };
+    const selectProfile = async (value: string) => { await openKnowledgeSettings(); await profile.selectOption(value); };
+
     await expect(composer).toBeVisible({ timeout: 30000 });
-    await composer.fill('RAG16 draft survives research'); await mode.selectOption('manual'); await profile.selectOption('research');
-    await page.getByTestId('chat-knowledge-scope-button').click();
+    await composer.fill('RAG16 draft survives research'); await selectMode('manual'); await selectProfile('research');
+    await openKnowledgeSettings();
     const queryInput = page.getByTestId('chat-knowledge-search-input');
     const entries = () => app.evaluate(() => (globalThis as unknown as { rag16Entries: Entry[] }).rag16Entries);
     const final = async (query: string) => {
@@ -459,7 +467,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     receipt.stale = stale; steps.ownerRevisionRecheckedOnDelivery = true;
 
     const callsBeforeLocal = (await entries()).filter(entry => entry.action === 'researchStart').length;
-    await profile.selectOption('local'); await expect(mode).toHaveValue('manual');
+    await selectProfile('local'); await expect(mode).toHaveValue('manual');
     await queryInput.fill('concepts/archive.md'); await page.getByTestId('chat-knowledge-search-submit').click();
     const archiveRow = page.getByTestId('chat-knowledge-search-result').filter({ hasText: 'concepts/archive.md' }).first();
     await expect(archiveRow).toBeVisible({ timeout: 15000 }); await archiveRow.click(); await composer.press('Escape');

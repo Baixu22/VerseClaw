@@ -206,7 +206,11 @@
     "openStep": "「{{title}}」をタスク台帳で開く",
     "showSteps": "ステップを表示",
     "hideSteps": "ステップを隠す",
-    "updated": "{{time}}に更新"
+    "updated": "{{time}}に更新",
+    "runSteps": "今回のステップ",
+    "runStepsProgress": "今回の実行：{{total}} ステップ中 {{completed}} 完了",
+    "runStepsComplete": "今回のステップは完了",
+    "viewBlockers": "問題を確認"
   },
   "trace": {
     "open": "タスク追跡レポート",

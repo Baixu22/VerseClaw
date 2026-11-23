@@ -80,17 +80,26 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     });
     const composer = page.getByTestId('chat-composer-input');
     const mode = page.getByTestId('chat-knowledge-interaction'), profile = page.getByTestId('chat-knowledge-profile');
+    const openKnowledgeSettings = async () => {
+      const trigger = page!.getByTestId('chat-knowledge-scope-button');
+      if (await trigger.getAttribute('aria-expanded') !== 'true') await trigger.click();
+      await expect(page!.getByTestId('chat-knowledge-scope-menu')).toHaveAttribute('data-state', 'open');
+    };
+    const selectMode = async (value: string) => { await openKnowledgeSettings(); await mode.selectOption(value); };
+    const selectProfile = async (value: string) => { await openKnowledgeSettings(); await profile.selectOption(value); };
+
     await expect(composer).toBeVisible({ timeout: 30000 });
+    await openKnowledgeSettings();
     await expect(mode).toHaveValue('off'); await expect(profile).toHaveValue('local');
     await composer.fill('RAG11 Off plain send'); await composer.press('Enter');
     await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 90000 });
     expect(wire.some(text => text.includes('RAG11 Off plain send'))).toBe(true);
     await expect(page.getByTestId('chat-used-knowledge')).toHaveCount(0);
     steps.offOrdinarySend = true;
-    await profile.selectOption('quality'); await expect(mode).toHaveValue('off');
-    await mode.selectOption('manual'); await expect(mode).toHaveValue('manual'); await expect(profile).toHaveValue('quality');
-    await profile.selectOption('research'); await expect(mode).toHaveValue('manual');
-    await mode.selectOption('suggest'); await expect(profile).toHaveValue('research'); await profile.selectOption('local');
+    await selectProfile('quality'); await expect(mode).toHaveValue('off');
+    await selectMode('manual'); await expect(mode).toHaveValue('manual'); await expect(profile).toHaveValue('quality');
+    await selectProfile('research'); await expect(mode).toHaveValue('manual');
+    await selectMode('suggest'); await expect(profile).toHaveValue('research'); await selectProfile('local');
     await composer.fill(path);
     await expect(page.getByTestId('chat-knowledge-suggestion')).toBeVisible({ timeout: 30000 });
     await page.getByTestId('chat-knowledge-suggestion-open').click();
@@ -103,10 +112,10 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     await page.getByTestId('chat-knowledge-inspected-attach').click();
     await expect(page.getByTestId('chat-knowledge-selected-item')).toHaveCount(1);
     await expect(composer).toHaveValue(path);
-    await mode.selectOption('off'); await expect(page.getByTestId('chat-knowledge-selected-item')).toHaveCount(0);
+    await selectMode('off'); await expect(page.getByTestId('chat-knowledge-selected-item')).toHaveCount(0);
     await expect(profile).toHaveValue('local');
     steps.orthogonalModesAndInspect = true;
-    await mode.selectOption('suggest'); await composer.fill('deployment guide port');
+    await selectMode('suggest'); await composer.fill('deployment guide port');
     await expect(page.getByTestId('chat-knowledge-suggestion')).toBeVisible({ timeout: 30000 });
     await page.getByTestId('chat-knowledge-suggestion-dismiss').click();
     await expect(composer).toHaveValue('deployment guide port');
@@ -119,7 +128,7 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     expect(fallback.retrieval?.fallbackReasons.some(reason => /index|fallback/.test(reason))).toBe(true);
 
     const attach = async (lookup: string) => {
-      await page!.getByTestId('chat-knowledge-scope-button').click();
+      await openKnowledgeSettings();
       await page!.getByTestId('chat-knowledge-search-input').fill(lookup);
       const row = page!.getByTestId('chat-knowledge-search-result').filter({ hasText: lookup }).first();
       let attempts = 0;
@@ -135,7 +144,7 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
       await expect(page!.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 90000 });
       if (used) await expect(page!.getByTestId('chat-used-knowledge').last()).toContainText('Used Knowledge:', { timeout: 30000 });
     };
-    await mode.selectOption('manual'); await attach(path); await attach('concepts/budget-guide.md');
+    await selectMode('manual'); await attach(path); await attach('concepts/budget-guide.md');
     await composer.fill('RAG11 manual evidence with budget drop'); await composer.press('Enter');
     await finishSend();
     const usage = page.getByTestId('chat-used-knowledge').last();
@@ -145,14 +154,14 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     await expect(page.getByTestId('chat-used-knowledge-sources').last()).not.toContainText('Large budget guide');
     await page.screenshot({ path: testInfo.outputPath('rag11-used.png'), fullPage: true });
     steps.actualRetainedUsageAndBudgetDrop = true;
-    await mode.selectOption('auto-read'); await composer.fill(path); await composer.press('Enter');
+    await selectMode('auto-read'); await composer.fill(path); await composer.press('Enter');
     await finishSend(); await expect(page.getByTestId('chat-used-knowledge-sources').last()).toContainText('Deployment guide');
     steps.autoReadExactOwner = true;
 
-    await mode.selectOption('manual'); await attach(path);
+    await selectMode('manual'); await attach(path);
     await composer.fill('RAG11 hold run'); await composer.press('Enter');
     await expect.poll(() => wire.some(text => text.includes('RAG11 hold run')), { timeout: 60000 }).toBe(true);
-    await mode.selectOption('auto-read'); await composer.fill('concepts/queue-guide.md');
+    await selectMode('auto-read'); await composer.fill('concepts/queue-guide.md');
     await composer.press('Enter');
     await expect(composer).toHaveValue('', { timeout: 15000 });
     expect(wire.some(text => text.includes('concepts/queue-guide.md'))).toBe(false);
@@ -167,7 +176,7 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     await app.evaluate(({ dialog }, filePath) => {
       dialog.showOpenDialog = (async () => ({ canceled: false, filePaths: [filePath] })) as typeof dialog.showOpenDialog;
     }, image);
-    await mode.selectOption('manual'); await attach(path);
+    await selectMode('manual'); await attach(path);
     await page.getByTestId('chat-composer-actions').click();
     await page.getByTestId('chat-composer-action-attach-files').click();
     await expect(page.getByText('pixel.png', { exact: true }).first()).toBeVisible();
@@ -199,36 +208,37 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
       (globalThis as unknown as { rag11Faults: { fault: string } }).rag11Faults.fault = kind;
     }, value);
     const callCount = () => app.evaluate(() => (globalThis as unknown as { rag11Faults: { calls: Array<{ action: string }> } }).rag11Faults.calls.filter(call => call.action === 'routeContext').length);
-    await mode.selectOption('suggest'); await fault('late');
+    await selectMode('suggest'); await fault('late');
     let before = await callCount(); await composer.fill(path + '  ');
     await expect.poll(callCount).toBeGreaterThan(before);
-    await page.getByTestId('chat-knowledge-cancel').click();
+    await openKnowledgeSettings();
+    await page.getByTestId('chat-knowledge-menu-cancel').click();
     await expect(composer).toHaveValue(path + '  ');
     await page.waitForTimeout(1800); await expect(page.getByTestId('chat-knowledge-suggestion')).toHaveCount(0);
     steps.cancelAndLateResponse = true;
     before = await callCount(); await composer.fill('concepts/queue-guide.md ');
-    await expect.poll(callCount).toBeGreaterThan(before); await profile.selectOption('quality');
+    await expect.poll(callCount).toBeGreaterThan(before); await selectProfile('quality');
     await page.waitForTimeout(1800); await expect(page.getByTestId('chat-knowledge-preflight-item')).toHaveCount(0);
     steps.profileChangeFencesOldResponse = true;
-    before = await callCount(); await profile.selectOption('local'); await composer.fill(path);
-    await expect.poll(callCount).toBeGreaterThan(before); await mode.selectOption('off');
+    before = await callCount(); await selectProfile('local'); await composer.fill(path);
+    await expect.poll(callCount).toBeGreaterThan(before); await selectMode('off');
     await page.waitForTimeout(1800); await expect(page.getByTestId('chat-knowledge-suggestion')).toHaveCount(0);
     steps.scopeChangeFencesOldResponse = true;
-    await mode.selectOption('auto-read'); before = await callCount(); await composer.fill(path); await composer.press('Enter');
+    await selectMode('auto-read'); before = await callCount(); await composer.fill(path); await composer.press('Enter');
     await expect.poll(callCount).toBeGreaterThan(before); await composer.fill('RAG11 replacement draft');
     await page.waitForTimeout(1800); await expect(composer).toHaveValue('RAG11 replacement draft');
     expect(wire.some(text => text.includes('RAG11 replacement draft'))).toBe(false);
     steps.queryChangePreservesUnsentDraft = true;
 
-    await fault('off'); await mode.selectOption('suggest'); await composer.fill(path + ' ');
+    await fault('off'); await selectMode('suggest'); await composer.fill(path + ' ');
     await expect(page.getByTestId('chat-knowledge-suggestion')).toBeVisible({ timeout: 30000 });
     await page.getByTestId('chat-knowledge-suggestion-open').click(); await fault('late');
     await page.getByTestId('chat-knowledge-inspect-source').first().click();
-    await mode.selectOption('off'); await page.waitForTimeout(1800);
+    await selectMode('off'); await page.waitForTimeout(1800);
     await expect(page.getByTestId('chat-knowledge-source-inspector')).toHaveCount(0);
     steps.lateInspectFenced = true;
 
-    await fault('late'); await mode.selectOption('suggest');
+    await fault('late'); await selectMode('suggest');
     before = await callCount(); await composer.fill('concepts/queue-guide.md');
     await expect.poll(callCount).toBeGreaterThan(before);
     await page.getByTestId(`sidebar-session-project-${owner.id}`).locator('.project-row-wrap').hover();
@@ -240,7 +250,7 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     await expect(page.getByTestId('chat-knowledge-suggestion')).toHaveCount(0);
     steps.sessionSwitchFencesOldResponse = true;
 
-    await mode.selectOption('auto-read'); await profile.selectOption('quality'); await fault('provider-timeout');
+    await selectMode('auto-read'); await selectProfile('quality'); await fault('provider-timeout');
     await composer.fill('RAG11 provider timeout ordinary send');
     const started = Date.now(); await composer.press('Enter');
     await expect(composer).toHaveValue('', { timeout: 8000 });
@@ -249,11 +259,11 @@ test('Project RAG chat modes retain real owner evidence and bound optional reads
     await finishSend(false); await fault('off');
     steps.providerTimeoutDoesNotHoldSend = true;
 
-    await profile.selectOption('local'); await composer.fill('RAG11 missing indexed content');
+    await selectProfile('local'); await composer.fill('RAG11 missing indexed content');
     await composer.press('Enter'); await finishSend(false);
     steps.missingIndexDoesNotHoldSend = true;
     await writeFile(source, raw('Deployment guide', 'The deployment port is 19999.', 2));
-    await mode.selectOption('suggest'); await composer.fill(path);
+    await selectMode('suggest'); await composer.fill(path);
     await expect(page.getByTestId('chat-knowledge-suggestion')).toBeVisible({ timeout: 30000 });
     await page.getByTestId('chat-knowledge-suggestion-open').click();
     await expect(page.getByTestId('chat-knowledge-preflight-version').first()).not.toContainText('Version 1');

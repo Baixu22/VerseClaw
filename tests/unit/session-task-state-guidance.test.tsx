@@ -132,6 +132,7 @@ describe('U2 dependency navigation uses the existing task owner', () => {
     render(<ManagedTasks workspaceId="project-a" sessionKey="session-a" />);
     await screen.findByRole('heading', { name: 'Task dependent' });
     const dependent = within(card('Task dependent'));
+    fireEvent.click(dependent.getByTestId('managed-task-details').querySelector('summary')!);
     expect(dependent.getByText(ledger.managed.waitingDependency)).toBeVisible();
     expect(dependent.getByText('Awaiting acceptance')).toBeVisible();
     expect(dependent.getByText('Cancelled')).toBeVisible();
@@ -140,6 +141,8 @@ describe('U2 dependency navigation uses the existing task owner', () => {
     fireEvent.click(dependent.getByRole('button', { name: 'Open dependency: Task input' }));
     await waitFor(() => expect(card('Task input')).toHaveFocus());
     expect(host.queryTasks).toHaveBeenCalledTimes(1);
+    const inputDetails = card('Task input').querySelector<HTMLDetailsElement>('details')!;
+    if (!inputDetails.open) fireEvent.click(inputDetails.querySelector('summary')!);
     fireEvent.click(within(card('Task input')).getByRole('button', { name: ledger.managed.claim }));
     await waitFor(() => expect(host.command).toHaveBeenCalledWith({ workspaceId: 'project-a',
       command: { action: 'claim', taskNodeId: 'input', sessionKey: 'session-a', requestId: expect.any(String) } }));

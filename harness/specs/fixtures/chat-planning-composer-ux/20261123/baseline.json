@@ -1,0 +1,46 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "baseHead": "e3f4e0093ac7ca51254ce48ab94f19900993e1d6",
+  "source": [
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "1381f1b80f226a50b85d13853c516180f35e930cb2b4a5621f44cd5ddd8dcb6a",
+      "unchangedSinceScreenshot": true
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "ff09422ca73bbaaeb2dee26cfa5f3662394372631a5eaab55f3edad444bd50e9",
+      "unchangedSinceScreenshot": true
+    },
+    {
+      "path": "src/pages/Chat/SessionTaskDock.tsx",
+      "sha256": "2d3817a4019c324ad1826ca8da293c49bcaf743a1652563ac7fd758258277682",
+      "unchangedSinceScreenshot": true
+    },
+    {
+      "path": "src/components/tool-ui/plan-view.tsx",
+      "sha256": "2c92cadee22a78b024ee908a14d71de951193c6e7c5cde903b2e6f111685e86b",
+      "unchangedSinceScreenshot": true
+    },
+    {
+      "path": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "34c062dcad669edfa5b42cbbcc4c13b54862f8b2ef46af0c10defd465bd31518",
+      "unchangedSinceScreenshot": true
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "chat-collapsed.png",
+      "sha256": "b4bdeadc6d2fbc8e4734213e9b9f289a13bf4e182ca104b14d504af05158ae6c"
+    },
+    {
+      "name": "chat-expanded.png",
+      "sha256": "1bc3fb2496d492abd2bc374cb6fb26eb71daae9500235a0ef9dae49fbbfc2327"
+    },
+    {
+      "name": "task-workbench.png",
+      "sha256": "619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b"
+    }
+  ]
+}
