@@ -215,8 +215,7 @@ async function installComposerGitMocks(
         const key = payload.params?.key ?? payload.params?.sessionKey;
         if (key === seed.source.activeSessionKey || key === created?.activeSessionKey) {
           record();
-          return { id: request.id, ok: true, data: { success: true,
-            result: { messages: key === seed.source.activeSessionKey ? seed.messages : [] } } };
+          return { id: request.id, ok: true, data: { messages: key === seed.source.activeSessionKey ? seed.messages : [] } };
         }
       }
       if (request.module === 'workspaces' && request.action === 'create') {

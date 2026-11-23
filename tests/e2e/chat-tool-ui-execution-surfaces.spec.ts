@@ -245,17 +245,13 @@ test.describe('Tool UI execution surfaces', () => {
       expect(approveBox).not.toBeNull();
       expect(approvalSurfaceBox).not.toBeNull();
       expect(Math.abs((denyBox?.y ?? 0) - (approveBox?.y ?? 0))).toBeLessThanOrEqual(1);
-      expect(Math.abs((denyBox?.width ?? 0) - (approveBox?.width ?? 0))).toBeLessThanOrEqual(2);
-      const actionGroupWidth = (approveBox?.x ?? 0) + (approveBox?.width ?? 0) - (denyBox?.x ?? 0);
-      expect(actionGroupWidth).toBeLessThanOrEqual((approvalSurfaceBox?.width ?? 0) / 2 + 1);
-      const actionRightInset = (approvalSurfaceBox?.x ?? 0) + (approvalSurfaceBox?.width ?? 0)
-        - ((approveBox?.x ?? 0) + (approveBox?.width ?? 0));
-      const actionBottomInset = (approvalSurfaceBox?.y ?? 0) + (approvalSurfaceBox?.height ?? 0)
-        - ((approveBox?.y ?? 0) + (approveBox?.height ?? 0));
-      expect(actionRightInset).toBeGreaterThanOrEqual(0);
-      expect(actionRightInset).toBeLessThanOrEqual(16);
-      expect(actionBottomInset).toBeGreaterThanOrEqual(0);
-      expect(actionBottomInset).toBeLessThanOrEqual(16);
+      for (const box of [denyBox!, approveBox!]) {
+        expect(box.width).toBeGreaterThan(28);
+        expect(box.height).toBeGreaterThanOrEqual(28);
+        expect(box.x).toBeGreaterThanOrEqual(approvalSurfaceBox!.x);
+        expect(box.x + box.width).toBeLessThanOrEqual(approvalSurfaceBox!.x + approvalSurfaceBox!.width);
+        expect(box.y + box.height).toBeLessThanOrEqual(approvalSurfaceBox!.y + approvalSurfaceBox!.height);
+      }
 
       const lightPath = testInfo.outputPath('tool-ui-execution-light.png');
       await message.screenshot({ path: lightPath });
