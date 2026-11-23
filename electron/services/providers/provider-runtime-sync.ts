@@ -52,11 +52,13 @@ type RuntimeProviderSyncContext = {
 function buildRuntimeProviderRequestAuth(
   config: ProviderConfig,
   apiKey: string | undefined,
-): { auth: Record<string, unknown> } | undefined {
+): { auth?: Record<string, unknown> } | undefined {
   const auth = config.requestAuth;
-  if (!auth || auth.mode === 'none') {
+  if (!auth) {
     return undefined;
   }
+  // An empty request explicitly clears the persisted override; omission preserves it.
+  if (auth.mode === 'none') return {};
   const value = (apiKey ?? '').trim();
   if (!value) {
     return undefined;
@@ -400,17 +402,17 @@ async function syncCustomProviderAgentModel(
   }
 
   const resolvedKey = apiKey !== undefined ? (apiKey.trim() || null) : await getApiKey(config.id);
-  if (!resolvedKey || !config.baseUrl) {
+  if ((!resolvedKey && config.requestAuth?.mode !== 'none') || !config.baseUrl) {
     return;
   }
 
   const modelId = config.model;
-  const request = buildRuntimeProviderRequestAuth(config, resolvedKey);
+  const request = buildRuntimeProviderRequestAuth(config, resolvedKey ?? undefined);
   await updateAgentModelProvider(runtimeProviderKey, {
     baseUrl: normalizeProviderBaseUrl(config, config.baseUrl, config.apiProtocol || 'openai-completions'),
     api: config.apiProtocol || 'openai-completions',
     models: modelId ? [buildRuntimeModelProfileEntry(config, modelId)] : [],
-    apiKey: resolvedKey,
+    apiKey: resolvedKey ?? undefined,
     ...(request ? { request } : {}),
   });
 }

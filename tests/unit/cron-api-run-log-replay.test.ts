@@ -7,7 +7,13 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createRequire } from 'node:module';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { CronRunsParamsSchema } from '../../openclaw_runtime/packages/gateway-protocol/src/schema/cron';
+
+const runtimeRequire = createRequire(join(process.cwd(), 'openclaw_runtime/package.json'));
+const Ajv = runtimeRequire('ajv');
+const validateRunsParams = new Ajv({ allErrors: true, strict: false }).compile(CronRunsParamsSchema);
 
 const pathsMock = vi.hoisted(() => ({
   configDir: '',
@@ -27,6 +33,43 @@ describe('cron session history run-log replay annotation (R7-1 T2)', () => {
 
   afterEach(async () => {
     await rm(root, { recursive: true, force: true });
+  });
+
+  it('pages within the bundled schema cap and retains the newest runs and later-page run details', async () => {
+    const all = Array.from({ length: 650 }, (_, index) => ({
+      jobId: 'paged-job', action: 'finished', status: 'ok', sessionId: `session-${index}`,
+      summary: `execution ${index}`, ts: 1_800_000_000_000 + index * 1000,
+    })).reverse();
+    const rpc = vi.fn(async (method: string, payload: { offset?: number; limit?: number; sortDir?: string }) => {
+      if (method === 'cron.list') return { jobs: [] };
+      expect(method).toBe('cron.runs');
+      if (!validateRunsParams(payload)) throw Error(JSON.stringify(validateRunsParams.errors));
+      expect(payload.sortDir).toBe('desc');
+      const offset = payload.offset ?? 0;
+      const entries = all.slice(offset, offset + payload.limit!);
+      const nextOffset = offset + entries.length;
+      return { entries, hasMore: nextOffset < all.length, nextOffset };
+    });
+    const { createCronApi } = await import('@electron/services/cron-api');
+    const api = createCronApi({ gatewayManager: { rpc } as never });
+    const result = await api.sessionHistory({ sessionKey: 'agent:main:cron:paged-job', limit: 20 });
+    expect(result.messages?.at(-1)?.content).toContain('execution 649');
+    expect(result.messages).toHaveLength(20);
+    expect(rpc.mock.calls.filter(([method]) => method === 'cron.runs').map(([, payload]) => [payload.offset, payload.limit])).toEqual([[0, 200], [200, 200], [400, 100]]);
+    const older = await api.sessionHistory({ sessionKey: 'agent:main:cron:paged-job:run:session-300', limit: 20 });
+    expect(older.messages).toHaveLength(1);
+    expect(older.messages?.[0].content).toContain('execution 300');
+  });
+
+  it('keeps successful pages when a later history page fails', async () => {
+    const rpc = vi.fn(async (method: string, payload: { offset?: number }) => {
+      if (method === 'cron.list') return { jobs: [] };
+      if (payload.offset) throw Error('gateway disconnected');
+      return { entries: [{ jobId: 'partial', summary: 'retained recent run', ts: 1_800_000_000_000 }], hasMore: true, nextOffset: 1 };
+    });
+    const { createCronApi } = await import('@electron/services/cron-api');
+    const result = await createCronApi({ gatewayManager: { rpc } as never }).sessionHistory({ sessionKey: 'agent:main:cron:partial' });
+    expect(result.messages?.[0].content).toContain('retained recent run');
   });
 
   it('marks every synthesized fallback message as a run-log replay', async () => {

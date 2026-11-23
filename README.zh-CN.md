@@ -239,6 +239,7 @@ flowchart LR
 - Runtime 配置通常在 `~/.openclaw`，支持 `OPENCLAW_CONFIG_DIR`。
 - 会话使用 JSONL transcript；运行态还使用 SQLite。
 - Token 历史来自 session transcript 的结构化 usage；成本是估算值。
+- 模型用量按日统计区分不同年份，日期标签包含年份。
 - Knowledge 使用 `memory-wiki` vault 和本地 governance metadata。
 - 监听目录通过快照核对新增、修改与撤销，补偿停机期间的变化；变更只进入带版本的待审候选。
 - Librarian 问答与有界追问通过已配置 Gateway 模型处理准入后的证据，核验逐项原文引用与版本；部分读取、冲突和模型失败明确披露。Studio 继续生成待审摘录草稿。

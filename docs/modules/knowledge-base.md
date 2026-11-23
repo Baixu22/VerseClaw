@@ -327,6 +327,8 @@ Watched directory 支持：
 - 事件日志；
 - 启动时恢复 enabled watchers。
 
+启动按来源隔离扫描失败：一个目录或 connector 失败后继续启动后续来源。已建立的目录 watcher 和周期补扫保留，修正来源内容后可再次捕获；扫描错误记录在该来源事件中。
+
 重要实现限制：
 
 - 新文件只会创建一个 **review-gated Inbox item**；

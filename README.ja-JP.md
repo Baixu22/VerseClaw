@@ -239,6 +239,7 @@ Main layers：
 - Runtime config は通常 `~/.openclaw`。`OPENCLAW_CONFIG_DIR` をサポート。
 - Session は JSONL transcript、runtime state は SQLite も使用。
 - Token history は structured session usage record から集計。Cost は推定値。
+- モデル使用量の日別集計は年ごとに区別し、日付ラベルに年を表示します。
 - Knowledge は `memory-wiki` vault と local governance metadata を使用。
 - 監視フォルダーは追加・変更・削除を版付きの審査候補へ同期し、停止中の変更も再走査します。
 - Librarian は許可済みの証拠と制限された会話履歴を設定済み Gateway モデルへ渡し、原文引用と版を検証します。部分読み取り、矛盾、モデル失敗を明示し、Studio はレビュー用の抜粋草稿を保存します。

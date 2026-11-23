@@ -1026,6 +1026,46 @@ describe('knowledge host API', () => {
     } finally { stopAllKnowledgeSourceWatches(); }
   });
 
+  it('starts later watched sources after an initial scan fails and recovers the failed source', async () => {
+    const configs = ['bad', 'good'].map(id => ({
+      id, path: join(root, id), patterns: ['**/*.md'], enabled: true, ingestNewFiles: true,
+      autoCompile: false, requiresReview: true,
+    }));
+    for (const config of configs) mkdirSync(config.path, { recursive: true });
+    writeFileSync(join(configs[0].path, 'empty.md'), '');
+    writeFileSync(join(configs[1].path, 'good.md'), 'Good source');
+    mkdirSync(join(root, 'knowledge'), { recursive: true });
+    writeFileSync(join(root, 'knowledge', 'watched-directories.json'), JSON.stringify(configs));
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const rpc = vi.fn();
+    const api = createKnowledgeApi({ gatewayManager: { rpc } as never });
+    await api.listWatchedDirectories();
+    expect((await api.listInboxItems({ status: 'all' })).items.map(item => item.title)).toEqual(['good.md']);
+    await vi.waitFor(async () => expect(await api.listWatchedDirectoryEvents({ configId: 'bad' })).toEqual(expect.arrayContaining([expect.objectContaining({ event: 'error' })])));
+    writeFileSync(join(configs[0].path, 'empty.md'), 'Recovered source');
+    await vi.waitFor(async () => expect((await api.listInboxItems({ status: 'all' })).items).toHaveLength(2), { timeout: 5000 });
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it('starts later connectors after a connector startup failure', async () => {
+    const configs = ['bad', 'good'].map(id => ({ id, kind: 'github-public-directory', owner: 'fixture', repo: id,
+      ref: 'main', path: 'docs', enabled: true, intervalSeconds: 60 }));
+    mkdirSync(join(root, 'knowledge'), { recursive: true });
+    writeFileSync(join(root, 'knowledge', 'source-connectors.json'), JSON.stringify(configs));
+    const connectorModule = await import('@electron/services/knowledge-github-connector');
+    const started: string[] = [];
+    const spy = vi.spyOn(connectorModule, 'createKnowledgeGithubConnector').mockImplementation(({ config }) => ({
+      start: async () => { started.push(config.id); if (config.id === 'bad') throw Error('fixture startup failure'); },
+      stop: vi.fn(), settled: async () => undefined, scan: vi.fn(),
+    }) as never);
+    try {
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: { rpc: vi.fn() } as never });
+      await api.listSourceConnectors();
+      expect(started).toEqual(['bad', 'good']);
+    } finally { spy.mockRestore(); }
+  });
+
   it('records knowledge provenance references as metadata only', async () => {
     const gatewayManager = { rpc: vi.fn() };
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');

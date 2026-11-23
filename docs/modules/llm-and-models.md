@@ -59,6 +59,8 @@
 
 账户保存、默认模型选择及模型配置更新保留声明的推理、视觉和上下文能力。更新同一模型时，能力声明写入运行时配置和各 agent 的 models.json，已有价格记录继续保留。
 
+显式更新 `requestAuth.mode=none` 会清除 `openclaw.json` 和各 agent `models.json` 中原有的 `request.auth` 覆盖；省略 `requestAuth` 则保留既有覆盖。
+
 密钥通过 `electron/services/secrets/secret-store.ts` 和 Electron `safeStorage` 封装存储；Renderer 只应看到 masked 值。OS 加密不可用时，健康检查应报告不可用，而不是把“文件存在”当作可安全解密。
 
 支持的协议类型包括：
@@ -253,6 +255,8 @@ TF-0507 使用声明模型与 24 个 agent 驱动场景验证了受控事实下�
 - `available | missing | error` usage 状态。
 
 历史扫描支持正常 `.jsonl`、`.deleted.jsonl` 和 `.jsonl.reset.*` transcript。永久删除会话会移除该会话对后续统计的贡献；archive 会保留 transcript，因此仍可计入历史。
+
+Models 按本地自然日聚合用量，以完整日期区分年份并按时间排序；日期标签包含年份。同一天的多条记录累加，按模型分组仍显示总量最高的八项。
 
 ### 8.2 成本
 

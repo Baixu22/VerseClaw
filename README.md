@@ -240,6 +240,7 @@ No separate database server is required.
 - Runtime configuration normally lives under `~/.openclaw`, with `OPENCLAW_CONFIG_DIR` support.
 - Sessions use JSONL transcripts; runtime state also uses SQLite.
 - Token history is aggregated from structured session usage records. Costs are estimates.
+- Daily model usage keeps different years separate and displays the year in each date label.
 - Knowledge uses a `memory-wiki` vault plus local governance metadata.
 - Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
 - Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.

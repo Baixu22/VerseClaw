@@ -233,33 +233,33 @@ async function readCronRunLog(
   gatewayManager: GatewayManager,
   jobId: string,
 ): Promise<CronRunLogEntry[]> {
-  // Runtime persists run logs to SQLite (cron_run_logs); the legacy JSONL
-  // path below has no producers. Prefer the cron.runs RPC so run history
-  // actually shows up; fall back to the old file read (now effectively empty)
-  // when the gateway is unreachable.
+  // Keep the latest 500 records within one RPC budget. The Gateway caps each
+  // page at 200; descending pages avoid dropping recent runs on busy jobs.
+  const entries: CronRunLogEntry[] = [];
+  const deadline = Date.now() + 8000;
   try {
-    const result = await gatewayManager.rpc(
-      'cron.runs',
-      { jobId, limit: 500, sortDir: 'asc' },
-      8000,
-    );
-    const page = result as { entries?: CronRunLogEntry[] } | undefined;
-    const entries = Array.isArray(page?.entries) ? page.entries : [];
-    if (entries.length > 0) {
-      return entries.filter(
-        (entry) => entry && entry.jobId === jobId && (!entry.action || entry.action === 'finished'),
+    let offset = 0;
+    while (offset < 500 && Date.now() < deadline) {
+      const result = await gatewayManager.rpc(
+        'cron.runs',
+        { jobId, limit: Math.min(200, 500 - offset), offset, sortDir: 'desc' },
+        Math.max(1, deadline - Date.now()),
       );
+      const page = result as { entries?: CronRunLogEntry[]; hasMore?: boolean; nextOffset?: number | null } | undefined;
+      const rows = Array.isArray(page?.entries) ? page.entries : [];
+      entries.push(...rows.filter((entry) => entry && entry.jobId === jobId && (!entry.action || entry.action === 'finished')));
+      if (!page?.hasMore || rows.length === 0 || !Number.isInteger(page.nextOffset) || page.nextOffset! <= offset) break;
+      offset = page.nextOffset!;
     }
-    // No entries from the RPC (mock, old gateway, or genuinely empty run log):
-    // fall through to the legacy JSONL read so callers keep working.
   } catch {
-    // fall through to legacy JSONL read (returns [] when absent)
+    // Preserve pages already received when a later page fails.
   }
+  if (entries.length > 0) return entries;
+  // Older installations can still have a JSONL run log when the Gateway is unavailable.
   const logPath = join(getOpenClawConfigDir(), 'cron', 'runs', `${jobId}.jsonl`);
   const raw = await readFile(logPath, 'utf8').catch(() => '');
   if (!raw.trim()) return [];
 
-  const entries: CronRunLogEntry[] = [];
   for (const line of raw.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed) continue;

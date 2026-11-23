@@ -22,6 +22,19 @@ function createEntry(day: number, totalTokens: number): UsageHistoryEntry {
 }
 
 describe('models usage history helpers', () => {
+  it.each([false, true])('keeps years distinct and merges the same local day (reversed=%s)', (reversed) => {
+    const entries = [
+      { ...createEntry(20, 100), timestamp: new Date(2025, 10, 20, 1).toISOString() },
+      { ...createEntry(20, 200), timestamp: new Date(2026, 10, 20, 1).toISOString() },
+      { ...createEntry(20, 50), timestamp: new Date(2026, 10, 20, 23).toISOString() },
+    ];
+    const groups = groupUsageHistory(filterUsageHistoryByWindow(reversed ? entries.reverse() : entries, 'all'), 'day');
+    expect(groups.map((group) => group.totalTokens)).toEqual([100, 250]);
+    expect(groups[0].label).toContain('2025');
+    expect(groups[1].label).toContain('2026');
+    expect(groups[0].sortKey).toBeLessThan(groups[1].sortKey as number);
+  });
+
   it('keeps all day buckets instead of truncating to the first eight', () => {
     const entries = Array.from({ length: 12 }, (_, index) => createEntry(index + 1, index + 1));
 

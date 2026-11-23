@@ -213,6 +213,8 @@ pnpm run harness:ci
 
 Agent Dev 是本地诊断/仿真控制面，不是产品运行时 authority。
 
+Host API 回放先按 module、action 和完整 payload 精确匹配，再使用同路由且未指定 payload 的通用 fixture。只有不同 payload 的 fixture 时，调用继续走原 Host bridge。
+
 | 命令 | 用途 |
 |---|---|
 | `pnpm agent-dev:make <page\|e2e\|host-route\|skill\|channel\|plugin\|scenario> <name>` | 生成约定骨架 |

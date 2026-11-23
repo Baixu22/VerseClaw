@@ -175,7 +175,7 @@ describe('R4 provider-runtime-sync auth / headers / capability metadata', () => 
     expect(entry.request).toEqual(expectedRequest);
   });
 
-  it('omits request.auth entirely for "none" auth mode', async () => {
+  it('sends an explicit deletion for persisted request.auth in "none" auth mode', async () => {
     await syncSavedProviderToRuntime(
       createCustomProvider({ requestAuth: { mode: 'none' } }),
       'sk-test',
@@ -183,9 +183,9 @@ describe('R4 provider-runtime-sync auth / headers / capability metadata', () => 
     );
 
     const [, , override] = syncConfigCallArgs();
-    expect(override.request).toBeUndefined();
+    expect(override.request).toEqual({});
     const [, entry] = agentModelsCallArgs();
-    expect(entry.request).toBeUndefined();
+    expect(entry.request).toEqual({});
   });
 
   it('writes declared capability metadata end-to-end (UI fill -> openclaw.json -> models.json)', async () => {

@@ -536,6 +536,7 @@ Doctor/Doctor Fix：
 - preview 输出 create/skip-existing/rejected；
 - restore 仅创建不存在路径，不覆盖当前数据；
 - 拒绝路径遍历/越出 manifest root；
+- 预览及写入时检查目标路径的既有祖先，拒绝 symbolic link/junction 重定向；有拒绝项时返回 `success=false`；
 - 中途失败时回滚本次已创建文件；
 - 结果包含 written/skipped/rejected/errors/rolledBack。
 

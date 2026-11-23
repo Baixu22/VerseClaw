@@ -162,6 +162,8 @@ Delivery modes：
 
 奇偶/并发、retention、session reaper、stagger 等细节见 `openclaw_runtime/src/cron/`。
 
+任务详情从 `cron.runs` 按时间倒序分批读取最近 500 条运行记录，每页最多 200 条，整个读取共用 8 秒预算。显示时按时间正序排列并应用消息数量限制；后续页失败时保留已收到的记录。
+
 ## 5. Inbox
 
 用户入口：`/inbox`，advanced。

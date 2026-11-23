@@ -3740,7 +3740,11 @@ export function createKnowledgeApi({
     if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) return;
     for (const config of configs) {
       if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) break;
-      await startWatching(config);
+      try {
+        await startWatching(config);
+      } catch (error) {
+        logger.warn('[knowledge] source watcher initialization failed', config.id, sanitizeUiErrorText(error));
+      }
     }
   }).catch(error => logger.warn('[knowledge] source watcher initialization failed', error));
   function disposeOwnedWatches() {
@@ -3788,7 +3792,11 @@ export function createKnowledgeApi({
     if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) return;
     for (const config of configs) {
       if (knowledgeSourceWatchDisposers.get(watchedOwner) !== disposeOwnedWatches) break;
-      await startConnector(config);
+      try {
+        await startConnector(config);
+      } catch (error) {
+        logger.warn('[knowledge] connector initialization failed', config.id, sanitizeUiErrorText(error));
+      }
     }
   }).catch(error => logger.warn('[knowledge] connector initialization failed', sanitizeUiErrorText(error)));
   let connectorSettingsQueue: Promise<unknown> = Promise.resolve();
