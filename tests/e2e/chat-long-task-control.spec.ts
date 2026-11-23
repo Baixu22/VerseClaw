@@ -19,6 +19,10 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpcByMethod: {
+          'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'long-task-generation', displayName: 'main' }] },
+          'chat.history': { messages: [] },
+        },
         hostApi: {
           [stableStringify(['gateway', 'status', null])]: {
             state: 'running',
@@ -307,7 +311,9 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       }, MAIN_SESSION_KEY);
 
       const page = await getStableWindow(app);
+      await page.reload();
       await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', 'long-task-generation');
 
       await expect(page.getByTestId('chat-long-task-queue-count')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-actions').click();

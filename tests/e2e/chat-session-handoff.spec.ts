@@ -507,7 +507,7 @@ test.describe('Verse Claw chat session handoff', () => {
       expect(bounds && bounds.x >= 0 && bounds.x + bounds.width <= 480).toBe(true);
       await page.screenshot({ path: testInfo.outputPath('handoff-narrow-dark.png') });
       await page.evaluate(() => document.documentElement.classList.remove('dark'));
-      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('background-color', 'rgb(252, 252, 250)');
       await page.screenshot({ path: testInfo.outputPath('handoff-narrow-light.png') });
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.getByTestId('chat-handoff-details').locator('summary').click();
