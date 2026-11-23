@@ -81,7 +81,11 @@ test('keeps operation groups in conversation order with shared width, accessible
     for (const lang of ['en', 'zh', 'ja', 'ru']) {
       await language(page, lang);
       for (const theme of ['light', 'dark']) {
-        await page.evaluate(dark => document.documentElement.classList.toggle('dark', dark), theme === 'dark');
+        await page.evaluate(async theme => {
+          await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: 'settings', action: 'set', payload: { key: 'theme', value: theme } });
+        }, theme);
+        await page.reload();
+        await expect(page.getByText('最终答复：配置已更新，检查已完成。', { exact: true })).toBeVisible();
         await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', theme === 'dark' ? 'rgb(33, 33, 31)' : 'rgb(247, 247, 245)');
         for (const width of [1280, 375]) {
           await pinWindowContentSize(app, { width, height: 800 });
