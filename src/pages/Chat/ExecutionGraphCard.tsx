@@ -190,7 +190,8 @@ function StepDetailRow({
       const action = showRunning && !runActive ? t('toolActivity.pendingResult')
         : t(`toolActivity.${running ? 'running' : 'completed'}.${kind}`);
       return (
-        <div className="tool-activity-step" data-testid="chat-tool-activity-step" data-status={step.status}>
+        <div className="group/execution-step tool-activity-step" data-testid="chat-tool-activity-step" data-status={step.status}>
+          <div className="tool-activity-step-line">
           <button type="button" className="tool-activity-step-toggle" data-testid="chat-execution-step-toggle"
             onClick={toggleExpanded} aria-expanded={hasDetail ? expanded : undefined}
             aria-controls={hasDetail && expanded ? detailId : undefined} aria-label={`${displayLabel}, ${statusLabel}`} title={target}>
@@ -202,7 +203,9 @@ function StepDetailRow({
             {showError && <span className="tool-activity-error">{statusLabel}</span>}
             {hasDetail && <ChevronRight aria-hidden="true" className={cn('tool-activity-chevron', expanded && 'rotate-90')} />}
           </button>
-          {riskBadge}{urlLink}{detail}
+          {riskBadge}{urlLink}
+          </div>
+          {detail}
         </div>
       );
     }

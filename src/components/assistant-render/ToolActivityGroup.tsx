@@ -13,7 +13,7 @@ export function ToolActivityIcon({ kind, reveal = false }: { kind: ToolActivityK
   const Icon = ICONS[kind];
   return (
     <span className="tool-activity-icon" data-kind={kind} aria-hidden="true">
-      <Icon strokeWidth={1.5} />
+      <Icon strokeWidth={1.5} className="tool-activity-icon-base" />
       {reveal && <Icon strokeWidth={1.5} className="tool-activity-icon-glint" />}
     </span>
   );
@@ -30,7 +30,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
   const { t, i18n } = useTranslation('chat');
   const contentId = useId();
   const current = group.current;
-  const animate = Boolean(current) && group.isCurrent;
+  const isRunning = Boolean(current) && group.isCurrent && group.status !== 'error' && group.status !== 'aborted';
   const kinds = [...new Set(group.entries.map(entry => entry.kind))];
   const completed = new Intl.ListFormat(i18n?.language, { style: 'long', type: 'conjunction' })
     .format(kinds.map(kind => t(`toolActivity.completed.${kind}`)));
@@ -38,26 +38,54 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
   const target = current?.target ?? current?.name;
   const label = group.status === 'error' ? t('toolActivity.failed', { action: group.pendingResult ? t('toolActivity.pendingResult') : action })
     : group.status === 'aborted' ? t('toolActivity.stopped') : group.pendingResult ? t('toolActivity.pendingResult') : action;
+  const summaryText = target ? `${label} ${target}` : label;
+
   return (
-    <section className="tool-activity-group" data-testid="chat-tool-activity-group" data-group-id={group.id} data-status={group.status}>
-      <button type="button" className={cn('tool-activity-toggle', group.status === 'error' && 'text-destructive')}
-        data-testid="chat-tool-activity-toggle" aria-expanded={expanded} aria-controls={expanded ? contentId : undefined}
-        onClick={() => onExpandedChange(!expanded)} title={target ?? label}>
-        <ToolActivityIcon key={current?.id ?? kinds[0]} kind={current?.kind ?? kinds[0] ?? 'other'} reveal={Boolean(animate) && !expanded} />
+    <section
+      className="tool-activity-group"
+      data-testid="chat-tool-activity-group"
+      data-group-id={group.id}
+      data-status={group.status}
+      data-expanded={expanded ? 'true' : 'false'}
+      data-running={isRunning ? 'true' : 'false'}
+    >
+      <button
+        type="button"
+        className={cn('tool-activity-toggle', group.status === 'error' && 'text-destructive')}
+        data-testid="chat-tool-activity-toggle"
+        aria-expanded={expanded}
+        aria-controls={expanded ? contentId : undefined}
+        onClick={() => onExpandedChange(!expanded)}
+        title={target ?? label}
+      >
+        <ToolActivityIcon key={current?.id ?? kinds[0]} kind={current?.kind ?? kinds[0] ?? 'other'} reveal={isRunning && !expanded} />
         <span className="tool-activity-label" data-testid="chat-tool-activity-label">
-          {current && animate && !expanded ? <Shimmer className="tool-activity-shimmer">{label}{target ? ` ${target}` : ''}</Shimmer>
-            : <span>{label}{target ? ` ${target}` : ''}</span>}
+          {isRunning && !expanded ? (
+            <Shimmer className="tool-activity-shimmer">{summaryText}</Shimmer>
+          ) : (
+            <span>
+              <span className="tool-activity-action">{label}</span>
+              {target ? <span className="tool-activity-target">{` ${target}`}</span> : null}
+            </span>
+          )}
         </span>
         <ChevronDown strokeWidth={1.5} aria-hidden="true" className={cn('tool-activity-chevron', expanded && 'is-expanded')} />
       </button>
       {expanded && (
         <div id={contentId} className="tool-activity-details" data-testid="chat-tool-activity-details">
-          <ExecutionGraphCard agentLabel={group.agentLabel} steps={group.steps} terminals={group.terminals}
+          <ExecutionGraphCard
+            agentLabel={group.agentLabel}
+            steps={group.steps}
+            terminals={group.terminals}
             traceId={group.traceId}
-            active={Boolean(current)} suppressThinking appearance="activity"
-            currentToolId={group.isCurrent ? current?.id : undefined}
-            expandedStepIds={expandedStepIds} onStepExpandedChange={onStepExpandedChange}
-            renderToolIcon={(kind, reveal) => <ToolActivityIcon kind={kind} reveal={reveal} />} />
+            active={Boolean(current)}
+            suppressThinking
+            appearance="activity"
+            currentToolId={isRunning ? current?.id : undefined}
+            expandedStepIds={expandedStepIds}
+            onStepExpandedChange={onStepExpandedChange}
+            renderToolIcon={(kind, reveal) => <ToolActivityIcon kind={kind} reveal={reveal} />}
+          />
           {children}
         </div>
       )}

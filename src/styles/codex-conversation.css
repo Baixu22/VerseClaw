@@ -57,72 +57,366 @@
   max-width: none;
   padding-inline: var(--conversation-gutter);
 }
+
 .codex-composer-host.chat-conversation-measure {
   padding-inline-end: calc(var(--conversation-gutter) + var(--conversation-scrollbar-width, 0px));
 }
+
 @media (min-width: 768px) {
-  .chat-conversation-measure { --conversation-gutter: 32px; }
+  .chat-conversation-measure {
+    --conversation-gutter: 32px;
+  }
 }
-[data-testid='chat-scroll-container'].rareui-has-turn-rail { padding-inline-start: 0; }
+
+[data-testid='chat-scroll-container'].rareui-has-turn-rail {
+  padding-inline-start: 0;
+}
+
 [data-testid='chat-conversation-column']:has(.rareui-has-turn-rail) .chat-conversation-measure {
   padding-inline-start: calc(var(--conversation-gutter) + 30px);
 }
+
 @media (min-width: 1181px) {
-  [data-testid='chat-conversation-column']:has([data-testid='chat-scroll-container'][data-rail='expanded']) .codex-composer-host:not(.codex-composer-host--hero) {
+  [data-testid='chat-conversation-column']:has([data-testid='chat-scroll-container'][data-rail='expanded'])
+    .codex-composer-host:not(.codex-composer-host--hero) {
     width: calc(100% - 316px);
     margin-inline-start: 0;
     margin-inline-end: 316px;
   }
 }
 
-.tool-activity-group { min-width: 0; color: var(--color-chat-secondary); font-size: 14px; line-height: 22px; }
-.tool-activity-toggle, .tool-activity-step-toggle {
-  display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%;
-  min-height: 28px; padding: 2px 0; border: 0; border-radius: 4px; background: transparent;
-  color: inherit; font: inherit; text-align: start; cursor: pointer;
+/* Tool activity group: quiet single-line disclosure subordinate to prose. */
+.tool-activity-group {
+  min-width: 0;
+  color: var(--color-chat-secondary);
+  font-size: 13.5px;
+  line-height: 20px;
+  letter-spacing: -0.005em;
 }
-.tool-activity-toggle { width: fit-content; }
-.tool-activity-toggle:hover, .tool-activity-step-toggle:hover { color: var(--color-chat-foreground); }
-.tool-activity-toggle:focus-visible, .tool-activity-step-toggle:focus-visible {
-  outline: 1px solid var(--color-chat-secondary); outline-offset: 3px;
+
+.tool-activity-group[data-expanded='true'] {
+  margin-bottom: 4px;
 }
-.tool-activity-label, .tool-activity-step-label { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tool-activity-label { flex: 0 1 auto; }
-.tool-activity-step-label { flex: 1; }
-.tool-activity-chevron { flex: none; width: 14px; height: 14px; opacity: .65; transition: transform 150ms ease-out; }
-.tool-activity-toggle .tool-activity-chevron { transform: rotate(-90deg); }
-.tool-activity-toggle .tool-activity-chevron.is-expanded { transform: none; }
-.tool-activity-group[data-status='error'] .tool-activity-toggle { color: hsl(var(--destructive)); }
-.tool-activity-icon { position: relative; display: inline-flex; width: 16px; height: 16px; flex: none; }
-.tool-activity-icon svg { display: block; width: 16px; height: 16px; }
+
+.tool-activity-toggle,
+.tool-activity-step-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 26px;
+  padding: 3px 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 400;
+  text-align: start;
+  cursor: pointer;
+  transition: color 140ms ease-out;
+}
+
+.tool-activity-toggle[aria-expanded='true'] {
+  color: color-mix(in srgb, var(--color-chat-foreground) 78%, var(--color-chat-secondary));
+}
+
+.tool-activity-toggle:hover,
+.tool-activity-step-toggle:hover,
+.tool-activity-step-toggle[aria-expanded='true'] {
+  color: var(--color-chat-foreground);
+}
+
+.tool-activity-toggle:focus-visible,
+.tool-activity-step-toggle:focus-visible {
+  color: var(--color-chat-foreground);
+  outline: 1.5px solid color-mix(in srgb, var(--color-chat-foreground) 45%, var(--color-chat-secondary));
+  outline-offset: 3px;
+}
+
+.tool-activity-group[data-status='error'] .tool-activity-toggle {
+  color: hsl(var(--destructive));
+}
+
+.tool-activity-group[data-status='error'] .tool-activity-toggle:hover,
+.tool-activity-group[data-status='error'] .tool-activity-toggle:focus-visible {
+  color: color-mix(in srgb, hsl(var(--destructive)) 82%, var(--color-chat-foreground));
+}
+
+.tool-activity-label,
+.tool-activity-step-label {
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tool-activity-target {
+  opacity: 0.88;
+}
+
+/* 16px monochrome SVG icons & disclosure chevrons with balanced optical stroke. */
+.tool-activity-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: currentColor;
+}
+
+.tool-activity-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.tool-activity-icon svg[viewBox='0 0 24 24'] {
+  stroke-width: 1.85;
+}
+
+.tool-activity-icon-base {
+  opacity: 0.9;
+}
+
+.tool-activity-chevron {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 140ms ease-out, transform 150ms ease-out;
+}
+
+.tool-activity-toggle .tool-activity-chevron {
+  transform: rotate(-90deg);
+}
+
+.tool-activity-toggle .tool-activity-chevron.is-expanded {
+  transform: rotate(0deg);
+}
+
+.tool-activity-toggle:hover .tool-activity-chevron,
+.tool-activity-toggle:focus-visible .tool-activity-chevron,
+.tool-activity-toggle[aria-expanded='true'] .tool-activity-chevron,
+.tool-activity-chevron.is-expanded,
+.tool-activity-step-toggle:hover .tool-activity-chevron,
+.tool-activity-step-toggle:focus-visible .tool-activity-chevron,
+.tool-activity-step-toggle[aria-expanded='true'] .tool-activity-chevron {
+  opacity: 0.72;
+}
+
+@media (hover: none) {
+  .tool-activity-toggle .tool-activity-chevron {
+    opacity: 0.5;
+  }
+}
+
+/* White highlight belongs exclusively to the active running tool icon and text. */
 .tool-activity-icon .tool-activity-icon-glint {
-  position: absolute; inset: 0; color: var(--color-white, #fff);
-  mask-image: linear-gradient(90deg, transparent, #fff, transparent);
-  mask-repeat: no-repeat; mask-size: 60% 100%;
-  animation: tool-activity-icon-reveal 1s ease-out both;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--color-white, #fff);
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.32));
+  -webkit-mask-image: linear-gradient(110deg, transparent 10%, #fff 50%, transparent 90%);
+  mask-image: linear-gradient(110deg, transparent 10%, #fff 50%, transparent 90%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 65% 100%;
+  mask-size: 65% 100%;
+  animation: tool-activity-icon-reveal 800ms cubic-bezier(0.22, 1, 0.36, 1) 1 both;
 }
+
 @keyframes tool-activity-icon-reveal {
-  0% { mask-position: -150% 0; opacity: 0; }
-  15% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { mask-position: 250% 0; opacity: 0; }
+  0% {
+    -webkit-mask-position: -160% 0;
+    mask-position: -160% 0;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-mask-position: 260% 0;
+    mask-position: 260% 0;
+    opacity: 0;
+  }
 }
+
 .tool-activity-group .tool-activity-shimmer {
-  display: inline; background-image: linear-gradient(110deg, var(--color-chat-secondary) 20%, var(--color-white, #fff) 50%, var(--color-chat-secondary) 80%);
-  background-size: 200% 100%; color: transparent;
+  display: inline;
+  background-image: linear-gradient(
+    110deg,
+    var(--color-chat-secondary) 0%,
+    var(--color-chat-secondary) 35%,
+    var(--color-white, #fff) 50%,
+    var(--color-chat-secondary) 65%,
+    var(--color-chat-secondary) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
-.tool-activity-details { min-width: 0; margin: 8px 0 0 7px; border-inline-start: 1px solid var(--color-chat-tray-border); padding: 0 0 2px 20px; }
-.tool-activity-details [data-testid='chat-execution-step'] { gap: 0; }
-.tool-activity-step { min-width: 0; width: 100%; }
-.tool-activity-step-toggle { width: 100%; }
-.tool-activity-terminal > button { color: inherit; }
-.tool-activity-error { flex: none; font-size: 12px; color: hsl(var(--destructive)); }
-.tool-activity-details [data-testid='chat-run-terminals'] { margin-block: 0; }
-.tool-activity-details [data-testid='chat-execution-step-detail'] { margin-inline-start: 24px; }
+
+/* Expanded sequential log aligned along a 1px connector under the 16px header icon. */
+.tool-activity-details {
+  min-width: 0;
+  margin: 4px 0 2px 7px;
+  border-inline-start: 1px solid var(--color-chat-tray-border);
+  padding: 1px 0 1px 16px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.tool-activity-details [data-testid='chat-execution-step'] {
+  gap: 0;
+}
+
+.tool-activity-details [data-testid='chat-execution-step']:empty {
+  display: none;
+}
+
+.tool-activity-step {
+  min-width: 0;
+  width: 100%;
+}
+
+.tool-activity-step-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tool-activity-step-line > a { margin-top: 0; }
+
+.tool-activity-error {
+  flex: none;
+  font-size: 12px;
+  line-height: 16px;
+  color: hsl(var(--destructive));
+}
+
+.tool-activity-details [data-testid='chat-execution-step-detail'] {
+  margin: 4px 0 8px 24px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-chat-tray-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-chat-foreground) 3%, transparent);
+  color: var(--color-chat-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.tool-activity-details [data-testid='chat-execution-step-detail'] pre {
+  margin: 2px 0 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-chat-foreground) 3%, transparent);
+  color: color-mix(in srgb, var(--color-chat-foreground) 86%, var(--color-chat-secondary));
+  font-size: 12px;
+  line-height: 18px;
+  overflow-x: auto;
+}
+
+.tool-activity-details [data-testid='chat-run-terminals'] {
+  margin-block: 0;
+}
+
+.tool-activity-terminal {
+  min-width: 0;
+  color: var(--color-chat-secondary);
+}
+
+.tool-activity-terminal > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 26px;
+  padding: 3px 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 400;
+  text-align: start;
+  cursor: pointer;
+  transition: color 140ms ease-out;
+}
+
+.tool-activity-terminal > button * {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: 400;
+}
+
+.tool-activity-terminal > button > svg:first-child {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  opacity: 0.85;
+}
+
+.tool-activity-terminal > button:hover {
+  color: var(--color-chat-foreground);
+}
+
+.tool-activity-terminal > button:focus-visible {
+  color: var(--color-chat-foreground);
+  outline: 1.5px solid color-mix(in srgb, var(--color-chat-foreground) 45%, var(--color-chat-secondary));
+  outline-offset: 3px;
+}
+
+.tool-activity-terminal pre {
+  margin: 4px 0 8px 24px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-chat-tray-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-chat-foreground) 3%, transparent);
+  color: color-mix(in srgb, var(--color-chat-foreground) 86%, var(--color-chat-secondary));
+  font-size: 12px;
+  line-height: 18px;
+  overflow-x: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .tool-activity-group .tool-activity-shimmer { animation: none !important; background: none !important; color: inherit !important; }
-  .tool-activity-icon-glint { display: none !important; }
-  .tool-activity-chevron { transition: none; }
+  .tool-activity-group .tool-activity-shimmer {
+    animation: none !important;
+    transition: none !important;
+    background: none !important;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  .tool-activity-icon-glint {
+    display: none !important;
+    animation: none !important;
+  }
+
+  .tool-activity-chevron,
+  .tool-activity-toggle,
+  .tool-activity-step-toggle,
+  .tool-activity-terminal > button {
+    transition: none;
+  }
 }
 
 .codex-markdown > :first-child {
