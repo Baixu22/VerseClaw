@@ -21,10 +21,24 @@ afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 describe('continuous local knowledge synchronization', () => {
+  it('advances healthy files despite an invalid sibling without inferring withdrawal', async () => {
+    const f = await fixture();
+    await writeFile(join(f.root, 'healthy.md'), 'first'); await writeFile(join(f.root, 'retained.md'), 'retain');
+    await f.sync.scan();
+    await writeFile(join(f.root, 'healthy.md'), 'updated'); await unlink(join(f.root, 'retained.md'));
+    await writeFile(join(f.root, 'binary.md'), Buffer.from([0, 65]));
+    await f.sync.scan();
+    expect(f.received.map(item => item.kind)).toEqual(['created', 'created', 'updated']);
+    expect(f.config.onError).toHaveBeenCalled();
+    expect(JSON.parse(await readFile(f.config.cursorPath, 'utf8')).files['retained.md']).toBeDefined();
+    await unlink(join(f.root, 'binary.md')); await f.sync.scan();
+    expect(f.received.at(-1)?.kind).toBe('withdrawn');
+  });
   it('rejects invalid UTF-8 without capturing replacement bytes or advancing the owner cursor', async () => {
     const f = await fixture();
     await writeFile(join(f.root, 'broken.md'), Buffer.from([0x23, 0x20, 0xc3, 0x28]));
-    await expect(f.sync.scan()).rejects.toThrow();
+    await f.sync.scan();
+    expect(f.config.onError).toHaveBeenCalled();
     expect(f.received).toHaveLength(0);
     await expect(readFile(f.config.cursorPath)).rejects.toMatchObject({ code: 'ENOENT' });
     const raw = '\uFEFF# 中文\r\n日本語 русский 😀\r\n';
@@ -104,7 +118,8 @@ describe('continuous local knowledge synchronization', () => {
     const cursor = await readFile(f.config.cursorPath, 'utf8');
     f.received.splice(0);
     await writeFile(file, bytes);
-    await expect(f.sync.scan()).rejects.toThrow();
+    await f.sync.scan();
+    expect(f.config.onError).toHaveBeenCalled();
     expect(f.received).toHaveLength(0);
     expect(await readFile(f.config.cursorPath, 'utf8')).toBe(cursor);
     await writeFile(file, 'repaired valid body'); await f.sync.scan();

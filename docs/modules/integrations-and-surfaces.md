@@ -65,6 +65,8 @@ Settings 的角色：
 
 ## 3. Channels
 
+编辑已有账户时，Main 保留未修改的脱敏凭据；显式新值替换原值，空值清空。顶层默认账户镜像归回已声明的账户，不额外创建 `default` 机器人；重复绑定错误只显示账户标识。
+
 类型定义：`shared/types/channel.ts`。
 
 当前枚举 15 类：
@@ -162,7 +164,7 @@ Delivery modes：
 
 奇偶/并发、retention、session reaper、stagger 等细节见 `openclaw_runtime/src/cron/`。
 
-任务详情从 `cron.runs` 按时间倒序分批读取最近 500 条运行记录，每页最多 200 条，整个读取共用 8 秒预算。显示时按时间正序排列并应用消息数量限制；后续页失败时保留已收到的记录。
+任务详情从 `cron.runs` 按时间倒序分批读取最近 500 条运行记录，每页最多 200 条，整个读取共用 8 秒预算。显示时按时间正序排列并应用消息数量限制；后续页失败时保留已收到的记录。列表读取不修改投递配置；RPC 失败时保留上一份列表并显示错误。改名或修改正文会保留未编辑的 webhook、announce 路由和扩展字段。
 
 ## 5. Inbox
 
@@ -203,6 +205,8 @@ Host API：
 
 Remote Tasks 是远程任务记录和操作面；`/remote-tasks` 兼容入口会回到 Inbox 的 remote-task source 视图。
 
+任务在持久文件锁内领取执行权。运行中的同一任务再次收到 execute 会明确拒绝；重启后保留的 running 也必须先核对已有执行。任务存储损坏或不可读时阻止写入，主文件丢失时可恢复有效备份。
+
 边界：
 
 - 创建/预览 ≠ 已执行；
@@ -236,11 +240,14 @@ Skill source 可来自：
 
 - skill discovered ≠ exposed；
 - Skill 启停配置写入 runtime 所有的 `openclaw.json`，受管目录在 Gateway 启动前注册；
+- 显式卸载记录在本地受管技能偏好中，后续启动跳过该预装包；明确重新安装并通过完整性检查后解除卸载标记；
 - config saved ≠ runtime reloaded；
 - marketplace install ≠ executable trust；
 - skill contents 可以影响 prompt，但不是权限 grant。
 
 ### MCP
+
+MCP 配置和密钥 vault 的读改写、Runtime 同步与失败回滚在同一串行范围内。JSON 导入与详情编辑保留 `headers`、`exposure`、`sslVerify`；格式错误直接报错。回传的 header 掩码保留已有值，不作为凭据写入。
 
 Type：`shared/types/mcp.ts`。
 

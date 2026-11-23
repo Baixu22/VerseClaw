@@ -20,9 +20,7 @@ import type {
 } from '@shared/types/cron';
 import type { GatewayManager } from '../gateway/manager';
 import { getOpenClawConfigDir } from '../utils/paths';
-import { resolveAgentIdFromChannel } from '../utils/agent-config';
 import { toOpenClawChannelType, toUiChannelType } from '../utils/channel-alias';
-import { resolveAccountIdFromSessionHistory } from '../utils/session-util';
 import { isRecord } from './payload-utils';
 import {
   classifyCronHostAction,
@@ -406,7 +404,7 @@ function normalizeCronDelivery(
   if (!rawDelivery || typeof rawDelivery !== 'object') return { mode: fallbackMode };
 
   const delivery = rawDelivery as JsonRecord;
-  const mode = delivery.mode === 'announce' ? 'announce' : fallbackMode;
+  const mode = delivery.mode === 'announce' || delivery.mode === 'webhook' ? delivery.mode : fallbackMode;
   const channel = typeof delivery.channel === 'string' && delivery.channel.trim()
     ? toOpenClawChannelType(delivery.channel.trim())
     : undefined;
@@ -415,8 +413,8 @@ function normalizeCronDelivery(
     ? delivery.accountId.trim()
     : undefined;
 
-  if (mode === 'announce' && !channel) return { mode: 'none' };
   return {
+    ...delivery,
     mode,
     ...(channel ? { channel } : {}),
     ...(to ? { to } : {}),
@@ -447,7 +445,7 @@ function normalizeCronDeliveryPatch(rawDelivery: unknown): Record<string, unknow
   if (!rawDelivery || typeof rawDelivery !== 'object') return {};
 
   const delivery = rawDelivery as JsonRecord;
-  const patch: Record<string, unknown> = {};
+  const patch: Record<string, unknown> = { ...delivery };
   if ('mode' in delivery) {
     patch.mode = typeof delivery.mode === 'string' && delivery.mode.trim() ? delivery.mode.trim() : 'none';
   }
@@ -628,100 +626,10 @@ function transformCronJob(job: GatewayCronJob, source: CronJobSource = 'gateway'
 }
 
 async function listCronJobs(gatewayManager: GatewayManager): Promise<CronJob[]> {
-  let jobs: GatewayCronJob[] = [];
-  let usedFallback = false;
-
-  try {
-    const result = await gatewayManager.rpc('cron.list', { includeDisabled: true }, 8000);
-    const data = result as { jobs?: GatewayCronJob[] };
-    jobs = data?.jobs ?? (Array.isArray(result) ? result as GatewayCronJob[] : []);
-  } catch {
-    try {
-      const cronJsonPath = join(getOpenClawConfigDir(), 'cron', 'cron.json');
-      const raw = await readFile(cronJsonPath, 'utf-8');
-      const parsed = JSON.parse(raw);
-      jobs = (Array.isArray(parsed) ? parsed : (parsed?.jobs ?? [])) as GatewayCronJob[];
-      usedFallback = true;
-    } catch {
-      // No fallback data available.
-    }
-  }
-
-  if (!usedFallback && jobs.length > 0) {
-    await repairCronJobs(gatewayManager, jobs);
-  }
-
-  const projected = jobs.map((job) => transformCronJob(job, usedFallback ? 'config-fallback' : 'gateway'));
-  return usedFallback ? projected : annotateCoordinatorStatus(gatewayManager, projected);
-}
-
-/**
- * Repair known gateway-side cron misconfigurations (announce delivery without
- * a channel, missing agentId). Each repair is an RPC round-trip: the local job
- * projection is only mutated AFTER the RPC succeeds. Failures leave the
- * gateway copy untouched and mark the job `repairDegraded` so the UI shows
- * the repair did not happen instead of a fake success.
- */
-async function repairCronJobs(gatewayManager: GatewayManager, jobs: GatewayCronJob[]): Promise<void> {
-  const jobsToRepairDelivery = jobs.filter((job) => {
-    const isIsolatedAgent = (job.sessionTarget === 'isolated' || !job.sessionTarget)
-      && job.payload?.kind === 'agentTurn';
-    return isIsolatedAgent && job.delivery?.mode === 'announce' && !job.delivery?.channel;
-  });
-
-  await Promise.all(jobsToRepairDelivery.map(async (job) => {
-    try {
-      await gatewayManager.rpc('cron.update', {
-        id: job.id,
-        patch: { delivery: { mode: 'none' } },
-      }, 8000);
-      job.delivery = { mode: 'none' };
-      if (job.state?.lastError?.includes('Channel is required')) {
-        job.state.lastError = undefined;
-        job.state.lastStatus = 'ok';
-      }
-    } catch (error) {
-      job.repairDegraded = true;
-      console.warn(`[cron] Failed to repair delivery for job "${job.id}":`, error);
-    }
-  }));
-
-  const jobsToRepairAgent = jobs.filter((job) => {
-    const jobAgentId = (job as unknown as { agentId?: string }).agentId;
-    return (
-      (job.sessionTarget === 'isolated' || !job.sessionTarget)
-      && job.payload?.kind === 'agentTurn'
-      && job.delivery?.mode === 'announce'
-      && job.delivery?.channel
-      && jobAgentId === undefined
-    );
-  });
-
-  await Promise.all(jobsToRepairAgent.map(async (job) => {
-    try {
-      const channel = toOpenClawChannelType(job.delivery!.channel!);
-      const accountId = job.delivery!.accountId;
-      const toAddress = job.delivery!.to;
-      let correctAgentId = await resolveAgentIdFromChannel(channel, accountId);
-      let resolvedAccountId: string | null = null;
-      if (!correctAgentId && !accountId && toAddress) {
-        resolvedAccountId = await resolveAccountIdFromSessionHistory(toAddress, channel);
-        if (resolvedAccountId) {
-          correctAgentId = await resolveAgentIdFromChannel(channel, resolvedAccountId);
-        }
-      }
-      if (correctAgentId) {
-        const patch: Record<string, unknown> = { agentId: correctAgentId };
-        if (resolvedAccountId && !accountId) patch.delivery = { accountId: resolvedAccountId };
-        await gatewayManager.rpc('cron.update', { id: job.id, patch }, 8000);
-        (job as unknown as { agentId: string }).agentId = correctAgentId;
-        if (resolvedAccountId && !accountId && job.delivery) job.delivery.accountId = resolvedAccountId;
-      }
-    } catch (error) {
-      job.repairDegraded = true;
-      console.warn(`[cron] Failed to repair agentId for job "${job.id}":`, error);
-    }
-  }));
+  const result = await gatewayManager.rpc('cron.list', { includeDisabled: true }, 8000);
+  const jobs = Array.isArray(result) ? result : (result as { jobs?: GatewayCronJob[] })?.jobs;
+  if (!Array.isArray(jobs)) throw new Error('Invalid cron.list response');
+  return annotateCoordinatorStatus(gatewayManager, jobs.map(job => transformCronJob(job, 'gateway')));
 }
 
 function getId(payload: unknown): string {

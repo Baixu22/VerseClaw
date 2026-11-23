@@ -77,6 +77,7 @@ import {
   syncDeletedProviderToRuntime,
   syncSavedProviderToRuntime,
   syncUpdatedProviderToRuntime,
+  getProviderFallbackModelRefs,
 } from '@electron/services/providers/provider-runtime-sync';
 
 function createProvider(overrides: Partial<ProviderConfig> = {}): ProviderConfig {
@@ -91,6 +92,15 @@ function createProvider(overrides: Partial<ProviderConfig> = {}): ProviderConfig
     ...overrides,
   };
 }
+
+it('binds fallback references to OAuth account routes and preserves existing prefixes', async () => {
+  const oauth = createProvider({ id: 'oauth-account', type: 'openai', model: 'openai-codex/gpt-fixture' });
+  mocks.getProviderAccount.mockImplementation(async (id) => id === oauth.id ? { authMode: 'oauth_browser' } : null);
+  mocks.getAllProviders.mockResolvedValue([oauth]);
+  expect(await getProviderFallbackModelRefs(createProvider({ fallbackProviderIds: [oauth.id] }))).toEqual(['openai-codex/gpt-fixture']);
+  expect(await getProviderFallbackModelRefs({ ...oauth, fallbackModels: ['gpt-fallback', 'openai-codex/gpt-prefixed'] }))
+    .toEqual(['openai-codex/gpt-fallback', 'openai-codex/gpt-prefixed']);
+});
 
 function createGateway(state: 'running' | 'stopped' = 'running'): Pick<GatewayManager, 'debouncedReload' | 'debouncedRestart' | 'getStatus'> {
   return {

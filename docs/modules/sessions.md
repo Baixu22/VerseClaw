@@ -99,6 +99,8 @@ Renderer 相关：
 
 Renderer 还有 pending message queue；运行中普通发送会被保存、排序，并在 run drain 后自动发送。
 
+Runtime 审批按 `expiresAtMs` 撤下过期输入遮罩，原草稿保持挂载。连接状态变化和失败的审批操作会重新读取待处理快照；空快照清除过时项，迟到的旧快照不会复活已解决的审批。
+
 ## 5. 历史加载与恢复
 
 历史动作包括：

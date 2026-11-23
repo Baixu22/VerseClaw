@@ -34,6 +34,7 @@ vi.mock('@electron/gateway/skill-installer', () => ({
 }));
 
 vi.mock('@electron/utils/skill-config', () => ({
+  setManagedSkillRemoved: vi.fn(),
   getAllSkillConfigs: vi.fn(async () => ({})),
   getSkillConfig: vi.fn(async () => undefined),
   updateSkillConfig: (...args: unknown[]) => updateSkillConfigMock(...args),

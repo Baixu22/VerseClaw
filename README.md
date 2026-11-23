@@ -242,6 +242,7 @@ No separate database server is required.
 - Token history is aggregated from structured session usage records. Costs are estimates.
 - Daily model usage keeps different years separate and displays the year in each date label.
 - Knowledge uses a `memory-wiki` vault plus local governance metadata.
+- Knowledge imports keep same-named sources separate, reviewed creates reject collisions, and interrupted governance commits resume from recorded Wiki effects. Removed preinstalled skills stay removed across restarts.
 - Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
 - Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
 - Chinese lexical retrieval, bounded long-document continuation, a provider-scoped embedding cache and version-bound Steward findings share the same admission boundary. An opt-in public GitHub directory connector sends updates and withdrawals to Inbox; other SaaS connectors are not implemented.

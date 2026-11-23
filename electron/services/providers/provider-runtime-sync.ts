@@ -26,6 +26,7 @@ import { logger } from '../../utils/logger';
 import { recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from '../resource-envelope';
 import { buildMultiInstanceProviderApiKeySecretRef } from '../../utils/provider-keys';
 import { listAgentsSnapshot } from '../../utils/agent-config';
+import { runtimeProviderKey } from '../../../shared/providers/runtime-identity';
 
 const OPENAI_OAUTH_RUNTIME_PROVIDER = 'openai-codex';
 const OPENAI_OAUTH_DEFAULT_MODEL_REF = `${OPENAI_OAUTH_RUNTIME_PROVIDER}/gpt-5.5`;
@@ -140,23 +141,7 @@ function shouldUseExplicitDefaultOverride(config: ProviderConfig, runtimeProvide
 }
 
 export function getOpenClawProviderKey(type: string, providerId: string): string {
-  if (isUnregisteredProviderType(type)) {
-    // If the providerId is already a runtime key (e.g. re-seeded from openclaw.json
-    // as "custom-XXXXXXXX"), return it directly to avoid double-hashing.
-    const prefix = `${type}-`;
-    if (providerId.startsWith(prefix)) {
-      const tail = providerId.slice(prefix.length);
-      if (tail.length === 8 && !tail.includes('-')) {
-        return providerId;
-      }
-    }
-    const suffix = providerId.replace(/-/g, '').slice(0, 8);
-    return `${type}-${suffix}`;
-  }
-  if (type === 'minimax-portal-cn') {
-    return 'minimax-portal';
-  }
-  return type;
+  return runtimeProviderKey(type, providerId);
 }
 
 async function resolveRuntimeProviderKey(config: ProviderConfig): Promise<string> {
@@ -184,8 +169,7 @@ async function getBrowserOAuthRuntimeProvider(config: ProviderConfig): Promise<s
   return null;
 }
 
-export function getProviderModelRef(config: ProviderConfig): string | undefined {
-  const providerKey = getOpenClawProviderKey(config.type, config.id);
+export function getProviderModelRef(config: ProviderConfig, providerKey = getOpenClawProviderKey(config.type, config.id)): string | undefined {
 
   if (config.model) {
     return config.model.startsWith(`${providerKey}/`)
@@ -208,7 +192,7 @@ export async function getProviderFallbackModelRefs(config: ProviderConfig): Prom
   const providerMap = new Map(allProviders.map((provider) => [provider.id, provider]));
   const seen = new Set<string>();
   const results: string[] = [];
-  const providerKey = getOpenClawProviderKey(config.type, config.id);
+  const providerKey = await resolveRuntimeProviderKey(config);
 
   for (const fallbackModel of config.fallbackModels ?? []) {
     const normalizedModel = fallbackModel.trim();
@@ -229,7 +213,7 @@ export async function getProviderFallbackModelRefs(config: ProviderConfig): Prom
     const fallbackProvider = providerMap.get(fallbackId);
     if (!fallbackProvider) continue;
 
-    const modelRef = getProviderModelRef(fallbackProvider);
+    const modelRef = getProviderModelRef(fallbackProvider, await resolveRuntimeProviderKey(fallbackProvider));
     if (!modelRef || seen.has(modelRef)) continue;
 
     seen.add(modelRef);

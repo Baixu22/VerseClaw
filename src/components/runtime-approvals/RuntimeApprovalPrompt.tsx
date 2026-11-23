@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Copy, ShieldQuestion } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -61,31 +61,48 @@ export function RuntimeApprovalPrompt({
   const previousRequestRef = useRef<string | undefined>(undefined);
   const requestRef = useRef<HTMLDivElement>(null);
   const submitting = useRef(new Set<string>());
+  const eventRevision = useRef(0);
+  const snapshotSequence = useRef(0);
   const { copiedId, copy } = useCopyToClipboard();
 
-  // The broadcast only covers requests raised while the renderer is listening;
-  // seed from the runtime's own pending list so a reload does not orphan a request.
-  useEffect(() => {
-    let cancelled = false;
-    void hostApi.runtimeApprovals.list()
-      .then((result) => {
-        if (!cancelled && result.pending.length > 0) {
-          setPending((current) => mergePendingApprovals(current, result.pending));
-        }
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
+  const refreshPending = useCallback(async () => {
+    const revision = eventRevision.current;
+    const sequence = ++snapshotSequence.current;
+    const result = await hostApi.runtimeApprovals.list();
+    // A newer broadcast owns state; a late list must not resurrect a resolved request.
+    if (revision === eventRevision.current && sequence === snapshotSequence.current) {
+      setPending(result.pending.filter(entry => !entry.expiresAtMs || entry.expiresAtMs > Date.now()));
+    }
   }, []);
 
+  useEffect(() => {
+    const revision = eventRevision;
+    void refreshPending().catch(() => {});
+    const off = hostEvents.onGatewayStatus(() => { void refreshPending().catch(() => {}); });
+    return () => { revision.current++; off(); };
+  }, [refreshPending]);
+
   useEffect(() => hostEvents.onRuntimeApprovalRequested((event) => {
+    eventRevision.current++;
+    if (event.expiresAtMs && event.expiresAtMs <= Date.now()) return;
     setPending((current) => mergePendingApprovals(current, [event]));
   }), []);
 
   useEffect(() => hostEvents.onRuntimeApprovalResolved((event) => {
+    eventRevision.current++;
     setPending((current) => current.filter((entry) => entry.approvalId !== event.approvalId));
   }), []);
+
+  useEffect(() => {
+    const expires = pending.map(entry => entry.expiresAtMs).filter((value): value is number => typeof value === 'number' && value > 0);
+    if (!expires.length) return;
+    const timer = setTimeout(() => {
+      eventRevision.current++;
+      setPending(current => current.filter(entry => !entry.expiresAtMs || entry.expiresAtMs > Date.now()));
+      void refreshPending().catch(() => {});
+    }, Math.min(2_147_483_647, Math.max(0, Math.min(...expires) - Date.now())));
+    return () => clearTimeout(timer);
+  }, [pending, refreshPending]);
 
   const request = pending.find((entry) => entry.sessionKey
     ? entry.sessionKey === sessionKey
@@ -118,11 +135,13 @@ export function RuntimeApprovalPrompt({
         decision,
       });
       if (!result.success) {
+        void refreshPending().catch(() => {});
         setDecisionsById((current) => ({ ...current, [approvalId]: { busy: false, error: result.error ?? t('runtimeApprovals.resolveFailed') } }));
         return;
       }
       setPending((current) => current.filter((entry) => entry.approvalId !== approvalId));
     } catch (cause) {
+      void refreshPending().catch(() => {});
       setDecisionsById((current) => ({ ...current, [approvalId]: { busy: false, error: cause instanceof Error ? cause.message : String(cause) } }));
     } finally {
       submitting.current.delete(approvalId);

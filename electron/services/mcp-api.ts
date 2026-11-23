@@ -643,13 +643,30 @@ function normalizeStringArray(value: unknown): string[] | undefined {
 }
 
 function normalizeExposure(value: unknown): McpServerConfig['exposure'] {
-  if (!isRecord(value)) return undefined;
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || Object.entries(value).some(([key, entries]) =>
+    !['agents', 'workspaces', 'roles'].includes(key) || !Array.isArray(entries)
+      || entries.some(entry => typeof entry !== 'string' || !entry.trim()))) {
+    throw new Error('MCP exposure must contain arrays of agent, workspace or role identifiers');
+  }
   const exposure = {
     ...(value.agents !== undefined ? { agents: normalizeStringArray(value.agents) ?? [] } : {}),
     ...(value.workspaces !== undefined ? { workspaces: normalizeStringArray(value.workspaces) ?? [] } : {}),
     ...(value.roles !== undefined ? { roles: normalizeStringArray(value.roles) ?? [] } : {}),
   };
   return Object.keys(exposure).length > 0 ? exposure : undefined;
+}
+
+function normalizeHeaders(value: unknown, previous?: Record<string, string>): Record<string, string> | undefined {
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || Object.values(value).some(entry => typeof entry !== 'string')) {
+    throw new Error('MCP headers must be a string map');
+  }
+  return Object.fromEntries(Object.entries(value).map(([key, entry]) => {
+    if (entry !== '????') return [key, entry as string];
+    if (!previous || !(key in previous)) throw new Error(`Cannot save a masked MCP header: ${key}`);
+    return [key, previous[key]];
+  }));
 }
 
 function normalizeEnv(value: unknown): Record<string, string> | undefined {
@@ -706,6 +723,7 @@ function hydrateMcpServerAddresses(servers: McpServerConfig[]): McpServerConfig[
 }
 
 function validateServer(server: McpServerConfig): void {
+  if (server.sslVerify !== undefined && typeof server.sslVerify !== 'boolean') throw new Error('MCP sslVerify must be boolean');
   if (!server.name.trim()) {
     throw new Error('MCP 服务名称不能为空');
   }
@@ -740,7 +758,7 @@ function buildServer(
     cwd: normalizeString(payload.cwd),
     url: normalizeString(payload.url),
     env: normalizeEnv(payload.env),
-    headers: normalizeEnv(payload.headers),
+    headers: normalizeHeaders(payload.headers),
     sslVerify: payload.sslVerify,
     enabled: payload.enabled !== false,
     scope: normalizeScope(payload.scope),
@@ -775,7 +793,7 @@ function updateServer(current: McpServerConfig, payload: McpServerUpdatePayload)
     cwd: payload.cwd === undefined ? current.cwd : normalizeString(payload.cwd),
     url: payload.url === undefined ? current.url : normalizeString(payload.url),
     env: payload.env === undefined ? current.env : normalizeEnv(payload.env),
-    headers: payload.headers === undefined ? current.headers : normalizeEnv(payload.headers),
+    headers: payload.headers === undefined ? current.headers : normalizeHeaders(payload.headers, current.headers),
     sslVerify: payload.sslVerify === undefined ? current.sslVerify : payload.sslVerify,
     enabled: payload.enabled === undefined ? current.enabled : payload.enabled !== false,
     scope: payload.scope === undefined ? current.scope : normalizeScope(payload.scope),
@@ -806,35 +824,37 @@ async function writeEnvVault(vault: McpEnvSecretVault): Promise<void> {
 }
 
 async function readServers(): Promise<StoredMcpServer[]> {
-  const store = await getMcpStore();
-  const servers = store.get('servers');
-  if (!Array.isArray(servers)) return [];
-  let vault = await readEnvVault();
-  let vaultDirty = false;
-  let serversDirty = false;
-  const migrated: StoredMcpServer[] = [];
-  for (const raw of servers as StoredMcpServer[]) {
-    const base = hydrateMcpServerAddress(raw as McpServerConfig) as StoredMcpServer;
-    if (base !== raw) {
-      serversDirty = true;
+  return withConfigLock(async () => {
+    const store = await getMcpStore();
+    const servers = store.get('servers');
+    if (!Array.isArray(servers)) return [];
+    let vault = await readEnvVault();
+    let vaultDirty = false;
+    let serversDirty = false;
+    const migrated: StoredMcpServer[] = [];
+    for (const raw of servers as StoredMcpServer[]) {
+      const base = hydrateMcpServerAddress(raw as McpServerConfig) as StoredMcpServer;
+      if (base !== raw) {
+        serversDirty = true;
+      }
+      const result = await migrateLegacyMcpEnv(base.id, base.env, vault);
+      if (result.migrated) {
+        vault = result.vault;
+        vaultDirty = true;
+        serversDirty = true;
+        migrated.push({ ...base, env: result.env });
+      } else {
+        migrated.push(base);
+      }
     }
-    const result = await migrateLegacyMcpEnv(base.id, base.env, vault);
-    if (result.migrated) {
-      vault = result.vault;
-      vaultDirty = true;
-      serversDirty = true;
-      migrated.push({ ...base, env: result.env });
-    } else {
-      migrated.push(base);
+    if (vaultDirty || serversDirty) {
+      store.set('servers', migrated.slice(0, MAX_MCP_SERVERS));
     }
-  }
-  if (vaultDirty || serversDirty) {
-    store.set('servers', migrated.slice(0, MAX_MCP_SERVERS));
-  }
-  if (vaultDirty) {
-    await writeEnvVault(vault);
-  }
-  return migrated;
+    if (vaultDirty) {
+      await writeEnvVault(vault);
+    }
+    return migrated;
+  });
 }
 
 async function writeServers(servers: StoredMcpServer[], vault?: McpEnvSecretVault): Promise<void> {
@@ -973,8 +993,8 @@ export async function syncAgentMcpExposureToOpenClawConfig(
  * Main-process-local and intentionally not mirrored.
  */
 export async function syncAllMcpServersToOpenClawConfig(selection?: { agentId: string; defaultMcpServerIds: string[] }): Promise<void> {
-  const servers = (await readServers()).filter((server) => !isClawxBridgeServer(server));
   await withConfigLock(async () => {
+    const servers = (await readServers()).filter((server) => !isClawxBridgeServer(server));
     const config = await readOpenClawConfig();
     const mcp = isRecord(config.mcp) ? { ...(config.mcp as Record<string, unknown>) } : {};
     const currentServers = isRecord(mcp.servers)
@@ -1153,13 +1173,15 @@ async function updateServerRuntimeFields(
   id: string,
   patch: Partial<McpServerConfig>,
 ): Promise<StoredMcpServer | undefined> {
-  const servers = await readServers();
-  const index = servers.findIndex((server) => server.id === id);
-  if (index === -1) return undefined;
-  const next = [...servers];
-  next[index] = { ...next[index], ...patch, updatedAt: Date.now() };
-  await writeServers(next);
-  return next[index];
+  return withConfigLock(async () => {
+    const servers = await readServers();
+    const index = servers.findIndex((server) => server.id === id);
+    if (index === -1) return undefined;
+    const next = [...servers];
+    next[index] = { ...next[index], ...patch, updatedAt: Date.now() };
+    await writeServers(next);
+    return next[index];
+  });
 }
 
 async function findServer(id: string): Promise<StoredMcpServer | McpServerConfig> {
@@ -1522,7 +1544,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
 
   return {
     listServers: async () => listResult(await readServers()),
-    createServer: async (payload) => {
+    createServer: async (payload) => withConfigLock(async () => {
       const servers = await readServers();
       const previous = [...servers];
       const previousVault = await readEnvVault();
@@ -1544,8 +1566,8 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         throw new Error(ack.error || 'MCP reload failed; create rolled back');
       }
       return listResult(next);
-    },
-    updateServer: async (payload) => {
+    }),
+    updateServer: async (payload) => withConfigLock(async () => {
       const body = parsePayload<McpServerUpdatePayload>(payload);
       const id = normalizeString(body.id);
       if (!id) throw new Error('id is required');
@@ -1576,8 +1598,8 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         throw new Error(ack.error || 'MCP reload failed; update rolled back');
       }
       return listResult(next);
-    },
-    deleteServer: async (payload) => {
+    }),
+    deleteServer: async (payload) => withConfigLock(async () => {
       const id = normalizeString((parsePayload<{ id?: unknown }>(payload)).id);
       if (!id) throw new Error('id is required');
       const servers = await readServers();
@@ -1593,7 +1615,7 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         throw new Error(ack.error || 'MCP reload failed; delete rolled back');
       }
       return listResult(next);
-    },
+    }),
     testServer: async (payload) => {
       const body = parsePayload<{ id?: unknown; server?: unknown }>(payload);
       try {

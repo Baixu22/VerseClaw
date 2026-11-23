@@ -61,6 +61,8 @@
 
 显式更新 `requestAuth.mode=none` 会清除 `openclaw.json` 和各 agent `models.json` 中原有的 `request.auth` 覆盖；省略 `requestAuth` 则保留既有覆盖。
 
+账户模型菜单和 Host 同步共用 provider key 规则，Runtime 导入的 custom/ollama 标识不会重复加前缀。账户回退按该账户的认证模式选择运行时路由。默认账户或模型更新同步失败后，相同配置的重试会再次同步 Runtime，再报告成功。
+
 密钥通过 `electron/services/secrets/secret-store.ts` 和 Electron `safeStorage` 封装存储；Renderer 只应看到 masked 值。OS 加密不可用时，健康检查应报告不可用，而不是把“文件存在”当作可安全解密。
 
 支持的协议类型包括：

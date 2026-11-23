@@ -145,7 +145,7 @@ Knowledge 页面本身可在 plugin 未加载时打开，但 status/search/apply
 - `knowledge_governance_proposals`
 - `knowledge_governance_events`
 
-并通过 operation journal 支持 unknown outcome 的恢复/重试和重复请求识别。
+operation journal 记录 intent、Wiki 提交和治理记录提交阶段。已有 Wiki 提交回执时，重试只补齐未完成的草稿、提案和回执记录，并保持原操作的版本；intent 不进入已提交回执集合。
 
 没有新增独立知识数据库服务。
 
@@ -177,7 +177,13 @@ Library 支持：
 - OKF bundle 验证和导入；
 - 打开 vault。
 
+本地文件导入以规范源路径区分身份，同名 README 和显式同标题来源保留独立页；重新导入同一来源更新其原页并保留 Notes 区块。创建 synthesis 遇到已存在的规范页名会返回冲突。Wiki owner 将版本校验、写入与共享索引刷新放在同一 vault 锁内；同版本的并发修改只能提交一个。
+
+治理提案通过需要 `operator.write` 的 `wiki.lifecycleMetadata` 读取目标状态和真实版本。归档/撤销页仍禁止正文检索，其生命周期元数据可用于受审恢复。
+
 检索结果不一定自动进入模型 prompt。Chat 的 knowledge scope、invocation mode 和 explicit refs 决定“候选是否参与本轮”。
+
+远端 reranker 的配置不改变 local 或 exact-only 检索的本地读取准入。仅本次计划已取得可用远端重排器、准备发送候选时才检查对应 egress 权限；重排不可用时保留通过本地准入的结果。
 
 ## 6. Chat 与 Knowledge 的交互
 
@@ -327,7 +333,7 @@ Watched directory 支持：
 - 事件日志；
 - 启动时恢复 enabled watchers。
 
-启动按来源隔离扫描失败：一个目录或 connector 失败后继续启动后续来源。已建立的目录 watcher 和周期补扫保留，修正来源内容后可再次捕获；扫描错误记录在该来源事件中。
+启动按来源隔离扫描失败：一个目录或 connector 失败后继续启动后续来源。同一目录内的空文件、二进制、超限或无效 UTF-8 文件单独记录错误，其他可读文件继续同步；保留错误文件的旧游标，扫描不完整时不推断删除。已建立的 watcher 和周期补扫保留，修正内容后可再次捕获。
 
 重要实现限制：
 

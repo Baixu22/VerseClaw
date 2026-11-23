@@ -813,9 +813,13 @@ function migrateLegacyChannelConfigToAccounts(
     }
 
     const accounts = ensureChannelAccountsMap(channelSection);
-    const existingDefaultAccount = accounts[defaultAccountId] ?? {};
+    // Modern top-level credentials mirror the declared default account. A truly
+    // flat legacy configuration still migrates to the conventional default id.
+    const targetAccountId = typeof channelSection.defaultAccount === 'string'
+        && accounts[channelSection.defaultAccount] ? channelSection.defaultAccount : defaultAccountId;
+    const existingDefaultAccount = accounts[targetAccountId] ?? {};
 
-    accounts[defaultAccountId] = {
+    accounts[targetAccountId] = {
         ...(channelSection.enabled !== undefined ? { enabled: channelSection.enabled } : {}),
         ...legacyPayload,
         ...existingDefaultAccount,
@@ -869,7 +873,7 @@ function assertNoDuplicateCredential(
             && normalizeCredentialValue(existingValue) === normalizedIncomingValue
         ) {
             throw new Error(
-                `The ${channelType} bot (${uniqueKey}: ${normalizedIncomingValue}) is already bound to another agent (account: ${existingAccountId}). ` +
+                `The ${channelType} bot is already bound to another agent (account: ${existingAccountId}). ` +
                 `Each agent must use a unique bot.`,
             );
         }
@@ -903,11 +907,18 @@ export async function saveChannelConfig(
         const channelSection = currentConfig.channels[resolvedChannelType];
         migrateLegacyChannelConfigToAccounts(channelSection, DEFAULT_ACCOUNT_ID);
 
-        // Guard: reject if this bot/app credential is already used by another account.
-        assertNoDuplicateCredential(resolvedChannelType, config, channelSection, resolvedAccountId);
-
         const existingAccountConfig = resolveAccountConfig(channelSection, resolvedAccountId);
-        const transformedConfig = transformChannelConfig(resolvedChannelType, config, existingAccountConfig);
+        const resolvedInput = { ...config };
+        for (const [key, value] of Object.entries(resolvedInput)) {
+            if (!CHANNEL_SECRET_FIELD_RE.test(key) || typeof value !== 'string' || !value.startsWith('????')) continue;
+            const previous = existingAccountConfig[key];
+            if (typeof previous !== 'string' || value !== redactChannelSecretValue(previous)) {
+                throw new Error(`Cannot save a masked channel credential for ${key}`);
+            }
+            resolvedInput[key] = previous;
+        }
+        assertNoDuplicateCredential(resolvedChannelType, resolvedInput, channelSection, resolvedAccountId);
+        const transformedConfig = transformChannelConfig(resolvedChannelType, resolvedInput, existingAccountConfig);
         const uniqueKey = CHANNEL_UNIQUE_CREDENTIAL_KEY[resolvedChannelType];
         if (uniqueKey && typeof transformedConfig[uniqueKey] === 'string') {
             const rawCredentialValue = transformedConfig[uniqueKey] as string;
