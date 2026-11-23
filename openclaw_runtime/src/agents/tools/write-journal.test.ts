@@ -43,6 +43,71 @@ describe("write-journal (C2-8)", () => {
     rmSync(repoRoot, { recursive: true, force: true });
   });
 
+  it("preserves an orphan snapshot and corrupt sidecar across restart", () => {
+    const first = snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "f.ts",
+      toolName: "write",
+    })!;
+    writeFileSync(path.join(repoRoot, "f.ts"), "v1\n");
+    writeFileSync(`${first.snapshotPath}.meta.json`, "{corrupt");
+    __resetWriteJournals();
+    const second = snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "f.ts",
+      toolName: "write",
+    })!;
+    expect(second.seq).toBeGreaterThan(first.seq);
+    expect(second.snapshotPath).not.toBe(first.snapshotPath);
+    expect(readFileSync(first.snapshotPath, "utf8")).toBe("v0\n");
+    expect(readFileSync(`${first.snapshotPath}.meta.json`, "utf8")).toBe("{corrupt");
+  });
+
+  it("reserves filenames of meta-only and snapshot-only entries", () => {
+    const initial = snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "f.ts",
+      toolName: "write",
+    })!;
+    const dir = path.dirname(initial.snapshotPath);
+    writeFileSync(path.join(dir, "0041-f.ts.pre"), "orphan snapshot");
+    writeFileSync(path.join(dir, "0042-f.ts.pre.meta.json"), "{bad meta");
+    __resetWriteJournals();
+    const next = snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "f.ts",
+      toolName: "write",
+    })!;
+    expect(next.seq).toBeGreaterThan(42);
+    expect(readFileSync(path.join(dir, "0041-f.ts.pre"), "utf8")).toBe("orphan snapshot");
+    expect(readFileSync(path.join(dir, "0042-f.ts.pre.meta.json"), "utf8")).toBe("{bad meta");
+  });
+
+  it("does not overwrite a filename occupied after the journal was cached", () => {
+    const first = snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "f.ts",
+      toolName: "write",
+    })!;
+    const occupied = path.join(path.dirname(first.snapshotPath), "0002-f.ts.pre");
+    writeFileSync(occupied, "external retained snapshot");
+    writeFileSync(`${occupied}.meta.json`, "retained metadata");
+    const next = snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: "f.ts",
+      toolName: "write",
+    })!;
+    expect(next.seq).toBeGreaterThan(2);
+    expect(readFileSync(occupied, "utf8")).toBe("external retained snapshot");
+    expect(readFileSync(`${occupied}.meta.json`, "utf8")).toBe("retained metadata");
+  });
+
   it("3 writes then undo restores prior content", async () => {
     const file = path.join(repoRoot, "f.ts");
     for (const content of ["v1\n", "v2\n", "v3\n"]) {
@@ -447,26 +512,42 @@ describe("write-journal (C2-8)", () => {
 
   it("refuses a snapshot replaced by an outside hardlink without restoring its bytes", async () => {
     const file = path.join(repoRoot, "f.ts");
-    const entry = snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: file, toolName: "write" })!;
+    const entry = snapshotBeforeWrite({
+      workspaceRoot: repoRoot,
+      sessionId,
+      filePath: file,
+      toolName: "write",
+    })!;
     writeFileSync(file, "changed\n");
     const outside = repoRoot + "-external.txt";
     writeFileSync(outside, "external-private-marker\n");
     try {
       rmSync(entry.snapshotPath);
       linkSync(outside, entry.snapshotPath);
-      const result = await undoLastWrites({ workspaceRoot: repoRoot, sessionId, workspaceOnly: true });
+      const result = await undoLastWrites({
+        workspaceRoot: repoRoot,
+        sessionId,
+        workspaceOnly: true,
+      });
       expect(result.errors).toHaveLength(1);
       expect(result.remainingEntries).toBe(1);
       expect(readFileSync(file, "utf8")).toBe("changed\n");
       expect(readFileSync(outside, "utf8")).toBe("external-private-marker\n");
-    } finally { rmSync(outside, { force: true }); }
+    } finally {
+      rmSync(outside, { force: true });
+    }
   });
 
   it("does not consume a new journal tail while asynchronous undo reads its snapshot", async () => {
     const file = path.join(repoRoot, "f.ts");
     snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: file, toolName: "write" });
     writeFileSync(file, "changed\n");
-    const pending = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2, workspaceOnly: true });
+    const pending = undoLastWrites({
+      workspaceRoot: repoRoot,
+      sessionId,
+      steps: 2,
+      workspaceOnly: true,
+    });
     const other = path.join(repoRoot, "new.txt");
     snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: other, toolName: "write" });
     writeFileSync(other, "new-concurrent-content");

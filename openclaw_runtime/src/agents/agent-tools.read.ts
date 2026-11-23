@@ -37,6 +37,7 @@ import { assertSandboxPath } from "./sandbox-paths.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import { createEditTool, createLsTool, createReadTool, createWriteTool } from "./sessions/index.js";
 import { sanitizeToolResultImages } from "./tool-images.js";
+import { createStaleWriteGuard, type StaleWriteGuardOptions } from "./stale-write-guard.js";
 
 export {
   REQUIRED_PARAM_GROUPS,
@@ -315,10 +316,13 @@ async function executeReadWithAdaptivePaging(params: {
   let aggregatedBytes = 0;
   let capped = false;
   let continuationOffset: number | undefined;
-  const reviewReads: import('../../../shared/task-system/types.js').TaskReviewReadProof[] = [];
+  const reviewReads: import("../../../shared/task-system/types.js").TaskReviewReadProof[] = [];
   const withReadProof = (result: AgentToolResult<unknown>, text: string) => {
     const value = withToolResultText(result, text);
-    return { ...value, details: { ...(value.details as Record<string, unknown> | undefined), reviewReads } };
+    return {
+      ...value,
+      details: { ...(value.details as Record<string, unknown> | undefined), reviewReads },
+    };
   };
 
   for (let page = 0; page < MAX_ADAPTIVE_READ_PAGES; page += 1) {
@@ -354,7 +358,10 @@ async function executeReadWithAdaptivePaging(params: {
 
     aggregatedText += `${delimiter}${pageText}`;
     aggregatedBytes += nextBytes;
-    reviewReads.push(...((pageResult.details as { reviewReads?: typeof reviewReads } | undefined)?.reviewReads ?? []));
+    reviewReads.push(
+      ...((pageResult.details as { reviewReads?: typeof reviewReads } | undefined)?.reviewReads ??
+        []),
+    );
 
     if (!canContinue || !truncation) {
       return withReadProof(firstResult, aggregatedText);
@@ -836,6 +843,7 @@ type SandboxToolParams = {
   bridge: SandboxFsBridge;
   modelContextWindowTokens?: number;
   imageSanitization?: ImageSanitizationLimits;
+  staleWriteGuard?: StaleWriteGuardOptions;
 };
 
 /** Create a sandbox-backed read tool with OpenClaw result normalization. */
@@ -858,8 +866,12 @@ export function createSandboxedLsTool(params: SandboxToolParams) {
 
 /** Create a sandbox-backed write tool with required-parameter validation. */
 export function createSandboxedWriteTool(params: SandboxToolParams) {
+  const operations = createSandboxWriteOperations(params);
   const base = createWriteTool(params.root, {
-    operations: createSandboxWriteOperations(params),
+    operations,
+    beforeWrite: params.staleWriteGuard
+      ? createStaleWriteGuard(params.staleWriteGuard, operations.readFile, operations.statFile)
+      : undefined,
   }) as unknown as AnyAgentTool;
   return wrapToolParamValidation(base, REQUIRED_PARAM_GROUPS.write);
 }
@@ -873,9 +885,16 @@ export function createSandboxedEditTool(params: SandboxToolParams) {
 }
 
 /** Create a host workspace write tool using guarded filesystem operations. */
-export function createHostWorkspaceWriteTool(root: string, options?: { workspaceOnly?: boolean }) {
+export function createHostWorkspaceWriteTool(
+  root: string,
+  options?: { workspaceOnly?: boolean; staleWriteGuard?: StaleWriteGuardOptions },
+) {
+  const operations = createHostWriteOperations(root, options);
   const base = createWriteTool(root, {
-    operations: createHostWriteOperations(root, options),
+    operations,
+    beforeWrite: options?.staleWriteGuard
+      ? createStaleWriteGuard(options.staleWriteGuard, operations.readFile, operations.statFile)
+      : undefined,
   }) as unknown as AnyAgentTool;
   return wrapToolParamValidation(base, REQUIRED_PARAM_GROUPS.write);
 }
@@ -1044,7 +1063,10 @@ async function writeWorkspaceFile(
   content: Buffer | string,
 ) {
   const relative = await toCanonicalRelativeWorkspacePath(root, absolutePath);
-  await (await rootPromise).write(relative, content, { mkdir: true });
+  const scopedRoot = await rootPromise;
+  // fs-safe normalizes and expands leading ~ segments. A validated canonical
+  // absolute path preserves a literal ~ directory without changing user input.
+  await scopedRoot.write(path.resolve(scopedRoot.rootReal, relative), content, { mkdir: true });
 }
 
 function createHostWriteOperations(root: string, options?: { workspaceOnly?: boolean }) {
@@ -1078,7 +1100,13 @@ function createHostWriteOperations(root: string, options?: { workspaceOnly?: boo
       writeWorkspaceFile(root, rootPromise, absolutePath, content),
     readFile: async (absolutePath: string) => {
       const relative = toRelativeWorkspacePath(root, absolutePath);
-      return (await (await rootPromise).read(relative)).buffer;
+      const scopedRoot = await rootPromise;
+      // A full rewrite hashes the complete prior file, matching the original disk hash.
+      return (
+        await scopedRoot.read(path.resolve(scopedRoot.rootReal, relative), {
+          maxBytes: Number.MAX_SAFE_INTEGER,
+        })
+      ).buffer;
     },
     statFile: async (absolutePath: string) => {
       const relative = toRelativeWorkspacePath(root, absolutePath);
@@ -1108,7 +1136,8 @@ function createHostEditOperations(root: string, options?: { workspaceOnly?: bool
   return {
     readFile: async (absolutePath: string) => {
       const relative = toRelativeWorkspacePath(root, absolutePath);
-      const safeRead = await (await rootPromise).read(relative);
+      const scopedRoot = await rootPromise;
+      const safeRead = await scopedRoot.read(path.resolve(scopedRoot.rootReal, relative));
       return safeRead.buffer;
     },
     writeFile: (absolutePath: string, content: Buffer | string) =>
@@ -1126,7 +1155,8 @@ function createHostEditOperations(root: string, options?: { workspaceOnly?: bool
         return;
       }
       try {
-        const opened = await (await rootPromise).open(relative);
+        const scopedRoot = await rootPromise;
+        const opened = await scopedRoot.open(path.resolve(scopedRoot.rootReal, relative));
         await opened.handle.close().catch(() => {});
       } catch (error) {
         if (error instanceof FsSafeError && error.code === "not-found") {

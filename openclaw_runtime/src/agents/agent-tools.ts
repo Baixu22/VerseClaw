@@ -65,7 +65,7 @@ import {
 } from "./agent-tools.read.js";
 import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools.schema.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
-import { createPersistentTaskTool } from './tools/persistent-task-tool.js';
+import { createPersistentTaskTool } from "./tools/persistent-task-tool.js";
 import { extractApplyPatchTargetPaths } from "./apply-patch-paths.js";
 import { createApplyPatchTool, parsePatchText } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
@@ -83,7 +83,6 @@ import {
 } from "../context-engine/coding-runtime-flags.js";
 import { wrapToolWithSymbolLease } from "./symbol-lease-guard.js";
 import { wrapToolWithParseOnTouch } from "./parse-on-touch.js";
-import { wrapToolWithStaleWriteGuard } from "./stale-write-guard.js";
 import { wrapToolWithStage1ToolGuard, type Stage1ToolGuardOptions } from "./stage1-tool-guard.js";
 import { wrapToolWithStage4ToolGuard, type Stage4ToolGuardOptions } from "./stage4-tool-guard.js";
 import { type TestRunnerExecutor, wrapToolWithWriteSideEffects } from "./write-side-effects.js";
@@ -883,15 +882,6 @@ export function createOpenClawCodingTools(options?: {
         flags: writeJournalFlags,
       });
     }
-    // C2-2 stale guard only for full-file write
-    if (kind === "write") {
-      next = wrapToolWithStaleWriteGuard(next, {
-        workspaceRoot: codingRoot,
-        sessionId: codingSessionId,
-        enabled: staleWriteGuardEnabled,
-        factStore: options?.factService?.store,
-      });
-    }
     // C2-1 parse-on-write + C2-9 syntax check + C2-5 diag + C2-3 verify after success
     next = wrapToolWithWriteSideEffects(next, {
       workspaceRoot: codingRoot,
@@ -1072,9 +1062,19 @@ export function createOpenClawCodingTools(options?: {
     {
       name: "write",
       build: () => {
+        const staleWriteGuard = {
+          workspaceRoot: codingRoot,
+          sessionId: codingSessionId,
+          enabled: staleWriteGuardEnabled,
+          factStore: options?.factService?.store,
+        };
         return sandboxRoot
-          ? createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
-          : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
+          ? createSandboxedWriteTool({
+              root: sandboxRoot,
+              bridge: sandboxFsBridge!,
+              staleWriteGuard,
+            })
+          : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly, staleWriteGuard });
       },
     },
   ];
@@ -1347,8 +1347,17 @@ export function createOpenClawCodingTools(options?: {
     : [];
   const tools: AnyAgentTool[] = [
     ...base,
-    ...(options?.sessionKey && options?.sessionId && !sandbox ? [createPersistentTaskTool({ workspace: workspaceRoot,sessionKey:options.sessionKey,generation:options.sessionId,
-      inheritedToolAllowlist: taskReviewToolAllowlist, inheritedToolDenylist })] : []),
+    ...(options?.sessionKey && options?.sessionId && !sandbox
+      ? [
+          createPersistentTaskTool({
+            workspace: workspaceRoot,
+            sessionKey: options.sessionKey,
+            generation: options.sessionId,
+            inheritedToolAllowlist: taskReviewToolAllowlist,
+            inheritedToolDenylist,
+          }),
+        ]
+      : []),
     ...(includeShellTools && applyPatchTool ? [applyPatchTool as unknown as AnyAgentTool] : []),
     ...(execTool ? [execTool as unknown as AnyAgentTool] : []),
     ...(processTool ? [processTool as unknown as AnyAgentTool] : []),

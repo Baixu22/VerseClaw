@@ -1,5 +1,15 @@
 /** Coding journal storage/recovery owner. Tool schemas and media helpers live in write-journal.ts. */
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+  closeSync,
+  existsSync,
+  mkdirSync,
+  openSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 import { FsSafeError, root as fsRoot } from "../../infra/fs-safe.js";
 import { assertSandboxPath } from "../sandbox-paths.js";
@@ -59,9 +69,9 @@ function isWriteJournalBatchState(value: unknown): value is WriteJournalBatchSta
   );
 }
 
-function persistWriteJournalEntry(entry: WriteJournalEntry): void {
+function persistWriteJournalEntry(entry: WriteJournalEntry, descriptor?: number): void {
   writeFileSync(
-    `${entry.snapshotPath}.meta.json`,
+    descriptor ?? `${entry.snapshotPath}.meta.json`,
     JSON.stringify({
       seq: entry.seq,
       relPath: entry.relPath,
@@ -92,7 +102,14 @@ export function journalDirFor(workspaceRoot: string, sessionId: string): string 
 function rehydrateJournalFromDisk(journal: WriteJournal): void {
   try {
     if (!existsSync(journal.rootDir)) return;
-    const metas = readdirSync(journal.rootDir).filter((name) => name.endsWith(".meta.json"));
+    const filenames = readdirSync(journal.rootDir);
+    const metas = filenames.filter((name) => name.endsWith(".meta.json"));
+    let lastOccupiedSeq = 0;
+    for (const filename of filenames) {
+      const match = /^(\d+)-.+\.pre(?:\.meta\.json)?$/.exec(filename);
+      const seq = match ? Number(match[1]) : 0;
+      if (Number.isSafeInteger(seq) && seq > lastOccupiedSeq) lastOccupiedSeq = seq;
+    }
     const entries: WriteJournalEntry[] = [];
     for (const metaName of metas) {
       try {
@@ -101,6 +118,8 @@ function rehydrateJournalFromDisk(journal: WriteJournal): void {
         const snapshotPath = path.join(journal.rootDir, metaName.replace(/\.meta\.json$/, ""));
         if (
           typeof parsed.seq === "number" &&
+          Number.isSafeInteger(parsed.seq) &&
+          parsed.seq > 0 &&
           typeof parsed.relPath === "string" &&
           typeof parsed.absPath === "string"
         ) {
@@ -128,7 +147,8 @@ function rehydrateJournalFromDisk(journal: WriteJournal): void {
     }
     entries.sort((a, b) => a.seq - b.seq);
     journal.entries = entries;
-    journal.nextSeq = entries.length > 0 ? entries[entries.length - 1]!.seq + 1 : 1;
+    // Unreadable metadata must not make its still-present preimage reusable.
+    journal.nextSeq = Math.max(lastOccupiedSeq, entries.at(-1)?.seq ?? 0) + 1;
   } catch {
     // Fail-open: an unreadable journal dir must not block tool creation.
   }
@@ -210,42 +230,57 @@ export function snapshotPreparedWrite(params: {
       toFactRelPath(params.filePath, params.workspaceRoot) ??
       path.relative(params.workspaceRoot, absPath).replace(/\\/g, "/");
     mkdirSync(journal.rootDir, { recursive: true });
-    const seq = journal.nextSeq++;
     const base = path.basename(rel || "file");
-    const hashHint = String(seq).padStart(4, "0");
-    const snapshotPath = path.join(journal.rootDir, `${hashHint}-${base}.pre`);
-    if (params.hadPrior) {
-      if (params.priorContent === undefined) {
-        throw new Error(`Missing prepared journal content for ${absPath}`);
+    if (params.hadPrior && params.priorContent === undefined)
+      throw new Error(`Missing prepared journal content for ${absPath}`);
+    let seq: number;
+    let snapshotPath: string;
+    let descriptor: number;
+    for (;;) {
+      if (!Number.isSafeInteger(journal.nextSeq) || journal.nextSeq < 1)
+        throw new Error("Journal sequence exhausted");
+      seq = journal.nextSeq++;
+      snapshotPath = path.join(journal.rootDir, `${String(seq).padStart(4, "0")}-${base}.pre`);
+      if (existsSync(snapshotPath)) continue;
+      try {
+        descriptor = openSync(`${snapshotPath}.meta.json`, "wx");
+        break;
+      } catch (error) {
+        if (error && typeof error === "object" && "code" in error && error.code === "EEXIST")
+          continue;
+        throw error;
       }
-      writeFileSync(snapshotPath, params.priorContent);
-    } else {
-      // Marker for create: empty snapshot file with sidecar meta.
-      writeFileSync(snapshotPath, "", "utf8");
     }
-    const entry: WriteJournalEntry = {
-      seq,
-      relPath: rel,
-      absPath,
-      snapshotPath,
-      hadPrior: params.hadPrior,
-      toolName: params.toolName,
-      createdAtMs: Date.now(),
-      lineage: {
-        sessionId,
-        workspaceRoot: path.resolve(params.workspaceRoot),
-        ...(process.env.VERSE_CLAW_GATEWAY_GENERATION
-          ? { gatewayGeneration: process.env.VERSE_CLAW_GATEWAY_GENERATION }
-          : {}),
-        ...(params.requestId ? { requestId: params.requestId } : {}),
-        ...(params.flags ? { flags: params.flags } : {}),
-      },
-      ...(params.batch ? { batch: params.batch } : {}),
-    };
-    persistWriteJournalEntry(entry);
-    journal.entries.push(entry);
-    codingObservability.recordJournalLatency(performance.now() - started, true);
-    return entry;
+    try {
+      // Reserving metadata first and creating the preimage exclusively keeps
+      // either an orphan snapshot or an existing sidecar from being overwritten.
+      writeFileSync(snapshotPath, params.hadPrior ? params.priorContent! : "", { flag: "wx" });
+      const entry: WriteJournalEntry = {
+        seq,
+        relPath: rel,
+        absPath,
+        snapshotPath,
+        hadPrior: params.hadPrior,
+        toolName: params.toolName,
+        createdAtMs: Date.now(),
+        lineage: {
+          sessionId,
+          workspaceRoot: path.resolve(params.workspaceRoot),
+          ...(process.env.VERSE_CLAW_GATEWAY_GENERATION
+            ? { gatewayGeneration: process.env.VERSE_CLAW_GATEWAY_GENERATION }
+            : {}),
+          ...(params.requestId ? { requestId: params.requestId } : {}),
+          ...(params.flags ? { flags: params.flags } : {}),
+        },
+        ...(params.batch ? { batch: params.batch } : {}),
+      };
+      persistWriteJournalEntry(entry, descriptor);
+      journal.entries.push(entry);
+      codingObservability.recordJournalLatency(performance.now() - started, true);
+      return entry;
+    } finally {
+      closeSync(descriptor);
+    }
   } catch {
     codingObservability.recordJournalLatency(performance.now() - started, false);
     return null;
@@ -320,23 +355,31 @@ export function writeJournalRecoveryRef(entries: WriteJournalEntry[]): string | 
  * the outcome reports failure with the journal directory preserved for manual
  * recovery. A partially restored batch is a failure, never a success.
  */
-export async function undoLastWrites(params: {
-  workspaceRoot: string;
-  sessionId?: string;
-  steps?: number;
-  workspaceOnly?: boolean;
-  /**
-   * #175: newest-first identity of the entries the caller selected. Each pop is
-   * verified against it, so a concurrent write that landed *after* the selection
-   * aborts the undo instead of being deleted as "the Nth entry from the tail"
-   * while the intended target is left untouched.
-   */
-  expectedEntries?: readonly { seq: number; relPath: string }[];
-}, validateWorkspacePath?: (root: string, candidate: string) => unknown): Promise<{ restored: string[]; errors: string[]; journalDir: string; remainingEntries: number }> {
+export async function undoLastWrites(
+  params: {
+    workspaceRoot: string;
+    sessionId?: string;
+    steps?: number;
+    workspaceOnly?: boolean;
+    /**
+     * #175: newest-first identity of the entries the caller selected. Each pop is
+     * verified against it, so a concurrent write that landed *after* the selection
+     * aborts the undo instead of being deleted as "the Nth entry from the tail"
+     * while the intended target is left untouched.
+     */
+    expectedEntries?: readonly { seq: number; relPath: string }[];
+  },
+  validateWorkspacePath?: (root: string, candidate: string) => unknown,
+): Promise<{ restored: string[]; errors: string[]; journalDir: string; remainingEntries: number }> {
   const sessionId = params.sessionId?.trim() || "default";
   const journal = getOrCreateWriteJournal(params.workspaceRoot, sessionId);
   const steps = Math.max(1, Math.floor(params.steps ?? 1));
-  const expectedEntries = params.expectedEntries ?? journal.entries.slice(-steps).toReversed().map(({ seq, relPath }) => ({ seq, relPath }));
+  const expectedEntries =
+    params.expectedEntries ??
+    journal.entries
+      .slice(-steps)
+      .toReversed()
+      .map(({ seq, relPath }) => ({ seq, relPath }));
   const restored: string[] = [];
   const errors: string[] = [];
   for (let i = 0; i < steps; i += 1) {
@@ -379,14 +422,17 @@ export async function undoLastWrites(params: {
       await assertSandboxPath({ filePath: entry.absPath, cwd: targetRoot, root: targetRoot });
       const destination = await fsRoot(targetRoot);
       const relative = toRelativeWorkspacePath(targetRoot, entry.absPath);
+      // Keep the validated target literal; fs-safe also accepts bounded
+      // absolute paths, avoiding a second ~ expansion during recovery.
+      const restorePath = path.resolve(destination.rootReal, relative);
       if (journal.entries.at(-1) !== entry) {
         throw new Error("concurrent_write_detected: journal tail changed before restore");
       }
       if (preimage !== undefined) {
-        await destination.write(relative, preimage, { mkdir: true });
+        await destination.write(restorePath, preimage, { mkdir: true });
       } else {
         try {
-          await destination.remove(relative);
+          await destination.remove(restorePath);
         } catch (error) {
           if (!(error instanceof FsSafeError && error.code === "not-found")) throw error;
         }
@@ -431,4 +477,3 @@ export function clearWriteJournal(params: { workspaceRoot: string; sessionId?: s
     journals.delete(key);
   }
 }
-
