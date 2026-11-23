@@ -145,7 +145,7 @@ Knowledge 页面本身可在 plugin 未加载时打开，但 status/search/apply
 - `knowledge_governance_proposals`
 - `knowledge_governance_events`
 
-operation journal 记录 intent、Wiki 提交和治理记录提交阶段。已有 Wiki 提交回执时，重试只补齐未完成的草稿、提案和回执记录，并保持原操作的版本；intent 不进入已提交回执集合。
+operation journal 记录 intent、Wiki 提交和治理记录提交阶段。已有 Wiki 提交回执时，重试只补齐未完成的草稿、提案和回执记录，并保持原操作的版本；intent 不进入已提交回执集合，失败回执不带 `committedAt`。
 
 没有新增独立知识数据库服务。
 

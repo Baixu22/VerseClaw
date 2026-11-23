@@ -1963,7 +1963,7 @@ function receiptFromOperationJournal(
     contentDigest: entry.contentDigest,
     idempotencyKey: entry.idempotencyKey,
     status: entry.state === 'failed' ? 'failed' : 'committed',
-    committedAt: entry.updatedAt,
+    ...(entry.state !== 'failed' ? { committedAt: entry.updatedAt } : {}),
     evidenceRefs: [entry.proposalId, entry.draftId],
     compensation: entry.compensation ?? compensationForOperation(operation),
   };
@@ -1981,7 +1981,7 @@ async function listOperationReceipts(): Promise<KnowledgeGovernanceReceipt[]> {
     const receipt = receiptFromOperationJournal(entry, proposal, draft);
     if (receipt) receipts.push(receipt);
   }
-  return receipts.sort((left, right) => right.committedAt.localeCompare(left.committedAt));
+  return receipts.sort((left, right) => (right.committedAt ?? '').localeCompare(left.committedAt ?? ''));
 }
 
 function proposalIdempotencyKey(proposal: KnowledgeChangeProposal, draft: KnowledgeDraft): string {

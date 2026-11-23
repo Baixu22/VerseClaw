@@ -88,6 +88,8 @@ describe('KS-08 memory-wiki lifecycle Main RPC wiring', () => {
     const result = await api.listGovernanceReceipts();
     expect(result.receipts.map(item => item.idempotencyKey).sort()).toEqual(['failed', 'json_committed', 'wiki_committed']);
     expect(result.receipts.find(item => item.idempotencyKey === 'failed')?.status).toBe('failed');
+    expect(result.receipts.find(item => item.idempotencyKey === 'failed')?.committedAt).toBeUndefined();
+    expect(result.receipts.filter(item => item.status === 'committed').every(item => item.committedAt)).toBe(true);
   });
 
   it.each(['archived', 'revoked'])('restores %s pages using metadata revision instead of denied content', async status => {
