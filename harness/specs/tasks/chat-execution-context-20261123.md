@@ -43,6 +43,7 @@ touchedAreas:
   - tests/e2e/chat-planning-composer-ux.spec.ts
   - tests/e2e/chat-layout-cdp.spec.ts
   - tests/e2e/beam-composer-verify.spec.ts
+  - tests/e2e/session-fork-intent.spec.ts
   - docs/dev/chat-execution-context.md
   - docs/dev/durable-task-system/DESIGN.md
   - docs/modules/multi-agent-and-tasks.md
@@ -50,6 +51,7 @@ touchedAreas:
   - harness/specs/tasks/chat-execution-context-20261123.md
   - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/fixtures/chat-execution-context/20261123/**
+  - harness/specs/fixtures/chat-execution-context/20261123-startup/**
 expectedUserBehavior:
   - 执行设置只在新会话启动前显示，运行开始即关闭浮层并收起，已有历史和已暂停会话保持收起；新建空会话再次显示，任务进度按真实状态保留。
   - 启动区显示真实分支名与下拉箭头，打开独立分支搜索和切换区域，375px窄窗仍可直接使用。
