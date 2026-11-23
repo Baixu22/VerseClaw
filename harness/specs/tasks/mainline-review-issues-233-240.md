@@ -5,7 +5,7 @@ title: Repair the eight confirmed mainline review issues
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Fix issues 233 through 240 with regression coverage for exported text, restore containment, workspace ownership, source startup, replay matching, usage dates, Cron history and provider authentication.
-diffBase: 9a2a5280ddb3ccb4607ad8ccfe85d5e3292feb7c
+diffBase: d3e95fd5497b40946f3db68cea8c7bb37dea3b21
 touchedAreas:
   - electron/services/**
   - electron/utils/openclaw-auth.ts
@@ -55,3 +55,21 @@ docs:
 This task implements the owner's requested fixes for review index #241. Reproductions
 and verification are agent-driven. Each issue remains open until its fix is available
 on main; branch-only results are recorded as pending integration.
+
+## Validation record — 2026-11-23
+
+Code candidate: `ab845cfa7e60bfcb0b77794f2baa70e281ec79cd`, based on
+`d3e95fd5497b40946f3db68cea8c7bb37dea3b21`. Evidence actor: `agent`.
+
+- Thirteen focused Vitest files passed: 217 tests, including all eight issue regressions.
+- `tests/e2e/mainline-review-regressions.spec.ts`: two Electron tests passed against the rebuilt application, covering the real Host export and cross-year Models display.
+- `pnpm run typecheck`: Node, Web and test projects passed without cache reuse.
+- `pnpm run build:vite`, typed Host contract check, targeted ESLint, comms replay/compare, Harness validation and dry-run passed.
+- Windows Electron used a byte-identical staged executable because the installed executable's low-integrity label prevented profile writes. Both executable SHA-256 values were `fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e`.
+
+The regression set is the eight core files in `requiredTests`, plus
+`task-ledger-export`, `provider-runtime-sync-r4`, `provider-runtime-sync`,
+`provider-request-auth-parity`, and `cron-api-browser-run-result` under
+`tests/unit/`, all with `.test.ts` suffixes. Run with `--maxWorkers=1
+--no-file-parallelism`. Raw JSON reports, earlier failures and local execution
+details are retained in `D:/tmp/mainline-issue-fixes-20261123/`.
