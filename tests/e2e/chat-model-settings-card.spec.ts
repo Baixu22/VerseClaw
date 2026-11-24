@@ -43,13 +43,26 @@ async function inspectCard(page: Page) {
   await expect.poll(() => tooltip.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42)).toBeCloseTo(-36, 0);
   const geometry = await page.getByTestId('chat-model-settings-card').evaluate(card => {
     const box = card.getBoundingClientRect();
-    const model = card.querySelector('[data-testid="chat-model-picker-current"]')!.getBoundingClientRect();
+    const modelButton = card.querySelector('[data-testid="chat-model-picker-current"]')!;
+    const model = modelButton.getBoundingClientRect();
+    const track = card.querySelector('[data-testid="chat-agent-effort-track"]')!.getBoundingClientRect();
     const tooltip = card.querySelector('[data-testid="chat-agent-effort-tooltip"]')!.getBoundingClientRect();
-    return { width: box.width, height: box.height, modelBottom: model.bottom, tooltipTop: tooltip.top,
+    const x = (Math.max(model.left, tooltip.left) + Math.min(model.right, tooltip.right)) / 2;
+    const y = (Math.max(model.top, tooltip.top) + Math.min(model.bottom, tooltip.bottom)) / 2;
+    const modelReceivesPointer = document.elementFromPoint(x, y)?.closest('[data-testid="chat-model-picker-current"]') === modelButton;
+    return { width: box.width, height: box.height, modelTop: model.top, modelBottom: model.bottom,
+      trackGap: track.top - model.bottom, tooltipTop: tooltip.top, tooltipBottom: tooltip.bottom, modelReceivesPointer,
+      modelLayer: Number(getComputedStyle(card.querySelector('.chat-model-settings-model')!).zIndex),
+      tooltipLayer: Number(getComputedStyle(card.querySelector('.chat-model-settings-slider')!).zIndex),
       tooltipLeft: tooltip.left, tooltipRight: tooltip.right, viewport: innerWidth };
   });
-  expect(geometry.height).toBeLessThanOrEqual(160);
-  expect(geometry.tooltipTop).toBeGreaterThanOrEqual(geometry.modelBottom);
+  expect(geometry.height).toBeLessThanOrEqual(130);
+  expect(geometry.trackGap).toBeGreaterThanOrEqual(0);
+  expect(geometry.trackGap).toBeLessThanOrEqual(16);
+  expect(geometry.tooltipTop).toBeLessThan(geometry.modelBottom);
+  expect(geometry.tooltipBottom).toBeGreaterThan(geometry.modelTop);
+  expect(geometry.tooltipLayer).toBeGreaterThan(geometry.modelLayer);
+  expect(geometry.modelReceivesPointer).toBe(true);
   expect(geometry.tooltipLeft).toBeGreaterThanOrEqual(6);
   expect(geometry.tooltipRight).toBeLessThanOrEqual(geometry.viewport - 6);
   await expect(page.getByTestId('chat-agent-effort-label')).toBeHidden();
@@ -127,9 +140,11 @@ test('keeps both layers usable across locales, themes, 375px and reduced motion'
           await openModels(page);
           const focusStyle = await page.getByTestId('chat-model-picker-search').evaluate(input => ({
             outline: getComputedStyle(input).outlineStyle, shadow: getComputedStyle(input).boxShadow,
+            borderWidth: getComputedStyle(input).borderTopWidth,
           }));
           expect(focusStyle.outline).toBe('none');
-          expect(focusStyle.shadow).not.toBe('none');
+          expect(focusStyle.shadow).toBe('none');
+          expect(focusStyle.borderWidth).toBe('0px');
           const bounds = await page.getByTestId('chat-model-picker-list-layer').evaluate(element => {
             const box = element.getBoundingClientRect();
             return { viewport: innerWidth, left: box.left, right: box.right, top: box.top, bottom: box.bottom, overflow: document.documentElement.scrollWidth > innerWidth };
