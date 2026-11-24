@@ -1,3 +1,4 @@
+import { writeFile } from 'node:fs/promises';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
@@ -172,6 +173,18 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await expect(slider).toHaveAttribute('max', '6');
 
       await expect(slider).toHaveAttribute('aria-valuetext', 'High');
+      await slider.evaluate(element => {
+        const trace: unknown[] = [];
+        (window as typeof window & { __effortPointerTrace?: unknown[] }).__effortPointerTrace = trace;
+        for (const type of ['pointerdown', 'pointermove', 'pointerup', 'input', 'change']) {
+          element.addEventListener(type, event => {
+            const pointer = event as PointerEvent;
+            const track = element.parentElement!.getBoundingClientRect();
+            trace.push({ type, clientX: pointer.clientX, clientY: pointer.clientY,
+              value: (element as HTMLInputElement).value, track: track.toJSON() });
+          });
+        }
+      });
       await slider.hover();
       const tooltip = page.getByTestId('chat-agent-effort-tooltip');
       await expect(tooltip).toHaveAttribute('aria-label', 'High');
@@ -182,6 +195,14 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await page.mouse.move(bounds!.x + bounds!.width * 4.5 / 7, y);
       await page.mouse.down();
       await page.mouse.move(bounds!.x + bounds!.width * 0.8, y, { steps: 12 });
+      await writeFile(testInfo.outputPath('pointer-geometry.json'), JSON.stringify({
+        driven_by: 'agent', actor: 'codex-model-ui', requestedBounds: bounds,
+        requestedTarget: { x: bounds!.x + bounds!.width * 0.8, y },
+        observed: await page.evaluate(() => ({
+          viewport: { width: innerWidth, height: innerHeight, scale: devicePixelRatio },
+          events: (window as typeof window & { __effortPointerTrace?: unknown[] }).__effortPointerTrace,
+        })),
+      }, null, 2));
       await expect(slider).toHaveAttribute('aria-valuetext', 'Extra high');
       await expect(tooltip).toHaveAttribute('aria-label', 'Extra high');
       expect(await app.evaluate(() => (globalThis as unknown as {
