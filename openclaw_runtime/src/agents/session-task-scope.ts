@@ -55,6 +55,12 @@ export function sessionTaskOperationsInFlight(runId: string): string[] {
     .map(request => request.operationId).filter((id): id is string => Boolean(id));
 }
 
+/** Read original in-flight tool identities; this does not claim admission or execution. */
+export function readSessionTaskEffectRequests(sessionKey: string, generation: string) {
+  return [...effectRequests.values()].filter(request => request.sessionKey === sessionKey && request.sessionGeneration === generation)
+    .map(request => ({ requestId: request.requestId, operationId: request.operationId, runId: request.runId, toolName: request.toolName }));
+}
+
 export async function withSessionTaskScope<T>(
   context:
     | {

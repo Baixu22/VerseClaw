@@ -9,6 +9,7 @@ import { createEmptySessionActivitySnapshot, createSessionActivityReadSnapshot, 
 import { normalizeAutonomySessionScope } from '@shared/types/identity-scope';
 import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from './workspaces-api';
 import { canonicalPath } from '../../shared/task-system/identity';
+import { emptySessionCollaborationPage, parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
@@ -128,6 +129,17 @@ export function createSessionActivityApi({
   const taskLedgerApi = createTaskLedgerApi();
 
   return {
+    query: async (input) => {
+      const query = parseSessionCollaborationQuery(input);
+      const root = await getWorkspaceRootPathById(query.requester.workspaceId);
+      if (!root) return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-missing') };
+      try {
+        const response = await gatewayManager.rpc<{ page: SessionCollaborationPage }>('session.activitySnapshot', { query });
+        if (await getWorkspaceRootPathById(query.requester.workspaceId) !== root)
+          return { success: true, page: emptySessionCollaborationPage(query, 'stale', 'scope-mismatch') };
+        return { success: true, page: validateSessionCollaborationPage(query, response.page) };
+      } catch { return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-unavailable') }; }
+    },
     read: async (input) => {
       const query = parseSessionActivityReadQuery(input);
       let snapshot = createSessionActivityReadSnapshot(query.scope);

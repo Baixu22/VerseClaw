@@ -30,6 +30,18 @@ agent:<agentId>:<suffix>
 
 ## 2. 持久化模型
 
+### 会话发现与轻量详情
+
+`hostApi.sessionActivity.query({ requester, workspace?, target?, search?, fields?, limit?, cursor? })` 与 agent 的 `sessions_list({ collaboration: true })` 消费同一读取合同。`requester` 绑定原 workspace/project/sessionKey/generation，`target` 固定详情的目标范围；`workspace` 过滤项目，`search` 匹配会话 metadata 与原 TaskSystem 目标。
+
+列表默认 20 条，最多 50 条，单次检查最多 100 个可见候选。游标绑定读取者、过滤条件、可见候选和原 metadata 身份，metadata 或读取策略变化、reset 均返回 stale。字段可选择 goal、tasks、run、actions、origin、execution；未选择的字段为 not_read。目标摘要最多 512 个 Unicode 字符，原任务 digest/revision 与详情引用保留，完整任务目标可通过 A1 `read` 接口按需取得。
+
+agent 使用 `session_status({ readOnly: true, scope: row.detail.scope })` 读取目标详情；不指定 scope 时读取当前运行的会话。只读模式拒绝模型更改，跳过转录用量与状态卡的配置写入。读取结果包含原任务目标、writer/observer 引用、ScopedRun、实际工具/进程动作和逐来源状态。
+
+查询先应用既有 visibility、A2A allow 与 sandbox 读取策略，再读取任务和动作；它不读取完整 transcript，不调用摘要模型，也不切换活动工作区。实际动作从原 session-task effect request 和 bash process owner 投影，缺少归属或运行中尚未观测到动作时保留 unknown。搜索无法核验的目标计入 unknownMatches；每个执行根在一次查询中只尝试一个任务连接，旧 schema 保持原数据并返回 unavailable。
+
+协作模式使用上述 workspace、search、fields、limit、cursor 参数；混入旧列表模式的过滤或转录参数会被拒绝。Main、UI 和工具共同校验返回范围、字段选择与读取预算，缺少 session owner 的行不携带任务或运行事实。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

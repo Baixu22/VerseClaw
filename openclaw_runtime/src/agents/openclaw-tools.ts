@@ -584,6 +584,8 @@ export function createOpenClawTools(
     ...(includeUpdatePlanTool ? [createUpdatePlanTool()] : []),
     createSessionsListTool({
       agentSessionKey: options?.agentSessionKey,
+      runSessionKey: options?.runSessionKey,
+      agentSessionId: options?.sessionId,
       sandboxed: options?.sandboxed,
       config: resolvedConfig,
       callGateway: effectiveCallGateway,
@@ -729,6 +731,8 @@ export function createOpenClawTools(
     }),
     createSessionStatusTool({
       agentSessionKey: options?.agentSessionKey,
+      agentSessionId: options?.sessionId,
+      callGateway: effectiveCallGateway,
       runSessionKey: options?.runSessionKey,
       config: resolvedConfig,
       sandboxed: options?.sandboxed,

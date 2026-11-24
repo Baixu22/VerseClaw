@@ -1,6 +1,16 @@
 import type { ChatSession, RawMessage } from '@shared/chat/types';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
+import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationQuery, type SessionCollaborationPage } from '@shared/types/session-collaboration';
+import type { SessionCollaborationQueryResult } from '@shared/host-api/contract';
+
+/** UI consumers use the same scoped payload and bounded reply as the session tools. */
+export async function readSessionCollaborationPage(input: SessionCollaborationQuery,
+  read: (query: SessionCollaborationQuery) => Promise<SessionCollaborationQueryResult>): Promise<SessionCollaborationPage> {
+  const query = parseSessionCollaborationQuery(input);
+  const result = await read(query);
+  return validateSessionCollaborationPage(query, result.page);
+}
 
 /** Older history and summary reads cannot undo activity already observed from the runtime. */
 export function mergeSessionActivity(previous: Record<string, number>, incoming: Record<string, number>): Record<string, number> {

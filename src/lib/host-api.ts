@@ -1,5 +1,6 @@
 import { knowledgeHostApi } from './host-api/knowledge';
 import type { SessionActivityReadQuery } from '@shared/types/session-activity';
+import type { SessionCollaborationQuery } from '@shared/types/session-collaboration';
 import type { SystemProjectRead } from '@shared/types/system-portfolio';
 import type { SystemControlChange } from '@shared/types/system-control';
 import type { ProjectConfigurationApply, ProjectConfigurationInput, ProjectConfigurationRecovery } from '@shared/project-configuration';
@@ -898,6 +899,7 @@ export const hostApi = {
   sessionActivity: {
     snapshot: (input: SessionActivitySnapshotPayload) => invokeHost('sessionActivity', 'snapshot', input),
     read: (input: SessionActivityReadQuery) => invokeHost('sessionActivity', 'read', input),
+    query: (input: SessionCollaborationQuery) => invokeHost('sessionActivity', 'query', input),
   },
   git: {
     init: (): Promise<GitOperationResult> => invokeHost('git', 'init'),

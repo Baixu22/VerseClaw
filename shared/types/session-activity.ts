@@ -15,7 +15,7 @@ export type SessionActivityReadQuery = {
 export type SessionActivityReadState = 'ready' | 'empty' | 'not_read' | 'unavailable' | 'stale' | 'unknown';
 export type SessionActivityReadReason = 'source-not-read' | 'owner-missing' | 'owner-unavailable'
   | 'scope-mismatch' | 'generation-changed' | 'binding-changed' | 'execution-changed'
-  | 'run-identity-missing' | 'protocol-unverified';
+  | 'run-identity-missing' | 'protocol-unverified' | 'not-visible';
 export type SessionActivityReadSource<T> = { owner: string } & (
   | { state: 'ready' | 'empty'; value: T; readAt: number }
   | { state: Exclude<SessionActivityReadState, 'ready' | 'empty'>; value: null; readAt: number | null; reason: SessionActivityReadReason }

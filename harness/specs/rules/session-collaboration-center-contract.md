@@ -6,6 +6,7 @@ appliesTo:
   - session-collaboration-center
   - session-collaboration-center-plan
   - session-collaboration-identity-read-model
+  - session-collaboration-a2
 ---
 # 会话协作中心合同
 
@@ -19,6 +20,8 @@ appliesTo:
 - Task 链接只关联工作，不产生会话血缘；真实来源消费 SessionDerivation 与 session store。读取不隐式创建任务、claim、会话或数据库。
 
 ## 通信与控制
+
+- 共用发现和详情读取绑定原 requester/target scope；模型参数不成为读取者身份。沿同一 Query 合同消费原 owner，先做 visibility/A2A/sandbox 筛选，再读取任务和动作。字段未选保留 not_read；cursor 绑定 metadata 身份，来源变化或 reset 拒绝旧页。只读状态请求跳过模型配置与转录统计，mutation/admission 分类同样保持只读。
 
 - Renderer 使用 typed host-api / host:invoke；Main 持有 Gateway WebSocket。新增协作模块不直连 Gateway，也不恢复本地 HTTP fallback。
 - 优先扩展现有 sessions_list、session_status 的只读模式、sessions_history 和 sessions_send；新增有条件等待仅拥有订阅及结果引用。

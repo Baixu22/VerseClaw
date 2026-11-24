@@ -13,6 +13,8 @@ requiredRules:
 ---
 # 会话协作中心场景
 
+A2 通过 typed sessionActivity.query 与 sessions_list(collaboration=true)、session_status(readOnly=true) 共用有界发现和详情读取。正反场景核对目标搜索、工作区/会话过滤、分页/字段上限、来源状态、游标与 reset 拒绝、visibility/A2A/sandbox 读取策略，以及原 owner 前后状态；完整 transcript 读取与模型调用保持 0。
+
 本场景定义后续 A–E 叶的自动验收旅程。节点与读写合同见 session-collaboration-center-plan，范围为本机已配置、原权限允许的工作区与会话。
 
 A1 的共用读取入口是 typed `hostApi.sessionActivity.read`。每个目标传入原 workspace/project/sessionKey/sessionGeneration，并可固定 Workspace binding revision 与执行域引用。`readModel.sources` 明确区分已读事实、真实为空、未读取、不可用、过期和未知；读取前后从原 owner 核对会话、任务、配置、检出与资源资格。正反例包含同 key 跨工作区、旧 generation、旧 binding/执行域 revision、缺失 owner，以及 Runtime 读取和 Main 等待期间的 reset。
