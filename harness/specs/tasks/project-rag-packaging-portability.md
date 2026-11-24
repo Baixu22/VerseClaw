@@ -114,6 +114,7 @@ plannedE2E:
 expectedUserBehavior:
   - "让目标系统在实际发布平台可安装、可恢复、可持续维护。"
 acceptance:
+  - "当前Windows-only资格范围按所有者2026-11-24指令执行win32-x64实际安装、模型、容量和升级验证；macOS/Linux四目标登记deferred并保留独立补验节点。"
   - "按实际release target矩阵运行原生SDK/模型/FTS/SQLite probe；npm包清单不当作加载成功。"
   - "Intel Mac等缺ANN预编译包的平台具备完整portable语义路径与容量边界；ANN tier仅在实测通过的目标声明。"
   - "有网首次安装、签名/校验、离线重启、低空间、半安装、模型更换、旧binary读取和增量schema回滚通过。"
@@ -140,5 +141,7 @@ docs:
 回滚：停用不兼容feature pack，回portable/lexical；保留canonical owner和正常Chat启动。
 
 打包在目标平台依赖清理后封存RetrievalArtifactManifest/v1，安装包source Runtime启动前核验文件与目标。原生probe在隔离目录执行实际SDK、SQLite/FTS、portable vector和可选ANN读写，并逐项报告未测容量/模型。upgrade-check只读现有owner SQLite版本与前后包，拒绝空间不足、旧binary无法读新schema或回滚不兼容；实际安装继续走既有installer，禁止整库覆盖。完整发布矩阵、安装与模型故障验收在实际产物运行后再记通过。
+
+当前执行采用windows-only资格范围，先交付Windows安装、离线运行与升级回滚。macOS/Linux四目标在独立补验节点保留原生SDK、模型、容量及故障条件；当前Windows节点不依赖暂缓目标。恢复all-platforms范围后按原完整矩阵执行。范围与顺序见docs/dev/project-rag/WINDOWS-FIRST-PLAN.md。
 
 residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。

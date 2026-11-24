@@ -1,0 +1,59 @@
+{
+  "actor": "codex-g2-r50",
+  "driven_by": "agent",
+  "sourceParent": "8561c745132d2e187090b7a41fbdb6405c6dbed7",
+  "inputs": [
+    {
+      "path": "scripts/lib/project-rag-acceptance.mjs",
+      "sha256": "8a2b5663b4a661b834476327683f9ea4f2e641efb451972fb6f076a38aeb5d80"
+    },
+    {
+      "path": "scripts/lib/project-rag-acceptance.d.mts",
+      "sha256": "79f13cc343400a3d476c8f9ef77dea369a0a8a968e14ed922cf33fbb2f59f6ef"
+    },
+    {
+      "path": "tests/unit/project-rag-acceptance-readback.test.ts",
+      "sha256": "8e33ca69ba888270ebeafa469b2fc0288fa7fadbade5b7d9a03db5470de9019a"
+    },
+    {
+      "path": "docs/dev/project-rag/WINDOWS-FIRST-PLAN.md",
+      "sha256": "889d75cb24b37a76bf2885c3728c3e95b9dacd9a3957181aecce12c0fddbd86a"
+    },
+    {
+      "path": "docs/dev/project-rag/OFFLINE-DRIVERS.md",
+      "sha256": "8acd3da6f7e56e9ba8afc9ced1915fd2f70ab9827ed62eb58724477739237ec6"
+    },
+    {
+      "path": "docs/dev/project-rag/WORK-PACKAGES.md",
+      "sha256": "64d6d5be2f6824cdbcbce4a5687e171c0a531f0b80b29e798914fb034b69b0c7"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-packaging-portability.md",
+      "sha256": "19943f4bf2ab7b3a00ccff18106f9be3dcf5fd946acb1df6fc6188f46038c3ae"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-long-term-acceptance.md",
+      "sha256": "b99d850f93f47d13348dc4338622d2ee99f9d46e9835436d6f50ebbdd7d7e4b2"
+    },
+    {
+      "path": "README.md",
+      "sha256": "95fd20943ab24c7c7810ae214298f75f30ccb45aba84c8553919611965a27f47"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "565b39e60f6a5b046b631c8c2a810682c89b5998b3f26de8655eb6f8db750be7"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "083d3ef47192b79c38cd320d999413512aba2b09dd0e8031b6b0254bdf4f0902"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "04d714a7c4cdf611fb3e1830183db2189e26fb29f87f67cb9adfe298dcdc1acf"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "cbc8a9826b4a5a465fb22b8407a990bc3127b833bde7c23e9db0d0cc6f6aefcf"
+    }
+  ]
+}

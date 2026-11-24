@@ -33,6 +33,33 @@ function sourceFixture(root: string) {
 }
 
 describe('RAG acceptance preserves actual duration and failed evidence', () => {
+  it('supports an explicit Windows scope while preserving the full-platform contract', () => {
+    const directory = mkdtempSync(join(tmpdir(), 'rag-windows-scope-')), candidate = 'a'.repeat(40);
+    try {
+      const bytes = JSON.stringify({ actor: 'agent-unit-fixture', driven_by: 'agent', candidate,
+        target: 'win32-x64', status: 'passed', portable: true, sqlite: true, fts: true, sdk: true });
+      writeFileSync(join(directory, 'windows.json'), bytes);
+      const manifest = { schema: 'ProjectRagAcceptanceManifest/v1', candidate,
+        platforms: [{ target: 'win32-x64', path: 'windows.json', sha256: createHash('sha256').update(bytes).digest('hex') }] };
+      const windows = readProjectRagAcceptance(directory, { ...manifest, qualificationScope: 'windows-only' });
+      expect(windows.qualificationScope).toBe('windows-only'); expect(windows.requiredPlatforms).toEqual(['win32-x64']);
+      expect(windows.deferredPlatforms).toEqual(['darwin-arm64', 'darwin-x64', 'linux-arm64', 'linux-x64']
+        .map(target => ({ target, status: 'deferred' })));
+      expect(windows.reasons.some(reason => /^(darwin|linux)/.test(reason))).toBe(false);
+      expect(windows.reasons).toContain('full-executor-verifier-pending');
+      expect(windows.reasons).toContain('soak-not-completed'); expect(windows.reasons).toContain('portable:capacity-incomplete');
+      expect(windows.status).toBe('NO_GO');
+      for (const qualificationScope of [undefined, 'all-platforms']) {
+        const full = readProjectRagAcceptance(directory, { ...manifest, qualificationScope });
+        expect(full.qualificationScope).toBe('all-platforms'); expect(full.requiredPlatforms).toHaveLength(5);
+        expect(full.deferredPlatforms).toEqual([]); expect(full.reasons.some(reason => reason.startsWith('linux-arm64:'))).toBe(true);
+      }
+      const absent = readProjectRagAcceptance(directory, { ...manifest, qualificationScope: 'windows-only', platforms: [] });
+      expect(absent.reasons).toContain('win32-x64:native-proof-incomplete');
+      for (const qualificationScope of ['win', '', null])
+        expect(() => readProjectRagAcceptance(directory, { ...manifest, qualificationScope })).toThrow('qualification scope');
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  });
   it('requires all supplied candidate identities to match the frozen manifest', () => {
     const directory = mkdtempSync(join(tmpdir(), 'rag-candidate-identities-'));
     const candidate = 'a'.repeat(40), previous = 'b'.repeat(40);

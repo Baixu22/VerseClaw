@@ -106,6 +106,7 @@ plannedE2E:
 expectedUserBehavior:
   - "证明长期目标已经交付，并结束临时并行实现。"
 acceptance:
+  - "当前Windows-only资格验证显式绑定qualificationScope和win32-x64原件，macOS/Linux四目标记deferred；节点按Windows顺序执行，其余完整能力、质量、费用、稳定性和工程门槛保持。"
   - "RAG-01至RAG-18每项能力都有当前候选真实接线与失败路径证据；仅完成FTS阶段不得关闭长期目标。"
   - "固定240query评测、完整Electron旅程、实际provider、20k/100k容量和72小时agent驱动soak完成，失败/partial/unknown保留。"
   - "60任务×3repeats×3arms结果封存；按profile冻结门槛判定质量、成本与任务收益，区间/费用缺失不能晋级。"
@@ -137,5 +138,7 @@ docs:
 任务队列执行入口scripts/knowledge-rag-task-runner.ts绑定原540槽位、固定argv adapter及输入digest，生成与oracle隔离的participant工作区；每槽执行后独立重新分级并追加唯一attempt，原期限内捕获实际费用/用量，缺证据或基础设施错误立即停队列。中断、超时和无产物保持原状态，不覆盖旧跑次；实际provider资源仅在明确执行命令时消费。
 
 查询入口scripts/knowledge-rag-query-runner.ts对固定240query执行page/full两臂，逐臂原子保存queries.json检查点。完整查询与当前partialQuery分别保留；failure绑定queryId、arm、失败阶段和原始原因，启动或终止未确认的命令结果保留null。原始日志和捕获保留，任何失败立即停止并返回非零退出码，只有全部240query完成才标记complete。持续回归覆盖非零退出、原期限超时、缺失/损坏捕获、候选/策略漂移、工作树变化及启动失败。
+
+所有者于2026-11-24指定Windows优先。当前manifest显式采用qualificationScope=windows-only，仅平台原件范围收敛为win32-x64，结果保留四个deferred目标；18叶接线/失败路径、固定评测、容量、费用、安全、完整双角色及72小时条件照常验证。省略范围或指定all-platforms沿用五平台读回，未知范围拒绝。重新规划的节点与后继补验见docs/dev/project-rag/WINDOWS-FIRST-PLAN.md。
 
 residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。

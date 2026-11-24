@@ -315,4 +315,6 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 
 策略导入由 owner 在有界 Node 校验器中重新读取查询和任务原件，并核对实际执行的排序策略 digest。查询执行器保存完整查询、部分臂测量及失败阶段的检查点。计划参数与证据目录见[离线执行指南](docs/dev/project-rag/OFFLINE-DRIVERS.md)。
 
+G2 当前优先 Windows x64 开发与验证。验收清单显式选择 Windows 范围，macOS/Linux 验证登记为暂缓；节点顺序与完成条件见[Windows 开发与测试计划](docs/dev/project-rag/WINDOWS-FIRST-PLAN.md)。
+
 安装包中的检索组件在 Runtime 启动前核验交付文件清单。离线工具检查原生 SQLite/向量能力、升级兼容性和候选绑定评测回执，独立安装包与稳定性驱动保留实际失败及耗时。

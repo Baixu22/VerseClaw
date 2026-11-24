@@ -2,6 +2,8 @@
 
 本计划的终点是完整长期版本。RAG-01 至 RAG-19 为必交付；实际进度由本地 Task Forest 与每叶精选证据记录。阶段交付按各自规格验收，长期目标在全部实现与验收节点完成后收口。
 
+2026-11-24 所有者指定优先 Windows 开发测试。RAG-16 至 RAG-19 的当前资格范围为 Windows x64，macOS/Linux 四目标进入暂缓补验节点；执行顺序与范围见[Windows 开发与测试顺序](WINDOWS-FIRST-PLAN.md)。原 Windows 验证门槛保持，跨平台补验恢复后按实际目标生成独立证据。
+
 依据：[最终 ADR](../adr/2026-11-09-project-rag-retrieval-plane.md) · [外部资料](RESEARCH-20261109.zh-CN.md) · [结构化合同](program.v2.json)。运行进度与实际 TF ID 由本地 Task Forest 管理；工作树的 WORKTREE.md 提供当前绑定。
 
 ## 长期目标

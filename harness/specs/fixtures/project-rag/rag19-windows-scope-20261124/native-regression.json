@@ -1,0 +1,61 @@
+{
+  "schema": "G2WindowsScopeRegression/v1",
+  "actor": "codex-g2-r50",
+  "driven_by": "agent",
+  "phase": "fixed",
+  "kind": "native-code-agent-fixtures",
+  "modelRequests": 0,
+  "sourceParent": "8561c745132d2e187090b7a41fbdb6405c6dbed7",
+  "sourceSha256": "8a2b5663b4a661b834476327683f9ea4f2e641efb451972fb6f076a38aeb5d80",
+  "checks": [
+    {
+      "name": "windows-scope-defers-four-targets-and-retains-other-gates",
+      "passed": true
+    },
+    {
+      "name": "legacy-full-scope",
+      "passed": true
+    },
+    {
+      "name": "explicit-full-scope",
+      "passed": true
+    },
+    {
+      "name": "windows-receipt-required",
+      "passed": true
+    },
+    {
+      "name": "windows-conflicting-candidate-rejected",
+      "passed": true
+    },
+    {
+      "name": "windows-portable-capability-required",
+      "passed": true
+    },
+    {
+      "name": "windows-sqlite-capability-required",
+      "passed": true
+    },
+    {
+      "name": "windows-fts-capability-required",
+      "passed": true
+    },
+    {
+      "name": "windows-sdk-capability-required",
+      "passed": true
+    },
+    {
+      "name": "invalid-scope-\"win\"",
+      "passed": true
+    },
+    {
+      "name": "invalid-scope-\"\"",
+      "passed": true
+    },
+    {
+      "name": "invalid-scope-null",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

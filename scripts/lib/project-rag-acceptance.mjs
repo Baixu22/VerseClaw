@@ -66,6 +66,10 @@ export function readProjectRagAcceptance(directory, manifest) {
   const reasons = [];
   if (manifest?.schema !== 'ProjectRagAcceptanceManifest/v1' || !/^[a-f0-9]{40}$/.test(manifest.candidate))
     throw new Error('Invalid RAG acceptance manifest');
+  const qualificationScope = manifest.qualificationScope === undefined ? 'all-platforms' : manifest.qualificationScope;
+  if (!['all-platforms', 'windows-only'].includes(qualificationScope)) throw new Error('Invalid RAG qualification scope');
+  const allTargets = ['darwin-arm64', 'darwin-x64', 'linux-arm64', 'linux-x64', 'win32-x64'];
+  const targets = qualificationScope === 'windows-only' ? ['win32-x64'] : allTargets;
   const expectedNodes = Array.from({ length: 18 }, (_, index) => `RAG-${String(index + 1).padStart(2, '0')}`);
   if (!Array.isArray(manifest.nodes) || manifest.nodes.length !== 18
     || new Set(manifest.nodes.map(node => node.id)).size !== 18) reasons.push('incomplete-node-inventory');
@@ -103,7 +107,6 @@ export function readProjectRagAcceptance(directory, manifest) {
     if (!probe || probe.executedAt > recordedAt || recordedAt - probe.executedAt > soak.maximumGapMs)
       reasons.push(`soak-probe-${index}:execution-time-mismatch`);
   }
-  const targets = ['darwin-arm64', 'darwin-x64', 'linux-arm64', 'linux-x64', 'win32-x64'];
   for (const target of targets) {
     const platform = read(manifest.platforms?.find(row => row.target === target), target);
     if (!platform || platform.target !== target || platform.status !== 'passed' || platform.portable !== true
@@ -161,5 +164,7 @@ export function readProjectRagAcceptance(directory, manifest) {
   }
   return { schema: 'ProjectRagAcceptance/v1', actor: 'codex/project-rag-independent-readback', driven_by: 'agent',
     candidate: manifest.candidate, status: reasons.length ? 'NO_GO' : 'passed', reasons: [...new Set(reasons)],
+    qualificationScope, requiredPlatforms: targets,
+    deferredPlatforms: allTargets.filter(target => !targets.includes(target)).map(target => ({ target, status: 'deferred' })),
     realHumanEvidence: false, productPublished: false };
 }

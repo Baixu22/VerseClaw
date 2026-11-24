@@ -1,0 +1,27 @@
+{
+  "schema": "G2WindowsScopeRegression/v1",
+  "actor": "codex-g2-r50",
+  "driven_by": "agent",
+  "phase": "original",
+  "kind": "native-code-agent-fixtures",
+  "modelRequests": 0,
+  "sourceParent": "8561c745132d2e187090b7a41fbdb6405c6dbed7",
+  "sourceSha256": "fb6c9a2e314064d4908dfcec370f7df2afc34bb1f72dcc6fa47a3746e904ff45",
+  "checks": [
+    {
+      "name": "windows-scope-still-requires-other-platforms",
+      "observed": [
+        "darwin-arm64:Missing evidence pin",
+        "darwin-arm64:native-proof-incomplete",
+        "darwin-x64:Missing evidence pin",
+        "darwin-x64:native-proof-incomplete",
+        "linux-arm64:Missing evidence pin",
+        "linux-arm64:native-proof-incomplete",
+        "linux-x64:Missing evidence pin",
+        "linux-x64:native-proof-incomplete"
+      ],
+      "passed": true
+    }
+  ],
+  "passed": true
+}
