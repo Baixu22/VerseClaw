@@ -115,7 +115,7 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
   };
 
   return (
-    <div className={cn('effort-preview relative w-full select-none pb-9 pt-14', disabled && 'opacity-50')} data-testid="chat-agent-effort-preview">
+    <div className={cn('effort-preview relative w-full select-none pb-6 pt-6', disabled && 'opacity-50')} data-testid="chat-agent-effort-preview">
       <div ref={trackRef} className="relative h-8 w-full" data-testid="chat-agent-effort-track">
         <svg aria-hidden="true" className="pointer-events-none absolute h-0 w-0">
           <defs>
@@ -259,17 +259,17 @@ function AnimatedEffortLabel({ label, index, reducedMotion }: { label: string; i
 
 const PREVIEW_CSS = `
   .effort-preview {
-    --effort-preview-ring: var(--color-border);
-    --effort-preview-shadow: drop-shadow(0 1px 3px color-mix(in oklab, var(--color-text-foreground) 10%, transparent)) drop-shadow(0 1px 1px color-mix(in oklab, var(--color-text-foreground) 10%, transparent));
+    --effort-preview-ring: hsl(var(--border));
+    --effort-preview-shadow: drop-shadow(0 1px 3px color-mix(in oklab, hsl(var(--foreground)) 10%, transparent)) drop-shadow(0 1px 1px color-mix(in oklab, hsl(var(--foreground)) 10%, transparent));
   }
   .dark .effort-preview { --effort-preview-ring: transparent; }
-  .effort-preview .effort-track-surface { background: var(--color-background-secondary); }
-  .effort-preview-progress { background: linear-gradient(to right, color-mix(in oklab, var(--color-text-foreground) 16%, var(--color-background-secondary)), color-mix(in oklab, var(--color-text-foreground) 10%, var(--color-background-secondary))); }
-  .dark .effort-preview-progress { background: linear-gradient(to right, color-mix(in oklab, var(--color-text-foreground) 28%, var(--color-background-secondary)), color-mix(in oklab, var(--color-text-foreground) 18%, var(--color-background-secondary))); }
-  .effort-preview-tick { background: var(--color-text-foreground); }
-  .effort-preview-tooltip { width: max-content; background: var(--color-background-elevated-primary-opaque); }
-  .effort-preview-thumb { background: var(--gray-0); box-shadow: var(--shadow-md), 0 0 0 1px var(--color-border-heavy); }
-  .dark .effort-preview-thumb { background: var(--gray-300); }
-  .effort-preview-thumb--focused { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+  .effort-preview .effort-track-surface { background: hsl(var(--muted)); }
+  .effort-preview-progress { background: linear-gradient(to right, color-mix(in oklab, hsl(var(--foreground)) 16%, hsl(var(--muted))), color-mix(in oklab, hsl(var(--foreground)) 10%, hsl(var(--muted)))); }
+  .dark .effort-preview-progress { background: linear-gradient(to right, color-mix(in oklab, hsl(var(--foreground)) 28%, hsl(var(--muted))), color-mix(in oklab, hsl(var(--foreground)) 18%, hsl(var(--muted)))); }
+  .effort-preview-tick { background: hsl(var(--foreground)); }
+  .effort-preview-tooltip { width: max-content; background: hsl(var(--surface-modal)); }
+  .effort-preview-thumb { background: hsl(var(--surface-modal)); box-shadow: 0 1px 4px hsl(var(--foreground) / 0.12), 0 0 0 1px hsl(var(--border)); }
+  .dark .effort-preview-thumb { background: hsl(var(--foreground)); }
+  .effort-preview-thumb--focused { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
   .effort-preview-input { appearance: none; -webkit-appearance: none; }
 `;

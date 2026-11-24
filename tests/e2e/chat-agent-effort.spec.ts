@@ -130,7 +130,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       });
 
       await installIpcMocks(app, {
-        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
         gatewayRpcByMethod: {
           'sessions.list': { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } },
           'chat.history': { success: true, result: { messages: [] } },

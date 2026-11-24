@@ -124,6 +124,7 @@ test('keeps both layers usable across locales, themes, 375px and reduced motion'
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.getByTestId('chat-model-picker-button').click();
     await page.getByTestId('chat-agent-effort-slider').focus();
+    await page.getByTestId('chat-agent-effort-slider').press('ArrowLeft');
     await expect(page.getByTestId('chat-agent-effort-tooltip')).toBeVisible();
     await page.getByTestId('chat-model-picker-current').click();
     await expect(page.getByTestId('chat-agent-effort-slider')).toBeHidden();

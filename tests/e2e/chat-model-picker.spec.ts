@@ -167,7 +167,7 @@ test.describe('Verse Claw chat model picker', () => {
       await expect(page.getByTestId('chat-model-scope-selector')).toHaveCount(0);
       await expect(page.getByTestId('chat-model-options')).toBeVisible();
       await expect(page.getByTestId('chat-model-options')).toContainText('model-beta');
-      await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();
+      await page.getByTestId('chat-model-options').locator(`[role="option"][data-id="${betaModelRef}"]`).click();
       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
 
       const requests = await app.evaluate(() => (
@@ -190,7 +190,7 @@ test.describe('Verse Claw chat model picker', () => {
       await app.evaluate(() => { (globalThis as typeof globalThis & { __failModelReset?: boolean }).__failModelReset = true; });
       await page.getByTestId('chat-model-picker-button').click();
       await page.getByTestId('chat-model-picker-current').click();
-      await page.getByTestId('chat-model-options').getByRole('button', { name: 'model-alpha', exact: true }).click();
+      await page.getByTestId('chat-model-options').locator(`[role="option"][data-id="${alphaModelRef}"]`).click();
       await expect(page.getByText(/Gateway disconnected during reset/)).toBeVisible();
       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
       await expect(page.getByTestId('chat-turn-model-chip')).toHaveCount(0);
