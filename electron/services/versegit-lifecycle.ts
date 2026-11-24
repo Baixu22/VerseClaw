@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import {
@@ -42,10 +42,11 @@ function canonical(value: unknown): string {
 }
 function atomicWrite(path: string, value: unknown): void {
   mkdirSync(dirname(path), { recursive: true });
-  const temp = path + '.' + process.pid + '.' + Date.now() + '.tmp';
-  writeFileSync(temp, canonical(value) + '\n', 'utf8');
-  if (existsSync(path)) rmSync(path, { force: true });
-  renameSync(temp, path);
+  const temp = path + '.' + randomUUID() + '.tmp';
+  writeFileSync(temp, canonical(value) + '\n', { encoding: 'utf8', flag: 'wx', mode: 0o600, flush: true });
+  // Replace the complete record in one step; a failed rename must retain its epoch fence.
+  try { renameSync(temp, path); }
+  finally { try { rmSync(temp, { force: true }); } catch { /* Preserve the replacement error. */ } }
 }
 function validateIdentity(identity: VerseGitCompletionIdentity): string[] {
   const issues: string[] = [];

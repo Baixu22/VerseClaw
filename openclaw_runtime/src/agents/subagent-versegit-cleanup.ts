@@ -112,7 +112,7 @@ function runningPidsForSession(sessionKey: string): number[] {
 }
 
 function settleResult(result: CleanupResult): CleanupResult {
-  if (result.record) clearVerseGitRuntimeBindingForRun(result.record.runId);
+  if (result.record?.status === "deleted") clearVerseGitRuntimeBindingForRun(result.record.runId);
   return result;
 }
 
@@ -155,6 +155,7 @@ export async function runSubagentVerseGitCleanup(params: {
   if (!root) return runLegacyActions(params.actions, params.sessionPresent);
   const barrier = createVerseGitCleanupBarrier(root) as FileVerseGitCleanupBarrier;
   const existing = barrier.read(params.runId);
+  if (existing?.status === "deleted") return settleResult({ ok: true, barriered: true, issues: [], record: existing });
   const durable = params.entry.orchestration?.verseGitCleanup;
   const binding: VerseGitBindingRecord | undefined = bindingContext?.binding
     ?? (durable
@@ -232,12 +233,13 @@ export async function runSubagentVerseGitCleanup(params: {
     }
   }
   const worktreeResourceId = resources.find((resource) => resource.kind === "worktree")?.id ?? null;
-  const beforePids = existing
-    ? resources
+  const beforePids = [...new Set([
+    ...runningPidsForSession(params.entry.childSessionKey),
+    ...(existing ? resources
         .filter((resource) => resource.kind === "process")
         .map((resource) => Number(resource.target))
-        .filter((pid) => Number.isInteger(pid) && pid > 0)
-    : runningPidsForSession(params.entry.childSessionKey);
+        .filter((pid) => Number.isInteger(pid) && pid > 0 && isPidAlive(pid)) : []),
+  ])];
   const evidenceDigests = existing?.evidenceDigests ?? [digest({
     runId: params.runId,
     sessionId: params.entry.childSessionKey,
@@ -254,7 +256,7 @@ export async function runSubagentVerseGitCleanup(params: {
     actor: existing?.actor ?? params.actor ?? "codex",
     expected,
     current,
-    references: existing?.references ?? cleanupReferences(params.entry, params.references ?? []),
+    references: cleanupReferences(params.entry, params.references ?? []),
     evidenceDigests,
     inventoryBefore: existing?.inventoryBefore ?? cleanupInventoryFromResources(resources),
     resources,
@@ -283,7 +285,7 @@ export async function runSubagentVerseGitCleanup(params: {
     : await port.end({
         bindingId: seal.record.bindingId,
         reason: params.bindingEndReason,
-      }).catch((error: unknown) => error instanceof Error ? error : new Error(String(error)));
+      }).then(() => null, (error: unknown) => error instanceof Error ? error : new Error(String(error)));
   const endCode = (endError as { code?: unknown } | null)?.code;
   if (endError && endCode !== "BINDING_ENDED") {
     const failed = barrier.recoveryRequired({

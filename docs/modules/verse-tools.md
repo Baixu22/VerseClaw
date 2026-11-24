@@ -100,6 +100,10 @@ VG 不再只是“可选的 symbol verification plugin”，而是：
 - selected 结果不能升级为 full；
 - 执行 receipt、exit、timeout、cleanup、input hash 可复查。
 
+完成回执和清理记录通过原子替换保存，替换失败时保留上一份完整记录及其 epoch。
+清理沿同一 run、binding 和证据 seal 重试，每次重新核对停止结果、存活进程和资源引用。
+停止暂时超时后可继续恢复；身份冲突保持拒绝。已记录删除完成的重复请求直接返回原回执。
+
 **不授权：**
 
 - default-on；
@@ -169,6 +173,9 @@ VerseShell 是 ClawX 的受控 typed ACI / governed execution foundation：
 - manifest 声明 binary `resources/bin/win32-x64/ae.exe`（由资源准备/重建流程生成，干净检出可能暂不存在）：
   `3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2`
 - operation catalog：32 个 operation。
+
+宿主启动校验与上述源码身份、两份补丁及二进制摘要保持一致。
+执行器确认关闭后会退出 manager 注册表；解除 kill switch 可重新创建执行器，旧客户端继续拒绝请求。
 
 ### 3.3 验证覆盖
 

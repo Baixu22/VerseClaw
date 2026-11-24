@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import {
@@ -46,10 +46,11 @@ function resourceFile(root: string, runId: string): string {
 
 function atomicWrite(path: string, value: unknown): void {
   mkdirSync(dirname(path), { recursive: true });
-  const temporary = path + '.' + process.pid + '.' + Date.now() + '.tmp';
-  writeFileSync(temporary, canonical(value) + '\n', 'utf8');
-  if (existsSync(path)) rmSync(path, { force: true });
-  renameSync(temporary, path);
+  const temporary = path + '.' + randomUUID() + '.tmp';
+  writeFileSync(temporary, canonical(value) + '\n', { encoding: 'utf8', flag: 'wx', mode: 0o600, flush: true });
+  // Keep the previous seal readable until its complete replacement succeeds.
+  try { renameSync(temporary, path); }
+  finally { try { rmSync(temporary, { force: true }); } catch { /* Preserve the replacement error. */ } }
 }
 
 function nonEmpty(value: unknown): value is string {
@@ -205,18 +206,22 @@ export class FileVerseGitCleanupBarrier implements VerseGitCleanupBarrierPort {
       if (existing.sealId !== sealId) {
         return { ok: false, sealId: existing.sealId, issues: ['cleanup_seal_conflict'], record: existing };
       }
-      if (existing.status === 'rejected') {
+      if (existing.status === 'rejected' && !existing.issues.every(issue =>
+        ['drain_not_confirmed', 'processes_still_running', 'references_still_present'].includes(issue)
+        || issue.startsWith('session_stop_failed:'))) {
         return { ok: false, sealId: existing.sealId, issues: [...existing.issues], record: existing };
       }
-      return { ok: true, sealId: existing.sealId, issues: [], record: existing };
+      if (existing.status === 'deleted') return { ok: true, sealId, issues: [], record: existing };
     }
 
+    // The immutable seal fixes ownership; drain and references must be observed again on retry.
     const issues = validateSeal(input);
     if (issues.length > 0) {
-      const record = failedRecord(input, sealId, issues);
-      this.write(record);
+      const record = existing ?? failedRecord(input, sealId, issues);
+      if (!existing) this.write(record);
       return { ok: false, sealId, issues, record };
     }
+    if (existing && existing.status !== 'rejected') return { ok: true, sealId, issues: [], record: existing };
     const at = new Date().toISOString();
     const record: VerseGitCleanupBarrierRecord = {
       schema: VG_CLEANUP_BARRIER_SCHEMA,
@@ -243,7 +248,7 @@ export class FileVerseGitCleanupBarrier implements VerseGitCleanupBarrierPort {
       resources: input.resources.map((resource) => ({ ...resource })),
       deletedKinds: [...input.deletedKinds],
       issues: [],
-      lateEvents: [],
+      lateEvents: existing?.lateEvents ?? [],
     };
     this.write(record);
     return { ok: true, sealId, issues: [], record };

@@ -79,6 +79,7 @@ describe("concurrent acquisition with real ACI protocol children", () => {
     const managers: VerseShellProcessManager[] = [];
     try {
       for (let cycle = 0; cycle < 3; cycle++) {
+        const firstChildIndex = children.length;
         const manager = new VerseShellProcessManager({
           maxProcesses: 1,
           shutdownGraceMs: 1_000,
@@ -97,14 +98,24 @@ describe("concurrent acquisition with real ACI protocol children", () => {
         const clients = await Promise.all(
           Array.from({ length: 16 }, () => manager.getClient(config)),
         );
-        expect(children).toHaveLength(cycle + 1);
+        expect(children).toHaveLength(firstChildIndex + 1);
         expect(new Set(clients.map((client) => client.processKey)).size).toBe(1);
         const read = await clients[0].execute("file.view", { path: "fixture" });
-        expect(read.data).toEqual({ pid: children[cycle].pid });
+        expect(read.data).toEqual({ pid: children[firstChildIndex].pid });
+        if (cycle === 0) {
+          await manager.setKillSwitch(true);
+          expect(isAlive(children[firstChildIndex].pid!)).toBe(false);
+          await manager.setKillSwitch(false);
+          const renewed = await Promise.all(Array.from({ length: 16 }, () => manager.getClient(config)));
+          expect(new Set(renewed.map(client => client.processKey)).size).toBe(1);
+          await expect(renewed[0].execute("file.view", { path: "fixture" })).resolves.toMatchObject({ ok: true });
+          await manager.setKillSwitch(true);
+          expect(manager.list()).toEqual([]);
+        }
         await Promise.all([manager.shutdownAll(), manager.shutdownAll()]);
-        await closed[cycle];
+        await Promise.all(closed);
         expect(manager.list()).toEqual([]);
-        expect(isAlive(children[cycle].pid!)).toBe(false);
+        expect(isAlive(children[firstChildIndex].pid!)).toBe(false);
       }
       const observations = children.map((child) => ({
         pid: child.pid,

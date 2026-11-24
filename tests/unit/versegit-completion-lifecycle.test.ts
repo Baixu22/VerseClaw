@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createVerseGitCompletionStore } from '../../electron/services/versegit-lifecycle';
 import { recordDeferredPatchFlowCompletion } from '../../openclaw_runtime/src/agents/orchestration-patch-flow';
@@ -54,6 +54,13 @@ afterEach(() => {
 });
 
 describe('persistent host completion lifecycle', () => {
+  it('preserves the prior receipt and epoch fence when replacement fails', () => {
+    const root = makeRoot();
+    const output = execFileSync(process.execPath, [resolve('node_modules/tsx/dist/cli.mjs'),
+      resolve('tests/fixtures/versegit-receipt-replacement.mts'), 'completion', root], { encoding: 'utf8', windowsHide: true, timeout: 15_000 });
+    expect(JSON.parse(output)).toMatchObject({ mode: 'completion', preserved: true, retried: true });
+  });
+
   it('maps applied, not-applied and unknown without claiming provider landed', () => {
     const store = createVerseGitCompletionStore(makeRoot());
     const applied = store.record({ identity: identity({ sessionId: 's-applied' }), hostOutcome: 'applied', idempotencyKey: 'k-applied', actor: 'codex' });

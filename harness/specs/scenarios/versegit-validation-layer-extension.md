@@ -137,6 +137,12 @@ programmatic cleanup, user-requested cleanup, stale pruning and failure-path
 cleanup. VG never deletes a host worktree. Any barrier failure preserves the
 resource and records `recovery_required`.
 
+Completion and cleanup records replace the previous complete file atomically. A replacement
+failure retains the existing receipt and epoch fence. Cleanup retries use the same immutable
+run/binding/evidence seal and recheck current references and process drain. A transient stop
+timeout can resume after successful readback; identity conflicts remain rejected. Once deletion
+is recorded, repeated cleanup returns its receipt without repeating destructive actions.
+
 ## Coverage and evidence
 
 Symbol coverage is language-specific, not full language-service coverage. Read

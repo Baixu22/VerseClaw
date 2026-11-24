@@ -16,15 +16,14 @@ const COMPLIANCE_FILES = {
   source_inputs_file: 'source-inputs.json',
 } as const;
 
-const EXPECTED_SOURCE_INPUTS_SHA256 = '26c152fde20a87545a0b5544b998f3cb59e672338ed6110a2f18a79e6aca5f2f';
-const EXPECTED_SOURCE_IDENTITY_SHA256 = 'a9eb8940dd4f6509fdec8abebfc6351933266494387b3ae1e7e5e0445a00e0d5';
+const EXPECTED_SOURCE_INPUTS_SHA256 = 'd1d3cd4cd004d6a545a9e2e7a8cf48a3564e8cf467f70882e45fa736d2b388c6';
+const EXPECTED_SOURCE_IDENTITY_SHA256 = 'b3f8a52e9e8d758e0aa324e26ad50bf2db7662d5d69cd57bfc9fa8e877a3f0a0';
 const EXPECTED_SOURCE_REPOSITORY = 'https://github.com/Baixu22/VerseShell.git';
 const EXPECTED_SOURCE_COMMIT = 'c06f406e83566bb968448222d9c8caf429e580a0';
 const EXPECTED_SOURCE_COMMIT_EPOCH = 1791974123;
 const EXPECTED_PATCHES = [
   ['resources/verseshell/patches/p0-runtime-startup.patch', 1645, '17214efd7bf09e009256eb149c84a84e8fe85afcd467968ac2a6e472fbdb5aba'],
   ['resources/verseshell/patches/python-current-interpreter.patch', 2477, '0c073908e56492bd44d7455d55bee7661842db32c3ec6fe177d0b69093ae7f55'],
-  ['resources/verseshell/patches/binary-test-targets.patch', 301, '036a2c8cead0b33b39cd5718b0b54b1c2eb4d0576fd6fbeee4680e2ea5766d8e'],
 ] as const;
 const EXPECTED_RECOVERED_PATHS = [] as const;
 

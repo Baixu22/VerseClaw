@@ -656,13 +656,40 @@ describe.runIf(runRealBinary)('real governed candidate receipts', () => {
     expect(failedRun.cleanup.status).toBe('clean');
     expect(repairedRun.cleanup.status).toBe('clean');
 
-    service.cleanup('worker-a');
-    service.cleanup('worker-b');
     expect({
       head: git(baseRoot, ['rev-parse', 'HEAD']),
       refs: git(baseRoot, ['for-each-ref', '--format=%(refname) %(objectname)', 'refs/heads']),
       status: git(baseRoot, ['status', '--porcelain=v1', '--untracked-files=all']),
     }).toEqual(mainBefore);
     expect(git(baseRoot, ['show', 'HEAD:src/consumer-b.cjs'])).toContain('b-v0');
+    for (const worker of workers) {
+      expect(() => service.cleanup(worker.worktreeId)).toThrow('worktree_cleanup_user_content_present');
+      const retainedFiles = worker.declaredWriteSet.map(file => ({ file, content: readFileSync(join(worker.worktreePath, file), 'utf8') }));
+      git(worker.worktreePath, ['add', '--', ...worker.declaredWriteSet]);
+      git(worker.worktreePath, ['commit', '-m', 'retain verified worker result']);
+      const retainedRef = `refs/heads/retained-${worker.worktreeId}`;
+      git(worker.worktreePath, ['update-ref', retainedRef, 'HEAD']);
+      service.cleanup(worker.worktreeId);
+      expect(existsSync(worker.worktreePath)).toBe(false);
+      for (const retained of retainedFiles) {
+        expect(git(baseRoot, ['show', `${retainedRef}:${retained.file}`])).toBe(retained.content.trim());
+      }
+    }
+    expect(git(baseRoot, ['rev-parse', 'HEAD'])).toBe(mainBefore.head);
+    expect(git(baseRoot, ['status', '--porcelain=v1', '--untracked-files=all'])).toBe(mainBefore.status);
+    const reportDir = process.env.PERFORMANCE_LIFECYCLE_REPORT_DIR;
+    if (reportDir) {
+      writeFileSync(join(reportDir, 'candidate-receipts.json'), JSON.stringify({
+        schema: 'clawx.concurrent-candidate-continuation/v1',
+        driven_by: 'agent', actor: 'codex', realHumanEvidence: false,
+        baseBefore: mainBefore,
+        baseAfter: {
+          head: git(baseRoot, ['rev-parse', 'HEAD']),
+          status: git(baseRoot, ['status', '--porcelain=v1', '--untracked-files=all']),
+          retainedRefs: workers.map(worker => git(baseRoot, ['rev-parse', `refs/heads/retained-${worker.worktreeId}`])),
+        },
+        failedRun, repairedRun,
+      }, null, 2), 'utf8');
+    }
   }, 180_000);
 });
