@@ -245,6 +245,10 @@
     {
       "path": "D:\\tmp\\session-collaboration-A1-20261124\\run-check.py",
       "sha256": "9d9f71e954405224f5008ffecc24acc1e39c61f7f94e855c8defd1dd5da28480"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\artifact-first-git-readback.json",
+      "sha256": "032e8a3d083245e522b593b14fccd938c27dadea0c86c11742e474841d90226f"
     }
   ],
   "commsInputs": [

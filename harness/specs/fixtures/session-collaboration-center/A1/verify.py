@@ -1,4 +1,4 @@
-import hashlib, json, subprocess
+import hashlib, json, subprocess, sys
 from pathlib import Path
 
 folder = Path(__file__).resolve().parent
@@ -66,4 +66,7 @@ for line in (folder/'SHA256SUMS').read_text().splitlines():
     assert sha((folder/name).read_bytes())==expected, name
 manifest={line.split('  ',1)[1] for line in (folder/'SHA256SUMS').read_text().splitlines()}
 assert manifest == {p.name for p in folder.iterdir() if p.is_file() and p.name!='SHA256SUMS'}
+if '--git' in sys.argv:
+    for path in folder.iterdir():
+        if path.is_file(): assert git('show','HEAD:'+path.relative_to(repo).as_posix())==path.read_bytes(), path.name
 print(json.dumps({'status':'passed','candidate':candidate['commit'],'sourceFiles':len(report['sources']),'artifactFiles':len(manifest),'tests':units['passed'],'ownerStateUnchanged':True}))
