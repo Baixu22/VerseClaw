@@ -103,6 +103,10 @@ test('keeps operation groups in conversation order with shared width, accessible
         for (const width of [1280, 375]) {
           const nativeSize = await pinWindowContentSize(app, { width, height: 800 });
           expect(nativeSize.width).toBe(width);
+          await expect.poll(async () => {
+            const settled = await boundaries(page);
+            return Math.max(settled.left, settled.right);
+          }).toBeLessThan(2);
           const sizes = await boundaries(page);
           expect(sizes.viewportWidth).toBe(width);
           expect(sizes.left).toBeLessThan(2); expect(sizes.right).toBeLessThan(2); expect(sizes.overflow).toBe(false);
