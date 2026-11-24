@@ -2,6 +2,16 @@
 # byte-locked exceptions below override this default explicitly.
 * text=auto eol=lf
 
+# Imported VerseBrowser sources retain their manifest-bound bytes when patched.
+packages/versebrowser/src/engine/service.ts -text
+packages/versebrowser/src/engine/task-service.ts -text
+packages/versebrowser/src/engine/supervised-task-executor.ts -text
+packages/versebrowser/src/engine/browser-control/replay-tool-executor.ts -text
+packages/versebrowser/src/engine/browser-control/same-origin-js-fetcher.ts -text
+packages/versebrowser/src/engine/browser-control/same-origin-source-map-fetcher.ts -text
+# Unified-diff blank context markers are significant patch bytes.
+packages/versebrowser/patches/*.patch -text whitespace=-trailing-space
+
 # VerseShell process-lifecycle patch is content-addressed by the committed
 # manifest (provenance.build_input.diff_sha256 / compliance checksum) and
 # verified by tests/unit/uas-05-verseshell-process-lifecycle.test.ts and

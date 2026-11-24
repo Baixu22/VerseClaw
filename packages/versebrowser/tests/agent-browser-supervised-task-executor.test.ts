@@ -121,6 +121,34 @@ describe('agent browser supervised task network policy', () => {
 });
 
 describe('agent browser supervised task executor', () => {
+  it('keeps the shared runtime enabled until a retry finishes after the old close settles', async () => {
+    const service = createRuntime();
+    const firstController = new AbortController();
+    const steps: Array<() => void> = [];
+    let releaseClose!: () => void;
+    vi.mocked(service.waitForSelector).mockImplementation(async () => {
+      await new Promise<void>(resolve => steps.push(resolve));
+      return { id: 'session-1' } as never;
+    });
+    vi.mocked(service.close).mockImplementationOnce(() => new Promise<void>(resolve => { releaseClose = resolve; }));
+    const execute = createAgentBrowserSupervisedTaskExecutor({ service, assertSandboxAllowed: async () => {}, lookupAddresses: publicLookup });
+    const first = execute(createRunningTask(), firstController.signal, () => {}).catch(error => error);
+    await vi.waitFor(() => expect(steps).toHaveLength(1));
+    firstController.abort();
+    steps[0]();
+    await vi.waitFor(() => expect(releaseClose).toBeTypeOf('function'));
+    const second = execute({ ...createRunningTask(), runId: 'run-2' }, new AbortController().signal, () => {});
+    await vi.waitFor(() => expect(steps).toHaveLength(2));
+    try {
+      releaseClose();
+      expect(await first).toBeInstanceOf(Error);
+      expect(service.isEnabled()).toBe(true);
+    } finally { steps[1](); }
+    expect((await second).verification.status).toBe('passed');
+    expect(service.isEnabled()).toBe(false);
+    expect(service.setEnabled).toHaveBeenCalledTimes(2);
+  });
+
   it('awaits one asynchronous owner cleanup before completing cancellation', async () => {
     const service=createRuntime();const controller=new AbortController();
     let releaseStep!:()=>void, releaseClose!:()=>void;

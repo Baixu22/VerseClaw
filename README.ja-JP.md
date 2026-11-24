@@ -249,7 +249,7 @@ Main layers：
 
 Local storage は offline execution を意味しません。Online model、channel、browser、external tool は設定に従って data を受け取ります。Credential や private transcript を commit / public issue に含めないでください。
 
-VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。81 メソッドの契約は Electron の 81 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。プライベートネットワークへの移動は Main がセッションと origin に結び付けて承認します。agent による検証も Main で承認を実行し、呼び出し側の承認マーカーではアクセス権を付与しません。 ナビゲーションの失敗時は待機状態を解放し、次の移動を独立して実行します。 ブラウザーのリソースは元のウィンドウの終了確認後に解放します。
+VerseBrowser: インストール・開発・ビルド時に組み込みモジュールを自動コンパイルします。81 メソッドの契約は Electron の 81 機能の実装を意味しません。[呼び出し方法とドライバー制限](packages/README.md#versebrowser-integration-and-invocation)を参照してください。プライベートネットワークへの移動は Main がセッションと origin に結び付けて承認します。agent による検証も Main で承認を実行し、呼び出し側の承認マーカーではアクセス権を付与しません。完全アクセスは承認時のタブと origin に限定されます。読み取り中に承認が変わった場合、ネットワーク詳細、リクエスト比較、パラメーター候補と JS 断片を自動的にマスキングします。JS、SourceMap、リプレイのバックグラウンド通信にも同じ profile のネットワークポリシーが適用されます。リプレイ承認は一度の送信で消費され、応答を失っても再利用できません。URL、ヘッダー、リクエスト本文の認証情報フィールドは草案の作成前に拒否します。キャンセルと一時停止は現在の実行を中断し、古いコールバックが再試行を上書きすることを防ぎます。ナビゲーションの失敗時は待機状態を解放し、次の移動を独立して実行します。ブラウザーのリソースは元のウィンドウの終了確認後に解放します。
 
 <a id="development"></a>
 
