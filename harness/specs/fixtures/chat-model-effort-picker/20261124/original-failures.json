@@ -463,6 +463,62 @@
         "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r2.stderr.log",
         "sha256": "21781bfcceb07faa7feb7aaaf9fd41b036bc148157e7d86f3b870c6791816564"
       }
+    },
+    {
+      "actor": "codex-output-ui",
+      "driven_by": "agent",
+      "label": "electron-r13",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/chat-model-settings-card.spec.ts",
+        "tests/e2e/chat-agent-effort.spec.ts",
+        "tests/e2e/chat-model-picker.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r13"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "candidate": {
+        "commit": "97c6ef0ce38535d8d2d25bd3d2cadafbe36716f7",
+        "tree": "99310660be5740656333be7b860adcbaf7d7305c",
+        "dirty": false
+      },
+      "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+      "timeoutSeconds": 900,
+      "admission": {
+        "freeBytes": 6401015808,
+        "minimumFreeBytes": 2147483648,
+        "heavy": []
+      },
+      "startedAt": "2026-11-24T15:31:41.252431+00:00",
+      "status": "finished",
+      "resourceLimits": {
+        "NODE_OPTIONS": "--max-old-space-size=768",
+        "GOMEMLIMIT": "900MiB",
+        "GOMAXPROCS": "2",
+        "workers": 1
+      },
+      "electronRuntime": {
+        "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+        "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+      },
+      "independentUIAuthorized": true,
+      "driverPid": 23104,
+      "exitCode": 1,
+      "durationSeconds": 121.563,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r13.stdout.log",
+        "sha256": "6c7b5846cc82cde3236d9f6c9dbc3ed37048d8bb4a730fec7e54d52654527a4a"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r13.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
     }
   ],
   "handling": {
@@ -473,6 +529,7 @@
     "electron-r5": "以typed agents.list快照初始化High。",
     "electron-r6": "保留旧拖动失败；记录实际坐标并等待Tooltip入场结束后取得手势坐标。",
     "lint-r8": "随已保存强度同步草稿，移除effect级联setState。",
-    "electron-r9": "以高度和边界检查紧凑布局，适配375px会话栏收窄。"
+    "electron-r9": "以高度和边界检查紧凑布局，适配375px会话栏收窄。",
+    "electron-r13": "保留拖动中提前保存失败；拖动失焦保持预览，并记录blur、pointercancel及lostpointercapture事件。"
   }
 }

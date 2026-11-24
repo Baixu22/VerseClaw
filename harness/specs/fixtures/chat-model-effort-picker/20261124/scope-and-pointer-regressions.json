@@ -1,0 +1,12 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "sourceCommit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+  "cases": [
+    "角色改变后旧重置结果不更新强度显示",
+    "组件关闭后旧重置结果不更新强度显示",
+    "拖动失焦不提前保存，结束时仅保存一次"
+  ],
+  "unitReport": "raw/unit-r14.json",
+  "nativeReport": "raw/electron-r14.stdout.log"
+}

@@ -2,11 +2,10 @@
   "driven_by": "agent",
   "actor": "codex-model-ui",
   "status": "passed",
-  "candidate": "07d6cf9f9f8c1fbc5a6dde00bd434f1de79682a9",
+  "candidate": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
   "unit": {
-    "passed": 125,
-    "total": 125,
-    "sourceEquivalence": "candidate.json"
+    "passed": 128,
+    "total": 128
   },
   "electron": {
     "passed": 6,
@@ -38,13 +37,13 @@
   "build": {
     "driven_by": "agent",
     "actor": "codex-model-ui",
-    "sourceCommit": "07d6cf9f9f8c1fbc5a6dde00bd434f1de79682a9",
+    "sourceCommit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
     "sourceRoot": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
     "installedRoot": "D:\\ClawX",
-    "backup": "D:\\tmp\\clawx-model-effort-picker-20261124\\previous-main-build",
+    "backup": "D:\\tmp\\clawx-model-effort-picker-20261124\\previous-main-build-r14",
     "copiedFiles": 1413,
     "verifiedFiles": 1413,
-    "retainedOldAssetFiles": 91,
+    "retainedOldAssetFiles": 178,
     "status": "passed"
   },
   "sourceAndStagingPreserved": {
@@ -88,16 +87,17 @@
   },
   "rawRoot": "D:\\tmp\\clawx-model-effort-picker-20261124",
   "checks": [
-    "lint-r9",
     "i18n-r9",
     "contract-r9",
     "comms-replay-r9",
     "comms-compare-r9",
-    "unit-r9",
     "harness-validate-r12",
     "harness-dry-run-r12",
-    "typecheck-r12",
-    "build-r12",
-    "electron-r12"
-  ]
+    "lint-r14",
+    "unit-r14",
+    "typecheck-r14",
+    "build-r14",
+    "electron-r14"
+  ],
+  "additionalRegressions": "scope-and-pointer-regressions.json"
 }

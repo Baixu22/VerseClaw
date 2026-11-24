@@ -11,6 +11,8 @@ entries=[line.split('  ',1) for line in read('SHA256SUMS').decode().splitlines()
 for expected,name in entries:
     assert sha(read(name))==expected,name
     if args.from_git:assert sha(git('show','HEAD:'+prefix+'/'+name))==expected,name+' Git bytes'
+expected_names={name for _,name in entries}|{'SHA256SUMS'}
+assert {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}==expected_names
 candidate=load('candidate.json')
 for item in candidate['sources']:
     assert sha(git('show',candidate['commit']+':'+item['path']))==item['sha256'],item['path']
@@ -19,8 +21,8 @@ checks=load('checks.json')
 for label,check in checks.items():
     assert check['exitCode']==0 and check['sourceUnchanged'],label
     for stream in ['stdout','stderr']:assert sha(read('raw/'+label+'.'+stream+'.log'))==check[stream]['sha256'],label+' '+stream
-unit=load('raw/unit-r9.json');assert unit['numPassedTests']==unit['numTotalTests']==125
-native=load('raw/electron-r12.stdout.log');assert native['stats']['expected']==6 and native['stats']['unexpected']==0 and native['stats']['skipped']==0
+unit=load('raw/unit-r14.json');assert unit['numPassedTests']==unit['numTotalTests']==128
+native=load('raw/electron-r14.stdout.log');assert native['stats']['expected']==6 and native['stats']['unexpected']==0 and native['stats']['skipped']==0
 geometry=load('geometry.json');assert len(geometry['measurements'])==16
 for item in geometry['measurements']:
     card=item['cardGeometry'];assert card['height']<=160 and card['tooltipTop']>=card['modelBottom']
@@ -32,4 +34,4 @@ receipt=load('carbon/receipt.json');assert receipt['status']=='SUCCESS' and rece
 build=load('main-build-installed.json');files=load('main-build-files.json');assert build['verifiedFiles']==len(files)
 for item in files:assert sha((repo/item['path']).read_bytes())==item['sha256'],item['path']+' build'
 cleanup=load('electron-process-cleanup.json');assert cleanup['status']=='passed' and not cleanup['survivors']
-print(json.dumps({'status':'passed','manifestFiles':len(entries),'sourceFiles':len(candidate['sources']),'buildFiles':len(files),'unit':125,'electron':6,'variants':16,'gitBytesChecked':args.from_git}))
+print(json.dumps({'status':'passed','manifestFiles':len(entries),'sourceFiles':len(candidate['sources']),'buildFiles':len(files),'unit':128,'electron':6,'variants':16,'gitBytesChecked':args.from_git}))

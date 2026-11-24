@@ -1,6 +1,7 @@
 {
   "driven_by": "agent",
   "actor": "codex-model-ui",
+  "sourceRun": "electron-r14",
   "sources": [
     "settings-tooltip-dark-1280.png",
     "models-dark-1280.png"

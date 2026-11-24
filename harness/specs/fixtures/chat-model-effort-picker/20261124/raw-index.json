@@ -5,6 +5,16 @@
     "bytes": 1480
   },
   {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r13.command.json",
+    "sha256": "7652625984848bf402730a1666a167d6ba91083711760ea1eaf576ce68d2dc2d",
+    "bytes": 1480
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r14.command.json",
+    "sha256": "b30f1e491af48909d87a8a72020915c5bd69cab442f5577c663cb7ca461da2ca",
+    "bytes": 1621
+  },
+  {
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r4.command.json",
     "sha256": "5a8b50cb22dafff77ece1a1029502008770b33e6d27f2857ad2ae12321ed6ab2",
     "bytes": 1477
@@ -48,6 +58,16 @@
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r12.command.json",
     "sha256": "dd4a84cdbcf2317a9f5d2c6fa9e57f62c813015ebbc73b6e4051109f0316bf6f",
     "bytes": 1774
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r13.command.json",
+    "sha256": "8db8bfa751c24b331f9d65ba016492265ea7b36cc0c41aa7188cfb1e8b8badd3",
+    "bytes": 1774
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r14.command.json",
+    "sha256": "b6a5f2e87501a27865389b0652fe2991d3a6e35e8e15bd381dbe9614ca755882",
+    "bytes": 1916
   },
   {
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4.command.json",
@@ -100,6 +120,16 @@
     "bytes": 2097
   },
   {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\lint-r13.command.json",
+    "sha256": "f656b4f44cee0c5cb89480987e4e3691a7d878edc03018008cc542c74c48ff4e",
+    "bytes": 1955
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\lint-r14.command.json",
+    "sha256": "5a23da4093e23b106709c44a7ad03a8e53ea52185b8d12d130bc2ae3f8e09b6a",
+    "bytes": 2097
+  },
+  {
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\lint-r8.command.json",
     "sha256": "7fbab3b95da56223061b5d6a6a72eaf154c8cb72fdb04d022c5f48d1053f006e",
     "bytes": 1952
@@ -113,6 +143,16 @@
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r12.command.json",
     "sha256": "612a2cce1ac3f90c47fe1e3558eeeaf87ab05c87471e11e10435f5b72d9eb9f8",
     "bytes": 1492
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r13.command.json",
+    "sha256": "b97d46f5e510a5ed9dee9a9716462e773d06c50d27935cf0acb1881c188f636c",
+    "bytes": 1491
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r14.command.json",
+    "sha256": "076a4c8e1fdd8a8914de6b1705fe215b9de1f9fb4c21764060a2ddb273c45d02",
+    "bytes": 1634
   },
   {
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r3.command.json",
@@ -138,6 +178,16 @@
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r1.command.json",
     "sha256": "b246f07fa28540b8558082d4a5d35bd62580126b9ef22d34e3147c48f8177e91",
     "bytes": 2022
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r13.command.json",
+    "sha256": "6f858a0da977a1137e518b9873880ac92d8d664dfee2641b187edf3a246c7c43",
+    "bytes": 1868
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r14.command.json",
+    "sha256": "c8b2abe6591f7dd6b851119a9993fdde0dcc496826b93136c902c47b9cd22139",
+    "bytes": 2009
   },
   {
     "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r2.command.json",
