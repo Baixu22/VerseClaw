@@ -92,6 +92,18 @@ describe('compact model settings card', () => {
     expect(change).not.toHaveBeenCalled();
     expect(screen.getByTestId('chat-model-settings-reset')).not.toBeDisabled();
   });
+  it.each(['agent-change', 'unmount'])('ignores an old reset result after %s', async mode => {
+    let finish!: () => void;
+    mocks.updateEffort.mockImplementation(() => new Promise<void>(resolve => { finish = resolve; }));
+    const change = vi.fn();
+    const { rerender, unmount } = render(card({ onEffortChange: change }));
+    fireEvent.click(screen.getByTestId('chat-model-settings-reset'));
+    if (mode === 'unmount') unmount();
+    else rerender(card({ agentId: 'other', onEffortChange: change }));
+    finish();
+    await waitFor(() => expect(mocks.updateEffort).toHaveResolved());
+    expect(change).not.toHaveBeenCalled();
+  });
   it('blocks pointer and reset changes while the composer is disabled', () => {
     const select = vi.fn();
     render(card({ disabled: true, onSelectModel: select }));

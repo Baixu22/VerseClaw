@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Loader2, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -27,6 +27,11 @@ export function ChatModelSettingsCard({ agentId, effort, options, modelRef, disa
   const [modelsOpen, setModelsOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [resetError, setResetError] = useState(false);
+  const activeScope = useRef<symbol | null>(null);
+  useLayoutEffect(() => {
+    activeScope.current = Symbol(agentId ?? 'none');
+    return () => { activeScope.current = null; };
+  }, [agentId]);
   const busy = disabled || resetting || Boolean(switchingModelRef);
   const models = useMemo(() => {
     const rows = [...options];
@@ -41,11 +46,12 @@ export function ChatModelSettingsCard({ agentId, effort, options, modelRef, disa
 
   const reset = async () => {
     if (!agentId || busy || effort === 'auto') return;
+    const scope = activeScope.current;
     setResetting(true); setResetError(false);
     try {
       await updateEffort(agentId, 'auto');
-      onEffortChange('auto');
-    } catch { setResetError(true); }
+      if (scope === activeScope.current) onEffortChange('auto');
+    } catch { if (scope === activeScope.current) setResetError(true); }
     finally { setResetting(false); }
   };
 
