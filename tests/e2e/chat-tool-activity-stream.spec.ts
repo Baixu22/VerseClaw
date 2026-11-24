@@ -48,7 +48,7 @@ async function boundaries(page: Page) {
   return page.evaluate(() => {
     const transcript = document.querySelector('[data-testid="chat-virtual-history"]')!.getBoundingClientRect();
     const input = document.querySelector('[data-testid="chat-composer-shell"]')!.getBoundingClientRect();
-    return { left: Math.abs(transcript.left - input.left), right: Math.abs(transcript.right - input.right),
+    return { viewportWidth: innerWidth, left: Math.abs(transcript.left - input.left), right: Math.abs(transcript.right - input.right),
       overflow: document.documentElement.scrollWidth > innerWidth };
   });
 }
@@ -65,6 +65,9 @@ test('keeps operation groups in conversation order with shared width, accessible
     await mkdir(info.outputPath('workspace'), { recursive: true });
     await seed(app, HISTORY, info.outputPath('workspace'));
     const page = await getStableWindow(app);
+    await app.evaluate(({ BrowserWindow }) => {
+      for (const window of BrowserWindow.getAllWindows()) window.setMinimumSize(320, 600);
+    });
     const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
     await page.reload();
     const groups = page.getByTestId('chat-tool-activity-group');
@@ -88,8 +91,10 @@ test('keeps operation groups in conversation order with shared width, accessible
         await expect(page.getByText('最终答复：配置已更新，检查已完成。', { exact: true })).toBeVisible();
         await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', theme === 'dark' ? 'rgb(33, 33, 31)' : 'rgb(247, 247, 245)');
         for (const width of [1280, 375]) {
-          await pinWindowContentSize(app, { width, height: 800 });
+          const nativeSize = await pinWindowContentSize(app, { width, height: 800 });
+          expect(nativeSize.width).toBe(width);
           const sizes = await boundaries(page);
+          expect(sizes.viewportWidth).toBe(width);
           expect(sizes.left).toBeLessThan(2); expect(sizes.right).toBeLessThan(2); expect(sizes.overflow).toBe(false);
           measurements.push({ lang, theme, width, ...sizes });
         }
