@@ -33,7 +33,7 @@ export function ChatModelSettingsCard({ agentId, effort, options, modelRef, disa
     if (modelRef && !rows.some(row => row.modelRef === modelRef)) rows.unshift({ modelRef, label: formatModelRefLabel(modelRef) });
     return rows.map((option): PickerModel => {
       const display = describeModelRef(option.modelRef);
-      return { id: option.modelRef, name: `${display.name}${display.source ? ` (${display.source})` : ''}`,
+      return { id: option.modelRef, name: display.name,
         label: option.label, provider: display.source ?? undefined,
         icon: <ModelBrandIcon modelRef={option.modelRef} size={16} /> };
     }).sort((left, right) => (left.provider ?? '').localeCompare(right.provider ?? ''));
@@ -71,7 +71,7 @@ export function ChatModelSettingsCard({ agentId, effort, options, modelRef, disa
         <ChatModelPicker models={models} value={modelRef ?? ''} disabled={busy || !agentId}
           busyId={switchingModelRef} onChange={reference => void onSelectModel(reference)} onOpenChange={setModelsOpen} />
       </div>
-      <div data-testid="chat-model-settings-slider-region" inert={modelsOpen} aria-hidden={modelsOpen || undefined}
+      <div className="chat-model-settings-slider" data-testid="chat-model-settings-slider-region" inert={modelsOpen} aria-hidden={modelsOpen || undefined}
         style={{ visibility: modelsOpen ? 'hidden' : undefined }}>
         {agentId && <ChatAgentEffortPanel agentId={agentId} disabled={busy} onEffortChange={onEffortChange} />}
       </div>

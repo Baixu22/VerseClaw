@@ -188,6 +188,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await slider.hover();
       const tooltip = page.getByTestId('chat-agent-effort-tooltip');
       await expect(tooltip).toHaveAttribute('aria-label', 'High');
+      await expect.poll(() => tooltip.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42)).toBeCloseTo(-36, 0);
       await expect(page.getByTestId('chat-agent-effort-popover').locator('img')).toHaveCount(0);
       const bounds = await slider.boundingBox();
       expect(bounds).not.toBeNull();

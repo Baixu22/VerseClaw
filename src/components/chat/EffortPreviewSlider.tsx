@@ -231,7 +231,7 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
           }}
         />
       </div>
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center text-xs font-medium text-muted-foreground" data-testid="chat-agent-effort-label">
+      <div aria-hidden="true" className="effort-preview-label pointer-events-none absolute inset-x-0 bottom-0 flex justify-center text-xs font-medium text-muted-foreground" data-testid="chat-agent-effort-label">
         <AnimatedEffortLabel label={label} index={index} reducedMotion={Boolean(reducedMotion)} />
       </div>
       <style>{PREVIEW_CSS}</style>

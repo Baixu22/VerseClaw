@@ -110,6 +110,7 @@ function ChatModelPicker({
     const selected: PickerModel = models.find((model) => model.id === selectedId)
         ?? (value === undefined ? models[0] : undefined)
         ?? { id: '', name: t('composer.modelSourceDefault') }
+    const selectedLabel = selected.provider ? `${selected.name} (${selected.provider})` : selected.name
 
     const [phase, setPhase] = useState<Phase>('closed')
     const [foldTo, setFoldTo] = useState<string | undefined>(undefined)
@@ -436,7 +437,7 @@ function ChatModelPicker({
                 data-testid="chat-model-picker-current"
                 disabled={disabled || Boolean(busyId) || !models.length}
                 aria-busy={Boolean(busyId) || undefined}
-                aria-label={`${t('composer.actions.model')}: ${selected.name}`}
+                aria-label={`${t('composer.actions.model')}: ${selectedLabel}`}
                 onClick={() => (open ? close(selectedId, 'pointer') : show())}
                 onKeyDown={onTriggerKey}
                 className={cn(
@@ -459,7 +460,7 @@ function ChatModelPicker({
                         </motion.span>
                     </AnimatePresence>
                 </span>
-                <span className="chat-model-picker-name" title={selected.name}><RollingText text={selected.name} roll={roll} /></span>
+                <span className="chat-model-picker-name" title={selectedLabel}><RollingText text={selectedLabel} roll={roll} /></span>
                 <motion.span
                     className="grid place-items-center"
                     animate={{ opacity: phase === 'closed' ? 0.45 : 0 }}
