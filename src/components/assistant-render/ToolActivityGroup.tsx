@@ -14,12 +14,11 @@ const ICONS = { read: FileText, write: FilePlus2, edit: FilePenLine, search: Sea
   memory: BrainCircuit, agent: Bot, plan: ListTodo, 'generate-image': ImagePlus, presentation: Presentation,
   download: Download, upload: Upload, archive: Archive, delete: Trash2 };
 
-export function ToolActivityIcon({ kind, iconId = kind, reveal = false }: { kind: ToolActivityKind; iconId?: ToolActivityIconId; reveal?: boolean }) {
+export function ToolActivityIcon({ kind, iconId = kind, animated = false }: { kind: ToolActivityKind; iconId?: ToolActivityIconId; animated?: boolean }) {
   const Icon = ICONS[iconId];
   return (
-    <span className="tool-activity-icon" data-kind={kind} data-icon={iconId} aria-hidden="true">
+    <span className="tool-activity-icon" data-kind={kind} data-icon={iconId} data-animated={animated ? 'true' : 'false'} aria-hidden="true">
       <Icon strokeWidth={1.5} className="tool-activity-icon-base" />
-      {reveal && <Icon strokeWidth={1.5} className="tool-activity-icon-glint" />}
     </span>
   );
 }
@@ -65,7 +64,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
         onClick={() => onExpandedChange(!expanded)}
         title={target ?? label}
       >
-        <ToolActivityIcon key={isRunning && !expanded ? current?.id : 'idle'} kind={summaryEntry?.kind ?? 'other'} iconId={summaryEntry?.iconId} reveal={isRunning && !expanded} />
+        <ToolActivityIcon key={isRunning && !expanded ? current?.id : 'idle'} kind={summaryEntry?.kind ?? 'other'} iconId={summaryEntry?.iconId} animated={isRunning && !expanded} />
         <span className="tool-activity-label" data-testid="chat-tool-activity-label">
           {isRunning && !expanded ? <span key={current?.id} className="tool-activity-text-enter" data-testid="chat-tool-activity-text-enter" data-tool-id={current?.id}>
             <Shimmer className="tool-activity-shimmer">{summaryText}</Shimmer>
@@ -86,7 +85,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
             currentToolId={isRunning ? current?.id : undefined}
             expandedStepIds={expandedStepIds}
             onStepExpandedChange={onStepExpandedChange}
-            renderToolIcon={(kind, reveal, iconId) => <ToolActivityIcon kind={kind} iconId={iconId} reveal={reveal} />}
+            renderToolIcon={(kind, _reveal, iconId) => <ToolActivityIcon kind={kind} iconId={iconId} />}
           />
           {children}
         </div>

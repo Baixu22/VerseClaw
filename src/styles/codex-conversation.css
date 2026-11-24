@@ -272,39 +272,96 @@
   }
 }
 
-/* White highlight belongs exclusively to the active running tool icon and text. */
-.tool-activity-icon .tool-activity-icon-glint {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  color: var(--color-white, #fff);
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.18));
-  -webkit-mask-image: linear-gradient(110deg, transparent 10%, #fff 50%, transparent 90%);
-  mask-image: linear-gradient(110deg, transparent 10%, #fff 50%, transparent 90%);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-size: 65% 100%;
-  mask-size: 65% 100%;
-  animation: tool-activity-icon-reveal 800ms cubic-bezier(0.22, 1, 0.36, 1) 1 both;
+/* Lucide motion plays only beside the current folded running summary. */
+@media (prefers-reduced-motion: no-preference) {
+  .tool-activity-toggle .tool-activity-icon[data-animated='true'] svg {
+    transform-origin: center;
+    animation: tool-activity-icon-pop 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .tool-activity-icon[data-animated='true']:is([data-icon='read'], [data-icon='write'], [data-icon='code']) svg > path:nth-of-type(n+3) {
+    stroke-dasharray: 9;
+    animation: tool-activity-icon-line 1.8s ease-out infinite;
+  }
+
+  .tool-activity-icon[data-animated='true']:is([data-icon='read'], [data-icon='write'], [data-icon='code']) svg > path:nth-of-type(4) {
+    animation-delay: 100ms;
+  }
+
+  .tool-activity-icon[data-animated='true'][data-icon='read'] svg > path:nth-of-type(5) {
+    animation-delay: 200ms;
+  }
+
+  .tool-activity-icon[data-animated='true'][data-icon='edit'] svg > path:nth-of-type(2) {
+    animation: tool-activity-icon-prompt 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .tool-activity-toggle .tool-activity-icon[data-animated='true'][data-icon='search'] svg {
+    animation-name: tool-activity-icon-search;
+  }
+
+  .tool-activity-toggle .tool-activity-icon[data-animated='true']:is([data-icon='web'], [data-icon='command']) svg {
+    animation: none;
+  }
+
+  .tool-activity-icon[data-animated='true'][data-icon='web'] svg > path:first-of-type {
+    transform-box: view-box;
+    transform-origin: center;
+    animation: tool-activity-icon-globe 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .tool-activity-icon[data-animated='true'][data-icon='command'] svg > path:first-child {
+    animation: tool-activity-icon-cursor 1.8s linear infinite;
+  }
+
+  .tool-activity-icon[data-animated='true'][data-icon='command'] svg > path:last-child {
+    animation: tool-activity-icon-prompt 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .tool-activity-toggle .tool-activity-icon[data-animated='true']:is([data-icon='other'], [data-icon='build']) svg {
+    animation-name: tool-activity-icon-wrench;
+  }
 }
 
-@keyframes tool-activity-icon-reveal {
-  0% {
-    -webkit-mask-position: -160% 0;
-    mask-position: -160% 0;
-    opacity: 0;
-  }
-  18% {
-    opacity: 0.86;
-  }
-  82% {
-    opacity: 0.86;
-  }
-  100% {
-    -webkit-mask-position: 260% 0;
-    mask-position: 260% 0;
-    opacity: 0;
-  }
+@keyframes tool-activity-icon-pop {
+  0%, 44%, 100% { transform: scale(1); }
+  16% { transform: scale(1.08); }
+  32% { transform: scale(0.98); }
+}
+
+@keyframes tool-activity-icon-line {
+  0% { stroke-dashoffset: -9; opacity: 0; }
+  24%, 100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes tool-activity-icon-search {
+  0%, 60%, 100% { transform: translate(0, 0) rotate(0); }
+  15% { transform: translate(1px, -0.5px) rotate(6deg); }
+  30% { transform: translate(-1px, 1px) rotate(-6deg); }
+  45% { transform: translate(0.5px, -0.5px) rotate(4deg); }
+}
+
+@keyframes tool-activity-icon-globe {
+  0%, 60%, 100% { transform: scaleX(1); }
+  30% { transform: scaleX(-1); }
+}
+
+@keyframes tool-activity-icon-cursor {
+  0%, 18%, 36%, 54%, 100% { opacity: 1; }
+  9%, 27%, 45% { opacity: 0.1; }
+}
+
+@keyframes tool-activity-icon-prompt {
+  0%, 36%, 100% { transform: translateX(0); }
+  14% { transform: translateX(2px); }
+  26% { transform: translateX(-0.4px); }
+}
+
+@keyframes tool-activity-icon-wrench {
+  0%, 52%, 100% { transform: rotate(0); }
+  13% { transform: rotate(-12deg); }
+  26% { transform: rotate(10deg); }
+  39% { transform: rotate(-6deg); }
 }
 
 .tool-activity-group .tool-activity-shimmer {
@@ -469,11 +526,6 @@
     background: none !important;
     color: inherit !important;
     -webkit-text-fill-color: currentColor !important;
-  }
-
-  .tool-activity-icon-glint {
-    display: none !important;
-    animation: none !important;
   }
 
   .tool-activity-chevron,

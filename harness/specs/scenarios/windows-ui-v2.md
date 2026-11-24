@@ -68,6 +68,9 @@ Chat output has no avatar gutter and shares the available conversation width
 with the input. Adjacent operations form a folded group after their progress
 explanation. Folded summaries use an unboxed operation icon and the latest action
 text, entering left to right once with a continuous white running shimmer.
+Only the current running folded summary loops its Lucide icon animation.
+Expanded rows, background groups and settled states keep static icons even on
+hover; reduced motion keeps all operation icons static.
 Expanded tool and command rows use CallChip progress strips with a background,
 timer and completion check. Icons reflect the actual tool and its captured target.
 Calls, late results and command output keep their original group. Completed
