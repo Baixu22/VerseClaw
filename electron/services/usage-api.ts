@@ -1,4 +1,5 @@
 import { resolveContextWindow } from '../utils/context-window';
+import { getSessionContextSnapshot } from '../utils/session-context';
 import { assessPromptCacheStatus } from '../utils/prompt-cache-status';
 import { getSetting, setSetting } from '../utils/store';
 import { getRecentTokenUsageHistory, getSessionTokenUsageSummary, getUsageAggregateSummary } from '../utils/token-usage';
@@ -270,24 +271,29 @@ export function createUsageApi(): CompleteHostServiceRegistry['usage'] {
       const messageCount = isRecord(payload) && typeof payload.messageCount === 'number'
         ? Math.max(0, Math.floor(payload.messageCount))
         : 0;
-      const explicitUsedTokens = isRecord(payload) && typeof payload.usedTokens === 'number'
-        ? Math.max(0, Math.floor(payload.usedTokens))
-        : null;
+      const expectedSessionId = readString(payload, 'expectedSessionId') ?? undefined;
       const modelRef = isRecord(payload) && typeof payload.modelRef === 'string' ? payload.modelRef : null;
-      const [summary, contextWindow] = await Promise.all([
-        getSessionTokenUsageSummary(sessionKey),
+      const [snapshot, contextWindow] = await Promise.all([
+        getSessionContextSnapshot(sessionKey, expectedSessionId),
         resolveContextWindow(modelRef),
       ]);
-      const usedTokens = explicitUsedTokens ?? (summary.totalTokens > 0 ? summary.totalTokens : null);
-      const status = contextWindow.maxTokens != null || usedTokens != null ? 'bestEffort' : 'unavailable';
+      const usedTokens = snapshot?.usedTokens ?? null;
+      const runtimeLimit = snapshot?.contextTokens;
+      const maxTokens = runtimeLimit != null && runtimeLimit > 0
+        ? Math.min(runtimeLimit, contextWindow.maxTokens ?? runtimeLimit) : contextWindow.maxTokens;
+      const status = maxTokens != null || usedTokens != null ? 'bestEffort' : 'unavailable';
 
       return {
         success: true,
         range: {
           sessionKey,
+          sessionId: snapshot?.sessionId,
           modelRef: contextWindow.modelRef,
-          maxTokens: contextWindow.maxTokens,
+          maxTokens,
           usedTokens,
+          usageSource: snapshot?.usageSource ?? 'unavailable',
+          measuredAt: snapshot?.measuredAt ?? null,
+          composition: snapshot?.composition ?? null,
           visibleMessageStartIndex: messageCount > 0 ? 0 : null,
           visibleMessageEndIndex: messageCount > 0 ? messageCount - 1 : null,
           retainedMessageCount: messageCount,

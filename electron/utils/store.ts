@@ -158,6 +158,7 @@ export interface AppSettings {
   disabledSkills: string[];
   workProviders: WorkProviderConfig;
   sessionActivityPanelEnabled: boolean;
+  chatContextDisplayEnabled: boolean;
   sessionActivityAutoExpand: 'active' | 'attention' | 'never';
   sessionActivityShowGit: boolean;
   sessionActivityShowCommands: boolean;
@@ -234,6 +235,7 @@ function createDefaultSettings(): AppSettings {
     disabledSkills: [],
     workProviders: {},
     sessionActivityPanelEnabled: true,
+    chatContextDisplayEnabled: true,
     sessionActivityAutoExpand: 'active',
     sessionActivityShowGit: true,
     sessionActivityShowCommands: true,

@@ -33,12 +33,17 @@ const contextRange = (over: Partial<WorkspaceContextRange> = {}): WorkspaceConte
 });
 
 describe('resolveContextPressure', () => {
-  it('prefers live usage over the static range', () => {
+  it('uses the current range ahead of cumulative session usage', () => {
     const p = resolveContextPressure({
       liveUsage: liveUsage(),
       contextRange: contextRange({ usedTokens: 10, maxTokens: 20 }),
     });
-    expect(p.usedTokens).toBe(1050);
+    expect(p.usedTokens).toBe(10);
+  });
+
+  it('keeps unmeasured context unknown when only session billing totals exist', () => {
+    expect(resolveContextPressure({ liveUsage: liveUsage({ scope: 'session', totalTokens: 900000 }) }).usedTokens).toBeNull();
+    expect(resolveContextPressure({ liveUsage: liveUsage(), contextRange: contextRange({ usageSource: 'unavailable' }) }).usedTokens).toBeNull();
   });
 
   it('falls back to the range when live usage is absent', () => {

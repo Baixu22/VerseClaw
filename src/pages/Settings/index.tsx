@@ -184,6 +184,8 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
     setTelemetryEnabled,
     uiDepthMode,
     setUiDepthMode,
+    chatContextDisplayEnabled,
+    setChatContextDisplayEnabled,
   } = useSettingsStore(useShallow((state) => ({
     theme: state.theme,
     setTheme: state.setTheme,
@@ -219,6 +221,8 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
     setTelemetryEnabled: state.setTelemetryEnabled,
     uiDepthMode: state.uiDepthMode,
     setUiDepthMode: state.setUiDepthMode,
+    chatContextDisplayEnabled: state.chatContextDisplayEnabled,
+    setChatContextDisplayEnabled: state.setChatContextDisplayEnabled,
   })));
 
   const { status: gatewayStatus, restart: restartGateway } = useGatewayStore(useShallow((state) => ({
@@ -1501,6 +1505,18 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
                     checked={launchAtStartup}
                     testId="settings-launch-at-startup"
                     onChange={setLaunchAtStartup}
+                  />
+                )}
+              />
+              <SettingsRow
+                title={t('appearance.contextDisplay.title')}
+                description={t('appearance.contextDisplay.description')}
+                control={(
+                  <SettingsSwitch
+                    ariaLabel={t('appearance.contextDisplay.title')}
+                    checked={chatContextDisplayEnabled}
+                    testId="settings-chat-context-display"
+                    onChange={setChatContextDisplayEnabled}
                   />
                 )}
               />

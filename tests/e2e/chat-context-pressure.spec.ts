@@ -59,6 +59,7 @@ test.describe('Verse Claw chat context pressure', () => {
           // The window ceiling lives on the context range.
           [stableStringify(['usage', 'contextRange', {
             sessionKey: MAIN_SESSION_KEY,
+            expectedSessionId: 'context-pressure-generation',
             modelRef: null,
             messageCount: 0,
             usedTokens: null,
@@ -143,12 +144,11 @@ test.describe('Verse Claw chat context pressure', () => {
       // and the click can land on a not-yet-ready item.
       await expect(compact).toContainText('64k / 128k tokens');
       await compact.click();
-
+      const dialog = page.getByTestId('chat-compaction-dialog');
+      await expect(dialog).toContainText('64k / 128k tokens');
+      await dialog.getByTestId('chat-compaction-details').locator('summary').click();
       const pressure = page.getByTestId('chat-context-pressure');
       await expect(pressure).toBeVisible();
-
-      // Session context: used against the window ceiling.
-      await expect(pressure).toContainText('64k / 128k tokens');
       // Cache-served tokens for the session.
       await expect(pressure).toContainText('59k');
       // Warm hit rate and last-turn hit rate, both from real usage.
@@ -198,6 +198,7 @@ test.describe('Verse Claw chat context pressure', () => {
           },
           [stableStringify(['usage', 'contextRange', {
             sessionKey: MAIN_SESSION_KEY,
+            expectedSessionId: 'context-pressure-generation',
             modelRef: null,
             messageCount: 0,
             usedTokens: null,
@@ -279,9 +280,10 @@ test.describe('Verse Claw chat context pressure', () => {
       // Partial measurement: the session row is shown, but the optional cache
       // and hit-rate rows must be omitted rather than fabricated as 0%.
       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
+      await expect(page.getByTestId('chat-compaction-dialog')).toContainText('64k / 128k tokens');
+      await page.getByTestId('chat-compaction-details').locator('summary').click();
       const pressure = page.getByTestId('chat-context-pressure');
       await expect(pressure).toBeVisible();
-      await expect(pressure).toContainText('64k / 128k tokens');
       await expect(pressure).not.toContainText('%');
       await expect(pressure).not.toContainText('$');
     } finally {

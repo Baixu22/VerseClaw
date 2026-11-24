@@ -48,7 +48,8 @@ export function resolveContextPressure(input: ChatContextPressureProps): {
   utilisation: number | null;
 } {
   const { liveUsage, contextRange } = input;
-  const usedTokens = liveUsage?.totalTokens ?? contextRange?.usedTokens ?? null;
+  const usedTokens = contextRange?.usageSource === 'unavailable' ? null
+    : contextRange?.usedTokens ?? (liveUsage?.scope === 'session' ? null : liveUsage?.totalTokens) ?? null;
   // The window ceiling is a property of the range, not of live usage. Gating it
   // on liveUsage being present would drop the ceiling whenever only the range
   // knows the used count.

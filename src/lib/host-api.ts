@@ -1779,7 +1779,7 @@ export const hostApi = {
     live: (sessionKey: string, runId?: string | null, streaming?: boolean) => (
       invokeHost('usage', 'live', { sessionKey, runId, streaming })
     ),
-    contextRange: (input: { sessionKey: string; modelRef?: string | null; messageCount?: number; usedTokens?: number | null }) => (
+    contextRange: (input: { sessionKey: string; expectedSessionId?: string; modelRef?: string | null; messageCount?: number; usedTokens?: number | null }) => (
       invokeHost('usage', 'contextRange', input)
     ),
     promptCacheStatus: (input: Parameters<PromptCacheStatusFn>[0]): Promise<ReturnType<PromptCacheStatusFn>> => (

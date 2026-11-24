@@ -67,6 +67,7 @@ test.describe('Verse Claw chat manual compaction', () => {
           },
           [stableStringify(['usage', 'contextRange', {
             sessionKey: MAIN_SESSION_KEY,
+            expectedSessionId: EXPECTED_SESSION_ID,
             modelRef: null,
             messageCount: 0,
             usedTokens: null,

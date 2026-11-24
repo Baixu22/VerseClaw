@@ -522,6 +522,7 @@ export type SettingsSnapshot = Partial<{
   cdpRemoteDebuggingPort: number;
   workProviders: WorkProviderConfig;
   sessionActivityPanelEnabled: boolean;
+  chatContextDisplayEnabled: boolean;
   sessionActivityAutoExpand: 'active' | 'attention' | 'never';
   sessionActivityShowGit: boolean;
   sessionActivityShowCommands: boolean;
@@ -5481,6 +5482,7 @@ export type WorkspaceLiveUsagePayload = { sessionKey: string; runId?: string | n
 export type WorkspaceLiveUsageResult = HostSuccess & { usage: LiveTokenUsage };
 export type WorkspaceContextRangePayload = {
   sessionKey: string;
+  expectedSessionId?: string;
   modelRef?: string | null;
   messageCount?: number;
   usedTokens?: number | null;

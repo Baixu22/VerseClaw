@@ -58,6 +58,7 @@ interface SettingsState {
    */
   runActivityKeepExpandedOnComplete: boolean;
   uiDepthMode: UiDepthMode;
+  chatContextDisplayEnabled: boolean;
   lastChatModelRef: string | null;
   workProviders: WorkProviderConfig;
   sessionActivityPanelEnabled: boolean;
@@ -97,6 +98,7 @@ interface SettingsState {
   setDevModeUnlocked: (value: boolean) => void;
   setRunActivityKeepExpandedOnComplete: (value: boolean) => void;
   setUiDepthMode: (value: UiDepthMode) => void;
+  setChatContextDisplayEnabled: (value: boolean) => void;
   rememberChatModel: (modelRef: string) => void;
   setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
   setSessionActivityPanelEnabled: (value: boolean) => void;
@@ -134,6 +136,7 @@ const defaultSettings = {
   devModeUnlocked: false,
   runActivityKeepExpandedOnComplete: false,
   uiDepthMode: 'basic' as UiDepthMode,
+  chatContextDisplayEnabled: true,
   lastChatModelRef: null as string | null,
   workProviders: {} as WorkProviderConfig,
   sessionActivityPanelEnabled: true,
@@ -241,6 +244,10 @@ export const useSettingsStore = create<SettingsState>()(
         void hostApi.settings.set('runActivityKeepExpandedOnComplete', runActivityKeepExpandedOnComplete).catch(() => { });
       },
       setUiDepthMode: (uiDepthMode) => set({ uiDepthMode }),
+      setChatContextDisplayEnabled: (chatContextDisplayEnabled) => {
+        set({ chatContextDisplayEnabled });
+        void hostApi.settings.set('chatContextDisplayEnabled', chatContextDisplayEnabled).catch(() => { });
+      },
       rememberChatModel: (lastChatModelRef) => set({ lastChatModelRef }),
       setWorkProviderEnabled: (providerId, enabled) => {
         set((state) => {

@@ -137,6 +137,10 @@
       "description": "Basic 保持常用界面更简洁。Advanced 显示更多 checkpoint 证据、压缩警告、角色契约和诊断信息。",
       "basic": "Basic",
       "advanced": "Advanced"
+    },
+    "contextDisplay": {
+      "title": "显示上下文用量",
+      "description": "在聊天输入框旁显示上下文标签，悬停或聚焦可查看组成详情。"
     }
   },
   "aiProviders": {
