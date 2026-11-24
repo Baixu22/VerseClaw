@@ -1,0 +1,57 @@
+{
+  "schema": "G2CandidateIdentityRegression/v1",
+  "actor": "codex-g2-r48",
+  "driven_by": "agent",
+  "reviewEngine": "current-main-model",
+  "scope": "native synthetic-code regression; candidate identity only",
+  "sourceParent": "b38ac1b78b8f8121a0160840bf70505cdf085485",
+  "sourceDirty": true,
+  "sourceSha256": "fb6c9a2e314064d4908dfcec370f7df2afc34bb1f72dcc6fa47a3746e904ff45",
+  "originalDirectory": "D:\\tmp\\g2-r48-20261124\\candidate-alias-fixed-wiZF0g",
+  "checks": [
+    {
+      "name": "candidate-string",
+      "expectedCandidateMismatch": false,
+      "observedCandidateMismatch": false,
+      "fullFixtureStatus": "NO_GO",
+      "passed": true
+    },
+    {
+      "name": "matching-object-and-alias",
+      "expectedCandidateMismatch": false,
+      "observedCandidateMismatch": false,
+      "fullFixtureStatus": "NO_GO",
+      "passed": true
+    },
+    {
+      "name": "single-alias",
+      "expectedCandidateMismatch": false,
+      "observedCandidateMismatch": false,
+      "fullFixtureStatus": "NO_GO",
+      "passed": true
+    },
+    {
+      "name": "old-string-new-alias",
+      "expectedCandidateMismatch": true,
+      "observedCandidateMismatch": true,
+      "fullFixtureStatus": "NO_GO",
+      "passed": true
+    },
+    {
+      "name": "old-object-new-alias",
+      "expectedCandidateMismatch": true,
+      "observedCandidateMismatch": true,
+      "fullFixtureStatus": "NO_GO",
+      "passed": true
+    },
+    {
+      "name": "new-string-old-alias",
+      "expectedCandidateMismatch": true,
+      "observedCandidateMismatch": true,
+      "fullFixtureStatus": "NO_GO",
+      "passed": true
+    }
+  ],
+  "modelRequests": 0,
+  "passed": true
+}

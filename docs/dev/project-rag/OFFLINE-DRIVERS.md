@@ -40,4 +40,4 @@ probe 执行实际 SQLite/FTS、SDK、portable vector 和可选 ANN 读写，分
 
 `ProjectRagSoakPlan/v1` 固定源码输入、绝对 argv、探针/间隔预算及实际 72 小时。每次探针保存独立文件、执行时间和八个生命周期步骤；失败、探针复用、断档、候选变化、撤销泄漏、重复发布和未清理作业进入失败记录。
 
-`ProjectRagAcceptanceManifest/v1` 绑定同一候选的 18 叶 `nodes`、五平台 `platforms`、20k/100k `capacity`、三个带 profile/path/sha256 的 `policyPackages`、`taskExecutions`、`soak` 及完整 `engineering`/`engineeringManifest`/`engineeringDirectory`。读回重新验证策略包与任务收益，最终结果保存具体未满足项。
+`ProjectRagAcceptanceManifest/v1` 绑定同一候选的 18 叶 `nodes`、五平台 `platforms`、20k/100k `capacity`、三个带 profile/path/sha256 的 `policyPackages`、`taskExecutions`、`soak` 及完整 `engineering`/`engineeringManifest`/`engineeringDirectory`。证据中已填写的 `candidate`、`candidate.commit` 与 `candidateCommit` 必须一致地匹配该候选；冲突字段记为 `candidate-mismatch`。读回重新验证策略包与任务收益，最终结果保存具体未满足项。

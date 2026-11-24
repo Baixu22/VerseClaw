@@ -1,0 +1,49 @@
+{
+  "schema": "G2MainModelAcceptanceReview/v1",
+  "actor": "codex-g2-r48",
+  "driven_by": "agent",
+  "engine": "current-main-model",
+  "method": "main-agent direct source/caller review and native regression",
+  "authorization": {
+    "source": "direct user message in this chat",
+    "instruction": "继续验收一下，用你自己的模型来继续",
+    "appliesTo": "this acceptance continuation",
+    "changesGlobalModelDefault": false
+  },
+  "sourceParent": "b38ac1b78b8f8121a0160840bf70505cdf085485",
+  "recordedAt": "2026-11-24T05:01:45.283Z",
+  "finding": {
+    "id": "conflicting-candidate-identities",
+    "effect": "A matching candidateCommit hid an older candidate or candidate.commit.",
+    "resolution": "Compare every supplied source candidate identity against the frozen manifest.",
+    "status": "fixed-native-regression-passed",
+    "cases": 6
+  },
+  "inputs": [
+    {
+      "path": "scripts/lib/project-rag-acceptance.mjs",
+      "sha256": "fb6c9a2e314064d4908dfcec370f7df2afc34bb1f72dcc6fa47a3746e904ff45"
+    },
+    {
+      "path": "tests/unit/project-rag-acceptance-readback.test.ts",
+      "sha256": "db49558a7bcc23eabbaa06d9e44c8f594f9b80b5b0bfb76c24ced7b78098019d"
+    },
+    {
+      "path": "docs/dev/project-rag/OFFLINE-DRIVERS.md",
+      "sha256": "9ad92e638255fae5dc43bea9dc923b25fba264ced06abbfb833b4e2639f948f2"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-long-term-acceptance.md",
+      "sha256": "06721bc73878ddd08aaf56936c5358642c2b01e0d3a35a2710e562e9b8e79a62"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-observability-offline-promotion.md",
+      "sha256": "96d40081de417fc07ddd5b8f6ca36ac46f505e116d35632f16ea5f058dbf0fde"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-packaging-portability.md",
+      "sha256": "c37e7a0e9bea009dc153634bd276d60980a5804ecbe0d38c276013a42e197339"
+    }
+  ],
+  "fullAcceptance": "resumed; resource-coordinated engineering execution pending"
+}

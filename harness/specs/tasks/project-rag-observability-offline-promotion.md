@@ -123,4 +123,4 @@ docs:
 
 检索回执沿现有 memory-wiki SQLite plugin state 持久化，只保存 refs/digests/status/usage。未知费用与token保留null；来源撤销/修改会使收据失效并删除弱反馈。Main选取策略包文件，owner在有界Node校验器中读回240查询、540任务原件和实际执行的策略digest，重算统计后原子比较当前policy digest并晋级。backend/admin的wiki.retrieval.evaluate沿同一owner读取与预算路径执行manual候选评测，普通wiki.retrieve拒绝策略覆盖。重复操作内容相异拒绝，回滚保留前一policy；排序候选、重排、来源数和最终条数保持既有profile上限。
 
-本次所有者指示优先完成RAG17～19代码、暂缓完整验收。residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收仍按自身新增测试和接口要求执行，正式状态待实际证据收口。
+residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。

@@ -72,8 +72,10 @@ export function readProjectRagAcceptance(directory, manifest) {
   const read = (pin, label) => {
     try {
       const value = readBoundEvidence(directory, pin);
-      if (value.candidate !== manifest.candidate && value.candidate?.commit !== manifest.candidate
-        && value.candidateCommit !== manifest.candidate) reasons.push(`${label}:candidate-mismatch`);
+      const candidateIds = [typeof value.candidate === 'object' ? value.candidate?.commit : value.candidate,
+        value.candidateCommit].filter(candidate => candidate !== undefined);
+      if (!candidateIds.length || candidateIds.some(candidate => candidate !== manifest.candidate))
+        reasons.push(`${label}:candidate-mismatch`);
       const engineeringActor = label === 'engineering' && value.schema === ACCEPTANCE_REPORT_SCHEMA
         && value.role === 'verifier' && typeof value.actor === 'string' && value.actor.length > 0;
       if (value.driven_by !== 'agent' && !engineeringActor) reasons.push(`${label}:actor-provenance-missing`);

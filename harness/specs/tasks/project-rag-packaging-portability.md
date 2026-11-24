@@ -141,4 +141,4 @@ docs:
 
 打包在目标平台依赖清理后封存RetrievalArtifactManifest/v1，安装包source Runtime启动前核验文件与目标。原生probe在隔离目录执行实际SDK、SQLite/FTS、portable vector和可选ANN读写，并逐项报告未测容量/模型。upgrade-check只读现有owner SQLite版本与前后包，拒绝空间不足、旧binary无法读新schema或回滚不兼容；实际安装继续走既有installer，禁止整库覆盖。完整发布矩阵、安装与模型故障验收在实际产物运行后再记通过。
 
-本次所有者指示优先完成RAG17～19代码、暂缓完整验收。residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收仍按自身新增测试和接口要求执行，正式状态待实际证据收口。
+residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。

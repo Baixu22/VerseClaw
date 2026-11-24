@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { RAG_SOAK_MINIMUM_MS, validateRagSoak, validateRagSoakProbe } from '../../scripts/lib/project-rag-acceptance.mjs';
+import { RAG_SOAK_MINIMUM_MS, readProjectRagAcceptance, validateRagSoak, validateRagSoakProbe } from '../../scripts/lib/project-rag-acceptance.mjs';
 import { runRagCommand } from '../../scripts/lib/project-rag-process.mjs';
 import { mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -24,6 +24,28 @@ function report() {
 }
 
 describe('RAG acceptance preserves actual duration and failed evidence', () => {
+  it('requires all supplied candidate identities to match the frozen manifest', () => {
+    const directory = mkdtempSync(join(tmpdir(), 'rag-candidate-identities-'));
+    const candidate = 'a'.repeat(40), previous = 'b'.repeat(40);
+    const variants: Array<{ candidate?: string | { commit: string }; candidateCommit?: string; valid: boolean }> = [
+      { candidate, valid: true },
+      { candidate: { commit: candidate }, candidateCommit: candidate, valid: true },
+      { candidateCommit: candidate, valid: true },
+      { candidate: previous, candidateCommit: candidate, valid: false },
+      { candidate: { commit: previous }, candidateCommit: candidate, valid: false },
+      { candidate, candidateCommit: previous, valid: false },
+    ];
+    try {
+      for (const { valid, ...identities } of variants) {
+        const bytes = JSON.stringify({ schema: 'ProjectRagCapabilityEvidence/v1', actor: 'agent-unit-fixture',
+          driven_by: 'agent', ...identities, status: 'passed', wiringVerified: true, failurePathsVerified: true, checks: [] });
+        writeFileSync(join(directory, 'node.json'), bytes);
+        const result = readProjectRagAcceptance(directory, { schema: 'ProjectRagAcceptanceManifest/v1', candidate,
+          nodes: [{ id: 'RAG-01', path: 'node.json', sha256: createHash('sha256').update(bytes).digest('hex') }] });
+        expect(result.reasons.includes('RAG-01:candidate-mismatch')).toBe(!valid);
+      }
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  });
   it('requires continuous 72-hour wall and monotonic observations', () => {
     expect(validateRagSoak(report())).toEqual([]);
     const short = report(); short.activeElapsedMs = 1000;

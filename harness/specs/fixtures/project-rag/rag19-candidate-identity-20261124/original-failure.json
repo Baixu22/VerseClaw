@@ -1,0 +1,17 @@
+{
+  "actor": "codex-g2-r48",
+  "driven_by": "agent",
+  "mode": "native-code-regression-fixture",
+  "reviewEngine": "current-main-model",
+  "sourceCandidate": "b38ac1b78b8f8121a0160840bf70505cdf085485",
+  "sourceInputSha256": "2a8b2018e55919b07e822bcaef2783420f3b2463eb96b2d359fd5d047140f2bd",
+  "originalDirectory": "D:\\tmp\\g2-r48-20261124\\candidate-alias-original-mUXwEx",
+  "expectedCandidateMismatch": true,
+  "observedCandidateMismatch": false,
+  "fullFixtureStatus": "NO_GO",
+  "scopedReasons": [
+    "RAG-01:disk-backed-checks-missing"
+  ],
+  "modelRequests": 0,
+  "passed": false
+}

@@ -132,8 +132,8 @@ docs:
 
 回滚：保持前一已验证profile与所有者服务，记录未达标项，修复后新版本重测。
 
-最终读回入口scripts/knowledge-rag-acceptance.ts读取同候选各叶接线/失败路径、五平台原生探针、20k/100k容量、完整三臂测量、工程双角色和实际72小时soak。原始540槽位沿既有ProjectRagAttemptReceipt/v1、独立grader、experiment及negative safety证据逐hash验证。soak以墙钟和单调时钟共同累计，探针断档、候选变化、丢作业、重复发布或撤销泄漏均保留失败；不能用缩短时长或修改时间戳代替。
+最终读回入口scripts/knowledge-rag-acceptance.ts读取同候选各叶接线/失败路径、五平台原生探针、20k/100k容量、完整三臂测量、工程双角色和实际72小时soak。证据的candidate、candidate.commit与candidateCommit并存时必须一致匹配冻结候选，冲突字段不能重标旧证据。原始540槽位沿既有ProjectRagAttemptReceipt/v1、独立grader、experiment及negative safety证据逐hash验证。soak以墙钟和单调时钟共同累计，探针断档、候选变化、丢作业、重复发布或撤销泄漏均保留失败；不能用缩短时长或修改时间戳代替。
 
 任务队列执行入口scripts/knowledge-rag-task-runner.ts绑定原540槽位、固定argv adapter及输入digest，生成与oracle隔离的participant工作区；每槽执行后独立重新分级并追加唯一attempt，原期限内捕获实际费用/用量，缺证据或基础设施错误立即停队列。中断、超时和无产物保持原状态，不覆盖旧跑次；实际provider资源仅在明确执行命令时消费。
 
-本次所有者指示优先完成RAG17～19代码、暂缓完整验收。residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收仍按自身新增测试和接口要求执行，正式状态待实际证据收口。
+residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。

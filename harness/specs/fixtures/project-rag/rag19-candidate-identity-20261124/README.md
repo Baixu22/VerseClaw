@@ -1,0 +1,5 @@
+# 验收候选身份一致性回归
+
+原件的旧candidate会被匹配的candidateCommit掩盖，导致候选漂移未进入失败原因。现在所有已填写的来源候选身份必须一致匹配冻结manifest；candidate字符串、candidate.commit和candidateCommit三种写法保留。
+
+原失败及修复后的六种原生场景保留在本目录，均为agent驱动的代码回归。持续回归位于tests/unit/project-rag-acceptance-readback.test.ts。当前主模型按所有者本次指示直接复查；完整工程、产品与稳定性验收继续按原合同执行。
