@@ -19,7 +19,6 @@ import {
   Briefcase,
   Check,
   ChevronDown,
-  ChevronRight,
   CircleSlash,
   Compass,
   Copy,
@@ -122,7 +121,6 @@ import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
 import { ComposerPopover } from '@/components/chat/ComposerPopover';
 import { ModelBrandIcon } from '@/components/chat/ModelBrandIcon';
 import { describeModelRef } from '@/lib/model-brand';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { SmokyDissolve } from '@/components/ui/smoky-dissolve';
 import MaterialFileTypeIcon from '@lobehub/ui/es/MaterialFileTypeIcon/index';
 import LobeConfigProvider from '@lobehub/ui/es/ConfigProvider/index';
@@ -1224,7 +1222,6 @@ export function ChatInput({
   );
   const [providerGateOpen, setProviderGateOpen] = useState(false);
   const navigate = useNavigate();
-  const prefersReducedMotion = useReducedMotion();
   const effectiveModelRef = resolveChatModelRef({
     session: currentSession,
     hasMessages: useChatStore((s) => s.messages.length > 0),
