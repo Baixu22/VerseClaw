@@ -206,6 +206,18 @@ describe('ChatAgentEffortButton', () => {
     expect(updateAgentReasoningEffort).toHaveBeenCalledWith('main', 'low');
   });
 
+  it('keeps a pointer preview uncommitted when the input loses focus during the drag', () => {
+    render(<ChatAgentEffortPanel agentId="main" />);
+    const slider = screen.getByTestId('chat-agent-effort-slider');
+    Object.defineProperty(slider, 'setPointerCapture', { value: vi.fn() });
+    vi.spyOn(screen.getByTestId('chat-agent-effort-track'), 'getBoundingClientRect').mockReturnValue({ left: 0, width: 100, top: 0, height: 32 } as DOMRect);
+    fireEvent(slider, new MouseEvent('pointerdown', { bubbles: true, button: 0, clientX: 40 }));
+    fireEvent.blur(slider);
+    expect(updateAgentReasoningEffort).not.toHaveBeenCalled();
+    fireEvent.pointerUp(slider);
+    expect(updateAgentReasoningEffort).toHaveBeenCalledExactlyOnceWith('main', 'low');
+  });
+
   it('keeps a disabled slider inactive', () => {
     render(<ChatAgentEffortPanel agentId="main" disabled />);
     const slider = screen.getByTestId('chat-agent-effort-slider');

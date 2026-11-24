@@ -216,7 +216,7 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
           onLostPointerCapture={() => { if (draggingRef.current) endPointer(); }}
           onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)}
           onFocus={(event) => setFocused(event.currentTarget.matches(':focus-visible'))}
-          onBlur={(event) => { setFocused(false); if (!disabled) onValueCommit(Number(event.currentTarget.value)); }}
+          onBlur={(event) => { setFocused(false); if (!disabled && !draggingRef.current) onValueCommit(Number(event.currentTarget.value)); }}
           onKeyDown={(event) => {
             const next = event.key === 'ArrowLeft' || event.key === 'ArrowDown' ? index - 1
               : event.key === 'ArrowRight' || event.key === 'ArrowUp' ? index + 1

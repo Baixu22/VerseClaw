@@ -176,12 +176,14 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await slider.evaluate(element => {
         const trace: unknown[] = [];
         (window as typeof window & { __effortPointerTrace?: unknown[] }).__effortPointerTrace = trace;
-        for (const type of ['pointerdown', 'pointermove', 'pointerup', 'input', 'change']) {
+        for (const type of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'lostpointercapture', 'blur', 'input', 'change']) {
           element.addEventListener(type, event => {
             const pointer = event as PointerEvent;
             const track = element.parentElement!.getBoundingClientRect();
             trace.push({ type, clientX: pointer.clientX, clientY: pointer.clientY,
-              value: (element as HTMLInputElement).value, track: track.toJSON() });
+              value: (element as HTMLInputElement).value, focused: document.hasFocus(),
+              captured: pointer.pointerId ? element.hasPointerCapture(pointer.pointerId) : undefined,
+              track: track.toJSON() });
           });
         }
       });
