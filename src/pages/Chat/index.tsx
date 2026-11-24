@@ -1893,9 +1893,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     const timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
       void hostApi.usage.contextRange({
         sessionKey: currentSessionKey,
+        expectedSessionId: controlGeneration,
         modelRef: currentModelRef,
         messageCount: messages.length,
-        usedTokens: liveUsageRef.current?.totalTokens ?? null,
+        usedTokens: null,
       })
         .then((result) => {
           if (!cancelled) setContextRange(result.range);
@@ -1908,7 +1909,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [controlScope, currentModelRef, currentSessionKey, messages.length]);
+  }, [controlScope, controlGeneration, currentModelRef, currentSessionKey, messages.length, sending, pendingFinal]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2147,9 +2148,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           refreshLongTaskControlStatus(),
           hostApi.usage.contextRange({
             sessionKey: currentSessionKey,
+            expectedSessionId: controlGeneration,
             modelRef: currentModelRef,
             messageCount: messages.length,
-            usedTokens: liveUsage?.totalTokens ?? null,
+            usedTokens: null,
           }).then((contextResult) => { if (isCurrentControlScope()) setContextRange(contextResult.range); })
             .catch(() => { if (isCurrentControlScope()) setContextRange(null); }),
         ]);
@@ -2165,7 +2167,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     } finally {
       if (isCurrentControlScope()) setCompactionBusy(false);
     }
-  }, [controlGeneration, currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
+  }, [controlGeneration, currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;

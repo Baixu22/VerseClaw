@@ -137,6 +137,10 @@
       "description": "Basic は通常画面を簡潔に保ちます。Advanced は checkpoint 証拠、圧縮警告、ロール契約、診断をより多く表示します。",
       "basic": "Basic",
       "advanced": "Advanced"
+    },
+    "contextDisplay": {
+      "title": "コンテキスト使用量を表示",
+      "description": "入力欄の横にコンテキストタグを表示します。ホバーまたはフォーカスで構成を確認できます。"
     }
   },
   "aiProviders": {

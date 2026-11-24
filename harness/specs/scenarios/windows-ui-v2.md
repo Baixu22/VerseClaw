@@ -18,6 +18,12 @@ pathPatterns:
 
 # Cross-platform FakeCoding UI v2
 
+The chat composer includes a Lobe UI TokenTag for current context usage. Hover,
+focus or click reveals the runtime report's source composition; source groups
+expand to file, skill and tool metadata. Settings > General > Appearance persists
+its display switch. Validate unknown readings, generation changes, keyboard,
+four locales and narrow light/dark layouts with `tests/e2e/chat-context-display.spec.ts`.
+
 ## Purpose
 
 Give the Electron application a coherent FakeCoding-aligned grayscale shell, compact control system, and route-driven settings surface while preserving all existing product workflows.
@@ -37,6 +43,12 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
 9. Sidebar settings remain bottom-anchored with the session list visible or collapsed. Running and waiting status keeps its existing animation; completed and failed status uses a shared static semantic icon in session rows, activity entries and the activity bell. With no live run, the bell shows the latest unread event's icon and returns to the bell glyph when read.
 
 ## Validation
+
+The reasoning section of the model menu uses the supplied Aceternity Preview
+Slider with a floating text tooltip. Seven existing levels remain accessible
+through pointer dragging, arrow keys, Home and End. Moving previews the level;
+releasing saves it. Agent-driven Electron captures check light, dark, narrow
+and reduced-motion layouts; see `tasks/chat-effort-preview-slider-20261124.md`.
 
 Composer model, knowledge, permission and agent menus share the add control's
 blur-to-clear motion, neutral surface and selection marks. Opening one closes

@@ -137,6 +137,10 @@
       "description": "Basic делает обычные экраны проще. Advanced показывает больше checkpoint evidence, предупреждений сжатия, role contracts и diagnostics.",
       "basic": "Basic",
       "advanced": "Advanced"
+    },
+    "contextDisplay": {
+      "title": "Показывать использование контекста",
+      "description": "Метка контекста рядом с полем ввода показывает состав при наведении или фокусе."
     }
   },
   "aiProviders": {

@@ -137,6 +137,10 @@
       "description": "Basic keeps routine screens quieter. Advanced shows more checkpoint evidence, compaction warnings, role contracts, and diagnostics.",
       "basic": "Basic",
       "advanced": "Advanced"
+    },
+    "contextDisplay": {
+      "title": "Show context usage",
+      "description": "Display a context tag beside the chat input, with composition details on hover or focus."
     }
   },
   "aiProviders": {

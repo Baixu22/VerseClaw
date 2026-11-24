@@ -336,9 +336,13 @@ export interface WorkspaceSnapshot {
 
 export interface WorkspaceContextRange {
   sessionKey: string;
+  sessionId?: string;
   modelRef?: string | null;
   maxTokens?: number | null;
   usedTokens?: number | null;
+  usageSource?: 'runtime' | 'last-request' | 'unavailable';
+  measuredAt?: number | null;
+  composition?: import('./context-display').SessionContextComposition | null;
   visibleMessageStartIndex?: number | null;
   visibleMessageEndIndex?: number | null;
   retainedMessageCount?: number;

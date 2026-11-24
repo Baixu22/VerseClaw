@@ -92,6 +92,7 @@ import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
 import { getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
 import { ChatModelSettingsCard } from '@/components/chat/ChatModelSettingsCard';
 import { ChatContextPressure } from '@/components/chat/ChatContextPressure';
+import { ChatContextIndicator } from '@/components/chat/ChatContextIndicator';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import {
   buildCapabilityActionMessage,
@@ -1140,6 +1141,7 @@ export function ChatInput({
   const gatewayStatus = useGatewayStore((s) => s.status);
   const agents = useAgentsStore((s) => s.agents);
   const lastChatModelRef = useSettingsStore((s) => s.lastChatModelRef);
+  const chatContextDisplayEnabled = useSettingsStore((s) => s.chatContextDisplayEnabled);
   const rememberChatModel = useSettingsStore((s) => s.rememberChatModel);
   const defaultModelRef = useAgentsStore((s) => s.defaultModelRef);
   const providerAccounts = useProviderStore((s) => s.accounts);
@@ -4245,6 +4247,16 @@ export function ChatInput({
             </div>
 
             <div className="codex-composer-control-group ml-auto flex min-w-0 shrink-0 items-center gap-1">
+            {chatContextDisplayEnabled !== false && (
+              <ChatContextIndicator
+                key={`${currentSessionKey}:${currentSession?.sessionId ?? ''}`}
+                sessionKey={currentSessionKey}
+                sessionId={currentSession?.sessionId}
+                contextRange={contextRange}
+                compactionStatus={compactionStatus}
+                onOpen={closeComposerPopovers}
+              />
+            )}
             {(showModelPicker || currentAgentId) && (
               <div ref={modelPickerRef} className="relative shrink-0">
                 <Tooltip>
