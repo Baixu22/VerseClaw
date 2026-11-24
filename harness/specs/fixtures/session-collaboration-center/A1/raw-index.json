@@ -1,0 +1,287 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-tf0919",
+  "files": [
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final-r2\\command.json",
+      "sha256": "dfe8afaaddd5dc582fddeae87bf0275d3d21ff441eb01929809894443f12c226"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final-r2\\owner-readbacks.json",
+      "sha256": "57e80983d854f72b4c249784426c992042ca3306a5db2068099c0842f3c6308a"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final-r2\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final-r2\\stdout.log",
+      "sha256": "996d9e530a44ccee332425509dd63cefba319232a75265c86b53a3c0e5299fe7"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final-r2\\vitest.json",
+      "sha256": "e0a3c770bc03aa79c3e2b27ca58d760173c744b0e2f16518b015f31ab4de6629"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\typecheck-final-r2\\command.json",
+      "sha256": "310f5428fd86df58b0b787524b7e7b134ab7c3a555cabe648fb53d7dd04cd7e8"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\typecheck-final-r2\\stderr.log",
+      "sha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\typecheck-final-r2\\stdout.log",
+      "sha256": "9b36af5f1513d07f3aaaa6b72031682e4a4cebe3f0c1c79b8e847a3524863157"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\contract-final\\command.json",
+      "sha256": "067fc7332fd9c6807acca772accffdfd2a3c865afaeedbcba9a8f561d7a94b02"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\contract-final\\stderr.log",
+      "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\contract-final\\stdout.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\comms-replay-final\\command.json",
+      "sha256": "694de7c06a69b60be9dd3dbe6443c949919b6ce31ec0a2b7b373197653d6329b"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\comms-replay-final\\stderr.log",
+      "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\comms-replay-final\\stdout.log",
+      "sha256": "1ee46956c0ba3ff01931b7b063bb13d4be58499495ba20e2f6ef9728370cc881"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\comms-compare-final\\command.json",
+      "sha256": "aa6b2f37327d7802251ecd41b12f704f1074f1935f8f87d7a8ce95ad33c8c2c9"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\comms-compare-final\\stderr.log",
+      "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\comms-compare-final\\stdout.log",
+      "sha256": "7ac2813911908d3b19f21bbb2126e3c75d0852b007b50e8c4b6282ade8cc43a9"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-final\\command.json",
+      "sha256": "244f856e8b4c3505a3c5d1b0fe4b96e4e1bc4b32e1d4414cfd0562e53c99bd5b"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-final\\stderr.log",
+      "sha256": "d61a6be7f0a2c755d7b2db30aaec81677701e65c0bd03799819418f85126a6e7"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-final\\stdout.log",
+      "sha256": "f80d6cd46c9185f62d61cb0479c634231e207a7a986c34a7b08fab85d72946e4"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-flow-readback\\command.json",
+      "sha256": "f2794bfab28bc430aac323ef34beb3fa8972c098786bab5e735043112270ad57"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-flow-readback\\stderr.log",
+      "sha256": "398d814a92a11a85f16463c235cc87cbfdb5ad890db8b76dc6382bfd692b04fa"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-flow-readback\\stdout.log",
+      "sha256": "83aec3289219d106def0137014d8690228c039c4497ad848077b0d30436d9fdc"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\diff-final\\command.json",
+      "sha256": "e401ef5fd000eb189c5589c3ef0536471c8486b57c5f68555298754bc96701e4"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\diff-final\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\diff-final\\stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\lint-final\\command.json",
+      "sha256": "bce032f74f45286f1c189431f00fe731b15289e9d7ae2ba45a4f604f1ccd7d4a"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\lint-final\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\lint-final\\stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\retention-final\\command.json",
+      "sha256": "924a426628529580c4fcf60bd501e8203449c54776bdf4c0259cf4fb9306ed93"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\retention-final\\stderr.log",
+      "sha256": "f62d1dbbb5220d55c5deff1fc44b06476881b770066fcf3c9d0ecb2c407bb252"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\retention-final\\stdout.log",
+      "sha256": "2d0ab8c2c0e72a98f7a700a82e3cc23e01f28acb01ae2a1446a4c7d22ee20c6e"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r1\\command.json",
+      "sha256": "81cc92089705e8ce7db1a92351506f2ba01d641333b8f2648b785fa4afc4e879"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r1\\stderr.log",
+      "sha256": "4524a47aeabc8ca730144442bf47a50a381ceedf803f5e144a1410ab17b3b2be"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r1\\stdout.log",
+      "sha256": "7da9f41353d83a3cd3104ec8e423e2c38f7e07f64ec10457215a3b5edc32bda4"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r1\\vitest.json",
+      "sha256": "664613bf97cb5420674ce8d1bdeecb664c256d691bbcad9156704328120a7e6f"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r2\\command.json",
+      "sha256": "257df895cc8c0886367d66fe389ea7d628b64db8508332f66a0d1967d2615932"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r2\\owner-readbacks.json",
+      "sha256": "fd35c59c313210d56acf488e1d80b13d053b86c4f8690f06a7e98c457dc5361f"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r2\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r2\\stdout.log",
+      "sha256": "7dd8d1599df7fb06f21af1550fcc225ede055681793d0c3f5671541f4a94ee31"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r2\\vitest.json",
+      "sha256": "becb32ab66549a5b570bd6b8bdd094d0384d5db06df01945e1dfb504a92747d1"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r3\\command.json",
+      "sha256": "8b5f059e676abd91cafa1ed567146dcb684a52a693c07f4ed0367c453b314af1"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r3\\owner-readbacks.json",
+      "sha256": "32dd1f2acf482d221203cca4809c016a86cda887260ad6277dc0dc95dfb0499b"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r3\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r3\\stdout.log",
+      "sha256": "5c9bb00951f82ffc746e211b044a14b46ea17e506d1d85a33040b9f8213935f2"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r3\\vitest.json",
+      "sha256": "a1620206cd3efe7cc399818cee25b684a985b7f3ffe7a311e3d7e546b73e6c7c"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final\\command.json",
+      "sha256": "ea4bffe5dcc2e70f79c90933a7f7e4535c4acb7f25b7a0ff91240c1b0687c165"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final\\owner-readbacks.json",
+      "sha256": "3c28983efe97608051796920eee5d6adc898b03dbc4efd4d2f083e9b5822fe15"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final\\stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final\\stdout.log",
+      "sha256": "dc98277979e42134375dbbf69837499b21466c102b0204de6dfbb040768e6067"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\unit-final\\vitest.json",
+      "sha256": "98a5fea2918170d8a25028ffcdd853a97ce48c0cb3e337a11797c7db147e6f5b"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-ci-final\\command.json",
+      "sha256": "65688c94c3586ecf9af78e47d0fd83a6691f7702d0aa2d50611b5010cce19b31"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-ci-final\\stderr.log",
+      "sha256": "9f5b0c2a0d2c2a0070510c49eaaf61e4d6d0fbd2706214831adf273824cf6a3f"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\harness-ci-final\\stdout.log",
+      "sha256": "2cfad25cb3d8394ee231d1d5002cc62ecbc7bd10c6f25b3c2a4f2501d2d6c43a"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\typecheck-final-r1\\command.json",
+      "sha256": "138819ecbada857dee9c8e31e347dc28e3abaf9c5d6499bb6d12135abe8f5715"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\typecheck-final-r1\\stderr.log",
+      "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\typecheck-final-r1\\stdout.log",
+      "sha256": "1b669233bf025535e9e486d4c675a48d947bcfd40f3a746ed318141c07048fd7"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\context.log",
+      "sha256": "d4969ba1199be8cd05fbb036f29bb65e7b9f24d78a34f970487420c51bb5bfb1"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\context-r3.log",
+      "sha256": "4139c8a8a82ae667d1ad352ec45622e6f095333ff22e60c20889440b92297bbe"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\installer-workspace.diff",
+      "sha256": "37ca68e0eb5ae675a45bd3cf8e4f4a8926a0ff3b9d0d65ff0f1e484e35e8a6eb"
+    },
+    {
+      "path": "D:\\tmp\\session-collaboration-A1-20261124\\run-check.py",
+      "sha256": "9d9f71e954405224f5008ffecc24acc1e39c61f7f94e855c8defd1dd5da28480"
+    }
+  ],
+  "commsInputs": [
+    {
+      "path": "scripts/comms/datasets/gateway-restart-during-run.jsonl",
+      "sha256": "1734f53286828cb0c2a3124e1bca8f3f99361962264438922ad510bb3e1ec508"
+    },
+    {
+      "path": "scripts/comms/datasets/happy-path-chat.jsonl",
+      "sha256": "ec9a5dc23b6c35e62d2740f75efe16ca24b465aa123dccf28c8b8e6d7593c15d"
+    },
+    {
+      "path": "scripts/comms/datasets/history-overlap-guard.jsonl",
+      "sha256": "7169f0c78bca380df0977b45a5f80e830395652006d02f4ee812a30651a4d85f"
+    },
+    {
+      "path": "scripts/comms/datasets/invalid-config-patch-recovered.jsonl",
+      "sha256": "40a20bc9dc68b0db9e69a215b3441ef9df16998f0f7028c95855c4859579f4fc"
+    },
+    {
+      "path": "scripts/comms/datasets/multi-agent-channel-switch.jsonl",
+      "sha256": "c71cc2794b23c21370f341868bcfeb95b1f4ced7548ed2193b825f5cd00fad35"
+    },
+    {
+      "path": "scripts/comms/datasets/network-degraded.jsonl",
+      "sha256": "801df2161b7534081201d33e489c867319a77d74a8bf7c2db462e4640ff35e0b"
+    }
+  ],
+  "initialFailure": {
+    "kind": "dependency-bootstrap",
+    "firstObservation": "Codex thread 01a20be0-c1ab-7032-a348-54a5f239520f; initial tool transcript retained",
+    "retryLog": "D:\\tmp\\session-collaboration-A1-20261124\\context.log",
+    "reason": "pnpm postinstall blocked node-llama-cpp ignored build"
+  },
+  "unitFirstFailure": {
+    "kind": "suite-initialization",
+    "receipt": "D:\\tmp\\session-collaboration-A1-20261124\\unit-r1\\command.json",
+    "reason": "Workspace fixture lacked getActiveWorkspaceProfile; 24 existing tests passed, collaboration suite did not initialize"
+  }
+}

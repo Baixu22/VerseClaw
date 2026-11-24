@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "driven_by": "agent",
+  "actor": "codex-tf0919",
+  "threadId": "01a20be0-c1ab-7032-a348-54a5f239520f",
+  "createdAt": "2026-11-24T05:57:02.889529+00:00",
+  "node": "TF-0919",
+  "parent": "TF-0913",
+  "goal": "TF-0664",
+  "candidate": {
+    "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+    "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+    "dirty": false,
+    "changes": []
+  },
+  "diffBase": "cfa2ac31794d9014645d250811a523e06a619143",
+  "spec": "harness/specs/tasks/session-collaboration-identity-read-model.md",
+  "changedFiles": [
+    "docs/modules/multi-agent-and-tasks.md",
+    "docs/modules/sessions.md",
+    "electron/services/session-activity-api.ts",
+    "harness/specs/scenarios/session-collaboration-center.md",
+    "harness/specs/tasks/session-collaboration-identity-read-model.md",
+    "openclaw_runtime/src/agents/execution-domain.ts",
+    "openclaw_runtime/src/agents/execution-task-authority.ts",
+    "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+    "openclaw_runtime/src/gateway/session-utils.ts",
+    "shared/host-api/contract.ts",
+    "shared/task-system/store.ts",
+    "shared/types/session-activity.ts",
+    "src/lib/host-api.ts",
+    "tests/unit/host-api-facade.test.ts",
+    "tests/unit/session-collaboration-identity.test.ts"
+  ],
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "gitSha256": "befe76a59592564a979cc8cf8d1591938293b786078f99f3bf4e8c49a115b72a",
+      "workingSha256": "befe76a59592564a979cc8cf8d1591938293b786078f99f3bf4e8c49a115b72a"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "gitSha256": "4d42dc2e442ae20f31e89ceb3948f5acefdc58c8f62f1b0388dd616769d97420",
+      "workingSha256": "4d42dc2e442ae20f31e89ceb3948f5acefdc58c8f62f1b0388dd616769d97420"
+    },
+    {
+      "path": "docs/modules/sessions.md",
+      "gitSha256": "c7c677dce3b7c1f516cce823afd1fb30eea3806f46ca2a8c1a3b33ea066bc814",
+      "workingSha256": "c7c677dce3b7c1f516cce823afd1fb30eea3806f46ca2a8c1a3b33ea066bc814"
+    },
+    {
+      "path": "electron/services/session-activity-api.ts",
+      "gitSha256": "675a753db8e89f39e0ba3427137650ba1065cc599eaa0a6f67761615199204b1",
+      "workingSha256": "675a753db8e89f39e0ba3427137650ba1065cc599eaa0a6f67761615199204b1"
+    },
+    {
+      "path": "harness/specs/guides/session-collaboration-center-plan.md",
+      "gitSha256": "6bfc195bb4c9e5495d866a4ea56980f7a22924861dcc0e2bec5f68f41a4988db",
+      "workingSha256": "6bfc195bb4c9e5495d866a4ea56980f7a22924861dcc0e2bec5f68f41a4988db"
+    },
+    {
+      "path": "harness/specs/rules/session-collaboration-center-contract.md",
+      "gitSha256": "d2d30f963b63606a6ebb29e06e3338705c06ef53fcc34ced682792fc8b0ecb94",
+      "workingSha256": "d2d30f963b63606a6ebb29e06e3338705c06ef53fcc34ced682792fc8b0ecb94"
+    },
+    {
+      "path": "harness/specs/scenarios/session-collaboration-center.md",
+      "gitSha256": "cc189aafd1a8435484084f91353924d3fd57b88d927adedef94b16252d28aab4",
+      "workingSha256": "cc189aafd1a8435484084f91353924d3fd57b88d927adedef94b16252d28aab4"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-identity-read-model.md",
+      "gitSha256": "55b32227e6130d6689de82649834c379f1811d35b8fd3f4180666eecd659f3c4",
+      "workingSha256": "55b32227e6130d6689de82649834c379f1811d35b8fd3f4180666eecd659f3c4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-domain.ts",
+      "gitSha256": "01db4f2448e68497fb8c26ac6e7b8392b39410b3b953f64c55964985871f1140",
+      "workingSha256": "01db4f2448e68497fb8c26ac6e7b8392b39410b3b953f64c55964985871f1140"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-authority.ts",
+      "gitSha256": "48de05aa33914fe39cfb4f761324002021b5c856aec824e64b587c84e7dda1ae",
+      "workingSha256": "48de05aa33914fe39cfb4f761324002021b5c856aec824e64b587c84e7dda1ae"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "gitSha256": "c659c9acf40399f1c6ae0b76b777c711f96ceda1e4a225323aa3831199ccc8f4",
+      "workingSha256": "c659c9acf40399f1c6ae0b76b777c711f96ceda1e4a225323aa3831199ccc8f4"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-utils.ts",
+      "gitSha256": "2ee3af3c9b052a4087df26eb3e8182ad4231caf653112f24c2e99e30d1672adc",
+      "workingSha256": "2ee3af3c9b052a4087df26eb3e8182ad4231caf653112f24c2e99e30d1672adc"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "gitSha256": "db38a4ff138c1b249d28e56bcf5a5ec9cd6be0c02af712c3fc6dbc35ae58c0d8",
+      "workingSha256": "db38a4ff138c1b249d28e56bcf5a5ec9cd6be0c02af712c3fc6dbc35ae58c0d8"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "gitSha256": "3306c0c0268101b313bd086f658b8da24d521eabd7052d09a3ae41763502948a",
+      "workingSha256": "3306c0c0268101b313bd086f658b8da24d521eabd7052d09a3ae41763502948a"
+    },
+    {
+      "path": "shared/types/identity-scope.ts",
+      "gitSha256": "5187ad04b0e214c1d225a16b40e852becc2163f7019812b44fa82fa2926a7ae2",
+      "workingSha256": "5187ad04b0e214c1d225a16b40e852becc2163f7019812b44fa82fa2926a7ae2"
+    },
+    {
+      "path": "shared/types/session-activity.ts",
+      "gitSha256": "b7dbb12ebd79cf6cfc5003592027fd51e6025a18d08ebc319ba8b2b42e35b709",
+      "workingSha256": "b7dbb12ebd79cf6cfc5003592027fd51e6025a18d08ebc319ba8b2b42e35b709"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "gitSha256": "8e03529451afc4730a8e54884fc633c69d9af5ee84540b1808f9f4e9a2140980",
+      "workingSha256": "8e03529451afc4730a8e54884fc633c69d9af5ee84540b1808f9f4e9a2140980"
+    },
+    {
+      "path": "tests/unit/host-api-facade.test.ts",
+      "gitSha256": "19d19c2586fd6a5b19e007e0c57af3fb59b7866ca1b9f447ec11385a6c4ee3e3",
+      "workingSha256": "19d19c2586fd6a5b19e007e0c57af3fb59b7866ca1b9f447ec11385a6c4ee3e3"
+    },
+    {
+      "path": "tests/unit/session-collaboration-identity.test.ts",
+      "gitSha256": "36cfd0b41e9b61923372378775faa92863273c6761e179520f7b65210d2f0f16",
+      "workingSha256": "36cfd0b41e9b61923372378775faa92863273c6761e179520f7b65210d2f0f16"
+    }
+  ],
+  "unitTests": 133,
+  "collaborationCases": 20,
+  "evidenceKinds": {
+    "session": "original SQLite SessionStore with fixture config",
+    "tasks": "original SQLite TaskSystem",
+    "execution": "native Git roots and original execution SQLite owner",
+    "childRun": "original in-memory registry seeded through owner APIs",
+    "main": "fixture Workspace adapters and Gateway transport; original typed service/handler/facade"
+  },
+  "actorModelRoute": {
+    "state": "unreported",
+    "source": "Codex read_thread metadata has no model field"
+  },
+  "reviewModelPolicy": "ccs-workbuddy/deepseek-v4.1-flash",
+  "productModelCalls": 0,
+  "ownerStateUnchanged": true,
+  "credentialScan": {
+    "hits": []
+  },
+  "baselineCi": {
+    "exitCode": 1,
+    "phase": "repo:duplicates:check",
+    "precedingHarnessTestsPassed": 59,
+    "duplicates": [
+      {
+        "path": "harness/specs/fixtures/chat-planning-composer-ux/20261123/images/before-task-workbench.png",
+        "sha256": "619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b",
+        "baselineBlob": "efbf8ab7e2fb9a67d80c6e013321477b7fb9b467",
+        "candidateBlob": "efbf8ab7e2fb9a67d80c6e013321477b7fb9b467"
+      },
+      {
+        "path": "harness/specs/fixtures/task-system-ui-consolidation/20261122/after/ledger-light-1280.png",
+        "sha256": "619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b",
+        "baselineBlob": "efbf8ab7e2fb9a67d80c6e013321477b7fb9b467",
+        "candidateBlob": "efbf8ab7e2fb9a67d80c6e013321477b7fb9b467"
+      }
+    ],
+    "receipt": "D:\\tmp\\session-collaboration-A1-20261124\\harness-ci-final\\command.json"
+  },
+  "acceptance": {
+    "identity": "Two independent sessions and one child retain original scope, generation, ScopedRun and TaskSystem references.",
+    "fencing": "Cross workspace/project, stale generation/task/binding/execution, missing owners and Runtime/Host reset are rejected or marked by source.",
+    "readOnly": "Original owner state and database hashes match before/after; missing stores and old schemas are not initialized or migrated.",
+    "transport": "Typed host:invoke delegates to the existing Main-owned Gateway WebSocket; contract and uncached node/web/test checks pass."
+  },
+  "nextNode": "TF-0920",
+  "nextSpec": "harness/specs/tasks/session-collaboration-a2.md (create at A2 start)"
+}
