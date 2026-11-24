@@ -6,7 +6,7 @@ scenario: gateway-backend-communication
 scenarios:
   - windows-ui-v2
 taskType: runtime-bridge
-diffBase: 082cd50b8474bca55c0e36b7e36db31d906a586b
+diffBase: f2e1ca783db026e50bd79d6ffba7db3cd0646ac7
 intent: 折叠处采用最新处理的纯文本白色shimmer和从左向右进场，展开后使用原调用条；按实际工作丰富Lucide图标，并由Carbon核对要求和优化审美。
 requiredRules:
   - backend-communication-boundary
