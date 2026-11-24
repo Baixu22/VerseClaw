@@ -132,6 +132,7 @@ function ChatAgentEffortPopoverBody({
   const { t } = useTranslation('chat');
   const updateAgentReasoningEffort = useAgentsStore((s) => s.updateAgentReasoningEffort);
   const [draftValue, setDraftValue] = useState<number>(() => toSliderIndex(initialEffort));
+  const [syncedEffort, setSyncedEffort] = useState(initialEffort);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const initialRef = useRef<SavedEffort>(initialEffort ?? 'auto');
   const rawId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
@@ -140,9 +141,13 @@ function ChatAgentEffortPopoverBody({
   const statusEffort: DisplayEffort = EFFORT_OPTIONS[draftIndex] ?? 'auto';
   const isHighZone = draftIndex >= HIGH_INDEX;
 
+  if (syncedEffort !== initialEffort) {
+    setSyncedEffort(initialEffort);
+    setDraftValue(toSliderIndex(initialEffort));
+  }
+
   useEffect(() => {
     initialRef.current = initialEffort ?? 'auto';
-    setDraftValue(toSliderIndex(initialEffort));
   }, [initialEffort]);
 
   const commit = useCallback(
