@@ -1,0 +1,391 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\playwright.config.ts",
+    "rootDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/clawx-model-effort-picker-20261124/electron-r9",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-agent-effort.spec.ts",
+      "file": "chat-agent-effort.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw combined model and reasoning settings",
+          "file": "chat-agent-effort.spec.ts",
+          "line": 26,
+          "column": 6,
+          "specs": [
+            {
+              "title": "previews pointer and keyboard effort changes and commits after release",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16746,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T14:19:08.827Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "effort-text-preview-drag",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-agent-effort-Verse-Cl-27e76-s-and-commits-after-release\\attachments\\effort-text-preview-drag-6f5d308befbfe30006abd0cc43c3df1c1dc23cdf.png"
+                        },
+                        {
+                          "name": "combined-effort-max",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-agent-effort-Verse-Cl-27e76-s-and-commits-after-release\\attachments\\combined-effort-max-004fe823363e07dd41a9801b33b51d9e6e0871aa.png"
+                        },
+                        {
+                          "name": "combined-model-effort-menu",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-agent-effort-Verse-Cl-27e76-s-and-commits-after-release\\attachments\\combined-model-effort-menu-cfaa5d496307dfbf82f12c326b1666b2918a0e18.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-58d496da8f37c4ba07df",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "keeps the text preview inside light, dark and narrow dropdowns",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9773,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T14:19:25.592Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "effort-preview-light",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-agent-effort-Verse-Cl-1b329-t-dark-and-narrow-dropdowns\\attachments\\effort-preview-light-114cc40295ca1a97d1c1701988c7bb5d178cf800.png"
+                        },
+                        {
+                          "name": "effort-preview-dark",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-agent-effort-Verse-Cl-1b329-t-dark-and-narrow-dropdowns\\attachments\\effort-preview-dark-ea653458a0246a97eafb96297611c4e825b7f5cf.png"
+                        },
+                        {
+                          "name": "effort-preview-narrow-dark",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-agent-effort-Verse-Cl-1b329-t-dark-and-narrow-dropdowns\\attachments\\effort-preview-narrow-dark-ad542be55f0d900fe93e8db84331019f5c5483f5.png"
+                        },
+                        {
+                          "name": "effort-preview-narrow-reduced",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-agent-effort-Verse-Cl-1b329-t-dark-and-narrow-dropdowns\\attachments\\effort-preview-narrow-reduced-cf9e1bcac282dbc8b087a4334f3984ceac12ccaa.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-c48829ada0d202c143b9",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 272,
+              "column": 7
+            },
+            {
+              "title": "does not commit when slider stays at the current value",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7239,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T14:19:35.377Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-bd6b138083e40507e387",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 456,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-model-picker.spec.ts",
+      "file": "chat-model-picker.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat model picker",
+          "file": "chat-model-picker.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selects an imported account model and preserves the previous choice on save failure",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7668,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T14:19:42.632Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "14a7e36374152ee4f474-4ed5d7f421936096b3d1",
+              "file": "chat-model-picker.spec.ts",
+              "line": 7,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-model-settings-card.spec.ts",
+      "file": "chat-model-settings-card.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "opens the compact reasoning card, masks its slider and saves the selected runtime model",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9728,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T14:19:50.315Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "859356e7bb0c0fc2bfd6-2281ac5cc3abcd867818",
+          "file": "chat-model-settings-card.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "keeps both layers usable across locales, themes, 375px and reduced motion",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 10576,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m1.9\u001b[39m\nReceived:   \u001b[31m1.8846153846153846\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m1.9\u001b[39m\nReceived:   \u001b[31m1.8846153846153846\u001b[39m\n    at inspectCard (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts:51:44)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts:126:32",
+                    "location": {
+                      "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts",
+                      "column": 44,
+                      "line": 51
+                    },
+                    "snippet": "  49 |       tooltipLeft: tooltip.left, tooltipRight: tooltip.right, viewport: innerWidth };\n  50 |   });\n> 51 |   expect(geometry.width / geometry.height).toBeGreaterThan(1.9);\n     |                                            ^\n  52 |   expect(geometry.tooltipTop).toBeGreaterThanOrEqual(geometry.modelBottom);\n  53 |   expect(geometry.tooltipLeft).toBeGreaterThanOrEqual(6);\n  54 |   expect(geometry.tooltipRight).toBeLessThanOrEqual(geometry.viewport - 6);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts",
+                        "column": 44,
+                        "line": 51
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m1.9\u001b[39m\nReceived:   \u001b[31m1.8846153846153846\u001b[39m\n\n  49 |       tooltipLeft: tooltip.left, tooltipRight: tooltip.right, viewport: innerWidth };\n  50 |   });\n> 51 |   expect(geometry.width / geometry.height).toBeGreaterThan(1.9);\n     |                                            ^\n  52 |   expect(geometry.tooltipTop).toBeGreaterThanOrEqual(geometry.modelBottom);\n  53 |   expect(geometry.tooltipLeft).toBeGreaterThanOrEqual(6);\n  54 |   expect(geometry.tooltipRight).toBeLessThanOrEqual(geometry.viewport - 6);\n    at inspectCard (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts:51:44)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts:126:32"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T14:20:00.051Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts",
+                    "column": 44,
+                    "line": 51
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "859356e7bb0c0fc2bfd6-52e0582a099382f0af98",
+          "file": "chat-model-settings-card.spec.ts",
+          "line": 107,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-24T14:19:07.785Z",
+    "duration": 64058.505000000005,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

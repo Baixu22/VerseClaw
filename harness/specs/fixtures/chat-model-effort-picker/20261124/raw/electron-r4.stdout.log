@@ -1,0 +1,474 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\playwright.config.ts",
+    "rootDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/clawx-model-effort-picker-20261124/electron-r4",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-agent-effort.spec.ts",
+      "file": "chat-agent-effort.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw combined model and reasoning settings",
+          "file": "chat-agent-effort.spec.ts",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "previews pointer and keyboard effort changes and commits after release",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 27343,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-agent-effort-slider')\nExpected: \u001b[32m\"High\"\u001b[39m\nReceived: \u001b[31m\"Auto\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-agent-effort-slider')\u001b[22m\n\u001b[2m    18 × locator resolved to <input min=\"0\" max=\"6\" value=\"0\" step=\"0.05\" type=\"range\" aria-valuetext=\"Auto\" aria-label=\"Reasoning effort\" data-testid=\"chat-agent-effort-slider\" class=\"effort-preview-input absolute inset-0 z-20 m-0 h-full w-full touch-none cursor-grab opacity-0 active:cursor-grabbing disabled:cursor-not-allowed\"/>\u001b[22m\n\u001b[2m       - unexpected value \"Auto\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-agent-effort-slider')\nExpected: \u001b[32m\"High\"\u001b[39m\nReceived: \u001b[31m\"Auto\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-agent-effort-slider')\u001b[22m\n\u001b[2m    18 × locator resolved to <input min=\"0\" max=\"6\" value=\"0\" step=\"0.05\" type=\"range\" aria-valuetext=\"Auto\" aria-label=\"Reasoning effort\" data-testid=\"chat-agent-effort-slider\" class=\"effort-preview-input absolute inset-0 z-20 m-0 h-full w-full touch-none cursor-grab opacity-0 active:cursor-grabbing disabled:cursor-not-allowed\"/>\u001b[22m\n\u001b[2m       - unexpected value \"Auto\"\u001b[22m\n\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts:166:28",
+                        "location": {
+                          "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts",
+                          "column": 28,
+                          "line": 166
+                        },
+                        "snippet": "  164 |       await expect(slider).toHaveAttribute('max', '6');\n  165 |\n> 166 |       await expect(slider).toHaveAttribute('aria-valuetext', 'High');\n      |                            ^\n  167 |       await slider.hover();\n  168 |       const tooltip = page.getByTestId('chat-agent-effort-tooltip');\n  169 |       await expect(tooltip).toHaveAttribute('aria-label', 'High');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts",
+                            "column": 28,
+                            "line": 166
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-agent-effort-slider')\nExpected: \u001b[32m\"High\"\u001b[39m\nReceived: \u001b[31m\"Auto\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-agent-effort-slider')\u001b[22m\n\u001b[2m    18 × locator resolved to <input min=\"0\" max=\"6\" value=\"0\" step=\"0.05\" type=\"range\" aria-valuetext=\"Auto\" aria-label=\"Reasoning effort\" data-testid=\"chat-agent-effort-slider\" class=\"effort-preview-input absolute inset-0 z-20 m-0 h-full w-full touch-none cursor-grab opacity-0 active:cursor-grabbing disabled:cursor-not-allowed\"/>\u001b[22m\n\u001b[2m       - unexpected value \"Auto\"\u001b[22m\n\n\n  164 |       await expect(slider).toHaveAttribute('max', '6');\n  165 |\n> 166 |       await expect(slider).toHaveAttribute('aria-valuetext', 'High');\n      |                            ^\n  167 |       await slider.hover();\n  168 |       const tooltip = page.getByTestId('chat-agent-effort-tooltip');\n  169 |       await expect(tooltip).toHaveAttribute('aria-label', 'High');\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts:166:28"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T12:48:32.537Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-agent-effort-Verse-Cl-27e76-s-and-commits-after-release\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-agent-effort-Verse-Cl-27e76-s-and-commits-after-release\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-agent-effort-Verse-Cl-27e76-s-and-commits-after-release\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts",
+                        "column": 28,
+                        "line": 166
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-58d496da8f37c4ba07df",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 26,
+              "column": 7
+            },
+            {
+              "title": "keeps the text preview inside light, dark and narrow dropdowns",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6201,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"rgba(0, 0, 0, 0)\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"rgba(0, 0, 0, 0)\"\u001b[39m\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts:376:49",
+                        "location": {
+                          "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts",
+                          "column": 49,
+                          "line": 376
+                        },
+                        "snippet": "  374 |         return { light, dark };\n  375 |       });\n> 376 |       expect(trackMetrics.light.background).not.toBe(trackMetrics.dark.background);\n      |                                                 ^\n  377 |       expect(trackMetrics.light.background).not.toMatch(/rgb\\((?:0|12), (?:0|12), (?:0|12)\\)/);\n  378 |       expect(trackMetrics.dark.background).not.toMatch(/rgb\\((?:0|12), (?:0|12), (?:0|12)\\)/);\n  379 |       expect(trackMetrics.light).toMatchObject({ clipPath: 'none', height: '32px', thumbWidth: '12px', thumbHeight: '20px' });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts",
+                            "column": 49,
+                            "line": 376
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"rgba(0, 0, 0, 0)\"\u001b[39m\n\n  374 |         return { light, dark };\n  375 |       });\n> 376 |       expect(trackMetrics.light.background).not.toBe(trackMetrics.dark.background);\n      |                                                 ^\n  377 |       expect(trackMetrics.light.background).not.toMatch(/rgb\\((?:0|12), (?:0|12), (?:0|12)\\)/);\n  378 |       expect(trackMetrics.dark.background).not.toMatch(/rgb\\((?:0|12), (?:0|12), (?:0|12)\\)/);\n  379 |       expect(trackMetrics.light).toMatchObject({ clipPath: 'none', height: '32px', thumbWidth: '12px', thumbHeight: '20px' });\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts:376:49"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T12:49:00.430Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-agent-effort-Verse-Cl-1b329-t-dark-and-narrow-dropdowns\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-agent-effort-Verse-Cl-1b329-t-dark-and-narrow-dropdowns\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-agent-effort-Verse-Cl-1b329-t-dark-and-narrow-dropdowns\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-agent-effort.spec.ts",
+                        "column": 49,
+                        "line": 376
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-c48829ada0d202c143b9",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 242,
+              "column": 7
+            },
+            {
+              "title": "does not commit when slider stays at the current value",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6468,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T12:49:07.167Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-bd6b138083e40507e387",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 426,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-model-picker.spec.ts",
+      "file": "chat-model-picker.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat model picker",
+          "file": "chat-model-picker.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selects an imported account model and preserves the previous choice on save failure",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 36612,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' })\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' })\u001b[22m\n\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-picker.spec.ts:170:105",
+                        "location": {
+                          "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-picker.spec.ts",
+                          "column": 105,
+                          "line": 170
+                        },
+                        "snippet": "  168 |       await expect(page.getByTestId('chat-model-options')).toBeVisible();\n  169 |       await expect(page.getByTestId('chat-model-options')).toContainText('model-beta');\n> 170 |       await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();\n      |                                                                                                         ^\n  171 |       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');\n  172 |\n  173 |       const requests = await app.evaluate(() => ("
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-picker.spec.ts",
+                            "column": 105,
+                            "line": 170
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' })\u001b[22m\n\n\n  168 |       await expect(page.getByTestId('chat-model-options')).toBeVisible();\n  169 |       await expect(page.getByTestId('chat-model-options')).toContainText('model-beta');\n> 170 |       await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();\n      |                                                                                                         ^\n  171 |       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');\n  172 |\n  173 |       const requests = await app.evaluate(() => (\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-picker.spec.ts:170:105"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-24T12:49:13.658Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-model-picker-Verse-Cl-aca67-ious-choice-on-save-failure\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-model-picker-Verse-Cl-aca67-ious-choice-on-save-failure\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-model-picker-Verse-Cl-aca67-ious-choice-on-save-failure\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-picker.spec.ts",
+                        "column": 105,
+                        "line": 170
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "14a7e36374152ee4f474-4ed5d7f421936096b3d1",
+              "file": "chat-model-picker.spec.ts",
+              "line": 7,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-model-settings-card.spec.ts",
+      "file": "chat-model-settings-card.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "opens the compact reasoning card, masks its slider and saves the selected runtime model",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8216,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T12:49:50.810Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "859356e7bb0c0fc2bfd6-2281ac5cc3abcd867818",
+          "file": "chat-model-settings-card.spec.ts",
+          "line": 48,
+          "column": 5
+        },
+        {
+          "title": "keeps both layers usable across locales, themes, 375px and reduced motion",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 62939,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-agent-effort-tooltip')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-agent-effort-tooltip')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-agent-effort-tooltip')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-agent-effort-tooltip')\u001b[22m\n\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts:127:65",
+                    "location": {
+                      "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts",
+                      "column": 65,
+                      "line": 127
+                    },
+                    "snippet": "  125 |     await page.getByTestId('chat-model-picker-button').click();\n  126 |     await page.getByTestId('chat-agent-effort-slider').focus();\n> 127 |     await expect(page.getByTestId('chat-agent-effort-tooltip')).toBeVisible();\n      |                                                                 ^\n  128 |     await page.getByTestId('chat-model-picker-current').click();\n  129 |     await expect(page.getByTestId('chat-agent-effort-slider')).toBeHidden();\n  130 |     await page.screenshot({ path: info.outputPath('models-reduced-motion.png') });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts",
+                        "column": 65,
+                        "line": 127
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-agent-effort-tooltip')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-agent-effort-tooltip')\u001b[22m\n\n\n  125 |     await page.getByTestId('chat-model-picker-button').click();\n  126 |     await page.getByTestId('chat-agent-effort-slider').focus();\n> 127 |     await expect(page.getByTestId('chat-agent-effort-tooltip')).toBeVisible();\n      |                                                                 ^\n  128 |     await page.getByTestId('chat-model-picker-current').click();\n  129 |     await expect(page.getByTestId('chat-agent-effort-slider')).toBeHidden();\n  130 |     await page.screenshot({ path: info.outputPath('models-reduced-motion.png') });\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts:127:65"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T12:49:59.042Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-model-settings-card.spec.ts",
+                    "column": 65,
+                    "line": 127
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "859356e7bb0c0fc2bfd6-52e0582a099382f0af98",
+          "file": "chat-model-settings-card.spec.ts",
+          "line": 89,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-24T12:48:31.627Z",
+    "duration": 151634.387,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}
