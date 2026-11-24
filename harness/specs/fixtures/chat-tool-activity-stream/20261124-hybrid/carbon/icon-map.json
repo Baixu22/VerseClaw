@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "sourcePath": "D:/ClawX/src/components/assistant-render/ToolActivityGroup.tsx",
+  "sourceSha256": "f26811f65f624302e34626be9d75785220b127219de9047a5d010e897dec7075",
+  "rendering": "Actual lucide-react SVG components rendered at 16px; catalog is a reference sheet",
+  "mapping": [
+    {
+      "id": "read",
+      "component": "FileText"
+    },
+    {
+      "id": "write",
+      "component": "FilePlus2"
+    },
+    {
+      "id": "edit",
+      "component": "FilePenLine"
+    },
+    {
+      "id": "search",
+      "component": "Search"
+    },
+    {
+      "id": "web",
+      "component": "Globe"
+    },
+    {
+      "id": "command",
+      "component": "Terminal"
+    },
+    {
+      "id": "other",
+      "component": "Wrench"
+    },
+    {
+      "id": "folder",
+      "component": "FolderOpen"
+    },
+    {
+      "id": "code",
+      "component": "FileCode2"
+    },
+    {
+      "id": "image",
+      "component": "Image"
+    },
+    {
+      "id": "pdf",
+      "component": "FileType2"
+    },
+    {
+      "id": "table",
+      "component": "Table2"
+    },
+    {
+      "id": "config",
+      "component": "FileCog"
+    },
+    {
+      "id": "browser-click",
+      "component": "MousePointerClick"
+    },
+    {
+      "id": "browser-screenshot",
+      "component": "Camera"
+    },
+    {
+      "id": "browser-scroll",
+      "component": "Mouse"
+    },
+    {
+      "id": "git",
+      "component": "GitBranch"
+    },
+    {
+      "id": "git-diff",
+      "component": "GitCompareArrows"
+    },
+    {
+      "id": "git-commit",
+      "component": "GitCommitHorizontal"
+    },
+    {
+      "id": "git-merge",
+      "component": "GitMerge"
+    },
+    {
+      "id": "test",
+      "component": "FlaskConical"
+    },
+    {
+      "id": "build",
+      "component": "Hammer"
+    },
+    {
+      "id": "package",
+      "component": "Package"
+    },
+    {
+      "id": "network",
+      "component": "Network"
+    },
+    {
+      "id": "database",
+      "component": "Database"
+    },
+    {
+      "id": "memory",
+      "component": "BrainCircuit"
+    },
+    {
+      "id": "agent",
+      "component": "Bot"
+    },
+    {
+      "id": "plan",
+      "component": "ListTodo"
+    },
+    {
+      "id": "generate-image",
+      "component": "ImagePlus"
+    },
+    {
+      "id": "presentation",
+      "component": "Presentation"
+    },
+    {
+      "id": "download",
+      "component": "Download"
+    },
+    {
+      "id": "upload",
+      "component": "Upload"
+    },
+    {
+      "id": "archive",
+      "component": "Archive"
+    },
+    {
+      "id": "delete",
+      "component": "Trash2"
+    }
+  ]
+}

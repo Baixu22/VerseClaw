@@ -1,0 +1,22 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "data": "agent-generated runtime events; real Electron rendering",
+  "gradient": "linear-gradient(110deg, rgb(154, 154, 149) 0%, rgb(154, 154, 149) 40%, rgb(255, 255, 255) 50%, rgb(154, 154, 149) 60%, rgb(154, 154, 149) 100%)",
+  "entrance": {
+    "keyframes": [
+      "inset(0px 100% 0px 0px)",
+      "inset(0px)"
+    ],
+    "duration": 800
+  },
+  "command": "python -X utf8 D:/project/a-long-path-for-conversation-rendering/checks/run-check.py --focus output",
+  "latestTargets": [
+    "最新查询目标",
+    "当前记忆目标",
+    "下一记忆目标"
+  ],
+  "chunkKeepsIconAndEntrance": true,
+  "sameIconNewCallRestartsReveal": true,
+  "status": "passed"
+}

@@ -1,0 +1,199 @@
+{
+    "driven_by":  "agent",
+    "actor":  "codex-output-ui",
+    "status":  "passed",
+    "files":  [
+                  {
+                      "path":  "electron/utils/session-context.ts",
+                      "sha256":  "48942291ff25f764766f396fe7c5ea4bdfaf30e82c4677896b655fff328f0bc4",
+                      "bytes":  6645
+                  },
+                  {
+                      "path":  "harness/specs/tasks/chat-activity-bell-unread-status-20261120.md",
+                      "sha256":  "1e170f3650805280d1b1886d87da9db4307f748f19aed4cb6ad8f7105f508f9c",
+                      "bytes":  2195
+                  },
+                  {
+                      "path":  "harness/specs/tasks/chat-context-display-20261124.md",
+                      "sha256":  "949879010b0e9f29338027c48e54ce0014ad80811098055dd5ff952143c5ea47",
+                      "bytes":  3783
+                  },
+                  {
+                      "path":  "shared/types/context-display.ts",
+                      "sha256":  "90a006597303811ed6c83ac57ba8cdd367982a0caa78b620a16c6cab942f5120",
+                      "bytes":  777
+                  },
+                  {
+                      "path":  "src/components/chat/ChatContextIndicator.tsx",
+                      "sha256":  "1251492e64d90ad577c0faa87226bc28daaf1e2b263fba97e110585b4781d5e1",
+                      "bytes":  16050
+                  },
+                  {
+                      "path":  "tests/e2e/chat-context-display.spec.ts",
+                      "sha256":  "b9f1ab7095bdd6a921a0ed023bd452f68b9d2cd12274c3fbd162b85f6a017bd8",
+                      "bytes":  16822
+                  },
+                  {
+                      "path":  "tests/unit/chat-context-indicator.test.tsx",
+                      "sha256":  "fb2ae16c0c381caa071428577d393d9f70c96672003cdf4925a2215abda89119",
+                      "bytes":  8910
+                  },
+                  {
+                      "path":  "tests/unit/session-context.test.ts",
+                      "sha256":  "e96df0de27602d0715a9d9d6ed19e01669d0cba3769526858f99cc6307618c26",
+                      "bytes":  6527
+                  },
+                  {
+                      "path":  "README.ja-JP.md",
+                      "sha256":  "7d129335b3d2d8fd54081540eaca97c95217e75faed9cc47f14f766a4f5a6814",
+                      "bytes":  50587
+                  },
+                  {
+                      "path":  "README.md",
+                      "sha256":  "332c043c30a5994a11916bf8e65140679dff509091928c24226daec155034d37",
+                      "bytes":  43331
+                  },
+                  {
+                      "path":  "README.zh-CN.md",
+                      "sha256":  "9a31ed9f57888d9e9b26bf20b6b6a8ef56fd7bbf2d6282f22d477d10c203bcdb",
+                      "bytes":  38279
+                  },
+                  {
+                      "path":  "docs/modules/context-and-memory.md",
+                      "sha256":  "33f1d0ee42814f26f5413fc4aa0669ecddd44007d68f4d88f42ad2089e58755a",
+                      "bytes":  39968
+                  },
+                  {
+                      "path":  "electron/services/usage-api.ts",
+                      "sha256":  "55cca804a217ca0243271ff267d2cb2280df175fa4f990653606112434b22f6c",
+                      "bytes":  13521
+                  },
+                  {
+                      "path":  "electron/utils/store.ts",
+                      "sha256":  "2081c713e33f0797f573982b52df5d001353e5bbf4185d67ee87db6fd330c93d",
+                      "bytes":  10844
+                  },
+                  {
+                      "path":  "harness/specs/rules/ui-motion-material-system.md",
+                      "sha256":  "189ca3c2f41e151d620e7a2606722e7dd51febceb3fc7fab242913a31d20dbde",
+                      "bytes":  5907
+                  },
+                  {
+                      "path":  "harness/specs/scenarios/windows-ui-v2.md",
+                      "sha256":  "0a876d17a8010d44515c62708973b6cfbfb6993f4b1a2c97af96d8dff7b07d08",
+                      "bytes":  9869
+                  },
+                  {
+                      "path":  "openclaw_runtime/pnpm-workspace.yaml",
+                      "sha256":  "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910",
+                      "bytes":  1020
+                  },
+                  {
+                      "path":  "shared/host-api/contract.ts",
+                      "sha256":  "bc7e7834f6588396dbf959ac8c1b48b72a794af3caba308a83f3d8bd04443eff",
+                      "bytes":  233744
+                  },
+                  {
+                      "path":  "shared/i18n/locales/en/chat.json",
+                      "sha256":  "0f44012b9571a11fe5a9ab0586a1aeb5501cb3b5845d79eda154ebc74411705c",
+                      "bytes":  120851
+                  },
+                  {
+                      "path":  "shared/i18n/locales/en/settings.json",
+                      "sha256":  "63db81543d780e7448103946ba2031355fe6f41b4655c880507e47929d1210c5",
+                      "bytes":  53483
+                  },
+                  {
+                      "path":  "shared/i18n/locales/ja/chat.json",
+                      "sha256":  "67304cbba95024f2ee6deadb9fb605c0050ccce2108001da10ddd7e8bc33b5f2",
+                      "bytes":  143977
+                  },
+                  {
+                      "path":  "shared/i18n/locales/ja/settings.json",
+                      "sha256":  "7440aadb46290a5f1df6b3bcb44629333ccbbe30a163d0e81edaa277ed2e6f8c",
+                      "bytes":  66312
+                  },
+                  {
+                      "path":  "shared/i18n/locales/ru/chat.json",
+                      "sha256":  "d1eae69d981c2c3e88acbd1e1771bdc1987466df2276a9da4cb2e5b241d73735",
+                      "bytes":  170048
+                  },
+                  {
+                      "path":  "shared/i18n/locales/ru/settings.json",
+                      "sha256":  "6d562b6e438fa049b5d05a8ff4217ce8c815bd812e78b422011e45d7f351cef8",
+                      "bytes":  78886
+                  },
+                  {
+                      "path":  "shared/i18n/locales/zh/chat.json",
+                      "sha256":  "ae60b82484b3b03015344c838d5c57be865cb2c0b9fc6beb448e2ef1850aff75",
+                      "bytes":  117771
+                  },
+                  {
+                      "path":  "shared/i18n/locales/zh/settings.json",
+                      "sha256":  "64863b33d49ed8f4f426cbf12687ef94523b900a592d829421f0a2092dff9f4d",
+                      "bytes":  51505
+                  },
+                  {
+                      "path":  "shared/types/workspace.ts",
+                      "sha256":  "6c3bfb4011ed8fcba758f579bf24fa3b2c7964e480ddd3690f297e598eef8718",
+                      "bytes":  16221
+                  },
+                  {
+                      "path":  "src/components/chat/ChatContextPressure.tsx",
+                      "sha256":  "f7a86c24c177d33655839ab982e457b1fafa2013867c897b618f5bf94f5d1acb",
+                      "bytes":  5132
+                  },
+                  {
+                      "path":  "src/lib/host-api.ts",
+                      "sha256":  "dc81532bbe42d3664b80d2f1a255931f3144f05bf7a944201f6032368bc3418a",
+                      "bytes":  91031
+                  },
+                  {
+                      "path":  "src/pages/Chat/ChatInput.tsx",
+                      "sha256":  "5dd9bb385ed414e4c5e9d78e0eeb92e72b427c0644c58bf2c8d296a7cd123231",
+                      "bytes":  222509
+                  },
+                  {
+                      "path":  "src/pages/Chat/index.tsx",
+                      "sha256":  "81467463aa32f5b55f48a3de2ffa9bc182a9c8f8c3fe074a7d77ffbc6800ca85",
+                      "bytes":  217101
+                  },
+                  {
+                      "path":  "src/pages/Settings/index.tsx",
+                      "sha256":  "2208cfe7629979b14c6b6096c5d61d8ae293cfd478bb269bed3ef683a8bbf0eb",
+                      "bytes":  104996
+                  },
+                  {
+                      "path":  "src/stores/settings.ts",
+                      "sha256":  "85b6a4ec16c8728020477025311d2e45e360b06ff8b7917342c1916b45d6405a",
+                      "bytes":  13076
+                  },
+                  {
+                      "path":  "src/styles/codex-composer-shell.css",
+                      "sha256":  "2bfcd3877b57e2e5ba28768d016cdc1fa2348bab9e5b122851746d5269eb26d3",
+                      "bytes":  31693
+                  },
+                  {
+                      "path":  "tests/e2e/chat-context-pressure.spec.ts",
+                      "sha256":  "9bdf8721999a373c509643510249dfff80ccd773c800fcb870a9c01295819c9a",
+                      "bytes":  11813
+                  },
+                  {
+                      "path":  "tests/e2e/chat-manual-compaction.spec.ts",
+                      "sha256":  "6e0346d4987ecfa112ceaf8542472a25b32fc61b5b0b1d0873fe21cafe771113",
+                      "bytes":  9489
+                  },
+                  {
+                      "path":  "tests/unit/chat-context-pressure.test.tsx",
+                      "sha256":  "df1efc4f49b7ccd38bfff7032d0d1e1fe8a641d76c7c25a9e2f2ce26435594fe",
+                      "bytes":  4753
+                  },
+                  {
+                      "path":  "tests/unit/usage-live-scope.test.ts",
+                      "sha256":  "d01f582c4aa22362ce401c598c1938841c7d652e9a90550560a3cb3c77e8ccb5",
+                      "bytes":  2257
+                  }
+              ],
+    "filesVerified":  38,
+    "mainCommit":  "ae41d30c393dc0ef3c9013d87adac3d0f319ae2b"
+}

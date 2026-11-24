@@ -1,0 +1,29 @@
+{
+    "driven_by":  "agent",
+    "actor":  "codex-output-ui",
+    "status":  "passed",
+    "installedAt":  "2026-11-24T08:50:39.7667846Z",
+    "candidateCommit":  "ae41d30c393dc0ef3c9013d87adac3d0f319ae2b",
+    "buildSourceCommit":  "ae41d30c393dc0ef3c9013d87adac3d0f319ae2b",
+    "sourceRoot":  "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
+    "mainRoot":  "D:\\ClawX",
+    "previousBuildRoot":  "D:\\tmp\\clawx-output-hybrid-20261124\\previous-main-build",
+    "verifiedFiles":  1412,
+    "preservedFiles":  1412,
+    "trees":  [
+                  {
+                      "filesVerified":  1402,
+                      "name":  "dist"
+                  },
+                  {
+                      "filesVerified":  10,
+                      "name":  "dist-electron"
+                  }
+              ],
+    "fileManifest":  "main-build-files.json",
+    "fileManifestSha256":  "192e888305394e790063166f7664bb3c8a49162396c8a474a8b22d1999385bdf",
+    "productMatchesBuildSource":  true,
+    "mainSourceHasParallelChanges":  true,
+    "parallelSourceFilesPreserved":  38,
+    "priorBuildOwnershipVerified":  true
+}

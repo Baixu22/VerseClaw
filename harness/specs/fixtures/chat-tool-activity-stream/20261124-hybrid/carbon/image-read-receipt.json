@@ -1,0 +1,130 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "conversationId": "531fbf54-d788-4ff3-8edc-c14ef2359b67",
+  "source": "read-only SQLite steps snapshot",
+  "sourceDatabase": "C:/Users/27933/.gemini/antigravity-cli/conversations/531fbf54-d788-4ff3-8edc-c14ef2359b67.db",
+  "reads": [
+    {
+      "index": 2,
+      "stepType": 132,
+      "status": 3,
+      "payloadBytes": 18957,
+      "files": [
+        "reference-expanded.png"
+      ],
+      "viewFilePresent": false,
+      "prefixHex": "08840120032afa34",
+      "payloadSha256": "d14ff76d0b5b3171fd3ef1942651857505a137415bdbd8be86d88926ac9cdd10",
+      "imageMarkers": [
+        "image/png"
+      ],
+      "fileMetadata": [
+        "read_file",
+        "P{\"Path\":\"D:\\\\tmp\\\\clawx-output-hybrid-20261124\\\\carbon\\\\reference-expanded.png\"}:",
+        "Showing binary file of type image/png",
+        "filesJR",
+        "Ifile:///D:/tmp/clawx-output-hybrid-20261124/carbon/reference-expanded.png ",
+        "image/png",
+        "2type.googleapis.com/exa.cortex.core.tools.ReadFile"
+      ]
+    },
+    {
+      "index": 3,
+      "stepType": 132,
+      "status": 3,
+      "payloadBytes": 103068,
+      "files": [
+        "reference-collapsed.png"
+      ],
+      "viewFilePresent": false,
+      "prefixHex": "08840120032a9903",
+      "payloadSha256": "a36b2d1e6883110a077071b3f6b3360d784746d88a65fbeed4f5753eb3f0d333",
+      "imageMarkers": [
+        "image/png",
+        "image/jpeg"
+      ],
+      "fileMetadata": [
+        "read_file",
+        "Q{\"Path\":\"D:\\\\tmp\\\\clawx-output-hybrid-20261124\\\\carbon\\\\reference-collapsed.png\"}2",
+        "Showing binary file of type image/png",
+        "filesJT",
+        "Jfile:///D:/tmp/clawx-output-hybrid-20261124/carbon/reference-collapsed.png ",
+        "image/jpeg",
+        "2type.googleapis.com/exa.cortex.core.tools.ReadFile"
+      ]
+    },
+    {
+      "index": 4,
+      "stepType": 132,
+      "status": 3,
+      "payloadBytes": 72033,
+      "files": [
+        "prototype-wide.png"
+      ],
+      "viewFilePresent": false,
+      "prefixHex": "08840120032a9403",
+      "payloadSha256": "67a96e377d63d4c29dac7848094c3553d895f029fbd6011440ce87207e144cd5",
+      "imageMarkers": [
+        "image/png"
+      ],
+      "fileMetadata": [
+        "read_file",
+        "L{\"Path\":\"D:\\\\tmp\\\\clawx-output-hybrid-20261124\\\\carbon\\\\prototype-wide.png\"}2",
+        "Showing binary file of type image/png",
+        "filesJO",
+        "Efile:///D:/tmp/clawx-output-hybrid-20261124/carbon/prototype-wide.png ",
+        "image/png",
+        "2type.googleapis.com/exa.cortex.core.tools.ReadFile"
+      ]
+    },
+    {
+      "index": 5,
+      "stepType": 132,
+      "status": 3,
+      "payloadBytes": 70428,
+      "files": [
+        "prototype-narrow.png"
+      ],
+      "viewFilePresent": false,
+      "prefixHex": "08840120032a9603",
+      "payloadSha256": "dc6acd06e2c00777d03db73e02479ab2bf42641338209e1df870d132263c13bd",
+      "imageMarkers": [
+        "image/png"
+      ],
+      "fileMetadata": [
+        "read_file",
+        "N{\"Path\":\"D:\\\\tmp\\\\clawx-output-hybrid-20261124\\\\carbon\\\\prototype-narrow.png\"}2",
+        "Showing binary file of type image/png",
+        "filesJQ",
+        "Gfile:///D:/tmp/clawx-output-hybrid-20261124/carbon/prototype-narrow.png ",
+        "image/png",
+        "2type.googleapis.com/exa.cortex.core.tools.ReadFile"
+      ]
+    },
+    {
+      "index": 6,
+      "stepType": 132,
+      "status": 3,
+      "payloadBytes": 64751,
+      "files": [
+        "icon-catalog.png"
+      ],
+      "viewFilePresent": false,
+      "prefixHex": "08840120032a9203",
+      "payloadSha256": "8fcc089a753181f64856124198ed806c41486338a084f07f4e166f5a3adc29c2",
+      "imageMarkers": [
+        "image/png"
+      ],
+      "fileMetadata": [
+        "read_file",
+        "J{\"Path\":\"D:\\\\tmp\\\\clawx-output-hybrid-20261124\\\\carbon\\\\icon-catalog.png\"}2",
+        "Showing binary file of type image/png",
+        "filesJM",
+        "Cfile:///D:/tmp/clawx-output-hybrid-20261124/carbon/icon-catalog.png ",
+        "image/png",
+        "2type.googleapis.com/exa.cortex.core.tools.ReadFile"
+      ]
+    }
+  ]
+}

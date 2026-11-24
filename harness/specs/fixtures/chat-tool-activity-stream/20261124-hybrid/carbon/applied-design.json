@@ -1,0 +1,63 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "commit": "ae41d30c393dc0ef3c9013d87adac3d0f319ae2b",
+  "basis": "returned-review.md: five numbered design outlines",
+  "structuredPatchesReturned": false,
+  "items": [
+    {
+      "id": 1,
+      "change": "同类新调用按调用身份重新挂载图标；日志追加保留节点",
+      "files": [
+        "src/components/assistant-render/ToolActivityGroup.tsx"
+      ],
+      "verification": [
+        "unit-tests.json",
+        "live.json"
+      ]
+    },
+    {
+      "id": 2,
+      "change": "13px折叠摘要、紧凑垂直节奏和2px焦点偏移",
+      "files": [
+        "src/styles/codex-conversation.css"
+      ],
+      "verification": [
+        "geometry.json",
+        "screenshots/history-zh-dark-375.png"
+      ]
+    },
+    {
+      "id": 3,
+      "change": "30px调用条、11px圆角、18px文字行高；运行文本省略号；图标1.65/1.5描边；可见的小箭头",
+      "files": [
+        "src/styles/codex-conversation.css"
+      ],
+      "verification": [
+        "geometry.json",
+        "screenshots/history-expanded-dark-1280.png"
+      ]
+    },
+    {
+      "id": 4,
+      "change": "白色光带收窄到40%-60%，图标光晕1px/0.18，峰值透明度0.86",
+      "files": [
+        "src/styles/codex-conversation.css"
+      ],
+      "verification": [
+        "live.json"
+      ]
+    },
+    {
+      "id": 5,
+      "change": "连接线居中于图标，调用间距4px，详情和输出左缘对齐，窄窗为目标路径保留宽度",
+      "files": [
+        "src/styles/codex-conversation.css"
+      ],
+      "verification": [
+        "geometry.json",
+        "screenshots/history-expanded-ru-dark-375.png"
+      ]
+    }
+  ]
+}

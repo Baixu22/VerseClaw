@@ -1,0 +1,72 @@
+[
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\build-r2.command.json",
+    "bytes": 1465,
+    "sha256": "ccb6bb717cf0d949afb55f0ae9f37519537f1a32fe4fcc00d08cb5e9d724e24a"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\build-r4.command.json",
+    "bytes": 1935,
+    "sha256": "60f17c54703b20698b2ba2c181a23e20e106ddd8bfa22008c744b900b3d0f51e"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r2.command.json",
+    "bytes": 1663,
+    "sha256": "2fd367f3fb58312b9b2bd7024123bb20c18acb6c16d183aa8bd63e468b18a7cc"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4.command.json",
+    "bytes": 1825,
+    "sha256": "d54beb2e17f1b3fe3f534fd3373969e60b045959b5f8d0fa85a9fd628f3293b4"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\harness-ci-r4.command.json",
+    "bytes": 1480,
+    "sha256": "2b1c08b42146824d6fa02b5bbcb2e6b93b48e1b300c92868c807167b1919edcf"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r3.command.json",
+    "bytes": 1514,
+    "sha256": "140337cbbf9bc1688ac8dd746b231fcff761dd409a4177144a33bc19842d72f2"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.command.json",
+    "bytes": 1517,
+    "sha256": "c69802c1150b01427902edf8ba87998713904beb51b94684700d681938a412b2"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\typecheck-r1.command.json",
+    "bytes": 1477,
+    "sha256": "25c218ff2b5528c9989ac676c599c29727eefbaf3fd431cff7cf580de8790074"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\typecheck-r4.command.json",
+    "bytes": 1476,
+    "sha256": "2512230dfa0ea6de09754887dcc83d61cf1f216a91f3d24eb3704cc08ee21c17"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\typecheck-test-r2.command.json",
+    "bytes": 1496,
+    "sha256": "ad22a59b59f311c8711c08b19dc5165b94152267b07e5f8ddb0cd19a9c92dd84"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\unit-r1.command.json",
+    "bytes": 2009,
+    "sha256": "a5989096f0aaa6f7f4a52de870c957fa05b14875492f2d03956938d5a8200997"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\unit-r4.command.json",
+    "bytes": 2011,
+    "sha256": "c6a46290edb452af2ad7571a74f183a96121d6346a3e6ab2d184c8a376bd29bd"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\carbon\\agy.log",
+    "bytes": 36410,
+    "sha256": "865f6bbc2eef8c399a2c6199297178794fe3201537b94e97bbca431c81e7abb5"
+  },
+  {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\carbon\\stderr.log",
+    "bytes": 354,
+    "sha256": "8201be334084259c900977f1afd77e89c1024f8c92f5bda988a5d5213456ceb1"
+  }
+]

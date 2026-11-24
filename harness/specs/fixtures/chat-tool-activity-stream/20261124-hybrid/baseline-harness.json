@@ -1,0 +1,57 @@
+{
+  "status": "stopped_at_existing_duplicate_assets",
+  "command": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "harness-ci-r4",
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "harness:ci"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "ae41d30c393dc0ef3c9013d87adac3d0f319ae2b",
+      "tree": "c0212c1b4e8e97b1392af929bf0c7230aea62dbb",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 600,
+    "admission": {
+      "freeBytes": 8458944512,
+      "minimumFreeBytes": 2147483648,
+      "heavy": []
+    },
+    "startedAt": "2026-11-24T08:45:36.784308+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": true,
+    "driverPid": 30348,
+    "exitCode": 1,
+    "durationSeconds": 29.375,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\harness-ci-r4.stdout.log",
+      "sha256": "7bd441239bb27b29e71fc31ff5ec3260cdd93208becb82b17f81b001f5bfe3e4"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\harness-ci-r4.stderr.log",
+      "sha256": "9f5b0c2a0d2c2a0070510c49eaaf61e4d6d0fbd2706214831adf273824cf6a3f"
+    }
+  },
+  "testsPassedBeforeStop": 59,
+  "duplicateSha256": "619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b",
+  "duplicates": [
+    "harness/specs/fixtures/chat-planning-composer-ux/20261123/images/before-task-workbench.png",
+    "harness/specs/fixtures/task-system-ui-consolidation/20261122/after/ledger-light-1280.png"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "type": "object",
+  "properties": {
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "verdict": {
+            "enum": [
+              "pass",
+              "fix",
+              "unclear"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "verdict",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 7,
+      "minItems": 7
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 5
+    },
+    "decision": {
+      "type": "string"
+    },
+    "patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "enum": [
+              "activity.css",
+              "ToolActivityGroup.tsx"
+            ],
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "replace": {
+            "type": "string"
+          },
+          "find": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "file",
+          "find",
+          "replace",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 5
+    }
+  },
+  "required": [
+    "requirements",
+    "observations",
+    "decision",
+    "patches"
+  ],
+  "additionalProperties": false
+}
