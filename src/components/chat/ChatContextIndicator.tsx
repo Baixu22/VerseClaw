@@ -58,7 +58,8 @@ function SourceGroup({ label, group, color, share }: { label: string; group: Con
 
 /** A nonmodal, hoverable context report; only memory receipts are loaded on demand. */
 export function ChatContextIndicator({ sessionKey, sessionId, contextRange, compactionStatus, onOpen }: Props) {
-  const { t } = useTranslation('chat');
+  const { t, i18n } = useTranslation('chat');
+  const timestamp = (value: number) => new Date(value).toLocaleString(i18n.language, { dateStyle: 'medium', timeStyle: 'short' });
   const id = useId();
   const portal = useOverlayPortalContainer();
   const { triggerRef, layerRef, open, setOpen, style, placement } = usePopover<HTMLButtonElement>({ gap: 8, align: 'right', fitViewport: true, preferredSide: 'top' });
@@ -187,7 +188,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
           <SourceGroup label={t('contextDisplay.skills')} group={composition.skills} color="bg-zinc-400" share={sourceShare(composition.skills.chars)} />
           <SourceGroup label={t('contextDisplay.workspaceFiles')} group={composition.workspaceFiles} color="bg-zinc-500" share={sourceShare(composition.workspaceFiles.chars)} />
           <p className="px-1 py-2 leading-5 text-muted-foreground">{t('contextDisplay.characterMeasurement')}</p>
-          <p className="px-1 pb-2 text-muted-foreground">{t(composition.source === 'estimate' ? 'contextDisplay.estimatedReport' : 'contextDisplay.runtimeReport')} · {new Date(composition.generatedAt).toLocaleTimeString()}{composition.modelRef && composition.modelRef !== matchingRange?.modelRef ? ` · ${composition.modelRef}` : ''}</p>
+          <p className="px-1 pb-2 text-muted-foreground">{t(composition.source === 'estimate' ? 'contextDisplay.estimatedReport' : 'contextDisplay.runtimeReport')} · {timestamp(composition.generatedAt)}{composition.modelRef && composition.modelRef !== matchingRange?.modelRef ? ` · ${composition.modelRef}` : ''}</p>
         </> : <p className="px-1 py-2 leading-5 text-muted-foreground" data-testid="chat-context-composition-pending">{t('contextDisplay.compositionPending')}</p>}
         {matchingRange?.retainedMessageCount != null && <p className="px-1 py-2 text-muted-foreground">{t('contextDisplay.loadedMessages', { count: matchingRange.retainedMessageCount })}</p>}
         {truncatedMessageCount != null && truncatedMessageCount > 0 && <p className="px-1 pb-2 text-amber-700 dark:text-amber-400" data-testid="chat-context-hidden-messages">{t('contextDisplay.hiddenMessages', { count: truncatedMessageCount })}</p>}
@@ -200,7 +201,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
         {receiptState === 'ready' && !receipts.length && <p className="text-muted-foreground">{t('contextDisplay.memoryNone')}</p>}
         {receiptState === 'ready' && receipts.map((receipt, index) => <details key={`${receipt.source}:${receipt.createdAt}:${index}`} className="group mb-2" data-testid="chat-context-memory-receipt">
           <summary className="flex cursor-pointer list-none items-start gap-2 rounded-md focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-details-marker]:hidden"><ChevronRight className="mt-0.5 size-3 shrink-0 group-open:rotate-90" aria-hidden="true" /><span className="min-w-0 flex-1 break-all">{receipt.source}</span><span className="shrink-0 text-muted-foreground">{t('contextDisplay.memorySelected', { count: receipt.selected.length })}</span></summary>
-          <div className="ml-5 mt-2 space-y-1 break-all text-muted-foreground"><p>{new Date(receipt.createdAt).toLocaleTimeString()} · {t('contextDisplay.chars', { value: full(receipt.budgetCharsApplied) })}</p>{receipt.selected.map((ref, refIndex) => <p className="font-mono" key={refIndex}>{ref}</p>)}{receipt.omitted.length > 0 && <p>{t('contextDisplay.memoryOmitted', { count: receipt.omitted.length })}</p>}</div>
+          <div className="ml-5 mt-2 space-y-1 break-all text-muted-foreground"><p>{timestamp(receipt.createdAt)} · {t('contextDisplay.chars', { value: full(receipt.budgetCharsApplied) })}</p>{receipt.selected.map((ref, refIndex) => <p className="font-mono" key={refIndex}>{ref}</p>)}{receipt.omitted.length > 0 && <p>{t('contextDisplay.memoryOmitted', { count: receipt.omitted.length })}</p>}</div>
         </details>)}
       </section>}
       </div>

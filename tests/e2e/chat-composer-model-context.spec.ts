@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { appendFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { appendFile, readFile, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, pinWindowContentSize, test } from './fixtures/electron';
-import { createComposerContextFiles, persistComposerContext } from './fixtures/composer-context-report';
+import { createComposerContextFiles, persistComposerContext, persistRuntimeContextEntries } from './fixtures/composer-context-report';
 import { hostInvoke } from './fixtures/fp-p1-harness';
 import type { WorkspaceContextRange } from '../../shared/types/workspace';
 
@@ -130,3 +130,48 @@ for (const theme of ['light', 'dark'] as const) {
     } finally { await closeElectronApp(app); }
   });
 }
+
+test('reads an observed runtime SQLite snapshot and shows its original report date', async ({ launchElectronApp, userDataDir }, info) => {
+  const observed = JSON.parse(await readFile(resolve('harness/specs/fixtures/chat-composer-model-context/inputs/observed-runtime-snapshot.json'), 'utf8'));
+  const entry = observed.entry;
+  const key = observed.sessionKey;
+  const reference = `${entry.systemPromptReport.provider}/${entry.systemPromptReport.model}`;
+  const { databasePath } = persistRuntimeContextEntries(join(userDataDir, 'openclaw-source-state'), { [key]: entry });
+  const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'dark', deviceScaleFactor: 1 });
+  try {
+    await installIpcMocks(app, {
+      gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 },
+      gatewayRpcByMethod: { 'sessions.list': { sessions: [{ key, sessionId: entry.sessionId, displayName: 'Observed runtime snapshot', modelRefOverride: reference }] }, 'chat.history': { messages: [] }, '*': {} },
+      hostApi: {
+        '["agents","list",null]': { success: true, agents: [{ id: 'main', name: 'Main', isDefault: true, modelRef: reference, mainSessionKey: key, reasoningEffort: 'auto', channelTypes: [] }], defaultAgentId: 'main', defaultModelRef: reference },
+        '["sessions","compactionStatus",null]': { success: true, available: false, canCompact: false, inProgress: false, pressure: 'unknown', warnings: [] },
+      },
+    });
+    const page = await getStableWindow(app);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const range = await hostInvoke<{ success: boolean; range: WorkspaceContextRange }>(app, 'usage', 'contextRange', { sessionKey: key, expectedSessionId: entry.sessionId, modelRef: reference });
+    expect(range.range.usedTokens).toBe(entry.totalTokens);
+    expect(range.range.usageSource).toBe('runtime');
+    expect(range.range.composition?.systemPromptChars).toBe(entry.systemPromptReport.systemPrompt.chars);
+    expect(range.range.composition?.generatedAt).toBe(entry.systemPromptReport.generatedAt);
+    await page.evaluate(async () => {
+      await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: 'settings', action: 'set', payload: { key: 'language', value: 'zh' } });
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const tag = page.getByTestId('chat-context-indicator');
+    const details = page.getByTestId('chat-context-details');
+    for (const width of [1280, 375]) {
+      await pinWindowContentSize(app, { width, height: width === 375 ? 667 : 800 });
+      await tag.click();
+      await expect(details.getByTestId('chat-context-usage')).toContainText(entry.totalTokens.toLocaleString('en-US'));
+      await details.getByTestId('chat-context-detailed-breakdown').click();
+      const date = await page.evaluate(value => new Date(value).toLocaleString('zh', { dateStyle: 'medium', timeStyle: 'short' }), entry.systemPromptReport.generatedAt);
+      await expect(details).toContainText(date);
+      await page.screenshot({ path: info.outputPath(`observed-runtime-zh-${width}.png`) });
+      await page.keyboard.press('Escape');
+    }
+    await writeFile(info.outputPath('observed-source-chain.json'), JSON.stringify({ driven_by: 'agent', actor: 'playwright-composer-context',
+      origin: 'historical observed runtime metadata', originalEntrySha256: observed.originalEntrySha256, sourceCapturedAt: observed.capturedAt,
+      metadataStore: 'real-runtime-writer-and-Main-read-only-SQLite', databasePath, range, entry }, null, 2));
+  } finally { await closeElectronApp(app); }
+});

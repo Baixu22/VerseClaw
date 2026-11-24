@@ -5,6 +5,16 @@ import { Type } from '@sinclair/typebox';
 import { buildSystemPromptReport } from '../../../openclaw_runtime/src/agents/system-prompt-report';
 import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore, resolveSqliteSessionStoreDatabasePath } from '../../../openclaw_runtime/src/config/sessions/store-sqlite';
 
+export function persistRuntimeContextEntries(stateDir: string, entries: Parameters<typeof replaceSqliteSessionStore>[1]) {
+  const storePath = join(stateDir, 'agents', 'main', 'sessions', 'sessions.json');
+  const databasePath = resolveSqliteSessionStoreDatabasePath(storePath);
+  const withinFixture = relative(stateDir, databasePath);
+  if (withinFixture.startsWith('..') || isAbsolute(withinFixture)) throw new Error('Session database escaped the agent fixture');
+  try { replaceSqliteSessionStore(storePath, entries); }
+  finally { closeSqliteSessionStoreDatabase(storePath); }
+  return { storePath, databasePath };
+}
+
 /** Agent-owned files use the production report builder; no context DTO is replayed. */
 export async function createComposerContextFiles(homeDir: string) {
   const workspaceDir = join(homeDir, 'composer-workspace');
@@ -51,11 +61,7 @@ export async function persistComposerContext(input: {
   const indexPath = join(sessionsDir, 'sessions.json');
   const transcriptPath = join(sessionsDir, `${input.sessionId}.jsonl`);
   const index = { [input.sessionKey]: { sessionId: input.sessionId, contextTokens: 32768, updatedAt: generatedAt, systemPromptReport: report } };
-  const databasePath = resolveSqliteSessionStoreDatabasePath(indexPath);
-  const withinFixture = relative(input.stateDir, databasePath);
-  if (withinFixture.startsWith('..') || isAbsolute(withinFixture)) throw new Error('Session database escaped the agent fixture');
-  try { replaceSqliteSessionStore(indexPath, index); }
-  finally { closeSqliteSessionStoreDatabase(indexPath); }
+  const { databasePath } = persistRuntimeContextEntries(input.stateDir, index);
   const total = input.usage.input + input.usage.output + input.usage.cacheRead + input.usage.cacheWrite;
   const transcript = { type: 'message', timestamp: new Date(generatedAt).toISOString(), message: {
     role: 'assistant', content: [{ type: 'text', text: 'Context sources inspected.' }], usage: { ...input.usage, total },
