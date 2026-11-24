@@ -31,8 +31,7 @@ function card(props: Partial<React.ComponentProps<typeof ChatModelSettingsCard>>
 
 beforeEach(() => {
   mocks.updateEffort.mockReset().mockResolvedValue(undefined);
-  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
-  vi.stubGlobal('CSS', { escape: (text: string) => text.replace(/["\\]/g, '\\$&') });
+  vi.stubGlobal('CSS', { ...CSS, escape: (text: string) => text.replace(/["\\]/g, '\\$&') });
 });
 afterEach(() => vi.unstubAllGlobals());
 
