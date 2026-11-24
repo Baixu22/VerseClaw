@@ -616,3 +616,44 @@ it.each([
     expect(cancel).toHaveBeenCalledTimes(before);
   } finally { vi.useRealTimers(); }
 });
+
+it.each([
+  ['error', 'partial'], ['timeout', 'partial'], ['error', 'scope-changed'], ['timeout', 'scope-changed'],
+  ['error', 'denied'], ['timeout', 'denied'],
+] as const)('keeps cancellation active during %s recovery with a %s owner readback', async (reason, readback) => {
+  vi.useFakeTimers();
+  const controller = new AbortController(), plan = createResearchPlan({ requestId: 'recovery-cancel', query: 'Gateway port', scope });
+  type StatusReply = Awaited<ReturnType<typeof hostApi.knowledge.researchStatus>>;
+  let release!: (response: StatusReply) => void;
+  const waiting = new Promise<StatusReply>(resolve => { release = resolve; });
+  const snapshot: ResearchResultV1 = readback === 'scope-changed'
+    ? { ...emptyResearchResult(plan), phase: 'finished', status: 'unavailable', stopReason: 'scope-changed' }
+    : { ...emptyResearchResult(plan), phase: 'finished', status: 'partial', evidence: [evidence('current')] };
+  const start = vi.mocked(hostApi.knowledge.researchStart).mockReset().mockResolvedValue({ success: true,
+    research: { ...emptyResearchResult(plan), evidence: [evidence('old')] } });
+  const status = vi.mocked(hostApi.knowledge.researchStatus).mockReset().mockReturnValue(waiting);
+  if (reason === 'error') status.mockRejectedValueOnce(new Error('Transport failed'));
+  const cancel = vi.mocked(hostApi.knowledge.researchCancel).mockReset().mockResolvedValue({ success: true });
+  const updates = vi.fn(() => { if (reason === 'timeout' && updates.mock.calls.length === 1) vi.setSystemTime(Date.now() + 30001); });
+  try {
+    const pending = readKnowledgeResearch({ query: plan.query, workspaceId: scope.workspaceId, sessionKey: scope.sessionKey },
+      controller.signal, updates, 'Research failed');
+    await vi.waitFor(() => expect(status).toHaveBeenCalledTimes(reason === 'error' ? 2 : 1), { interval: 1 });
+    const before = cancel.mock.calls.length;
+    controller.abort();
+    expect(cancel).toHaveBeenCalledTimes(before + 1);
+    release(readback === 'denied' ? { success: false, error: 'Owner changed during recovery' } : { success: true, research: snapshot });
+    if (readback === 'denied') {
+      await expect(pending).rejects.toThrow('Owner changed during recovery');
+      expect(updates).toHaveBeenCalledTimes(1);
+    } else {
+      expect(await pending).toMatchObject({ reason: 'cancelled', result: readback === 'scope-changed'
+        ? { status: 'unavailable', stopReason: 'scope-changed', evidence: [] }
+        : { status: 'cancelled', stopReason: 'cancelled', evidence: snapshot.evidence } });
+      expect(updates).toHaveBeenCalledTimes(2);
+    }
+    const request = start.mock.calls[0][0];
+    for (const [selected] of cancel.mock.calls) expect(selected).toEqual({ requestId: request.requestId,
+      workspaceId: scope.workspaceId, sessionKey: scope.sessionKey });
+  } finally { release({ success: true }); vi.useRealTimers(); }
+});

@@ -7,9 +7,10 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-16
 intent: 完成跨来源研究、证据缺口追查与关系分析。
-diffBase: e1b3ad5d64ab409ab58e95144ec8d747f73e2b44
+diffBase: 270da250a3ce7b5ff74b452d7733fd0ae8348b24
 historicalDiffBase: 159d7d2450e3776814e0ea83e03e2db1698dceb7
 touchedAreas:
+  - "harness/specs/fixtures/project-rag/rag16-recovery-cancel-20261124/**"
   - "harness/specs/fixtures/project-rag/rag16-cancel-races-20261124/**"
   - "harness/specs/fixtures/project-rag/rag16-error-cancel-20261124/**"
   - "openclaw_runtime/src/knowledge/retrieval/**"
@@ -406,3 +407,5 @@ Windows CIM查询只请求进程ID、父进程ID和创建时间，三列身份�
 前端启动或状态回执返回success:false，以及观察回调抛错时，向同一requestId与workspace/session发送取消后保留原错误，并清理监听。单测覆盖三种失败与监听清理，原Electron旅程新增failed status回执并核对实际Main取消终态；原30秒Research预算、480秒用例上限和零重试保持。
 
 取消或期限先于Main准入时，迟到启动回执补发同一requestId与workspace/session的取消，不发布迟到结果。启动和状态回执交付前继续检查原取消与期限，终态观察回调停止请求时保留对应停止原因；scope-changed继续保留。持续单测覆盖迟到成功、失败、拒绝及启动/状态/观察回调竞态，Electron旅程延迟实际Main启动，核对首次取消拒绝、补偿取消接受与实际cancelled终态；原requiredTests、30秒期限、480秒用例上限及零重试保持。
+
+恢复读回必须在外层try内等待结算，随后清理取消监听；读回等待期间的显式取消向同一requestId与workspace/session派发并保留cancelled，owner拒绝与scope-changed继续按原权限合同处理。持续单测覆盖error/timeout恢复中的partial、scope-changed和拒绝三种回执；Electron旅程在实际Main读回后延迟交付，核对新增取消、最终界面与Main取消终态。原1.5秒读回上限、30秒Research期限、480秒用例上限、四requiredTests与零重试保持。

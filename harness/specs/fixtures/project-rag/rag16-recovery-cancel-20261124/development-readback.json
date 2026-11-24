@@ -1,0 +1,165 @@
+{
+  "schema": "G2ResearchRecoveryCancellationDevelopment/v1",
+  "actor": "codex-g2-r53",
+  "driven_by": "agent",
+  "node": "TF-0893",
+  "sourceParent": "270da250a3ce7b5ff74b452d7733fd0ae8348b24",
+  "qualificationScope": "windows-only",
+  "sourceInputs": [
+    {
+      "path": "src/lib/knowledge-research.ts",
+      "sha256": "5d0386ff46cb0a6f8b550afee4e5f16b49187b5fe711cc6b75bd417c2606d2c9"
+    },
+    {
+      "path": "tests/unit/project-rag-research-controller.test.ts",
+      "sha256": "e81e288f7e892f372d2ae720c9013b405ad1fb85270f5d75e5ea0010f163b7fe"
+    },
+    {
+      "path": "tests/e2e/project-rag-research.spec.ts",
+      "sha256": "1e5298fb38465aa76095b15776cd2d0551cffa2b6832d292ff0fc7fb488d3ea0"
+    },
+    {
+      "path": "docs/dev/project-rag/RESEARCH-CONTRACT.md",
+      "sha256": "fe957cd6eaade1b1d75af0b5d3e39005beb28e6bcedc6f4ab5cd99264aa4567e"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-bounded-research.md",
+      "sha256": "c0bba2da8ef891a29b6e021112f0340612e23de10ad90d7c7ec64c4019e85720"
+    },
+    {
+      "path": "README.md",
+      "sha256": "807ea24577979378a0d427c150c2a6ddc80b2cfc9017f797e5eb3ed5e67fc552"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "14f7ea6cfd8084742658dc6fb7d6bb31fd0120cf067c5a8e763ca502a5fd5968"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "1ece61fb43c69177d26d4df1d8cdf8d4ae6f2dd008fbd3c6ee96ee9481f618ac"
+    }
+  ],
+  "rawDirectory": "D:/tmp/g2-r53-recovery-cancel-20261124",
+  "changes": [
+    "Wait for recovery inside the original try before finally removes the abort listener.",
+    "Explicit cancellation during recovery remains cancelled after current owner readback.",
+    "Owner denial still rejects without republishing cached evidence; scope-changed remains intact."
+  ],
+  "checks": {
+    "nativeFrontendRegression": {
+      "cases": 26,
+      "passed": true,
+      "modelRequests": 0
+    },
+    "syntax": {
+      "files": [
+        {
+          "path": "src/lib/knowledge-research.ts",
+          "diagnostics": []
+        },
+        {
+          "path": "tests/unit/project-rag-research-controller.test.ts",
+          "diagnostics": []
+        },
+        {
+          "path": "tests/e2e/project-rag-research.spec.ts",
+          "diagnostics": []
+        }
+      ],
+      "passed": true
+    },
+    "lint": {
+      "files": 3,
+      "errors": 0,
+      "warnings": 0
+    },
+    "harness": {
+      "spec": "project-rag-bounded-research",
+      "result": "valid",
+      "exitCode": 0
+    }
+  },
+  "persistentRegression": {
+    "newParameterizedCases": 6,
+    "implemented": true,
+    "executed": false
+  },
+  "electronJourney": {
+    "implemented": true,
+    "executed": false,
+    "readsActualMain": true,
+    "assertions": [
+      "Retain the original transport failure case.",
+      "Hold an actual Main owner readback before renderer delivery.",
+      "Explicit cancellation causes an additional same-request backend stop.",
+      "Cancelled UI and actual Main terminal are observed."
+    ]
+  },
+  "budgets": {
+    "recoveryReadbackMs": 1500,
+    "researchDeadlineMs": 30000,
+    "electronTestTimeoutMs": 480000,
+    "retries": 0,
+    "forestWindowSeconds": 900,
+    "baselineWindowSeconds": 2400,
+    "minimumFreeBytes": 4294967296,
+    "requiredTests": 4,
+    "engineeringGates": 26
+  },
+  "rawPins": [
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\check-recovery-cancel.mjs",
+      "sha256": "10acfd1efe4bf29ce6455cf23f48ebf36769f4c4e2e6aecdf24a7b4180edd8ae"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\check-research-races.mjs",
+      "sha256": "31e39c31cbd9f4f09e035535dbd18512a12e9220da58d9d2646cc903157e4f34"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\check-terminal-stop.mjs",
+      "sha256": "d345de87c12331878f481af585c488aafe15749f4d2ed5d737b589ae90940aae"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\check-research-errors.mjs",
+      "sha256": "c95134a4a15e3e28f323278715c9d2114739e8b72bda873708d9a5cfbae68a55"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\recovery-cancel-original-r1.json",
+      "sha256": "c00f5a253121c1a03986ce14771e80d60eb6ec794d2f8a4e957902f44f5c00a4"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\recovery-cancel-fixed-r1.json",
+      "sha256": "58b84d6a27f2c0175f9d9e5a5658955498910f923a7a060da777f1f2d4f6f181"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\research-races-fixed-r1.json",
+      "sha256": "9b35b03aa442f9c80b2cdd9f212f60c3215fb1d709249261e4c4b5c3a1b1edfd"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\terminal-stop-fixed-r1.json",
+      "sha256": "81b848052622d9255dfcbf81f23c4134a0b31e2068fd63caf7dff9dbb816a45f"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\research-errors-fixed-r1.json",
+      "sha256": "e5c5b4e704c59ee0681d367ade4cb5160732983a187f1f220f8d642e72114500"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\syntax-r1.json",
+      "sha256": "66709a77d1e03202dfc5c008a97bc0149f63782f31ccf51a7cf5d882b1a1e384"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\lint-r1.json",
+      "sha256": "abe1836c23aab5cf00aa7329175e65db8a816742abf117141c774ed76080fb0e"
+    },
+    {
+      "path": "D:\\tmp\\g2-r53-recovery-cancel-20261124\\harness-rag16-r1.log",
+      "sha256": "5c02e8d6ed0f96cb3f45b51365515f7dd6097bdc53c2e4d43d64dd91122ca81a"
+    }
+  ],
+  "pendingChecks": [
+    "Persistent Vitest including retained 10 race cases and 6 new recovery cases.",
+    "Full uncached Node/Web/Test typecheck.",
+    "Actual Electron recovery-cancel, late-start and failure/cancellation journeys.",
+    "Fresh Windows baseline and same-candidate Executor/Verifier engineering gates."
+  ]
+}

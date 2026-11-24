@@ -1,0 +1,96 @@
+{
+  "schema": "G2ResearchRecoveryCancellation/v1",
+  "actor": "codex-g2-r53",
+  "driven_by": "agent",
+  "phase": "original",
+  "sourceSha256": "39e9940861c36056650dde53d302abbd1e6d166848e60afa9dcf649c026413e6",
+  "method": "Actual renderer/bounded-read modules with held owner readback after error/deadline and explicit caller cancellation",
+  "modelRequests": 0,
+  "checks": [
+    {
+      "initialReason": "error",
+      "readback": "partial",
+      "reason": "error",
+      "status": "partial",
+      "cancelDuringReadback": 0,
+      "updates": 2,
+      "failure": null,
+      "violations": [
+        "Recovery abort listener removed before settlement",
+        "Recovery result overwrote explicit cancellation",
+        "Partial readback retained old stop reason"
+      ],
+      "passed": false
+    },
+    {
+      "initialReason": "error",
+      "readback": "scope-changed",
+      "reason": "error",
+      "status": "unavailable",
+      "cancelDuringReadback": 0,
+      "updates": 2,
+      "failure": null,
+      "violations": [
+        "Recovery abort listener removed before settlement",
+        "Recovery result overwrote explicit cancellation"
+      ],
+      "passed": false
+    },
+    {
+      "initialReason": "error",
+      "readback": "denied",
+      "reason": null,
+      "status": null,
+      "cancelDuringReadback": 0,
+      "updates": 1,
+      "failure": "Error: Owner changed during recovery",
+      "violations": [
+        "Recovery abort listener removed before settlement"
+      ],
+      "passed": false
+    },
+    {
+      "initialReason": "timeout",
+      "readback": "partial",
+      "reason": "timeout",
+      "status": "partial",
+      "cancelDuringReadback": 0,
+      "updates": 2,
+      "failure": null,
+      "violations": [
+        "Recovery abort listener removed before settlement",
+        "Recovery result overwrote explicit cancellation",
+        "Partial readback retained old stop reason"
+      ],
+      "passed": false
+    },
+    {
+      "initialReason": "timeout",
+      "readback": "scope-changed",
+      "reason": "timeout",
+      "status": "unavailable",
+      "cancelDuringReadback": 0,
+      "updates": 2,
+      "failure": null,
+      "violations": [
+        "Recovery abort listener removed before settlement",
+        "Recovery result overwrote explicit cancellation"
+      ],
+      "passed": false
+    },
+    {
+      "initialReason": "timeout",
+      "readback": "denied",
+      "reason": null,
+      "status": null,
+      "cancelDuringReadback": 0,
+      "updates": 1,
+      "failure": "Error: Owner changed during recovery",
+      "violations": [
+        "Recovery abort listener removed before settlement"
+      ],
+      "passed": false
+    }
+  ],
+  "passed": false
+}

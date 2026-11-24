@@ -205,6 +205,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const heldRejectedStatus = new Promise<void>(resolve => { releaseRejectedStatus = resolve; });
   let releaseLateStart!: () => void;
   const heldLateStart = new Promise<void>(resolve => { releaseLateStart = resolve; });
+  let releaseRecovery!: () => void;
+  const heldRecovery = new Promise<void>(resolve => { releaseRecovery = resolve; });
   const scopeQuestions = Array.from({ length: 9 }, (_, index) => `RAG16_SCOPE_${index + 1}`);
   const scopeQuery = scopeQuestions.join('; ');
   const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
@@ -234,6 +236,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (input.query === 'Gateway port transport failure') await heldTransport;
     if (input.query === 'Gateway port rejected status') await heldRejectedStatus;
     if (input.query === 'Gateway port delayed start cancellation') await heldLateStart;
+    if (input.query === 'Gateway port recovery cancellation') await heldRecovery;
     const coverage = port && text.includes('Gateway port is 8080.')
       ? [{ question: input.questions[0], sourceId: port, quote: 'port is 8080' }] : [];
     if (input.query.includes('conflicting')) return { text: JSON.stringify({
@@ -252,7 +255,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
   let page: Page | undefined;
   type Entry = { action: string; payload: Json; response: { data?: { success?: boolean; research?: ResearchResultV1 } } };
-  type StatusFault = { requestId: string; failed: boolean; replyFailure?: boolean; cancelHeld: Promise<void>; releaseCancel: () => void; readback?: Json };
+  type StatusFault = { requestId: string; failed: boolean; replyFailure?: boolean; cancelHeld: Promise<void>; releaseCancel: () => void;
+    readback?: Json; readbackHeld?: Promise<void>; releaseReadback?: () => void };
   type StartFault = { query: string; queued?: Json; held: Promise<void>; release: () => void };
   try {
     page = await getStableWindow(app); await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
@@ -332,6 +336,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
         if (faultRequest && request.action === 'researchStatus' && !fault.readback) {
           fault.readback = response;
           fault.releaseCancel();
+          if (fault.readbackHeld) await fault.readbackHeld;
         }
         return response;
       });
@@ -456,6 +461,45 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
       releaseTransport();
     }
 
+    const recoveryQuery = 'Gateway port recovery cancellation';
+    await writeFile(join(vault, 'concepts/recovery-cancel.md'), raw(recoveryQuery, 'Gateway port is 8080. Recovery readback cancellation evidence.'));
+    await queryInput.fill(recoveryQuery); await page.getByTestId('chat-knowledge-search-submit').click();
+    await expect.poll(() => planningCalls.some(call => call.query === recoveryQuery), { timeout: 30000 }).toBe(true);
+    const recoveryStart = (await entries()).find(entry => entry.action === 'researchStart' && entry.payload.query === recoveryQuery)!;
+    expect(recoveryStart).toBeTruthy();
+    await app.evaluate((_electron, requestId) => {
+      const fault = (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault;
+      Object.assign(fault, { requestId, failed: false, replyFailure: false, readback: undefined });
+      fault.cancelHeld = new Promise<void>(resolve => { fault.releaseCancel = resolve; });
+      fault.readbackHeld = new Promise<void>(resolve => { fault.releaseReadback = resolve; });
+    }, String(recoveryStart.payload.requestId));
+    try {
+      await expect.poll(() => app.evaluate(() => (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault.readback),
+        { timeout: 10000 }).toBeTruthy();
+      await expect.poll(async () => (await entries()).some(entry => entry.action === 'researchCancel'
+        && entry.payload.requestId === recoveryStart.payload.requestId && entry.response.data?.success === true), { timeout: 10000 }).toBe(true);
+      const beforeRecoveryCancel = (await entries()).filter(entry => entry.action === 'researchCancel'
+        && entry.payload.requestId === recoveryStart.payload.requestId).length;
+      await page.getByTestId('chat-knowledge-cancel').click();
+      await expect.poll(async () => (await entries()).filter(entry => entry.action === 'researchCancel'
+        && entry.payload.requestId === recoveryStart.payload.requestId).length, { timeout: 10000 }).toBeGreaterThan(beforeRecoveryCancel);
+      const ownerReadback = await app.evaluate(() => (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault.readback);
+      await app.evaluate(() => (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault.releaseReadback!());
+      await expect(page.getByTestId('chat-research-status')).toHaveText('Research cancelled', { timeout: 10000 });
+      await expect(page.getByTestId('chat-knowledge-search-submit')).toBeEnabled({ timeout: 10000 });
+      const recoverySelection = { requestId: String(recoveryStart.payload.requestId), sessionKey: owner.activeSessionKey, workspaceId: owner.id };
+      let recoveryStopped: { research?: ResearchResultV1 } = {};
+      await expect.poll(async () => {
+        recoveryStopped = await host<{ research?: ResearchResultV1 }>(page!, 'knowledge', 'researchStatus', recoverySelection);
+        return recoveryStopped.research;
+      }, { timeout: 10000 }).toMatchObject({ status: 'cancelled', phase: 'finished', stopReason: 'cancelled' });
+      receipt.recoveryCancellation = { ownerReadback, terminal: recoveryStopped.research };
+      steps.cancelDuringRecoveryKeepsListener = true; steps.explicitCancelWinsRecoveryReadback = true;
+    } finally {
+      await app.evaluate(() => (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault.releaseReadback?.());
+      releaseRecovery();
+    }
+
     const rejectedQuery = 'Gateway port rejected status';
     await writeFile(join(vault, 'concepts/rejected-status.md'), raw(rejectedQuery, 'Gateway port is 8080. Research status delivery can fail.'));
     await queryInput.fill(rejectedQuery); await page.getByTestId('chat-knowledge-search-submit').click();
@@ -554,7 +598,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (page) await page.screenshot({ path: testInfo.outputPath('research-failure.png'), fullPage: true });
     throw error;
   } finally {
-    releaseHeld(); releaseTransport(); releaseRejectedStatus(); releaseLateStart(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
+    releaseHeld(); releaseTransport(); releaseRejectedStatus(); releaseLateStart(); releaseRecovery(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
+    await app.evaluate(() => (globalThis as unknown as { rag16StatusFault?: StatusFault }).rag16StatusFault?.releaseReadback?.()).catch(error => { receipt.readbackReleaseError = String(error); });
     await app.evaluate(() => (globalThis as unknown as { rag16StartFault?: StartFault }).rag16StartFault?.release()).catch(error => { receipt.startReleaseError = String(error); });
     if (page && receipt.status !== 'pass') { try { receipt.logs = await host(page, 'logs', 'recent'); receipt.entries = await app.evaluate(() => (globalThis as unknown as { rag16Entries?: Entry[] }).rag16Entries ?? []); } catch (error) { receipt.logReadError = String(error); } }
     await writeFile(testInfo.outputPath('research-receipt.json'), JSON.stringify(receipt, null, 2));

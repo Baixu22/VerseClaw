@@ -1,0 +1,39 @@
+{
+  "actor": "codex-g2-r53",
+  "driven_by": "agent",
+  "sourceParent": "270da250a3ce7b5ff74b452d7733fd0ae8348b24",
+  "inputs": [
+    {
+      "path": "src/lib/knowledge-research.ts",
+      "sha256": "5d0386ff46cb0a6f8b550afee4e5f16b49187b5fe711cc6b75bd417c2606d2c9"
+    },
+    {
+      "path": "tests/unit/project-rag-research-controller.test.ts",
+      "sha256": "e81e288f7e892f372d2ae720c9013b405ad1fb85270f5d75e5ea0010f163b7fe"
+    },
+    {
+      "path": "tests/e2e/project-rag-research.spec.ts",
+      "sha256": "1e5298fb38465aa76095b15776cd2d0551cffa2b6832d292ff0fc7fb488d3ea0"
+    },
+    {
+      "path": "docs/dev/project-rag/RESEARCH-CONTRACT.md",
+      "sha256": "fe957cd6eaade1b1d75af0b5d3e39005beb28e6bcedc6f4ab5cd99264aa4567e"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-bounded-research.md",
+      "sha256": "c0bba2da8ef891a29b6e021112f0340612e23de10ad90d7c7ec64c4019e85720"
+    },
+    {
+      "path": "README.md",
+      "sha256": "807ea24577979378a0d427c150c2a6ddc80b2cfc9017f797e5eb3ed5e67fc552"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "14f7ea6cfd8084742658dc6fb7d6bb31fd0120cf067c5a8e763ca502a5fd5968"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "1ece61fb43c69177d26d4df1d8cdf8d4ae6f2dd008fbd3c6ee96ee9481f618ac"
+    }
+  ]
+}
