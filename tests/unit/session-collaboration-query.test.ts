@@ -342,8 +342,8 @@ describe('A2 shared session discovery and detail', () => {
     expect(validateSessionCollaborationPage(selected, unchecked)).toMatchObject({ state: 'unknown', items: [] });
     receipts.push({ case: 'shared-reply-boundary', rejectedCases: corruptions.map(([name, , state]) => ({ name, state })), unselectedFieldRejected: true });
   });
-  it.each([{ limit: 51 }, { limit: 0 }, { fields: ['unknown'] }, { cursor: 'x'.repeat(257) }, { requester: { ...scope(), writeClaim: true } }])
-    ('rejects an unbounded or authority-bearing query before owner hydration: %j', async patch => {
+  it.each([{ limit: 51 }, { limit: 0 }, { fields: ['unknown'] }, { cursor: 'x'.repeat(257) }, { requester: { ...scope(), writeClaim: true } }])(
+    'rejects an unbounded or authority-bearing query before owner hydration: %j', async patch => {
       const read = vi.spyOn(metadata, 'loadCombinedSessionStoreForGateway');
       await expect(runtime({ ...query(), ...patch } as SessionCollaborationQuery)).rejects.toThrow(); expect(read).not.toHaveBeenCalled();
     });
