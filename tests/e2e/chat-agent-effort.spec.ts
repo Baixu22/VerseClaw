@@ -131,6 +131,14 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
 
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        hostApi: {
+          '["agents","list",null]': {
+            success: true,
+            agents: [{ id: 'main', name: 'Main', isDefault: true, modelRef: 'test/model', modelDisplay: 'test/model',
+              mainSessionKey: SESSION_KEY, reasoningEffort: 'high', channelTypes: [], workspace: '~/.openclaw/workspace' }],
+            defaultAgentId: 'main', defaultModelRef: 'test/model', configuredChannelTypes: [], channelOwners: {}, channelAccountOwners: {},
+          },
+        },
         gatewayRpcByMethod: {
           'sessions.list': { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } },
           'chat.history': { success: true, result: { messages: [] } },
