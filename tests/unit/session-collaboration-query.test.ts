@@ -159,6 +159,29 @@ describe('A2 shared session discovery and detail', () => {
     const after = ownerState(); expect(after).toEqual(before);
     receipts.push({ case: 'shared-ui-agent-owners', input, ui, detail, before, after, beforeSha256: hash(before), afterSha256: hash(after) });
   });
+  it('keeps owned runs running without observed actions and rejects empty ready actions across consumers', async () => {
+    const before = structuredClone(ownerState()), input = query({ target: scope(), limit: 1 });
+    const { api, rpc } = main();
+    const call = vi.fn(async (request: { params?: unknown }) => runtime((request.params as { query: SessionCollaborationQuery }).query));
+    const opts = { agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: call as never };
+    const ui = await readSessionCollaborationPage(input, api.query);
+    expect(ui).toMatchObject({ state: 'ready', items: [{ status: 'running', sources: { run: { state: 'ready' }, actions: { state: 'unknown', value: null } } }] });
+    const list = await createSessionsListTool(opts).execute('owned-run-list', { collaboration: true });
+    const status = await createSessionStatusTool(opts).execute('owned-run-status', { readOnly: true, scope: scope() });
+    expect((list.details as SessionCollaborationPage).items[0]).toEqual(ui.items[0]); expect(status.details).toEqual(ui);
+    const malformed = structuredClone(ui);
+    malformed.items[0].sources.actions = { owner: 'session-task-effects/bash-processes', state: 'ready', value: [], readAt: Date.now() };
+    expect(validateSessionCollaborationPage(input, malformed)).toMatchObject({ state: 'unknown', reason: 'protocol-unverified', items: [] });
+    rpc.mockResolvedValue({ page: malformed }); opts.callGateway = vi.fn(async () => ({ page: malformed })) as never;
+    const rejectedUi = await readSessionCollaborationPage(input, api.query);
+    const rejectedList = await createSessionsListTool(opts).execute('empty-ready-list', { collaboration: true });
+    const rejectedStatus = await createSessionStatusTool(opts).execute('empty-ready-status', { readOnly: true, scope: scope() });
+    expect(rejectedUi).toMatchObject({ state: 'unknown', reason: 'protocol-unverified', items: [] });
+    expect(rejectedList.details).toEqual(rejectedUi); expect(rejectedStatus.details).toEqual(rejectedUi);
+    const after = ownerState(); expect(after).toEqual(before);
+    receipts.push({ case: 'owned-run-without-actions-and-empty-ready-rejection', input, ui, list: list.details, status: status.details,
+      malformed, rejectedUi, rejectedList: rejectedList.details, rejectedStatus: rejectedStatus.details, beforeSha256: hash(before), afterSha256: hash(after) });
+  });
   it('filters by real TaskSystem goals and workspace without switching the active workspace', async () => {
     const goal = (await runtime(query({ search: 'quantum needle' }))).page;
     expect(goal.items.map(row => row.sessionKey)).toEqual([B]);

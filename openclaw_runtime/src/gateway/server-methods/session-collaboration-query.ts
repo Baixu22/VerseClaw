@@ -140,7 +140,7 @@ export async function readSessionCollaborationQuery(input: unknown, context: Gat
             if (fields.has('execution') && row.sources.execution.state !== 'ready') row.sources.execution = unavailable('execution-domain');
           }
         }
-        if (row.sources.run.state === 'ready' || (row.sources.actions.state === 'ready' && row.sources.actions.value.length)) row.status = 'running';
+        if (row.sources.run.state === 'ready' || row.sources.actions.state === 'ready') row.status = 'running';
         else if (row.sources.run.state === 'empty' && row.sources.actions.state === 'empty') row.status = 'idle';
       }
       if (search && ![row.label, key, ...references?.map(reference => reference.objective) ?? []].some(text => text.toLocaleLowerCase().includes(search))) {
