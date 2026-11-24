@@ -61,7 +61,7 @@ export async function readSessionCollaborationQuery(input: unknown, context: Gat
   const requester = sessionActivityOwnerScope(query.requester.sessionKey, store[query.requester.sessionKey]);
   if (!requester) return fail('unavailable', 'owner-missing');
   try { normalizeAutonomySessionScope(query.requester, requester); }
-  catch { return fail('stale', 'generation-changed'); }
+  catch { return fail('stale', query.requester.sessionGeneration === requester.sessionGeneration ? 'scope-mismatch' : 'generation-changed'); }
   const sandboxed = resolveSandboxRuntimeStatus({ cfg, sessionKey: requester.sessionKey }).sandboxed;
   const checker = createSessionVisibilityRowChecker({ action: query.target ? 'status' : 'list', requesterSessionKey: requester.sessionKey,
     visibility: resolveEffectiveSessionToolsVisibility({ cfg, sandboxed }), a2aPolicy: createAgentToAgentPolicy(cfg) });
@@ -96,7 +96,8 @@ export async function readSessionCollaborationQuery(input: unknown, context: Gat
           actions: unread('session-task-effects/bash-processes'), origin: unread('sessions'), execution: unread('execution-domain') } };
       if (!scope) row.sources.session = unavailable('sessions', 'owner-missing', 'unknown');
       else {
-        if (query.target) { try { normalizeAutonomySessionScope(query.target, scope); } catch { return fail('stale', 'generation-changed'); } }
+        if (query.target) { try { normalizeAutonomySessionScope(query.target, scope); }
+          catch { return fail('stale', query.target.sessionGeneration === scope.sessionGeneration ? 'scope-mismatch' : 'generation-changed'); } }
         if (query.workspace && scope.projectId !== query.workspace.projectId) return fail('unavailable', 'scope-mismatch');
         row.sources.session = { owner: 'sessions', state: 'ready', readAt: Date.now(), value: { scope, agentId: parseAgentSessionKey(key)!.agentId } };
         row.detail = { scope };

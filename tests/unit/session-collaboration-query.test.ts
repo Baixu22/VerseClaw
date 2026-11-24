@@ -281,8 +281,10 @@ describe('A2 shared session discovery and detail', () => {
     });
     const reset = (await runtime(query())).page; expect(reset).toMatchObject({ state: 'stale', items: [] });
     const foreign = (await runtime(query({ target: scope(A, 'workspace-b', 'generation-a') }))).page;
-    expect(foreign).toMatchObject({ state: 'stale', items: [] });
-    receipts.push({ case: 'reset-and-cross-workspace', reset, foreign });
+    expect(foreign).toMatchObject({ state: 'stale', reason: 'scope-mismatch', items: [] });
+    const requesterMismatch = (await runtime(query({ requester: scope(A, 'workspace-b', 'generation-a') }))).page;
+    expect(requesterMismatch).toMatchObject({ state: 'stale', reason: 'scope-mismatch', items: [] });
+    receipts.push({ case: 'reset-and-cross-workspace', reset, foreign, requesterMismatch });
   });
   it.each(['self', 'tree', 'agent'] as const)('applies original %s visibility before hydrating task details', async visibility => {
     mocks.cfg = { tools: { sessions: { visibility } } };
