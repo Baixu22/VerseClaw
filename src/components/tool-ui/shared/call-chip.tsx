@@ -186,7 +186,7 @@ export function CallChip({
       <span
         aria-hidden="true"
         data-testid="chat-call-chip-progress"
-        className="pointer-events-none absolute inset-0 origin-left motion-reduce:!transition-none"
+        className="call-chip-progress pointer-events-none absolute inset-0 origin-left motion-reduce:!transition-none"
         style={{
           backgroundColor: fillBackground,
           transform: `scaleX(${progress})`,

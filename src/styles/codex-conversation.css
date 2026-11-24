@@ -414,6 +414,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tool-activity-call-chip .call-chip-progress {
+    transition: none !important;
+  }
+
   .tool-activity-group .tool-activity-shimmer {
     animation: none !important;
     transition: none !important;

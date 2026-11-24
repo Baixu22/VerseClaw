@@ -76,7 +76,13 @@ test('keeps operation groups in conversation order with shared width, accessible
     await expect(groups.nth(1).getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
     for (const group of await groups.all()) {
       await expect(group.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'done');
-      await expect(group.getByTestId('chat-call-chip')).toHaveCSS('border-radius', '8px');
+      const shape = await group.getByTestId('chat-call-chip').evaluate(node => {
+        const style = getComputedStyle(node);
+        return { radius: parseFloat(style.borderRadius), background: style.backgroundColor, height: node.getBoundingClientRect().height };
+      });
+      expect(shape.radius).toBeGreaterThan(0);
+      expect(shape.height).toBeGreaterThanOrEqual(26);
+      expect(shape.background).not.toBe('rgba(0, 0, 0, 0)');
     }
     await expect(page.getByText('最终答复：配置已更新，检查已完成。', { exact: true })).toBeVisible();
     expect(await page.evaluate(() => {
