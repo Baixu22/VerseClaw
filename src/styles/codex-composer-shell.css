@@ -595,6 +595,17 @@
   color: inherit;
 }
 
+.chat-context-token-tag.codex-composer-control,
+.chat-context-token-tag.codex-composer-control:hover,
+.chat-context-token-tag.codex-composer-control.is-active {
+  background: transparent;
+  box-shadow: none;
+}
+
+.chat-context-token-tag .ant-progress svg circle {
+  fill: none;
+}
+
 .chat-context-token-tag .ant-progress-circle-path {
   stroke: currentColor !important;
   transition: stroke-dashoffset 150ms linear !important;
@@ -605,9 +616,13 @@
 }
 
 .chat-context-details {
-  width: min(420px, calc(100vw - 16px));
-  max-height: min(680px, calc(100vh - 32px));
+  width: min(384px, calc(100vw - 16px));
+  max-height: min(600px, calc(100vh - 32px));
   font-size: 13px;
+}
+
+.chat-context-composition-line {
+  height: 2px;
 }
 
 .chat-context-source-row {

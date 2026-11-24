@@ -55,6 +55,7 @@ for (const theme of ['light', 'dark'] as const) {
       const tag = page.getByTestId('chat-context-indicator');
       await expect(tag).toHaveAttribute('aria-label', 'Context: 40,000 of 128,000 tokens');
       await expect(tag).toHaveText('');
+      await expect(tag).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
       await expect(tag).toHaveCSS('width', '30px');
       await expect(tag.locator('svg')).toHaveCount(1);
       await expect(tag.locator('.ant-progress-circle-path').first()).toHaveCSS('stroke', await tag.evaluate(element => getComputedStyle(element).color));
@@ -65,6 +66,7 @@ for (const theme of ['light', 'dark'] as const) {
       await expect(details).toBeVisible();
       await expect(details.getByTestId('chat-context-usage')).toHaveText('40,000 / 128,000 tokens');
       await expect(details.getByTestId('chat-context-composition-bar').locator('span')).toHaveCount(6);
+      await expect(details.getByTestId('chat-context-composition-bar')).toHaveCSS('height', '2px');
       await expect(details).toContainText('Share of recorded characters');
       await details.locator('summary').filter({ hasText: 'Project files' }).click();
       await expect(details.getByText('AGENTS.md', { exact: true })).toBeVisible();

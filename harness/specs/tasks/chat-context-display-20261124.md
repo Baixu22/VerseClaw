@@ -6,7 +6,7 @@ scenario: gateway-backend-communication
 scenarios:
   - windows-ui-v2
 taskType: runtime-bridge
-diffBase: 6c764bdc2d5ddf5390c74c09b0d6dd026ffbdeb3
+diffBase: 1f87f31d5d7064e97b53eed03d1f12862ff43fc3
 intent: 复用 Lobe UI TokenTag，为聊天输入框提供上下文用量、悬停组成详情和持久化显示开关。
 requiredRules:
   - backend-communication-boundary
@@ -48,7 +48,7 @@ touchedAreas:
   - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/rules/ui-motion-material-system.md
 expectedUserBehavior:
-  - 输入框仅显示圆环；已用量和模型容量在悬停详情显示，高用量状态可辨认，未知读数显示明确的待测状态。
+  - 输入框仅显示无填充的线条圆环；已用量和模型容量在悬停详情显示，高用量状态可辨认，未知读数显示明确的待测状态。
   - 悬停或键盘聚焦展示上下文组成；点击可保持详情，Escape 和外部点击关闭。
   - 标题、用量与关闭入口保持可见；文件、技能、工具和记忆来源在独立区域滚动。
   - 详情采用紧凑分项表格、来源颜色和所记录字符的占比条；详细来源动作可展开全部来源组。
@@ -61,6 +61,7 @@ acceptance:
   - 延迟返回、会话切换和重置不会展示上一会话的组成或记忆回执。
   - 完成四语、浅色/深色、窄窗口及键盘交互的 Electron 覆盖。
   - 设置读写沿用 host-api；所有测试证据标记为 agent 驱动。
+  - 文件内容经真实报告生成器和Main接口显示；来源文件变化会更新界面计量，未测量的截断和摘要计数保持未知。
 requiredTests:
   - pnpm exec vitest run tests/unit/session-context.test.ts tests/unit/chat-context-indicator.test.tsx tests/unit/chat-context-pressure.test.tsx tests/unit/usage-live-scope.test.ts tests/unit/chat-input.test.tsx --maxWorkers=1
   - pnpm run typecheck

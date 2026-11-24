@@ -74,7 +74,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
   const receipts = receiptResult?.key === receiptKey && receiptResult.state === 'ready' ? receiptResult.receipts : [];
   const used = matchingRange?.usageSource === 'unavailable' ? null : matchingRange?.usedTokens ?? null;
   const limit = matchingRange?.maxTokens ?? null;
-  const truncatedMessageCount = matchingRange ? compactionStatus?.truncatedMessageCount ?? matchingRange.truncatedMessageCount ?? 0 : 0;
+  const truncatedMessageCount = matchingRange ? compactionStatus?.truncatedMessageCount ?? matchingRange.truncatedMessageCount ?? null : null;
   const validUsed = used != null && Number.isFinite(used) && used >= 0 ? used : null;
   const validLimit = limit != null && Number.isFinite(limit) && limit > 0 ? limit : null;
   const utilisation = validUsed != null && validLimit != null ? validUsed / validLimit : null;
@@ -143,7 +143,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
         if (!pinned && event.detail === 0) window.requestAnimationFrame(() => layerRef.current?.querySelector<HTMLButtonElement>('button')?.focus());
       }}
     >
-      <TokenTag as="span" role="presentation" tabIndex={-1} aria-hidden="true" size={16} value={utilisation == null ? 0 : validUsed!} maxValue={validLimit ?? 1} showInfo={false} className="pointer-events-none" style={{ height: 18, width: 18, color: 'inherit' }} />
+      <TokenTag as="span" role="presentation" tabIndex={-1} aria-hidden="true" size={16} value={utilisation == null ? 0 : validUsed!} maxValue={validLimit ?? 1} showInfo={false} className="pointer-events-none" style={{ height: 18, width: 18, color: 'inherit', background: 'transparent' }} />
     </button>
     {open && createPortal(<div
       ref={layerRef}
@@ -176,7 +176,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
       <section className="border-t border-border px-3 py-2" aria-label={t('contextDisplay.composition')}>
         <div className="flex items-center justify-between gap-3 px-1 py-1"><h3 className="font-medium">{t('contextDisplay.composition')}</h3><span className="text-xs text-muted-foreground">{t('contextDisplay.sourceShare')}</span></div>
         {composition ? <>
-          <div className="mx-1 mb-2 mt-1 flex h-1.5 overflow-hidden rounded-full bg-muted" data-testid="chat-context-composition-bar" role="img" aria-label={t('contextDisplay.sourceShare')}>
+          <div className="chat-context-composition-line mx-1 mb-2 mt-1 flex overflow-hidden rounded-full bg-muted" data-testid="chat-context-composition-bar" role="img" aria-label={t('contextDisplay.sourceShare')}>
             {sourceParts.filter(part => part.chars != null && part.chars > 0).map(part => <span key={part.id} className={part.color} style={{ width: `${sourceShare(part.chars) ?? 0}%` }} title={`${t(`contextDisplay.${part.id}`)}: ${full(part.chars!)}`} />)}
           </div>
           <p className="px-1 pb-2 text-xs text-muted-foreground">{t('contextDisplay.sourceTotal', { value: full(sourceTotalChars) })}</p>
@@ -190,7 +190,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
           <p className="px-1 pb-2 text-muted-foreground">{t(composition.source === 'estimate' ? 'contextDisplay.estimatedReport' : 'contextDisplay.runtimeReport')} · {new Date(composition.generatedAt).toLocaleTimeString()}{composition.modelRef && composition.modelRef !== matchingRange?.modelRef ? ` · ${composition.modelRef}` : ''}</p>
         </> : <p className="px-1 py-2 leading-5 text-muted-foreground" data-testid="chat-context-composition-pending">{t('contextDisplay.compositionPending')}</p>}
         {matchingRange?.retainedMessageCount != null && <p className="px-1 py-2 text-muted-foreground">{t('contextDisplay.loadedMessages', { count: matchingRange.retainedMessageCount })}</p>}
-        {truncatedMessageCount > 0 && <p className="px-1 pb-2 text-amber-700 dark:text-amber-400" data-testid="chat-context-hidden-messages">{t('contextDisplay.hiddenMessages', { count: truncatedMessageCount })}</p>}
+        {truncatedMessageCount != null && truncatedMessageCount > 0 && <p className="px-1 pb-2 text-amber-700 dark:text-amber-400" data-testid="chat-context-hidden-messages">{t('contextDisplay.hiddenMessages', { count: truncatedMessageCount })}</p>}
       </section>
       {composition && <section className="border-t border-border px-4 py-3" aria-label={t('contextDisplay.memory')}>
         <h3 className="mb-2 flex items-center gap-2 font-medium"><Brain className="size-3.5 text-muted-foreground" aria-hidden="true" />{t('contextDisplay.memory')}</h3>

@@ -39,6 +39,8 @@ describe("live usage scope", () => {
     mock.window.mockResolvedValue({ modelRef: "test/model", maxTokens: 128000 });
     const result = await createUsageApi().contextRange({ sessionKey: "agent:main:a", expectedSessionId: "generation-a", usedTokens: 900000, messageCount: 12 });
     expect(result.range).toMatchObject({ usedTokens: 4096, maxTokens: 8192, sessionId: "generation-a", retainedMessageCount: 12 });
+    expect(result.range).not.toHaveProperty("truncatedMessageCount");
+    expect(result.range).not.toHaveProperty("summarizedMessageCount");
     expect(mock.snapshot).toHaveBeenCalledWith("agent:main:a", "generation-a");
   });
 });

@@ -297,8 +297,6 @@ export function createUsageApi(): CompleteHostServiceRegistry['usage'] {
           visibleMessageStartIndex: messageCount > 0 ? 0 : null,
           visibleMessageEndIndex: messageCount > 0 ? messageCount - 1 : null,
           retainedMessageCount: messageCount,
-          truncatedMessageCount: 0,
-          summarizedMessageCount: 0,
           status,
         },
       };

@@ -50,7 +50,7 @@ expectedUserBehavior:
 acceptance:
   - 真实模型引用选择、搜索、禁用、状态隔离、滑块提交和重置有自动检查。
   - agent驱动的Electron截图与交互证明两层切换、滑块及Tooltip隐藏、键盘和实际窄窗边界。
-  - Carbon实际查看参考及已验证初版，集中返回视觉判断和有限调整，回执与用量可回读。
+  - Carbon实际查看参考与初版截图，并直接修改指定组件的视觉代码；真实diff、回执和用量可回读。
   - 类型、四语、契约、通信、构建、所选Harness与源码绑定通过，失败记录保留。
 requiredTests:
   - pnpm exec vitest run tests/unit/chat-model-settings-card.test.tsx tests/unit/chat-agent-effort-popover.test.tsx tests/unit/chat-input.test.tsx tests/unit/chat-model-selection.test.ts --maxWorkers=1
