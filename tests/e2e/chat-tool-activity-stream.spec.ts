@@ -124,9 +124,40 @@ test('keeps operation groups in conversation order with shared width, accessible
     await expect(groups.nth(1).locator('[data-testid="chat-tool-activity-step"][data-kind="edit"] [data-testid="chat-call-chip"]')).toHaveCount(1);
     const expandedChip = groups.nth(1).getByTestId('chat-call-chip').first();
     await expect(expandedChip).toHaveAttribute('data-status', 'done');
-    const expandedShape = await expandedChip.evaluate(node => ({ radius: parseFloat(getComputedStyle(node).borderRadius), background: getComputedStyle(node).backgroundColor }));
+    const expandedShape = await expandedChip.evaluate(node => {
+      const name = node.querySelector<HTMLElement>('.font-medium')!;
+      const nameStyle = getComputedStyle(name);
+      return { radius: parseFloat(getComputedStyle(node).borderRadius), background: getComputedStyle(node).backgroundColor,
+        nameFontSize: parseFloat(nameStyle.fontSize), nameLineHeight: parseFloat(nameStyle.lineHeight) };
+    });
     expect(expandedShape.radius).toBeGreaterThan(0); expect(expandedShape.background).not.toBe('rgba(0, 0, 0, 0)');
+    expect(expandedShape.nameLineHeight).toBeGreaterThanOrEqual(expandedShape.nameFontSize * 1.3);
     await page.screenshot({ path: info.outputPath('history-expanded-dark-1280.png') });
+    const expandedNarrow: unknown[] = [];
+    for (const lang of ['en', 'ru']) {
+      await language(page, lang);
+      await pinWindowContentSize(app, { width: 375, height: 800 });
+      const group = groups.nth(1);
+      if (await group.getByTestId('chat-tool-activity-toggle').getAttribute('aria-expanded') !== 'true') {
+        await group.getByTestId('chat-tool-activity-toggle').click();
+      }
+      const chip = group.getByTestId('chat-call-chip').first();
+      await expect(chip).toBeVisible();
+      await expect.poll(() => chip.evaluate(node => {
+        const target = node.querySelector<HTMLElement>('.font-mono[title]')!;
+        return target.getBoundingClientRect().width;
+      })).toBeGreaterThan(40);
+      const shape = await chip.evaluate(node => ({ width: node.getBoundingClientRect().width,
+        nameWidth: node.querySelector<HTMLElement>('.font-medium')!.getBoundingClientRect().width,
+        targetWidth: node.querySelector<HTMLElement>('.font-mono[title]')!.getBoundingClientRect().width,
+        overflow: document.documentElement.scrollWidth > innerWidth }));
+      expect(shape.nameWidth).toBeLessThanOrEqual(shape.width * 0.43);
+      expect(shape.overflow).toBe(false);
+      expandedNarrow.push({ lang, viewportWidth: 375, ...shape });
+      await page.screenshot({ path: info.outputPath(`history-expanded-${lang}-dark-375.png`) });
+    }
+    await language(page, 'en');
+    await pinWindowContentSize(app, { width: 1280, height: 800 });
     await page.getByTestId('chat-workspace-toggle').click();
     await expect(page.getByTestId('artifact-panel-aside')).toBeVisible();
     const openPanel = await boundaries(page);
@@ -134,7 +165,7 @@ test('keeps operation groups in conversation order with shared width, accessible
     await page.getByTestId('artifact-panel-close').click();
     await expect(page.getByTestId('artifact-panel-aside')).toBeHidden();
     expect(errors).toEqual([]);
-    await writeFile(info.outputPath('history-geometry.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-output-ui', data: 'mocked history; real Electron rendering', measurements, openPanel, errors }, null, 2));
+    await writeFile(info.outputPath('history-geometry.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-output-ui', data: 'mocked history; real Electron rendering', measurements, expandedShape, expandedNarrow, openPanel, errors }, null, 2));
   } finally { await closeElectronApp(app); }
 });
 
@@ -176,6 +207,12 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     const gradient = await current.getByTestId('ai-element-shimmer').evaluate(node => getComputedStyle(node).backgroundImage);
     expect(gradient).toContain('rgb(255, 255, 255)');
     await expect(current.locator('.tool-activity-icon[data-kind="command"]')).toHaveCount(1);
+    const commandIcon = await current.locator('.tool-activity-icon').elementHandle();
+    const commandEntrance = await current.getByTestId('chat-tool-activity-text-enter').elementHandle();
+    await event(app, { type: 'command.output', toolCallId: 'live-command', itemId: 'live-command:output', command,
+      output: 'Collecting checks…\nRunning focused checks…\n', phase: 'chunk', status: 'running', ts: Date.now() });
+    expect(await current.locator('.tool-activity-icon').evaluate((node, previous) => node === previous, commandIcon)).toBe(true);
+    expect(await current.getByTestId('chat-tool-activity-text-enter').evaluate((node, previous) => node === previous, commandEntrance)).toBe(true);
     await page.screenshot({ path: info.outputPath('live-shimmer-dark-1280.png') });
     await current.getByTestId('chat-tool-activity-toggle').click();
     await expect(current.getByTestId('chat-tool-activity-toggle').getByTestId('ai-element-shimmer')).toHaveCount(0);
@@ -201,7 +238,13 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await expect(current.getByTestId('chat-tool-activity-label')).toContainText('当前记忆目标');
     await expect(current.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'latest-memory');
     await expect(current.locator('.tool-activity-icon[data-icon="memory"]')).toHaveCount(1);
+    const memoryIcon = await current.locator('.tool-activity-icon').elementHandle();
     await event(app, { type: 'tool.completed', toolCallId: 'latest-memory', name: 'memory_search', result: 'Memory lookup finished.', ts: Date.now() });
+    await event(app, { type: 'tool.started', toolCallId: 'latest-memory-next', name: 'memory_search', args: { query: '下一记忆目标' }, ts: Date.now() });
+    await expect(current.getByTestId('chat-tool-activity-label')).toContainText('下一记忆目标');
+    await expect(current.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'latest-memory-next');
+    expect(await current.locator('.tool-activity-icon').evaluate((node, previous) => node === previous, memoryIcon)).toBe(false);
+    await event(app, { type: 'tool.completed', toolCallId: 'latest-memory-next', name: 'memory_search', result: 'Next memory lookup finished.', ts: Date.now() });
     await event(app, { type: 'command.output', toolCallId: 'live-command', itemId: 'live-command:output', command,
       output: 'Collecting checks…\n  COMPLETE_RESULT: 18 checks passed.\n', phase: 'end', status: 'completed', exitCode: 0, ts: Date.now() });
     await event(app, { type: 'tool.completed', toolCallId: 'live-command', name: 'exec_command', result: 'COMPLETE_RESULT: 18 checks passed.', ts: Date.now() });
@@ -217,6 +260,7 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await expect(current.getByTestId('chat-run-terminal')).toHaveCount(1);
     await page.screenshot({ path: info.outputPath('completed-command-dark-1280.png') });
     await mkdir(info.outputPath('evidence'), { recursive: true });
-    await writeFile(join(info.outputPath('evidence'), 'live.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-output-ui', data: 'agent-generated runtime events; real Electron rendering', gradient, entrance, command, latestTargets: ['最新查询目标', '当前记忆目标'], status: 'passed' }, null, 2));
+    await writeFile(join(info.outputPath('evidence'), 'live.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-output-ui', data: 'agent-generated runtime events; real Electron rendering', gradient, entrance, command,
+      latestTargets: ['最新查询目标', '当前记忆目标', '下一记忆目标'], chunkKeepsIconAndEntrance: true, sameIconNewCallRestartsReveal: true, status: 'passed' }, null, 2));
   } finally { await closeElectronApp(app); }
 });

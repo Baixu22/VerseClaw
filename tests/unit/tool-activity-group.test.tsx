@@ -84,9 +84,15 @@ describe('tool activity disclosure', () => {
     const group = model(true);
     const view = render(<Harness group={group} />);
     const entrance = screen.getByTestId('chat-tool-activity-text-enter');
+    const icon = screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon');
     view.rerender(<Harness group={{ ...group, current: { ...group.current!, target: '/project/new-config.ts' } }} />);
     expect(screen.getByTestId('chat-tool-activity-text-enter')).toBe(entrance);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toBe(icon);
     expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('/project/new-config.ts');
+    const nextRead = { ...group.current!, id: 'read-next', target: '/project/next-config.ts' };
+    view.rerender(<Harness group={{ ...group, current: nextRead, entries: [...group.entries, nextRead] }} />);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).not.toBe(icon);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).not.toBe(entrance);
     const next = { id: 'search-next', name: 'web_search', kind: 'search' as const, target: 'latest query', running: true, order: 1 };
     view.rerender(<Harness group={{ ...group, current: next, entries: [...group.entries, next] }} />);
     expect(screen.getByTestId('chat-tool-activity-text-enter')).not.toBe(entrance);

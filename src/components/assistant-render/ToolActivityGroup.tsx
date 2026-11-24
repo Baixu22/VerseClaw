@@ -65,7 +65,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
         onClick={() => onExpandedChange(!expanded)}
         title={target ?? label}
       >
-        <ToolActivityIcon kind={summaryEntry?.kind ?? 'other'} iconId={summaryEntry?.iconId} reveal={isRunning && !expanded} />
+        <ToolActivityIcon key={isRunning && !expanded ? current?.id : 'idle'} kind={summaryEntry?.kind ?? 'other'} iconId={summaryEntry?.iconId} reveal={isRunning && !expanded} />
         <span className="tool-activity-label" data-testid="chat-tool-activity-label">
           {isRunning && !expanded ? <span key={current?.id} className="tool-activity-text-enter" data-testid="chat-tool-activity-text-enter" data-tool-id={current?.id}>
             <Shimmer className="tool-activity-shimmer">{summaryText}</Shimmer>

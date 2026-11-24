@@ -88,8 +88,9 @@
 /* Tool operation strips stay grouped beneath their progress explanation. */
 .tool-activity-group {
   min-width: 0;
+  margin-block: 2px;
   color: var(--color-chat-secondary);
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 20px;
   letter-spacing: -0.005em;
 }
@@ -107,7 +108,7 @@
   min-width: 0;
   max-width: 100%;
   min-height: 26px;
-  padding: 3px 0;
+  padding: 2px 0;
   border: 0;
   border-radius: 6px;
   background: transparent;
@@ -133,7 +134,7 @@
 .tool-activity-step-toggle:focus-visible {
   color: var(--color-chat-foreground);
   outline: 1.5px solid color-mix(in srgb, var(--color-chat-foreground) 45%, var(--color-chat-secondary));
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .tool-activity-group[data-status='error'] .tool-activity-toggle {
@@ -161,22 +162,39 @@
 
 .tool-activity-strip-toggle,
 .tool-activity-terminal > .tool-activity-strip-toggle {
-  min-height: 32px;
+  min-height: 30px;
   padding: 0;
+  border-radius: 11px;
 }
 
 .tool-activity-group .tool-activity-call-chip {
+  height: 30px;
+  gap: 6px;
+  padding-inline: 11px;
+  border-radius: 11px;
   background-color: hsl(var(--surface-input));
 }
 
+.tool-activity-call-chip > [title] {
+  line-height: 18px;
+}
+
 .tool-activity-call-chip:not([data-status='error']) {
+  border-color: color-mix(in srgb, var(--color-chat-tray-border) 55%, transparent);
+}
+
+.tool-activity-strip-toggle:hover .tool-activity-call-chip:not([data-status='error']),
+.tool-activity-strip-toggle[aria-expanded='true'] .tool-activity-call-chip:not([data-status='error']) {
   border-color: var(--color-chat-tray-border);
+  background-color: color-mix(in srgb, var(--color-chat-foreground) 4%, hsl(var(--surface-input)));
 }
 
 .tool-activity-text-enter {
-  display: inline-block;
+  display: block;
   max-width: 100%;
-  vertical-align: bottom;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   animation: tool-activity-text-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) 1 both;
 }
 
@@ -205,7 +223,11 @@
 }
 
 .tool-activity-icon svg[viewBox='0 0 24 24'] {
-  stroke-width: 1.85;
+  stroke-width: 1.65;
+}
+
+.tool-activity-icon:is([data-icon='code'], [data-icon='config'], [data-icon='table'], [data-icon='memory'], [data-icon='git-diff']) svg {
+  stroke-width: 1.5;
 }
 
 .tool-activity-icon-base {
@@ -214,11 +236,16 @@
 
 .tool-activity-chevron {
   flex: none;
-  width: 14px;
-  height: 14px;
-  stroke-width: 2;
-  opacity: 0;
+  width: 12px;
+  height: 12px;
+  stroke-width: 1.65;
+  opacity: 0.35;
   transition: opacity 140ms ease-out, transform 150ms ease-out;
+}
+
+.tool-activity-call-chip .tool-activity-chevron {
+  width: 10px;
+  height: 10px;
 }
 
 .tool-activity-toggle .tool-activity-chevron {
@@ -251,7 +278,7 @@
   inset: 0;
   pointer-events: none;
   color: var(--color-white, #fff);
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.32));
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.18));
   -webkit-mask-image: linear-gradient(110deg, transparent 10%, #fff 50%, transparent 90%);
   mask-image: linear-gradient(110deg, transparent 10%, #fff 50%, transparent 90%);
   -webkit-mask-repeat: no-repeat;
@@ -268,10 +295,10 @@
     opacity: 0;
   }
   18% {
-    opacity: 1;
+    opacity: 0.86;
   }
   82% {
-    opacity: 1;
+    opacity: 0.86;
   }
   100% {
     -webkit-mask-position: 260% 0;
@@ -285,12 +312,12 @@
   background-image: linear-gradient(
     110deg,
     var(--color-chat-secondary) 0%,
-    var(--color-chat-secondary) 35%,
+    var(--color-chat-secondary) 40%,
     var(--color-white, #fff) 50%,
-    var(--color-chat-secondary) 65%,
+    var(--color-chat-secondary) 60%,
     var(--color-chat-secondary) 100%
   );
-  background-size: 220% 100%;
+  background-size: 240% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -300,15 +327,20 @@
 /* Expanded sequential log aligned along a 1px connector under the 16px header icon. */
 .tool-activity-details {
   min-width: 0;
-  margin: 4px 0 2px 7px;
+  margin: 4px 0 2px 7.5px;
   border-inline-start: 1px solid var(--color-chat-tray-border);
-  padding: 1px 0 1px 16px;
+  padding: 2px 0 2px 15.5px;
   font-size: 13px;
   line-height: 20px;
 }
 
 .tool-activity-details [data-testid='chat-execution-step'] {
   gap: 0;
+}
+
+.tool-activity-details [data-testid='chat-execution-graph'] > div:first-child > div + div,
+.tool-activity-details [data-testid='chat-run-terminal'] + [data-testid='chat-run-terminal'] {
+  margin-top: 4px;
 }
 
 .tool-activity-details [data-testid='chat-execution-step']:empty {
@@ -338,7 +370,7 @@
 }
 
 .tool-activity-details [data-testid='chat-execution-step-detail'] {
-  margin: 4px 0 8px 24px;
+  margin: 4px 0 8px;
   padding: 8px 12px;
   border: 1px solid var(--color-chat-tray-border);
   border-radius: 8px;
@@ -401,11 +433,11 @@
 .tool-activity-terminal > button:focus-visible {
   color: var(--color-chat-foreground);
   outline: 1.5px solid color-mix(in srgb, var(--color-chat-foreground) 45%, var(--color-chat-secondary));
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .tool-activity-terminal pre {
-  margin: 4px 0 8px 24px;
+  margin: 4px 0 8px;
   padding: 8px 12px;
   border: 1px solid var(--color-chat-tray-border);
   border-radius: 8px;
@@ -414,6 +446,12 @@
   font-size: 12px;
   line-height: 18px;
   overflow-x: auto;
+}
+
+@media (max-width: 480px) {
+  .tool-activity-call-chip > .font-medium {
+    max-width: min(7rem, 42%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
