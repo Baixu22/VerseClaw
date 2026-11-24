@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { ElectronApplication, Page } from '@playwright/test';
+import type { ElectronApplication, Locator, Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, pinWindowContentSize, test } from './fixtures/electron';
 
 const SESSION = 'agent:main:main';
@@ -51,6 +51,13 @@ async function boundaries(page: Page) {
     return { viewportWidth: innerWidth, left: Math.abs(transcript.left - input.left), right: Math.abs(transcript.right - input.right),
       overflow: document.documentElement.scrollWidth > innerWidth };
   });
+}
+async function iconMotion(root: Locator) {
+  return root.locator('.tool-activity-icon').evaluateAll(icons => icons.flatMap(icon =>
+    icon.getAnimations({ subtree: true }).filter((animation): animation is CSSAnimation => animation instanceof CSSAnimation)
+      .map(animation => ({ name: animation.animationName, state: animation.playState,
+        iterations: String(animation.effect?.getComputedTiming().iterations) })),
+  ));
 }
 async function event(app: ElectronApplication, payload: Record<string, unknown>) {
   await app.evaluate(({ BrowserWindow }, event) => {
@@ -207,6 +214,11 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     const gradient = await current.getByTestId('ai-element-shimmer').evaluate(node => getComputedStyle(node).backgroundImage);
     expect(gradient).toContain('rgb(255, 255, 255)');
     await expect(current.locator('.tool-activity-icon[data-kind="command"]')).toHaveCount(1);
+    await expect(current.locator('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
+    const activeMotion = await iconMotion(current);
+    expect(activeMotion.map(animation => animation.name)).toEqual(expect.arrayContaining(['tool-activity-icon-cursor', 'tool-activity-icon-prompt']));
+    expect(activeMotion.every(animation => animation.state === 'running' && animation.iterations === 'Infinity')).toBe(true);
+    expect(await iconMotion(groups.first())).toEqual([]);
     const commandIcon = await current.locator('.tool-activity-icon').elementHandle();
     const commandEntrance = await current.getByTestId('chat-tool-activity-text-enter').elementHandle();
     await event(app, { type: 'command.output', toolCallId: 'live-command', itemId: 'live-command:output', command,
@@ -217,6 +229,10 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await current.getByTestId('chat-tool-activity-toggle').click();
     await expect(current.getByTestId('chat-tool-activity-toggle').getByTestId('ai-element-shimmer')).toHaveCount(0);
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCount(1);
+    await expect(current.locator('.tool-activity-icon[data-animated="true"]')).toHaveCount(0);
+    expect(await iconMotion(current)).toEqual([]);
+    await current.getByTestId('chat-tool-activity-toggle').hover();
+    expect(await iconMotion(current)).toEqual([]);
     await expect(current.getByTestId('chat-tool-activity-toggle').getByTestId('chat-call-chip')).toHaveCount(0);
     await expect(current.getByTestId('chat-run-terminal-toggle').getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
     await expect.poll(() => current.getByTestId('chat-call-chip-progress').evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).a)).toBeGreaterThan(0);
@@ -225,19 +241,40 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCSS('animation-name', 'none');
     await expect(current.getByTestId('chat-run-terminal-toggle').getByTestId('chat-call-chip-progress')).toHaveCSS('transition-duration', '0s');
-    await expect(current.locator('.tool-activity-icon-glint')).toHaveCSS('display', 'none');
+    expect(await iconMotion(current)).toEqual([]);
     await page.screenshot({ path: info.outputPath('live-expanded-reduced-motion.png') });
-    await page.emulateMedia({ reducedMotion: 'no-preference' });
     await current.getByTestId('chat-tool-activity-toggle').click();
+    await expect(current.locator('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
+    expect(await iconMotion(current)).toEqual([]);
+    await expect(current.getByTestId('ai-element-shimmer')).toHaveCSS('animation-name', 'none');
+    await page.screenshot({ path: info.outputPath('live-collapsed-reduced-motion.png') });
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect.poll(() => iconMotion(current)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'tool-activity-icon-cursor', iterations: 'Infinity' }),
+    ]));
     await event(app, { type: 'tool.started', toolCallId: 'latest-search', name: 'web_search', args: { query: '最新查询目标' }, ts: Date.now() });
     await expect(current.getByTestId('chat-tool-activity-label')).toContainText('最新查询目标');
     await expect(current.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'latest-search');
     await expect(current.locator('.tool-activity-icon[data-icon="search"]')).toHaveCount(1);
+    await expect(current.locator('.tool-activity-icon svg')).toHaveCSS('animation-name', 'tool-activity-icon-search');
     await event(app, { type: 'tool.completed', toolCallId: 'latest-search', name: 'web_search', result: 'Search finished.', ts: Date.now() });
+    await event(app, { type: 'tool.started', toolCallId: 'latest-web', name: 'web_fetch', args: { url: 'https://example.com/docs' }, ts: Date.now() });
+    await expect(current.locator('.tool-activity-icon[data-icon="web"]')).toHaveCount(1);
+    expect(await iconMotion(current)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'tool-activity-icon-globe', iterations: 'Infinity' }),
+    ]));
+    await event(app, { type: 'tool.completed', toolCallId: 'latest-web', name: 'web_fetch', result: 'Page fetched.', ts: Date.now() });
+    await event(app, { type: 'tool.started', toolCallId: 'latest-file', name: 'read_file', args: { path: 'docs/configuration.md' }, ts: Date.now() });
+    await expect(current.locator('.tool-activity-icon[data-icon="read"]')).toHaveCount(1);
+    expect(await iconMotion(current)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'tool-activity-icon-line', iterations: 'Infinity' }),
+    ]));
+    await event(app, { type: 'tool.completed', toolCallId: 'latest-file', name: 'read_file', result: 'File read.', ts: Date.now() });
     await event(app, { type: 'tool.started', toolCallId: 'latest-memory', name: 'memory_search', args: { query: '当前记忆目标' }, ts: Date.now() });
     await expect(current.getByTestId('chat-tool-activity-label')).toContainText('当前记忆目标');
     await expect(current.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'latest-memory');
     await expect(current.locator('.tool-activity-icon[data-icon="memory"]')).toHaveCount(1);
+    await expect(current.locator('.tool-activity-icon svg')).toHaveCSS('animation-name', 'tool-activity-icon-pop');
     const memoryIcon = await current.locator('.tool-activity-icon').elementHandle();
     await event(app, { type: 'tool.completed', toolCallId: 'latest-memory', name: 'memory_search', result: 'Memory lookup finished.', ts: Date.now() });
     await event(app, { type: 'tool.started', toolCallId: 'latest-memory-next', name: 'memory_search', args: { query: '下一记忆目标' }, ts: Date.now() });
@@ -254,13 +291,17 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await expect(current.getByTestId('chat-call-chip')).toHaveCount(0);
     await expect(current.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCount(0);
+    await expect(current.locator('.tool-activity-icon')).toHaveAttribute('data-animated', 'false');
+    await current.getByTestId('chat-tool-activity-toggle').hover();
+    expect(await iconMotion(current)).toEqual([]);
     await current.getByTestId('chat-tool-activity-toggle').click();
     await current.getByTestId('chat-run-terminal-toggle').click();
     await expect(current.getByTestId('terminal-output')).toContainText('COMPLETE_RESULT: 18 checks passed.');
     await expect(current.getByTestId('chat-run-terminal')).toHaveCount(1);
     await page.screenshot({ path: info.outputPath('completed-command-dark-1280.png') });
     await mkdir(info.outputPath('evidence'), { recursive: true });
-    await writeFile(join(info.outputPath('evidence'), 'live.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-output-ui', data: 'agent-generated runtime events; real Electron rendering', gradient, entrance, command,
-      latestTargets: ['最新查询目标', '当前记忆目标', '下一记忆目标'], chunkKeepsIconAndEntrance: true, sameIconNewCallRestartsReveal: true, status: 'passed' }, null, 2));
+    await writeFile(join(info.outputPath('evidence'), 'live.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-output-ui', data: 'agent-generated runtime events; real Electron rendering', gradient, entrance, command, activeMotion,
+      iconPolicy: 'current-folded-running-only', expandedIconsStatic: true, reducedMotionIconsStatic: true, settledHoverStatic: true,
+      latestTargets: ['最新查询目标', 'https://example.com/docs', 'docs/configuration.md', '当前记忆目标', '下一记忆目标'], chunkKeepsIconAndEntrance: true, sameIconNewCallUpdatesMotion: true, status: 'passed' }, null, 2));
   } finally { await closeElectronApp(app); }
 });

@@ -37,14 +37,20 @@ describe('tool activity disclosure', () => {
   it('moves the live shimmer into the details and preserves manual expansion on completion', () => {
     const view = render(<Harness group={model(true)} />);
     expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
     expect(within(screen.getByTestId('chat-tool-activity-toggle')).queryByTestId('chat-call-chip')).toBeNull();
     expect(within(screen.getByTestId('chat-tool-activity-toggle')).getByTestId('ai-element-shimmer')).toHaveTextContent('/project/config.ts');
     fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
     expect(within(screen.getByTestId('chat-tool-activity-toggle')).queryByTestId('ai-element-shimmer')).toBeNull();
     expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
     view.rerender(<Harness group={model()} />);
     expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'true');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
   });
   it('keeps the summary plain and the expanded progress strip tied to the call status', async () => {
     const view = render(<Harness group={model(true)} />);
@@ -76,8 +82,20 @@ describe('tool activity disclosure', () => {
     render(<Harness group={{ ...model(true), isCurrent: false }} />);
     expect(screen.queryByTestId('chat-call-chip')).toBeNull();
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
     fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
     expect(within(screen.getByTestId('chat-tool-activity-details')).getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
+  });
+  it.each(['completed', 'error', 'aborted'] as const)('keeps %s summaries static even when they retain the last call', (status) => {
+    render(<Harness group={{ ...model(true), status }} />);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'false');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+  });
+  it('keeps pending results static', () => {
+    render(<Harness group={{ ...model(), pendingResult: true }} />);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'false');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
   });
   it('reuses the text entrance for chunks and restarts it for the latest new operation', () => {

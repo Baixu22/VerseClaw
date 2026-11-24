@@ -6,7 +6,7 @@ scenario: gateway-backend-communication
 scenarios:
   - windows-ui-v2
 taskType: runtime-bridge
-diffBase: c76f588f3e1e56441522a0ce0560ec9515d4098f
+diffBase: 49aa08031a2a1a1f88d16a7bf6bc9911b1ae9989
 intent: 点击模型入口先显示当前强度、模型与官方Preview Slider交互，再从模型行展开Rare UI列表并隐藏滑块；头像浮层改为本地化强度文字Tooltip，前置开发由Codex完成，集中交Carbon优化视觉细节。
 requiredRules:
   - backend-communication-boundary
