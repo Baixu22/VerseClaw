@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { appendFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, pinWindowContentSize, test } from './fixtures/electron';
 import { createComposerContextFiles, persistComposerContext } from './fixtures/composer-context-report';
 import { hostInvoke } from './fixtures/fp-p1-harness';
@@ -9,11 +10,11 @@ const sessionKey = 'agent:main:main';
 const modelRef = 'custom-composerprobe/gpt-6.1-sol';
 
 for (const theme of ['light', 'dark'] as const) {
-  test(`uses recorded files for context and fits adjacent model controls (${theme})`, async ({ launchElectronApp, homeDir }, info) => {
+  test(`uses recorded files for context and fits adjacent model controls (${theme})`, async ({ launchElectronApp, homeDir, userDataDir }, info) => {
     test.setTimeout(180000);
     const sessionId = randomUUID();
     const files = await createComposerContextFiles(homeDir);
-    const input = { homeDir, ...files, sessionKey, sessionId, modelRef, usage: { input: 2400, output: 200, cacheRead: 1200, cacheWrite: 0 } };
+    const input = { homeDir, stateDir: join(userDataDir, 'openclaw-source-state'), ...files, sessionKey, sessionId, modelRef, usage: { input: 2400, output: 200, cacheRead: 1200, cacheWrite: 0 } };
     const first = await persistComposerContext(input, info.outputPath('first-inputs'));
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme, deviceScaleFactor: 1 });
     try {

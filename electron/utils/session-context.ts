@@ -1,5 +1,7 @@
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadExistingSqliteSessionStoreReadOnly, resolveSqliteSessionStoreDatabasePath } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
 import type { ContextSourceEntry, ContextSourceGroup, SessionContextComposition } from '@shared/types/context-display';
 import { isRecord } from '../services/payload-utils';
 import { resolveSessionTranscriptPath } from './session-files';
@@ -88,7 +90,11 @@ export async function getSessionContextSnapshot(sessionKey: string, expectedSess
     const sessionsDir = join(root, 'agents', agentId, 'sessions');
     let index: Record<string, unknown>;
     try {
-      const parsed: unknown = JSON.parse(await readFile(join(sessionsDir, 'sessions.json'), 'utf8'));
+      const storePath = join(sessionsDir, 'sessions.json');
+      // The runtime writes SQLite metadata. JSON is only a legacy source when no database exists.
+      const parsed: unknown = existsSync(resolveSqliteSessionStoreDatabasePath(storePath))
+        ? loadExistingSqliteSessionStoreReadOnly(storePath)
+        : JSON.parse(await readFile(storePath, 'utf8'));
       if (!isRecord(parsed)) continue;
       index = parsed;
     } catch (error) {

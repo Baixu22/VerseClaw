@@ -1,7 +1,7 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { isAbsolute, join, relative } from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const fixture = vi.hoisted(() => ({ root: '' }));
@@ -10,6 +10,7 @@ vi.mock('../../electron/utils/token-usage', async () => ({
   getOpenClawUsageDirs: () => [fixture.root],
 }));
 import { getSessionContextSnapshot, projectContextComposition } from '../../electron/utils/session-context';
+import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore, resolveSqliteSessionStoreDatabasePath } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
 
 const sessionKey = 'agent:main:context-a';
 const sessionId = 'generation-a';
@@ -28,6 +29,15 @@ async function seed(entry: Record<string, unknown>, messages?: unknown[]) {
   await mkdir(dir, { recursive: true });
   await writeFile(join(dir, 'sessions.json'), JSON.stringify({ [sessionKey]: { sessionId, ...entry } }));
   if (messages) await writeFile(join(dir, `${sessionId}.jsonl`), messages.map(message => JSON.stringify(message)).join('\n'));
+}
+
+function seedRuntimeStore(storePath: string, entries: Parameters<typeof replaceSqliteSessionStore>[1]) {
+  const databasePath = resolveSqliteSessionStoreDatabasePath(storePath);
+  const withinFixture = relative(fixture.root, databasePath);
+  if (withinFixture.startsWith('..') || isAbsolute(withinFixture)) throw new Error('Database escaped the agent fixture');
+  try { replaceSqliteSessionStore(storePath, entries); }
+  finally { closeSqliteSessionStoreDatabase(storePath); }
+  return databasePath;
 }
 
 beforeEach(async () => { fixture.root = await mkdtemp(join(tmpdir(), 'clawx-context-unit-')); });
@@ -63,6 +73,22 @@ describe('context report projection', () => {
 });
 
 describe('current session context snapshot', () => {
+  it('reads the actual runtime SQLite store ahead of a stale JSON index without changing database bytes', async () => {
+    await seed({ totalTokens: 900000, contextTokens: 1000000 });
+    const storePath = join(fixture.root, 'agents', 'main', 'sessions', 'sessions.json');
+    const databasePath = seedRuntimeStore(storePath, { [sessionKey]: { sessionId, updatedAt: 200, totalTokens: 7000, totalTokensFresh: true, contextTokens: 16000 } });
+    const before = await readFile(databasePath);
+    expect(await getSessionContextSnapshot(sessionKey, sessionId)).toMatchObject({ sessionId, usedTokens: 7000, contextTokens: 16000, usageSource: 'runtime' });
+    expect(await readFile(databasePath)).toEqual(before);
+  });
+
+  it('does not revive a legacy JSON row missing from the authoritative SQLite store', async () => {
+    await seed({ totalTokens: 900000 });
+    const storePath = join(fixture.root, 'agents', 'main', 'sessions', 'sessions.json');
+    seedRuntimeStore(storePath, { 'agent:main:other': { sessionId: 'other-generation', updatedAt: 200 } });
+    expect(await getSessionContextSnapshot(sessionKey, sessionId)).toBeNull();
+  });
+
   it('reads the current runtime count and binds the composition to its transcript', async () => {
     await seed({ totalTokens: 7000, totalTokensFresh: true, contextTokens: 16000, updatedAt: 200, systemPromptReport: report() });
     expect(await getSessionContextSnapshot(sessionKey, sessionId)).toMatchObject({ sessionId, usedTokens: 7000, contextTokens: 16000, usageSource: 'runtime', composition: { sessionId } });

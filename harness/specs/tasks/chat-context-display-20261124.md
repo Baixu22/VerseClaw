@@ -80,4 +80,4 @@ docs:
     - README.ja-JP.md
 ---
 
-读取 OpenClaw 已持久化的 systemPromptReport 和当前会话的用量记录，经 Main 投影为名称、计量和状态。记忆来源复用 injectionReceipts。组成中的字符数是运行时报告的计量，Token 总数来自模型用量记录。
+读取 OpenClaw 已持久化的 systemPromptReport 和当前会话的用量记录，经 Main 投影为名称、计量和状态。当前会话元数据采用运行时SQLite只读入口，数据库不存在时兼容旧JSON索引。记忆来源复用 injectionReceipts。组成中的字符数是运行时报告的计量，Token 总数来自模型用量记录。

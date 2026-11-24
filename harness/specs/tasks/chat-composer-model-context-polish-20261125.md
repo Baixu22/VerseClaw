@@ -28,8 +28,10 @@ touchedAreas:
   - scripts/repository-artifacts.json
   - .gitignore
   - electron/services/usage-api.ts
+  - electron/utils/session-context.ts
   - shared/i18n/locales/*/chat.json
   - tests/unit/usage-live-scope.test.ts
+  - tests/unit/session-context.test.ts
   - tests/unit/chat-context-indicator.test.tsx
   - tests/e2e/chat-context-display.spec.ts
   - tests/e2e/chat-model-settings-card.spec.ts
@@ -52,7 +54,8 @@ expectedUserBehavior:
   - 模型卡片和上下文详情在明暗主题、375px与桌面窗口中保持边界、字号和间距比例。
   - 模型卡片宽度最多304px、圆角18px，28px模型按钮与滑块相距10px；上下文详情使用384px宽度、16px圆角与右对齐数值。
 acceptance:
-  - 真实文件经运行时报告生成器、会话索引、Main接口和Renderer显示；文件修改后计量变化有来源哈希与截图。
+  - 真实文件经运行时报告生成器、生产SQLite写入器、Main只读接口和Renderer显示；文件修改后计量变化有来源哈希与截图。
+  - 当前SQLite元数据优先于陈旧JSON；数据库中缺少的会话不会由旧JSON复活，读取保持数据库字节不变。
   - 生产接口不把缺少测量的计数写成0，缺少用量或报告时显示未知状态。
   - 记忆回执按会话来源和真实时间展示；报告生成前已记录的注入可查阅，未提供报告关联标识时不声称其属于当前报告。
   - 实际Electron操作检查纯线条、搜索无框、Tooltip点击穿透、来源展开和相邻菜单切换。

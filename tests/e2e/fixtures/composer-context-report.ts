@@ -1,8 +1,9 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { basename, join, resolve } from 'node:path';
+import { basename, isAbsolute, join, relative, resolve } from 'node:path';
 import { Type } from '@sinclair/typebox';
 import { buildSystemPromptReport } from '../../../openclaw_runtime/src/agents/system-prompt-report';
+import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore, resolveSqliteSessionStoreDatabasePath } from '../../../openclaw_runtime/src/config/sessions/store-sqlite';
 
 /** Agent-owned files use the production report builder; no context DTO is replayed. */
 export async function createComposerContextFiles(homeDir: string) {
@@ -17,7 +18,7 @@ export async function createComposerContextFiles(homeDir: string) {
 }
 
 export async function persistComposerContext(input: {
-  homeDir: string; workspaceDir: string; files: string[]; sessionKey: string; sessionId: string; modelRef: string;
+  homeDir: string; stateDir: string; workspaceDir: string; files: string[]; sessionKey: string; sessionId: string; modelRef: string;
   usage: { input: number; output: number; cacheRead: number; cacheWrite: number };
 }, archiveDir: string) {
   const generatedAt = Date.now();
@@ -45,20 +46,26 @@ export async function persistComposerContext(input: {
     bootstrapMaxChars: 4096, systemPrompt, bootstrapFiles, injectedFiles, skillsPrompt, tools: [tool],
     currentTurn: { promptChars: turnPrompt.length, runtimeContextChars: 0 },
   });
-  const sessionsDir = join(input.homeDir, '.openclaw', 'agents', 'main', 'sessions');
+  const sessionsDir = join(input.stateDir, 'agents', 'main', 'sessions');
   await mkdir(sessionsDir, { recursive: true });
   const indexPath = join(sessionsDir, 'sessions.json');
   const transcriptPath = join(sessionsDir, `${input.sessionId}.jsonl`);
   const index = { [input.sessionKey]: { sessionId: input.sessionId, contextTokens: 32768, updatedAt: generatedAt, systemPromptReport: report } };
+  const databasePath = resolveSqliteSessionStoreDatabasePath(indexPath);
+  const withinFixture = relative(input.stateDir, databasePath);
+  if (withinFixture.startsWith('..') || isAbsolute(withinFixture)) throw new Error('Session database escaped the agent fixture');
+  try { replaceSqliteSessionStore(indexPath, index); }
+  finally { closeSqliteSessionStoreDatabase(indexPath); }
   const total = input.usage.input + input.usage.output + input.usage.cacheRead + input.usage.cacheWrite;
   const transcript = { type: 'message', timestamp: new Date(generatedAt).toISOString(), message: {
     role: 'assistant', content: [{ type: 'text', text: 'Context sources inspected.' }], usage: { ...input.usage, total },
   } };
-  await writeFile(indexPath, JSON.stringify(index));
+  // A contradictory legacy row must never replace the runtime database.
+  await writeFile(indexPath, JSON.stringify({ [input.sessionKey]: { sessionId: input.sessionId, totalTokens: 900000, contextTokens: 1000000 } }));
   await writeFile(transcriptPath, `${JSON.stringify(transcript)}\n`);
   await mkdir(archiveDir, { recursive: true });
   await writeFile(join(archiveDir, 'system-prompt.txt'), systemPrompt);
-  const paths = [...input.files, indexPath, transcriptPath];
+  const paths = [...input.files, indexPath, transcriptPath, databasePath];
   const sources = await Promise.all(paths.map(async (path, index) => {
     const bytes = await readFile(path);
     const archivedName = `${index}-${basename(path)}`;
@@ -66,6 +73,8 @@ export async function persistComposerContext(input: {
     return { path, archivedName, sha256: createHash('sha256').update(bytes).digest('hex') };
   }));
   return { driven_by: 'agent', actor: 'playwright-composer-context', usageSource: 'agent-transcript-fixture',
+    metadataStore: 'actual-runtime-SQLite-writer',
+    persistedEntry: index[input.sessionKey],
     generator: 'openclaw_runtime/src/agents/system-prompt-report.ts',
     usedTokens: input.usage.input + input.usage.cacheRead + input.usage.cacheWrite, sources, report };
 }
