@@ -168,7 +168,8 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await expect(current.getByTestId('chat-tool-activity-text-enter')).toHaveCSS('animation-iteration-count', '1');
     const entrance = await current.getByTestId('chat-tool-activity-text-enter').evaluate(node => {
       const animation = node.getAnimations().find(item => item instanceof CSSAnimation && item.animationName === 'tool-activity-text-enter');
-      return { keyframes: animation?.effect?.getKeyframes().map(frame => frame.clipPath), duration: animation?.effect?.getComputedTiming().duration };
+      const effect = animation?.effect;
+      return { keyframes: effect instanceof KeyframeEffect ? effect.getKeyframes().map(frame => frame.clipPath) : [], duration: effect?.getComputedTiming().duration };
     });
     expect(entrance.keyframes?.[0]).toContain('100%');
     expect(entrance.keyframes?.at(-1)).not.toContain('100%');
