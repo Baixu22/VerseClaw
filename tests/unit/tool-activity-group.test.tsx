@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import en from '../../shared/i18n/locales/en/chat.json';
 import { ToolActivityGroup } from '@/components/assistant-render/ToolActivityGroup';
 import type { ToolActivityGroupModel } from '@/pages/Chat/tool-activity-groups';
@@ -15,7 +15,8 @@ function model(running = false): ToolActivityGroupModel {
   const entry = { id: 'read', name: 'read_file', kind: 'read' as const, target: '/project/config.ts', running, order: 0 };
   return { id: 'run:read', runKey: 'run', anchorIndex: 1, agentLabel: 'Main', status: running ? 'running' : 'completed',
     steps: [{ id: 'read', kind: 'tool', label: 'read_file', status: running ? 'running' : 'completed', depth: 1,
-      inputDetail: '{"path":"/project/config.ts"}', detail: running ? '{"path":"/project/config.ts"}' : 'FULL_READ_RESULT' }],
+      inputDetail: '{"path":"/project/config.ts"}', detail: running ? '{"path":"/project/config.ts"}' : 'FULL_READ_RESULT',
+      startedAt: Date.now() - 1000, durationMs: running ? undefined : 1350 }],
     terminals: [], files: [], diffs: [], entries: [entry], current: running ? entry : undefined, isCurrent: running };
 }
 function Harness({ group }: { group: ToolActivityGroupModel }) {
@@ -36,12 +37,22 @@ describe('tool activity disclosure', () => {
   it('moves the live shimmer into the details and preserves manual expansion on completion', () => {
     const view = render(<Harness group={model(true)} />);
     expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
-    expect(within(screen.getByTestId('chat-tool-activity-toggle')).getByTestId('ai-element-shimmer')).toHaveTextContent('/project/config.ts');
+    expect(within(screen.getByTestId('chat-tool-activity-toggle')).getByTestId('chat-call-chip')).toHaveTextContent('/project/config.ts');
     fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
     expect(within(screen.getByTestId('chat-tool-activity-toggle')).queryByTestId('ai-element-shimmer')).toBeNull();
     expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
     view.rerender(<Harness group={model()} />);
     expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+  });
+  it('restores the running progress strip and settles it using the call status', async () => {
+    const view = render(<Harness group={model(true)} />);
+    const header = within(screen.getByTestId('chat-tool-activity-toggle'));
+    expect(header.getByTestId('chat-call-chip')).toHaveAttribute('aria-busy', 'true');
+    await waitFor(() => expect(header.getByTestId('chat-call-chip-progress')).not.toHaveStyle({ transform: 'scaleX(0)' }));
+    view.rerender(<Harness group={model()} />);
+    expect(header.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'done');
+    expect(header.getByTestId('chat-call-chip')).not.toHaveAttribute('aria-busy');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
   });
   it('keeps a failed group static while exposing its attention state', () => {

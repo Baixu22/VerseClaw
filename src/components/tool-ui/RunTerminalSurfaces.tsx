@@ -32,6 +32,9 @@ export function RunTerminalSurfaces({ surfaces, appearance = 'chip', renderToolI
       {surfaces.map((surface) => {
         const animate = appearance === 'activity' && activityActive && surface.status === 'running'
           && (surface.toolCallId ?? surface.id) === currentToolId;
+        const running = activityActive && surface.status === 'running';
+        const action = surface.status === 'running' && !activityActive ? t('toolActivity.pendingResult')
+          : t(`toolActivity.${running ? 'running' : 'completed'}.command`);
         const output = (
           <Terminal
             transcriptDetail
@@ -55,18 +58,21 @@ export function RunTerminalSurfaces({ surfaces, appearance = 'chip', renderToolI
               variant="plain"
               defaultOpen={appearance === 'activity' ? false : surface.status !== 'completed'}
               className={appearance === 'activity' ? 'tool-activity-terminal' : undefined}
-              headerClassName={appearance === 'activity' ? 'tool-activity-step-toggle' : undefined}
+              headerClassName={appearance === 'activity' ? 'tool-activity-step-toggle tool-activity-strip-toggle' : undefined}
               title={appearance === 'activity'
-                ? <span className="tool-activity-step-label" title={surface.command}>
-                    {animate ? <Shimmer className="tool-activity-shimmer">{t('toolActivity.running.command')} {surface.command}</Shimmer>
-                      : <span>{surface.command}</span>}
-                  </span>
+                ? <CallChip name={action} argument={surface.command} className="tool-activity-call-chip"
+                    status={surface.status === 'failed' ? 'error' : running ? 'running' : surface.status === 'completed' ? 'done' : 'idle'}
+                    icon={renderToolIcon?.('command', animate) ?? 'terminal'}
+                    startedAt={surface.startedAt} durationMs={surface.durationMs}
+                    statusLabel={t(`processPanel.status.${surface.status}`)}>
+                    {animate ? <Shimmer className="tool-activity-shimmer">{action}</Shimmer> : undefined}
+                  </CallChip>
                 : surface.status === 'running' || surface.status === 'failed'
               ? <CallChip name={surface.command} icon="terminal" status={surface.status === 'running' ? 'running' : 'error'} statusLabel={t(`processPanel.status.${surface.status}`)} showTimer={false} />
                 : <code className="block min-w-0 truncate font-mono text-xs" title={surface.command}>{surface.command}</code>}
-              leading={appearance === 'activity' ? renderToolIcon?.('command', animate)
+              leading={appearance === 'activity' ? undefined
                 : surface.status === 'completed' ? <TerminalIcon className="size-3.5" /> : undefined}
-              trailing={(
+              trailing={appearance === 'activity' ? undefined : (
                 <span className="shrink-0 text-[11px] text-muted-foreground">
                   {t(`processPanel.status.${surface.status}`)}{formatDuration(surface.durationMs) ? ` · ${formatDuration(surface.durationMs)}` : ''}
                 </span>

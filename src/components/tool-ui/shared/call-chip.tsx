@@ -44,6 +44,7 @@ export type CallChipProps = {
   showTimer?: boolean;
   statusLabel?: string;
   trailing?: ReactNode;
+  children?: ReactNode;
   className?: string;
   style?: CSSProperties;
 };
@@ -85,6 +86,7 @@ export function CallChip({
   showTimer = true,
   statusLabel,
   trailing,
+  children,
   className,
   style,
 }: CallChipProps) {
@@ -205,7 +207,7 @@ export function CallChip({
         {leading}
       </span>
       <span className="relative min-w-0 max-w-[12rem] truncate font-medium" title={name} aria-hidden="true">
-        {name}
+        {children ?? name}
       </span>
       {argument ? (
         <span

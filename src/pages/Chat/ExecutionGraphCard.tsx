@@ -190,18 +190,19 @@ function StepDetailRow({
       const action = showRunning && !runActive ? t('toolActivity.pendingResult')
         : t(`toolActivity.${running ? 'running' : 'completed'}.${kind}`);
       return (
-        <div className="group/execution-step tool-activity-step" data-testid="chat-tool-activity-step" data-status={step.status}>
+        <div className="group/execution-step tool-activity-step" data-testid="chat-tool-activity-step" data-status={step.status} data-kind={kind}>
           <div className="tool-activity-step-line">
-          <button type="button" className="tool-activity-step-toggle" data-testid="chat-execution-step-toggle"
+          <button type="button" className="tool-activity-step-toggle tool-activity-strip-toggle" data-testid="chat-execution-step-toggle"
             onClick={toggleExpanded} aria-expanded={hasDetail ? expanded : undefined}
             aria-controls={hasDetail && expanded ? detailId : undefined} aria-label={`${displayLabel}, ${statusLabel}`} title={target}>
-            {renderToolIcon?.(kind, animate)}
-            <span className="tool-activity-step-label">
-              {animate ? <Shimmer className="tool-activity-shimmer">{action}{target ? ` ${target}` : ''}</Shimmer>
-                : <span>{action}{target ? ` ${target}` : ''}</span>}
-            </span>
-            {showError && <span className="tool-activity-error">{statusLabel}</span>}
-            {hasDetail && <ChevronRight aria-hidden="true" className={cn('tool-activity-chevron', expanded && 'rotate-90')} />}
+            <CallChip name={action} argument={target}
+              status={showError ? 'error' : running ? 'running' : step.status === 'completed' ? 'done' : 'idle'}
+              icon={renderToolIcon?.(kind, animate) ?? inferCallChipIcon(displayLabel)}
+              startedAt={step.startedAt} durationMs={step.durationMs} statusLabel={statusLabel}
+              className="tool-activity-call-chip"
+              trailing={hasDetail ? <ChevronRight className={cn('tool-activity-chevron', expanded && 'rotate-90')} /> : undefined}>
+              {animate ? <Shimmer className="tool-activity-shimmer">{action}</Shimmer> : undefined}
+            </CallChip>
           </button>
           {riskBadge}{urlLink}
           </div>

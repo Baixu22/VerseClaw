@@ -54,8 +54,10 @@ hides this entry without shifting the composer.
 
 Chat output has no avatar gutter and shares the available conversation width
 with the input. Adjacent operations form a folded group after their progress
-explanation. The current action and target use a semantic operation icon and a
-white shimmer; expansion moves the animation into that operation's detail row.
+explanation. Group summaries, tool calls and command rows use CallChip progress
+strips with a background and timer. The current action and target use a semantic
+operation icon and a white shimmer; expansion moves that highlight into the
+owning detail row.
 Calls, late results and command output keep their original group. Completed
 records remain static and preserve manual disclosure. Final replies, delivered
 resources, errors and pending requests remain accessible.

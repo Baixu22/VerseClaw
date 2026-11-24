@@ -3,6 +3,7 @@ import { ChevronDown, PencilLine, Wrench } from 'lucide-react';
 import { FileText, File, Search, Globe, Terminal } from '@/components/icons/codex-icons';
 import { useTranslation } from 'react-i18next';
 import { Shimmer } from '@/components/ai-elements/shimmer';
+import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { ExecutionGraphCard } from '@/pages/Chat/ExecutionGraphCard';
 import { cn } from '@/lib/utils';
 import type { ToolActivityGroupModel, ToolActivityKind } from '@/pages/Chat/tool-activity-groups';
@@ -38,7 +39,10 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
   const target = current?.target ?? current?.name;
   const label = group.status === 'error' ? t('toolActivity.failed', { action: group.pendingResult ? t('toolActivity.pendingResult') : action })
     : group.status === 'aborted' ? t('toolActivity.stopped') : group.pendingResult ? t('toolActivity.pendingResult') : action;
-  const summaryText = target ? `${label} ${target}` : label;
+  const timing = current ? group.steps.find(step => step.id === current.id)
+    ?? group.terminals.find(surface => (surface.toolCallId ?? surface.id) === current.id) : undefined;
+  const chipStatus = group.status === 'error' ? 'error' : isRunning ? 'running'
+    : group.status === 'completed' && !group.pendingResult ? 'done' : 'idle';
 
   return (
     <section
@@ -51,25 +55,29 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
     >
       <button
         type="button"
-        className={cn('tool-activity-toggle', group.status === 'error' && 'text-destructive')}
+        className={cn('tool-activity-toggle tool-activity-strip-toggle', group.status === 'error' && 'text-destructive')}
         data-testid="chat-tool-activity-toggle"
         aria-expanded={expanded}
         aria-controls={expanded ? contentId : undefined}
         onClick={() => onExpandedChange(!expanded)}
         title={target ?? label}
       >
-        <ToolActivityIcon key={current?.id ?? kinds[0]} kind={current?.kind ?? kinds[0] ?? 'other'} reveal={isRunning && !expanded} />
         <span className="tool-activity-label" data-testid="chat-tool-activity-label">
-          {isRunning && !expanded ? (
-            <Shimmer className="tool-activity-shimmer">{summaryText}</Shimmer>
-          ) : (
-            <span>
-              <span className="tool-activity-action">{label}</span>
-              {target ? <span className="tool-activity-target">{` ${target}`}</span> : null}
-            </span>
-          )}
+          <CallChip
+            key={current?.id ?? group.id}
+            name={label}
+            argument={target}
+            status={chipStatus}
+            icon={<ToolActivityIcon kind={current?.kind ?? kinds[0] ?? 'other'} reveal={isRunning && !expanded} />}
+            startedAt={timing?.startedAt}
+            durationMs={timing?.durationMs}
+            showTimer={isRunning && !expanded}
+            className="tool-activity-call-chip"
+            trailing={<ChevronDown strokeWidth={1.5} className={cn('tool-activity-chevron', expanded && 'is-expanded')} />}
+          >
+            {isRunning && !expanded ? <Shimmer className="tool-activity-shimmer">{label}</Shimmer> : undefined}
+          </CallChip>
         </span>
-        <ChevronDown strokeWidth={1.5} aria-hidden="true" className={cn('tool-activity-chevron', expanded && 'is-expanded')} />
       </button>
       {expanded && (
         <div id={contentId} className="tool-activity-details" data-testid="chat-tool-activity-details">

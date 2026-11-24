@@ -85,7 +85,7 @@
   }
 }
 
-/* Tool activity group: quiet single-line disclosure subordinate to prose. */
+/* Tool operation strips stay grouped beneath their progress explanation. */
 .tool-activity-group {
   min-width: 0;
   color: var(--color-chat-secondary);
@@ -157,6 +157,29 @@
 
 .tool-activity-target {
   opacity: 0.88;
+}
+
+.tool-activity-strip-toggle,
+.tool-activity-terminal > .tool-activity-strip-toggle {
+  min-height: 32px;
+  padding: 0;
+}
+
+.tool-activity-call-chip {
+  background-color: hsl(var(--surface-input));
+}
+
+.tool-activity-call-chip:not([data-status='error']) {
+  border-color: var(--color-chat-tray-border);
+}
+
+.tool-activity-toggle .tool-activity-call-chip > span[title] {
+  max-width: none;
+}
+
+.tool-activity-group[data-expanded='true'] > .tool-activity-toggle [data-testid='chat-call-chip-progress'] {
+  transform: scaleX(0) !important;
+  transition: none !important;
 }
 
 /* 16px monochrome SVG icons & disclosure chevrons with balanced optical stroke. */
@@ -274,7 +297,7 @@
 /* Expanded sequential log aligned along a 1px connector under the 16px header icon. */
 .tool-activity-details {
   min-width: 0;
-  margin: 4px 0 2px 7px;
+  margin: 4px 0 2px 18px;
   border-inline-start: 1px solid var(--color-chat-tray-border);
   padding: 1px 0 1px 16px;
   font-size: 13px;
@@ -359,13 +382,6 @@
   text-align: start;
   cursor: pointer;
   transition: color 140ms ease-out;
-}
-
-.tool-activity-terminal > button * {
-  color: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  font-weight: 400;
 }
 
 .tool-activity-terminal > button > svg:first-child {

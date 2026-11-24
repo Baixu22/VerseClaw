@@ -74,6 +74,10 @@ test('keeps operation groups in conversation order with shared width, accessible
     await expect(groups).toHaveCount(2);
     await expect(groups.nth(0).getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
     await expect(groups.nth(1).getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
+    for (const group of await groups.all()) {
+      await expect(group.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'done');
+      await expect(group.getByTestId('chat-call-chip')).toHaveCSS('border-radius', '8px');
+    }
     await expect(page.getByText('最终答复：配置已更新，检查已完成。', { exact: true })).toBeVisible();
     expect(await page.evaluate(() => {
       const rows = [...document.querySelectorAll('[data-testid="chat-tool-activity-group"]')];
@@ -107,13 +111,13 @@ test('keeps operation groups in conversation order with shared width, accessible
     await groups.nth(0).getByTestId('chat-tool-activity-toggle').focus();
     await page.keyboard.press('Enter');
     await expect(groups.nth(0).getByTestId('chat-tool-activity-details')).toBeVisible();
-    await expect(groups.nth(0).locator('.tool-activity-details .tool-activity-icon[data-kind="read"]')).toHaveCount(1);
-    for (const kind of ['search', 'web', 'command']) await expect(groups.nth(0).locator(`.tool-activity-details .tool-activity-icon[data-kind="${kind}"]`)).toHaveCount(1);
+    await expect(groups.nth(0).locator('[data-testid="chat-tool-activity-step"][data-kind="read"] [data-testid="chat-call-chip"]')).toHaveCount(1);
+    for (const kind of ['search', 'web', 'command']) await expect(groups.nth(0).locator(`[data-testid="chat-tool-activity-step"][data-kind="${kind}"] [data-testid="chat-call-chip"]`)).toHaveCount(1);
     await groups.nth(0).getByTestId('chat-execution-step-toggle').nth(0).click();
     await expect(groups.nth(0).getByTestId('chat-execution-step-detail')).toContainText('export const enabled = false;');
     await groups.nth(1).getByTestId('chat-tool-activity-toggle').click();
-    await expect(groups.nth(1).locator('.tool-activity-details .tool-activity-icon[data-kind="write"]')).toHaveCount(1);
-    await expect(groups.nth(1).locator('.tool-activity-details .tool-activity-icon[data-kind="edit"]')).toHaveCount(1);
+    await expect(groups.nth(1).locator('[data-testid="chat-tool-activity-step"][data-kind="write"] [data-testid="chat-call-chip"]')).toHaveCount(1);
+    await expect(groups.nth(1).locator('[data-testid="chat-tool-activity-step"][data-kind="edit"] [data-testid="chat-call-chip"]')).toHaveCount(1);
     await page.screenshot({ path: info.outputPath('history-expanded-dark-1280.png') });
     await page.getByTestId('chat-workspace-toggle').click();
     await expect(page.getByTestId('artifact-panel-aside')).toBeVisible();
@@ -150,7 +154,10 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     const current = groups.nth(1);
     await expect(current).toHaveAttribute('data-status', 'running');
     await expect(current.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
-    await expect(current.getByTestId('ai-element-shimmer')).toContainText('python -X utf8');
+    await expect(current.getByTestId('chat-call-chip')).toContainText('python -X utf8');
+    await expect(current.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    await expect.poll(() => current.getByTestId('chat-call-chip-progress').evaluate(node =>
+      new DOMMatrixReadOnly(getComputedStyle(node).transform).a)).toBeGreaterThan(0);
     const gradient = await current.getByTestId('ai-element-shimmer').evaluate(node => getComputedStyle(node).backgroundImage);
     expect(gradient).toContain('rgb(255, 255, 255)');
     await expect(current.locator('.tool-activity-icon[data-kind="command"]')).toHaveCount(1);
@@ -158,10 +165,12 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await current.getByTestId('chat-tool-activity-toggle').click();
     await expect(current.getByTestId('chat-tool-activity-toggle').getByTestId('ai-element-shimmer')).toHaveCount(0);
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCount(1);
+    await expect(current.getByTestId('chat-tool-activity-toggle').getByTestId('chat-call-chip-progress')).toHaveCSS('transform', 'matrix(0, 0, 0, 1, 0, 0)');
     await current.getByTestId('chat-run-terminal-toggle').click();
     await expect(current.getByTestId('terminal-output')).toContainText('Collecting checks…');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCSS('animation-name', 'none');
+    await expect(current.getByTestId('chat-run-terminal-toggle').getByTestId('chat-call-chip-progress')).toHaveCSS('transition-duration', '0s');
     await expect(current.locator('.tool-activity-icon-glint')).toHaveCSS('display', 'none');
     await page.screenshot({ path: info.outputPath('live-expanded-reduced-motion.png') });
     await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -172,6 +181,7 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     await seed(app, [...history, { id: 'live-final', role: 'assistant', content: '最终答复：读取和检查均已完成。', timestamp: Date.now() }]);
     await event(app, { type: 'run.ended', status: 'completed', endedAt: Date.now(), ts: Date.now() });
     await expect(current).toHaveAttribute('data-status', 'completed');
+    await expect(current.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'done');
     await expect(current.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCount(0);
     await current.getByTestId('chat-tool-activity-toggle').click();
