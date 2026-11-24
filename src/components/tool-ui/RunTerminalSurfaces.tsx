@@ -64,7 +64,7 @@ export function RunTerminalSurfaces({ surfaces, appearance = 'chip', renderToolI
                     status={surface.status === 'failed' ? 'error' : running ? 'running' : surface.status === 'completed' ? 'done' : 'idle'}
                     icon={renderToolIcon?.('command', animate) ?? 'terminal'}
                     startedAt={surface.startedAt} durationMs={surface.durationMs}
-                    statusLabel={t(`processPanel.status.${surface.status}`)}>
+                    statusLabel={surface.status === 'running' && !activityActive ? t('toolActivity.pendingResult') : t(`processPanel.status.${surface.status}`)}>
                     {animate ? <Shimmer className="tool-activity-shimmer">{action}</Shimmer> : undefined}
                   </CallChip>
                 : surface.status === 'running' || surface.status === 'failed'

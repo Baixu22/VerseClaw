@@ -64,5 +64,6 @@ describe('tool activity disclosure', () => {
     const detailChip = within(screen.getByTestId('chat-tool-activity-details')).getByTestId('chat-call-chip');
     expect(detailChip).toHaveAttribute('data-status', 'idle');
     expect(detailChip).not.toHaveAttribute('aria-busy');
+    expect(detailChip.getAttribute('aria-label')).not.toContain(en.taskPanel.stepStatus.running);
   });
 });

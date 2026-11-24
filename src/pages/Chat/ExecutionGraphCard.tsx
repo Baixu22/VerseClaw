@@ -198,7 +198,8 @@ function StepDetailRow({
             <CallChip name={action} argument={target}
               status={showError ? 'error' : running ? 'running' : step.status === 'completed' ? 'done' : 'idle'}
               icon={renderToolIcon?.(kind, animate) ?? inferCallChipIcon(displayLabel)}
-              startedAt={step.startedAt} durationMs={step.durationMs} statusLabel={statusLabel}
+              startedAt={step.startedAt} durationMs={step.durationMs}
+              statusLabel={showRunning && !runActive ? t('toolActivity.pendingResult') : statusLabel}
               className="tool-activity-call-chip"
               trailing={hasDetail ? <ChevronRight className={cn('tool-activity-chevron', expanded && 'rotate-90')} /> : undefined}>
               {animate ? <Shimmer className="tool-activity-shimmer">{action}</Shimmer> : undefined}
