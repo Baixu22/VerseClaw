@@ -9,7 +9,11 @@ import { isPlanToolName } from './run-surface-promotion';
 import { isToolResultRole } from '@/stores/chat/helpers';
 
 export type ToolActivityKind = 'read' | 'write' | 'edit' | 'search' | 'web' | 'command' | 'other';
-export type ToolActivityEntry = { id: string; name: string; kind: ToolActivityKind; target?: string; running: boolean; order: number };
+export type ToolActivityIconId = ToolActivityKind | 'folder' | 'code' | 'image' | 'pdf' | 'table' | 'config'
+  | 'browser-click' | 'browser-screenshot' | 'browser-scroll' | 'git' | 'git-diff' | 'git-commit' | 'git-merge'
+  | 'test' | 'build' | 'package' | 'network' | 'database' | 'memory' | 'agent' | 'plan'
+  | 'generate-image' | 'presentation' | 'download' | 'upload' | 'archive' | 'delete';
+export type ToolActivityEntry = { id: string; name: string; kind: ToolActivityKind; iconId?: ToolActivityIconId; target?: string; running: boolean; order: number };
 export type ToolActivityGroupModel = {
   id: string;
   runKey: string;
@@ -34,7 +38,7 @@ export function inferToolActivityKind(name: string): ToolActivityKind {
   if (/(web_fetch|browse|fetch_url|open_url|navigate|visit)/.test(tool)) return 'web';
   if (/(edit|patch|replace|modify)/.test(tool)) return 'edit';
   if (/(write|create_file|save_file)/.test(tool)) return 'write';
-  if (/(read|view_file|file_view|open_file|list_files|file_list|file_stat|file_hash)/.test(tool)) return 'read';
+  if (/(read|view_file|file_view|open_file|list_files|file_list|file_stat|file_hash|list_dir|directory_list|glob)/.test(tool)) return 'read';
   if (/(exec|bash|shell|command|terminal|process|run)/.test(tool)) return 'command';
   return 'other';
 }
@@ -62,6 +66,58 @@ export function toolActivityKind(step: Pick<TaskStep, 'label' | 'inputDetail' | 
       const input = JSON.parse(step.inputDetail ?? step.detail ?? '{}');
       if (input?.action === 'search') return 'search';
     } catch { /* Keep the named tool's category when its arguments are partial. */ }
+  }
+  return kind;
+}
+
+export function toolActivityIconId(step: Pick<TaskStep, 'label' | 'inputDetail' | 'detail' | 'target'>): ToolActivityIconId {
+  const name = step.label.toLowerCase().replace(/[\s.:-]+/g, '_');
+  const kind = toolActivityKind(step);
+  const target = toolActivityTarget(step) ?? '';
+  let action = '';
+  try {
+    const input = JSON.parse(step.inputDetail ?? step.detail ?? '{}');
+    if (typeof input?.action === 'string') action = input.action.toLowerCase();
+  } catch { /* The named tool and captured target still identify partial arguments. */ }
+  if (/(image_generate|generate_image|imagegen)/.test(name)) return 'generate-image';
+  if (/(browser|browse|playwright|puppeteer|cua)/.test(name)) {
+    const browserAction = `${name}_${action}`;
+    if (/screenshot|capture_screen|snapshot_image/.test(browserAction)) return 'browser-screenshot';
+    if (/click|tap|type|fill|press/.test(browserAction)) return 'browser-click';
+    if (/scroll/.test(browserAction)) return 'browser-scroll';
+    if (/search/.test(browserAction)) return 'search';
+    return 'web';
+  }
+  if (kind === 'command' || /git|versegit/.test(name)) {
+    const command = `${name} ${target}`;
+    if (/\bgit(?:\.exe)?\b|versegit|git_/.test(command)) {
+      if (/\bdiff\b|git_diff|compare/.test(command)) return 'git-diff';
+      if (/\bcommit\b|git_commit/.test(command)) return 'git-commit';
+      if (/\bmerge\b|\brebase\b|git_merge/.test(command)) return 'git-merge';
+      return 'git';
+    }
+    if (/\b(vitest|jest|pytest|playwright|mocha)\b|\b(pnpm|npm|yarn|bun)(?:\.cmd)?\s+(run\s+)?(test|typecheck|lint|check)\b/i.test(target)) return 'test';
+    if (/\b(pnpm|npm|yarn|bun|cargo|dotnet)(?:\.cmd)?\s+(run\s+)?build\b|\b(vite\s+build|webpack|cmake|make)\b/i.test(target)) return 'build';
+    if (/\b(pnpm|npm|yarn|bun|pip|uv|cargo)(?:\.cmd)?\s+(install|add|update|remove|uninstall)\b/i.test(target)) return 'package';
+  }
+  if (/memory|recall|remember/.test(name)) return 'memory';
+  if (/sql|database|sqlite|postgres|query_db/.test(name)) return 'database';
+  if (/subagent|sessions_spawn|spawn_agent|delegate|handoff/.test(name)) return 'agent';
+  if (/update_plan|todo|task_ledger/.test(name)) return 'plan';
+  if (/http_request|api_request|network|rpc|connect/.test(name)) return 'network';
+  if (/download/.test(name)) return 'download';
+  if (/upload/.test(name)) return 'upload';
+  if (/archive|compress|unzip|extract_zip/.test(name)) return 'archive';
+  if (/delete_file|remove_file|file_delete/.test(name)) return 'delete';
+  if (/directory|folder|list_files|file_list|list_dir|glob|list_tree/.test(name)) return 'folder';
+  if (kind === 'read' || kind === 'write' || kind === 'edit') {
+    const path = target.toLowerCase().split(/[?#]/)[0];
+    if (/\.(png|jpe?g|gif|webp|svg|ico|avif)$/.test(path)) return 'image';
+    if (/\.pdf$/.test(path)) return 'pdf';
+    if (/\.(xlsx?|csv|tsv|ods)$/.test(path)) return 'table';
+    if (/\.(pptx?|odp)$/.test(path)) return 'presentation';
+    if (/\.(json|ya?ml|toml|ini|env)$/.test(path)) return 'config';
+    if (/\.(tsx?|jsx?|mjs|cjs|py|rs|go|c|cpp|h|java|css|html|vue|sh|ps1)$/.test(path)) return 'code';
   }
   return kind;
 }
@@ -163,6 +219,7 @@ export function buildToolActivityGroups(
     if (step?.kind === 'tool' || terminal || (step?.kind === 'system' && !id.startsWith('tool-result-'))) {
       group.entries.push({ id: callId, name: terminal?.command ?? step!.label,
         kind: terminal ? 'command' : toolActivityKind(step!),
+        iconId: terminal ? toolActivityIconId({ label: 'exec_command', target: terminal.command }) : toolActivityIconId(step!),
         target: terminal?.command ?? toolActivityTarget(step!),
         running: card.active && (terminal?.status === 'running' || step?.status === 'running'),
         order: step?.eventOrder ?? terminal?.eventOrder ?? item.order });

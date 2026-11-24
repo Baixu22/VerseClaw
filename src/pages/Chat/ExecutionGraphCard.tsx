@@ -10,7 +10,7 @@ import type { TaskStep } from './task-visualization';
 import { CallChip, inferCallChipIcon } from '@/components/tool-ui/shared/call-chip';
 import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
 import type { RunTerminalSurface } from '@/components/tool-ui/run-surfaces';
-import { toolActivityKind, toolActivityTarget, type ToolActivityKind } from './tool-activity-groups';
+import { toolActivityIconId, toolActivityKind, toolActivityTarget, type ToolActivityKind, type ToolActivityIconId } from './tool-activity-groups';
 
 interface ExecutionGraphCardProps {
   agentLabel: string;
@@ -23,7 +23,7 @@ interface ExecutionGraphCardProps {
   onStepExpandedChange?: (stepId: string, expanded: boolean) => void;
   terminals?: RunTerminalSurface[];
   appearance?: 'chip' | 'activity';
-  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean) => ReactNode;
+  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean, iconId?: ToolActivityIconId) => ReactNode;
   currentToolId?: string;
 }
 
@@ -48,7 +48,7 @@ function StepDetailRow({
   onExpandedChange?: (expanded: boolean) => void;
   inputDetail?: string;
   appearance?: 'chip' | 'activity';
-  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean) => ReactNode;
+  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean, iconId?: ToolActivityIconId) => ReactNode;
   currentToolId?: string;
   runActive?: boolean;
 }) {
@@ -197,7 +197,7 @@ function StepDetailRow({
             aria-controls={hasDetail && expanded ? detailId : undefined} aria-label={`${displayLabel}, ${statusLabel}`} title={target}>
             <CallChip name={action} argument={target}
               status={showError ? 'error' : running ? 'running' : step.status === 'completed' ? 'done' : 'idle'}
-              icon={renderToolIcon?.(kind, animate) ?? inferCallChipIcon(displayLabel)}
+              icon={renderToolIcon?.(kind, animate, toolActivityIconId(step)) ?? inferCallChipIcon(displayLabel)}
               startedAt={step.startedAt} durationMs={step.durationMs}
               statusLabel={showRunning && !runActive ? t('toolActivity.pendingResult') : statusLabel}
               className="tool-activity-call-chip"

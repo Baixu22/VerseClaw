@@ -4,7 +4,28 @@ import type { UserRunCard } from '@/pages/Chat/execution-projection';
 import type { TaskStep } from '@/pages/Chat/task-visualization';
 import { deriveRuntimeTaskSteps } from '@/pages/Chat/task-visualization';
 import type { ChatRuntimeRunState } from '@/stores/chat/types';
-import { buildToolActivityGroups, inferToolActivityKind } from '@/pages/Chat/tool-activity-groups';
+import { buildToolActivityGroups, inferToolActivityKind, toolActivityIconId } from '@/pages/Chat/tool-activity-groups';
+
+describe('semantic operation icons', () => {
+  it.each([
+    ['list_directory', '/project', 'folder'], ['read_file', '/project/config.ts', 'code'],
+    ['read_file', '/project/settings.json', 'config'], ['read_file', '/project/report.pdf', 'pdf'],
+    ['read_file', '/project/chart.png', 'image'], ['read_file', '/project/data.csv', 'table'],
+    ['exec_command', 'git -C /project diff', 'git-diff'], ['exec_command', 'git commit -m fix', 'git-commit'],
+    ['exec_command', 'pnpm run test', 'test'], ['exec_command', 'pnpm run build:vite', 'build'],
+    ['exec_command', 'pnpm add dependency', 'package'], ['memory_search', 'query', 'memory'],
+    ['query_database', 'query', 'database'], ['sessions_spawn', 'task', 'agent'],
+    ['update_plan', 'task', 'plan'], ['unknown_tool', 'task', 'other'],
+  ])('maps %s and its captured target to %s', (label, target, expected) => {
+    expect(toolActivityIconId({ label, target })).toBe(expected);
+  });
+  it('uses the actual browser action and keeps file reads distinct from path words', () => {
+    expect(toolActivityIconId({ label: 'browser', inputDetail: '{"action":"screenshot"}' })).toBe('browser-screenshot');
+    expect(toolActivityIconId({ label: 'browser', inputDetail: '{"action":"click"}' })).toBe('browser-click');
+    expect(toolActivityIconId({ label: 'read_file', target: '/project/git-search.ts' })).toBe('code');
+    expect(toolActivityIconId({ label: 'web_fetch', target: 'https://example.com/chart.png' })).toBe('web');
+  });
+});
 
 function card(steps: TaskStep[], active = false, runKey = 'run-a'): UserRunCard {
   return { runKey, triggerIndex: 0, replyIndex: 5, active, status: active ? 'running' : 'completed', hasVisibleReply: !active,

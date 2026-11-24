@@ -10,7 +10,7 @@ import type { RunTerminalSurface } from '@/components/tool-ui/run-surfaces';
 import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import { Shimmer } from '@/components/ai-elements/shimmer';
-import type { ToolActivityKind } from '@/pages/Chat/tool-activity-groups';
+import { toolActivityIconId, type ToolActivityKind, type ToolActivityIconId } from '@/pages/Chat/tool-activity-groups';
 
 function formatDuration(durationMs?: number): string | null {
   if (durationMs == null) return null;
@@ -20,7 +20,7 @@ function formatDuration(durationMs?: number): string | null {
 export function RunTerminalSurfaces({ surfaces, appearance = 'chip', renderToolIcon, currentToolId, activityActive = false }: {
   surfaces: RunTerminalSurface[];
   appearance?: 'chip' | 'activity';
-  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean) => ReactNode;
+  renderToolIcon?: (kind: ToolActivityKind, reveal: boolean, iconId?: ToolActivityIconId) => ReactNode;
   currentToolId?: string;
   activityActive?: boolean;
 }) {
@@ -62,7 +62,7 @@ export function RunTerminalSurfaces({ surfaces, appearance = 'chip', renderToolI
               title={appearance === 'activity'
                 ? <CallChip name={action} argument={surface.command} className="tool-activity-call-chip"
                     status={surface.status === 'failed' ? 'error' : running ? 'running' : surface.status === 'completed' ? 'done' : 'idle'}
-                    icon={renderToolIcon?.('command', animate) ?? 'terminal'}
+                    icon={renderToolIcon?.('command', animate, toolActivityIconId({ label: 'exec_command', target: surface.command })) ?? 'terminal'}
                     startedAt={surface.startedAt} durationMs={surface.durationMs}
                     statusLabel={surface.status === 'running' && !activityActive ? t('toolActivity.pendingResult') : t(`processPanel.status.${surface.status}`)}>
                     {animate ? <Shimmer className="tool-activity-shimmer">{action}</Shimmer> : undefined}

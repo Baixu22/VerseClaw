@@ -1,19 +1,23 @@
 import { useId, type ReactNode } from 'react';
-import { ChevronDown, PencilLine, Wrench } from 'lucide-react';
-import { FileText, File, Search, Globe, Terminal } from '@/components/icons/codex-icons';
+import { Archive, Bot, BrainCircuit, Camera, ChevronDown, Database, Download, FileCode2, FileCog, FilePenLine, FilePlus2, FileText, FileType2, FlaskConical, FolderOpen, GitBranch, GitCommitHorizontal, GitCompareArrows, GitMerge, Globe, Hammer, Image, ImagePlus, ListTodo, Mouse, MousePointerClick, Network, Package, Presentation, Search, Table2, Terminal, Trash2, Upload, Wrench } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Shimmer } from '@/components/ai-elements/shimmer';
-import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { ExecutionGraphCard } from '@/pages/Chat/ExecutionGraphCard';
 import { cn } from '@/lib/utils';
-import type { ToolActivityGroupModel, ToolActivityKind } from '@/pages/Chat/tool-activity-groups';
+import type { ToolActivityGroupModel, ToolActivityKind, ToolActivityIconId } from '@/pages/Chat/tool-activity-groups';
 
-const ICONS = { read: FileText, write: File, edit: PencilLine, search: Search, web: Globe, command: Terminal, other: Wrench };
+const ICONS = { read: FileText, write: FilePlus2, edit: FilePenLine, search: Search, web: Globe, command: Terminal, other: Wrench,
+  folder: FolderOpen, code: FileCode2, image: Image, pdf: FileType2, table: Table2, config: FileCog,
+  'browser-click': MousePointerClick, 'browser-screenshot': Camera, 'browser-scroll': Mouse,
+  git: GitBranch, 'git-diff': GitCompareArrows, 'git-commit': GitCommitHorizontal, 'git-merge': GitMerge,
+  test: FlaskConical, build: Hammer, package: Package, network: Network, database: Database,
+  memory: BrainCircuit, agent: Bot, plan: ListTodo, 'generate-image': ImagePlus, presentation: Presentation,
+  download: Download, upload: Upload, archive: Archive, delete: Trash2 };
 
-export function ToolActivityIcon({ kind, reveal = false }: { kind: ToolActivityKind; reveal?: boolean }) {
-  const Icon = ICONS[kind];
+export function ToolActivityIcon({ kind, iconId = kind, reveal = false }: { kind: ToolActivityKind; iconId?: ToolActivityIconId; reveal?: boolean }) {
+  const Icon = ICONS[iconId];
   return (
-    <span className="tool-activity-icon" data-kind={kind} aria-hidden="true">
+    <span className="tool-activity-icon" data-kind={kind} data-icon={iconId} aria-hidden="true">
       <Icon strokeWidth={1.5} className="tool-activity-icon-base" />
       {reveal && <Icon strokeWidth={1.5} className="tool-activity-icon-glint" />}
     </span>
@@ -40,10 +44,8 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
   const target = current?.target ?? current?.name;
   const label = group.status === 'error' ? t('toolActivity.failed', { action: group.pendingResult ? t('toolActivity.pendingResult') : action })
     : group.status === 'aborted' ? t('toolActivity.stopped') : group.pendingResult ? t('toolActivity.pendingResult') : action;
-  const timing = current ? group.steps.find(step => step.id === current.id)
-    ?? group.terminals.find(surface => (surface.toolCallId ?? surface.id) === current.id) : undefined;
-  const chipStatus = group.status === 'error' ? 'error' : active ? 'running'
-    : group.status === 'completed' && !group.pendingResult ? 'done' : 'idle';
+  const summaryText = target ? `${label} ${target}` : label;
+  const summaryEntry = current ?? group.entries[0];
 
   return (
     <section
@@ -56,29 +58,20 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
     >
       <button
         type="button"
-        className={cn('tool-activity-toggle tool-activity-strip-toggle', group.status === 'error' && 'text-destructive')}
+        className={cn('tool-activity-toggle', group.status === 'error' && 'text-destructive')}
         data-testid="chat-tool-activity-toggle"
         aria-expanded={expanded}
         aria-controls={expanded ? contentId : undefined}
         onClick={() => onExpandedChange(!expanded)}
         title={target ?? label}
       >
+        <ToolActivityIcon kind={summaryEntry?.kind ?? 'other'} iconId={summaryEntry?.iconId} reveal={isRunning && !expanded} />
         <span className="tool-activity-label" data-testid="chat-tool-activity-label">
-          <CallChip
-            key={current?.id ?? group.id}
-            name={label}
-            argument={target}
-            status={chipStatus}
-            icon={<ToolActivityIcon kind={current?.kind ?? kinds[0] ?? 'other'} reveal={isRunning && !expanded} />}
-            startedAt={timing?.startedAt}
-            durationMs={timing?.durationMs}
-            showTimer={active && !expanded}
-            className="tool-activity-call-chip"
-            trailing={<ChevronDown strokeWidth={1.5} className={cn('tool-activity-chevron', expanded && 'is-expanded')} />}
-          >
-            {isRunning && !expanded ? <Shimmer className="tool-activity-shimmer">{label}</Shimmer> : undefined}
-          </CallChip>
+          {isRunning && !expanded ? <span key={current?.id} className="tool-activity-text-enter" data-testid="chat-tool-activity-text-enter" data-tool-id={current?.id}>
+            <Shimmer className="tool-activity-shimmer">{summaryText}</Shimmer>
+          </span> : <span>{summaryText}</span>}
         </span>
+        <ChevronDown strokeWidth={1.5} className={cn('tool-activity-chevron', expanded && 'is-expanded')} />
       </button>
       {expanded && (
         <div id={contentId} className="tool-activity-details" data-testid="chat-tool-activity-details">
@@ -93,7 +86,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
             currentToolId={isRunning ? current?.id : undefined}
             expandedStepIds={expandedStepIds}
             onStepExpandedChange={onStepExpandedChange}
-            renderToolIcon={(kind, reveal) => <ToolActivityIcon kind={kind} reveal={reveal} />}
+            renderToolIcon={(kind, reveal, iconId) => <ToolActivityIcon kind={kind} iconId={iconId} reveal={reveal} />}
           />
           {children}
         </div>

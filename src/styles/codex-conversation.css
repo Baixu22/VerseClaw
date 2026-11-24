@@ -173,13 +173,16 @@
   border-color: var(--color-chat-tray-border);
 }
 
-.tool-activity-toggle .tool-activity-call-chip > span[title] {
-  max-width: none;
+.tool-activity-text-enter {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: bottom;
+  animation: tool-activity-text-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) 1 both;
 }
 
-.tool-activity-group[data-expanded='true'] > .tool-activity-toggle [data-testid='chat-call-chip-progress'] {
-  transform: scaleX(0) !important;
-  transition: none !important;
+@keyframes tool-activity-text-enter {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
 }
 
 /* 16px monochrome SVG icons & disclosure chevrons with balanced optical stroke. */
@@ -297,7 +300,7 @@
 /* Expanded sequential log aligned along a 1px connector under the 16px header icon. */
 .tool-activity-details {
   min-width: 0;
-  margin: 4px 0 2px 18px;
+  margin: 4px 0 2px 7px;
   border-inline-start: 1px solid var(--color-chat-tray-border);
   padding: 1px 0 1px 16px;
   font-size: 13px;
@@ -414,6 +417,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tool-activity-text-enter {
+    animation: none !important;
+    clip-path: none !important;
+  }
   .tool-activity-call-chip .call-chip-progress {
     transition: none !important;
   }

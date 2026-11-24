@@ -37,7 +37,8 @@ describe('tool activity disclosure', () => {
   it('moves the live shimmer into the details and preserves manual expansion on completion', () => {
     const view = render(<Harness group={model(true)} />);
     expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
-    expect(within(screen.getByTestId('chat-tool-activity-toggle')).getByTestId('chat-call-chip')).toHaveTextContent('/project/config.ts');
+    expect(within(screen.getByTestId('chat-tool-activity-toggle')).queryByTestId('chat-call-chip')).toBeNull();
+    expect(within(screen.getByTestId('chat-tool-activity-toggle')).getByTestId('ai-element-shimmer')).toHaveTextContent('/project/config.ts');
     fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
     expect(within(screen.getByTestId('chat-tool-activity-toggle')).queryByTestId('ai-element-shimmer')).toBeNull();
     expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
@@ -45,14 +46,19 @@ describe('tool activity disclosure', () => {
     expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'true');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
   });
-  it('restores the running progress strip and settles it using the call status', async () => {
+  it('keeps the summary plain and the expanded progress strip tied to the call status', async () => {
     const view = render(<Harness group={model(true)} />);
     const header = within(screen.getByTestId('chat-tool-activity-toggle'));
-    expect(header.getByTestId('chat-call-chip')).toHaveAttribute('aria-busy', 'true');
-    await waitFor(() => expect(header.getByTestId('chat-call-chip-progress')).not.toHaveStyle({ transform: 'scaleX(0)' }));
+    expect(header.queryByTestId('chat-call-chip')).toBeNull();
+    expect(header.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'read');
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    const details = within(screen.getByTestId('chat-tool-activity-details'));
+    expect(details.getByTestId('chat-call-chip')).toHaveAttribute('aria-busy', 'true');
+    await waitFor(() => expect(details.getByTestId('chat-call-chip-progress')).not.toHaveStyle({ transform: 'scaleX(0)' }));
     view.rerender(<Harness group={model()} />);
-    expect(header.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'done');
-    expect(header.getByTestId('chat-call-chip')).not.toHaveAttribute('aria-busy');
+    expect(header.queryByTestId('chat-call-chip')).toBeNull();
+    expect(details.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'done');
+    expect(details.getByTestId('chat-call-chip')).not.toHaveAttribute('aria-busy');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
   });
   it('keeps a failed group static while exposing its attention state', () => {
@@ -68,10 +74,23 @@ describe('tool activity disclosure', () => {
   });
   it('keeps a background call running while the white highlight follows the newest group', () => {
     render(<Harness group={{ ...model(true), isCurrent: false }} />);
-    expect(screen.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    expect(screen.queryByTestId('chat-call-chip')).toBeNull();
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
     fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
     expect(within(screen.getByTestId('chat-tool-activity-details')).getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+  });
+  it('reuses the text entrance for chunks and restarts it for the latest new operation', () => {
+    const group = model(true);
+    const view = render(<Harness group={group} />);
+    const entrance = screen.getByTestId('chat-tool-activity-text-enter');
+    view.rerender(<Harness group={{ ...group, current: { ...group.current!, target: '/project/new-config.ts' } }} />);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).toBe(entrance);
+    expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('/project/new-config.ts');
+    const next = { id: 'search-next', name: 'web_search', kind: 'search' as const, target: 'latest query', running: true, order: 1 };
+    view.rerender(<Harness group={{ ...group, current: next, entries: [...group.entries, next] }} />);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).not.toBe(entrance);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'search-next');
+    expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('latest query');
   });
 });

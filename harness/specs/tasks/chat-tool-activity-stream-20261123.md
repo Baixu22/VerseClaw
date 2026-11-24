@@ -7,7 +7,7 @@ scenarios:
   - windows-ui-v2
 taskType: runtime-bridge
 diffBase: 082cd50b8474bca55c0e36b7e36db31d906a586b
-intent: 保留正文与输入框同宽及按说明分组折叠，按用户新要求恢复工具调用条的背景、横向进度填充和计时；当前动作与图标保留白色高光。
+intent: 折叠处采用最新处理的纯文本白色shimmer和从左向右进场，展开后使用原调用条；按实际工作丰富Lucide图标，并由Carbon核对要求和优化审美。
 requiredRules:
   - backend-communication-boundary
   - identity-scope-boundary
@@ -51,6 +51,7 @@ touchedAreas:
   - harness/specs/rules/ui-motion-material-system.md
   - harness/specs/fixtures/chat-tool-activity-stream/20261123/**
   - harness/specs/fixtures/chat-tool-activity-stream/20261124-progress-strips/**
+  - harness/specs/fixtures/chat-tool-activity-stream/20261124-hybrid/**
   - docs/dev/chat-tool-activity-stream.md
   - README*.md
   - scripts/repository-artifacts.json
@@ -59,7 +60,9 @@ expectedUserBehavior:
   - 正文、工具组与输入框共享可用会话宽度，宽屏和窄窗保持相同左右边界；打开工作区面板后按剩余会话宽度响应。
   - 可读的助手说明保留在会话中，每段相邻工具操作在对应说明后形成独立折叠组；新的说明开始下一组。
   - 组默认折叠。运行期间显示最新正在执行的动作与目标；完成后显示实际执行过的操作类别，静态保留。
-  - 折叠摘要、展开后的工具和命令记录复用 CallChip 的条状背景、进度填充与计时；完成状态跟随实际运行回执。
+  - 折叠摘要保持无背景的纯文本和方法图标，显示最新正在进行的处理；当前动作文字从左向右进场一次并持续白色shimmer。
+  - 展开后的工具和命令记录复用 CallChip 的条状背景、进度填充与计时，完成状态使用原状态勾并跟随实际回执。
+  - Lucide图标按目录、文件格式、Git、浏览器动作、测试、构建、包管理、网络、数据库、记忆、子代理和计划等实际用途匹配。
   - 文件读取、写入/编辑、网页访问、搜索、命令和其他工具有明确的单色图标；新运行图标只播放一次白色扫光，运行摘要持续 shimmer。
   - 展开后按原顺序查看保留的工具调用、参数和结果；命令输出、文件修改复用已有查看器。同一操作的结果和命令输出只有一个所属组。
   - 审批与交互请求继续通过现有入口处理；失败摘要直接可见，最终答复和交付资源在会话中可访问。
@@ -70,6 +73,7 @@ acceptance:
   - Agent 驱动的 Electron 旅程覆盖历史与运行中两组操作、展开结果、完成静态、长路径和命令、四语、明暗主题、375px 窄窗、键盘与减少动态效果。
   - 正文和输入框的边界通过实际窗口几何断言，展开日志不扩大页面宽度。
   - 原生 Electron 检查调用条背景、运行中的横向填充、完成状态以及减少动态效果下的静态进度。
+  - 原生Electron核对折叠处不渲染调用条、最新动作切换、左向右一次进场、连续shimmer和语义图标；日志追加不重播进场。
   - Carbon 实际查看用户参考与首版截图，负责主要视觉收敛，意见、用量和最终落实可从产物读回；调用使用现有模型守卫。
   - 当前干净候选的回归、类型、四语、通信、Harness 与构建通过，最终截图、失败回执和哈希绑定保留。
 requiredTests:
