@@ -1,0 +1,33 @@
+{
+  "schema": "G2QueryFailureRegression/v1",
+  "actor": "codex-g2-r49",
+  "driven_by": "agent",
+  "phase": "original",
+  "reviewEngine": "current-main-model",
+  "observationKind": "agent-fixture-real-cli-processes",
+  "modelRequests": 0,
+  "sourceParent": "fe655957eaa1bec2e4895c82704827b053b84291",
+  "sourceSha256": "sha256:5763863265b355d64cadd042235459c64f8bda3391df77585dd400f4438f99cb",
+  "checks": [
+    {
+      "mode": "exit",
+      "driverExitCode": 1,
+      "elapsedMs": 1513,
+      "fixture": "D:\\tmp\\g2-r49-20261124\\original-exit",
+      "summaryPresent": false,
+      "completedQueries": null,
+      "partialQueryId": null,
+      "failedArm": null,
+      "failureStage": null,
+      "commandPresent": true,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "failure": {
+    "completedQueries": 1,
+    "missingSummary": "queries.json",
+    "rawDriverLog": "D:\\tmp\\g2-r49-20261124\\original-exit\\driver.log",
+    "rawDriverLogSha256": "dc0b3222912db45a0ae4a55a54a4c7a0b7ce3a0b39111aa5fd9d51ad07e83e81"
+  }
+}

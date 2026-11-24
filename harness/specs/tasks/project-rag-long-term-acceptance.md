@@ -136,4 +136,6 @@ docs:
 
 任务队列执行入口scripts/knowledge-rag-task-runner.ts绑定原540槽位、固定argv adapter及输入digest，生成与oracle隔离的participant工作区；每槽执行后独立重新分级并追加唯一attempt，原期限内捕获实际费用/用量，缺证据或基础设施错误立即停队列。中断、超时和无产物保持原状态，不覆盖旧跑次；实际provider资源仅在明确执行命令时消费。
 
+查询入口scripts/knowledge-rag-query-runner.ts对固定240query执行page/full两臂，逐臂原子保存queries.json检查点。完整查询与当前partialQuery分别保留；failure绑定queryId、arm、失败阶段和原始原因，启动或终止未确认的命令结果保留null。原始日志和捕获保留，任何失败立即停止并返回非零退出码，只有全部240query完成才标记complete。持续回归覆盖非零退出、原期限超时、缺失/损坏捕获、候选/策略漂移、工作树变化及启动失败。
+
 residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。

@@ -313,6 +313,6 @@ Conversation tasks are managed by the agent. Identified work appears in one task
 
 Retrieval diagnostics in Knowledge settings show reference-only receipts, measured latency and unknown usage. Evaluated ranking policies are imported from the frozen offline cohort and can be rolled back; feedback never changes ranking automatically.
 
-Policy imports reopen original query/task artifacts in the owner’s bounded Node verifier and check the actual ranking-policy digest. See the [offline execution guide](docs/dev/project-rag/OFFLINE-DRIVERS.md) for plans and evidence layout.
+Policy imports reopen original query/task artifacts in the owner’s bounded Node verifier and check the actual ranking-policy digest. Query drivers checkpoint completed queries, partial arm measurements and failure stages. See the [offline execution guide](docs/dev/project-rag/OFFLINE-DRIVERS.md) for plans and evidence layout.
 
 Packaged retrieval verifies its delivered file manifest before Runtime startup. Offline tooling checks native SQLite/vector availability, upgrade compatibility and candidate-bound evaluation receipts; the dedicated packaged and soak runners retain actual failures and elapsed time.

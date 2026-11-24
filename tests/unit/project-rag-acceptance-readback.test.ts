@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { RAG_SOAK_MINIMUM_MS, readProjectRagAcceptance, validateRagSoak, validateRagSoakProbe } from '../../scripts/lib/project-rag-acceptance.mjs';
 import { runRagCommand } from '../../scripts/lib/project-rag-process.mjs';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
@@ -21,6 +21,15 @@ function report() {
       recordedAt: new Date(start + sequence * 600000).toISOString(), probeDigest: createHash('sha256').update(String(sequence)).digest('hex'),
       lostJobs: 0, duplicatePublications: 0, revocationLeaks: 0, pendingJobs: 0,
     })) };
+}
+
+function sourceFixture(root: string) {
+  const source = join(root, 'source'); mkdirSync(source);
+  const git = (...args: string[]) => execFileSync('git', args, { cwd: source, encoding: 'utf8', windowsHide: true }).trim();
+  git('init', '-b', 'codex/fixture'); writeFileSync(join(source, 'fixture.txt'), 'agent fixture\n'); git('add', 'fixture.txt');
+  git('-c', 'user.name=AgentFixture', '-c', 'user.email=agent-fixture@example.invalid', '-c', 'commit.gpgsign=false',
+    '-c', 'core.hooksPath=' + join(root, 'no-hooks'), 'commit', '-m', 'agent fixture');
+  return { source, candidate: git('rev-parse', 'HEAD') };
 }
 
 describe('RAG acceptance preserves actual duration and failed evidence', () => {
@@ -83,15 +92,62 @@ describe('RAG acceptance preserves actual duration and failed evidence', () => {
       expect(result.durationMs).toBeLessThan(6000);
     } finally { rmSync(root, { recursive: true, force: true }); }
   });
+  it.each(['exit', 'timeout', 'missing', 'malformed', 'identity', 'policy', 'source', 'start'])(
+    'retains completed queries and the failing arm on %s', (mode) => {
+      const root = mkdtempSync(join(tmpdir(), 'rag-partial-query-'));
+      try {
+        const { source, candidate } = sourceFixture(root), corpusRoot = resolve('harness/specs/fixtures/project-rag/v4');
+        const bundle = loadFrozenRagCorpus(corpusRoot, release.freezeDigest), policy = defaultRetrievalPolicy('local');
+        const failedQuery = bundle.queries[mode === 'start' ? 0 : 1].id, failedArm = mode === 'start' ? 'page' : 'full';
+        const adapter = join(root, 'adapter.mjs'), output = join(root, 'run');
+        writeFileSync(adapter, `import { writeFileSync } from 'node:fs';
+const env = process.env, mode = ${JSON.stringify(mode)};
+const fail = env.RAG_QUERY_ID === ${JSON.stringify(failedQuery)} && env.RAG_QUERY_ARM === 'full';
+if (fail && mode === 'exit') process.exit(7);
+if (fail && mode === 'timeout') { setInterval(() => {}, 1000); }
+else if (fail && mode === 'missing') {}
+else if (fail && mode === 'malformed') writeFileSync(env.RAG_QUERY_REPORT, '{');
+else {
+  if (fail && mode === 'source') writeFileSync('dirty.txt', 'agent fixture');
+  writeFileSync(env.RAG_QUERY_REPORT, JSON.stringify({ candidate: fail && mode === 'identity' ? 'b'.repeat(40) : env.RAG_QUERY_CANDIDATE,
+    queryId: env.RAG_QUERY_ID, arm: env.RAG_QUERY_ARM, profile: env.RAG_QUERY_PROFILE,
+    ownerPinsVerified: true, safetyViolations: 0, results: [],
+    plan: { policyDigest: fail && mode === 'policy' ? 'sha256:' + 'b'.repeat(64) : ${JSON.stringify(retrievalPolicyDigest(policy))} } }));
+}
+`);
+        const plan = { schema: 'ProjectRagQueryExecutionPlan/v1', sourceRoot: source, candidate, corpusRoot,
+          corpusDigest: bundle.freezeDigest, profile: 'local', candidatePolicy: policy,
+          argv: mode === 'start' ? [join(root, 'absent.exe')] : [process.execPath, adapter],
+          adapterInputs: [{ path: adapter, digest: sha256(readFileSync(adapter)) }],
+          heldOutRelease: { corpusDigest: bundle.freezeDigest, cleanCandidate: candidate,
+            calibrationFrozen: true, calibrationReceiptDigest: 'sha256:' + 'a'.repeat(64) } };
+        const planFile = join(root, 'plan.json'); writeFileSync(planFile, jsonBytes(plan));
+        const result = spawnSync(process.execPath, [resolve('openclaw_runtime/node_modules/tsx/dist/cli.mjs'),
+          resolve('scripts/knowledge-rag-query-runner.ts'), planFile, output], { cwd: resolve('.'), encoding: 'utf8',
+          windowsHide: true, timeout: 20000, env: { ...process.env, NODE_OPTIONS: '--max-old-space-size=384' } });
+        expect(result.status, result.stderr).toBe(1);
+        const receipt = JSON.parse(readFileSync(join(output, 'queries.json'), 'utf8'));
+        expect(receipt).toMatchObject({ candidate, corpusDigest: bundle.freezeDigest, complete: false,
+          expectedQueries: 240, completedQueries: mode === 'start' ? 0 : 1,
+          partialQuery: { queryId: failedQuery }, failure: { queryId: failedQuery, arm: failedArm } });
+        expect(receipt.failure.reason).toBeTruthy();
+        expect(receipt.queries).toHaveLength(mode === 'start' ? 0 : 1);
+        if (mode !== 'start') {
+          expect(receipt.queries[0]).toMatchObject({ queryId: bundle.queries[0].id,
+            page: { rawDigest: expect.any(String) }, full: { rawDigest: expect.any(String) } });
+          expect(receipt.partialQuery.page.rawDigest).toBe(sha256(readFileSync(join(output, failedQuery + '-page.raw.json'))));
+        }
+        const command = JSON.parse(readFileSync(join(output, `${failedQuery}-${failedArm}.command.json`), 'utf8'));
+        if (mode === 'exit') expect(command.exitCode).toBe(7);
+        if (mode === 'timeout') expect(command.timedOut).toBe(true);
+        if (mode === 'start') { expect(command).toMatchObject({ exitCode: null, timedOut: null }); expect(command.error).toBeTruthy(); }
+        expect(existsSync(join(output, bundle.queries[2].id + '-page.log'))).toBe(false);
+      } finally { rmSync(root, { recursive: true, force: true }); }
+    }, 30000);
   it('preserves a partial agent-driven cohort and returns a failing process exit', () => {
     const root = mkdtempSync(join(tmpdir(), 'rag-partial-driver-'));
     try {
-      const source = join(root, 'source'); mkdirSync(source);
-      const git = (...args: string[]) => execFileSync('git', args, { cwd: source, encoding: 'utf8', windowsHide: true }).trim();
-      git('init', '-b', 'codex/fixture'); writeFileSync(join(source, 'fixture.txt'), 'agent fixture\n'); git('add', 'fixture.txt');
-      git('-c', 'user.name=AgentFixture', '-c', 'user.email=agent-fixture@example.invalid', '-c', 'commit.gpgsign=false',
-        '-c', 'core.hooksPath=' + join(root, 'no-hooks'), 'commit', '-m', 'agent fixture');
-      const candidate = git('rev-parse', 'HEAD'), corpusRoot = resolve('harness/specs/fixtures/project-rag/v4');
+      const { source, candidate } = sourceFixture(root), corpusRoot = resolve('harness/specs/fixtures/project-rag/v4');
       const bundle = loadFrozenRagCorpus(corpusRoot, release.freezeDigest), pin = 'sha256:' + 'a'.repeat(64);
       const provider = { instanceId: 'agent-mock', modelRevision: 'mock-v1', usageParserRevision: 'mock-v1', rateSheetRevision: 'mock-v1',
         capabilityReceiptDigest: pin, endpointOrigin: 'https://example.invalid' }, generationSettings = { temperature: 0 };

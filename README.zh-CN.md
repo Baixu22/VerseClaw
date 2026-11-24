@@ -313,6 +313,6 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 
 知识设置中的检索诊断展示仅含引用的回执、实际延迟及未知用量。排序策略从固定离线评测结果导入并支持回滚，反馈不会自动调整排序。
 
-策略导入由 owner 在有界 Node 校验器中重新读取查询和任务原件，并核对实际执行的排序策略 digest。计划参数与证据目录见[离线执行指南](docs/dev/project-rag/OFFLINE-DRIVERS.md)。
+策略导入由 owner 在有界 Node 校验器中重新读取查询和任务原件，并核对实际执行的排序策略 digest。查询执行器保存完整查询、部分臂测量及失败阶段的检查点。计划参数与证据目录见[离线执行指南](docs/dev/project-rag/OFFLINE-DRIVERS.md)。
 
 安装包中的检索组件在 Runtime 启动前核验交付文件清单。离线工具检查原生 SQLite/向量能力、升级兼容性和候选绑定评测回执，独立安装包与稳定性驱动保留实际失败及耗时。

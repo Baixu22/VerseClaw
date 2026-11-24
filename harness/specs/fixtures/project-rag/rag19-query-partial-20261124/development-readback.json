@@ -1,0 +1,129 @@
+{
+  "schema": "G2QueryPartialDevelopment/v1",
+  "actor": "codex-g2-r49",
+  "driven_by": "agent",
+  "node": "TF-0896",
+  "sourceParent": "fe655957eaa1bec2e4895c82704827b053b84291",
+  "rawDirectory": "D:/tmp/g2-r49-20261124",
+  "sourceInputs": [
+    {
+      "path": "scripts/knowledge-rag-query-runner.ts",
+      "sha256": "89e0dcb229e2c441458aca690283a26ac0c10ad76dca338de734c52f6f773c09"
+    },
+    {
+      "path": "tests/unit/project-rag-acceptance-readback.test.ts",
+      "sha256": "c42d4b28c6279dd49386e20e704988bf46e9c1c66a290eb1827f213d4c31da51"
+    },
+    {
+      "path": "docs/dev/project-rag/OFFLINE-DRIVERS.md",
+      "sha256": "98eb24c0b3c045d2f8a2c390e05a9d3836c04749a578bdceba91fbb9aa291a21"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-long-term-acceptance.md",
+      "sha256": "8859f34c35acb8a97ed1ac95d299a258e566f7a8619b0ee0dbf0eed977026fcd"
+    },
+    {
+      "path": "README.md",
+      "sha256": "99b38399c691e26c7f2650adbc28afda14733b339baf1874a000d2a551a1d208"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "308832e5ca208cd2f65d03ef1f1ac18594d8a3b4f0237b24acfdf26e6d50f65a"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "cfa75cbcebf5a82e3c0f8e81fcfd4614d262cdb181787a1dbe37afbf955bd4e8"
+    }
+  ],
+  "checks": {
+    "nativeProcessRegression": {
+      "passed": true,
+      "cases": 8,
+      "modelRequests": 0
+    },
+    "syntax": {
+      "schema": "G2QuerySyntax/v1",
+      "actor": "codex-g2-r49",
+      "driven_by": "agent",
+      "method": "TypeScript transpile syntax diagnostics",
+      "checks": [
+        {
+          "file": "scripts/knowledge-rag-query-runner.ts",
+          "errors": []
+        },
+        {
+          "file": "tests/unit/project-rag-acceptance-readback.test.ts",
+          "errors": []
+        }
+      ],
+      "passed": true
+    },
+    "scopedTypecheck": {
+      "schema": "G2ScopedQueryTypecheck/v1",
+      "actor": "codex-g2-r49",
+      "driven_by": "agent",
+      "method": "TypeScript noEmit program for changed CLI and persistent regression under tsconfig.test.json",
+      "files": [
+        "scripts/knowledge-rag-query-runner.ts",
+        "tests/unit/project-rag-acceptance-readback.test.ts"
+      ],
+      "durationMs": 1890,
+      "errors": [],
+      "passed": true
+    },
+    "targetedLint": {
+      "passed": true,
+      "files": [
+        {
+          "path": "D:\\ClawX-work\\g2-rag16-relay-20261119\\scripts\\knowledge-rag-query-runner.ts",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "D:\\ClawX-work\\g2-rag16-relay-20261119\\tests\\unit\\project-rag-acceptance-readback.test.ts",
+          "errors": 0,
+          "warnings": 0
+        }
+      ]
+    },
+    "harness": {
+      "spec": "project-rag-long-term-acceptance",
+      "result": "PASS_WITH_RESIDUAL",
+      "exitCode": 0
+    }
+  },
+  "rawPins": [
+    {
+      "path": "D:\\tmp\\g2-r49-20261124\\query-check.mjs",
+      "sha256": "ac2a5d6f42800f03c504ff89b7a8fb1ce4b46f53287644a7cd49836fc1c98460"
+    },
+    {
+      "path": "D:\\tmp\\g2-r49-20261124\\query-original-r1.json",
+      "sha256": "ebe50c9c97c530471ade906643bcd50c68cbbe85c42b1901a2edd73f1ef42ba7"
+    },
+    {
+      "path": "D:\\tmp\\g2-r49-20261124\\query-fixed-r1.json",
+      "sha256": "1b68d261c20f85f1c1e5a5cf6f6577251f465411b88d3431e3e41a844e3a5721"
+    },
+    {
+      "path": "D:\\tmp\\g2-r49-20261124\\syntax-r1.json",
+      "sha256": "ecbf5b86eb9cd942c66ec9da893d23c9e985cecaf24cb76713b0a0894984178a"
+    },
+    {
+      "path": "D:\\tmp\\g2-r49-20261124\\scoped-types-r1.json",
+      "sha256": "41fd6914fa2968b5c85dc9bdb4bb5c0e179ca52c8297ae9900344f7254e056f4"
+    },
+    {
+      "path": "D:\\tmp\\g2-r49-20261124\\lint-r1.json",
+      "sha256": "262fe631a001faf4d6cc5378fbffbbdba8b001d7381c58161794287c059577c9"
+    },
+    {
+      "path": "D:\\tmp\\g2-r49-20261124\\harness-rag19-r1.log",
+      "sha256": "9f59259114502a6b6b38df31ce5c9c70f865b19a3439c4a5e9455d6160922ffd"
+    }
+  ],
+  "pendingValidation": {
+    "persistentVitest": "fresh matching baseline window",
+    "fullEngineering": "original26-gate executor/verifier after baseline commit"
+  }
+}

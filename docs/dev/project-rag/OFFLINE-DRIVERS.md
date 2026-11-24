@@ -11,6 +11,8 @@ pnpm --dir openclaw_runtime exec tsx ../scripts/knowledge-rag-task-runner.ts <ta
 
 查询计划使用 `ProjectRagQueryExecutionPlan/v1`，包含 `sourceRoot`、`candidate`、`corpusRoot`、`corpusDigest`、`profile`、`candidatePolicy`、`argv`、`adapterInputs` 与 `heldOutRelease`。固定 240 条查询，各执行 page/full 两臂。适配器接收 `RAG_QUERY_*` 环境变量；full 臂从 `RAG_QUERY_POLICY_JSON` 取得排序候选，通过 backend/admin 的 `wiki.retrieval.evaluate` 执行，保存实际返回的 `plan.policyDigest`。普通 `wiki.retrieve` 使用当前 owner 策略。候选评测沿同一来源准入、检索与预算路径运行，模式为 manual。
 
+`queries.json` 在执行前建立，逐臂原子保存检查点。`queries` 保存两臂均完成的查询，`partialQuery` 保存当前查询已获得的测量，`completedQueries` 只计完整查询。失败时 `failure` 记录 queryId、arm、失败阶段及原始原因，队列立即停止并返回非零退出码；启动或终止结果未确认时，命令回执的 `exitCode`、`timedOut` 保留 `null`。仅全 240 条查询完成后 `complete` 才为 `true`。每次执行使用新目录，日志、命令回执和已有 raw JSON 均保留。
+
 任务计划使用 `ProjectRagTaskExecutionPlan/v1`，包含 `sourceRoot`、`corpusRoot`、`participantRoot`、`adapterArgv`、`adapterInputs`、`experiment`、`heldOutRelease`、`candidatePolicies` 与安全回执。participant 与任务证据目录互为独立兄弟目录。`candidatePolicies` 固定 local/quality/research 三个候选，`experiment.arms` 的 full 臂用 `policyDigests` 绑定它们。原 60 任务×3 repeats×3 arms 的顺序、预算与停止条件保持冻结。
 
 任务适配器读取 `RAG_TASK_REQUEST` 和 `RAG_TASK_WORKSPACE`，接收原始预算与独立 session nonce。full 臂使用 `RAG_TASK_POLICY_JSON`，把实际 owner 回执的策略 digest 写到 `retrievalPolicyDigest`。返回候选、session、arm、experiment、五阶段费用、实测 token/模型调用/耗时、安全和关闭 writeback 的回执；独立判据重新读取产物。代码判据使用冻结原文与原平台的路径语义，Node 权限隔离禁止额外文件、子进程和 worker 访问。infra/unknown/timeout 状态保留在原始 attempt 中并停止后续队列。
