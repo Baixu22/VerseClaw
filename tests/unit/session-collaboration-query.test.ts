@@ -314,8 +314,10 @@ describe('A2 shared session discovery and detail', () => {
   });
   it('rejects malformed, unselected and cross-scope replies consistently at Main, UI and tool consumers', async () => {
     const input = query(), good = (await runtime(input)).page;
+    expect(await readSessionCollaborationPage(input, () => ({ success: true, page: good }))).toEqual(good);
     const corruptions: Array<[string, (page: SessionCollaborationPage) => void, 'unknown' | 'stale']> = [
       ['missing-source', page => { delete (page.items[0].sources as Partial<typeof page.items[0]['sources']>).tasks; }, 'unknown'],
+      ['missing-source-reason', page => { Reflect.deleteProperty(page.items[0].sources.actions, 'reason'); }, 'unknown'],
       ['missing-ready-value', page => { page.items[0].sources.session.value = null as never; }, 'unknown'],
       ['wrong-row-key', page => { page.items[0].sessionKey = B as typeof page.items[0]['sessionKey']; }, 'stale'],
       ['wrong-run-scope', page => { page.items[0].sources.run.value!.scope.workspaceId = scope(B, 'workspace-b', 'generation-b').workspaceId; }, 'stale'],

@@ -106,7 +106,7 @@ export function validateSessionCollaborationPage(query: SessionCollaborationQuer
           || (name !== 'session' && !fields.has(name) && source.state !== 'not_read')) return invalid();
         if (source.state === 'ready' || source.state === 'empty') {
           if (!at(source.readAt)) return invalid();
-        } else if (source.value !== null || !text(source.reason) || (source.readAt !== null && !at(source.readAt))) return invalid();
+        } else if (source.value !== null || !('reason' in source) || !text(source.reason) || (source.readAt !== null && !at(source.readAt))) return invalid();
       }
       const { session, goal, tasks, run, actions, origin, execution } = row.sources;
       if (session.state !== 'ready') {

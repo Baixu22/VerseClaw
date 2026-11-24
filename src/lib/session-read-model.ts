@@ -6,7 +6,7 @@ import type { SessionCollaborationQueryResult } from '@shared/host-api/contract'
 
 /** UI consumers use the same scoped payload and bounded reply as the session tools. */
 export async function readSessionCollaborationPage(input: SessionCollaborationQuery,
-  read: (query: SessionCollaborationQuery) => Promise<SessionCollaborationQueryResult>): Promise<SessionCollaborationPage> {
+  read: (query: SessionCollaborationQuery) => SessionCollaborationQueryResult | Promise<SessionCollaborationQueryResult>): Promise<SessionCollaborationPage> {
   const query = parseSessionCollaborationQuery(input);
   const result = await read(query);
   return validateSessionCollaborationPage(query, result.page);
