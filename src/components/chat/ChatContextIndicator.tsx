@@ -112,8 +112,8 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
     void hostApi.memory.injectionReceipts({ sessionKey, limit: 8 }).then(result => {
       if (cancelled) return;
       if (!result.success) throw new Error('receipt_read_failed');
-      // The receipt contract has no generation field: older receipts cannot be attributed to this report.
-      setReceiptResult({ key: receiptKey, state: 'ready', receipts: result.receipts.filter(receipt => receipt.sessionKey === sessionKey && receipt.createdAt >= reportGeneratedAt).slice(0, 8) });
+      // Receipts are timestamped session history; they have no report/generation identity.
+      setReceiptResult({ key: receiptKey, state: 'ready', receipts: result.receipts.filter(receipt => receipt.sessionKey === sessionKey).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8) });
     }).catch(() => { if (!cancelled) setReceiptResult({ key: receiptKey, state: 'error', receipts: [] }); });
     return () => { cancelled = true; };
   }, [open, sessionKey, reportGeneratedAt, receiptKey]);
@@ -194,6 +194,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
       </section>
       {composition && <section className="border-t border-border px-4 py-3" aria-label={t('contextDisplay.memory')}>
         <h3 className="mb-2 flex items-center gap-2 font-medium"><Brain className="size-3.5 text-muted-foreground" aria-hidden="true" />{t('contextDisplay.memory')}</h3>
+        <p className="mb-2 text-xs leading-5 text-muted-foreground">{t('contextDisplay.memoryScope')}</p>
         {receiptState === 'loading' && <p role="status" className="text-muted-foreground">{t('contextDisplay.memoryLoading')}</p>}
         {receiptState === 'error' && <p role="status" className="flex items-center justify-between gap-2 text-muted-foreground">{t('contextDisplay.memoryError')}<button type="button" className="rounded-md px-2 py-1 text-foreground hover:bg-black/5 focus-visible:ring-1 focus-visible:ring-ring dark:hover:bg-white/10" onClick={() => setRetry(value => value + 1)}>{t('contextDisplay.retry')}</button></p>}
         {receiptState === 'ready' && !receipts.length && <p className="text-muted-foreground">{t('contextDisplay.memoryNone')}</p>}

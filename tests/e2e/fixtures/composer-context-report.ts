@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
+import { Type } from '@sinclair/typebox';
 import { buildSystemPromptReport } from '../../../openclaw_runtime/src/agents/system-prompt-report';
 
 /** Agent-owned files use the production report builder; no context DTO is replayed. */
@@ -27,7 +28,7 @@ export async function persistComposerContext(input: {
   const skillsPrompt = '<available_skills>\n<skill><name>context-review</name><description>Inspect recorded context sources.</description></skill>\n</available_skills>';
   const tool = {
     name: 'read_file', label: 'Read file', description: 'Read a UTF-8 file from the active workspace.',
-    parameters: { type: 'object' as const, properties: { path: { type: 'string' as const } }, required: ['path'] },
+    parameters: Type.Object({ path: Type.String() }),
     execute: async (_id: string, args: { path: string }) => ({ content: [{ type: 'text' as const, text: await readFile(args.path, 'utf8') }], details: {} }),
   };
   const systemPrompt = [

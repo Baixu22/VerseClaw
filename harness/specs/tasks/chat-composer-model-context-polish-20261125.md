@@ -28,6 +28,7 @@ touchedAreas:
   - electron/services/usage-api.ts
   - shared/i18n/locales/*/chat.json
   - tests/unit/usage-live-scope.test.ts
+  - tests/unit/chat-context-indicator.test.tsx
   - tests/e2e/chat-context-display.spec.ts
   - tests/e2e/chat-model-settings-card.spec.ts
   - tests/e2e/chat-composer-model-context.spec.ts
@@ -50,6 +51,7 @@ expectedUserBehavior:
 acceptance:
   - 真实文件经运行时报告生成器、会话索引、Main接口和Renderer显示；文件修改后计量变化有来源哈希与截图。
   - 生产接口不把缺少测量的计数写成0，缺少用量或报告时显示未知状态。
+  - 记忆回执按会话来源和真实时间展示；报告生成前已记录的注入可查阅，未提供报告关联标识时不声称其属于当前报告。
   - 实际Electron操作检查纯线条、搜索无框、Tooltip点击穿透、来源展开和相邻菜单切换。
   - Carbon看图后直接修改CSS或JSX，保存真实修改、守卫记录和usage；Codex复核diff并重新截图验收。
   - 定向单测、完整类型、四语、contract、comms、构建及所选Harness通过。

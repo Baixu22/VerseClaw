@@ -111,14 +111,15 @@ describe('context indicator', () => {
     expect(screen.getByTestId('chat-context-usage').textContent).toBe('— / 128,000 tokens');
   });
 
-  it('filters old and foreign receipt sources and permits a failed read to be retried', async () => {
-    mocks.receipts.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce({ success: true, receipts: [receipt, { ...receipt, source: 'previous-generation', createdAt: 10 }, { ...receipt, source: 'foreign', sessionKey: 'agent:main:other' }] });
+  it('keeps timestamped history for the owning conversation and retries a failed read', async () => {
+    mocks.receipts.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce({ success: true, receipts: [receipt, { ...receipt, source: 'earlier-injection', createdAt: 10 }, { ...receipt, source: 'foreign', sessionKey: 'agent:main:other' }] });
     render(<ChatContextIndicator sessionKey={sessionKey} sessionId={sessionId} contextRange={range()} />);
     fireEvent.click(screen.getByTestId('chat-context-indicator'));
     await waitFor(() => expect(screen.getByText('Memory receipts could not be loaded.')).toBeTruthy());
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
     await waitFor(() => expect(screen.getByText('working-memory')).toBeTruthy());
-    expect(screen.queryByText('previous-generation')).toBeNull();
+    expect(screen.getByText('earlier-injection')).toBeTruthy();
+    expect(screen.getByText(en.contextDisplay.memoryScope)).toBeTruthy();
     expect(screen.queryByText('foreign')).toBeNull();
   });
 
@@ -135,7 +136,7 @@ describe('context indicator', () => {
     expect(screen.getByTestId('chat-context-composition-pending')).toBeTruthy();
   });
 
-  it('hides the prior report receipts while a new report is loading', async () => {
+  it('refreshes memory history while a new report is loading', async () => {
     let finish!: (value: unknown) => void;
     const { rerender } = render(<ChatContextIndicator sessionKey={sessionKey} sessionId={sessionId} contextRange={range()} />);
     fireEvent.click(screen.getByTestId('chat-context-indicator'));
@@ -147,7 +148,7 @@ describe('context indicator', () => {
     expect(screen.queryByText('working-memory')).toBeNull();
     expect(screen.getByRole('status').textContent).toBe(en.contextDisplay.memoryLoading);
     await act(async () => finish({ success: true, receipts: [receipt] }));
-    expect(screen.queryByText('working-memory')).toBeNull();
+    expect(screen.getByText('working-memory')).toBeTruthy();
     expect(screen.queryByRole('status')).toBeNull();
   });
 });
