@@ -663,18 +663,19 @@
      }
      return this.cliRunner;
    }
-@@ -1916,9 +2079,7 @@
-   async networkGetRequestDetails(payload: AgentBrowserNetworkDetailPayload): Promise<Omit<AgentBrowserNetworkDetailResult, 'success'>> {
+@@ -1917,8 +2080,10 @@
      const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
      const requestIds = normalizeRequestIds(payload.requestIds);
--    const revealRaw = this.canRevealRaw(record, payload.redacted);
--    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+     const revealRaw = this.canRevealRaw(record, payload.redacted);
++    const binding = record.fullAccessBinding;
+     const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
 -    return { details: revealRaw ? details : details.map(redactNetworkRequestDetail) };
-+    return { details: await this.readNetworkDetails(record, recorder, requestIds, payload.redacted) };
++    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
++    return { details: keepRaw ? details : details.map(redactNetworkRequestDetail) };
    }
  
    /**
-@@ -1938,9 +2099,11 @@
+@@ -1938,9 +2103,11 @@
      const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
      const filter = normalizeNetworkWaitFilter(payload.filter);
      const revealRaw = this.canRevealRaw(record, payload.redacted);
@@ -687,36 +688,47 @@
      };
    }
  
-@@ -1951,8 +2114,7 @@
-   async networkCompareRequests(payload: AgentBrowserNetworkComparePayload): Promise<Omit<AgentBrowserNetworkCompareResult, 'success'>> {
+@@ -1952,8 +2119,10 @@
      const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
      const requestIds = normalizeRequestIds(payload.requestIds);
--    const revealRaw = this.canRevealRaw(record, payload.redacted);
--    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
-+    const details = await this.readNetworkDetails(record, recorder, requestIds, payload.redacted);
-     return { comparison: compareNetworkRequests(details) };
+     const revealRaw = this.canRevealRaw(record, payload.redacted);
++    const binding = record.fullAccessBinding;
+     const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+-    return { comparison: compareNetworkRequests(details) };
++    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
++    return { comparison: compareNetworkRequests(keepRaw ? details : details.map(redactNetworkRequestDetail)) };
    }
  
-@@ -1962,8 +2124,7 @@
-   async networkFindParameterCandidates(payload: AgentBrowserNetworkFindParamsPayload): Promise<Omit<AgentBrowserNetworkFindParamsResult, 'success'>> {
+   /**
+@@ -1963,8 +2132,10 @@
      const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
      const requestIds = normalizeRequestIds(payload.requestIds);
--    const revealRaw = this.canRevealRaw(record, payload.redacted);
--    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
-+    const details = await this.readNetworkDetails(record, recorder, requestIds, payload.redacted);
-     return { candidates: formatParameterCandidates(findParameterCandidates(details)) };
+     const revealRaw = this.canRevealRaw(record, payload.redacted);
++    const binding = record.fullAccessBinding;
+     const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+-    return { candidates: formatParameterCandidates(findParameterCandidates(details)) };
++    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
++    return { candidates: formatParameterCandidates(findParameterCandidates(keepRaw ? details : details.map(redactNetworkRequestDetail))) };
    }
  
-@@ -1978,7 +2139,7 @@
+   /**
+@@ -1977,12 +2148,14 @@
+       ? normalizeRequestIds(payload.requestIds)
        : [];
      const revealRaw = this.canRevealRaw(record, payload.redacted);
++    const binding = record.fullAccessBinding;
      const details = requestIds.length > 0
--      ? await recorder.getDetails(requestIds, { redacted: !revealRaw })
-+      ? await this.readNetworkDetails(record, recorder, requestIds, payload.redacted)
+       ? await recorder.getDetails(requestIds, { redacted: !revealRaw })
        : recorder.listRequests({}, { redacted: !revealRaw })
            .filter((meta) => isJavaScriptMeta(meta))
            .map((meta) => ({ ...meta, truncated: false, redacted: !revealRaw }) as NetworkRequestDetail);
-@@ -2225,7 +2386,7 @@
+-    return { candidates: extractJsCandidates(details, { keywords: payload.keywords, urlIncludes: payload.urlIncludes }) };
++    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
++    return { candidates: extractJsCandidates(keepRaw ? details : details.map(redactNetworkRequestDetail), { keywords: payload.keywords, urlIncludes: payload.urlIncludes }) };
+   }
+ 
+   // ===== P2-1：JS 资源索引 =====
+@@ -2225,7 +2398,7 @@
     */
    private isFullAccess(record: AgentBrowserRecord): boolean {
      this.refreshRuntimeModeExpiry(record);
@@ -725,7 +737,7 @@
    }
  
    /**
-@@ -2235,6 +2396,7 @@
+@@ -2235,6 +2408,7 @@
    private revokeFullAccessRuntime(record: AgentBrowserRecord): void {
      record.runtimeMode = 'normal_restricted';
      record.runtimeExpiresAt = undefined;
@@ -733,22 +745,7 @@
      record.session = { ...record.session, runtimeMode: 'normal_restricted' };
      const control = this.browserControlStates.get(record.session.id);
      control?.boundaryExecutor.clearGrantContext();
-@@ -2292,6 +2454,14 @@
-     return { recorder: state.networkRecorder, record };
-   }
- 
-+  private async readNetworkDetails(record: AgentBrowserRecord, recorder: BrowserNetworkRecorder, requestIds: string[], redacted: boolean | undefined): Promise<NetworkRequestDetail[]> {
-+    const revealRaw = this.canRevealRaw(record, redacted);
-+    const binding = record.fullAccessBinding;
-+    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
-+    return revealRaw && this.hasFullAccessBinding(record, binding, recorder)
-+      ? details : details.map(redactNetworkRequestDetail);
-+  }
-+
-   /**
-    * 获取 browser-window 引擎下累积的 Console 消息摘要。
-    * 通过 BrowserConsoleRecorder 状态化累积 Runtime.consoleAPICalled / Runtime.exceptionThrown / Log.entryAdded 事件。
-@@ -2316,9 +2486,13 @@
+@@ -2316,9 +2490,13 @@
     * normal_restricted / controlled_enhanced 模式下永远返回 false（脱敏）。
     */
    private canRevealRaw(record: AgentBrowserRecord, redacted: boolean | undefined): boolean {

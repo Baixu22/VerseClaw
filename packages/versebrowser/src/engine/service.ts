@@ -2079,7 +2079,11 @@ export class AgentBrowserService {
   async networkGetRequestDetails(payload: AgentBrowserNetworkDetailPayload): Promise<Omit<AgentBrowserNetworkDetailResult, 'success'>> {
     const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
     const requestIds = normalizeRequestIds(payload.requestIds);
-    return { details: await this.readNetworkDetails(record, recorder, requestIds, payload.redacted) };
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const binding = record.fullAccessBinding;
+    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
+    return { details: keepRaw ? details : details.map(redactNetworkRequestDetail) };
   }
 
   /**
@@ -2114,8 +2118,11 @@ export class AgentBrowserService {
   async networkCompareRequests(payload: AgentBrowserNetworkComparePayload): Promise<Omit<AgentBrowserNetworkCompareResult, 'success'>> {
     const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
     const requestIds = normalizeRequestIds(payload.requestIds);
-    const details = await this.readNetworkDetails(record, recorder, requestIds, payload.redacted);
-    return { comparison: compareNetworkRequests(details) };
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const binding = record.fullAccessBinding;
+    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
+    return { comparison: compareNetworkRequests(keepRaw ? details : details.map(redactNetworkRequestDetail)) };
   }
 
   /**
@@ -2124,8 +2131,11 @@ export class AgentBrowserService {
   async networkFindParameterCandidates(payload: AgentBrowserNetworkFindParamsPayload): Promise<Omit<AgentBrowserNetworkFindParamsResult, 'success'>> {
     const { recorder, record } = this.getNetworkRecorder(payload.sessionId);
     const requestIds = normalizeRequestIds(payload.requestIds);
-    const details = await this.readNetworkDetails(record, recorder, requestIds, payload.redacted);
-    return { candidates: formatParameterCandidates(findParameterCandidates(details)) };
+    const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const binding = record.fullAccessBinding;
+    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
+    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
+    return { candidates: formatParameterCandidates(findParameterCandidates(keepRaw ? details : details.map(redactNetworkRequestDetail))) };
   }
 
   /**
@@ -2138,12 +2148,14 @@ export class AgentBrowserService {
       ? normalizeRequestIds(payload.requestIds)
       : [];
     const revealRaw = this.canRevealRaw(record, payload.redacted);
+    const binding = record.fullAccessBinding;
     const details = requestIds.length > 0
-      ? await this.readNetworkDetails(record, recorder, requestIds, payload.redacted)
+      ? await recorder.getDetails(requestIds, { redacted: !revealRaw })
       : recorder.listRequests({}, { redacted: !revealRaw })
           .filter((meta) => isJavaScriptMeta(meta))
           .map((meta) => ({ ...meta, truncated: false, redacted: !revealRaw }) as NetworkRequestDetail);
-    return { candidates: extractJsCandidates(details, { keywords: payload.keywords, urlIncludes: payload.urlIncludes }) };
+    const keepRaw = revealRaw && this.hasFullAccessBinding(record, binding, recorder);
+    return { candidates: extractJsCandidates(keepRaw ? details : details.map(redactNetworkRequestDetail), { keywords: payload.keywords, urlIncludes: payload.urlIncludes }) };
   }
 
   // ===== P2-1：JS 资源索引 =====
@@ -2452,14 +2464,6 @@ export class AgentBrowserService {
       throw new Error('浏览器控制尚未初始化，请先调用 takeSnapshot 触发 CDP attach。');
     }
     return { recorder: state.networkRecorder, record };
-  }
-
-  private async readNetworkDetails(record: AgentBrowserRecord, recorder: BrowserNetworkRecorder, requestIds: string[], redacted: boolean | undefined): Promise<NetworkRequestDetail[]> {
-    const revealRaw = this.canRevealRaw(record, redacted);
-    const binding = record.fullAccessBinding;
-    const details = await recorder.getDetails(requestIds, { redacted: !revealRaw });
-    return revealRaw && this.hasFullAccessBinding(record, binding, recorder)
-      ? details : details.map(redactNetworkRequestDetail);
   }
 
   /**
