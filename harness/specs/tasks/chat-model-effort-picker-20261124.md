@@ -6,7 +6,7 @@ scenario: gateway-backend-communication
 scenarios:
   - windows-ui-v2
 taskType: runtime-bridge
-diffBase: 6c764bdc2d5ddf5390c74c09b0d6dd026ffbdeb3
+diffBase: c76f588f3e1e56441522a0ce0560ec9515d4098f
 intent: 点击模型入口先显示当前强度、模型与官方Preview Slider交互，再从模型行展开Rare UI列表并隐藏滑块；头像浮层改为本地化强度文字Tooltip，前置开发由Codex完成，集中交Carbon优化视觉细节。
 requiredRules:
   - backend-communication-boundary
@@ -46,6 +46,7 @@ expectedUserBehavior:
   - 模型数据来自当前配置，选择沿用现有会话模型写入、缓存提示、忙态、错误和身份隔离流程。
   - 滑块保留弹簧跟随、倾斜、边缘弹性和松手提交；原头像浮层显示四语强度文字，七种强度与现有存储一致。
   - 搜索、方向键、Enter、Escape、Tab、四语、明暗、375px和减少动态效果可操作；模型层关闭后恢复强度卡片。
+  - 卡片保持紧凑比例，模型列表在提供商分组下只显示模型名，搜索框使用中性灰焦点而不出现蓝色框；滑块文字Tooltip与模型行保持分离。
 acceptance:
   - 真实模型引用选择、搜索、禁用、状态隔离、滑块提交和重置有自动检查。
   - agent驱动的Electron截图与交互证明两层切换、滑块及Tooltip隐藏、键盘和实际窄窗边界。

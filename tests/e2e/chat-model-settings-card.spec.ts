@@ -37,6 +37,24 @@ async function openModels(page: Page) {
     return match ? Math.max(...match[1].split(/\s+/).map(value => Math.abs(parseFloat(value)))) : 0;
   })).toBeLessThan(0.2);
 }
+async function inspectCard(page: Page) {
+  await page.getByTestId('chat-agent-effort-slider').hover();
+  const tooltip = page.getByTestId('chat-agent-effort-tooltip');
+  await expect.poll(() => tooltip.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42)).toBeCloseTo(-36, 0);
+  const geometry = await page.getByTestId('chat-model-settings-card').evaluate(card => {
+    const box = card.getBoundingClientRect();
+    const model = card.querySelector('[data-testid="chat-model-picker-current"]')!.getBoundingClientRect();
+    const tooltip = card.querySelector('[data-testid="chat-agent-effort-tooltip"]')!.getBoundingClientRect();
+    return { width: box.width, height: box.height, modelBottom: model.bottom, tooltipTop: tooltip.top,
+      tooltipLeft: tooltip.left, tooltipRight: tooltip.right, viewport: innerWidth };
+  });
+  expect(geometry.width / geometry.height).toBeGreaterThan(1.9);
+  expect(geometry.tooltipTop).toBeGreaterThanOrEqual(geometry.modelBottom);
+  expect(geometry.tooltipLeft).toBeGreaterThanOrEqual(6);
+  expect(geometry.tooltipRight).toBeLessThanOrEqual(geometry.viewport - 6);
+  await expect(page.getByTestId('chat-agent-effort-label')).toBeHidden();
+  return geometry;
+}
 async function language(page: Page, value: string) {
   await page.evaluate(async language => {
     await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: 'settings', action: 'set', payload: { key: 'language', value: language } });
@@ -56,7 +74,7 @@ test('opens the compact reasoning card, masks its slider and saves the selected 
     await page.getByTestId('chat-model-picker-button').click();
     await expect(page.getByTestId('chat-model-settings-effort')).toContainText('Max');
     await expect(page.getByTestId('chat-agent-effort-slider')).toBeVisible();
-    await page.getByTestId('chat-agent-effort-slider').hover();
+    const cardGeometry = await inspectCard(page);
     await expect(page.getByTestId('chat-agent-effort-tooltip')).toBeVisible();
     await expect(page.getByTestId('chat-agent-effort-popover').locator('img')).toHaveCount(0);
     await page.screenshot({ path: info.outputPath('settings-tooltip-dark-1280.png') });
@@ -82,7 +100,7 @@ test('opens the compact reasoning card, masks its slider and saves the selected 
     await page.getByTestId('chat-model-settings-reset').click();
     await expect(page.getByTestId('chat-agent-effort-slider')).toHaveValue('0');
     await page.screenshot({ path: info.outputPath('settings-reset-auto.png') });
-    await writeFile(info.outputPath('interaction.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-model-ui', modelCalls, sliderMasked: true, avatarReplacedByText: true, draftPreserved: true, reset: 'auto' }, null, 2));
+    await writeFile(info.outputPath('interaction.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-model-ui', modelCalls, cardGeometry, sliderMasked: true, avatarReplacedByText: true, draftPreserved: true, reset: 'auto' }, null, 2));
   } finally { await closeElectronApp(app); }
 });
 
@@ -105,14 +123,20 @@ test('keeps both layers usable across locales, themes, 375px and reduced motion'
           const size = await pinWindowContentSize(app, { width, height: 800 }); expect(size.width).toBe(width);
           await page.getByTestId('chat-model-picker-button').click();
           await expect(page.getByTestId('chat-agent-effort-slider')).toBeVisible();
+          const cardGeometry = await inspectCard(page);
           await openModels(page);
+          const focusStyle = await page.getByTestId('chat-model-picker-search').evaluate(input => ({
+            outline: getComputedStyle(input).outlineStyle, shadow: getComputedStyle(input).boxShadow,
+          }));
+          expect(focusStyle.outline).toBe('none');
+          expect(focusStyle.shadow).not.toBe('none');
           const bounds = await page.getByTestId('chat-model-picker-list-layer').evaluate(element => {
             const box = element.getBoundingClientRect();
             return { viewport: innerWidth, left: box.left, right: box.right, top: box.top, bottom: box.bottom, overflow: document.documentElement.scrollWidth > innerWidth };
           });
           expect(bounds.left).toBeGreaterThanOrEqual(6); expect(bounds.right).toBeLessThanOrEqual(width - 6);
           expect(bounds.top).toBeGreaterThanOrEqual(6); expect(bounds.bottom).toBeLessThanOrEqual(794);
-          expect(bounds.overflow).toBe(false); measurements.push({ lang, theme, width, ...bounds });
+          expect(bounds.overflow).toBe(false); measurements.push({ lang, theme, width, ...bounds, cardGeometry, focusStyle });
           if (width === 375 && (lang === 'zh' || lang === 'ru')) await page.screenshot({ path: info.outputPath(`models-${lang}-${theme}-375.png`) });
           await page.keyboard.press('Escape');
           await expect(page.getByTestId('chat-agent-effort-slider')).toBeVisible();
