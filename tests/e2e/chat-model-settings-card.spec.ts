@@ -48,7 +48,7 @@ async function inspectCard(page: Page) {
     return { width: box.width, height: box.height, modelBottom: model.bottom, tooltipTop: tooltip.top,
       tooltipLeft: tooltip.left, tooltipRight: tooltip.right, viewport: innerWidth };
   });
-  expect(geometry.width / geometry.height).toBeGreaterThan(1.9);
+  expect(geometry.height).toBeLessThanOrEqual(160);
   expect(geometry.tooltipTop).toBeGreaterThanOrEqual(geometry.modelBottom);
   expect(geometry.tooltipLeft).toBeGreaterThanOrEqual(6);
   expect(geometry.tooltipRight).toBeLessThanOrEqual(geometry.viewport - 6);
