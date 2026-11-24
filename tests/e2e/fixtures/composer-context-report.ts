@@ -40,7 +40,10 @@ export async function persistComposerContext(input: {
   const tool = {
     name: 'read_file', label: 'Read file', description: 'Read a UTF-8 file from the active workspace.',
     parameters: Type.Object({ path: Type.String() }),
-    execute: async (_id: string, args: { path: string }) => ({ content: [{ type: 'text' as const, text: await readFile(args.path, 'utf8') }], details: {} }),
+    execute: async (_id: string, args: unknown) => {
+      if (typeof args !== 'object' || args === null || !('path' in args) || typeof args.path !== 'string') throw new Error('File path required');
+      return { content: [{ type: 'text' as const, text: await readFile(args.path, 'utf8') }], details: {} };
+    },
   };
   const systemPrompt = [
     'Inspect the current workspace and preserve recorded measurements.', skillsPrompt, tool.description,
