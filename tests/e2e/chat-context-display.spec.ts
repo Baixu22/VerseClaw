@@ -134,6 +134,15 @@ test('keeps an unknown reading distinct from cumulative billing and signals high
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(tag).toHaveAttribute('data-status', 'overload');
     await tag.click();
+    const alertColor = await page.evaluate(() => {
+      const reference = document.createElement('span');
+      reference.className = 'text-red-700 dark:text-red-400';
+      document.body.append(reference);
+      const color = getComputedStyle(reference).color;
+      reference.remove();
+      return color;
+    });
+    await expect(tag).toHaveCSS('color', alertColor);
     await expect(page.getByTestId('chat-context-usage')).toHaveText('120,000 / 128,000 tokens');
   } finally { await closeElectronApp(app); }
 });

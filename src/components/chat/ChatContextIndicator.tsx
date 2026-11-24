@@ -26,7 +26,7 @@ function SourceRow({ label, chars, color, share, children }: { label: string; ch
   const { t } = useTranslation('chat');
   return <div className="chat-context-source-row">
     <span className={cn('size-2.5 rounded-sm', color)} aria-hidden="true" />
-    <span className="min-w-0">{label}</span>
+    <span className="min-w-0" title={label}>{label}</span>
     <span className="tabular-nums text-muted-foreground" title={chars == null ? undefined : t('contextDisplay.chars', { value: full(chars) })}>{chars == null ? '—' : t('contextDisplay.chars', { value: compact(chars) })}</span>
     <span className="text-right font-medium tabular-nums" title={t('contextDisplay.sourceShare')}>{share == null ? '—' : `${Math.round(share * 10) / 10}%`}</span>
     {children ?? <span aria-hidden="true" />}

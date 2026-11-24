@@ -14,7 +14,7 @@ for (const theme of ['light', 'dark'] as const) {
     const sessionId = randomUUID();
     const files = await createComposerContextFiles(homeDir);
     const input = { homeDir, ...files, sessionKey, sessionId, modelRef, usage: { input: 2400, output: 200, cacheRead: 1200, cacheWrite: 0 } };
-    const first = await persistComposerContext(input);
+    const first = await persistComposerContext(input, info.outputPath('first-inputs'));
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme, deviceScaleFactor: 1 });
     try {
       const now = new Date().toISOString();
@@ -52,6 +52,7 @@ for (const theme of ['light', 'dark'] as const) {
       await expect(details.getByTestId('chat-context-composition-bar')).toHaveCSS('height', '2px');
       await details.locator('summary').filter({ hasText: 'Project files' }).click();
       await expect(details.getByText('AGENTS.md', { exact: true })).toBeVisible();
+      await expect(details.getByTestId('chat-context-source-entries').filter({ hasText: 'TOOLS.md' })).toContainText(first.report.injectedWorkspaceFiles[1].injectedChars.toLocaleString('en-US'));
       await expect(details).toContainText('Input tokens measured for the last request.');
       await page.screenshot({ path: info.outputPath(`context-files-${theme}-1280.png`) });
       await page.keyboard.press('Escape');
@@ -76,7 +77,7 @@ for (const theme of ['light', 'dark'] as const) {
 
       // Change the source and rebuild its real runtime report; UI must follow the new persisted values.
       await appendFile(files.files[1], '\nRecorded source changes must update the context report.\n');
-      const second = await persistComposerContext({ ...input, usage: { input: 2700, output: 250, cacheRead: 1300, cacheWrite: 100 } });
+      const second = await persistComposerContext({ ...input, usage: { input: 2700, output: 250, cacheRead: 1300, cacheWrite: 100 } }, info.outputPath('second-inputs'));
       const secondRange = await readRange();
       expect(second.report.systemPrompt.chars).toBeGreaterThan(first.report.systemPrompt.chars);
       expect(secondRange.range.composition?.systemPromptChars).toBe(second.report.systemPrompt.chars);
@@ -87,6 +88,7 @@ for (const theme of ['light', 'dark'] as const) {
       await tag.click();
       await details.getByTestId('chat-context-detailed-breakdown').click();
       await expect(details.getByText('TOOLS.md', { exact: true })).toBeVisible();
+      await expect(details.getByTestId('chat-context-source-entries').filter({ hasText: 'TOOLS.md' })).toContainText(second.report.injectedWorkspaceFiles[1].injectedChars.toLocaleString('en-US'));
       await page.screenshot({ path: info.outputPath(`context-updated-${theme}-1280.png`) });
       const sizes: Record<string, unknown> = {};
       for (const width of [1280, 375]) {
@@ -103,6 +105,24 @@ for (const theme of ['light', 'dark'] as const) {
         await expect(details.getByRole('button', { name: 'Close context details' })).toBeInViewport();
         sizes[String(width)] = bounds;
         await page.screenshot({ path: info.outputPath(`context-updated-${theme}-${width}px.png`) });
+      }
+      await page.evaluate(async () => {
+        await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: 'settings', action: 'set', payload: { key: 'language', value: 'zh' } });
+      });
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await expect(page.locator('html')).toHaveAttribute('lang', 'zh');
+      for (const width of [1280, 375]) {
+        await pinWindowContentSize(app, { width, height: width === 375 ? 667 : 800 });
+        await tag.click();
+        await details.getByTestId('chat-context-source-group').last().locator('summary').click();
+        await expect(details.getByText('TOOLS.md', { exact: true })).toBeVisible();
+        await page.screenshot({ path: info.outputPath(`context-files-${theme}-zh-${width}.png`) });
+        await page.keyboard.press('Escape');
+        await page.getByTestId('chat-model-picker-button').click();
+        await page.getByTestId('chat-agent-effort-slider').hover();
+        await expect(tooltip).toBeVisible();
+        await page.screenshot({ path: info.outputPath(`model-tooltip-${theme}-zh-${width}.png`) });
+        await page.keyboard.press('Escape');
       }
       await writeFile(info.outputPath('source-chain.json'), JSON.stringify({ driven_by: 'agent', actor: 'playwright-composer-context',
         contextService: 'real-Main', navigationAndProviderSeam: 'typed-replay', electronVersion: await app.evaluate(() => process.versions.electron), first, firstRange, second, secondRange, sizes }, null, 2));

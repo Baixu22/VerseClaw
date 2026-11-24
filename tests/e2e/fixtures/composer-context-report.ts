@@ -19,7 +19,7 @@ export async function createComposerContextFiles(homeDir: string) {
 export async function persistComposerContext(input: {
   homeDir: string; workspaceDir: string; files: string[]; sessionKey: string; sessionId: string; modelRef: string;
   usage: { input: number; output: number; cacheRead: number; cacheWrite: number };
-}) {
+}, archiveDir: string) {
   const generatedAt = Date.now();
   const bootstrapFiles = await Promise.all(input.files.map(async path => ({
     name: basename(path) as 'AGENTS.md' | 'TOOLS.md', path, content: await readFile(path, 'utf8'), missing: false,
@@ -56,8 +56,15 @@ export async function persistComposerContext(input: {
   } };
   await writeFile(indexPath, JSON.stringify(index));
   await writeFile(transcriptPath, `${JSON.stringify(transcript)}\n`);
+  await mkdir(archiveDir, { recursive: true });
+  await writeFile(join(archiveDir, 'system-prompt.txt'), systemPrompt);
   const paths = [...input.files, indexPath, transcriptPath];
-  const sources = await Promise.all(paths.map(async path => ({ path, sha256: createHash('sha256').update(await readFile(path)).digest('hex') })));
+  const sources = await Promise.all(paths.map(async (path, index) => {
+    const bytes = await readFile(path);
+    const archivedName = `${index}-${basename(path)}`;
+    await writeFile(join(archiveDir, archivedName), bytes);
+    return { path, archivedName, sha256: createHash('sha256').update(bytes).digest('hex') };
+  }));
   return { driven_by: 'agent', actor: 'playwright-composer-context', usageSource: 'agent-transcript-fixture',
     generator: 'openclaw_runtime/src/agents/system-prompt-report.ts',
     usedTokens: input.usage.input + input.usage.cacheRead + input.usage.cacheWrite, sources, report };

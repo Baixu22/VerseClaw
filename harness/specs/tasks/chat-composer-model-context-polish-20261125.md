@@ -25,6 +25,8 @@ touchedAreas:
   - src/components/chat/ChatModelPicker.tsx
   - src/styles/chat-model-settings.css
   - src/styles/codex-composer-shell.css
+  - scripts/repository-artifacts.json
+  - .gitignore
   - electron/services/usage-api.ts
   - shared/i18n/locales/*/chat.json
   - tests/unit/usage-live-scope.test.ts
@@ -48,6 +50,7 @@ expectedUserBehavior:
   - 上下文入口仅有纯线条圆环，详情组成进度为2px细线，标题、用量和关闭入口固定。
   - 展开的文件、工具和技能计量来自当前会话运行报告，字符份额与Token用量明确区分。
   - 模型卡片和上下文详情在明暗主题、375px与桌面窗口中保持边界、字号和间距比例。
+  - 模型卡片宽度最多304px、圆角18px，28px模型按钮与滑块相距10px；上下文详情使用384px宽度、16px圆角与右对齐数值。
 acceptance:
   - 真实文件经运行时报告生成器、会话索引、Main接口和Renderer显示；文件修改后计量变化有来源哈希与截图。
   - 生产接口不把缺少测量的计数写成0，缺少用量或报告时显示未知状态。
