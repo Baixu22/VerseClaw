@@ -42,7 +42,10 @@ The captured recorder must still own the current control session; debugger detac
 or replacement cannot validate a late result from the earlier connection.
 
 A replay draft is consumed synchronously before network dispatch. Concurrent calls,
-timeouts and unknown outcomes cannot reuse it. JS, SourceMap and replay fetches use
+timeouts and unknown outcomes cannot reuse it. Its URL, headers and request body
+share the module's canonical credential-name check before draft creation; ordinary
+identifiers such as sessionId and passThrough remain usable.
+JS, SourceMap and replay fetches use
 the existing session/profile proxy, including pinned destination addresses, per-request
 authorization, upstream proxy routing and revocation. A missing or refusing owner must
 never fall back to ambient fetch.

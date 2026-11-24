@@ -247,9 +247,9 @@
       "patchPath": "packages/versebrowser/patches/browser-issues-265-268__src__engine__browser-control__replay-tool-executor.ts.patch",
       "driven_by": "agent",
       "actor": "codex-browser-issues-265-268",
-      "reason": "Consume the draft before dispatch and retain its consumed state after response loss; verify grant identity, origin and expiry.",
-      "patchedSha256": "1bb5ad3c0368e7557d8b4a728231af674f10d19c754c2d2525e8ddd962098c08",
-      "patchSha256": "7fb367623360144dd2133569034a619404016a05ed5f72ad0b8c2ef457ef7213",
+      "reason": "Claim the draft before dispatch and retain the claim after an unknown outcome; verify grant identity and share canonical credential checks across URLs, headers, JSON, form and text bodies.",
+      "patchedSha256": "ff85cb9423be4b7829242dfb5e47e1b551ac5ff412d0d321df03fedea9ef56fa",
+      "patchSha256": "bcfaebc20949347f404d3d85227c002c9aecab944cb02fb3aa92e952e4b43333",
       "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
     },
     {

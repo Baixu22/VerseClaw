@@ -83,6 +83,24 @@ function prepareDraft(executor: ReplayToolExecutor): string {
 }
 
 describe('请求重放沙箱执行器', () => {
+  it.each(['query', 'json', 'form', 'text', 'header'] as const)('rejects credential names in %s before preparing a replay', (format) => {
+    const fetcher = vi.fn(async () => new Response(null)) as unknown as typeof fetch;
+    const makeMeta = (fields: Record<string, string>): NetworkRequestMeta => {
+      if (format === 'query') return createMeta({ url: `https://example.com/api/items?${new URLSearchParams(fields)}` });
+      if (format === 'header') return createMeta({ requestHeaders: Object.entries(fields).map(([name, value]) => ({ name, value })) });
+      return createMeta({ method: 'POST',
+        requestHeaders: [{ name: 'Content-Type', value: format === 'json' ? 'application/json' : format === 'form' ? 'application/x-www-form-urlencoded' : 'text/plain' }],
+        requestBody: format === 'json' ? JSON.stringify({ entries: [fields] }) : new URLSearchParams(fields).toString(),
+      });
+    };
+    for (const key of ['private_key', 'auth_token', 'client_secret', 'x-session-id', 'otp', 'pin', 'credentials']) {
+      expect(createExecutor({ meta: makeMeta({ [key]: 'fixture-value' }), fetcher }).prepareRequest({ requestId: 'req-1' }), key).toMatchObject({ isError: true });
+    }
+    const ordinary = { shipping: 'ground', mapping: 'fixture', sessionId: 'row-1', passThrough: 'enabled', author: 'fixture', page: '2' };
+    expect(createExecutor({ meta: makeMeta(ordinary), fetcher }).prepareRequest({ requestId: 'req-1' }).isError).toBeUndefined();
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it('claims a draft before dispatch so concurrent sends have one network effect', async () => {
     let finish!: (response: Response) => void;
     const fetcher = vi.fn(() => new Promise<Response>(resolve => { finish = resolve; }));

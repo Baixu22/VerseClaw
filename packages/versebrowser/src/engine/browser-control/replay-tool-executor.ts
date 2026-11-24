@@ -15,6 +15,7 @@ import { createBoundaryGrantScopeKey } from '../../core/tool-authorization.ts';
 import { redactNetworkText } from '../../core/network-context.ts';
 import { truncateText } from '../../core/text.ts';
 import { REDACTED } from '../../security/redact-secrets.ts';
+import { isSensitiveNetworkName } from '../../security/secret-names.ts';
 
 export interface ReplayResult {
   content: string;
@@ -77,13 +78,6 @@ const DRAFT_TTL_MS = 5 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 10000;
 const MAX_REQUEST_BODY_BYTES = 64 * 1024;
 const MAX_RESPONSE_BODY_CHARS = 256 * 1024;
-const SENSITIVE_HEADER_PATTERN = /^(authorization|cookie|set-cookie|proxy-authorization|x-api-key|api-key|x-csrf-token|x-xsrf-token)$/i;
-const SENSITIVE_FIELD_NAME_PATTERN = /^(authorization|cookie|set-cookie|proxy-authorization|token|access[_-]?token|refresh[_-]?token|api[_-]?key|secret|password|passwd|credential|session|sid|csrf|xsrf)$/i;
-// C96/TF-0123: the free-text body rule used to omit private_key / authorization / cookie /
-// otp / pin, so a `text/plain` request body carrying one of them was accepted for replay
-// (measured 2026-10-14) while `token=` / `credential=` were refused. The name list is aligned
-// with the canonical check.
-const SENSITIVE_TEXT_FIELD_PATTERN = /\b(?:token|access[_-]?token|refresh[_-]?token|api[_-]?key|secret|password|passwd|credential|private[-_]?key|authorization|cookie|session|sid|csrf|xsrf|otp|pin)\s*[:=]/i;
 
 export class ReplayToolExecutor {
   private readonly drafts = new Map<string, ReplayDraft>();
@@ -354,7 +348,7 @@ function normalizeReplayUrl(urlRaw: string, origin: string): { ok: true; url: st
 function normalizeReplayHeaders(headers: NetworkHeader[] | undefined): { ok: true; headers: NetworkHeader[] } | { ok: false; message: string } {
   const result: NetworkHeader[] = [];
   for (const header of headers ?? []) {
-    if (SENSITIVE_HEADER_PATTERN.test(header.name)) {
+    if (isSensitiveFieldName(header.name)) {
       return { ok: false, message: '请求包含敏感 Header，受控增强模式下拒绝重放。' };
     }
     const lower = header.name.toLowerCase();
@@ -398,7 +392,8 @@ function hasSensitiveBody(body: string, headers: NetworkHeader[]): boolean {
       return true;
     }
   }
-  return SENSITIVE_TEXT_FIELD_PATTERN.test(body);
+  // Bound field parsing so delimiter-free bodies stay linear.
+  return Array.from(body.matchAll(/([\w.-]{1,256})["']?\s*[:=]/g)).some(match => isSensitiveFieldName(match[1] ?? ''));
 }
 
 function hasSensitiveJsonKey(value: unknown): boolean {
@@ -412,7 +407,7 @@ function hasSensitiveJsonKey(value: unknown): boolean {
 }
 
 function isSensitiveFieldName(name: string): boolean {
-  return SENSITIVE_FIELD_NAME_PATTERN.test(name);
+  return isSensitiveNetworkName(name);
 }
 
 function shouldReadResponseText(contentType: string): boolean {
@@ -441,7 +436,7 @@ function summarizeUrl(urlRaw: string): string {
 }
 
 function redactHeaderValue(name: string, value: string): string {
-  return SENSITIVE_HEADER_PATTERN.test(name) ? REDACTED : truncateText(value, 300).text;
+  return isSensitiveFieldName(name) ? REDACTED : truncateText(value, 300).text;
 }
 
 function createReplayHeaders(headers: NetworkHeader[]): Headers {
