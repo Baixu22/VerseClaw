@@ -1,0 +1,204 @@
+{
+  "schema": "G2ResearchCancellationNativeRegression/v1",
+  "actor": "codex-g2-r52",
+  "driven_by": "agent",
+  "sourceSha256": "39e9940861c36056650dde53d302abbd1e6d166848e60afa9dcf649c026413e6",
+  "cases": 20,
+  "checks": [
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "cancel-before-start",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 3,
+      "backendRunning": false,
+      "updates": 0,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "timeout-before-start",
+      "reason": "timeout",
+      "status": null,
+      "cancellations": 2,
+      "backendRunning": false,
+      "updates": 0,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "late-start-rejects",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 2,
+      "backendRunning": false,
+      "updates": 0,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "late-start-fails",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 3,
+      "backendRunning": false,
+      "updates": 0,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "cancel-before-start-delivery",
+      "reason": "cancelled",
+      "status": "cancelled",
+      "cancellations": 2,
+      "backendRunning": false,
+      "updates": 1,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "cancel-before-status-delivery",
+      "reason": "cancelled",
+      "status": "cancelled",
+      "cancellations": 2,
+      "backendRunning": false,
+      "updates": 2,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "normal-completion",
+      "reason": "complete",
+      "status": "complete",
+      "cancellations": 0,
+      "backendRunning": false,
+      "updates": 1,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchCancellationRace/v1",
+      "scenario": "already-cancelled",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 0,
+      "backendRunning": false,
+      "updates": 0,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "cancelled",
+      "stage": "start",
+      "status": "cancelled",
+      "stopReason": "cancelled",
+      "updates": 1,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "cancelled",
+      "stage": "status",
+      "status": "cancelled",
+      "stopReason": "cancelled",
+      "updates": 2,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "cancelled",
+      "stage": "observer",
+      "status": "cancelled",
+      "stopReason": "cancelled",
+      "updates": 2,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "cancelled",
+      "stage": "scope-changed",
+      "status": "unavailable",
+      "stopReason": "scope-changed",
+      "updates": 2,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "timeout",
+      "stage": "start",
+      "status": "partial",
+      "stopReason": "deadline",
+      "updates": 1,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "timeout",
+      "stage": "status",
+      "status": "partial",
+      "stopReason": "deadline",
+      "updates": 2,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "timeout",
+      "stage": "observer",
+      "status": "partial",
+      "stopReason": "deadline",
+      "updates": 2,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchTerminalStop/v1",
+      "reason": "timeout",
+      "stage": "scope-changed",
+      "status": "unavailable",
+      "stopReason": "scope-changed",
+      "updates": 2,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchErrorCleanup/v1",
+      "failure": "start",
+      "failed": true,
+      "cancellations": 1,
+      "backendRunning": false,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchErrorCleanup/v1",
+      "failure": "status",
+      "failed": true,
+      "cancellations": 1,
+      "backendRunning": false,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchErrorCleanup/v1",
+      "failure": "observer",
+      "failed": true,
+      "cancellations": 1,
+      "backendRunning": false,
+      "passed": true
+    },
+    {
+      "suite": "G2ResearchErrorCleanup/v1",
+      "failure": "complete",
+      "failed": false,
+      "cancellations": 0,
+      "backendRunning": false,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "modelRequests": 0,
+  "method": "Actual renderer and bounded-read modules; deferred Host admission, controlled response microtasks and original deadline; Host boundary uses agent fixtures"
+}

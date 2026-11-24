@@ -1,0 +1,50 @@
+{
+  "actor": "codex-g2-r52",
+  "driven_by": "agent",
+  "reviewEngine": "current-main-model",
+  "role": "mainline-source-review",
+  "independentVerifier": false,
+  "inputs": [
+    {
+      "path": "src/lib/knowledge-research.ts",
+      "sha256": "39e9940861c36056650dde53d302abbd1e6d166848e60afa9dcf649c026413e6"
+    },
+    {
+      "path": "tests/unit/project-rag-research-controller.test.ts",
+      "sha256": "5b97b316c586851aed47d9fb76a192affb0c51ba93ceff914bce533544a85c0e"
+    },
+    {
+      "path": "tests/e2e/project-rag-research.spec.ts",
+      "sha256": "af4c7cc9b37c7402da413d176213b827e1a62c23a5438c4f6ae61aa34ee92d8b"
+    },
+    {
+      "path": "docs/dev/project-rag/RESEARCH-CONTRACT.md",
+      "sha256": "27d3143e8924ffd939274e1212ad69296e45b5e4bd84c2ca4516d6a31625d136"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-bounded-research.md",
+      "sha256": "9f12c9c49efc55692238f6b731bff9ac5e22710a4d059430c7229d241acc5103"
+    },
+    {
+      "path": "README.md",
+      "sha256": "626df95a342206cda174a883b64e90b2bef56d0d74973ad70b9771f3d71f23d3"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "2f91cf078214fbd686abcf0eb06d6468097253fba5abcf7de04b7d7cf9ae7be2"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "efc428be5e7d109d7fd601860daf2d256b5dc234422ae535d71ddaa10bb5c4e4"
+    }
+  ],
+  "findings": [],
+  "reviewedContracts": [
+    "All late successful or failed start settlements compensate only a stopped request and retain the same request/owner selectors.",
+    "Late start rejection is handled without unhandled promise rejection or a new backend dispatch.",
+    "Cancellation and original deadline precede completed delivery; normal completion still issues no cancellation.",
+    "Cancelled/timeout delivery retains the final owner-checked snapshot and never mutates the owner result.",
+    "scope-changed remains unavailable under both cancellation and deadline recovery.",
+    "The persistent suite and actual Main Electron journey preserve existing coverage, source admission and frozen budgets."
+  ]
+}

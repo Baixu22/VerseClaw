@@ -546,3 +546,73 @@ it.each(['start', 'status', 'observer'] as const)('cancels backend Research afte
   controller.abort();
   expect(cancel).toHaveBeenCalledTimes(1);
 });
+
+it.each([
+  ['cancelled', 'accepted'], ['timeout', 'accepted'], ['cancelled', 'failed'], ['cancelled', 'rejected'],
+] as const)('stops late Research admission after %s with a %s start reply', async (reason, reply) => {
+  vi.useFakeTimers();
+  const controller = new AbortController(), plan = createResearchPlan({ requestId: 'late-start', query: 'Gateway port', scope });
+  type StartReply = Awaited<ReturnType<typeof hostApi.knowledge.researchStart>>;
+  let accept!: (value: StartReply) => void, reject!: (error: Error) => void, backendRunning = false;
+  const acceptance = new Promise<StartReply>((resolve, fail) => { accept = resolve; reject = fail; });
+  const start = vi.mocked(hostApi.knowledge.researchStart).mockReset().mockReturnValue(acceptance);
+  vi.mocked(hostApi.knowledge.researchStatus).mockReset().mockResolvedValue({ success: true });
+  const cancel = vi.mocked(hostApi.knowledge.researchCancel).mockReset().mockImplementation(async () => {
+    if (!backendRunning) return { success: false, error: 'Request has not reached Main' };
+    backendRunning = false; return { success: true };
+  });
+  const updates = vi.fn();
+  try {
+    const pending = readKnowledgeResearch({ query: plan.query, workspaceId: scope.workspaceId, sessionKey: scope.sessionKey },
+      controller.signal, updates, 'Research failed');
+    if (reason === 'cancelled') controller.abort();
+    else await vi.advanceTimersByTimeAsync(30000);
+    expect(await pending).toEqual({ reason });
+    const before = cancel.mock.calls.length;
+    if (reply === 'rejected') reject(new Error('Late transport rejection'));
+    else {
+      backendRunning = true;
+      accept(reply === 'failed' ? { success: false, error: 'Late failed acknowledgement' }
+        : { success: true, research: emptyResearchResult(plan) });
+    }
+    await Promise.resolve(); await Promise.resolve();
+    expect(backendRunning).toBe(false);
+    expect(cancel).toHaveBeenCalledTimes(before + (reply === 'rejected' ? 0 : 1));
+    expect(updates).not.toHaveBeenCalled();
+    const request = start.mock.calls[0][0];
+    for (const [selected] of cancel.mock.calls) expect(selected).toEqual({ requestId: request.requestId,
+      workspaceId: scope.workspaceId, sessionKey: scope.sessionKey });
+    controller.abort();
+    expect(cancel).toHaveBeenCalledTimes(before + (reply === 'rejected' ? 0 : 1));
+  } finally { reject(new Error('Fixture cleanup')); vi.useRealTimers(); }
+});
+
+it.each([
+  ['start', 'cancelled'], ['status', 'cancelled'], ['observer', 'cancelled'],
+  ['start', 'timeout'], ['status', 'timeout'], ['observer', 'timeout'],
+] as const)('keeps %s terminal delivery stopped after %s wins the race', async (stage, reason) => {
+  vi.useFakeTimers();
+  const controller = new AbortController(), plan = createResearchPlan({ requestId: 'delivery-race', query: 'Gateway port', scope });
+  const terminal: ResearchResultV1 = { ...emptyResearchResult(plan), phase: 'finished', status: 'complete', stopReason: 'covered', evidence: [evidence('port')] };
+  const stop = () => { if (reason === 'cancelled') controller.abort(); else vi.setSystemTime(Date.now() + 30001); };
+  const race = () => {
+    const response = Promise.resolve({ success: true, research: terminal });
+    response.then(() => queueMicrotask(stop));
+    return response;
+  };
+  vi.mocked(hostApi.knowledge.researchStart).mockReset().mockImplementation(stage === 'start' ? race
+    : async () => ({ success: true, research: stage === 'observer' ? terminal : emptyResearchResult(plan) }));
+  const status = vi.mocked(hostApi.knowledge.researchStatus).mockReset().mockResolvedValue({ success: true, research: terminal });
+  if (stage === 'status') status.mockImplementationOnce(race);
+  const cancel = vi.mocked(hostApi.knowledge.researchCancel).mockReset().mockResolvedValue({ success: true });
+  const updates = vi.fn((result: ResearchResultV1) => { if (stage === 'observer' && result.status === 'complete') stop(); });
+  try {
+    const read = await readKnowledgeResearch({ query: plan.query }, controller.signal, updates, 'Research failed');
+    expect(read).toMatchObject({ reason, result: { phase: 'finished', status: reason === 'cancelled' ? 'cancelled' : 'partial',
+      stopReason: reason === 'cancelled' ? 'cancelled' : 'deadline', evidence: terminal.evidence } });
+    if (stage !== 'observer') expect(updates.mock.calls.some(([result]) => result.status === 'complete')).toBe(false);
+    expect(terminal).toMatchObject({ status: 'complete', stopReason: 'covered' });
+    const before = cancel.mock.calls.length; controller.abort();
+    expect(cancel).toHaveBeenCalledTimes(before);
+  } finally { vi.useRealTimers(); }
+});

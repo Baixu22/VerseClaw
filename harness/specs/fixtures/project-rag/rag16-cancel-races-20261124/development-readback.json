@@ -1,0 +1,168 @@
+{
+  "schema": "G2ResearchCancellationRaceDevelopment/v1",
+  "actor": "codex-g2-r52",
+  "driven_by": "agent",
+  "node": "TF-0893",
+  "sourceParent": "e1b3ad5d64ab409ab58e95144ec8d747f73e2b44",
+  "qualificationScope": "windows-only",
+  "rawDirectory": "D:/tmp/g2-r52-research-20261124",
+  "sourceInputs": [
+    {
+      "path": "src/lib/knowledge-research.ts",
+      "sha256": "39e9940861c36056650dde53d302abbd1e6d166848e60afa9dcf649c026413e6"
+    },
+    {
+      "path": "tests/unit/project-rag-research-controller.test.ts",
+      "sha256": "5b97b316c586851aed47d9fb76a192affb0c51ba93ceff914bce533544a85c0e"
+    },
+    {
+      "path": "tests/e2e/project-rag-research.spec.ts",
+      "sha256": "af4c7cc9b37c7402da413d176213b827e1a62c23a5438c4f6ae61aa34ee92d8b"
+    },
+    {
+      "path": "docs/dev/project-rag/RESEARCH-CONTRACT.md",
+      "sha256": "27d3143e8924ffd939274e1212ad69296e45b5e4bd84c2ca4516d6a31625d136"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-bounded-research.md",
+      "sha256": "9f12c9c49efc55692238f6b731bff9ac5e22710a4d059430c7229d241acc5103"
+    },
+    {
+      "path": "README.md",
+      "sha256": "626df95a342206cda174a883b64e90b2bef56d0d74973ad70b9771f3d71f23d3"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "2f91cf078214fbd686abcf0eb06d6468097253fba5abcf7de04b7d7cf9ae7be2"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "efc428be5e7d109d7fd601860daf2d256b5dc234422ae535d71ddaa10bb5c4e4"
+    }
+  ],
+  "changes": [
+    "Late start settlement repeats cancellation for the same stopped request.",
+    "Start/status delivery and terminal observer settlement obey the original cancellation/deadline.",
+    "Owner-change terminal state and confirmed owner snapshots remain intact."
+  ],
+  "checks": {
+    "nativeFrontendRegression": {
+      "cases": 20,
+      "passed": true,
+      "modelRequests": 0
+    },
+    "syntax": {
+      "files": [
+        {
+          "path": "src/lib/knowledge-research.ts",
+          "diagnostics": []
+        },
+        {
+          "path": "tests/unit/project-rag-research-controller.test.ts",
+          "diagnostics": []
+        },
+        {
+          "path": "tests/e2e/project-rag-research.spec.ts",
+          "diagnostics": []
+        }
+      ],
+      "passed": true
+    },
+    "lint": {
+      "files": 3,
+      "errors": 0,
+      "warnings": 0
+    },
+    "harness": {
+      "spec": "project-rag-bounded-research",
+      "result": "valid",
+      "exitCode": 0
+    }
+  },
+  "persistentRegression": {
+    "newParameterizedCases": 10,
+    "implemented": true,
+    "executed": false
+  },
+  "electronJourney": {
+    "implemented": true,
+    "executed": false,
+    "readsActualMain": true,
+    "assertions": [
+      "Initial cancellation rejected before Main admission.",
+      "Late start accepted by actual Main.",
+      "Same-request compensating cancellation accepted and actual Main cancelled terminal.",
+      "Late UI result absent."
+    ]
+  },
+  "budgets": {
+    "researchDeadlineMs": 30000,
+    "electronTestTimeoutMs": 480000,
+    "retries": 0,
+    "baselineWindowSeconds": 2400,
+    "forestWindowSeconds": 900,
+    "minimumFreeBytes": 4294967296,
+    "originalRequiredTests": 4,
+    "engineeringGates": 26
+  },
+  "rawPins": [
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\check-research-races.mjs",
+      "sha256": "496157c93908924b5b0a5d5e45e951269dfca8e7553a4a2c8d2fb13eb3dd2d52"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\check-terminal-stop.mjs",
+      "sha256": "372aa065cc9397846457002ff205be72239e56c4828d9463ce5eaa228e06737d"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\check-research-errors.mjs",
+      "sha256": "2de8adafa7a1c5d806e450d5a56d3ce699d9654e534f9f8efdab331ced15dd05"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\research-races-original-r1.json",
+      "sha256": "14cc8af0d972a36bc700f59391756bd27375047c129526420ec27cb804b4c929"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\research-races-fixed-r1.json",
+      "sha256": "4c3104312bc63828e415180a37161afb37c5e46b42a42079e970e56d12b6ead2"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\terminal-stop-fixed-r1.json",
+      "sha256": "b0fb78abce233ef8d1c30e0e53d1d92fcb5f7734bd97b1b283bbdadd4a862381"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\research-errors-fixed-r1.json",
+      "sha256": "e1fc91a6ae4344cff39af74d5ba376cdcdd24d3cd87712e2f6d7eff4b37e9efe"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\syntax-r1.json",
+      "sha256": "745db920fef988b8b58a9c7ad3c07af8970ffe481f1d9b4236af1a878b07cfdb"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\syntax-r2.json",
+      "sha256": "66709a77d1e03202dfc5c008a97bc0149f63782f31ccf51a7cf5d882b1a1e384"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\syntax-final-r1.json",
+      "sha256": "66709a77d1e03202dfc5c008a97bc0149f63782f31ccf51a7cf5d882b1a1e384"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\lint-r1.json",
+      "sha256": "abe1836c23aab5cf00aa7329175e65db8a816742abf117141c774ed76080fb0e"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\lint-final-r1.json",
+      "sha256": "abe1836c23aab5cf00aa7329175e65db8a816742abf117141c774ed76080fb0e"
+    },
+    {
+      "path": "D:\\tmp\\g2-r52-research-20261124\\harness-rag16-r1.log",
+      "sha256": "5c02e8d6ed0f96cb3f45b51365515f7dd6097bdc53c2e4d43d64dd91122ca81a"
+    }
+  ],
+  "pendingChecks": [
+    "Persistent Vitest including 10 new Research race cases.",
+    "Full uncached Node/Web/Test typecheck.",
+    "Real Electron delayed-start and failure/cancellation journeys.",
+    "Fresh Windows baseline and same-candidate Executor/Verifier gates."
+  ]
+}

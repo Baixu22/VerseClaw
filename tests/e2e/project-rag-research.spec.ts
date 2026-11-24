@@ -203,6 +203,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const heldTransport = new Promise<void>(resolve => { releaseTransport = resolve; });
   let releaseRejectedStatus!: () => void;
   const heldRejectedStatus = new Promise<void>(resolve => { releaseRejectedStatus = resolve; });
+  let releaseLateStart!: () => void;
+  const heldLateStart = new Promise<void>(resolve => { releaseLateStart = resolve; });
   const scopeQuestions = Array.from({ length: 9 }, (_, index) => `RAG16_SCOPE_${index + 1}`);
   const scopeQuery = scopeQuestions.join('; ');
   const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
@@ -231,6 +233,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (input.query.includes('cancellation')) await held;
     if (input.query === 'Gateway port transport failure') await heldTransport;
     if (input.query === 'Gateway port rejected status') await heldRejectedStatus;
+    if (input.query === 'Gateway port delayed start cancellation') await heldLateStart;
     const coverage = port && text.includes('Gateway port is 8080.')
       ? [{ question: input.questions[0], sourceId: port, quote: 'port is 8080' }] : [];
     if (input.query.includes('conflicting')) return { text: JSON.stringify({
@@ -250,6 +253,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   let page: Page | undefined;
   type Entry = { action: string; payload: Json; response: { data?: { success?: boolean; research?: ResearchResultV1 } } };
   type StatusFault = { requestId: string; failed: boolean; replyFailure?: boolean; cancelHeld: Promise<void>; releaseCancel: () => void; readback?: Json };
+  type StartFault = { query: string; queued?: Json; held: Promise<void>; release: () => void };
   try {
     page = await getStableWindow(app); await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
     const created = await host<{ activeWorkspace: { id: string; activeSessionKey: string } }>(page, 'workspaces', 'create',
@@ -304,8 +308,14 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
       (globalThis as unknown as { rag16Entries: Entry[] }).rag16Entries = entries;
       const fault: StatusFault = { requestId: '', failed: false, cancelHeld: Promise.resolve(), releaseCancel: () => {} };
       (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault = fault;
+      const startFault: StartFault = { query: '', held: Promise.resolve(), release: () => {} };
+      (globalThis as unknown as { rag16StartFault: StartFault }).rag16StartFault = startFault;
       ipcMain.removeHandler('host:invoke');
       ipcMain.handle('host:invoke', async (event, request: Json) => {
+        if (request.module === 'knowledge' && request.action === 'researchStart' && (request.payload as Json)?.query === startFault.query) {
+          startFault.queued = request.payload as Json;
+          await startFault.held;
+        }
         const faultRequest = request.module === 'knowledge' && (request.payload as Json)?.requestId === fault.requestId;
         if (faultRequest && request.action === 'researchStatus' && !fault.failed) {
           fault.failed = true;
@@ -470,6 +480,43 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     expect((await host<{ research?: ResearchResultV1 }>(page, 'knowledge', 'researchStatus', rejectedSelection)).research?.stopReason).toBe('cancelled');
     receipt.failedStatusCancellation = stoppedAfterRejection.research; steps.failedStatusReplyCancelsBackend = true;
 
+    const delayedQuery = 'Gateway port delayed start cancellation';
+    await writeFile(join(vault, 'concepts/delayed-start.md'), raw(delayedQuery, 'Gateway port is 8080. Delayed startup cancellation evidence.'));
+    await app.evaluate((_electron, query) => {
+      const fault = (globalThis as unknown as { rag16StartFault: StartFault }).rag16StartFault;
+      fault.query = query;
+      fault.held = new Promise<void>(resolve => { fault.release = resolve; });
+    }, delayedQuery);
+    await queryInput.fill(delayedQuery); await page.getByTestId('chat-knowledge-search-submit').click();
+    let queuedStart: Json = {};
+    await expect.poll(async () => {
+      queuedStart = await app.evaluate(() => (globalThis as unknown as { rag16StartFault: StartFault }).rag16StartFault.queued ?? {});
+      return queuedStart.requestId;
+    }, { timeout: 10000 }).toBeTruthy();
+    await page.getByTestId('chat-knowledge-cancel').click();
+    const delayedSelection = { requestId: String(queuedStart.requestId), sessionKey: owner.activeSessionKey, workspaceId: owner.id };
+    await expect.poll(async () => (await entries()).some(entry => entry.action === 'researchCancel'
+      && entry.payload.requestId === delayedSelection.requestId && entry.response.data?.success === false), { timeout: 10000 }).toBe(true);
+    await expect(page.getByTestId('chat-knowledge-search-submit')).toBeEnabled({ timeout: 10000 });
+    await app.evaluate(() => (globalThis as unknown as { rag16StartFault: StartFault }).rag16StartFault.release());
+    await expect.poll(async () => (await entries()).some(entry => entry.action === 'researchCancel'
+      && entry.payload.requestId === delayedSelection.requestId && entry.response.data?.success === true), { timeout: 10000 }).toBe(true);
+    let delayedStopped: { research?: ResearchResultV1 } = {};
+    await expect.poll(async () => {
+      delayedStopped = await host<{ research?: ResearchResultV1 }>(page!, 'knowledge', 'researchStatus', delayedSelection);
+      return delayedStopped.research;
+    }, { timeout: 10000 }).toMatchObject({ status: 'cancelled', phase: 'finished', stopReason: 'cancelled' });
+    const delayedCancels = (await entries()).filter(entry => entry.action === 'researchCancel' && entry.payload.requestId === delayedSelection.requestId);
+    const delayedAccepted = (await entries()).find(entry => entry.action === 'researchStart' && entry.payload.requestId === delayedSelection.requestId);
+    expect(delayedAccepted?.response.data?.success).toBe(true);
+    expect(delayedCancels.length).toBeGreaterThan(1);
+    expect(delayedCancels.every(entry => entry.payload.sessionKey === delayedSelection.sessionKey && entry.payload.workspaceId === delayedSelection.workspaceId)).toBe(true);
+    releaseLateStart();
+    expect((await host<{ research?: ResearchResultV1 }>(page, 'knowledge', 'researchStatus', delayedSelection)).research?.stopReason).toBe('cancelled');
+    await expect(page.getByTestId('chat-research-progress')).toHaveCount(0);
+    receipt.delayedStartCancellation = { queuedStart, accepted: delayedAccepted, cancellations: delayedCancels, terminal: delayedStopped.research };
+    steps.lateStartCancellationCompensated = true; steps.lateStartResultIgnored = true;
+
     await writeFile(join(vault, 'concepts/other-port.md'), raw('Conflicting Gateway port', 'Gateway port is 9090.'));
     const conflict = await execute('conflicting Gateway port');
     expect(conflict.status).toBe('partial'); expect(conflict.conflicts.length).toBeGreaterThan(0);
@@ -507,7 +554,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (page) await page.screenshot({ path: testInfo.outputPath('research-failure.png'), fullPage: true });
     throw error;
   } finally {
-    releaseHeld(); releaseTransport(); releaseRejectedStatus(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
+    releaseHeld(); releaseTransport(); releaseRejectedStatus(); releaseLateStart(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
+    await app.evaluate(() => (globalThis as unknown as { rag16StartFault?: StartFault }).rag16StartFault?.release()).catch(error => { receipt.startReleaseError = String(error); });
     if (page && receipt.status !== 'pass') { try { receipt.logs = await host(page, 'logs', 'recent'); receipt.entries = await app.evaluate(() => (globalThis as unknown as { rag16Entries?: Entry[] }).rag16Entries ?? []); } catch (error) { receipt.logReadError = String(error); } }
     await writeFile(testInfo.outputPath('research-receipt.json'), JSON.stringify(receipt, null, 2));
     await testInfo.attach('research-receipt', { body: await readFile(testInfo.outputPath('research-receipt.json')), contentType: 'application/json' });

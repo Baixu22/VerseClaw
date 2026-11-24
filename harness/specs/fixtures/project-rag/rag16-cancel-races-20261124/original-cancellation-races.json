@@ -1,0 +1,104 @@
+{
+  "schema": "G2ResearchCancellationRace/v1",
+  "actor": "codex-g2-r52",
+  "driven_by": "agent",
+  "phase": "original",
+  "method": "Actual renderer and bounded-read modules with deferred Host admission and controlled deadline/response microtasks",
+  "sourceSha256": "1ce5d23ef778bc2b2c0fb287ae56b5acd5a0d7b9cc70113296a3a99fda2c6ff7",
+  "modelRequests": 0,
+  "checks": [
+    {
+      "scenario": "cancel-before-start",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 2,
+      "backendRunning": true,
+      "updates": 0,
+      "violations": [
+        "Late backend start remained active"
+      ],
+      "passed": false
+    },
+    {
+      "scenario": "timeout-before-start",
+      "reason": "timeout",
+      "status": null,
+      "cancellations": 1,
+      "backendRunning": true,
+      "updates": 0,
+      "violations": [
+        "Late backend start remained active"
+      ],
+      "passed": false
+    },
+    {
+      "scenario": "late-start-rejects",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 2,
+      "backendRunning": false,
+      "updates": 0,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "scenario": "late-start-fails",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 2,
+      "backendRunning": true,
+      "updates": 0,
+      "violations": [
+        "Late backend start remained active"
+      ],
+      "passed": false
+    },
+    {
+      "scenario": "cancel-before-start-delivery",
+      "reason": "complete",
+      "status": "complete",
+      "cancellations": 1,
+      "backendRunning": false,
+      "updates": 1,
+      "violations": [
+        "Incorrect stop reason",
+        "Cancelled read delivered completed evidence"
+      ],
+      "passed": false
+    },
+    {
+      "scenario": "cancel-before-status-delivery",
+      "reason": "cancelled",
+      "status": "complete",
+      "cancellations": 2,
+      "backendRunning": false,
+      "updates": 2,
+      "violations": [
+        "Cancelled read delivered completed evidence"
+      ],
+      "passed": false
+    },
+    {
+      "scenario": "normal-completion",
+      "reason": "complete",
+      "status": "complete",
+      "cancellations": 0,
+      "backendRunning": false,
+      "updates": 1,
+      "violations": [],
+      "passed": true
+    },
+    {
+      "scenario": "already-cancelled",
+      "reason": "cancelled",
+      "status": null,
+      "cancellations": 0,
+      "backendRunning": false,
+      "updates": 0,
+      "violations": [],
+      "passed": true
+    }
+  ],
+  "passed": false,
+  "unhandledRejections": []
+}

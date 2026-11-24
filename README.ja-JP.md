@@ -208,7 +208,7 @@ Main layers：
 - ファイルと GitHub のソースは版を進める前に UTF-8 を検証し、不正な文字列はカーソルを保持してエラーにします。
 - Project RAG は workspace に紐付く明示的な index lifecycle API を備え、SQLite 公開、background worker、owner 引用検証を行います。[索引ライフサイクル契約](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md)を参照してください。
 - コードの関係探索は実際の相対パスと現在の owner／版を検証し、通常 1 段、最大 2 段で import と呼び出しを辿ります。各段は 512 件の候補走査予算を共有し、上限に達すると partial を返します。タスク hint は現在の binding の revision、制約、証拠参照を返します。[コード関係とタスク context](docs/dev/project-rag/CODE-TASK-CONTEXT-CONTRACT.md)を参照してください。
-- Chat の知識選択で明示的に Research を実行すると、不足する証拠を追跡します。固定された予算内で最大 3 ラウンド、8 検索、2 回の計画呼び出しを行い、進捗、取消、証拠、推論、矛盾、部分結果を表示します。要求に失敗した場合はバックエンドの処理も取り消します。[Research 契約](docs/dev/project-rag/RESEARCH-CONTRACT.md)を参照してください。
+- Chat の知識選択で明示的に Research を実行すると、不足する証拠を追跡します。固定された予算内で最大 3 ラウンド、8 検索、2 回の計画呼び出しを行い、進捗、取消、証拠、推論、矛盾、部分結果を表示します。要求に失敗した場合はバックエンドの処理も取り消し、停止後に起動応答が届いた場合も同じ要求を再度取り消します。[Research 契約](docs/dev/project-rag/RESEARCH-CONTRACT.md)を参照してください。
 - DCS は許可された知識の順序を保ち、共有予算内で chunk や競合グループを丸ごと組み込み、Chat と model-only 知識 QA が保持した引用とバイト数を記録します。[証拠組み込み契約](docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md)を参照してください。
 - Librarian は許可済みの証拠と制限された会話履歴を設定済み Gateway モデルへ渡し、原文引用と版を検証します。部分読み取り、矛盾、モデル失敗を明示し、Studio はレビュー用の抜粋草稿を保存します。
 - 中国語検索、長文の制限付き続読、provider 別 embedding キャッシュ、版に紐付く Steward 所見を実装しています。任意の公開 GitHub ディレクトリ接続は更新と撤回を Inbox へ送ります。他の SaaS 接続は未実装です。
