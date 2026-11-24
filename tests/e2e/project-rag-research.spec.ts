@@ -201,6 +201,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const held = new Promise<void>(resolve => { releaseHeld = resolve; });
   let releaseTransport!: () => void;
   const heldTransport = new Promise<void>(resolve => { releaseTransport = resolve; });
+  let releaseRejectedStatus!: () => void;
+  const heldRejectedStatus = new Promise<void>(resolve => { releaseRejectedStatus = resolve; });
   const scopeQuestions = Array.from({ length: 9 }, (_, index) => `RAG16_SCOPE_${index + 1}`);
   const scopeQuery = scopeQuestions.join('; ');
   const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
@@ -228,6 +230,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     const port = find('gateway.md'), archive = find('archive.md'), other = find('other-port.md');
     if (input.query.includes('cancellation')) await held;
     if (input.query === 'Gateway port transport failure') await heldTransport;
+    if (input.query === 'Gateway port rejected status') await heldRejectedStatus;
     const coverage = port && text.includes('Gateway port is 8080.')
       ? [{ question: input.questions[0], sourceId: port, quote: 'port is 8080' }] : [];
     if (input.query.includes('conflicting')) return { text: JSON.stringify({
@@ -246,7 +249,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
   let page: Page | undefined;
   type Entry = { action: string; payload: Json; response: { data?: { success?: boolean; research?: ResearchResultV1 } } };
-  type StatusFault = { requestId: string; failed: boolean; cancelHeld: Promise<void>; releaseCancel: () => void; readback?: Json };
+  type StatusFault = { requestId: string; failed: boolean; replyFailure?: boolean; cancelHeld: Promise<void>; releaseCancel: () => void; readback?: Json };
   try {
     page = await getStableWindow(app); await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60000 });
     const created = await host<{ activeWorkspace: { id: string; activeSessionKey: string } }>(page, 'workspaces', 'create',
@@ -306,6 +309,11 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
         const faultRequest = request.module === 'knowledge' && (request.payload as Json)?.requestId === fault.requestId;
         if (faultRequest && request.action === 'researchStatus' && !fault.failed) {
           fault.failed = true;
+          if (fault.replyFailure) {
+            const response = { id: request.id, ok: true, data: { success: false, error: 'RAG16 injected failed status reply' } };
+            entries.push({ action: String(request.action), payload: request.payload as Json, response });
+            return response;
+          }
           throw new Error('RAG16 injected status transport failure');
         }
         if (faultRequest && request.action === 'researchCancel') await fault.cancelHeld;
@@ -438,6 +446,30 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
       releaseTransport();
     }
 
+    const rejectedQuery = 'Gateway port rejected status';
+    await writeFile(join(vault, 'concepts/rejected-status.md'), raw(rejectedQuery, 'Gateway port is 8080. Research status delivery can fail.'));
+    await queryInput.fill(rejectedQuery); await page.getByTestId('chat-knowledge-search-submit').click();
+    await expect.poll(() => planningCalls.some(call => call.query === rejectedQuery), { timeout: 30000 }).toBe(true);
+    const rejectedStart = (await entries()).find(entry => entry.action === 'researchStart' && entry.payload.query === rejectedQuery)!;
+    expect(rejectedStart).toBeTruthy();
+    await app.evaluate((_electron, requestId) => {
+      const fault = (globalThis as unknown as { rag16StatusFault: StatusFault }).rag16StatusFault;
+      Object.assign(fault, { requestId, failed: false, replyFailure: true, readback: undefined,
+        cancelHeld: Promise.resolve(), releaseCancel: () => {} });
+    }, String(rejectedStart.payload.requestId));
+    await expect.poll(async () => (await entries()).some(entry => entry.action === 'researchCancel'
+      && entry.payload.requestId === rejectedStart.payload.requestId), { timeout: 10000 }).toBe(true);
+    const rejectedSelection = { requestId: String(rejectedStart.payload.requestId), sessionKey: owner.activeSessionKey, workspaceId: owner.id };
+    let stoppedAfterRejection: { research?: ResearchResultV1 } = {};
+    await expect.poll(async () => {
+      stoppedAfterRejection = await host<{ research?: ResearchResultV1 }>(page!, 'knowledge', 'researchStatus', rejectedSelection);
+      return stoppedAfterRejection.research;
+    }, { timeout: 10000 }).toMatchObject({ status: 'cancelled', phase: 'finished', stopReason: 'cancelled' });
+    releaseRejectedStatus();
+    await expect(page.getByTestId('chat-knowledge-search-submit')).toBeEnabled({ timeout: 10000 });
+    expect((await host<{ research?: ResearchResultV1 }>(page, 'knowledge', 'researchStatus', rejectedSelection)).research?.stopReason).toBe('cancelled');
+    receipt.failedStatusCancellation = stoppedAfterRejection.research; steps.failedStatusReplyCancelsBackend = true;
+
     await writeFile(join(vault, 'concepts/other-port.md'), raw('Conflicting Gateway port', 'Gateway port is 9090.'));
     const conflict = await execute('conflicting Gateway port');
     expect(conflict.status).toBe('partial'); expect(conflict.conflicts.length).toBeGreaterThan(0);
@@ -475,7 +507,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (page) await page.screenshot({ path: testInfo.outputPath('research-failure.png'), fullPage: true });
     throw error;
   } finally {
-    releaseHeld(); releaseTransport(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
+    releaseHeld(); releaseTransport(); releaseRejectedStatus(); receipt.providerLog = llm.log; receipt.planningCalls = planningCalls; receipt.providerAnomalies = llm.anomalies;
     if (page && receipt.status !== 'pass') { try { receipt.logs = await host(page, 'logs', 'recent'); receipt.entries = await app.evaluate(() => (globalThis as unknown as { rag16Entries?: Entry[] }).rag16Entries ?? []); } catch (error) { receipt.logReadError = String(error); } }
     await writeFile(testInfo.outputPath('research-receipt.json'), JSON.stringify(receipt, null, 2));
     await testInfo.attach('research-receipt', { body: await readFile(testInfo.outputPath('research-receipt.json')), contentType: 'application/json' });

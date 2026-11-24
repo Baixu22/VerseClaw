@@ -1,0 +1,120 @@
+{
+  "schema": "G2ResearchErrorCancellationDevelopment/v1",
+  "actor": "codex-g2-r51",
+  "driven_by": "agent",
+  "node": "TF-0893",
+  "sourceParent": "8f49b8aa3ab7c2373a53b8c6eb92657f03ba557f",
+  "qualificationScope": "windows-only",
+  "rawDirectory": "D:/tmp/g2-r51-research-20261124",
+  "sourceInputs": [
+    {
+      "path": "src/lib/knowledge-research.ts",
+      "sha256": "1ce5d23ef778bc2b2c0fb287ae56b5acd5a0d7b9cc70113296a3a99fda2c6ff7"
+    },
+    {
+      "path": "tests/unit/project-rag-research-controller.test.ts",
+      "sha256": "bd968d5f6d592de0d310137e40587c3d9b9434e8a76c1dd725d8389795568e66"
+    },
+    {
+      "path": "tests/e2e/project-rag-research.spec.ts",
+      "sha256": "c2ee66e9c1bc75b45f0b595f2abe65fde41a261c4a5de51d13a1a76cf2b3dbad"
+    },
+    {
+      "path": "docs/dev/project-rag/RESEARCH-CONTRACT.md",
+      "sha256": "847c94f70a0da61150a318fdc89084a7dd2fdb5a10344cbe63dc54a99d8d35d8"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-bounded-research.md",
+      "sha256": "1967f43f1bf0b171451b974a96829661dfb0e6eaeef2a3977c10f433552e4a8e"
+    },
+    {
+      "path": "README.md",
+      "sha256": "e3ae8b06636df0371f9e47cb2d1b5eacbce5c9af432e086b7c5e7ad76a25e2d9"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "50d2bfe7c016079dde6712d554236eb78486f7566a7b07792e7b39a5eefb9816"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "ac15850fc4aafe94d095ac2a487f14e43fcaaf280d3c4eba76b80c42942a84ea"
+    }
+  ],
+  "checks": {
+    "nativeFrontendRegression": {
+      "cases": 4,
+      "passed": true,
+      "modelRequests": 0
+    },
+    "syntax": {
+      "actor": "codex-g2-r51",
+      "driven_by": "agent",
+      "method": "TypeScript transpile syntax diagnostics",
+      "checks": [
+        {
+          "file": "src/lib/knowledge-research.ts",
+          "errors": []
+        },
+        {
+          "file": "tests/unit/project-rag-research-controller.test.ts",
+          "errors": []
+        },
+        {
+          "file": "tests/e2e/project-rag-research.spec.ts",
+          "errors": []
+        }
+      ],
+      "passed": true
+    },
+    "lint": {
+      "files": 3,
+      "errors": 0,
+      "warnings": 0
+    },
+    "harness": {
+      "spec": "project-rag-bounded-research",
+      "result": "valid",
+      "exitCode": 0
+    }
+  },
+  "scopeRefresh": {
+    "currentDiffBase": "8f49b8aa3ab7c2373a53b8c6eb92657f03ba557f",
+    "historicalDiffBase": "159d7d2450e3776814e0ea83e03e2db1698dceb7",
+    "reason": "This node iteration starts after the retained R47-R50 sibling changes."
+  },
+  "rawPins": [
+    {
+      "path": "D:\\tmp\\g2-r51-research-20261124\\check-research-errors.mjs",
+      "sha256": "3269009f268eb9233ff7dde81ae3c323948bb6cafb2ad9c63552b24f9579ca3d"
+    },
+    {
+      "path": "D:\\tmp\\g2-r51-research-20261124\\research-errors-original-r1.json",
+      "sha256": "fb12f7ce89f8db071a68c116bd50564b59bfa41470bc5072c22e3526c18bdcfc"
+    },
+    {
+      "path": "D:\\tmp\\g2-r51-research-20261124\\research-errors-fixed-r1.json",
+      "sha256": "080cf4f4362512e6d96b7bcb4e51100c1042078c2f0a066e445e7eb2b1e67d36"
+    },
+    {
+      "path": "D:\\tmp\\g2-r51-research-20261124\\syntax-r1.json",
+      "sha256": "5a0d6c30ddd4740bcedab8786a0059128a3a30d6b6c8bff0a93118a59727a571"
+    },
+    {
+      "path": "D:\\tmp\\g2-r51-research-20261124\\lint-r1.json",
+      "sha256": "abe1836c23aab5cf00aa7329175e65db8a816742abf117141c774ed76080fb0e"
+    },
+    {
+      "path": "D:\\tmp\\g2-r51-research-20261124\\harness-rag16-r1.log",
+      "sha256": "cc974d29e3c6cc4e645c7854de3d00a25bf9b77c4629f9ba1f0c2688c13b8993"
+    },
+    {
+      "path": "D:\\tmp\\g2-r51-research-20261124\\harness-rag16-r2.log",
+      "sha256": "5c02e8d6ed0f96cb3f45b51365515f7dd6097bdc53c2e4d43d64dd91122ca81a"
+    }
+  ],
+  "pendingChecks": [
+    "persistent Vitest including Research controller",
+    "full Node/Web/Test typecheck",
+    "real Electron rejection-cancellation journey"
+  ]
+}

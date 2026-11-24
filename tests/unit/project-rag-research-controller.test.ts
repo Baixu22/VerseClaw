@@ -529,3 +529,20 @@ it('returns cancellation without cached evidence when the owner has no final sna
   expect(await readKnowledgeResearch({ query: plan.query }, controller.signal, updates, 'research failed')).toEqual({ reason: 'cancelled' });
   expect(updates).toHaveBeenCalledTimes(1);
 });
+
+it.each(['start', 'status', 'observer'] as const)('cancels backend Research after a %s failure and removes its listener', async stage => {
+  const controller = new AbortController(), plan = createResearchPlan({ requestId: 'error-cleanup', query: 'Gateway port', scope });
+  const message = `${stage} failed`;
+  vi.mocked(hostApi.knowledge.researchStart).mockReset().mockResolvedValue(stage === 'start'
+    ? { success: false, error: message } : { success: true, research: emptyResearchResult(plan) });
+  vi.mocked(hostApi.knowledge.researchStatus).mockReset().mockResolvedValue({ success: false, error: message });
+  const cancel = vi.mocked(hostApi.knowledge.researchCancel).mockReset().mockResolvedValue({ success: true });
+  const updates = vi.fn(() => { if (stage === 'observer') throw new Error(message); });
+  await expect(readKnowledgeResearch({ query: plan.query, workspaceId: scope.workspaceId, sessionKey: scope.sessionKey },
+    controller.signal, updates, 'Research failed')).rejects.toThrow(message);
+  expect(cancel).toHaveBeenCalledTimes(1);
+  expect(cancel).toHaveBeenCalledWith(expect.objectContaining({ workspaceId: scope.workspaceId, sessionKey: scope.sessionKey,
+    requestId: expect.any(String) }));
+  controller.abort();
+  expect(cancel).toHaveBeenCalledTimes(1);
+});

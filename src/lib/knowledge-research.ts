@@ -41,5 +41,6 @@ export async function readKnowledgeResearch(input: Omit<KnowledgeResearchPayload
       if (latest?.phase !== 'finished') await boundedKnowledgeRead(new Promise<void>(resolve => setTimeout(resolve, 250)), signal, 300);
     }
     return { result: latest, reason: latest.status === 'cancelled' ? 'cancelled' : latest.stopReason === 'deadline' ? 'timeout' : 'complete' };
-  } finally { signal.removeEventListener('abort', cancel); }
+  } catch (error) { cancel(); throw error; }
+  finally { signal.removeEventListener('abort', cancel); }
 }

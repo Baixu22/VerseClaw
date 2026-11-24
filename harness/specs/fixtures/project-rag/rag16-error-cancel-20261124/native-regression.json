@@ -1,0 +1,40 @@
+{
+  "schema": "G2ResearchErrorCleanup/v1",
+  "actor": "codex-g2-r51",
+  "driven_by": "agent",
+  "phase": "fixed",
+  "method": "Actual frontend and bounded-read TypeScript modules transpiled and executed with a Host boundary fixture",
+  "modelRequests": 0,
+  "sourceSha256": "1ce5d23ef778bc2b2c0fb287ae56b5acd5a0d7b9cc70113296a3a99fda2c6ff7",
+  "checks": [
+    {
+      "failure": "start",
+      "failed": true,
+      "cancellations": 1,
+      "backendRunning": false,
+      "passed": true
+    },
+    {
+      "failure": "status",
+      "failed": true,
+      "cancellations": 1,
+      "backendRunning": false,
+      "passed": true
+    },
+    {
+      "failure": "observer",
+      "failed": true,
+      "cancellations": 1,
+      "backendRunning": false,
+      "passed": true
+    },
+    {
+      "failure": "complete",
+      "failed": false,
+      "cancellations": 0,
+      "backendRunning": false,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

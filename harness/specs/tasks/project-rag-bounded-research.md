@@ -7,8 +7,10 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-16
 intent: 完成跨来源研究、证据缺口追查与关系分析。
-diffBase: 159d7d2450e3776814e0ea83e03e2db1698dceb7
+diffBase: 8f49b8aa3ab7c2373a53b8c6eb92657f03ba557f
+historicalDiffBase: 159d7d2450e3776814e0ea83e03e2db1698dceb7
 touchedAreas:
+  - "harness/specs/fixtures/project-rag/rag16-error-cancel-20261124/**"
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "openclaw_runtime/src/agents/provider-spend-budget.ts"
   - "openclaw_runtime/src/agents/command/shared-types.ts"
@@ -399,3 +401,5 @@ Windows CIM查询只请求进程ID、父进程ID和创建时间，三列身份�
 问题拆解去重后超过八项或为空时，冻结完整原问题作为单一覆盖目标；不截掉后续条件。单测覆盖八项边界、九项/大量子问题、重复与空拆解，现有Electron旅程验证缺少第九项证据时显示完整问题缺口。原三轮、八query与两次规划预算保持。
 
 前端中断恢复使用Main最后复验的快照。快照仍在运行时，传输错误映射unavailable、超时映射deadline、用户取消映射cancelled；超时/错误没有来源时状态为unavailable，有来源时为partial。Main终态原因保持。单测覆盖错误/超时/取消与空/非空证据，Electron旅程在规划期间注入一次状态传输故障并验证界面原因。
+
+前端启动或状态回执返回success:false，以及观察回调抛错时，向同一requestId与workspace/session发送取消后保留原错误，并清理监听。单测覆盖三种失败与监听清理，原Electron旅程新增failed status回执并核对实际Main取消终态；原30秒Research预算、480秒用例上限和零重试保持。
