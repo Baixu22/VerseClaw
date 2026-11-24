@@ -165,7 +165,7 @@
   padding: 0;
 }
 
-.tool-activity-call-chip {
+.tool-activity-group .tool-activity-call-chip {
   background-color: hsl(var(--surface-input));
 }
 
