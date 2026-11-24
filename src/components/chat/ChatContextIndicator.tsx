@@ -164,12 +164,12 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
         {percent != null && <span className={cn('tabular-nums', color)}>{percent}%</span>}
         <button type="button" className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:hover:bg-white/10" aria-label={t('contextDisplay.close')} onClick={() => { triggerRef.current?.focus(); close(); }}><X className="size-3.5" aria-hidden="true" /></button>
       </header>
-      <div className="shrink-0 space-y-2 px-4 py-3">
+      <div className="chat-context-usage-summary shrink-0">
         <p className="font-medium tabular-nums" data-testid="chat-context-usage">{t('contextDisplay.usedOfTotal', { used: validUsed == null ? '—' : full(validUsed), max: validLimit == null ? '—' : full(validLimit) })}</p>
         {validUsed != null && validLimit != null && <p className="text-muted-foreground">{t('contextDisplay.remaining', { value: full(Math.max(0, validLimit - validUsed)) })}</p>}
       </div>
       <div className="chat-context-source-scroll min-h-0 overflow-y-auto" data-testid="chat-context-source-scroll">
-      <div className="space-y-2 px-4 pb-3">
+      <div className="space-y-1 px-4 pb-2">
         {matchingRange?.modelRef && <p className="break-all text-muted-foreground">{matchingRange.modelRef}</p>}
         {validUsed == null && <p className="text-muted-foreground">{t('contextDisplay.usagePending')}</p>}
         <p className="text-muted-foreground">{t(matchingRange?.usageSource === 'last-request' ? 'contextDisplay.lastRequest' : 'contextDisplay.currentSnapshot')}</p>

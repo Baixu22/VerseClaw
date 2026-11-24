@@ -697,6 +697,19 @@
   color: var(--color-chat-foreground);
 }
 
+.chat-context-details > header {
+  padding-block: 8px;
+}
+
+.chat-context-usage-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 8px 16px;
+}
+
 .chat-context-details p {
   margin: 0;
 }
