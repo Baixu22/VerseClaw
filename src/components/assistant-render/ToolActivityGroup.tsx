@@ -31,7 +31,8 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
   const { t, i18n } = useTranslation('chat');
   const contentId = useId();
   const current = group.current;
-  const isRunning = Boolean(current) && Boolean(group.isCurrent) && group.status !== 'error' && group.status !== 'aborted';
+  const active = Boolean(current) && group.status === 'running';
+  const isRunning = active && Boolean(group.isCurrent);
   const kinds = [...new Set(group.entries.map(entry => entry.kind))];
   const completed = new Intl.ListFormat(i18n?.language, { style: 'long', type: 'conjunction' })
     .format(kinds.map(kind => t(`toolActivity.completed.${kind}`)));
@@ -41,7 +42,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
     : group.status === 'aborted' ? t('toolActivity.stopped') : group.pendingResult ? t('toolActivity.pendingResult') : action;
   const timing = current ? group.steps.find(step => step.id === current.id)
     ?? group.terminals.find(surface => (surface.toolCallId ?? surface.id) === current.id) : undefined;
-  const chipStatus = group.status === 'error' ? 'error' : isRunning ? 'running'
+  const chipStatus = group.status === 'error' ? 'error' : active ? 'running'
     : group.status === 'completed' && !group.pendingResult ? 'done' : 'idle';
 
   return (
@@ -71,7 +72,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
             icon={<ToolActivityIcon kind={current?.kind ?? kinds[0] ?? 'other'} reveal={isRunning && !expanded} />}
             startedAt={timing?.startedAt}
             durationMs={timing?.durationMs}
-            showTimer={isRunning && !expanded}
+            showTimer={active && !expanded}
             className="tool-activity-call-chip"
             trailing={<ChevronDown strokeWidth={1.5} className={cn('tool-activity-chevron', expanded && 'is-expanded')} />}
           >
@@ -86,7 +87,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
             steps={group.steps}
             terminals={group.terminals}
             traceId={group.traceId}
-            active={isRunning}
+            active={active}
             suppressThinking
             appearance="activity"
             currentToolId={isRunning ? current?.id : undefined}

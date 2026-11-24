@@ -66,4 +66,12 @@ describe('tool activity disclosure', () => {
     expect(detailChip).not.toHaveAttribute('aria-busy');
     expect(detailChip.getAttribute('aria-label')).not.toContain(en.taskPanel.stepStatus.running);
   });
+  it('keeps a background call running while the white highlight follows the newest group', () => {
+    render(<Harness group={{ ...model(true), isCurrent: false }} />);
+    expect(screen.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    expect(within(screen.getByTestId('chat-tool-activity-details')).getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+  });
 });
