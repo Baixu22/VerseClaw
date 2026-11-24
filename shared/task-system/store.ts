@@ -146,6 +146,7 @@ export class TaskSystemStore {
     readonly domain: TaskDomain,
     readonly now: () => number = Date.now,
     private readonly access?: TaskAuthorityAccess,
+    readOnly = false,
   ) {
     if (
       access &&
@@ -155,6 +156,17 @@ export class TaskSystemStore {
         access.domain.worktree !== domain.worktree)
     )
       throw new Error("TASK_AUTHORITY_DOMAIN_MISMATCH");
+    // Observers open the current schema without first-open, migration or writer barriers.
+    if (readOnly) {
+      this.assertAuthorityCurrent();
+      const db = new DatabaseSync(domain.database, { readOnly: true });
+      try {
+        const version = db.prepare("PRAGMA user_version").get() as { user_version: number };
+        if (version.user_version !== TASK_SCHEMA_VERSION) throw new Error("TASK_READ_SCHEMA_MISMATCH");
+        this.db = db;
+      } catch (error) { db.close(); throw error; }
+      return;
+    }
     const initialize = () => {
       this.assertAuthorityCurrent();
       mkdirSync(dirname(domain.database), { recursive: true });

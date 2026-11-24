@@ -15,6 +15,8 @@ requiredRules:
 
 本场景定义后续 A–E 叶的自动验收旅程。节点与读写合同见 session-collaboration-center-plan，范围为本机已配置、原权限允许的工作区与会话。
 
+A1 的共用读取入口是 typed `hostApi.sessionActivity.read`。每个目标传入原 workspace/project/sessionKey/sessionGeneration，并可固定 Workspace binding revision 与执行域引用。`readModel.sources` 明确区分已读事实、真实为空、未读取、不可用、过期和未知；读取前后从原 owner 核对会话、任务、配置、检出与资源资格。正反例包含同 key 跨工作区、旧 generation、旧 binding/执行域 revision、缺失 owner，以及 Runtime 读取和 Main 等待期间的 reset。
+
 1. Agent 建立两个独立会话 A/B 和 A 的子会话 C，使用既有任务/session owner 绑定各自目标、代次、运行和检出。系统/项目入口读取同一总览；B 的任务与 C 的 parent 不从界面文字推断。
 2. A 按任务主题查到 B 的工作，读取其短摘要、当前实际操作及成果入口。打开 C 的原历史，返回时筛选、选中、草稿和滚动仍保留。UI 与模型工具的身份/状态相同。
 3. A 订阅 B 的 run 终态与任务验收。B 结束当前 turn 而任务尚在 review 时返回两个准确状态；对目标的被动状态模型请求数为 0。断线后按原游标与 owner 事实补读。

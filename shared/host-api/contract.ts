@@ -74,7 +74,7 @@ import type {
   MemorySurfaceSnapshot,
   MemorySurfaceSource,
 } from '../types/memory';
-import type { SessionActivitySnapshot } from '../types/session-activity';
+import type { SessionActivitySnapshot, SessionActivityReadQuery } from '../types/session-activity';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -5965,6 +5965,7 @@ export type HostApiContract = {
   };
   sessionActivity: {
     snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
+    read: (payload: SessionActivityReadQuery) => SessionActivitySnapshotResult;
   };
   git: {
     init: () => GitOperationResult;

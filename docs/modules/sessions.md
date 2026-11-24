@@ -20,6 +20,14 @@ agent:<agentId>:<suffix>
 
 默认主会话是 `agent:main:main`。session key 不是 runId，也不是 Task Ledger node id。session stop 不完成任务；archive 不删除任务；run abort 不替代 session stop。
 
+### 跨会话身份读取
+
+`hostApi.sessionActivity.read({ scope, expectedBindingRevision?, expectedExecution? })` 读取显式的 workspace/project、sessionKey 和 sessionGeneration。Main 使用 typed `host:invoke`，经自己的 Gateway WebSocket 调用已有 `session.activitySnapshot`；Runtime 从原 SessionStore 和运行 registry 取得当前身份，并从执行域与 TaskSystem 读取原任务引用。
+
+`snapshot.readModel.sources` 分别标明会话、ScopedRun、任务、执行域、Workspace binding 和后台来源。`ready` 是已读事实，`empty` 是 owner 确认的空任务或无当前运行；`not_read` 表示尚未查询，`unavailable` 表示 owner 缺失或不可读，`stale` 表示代次或绑定已改变，`unknown` 表示缺少身份核验依据。消费者按来源状态读取值与 `readAt`。
+
+同 key 跨工作区、旧 generation、旧执行域或绑定 revision 会被拒绝。Runtime 读取后复核 session 与执行域，Main 在异步返回边界再次核对，reset 会丢弃整份旧关联。查询使用现有 SQLite 的只读连接；Workspace 选择、会话、任务、模型配置与资源准入保持原 owner 状态。
+
 ## 2. 持久化模型
 
 核心实现：
