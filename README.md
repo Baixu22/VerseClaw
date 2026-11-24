@@ -93,7 +93,7 @@ On touch screens the composer actions have a minimum 44 px target. Rejected plan
 
 Composer model, knowledge and permission menus share a compact surface and the add menu's blur transition. Menus stay within the window, close when another opens, and support Escape and reduced motion.
 
-Choose a model directly from the composer. New chats start with your last available choice; existing chats retain their own model. Switching applies to subsequent messages. Agent defaults are managed in Settings.
+The composer model button opens a compact reasoning card with the current model and a Preview Slider. Clicking the model unfolds a searchable, provider-grouped Rare UI picker and hides the reasoning controls. The slider's floating preview shows localized effort text. New chats start with your last available model; existing chats retain their own choice. Switching applies to subsequent messages. Agent defaults are managed in Settings.
 
 Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
 

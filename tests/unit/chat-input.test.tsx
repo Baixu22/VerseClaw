@@ -9,6 +9,15 @@ import type { WorkspaceProfile } from '@shared/types/workspace';
 import { buildResumeCheckpoint, type LongTaskControlStatus } from '@shared/types/long-task-control';
 import { toast as sonnerToast } from 'sonner';
 
+vi.mock('@/components/chat/ChatModelSettingsCard', () => ({
+  ChatModelSettingsCard: ({ options, switchingModelRef, onSelectModel }: {
+    options: Array<{ modelRef: string; label: string }>;
+    switchingModelRef?: string;
+    onSelectModel: (reference: string) => void;
+  }) => <div data-testid="chat-model-options">{options.map(option => <button key={option.modelRef}
+    disabled={Boolean(switchingModelRef)} onClick={() => onSelectModel(option.modelRef)}>{option.label}</button>)}</div>,
+}));
+
 function render(ui: ReactElement) {
   return testingLibraryRender(ui, { wrapper: HashRouter });
 }

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { ChatAgentEffortButton } from '@/components/chat/ChatAgentEffortPopover';
+import { ChatAgentEffortButton, ChatAgentEffortPanel } from '@/components/chat/ChatAgentEffortPopover';
 
 const updateAgentReasoningEffort = vi.fn().mockResolvedValue(undefined);
 const agentState = {
@@ -116,15 +116,16 @@ describe('ChatAgentEffortButton', () => {
     expect(card.style.clipPath).toContain('effort-squircle');
   });
 
-  it('keeps the card squircle but uses a real rounded track', async () => {
+  it('keeps the card squircle and mounts the preview slider filters', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     const popover = await screen.findByTestId('chat-agent-effort-popover');
     const clipPaths = popover.querySelectorAll('clipPath');
     const track = screen.getByTestId('chat-agent-effort-track');
     expect(clipPaths).toHaveLength(1);
-    expect(track.className).toContain('rounded-full');
+    expect(track.className).toContain('h-8');
     expect(track.style.clipPath).toBe('');
+    expect(popover.querySelectorAll('filter')).toHaveLength(2);
   });
 
   it('moves continuously and snaps to the nearest effort on release', async () => {
@@ -140,42 +141,81 @@ describe('ChatAgentEffortButton', () => {
     await waitFor(() => expect(updateAgentReasoningEffort).toHaveBeenCalledWith('main', 'low'));
   });
 
-  it('only ignites the fire trail at max effort', async () => {
+  it('shows localized effort text in the floating tooltip', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
-    const track = await screen.findByTestId('chat-agent-effort-track');
-    const canvas = screen.getByTestId('chat-agent-effort-fire');
-
-    // Agent starts at 'high' — flame not yet active (shader gates at 100%).
-    expect(track.className).not.toContain('effort-track-active');
-    expect(canvas).toHaveClass('mix-blend-screen', 'motion-reduce:hidden');
-    expect(canvas.style.maskImage).toContain('linear-gradient');
-
-    const slider = screen.getByTestId('chat-agent-effort-slider');
-    fireEvent.change(slider, { target: { value: '6' } });
-    expect(track.className).toContain('effort-track-active');
-    expect(track.className).toContain('effort-track-full');
+    const slider = await screen.findByTestId('chat-agent-effort-slider');
+    fireEvent.pointerEnter(slider);
+    expect(screen.getByTestId('chat-agent-effort-tooltip')).toHaveAttribute('aria-label', 'composer.effortStatusHigh');
+    fireEvent.change(slider, { target: { value: '5' } });
+    expect(slider).toHaveAttribute('aria-valuetext', 'composer.effortStatusXhigh');
+    expect(screen.getByTestId('chat-agent-effort-tooltip')).toHaveAttribute('aria-label', 'composer.effortStatusXhigh');
+    expect(updateAgentReasoningEffort).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('chat-agent-effort-fire')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-agent-effort-preview').querySelector('img')).toBeNull();
   });
 
-  it('shows all 7 tick labels under the track', async () => {
+  it('shows nine vertical marks and one current label below the track', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     await screen.findByTestId('chat-agent-effort-slider');
     const tickContainer = screen.getByTestId('chat-agent-effort-ticks');
     expect(tickContainer).toBeTruthy();
     const ticks = tickContainer.querySelectorAll('span');
-    expect(ticks.length).toBe(7);
+    expect(ticks.length).toBe(9);
+    expect(screen.getByTestId('chat-agent-effort-label')).toHaveTextContent('composer.effortStatusHigh');
   });
 
-  it('highlights the active tick label with the theme accent', async () => {
+  it('uses the compact rectangular preview thumb', async () => {
     renderButton();
     fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
     await screen.findByTestId('chat-agent-effort-slider');
-    const tickContainer = screen.getByTestId('chat-agent-effort-ticks');
-    const ticks = tickContainer.querySelectorAll('span');
-    // The agent starts at 'high' (index 4), so tick 4 should be active.
-    const activeTick = ticks[4];
-    expect(activeTick.className).toContain('effort-tick-active');
+    const thumb = screen.getByTestId('chat-agent-effort-thumb');
+    expect(thumb).toHaveClass('w-3', 'h-5', 'rounded-sm');
+  });
+
+  it('previews keyboard changes and saves them on key release', async () => {
+    renderButton();
+    fireEvent.click(screen.getByTestId('chat-agent-effort-button'));
+    const slider = await screen.findByTestId('chat-agent-effort-slider');
+    fireEvent.keyDown(slider, { key: 'ArrowRight' });
+    expect(slider).toHaveValue('5');
+    expect(screen.getByTestId('chat-agent-effort-tooltip')).toHaveAttribute('aria-label', 'composer.effortStatusXhigh');
+    expect(updateAgentReasoningEffort).not.toHaveBeenCalled();
+    fireEvent.keyUp(slider, { key: 'ArrowRight' });
+    expect(updateAgentReasoningEffort).toHaveBeenCalledWith('main', 'xhigh');
+    fireEvent.keyDown(slider, { key: 'Home' });
+    fireEvent.keyUp(slider, { key: 'Home' });
+    expect(updateAgentReasoningEffort).toHaveBeenLastCalledWith('main', 'auto');
+    fireEvent.keyDown(slider, { key: 'End' });
+    fireEvent.keyUp(slider, { key: 'End' });
+    expect(updateAgentReasoningEffort).toHaveBeenLastCalledWith('main', 'max');
+  });
+
+  it.each(['pointercancel', 'lostpointercapture'])('saves %s exactly once', (endEvent) => {
+    render(<ChatAgentEffortPanel agentId="main" />);
+    const slider = screen.getByTestId('chat-agent-effort-slider');
+    Object.defineProperty(slider, 'setPointerCapture', { value: vi.fn() });
+    vi.spyOn(screen.getByTestId('chat-agent-effort-track'), 'getBoundingClientRect').mockReturnValue({ left: 0, width: 100, top: 0, height: 32 } as DOMRect);
+    fireEvent(slider, new MouseEvent('pointerdown', { bubbles: true, button: 0, clientX: 40 }));
+    expect(updateAgentReasoningEffort).not.toHaveBeenCalled();
+    fireEvent(slider, new Event(endEvent, { bubbles: true }));
+    fireEvent.lostPointerCapture(slider);
+    fireEvent.blur(slider);
+    expect(updateAgentReasoningEffort).toHaveBeenCalledTimes(1);
+    expect(updateAgentReasoningEffort).toHaveBeenCalledWith('main', 'low');
+  });
+
+  it('keeps a disabled slider inactive', () => {
+    render(<ChatAgentEffortPanel agentId="main" disabled />);
+    const slider = screen.getByTestId('chat-agent-effort-slider');
+    expect(slider).toBeDisabled();
+    fireEvent.pointerEnter(slider);
+    fireEvent.keyDown(slider, { key: 'End' });
+    fireEvent.change(slider, { target: { value: '6' } });
+    fireEvent.pointerUp(slider);
+    expect(screen.queryByTestId('chat-agent-effort-tooltip')).not.toBeInTheDocument();
+    expect(updateAgentReasoningEffort).not.toHaveBeenCalled();
   });
 
   it('closes the popover on Escape key', async () => {

@@ -2346,7 +2346,11 @@
       "interventionFailed": "Последнее изменение не удалось",
       "suggestedKnowledge": "{{count}} подходящих источников",
       "connecting": "Подключение… Черновик сохранён."
-    }
+    },
+    "modelPickerSearch": "Поиск моделей или провайдеров",
+    "modelPickerEmpty": "Подходящих моделей нет",
+    "effortResetAutomatic": "Сбросить глубину рассуждений на Авто",
+    "effortResetFailed": "Не удалось сбросить глубину рассуждений. Повторите попытку."
   },
   "historyBuckets": {
     "today": "Сегодня",

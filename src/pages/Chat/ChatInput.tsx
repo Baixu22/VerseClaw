@@ -90,7 +90,8 @@ import { toast } from 'sonner';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { collectDroppedFiles } from '@/lib/collect-dropped-files';
 import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
-import { ChatAgentEffortPanel, getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
+import { getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
+import { ChatModelSettingsCard } from '@/components/chat/ChatModelSettingsCard';
 import { ChatContextPressure } from '@/components/chat/ChatContextPressure';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import {
@@ -1053,7 +1054,6 @@ export function ChatInput({
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [deliveryMenuOpen, setDeliveryMenuOpen] = useState(false);
-  const [executionSettingsSection, setExecutionSettingsSection] = useState<'effort' | null>(null);
   const [executionEffortPreview, setExecutionEffortPreview] = useState<AgentReasoningEffort>('auto');
   const [knowledgePickerOpen, setKnowledgePickerOpen] = useState(false);
   const [knowledgeQuery, setKnowledgeQuery] = useState('');
@@ -2034,10 +2034,6 @@ export function ChatInput({
       document.removeEventListener('mousedown', handlePointerDown);
     };
   }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, workspaceMenuOpen]);
-
-  useEffect(() => {
-    if (!modelPickerOpen) setExecutionSettingsSection(null);
-  }, [modelPickerOpen]);
 
   useEffect(() => {
     if (!actionMenuOpen && !workspaceMenuOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
@@ -3720,7 +3716,6 @@ export function ChatInput({
                         icon: <Gauge className="h-3.5 w-3.5" />,
                         testId: 'chat-composer-action-model',
                         onSelect: () => {
-                          setExecutionSettingsSection(null);
                           setModelPickerOpen(true);
                         },
                       }]
@@ -3767,7 +3762,6 @@ export function ChatInput({
                         testId="chat-composer-action-model"
                         onClick={() => {
                           setActionMenuOpen(false);
-                          setExecutionSettingsSection(null);
                           setModelPickerOpen(true);
                         }}
                       />
@@ -4267,11 +4261,9 @@ export function ChatInput({
                   title={effectiveModelRef ?? effectiveModelLabel}
                   aria-expanded={modelPickerOpen}
                   disabled={inputDisabled || sending}
-                  onClick={(event) => {
-                    const effortShortcut = (event.target as Element).closest('[data-testid="chat-agent-effort-button"]');
+                  onClick={() => {
                     closeComposerPopovers();
-                    setModelPickerOpen(effortShortcut ? true : !modelPickerOpen);
-                    if (effortShortcut) setExecutionSettingsSection('effort');
+                    setModelPickerOpen(!modelPickerOpen);
                   }}
                 >
                   <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
@@ -4297,77 +4289,20 @@ export function ChatInput({
                   </TooltipContent>
                 </Tooltip>
                   <ComposerPopover open={modelPickerOpen} align="right"
-                    className="codex-composer-menu--model codex-execution-settings"
+                    className="codex-composer-menu--model codex-model-settings-popover"
                     data-testid="chat-model-picker-menu"
                     role="dialog" aria-label={`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}
                   >
-                      <div className="codex-model-options" data-testid="chat-model-options">
-                        {pickerModelOptions.map((option) => {
-                          const isActive = option.modelRef === effectiveModelRef;
-                          const display = describeModelRef(option.modelRef);
-                          return (
-                            <button
-                              key={option.modelRef}
-                              type="button"
-                              onClick={() => void handleSelectModel(option.modelRef)}
-                              disabled={Boolean(switchingModelRef)}
-                              className={cn('codex-composer-menu__item codex-model-option', isActive && 'is-active')}
-                              data-testid={`chat-model-picker-option-${option.label}`}
-                              data-selected={isActive}
-                              aria-pressed={isActive}
-                              aria-label={option.label}
-                              title={option.modelRef}
-                            >
-                              <ModelBrandIcon modelRef={option.modelRef} size={18} className="codex-model-option__brand" />
-                              <span className="codex-model-option__text">
-                                <span className="codex-model-option__name">{display.name}</span>
-                                {display.source && <span className="codex-model-option__source">{display.source}</span>}
-                              </span>
-                              <span className="codex-composer-menu__check" data-hidden={isActive || switchingModelRef === option.modelRef ? undefined : 'true'}>
-                                {switchingModelRef === option.modelRef ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    <div className="codex-composer-menu__divider" />
-                    <button
-                      type="button"
-                      className="codex-execution-settings__row"
-                      aria-expanded={executionSettingsSection === 'effort'}
-                      onClick={() => setExecutionSettingsSection((section) => section === 'effort' ? null : 'effort')}
-                    >
-                      <span>{t('composer.effortTitle')}</span>
-                      <span className={cn(
-                        'codex-execution-settings__value',
-                        executionEffortPreview === 'max' && 'is-max',
-                      )}>
-                        {currentEffortLabel}
-                      </span>
-                      <ChevronRight className={cn('codex-execution-settings__chevron', executionSettingsSection === 'effort' && 'rotate-90')} />
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {executionSettingsSection === 'effort' && currentAgentId && (
-                        <motion.div
-                          key="effort"
-                          className="codex-execution-settings__disclosure"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={prefersReducedMotion
-                            ? { duration: 0 }
-                            : { height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.18 } }}
-                        >
-                          <div className="codex-execution-settings__section codex-execution-settings__section--effort">
-                            <ChatAgentEffortPanel
-                              agentId={currentAgent?.id ?? currentAgentId}
-                              disabled={inputDisabled || sending}
-                              onEffortChange={setExecutionEffortPreview}
-                            />
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <ChatModelSettingsCard
+                      agentId={currentAgent?.id ?? currentAgentId}
+                      effort={executionEffortPreview}
+                      options={pickerModelOptions}
+                      modelRef={effectiveModelRef}
+                      disabled={inputDisabled || sending}
+                      switchingModelRef={switchingModelRef}
+                      onSelectModel={handleSelectModel}
+                      onEffortChange={setExecutionEffortPreview}
+                    />
                   </ComposerPopover>
               </div>
             )}

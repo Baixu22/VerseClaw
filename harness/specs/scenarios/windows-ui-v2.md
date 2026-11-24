@@ -104,3 +104,5 @@ See `tasks/knowledge-bot-avatar.md` and `rules/knowledge-bot-runtime-state.md`.
 The execution context refinement in `tasks/chat-execution-context-20261123.md` moves project, directory and branch actions into one inset tray above the 22px composer. Task progress shares this tray. New worktrees use generated branch names with optional custom settings; current drafts are saved before switching.
 
 The conversation controls in `tasks/chat-continuity-controls-20261123.md` explain the effect of queue, guide, interrupt, branch and summary handoff. Continuation drafts take priority over collapsed sources; compaction shows one usage reading. Menus stay within the conversation column as the sidebar or artifact panel changes its width.
+
+The conversation model control opens a compact reasoning card. The owner-selected Preview Slider uses a localized text tooltip in place of image previews. Opening the model row unfolds the Rare UI model list while the reasoning region is hidden and inert with its layout preserved. Search, keyboard selection and runtime writes use the existing model owner; closing the model layer restores the reasoning card.

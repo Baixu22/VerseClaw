@@ -2346,7 +2346,11 @@
       "interventionFailed": "前回の調整は成功しませんでした",
       "suggestedKnowledge": "{{count}} 件の関連情報",
       "connecting": "接続中です。下書きは保持されます。"
-    }
+    },
+    "modelPickerSearch": "モデルまたはプロバイダーを検索",
+    "modelPickerEmpty": "一致するモデルがありません",
+    "effortResetAutomatic": "推論の強度を自動に戻す",
+    "effortResetFailed": "推論の強度をリセットできませんでした。もう一度お試しください。"
   },
   "historyBuckets": {
     "today": "今日",

@@ -2346,7 +2346,11 @@
       "interventionFailed": "The last adjustment did not succeed",
       "suggestedKnowledge": "Relevant sources: {{count}}",
       "connecting": "Connecting… Your draft is kept."
-    }
+    },
+    "modelPickerSearch": "Search models or providers",
+    "modelPickerEmpty": "No matching models",
+    "effortResetAutomatic": "Reset reasoning effort to Auto",
+    "effortResetFailed": "Could not reset reasoning effort. Try again."
   },
   "historyBuckets": {
     "today": "Today",

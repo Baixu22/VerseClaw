@@ -2346,7 +2346,11 @@
       "interventionFailed": "上次调整未成功",
       "suggestedKnowledge": "找到 {{count}} 条相关知识",
       "connecting": "正在连接，草稿已保留"
-    }
+    },
+    "modelPickerSearch": "搜索模型或提供商",
+    "modelPickerEmpty": "没有匹配的模型",
+    "effortResetAutomatic": "将思考强度重置为自动",
+    "effortResetFailed": "思考强度重置失败，请重试。"
   },
   "historyBuckets": {
     "today": "今天",
