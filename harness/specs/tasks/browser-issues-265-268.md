@@ -35,7 +35,7 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
-  - Full access records the approved tab and exact origin; navigation, replacement tabs and debugger reattachment cannot mint a new approval. Raw network data and pending full-access results retain that approval across asynchronous reads, including revocation, expiry and renewal.
+  - Full access records the approved tab and exact origin; navigation, replacement tabs and debugger reattachment cannot mint a new approval. Raw network details, comparisons, parameter candidates, JS snippets and pending full-access results retain that approval across asynchronous reads, including revocation, expiry and renewal.
   - Progress, completion, error and cleanup belong to the captured task run. Cancelling or pausing an old run cannot change or disable cancellation of its successor.
   - A replay draft is claimed before dispatch. Concurrent, failed, timed-out or unknown-result sends cannot reuse the same approval.
   - JS, SourceMap and replay requests use the existing session/profile network owner and pinned DNS, including redirects, expiry and revocation. No global fetch fallback is permitted.

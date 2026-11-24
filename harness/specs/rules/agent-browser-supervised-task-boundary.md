@@ -35,6 +35,8 @@ Full access binds the actual tab and exact origin at approval time. Moving to an
 origin or tab invalidates that binding; debugger attachment and caller payloads cannot
 replace it. Unredacted network reads use the same binding as full-access tools.
 Asynchronous reads retain the captured approval until their result is returned.
+Network details, comparisons, parameter candidates and JS snippets share that
+approval check before returning or deriving data from response bodies.
 Revocation, expiry or a replacement approval prevents an earlier read from returning raw data.
 The captured recorder must still own the current control session; debugger detachment
 or replacement cannot validate a late result from the earlier connection.

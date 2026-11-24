@@ -244,7 +244,7 @@ describe('agent browser runtime mode', () => {
     }
   });
 
-  it.each(['networkGetRequestDetails', 'fullAccessGetNetworkDetails'] as const)('keeps %s bound to the original approval while its body read is pending', async (method) => {
+  it.each(['networkGetRequestDetails', 'networkFindParameterCandidates', 'networkExtractJsCandidates', 'fullAccessGetNetworkDetails'] as const)('keeps %s bound to the original approval while its body read is pending', async (method) => {
     const { service, windows } = createService();
     const { session } = await service.open({ url: 'https://approved.example/', mode: 'headless' });
     service.setEnabled(true);
@@ -255,8 +255,11 @@ describe('agent browser runtime mode', () => {
       await service.takeSnapshot({ sessionId: session.id });
       const debuggerApi = windows[0].webContents.debugger;
       debuggerApi.emit('message', {}, 'Network.requestWillBeSent', {
-        requestId: 'pending-body', request: { url: 'https://approved.example/body', method: 'GET', headers: { Authorization: 'Bearer pending-fixture-secret' } },
+        requestId: 'pending-body', request: { url: 'https://approved.example/body.js', method: 'GET', headers: { Authorization: 'Bearer pending-fixture-secret' } },
       });
+      debuggerApi.sendCommand.mockResolvedValueOnce({ body: '{"token":"pending-fixture-secret"}' });
+      const approved = await service[method]({ sessionId: session.id, requestIds: ['pending-body'], redacted: false });
+      expect(JSON.stringify(approved)).toContain('pending-fixture-secret');
       debuggerApi.sendCommand.mockImplementationOnce(() => new Promise(resolve => { releaseBody = resolve; }));
       pending = service[method]({ sessionId: session.id, requestIds: ['pending-body'], redacted: false });
       await vi.waitFor(() => expect(releaseBody).toBeTypeOf('function'));
