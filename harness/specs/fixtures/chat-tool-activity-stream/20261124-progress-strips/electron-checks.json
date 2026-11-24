@@ -1,0 +1,205 @@
+{
+  "driven_by": "agent",
+  "data": "agent-generated history and runtime events; real Electron rendering",
+  "distinctJourneys": 12,
+  "cases": [
+    {
+      "id": "d7718b418ef73cd7bf41-e0ceae4104a9812f9b3c",
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "identifies a linked worktree in the composer and session status (light)",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 18983,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "d7718b418ef73cd7bf41-d9607d0e30675df0de4a",
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "identifies a linked worktree in the composer and session status (dark)",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 8810,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "d7718b418ef73cd7bf41-3b0729461093dae15517",
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "renders runtime approval inline with the composer and Git strip",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7356,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "d7718b418ef73cd7bf41-e8b32d86142d60fbe606",
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "aligns the review summary and preserves the draft when opening repository changes",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7437,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "7fd2f982a8b3c126e3ed-96e3465f9ba4a906fb63",
+      "file": "chat-execution-context.spec.ts",
+      "title": "execution tray creates a real worktree in two clicks and restores the original draft",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 21686,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "04c25d10ea2b96280ea2-90988602d3c8ca6f9fff",
+      "file": "chat-tool-activity-stream.spec.ts",
+      "title": "shows the current white shimmer once, preserves folding and settles runtime command output",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7523,
+          "retry": 0
+        }
+      ],
+      "candidate": "22b8e1633b9faad2f66b43fb6876d84c9193c5ee",
+      "run": "electron-r7"
+    },
+    {
+      "id": "fbdc74cf16e7047c807a-5368bbec17e918a4037a",
+      "file": "chat-tool-ui-execution-surfaces.spec.ts",
+      "title": "renders official execution surfaces in light, dark, and narrow layouts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 12221,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "8431e429a3efaf24759e-d93ce219608a2379a486",
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "keeps live activity compact, animated and readable without assistant avatars",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7338,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "8431e429a3efaf24759e-cb200531220cd7242619",
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "keeps interleaved command output in the execution order with separate tool inputs and results",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7495,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "8431e429a3efaf24759e-4313b82ec5dc9a3673ec",
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "collapses completed long task process and expands details on demand",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7944,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "8431e429a3efaf24759e-202f5033f3cb39b39ee0",
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "leaves short conversations unwrapped",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7679,
+          "retry": 0
+        }
+      ],
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+      "run": "electron-r5"
+    },
+    {
+      "id": "04c25d10ea2b96280ea2-0fe9ba70f465d0d27d2d",
+      "file": "chat-tool-activity-stream.spec.ts",
+      "title": "keeps operation groups in conversation order with shared width, accessible details and four locales",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 27521,
+          "retry": 0
+        }
+      ],
+      "candidate": "22b8e1633b9faad2f66b43fb6876d84c9193c5ee",
+      "run": "electron-r7"
+    }
+  ],
+  "runs": {
+    "electron-r5": {
+      "startTime": "2026-11-24T06:16:44.725Z",
+      "duration": 126964.625,
+      "expected": 11,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "electron-r7": {
+      "startTime": "2026-11-24T06:32:00.478Z",
+      "duration": 37091.617,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+}

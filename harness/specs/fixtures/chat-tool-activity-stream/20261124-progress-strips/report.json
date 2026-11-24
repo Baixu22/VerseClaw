@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidate": "22b8e1633b9faad2f66b43fb6876d84c9193c5ee",
+  "logicValidationCommit": "88e727353d9e45f6273b92e433cb187ba1ca4070",
+  "unitTests": 117,
+  "distinctElectronJourneys": 12,
+  "filesInstalled": 1412,
+  "newCarbonRequests": 0,
+  "originals": "D:\\tmp\\clawx-tool-progress-20261124"
+}

@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "data": "agent-generated runtime events; real Electron rendering",
+  "gradient": "linear-gradient(110deg, rgb(154, 154, 149) 0%, rgb(154, 154, 149) 35%, rgb(255, 255, 255) 50%, rgb(154, 154, 149) 65%, rgb(154, 154, 149) 100%)",
+  "command": "python -X utf8 D:/project/a-long-path-for-conversation-rendering/checks/run-check.py --focus output",
+  "status": "passed"
+}

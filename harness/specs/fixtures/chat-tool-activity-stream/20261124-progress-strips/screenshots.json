@@ -1,0 +1,50 @@
+{
+  "driven_by": "agent",
+  "images": [
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-collapsed-dark-1280.png",
+      "curated": "screenshots/history-collapsed-dark-1280.png",
+      "sha256": "44caf5d1f3d47f620f1f880c6b7eecf98859a1ddafd6523e807b70f4ec68d35f"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-expanded-dark-1280.png",
+      "curated": "screenshots/history-expanded-dark-1280.png",
+      "sha256": "038a9798bc3546d33759d5f320ac62ced15dea44653c54a85a8394e76c15419a"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-light-375.png",
+      "curated": "screenshots/history-zh-light-375.png",
+      "sha256": "299e7d8d740ab8b54662906bb524c47e0c0d344b307a6815f75bc88e88ef8168"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-dark-375.png",
+      "curated": "screenshots/history-zh-dark-375.png",
+      "sha256": "87d2caefff4541dab510eb3b59a96df9dfd429aa16e95583c43979b7f9968722"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-ru-light-375.png",
+      "curated": "screenshots/history-ru-light-375.png",
+      "sha256": "c642c7916950da01422d9750064906de65d893a5549bb257d007ddcf654363ef"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-ru-dark-375.png",
+      "curated": "screenshots/history-ru-dark-375.png",
+      "sha256": "5b288f95f22ea969626ef38e13b676b571a15b076e5038422e6a49f15c478a50"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\live-shimmer-dark-1280.png",
+      "curated": "screenshots/live-shimmer-dark-1280.png",
+      "sha256": "20c0def36d6f7538355c68b0f58c1102ee2d96f25272425a538f813e1342718b"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\live-expanded-reduced-motion.png",
+      "curated": "screenshots/live-expanded-reduced-motion.png",
+      "sha256": "4dc84f54d48ae4058a243a878618106c17d2d14dd6fd9d0f0a57377343d6346f"
+    },
+    {
+      "original": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\completed-command-dark-1280.png",
+      "curated": "screenshots/completed-command-dark-1280.png",
+      "sha256": "2cb34ebaf5faa9e7523d73c1d07ed03617791e2b39f9f96741fd91ba3e3fa308"
+    }
+  ]
+}

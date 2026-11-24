@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "status": "passed",
+  "installedAt": "2026-11-24T06:34:43.5962240Z",
+  "candidateCommit": "22b8e1633b9faad2f66b43fb6876d84c9193c5ee",
+  "buildSourceCommit": "8c66f01aee5c9b53e87764df27c01474effd37f8",
+  "sourceRoot": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
+  "mainRoot": "D:\\ClawX",
+  "previousBuildRoot": "D:\\tmp\\clawx-tool-progress-20261124\\previous-main-build",
+  "verifiedFiles": 1412,
+  "preservedFiles": 1412,
+  "trees": [
+    {
+      "filesVerified": 1402,
+      "name": "dist"
+    },
+    {
+      "filesVerified": 10,
+      "name": "dist-electron"
+    }
+  ],
+  "fileManifest": "main-build-files.json",
+  "fileManifestSha256": "ee01335716edced020f189f0f7e0ed48fb6e6be5362fb7bf1172b0cfaa7e3de7",
+  "productMatchesBuildSource": true,
+  "rawReceipt": {
+    "path": "D:\\tmp\\clawx-tool-progress-20261124\\main-build-installed.json",
+    "sha256": "c480d0a868a16aaa7af8044beba458a1bd6e6f76c455be753909d27707abd9cb"
+  }
+}

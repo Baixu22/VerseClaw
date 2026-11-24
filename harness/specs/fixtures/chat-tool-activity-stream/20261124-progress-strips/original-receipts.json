@@ -1,0 +1,223 @@
+{
+  "root": "D:\\tmp\\clawx-tool-progress-20261124",
+  "preserved": true,
+  "receipts": [
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\build-r2.command.json",
+      "sha256": "b55278b5f4a9cab038b33c49da06326a22f2697150860c3966c1805d5ce6647d",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\build-r4.command.json",
+      "sha256": "cc8cf3c9bab2142138699503b4ede4806403853d4e9d017f0472fc90da8be7af",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\build-r5.command.json",
+      "sha256": "d13c854e5057dc3f9df61754244eecac3f779dade3e638d151499a35dc4fec94",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\build-r6.command.json",
+      "sha256": "ea35a08a25777a19a1306a16a1faf87856a52a9958113197c7ccba9a32d8168b",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "8c66f01aee5c9b53e87764df27c01474effd37f8"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\comms-compare-r2.command.json",
+      "sha256": "b00ee6cba3cf62644b3d191fc82fc3c89df6ec2d34a54596a6cda0045697bca6",
+      "exitCode": 0,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\comms-replay-r2.command.json",
+      "sha256": "3dd6e742a2a887b76c886789bf5397239569ea3d09ebc5b1859bb61f7e1693d4",
+      "exitCode": 0,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\contract-r2.command.json",
+      "sha256": "3dc00b7c73b24f8563363381f9cb0cd9fe4737afb272583b6381ba34e5c8dae6",
+      "exitCode": 0,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r2.command.json",
+      "sha256": "a7dfa7d47be4e60416ba2eab6bf26f3171dac9a7e1b4e22b3236b8a4f245614e",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r4.command.json",
+      "sha256": "770f5ffddfa5286c43626e56512862fc48588399f34e8ffa329ca4fa48cfac42",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r5.command.json",
+      "sha256": "c1b27c15102a7aaf437f879eeb88552ca672271d614214cc653f02bfc6bec2db",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r6.command.json",
+      "sha256": "47f7f7a8e588fd3191f3b96791b3cfbdaaa5da989caf3bde10a794b063cf161c",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "8c66f01aee5c9b53e87764df27c01474effd37f8"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7.command.json",
+      "sha256": "eae37bf25bda89b656deea65c0ebe7f6d78cc3fbbc5d90e4109d784696f887a3",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "22b8e1633b9faad2f66b43fb6876d84c9193c5ee"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-current-r2.command.json",
+      "sha256": "5a37c7582cfba07b66e90a369dc7e182b13b42b4f369489136d96a745d0e0cc3",
+      "exitCode": 1,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-final-flow.command.json",
+      "sha256": "b0e59d03d50ab1f024264d08ea64d11966f07d7d409ac132a40eabfd338f7069",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-final-validate.command.json",
+      "sha256": "9b2ac0e8351e0b719c4aa4ec5e42ccf50f34ccde2e53ead14b596bb6e4129b9c",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-flow-r2.command.json",
+      "sha256": "dce6268011cbb75a6cd1db80bab11c7a852eda6e76fafc61cc4dfca9c73759b9",
+      "exitCode": 1,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-scoped-flow.command.json",
+      "sha256": "0cc3b5745ab59c5dd50c6d55f276aab8e25a0a74fae4df89e40d883a8cfe46bc",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-scoped-validate.command.json",
+      "sha256": "9f484808cdbb8f66f89d03f696ad146b2fe40e6e6c0a2109fdc0c964be24f9e0",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\i18n-r2.command.json",
+      "sha256": "c2ff6cc07000c2c9d1a9f6250164ae89e6b51a706f4ed765e1bbb62fff118fad",
+      "exitCode": 0,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\lint-final.command.json",
+      "sha256": "821239f72c1e65139cd22c3bbed678b5e8863cf95711ea60c11c10fcdbf568bb",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\lint-r2.command.json",
+      "sha256": "7c20d897742713b8fbe00157080c006313acfa009e2f78b69b6f7b1d2d70de6d",
+      "exitCode": 0,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\lint-r5.command.json",
+      "sha256": "e82cb6fd4273879597426f1e1cef433ea11b1443bbb10570332db57974ea88dd",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\retention-r2.command.json",
+      "sha256": "91c263e765ccc7539d6f6a6e8434fdf2f7cca7f977f162a7cebcdef2d2b67999",
+      "exitCode": 0,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\runtime-qa-r3.command.json",
+      "sha256": "c94179476199be154f1b02957078c115d452560fb194de44989d3a2d141ecb78",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\typecheck-r1.command.json",
+      "sha256": "9a33e597aba7aa4a96e703ad6b1c896b758572b6959028fa862834d034028feb",
+      "exitCode": 1,
+      "sourceUnchanged": false,
+      "candidate": "e22b75ba8cbd3b8ebacbc637ff96461f7c01bbba"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\typecheck-r2.command.json",
+      "sha256": "859bb85313cfb39b7af9a519b5f529e82edc3f8f68326d3f996934bd10531495",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\typecheck-r4.command.json",
+      "sha256": "c7bfd8e6566af98c80405ee227e11cdf9bd4c6971ccfb8504776262f5b0ab3d6",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\typecheck-test-r5.command.json",
+      "sha256": "4b1d5cccc6be8c157c8f4b37d3100fbfd6b9191ef769e8a4a8cc404c155cb64f",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\unit-r1.command.json",
+      "sha256": "7feb5409c9a3e6a4f1fba7e36417ccbc4af2d090d1637ddd0078dd8605e09407",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "e22b75ba8cbd3b8ebacbc637ff96461f7c01bbba"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\unit-r2.command.json",
+      "sha256": "fe523189664084e21560c0b41b63c2cafbd302e8202900e84827c8c8e0f681d1",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\unit-r4.command.json",
+      "sha256": "dc81cbe5c95570478e37c093b7b0da25e1fe7e36749134d8e2bc8a3ac3735225",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    }
+  ]
+}

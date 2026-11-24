@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidateCommit": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+  "command": [
+    "pnpm.cmd",
+    "harness",
+    "validate",
+    "--spec",
+    "harness/specs/tasks/chat-tool-activity-stream-20261123.md",
+    "--since",
+    "6087e226a"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 1.984,
+  "stdoutSha256": "f0de891b54254b49da6253db01bc84c61379af95c056299846bc625a4b6eb215",
+  "stderrSha256": "7053b2304edcf41dd53bfa04af49ec739009867a895dd1dc931c59325e0f23b6",
+  "sourceUnchanged": true
+}

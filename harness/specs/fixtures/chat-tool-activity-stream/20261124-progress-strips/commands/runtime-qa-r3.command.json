@@ -1,0 +1,51 @@
+{
+  "actor": "codex-output-ui",
+  "driven_by": "agent",
+  "label": "runtime-qa-r3",
+  "command": [
+    "pnpm.cmd",
+    "--dir",
+    "openclaw_runtime",
+    "run",
+    "build",
+    "qaRuntime"
+  ],
+  "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+  "candidate": {
+    "commit": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89",
+    "tree": "32b7b7dc7a71dbc93afe55a6e9cf5357d96f6239",
+    "dirty": false
+  },
+  "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+  "timeoutSeconds": 900,
+  "admission": {
+    "freeBytes": 4676632576,
+    "minimumFreeBytes": 4294967296,
+    "heavy": []
+  },
+  "startedAt": "2026-11-24T05:33:18.233274+00:00",
+  "status": "finished",
+  "resourceLimits": {
+    "NODE_OPTIONS": "--max-old-space-size=3072",
+    "GOMEMLIMIT": "900MiB",
+    "GOMAXPROCS": "2",
+    "workers": 1
+  },
+  "electronRuntime": {
+    "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+    "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+  },
+  "independentUIAuthorized": true,
+  "driverPid": 32320,
+  "exitCode": 0,
+  "durationSeconds": 16.406,
+  "sourceUnchanged": true,
+  "stdout": {
+    "path": "D:\\tmp\\clawx-tool-progress-20261124\\runtime-qa-r3.stdout.log",
+    "sha256": "bea568cbbbaf2b89708b0dbb893d8777d644c1de27f57b374964d70bb06a7661"
+  },
+  "stderr": {
+    "path": "D:\\tmp\\clawx-tool-progress-20261124\\runtime-qa-r3.stderr.log",
+    "sha256": "934da9f26330371606890fa070b71b83f31613fadec67f3fc276c56989cde225"
+  }
+}
