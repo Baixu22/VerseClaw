@@ -1,0 +1,391 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "measurements": [
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 805,
+      "right": 1093,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 1015.8504638671875,
+        "tooltipRight": 1063.8504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 699.5,
+      "right": 987.5,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 910.3504638671875,
+        "tooltipRight": 958.3504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "zh",
+      "theme": "light",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 699.5,
+      "right": 987.5,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 910.3504638671875,
+        "tooltipRight": 958.3504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "zh",
+      "theme": "light",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "zh",
+      "theme": "dark",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 699.5,
+      "right": 987.5,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 910.3504638671875,
+        "tooltipRight": 958.3504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "zh",
+      "theme": "dark",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ja",
+      "theme": "light",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 699.5,
+      "right": 987.5,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 910.3504638671875,
+        "tooltipRight": 958.3504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ja",
+      "theme": "light",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ja",
+      "theme": "dark",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 699.5,
+      "right": 987.5,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 910.3504638671875,
+        "tooltipRight": 958.3504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ja",
+      "theme": "dark",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ru",
+      "theme": "light",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 699.5,
+      "right": 987.5,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 910.3504638671875,
+        "tooltipRight": 958.3504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ru",
+      "theme": "light",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.121569 0.121569 0.113725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ru",
+      "theme": "dark",
+      "width": 1280,
+      "viewport": 1280,
+      "left": 699.5,
+      "right": 987.5,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 320,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 910.3504638671875,
+        "tooltipRight": 958.3504638671875,
+        "viewport": 1280
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    },
+    {
+      "lang": "ru",
+      "theme": "dark",
+      "width": 375,
+      "viewport": 375,
+      "left": 79,
+      "right": 367,
+      "top": 266,
+      "bottom": 443,
+      "overflow": false,
+      "cardGeometry": {
+        "width": 294,
+        "height": 156,
+        "modelBottom": 373.5,
+        "tooltipTop": 375.5,
+        "tooltipLeft": 287.7098388671875,
+        "tooltipRight": 335.7098388671875,
+        "viewport": 375
+      },
+      "focusStyle": {
+        "outline": "none",
+        "shadow": "color(srgb 0.92549 0.92549 0.913725 / 0.22) 0px 0px 0px 1px inset"
+      }
+    }
+  ],
+  "reducedMotion": true
+}

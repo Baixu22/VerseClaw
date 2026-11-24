@@ -1,0 +1,52 @@
+{
+  "driven_by": "agent",
+  "sources": {
+    "settings-tooltip-dark-1280.png": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r5\\chat-model-settings-card-o-66afc--the-selected-runtime-model\\settings-tooltip-dark-1280.png",
+      "sha256": "5b43cdc517b97ef13c06b2265ac9fa898761e46781db9e7133a66f8fb9b6fe62"
+    },
+    "models-dark-1280.png": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r5\\chat-model-settings-card-o-66afc--the-selected-runtime-model\\models-dark-1280.png",
+      "sha256": "0e21d7870e72e3c8bf7f7ce8c2635afb27155941c0c7c05b10826239ab642c32"
+    },
+    "models-zh-light-375.png": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r5\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\models-zh-light-375.png",
+      "sha256": "bd30f9523b58de77ebec73cca0094a9b84583025b546cfd5f5d3374b241dc70c"
+    },
+    "models-ru-dark-375.png": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r5\\chat-model-settings-card-k-f80ea-es-375px-and-reduced-motion\\models-ru-dark-375.png",
+      "sha256": "722a8c929799d73c87bd9d194fc93e077592c9ecbaac984248e661fe4ed6aa51"
+    },
+    "light-steady-tooltip": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r6\\chat-agent-effort-Verse-Cl-27e76-s-and-commits-after-release\\test-failed-1.png",
+      "sha256": "d96c31d235cf5e6a477b8e5a0f7208fafec54fa46dc745f739844b280d64e168"
+    }
+  },
+  "cropBoxes": {
+    "settings-tooltip-dark-1280.png": [
+      754,
+      254,
+      1122,
+      482
+    ],
+    "models-dark-1280.png": [
+      754,
+      218,
+      1122,
+      482
+    ],
+    "models-ru-dark-375.png": [
+      20,
+      215,
+      375,
+      482
+    ]
+  },
+  "lightTooltipCrop": [
+    1137,
+    477,
+    1680,
+    801
+  ],
+  "transformations": "Original pixel crops; only 1.5x native screenshot scaled to 1x for the light tooltip panel; no recreated UI. Rare UI CSS coordinates mapped by actual PNG/viewport width ratio"
+}

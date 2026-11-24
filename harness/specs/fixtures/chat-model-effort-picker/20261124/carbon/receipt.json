@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "actor": "carbon-model-ui-plan",
+  "model": "Gemini 4 Carbon (Low)",
+  "startedAt": "2026-11-24T14:02:50.116Z",
+  "endedAt": "2026-11-24T14:03:44.538Z",
+  "exitCode": 0,
+  "stoppedForGuard": false,
+  "jsonSchemaUsed": false,
+  "promptSha256": "befdce64e5bd1976404f849be06465408646bc1f287dde016b331720ada2a2d3",
+  "observedGuardWindowRequests": [
+    "gemini-4-carbon",
+    "gemini-4-carbon"
+  ],
+  "blockedModels": [],
+  "status": "SUCCESS",
+  "conversationId": "be2b7d9b-2bcc-4f60-9781-951672e0fb9c",
+  "usage": {
+    "input_tokens": 27181,
+    "output_tokens": 2178,
+    "thinking_tokens": 0,
+    "cache_read_tokens": 0,
+    "total_tokens": 29359
+  },
+  "durationSeconds": 51.7305594
+}

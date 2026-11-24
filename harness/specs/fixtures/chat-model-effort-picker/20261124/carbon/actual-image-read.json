@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "conversationId": "be2b7d9b-2bcc-4f60-9781-951672e0fb9c",
+  "source": "read-only SQLite steps",
+  "step": 2,
+  "stepType": 132,
+  "status": 3,
+  "tool": "read_file",
+  "requestedPath": "D:\\tmp\\clawx-model-effort-picker-20261124\\carbon\\review-board.png",
+  "sourceMime": "image/png",
+  "returnedMime": "image/jpeg",
+  "dimensions": [
+    1232,
+    1070
+  ],
+  "sourceSha256": "be4c152af31ed599c2bcb8da14e9262a2c2b1b7f68dbf26403f55c6330ade8ee",
+  "returnedSha256": "6ef5161f8c102e90828121427c84c272c936555659906805b77858f3e841eafb",
+  "returnedBytes": 96538,
+  "pixelMeanAbsoluteDifference": [
+    0.6506091455273698,
+    0.48151853987134363,
+    0.7750257919650443
+  ]
+}

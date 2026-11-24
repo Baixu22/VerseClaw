@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "sourceCommit": "07d6cf9f9f8c1fbc5a6dde00bd434f1de79682a9",
+  "items": [
+    {
+      "id": 1,
+      "result": "列表项只显示模型名，提供商放在分组标题；当前模型行保留来源标识。",
+      "files": [
+        "src/components/chat/ChatModelSettingsCard.tsx",
+        "src/components/chat/ChatModelPicker.tsx"
+      ]
+    },
+    {
+      "id": 2,
+      "result": "标题16px、卡片高度156px，压缩内部重复留白和底部强度文案；Tooltip下降12px，四语实测与模型行分离。",
+      "files": [
+        "src/styles/chat-model-settings.css"
+      ]
+    },
+    {
+      "id": 3,
+      "result": "搜索框移除蓝色outline，用中性灰内描边保留键盘焦点；列表项34px起、6px上下内边距。",
+      "files": [
+        "src/styles/chat-model-settings.css"
+      ]
+    }
+  ],
+  "implementationNotes": "补齐规划片段未列出的滑块内边距与重复标签处理；保留原滑块的弹簧、倾斜、goo和边缘反馈。"
+}

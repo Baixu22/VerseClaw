@@ -1,0 +1,12 @@
+{
+  "status": "prevented_by_clean_candidate_guard",
+  "labels": [
+    "harness-validate-r11",
+    "harness-dry-run-r11",
+    "typecheck-r11",
+    "build-r11",
+    "electron-r11"
+  ],
+  "commandsStarted": 0,
+  "reason": "unresolved documentation merge"
+}

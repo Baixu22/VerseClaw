@@ -1,0 +1,4 @@
+* text eol=lf
+raw/** -text whitespace=-trailing-space,-blank-at-eof
+*.png -text
+*.jpg -text

@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "unit": {
+    "total": 125,
+    "passed": 125
+  },
+  "types": "Main/Test passed typecheck-r3; Web passed typecheck-r4; subsequent source changes were slider styles and test fixtures",
+  "native": {
+    "electron-r5": "5 expected, 1 failure in legacy initial Agent fixture; two new model-settings journeys passed"
+  },
+  "legacyFixtureRecheck": "electron-r6 initial High passed; pointer expected Extra high but observed Max; electron-r7 records event geometry and is queued for 2GiB resource admission",
+  "sourceBuild": "0154eccf5e58a701684478d0a48b6ac4f5bdd0f1",
+  "sourceData": "agent-generated history and RPC fixtures; actual Electron rendering"
+}

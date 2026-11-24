@@ -1,0 +1,157 @@
+[
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r12.command.json",
+    "sha256": "84d3548aa7a912b74de0e0f1f4032e101237b5dc01cea3bfa27ba29f94d13420",
+    "bytes": 1480
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r4.command.json",
+    "sha256": "5a8b50cb22dafff77ece1a1029502008770b33e6d27f2857ad2ae12321ed6ab2",
+    "bytes": 1477
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r5.command.json",
+    "sha256": "0b4536364e9b8d1324b22377c6f7dfc285c54559466db365fbdbbb0fb423ef98",
+    "bytes": 1477
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r9.command.json",
+    "sha256": "24207c6ef283818e3ced0ceaf88a65b4da8485c3ece0d0e6ac03594ef00c9e02",
+    "bytes": 1476
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\comms-compare-r9.command.json",
+    "sha256": "207e0f1a5f0b703d283edda8271d07dd7c6c7e2db559dc5719559ff1b1ac1fbc",
+    "bytes": 1501
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\comms-replay-r9.command.json",
+    "sha256": "e0363ec1da5a698dc2c29c3b89f6be07ba641e613e3a118354e7a269143a9946",
+    "bytes": 1966
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\context-r8.command.json",
+    "sha256": "3847817938d6ae08cfc0f69eaf5b88c3eb10fdff121006a3fe4bbf6708029294",
+    "bytes": 1561
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\contract-r9.command.json",
+    "sha256": "19f3528297f15a512967871683a97c9fe68654dad4528ff2f8f770c631457b2f",
+    "bytes": 2432
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r10.command.json",
+    "sha256": "e45b5086df94ee84646cb7d1e17f68574ca932c7ee2b3b573b3b004e38a56bad",
+    "bytes": 1687
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r12.command.json",
+    "sha256": "dd4a84cdbcf2317a9f5d2c6fa9e57f62c813015ebbc73b6e4051109f0316bf6f",
+    "bytes": 1774
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r4.command.json",
+    "sha256": "bbb2d1751cb4c7dda89f97f3540521606f2450ec2cfbc1aa0a47e13418ab0012",
+    "bytes": 1770
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r5.command.json",
+    "sha256": "b61b461b00ea0694478ef3d2175359cd9a88f04e55bbbee5f513852c215b74bb",
+    "bytes": 1770
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r6.command.json",
+    "sha256": "13e19446d7937a17b2f4802699a153ca8b8574c2642a30f4038b0338d9a6c285",
+    "bytes": 1673
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r7.command.json",
+    "sha256": "c7f768d0beff65c05ab5ebaa704d5b00aa091495313590a64fa91832e78cccfe",
+    "bytes": 1727
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r9.command.json",
+    "sha256": "eb660e427e824e97f5592b5636306b9e144d109c66cee4b53c6ac0ecb3ca9e68",
+    "bytes": 1768
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-dry-run-r12.command.json",
+    "sha256": "bc01993002661e061beab6a2c30911ddede76ada534704dfbd8fea65bc02dd24",
+    "bytes": 1601
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-dry-run-r9.command.json",
+    "sha256": "7921e2c06eb33cf1477a17550c3ba185594e7e06ac2c5fd5ffe7ea437404e92f",
+    "bytes": 1598
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-validate-r12.command.json",
+    "sha256": "e881d71eea27369a23bf83c307a31d3a02ee7d87f5d0b000c43214bd8248cd77",
+    "bytes": 1592
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-validate-r9.command.json",
+    "sha256": "696149d840defe3503b8ab45cabb85df9e15aa8457a964cc02ec583232efb2c0",
+    "bytes": 1589
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\i18n-r9.command.json",
+    "sha256": "e33aa5d06735dd0b3dce81a9a00b87a51cb785ff1d9f956dd8039fe1164db172",
+    "bytes": 2097
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\lint-r8.command.json",
+    "sha256": "7fbab3b95da56223061b5d6a6a72eaf154c8cb72fdb04d022c5f48d1053f006e",
+    "bytes": 1952
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\lint-r9.command.json",
+    "sha256": "b7ad88863744a5e389f0e01c9841994a86ff4b588fab638b1e1d4caee977f362",
+    "bytes": 2896
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r12.command.json",
+    "sha256": "612a2cce1ac3f90c47fe1e3558eeeaf87ab05c87471e11e10435f5b72d9eb9f8",
+    "bytes": 1492
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r3.command.json",
+    "sha256": "865b80e7271d641bbeee4cabd30bf243ebdd5dafaa2ee3191f90da6001d6ea6b",
+    "bytes": 1489
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r4.command.json",
+    "sha256": "81eb67bc5e026cff7fde409e1b6adf1f76caed7fadad487eb6e25fc960afc82a",
+    "bytes": 1492
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r9.command.json",
+    "sha256": "1af47f8501d775f53d40bec6564e0d16f8e1ab26e122e71992a12b4de2ad6799",
+    "bytes": 1488
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-test-r10.command.json",
+    "sha256": "7b384e3ca7efa0d366af19c497871475ebf841f648e30300c300dcf1e7c0318e",
+    "bytes": 2500
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r1.command.json",
+    "sha256": "b246f07fa28540b8558082d4a5d35bd62580126b9ef22d34e3147c48f8177e91",
+    "bytes": 2022
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r2.command.json",
+    "sha256": "ca0a34cd03a7ed8d39a4b6d6446899967721e04534e2c30d99bf1a845ec9ea72",
+    "bytes": 2177
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r3.command.json",
+    "sha256": "eae9cc69fc6aacc77ca0303cdb17df4b8c7bd7afd35b877be74f51862329294d",
+    "bytes": 1863
+  },
+  {
+    "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r9.command.json",
+    "sha256": "cc1250b0abaf494000581c83603779ba63bf2a402071a46e41e2fad7b3868410",
+    "bytes": 1864
+  }
+]
