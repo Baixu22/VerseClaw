@@ -10,7 +10,7 @@ vi.mock('@lobehub/ui/es/chat/TokenTag/TokenTag', () => ({ default: () => <span d
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, values: Record<string, unknown> = {}) => {
   const value = key.split('.').reduce<unknown>((current, part) => current && typeof current === 'object' ? (current as Record<string, unknown>)[part] : undefined, en);
   return typeof value === 'string' ? value.replace(/\{\{(\w+)\}\}/g, (_, name: string) => String(values[name] ?? '')) : key;
-} }) }));
+}, i18n: { language: 'en' } }) }));
 
 const sessionKey = 'agent:main:context-a';
 const sessionId = 'generation-a';
