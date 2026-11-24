@@ -42,6 +42,8 @@ agent 使用 `session_status({ readOnly: true, scope: row.detail.scope })` 读�
 
 协作模式使用上述 workspace、search、fields、limit、cursor 参数；混入旧列表模式的过滤或转录参数会被拒绝。Main、UI 和工具共同校验返回范围、字段选择与读取预算，缺少 session owner 的行不携带任务或运行事实。
 
+回复的旧 requester、当前会话行或详情代次返回 `stale/generation-changed`，同代范围不符返回 `stale/scope-mismatch`。`not_read` 的 `readAt` 为 null，未知搜索匹配保留 unknown；重复会话行、未知原因码和失败页的分页游标被共同拒绝为 `unknown/protocol-unverified`。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
-import { parseSessionActivityReadQuery } from '../../shared/types/session-activity';
+import { parseSessionActivityReadQuery, type SessionActivityReadReason } from '../../shared/types/session-activity';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationQuery, type SessionCollaborationPage } from '../../shared/types/session-collaboration';
 import type { OpenClawConfig } from '../../openclaw_runtime/src/config/types.openclaw';
 import type { GatewayManager } from '../../electron/gateway/manager';
@@ -339,35 +339,68 @@ describe('A2 shared session discovery and detail', () => {
   });
   it('rejects malformed, unselected and cross-scope replies consistently at Main, UI and tool consumers', async () => {
     const input = query(), good = (await runtime(input)).page;
+    const scopedInput = query({ target: scope(), limit: 1 }), scopedGood = (await runtime(scopedInput)).page;
     expect(await readSessionCollaborationPage(input, () => ({ success: true, page: good }))).toEqual(good);
-    const corruptions: Array<[string, (page: SessionCollaborationPage) => void, 'unknown' | 'stale']> = [
+    const corruptions: Array<[string, (page: SessionCollaborationPage) => void, 'unknown' | 'stale', SessionActivityReadReason?]> = [
       ['missing-source', page => { delete (page.items[0].sources as Partial<typeof page.items[0]['sources']>).tasks; }, 'unknown'],
       ['missing-source-reason', page => { Reflect.deleteProperty(page.items[0].sources.actions, 'reason'); }, 'unknown'],
       ['missing-ready-value', page => { page.items[0].sources.session.value = null as never; }, 'unknown'],
-      ['wrong-row-key', page => { page.items[0].sessionKey = B as typeof page.items[0]['sessionKey']; }, 'stale'],
+      ['wrong-row-key', page => { page.items[0].sessionKey = 'agent:main:wrong' as typeof page.items[0]['sessionKey']; }, 'stale'],
       ['wrong-run-scope', page => { page.items[0].sources.run.value!.scope.workspaceId = scope(B, 'workspace-b', 'generation-b').workspaceId; }, 'stale'],
       ['negative-read-budget', page => { page.scanned = -1; }, 'unknown'],
-      ['excess-actions', page => { page.items[1].sources.actions.value = Array.from({ length: 9 }, () => page.items[1].sources.actions.value![0]); }, 'unknown'],
+      ['excess-actions', page => { page.items[page.items.length > 1 ? 1 : 0].sources.actions = { owner: 'session-task-effects/bash-processes', state: 'ready', readAt: Date.now(), value: Array.from({ length: 9 }, () => good.items[1].sources.actions.value![0]) }; }, 'unknown'],
       ['invalid-task-revision', page => { page.items[0].sources.tasks.value![0].revision = 0; }, 'unknown'],
       ['unverified-session-with-facts', page => { page.items[0].sources.session = { owner: 'sessions', state: 'unknown', value: null, readAt: null, reason: 'owner-missing' }; }, 'unknown'],
       ['invented-idle', page => { page.items[0].status = 'idle'; }, 'unknown'],
+      ['missing-requester', page => { Reflect.deleteProperty(page, 'requester'); }, 'unknown'],
+      ['duplicate-session', page => { page.items[1] = structuredClone(page.items[0]); page.scanned = Math.max(page.scanned, page.items.length); }, 'unknown'],
+      ['observed-unread-source', page => { page.items[0].sources.tasks = { owner: 'TaskSystem', state: 'not_read', value: null, readAt: Date.now(), reason: 'source-not-read' }; }, 'unknown'],
+      ['unread-owner-missing', page => { page.items[0].sources.tasks = { owner: 'TaskSystem', state: 'not_read', value: null, readAt: null, reason: 'owner-missing' }; }, 'unknown'],
+      ['unknown-source-reason', page => { Reflect.set(page.items[0].sources.actions, 'reason', 'invented-reason'); }, 'unknown'],
+      ['unknown-page-reason', page => { Reflect.set(page, 'reason', 'invented-reason'); }, 'unknown'],
+      ['failed-page-cursor', page => { page.items = []; page.state = 'stale'; page.reason = 'generation-changed'; page.scanned = 0; page.unknownMatches = 0; page.nextCursor = 'old-page'; }, 'unknown'],
+      ['old-requester-generation', page => { page.requester.sessionGeneration = 'old-generation'; }, 'stale', 'generation-changed'],
+      ['old-detail-generation', page => { page.items[0].detail!.scope = { ...page.items[0].detail!.scope, sessionGeneration: 'old-generation' }; }, 'stale', 'generation-changed'],
+      ['old-self-generation', page => { page.items[0].sources.session.value!.scope.sessionGeneration = 'old-generation'; page.items[0].detail!.scope.sessionGeneration = 'old-generation'; }, 'stale', 'generation-changed'],
     ];
     const { api, rpc } = main();
     const opts = { agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: vi.fn() as never };
-    for (const [name, corrupt, state] of corruptions) {
+    for (const [name, corrupt, state, reason] of corruptions) {
+      const expectedReason = reason ?? (state === 'stale' ? 'scope-mismatch' : 'protocol-unverified');
       const page = structuredClone(good); corrupt(page);
-      expect(validateSessionCollaborationPage(input, page).state, name).toBe(state);
+      expect(validateSessionCollaborationPage(input, page), name).toMatchObject({ state, reason: expectedReason, items: [] });
       rpc.mockResolvedValue({ page });
       opts.callGateway = vi.fn(async () => ({ page })) as never;
       const ui = await readSessionCollaborationPage(input, api.query);
       const tool = await createSessionsListTool(opts).execute(name, { collaboration: true });
-      expect(ui, name).toMatchObject({ state, items: [] }); expect(tool.details, name).toEqual(ui);
+      expect(ui, name).toMatchObject({ state, reason: expectedReason, items: [] }); expect(tool.details, name).toEqual(ui);
+      const scopedPage = structuredClone(scopedGood); corrupt(scopedPage);
+      rpc.mockResolvedValue({ page: scopedPage }); opts.callGateway = vi.fn(async () => ({ page: scopedPage })) as never;
+      const scopedUi = await readSessionCollaborationPage(scopedInput, api.query);
+      const status = await createSessionStatusTool(opts).execute(name, { readOnly: true, scope: scope() });
+      expect(scopedUi, name).toMatchObject({ state, reason: expectedReason, items: [] }); expect(status.details, name).toEqual(scopedUi);
     }
     const selected = query({ fields: [] });
     const unchecked = (await runtime(selected)).page;
     unchecked.items[0].sources.tasks = good.items[0].sources.tasks;
     expect(validateSessionCollaborationPage(selected, unchecked)).toMatchObject({ state: 'unknown', items: [] });
-    receipts.push({ case: 'shared-reply-boundary', rejectedCases: corruptions.map(([name, , state]) => ({ name, state })), unselectedFieldRejected: true });
+    receipts.push({ case: 'shared-reply-boundary', rejectedCases: corruptions.map(([name, , state, reason]) => ({ name, state, reason: reason ?? (state === 'stale' ? 'scope-mismatch' : 'protocol-unverified') })), unselectedFieldRejected: true });
+  });
+  it('preserves unknown search matches and rejects a fabricated empty page across consumers', async () => {
+    put(B, { workspaceId: undefined });
+    const input = query({ search: 'missing search needle' }), good = (await runtime(input)).page;
+    expect(validateSessionCollaborationPage(input, good)).toEqual(good);
+    expect(good).toMatchObject({ state: 'unknown', unknownMatches: 1, items: [] });
+    const malformed = { ...good, state: 'empty' as const };
+    expect(validateSessionCollaborationPage(input, malformed)).toMatchObject({ state: 'unknown', reason: 'protocol-unverified', items: [] });
+    const { api, rpc } = main(); rpc.mockResolvedValue({ page: malformed });
+    const opts = { agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: vi.fn(async () => ({ page: malformed })) as never };
+    const ui = await readSessionCollaborationPage(input, api.query);
+    const list = await createSessionsListTool(opts).execute('unknown-search-list', { collaboration: true, search: input.search });
+    const status = await createSessionStatusTool(opts).execute('unknown-search-status', { readOnly: true, scope: scope() });
+    expect(ui).toMatchObject({ state: 'unknown', reason: 'protocol-unverified', items: [] });
+    expect(list.details).toEqual(ui); expect(status.details).toEqual(ui);
+    receipts.push({ case: 'unknown-search-cannot-be-empty', input, good, malformed, ui, list: list.details, status: status.details });
   });
   it.each([{ limit: 51 }, { limit: 0 }, { fields: ['unknown'] }, { cursor: 'x'.repeat(257) }, { requester: { ...scope(), writeClaim: true } }])(
     'rejects an unbounded or authority-bearing query before owner hydration: %j', async patch => {

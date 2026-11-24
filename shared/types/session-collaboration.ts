@@ -1,5 +1,5 @@
 import { normalizeAutonomyObjectReference, normalizeAutonomySessionScope, type AutonomyProjectScope, type AutonomySessionScope, type SessionKey, type ScopedRunId } from './identity-scope.js';
-import { parseSessionActivityReadQuery, type SessionActivityReadQuery, type SessionActivityReadReason, type SessionActivityReadSource, type SessionActivityTaskReference } from './session-activity.js';
+import { parseSessionActivityReadQuery, SESSION_ACTIVITY_READ_REASONS, type SessionActivityReadQuery, type SessionActivityReadReason, type SessionActivityReadSource, type SessionActivityTaskReference } from './session-activity.js';
 import type { TaskAuthorityBasis } from '../task-system/identity.js';
 
 export const SESSION_COLLABORATION_FIELDS = ['goal', 'tasks', 'run', 'actions', 'origin', 'execution'] as const;
@@ -96,17 +96,26 @@ export function validateSessionCollaborationPage(query: SessionCollaborationQuer
     || !Number.isSafeInteger(page.unknownMatches) || page.unknownMatches < 0 || page.unknownMatches > page.scanned || !at(page.capturedAt)
     || !['ready', 'empty', 'unavailable', 'stale', 'unknown'].includes(page.state)
     || (page.items.length > 0) !== (page.state === 'ready')
+    || (page.reason !== undefined && !SESSION_ACTIVITY_READ_REASONS.includes(page.reason))
+    || (page.state === 'empty' && page.unknownMatches !== 0)
+    || (['unavailable', 'stale'].includes(page.state) && (page.reason === undefined || page.nextCursor !== null || page.scanned !== 0 || page.unknownMatches !== 0))
     || (page.nextCursor !== null && (!text(page.nextCursor) || page.nextCursor.length > 256))) return invalid();
   try {
+    normalizeAutonomySessionScope(page.requester, page.requester);
+    const seen = new Set<SessionKey>();
     for (const row of page.items) {
-      if (!text(row.sessionKey) || !text(row.label, 160) || !['running', 'idle', 'unknown'].includes(row.status)) return invalid();
+      if (!text(row.sessionKey) || seen.has(row.sessionKey) || !text(row.label, 160) || !['running', 'idle', 'unknown'].includes(row.status)) return invalid();
+      seen.add(row.sessionKey);
       for (const name of Object.keys(owners) as Array<keyof typeof owners>) {
         const source = row.sources[name];
         if (!source || source.owner !== owners[name] || !['ready', 'empty', 'not_read', 'unavailable', 'stale', 'unknown'].includes(source.state)
           || (name !== 'session' && !fields.has(name) && source.state !== 'not_read')) return invalid();
         if (source.state === 'ready' || source.state === 'empty') {
           if (!at(source.readAt)) return invalid();
-        } else if (source.value !== null || !('reason' in source) || !text(source.reason) || (source.readAt !== null && !at(source.readAt))) return invalid();
+        } else {
+          if (source.value !== null || !('reason' in source) || !SESSION_ACTIVITY_READ_REASONS.includes(source.reason) || (source.readAt !== null && !at(source.readAt))) return invalid();
+          if (source.state === 'not_read' && (source.readAt !== null || source.reason !== 'source-not-read')) return invalid();
+        }
       }
       const { session, goal, tasks, run, actions, origin, execution } = row.sources;
       if (session.state !== 'ready') {
@@ -141,21 +150,32 @@ export function validateSessionCollaborationPage(query: SessionCollaborationQuer
       if (row.status !== status) return invalid();
     }
   } catch { return invalid(); }
+  let mismatchReason: SessionActivityReadReason = 'scope-mismatch';
+  const checkScope = (value: AutonomySessionScope, expected: AutonomySessionScope) => {
+    const scope = normalizeAutonomySessionScope(value, value);
+    const current = normalizeAutonomySessionScope(expected, expected);
+    try { normalizeAutonomySessionScope(scope, current); }
+    catch (error) {
+      mismatchReason = scope.sessionGeneration === current.sessionGeneration ? 'scope-mismatch' : 'generation-changed';
+      throw error;
+    }
+  };
   try {
-    normalizeAutonomySessionScope(page.requester, query.requester);
+    checkScope(page.requester, query.requester);
     for (const row of page.items) {
       if (row.sources.session.state !== 'ready') continue;
-      const scope = row.sources.session.value.scope;
+      const scope = normalizeAutonomySessionScope(row.sources.session.value.scope, row.sources.session.value.scope);
       if (scope.sessionKey !== row.sessionKey) throw new TypeError('Mismatched row identity');
-      if (query.target) normalizeAutonomySessionScope(scope, query.target);
+      if (row.sessionKey === query.requester.sessionKey) checkScope(scope, query.requester);
+      if (query.target) checkScope(scope, query.target);
       if (query.workspace && (scope.workspaceId !== query.workspace.workspaceId || scope.projectId !== query.workspace.projectId)) throw new TypeError('Mismatched workspace');
-      if (row.detail) normalizeAutonomySessionScope(row.detail.scope, scope);
+      if (row.detail) checkScope(row.detail.scope, scope);
       const checkRun = (run: ScopedRunId) => normalizeAutonomyObjectReference({ kind: 'run', owner: 'runtime', scope, run }, scope);
       if (row.sources.run.state === 'ready' && row.sources.run.value) checkRun(row.sources.run.value);
       if (row.sources.actions.state === 'ready') for (const action of row.sources.actions.value) {
         if (action.run) checkRun(action.run);
       }
     }
-  } catch { return emptySessionCollaborationPage(query, 'stale', 'scope-mismatch'); }
+  } catch { return emptySessionCollaborationPage(query, 'stale', mismatchReason); }
   return page;
 }

@@ -13,9 +13,10 @@ export type SessionActivityReadQuery = {
   expectedExecution?: TaskAuthorityBasis;
 };
 export type SessionActivityReadState = 'ready' | 'empty' | 'not_read' | 'unavailable' | 'stale' | 'unknown';
-export type SessionActivityReadReason = 'source-not-read' | 'owner-missing' | 'owner-unavailable'
-  | 'scope-mismatch' | 'generation-changed' | 'binding-changed' | 'execution-changed'
-  | 'run-identity-missing' | 'protocol-unverified' | 'not-visible';
+export const SESSION_ACTIVITY_READ_REASONS = ['source-not-read', 'owner-missing', 'owner-unavailable',
+  'scope-mismatch', 'generation-changed', 'binding-changed', 'execution-changed',
+  'run-identity-missing', 'protocol-unverified', 'not-visible'] as const;
+export type SessionActivityReadReason = typeof SESSION_ACTIVITY_READ_REASONS[number];
 export type SessionActivityReadSource<T> = { owner: string } & (
   | { state: 'ready' | 'empty'; value: T; readAt: number }
   | { state: Exclude<SessionActivityReadState, 'ready' | 'empty'>; value: null; readAt: number | null; reason: SessionActivityReadReason }
