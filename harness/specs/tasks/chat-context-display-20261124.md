@@ -6,7 +6,7 @@ scenario: gateway-backend-communication
 scenarios:
   - windows-ui-v2
 taskType: runtime-bridge
-diffBase: ae41d30c393dc0ef3c9013d87adac3d0f319ae2b
+diffBase: 6c764bdc2d5ddf5390c74c09b0d6dd026ffbdeb3
 intent: 复用 Lobe UI TokenTag，为聊天输入框提供上下文用量、悬停组成详情和持久化显示开关。
 requiredRules:
   - backend-communication-boundary
