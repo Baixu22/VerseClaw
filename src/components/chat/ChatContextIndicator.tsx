@@ -89,6 +89,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
     { id: 'skills', chars: composition.skills.chars, color: 'bg-zinc-400' },
     { id: 'workspaceFiles', chars: composition.workspaceFiles.chars, color: 'bg-zinc-500' },
   ] : [];
+  const hasSourceMeasurement = sourceParts.some(part => part.chars != null);
   const sourceTotalChars = sourceParts.reduce((total, part) => total + (part.chars ?? 0), 0);
   const sourceShare = (chars: number | null) => chars != null && sourceTotalChars > 0 ? chars / sourceTotalChars * 100 : null;
   const clearTimer = useCallback(() => {
@@ -180,7 +181,7 @@ export function ChatContextIndicator({ sessionKey, sessionId, contextRange, comp
           <div className="chat-context-composition-line mx-1 mb-2 mt-1 flex overflow-hidden rounded-full bg-muted" data-testid="chat-context-composition-bar" role="img" aria-label={t('contextDisplay.sourceShare')}>
             {sourceParts.filter(part => part.chars != null && part.chars > 0).map(part => <span key={part.id} className={part.color} style={{ width: `${sourceShare(part.chars) ?? 0}%` }} title={`${t(`contextDisplay.${part.id}`)}: ${full(part.chars!)}`} />)}
           </div>
-          <p className="px-1 pb-2 text-xs text-muted-foreground">{t('contextDisplay.sourceTotal', { value: full(sourceTotalChars) })}</p>
+          <p className="px-1 pb-2 text-xs text-muted-foreground">{t('contextDisplay.sourceTotal', { value: hasSourceMeasurement ? full(sourceTotalChars) : '—' })}</p>
           <SourceRow label={t('contextDisplay.currentTurn')} chars={composition.currentTurnChars} color="bg-blue-500" share={sourceShare(composition.currentTurnChars)} />
           <SourceGroup label={t('contextDisplay.tools')} group={composition.tools} color="bg-orange-500" share={sourceShare(composition.tools.chars)} />
           <SourceRow label={t('contextDisplay.runtimeContext')} chars={composition.runtimeContextChars} color="bg-teal-500" share={sourceShare(composition.runtimeContextChars)} />

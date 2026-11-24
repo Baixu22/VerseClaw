@@ -87,6 +87,18 @@ describe('context indicator', () => {
     expect(mocks.receipts).not.toHaveBeenCalled();
   });
 
+  it('keeps an unmeasured composition total distinct from measured zero', () => {
+    const partial = range();
+    partial.composition = { ...partial.composition!, instructionsChars: null, currentTurnChars: null, runtimeContextChars: null,
+      tools: { chars: null, entries: [], totalEntries: 0 }, skills: { chars: null, entries: [], totalEntries: 0 },
+      workspaceFiles: { chars: null, entries: [], totalEntries: 0 } };
+    const { rerender } = render(<ChatContextIndicator sessionKey={sessionKey} sessionId={sessionId} contextRange={partial} />);
+    fireEvent.click(screen.getByTestId('chat-context-indicator'));
+    expect(screen.getByText('Recorded composition: — characters')).toBeTruthy();
+    rerender(<ChatContextIndicator sessionKey={sessionKey} sessionId={sessionId} contextRange={{ ...partial, composition: { ...partial.composition!, instructionsChars: 0 } }} />);
+    expect(screen.getByText('Recorded composition: 0 characters')).toBeTruthy();
+  });
+
   it('keeps a missing snapshot unknown when an unbound compaction status is present', () => {
     render(<ChatContextIndicator sessionKey={sessionKey} sessionId={sessionId} contextRange={null}
       compactionStatus={{ available: true, canCompact: true, inProgress: false, usedTokens: 900000, maxTokens: 128000, pressure: 'high', truncatedMessageCount: 3, warnings: [] }} />);
