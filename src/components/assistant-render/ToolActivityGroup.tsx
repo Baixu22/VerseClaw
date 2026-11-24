@@ -31,7 +31,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
   const { t, i18n } = useTranslation('chat');
   const contentId = useId();
   const current = group.current;
-  const isRunning = Boolean(current) && group.isCurrent && group.status !== 'error' && group.status !== 'aborted';
+  const isRunning = Boolean(current) && Boolean(group.isCurrent) && group.status !== 'error' && group.status !== 'aborted';
   const kinds = [...new Set(group.entries.map(entry => entry.kind))];
   const completed = new Intl.ListFormat(i18n?.language, { style: 'long', type: 'conjunction' })
     .format(kinds.map(kind => t(`toolActivity.completed.${kind}`)));
