@@ -51,10 +51,12 @@ async function readScopedActivity(query: SessionActivityReadQuery, context: Gate
     scope: ownerScope, agentId, parentSessionKey: entry.parentSessionKey ?? null, spawnedBy: entry.spawnedBy ?? null,
   } };
   snapshot.session.sessionId = entry.sessionId;
-  const runs = [...context.chatAbortControllers.entries()].filter(([, run]) => run.sessionKey === ownerScope.sessionKey
-    && run.sessionId === ownerScope.sessionGeneration && !run.controller.signal.aborted)
+  const sessionRuns = [...context.chatAbortControllers.entries()].filter(([, run]) => run.sessionKey === ownerScope.sessionKey && !run.controller.signal.aborted);
+  const runs = sessionRuns.filter(([, run]) => run.sessionId === ownerScope.sessionGeneration)
     .sort((a, b) => b[1].startedAtMs - a[1].startedAtMs);
   let runId = runs[0]?.[0] ?? null;
+  if (!runId && sessionRuns.some(([, run]) => !run.sessionId))
+    sources.run = { owner: 'runtime', state: 'unknown', readAt: Date.now(), value: null, reason: 'run-identity-missing' };
   if (runs.some(([, run]) => run.workspaceId && run.workspaceId !== ownerScope.workspaceId)) return fail('unavailable', 'scope-mismatch');
   // Embedded children are owned by the run registry rather than chatAbortControllers.
   if (!runId && entry.spawnedBy) {
@@ -62,13 +64,14 @@ async function readScopedActivity(query: SessionActivityReadQuery, context: Gate
       import('../../agents/subagent-registry-read.js'), import('../../infra/agent-events.js'),
     ]);
     const child = getLatestSubagentRunByChildSessionKey(ownerScope.sessionKey);
+    if (!child) sources.run = { owner: 'runtime', state: 'unknown', readAt: Date.now(), value: null, reason: 'owner-missing' };
     if (child && !child.endedAt) {
       const run = getAgentRunContext(child.runId);
       if (run?.sessionKey === ownerScope.sessionKey && run.sessionId === ownerScope.sessionGeneration) runId = child.runId;
       else sources.run = { owner: 'runtime', state: 'unknown', readAt: Date.now(), value: null, reason: 'run-identity-missing' };
     }
   }
-  if (sources.run.state === 'not_read') sources.run = { owner: 'runtime', state: runId ? 'ready' : 'empty', readAt: Date.now(),
+  if (runId || sources.run.state === 'not_read') sources.run = { owner: 'runtime', state: runId ? 'ready' : 'empty', readAt: Date.now(),
     value: runId ? normalizeRunScope({ runId, scope: { workspaceId: ownerScope.workspaceId, projectId: ownerScope.projectId, sessionKey: ownerScope.sessionKey } }) : null };
   snapshot.session.runId = runId;
   snapshot.session.status = runId ? 'running' : 'idle';

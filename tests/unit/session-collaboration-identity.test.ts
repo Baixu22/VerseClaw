@@ -198,6 +198,16 @@ describe('A1 owner-backed collaboration identity', () => {
     expect(loadExistingSqliteSessionStoreReadOnly(path)).toEqual({});
     receipts.push({ case: 'missing-session-and-execution-owner', root, absentSessionDirectoryCreated: false, absentExecutionDatabaseCreated: false });
   });
+  it('keeps generation-less runs and missing child run owners unknown rather than confirming idle', async () => {
+    runs.get('run-a')!.sessionId = '';
+    const unpinned = await runtime(query());
+    expect(unpinned.snapshot.readModel!.sources.session.state).toBe('ready');
+    expect(unpinned.snapshot.readModel!.sources.run).toMatchObject({ state: 'unknown', reason: 'run-identity-missing', value: null });
+    subagentRuns.delete('run-c'); clearAgentRunContext('run-c');
+    const missing = await runtime(query(C, 'workspace-a', 'generation-c'));
+    expect(missing.snapshot.readModel!.sources.run).toMatchObject({ state: 'unknown', reason: 'owner-missing', value: null });
+    receipts.push({ case: 'unknown-run-owners', unpinned: unpinned.snapshot, missing: missing.snapshot });
+  });
   it('fences old task generations and execution binding revisions', async () => {
     putSession(A, { sessionId: 'new-generation' });
     const staleTask = await runtime(query(A, 'workspace-a', 'new-generation'));
