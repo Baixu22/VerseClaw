@@ -86,7 +86,7 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
             steps={group.steps}
             terminals={group.terminals}
             traceId={group.traceId}
-            active={Boolean(current)}
+            active={isRunning}
             suppressThinking
             appearance="activity"
             currentToolId={isRunning ? current?.id : undefined}

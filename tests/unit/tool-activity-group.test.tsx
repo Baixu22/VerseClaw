@@ -60,5 +60,9 @@ describe('tool activity disclosure', () => {
     expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('Needs attention');
     expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
     expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    const detailChip = within(screen.getByTestId('chat-tool-activity-details')).getByTestId('chat-call-chip');
+    expect(detailChip).toHaveAttribute('data-status', 'idle');
+    expect(detailChip).not.toHaveAttribute('aria-busy');
   });
 });
