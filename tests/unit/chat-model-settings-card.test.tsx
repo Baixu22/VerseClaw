@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import chat from '../../shared/i18n/locales/en/chat.json';
 import { ChatModelSettingsCard } from '@/components/chat/ChatModelSettingsCard';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 const mocks = vi.hoisted(() => ({ updateEffort: vi.fn() }));
 vi.mock('@/stores/agents', () => ({ useAgentsStore: (select: (state: unknown) => unknown) => select({ updateAgentReasoningEffort: mocks.updateEffort }) }));
@@ -25,8 +26,8 @@ const options = [
   { modelRef: 'deepseek/deepseek-chat', label: 'DeepSeek / DeepSeek' },
 ];
 function card(props: Partial<React.ComponentProps<typeof ChatModelSettingsCard>> = {}) {
-  return <ChatModelSettingsCard agentId="main" effort="max" modelRef="openai/gpt-5" options={options}
-    onSelectModel={vi.fn()} onEffortChange={vi.fn()} {...props} />;
+  return <TooltipProvider><ChatModelSettingsCard agentId="main" effort="max" modelRef="openai/gpt-5" options={options}
+    onSelectModel={vi.fn()} onEffortChange={vi.fn()} {...props} /></TooltipProvider>;
 }
 
 beforeEach(() => {
