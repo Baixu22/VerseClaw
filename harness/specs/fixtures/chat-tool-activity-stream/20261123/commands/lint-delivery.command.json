@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidateCommit": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+  "command": [
+    "pnpm.cmd",
+    "exec",
+    "eslint",
+    "src/pages/Chat/tool-activity-groups.ts",
+    "src/components/assistant-render/ToolActivityGroup.tsx",
+    "src/pages/Chat/ExecutionGraphCard.tsx",
+    "src/components/tool-ui/RunTerminalSurfaces.tsx",
+    "--max-warnings",
+    "10"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 2.562,
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

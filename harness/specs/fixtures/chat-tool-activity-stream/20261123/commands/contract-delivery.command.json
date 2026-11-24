@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidateCommit": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+  "command": [
+    "pnpm.cmd",
+    "run",
+    "contract:check"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 1.86,
+  "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+  "stderrSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+}

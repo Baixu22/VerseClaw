@@ -1,0 +1,260 @@
+{
+  "driven_by": "agent",
+  "preservedOriginals": true,
+  "entries": [
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r2.command.json",
+      "sha256": "09a1f642e042f1b33376c667a3eab9724c213dcd38fe868c6cfb3cdaebbab100",
+      "label": "electron-failed-r2",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r2.stdout.log",
+        "sha256": "6f02ea9086f02bc58cffebbd8edc80042ce0426693ec85dd69cc2aa8b6683699"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r3.command.json",
+      "sha256": "56e737011983a67e3a5dd05649548ca3b6ec1531baf2bf6adf96564eca969a30",
+      "label": "electron-failed-r3",
+      "exitCode": 1,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r3.stdout.log",
+        "sha256": "8a6f40e87ece1bd229d0aec9567b41b460992dcf811ec6dfa36b307fa6db1b0b"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r3.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r4.command.json",
+      "sha256": "64dad017c6e18f073e3b147c1cc18ebfc5b84c5076b68df032957a9a540c3d98",
+      "label": "electron-failed-r4",
+      "exitCode": 1,
+      "candidate": "158033d09b8640194a9b42850d4d95fe7a7dc93b",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r4.stdout.log",
+        "sha256": "8615cc0775b9d346cbbd70e84bf32264794a189ad2cba34a4cfda42097c7551e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r4.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-final-r1.command.json",
+      "sha256": "b53a05697d5ba59345c12e61e1e004f82812c936310f67975f3693fe406a259d",
+      "label": "electron-final-r1",
+      "exitCode": 1,
+      "candidate": "1ead7cb43dd38f225ad588e62c378d08271db0b0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-final-r1.stdout.log",
+        "sha256": "7cb0184ff07fd9e30c700ea7225a1d50e9abe590f2a027ffc8c9c654ae9f16fa"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-final-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-last-two-r5.command.json",
+      "sha256": "95c3966c6c90981165604e723116e9b58bd1c3ddc93bd2a6bba7349c02a83332",
+      "label": "electron-last-two-r5",
+      "exitCode": 1,
+      "candidate": "bd71f877e69b3ba755f40e31ffa30956dc001194",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-last-two-r5.stdout.log",
+        "sha256": "bb2d3e9abdff53dba541e11ec8d6e71f24312f054a9eff8039d9fa64792c943b"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-last-two-r5.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r1.command.json",
+      "sha256": "d34056fd222ff61ba67fddb7923b1cea875adc833487e51785ee4076d7baba49",
+      "label": "electron-prototype-r1",
+      "exitCode": 1,
+      "candidate": "f2f32e67f8970210c83a12bbe63433cf279cb333",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r1.stdout.log",
+        "sha256": "14554c2d848c4d50381ade93d28475faa3a628b6a98b12bf8c464aed73d34a9e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r2.command.json",
+      "sha256": "e60f581ae817b477bc9499af92fe6f98f7c8497535f9cd3a71b3d6757c0eef62",
+      "label": "electron-prototype-r2",
+      "exitCode": 1,
+      "candidate": "f2f32e67f8970210c83a12bbe63433cf279cb333",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r2.stdout.log",
+        "sha256": "571b9208205a42a6326c972bb8e4039da9219eb6a883b5fc5e6b592295a1317d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r3.command.json",
+      "sha256": "b245636ba69bf8bde7c9fc955949959d9fa0ba963f783bab5cdd98e561328459",
+      "label": "electron-prototype-r3",
+      "exitCode": 1,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r3.stdout.log",
+        "sha256": "38623978bad6cd36de74a4572638372bc6d2de4c92aa63e335768602f2789dc1"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r3.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r4.command.json",
+      "sha256": "df5c7f92fa06292b7f2e36c8eb89998a6383855747be71d96d894d56e6738f3a",
+      "label": "electron-prototype-r4",
+      "exitCode": 1,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r4.stdout.log",
+        "sha256": "84ea285c5abf5b7e3a6ea797b72e2189b3aec3aa0ff675d89fea3a3a9df82848"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r4.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-final.command.json",
+      "sha256": "f035712a3ecb9af7b0fa476e70c893c8aef36f875e4fff32d1a93d552407b894",
+      "label": "harness-current-final",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-final.stdout.log",
+        "sha256": "de0abbc1ccfae518e493de2c716c72ccd27015b758323a0b40419cd8cbd1fa89"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-final.stderr.log",
+        "sha256": "1a14c08d6e5ff445cfdc18c69d3eecbe4c998aacd8ba2153f2c76bb3edad6d71"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-final.command.json",
+      "sha256": "9ce9c248bf2846a6d04f2057da49e2ee119f7ab73996bbe762b7112af68c2987",
+      "label": "harness-flow-final",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-final.stdout.log",
+        "sha256": "f5b486a481bdbdff20ad4f9b477466332ae38b721e36e7f71dc4109dc38d2c3a"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-final.stderr.log",
+        "sha256": "ea5ea535c06ab9db441124fc4e9b4f26678e3fdc8bce1dea92d9aadb49d727b4"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-final.command.json",
+      "sha256": "5307687ad3d81dbc9303dd5af1dea6595ce26b2b77e312bcb51cef3f6938d331",
+      "label": "retention-final",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-final.stdout.log",
+        "sha256": "e95fc444a11f5c2b73a81ab65ef1d5ee8e543509a8270ed784ef9eb0612711ce"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-final.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-build-r1.command.json",
+      "sha256": "cd2204ac34b04224bff15dbe6c1729d312661dbd1209675ffc71330191dd8be9",
+      "label": "runtime-build-r1",
+      "exitCode": 134,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-build-r1.stdout.log",
+        "sha256": "89f5129eced093fee8b4e6c5fcff034a83e4b4cddd2ac6323961b7bb48397000"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-build-r1.stderr.log",
+        "sha256": "41c1535e20d307138d3a157a2d54f7c1590f43db32ecbaeec98da99dbd28389f"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r1.command.json",
+      "sha256": "b86e9766cf38cee21ece9501cf2fc3d7e0a619608826198168b5e41719f5d6a2",
+      "label": "typecheck-web-r1",
+      "exitCode": 2,
+      "candidate": "87cbea6a810ecebe211094df998a73491665bbb1",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r1.stdout.log",
+        "sha256": "f1a10271a275693d1c358d25030e056029a8c9d263a2768fa6ba99715c5652e7"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r1.stderr.log",
+        "sha256": "4c6a5db0241dc9cb197b5cfb6af63ed04a35ec305fe459bfa8e886e2bcd904a4"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r2.command.json",
+      "sha256": "a66aee698a5fe45b7d914a084610155625af0f9194c71f84ec21e184a7d719d3",
+      "label": "unit-r2",
+      "exitCode": 1,
+      "candidate": "c6c12108a787fb49abd921f905dfb373480e7f61",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r2.stdout.log",
+        "sha256": "ce328650641e827ffcacd4a4bfea5b22279315c9a955b7567ec37772ff2faaea"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r2.stderr.log",
+        "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r3.command.json",
+      "sha256": "2c813dbb6dabdbcf07a775a2dced7d2ba28abb0aa63848aa86d30a04469a0b26",
+      "label": "unit-r3",
+      "exitCode": 1,
+      "candidate": "c6c12108a787fb49abd921f905dfb373480e7f61",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r3.stdout.log",
+        "sha256": "d8c557077e9f8516a9c4128de9243180152ff3c6e51679b65ea17d0bafa8e16e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r3.stderr.log",
+        "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+      }
+    }
+  ],
+  "nativeWidthCorrection": {
+    "original": "electron-delivery",
+    "requestedWidth": 375,
+    "actualWidth": 960,
+    "correctedBy": "electron-native-375",
+    "actualCorrectedWidth": 375
+  },
+  "runtimeDeclarationBuild": {
+    "original": "runtime-build-r1",
+    "exitCode": 134,
+    "outcome": "8 GiB V8 heap exhausted; full declaration build did not finish",
+    "uiRuntimeBuild": "runtime-qa-receipt-final",
+    "freshnessGuardEnabled": true
+  }
+}

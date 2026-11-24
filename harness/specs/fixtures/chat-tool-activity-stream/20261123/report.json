@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "createdAt": "2026-11-24T01:14:02.132864+00:00",
+  "candidate": "93e06939a816e1cc1cd209c61901302960dc2271",
+  "buildSourceCommit": "287491d723ee1d914361a15fce6c35fa21644a54",
+  "unitTests": 104,
+  "distinctElectronJourneys": 12,
+  "native375SupplementalExecutions": 2,
+  "mainBuildFilesVerified": 1412,
+  "carbonRequests": 4,
+  "carbonReportedTokens": 78353,
+  "sourceBoundBy": "candidate.json",
+  "originals": "D:\\tmp\\clawx-output-stream-20261124",
+  "previousSession": "harness/specs/fixtures/chat-execution-context/20261123-startup/REPORT.md"
+}

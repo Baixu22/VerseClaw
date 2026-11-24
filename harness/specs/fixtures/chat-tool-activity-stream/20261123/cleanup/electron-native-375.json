@@ -1,0 +1,78 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\clawx-output-stream-20261124\\run-roots\\verse-claw-e2e-run-rbwN2n",
+  "ledgerEntries": 10,
+  "checks": [
+    {
+      "pid": 45064,
+      "creationTime": 1795482188113,
+      "status": "exited"
+    },
+    {
+      "pid": 26936,
+      "creationTime": 1795482193036,
+      "status": "exited"
+    },
+    {
+      "pid": 36568,
+      "creationTime": 1795482193255,
+      "status": "exited"
+    },
+    {
+      "pid": 21916,
+      "creationTime": 1795482209928,
+      "status": "exited"
+    },
+    {
+      "pid": 13812,
+      "creationTime": 1795482213411,
+      "status": "exited"
+    },
+    {
+      "pid": 30684,
+      "creationTime": 1795482213510,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 45064,
+        "creationTime": 1795482188113,
+        "status": "exited"
+      },
+      {
+        "pid": 26936,
+        "creationTime": 1795482193036,
+        "status": "exited"
+      },
+      {
+        "pid": 36568,
+        "creationTime": 1795482193255,
+        "status": "exited"
+      },
+      {
+        "pid": 21916,
+        "creationTime": 1795482209928,
+        "status": "exited"
+      },
+      {
+        "pid": 13812,
+        "creationTime": 1795482213411,
+        "status": "exited"
+      },
+      {
+        "pid": 30684,
+        "creationTime": 1795482213510,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "detectedPendingLaunches": 0,
+  "pendingLaunches": 0,
+  "status": "passed"
+}
