@@ -500,6 +500,9 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
   }
 
   async close(sessionId: string): Promise<void> {
+    for (const [key, approval] of privateNetworkApprovals) {
+      if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
+    }
     try {
       await super.close(sessionId);
     } finally {
@@ -514,9 +517,6 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
           void pending?.then(proxy => profileActive ? proxy.revokeConnections() : proxy.close()).catch(() => undefined);
         }
         removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
-        for (const [key, approval] of privateNetworkApprovals) {
-          if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
-        }
       }
     }
   }
