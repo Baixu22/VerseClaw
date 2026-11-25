@@ -211,6 +211,12 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const scopeQuery = scopeQuestions.join('; ');
   const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
   const llm = await startScriptedLlm(async text => {
+    const supportLine = text.split('\n').map(line => line.trim()).find(line => line.startsWith('{"claimSupportReview":true'));
+    if (supportLine) {
+      const input = JSON.parse(supportLine) as { question: string; claims: Array<{ index: number }> };
+      return { text: JSON.stringify({ answerability: input.question.includes('conflicting') ? 'conflicting' : 'answerable',
+        claims: input.claims.map(claim => ({ index: claim.index, status: 'supported', reason: 'The retained source states this value.' })) }) };
+    }
     const line = text.split('\n').map(line => line.trim()).find(line => line.startsWith('{"researchPlanning":true'));
     if (!line) return { text: 'RAG16 ordinary reply' };
     const input = JSON.parse(line) as { query: string; round: number; questions: string[]; evidence: Array<{ sourceId: string; lookup: string }> };
@@ -238,7 +244,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     if (input.query === 'Gateway port delayed start cancellation') await heldLateStart;
     if (input.query === 'Gateway port recovery cancellation') await heldRecovery;
     const coverage = port && text.includes('Gateway port is 8080.')
-      ? [{ question: input.questions[0], sourceId: port, quote: 'port is 8080' }] : [];
+      ? [{ question: input.questions[0], sourceId: port, quote: 'port is 8080', answer: 'The gateway port is 8080.' }] : [];
     if (input.query.includes('conflicting')) return { text: JSON.stringify({
       queries: port && other ? [] : [port ? 'concepts/other-port.md' : 'concepts/gateway.md'],
       coverage, inferences: [], gaps: [port && other ? 'The gateway ports conflict.' : 'The second gateway source is missing.'],
@@ -247,7 +253,8 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     }) };
     if (input.query.includes('giant policy')) return { text: JSON.stringify({ queries: [], coverage,
       inferences: [], conflicts: [], gaps: ['RAG16_DCS_GAP: giant policy was not available in the retained context.'] }) };
-    if (archive && text.includes('Archive destination is /archive.')) coverage.push({ question: input.questions[1], sourceId: archive, quote: 'destination is /archive' });
+    if (archive && text.includes('Archive destination is /archive.')) coverage.push({ question: input.questions[1], sourceId: archive, quote: 'destination is /archive', answer: 'The backup location is /archive.' });
+    if (input.query === 'Gateway port') return { text: JSON.stringify({ queries: [], coverage, inferences: [], conflicts: [], gaps: [] }) };
     return { text: JSON.stringify({ queries: input.round === 1 && !archive ? ['Archive destination'] : [], coverage,
       inferences: archive ? ['RAG16_INFERENCE: the two sources describe runtime and archival settings.'] : [], conflicts: [],
       gaps: archive ? [] : ['Archive destination evidence is missing.'] }) };
@@ -364,17 +371,24 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
       return final(query);
     };
     const multi = await execute('Gateway port and backup location');
-    expect(multi).toMatchObject({ stopReason: 'covered', usage: { rounds: 2, queries: 4, planningModelCalls: 2 } });
+    expect(multi).toMatchObject({ status: 'partial', usage: { rounds: 2, queries: 4, planningModelCalls: 2 } });
+    expect(multi.gaps.some(gap => gap.reason === 'semantic-review-budget-exhausted')).toBe(true);
+    expect(multi.coverage.every(row => row.semanticSupport?.status === 'supported')).toBe(true);
     expect(multi.evidence.map(source => source.lookup)).toEqual(expect.arrayContaining(['concepts/gateway.md', 'concepts/archive.md']));
     expect(multi.retainedEvidence).toHaveLength(2); expect(multi.usage.actualCostUsd).not.toBeNull();
     expect(multi.usage.reservedCostUsd).toBeLessThanOrEqual(0.05); expect(multi.usage.reservedPlanningTokens).toBeLessThanOrEqual(16000);
-    await expect(page.getByTestId('chat-research-inferences')).toContainText('RAG16_INFERENCE');
+    expect(multi.coverage.some(row => row.question === 'backup location')).toBe(false);
     await expect(composer).toHaveValue('RAG16 draft survives research');
     receipt.multi = multi; steps.realMultiRoundEvidence = true; steps.frozenTotalBudget = true;
-    await page.getByTestId('chat-research-inferences').scrollIntoViewIfNeeded();
+    await page.getByTestId('chat-research-gaps').scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('research-result.png'), fullPage: true });
     await page.getByTestId('chat-knowledge-search-result').filter({ hasText: 'concepts/archive.md' }).first().scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('research-source-evidence.png'), fullPage: true });
+
+    const supported = await execute('Gateway port');
+    expect(supported).toMatchObject({ status: 'complete', stopReason: 'covered', usage: { planningModelCalls: 2 } });
+    expect(supported.coverage[0].semanticSupport?.status).toBe('supported');
+    receipt.supported = supported; steps.independentSemanticCoverage = true;
 
     const questionScope = await execute(scopeQuery);
     expect(questionScope.plan.questions).toEqual([scopeQuery]);
@@ -426,7 +440,7 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     await page.getByTestId('chat-research-cancel').click();
     await expect(page.getByTestId('chat-research-status')).toHaveText('Research cancelled', { timeout: 10000 });
     const cancelled = await final('Gateway port cancellation'); expect(cancelled.stopReason).toBe('cancelled'); expect(cancelled.evidence.length).toBeGreaterThan(0);
-    expect(cancelled.usage).toMatchObject({ planningModelCalls: 1, reservedPlanningTokens: 8000, reservedCostUsd: 0.025,
+    expect(cancelled.usage).toMatchObject({ planningModelCalls: 1, reservedPlanningTokens: 6000, reservedCostUsd: 0.01875,
       actualPlanningTokens: null, actualCostUsd: null });
     const beforeLate = planningCalls.length; releaseHeld(); await page.waitForTimeout(700);
     await expect(page.getByTestId('chat-research-status')).toHaveText('Research cancelled'); expect(planningCalls.length).toBe(beforeLate);

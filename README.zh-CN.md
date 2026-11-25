@@ -209,7 +209,7 @@ flowchart LR
 - Project RAG 提供显式启用、绑定 workspace 的索引生命周期 API，支持 SQLite 发布、后台 worker 和 owner 引用复核，见[索引生命周期合同](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md)。
 - 知识索引支持长段落在同一来源行内切分，并保持精确字节和行引用。离线检索评测区分部分重叠与完整证据覆盖，见[评测合同](docs/dev/project-rag/EVALUATION-CONTRACT.md)。 Wiki 结构化 claim 仅在当前 owner 读取正文中精确出现时参与冲突检测。
 - 编码上下文工具按实际相对路径和当前 owner／版本解析跨文件导入与调用，默认一跳、最多两跳；每跳共用 512 条候选扫描预算，达到上限时明确返回 partial。当前任务 hint 提供已绑定的 revision、约束和证据引用。参见[代码关系与任务线索](docs/dev/project-rag/CODE-TASK-CONTEXT-CONTRACT.md)。
-- Chat 知识选择器中的显式 Research 按证据缺口继续检索，单次冻结预算内最多三轮、八个 query 和两次规划调用；界面展示进度、取消、来源证据、推断、冲突与部分结果，请求失败时同时取消后端工作，迟到启动回执会对已停止请求补发取消；最后的 owner 复验读回期间仍可取消。参见 [Research 检索合同](docs/dev/project-rag/RESEARCH-CONTRACT.md)。
+- Chat 知识选择器中的显式 Research 按证据缺口继续检索，单次冻结预算内最多三轮、八个 query，规划与独立语义支持判断合计两次模型调用；覆盖需要保留来源支持对应问题的回答，预算耗尽后的未核验问题保留缺口；界面展示进度、取消、来源证据、推断、冲突与部分结果，请求失败时同时取消后端工作，迟到启动回执会对已停止请求补发取消；最后的 owner 复验读回期间仍可取消。参见 [Research 检索合同](docs/dev/project-rag/RESEARCH-CONTRACT.md)。
 - DCS 保留已准入知识的次序，在共享预算内整片装配 chunk 或冲突组，并记录 Chat 与 model-only 知识问答实际保留的引用和字节，见[证据装配合同](docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md)。
 - Librarian 问答与有界追问通过已配置 Gateway 模型处理准入后的证据，核验逐项原文引用与版本；重复 claim 文本只有全部出现位置都在当前读取范围内才进入结构化冲突判断。部分读取、冲突和模型失败明确披露。Studio 继续生成待审摘录草稿。
 - 中文词法、长文有界续读、按 provider 隔离的 embedding 缓存和版本绑定的 Steward 发现共用来源准入。可选公共 GitHub 目录连接器将更新与撤销送入 Inbox；其他 SaaS 连接器尚未实现。

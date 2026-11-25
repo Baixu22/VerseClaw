@@ -5,6 +5,7 @@ import {
   KnowledgeEmbeddingSession,
   type EmbeddingSpaceV1,
   type ProviderCapabilitySnapshotV1,
+  type RetrievalSpendCall,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   getEmbeddingProvider,
@@ -462,6 +463,7 @@ export function createMemoryWikiEmbeddingService(options: {
         expectedSpaceId?: string;
         deadlineAt?: number;
         signal?: AbortSignal;
+        remoteSpend?: RetrievalSpendCall;
       },
     ) {
       assertScope(identity);

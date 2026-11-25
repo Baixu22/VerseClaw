@@ -1,5 +1,6 @@
 import type { SourceRefV2 } from './owner-read-contract.js';
 import type { RetainedEvidenceManifestV1 } from './packing.js';
+import type { RetrievalSpendUsage } from './retrieval.js';
 
 export type ResearchScope = Readonly<{
   fingerprint: string;
@@ -47,9 +48,14 @@ export type ResearchEvidence = {
   truncated?: boolean;
 };
 export type ResearchQuote = { sourceId: string; quote: string };
+export type ResearchSupport = {
+  runId: string;
+  verdicts: Array<{ index: number; status: 'supported' | 'unsupported' | 'uncertain'; reason: string }>;
+};
 export type ResearchReview = {
   queries: string[];
-  coverage: Array<ResearchQuote & { question: string }>;
+  coverage: Array<ResearchQuote & { question: string; answer?: string;
+    semanticSupport?: { status: 'supported'; runId: string; reason: string } }>;
   inferences: string[];
   conflicts: Array<{ description: string; citations: ResearchQuote[] }>;
   gaps: string[];
@@ -88,6 +94,7 @@ export type ResearchResultV1 = {
     reservedCostUsd: number;
     actualPlanningTokens: number | null;
     actualCostUsd: number | null;
+    remoteRetrieval?: RetrievalSpendUsage;
     evidenceTokens: number;
     evidenceChars: number;
   };

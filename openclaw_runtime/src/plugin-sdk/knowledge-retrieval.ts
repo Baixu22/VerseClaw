@@ -1,4 +1,10 @@
 /** Owner-bound source normalization, structural projection and citation verification. */
+export { createRetrievalSpend } from "../knowledge/retrieval/spend.js";
+export type {
+  RetrievalSpendBudget,
+  RetrievalSpendUsage,
+  RetrievalSpendCall,
+} from "../knowledge/retrieval/spend.js";
 export { verifyOfflineRagPolicyPackage } from "../knowledge/retrieval/offline-policy-package.js";
 export {
   defaultRetrievalPolicy,

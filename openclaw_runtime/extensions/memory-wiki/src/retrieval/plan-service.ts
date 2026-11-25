@@ -9,6 +9,8 @@ import {
   type RetrievalProfile,
   type RetrievalGeneration,
   type RetrievalPolicyV1,
+  createRetrievalSpend,
+  type RetrievalSpendBudget,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   evaluateOwnerReadSnapshot,
@@ -51,6 +53,7 @@ export async function retrieveMemoryWiki(input: {
   deadlineAtMs?: number;
   /** A caller may tighten the owner policy when no remote retrieval tariff is available. */
   allowRemote?: boolean;
+  researchBudget?: RetrievalSpendBudget;
   signal?: AbortSignal;
   projection?: MemoryWikiProjectionService;
   embedding?: MemoryWikiEmbeddingService;
@@ -142,6 +145,19 @@ export async function retrieveMemoryWiki(input: {
       value.workspaceRootDigest,
       value.policyDigest,
     ]);
+  const spend = input.researchBudget
+    ? createRetrievalSpend({
+        budget: input.researchBudget,
+        config: input.appConfig ?? {},
+        workspaceId: input.identity.workspaceId ?? "",
+        sessionKey: input.identity.agentSessionKey ?? "",
+        sessionGeneration: input.identity.sessionId ?? "",
+        assertScope: () => {
+          if (scopeKey(context()) !== scopeKey(initialContext))
+            throw new Error("Research retrieval owner changed");
+        },
+      })
+    : undefined;
   const plan = createRetrievalPlan({
     query: input.query,
     profile,
@@ -182,7 +198,7 @@ export async function retrieveMemoryWiki(input: {
   if (input.rerank && !remoteRerankDenied && !plan.explicitRefs.length && plan.budget.rerankK) {
     try {
       rerank = {
-        provider: await input.rerank.provider(input.identity),
+        provider: await input.rerank.provider(input.identity, spend?.call),
         candidates: (hit) => ({ id: hit.id, text: hit.data.snippet }),
       };
     } catch (error) {
@@ -295,6 +311,7 @@ export async function retrieveMemoryWiki(input: {
       const found = await input.vector.search(input.identity, query.text, plan.budget.candidateK, {
         signal,
         deadlineAt: plan.budget.deadlineAtMs,
+        remoteSpend: spend?.call,
       });
       return {
         status: found.status === "available" ? "available" : "unavailable",
@@ -385,6 +402,7 @@ export async function retrieveMemoryWiki(input: {
   }
   return {
     ...result,
+    ...(spend ? { remoteSpend: await spend.snapshot() } : {}),
     results: result.results.map((hit) => {
       const { ownerConfirmed, ...data } = hit.data;
       const eligible =

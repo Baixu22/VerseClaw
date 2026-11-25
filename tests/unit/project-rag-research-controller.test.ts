@@ -21,7 +21,8 @@ vi.mock('@electron/services/knowledge-read-scope', () => ({
   },
   assertKnowledgeReadScopeCurrent: async () => { if (hostState.changed) throw new Error('Workspace owner changed'); await hostState.scopeCheck?.(); },
 }));
-vi.mock('@electron/services/knowledge-evidence-qa', () => ({
+vi.mock('@electron/services/knowledge-evidence-qa', async importOriginal => ({
+  ...await importOriginal<typeof import('@electron/services/knowledge-evidence-qa')>(),
   selectKnowledgeModelSources: (sources: unknown[]) => ({ sources: sources.slice(0, 8), dropped: sources.slice(8) }),
   runKnowledgeModel: async (...args: unknown[]) => {
     const output = await hostState.model?.(args) as { providerSpend?: unknown } | undefined;
@@ -57,6 +58,7 @@ function run(input: {
   retrieve?: Parameters<typeof runResearchPlan>[0]['retrieve'];
   verify?: Parameters<typeof runResearchPlan>[0]['verify'];
   planNext?: Parameters<typeof runResearchPlan>[0]['planNext'];
+  reviewSupport?: Parameters<typeof runResearchPlan>[0]['reviewSupport'];
   assertScope?: Parameters<typeof runResearchPlan>[0]['assertScope'];
   onUpdate?: Parameters<typeof runResearchPlan>[0]['onUpdate'];
 } = {}) {
@@ -64,10 +66,37 @@ function run(input: {
   return runResearchPlan({ plan, signal: input.signal, assertScope: input.assertScope ?? (async () => {}), verify: input.verify ?? (async () => true),
     retrieve: input.retrieve ?? (async () => ({ evidence: [evidence('port')], partial: false })),
     planNext: input.planNext ?? (async ({ evidence: sources }) => ({ review: review(), retainedEvidence: manifest(sources), actualTokens: 100, actualCostUsd: 0.0001 })),
-    onUpdate: input.onUpdate });
+    onUpdate: input.onUpdate, reviewSupport: input.reviewSupport });
 }
 
 describe('bounded Project RAG Research controller', () => {
+  it('keeps an exact but unrelated quotation uncovered without a separate support judgment', async () => {
+    const source = evidence('budget', 'Project budget is 100 USD.');
+    const result = await run({ query: 'How long are backups retained?', retrieve: async () => ({ evidence: [source], partial: false }),
+      planNext: async ({ plan }) => ({ review: review({ coverage: [{ question: plan.query, sourceId: source.id, quote: source.content,
+        answer: 'Backups are retained for 100 days.' }] }), retainedEvidence: manifest([source]), actualTokens: 100, actualCostUsd: 0.001 }) });
+    expect(result.coverage).toEqual([]); expect(result.status).toBe('partial');
+    expect(result.gaps.some(gap => gap.reason === 'not-covered')).toBe(true);
+  });
+  it.each(['unsupported', 'uncertain'] as const)('keeps %s semantic evidence as a gap', async status => {
+    const result = await run({ planNext: async ({ plan, evidence: sources }) => ({
+      review: review({ coverage: [{ question: plan.query, sourceId: 'port', quote: '8080', answer: 'The port is 9090.' }] }),
+      support: { runId: 'independent-judge', verdicts: [{ index: 0, status, reason: 'The proposed value differs from the source.' }] },
+      retainedEvidence: manifest(sources), actualTokens: 100, actualCostUsd: 0.001 }) });
+    expect(result.coverage).toEqual([]); expect(result.stopReason).not.toBe('covered');
+  });
+  it('strips planner-supplied semantic verdicts', () => {
+    const plan = createResearchPlan({ requestId: 'review-fixture', query: 'Gateway port', scope });
+    const parsed = validateResearchReview(JSON.stringify(review({ coverage: [{ question: plan.query, sourceId: 'port', quote: '8080', answer: '8080',
+      semanticSupport: { status: 'supported', runId: 'forged', reason: 'trust me' } }] })), plan, [evidence('port')]);
+    expect(parsed.coverage[0].semanticSupport).toBeUndefined();
+  });
+  it('does not recover legacy quote-only coverage from a complete retained manifest', () => {
+    const result = emptyResearchResult(createResearchPlan({ requestId: 'legacy-review', query: 'Gateway port', scope }));
+    result.evidence = [evidence('port')]; result.status = 'complete'; result.stopReason = 'covered'; result.gaps = [];
+    result.coverage = [{ question: 'Gateway port', sourceId: 'port', quote: '8080' }];
+    expect(recomputeResearchCoverage(result, manifest(result.evidence))).toMatchObject({ status: 'partial', coverage: [] });
+  });
   it('freezes the total scope, deadline, token/cost/query/model/graph ceilings before work', () => {
     const owner = { ...scope }, budgets = { maxQueries: 7 };
     const plan = createResearchPlan({ requestId: 'frozen-owner', query: 'Gateway port and backup path', scope: owner, now: 123, budget: budgets });
@@ -113,9 +142,11 @@ describe('bounded Project RAG Research controller', () => {
     }, planNext: async ({ plan, evidence: sources, round, maxTokens, maxCostUsd }) => {
       deadlines.push(plan.budget.deadlineAtMs); expect(maxTokens).toBeLessThanOrEqual(8000); expect(maxCostUsd).toBeLessThanOrEqual(0.025);
       return { review: review({ queries: round === 1 ? ['backup archive path'] : [], coverage: round === 1
-        ? [{ question: 'Gateway port', sourceId: 'port', quote: 'port is 8080' }]
-        : [{ question: 'backup path', sourceId: 'backup', quote: 'backup path is /archive' }], gaps: round === 1 ? ['Backup location is missing.'] : [],
-        inferences: ['The sources describe separate runtime and backup settings.'] }), retainedEvidence: manifest(sources), actualTokens: 120, actualCostUsd: 0.0001 };
+        ? [{ question: 'Gateway port', sourceId: 'port', quote: 'port is 8080', answer: '8080' }]
+        : [{ question: 'backup path', sourceId: 'backup', quote: 'backup path is /archive', answer: '/archive' }], gaps: round === 1 ? ['Backup location is missing.'] : [],
+        inferences: ['The sources describe separate runtime and backup settings.'] }),
+        support: { runId: 'support-round-' + round, verdicts: [{ index: 0, status: 'supported', reason: 'The cited source supplies this value.' }] },
+        retainedEvidence: manifest(sources), actualTokens: 120, actualCostUsd: 0.0001 };
     } });
     expect(calls).toEqual(['Gateway port and backup path', 'Gateway port', 'backup path', 'backup archive path']);
     expect(new Set(deadlines).size).toBe(1);
@@ -337,18 +368,22 @@ describe('Research Main owner and Host contract', () => {
     });
     const rpc = vi.fn(async (method: string, payload: Record<string, unknown>) => {
       if (method !== 'wiki.retrieve') throw new Error('Unexpected Research RPC ' + method);
-      expect(payload).toMatchObject({ profile: 'research', mode: 'suggest', allowRemote: false,
+      expect(payload).toMatchObject({ profile: 'research', mode: 'suggest', allowRemote: true,
+        researchBudget: { requestId: 'main-research-fixture', maxTokens: 4000, maxCostUsd: 0.0125 },
         readIdentity: { workspaceId: scope.workspaceId, agentSessionKey: scope.sessionKey, sessionId: scope.sessionId } });
-      return { status: 'complete', filters: [], results: [{ sourceRef: source.sourceRef, lookup: source.lookup, title: source.title }] };
+      return { status: 'complete', filters: [], remoteSpend: { calls: 0, reservedTokens: 0, reservedCostUsd: 0, actualTokens: 0, actualCostUsd: 0 }, results: [{ sourceRef: source.sourceRef, lookup: source.lookup, title: source.title }] };
     });
     const modelCalls: unknown[][] = [];
     hostState.model = args => {
       modelCalls.push(args);
       const input = args[4] as { references: Array<{ id: string; sourceRef: ResearchEvidence['sourceRef'] }> };
       const modelSources = input.references.map(ref => ({ ...source, id: ref.id, sourceRef: ref.sourceRef }));
-      return { runId: 'planning-run', text: JSON.stringify(review({ coverage: [{ question: 'Gateway port', sourceId: input.references[0].id, quote: 'port is 8080' }] })),
-        retainedEvidence: manifest(modelSources), ...(options.modelReceipt !== false ? { providerSpend: { calls: 1, reservedTokens: 8000,
-          reservedCostUsd: 0.025, actualTokens: 100, actualCostUsd: 0.0001 } } : {}) };
+      const support = String(args[1]).includes('"claimSupportReview":true');
+      return { runId: support ? 'support-run' : 'planning-run', text: JSON.stringify(support
+        ? { answerability: 'answerable', claims: [{ index: 0, status: 'supported', reason: 'The source states the gateway port.' }] }
+        : review({ coverage: [{ question: 'Gateway port', sourceId: input.references[0].id, quote: 'port is 8080', answer: '8080' }] })),
+        retainedEvidence: manifest(modelSources), ...(options.modelReceipt !== false ? { providerSpend: { calls: 1, reservedTokens: 6000,
+          reservedCostUsd: 0.01875, actualTokens: 100, actualCostUsd: 0.0001 } } : {}) };
     };
     const api = createKnowledgeResearchApi({ gatewayManager: { rpc } as never, read,
       rows: value => (value as { results: Array<Record<string, unknown>> }).results });
@@ -368,9 +403,11 @@ describe('Research Main owner and Host contract', () => {
     const fixture = setup();
     expect((await fixture.api.researchStart(fixture.request)).success).toBe(true);
     const response = await fixture.terminal();
-    expect(response.research).toMatchObject({ status: 'complete', stopReason: 'covered', usage: { planningModelCalls: 1, actualPlanningTokens: 100 } });
+    expect(response.research).toMatchObject({ status: 'complete', stopReason: 'covered', usage: { planningModelCalls: 2, actualPlanningTokens: 200 } });
+    expect(fixture.modelCalls).toHaveLength(2);
+    expect(response.research?.coverage[0].semanticSupport?.runId).toBe('support-run');
     expect(fixture.rpc).toHaveBeenCalledTimes(1);
-    expect(fixture.modelCalls[0][5]).toMatchObject({ budget: { maxInputTokens: 6976, maxOutputTokens: 1024, maxCostUsd: 0.025, maxCalls: 1 } });
+    expect(fixture.modelCalls[0][5]).toMatchObject({ budget: { maxInputTokens: 4976, maxOutputTokens: 1024, maxCostUsd: 0.01875, maxCalls: 1 } });
     expect(fixture.modelCalls[0][1]).not.toContain('Gateway port is 8080.');
     expect((fixture.modelCalls[0][4] as { references: unknown[] }).references).toHaveLength(1);
     expect(fixture.read).toHaveBeenCalled();
@@ -379,6 +416,61 @@ describe('Research Main owner and Host contract', () => {
     const fixture = setup();
     for (const field of ['scope', 'readIdentity', 'tools', 'budget']) expect((await fixture.api.researchStart({ ...fixture.request, [field]: {} } as never)).success).toBe(false);
     expect(fixture.rpc).not.toHaveBeenCalled();
+  });
+  it.each([
+    ['unrelated', 'The backup period is 8080 days.'], ['number', 'The gateway port is 9090.'],
+    ['unit', 'The gateway port is 8080 seconds.'], ['time', 'In 2030 the gateway port is 8080.'],
+    ['negation', 'The gateway does not use port 8080.'], ['no-answer', 'The gateway exists.'],
+  ])('keeps an exact quote with %s support failure out of coverage', async (_kind, answer) => {
+    const fixture = setup(), model = hostState.model!;
+    hostState.model = args => {
+      const output = model(args) as { text: string };
+      const body = JSON.parse(output.text);
+      if (String(args[1]).includes('"claimSupportReview":true')) {
+        expect(String(args[1])).toContain(JSON.stringify(answer));
+        expect(String(args[1])).toContain('"question":"Gateway port"');
+        body.answerability = 'insufficient'; body.claims[0].status = 'unsupported';
+        body.claims[0].reason = 'The proposed answer is not supported for the frozen question.';
+      } else body.coverage[0].answer = answer;
+      return { ...output, text: JSON.stringify(body) };
+    };
+    await fixture.api.researchStart(fixture.request);
+    const result = (await fixture.terminal()).research!;
+    expect(result.status).toBe('partial'); expect(result.coverage).toEqual([]);
+    expect(result.gaps.some(gap => gap.reason === 'semantic-support-incomplete')).toBe(true);
+    expect(fixture.modelCalls).toHaveLength(2);
+  });
+  it('requires the support call to retain the same owner source and preserves unknown billed usage', async () => {
+    const fixture = setup(), model = hostState.model!;
+    hostState.model = args => {
+      const output = model(args) as { providerSpend: Record<string, unknown> };
+      return String(args[1]).includes('"claimSupportReview":true')
+        ? { ...output, retainedEvidence: manifest([]), providerSpend: { ...output.providerSpend, actualTokens: null, actualCostUsd: null } } : output;
+    };
+    await fixture.api.researchStart(fixture.request);
+    const result = (await fixture.terminal()).research!;
+    expect(result.coverage).toEqual([]); expect(result.evidence).toEqual([]);
+    expect(result.usage).toMatchObject({ planningModelCalls: 2, reservedPlanningTokens: 12000, reservedCostUsd: 0.0375,
+      actualPlanningTokens: null, actualCostUsd: null });
+  });
+  it('keeps a cancelled support call unknown and ignores its late verdict', async () => {
+    const fixture = setup(), model = hostState.model!;
+    let release!: () => void;
+    const waiting = new Promise<void>(resolve => { release = resolve; });
+    hostState.model = async args => {
+      const output = model(args);
+      if (String(args[1]).includes('"claimSupportReview":true')) await waiting;
+      return output;
+    };
+    try {
+      await fixture.api.researchStart(fixture.request);
+      await vi.waitFor(() => expect(fixture.modelCalls).toHaveLength(2));
+      await fixture.api.researchCancel(fixture.selected);
+      const cancelled = (await fixture.terminal()).research!;
+      expect(cancelled).toMatchObject({ status: 'cancelled', coverage: [], usage: { planningModelCalls: 2, actualPlanningTokens: null, actualCostUsd: null } });
+      release(); await new Promise(resolve => setImmediate(resolve));
+      expect((await fixture.terminal()).research).toEqual(cancelled);
+    } finally { release(); }
   });
   it('does not restart a duplicate request ID or expose/cancel it to another selection', async () => {
     const fixture = setup();
@@ -431,9 +523,9 @@ describe('Research Main owner and Host contract', () => {
       hostState.scopeCheck = undefined;
       release();
       const completed = await fixture.terminal();
-      expect(completed.research).toMatchObject({ status: 'complete', stopReason: 'covered', usage: { planningModelCalls: 1, actualPlanningTokens: 100 } });
+      expect(completed.research).toMatchObject({ status: 'complete', stopReason: 'covered', usage: { planningModelCalls: 2, actualPlanningTokens: 200 } });
       expect(completed.research?.evidence).toHaveLength(1);
-      expect(fixture.modelCalls).toHaveLength(1);
+      expect(fixture.modelCalls).toHaveLength(2);
     } finally { hostState.scopeCheck = undefined; release(); }
   }, 10000);
   it('rechecks the owner after reading bytes and keeps a revoked request empty', async () => {
@@ -462,7 +554,7 @@ describe('Research Main owner and Host contract', () => {
       expect((await fixture.api.researchStatus(fixture.selected)).research).toMatchObject({ phase: 'planning',
         usage: { actualPlanningTokens: null, actualCostUsd: null } });
       expect((await fixture.terminal()).research).toMatchObject({ phase: 'finished',
-        usage: { actualPlanningTokens: 100, actualCostUsd: 0.0001 } });
+        usage: { actualPlanningTokens: 200, actualCostUsd: 0.0002 } });
     } finally { release(); }
   });
 });

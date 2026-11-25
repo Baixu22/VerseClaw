@@ -64,6 +64,8 @@ export type RetrievalHit<T> = {
   data: T;
 };
 export type RetrievalFilter = { namespaceId: string; subjectId: string; reason: string };
+export type RetrievalSpendUsage = { calls: number; reservedTokens: number; reservedCostUsd: number | null;
+  actualTokens: number | null; actualCostUsd: number | null; inFlight?: boolean };
 export type RetrievalLaneResult<T> = {
   status: 'available' | 'unavailable';
   reason?: string;
@@ -92,4 +94,5 @@ export type RetrievalResultV2<T> = {
   snapshotStatus: 'current' | 'changed';
   receiptId?: string;
   receiptStatus?: 'recorded' | 'unavailable';
+  remoteSpend?: RetrievalSpendUsage;
 };

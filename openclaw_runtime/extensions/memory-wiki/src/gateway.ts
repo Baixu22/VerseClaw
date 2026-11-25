@@ -36,6 +36,7 @@ import { memoryWikiNamespaceId } from "./owner-read.js";
 import {
   normalizeRetrievalPolicy,
   type RetrievalCapabilitySnapshotV1,
+  type RetrievalSpendBudget,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import type {
   KnowledgePolicyPromotionPayload,
@@ -283,6 +284,33 @@ export function registerMemoryWikiGatewayMethods(params: {
     },
     { scope: READ_SCOPE },
   );
+  const retrievals = new Map<string, AbortController>();
+  const cancelledRetrievals = new Map<string, number>();
+  const retrievalKey = (identity: MemoryWikiReadIdentity, requestId: string) =>
+    JSON.stringify([identity.workspaceId, identity.agentSessionKey, identity.sessionId, requestId]);
+  api.registerGatewayMethod(
+    "wiki.retrieval.cancel",
+    async ({ params: request, respond, client }) => {
+      try {
+        const identity = readIdentity(request, client),
+          requestId = readStringParam(request, "requestId");
+        if (!identity || !requestId || requestId.length > 128)
+          throw new Error("Invalid Research cancellation owner");
+        const key = retrievalKey(identity, requestId),
+          now = Date.now();
+        for (const [id, expiry] of cancelledRetrievals)
+          if (expiry <= now) cancelledRetrievals.delete(id);
+        if (!cancelledRetrievals.has(key) && cancelledRetrievals.size >= 128)
+          throw new Error("Research cancellation capacity reached");
+        cancelledRetrievals.set(key, now + 300000);
+        retrievals.get(key)?.abort(new Error("Research retrieval cancelled"));
+        respond(true, { cancelled: true });
+      } catch (error) {
+        respondError(respond, error);
+      }
+    },
+    { scope: READ_SCOPE },
+  );
   for (const evaluation of [false, true])
     api.registerGatewayMethod(
       evaluation ? "wiki.retrieval.evaluate" : "wiki.retrieve",
@@ -311,6 +339,16 @@ export function registerMemoryWikiGatewayMethods(params: {
             throw new Error("Invalid retrieval deadline");
           if (request.allowRemote !== undefined && typeof request.allowRemote !== "boolean")
             throw new Error("Invalid retrieval egress restriction");
+          if (
+            request.researchBudget !== undefined &&
+            (!request.researchBudget ||
+              typeof request.researchBudget !== "object" ||
+              Array.isArray(request.researchBudget) ||
+              Object.keys(request.researchBudget).some(
+                (key) => !["requestId", "maxTokens", "maxCostUsd"].includes(key),
+              ))
+          )
+            throw new Error("Invalid Research retrieval budget");
           const profile = readEnumParam(request, "profile", [
             "local",
             "quality",
@@ -329,6 +367,21 @@ export function registerMemoryWikiGatewayMethods(params: {
           const evaluationPolicy = evaluation
             ? normalizeRetrievalPolicy(request.policy)
             : undefined;
+          const researchBudget = request.researchBudget as RetrievalSpendBudget | undefined;
+          if (
+            researchBudget &&
+            (evaluation ||
+              profile !== "research" ||
+              researchBudget.requestId !== readStringParam(request, "requestId"))
+          )
+            throw new Error("Research budget must match its retrieval request");
+          const key = researchBudget ? retrievalKey(identity, researchBudget.requestId) : undefined;
+          if (key && (cancelledRetrievals.get(key) ?? 0) > Date.now())
+            throw new Error("Research retrieval cancelled before admission");
+          if (key && (retrievals.has(key) || retrievals.size >= 32))
+            throw new Error("Research retrieval already active or at capacity");
+          const controller = key ? new AbortController() : undefined;
+          if (key && controller) retrievals.set(key, controller);
           respond(
             true,
             await retrieveMemoryWiki({
@@ -342,12 +395,16 @@ export function registerMemoryWikiGatewayMethods(params: {
               explicitRefs: refs.filter((ref) => ref !== undefined),
               deadlineAtMs: request.deadlineAtMs as number | undefined,
               allowRemote: request.allowRemote as boolean | undefined,
+              researchBudget,
+              signal: controller?.signal,
               requestId: readStringParam(request, "requestId"),
               projection: params.projection,
               embedding: params.embedding,
               vector: params.vector,
               rerank: params.rerank,
               observability: params.observability,
+            }).finally(() => {
+              if (key) retrievals.delete(key);
             }),
           );
         } catch (error) {

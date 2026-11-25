@@ -7,9 +7,19 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-16
 intent: 完成跨来源研究、证据缺口追查与关系分析。
-diffBase: 270da250a3ce7b5ff74b452d7733fd0ae8348b24
+diffBase: 4d922bcd42445225c4dd20178b51fd04349efb2f
 historicalDiffBase: 159d7d2450e3776814e0ea83e03e2db1698dceb7
 touchedAreas:
+  - "openclaw_runtime/src/plugins/embedding-provider-types.ts"
+  - "openclaw_runtime/src/plugins/openai-compatible-embedding-provider.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval-embeddings.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval-rerank.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval/vector-service.ts"
+  - "shared/knowledge/retrieval.ts"
+  - "tests/unit/project-rag-retrieval-spend.test.ts"
+  - "tests/unit/project-rag-embedding-lifecycle.test.ts"
+  - "tests/unit/project-rag-plan-owner.test.ts"
   - "harness/specs/fixtures/project-rag/rag16-recovery-cancel-20261124/**"
   - "harness/specs/fixtures/project-rag/rag16-cancel-races-20261124/**"
   - "harness/specs/fixtures/project-rag/rag16-error-cancel-20261124/**"
@@ -260,6 +270,7 @@ requiredRules:
   - "project-rag-long-term-boundary"
   - "verseshell-upstream-preservation"
 requiredTests:
+  - "pnpm exec vitest run tests/unit/project-rag-retrieval-spend.test.ts tests/unit/project-rag-embedding-lifecycle.test.ts tests/unit/project-rag-plan-owner.test.ts tests/unit/project-rag-rerank-provider.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec vitest run tests/unit/knowledge-evidence-qa.test.ts tests/unit/project-rag-research-controller.test.ts tests/unit/autonomy-provider-spend.test.ts tests/unit/component-authority-manifest.test.ts tests/unit/component-disposition-catalog.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec playwright test tests/e2e/project-rag-research.spec.ts --workers=1 --retries=0"
   - "node --test scripts/verseshell-bundle.test.mjs scripts/verseshell-reintegration-check.test.mjs harness/src/profiles.test.mjs"

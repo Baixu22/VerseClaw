@@ -135,6 +135,8 @@ export function reserveProviderSpend(
     reservedCostUsd: number | null;
     config: BudgetConfig;
     maxSessionCalls?: number;
+    /** A retrieval request shares this ceiling across its embedding/rerank batches. */
+    runBudget?: { maxTokens: number; maxCostUsd: number };
   },
   options: DatabaseOptions = {},
 ): ProviderSpendReservation {
@@ -157,6 +159,43 @@ export function reserveProviderSpend(
       ).rows.length
     ) {
       throw new ProviderSpendRejectedError("duplicate");
+    }
+    if (input.runBudget) {
+      const rows = executeSqliteQuerySync(
+        db,
+        sql.selectFrom("provider_spend_calls").selectAll().where("run_id", "=", input.runId),
+      ).rows.filter((row) => row.state !== "cancelled");
+      if (rows.some((row) => row.scope_json !== JSON.stringify(input.scope)))
+        throw new ProviderSpendRejectedError("scope");
+      const state = snapshot("session", input.runId, rows);
+      if (
+        rows.some((row) => row.actual_tokens !== null && row.actual_tokens > row.reserved_tokens) ||
+        Math.max(
+          state.spentTokens + state.heldTokens,
+          rows.reduce((sum, row) => sum + row.reserved_tokens, 0),
+        ) +
+          reservedTokens >
+          integer(input.runBudget.maxTokens, "run token limit")
+      )
+        throw new ProviderSpendRejectedError("tokens");
+      if (reservedCost === null || state.unknownCostCalls > 0)
+        throw new ProviderSpendRejectedError("unknown-cost");
+      costMicros(input.runBudget.maxCostUsd);
+      if (
+        rows.some(
+          (row) =>
+            row.actual_cost_micros !== null &&
+            row.reserved_cost_micros !== null &&
+            row.actual_cost_micros > row.reserved_cost_micros,
+        ) ||
+        Math.max(
+          state.spentCostMicros + state.heldCostMicros,
+          rows.reduce((sum, row) => sum + (row.reserved_cost_micros ?? 0), 0),
+        ) +
+          reservedCost >
+          Math.floor(input.runBudget.maxCostUsd * MICROS_PER_USD)
+      )
+        throw new ProviderSpendRejectedError("cost");
     }
     for (const key of keys) {
       const limits = input.config[key.scope];

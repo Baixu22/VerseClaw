@@ -8,11 +8,13 @@ import type {
   ResearchResultV1,
   ResearchReview,
   ResearchScope,
+  ResearchSupport,
   ResearchStopReason,
 } from "../../../../shared/knowledge/research.js";
 import type { RetainedEvidenceManifestV1 } from "../../../../shared/knowledge/packing.js";
 import { RETRIEVAL_PROFILES } from "./plan.js";
 import { waitForRetrievalOperation } from "./embedding-session.js";
+import type { RetrievalSpendUsage } from "./spend.js";
 
 const LIMITS = Object.freeze({
   maxRounds: 3,
@@ -133,7 +135,7 @@ export function emptyResearchResult(plan: ResearchPlanV1): ResearchResultV1 {
   };
 }
 
-/** Recompute quoted coverage from the final DCS manifest after complete-unit budget cuts. */
+/** Recompute supported coverage from the final DCS manifest after complete-unit budget cuts. */
 export function recomputeResearchCoverage(
   input: ResearchResultV1,
   retained: RetainedEvidenceManifestV1,
@@ -163,11 +165,26 @@ export function recomputeResearchCoverage(
   result.evidence = result.evidence.filter((source) => admitted.has(source.id));
   result.coverage = result.coverage.filter(
     (row) =>
+      Boolean(
+        row.answer?.trim() &&
+        row.semanticSupport?.status === "supported" &&
+        row.semanticSupport.runId.trim(),
+      ) &&
       admitted.has(row.sourceId) &&
       result.evidence.some(
         (source) => source.id === row.sourceId && source.content.includes(row.quote),
       ),
   );
+  const unverified = result.coverage.length < input.coverage.length && !dropped;
+  if (unverified) {
+    result.gaps.push({
+      schema: "EvidenceGap/v1",
+      question: result.plan.query,
+      reason: "semantic-support-incomplete",
+    });
+    result.status = result.evidence.length ? "partial" : "unavailable";
+    if (result.stopReason === "covered") result.stopReason = "unavailable";
+  }
   result.conflicts = result.conflicts.filter((conflict) =>
     conflict.citations.every((citation) => admitted.has(citation.sourceId)),
   );
@@ -211,7 +228,7 @@ export function recomputeResearchCoverage(
   return result;
 }
 
-/** Model text supplies proposals. Only exact quotes in current DCS-retained evidence may cover a question. */
+/** Parse quoted proposals; semantic verdicts are supplied separately by the trusted reviewer. */
 export function validateResearchReview(
   raw: string,
   plan: ResearchPlanV1,
@@ -253,6 +270,8 @@ export function validateResearchReview(
     if (!plan.questions.includes(coverage.question))
       throw new TypeError("Research question is outside the frozen plan");
     quote(coverage);
+    if (coverage.answer !== undefined && !validText(coverage.answer, 1500))
+      throw new TypeError("Invalid research proposed answer");
   }
   for (const conflict of value.conflicts) {
     if (
@@ -264,7 +283,15 @@ export function validateResearchReview(
       throw new TypeError("Invalid research conflict");
     conflict.citations.forEach(quote);
   }
-  return value;
+  return {
+    ...value,
+    coverage: value.coverage.map(({ question, sourceId, quote, answer }) => ({
+      question,
+      sourceId,
+      quote,
+      ...(answer === undefined ? {} : { answer }),
+    })),
+  };
 }
 
 /** Validate settled usage before response parsing can mask a reservation violation. */
@@ -290,6 +317,8 @@ export function validateResearchPlanningUsage(
 
 export async function runResearchPlan(options: {
   plan: ResearchPlanV1;
+  retrievalBudget?: { maxTokens: number; maxCostUsd: number };
+  /** Physical call slots reserved before starting a proposal/support review. */
   signal?: AbortSignal;
   assertScope: (signal: AbortSignal) => Promise<void>;
   retrieve: (
@@ -298,6 +327,7 @@ export async function runResearchPlan(options: {
   ) => Promise<{
     evidence: ResearchEvidence[];
     partial: boolean;
+    remoteSpend?: RetrievalSpendUsage;
     gaps?: string[];
     conflicts?: ResearchReview["conflicts"];
     denied?: Array<{ domain: string; namespaceId: string; subjectId: string }>;
@@ -316,12 +346,45 @@ export async function runResearchPlan(options: {
     retainedEvidence?: RetainedEvidenceManifestV1;
     actualTokens: number | null;
     actualCostUsd: number | null;
+    support?: ResearchSupport;
+  }>;
+  reviewSupport?: (input: {
+    plan: ResearchPlanV1;
+    evidence: ResearchEvidence[];
+    review: ResearchReview;
+    maxTokens: number;
+    maxCostUsd: number;
+    signal: AbortSignal;
+  }) => Promise<{
+    support: ResearchSupport;
+    retainedEvidence?: RetainedEvidenceManifestV1;
+    actualTokens: number | null;
+    actualCostUsd: number | null;
+    gaps?: string[];
   }>;
   onUpdate?: (result: ResearchResultV1) => void;
 }): Promise<ResearchResultV1> {
   const { plan } = options,
     budget = plan.budget,
     result = emptyResearchResult(plan);
+  const retrievalBudget = options.retrievalBudget ?? { maxTokens: 0, maxCostUsd: 0 };
+  if (
+    !Number.isSafeInteger(retrievalBudget.maxTokens) ||
+    retrievalBudget.maxTokens < 0 ||
+    retrievalBudget.maxTokens > budget.maxPlanningTokens ||
+    !Number.isFinite(retrievalBudget.maxCostUsd) ||
+    retrievalBudget.maxCostUsd < 0 ||
+    retrievalBudget.maxCostUsd > budget.maxCostUsd
+  )
+    throw new Error("Invalid Research retrieval allocation");
+  let remoteUsage: RetrievalSpendUsage = {
+    calls: 0,
+    reservedTokens: 0,
+    reservedCostUsd: 0,
+    actualTokens: 0,
+    actualCostUsd: 0,
+  };
+  let planningCost: number | null = 0;
   const deadline = new AbortController(),
     remaining = budget.deadlineAtMs - Date.now();
   const timer =
@@ -350,6 +413,59 @@ export async function runResearchPlan(options: {
     }
   };
   const publish = () => options.onUpdate?.(structuredClone(result));
+  const canReview = () =>
+    result.usage.planningModelCalls < budget.maxPlanningModelCalls &&
+    result.usage.reservedPlanningTokens + retrievalBudget.maxTokens < budget.maxPlanningTokens;
+  const modelCall = async <T extends { actualTokens: number | null; actualCostUsd: number | null }>(
+    work: (limits: { maxTokens: number; maxCostUsd: number }) => Promise<T>,
+  ): Promise<T> => {
+    const slots = budget.maxPlanningModelCalls - result.usage.planningModelCalls;
+    const maxTokens = Math.min(
+      8000,
+      Math.floor(
+        (budget.maxPlanningTokens -
+          retrievalBudget.maxTokens -
+          result.usage.reservedPlanningTokens) /
+          slots,
+      ),
+    );
+    const planningReservedCost =
+      result.usage.reservedCostUsd - (remoteUsage.reservedCostUsd ?? retrievalBudget.maxCostUsd);
+    const maxCostUsd = Math.max(
+      0,
+      Math.floor(
+        (Math.floor(budget.maxCostUsd * 1e6) -
+          Math.ceil(retrievalBudget.maxCostUsd * 1e6) -
+          Math.round(planningReservedCost * 1e6)) /
+          slots,
+      ) / 1e6,
+    );
+    const { actualPlanningTokens } = result.usage;
+    result.usage.actualPlanningTokens = null;
+    result.usage.actualCostUsd = null;
+    result.phase = "planning";
+    result.usage.planningModelCalls++;
+    result.usage.reservedPlanningTokens += maxTokens;
+    result.usage.reservedCostUsd += maxCostUsd;
+    publish();
+    const output = await bounded(work({ maxTokens, maxCostUsd }));
+    await reverify();
+    signal.throwIfAborted();
+    validateResearchPlanningUsage(output, maxTokens, maxCostUsd);
+    result.usage.actualPlanningTokens =
+      output.actualTokens === null || actualPlanningTokens === null
+        ? null
+        : actualPlanningTokens + output.actualTokens;
+    planningCost =
+      output.actualCostUsd === null || planningCost === null
+        ? null
+        : planningCost + output.actualCostUsd;
+    result.usage.actualCostUsd =
+      planningCost === null || remoteUsage.actualCostUsd === null
+        ? null
+        : planningCost + remoteUsage.actualCostUsd;
+    return output;
+  };
   const blocked = new Set<string>(),
     seenQueries = new Set<string>(),
     covered = new Set<string>();
@@ -465,8 +581,54 @@ export async function runResearchPlan(options: {
         seenQueries.add(key);
         result.usage.queries = seenQueries.size;
         result.phase = "retrieving";
+        if (options.retrievalBudget) {
+          result.usage.actualCostUsd = null;
+          result.usage.remoteRetrieval = {
+            ...remoteUsage,
+            inFlight: true,
+            actualTokens: null,
+            actualCostUsd: null,
+          };
+        }
         publish();
         const response = await bounded(options.retrieve(query.text, signal));
+        if (response.remoteSpend) {
+          const usage = response.remoteSpend;
+          if (
+            !Number.isSafeInteger(usage.calls) ||
+            usage.calls < remoteUsage.calls ||
+            !Number.isSafeInteger(usage.reservedTokens) ||
+            usage.reservedTokens < remoteUsage.reservedTokens ||
+            usage.reservedTokens > retrievalBudget.maxTokens ||
+            usage.reservedCostUsd === null ||
+            !Number.isFinite(usage.reservedCostUsd) ||
+            usage.reservedCostUsd < (remoteUsage.reservedCostUsd ?? 0) ||
+            usage.reservedCostUsd > retrievalBudget.maxCostUsd
+          )
+            throw new Error("Invalid retrieval spend receipt");
+          validateResearchPlanningUsage(
+            usage,
+            retrievalBudget.maxTokens,
+            retrievalBudget.maxCostUsd,
+          );
+          result.usage.reservedCostUsd +=
+            usage.reservedCostUsd - (remoteUsage.reservedCostUsd ?? 0);
+          remoteUsage = { ...usage };
+          result.usage.remoteRetrieval = remoteUsage;
+          result.usage.actualCostUsd =
+            planningCost === null || usage.actualCostUsd === null
+              ? null
+              : planningCost + usage.actualCostUsd;
+          if (usage.calls && (usage.actualTokens === null || usage.actualCostUsd === null)) {
+            notes.add("retrieval-usage-unknown");
+            partial = true;
+          }
+        } else if (options.retrievalBudget) {
+          remoteUsage = { ...remoteUsage, actualTokens: null, actualCostUsd: null };
+          result.usage.remoteRetrieval = remoteUsage;
+          notes.add("retrieval-usage-unknown");
+          partial = true;
+        }
         await assertScope();
         signal.throwIfAborted();
         partial ||= response.partial;
@@ -569,55 +731,18 @@ export async function runResearchPlan(options: {
         stop = "no-new-evidence";
         break;
       }
-      if (
-        result.evidence.length &&
-        result.usage.planningModelCalls < budget.maxPlanningModelCalls &&
-        result.usage.reservedPlanningTokens < budget.maxPlanningTokens
-      ) {
-        const maxTokens = Math.min(
-          8000,
-          Math.floor(
-            (budget.maxPlanningTokens - result.usage.reservedPlanningTokens) /
-              (budget.maxPlanningModelCalls - result.usage.planningModelCalls),
-          ),
-        );
-        const maxCostUsd = Math.max(
-          0,
-          (budget.maxCostUsd - result.usage.reservedCostUsd) /
-            (budget.maxPlanningModelCalls - result.usage.planningModelCalls),
-        );
-        const { actualPlanningTokens, actualCostUsd } = result.usage;
-        // Pending liability stays unknown if cancellation prevents a validated receipt.
-        result.usage.actualPlanningTokens = null;
-        result.usage.actualCostUsd = null;
-        result.phase = "planning";
-        result.usage.planningModelCalls++;
-        result.usage.reservedPlanningTokens += maxTokens;
-        result.usage.reservedCostUsd += maxCostUsd;
-        publish();
+      if (result.evidence.length && canReview()) {
         try {
-          const planning = await bounded(
+          const planning = await modelCall((limits) =>
             options.planNext({
               plan,
               evidence: [...result.evidence],
               gaps: result.gaps,
               round,
-              maxTokens,
-              maxCostUsd,
+              ...limits,
               signal,
             }),
           );
-          await reverify();
-          signal.throwIfAborted();
-          validateResearchPlanningUsage(planning, maxTokens, maxCostUsd);
-          result.usage.actualPlanningTokens =
-            planning.actualTokens === null || actualPlanningTokens === null
-              ? null
-              : actualPlanningTokens + planning.actualTokens;
-          result.usage.actualCostUsd =
-            planning.actualCostUsd === null || actualCostUsd === null
-              ? null
-              : actualCostUsd + planning.actualCostUsd;
           const review = validateResearchReview(
             JSON.stringify(planning.review),
             plan,
@@ -643,11 +768,67 @@ export async function runResearchPlan(options: {
               throw new Error("Research quotation was not retained by DCS");
           }
           if (planning.retainedEvidence) result.retainedEvidence.push(planning.retainedEvidence);
-          const validCoverage = review.coverage.filter((row) =>
-            result.evidence.some(
-              (source) => source.id === row.sourceId && Boolean(source.updatedAt),
-            ),
-          );
+          let support = planning.support;
+          let finalRetained = planning.retainedEvidence;
+          if (
+            !support &&
+            options.reviewSupport &&
+            review.coverage.some((row) => row.answer) &&
+            canReview()
+          ) {
+            const sources = result.evidence.filter((source) =>
+              retainedQuotes.some(
+                (citation) =>
+                  (citation.intentId ?? citation.refId) === source.id &&
+                  citation.chunkDigest === source.contentDigest,
+              ),
+            );
+            const checked = await modelCall((limits) =>
+              options.reviewSupport!({ plan, evidence: sources, review, ...limits, signal }),
+            );
+            if (!checked.retainedEvidence)
+              throw new Error("Research support has no DCS retained evidence receipt");
+            support = checked.support;
+            finalRetained = checked.retainedEvidence;
+            review.gaps.push(...(checked.gaps ?? []));
+            result.retainedEvidence.push(finalRetained);
+          }
+          const seenSupport = new Set<number>();
+          for (const verdict of support?.verdicts ?? []) {
+            if (
+              !support?.runId?.trim() ||
+              !Number.isSafeInteger(verdict.index) ||
+              verdict.index < 0 ||
+              verdict.index >= review.coverage.length ||
+              seenSupport.has(verdict.index) ||
+              !["supported", "unsupported", "uncertain"].includes(verdict.status) ||
+              typeof verdict.reason !== "string" ||
+              !verdict.reason.trim() ||
+              verdict.reason.length > 1500
+            )
+              throw new Error("Invalid research semantic support receipt");
+            seenSupport.add(verdict.index);
+          }
+          const validCoverage = review.coverage.flatMap((row, index) => {
+            const verdict = support?.verdicts.find((item) => item.index === index);
+            return row.answer &&
+              verdict?.status === "supported" &&
+              support?.runId &&
+              result.evidence.some(
+                (source) => source.id === row.sourceId && Boolean(source.updatedAt),
+              )
+              ? [
+                  {
+                    ...row,
+                    semanticSupport: {
+                      status: "supported" as const,
+                      runId: support.runId,
+                      reason: verdict.reason,
+                    },
+                  },
+                ]
+              : [];
+          });
           result.coverage = [...result.coverage, ...validCoverage].filter(
             (row, index, rows) =>
               rows.findIndex((other) => JSON.stringify(row) === JSON.stringify(other)) === index,
@@ -659,7 +840,7 @@ export async function runResearchPlan(options: {
               conflicts.findIndex((other) => JSON.stringify(other) === JSON.stringify(conflict)) ===
               index,
           );
-          const projection = recomputeResearchCoverage(result, planning.retainedEvidence);
+          const projection = recomputeResearchCoverage(result, finalRetained);
           if (projection.evidence.length < result.evidence.length) {
             result.evidence = projection.evidence;
             result.coverage = projection.coverage;
@@ -675,8 +856,13 @@ export async function runResearchPlan(options: {
             notes.add("dcs-evidence-not-retained");
             partial = true;
           }
-          planningNotes = review.gaps;
-          if (planning.actualTokens === null || planning.actualCostUsd === null) {
+          planningNotes = [
+            ...review.gaps,
+            ...(validCoverage.length < review.coverage.length
+              ? ["semantic-support-incomplete"]
+              : []),
+          ];
+          if (result.usage.actualPlanningTokens === null || result.usage.actualCostUsd === null) {
             notes.add("planning-usage-unknown");
             partial = true;
           }
@@ -693,7 +879,7 @@ export async function runResearchPlan(options: {
           if (
             covered.size === plan.questions.length &&
             !result.conflicts.length &&
-            !review.gaps.length
+            !planningNotes.length
           )
             stop = "covered";
           else if (!pending.length)
@@ -707,8 +893,15 @@ export async function runResearchPlan(options: {
           partial = true;
           result.usage.actualPlanningTokens = null;
           result.usage.actualCostUsd = null;
+          planningCost = null;
         }
       }
+      if (
+        options.reviewSupport &&
+        !canReview() &&
+        plan.questions.some((question) => !covered.has(question))
+      )
+        notes.add("semantic-review-budget-exhausted");
       refreshGaps();
       publish();
       if (!pending.length && !stop) stop = "queries-exhausted";

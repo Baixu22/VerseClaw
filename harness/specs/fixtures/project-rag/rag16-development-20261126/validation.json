@@ -1,0 +1,302 @@
+{
+  "schema": "G2DevelopmentValidation/v1",
+  "actor": "codex-g2-development-first",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "node": "TF-0893",
+  "status": "development-verified",
+  "acceptance": "deferred-by-owner-20261126",
+  "candidateBase": "4d922bcd42445225c4dd20178b51fd04349efb2f",
+  "validation": {
+    "relatedTests": 220,
+    "followupTests": 101,
+    "types": "passed",
+    "lint": "passed",
+    "harness": "passed",
+    "comms": "passed"
+  },
+  "runs": [
+    {
+      "actor": "codex-g2-development-first",
+      "driven_by": "agent",
+      "status": "failed",
+      "steps": [
+        {
+          "name": "unit",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "exec",
+            "vitest",
+            "run",
+            "tests/unit/project-rag-research-controller.test.ts",
+            "tests/unit/knowledge-evidence-qa.test.ts",
+            "tests/unit/project-rag-retrieval-spend.test.ts",
+            "tests/unit/project-rag-embedding-lifecycle.test.ts",
+            "tests/unit/project-rag-rerank-provider.test.ts",
+            "tests/unit/project-rag-plan-owner.test.ts",
+            "tests/unit/autonomy-provider-spend.test.ts",
+            "--maxWorkers=1",
+            "--cache=false",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\g2-development-first-20261126-01a21178\\research-final\\unit.json"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 61.672,
+          "logSha256": "9e4f3da22abcb973123688572751d60ae96615b909861db4a3dc8560bb5fea44"
+        },
+        {
+          "name": "types",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "exec",
+            "tsgo",
+            "-p",
+            "D:\\tmp\\g2-development-first-20261126-01a21178\\tsconfig.research.json",
+            "--pretty",
+            "false"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 6.578,
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "harness",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "harness",
+            "validate",
+            "--spec",
+            "harness/specs/tasks/project-rag-bounded-research.md"
+          ],
+          "exitCode": 1,
+          "elapsedSeconds": 3.594,
+          "logSha256": "ebf3b5c321283ab69fb32b0daa9d179088a1c235c867816a4cb16fee63538408"
+        }
+      ],
+      "startedAt": "2026-11-25T16:53:58.655336+00:00",
+      "activeStep": null,
+      "completedAt": "2026-11-25T16:55:10.486962+00:00"
+    },
+    {
+      "actor": "codex-g2-development-first",
+      "driven_by": "agent",
+      "status": "passed",
+      "steps": [
+        {
+          "name": "unit",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "exec",
+            "vitest",
+            "run",
+            "tests/unit/project-rag-research-controller.test.ts",
+            "tests/unit/project-rag-retrieval-spend.test.ts",
+            "--maxWorkers=1",
+            "--cache=false",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\g2-development-first-20261126-01a21178\\research-followup\\unit.json"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 10.437,
+          "logSha256": "09e962c076d2938aa0dab45d495a682fdb9cafbd2aff2e0bc997b7a7ec2d3cab"
+        },
+        {
+          "name": "types",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "exec",
+            "tsgo",
+            "-p",
+            "D:\\tmp\\g2-development-first-20261126-01a21178\\tsconfig.research.json",
+            "--pretty",
+            "false"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 7.204,
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "harness",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "harness",
+            "validate",
+            "--spec",
+            "harness/specs/tasks/project-rag-bounded-research.md"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 2.406,
+          "logSha256": "03cc87ffaa94b9ad50b332545c5a64501fa404df4abb68967fb6ca00a9e17c2e"
+        },
+        {
+          "name": "dry-run",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "harness",
+            "run",
+            "--spec",
+            "harness/specs/tasks/project-rag-bounded-research.md",
+            "--dry-run"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 1.828,
+          "logSha256": "2a4eb2b52db9a7f9c25dbb469a09408ddb379a158d1fe86813e3fada45715b87"
+        },
+        {
+          "name": "comms-replay",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "run",
+            "comms:replay"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.578,
+          "logSha256": "c2a4a9584c7d8086fa59bec6c17a11f192a1d118649faf925efa0aae48852809"
+        },
+        {
+          "name": "comms-compare",
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+            "run",
+            "comms:compare"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.516,
+          "logSha256": "8b0b5dc70f13c44ba8942dc6bbe00ba2fc1f26be2108c5e8ac59a728e214ff54"
+        }
+      ],
+      "startedAt": "2026-11-25T16:55:55.278454+00:00",
+      "activeStep": null,
+      "completedAt": "2026-11-25T16:56:18.249551+00:00"
+    }
+  ],
+  "deferred": [
+    "full Runtime/Vite builds",
+    "Electron journeys",
+    "live provider quality/cost experiment",
+    "full engineering executor/verifier"
+  ],
+  "limitations": [
+    "Planning and semantic support share two model calls. Newly found evidence after this limit remains uncovered until a new request.",
+    "Positive input-only configured tariffs and single-call usage reporting are required for budgeted remote retrieval."
+  ],
+  "sourceInputs": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "0badc524209410557394b393591aa6a10f2bfc129fe5419f0ebb6edb30a033da"
+    },
+    {
+      "path": "README.md",
+      "sha256": "0386053fa53a62a9848dc8c3c2936222786cf74ae4fc2039805cd0c910295696"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "34e9291af3b2e07303120b430aac47f5f16a7834ba2a1f9767056caf6307ef3f"
+    },
+    {
+      "path": "docs/dev/project-rag/RESEARCH-CONTRACT.md",
+      "sha256": "63c1d77c4fcb6822ab2893bddfd94e6a419d5232b1e070e5405869663dffc1c7"
+    },
+    {
+      "path": "docs/dev/project-rag/WINDOWS-FIRST-PLAN.md",
+      "sha256": "21f2fea4297c0cad31f2fb37d446bf85464154137484eb0d17d88e658b835f76"
+    },
+    {
+      "path": "electron/services/knowledge-evidence-qa.ts",
+      "sha256": "93419dd1c5df4e90c4b84431cd8f42fcb5c03ec77cea76715c3865ea7a94be73"
+    },
+    {
+      "path": "electron/services/knowledge-research.ts",
+      "sha256": "804521ead3021521bb44bb848243c9c57f02ae1980e19e60e655ffbc9c7b9d8b"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-bounded-research.md",
+      "sha256": "9600cbfd1ae9e90bbce972f0b54e3d857a2a20a9a2973d821c6870760addf9ae"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+      "sha256": "11934aee2cb97818f194f106002513b01882ae997abb75c060956ad4cd32eaaf"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-embeddings.ts",
+      "sha256": "4398da0405c3f93211e14c7d81680c068a6ddd1315e11ca6b776a77255aaca30"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-rerank.ts",
+      "sha256": "bc80e5c55f09d5526c52d5458401d674e76bb489e33c3b6f0b6d70535b78d346"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts",
+      "sha256": "17c63adc6ef4e143a4a344c71a9dc85474055a3c0c85ac413e14129b0811c9b9"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval/vector-service.ts",
+      "sha256": "d9e62d76e76f0dc2328743309af90b1da6cffe08431b9769720035dd8efea029"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-spend-budget.ts",
+      "sha256": "e1f471e9d9088941ba7d72e9349ab031e2ec34973e668f2a8ffd3af2606c7b78"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/embedding-session.ts",
+      "sha256": "bd2ed2d6154ee3f82325cc8d3564ec9b275b37e47a74b4888c526705b129ca41"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/research.ts",
+      "sha256": "40dbbf56b32d7fe56fb7ad613c5d4f1b9f70eb9e1bad56e3fc354ddef2ea1687"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/spend.ts",
+      "sha256": "f5629f06579f18f75e57bbcead324d498af2637ec11ccfef2cf60b036376faf8"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts",
+      "sha256": "2a41df8199ddc7f320eb008aadde01d97986c3674a776dbedbf3c6b35af6a4b1"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/embedding-provider-types.ts",
+      "sha256": "a9a990b0b320de9819d2be84c0fc1c087185e3adaec8caef110bc15668f1ce47"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/openai-compatible-embedding-provider.ts",
+      "sha256": "e8d78cc4c09754f3cf15790f8a3a2215104532fb6bb3f4858eed9e1056d8db7d"
+    },
+    {
+      "path": "shared/knowledge/research.ts",
+      "sha256": "44cfcadaa2d5b13c97f366a80ce464a9e6c17eb63730a7f73e0dde5e6279cd81"
+    },
+    {
+      "path": "shared/knowledge/retrieval.ts",
+      "sha256": "70dffcdc9ce4c730897070f9180f55bd221dfd3691e6e0bf470f003363da9ee6"
+    },
+    {
+      "path": "tests/e2e/project-rag-research.spec.ts",
+      "sha256": "1bb82c1ed0b0eb8f44d9fcd1a04c8d3f73555fdb7b2e834c9a7566b3b1bf60e1"
+    },
+    {
+      "path": "tests/unit/project-rag-embedding-lifecycle.test.ts",
+      "sha256": "5ec410397e28aa8732aa67815074e1be461efa8be6c44461fca53d075ab8f7ce"
+    },
+    {
+      "path": "tests/unit/project-rag-plan-owner.test.ts",
+      "sha256": "b2b95a55739c256c7907a016dbe82f42d3ef9d1b67ef9084bfcf185e01a47bd7"
+    },
+    {
+      "path": "tests/unit/project-rag-research-controller.test.ts",
+      "sha256": "1e086e198b274b460481120f7f189b32ce8588eef16ce4971d286ab2747dd478"
+    },
+    {
+      "path": "tests/unit/project-rag-retrieval-spend.test.ts",
+      "sha256": "47c89332251d6197088335267c01912b641dc22a2c8fe1e81cffaf4fd9a6d41a"
+    }
+  ]
+}

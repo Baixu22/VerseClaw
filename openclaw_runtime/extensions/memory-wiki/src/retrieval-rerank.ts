@@ -1,6 +1,7 @@
 import {
   createEndpointRerankProvider,
   type RerankProviderV1,
+  type RetrievalSpendCall,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import { resolveConfiguredSecretInputString } from "openclaw/plugin-sdk/config-runtime";
 import {
@@ -199,8 +200,15 @@ export function createMemoryWikiRerankService(options: {
         return status;
       });
     },
-    async close() { await enqueue(async () => { saved = undefined; }); },
-    async provider(identity: MemoryWikiReadIdentity): Promise<RerankProviderV1> {
+    async close() {
+      await enqueue(async () => {
+        saved = undefined;
+      });
+    },
+    async provider(
+      identity: MemoryWikiReadIdentity,
+      remoteSpend?: RetrievalSpendCall,
+    ): Promise<RerankProviderV1> {
       assertScope(identity);
       if (!saved || saved.suspended) throw new Error("Rerank provider is not configured");
       status = {
@@ -231,33 +239,57 @@ export function createMemoryWikiRerankService(options: {
         model,
         endpoint: url,
         request: async (body, signal) => {
-          const { response, release } = await fetchWithSsrFGuard({
-            url,
-            signal,
-            init: {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+          const dispatch = async (reportInputTokens?: (tokens: unknown) => void) => {
+            signal.throwIfAborted();
+            assertScope(identity);
+            const { response, release } = await fetchWithSsrFGuard({
+              url,
+              signal,
+              init: {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+                },
+                body: JSON.stringify(body),
               },
-              body: JSON.stringify(body),
-            },
-            policy:
-              selection.mode === "local"
-                ? { allowPrivateNetwork: true, hostnameAllowlist: [new URL(url).hostname] }
-                : ssrfPolicyFromHttpBaseUrlAllowedHostname(url),
-            auditContext: "project-rag:rerank",
-          });
-          try {
-            if (!response.ok) throw new Error(`Rerank endpoint failed: HTTP ${response.status}`);
-            return (await response.json()) as {
-              results: Array<{ index: number; relevance_score: number }>;
-              tokens?: { input_tokens?: number };
-              meta?: { tokens?: { input_tokens?: number } };
-            };
-          } finally {
-            await release();
-          }
+              policy:
+                selection.mode === "local"
+                  ? { allowPrivateNetwork: true, hostnameAllowlist: [new URL(url).hostname] }
+                  : ssrfPolicyFromHttpBaseUrlAllowedHostname(url),
+              auditContext: "project-rag:rerank",
+            });
+            try {
+              if (!response.ok) throw new Error(`Rerank endpoint failed: HTTP ${response.status}`);
+              const result = (await response.json()) as {
+                results: Array<{ index: number; relevance_score: number }>;
+                tokens?: { input_tokens?: number };
+                meta?: {
+                  tokens?: { input_tokens?: number };
+                  billed_units?: { input_tokens?: number };
+                };
+              };
+              reportInputTokens?.(
+                result.meta?.billed_units?.input_tokens ??
+                  result.tokens?.input_tokens ??
+                  result.meta?.tokens?.input_tokens,
+              );
+              return result;
+            } finally {
+              await release();
+            }
+          };
+          return selection.mode === "remote" && remoteSpend
+            ? remoteSpend(
+                {
+                  providerRef,
+                  model,
+                  texts: body.documents.map((text) => body.query + "\n" + text),
+                  signal,
+                },
+                dispatch,
+              )
+            : dispatch();
         },
       });
     },
