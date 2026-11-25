@@ -289,7 +289,11 @@
     "harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/fresh-review.json",
     "harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/manifest.json",
     "harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/raw-evidence.json.gz",
-    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/source.json"
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/source.json",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/mainline-integration-20261125/REPORT.md",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/mainline-integration-20261125/report.json",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/mainline-integration-20261125/evidence.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/mainline-integration-20261125/SHA256SUMS"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
