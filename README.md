@@ -309,7 +309,7 @@ Search and filter the task list, then load further pages. Agents can suggest rel
 
 Conversation tasks are managed by the agent. Identified work appears in one task header above the conversation, with verified step progress and a hide/reopen control. The plain canvas keeps the input clear; a small changed-file entry appears below the composer only when files change. Branches and worktree controls remain in its details.
 
-- Knowledge Librarian offers source-only and open answers. Exact quotes and version/range pins are checked separately from agent-driven claim support; citations reopen the owner-verified raw range. General knowledge and inference have no fabricated citations.
+- Knowledge Librarian offers source-only and open answers. Exact quotes and version/range pins are checked separately from agent-driven claim support; citations reopen the owner-verified raw range. Repeated claim text contributes to structured conflicts only when all its occurrences are in the current read range. General knowledge and inference have no fabricated citations.
 - Chat offers Off, Manual, Suggest and Auto-read independently of Local, Quality and Research retrieval profiles. Preflight can inspect the current source before attaching it; each sent turn shows its retained DCS evidence and estimates. Optional reads are cancellable and bounded, and ordinary follow-ups preserve evidence through the send queue. See the [chat interaction contract](docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md).
 
 Retrieval diagnostics in Knowledge settings show reference-only receipts, measured latency and unknown usage. Evaluated ranking policies are imported from the frozen offline cohort and can be rolled back; feedback never changes ranking automatically.

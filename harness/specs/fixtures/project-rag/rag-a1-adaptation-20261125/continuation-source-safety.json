@@ -1,0 +1,127 @@
+{
+  "schema": "G2AdaptationSourceSafety/v1",
+  "candidate": "6d3bf2e970ecc927850cbc82dc20f15cac08749e+claims-occurrence-working-diff",
+  "actor": "agent-derived-safety-probe",
+  "driven_by": "agent",
+  "fixtureKind": "controlled-mutations-of-authorized-project-document",
+  "cases": [
+    {
+      "name": "revoked",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:9a8602c202dedc04b44d0bc4965d4afda85a116ab35b1a288ccafcc00aa6e1f1",
+      "expected": "revoked",
+      "actual": "revoked",
+      "passed": true
+    },
+    {
+      "name": "stale",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:5c73fa1e92b54ce1192634ff4185cc53c363b7032b95d6ced6e1dd41705e75d5",
+      "expected": "stale",
+      "actual": "stale",
+      "passed": true
+    },
+    {
+      "name": "expired",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:db164eff0fea7db2700f522e37ee1713f2e47c8b72d5d94c09fd72bf65c2bdbb",
+      "expected": "expired",
+      "actual": "expired",
+      "passed": true
+    },
+    {
+      "name": "acl",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:7d3a93f87c6670b5fdf90eb91e33e3786a1c154b8beb5c2175dafa1be20987c0",
+      "expected": "acl_denied",
+      "actual": "acl_denied",
+      "passed": true
+    },
+    {
+      "name": "scope",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:14e2a065724e63f9308f06cf108f3c691c063c841960c0d8317249aeb02a7c16",
+      "expected": "scope_mismatch",
+      "actual": "scope_mismatch",
+      "passed": true
+    },
+    {
+      "name": "conflict",
+      "sourceOrigin": "explicit-agent-derived-conflict-fixture",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "expected": "two conflicting stances with owner citations",
+      "actual": {
+        "kind": "claim",
+        "key": "claim:chunk-target-tokens",
+        "description": "Conflicting stances for claim \"chunk-target-tokens\": 目标最多 128 tokens vs 目标最多 384 tokens.",
+        "stances": [
+          "目标最多 128 tokens",
+          "目标最多 384 tokens"
+        ],
+        "citations": [
+          {
+            "refId": "memory-wiki:memory-wiki:03e02228a8e05b2cf2f771066e54040f3b415ecd1a3fc03e890ee051c6082d32:concepts/128.md:363-3421",
+            "owner": "memory-wiki",
+            "subjectId": "concepts/128.md",
+            "revision": "1",
+            "contentDigest": "sha256:3ee70b4683a09144b97414be89737a8a48b36f772c88cd07efffc674cd01d8dc",
+            "sourceRefs": [
+              "128"
+            ],
+            "sourceRef": {
+              "domain": "wiki",
+              "authorityId": "memory-wiki",
+              "namespaceId": "memory-wiki:03e02228a8e05b2cf2f771066e54040f3b415ecd1a3fc03e890ee051c6082d32",
+              "subjectId": "concepts/128.md",
+              "revision": "1",
+              "schema": "SourceRef/v2",
+              "sourceDigest": "sha256:a7fcfd9cccecef3b0c9f6a0623819ceadf49e1b3a53aa3632412a6f19cb843c2",
+              "policyEpoch": "sha256:52e79be3ae04b5514ae907fe144b20ee18931df0ff73673f6a4c88e14455fc93",
+              "locator": {
+                "coordinateSpace": "raw-source-utf8-v1",
+                "startByte": 363,
+                "endByteExclusive": 3421,
+                "startLine": 16,
+                "endLine": 40
+              }
+            }
+          },
+          {
+            "refId": "memory-wiki:memory-wiki:03e02228a8e05b2cf2f771066e54040f3b415ecd1a3fc03e890ee051c6082d32:concepts/384.md:363-3421",
+            "owner": "memory-wiki",
+            "subjectId": "concepts/384.md",
+            "revision": "1",
+            "contentDigest": "sha256:54a5b537362bf90905232ddfa8eb2c5708820d9a7e49ac083f2888ec79dd73b7",
+            "sourceRefs": [
+              "384"
+            ],
+            "sourceRef": {
+              "domain": "wiki",
+              "authorityId": "memory-wiki",
+              "namespaceId": "memory-wiki:03e02228a8e05b2cf2f771066e54040f3b415ecd1a3fc03e890ee051c6082d32",
+              "subjectId": "concepts/384.md",
+              "revision": "1",
+              "schema": "SourceRef/v2",
+              "sourceDigest": "sha256:5bf4d23baf1e0374fcfa5038fa5d7f3999309046d010642cce91855cb36386de",
+              "policyEpoch": "sha256:52e79be3ae04b5514ae907fe144b20ee18931df0ff73673f6a4c88e14455fc93",
+              "locator": {
+                "coordinateSpace": "raw-source-utf8-v1",
+                "startByte": 363,
+                "endByteExclusive": 3421,
+                "startLine": 16,
+                "endLine": 40
+              }
+            }
+          }
+        ]
+      },
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,151 @@
+{
+  "actor": "codex-g2-tf0946",
+  "driven_by": "agent",
+  "review": "code-review-result-r8.txt",
+  "findings": [
+    {
+      "subject": "snapshot output parent must exist",
+      "disposition": "not-a-regression",
+      "evidence": "git show f834e4150:scripts/knowledge-rag-adaptation.ts already creates output with mkdir(output, { recursive: false }); a missing parent already failed before realpath was introduced.",
+      "action": "Keep the existing output-parent precondition and realpath isolation."
+    },
+    {
+      "subject": "metadata claim text can match an unrelated occurrence in a partial read",
+      "disposition": "reproduced-and-fixed",
+      "before": "claims-occurrence-before.json: 37 passed, 1 failed; the unrelated Port occurrence incorrectly returned claim transport.",
+      "change": "Require the first and last exact occurrence in the full body to fall within the current continuous owner-read range.",
+      "regression": "Partial duplicate exclusions, full duplicate inclusion, actual SourceSet conflict output, UTF-8/CRLF coordinates, and Electron knowledge.get assertions."
+    }
+  ],
+  "receipts": [
+    {
+      "round": 6,
+      "path": "D:\\tmp\\g2-tf0946-20261125-01a21178\\code-review-receipt-r6.json",
+      "sha256": "116d5645ae34630eca7945e3cffdc75d75867d500a59612395f98a6b778f311c",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "d492f7cb2fc4504d49ec95ad227d0e8d8daead86b6bbf8a5aa202541c1099701",
+        "startedAt": "2026-11-25T11:00:50.814952+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "completed",
+        "usage": {
+          "cache_creation_input_tokens": 0,
+          "input_tokens": 13098,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 16000,
+          "output_tokens_details": {
+            "reasoning_tokens": 16000
+          },
+          "total_tokens": 29098
+        },
+        "costUsd": null,
+        "responseId": "chatcmpl-737e078de6d79b651e6ae016fb71e919",
+        "returnedModel": "deepseek-v4.1-flash",
+        "durationSeconds": 108.68700000000536,
+        "outputBytes": 0,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "round": 7,
+      "path": "D:\\tmp\\g2-tf0946-20261125-01a21178\\code-review-receipt-r7.json",
+      "sha256": "4a5c9096e3b55b7038aa3e4203102b164edb5e85716db4de2c939a83271de26d",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "597eaeeb5e2815d0d133e1ee5ac6b4cf27e1347519d6e9e9d3a762640dbf0dea",
+        "startedAt": "2026-11-25T11:10:30.117557+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "completed",
+        "usage": {
+          "cache_creation_input_tokens": 0,
+          "input_tokens": 13098,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 16000,
+          "output_tokens_details": {
+            "reasoning_tokens": 16000
+          },
+          "total_tokens": 29098
+        },
+        "costUsd": null,
+        "responseId": "chatcmpl-08e5433c5e8c7ab9f980c52bd828f81f",
+        "returnedModel": "deepseek-v4.1-flash",
+        "durationSeconds": 101.65599999998813,
+        "outputBytes": 0,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "round": 8,
+      "path": "D:\\tmp\\g2-tf0946-20261125-01a21178\\code-review-receipt-r8.json",
+      "sha256": "a0fb0c537c272f4881172cc0585e8a22acd88f8d3281fa14d5614a742bdac91a",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "db92d2ef43839cd3f983dea4f200f77b82c60972effa51aa9b318534e0862e89",
+        "startedAt": "2026-11-25T11:14:20.262817+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "completed",
+        "usage": {
+          "cache_creation_input_tokens": 0,
+          "input_tokens": 4966,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 9189,
+          "output_tokens_details": {
+            "reasoning_tokens": 9008
+          },
+          "total_tokens": 14155
+        },
+        "costUsd": null,
+        "responseId": "chatcmpl-4bc05fe465da47779fcdbfcd13f7a187",
+        "returnedModel": "deepseek-v4.1-flash",
+        "durationSeconds": 74.29700000002049,
+        "outputBytes": 682,
+        "outputSha256": "39febf5770724aad86713a06e5d8515b43a2d4c12ec485137bbc48d927364ab0"
+      }
+    },
+    {
+      "round": 9,
+      "path": "D:\\tmp\\g2-tf0946-20261125-01a21178\\code-review-receipt-r9.json",
+      "sha256": "87c4f76567e77cf3d24c5740a1e344a6882f30ef35444536898bfd9c7cd09295",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "356867e21bb17011d2d9dc5d7ae6f610ffc844aea76a27499d8588e4c64e61db",
+        "startedAt": "2026-11-25T11:37:59.714539+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "started",
+        "usage": null,
+        "costUsd": null
+      }
+    }
+  ],
+  "r9Recovery": {
+    "actor": "codex-g2-tf0946-review-recovery",
+    "driven_by": "agent",
+    "originalReceipt": "code-review-receipt-r9.json",
+    "terminalCount": 0,
+    "eventCount": 864,
+    "lastType": "response.reasoning_summary_text.delta",
+    "outputBytes": 0,
+    "backendStatus": "unknown",
+    "retryDispatched": false
+  },
+  "r8Text": "输出隔离：FAIL。触发 output=/tmp/rag-new/out 且 /tmp/rag-new 不存在：realpath(dirname(output)) 直接抛 ENOENT，原 resolve 可继续进入后续建目录；新增父目录必须已存在的前置条件。\n评分去重：PASS。seenHits 按 identity+start/end 去重，rankGrades 按单 hit 覆盖率计算，未发现重复计分或联合字节借分。\nClaims 切片：FAIL。触发未读 claim text=\"Port\" 而已读 slice 普通文本含 \"Port\"，slice.includes 会误纳入该未读 claim，下游 conflictSet 可带出其 id/text。\n复核者空白：PASS。actor 与 reviewer 均 trim 后比较，空白差异被拒；denied 分支不返回 claims。\nFINAL=FAIL",
+  "finalIndependentWholeChangeVerdict": "unavailable"
+}

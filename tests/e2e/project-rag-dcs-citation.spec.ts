@@ -156,6 +156,15 @@ test('Project RAG packs real owner evidence for ordinary, media, queued, retry a
     expect(conflict.conflictSet).toEqual(expect.arrayContaining([expect.objectContaining({
       key: 'claim:deployment-port', stances: expect.arrayContaining([quote, 'The deployment port is 9999.']),
     })]));
+    await writeFile(join(vault, 'concepts/ambiguous-claim.md'), document('Repeated claim', 'Port reference\nPort')
+      .replace('revision: 1\n', 'revision: 1\nclaims:\n  - id: transport\n    text: Port\n'));
+    const readRepeated = (lineCount: number) => host<Json>(page, 'knowledge', 'get', {
+      lookup: 'concepts/ambiguous-claim.md', corpus: 'wiki', workspaceId: owner.id, fromLine: 1, lineCount,
+    });
+    const repeatedPartial = await readRepeated(1), repeatedComplete = await readRepeated(2);
+    expect(repeatedPartial.claims).toEqual([]);
+    expect(repeatedComplete.claims).toEqual([{ id: 'transport', text: 'Port' }]);
+    receipt.claimOccurrence = { partialReadExcluded: true, completeReadIncluded: true };
     receipt.answerContract = { unsupported, missing, general, conflict };
     await writeFile(join(vault, 'concepts/z-first.md'), document('Z first', quote));
 

@@ -82,6 +82,28 @@ describe('Project RAG owner read contract', () => {
     expect(denied?.status).toBe('denied'); expect(denied?.claims).toBeUndefined();
   });
 
+  it('does not bind a repeated claim to an unrelated occurrence in a partial owner read', async () => {
+    const claims = (value: string) => `claims:\n  - id: transport\n    text: ${value}\n`;
+    await save(raw(claims('Port'), 'Port reference\nPort\n'));
+    await writeFile(join(root, 'concepts/other.md'), raw(claims('Socket'), 'Socket reference\nSocket\n'));
+    const read = (lookup: string) => getMemoryWikiPage({ config: config(), lookup, fromLine: 1, lineCount: 1 });
+    expect((await read('concepts/owner.md'))?.claims).toEqual([]);
+    const result = await retrieveSelectedSourceSetEvidence({ question: 'Which transport?',
+      sourceRefs: ['owner', 'other'].map(name => ({ id: name, path: `concepts/${name}.md`, kind: 'wiki' })),
+      readPage: ref => read(ref.path!),
+    });
+    expect(result.sourceSet.conflictSet).toEqual([]);
+    // Reading every occurrence makes the metadata-to-text binding unambiguous.
+    expect((await get())?.claims).toEqual([{ id: 'transport', text: 'Port' }]);
+  });
+
+  it('uses raw character offsets for repeated claims in UTF-8 CRLF owner slices', async () => {
+    await save(raw('claims:\n  - id: setting\n    text: 中文设置\n', '😀 heading\n中文设置\n中文设置\n').replace(/\n/g, '\r\n'));
+    const read = (lineCount: number) => getMemoryWikiPage({ config: config(), lookup: 'concepts/owner.md', fromLine: 2, lineCount });
+    expect((await read(1))?.claims).toEqual([]);
+    expect((await read(2))?.claims).toEqual([{ id: 'setting', text: '中文设置' }]);
+  });
+
   it.each([
     ['revoked', 'status: revoked\n'], ['archived', 'status: archived\n'],
     ['deleted', 'status: deleted\n'], ['stale', 'status: stale\n'], ['denied', 'status: denied\n'],

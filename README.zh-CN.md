@@ -211,7 +211,7 @@ flowchart LR
 - 编码上下文工具按实际相对路径和当前 owner／版本解析跨文件导入与调用，默认一跳、最多两跳；每跳共用 512 条候选扫描预算，达到上限时明确返回 partial。当前任务 hint 提供已绑定的 revision、约束和证据引用。参见[代码关系与任务线索](docs/dev/project-rag/CODE-TASK-CONTEXT-CONTRACT.md)。
 - Chat 知识选择器中的显式 Research 按证据缺口继续检索，单次冻结预算内最多三轮、八个 query 和两次规划调用；界面展示进度、取消、来源证据、推断、冲突与部分结果，请求失败时同时取消后端工作，迟到启动回执会对已停止请求补发取消；最后的 owner 复验读回期间仍可取消。参见 [Research 检索合同](docs/dev/project-rag/RESEARCH-CONTRACT.md)。
 - DCS 保留已准入知识的次序，在共享预算内整片装配 chunk 或冲突组，并记录 Chat 与 model-only 知识问答实际保留的引用和字节，见[证据装配合同](docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md)。
-- Librarian 问答与有界追问通过已配置 Gateway 模型处理准入后的证据，核验逐项原文引用与版本；部分读取、冲突和模型失败明确披露。Studio 继续生成待审摘录草稿。
+- Librarian 问答与有界追问通过已配置 Gateway 模型处理准入后的证据，核验逐项原文引用与版本；重复 claim 文本只有全部出现位置都在当前读取范围内才进入结构化冲突判断。部分读取、冲突和模型失败明确披露。Studio 继续生成待审摘录草稿。
 - 中文词法、长文有界续读、按 provider 隔离的 embedding 缓存和版本绑定的 Steward 发现共用来源准入。可选公共 GitHub 目录连接器将更新与撤销送入 Inbox；其他 SaaS 连接器尚未实现。
 - 设置 > 模型与服务可为项目检索选择本地 EmbeddingGemma 或配置的远端 Qwen VL，提供安装、校验、预热、取消和凭据刷新。参见 [embedding 生命周期](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md)。
 - 同页的知识运维管理默认检索方案、回答策略、索引启用/暂停/恢复/重建和发布空间预算，显示有效来源代际、索引滞后、逻辑删除、旧代际清理和模型能力原因。参见[配置与运维](docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md)。
