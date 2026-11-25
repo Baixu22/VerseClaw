@@ -4,7 +4,7 @@ title: 工作区路径、文件审批与写入恢复目标一致性
 lifecycleStatus: active
 taskType: runtime-bridge
 scenario: gateway-backend-communication
-diffBase: 526645345fac24c0ecb0f7e4170d920e57d37153
+diffBase: 2bc6a8dddd26fc2ad35ec475c07ae9e8a4c0ef19
 intent: 预检与创建使用同一 home 路径展开，外部写入批准绑定内容，journal 和 stale guard 跟随实际写入目标。
 expectedUserBehavior:
   - 使用 ~/ 路径时，工作区预检与创建识别同一目录并继续拒绝 home 根目录。
