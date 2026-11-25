@@ -1,0 +1,114 @@
+{
+  "schema": "ReviewAdjudication/v1",
+  "driven_by": "agent",
+  "actor": "codex/issues-closeout-01a21263",
+  "candidate": "824e6e1776818049b36e047bf95f1ecedba14a97",
+  "originalReportSha256": "526872a7a94831187e0932af415b28e7ee0a794c760005659636825fdb08583b",
+  "originalVerdict": "patch is correct",
+  "originalConfidence": 0.5,
+  "automatedValidity": false,
+  "adjudicatedCompletedReview": true,
+  "validityExplanation": "The report contains a completed correctness verdict and two specific conditional findings. The wrapper overmatched the word pending in the final semantic-check clause, producing exit4; preserve that receipt and original validity record. This is a completed review with its two requested semantic checks resolved below, not an initialization placeholder.",
+  "accepted": 0,
+  "rejected": 2,
+  "actionableRemaining": 0,
+  "decisions": [
+    {
+      "finding": {
+        "body": "In write-journal-core.ts undoLastWrites, the previous assertSandboxPath({filePath, cwd: targetRoot, root: targetRoot}) check is replaced by assertNoPathAliasEscape({absolutePath: entry.absPath, rootPath: targetRoot}). If assertNoPathAliasEscape does not perform the same containment/alias validation (e.g., it only rejects path-alias tokens and does not verify the target is inside rootRoot), undo could restore journal snapshot bytes to a target outside the sandbox/workspace, turning a containment check into a weaker one. Need to confirm the exact semantics of assertNoPathAliasEscape vs assertSandboxPath before this is considered safe.",
+        "category": "security",
+        "code_location": {
+          "file_path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+          "line": 430
+        },
+        "confidence": 0.5,
+        "priority": "P1",
+        "title": "Undo target validation may be weaker after swapping assertSandboxPath for assertNoPathAliasEscape"
+      },
+      "decision": "rejected",
+      "reason": "Undo first checks lexical containment via toRelativeWorkspacePathFromResolved(targetRoot, entry.absPath), then calls assertNoPathAliasEscape and performs rooted fs-safe restoration. The previous assertSandboxPath performs resolveSandboxPath containment then calls exactly the same assertNoPathAliasEscape helper. Both alias-policy options were undefined in the old call and remain at their default in the new call. The new arrangement preserves containment and alias checks while avoiding a second raw-input expansion of the stored filename.",
+      "sourceEvidence": [
+        {
+          "path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+          "startLine": 402,
+          "endLine": 447,
+          "sha256": "c0f3f2a376d9b2b1c86ceb828bfb24dfe86fa86d9fdb24aefcf4d63d3fd5a220",
+          "excerpt": "    try {\n      if (params.workspaceOnly) {\n        (validateWorkspacePath ?? toRelativeWorkspacePathFromResolved)(\n          params.workspaceRoot,\n          entry.absPath,\n        );\n      }\n      // Snapshot bytes always belong to this workspace, even when an operator\n      // explicitly permits restoring an external target. Never follow a swapped\n      // .pre link to bring external bytes into the restored file.\n      const journalRoot = await fsRoot(params.workspaceRoot);\n      const snapshotRelative = toRelativeWorkspacePathFromResolved(\n        params.workspaceRoot,\n        entry.snapshotPath,\n      );\n      let preimage: Buffer | undefined;\n      if (entry.hadPrior) {\n        try {\n          preimage = (await journalRoot.read(snapshotRelative)).buffer;\n        } catch (error) {\n          if (error instanceof FsSafeError && error.code === \"not-found\") {\n            throw new Error(`journal snapshot missing: ${entry.snapshotPath}`, { cause: error });\n          }\n          throw error;\n        }\n      }\n      const targetRoot = params.workspaceOnly ? params.workspaceRoot : path.dirname(entry.absPath);\n      const relative = toRelativeWorkspacePathFromResolved(targetRoot, entry.absPath);\n      await assertNoPathAliasEscape({\n        absolutePath: entry.absPath,\n        rootPath: targetRoot,\n        boundaryLabel: \"sandbox root\",\n      });\n      const destination = await fsRoot(targetRoot);\n      // Keep the validated target literal; fs-safe also accepts bounded\n      // absolute paths, avoiding a second ~ expansion during recovery.\n      const restorePath = path.resolve(destination.rootReal, relative);\n      if (journal.entries.at(-1) !== entry) {\n        throw new Error(\"concurrent_write_detected: journal tail changed before restore\");\n      }\n      if (preimage !== undefined) {\n        await destination.write(restorePath, preimage, { mkdir: true });\n      } else {\n        try {\n          await destination.remove(restorePath);\n        } catch (error) {"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/path-policy.ts",
+          "startLine": 36,
+          "endLine": 102,
+          "sha256": "5ca630cd13a65fde627e651da716dfa601f7ae4e9dba8c31d3a907199e4d5575",
+          "excerpt": "}): string {\n  // path.relative returns \".\" for the root itself. Treat that as escaping unless\n  // the caller explicitly accepts root-targeting operations.\n  if (params.relativePath === \"\" || params.relativePath === \".\") {\n    if (params.options?.allowRoot) {\n      return \"\";\n    }\n    throwPathEscapesBoundary({\n      options: params.options,\n      rootResolved: params.rootResolved,\n      candidate: params.candidate,\n    });\n  }\n  // The absolute-path check catches Windows drive-relative oddities after\n  // normalization, while the prefix checks cover ordinary parent traversal.\n  if (\n    params.relativePath === \"..\" ||\n    params.relativePath.startsWith(\"../\") ||\n    params.relativePath.startsWith(\"..\\\\\") ||\n    params.isAbsolutePath(params.relativePath)\n  ) {\n    throwPathEscapesBoundary({\n      options: params.options,\n      rootResolved: params.rootResolved,\n      candidate: params.candidate,\n    });\n  }\n  return params.relativePath;\n}\n\nfunction toRelativePathUnderRoot(params: {\n  root: string;\n  candidate: string;\n  options?: RelativePathOptions;\n  resolvedInput?: string;\n}): string {\n  const resolvedInput =\n    params.resolvedInput ??\n    resolveSandboxInputPath(params.candidate, params.options?.cwd ?? params.root);\n\n  if (process.platform === \"win32\") {\n    // Windows comparisons need normalized separators and drive casing before\n    // path.relative; otherwise the same root can look outside the boundary.\n    const rootResolved = path.win32.resolve(params.root);\n    const resolvedCandidate = path.win32.resolve(resolvedInput);\n    const rootForCompare = normalizeWindowsPathForComparison(rootResolved);\n    const targetForCompare = normalizeWindowsPathForComparison(resolvedCandidate);\n    const relative = path.win32.relative(rootForCompare, targetForCompare);\n    return validateRelativePathWithinBoundary({\n      relativePath: relative,\n      isAbsolutePath: path.win32.isAbsolute,\n      options: params.options,\n      rootResolved,\n      candidate: params.candidate,\n    });\n  }\n\n  const rootResolved = path.resolve(params.root);\n  const resolvedCandidate = path.resolve(resolvedInput);\n  const relative = path.relative(rootResolved, resolvedCandidate);\n  return validateRelativePathWithinBoundary({\n    relativePath: relative,\n    isAbsolutePath: path.isAbsolute,\n    options: params.options,\n    rootResolved,\n    candidate: params.candidate,\n  });"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sandbox-paths.ts",
+          "startLine": 66,
+          "endLine": 109,
+          "sha256": "62eaa4fe9ba0be61c1317f6812b1bcea209b1efc9fa16ae9646526f7781e067d",
+          "excerpt": "export function resolveSandboxPath(params: { filePath: string; cwd: string; root: string }): {\n  resolved: string;\n  relative: string;\n} {\n  const resolved = resolveSandboxInputPath(params.filePath, params.cwd);\n  const rootResolved = path.resolve(params.root);\n  const relative = path.relative(rootResolved, resolved);\n  if (!relative || relative === \"\") {\n    return { resolved, relative: \"\" };\n  }\n  if (\n    relative === \"..\" ||\n    relative.startsWith(\"../\") ||\n    relative.startsWith(\"..\\\\\") ||\n    path.isAbsolute(relative) ||\n    isWindowsDrivePath(relative)\n  ) {\n    throw new Error(`Path escapes sandbox root (${shortPath(rootResolved)}): ${params.filePath}`);\n  }\n  return { resolved, relative };\n}\n\nexport async function assertSandboxPath(params: {\n  filePath: string;\n  cwd: string;\n  root: string;\n  allowFinalSymlinkForUnlink?: boolean;\n  allowFinalHardlinkForUnlink?: boolean;\n}) {\n  const resolved = resolveSandboxPath(params);\n  const policy: PathAliasPolicy = {\n    allowFinalSymlinkForUnlink: params.allowFinalSymlinkForUnlink,\n    allowFinalHardlinkForUnlink: params.allowFinalHardlinkForUnlink,\n  };\n  await assertNoPathAliasEscape({\n    absolutePath: resolved.resolved,\n    rootPath: params.root,\n    boundaryLabel: \"sandbox root\",\n    policy,\n  });\n  return resolved;\n}\n\nexport function assertMediaNotDataUrl(media: string): void {"
+        }
+      ]
+    },
+    {
+      "finding": {
+        "body": "In wrapToolWithWriteJournal, paths for non-apply_patch tools are now resolved via resolveWorkspaceFile before acquirePatchBatchLocks, and the previous lockTargets mapping (path.isAbsolute ? path.resolve : path.resolve(workspaceRoot, filePath)) is replaced by the already-resolved paths. If resolveWorkspaceFile (now resolveToCwd) resolves inputs differently than the native write/edit tool's own resolver for some input form (e.g., a raw absolute path containing a literal ~ directory, or an @-prefixed path), the journal lease target and the actual written target can diverge, so the lock would not serialize writes to the same file. The new tests cover @ and file-URL forms, but the equivalence with the native resolver for all accepted input forms needs verification.",
+        "category": "bug",
+        "code_location": {
+          "file_path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+          "line": 224
+        },
+        "confidence": 0.45,
+        "priority": "P1",
+        "title": "Journal lock target may diverge from the native write target for some input forms"
+      },
+      "decision": "rejected",
+      "reason": "Native write.ts and edit.ts both import resolveToCwd from sessions/tools/path-utils.js and call it on the original path and cwd. resolveWorkspaceFile delegates to that exact same function and only applies path.normalize, matching normalized filesystem/lease identity. The wrapper resolves once before acquiring locks, passes the absolute result to snapshots, then executes the native tool with original arguments. Literal ~ components, @ prefixes and file URLs therefore use the same native resolver; existing path-identity and journal cases passed on this candidate.",
+      "sourceEvidence": [
+        {
+          "path": "openclaw_runtime/src/agents/session-read-hashes.ts",
+          "startLine": 66,
+          "endLine": 71,
+          "sha256": "fde1bb13d70e663627b3a2be6cc93a9ff9c575c2fbba911a67176213455b3453",
+          "excerpt": "  return relPath.replace(/\\\\/g, \"/\").replace(/^\\.\\//, \"\");\n}\n\n/** Resolve the same input target as the native read/write tools for hashing. */\nexport function resolveWorkspaceFile(workspaceRoot: string, relOrAbs: string): string {\n  return path.normalize(resolveToCwd(relOrAbs, workspaceRoot));"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/write.ts",
+          "startLine": 12,
+          "endLine": 22,
+          "sha256": "dac273aea78afdd4dcbf27cb3094095f1ca141bf7e358a4cda279fa76d41b9ef",
+          "excerpt": "import { dirname } from \"node:path\";\nimport { Container, Text } from \"@earendil-works/pi-tui\";\nimport { Type } from \"typebox\";\nimport { keyHint } from \"../../modes/interactive/components/keybinding-hints.js\";\nimport { getLanguageFromPath, highlightCode } from \"../../modes/interactive/theme/theme.js\";\nimport type { AgentTool } from \"../../runtime/index.js\";\nimport type { ToolDefinition, ToolRenderResultOptions } from \"../extensions/types.js\";\nimport { withFileMutationQueue } from \"./file-mutation-queue.js\";\nimport { resolveToCwd } from \"./path-utils.js\";\nimport {\n  invalidArgText,"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/write.ts",
+          "startLine": 405,
+          "endLine": 422,
+          "sha256": "dac273aea78afdd4dcbf27cb3094095f1ca141bf7e358a4cda279fa76d41b9ef",
+          "excerpt": "      signal?: AbortSignal,\n      onUpdate?,\n      ctx?,\n    ) {\n      void toolCallId;\n      void onUpdate;\n      void ctx;\n      const { path, content } = args;\n      const absolutePath = resolveToCwd(path, cwd);\n      const dir = dirname(absolutePath);\n      return withFileMutationQueue(\n        absolutePath,\n        async () => {\n          // A caller can wait here after outer validation. Recheck while this\n          // owner still holds the lease, before mkdir/write can apply an effect.\n          await options?.beforeWrite?.(absolutePath, args);\n          const byteLength = Buffer.byteLength(content, \"utf8\");\n          const precheck = await readOriginalWriteState(absolutePath, content, ops);"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/edit.ts",
+          "startLine": 29,
+          "endLine": 36,
+          "sha256": "2fede2a77ce202c1b713f2dd6cb12eec7bd5b8cdde9cf19106ee50f54a4194df",
+          "excerpt": "  normalizeToLF,\n  restoreLineEndings,\n  stripBom,\n} from \"./edit-diff.js\";\nimport { withFileMutationQueue } from \"./file-mutation-queue.js\";\nimport { resolveToCwd } from \"./path-utils.js\";\nimport { invalidArgText, shortenPath, str } from \"./render-utils.js\";\nimport type { EditToolDetails, EditToolInput } from \"./tool-contracts.js\";"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/edit.ts",
+          "startLine": 396,
+          "endLine": 410,
+          "sha256": "2fede2a77ce202c1b713f2dd6cb12eec7bd5b8cdde9cf19106ee50f54a4194df",
+          "excerpt": "    parameters: editSchema,\n    renderShell: \"self\",\n    prepareArguments: prepareEditArguments,\n    async execute(toolCallId, input: EditToolInput, signal?: AbortSignal, onUpdate?, ctx?) {\n      void onUpdate;\n      void ctx;\n      const { path, edits } = validateEditInput(input);\n      const absolutePath = resolveToCwd(path, cwd);\n\n      return withFileMutationQueue(absolutePath, async () => {\n        if (signal?.aborted) {\n          throw new Error(\"Operation aborted\");\n        }\n\n        try {"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+          "startLine": 220,
+          "endLine": 280,
+          "sha256": "bd65bc2ebf39d73beeb3f3a4d6d2a5b1c4595c1bf5046dd14acdcc02ebe1db6d",
+          "excerpt": "      const record = getToolParamsRecord(args);\n      const paths: string[] = [];\n      if (tool.name === \"apply_patch\") {\n        const input = typeof record?.input === \"string\" ? record.input : \"\";\n        paths.push(\n          ...extractPatchTargetPaths(input).map((filePath) =>\n            resolvePathFromInput(filePath, options.workspaceRoot),\n          ),\n        );\n      } else if (typeof record?.path === \"string\" && record.path.trim()) {\n        paths.push(resolveWorkspaceFile(options.workspaceRoot, record.path));\n      }\n      const lockTargets = tool.name === \"apply_patch\" ? [] : paths;\n      const release = await acquirePatchBatchLocks(lockTargets);\n      const snapshots: WriteJournalEntry[] = [];\n      try {\n        const confinedRoot =\n          options.workspaceOnly && paths.length > 0\n            ? await fsRoot(options.workspaceRoot)\n            : undefined;\n        for (const filePath of paths) {\n          const metadata = {\n            workspaceRoot: options.workspaceRoot,\n            sessionId: options.sessionId,\n            filePath,\n            toolName: tool.name,\n            ...(toolCallId ? { requestId: toolCallId } : {}),\n            ...(options.flags ? { flags: options.flags } : {}),\n          };\n          // Read through the existing rooted file handle after acquiring the\n          // lease: a path swapped while waiting must not leak into a snapshot.\n          let entry: WriteJournalEntry | null;\n          if (confinedRoot) {\n            const relative = toRelativeWorkspacePathFromResolved(options.workspaceRoot, filePath);\n            let prior: Buffer | undefined;\n            try {\n              prior = (await confinedRoot.read(path.resolve(confinedRoot.rootReal, relative)))\n                .buffer;\n            } catch (error) {\n              if (!(error instanceof FsSafeError && error.code === \"not-found\")) throw error;\n            }\n            entry = snapshotPreparedWrite({\n              ...metadata,\n              hadPrior: prior !== undefined,\n              ...(prior !== undefined ? { priorContent: prior } : {}),\n            });\n          } else {\n            entry = snapshotBeforeWrite(metadata);\n          }\n          if (entry) {\n            snapshots.push(entry);\n          }\n        }\n        const result = await tool.execute(toolCallId, args, signal, onUpdate);\n        if (snapshots.length === 0) {\n          return result;\n        }\n        const prevDetails =\n          result.details && typeof result.details === \"object\" && !Array.isArray(result.details)\n            ? (result.details as Record<string, unknown>)\n            : {};"
+        }
+      ]
+    }
+  ]
+}
