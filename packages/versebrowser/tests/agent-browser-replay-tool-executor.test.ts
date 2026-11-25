@@ -104,10 +104,10 @@ describe('请求重放沙箱执行器', () => {
   it('claims a draft before dispatch so concurrent sends have one network effect', async () => {
     let finish!: (response: Response) => void;
     const fetcher = vi.fn(() => new Promise<Response>(resolve => { finish = resolve; }));
-    let grant: BoundaryGrantContext | undefined;
-    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const approval: { grant?: BoundaryGrantContext } = {};
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => approval.grant });
     const draftId = prepareDraft(executor);
-    grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    approval.grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
     const first = executor.sendRequest({ draftId });
     try {
       expect((await executor.sendRequest({ draftId })).isError).toBe(true);
@@ -119,10 +119,10 @@ describe('请求重放沙箱执行器', () => {
 
   it.each(['connection reset', 'AbortError'])('keeps a %s send consumed when the outcome is unknown', async (failure) => {
     const fetcher = vi.fn(async () => { throw Object.assign(new Error(failure), { name: failure }); });
-    let grant: BoundaryGrantContext | undefined;
-    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const approval: { grant?: BoundaryGrantContext } = {};
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => approval.grant });
     const draftId = prepareDraft(executor);
-    grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    approval.grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
     await expect(executor.sendRequest({ draftId })).rejects.toThrow(failure);
     expect((await executor.sendRequest({ draftId })).isError).toBe(true);
     expect(fetcher).toHaveBeenCalledOnce();
@@ -130,10 +130,10 @@ describe('请求重放沙箱执行器', () => {
 
   it.each([{ tabId: 8 }, { origin: 'https://other.example' }, { expiresAt: 0 }])('rejects a mismatched or expired grant %j', async (override) => {
     const fetcher = vi.fn(async () => new Response('{}'));
-    let grant: BoundaryGrantContext | undefined;
-    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const approval: { grant?: BoundaryGrantContext } = {};
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => approval.grant });
     const draftId = prepareDraft(executor);
-    grant = createGrant({ ...override, scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    approval.grant = createGrant({ ...override, scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
     expect((await executor.sendRequest({ draftId })).isError).toBe(true);
     expect(fetcher).not.toHaveBeenCalled();
   });
@@ -209,7 +209,7 @@ describe('请求重放沙箱执行器', () => {
       headers: { 'content-type': 'application/json', 'x-trace-id': 'abc' },
     })) as unknown as typeof fetch;
     const grant: { current?: BoundaryGrantContext } = {};
-    const executor = createExecutor({ fetcher, getGrant: () => grant.current });
+    const executor = createExecutor({ fetcher, getGrant: () => approval.grant.current });
 
     const draftId = prepareDraft(executor);
     grant.current = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
@@ -237,7 +237,7 @@ describe('请求重放沙箱执行器', () => {
       headers: { 'content-type': 'text/plain' },
     })) as unknown as typeof fetch;
     const grant: { current?: BoundaryGrantContext } = {};
-    const executor = createExecutor({ fetcher, getGrant: () => grant.current });
+    const executor = createExecutor({ fetcher, getGrant: () => approval.grant.current });
     const draftId = prepareDraft(executor);
     grant.current = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
     const sendResult = await executor.sendRequest({ draftId });
@@ -266,7 +266,7 @@ describe('请求重放沙箱执行器', () => {
     const grant: { current?: BoundaryGrantContext } = {};
     const executor = createExecutor({
       fetcher,
-      getGrant: () => grant.current,
+      getGrant: () => approval.grant.current,
       meta: createMeta({
         requestHeaders: [
           { name: 'x-repeat', value: 'one' },
