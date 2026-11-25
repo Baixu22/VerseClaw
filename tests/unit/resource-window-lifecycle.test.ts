@@ -14,6 +14,7 @@ import { app, powerMonitor } from 'electron';
 import { getEfficiencyShedState, startRuntimeEfficiency, stopRuntimeEfficiency, startRuntimeResourceProtection, stopRuntimeResourceProtection, isRuntimeEfficiencyRunning, resetRuntimeEfficiencyForTests } from '../../electron/services/efficiency-orchestrator';
 import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
 import { getResourceFabric } from '../../electron/services/resource-fabric';
+import { managedProcessHostPressureLimit } from '../../openclaw_runtime/src/agents/verseshell/managed-process-reservation';
 import { registerWindowVisibility } from '../../electron/main/window-visibility';
 import type { BrowserWindow } from 'electron';
 
@@ -92,8 +93,10 @@ describe('window resource lifetimes', () => {
     mocks.snapshot.mockResolvedValue({ ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 5, totalPhysicalBytes: 100 } });
     startRuntimeEfficiency(); await flush();
     expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual(['physical-memory']);
+    expect(managedProcessHostPressureLimit()).toBe(1);
     stopRuntimeEfficiency();
     expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual(['physical-memory']);
+    expect(managedProcessHostPressureLimit()).toBe(1);
     expect(mocks.refresh).not.toBeNull();
     vi.setSystemTime(2000);
     mocks.snapshot.mockResolvedValue({ ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 30, totalPhysicalBytes: 100 } });
@@ -102,6 +105,7 @@ describe('window resource lifetimes', () => {
     mocks.snapshot.mockResolvedValue({ ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 30, totalPhysicalBytes: 100 } });
     await mocks.refresh?.();
     expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual([]);
+    expect(managedProcessHostPressureLimit()).toBeUndefined();
     expect(mocks.sampleStart).toHaveBeenCalledOnce();
     expect(mocks.sampleStop).toHaveBeenCalledOnce();
   });

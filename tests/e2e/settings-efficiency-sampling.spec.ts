@@ -1,4 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { completeSetup, expect, test } from './fixtures/electron';
 import type { RuntimeEfficiencyState } from '../../shared/host-api/contract';
 
@@ -26,6 +28,11 @@ async function readEfficiencyState(page: Page): Promise<RuntimeEfficiencyState> 
 }
 
 test.describe('Verse Claw runtime efficiency sampling settings', () => {
+  test.beforeEach(async ({ userDataDir }) => {
+    await writeFile(join(userDataDir, 'settings.json'), JSON.stringify({
+      language: 'en', efficiencySamplingEnabled: false,
+    }));
+  });
   test('toggles recording while retaining resource protection and persists', async ({ page }, testInfo) => {
     await completeSetup(page);
 
@@ -44,7 +51,7 @@ test.describe('Verse Claw runtime efficiency sampling settings', () => {
     await expect(section).toBeVisible();
     await expect(toggle).toBeVisible();
 
-    // Fail-closed: before the first 5s sample the readout must say not-sampled.
+    // Start recording disabled so the empty readout is independent of startup duration.
     await expect(page.getByTestId('settings-efficiency-not-sampled')).toBeVisible();
     await expect(page.getByTestId('settings-efficiency-sample-count')).toHaveCount(0);
 
