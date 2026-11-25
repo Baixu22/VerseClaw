@@ -1,0 +1,1301 @@
+{
+  "schema": "AutonomyContextScenarioMatrix/v1",
+  "actor": "codex/autonomy-context-tf0955",
+  "driven_by": "agent",
+  "families": 15,
+  "caseCount": 45,
+  "fixturePath": "tests/unit/fixtures/autonomy-context-baseline.v2.json",
+  "fixtureSha256": "9be207664df3eda5c913ec69ed90956e486e807f44ab8da0b90f756e3ac2795f",
+  "rows": [
+    {
+      "id": "c01-revision-01",
+      "family": "revision",
+      "title": "需求修订",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "按修订后的合同写入新值，拒绝旧模型调用"
+    },
+    {
+      "id": "c01-revision-02",
+      "family": "revision",
+      "title": "需求修订",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "按修订后的合同写入新值，拒绝旧模型调用"
+    },
+    {
+      "id": "c01-revision-03",
+      "family": "revision",
+      "title": "需求修订",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "按修订后的合同写入新值，拒绝旧模型调用"
+    },
+    {
+      "id": "c01-negative-01",
+      "family": "negative",
+      "title": "否定结论",
+      "split": "train",
+      "sources": [
+        {
+          "path": "electron/services/chat-api.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4"
+        },
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "排除 A 后选择 B，不重复调查 A"
+    },
+    {
+      "id": "c01-negative-02",
+      "family": "negative",
+      "title": "否定结论",
+      "split": "development",
+      "sources": [
+        {
+          "path": "electron/services/chat-api.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4"
+        },
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "排除 A 后选择 B，不重复调查 A"
+    },
+    {
+      "id": "c01-negative-03",
+      "family": "negative",
+      "title": "否定结论",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "electron/services/chat-api.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4"
+        },
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "排除 A 后选择 B，不重复调查 A"
+    },
+    {
+      "id": "c01-exact-01",
+      "family": "exact",
+      "title": "精确 ID/数字",
+      "split": "train",
+      "sources": [
+        {
+          "path": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "b0cc53b2744ade3c0c4b3b944dce86a06741c5da91ffc0802e1002c04c0e2b0c"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "从校验过的归档读取精确编号和数值再写入结果"
+    },
+    {
+      "id": "c01-exact-02",
+      "family": "exact",
+      "title": "精确 ID/数字",
+      "split": "development",
+      "sources": [
+        {
+          "path": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "b0cc53b2744ade3c0c4b3b944dce86a06741c5da91ffc0802e1002c04c0e2b0c"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "从校验过的归档读取精确编号和数值再写入结果"
+    },
+    {
+      "id": "c01-exact-03",
+      "family": "exact",
+      "title": "精确 ID/数字",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "b0cc53b2744ade3c0c4b3b944dce86a06741c5da91ffc0802e1002c04c0e2b0c"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "从校验过的归档读取精确编号和数值再写入结果"
+    },
+    {
+      "id": "c01-unknown-effect-01",
+      "family": "unknown-effect",
+      "title": "未知工具效果",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "保留未知写入，拒绝重放，等待原效果回执"
+    },
+    {
+      "id": "c01-unknown-effect-02",
+      "family": "unknown-effect",
+      "title": "未知工具效果",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "保留未知写入，拒绝重放，等待原效果回执"
+    },
+    {
+      "id": "c01-unknown-effect-03",
+      "family": "unknown-effect",
+      "title": "未知工具效果",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "保留未知写入，拒绝重放，等待原效果回执"
+    },
+    {
+      "id": "c01-temporary-01",
+      "family": "temporary",
+      "title": "临时要求范围",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "只在指定 turn 使用临时格式，接力后回到普通输出"
+    },
+    {
+      "id": "c01-temporary-02",
+      "family": "temporary",
+      "title": "临时要求范围",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "只在指定 turn 使用临时格式，接力后回到普通输出"
+    },
+    {
+      "id": "c01-temporary-03",
+      "family": "temporary",
+      "title": "临时要求范围",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "只在指定 turn 使用临时格式，接力后回到普通输出"
+    },
+    {
+      "id": "c01-experience-01",
+      "family": "experience",
+      "title": "不适用经验",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "shared/knowledge/experience.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad"
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "8a6dc4d5db48b6e36e46a30120cb3e03dfb095d98ab3911542b55bee47c45611"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "失效且仅适用于迁移阶段的经验不能驱动当前诊断操作"
+    },
+    {
+      "id": "c01-experience-02",
+      "family": "experience",
+      "title": "不适用经验",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "shared/knowledge/experience.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad"
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "8a6dc4d5db48b6e36e46a30120cb3e03dfb095d98ab3911542b55bee47c45611"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "失效且仅适用于迁移阶段的经验不能驱动当前诊断操作"
+    },
+    {
+      "id": "c01-experience-03",
+      "family": "experience",
+      "title": "不适用经验",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "shared/knowledge/experience.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad"
+        },
+        {
+          "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "8a6dc4d5db48b6e36e46a30120cb3e03dfb095d98ab3911542b55bee47c45611"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "失效且仅适用于迁移阶段的经验不能驱动当前诊断操作"
+    },
+    {
+      "id": "c01-concurrent-01",
+      "family": "concurrent",
+      "title": "并发编辑冲突",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "同一 owner revision 的第二次修订冲突，源历史变化拒绝旧投影"
+    },
+    {
+      "id": "c01-concurrent-02",
+      "family": "concurrent",
+      "title": "并发编辑冲突",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "同一 owner revision 的第二次修订冲突，源历史变化拒绝旧投影"
+    },
+    {
+      "id": "c01-concurrent-03",
+      "family": "concurrent",
+      "title": "并发编辑冲突",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "同一 owner revision 的第二次修订冲突，源历史变化拒绝旧投影"
+    },
+    {
+      "id": "c01-delegation-01",
+      "family": "delegation",
+      "title": "委派回交",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "返回 writer 后继续验证，worker 自述成功不完成任务"
+    },
+    {
+      "id": "c01-delegation-02",
+      "family": "delegation",
+      "title": "委派回交",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "返回 writer 后继续验证，worker 自述成功不完成任务"
+    },
+    {
+      "id": "c01-delegation-03",
+      "family": "delegation",
+      "title": "委派回交",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "返回 writer 后继续验证，worker 自述成功不完成任务"
+    },
+    {
+      "id": "c01-same-name-01",
+      "family": "same-name",
+      "title": "同名跨任务材料",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "按任务身份选择当前材料，引用不授予写入权"
+    },
+    {
+      "id": "c01-same-name-02",
+      "family": "same-name",
+      "title": "同名跨任务材料",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "按任务身份选择当前材料，引用不授予写入权"
+    },
+    {
+      "id": "c01-same-name-03",
+      "family": "same-name",
+      "title": "同名跨任务材料",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-ledger-working-context.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "按任务身份选择当前材料，引用不授予写入权"
+    },
+    {
+      "id": "c01-generation-01",
+      "family": "generation",
+      "title": "负责人换代",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "新负责人恢复检查点，旧 epoch 工具调用被拒绝"
+    },
+    {
+      "id": "c01-generation-02",
+      "family": "generation",
+      "title": "负责人换代",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "新负责人恢复检查点，旧 epoch 工具调用被拒绝"
+    },
+    {
+      "id": "c01-generation-03",
+      "family": "generation",
+      "title": "负责人换代",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "新负责人恢复检查点，旧 epoch 工具调用被拒绝"
+    },
+    {
+      "id": "c01-readback-01",
+      "family": "readback",
+      "title": "回读失败",
+      "split": "train",
+      "sources": [
+        {
+          "path": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164"
+        },
+        {
+          "path": "shared/types/context-item.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7e7d156475097786c95ec96239bbdeecd20ee149169285d3f8cc9704466c9b41"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "checksum 错误和缺失来源形成缺口，不采用旧值或写入"
+    },
+    {
+      "id": "c01-readback-02",
+      "family": "readback",
+      "title": "回读失败",
+      "split": "development",
+      "sources": [
+        {
+          "path": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164"
+        },
+        {
+          "path": "shared/types/context-item.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7e7d156475097786c95ec96239bbdeecd20ee149169285d3f8cc9704466c9b41"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "checksum 错误和缺失来源形成缺口，不采用旧值或写入"
+    },
+    {
+      "id": "c01-readback-03",
+      "family": "readback",
+      "title": "回读失败",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164"
+        },
+        {
+          "path": "shared/types/context-item.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7e7d156475097786c95ec96239bbdeecd20ee149169285d3f8cc9704466c9b41"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "checksum 错误和缺失来源形成缺口，不采用旧值或写入"
+    },
+    {
+      "id": "c01-native-01",
+      "family": "native",
+      "title": "原生 backend",
+      "split": "train",
+      "sources": [
+        {
+          "path": "electron/services/chat-api.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4"
+        },
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "shared/types/session-effective-policy.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "有效 native compaction 时只保留 owner 合同，wire 状态保持 unknown"
+    },
+    {
+      "id": "c01-native-02",
+      "family": "native",
+      "title": "原生 backend",
+      "split": "development",
+      "sources": [
+        {
+          "path": "electron/services/chat-api.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4"
+        },
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "shared/types/session-effective-policy.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "有效 native compaction 时只保留 owner 合同，wire 状态保持 unknown"
+    },
+    {
+      "id": "c01-native-03",
+      "family": "native",
+      "title": "原生 backend",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "electron/services/chat-api.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4"
+        },
+        {
+          "path": "shared/long-session-continuity.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+        },
+        {
+          "path": "shared/types/session-effective-policy.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "有效 native compaction 时只保留 owner 合同，wire 状态保持 unknown"
+    },
+    {
+      "id": "c01-cost-01",
+      "family": "cost",
+      "title": "成本抵消",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/trace.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "37b8a612874c3e7ef5060657930627e257de627fa6a76d0f8678fb632ff39271"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/long-session-paired-evaluation.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "03801ec35dcd7da5d0f78af3bbb5a759e0d412df7d1e6a718959f30de6d122f4"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "输入下降但全成本上升时拒绝收益，缺失用量保持 unknown"
+    },
+    {
+      "id": "c01-cost-02",
+      "family": "cost",
+      "title": "成本抵消",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/trace.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "37b8a612874c3e7ef5060657930627e257de627fa6a76d0f8678fb632ff39271"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/long-session-paired-evaluation.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "03801ec35dcd7da5d0f78af3bbb5a759e0d412df7d1e6a718959f30de6d122f4"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "输入下降但全成本上升时拒绝收益，缺失用量保持 unknown"
+    },
+    {
+      "id": "c01-cost-03",
+      "family": "cost",
+      "title": "成本抵消",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/trace.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "37b8a612874c3e7ef5060657930627e257de627fa6a76d0f8678fb632ff39271"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "shared/long-session-paired-evaluation.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "03801ec35dcd7da5d0f78af3bbb5a759e0d412df7d1e6a718959f30de6d122f4"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "输入下降但全成本上升时拒绝收益，缺失用量保持 unknown"
+    },
+    {
+      "id": "c01-restart-01",
+      "family": "restart",
+      "title": "关闭/崩溃恢复",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "6f0e7539b322e757587bb0fbdb679877620d4336c148e92136fc4be1bccae952"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "新连接恢复原 owner 与失败检查点，关闭投影保留原消息"
+    },
+    {
+      "id": "c01-restart-02",
+      "family": "restart",
+      "title": "关闭/崩溃恢复",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "6f0e7539b322e757587bb0fbdb679877620d4336c148e92136fc4be1bccae952"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "新连接恢复原 owner 与失败检查点，关闭投影保留原消息"
+    },
+    {
+      "id": "c01-restart-03",
+      "family": "restart",
+      "title": "关闭/崩溃恢复",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/store.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "6f0e7539b322e757587bb0fbdb679877620d4336c148e92136fc4be1bccae952"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "新连接恢复原 owner 与失败检查点，关闭投影保留原消息"
+    },
+    {
+      "id": "c01-isolation-01",
+      "family": "isolation",
+      "title": "总控与项目隔离",
+      "split": "train",
+      "sources": [
+        {
+          "path": "shared/task-system/project-coordinator.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839"
+        },
+        {
+          "path": "shared/permission-effect-contract.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087"
+        },
+        {
+          "path": "electron/services/resource-envelope.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "项目 scope 来自持久负责人绑定，错误项目及陈旧代次拒绝"
+    },
+    {
+      "id": "c01-isolation-02",
+      "family": "isolation",
+      "title": "总控与项目隔离",
+      "split": "development",
+      "sources": [
+        {
+          "path": "shared/task-system/project-coordinator.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839"
+        },
+        {
+          "path": "shared/permission-effect-contract.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087"
+        },
+        {
+          "path": "electron/services/resource-envelope.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "项目 scope 来自持久负责人绑定，错误项目及陈旧代次拒绝"
+    },
+    {
+      "id": "c01-isolation-03",
+      "family": "isolation",
+      "title": "总控与项目隔离",
+      "split": "final-holdout",
+      "sources": [
+        {
+          "path": "shared/task-system/project-coordinator.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839"
+        },
+        {
+          "path": "shared/permission-effect-contract.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087"
+        },
+        {
+          "path": "electron/services/resource-envelope.ts",
+          "revision": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+          "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6"
+        }
+      ],
+      "budget": {
+        "actions": 8,
+        "readbacks": 2,
+        "readbackBytes": 32768,
+        "wallSeconds": 60,
+        "liveModelCalls": 0
+      },
+      "expectedContinuation": "项目 scope 来自持久负责人绑定，错误项目及陈旧代次拒绝"
+    }
+  ]
+}

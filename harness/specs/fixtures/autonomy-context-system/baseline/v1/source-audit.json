@@ -1,0 +1,304 @@
+{
+  "schema": "AutonomyContextSourceAudit/v1",
+  "actor": "codex/autonomy-context-tf0955",
+  "driven_by": "agent",
+  "sourceCommit": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+  "anchors": [
+    {
+      "path": "shared/task-system/runtime.ts",
+      "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9",
+      "currentSha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f",
+      "currentSha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/task-system/project-coordinator.ts",
+      "sha256": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839",
+      "currentSha256": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/long-session-continuity.ts",
+      "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79",
+      "currentSha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/task-ledger-working-context.ts",
+      "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d",
+      "currentSha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/types/task-ledger.ts",
+      "sha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413",
+      "currentSha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/types/context-item.ts",
+      "sha256": "7e7d156475097786c95ec96239bbdeecd20ee149169285d3f8cc9704466c9b41",
+      "currentSha256": "7e7d156475097786c95ec96239bbdeecd20ee149169285d3f8cc9704466c9b41",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/types/context-folding.ts",
+      "sha256": "f27a4cc997cb64d1ed1ed9240d0d7af11058561ddad4850fa56ef9e0ce815458",
+      "currentSha256": "f27a4cc997cb64d1ed1ed9240d0d7af11058561ddad4850fa56ef9e0ce815458",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/types/session-effective-policy.ts",
+      "sha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f",
+      "currentSha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/knowledge/experience.ts",
+      "sha256": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad",
+      "currentSha256": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+      "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7",
+      "currentSha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "sha256": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4",
+      "currentSha256": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "sha256": "319324caa75910eb40522512b7e3f06950d66141e9665123cd5e3b161f900a33",
+      "currentSha256": "319324caa75910eb40522512b7e3f06950d66141e9665123cd5e3b161f900a33",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+      "sha256": "6f3ff109bb3232cb0b72569cc9fb97a7492727629bdf30c01a2d54bdd2fb6ad8",
+      "currentSha256": "6f3ff109bb3232cb0b72569cc9fb97a7492727629bdf30c01a2d54bdd2fb6ad8",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/tools/context-write-tool.ts",
+      "sha256": "35140c6df47630ac049197bfafa6b559de0803c7330d320c715bb53bb45735e9",
+      "currentSha256": "35140c6df47630ac049197bfafa6b559de0803c7330d320c715bb53bb45735e9",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/working-memory-regather.ts",
+      "sha256": "88a9cd0bf8e1ddc0585ffdcfb97fee9abafb1181fcdfd5d73d76bdf86e897e1e",
+      "currentSha256": "88a9cd0bf8e1ddc0585ffdcfb97fee9abafb1181fcdfd5d73d76bdf86e897e1e",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "sha256": "25586e17886a3d345e5cb5329ccc0112d4d009434c68380001e1963a046e0201",
+      "currentSha256": "25586e17886a3d345e5cb5329ccc0112d4d009434c68380001e1963a046e0201",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "ac354af731e64561f37bd920fde131dd0b64bf3a4949618dfa00cffb66673ecd",
+      "currentSha256": "ac354af731e64561f37bd920fde131dd0b64bf3a4949618dfa00cffb66673ecd",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "sha256": "c64cdba0657062b48ec3eb6ef09850eaae2e262d034b7810485487599e1ad14a",
+      "currentSha256": "c64cdba0657062b48ec3eb6ef09850eaae2e262d034b7810485487599e1ad14a",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "sha256": "6f0e7539b322e757587bb0fbdb679877620d4336c148e92136fc4be1bccae952",
+      "currentSha256": "6f0e7539b322e757587bb0fbdb679877620d4336c148e92136fc4be1bccae952",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+      "sha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42",
+      "currentSha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+      "sha256": "2a26de5e497849ddfa6b90d9e81055f550bcd956dcaabf727b3e7e451dc2bf14",
+      "currentSha256": "2a26de5e497849ddfa6b90d9e81055f550bcd956dcaabf727b3e7e451dc2bf14",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts",
+      "sha256": "9a86631a35437500f253d9be1d374171e8742cc600868fbe1d46ca742edde8d4",
+      "currentSha256": "9a86631a35437500f253d9be1d374171e8742cc600868fbe1d46ca742edde8d4",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+      "sha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224",
+      "currentSha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+      "sha256": "d99af54a0881938fc9174ace10a5f8c3a781f4e06b994f4b5d8c7fc0d69630d5",
+      "currentSha256": "d99af54a0881938fc9174ace10a5f8c3a781f4e06b994f4b5d8c7fc0d69630d5",
+      "matchesPlanning": true
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+      "sha256": "8a6dc4d5db48b6e36e46a30120cb3e03dfb095d98ab3911542b55bee47c45611",
+      "currentSha256": "8a6dc4d5db48b6e36e46a30120cb3e03dfb095d98ab3911542b55bee47c45611",
+      "matchesPlanning": true
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "484bbb33ee219f374dcd37e73d3c6c5d6aef811fef5d3ac160f2b308f542b772",
+      "currentSha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4",
+      "matchesPlanning": false
+    },
+    {
+      "path": "electron/services/resource-envelope.ts",
+      "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6",
+      "currentSha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6",
+      "matchesPlanning": true
+    },
+    {
+      "path": "shared/permission-effect-contract.ts",
+      "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087",
+      "currentSha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087",
+      "matchesPlanning": true
+    }
+  ],
+  "chains": [
+    {
+      "caller": "embedded-agent-runner/run/attempt.ts: before every provider call",
+      "production": "shared/task-system/runtime.ts: restoreTaskModelContext / executeTaskGuarded",
+      "consumer": "TaskSystemStore.context / beginOperation / beginModelCall",
+      "tests": [
+        "durable-task-system.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Current contract restored per model call; revision/handoff invalidates old writer; unknown effects remain unsettled and block subsequent writes."
+    },
+    {
+      "caller": "electron/services/chat-api.ts: continuityPreview / sendWithMedia",
+      "production": "compressionInputFromRpc -> buildLongSessionContinuityContext -> renderLongSessionContinuityContext",
+      "consumer": "Main binding/generation/criticalOmissions gate",
+      "tests": [
+        "long-session-continuity-context.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "RPC string adaptation omits semanticAtoms; polarity, original scope and per-atom verification are absent from continuity items. Knowledge freshness is rendered rather than filtered here."
+    },
+    {
+      "caller": "Working Context proposal/accept events",
+      "production": "shared/task-ledger-working-context.ts: projectTaskLedgerWorkingContext",
+      "consumer": "continuity collectWorkingContext",
+      "tests": [
+        "task-ledger-working-context-single-source.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Acceptance preserves original trust; confirmed plus acceptedEventId, task scope and TTL required by continuity."
+    },
+    {
+      "caller": "agent-core compaction",
+      "production": "compression-artifact.ts: buildDeterministicCompressionArtifact",
+      "consumer": "renderRecoveryContextProjection / Main RPC adapter",
+      "tests": [
+        "compression-artifact.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Semantic atoms carry status/polarity/scope/evidence. Legacy facts derive from active atoms including unverified atoms; unverifiedClaims remains a separate list."
+    },
+    {
+      "caller": "context-orchestrator.ts: finalizeContextOrchestratorTurn",
+      "production": "context-candidate.ts / turn-injection-budget.ts",
+      "consumer": "embedded attempt and provider-transport-fetch.ts",
+      "tests": [
+        "context-orchestrator-entry-scan.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Candidate authority/version/digest, stale-history and shared injection budget precede materialization. Task rehydration is a later provider-call hook. Wire capture belongs to transport finalization; offline previews do not produce it."
+    },
+    {
+      "caller": "buildObservationMaskingProjection",
+      "production": "registry/context-item-registry.ts: create/verifyContextArchiveHandle",
+      "consumer": "masked tool result and context_archive_recall",
+      "tests": [
+        "context-observation-masking.test.ts",
+        "context-archive-recall.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Archive checksum is verified before masking. Tool call/result identity stays intact. Missing and altered handles return explicit failures."
+    },
+    {
+      "caller": "Task Loop and Mission Control run/recovery",
+      "production": "task-loop-controller.ts: settleOrphanedTaskLoopLifecycles; mission-control/controller.ts: recoverInterruptedMissionLifecycles",
+      "consumer": "workflow lifecycle owner and project-coordinator.ts binding",
+      "tests": [
+        "durable-task-system.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Task Loop orphan run becomes lost; interrupted Mission returns to sleeping via original lifecycle owner. C01 runtime execution uses TaskSystem close/reopen and owner fencing, not the complete scheduler."
+    },
+    {
+      "caller": "SEKB/Knowledge/Role Memory reads",
+      "production": "shared/knowledge/experience.ts; experience-block-bridge.ts",
+      "consumer": "DCS experience blocks / continuity references",
+      "tests": [
+        "long-session-continuity-context.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "SEKB condition/action and owner pins already exist. Experience blocks are on demand. A retrieved continuity reference is not evidence of applicable adoption."
+    },
+    {
+      "caller": "session.activitySnapshot and native harness",
+      "production": "session-effective-policy.ts / context-engine-lifecycle.ts",
+      "consumer": "Main ownsNativeCompaction gate / native context budget scope",
+      "tests": [
+        "long-session-effective-policy.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Effective native capability disables host compression projection; wire visibility can remain unknown."
+    },
+    {
+      "caller": "resource envelope / wave scheduler / tool execution",
+      "production": "electron/services/resource-envelope.ts; resource-aware-wave-scheduler.ts; shared/permission-effect-contract.ts",
+      "consumer": "existing resource/permission/effect owners",
+      "tests": [
+        "durable-task-system.test.ts",
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Context cannot grant resource leases or permission. Maintenance/readback/retry accounting uses the original task identity and stays separate from input character count."
+    },
+    {
+      "caller": "createTaskModelUsageRecorder",
+      "production": "TaskSystemStore.beginModelCall / recordModelUsage; shared/task-system/trace.ts",
+      "consumer": "readTaskTrace.costs",
+      "tests": [
+        "autonomy-context-baseline.test.ts"
+      ],
+      "finding": "Usage binds the original credential; missing cost or price revision yields unknown total with known subtotal preserved. Synthetic cost receipts are labelled fixture."
+    }
+  ],
+  "retiredMemory": "Runtime Memory shadow/provider/proposeFacts/persist flags remain retired; no revival or write in C01.",
+  "readmeReview": {
+    "paths": [
+      "README.md",
+      "README.zh-CN.md",
+      "README.ja-JP.md"
+    ],
+    "decision": "not-required",
+    "reason": "Only offline evaluation and contracts are added; shipped behavior description remains accurate."
+  }
+}
