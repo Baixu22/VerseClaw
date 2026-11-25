@@ -1,11 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { closeElectronApp, expect, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
-import { configureSessionChainProvider, createSessionChainProject } from './fixtures/session-task-chain';
+import { configureSessionChainProvider } from './fixtures/session-task-chain';
+import { createCollaborationProject } from './fixtures/session-collaboration';
 import { parseSessionCollaborationQuery } from '../../shared/types/session-collaboration';
 import { parseSessionCollaborationWatch, type SessionCollaborationWatchResult } from '../../shared/types/session-collaboration-watch';
-import type { TaskLedgerSnapshotResult } from '../../shared/host-api/contract';
 
 test('scoped owner watch separates idle, receipt, cancellation and reset without model calls', async ({ launchElectronApp }, info) => {
   test.setTimeout(180_000);
@@ -13,15 +13,8 @@ test('scoped owner watch separates idle, receipt, cancellation and reset without
   const app = await launchElectronApp({ skipSetup: true });
   try {
     await configureSessionChainProvider(app, provider.port);
-    const root = info.outputPath('watch-project'); await mkdir(root, { recursive: true });
-    execFileSync('git', ['init', '--quiet', root], { windowsHide: true });
-    const project = await createSessionChainProject(app, root, 'Watch project');
-    const ledger = await hostInvoke<TaskLedgerSnapshotResult>(app, 'taskLedger', 'createNode', { workspaceId: project.workspaceId,
-      node: { title: 'Watch binding', kind: 'task', status: 'todo' }, idempotencyKey: 'watch-binding' });
-    await hostInvoke(app, 'workspaces', 'bindCoordinator', { ...project, agentId: 'main', expectedRevision: 0,
-      taskLedgerNodeIds: [ledger.snapshot.nodes.find(node => node.title === 'Watch binding')!.id],
-      environment: { kind: 'local', rootPath: root }, archiveRestorePolicy: 'restore' });
-    const scope = { workspaceId: project.workspaceId, projectId: project.workspaceId, sessionKey: project.sessionKey, sessionGeneration: project.generation };
+    const project = await createCollaborationProject(app, info.outputPath('watch-project'), 'Watch project');
+    const scope = project.scope;
     const query = parseSessionCollaborationQuery({ requester: scope, target: scope, limit: 1 });
     const before = await hostInvoke(app, 'workspaces', 'list'), modelCalls = provider.log.length;
     const watch = parseSessionCollaborationWatch({ id: 'e2e-idle', query, condition: 'idle', timeoutMs: 0 });

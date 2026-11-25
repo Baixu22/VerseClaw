@@ -1,4 +1,52 @@
 {
+    "collaboration": {
+        "title": "セッション連携",
+        "description": "進行中の作業を探し、元の情報を必要に応じて読みます。",
+        "refresh": "更新",
+        "requesterMissing": "ワークスペースが確認できるセッションを開くと、関連作業を読めます。",
+        "search": "セッションとタスク目標を検索",
+        "loading": "セッションの情報源を読み込み中…",
+        "stale": "前回の観測を保持しています。現在の情報源を再読込してください。",
+        "results": "最近の結果",
+        "resources": "リソース",
+        "unknownMatches": "目標の一致が不明：{{count}} 件",
+        "more": "次のページ",
+        "close": "詳細を閉じる",
+        "openSession": "セッションを開く",
+        "openWorker": "worker 履歴を読む",
+        "openTask": "タスクを開く",
+        "sourcesTitle": "情報源と識別情報",
+        "page": {
+            "not_read": "セッションの情報源は未読です。",
+            "ready": "表示中のセッション：{{count}}",
+            "empty": "一致するセッションはありません。",
+            "unavailable": "セッションの情報源を利用できません。",
+            "stale": "セッションの識別情報が変わりました。現在の状態を更新してください。",
+            "unknown": "一部の情報源を確認できません。"
+        },
+        "status": {
+            "running": "実行中",
+            "idle": "待機中",
+            "unknown": "活動不明"
+        },
+        "sources": {
+            "ready": "利用可能",
+            "empty": "空",
+            "not_read": "未読",
+            "unavailable": "利用不可",
+            "stale": "古い情報",
+            "unknown": "不明"
+        },
+        "fields": {
+            "session": "セッション",
+            "goal": "目標",
+            "tasks": "タスク",
+            "run": "実行",
+            "actions": "操作",
+            "origin": "由来",
+            "execution": "実行ドメイン"
+        }
+    },
     "title": "Agents",
     "subtitle": "新しい Agent を作成し、特定のチャンネルを異なるパーソナリティやワークスペースにルーティングできます。",
     "refresh": "更新",

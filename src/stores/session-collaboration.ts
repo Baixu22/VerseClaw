@@ -1,7 +1,18 @@
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { create } from 'zustand';
+import type { AutonomySessionScope } from '@shared/types/identity-scope';
 import { emptySessionCollaborationPage } from '@shared/types/session-collaboration';
 import { parseSessionCollaborationWatch, validateSessionCollaborationWatch, type SessionCollaborationWatch, type SessionCollaborationWatchResult } from '@shared/types/session-collaboration-watch';
+
+export type SessionCollaborationView = { search: string; selected: AutonomySessionScope | null };
+export const EMPTY_COLLABORATION_VIEW: SessionCollaborationView = { search: '', selected: null };
+export const useSessionCollaborationUi = create<{
+  views: Record<string, SessionCollaborationView>;
+  updateView: (key: string, patch: Partial<SessionCollaborationView>) => void;
+}>((set) => ({ views: {}, updateView: (key, patch) => set(state => ({ views: {
+  ...state.views, [key]: { ...(state.views[key] ?? EMPTY_COLLABORATION_VIEW), ...patch },
+} })) }));
 
 /** One selected-session listener; unmount cancels its exact Main-owned wait. */
 export function subscribeSessionCollaboration(input: SessionCollaborationWatch, onUpdate: (result: SessionCollaborationWatchResult) => void) {

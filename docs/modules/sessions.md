@@ -48,6 +48,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 `sessions_watch({ scope, condition, run?, cursor?, timeoutMs? })` 与 typed `sessionActivity.watch` 按原 owner 条件等待。`run-terminal` 使用原 ScopedRun，`task-receipt` 等待 TaskSystem 回执，`idle` 仅表示会话空闲；`changed` 和 `blocking-changed` 补读已变化的原来源。单次最长 25 秒，返回游标可供重连与去重；页面卸载通过 `cancelWatch` 释放该读取者的等待，不发送消息或调用目标模型。
 
+系统总览和项目会话面板提供同一个会话协作视图，可搜索其他会话的目标、查看已观测动作并选中来源详情。列表分页读取，详情和历史按需打开；更新保留搜索、选择和键盘焦点。会话、worker 历史和任务入口使用既有导航，来源未读取或不可用时显示相应状态。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`
