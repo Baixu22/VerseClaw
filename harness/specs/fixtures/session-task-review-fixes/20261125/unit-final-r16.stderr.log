@@ -1,0 +1,21 @@
+stderr | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps startup retry active after rendering local transcript fallback
+[chat.history] startup retry scheduled {
+  sessionKey: 'agent:main:main',
+  attempt: 1,
+  gatewayState: 'running',
+  errorKind: 'timeout',
+  error: 'Error: RPC timeout: chat.history'
+}
+
+stderr | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps the optimistic user message when completion refresh wins the transcript write race
+[sendMessage] Ignoring stale chat.send runId { runId: 'new-knowledge-run', sessionKey: 'agent:main:main' }
+
+stderr | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > archive retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-25T14:10:21.793Z] [WARN] [session:coordinator-lifecycle] {"event":"archive","sessionKey":"agent:main:tail","error":"Error: injected tail refusal after Runtime receipt"}
+
+stderr | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > restore retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-25T14:10:21.906Z] [WARN] [session:coordinator-lifecycle] {"event":"restore","sessionKey":"agent:main:tail","error":"Error: injected tail refusal after Runtime receipt"}
+
+stderr | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > delivers a displayed question response immediately without long-task inputMode
+[sendMessage] Ignoring stale chat.send runId { runId: 'answer-1', sessionKey: 'agent:main:main' }
+
