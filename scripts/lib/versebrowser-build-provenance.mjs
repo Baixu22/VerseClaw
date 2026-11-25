@@ -32,17 +32,26 @@ export function snapshotBuildSource(root) {
 }
 
 export async function collectCompiledOutputs(root) {
-  const outputs = [];
+  const files = [], outputs = [];
   async function visit(mapping, relative = '') {
     for (const entry of await readdir(path.join(root,mapping.source,relative),{withFileTypes:true})) {
       const file = relative + entry.name;
       if (entry.isDirectory()) await visit(mapping,file+'/');
       else if (entry.isFile() && mapping.prefix+file !== PROVENANCE_PATH && !(mapping.omitDeclarations && file.endsWith('.d.ts'))) {
-        outputs.push({archive:mapping.archive,path:mapping.prefix+file,sha256:sha256(await readFile(path.join(root,mapping.source,file)))});
+        files.push({archive:mapping.archive,path:mapping.prefix+file,source:path.join(root,mapping.source,file)});
       }
     }
   }
   for (const mapping of COMPILED_ROOTS) await visit(mapping);
+  // Both archives include the same browser bytes. Share only this snapshot's
+  // reads, and bound open files while hashing every declared output.
+  const hashes = new Map();
+  for (let offset = 0; offset < files.length; offset += 16) {
+    await Promise.all(files.slice(offset, offset + 16).map(async ({source,...output}) => {
+      if (!hashes.has(source)) hashes.set(source, readFile(source).then(sha256));
+      outputs.push({...output,sha256:await hashes.get(source)});
+    }));
+  }
   return outputs.sort((a,b)=>(a.archive+'/'+a.path).localeCompare(b.archive+'/'+b.path));
 }
 
