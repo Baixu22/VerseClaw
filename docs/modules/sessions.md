@@ -52,6 +52,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 协作消息使用 finding、status、request、handoff、result 用途和稳定意图 ID，携带源目标会话代次及原任务/证据引用。工具的来源绑定当前运行，Main 发送入口读取活动 Workspace/Session owner，并核对用户预览的源 scope。消息仍是 inter_session 数据；同 ID 异内容、过期意图、旧代和失效任务引用被原发送入口拒绝。
 
+消息意图在原 shared state SQLite 中保留首次来源和派发回执。相同意图重试返回原记录；缺失派发回执时保持 unknown。`sessions.collaborationMessages` 按当前读取者和目标 scope 分页读取有界摘要，指定原 ID 后读取完整意图与回执；读取不创建数据库或修改投递状态。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

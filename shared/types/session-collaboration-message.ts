@@ -27,9 +27,60 @@ export type SessionCollaborationMessageReceipt = {
   phase: 'accepted' | 'queued' | 'delivered' | 'replied' | 'rejected' | 'expired' | 'unknown';
   run: ScopedRunId | null;
   replyRef: string | null;
+  reply?: { text: string; sha256: string; run: ScopedRunId; truncated: boolean };
   reason?: string;
   updatedAt: number;
 };
+export type SessionCollaborationMessageQuery = { requester: AutonomySessionScope; target: AutonomySessionScope;
+  id?: string; taskNodeId?: string; cursor?: string; limit?: number };
+export type SessionCollaborationMessagePage = {
+  schemaVersion: 'SessionCollaborationMessages/v1'; requester: AutonomySessionScope;
+  state: 'ready' | 'empty' | 'unavailable' | 'stale' | 'unknown';
+  items: Array<{ sequence: number; header: Omit<SessionCollaborationMessage, 'message'> & { preview: string; truncated: boolean };
+    phase: SessionCollaborationMessageReceipt['phase']; run: ScopedRunId | null; replyRef: string | null; updatedAt: number }>;
+  receipt: SessionCollaborationMessageReceipt | null; nextCursor: string | null; reason?: string; capturedAt: number;
+};
+
+export function parseSessionCollaborationMessageQuery(value: unknown): SessionCollaborationMessageQuery {
+  const input = object(value);
+  if (Object.keys(input).some(key => !['requester', 'target', 'id', 'taskNodeId', 'cursor', 'limit'].includes(key))) throw new TypeError('Unexpected message query field');
+  const requester = normalizeAutonomySessionScope(input.requester, input.requester as AutonomySessionScope);
+  const target = normalizeAutonomySessionScope(input.target, input.target as AutonomySessionScope);
+  if (input.id !== undefined && !text(input.id, 160)) throw new TypeError('Bounded message reference required');
+  if (input.taskNodeId !== undefined && !text(input.taskNodeId, 300)) throw new TypeError('Bounded task reference required');
+  if (input.cursor !== undefined && !text(input.cursor, 256)) throw new TypeError('Bounded message cursor required');
+  if (input.limit !== undefined && (!Number.isSafeInteger(input.limit) || Number(input.limit) < 1 || Number(input.limit) > 50)) throw new TypeError('Message page limit must be 1..50');
+  return { requester, target, ...(input.id === undefined ? {} : { id: input.id as string }),
+    ...(input.taskNodeId === undefined ? {} : { taskNodeId: input.taskNodeId as string }), ...(input.cursor === undefined ? {} : { cursor: input.cursor as string }),
+    limit: input.limit === undefined ? 20 : input.limit as number };
+}
+
+export function validateSessionCollaborationMessagePage(query: SessionCollaborationMessageQuery, value: unknown): SessionCollaborationMessagePage | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const page = value as SessionCollaborationMessagePage;
+  const key = (scope: AutonomySessionScope) => JSON.stringify(normalizeAutonomySessionScope(scope, scope));
+  try {
+    if (page.schemaVersion !== 'SessionCollaborationMessages/v1' || !['ready', 'empty', 'unavailable', 'stale', 'unknown'].includes(page.state)
+      || !Array.isArray(page.items) || page.items.length > (query.limit ?? 20) || !Number.isFinite(page.capturedAt) || page.capturedAt < 0
+      || key(page.requester) !== key(query.requester) || (page.nextCursor !== null && !text(page.nextCursor, 256))) return null;
+    const selected = key(query.target), seen = new Set<string>();
+    for (const item of page.items) {
+      const header = item.header;
+      if (!Number.isSafeInteger(item.sequence) || item.sequence < 0 || !header || seen.has(header.id)
+        || !text(header.id, 160) || ![key(header.source), key(header.target)].includes(selected)
+        || typeof header.preview !== 'string' || Array.from(header.preview).length > 256 || typeof header.truncated !== 'boolean'
+        || !SESSION_COLLABORATION_PURPOSES.includes(header.purpose) || !/^[a-f0-9]{64}$/.test(header.payloadDigest)
+        || !['accepted', 'queued', 'delivered', 'replied', 'rejected', 'expired', 'unknown'].includes(item.phase)) return null;
+      seen.add(header.id);
+    }
+    if (page.receipt) {
+      const message = parseSessionCollaborationMessage(page.receipt.message);
+      if (!query.id || message.id !== query.id || ![key(message.source), key(message.target)].includes(selected)) return null;
+    }
+    if ((page.items.length > 0 || page.receipt !== null) !== (page.state === 'ready') || (query.id && page.items.length)) return null;
+    return page;
+  } catch { return null; }
+}
 const object = (value: unknown): Record<string, unknown> => {
   if (!value || typeof value !== 'object' || Array.isArray(value) || ![Object.prototype, null].includes(Object.getPrototypeOf(value))) throw new TypeError('Plain message record required');
   return value as Record<string, unknown>;

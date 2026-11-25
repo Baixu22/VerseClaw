@@ -1,5 +1,5 @@
 // Sessions gateway run-control methods (send/steer/abort/queue drain/long-task status).
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
 import {
   normalizeOptionalString,
   readStringValue,
@@ -304,17 +304,34 @@ async function handleSessionSend(params: {
       const { agentHandlers } = await import('./agent.js');
       const { assertSessionCollaborationSource } = await import('./session-collaboration-message.js');
       assertSessionCollaborationSource(collaboration.message, params.context, params.client);
+      const { messageIntentWriter } = await import('../../sessions/session-collaboration-message-store.js');
+      assertSessionCollaborationSource(collaboration.message, params.context, params.client);
+      if (loadSessionEntry(canonicalKey, { readOnly: true, skipCache: true }).entry?.sessionId !== collaboration.message.target.sessionGeneration) throw new Error('COLLABORATION_TARGET_GENERATION_CHANGED');
+      const store = messageIntentWriter(), intent = store.accept(collaboration.message);
+      if (!store.claim(intent.id, intent.payload_digest)) {
+        params.respond(true, { receipt: store.receipt(store.get(intent.id)!) }, undefined, { cached: true }); return;
+      }
       await agentHandlers.agent({ req: params.req, client: params.client, context: params.context, isWebchatConnect: params.isWebchatConnect,
         params: { message: collaboration.message.message, sessionKey: canonicalKey, expectedSessionId: collaboration.message.target.sessionGeneration,
-          workspaceId: collaboration.message.target.workspaceId, idempotencyKey: collaboration.message.id, deliver: false,
+          workspaceId: collaboration.message.target.workspaceId, idempotencyKey: intent.dispatch_key, deliver: false,
           sourceReplyDeliveryMode: 'message_tool_only', inputProvenance: collaboration.provenance },
         respond: (ok, payload, error, meta) => {
           releaseSendStartPermitOnce();
-          const ack = payload as { runId?: string; status?: string } | undefined;
-          params.respond(ok, ok ? { receipt: { schemaVersion: 'SessionCollaborationReceipt/v1', message: collaboration!.message,
-            phase: ack?.status === 'queued' ? 'queued' : ['accepted', 'ok'].includes(ack?.status ?? '') ? 'accepted' : 'unknown', run: ack?.runId ? { runId: ack.runId, scope: {
+          const ack = payload as { runId?: string; status?: string; result?: { payloads?: Array<{ text?: string }> } } | undefined;
+          const receipt: import('../../../../shared/types/session-collaboration-message.js').SessionCollaborationMessageReceipt = {
+            schemaVersion: 'SessionCollaborationReceipt/v1', message: collaboration!.message,
+            phase: !ok ? 'rejected' : ack?.status === 'queued' ? 'queued' : ['accepted', 'ok'].includes(ack?.status ?? '') ? 'accepted' : 'unknown', run: ack?.runId ? { runId: ack.runId, scope: {
               workspaceId: collaboration!.message.target.workspaceId, projectId: collaboration!.message.target.projectId, sessionKey: collaboration!.message.target.sessionKey } } : null,
-            replyRef: null, updatedAt: Date.now() } } : payload, error, meta);
+            replyRef: null, updatedAt: Date.now(), ...(!ok ? { reason: error?.message ?? 'dispatch-rejected' } : {}),
+          };
+          const fullReply = ack?.status === 'ok' ? ack.result?.payloads?.map(item => item.text ?? '').filter(text => text.trim() && text.trim() !== 'NO_REPLY').join('\n') : undefined;
+          if (fullReply && receipt.run) {
+            const text = Array.from(fullReply).slice(0, 8000).join(''), sha256 = createHash('sha256').update(text).digest('hex');
+            receipt.phase = 'replied'; receipt.replyRef = `session-message:${intent.id}:${sha256}`;
+            receipt.reply = { text, sha256, run: receipt.run, truncated: text.length < fullReply.length };
+          }
+          store.record(intent.id, receipt);
+          params.respond(ok, ok ? { receipt: store.receipt(store.get(intent.id)!) } : payload, error, meta);
         },
       });
       emitSessionsChanged(params.context, { sessionKey: canonicalKey, reason: 'send' });

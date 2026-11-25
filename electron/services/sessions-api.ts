@@ -60,8 +60,8 @@ import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOpe
   getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
 import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type WorkspaceId } from '@shared/types/identity-scope';
-import { createSessionCollaborationMessage, validateSessionCollaborationReceipt } from '@shared/session-collaboration-message';
-import { parseSessionCollaborationMessageInput } from '@shared/types/session-collaboration-message';
+import { createSessionCollaborationMessage, validateSessionCollaborationReceipt, verifySessionCollaborationMessage } from '@shared/session-collaboration-message';
+import { parseSessionCollaborationMessageInput, parseSessionCollaborationMessageQuery, validateSessionCollaborationMessagePage, type SessionCollaborationMessagePage } from '@shared/types/session-collaboration-message';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
 import { classifyDerivation } from '@shared/types/session-derivation';
 import {
@@ -2395,6 +2395,17 @@ export function createSessionsApi(ctx: {
     collaborationSender: async () => {
       try { return { success: true, source: await readCollaborationSender() }; }
       catch { return { success: true, source: null, reason: 'owner-unavailable' }; }
+    },
+    collaborationMessages: async (payload) => {
+      const query = parseSessionCollaborationMessageQuery(payload);
+      const unavailable = (state: 'unavailable' | 'unknown', reason: string): SessionCollaborationMessagePage => ({ schemaVersion: 'SessionCollaborationMessages/v1',
+        requester: query.requester, state, items: [], receipt: null, nextCursor: null, reason, capturedAt: Date.now() });
+      try {
+        const result = await ctx.gatewayManager!.rpc<{ messages: unknown }>('session.activitySnapshot', { messages: query }, 15_000);
+        const messages = validateSessionCollaborationMessagePage(query, result?.messages);
+        if (messages?.receipt) messages.receipt = validateSessionCollaborationReceipt(verifySessionCollaborationMessage(messages.receipt.message), messages.receipt);
+        return { success: true, messages: messages ?? unavailable('unknown', 'protocol-unverified') };
+      } catch { return { success: true, messages: unavailable('unavailable', 'owner-unavailable') }; }
     },
     sendCollaborationMessage: async (payload) => {
       const { expectedSource, ...input } = payload;

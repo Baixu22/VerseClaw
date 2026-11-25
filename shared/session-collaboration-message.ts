@@ -31,5 +31,11 @@ export function validateSessionCollaborationReceipt(expected: SessionCollaborati
     || (receipt.phase === 'replied' && !receipt.replyRef)) throw new TypeError('COLLABORATION_RECEIPT_INVALID');
   normalizeAutonomySessionScope(message.source, expected.source); normalizeAutonomySessionScope(message.target, expected.target);
   if (receipt.run) normalizeAutonomyObjectReference({ kind: 'run', owner: 'runtime', scope: message.target, run: receipt.run }, message.target);
+  if (receipt.reply) {
+    if (typeof receipt.reply.text !== 'string' || receipt.reply.text.length > 16_384 || typeof receipt.reply.truncated !== 'boolean'
+      || createHash('sha256').update(receipt.reply.text).digest('hex') !== receipt.reply.sha256 || receipt.phase !== 'replied') throw new TypeError('COLLABORATION_REPLY_INVALID');
+    normalizeAutonomyObjectReference({ kind: 'run', owner: 'runtime', scope: message.target, run: receipt.reply.run }, message.target);
+    if (receipt.reply.run.runId !== receipt.run?.runId) throw new TypeError('COLLABORATION_REPLY_RUN_MISMATCH');
+  }
   return { ...receipt, message };
 }

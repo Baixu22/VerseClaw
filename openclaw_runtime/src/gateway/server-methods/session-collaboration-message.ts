@@ -11,6 +11,10 @@ import { sessionActivityOwnerScope } from './session-activity-read-model.js';
 import { createAgentToAgentPolicy, createSessionVisibilityRowChecker, resolveEffectiveSessionToolsVisibility } from '../../plugin-sdk/session-visibility.js';
 import { resolveSandboxRuntimeStatus } from '../../agents/sandbox/runtime-status.js';
 import type { GatewayClient, GatewayRequestContext } from './types.js';
+import { createHash } from 'node:crypto';
+import { parseSessionCollaborationMessageQuery, type SessionCollaborationMessagePage, type SessionCollaborationMessageReceipt } from '../../../../shared/types/session-collaboration-message.js';
+import { readMessageIntents, messageScopeKey } from '../../sessions/session-collaboration-message-store.js';
+import { readScopedAgentRunOutcome } from './agent-job.js';
 
 export function assertSessionCollaborationSource(message: SessionCollaborationMessage, context: GatewayRequestContext, client: GatewayClient | null, now = Date.now()) {
   if (message.expiresAt !== undefined && message.expiresAt <= now) throw new Error('COLLABORATION_MESSAGE_EXPIRED');
@@ -60,3 +64,43 @@ export const sessionCollaborationProvenance = (message: SessionCollaborationMess
   sourceTool: 'sessions_send', collaboration: { id: message.id, purpose: message.purpose, sourceGeneration: message.source.sessionGeneration,
     targetGeneration: message.target.sessionGeneration, payloadDigest: message.payloadDigest, ...(message.replyTo ? { replyTo: message.replyTo } : {}) },
 });
+
+export function projectSessionMessageReceipt(receipt: SessionCollaborationMessageReceipt, context: GatewayRequestContext): SessionCollaborationMessageReceipt {
+  if (!receipt.run || receipt.phase === 'rejected' || receipt.phase === 'expired' || receipt.phase === 'replied') return receipt;
+  const target = receipt.message.target, active = context.chatAbortControllers.get(receipt.run.runId);
+  const known = active?.sessionKey === target.sessionKey && active.sessionId === target.sessionGeneration && !active.controller.signal.aborted;
+  const terminal = readScopedAgentRunOutcome(receipt.run.runId, target.sessionKey, target.sessionGeneration);
+  return known || terminal ? { ...receipt, phase: 'delivered', reason: receipt.replyRef ? undefined : 'reply-not-read' } : receipt;
+}
+
+export async function readSessionCollaborationMessages(value: unknown, context: GatewayRequestContext): Promise<SessionCollaborationMessagePage> {
+  const query = parseSessionCollaborationMessageQuery(value);
+  const page: SessionCollaborationMessagePage = { schemaVersion: 'SessionCollaborationMessages/v1', requester: query.requester,
+    state: 'empty', items: [], receipt: null, nextCursor: null, capturedAt: Date.now() };
+  const visibility = await readSessionCollaborationQuery({ requester: query.requester, target: query.target, fields: [], limit: 1 }, context);
+  if (visibility.state !== 'ready') return { ...page, state: visibility.state === 'empty' ? 'unknown' : visibility.state, reason: visibility.reason };
+  const basis = createHash('sha256').update(JSON.stringify({ ...query, cursor: undefined })).digest('hex');
+  let sequence = 0;
+  if (query.cursor) {
+    try {
+      const cursor = JSON.parse(Buffer.from(query.cursor, 'base64url').toString());
+      if (!Array.isArray(cursor) || cursor.length !== 2 || cursor[0] !== basis || !Number.isSafeInteger(cursor[1]) || cursor[1] < 0) throw new Error('CURSOR');
+      sequence = cursor[1];
+    } catch { return { ...page, state: 'stale', reason: 'scope-mismatch' }; }
+  }
+  try {
+    readMessageIntents(store => {
+      if (query.id) {
+        const row = store.get(query.id);
+        if (row && [row.source_scope, row.target_scope].includes(messageScopeKey(query.target))) page.receipt = projectSessionMessageReceipt(store.receipt(row), context);
+      } else {
+        page.items = store.summaries(query.target, sequence, query.limit!, query.taskNodeId);
+        if (page.items.length === query.limit) page.nextCursor = Buffer.from(JSON.stringify([basis, page.items.at(-1)!.sequence])).toString('base64url');
+      }
+    });
+  } catch { return { ...page, state: 'unavailable', reason: 'message-owner-unavailable' }; }
+  const after = await readSessionCollaborationQuery({ requester: query.requester, target: query.target, fields: [], limit: 1 }, context);
+  if (after.state !== 'ready') return { ...page, state: 'stale', reason: after.reason, items: [], receipt: null, nextCursor: null };
+  page.state = page.receipt || page.items.length ? 'ready' : 'empty';
+  return page;
+}
