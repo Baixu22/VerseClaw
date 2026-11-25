@@ -18,6 +18,7 @@
 
 import type { ChildProcess } from "node:child_process";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
+import { resolveGlobalSingleton } from "../../shared/global-singleton.js";
 import {
   managedProcessReservations,
   normalizeManagedPorts,
@@ -74,6 +75,10 @@ let envLoaded = false;
 const log = createSubsystemLogger("managed-process");
 let live = 0;
 const heldReservations = new Set<string>();
+const terminalReceipts = resolveGlobalSingleton(
+  Symbol.for("openclaw.managedProcessTerminalReceipts"),
+  () => new Set<ManagedProcessLease>(),
+);
 const counters = {
   peakLive: 0,
   admitted: 0,
@@ -125,6 +130,7 @@ export function configureManagedProcessCapacity(
 
 /** Drops the declaration, restores environment derivation and zeroes the counters (test helper). */
 export function resetManagedProcessCapacity(): void {
+  retryTerminalManagedProcesses();
   for (const id of heldReservations) releaseManagedProcessReservation(id);
   heldReservations.clear();
   config = undefined;
@@ -151,6 +157,7 @@ export function resolveManagedProcessDefaultLimits(): ManagedProcessDefaultLimit
 
 /** Current live count and declared limit. */
 export function managedProcessCapacityStats(): ManagedProcessCapacityStats {
+  retryTerminalManagedProcesses();
   const limit = managedProcessCapacityLimit();
   live = managedProcessReservations().length;
   return { live, ...counters, ...(limit === undefined ? {} : { limit }) };
@@ -185,6 +192,7 @@ export function admitManagedProcess(
     identity?: ManagedProcessIdentity;
   } = {},
 ): ManagedProcessAdmission {
+  retryTerminalManagedProcesses();
   const declared = declaredCapacity();
   const ports = normalizeManagedPorts(options.ports);
   const result = reserveManagedProcess({
@@ -241,20 +249,35 @@ export function startManagedChildProcess<T extends ChildProcess>(start: () => T,
       code === "ERR_OUT_OF_RANGE"
     ) {
       // Node validates these arguments before calling its native spawn handle.
-      lease.markTerminal();
-      lease.release();
+      settleTerminalManagedProcess(lease);
     } else lease.markUnknown("native-child-start-did-not-return-owner-handle");
     throw error;
   }
-  child.once("close", () => {
+  child.once("close", () => settleTerminalManagedProcess(lease));
+  return child;
+}
+
+/** Known no-start and native-close receipts share the same terminal settlement. */
+function settleTerminalManagedProcess(lease: ManagedProcessLease): void {
+  try {
+    lease.markTerminal();
+    lease.release();
+  } catch (error) {
+    terminalReceipts.add(lease);
+    log.warn(`Managed process terminal settlement failed: ${String(error)}`);
+  }
+}
+
+function retryTerminalManagedProcesses(): void {
+  for (const lease of terminalReceipts) {
     try {
       lease.markTerminal();
       lease.release();
-    } catch (error) {
-      log.warn(`Native exit capacity settlement failed: ${String(error)}`);
+      terminalReceipts.delete(lease);
+    } catch {
+      // Retain the close receipt until the store accepts terminal settlement.
     }
-  });
-  return child;
+  }
 }
 
 function createLease(id: string): ManagedProcessLease {

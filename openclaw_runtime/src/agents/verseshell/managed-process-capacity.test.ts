@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -15,8 +15,10 @@ import {
   managedProcessReservations,
   setManagedProcessHostPressure,
 } from "./managed-process-reservation.js";
+import * as reservationStore from "./managed-process-reservation.js";
 
 afterEach(() => {
+  vi.restoreAllMocks();
   resetManagedProcessCapacity();
   setManagedProcessHostPressure(false);
 });
@@ -227,5 +229,26 @@ describe("managed process capacity", () => {
     if (reportPath) writeFileSync(reportPath, JSON.stringify({ driven_by: 'agent', actor: 'codex-resource-native-error',
       platform: process.platform, nodeVersion: process.version, events, nativePid: child.pid ?? null,
       finalReservations: managedProcessReservations(), counters: managedProcessCapacityStats() }, null, 2) + '\n');
+  });
+
+  it("retries a confirmed native close after a temporary terminal-store failure", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const child = startManagedChildProcess(
+      () => spawn(process.execPath, ['-e', 'process.stdin.resume()'], { stdio: ['pipe', 'ignore', 'ignore'] }),
+      'retry-native-close',
+    );
+    const oldId = managedProcessReservations()[0].id;
+    vi.spyOn(reservationStore, 'updateManagedProcessReservation').mockImplementationOnce(() => {
+      throw new Error('temporary-native-exit-store-failure');
+    });
+    const closed = new Promise<void>(resolve => child.once('close', () => resolve()));
+    child.stdin!.end();
+    await closed;
+    expect(managedProcessReservations()).toContainEqual(expect.objectContaining({ id: oldId, phase: 'dispatched' }));
+    const next = admitManagedProcess();
+    expect(next.ok).toBe(true);
+    expect(managedProcessReservations().some(row => row.id === oldId)).toBe(false);
+    if (next.ok) next.lease.release();
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, doubleRelease: 0 });
   });
 });
