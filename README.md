@@ -24,6 +24,8 @@ Managed process lifecycles retain their shared executor until their own terminal
 
 Terminal PTYs and governed processes share declared host capacity. Known server ports are reserved before launch, stale terminal generations reject control, and uncertain exits retain their reservations for recovery. See [terminal resource ownership](harness/specs/guides/terminal-resource-ownership.md).
 
+Resource pressure contracts new execution while running work keeps its slots. Agent queues have finite waiting limits and prompt cancellation. Disabling efficiency sampling stops diagnostic recording while resource protection and idle-process reclamation continue. See [resources and observability](docs/modules/resources-and-observability.md).
+
 Opening the resource popover refreshes the current session's coordinator status and worker receipts.
 
 Runtime-managed worktree ownership, creation stages and merge intent persist in SQLite across restarts. Replaced paths, incomplete setup and unknown merge outcomes retain their resources and reject stale execution credentials. See the [registration and recovery contract](harness/specs/guides/execution-domain-registry.md).

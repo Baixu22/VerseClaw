@@ -10,6 +10,8 @@ export type CommandQueueEnqueueOptions = {
   priority?: "foreground" | "normal" | "background";
   maxQueueSize?: number;
   queueDeadlineMs?: number;
+  /** Absolute Unix-millisecond admission deadline, including time in outer queues. */
+  deadline?: number;
   signal?: AbortSignal;
 };
 

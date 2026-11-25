@@ -19,7 +19,7 @@ import {
   getActivePluginRegistryWorkspaceDirFromState,
   getPluginRegistryState,
 } from "../plugins/runtime-state.js";
-import { isCommandLaneTaskTimeoutError } from "../process/command-queue.js";
+import { isCommandLaneTaskTimeoutError, isCommandLaneWaitingError } from "../process/command-queue.js";
 import { createLazyImportLoader } from "../shared/lazy-promise.js";
 import { isDefaultAgentRuntimeId } from "./agent-runtime-id.js";
 import { normalizeOptionalAgentRuntimeId } from "./agent-runtime-id.js";
@@ -336,7 +336,7 @@ async function runFallbackCandidate<T>(params: {
     if (err instanceof ToolLoopTerminatedError || err instanceof PostCompactionLoopPersistedError) {
       throw err;
     }
-    if (isCommandLaneTaskTimeoutError(err)) {
+    if (isCommandLaneTaskTimeoutError(err) || isCommandLaneWaitingError(err)) {
       throw err;
     }
     if (isNonProviderRuntimeCoordinationError(err)) {

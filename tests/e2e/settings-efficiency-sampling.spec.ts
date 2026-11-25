@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { completeSetup, expect, test } from './fixtures/electron';
+import type { RuntimeEfficiencyState } from '../../shared/host-api/contract';
 
 async function ensureSwitchState(toggle: Locator, checked: boolean): Promise<void> {
   const currentState = await toggle.getAttribute('data-state');
@@ -8,7 +9,7 @@ async function ensureSwitchState(toggle: Locator, checked: boolean): Promise<voi
   }
 }
 
-async function readEfficiencyEnabled(page: Page): Promise<boolean> {
+async function readEfficiencyState(page: Page): Promise<RuntimeEfficiencyState> {
   return await page.evaluate(async () => {
     const bridge = (window as unknown as {
       verseClaw?: { hostInvoke: (request: unknown) => Promise<unknown> };
@@ -18,13 +19,14 @@ async function readEfficiencyEnabled(page: Page): Promise<boolean> {
       module: 'efficiency',
       action: 'getState',
     });
-    const record = response as { ok?: boolean; data?: { enabled?: boolean } } | undefined;
-    return Boolean(record?.ok && record.data?.enabled);
+    const record = response as { ok?: boolean; data?: RuntimeEfficiencyState } | undefined;
+    if (!record?.ok || !record.data) throw new Error('Efficiency host state unavailable');
+    return record.data;
   });
 }
 
 test.describe('Verse Claw runtime efficiency sampling settings', () => {
-  test('toggles sampling, fails closed when unmeasured, and persists', async ({ page }) => {
+  test('toggles recording while retaining resource protection and persists', async ({ page }, testInfo) => {
     await completeSetup(page);
 
     await page.getByTestId('sidebar-nav-settings').click();
@@ -49,10 +51,19 @@ test.describe('Verse Claw runtime efficiency sampling settings', () => {
     await ensureSwitchState(toggle, false);
     await expect(toggle).toHaveAttribute('data-state', 'unchecked');
     await expect(page.getByTestId('settings-efficiency-not-sampled')).toBeVisible();
-    await expect.poll(async () => await readEfficiencyEnabled(page)).toBe(false);
+    await expect.poll(async () => (await readEfficiencyState(page)).enabled).toBe(false);
+    const disabled = await readEfficiencyState(page);
+    expect(disabled.running).toBe(false);
+    expect(disabled.backgroundWork).not.toBeNull();
+    expect(disabled.shed).not.toBeNull();
+    await testInfo.attach('sampling-disabled-protection.json', {
+      body: JSON.stringify({ driven_by: 'agent', enabled: disabled.enabled, running: disabled.running, backgroundWork: disabled.backgroundWork, shed: disabled.shed }),
+      contentType: 'application/json',
+    });
 
     await ensureSwitchState(toggle, true);
     await expect(toggle).toHaveAttribute('data-state', 'checked');
-    await expect.poll(async () => await readEfficiencyEnabled(page)).toBe(true);
+    await expect.poll(async () => (await readEfficiencyState(page)).enabled).toBe(true);
+    await expect.poll(async () => (await readEfficiencyState(page)).running).toBe(true);
   });
 });

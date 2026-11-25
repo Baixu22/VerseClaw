@@ -635,7 +635,7 @@
     "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally.",
     "efficiencySampling": {
       "title": "Runtime efficiency sampling",
-      "description": "Records real process CPU and memory samples locally to diagnose heavy UI states. Nothing is uploaded. Disabling it stops the timer entirely.",
+      "description": "Records real process CPU and memory samples locally to diagnose heavy UI states. Nothing is uploaded. Turning this off stops diagnostic recording; resource protection and idle cleanup continue.",
       "toggleAria": "Toggle runtime efficiency sampling",
       "notSampled": "Not sampled yet. No measured runtime efficiency data is available.",
       "disabledHint": "Sampling is off. Turn it on to start collecting local measurements.",

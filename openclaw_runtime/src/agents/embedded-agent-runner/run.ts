@@ -125,7 +125,7 @@ import {
   hasOutboundDeliveryEvidence,
 } from "./delivery-evidence.js";
 import { resolveEmbeddedRunFailureSignal } from "./failure-signal.js";
-import { resolveGlobalLane, resolveSessionLane } from "./lanes.js";
+import { EMBEDDED_QUEUE_WAIT_MS, resolveGlobalLane, resolveSessionLane, withEmbeddedRunQueueBounds } from "./lanes.js";
 import { log } from "./logger.js";
 import { resolveModelAsync } from "./model.js";
 import {
@@ -523,6 +523,7 @@ export async function runEmbeddedAgent(
   const sessionLane = resolveSessionLane(params.sessionKey?.trim() || params.sessionId);
   const globalLane = resolveGlobalLane(params.lane);
   const sessionQueuePriority = resolveEmbeddedRunSessionQueuePriority(params.trigger);
+  const queueDeadlineAtMs = Date.now() + EMBEDDED_QUEUE_WAIT_MS;
   const laneTaskTimeoutMs = resolveEmbeddedRunLaneTimeoutMs(params.timeoutMs);
   let laneTaskProgressAtMs = Date.now();
   const noteLaneTaskProgress = () => {
@@ -537,16 +538,18 @@ export async function runEmbeddedAgent(
       laneTaskTimeoutMs,
     );
   const enqueueGlobal = <T>(task: () => Promise<T>, opts?: CommandQueueEnqueueOptions) => {
-    const globalOpts: CommandQueueEnqueueOptions = {
+    const globalOpts = withEmbeddedRunQueueBounds({
       ...opts,
       priority: sessionQueuePriority,
-    };
+    }, queueDeadlineAtMs, params.abortSignal);
     return params.enqueue
       ? params.enqueue(task, withLaneTimeout(globalOpts))
       : enqueueCommandInLane(globalLane, task, withLaneTimeout(globalOpts));
   };
   const enqueueSession = <T>(task: () => Promise<T>, opts?: CommandQueueEnqueueOptions) => {
-    const sessionOpts: CommandQueueEnqueueOptions = { ...opts, priority: sessionQueuePriority };
+    const sessionOpts = withEmbeddedRunQueueBounds(
+      { ...opts, priority: sessionQueuePriority }, queueDeadlineAtMs, params.abortSignal,
+    );
     return params.enqueue
       ? params.enqueue(task, sessionOpts)
       : enqueueCommandInLane(sessionLane, task, sessionOpts);

@@ -24,8 +24,8 @@ type ResourceTrackerInternals = {
   autoCleanup(): Promise<void>;
 };
 
-function internals(tracker: ResourceTracker): ResourceTracker & ResourceTrackerInternals {
-  return tracker as ResourceTracker & ResourceTrackerInternals;
+function internals(tracker: ResourceTracker): ResourceTrackerInternals {
+  return tracker as unknown as ResourceTrackerInternals;
 }
 
 describe('ResourceTracker', () => {
@@ -116,12 +116,32 @@ describe('ResourceTracker', () => {
   // ── Heartbeat / TCP ping ─────────────────────────────────────────────
 
   describe('heartbeat', () => {
-    it('routes heartbeat work through the background work gate', async () => {
+    it('reclaims managed idle resources while background work is deferred', async () => {
       const gate = getBackgroundWorkGate();
-      const gateSpy = vi.spyOn(gate, 'runBackground').mockResolvedValue(undefined);
+      gate.update({ shedSignal: true });
+      const id = tracker.register({ port: 21000, pid: process.pid, sessionKey: 'idle-maintenance' });
+      const resource = tracker.getSnapshot().resources.find(entry => entry.id === id)!;
+      resource.status = 'idle';
+      resource.sessionLastActiveAt = new Date(Date.now() - 31 * 60 * 1000).toISOString();
+      vi.spyOn(internals(tracker), 'tcpPing').mockResolvedValueOnce(true).mockResolvedValue(false);
       await (tracker as unknown as { runHeartbeat(): Promise<void> }).runHeartbeat();
-      expect(gateSpy).toHaveBeenCalledWith('resource-tracker-heartbeat', expect.any(Function));
-      gateSpy.mockRestore();
+      expect(tracker.getSnapshot().resources).toHaveLength(0);
+      expect(gate.getState()).toMatchObject({ deferring: true, pendingCount: 0 });
+    });
+
+    it('bounds probe concurrency and excludes an overlapping heartbeat', async () => {
+      for (let i = 0; i < 12; i++) tracker.register({ port: 21100 + i, pid: process.pid, sessionKey: 'bounded-maintenance' });
+      let release!: () => void;
+      const gate = new Promise<void>(resolve => { release = resolve; });
+      let active = 0; let peak = 0;
+      const probe = vi.spyOn(internals(tracker), 'tcpPing').mockImplementation(async () => {
+        active++; peak = Math.max(peak, active); await gate; active--; return true;
+      });
+      const run = (tracker as unknown as { runHeartbeat(): Promise<void> }).runHeartbeat();
+      await (tracker as unknown as { runHeartbeat(): Promise<void> }).runHeartbeat();
+      expect(probe).toHaveBeenCalledTimes(4);
+      release(); await run;
+      expect(probe).toHaveBeenCalledTimes(12); expect(peak).toBe(4);
     });
 
     it('TCP-pings a live port and returns true', async () => {

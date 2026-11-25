@@ -3,6 +3,7 @@ import { PostCompactionLoopPersistedError } from "./embedded-agent-runner/post-c
 import { runWithModelFallback } from "./model-fallback.js";
 import { createRequestAttemptBudget, runWithRequestAttemptBudget } from "./request-attempt-budget.js";
 import { ToolLoopTerminatedError } from "./tool-loop-termination.js";
+import { CommandLaneOverloadedError, CommandLaneQueueTimeoutError, CommandLaneQueueAbortedError, CommandLaneClearedError, CommandLaneTaskTimeoutError, GatewayDrainingError } from "../process/command-queue.js";
 
 function physicalFailureRun(budget: ReturnType<typeof createRequestAttemptBudget>) {
   return vi.fn(async () => {
@@ -28,6 +29,12 @@ describe("model fallback respects runtime loop termination", () => {
       toolName: "read",
       count: 6,
     }),
+    new CommandLaneOverloadedError("main"),
+    new CommandLaneQueueTimeoutError("main", 30_000),
+    new CommandLaneQueueAbortedError("main"),
+    new CommandLaneClearedError("main"),
+    new CommandLaneTaskTimeoutError("main", 10),
+    new GatewayDrainingError(),
   ])("preserves $name without trying another model", async (error) => {
     const run = vi.fn().mockRejectedValueOnce(error).mockResolvedValue("must not restart");
     const onError = vi.fn();

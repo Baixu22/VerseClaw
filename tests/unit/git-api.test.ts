@@ -14,10 +14,23 @@ const storeState = vi.hoisted(() => ({
 
 const execFileMock = vi.hoisted(() => vi.fn());
 
-vi.mock('node:child_process', () => ({
-  default: { execFile: execFileMock },
-  execFile: execFileMock,
-}));
+vi.mock('node:child_process', async () => {
+  const { EventEmitter } = await import('node:events');
+  const execFile = (...args: unknown[]) => {
+    const child = Object.assign(new EventEmitter(), { stdin: { destroy() {} } });
+    const callback = args.at(-1);
+    if (typeof callback === 'function') {
+      args[args.length - 1] = (...result: unknown[]) => {
+        callback(...result);
+        queueMicrotask(() => child.emit('close', 0, null));
+      };
+    }
+    const returned: unknown = execFileMock(...args);
+    return returned && typeof returned === 'object' && 'once' in returned && typeof returned.once === 'function'
+      ? returned : child;
+  };
+  return { default: { execFile }, execFile };
+});
 
 vi.mock('electron', () => ({
   shell: {

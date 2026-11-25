@@ -16,7 +16,6 @@ import {
   type ResourceTrackerRegisterPayload,
 } from '../../shared/types/resource-tracker';
 import { logger } from '../utils/logger';
-import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
 import { getTimerAligner } from '../../shared/resources';
 
 const execAsync = promisify(exec);
@@ -32,6 +31,8 @@ const AUTO_CLEANUP_IDLE_MS = 30 * 60 * 1000;
 
 /** TCP connect timeout per heartbeat probe (ms). */
 const PROBE_TIMEOUT_MS = 3_000;
+const HEARTBEAT_PROBE_CONCURRENCY = 4;
+const MAX_HEARTBEAT_CLEANUPS = 8;
 
 type ResourceRecord = TrackedResource;
 type ListeningPort = { port: number; pid: number; address: string };
@@ -71,7 +72,7 @@ export class ResourceTracker {
     this.heartbeatUnregister = getTimerAligner().register({
       id: 'resource-tracker-heartbeat',
       intervalMs: HEARTBEAT_INTERVAL_MS,
-      priority: 'background',
+      priority: 'interactive',
       run: () => this.runHeartbeat(),
     });
     logger.info('[ResourceTracker] Started heartbeat interval');
@@ -223,14 +224,14 @@ export class ResourceTracker {
     if (this.heartbeatInFlight) return;
     this.heartbeatInFlight = true;
     try {
-      await getBackgroundWorkGate().runBackground('resource-tracker-heartbeat', async () => {
-        const entries = Array.from(this.resources.values());
-        if (entries.length === 0) return;
-
-        const checks = entries.map((resource) => this.probeResource(resource));
-        await Promise.allSettled(checks);
-        await this.autoCleanup();
-      });
+      // Reclamation must progress during shedding. Bound the probes instead of
+      // putting maintenance behind the gate for new background work.
+      const entries = Array.from(this.resources.values());
+      for (let offset = 0; offset < entries.length; offset += HEARTBEAT_PROBE_CONCURRENCY) {
+        await Promise.allSettled(entries.slice(offset, offset + HEARTBEAT_PROBE_CONCURRENCY)
+          .map(resource => this.probeResource(resource)));
+      }
+      await this.autoCleanup();
     } finally {
       this.heartbeatInFlight = false;
     }
@@ -299,7 +300,8 @@ export class ResourceTracker {
       }
     }
 
-    for (const id of toRemove) {
+    const candidates = [...toRemove].slice(0, MAX_HEARTBEAT_CLEANUPS);
+    for (const id of candidates) {
       const resource = this.resources.get(id);
       if (resource) {
         logger.info(`[ResourceTracker] Auto-cleaning ${resource.status} resource: ${resource.label} (port=${resource.port})`);
@@ -307,8 +309,8 @@ export class ResourceTracker {
       }
     }
 
-    if (toRemove.size > 0) {
-      logger.info(`[ResourceTracker] Auto-cleaned ${toRemove.size} resources`);
+    if (candidates.length > 0) {
+      logger.info(`[ResourceTracker] Auto-cleaned ${candidates.length} resources`);
     }
   }
 

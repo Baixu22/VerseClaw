@@ -9,7 +9,7 @@
  * so the UI can fail closed to "not sampled" instead of showing a healthy zero.
  *
  * Everything stays local. Nothing here uploads, and the toggle only starts or
- * stops the existing unref'd timer.
+ * stops diagnostic recording. The resource protection observer stays active.
  */
 import type {
   RuntimeEfficiencyShedState,

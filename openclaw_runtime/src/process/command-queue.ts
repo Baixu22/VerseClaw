@@ -7,6 +7,7 @@ import {
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 import type { CommandQueueEnqueueOptions } from "./command-queue.types.js";
 import { CommandLane } from "./lanes.js";
+import { checkResourceWait, watchResourceWait } from "../../../shared/resources/wait.js";
 /**
  * Dedicated error type thrown when a queued command is rejected because
  * its lane was cleared.  Callers that fire-and-forget enqueued tasks can
@@ -21,11 +22,15 @@ export class CommandLaneClearedError extends Error {
 
 /**
  * Dedicated error type thrown when an active command exceeds its caller-owned
- * lane timeout. The underlying task may still be unwinding, but the lane is
- * released so queued work is not blocked forever.
+ * lane timeout. Both this lane and an outer lane retain their slots until
+ * executionSettled confirms the actual task's lifetime.
  */
 export class CommandLaneTaskTimeoutError extends Error {
-  constructor(lane: string, timeoutMs: number) {
+  constructor(
+    lane: string,
+    timeoutMs: number,
+    readonly executionSettled?: Promise<void>,
+  ) {
     super(`Command lane "${lane}" task timed out after ${timeoutMs}ms`);
     this.name = "CommandLaneTaskTimeoutError";
   }
@@ -59,23 +64,39 @@ export class GatewayDrainingError extends Error {
 
 export class CommandLaneOverloadedError extends Error {
   constructor(lane: string) {
-    super('Command lane ' + JSON.stringify(lane) + ' is overloaded');
-    this.name = 'CommandLaneOverloadedError';
+    super("Command lane " + JSON.stringify(lane) + " is overloaded");
+    this.name = "CommandLaneOverloadedError";
   }
 }
 
 export class CommandLaneQueueTimeoutError extends Error {
   constructor(lane: string, timeoutMs: number) {
-    super('Command lane ' + JSON.stringify(lane) + ' queued task timed out after ' + timeoutMs + 'ms');
-    this.name = 'CommandLaneQueueTimeoutError';
+    super(
+      "Command lane " + JSON.stringify(lane) + " queued task timed out after " + timeoutMs + "ms",
+    );
+    this.name = "CommandLaneQueueTimeoutError";
   }
 }
 
 export class CommandLaneQueueAbortedError extends Error {
   constructor(lane: string) {
-    super('Command lane ' + JSON.stringify(lane) + ' queued task was cancelled');
-    this.name = 'CommandLaneQueueAbortedError';
+    super("Command lane " + JSON.stringify(lane) + " queued task was cancelled");
+    this.name = "CommandLaneQueueAbortedError";
   }
+}
+
+/** Local admission failures must not be retried as provider/model failures. */
+export function isCommandLaneWaitingError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    [
+      "CommandLaneOverloadedError",
+      "CommandLaneQueueTimeoutError",
+      "CommandLaneQueueAbortedError",
+      "CommandLaneClearedError",
+      "GatewayDrainingError",
+    ].includes(error.name)
+  );
 }
 
 type QueueEntry = {
@@ -90,9 +111,9 @@ type QueueEntry = {
   activeAheadAtEnqueue: number;
   taskTimeoutMs?: number;
   taskTimeoutProgressAtMs?: () => number | undefined;
-  maxQueueSize?: number;
   queueDeadlineMs?: number;
   signal?: AbortSignal;
+  cleanup?: () => void;
   onWait?: (waitMs: number, queuedAhead: number) => void;
 };
 
@@ -300,6 +321,14 @@ async function runQueueEntryTask(lane: string, entry: QueueEntry): Promise<unkno
   if (taskTimeoutMs === undefined) {
     return await taskPromise;
   }
+  const executionSettled = taskPromise.then(
+    () => undefined,
+    async (error: unknown) => {
+      if (isCommandLaneTaskTimeoutError(error)) {
+        await (error as CommandLaneTaskTimeoutError).executionSettled;
+      }
+    },
+  );
 
   const startedAtMs = Date.now();
   const readLastProgressAtMs = () => {
@@ -321,7 +350,7 @@ async function runQueueEntryTask(lane: string, entry: QueueEntry): Promise<unkno
       const remainingMs = taskTimeoutMs - elapsedMs;
       if (remainingMs <= 0) {
         timedOut = true;
-        reject(new CommandLaneTaskTimeoutError(lane, taskTimeoutMs));
+        reject(new CommandLaneTaskTimeoutError(lane, taskTimeoutMs, executionSettled));
         return;
       }
       timeoutHandle = setTimeout(armTimeout, remainingMs);
@@ -364,13 +393,19 @@ function drainLane(lane: string) {
     try {
       while (state.activeTaskIds.size < state.maxConcurrent && state.queue.length > 0) {
         const entry = state.queue.shift() as QueueEntry;
+        entry.cleanup?.();
         const waitedMs = Date.now() - entry.enqueuedAt;
         if (entry.signal?.aborted) {
           entry.reject(new CommandLaneQueueAbortedError(lane));
           continue;
         }
         if (entry.queueDeadlineMs !== undefined && Date.now() >= entry.queueDeadlineMs) {
-          entry.reject(new CommandLaneQueueTimeoutError(lane, Math.max(0, entry.queueDeadlineMs - entry.enqueuedAt)));
+          entry.reject(
+            new CommandLaneQueueTimeoutError(
+              lane,
+              Math.max(0, entry.queueDeadlineMs - entry.enqueuedAt),
+            ),
+          );
           continue;
         }
         if (waitedMs >= entry.warnAfterMs) {
@@ -402,6 +437,12 @@ function drainLane(lane: string) {
             }
             entry.resolve(result);
           } catch (err) {
+            // Propagate failure promptly through outer lanes, but keep their
+            // capacity until a timed-out inner execution has really ended.
+            entry.reject(err);
+            if (isCommandLaneTaskTimeoutError(err)) {
+              await (err as CommandLaneTaskTimeoutError).executionSettled;
+            }
             const completedCurrentGeneration = completeTask(state, taskId, taskGeneration);
             const isProbeLane = lane.startsWith("auth-probe:") || lane.startsWith("session:probe-");
             if (!isProbeLane && !isExpectedNonErrorLaneFailure(err)) {
@@ -417,7 +458,6 @@ function drainLane(lane: string) {
               notifyActiveTaskWaiters();
               pump();
             }
-            entry.reject(err);
           }
         })();
       }
@@ -466,18 +506,27 @@ export function enqueueCommandInLane<T>(
   const state = getLaneState(cleaned);
   return new Promise<T>((resolve, reject) => {
     const maxQueueSize = opts?.maxQueueSize;
-    if (typeof maxQueueSize === 'number' && state.queue.length >= maxQueueSize) {
-      reject(new CommandLaneOverloadedError(cleaned));
+    if (maxQueueSize !== undefined && (!Number.isSafeInteger(maxQueueSize) || maxQueueSize < 0)) {
+      reject(new RangeError("maxQueueSize must be a non-negative integer"));
       return;
     }
     const enqueuedAt = Date.now();
     const queueDeadlineMs = opts?.queueDeadlineMs;
-    const queueDeadlineAt = typeof queueDeadlineMs === 'number' ? enqueuedAt + queueDeadlineMs : undefined;
-    if (opts?.signal?.aborted) {
-      reject(new CommandLaneQueueAbortedError(cleaned));
+    const deadline = Math.min(opts?.deadline ?? Infinity, queueDeadlineMs === undefined ? Infinity : enqueuedAt + queueDeadlineMs);
+    const queueDeadlineAt = deadline === Infinity ? undefined : deadline;
+    const expired = () => new CommandLaneQueueTimeoutError(cleaned, queueDeadlineMs ?? Math.max(0, deadline - enqueuedAt));
+    try { checkResourceWait({ signal: opts?.signal, deadline: queueDeadlineAt }, expired); }
+    catch (error) {
+      reject(opts?.signal?.aborted ? new CommandLaneQueueAbortedError(cleaned) : error);
       return;
     }
-    enqueueLaneEntry(state, {
+    const canStart =
+      !state.draining && state.queue.length === 0 && state.activeTaskIds.size < state.maxConcurrent;
+    if (maxQueueSize !== undefined && !canStart && state.queue.length >= maxQueueSize) {
+      reject(new CommandLaneOverloadedError(cleaned));
+      return;
+    }
+    const entry: QueueEntry = {
       task: () => task(),
       resolve: (value) => resolve(value as T),
       reject,
@@ -489,11 +538,25 @@ export function enqueueCommandInLane<T>(
       activeAheadAtEnqueue: 0,
       taskTimeoutMs: normalizeTaskTimeoutMs(opts?.taskTimeoutMs),
       taskTimeoutProgressAtMs: opts?.taskTimeoutProgressAtMs,
-      maxQueueSize: opts?.maxQueueSize,
       queueDeadlineMs: queueDeadlineAt,
       signal: opts?.signal,
       onWait: opts?.onWait,
-    });
+    };
+    enqueueLaneEntry(state, entry);
+    entry.cleanup = watchResourceWait(
+      { signal: entry.signal, deadline: queueDeadlineAt },
+      (error) => {
+        const index = state.queue.indexOf(entry);
+        if (index < 0) return;
+        state.queue.splice(index, 1);
+        entry.cleanup?.();
+        reject(entry.signal?.aborted ? new CommandLaneQueueAbortedError(cleaned) : error);
+        drainLane(cleaned);
+      },
+      expired,
+    );
+    // Expiration may settle synchronously while its registration is created.
+    if (!state.queue.includes(entry)) entry.cleanup();
     logLaneEnqueue(cleaned, getLaneDepth(state));
     drainLane(cleaned);
   });
@@ -554,6 +617,7 @@ export function clearCommandLane(lane: string = CommandLane.Main) {
   const removed = state.queue.length;
   const pending = state.queue.splice(0);
   for (const entry of pending) {
+    entry.cleanup?.();
     entry.reject(new CommandLaneClearedError(cleaned));
   }
   return removed;
@@ -589,6 +653,9 @@ export function resetCommandLane(lane: string = CommandLane.Main): number {
 export function resetCommandQueueStateForTest(): void {
   const queueState = getQueueState();
   queueState.gatewayDraining = false;
+  for (const state of queueState.lanes.values()) {
+    for (const entry of state.queue) entry.cleanup?.();
+  }
   queueState.lanes.clear();
   for (const waiter of Array.from(queueState.activeTaskWaiters)) {
     resolveActiveTaskWaiter(waiter, { drained: true });
