@@ -13,6 +13,7 @@ import { createTaskRuntimeGuard, restoreTaskModelContext, executeTaskGuarded,
 import { readTaskTrace } from '../../shared/task-system/trace';
 import { projectCoordinatorScope, assertSystemExecutionAllowed } from '../../shared/task-system/project-coordinator';
 import { normalizeSystemControl } from '../../shared/types/system-control';
+import { normalizeChecksum } from '../../shared/types/context-runtime-kit';
 import { createTaskLedgerWorkingContextProposal, createTaskLedgerWorkingContextDecision,
   projectTaskLedgerWorkingContext, emptyTaskLedgerWorkingContextSnapshot,
   STAGE3_WORKING_CONTEXT_POLICY_DIGEST } from '../../shared/task-ledger-working-context';
@@ -141,7 +142,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
     sessionId: s.id, archiveRoot: join(root, 'archives'), minChars: 1000, preserveNewestObservationCount: 0 });
   if (masking.maskedCount) steps.push({ action: 'mask-and-verify-observation', outcome: masking.archiveHandles });
   const restored = () => restoreTaskModelContext(guard, 'Continue from the current owner.');
-  const write = async (value: string) => step('write-result', () => executeTaskGuarded(guard, 'output', 'write', () => {
+  const write = async (value: string) => step('write-result', () => executeTaskGuarded(guard, 'output', 'write', async () => {
     writeFileSync(join(root, 'result.txt'), value); return { written: true };
   }));
   let observed: ContinuationObservation = {};
@@ -201,7 +202,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
         }), 'receipt timeout');
         store.close(); store = new TaskSystemStore(resolveTaskDomain(root));
         production = restored();
-        const replayRejected = await rejected('retry-write', () => executeTaskGuarded(guard, 'retry', 'write', () => { sideEffects++; }), 'TASK_RECONCILIATION_REQUIRED');
+        const replayRejected = await rejected('retry-write', () => executeTaskGuarded(guard, 'retry', 'write', async () => { sideEffects++; }), 'TASK_RECONCILIATION_REQUIRED');
         observed = { replayRejected, sideEffects, pending: store.get(claim.taskNodeId).pendingOperations };
         break;
       }
@@ -240,7 +241,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
         const child = store.binding(childSessionKey, 'child-g')!.claim!;
         store.checkpoint(child, { nextAction: 'verify', completed: ['worker claims all done'], unresolved: ['independent verification required'], artifacts: [] });
         const returned = store.returnDelegatedWriter(childSessionKey, { runId: 'child-run', endedAt: Date.now(), outcome: 'done', parentGeneration: claim.generation });
-        const childWriteRejected = await rejected('late-child-write', () => executeTaskGuarded(childGuard, 'child-late', 'write', () => {}), 'TASK_REFERENCE_READ_ONLY');
+        const childWriteRejected = await rejected('late-child-write', () => executeTaskGuarded(childGuard, 'child-late', 'write', async () => {}), 'TASK_REFERENCE_READ_ONLY');
         guard = createTaskRuntimeGuard(root, claim.sessionKey, claim.generation);
         production = restored();
         await write(readRestored(String(production)).progress.nextAction);
@@ -253,7 +254,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
         store.claim(other.contract.taskNodeId, 'other-session', 'other-generation', 'other-claim');
         store.selectReference(other.contract.taskNodeId, 'observer', 'observer-g', 'reference');
         const observerGuard = createTaskRuntimeGuard(root, 'observer', 'observer-g');
-        const foreignWriteRejected = await rejected('reference-write', () => executeTaskGuarded(observerGuard, 'foreign', 'write', () => {}), 'TASK_CLAIM_REQUIRED');
+        const foreignWriteRejected = await rejected('reference-write', () => executeTaskGuarded(observerGuard, 'foreign', 'write', async () => {}), 'TASK_CLAIM_REQUIRED');
         production = restored();
         await write(JSON.parse(readRestored(String(production)).core.constraints[0]).value);
         observed = { output: readFileSync(join(root, 'result.txt'), 'utf8'), foreignReadOnly: store.binding('observer', 'observer-g')?.referenceOnly === true, foreignWriteRejected };
@@ -262,7 +263,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
       case 'generation': {
         const oldGuard = guard;
         const newClaim = store.handoff(claim, `${claim.sessionKey}-next`, `${claim.generation}-next`).claim!;
-        const oldWriteRejected = await rejected('old-owner-write', () => executeTaskGuarded(oldGuard, 'old-write', 'write', () => {}), 'TASK_STALE_OWNER');
+        const oldWriteRejected = await rejected('old-owner-write', () => executeTaskGuarded(oldGuard, 'old-write', 'write', async () => {}), 'TASK_STALE_OWNER');
         guard = createTaskRuntimeGuard(root, newClaim.sessionKey, newClaim.generation);
         production = restored();
         await write(JSON.parse(readRestored(String(production)).core.constraints[0]).value);
@@ -271,7 +272,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
       }
       case 'readback': {
         const handle = createContextArchiveHandleForPayloadSync({ sessionId: s.id, itemId: createContextItemId(s.id), payload: s.rawInput.exact, archiveRoot: join(root, 'archives') });
-        const wrong = await step('read-checksum-mismatch', () => verifyContextArchiveHandle({ ...handle, checksum: `sha256:${'0'.repeat(64)}` }));
+        const wrong = await step('read-checksum-mismatch', () => verifyContextArchiveHandle({ ...handle, checksum: normalizeChecksum(`sha256:${'0'.repeat(64)}`) }));
         const missing = await step('read-missing-source', () => verifyContextArchiveHandle({ ...handle, uri: handle.uri.replace(/[^/]+$/, 'missing.context-archive.json') }));
         production = { wrong, missing };
         const diskOutput = readFileSync(join(root, 'result.txt'), 'utf8');
