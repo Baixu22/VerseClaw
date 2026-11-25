@@ -4,11 +4,12 @@ import { promisify } from 'node:util';
 const exec = promisify(execFile);
 
 // Prefer the current shell; retry only when it is absent, never after an uncertain operation.
-async function runPowerShell(script: string, options: ExecFileOptions & { encoding: 'utf8' }) {
+async function runPowerShell(script: string, options: ExecFileOptions & { encoding: 'utf8' }, requirePowerShell7 = false) {
   const args = ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script];
   try { return await exec('pwsh.exe', args, options); }
   catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    if (requirePowerShell7) throw new Error('Native process-tree termination requires PowerShell 7 (pwsh.exe)', { cause: error });
     return exec('powershell.exe', args, options);
   }
 }
@@ -116,7 +117,8 @@ $results = @(foreach ($entry in $entries) {
       } else {
         $result.status = 'alive'
         if ($env:CLAWX_PROCESS_TERMINATE -eq '1') {
-          $owned.Kill()
+          if ($env:CLAWX_PROCESS_TERMINATE_TREE -eq '1') { $owned.Kill($true) }
+          else { $owned.Kill() }
           if ($owned.WaitForExit(2000)) { $result.status = 'terminated' }
         }
       }
@@ -135,6 +137,7 @@ ConvertTo-Json -InputObject $results -Depth 3 -Compress
 export async function checkWindowsProcesses(
   identities: WindowsProcessIdentity[],
   terminate = false,
+  options: { entireProcessTree?: boolean } = {},
 ): Promise<WindowsProcessCheck[]> {
   if (!identities.length) return [];
   if (process.platform !== 'win32') throw new Error('Windows process checks require Windows');
@@ -147,7 +150,8 @@ export async function checkWindowsProcesses(
     ...process.env,
     CLAWX_PROCESS_IDENTITIES: JSON.stringify(entries),
     CLAWX_PROCESS_TERMINATE: terminate ? '1' : '0',
-  } });
+    CLAWX_PROCESS_TERMINATE_TREE: options.entireProcessTree ? '1' : '0',
+  } }, options.entireProcessTree === true);
   const results = JSON.parse(stdout.trim()) as WindowsProcessCheck[];
   if (!Array.isArray(results) || results.length !== entries.length
     || results.some((row, index) => row.pid !== entries[index].pid

@@ -11,6 +11,13 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - tests/e2e/fixtures/recovery-contract-probe.ts
+  - tests/unit/recovery-observation.test.ts
+  - tests/e2e/recovery-contract-eval.spec.ts
+  - tests/e2e/fixtures/recovery-process.ts
+  - tests/e2e/fixtures/windows-process.ts
+  - tests/unit/recovery-process.test.ts
+  - tests/unit/electron-process-identity.test.ts
   - openclaw_runtime/src/gateway/server/ws-connection.ts
   - openclaw_runtime/src/gateway/server/ws-connection/message-handler-loader.ts
   - openclaw_runtime/src/gateway/server/ws-connection.lazy.test.ts
@@ -334,6 +341,9 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/recovery-observation.test.ts
+  - tests/unit/recovery-process.test.ts
+  - tests/unit/electron-process-identity.test.ts
   - openclaw_runtime/src/gateway/server/ws-connection.lazy.test.ts
   - openclaw_runtime/src/gateway/server/health-state.lazy.test.ts
   - openclaw_runtime/src/infra/update-available-state.test.ts
@@ -462,6 +472,12 @@ acceptance:
   - Empty startup delivery queues leave send/reply execution unloaded. The existing queue owners retain recovery admission, cutoff, claims, backoff and settlement for pending work.
   - Handshake snapshots read health and update state without loading health probes or updater execution. Refreshes preserve public/sensitive isolation, coalescing and error propagation; update notifications share one state owner and retain change deduplication.
   - Challenge-only readiness probes leave authentication and RPC execution unloaded. The first incoming frame starts one handler load, preserves the 16-frame queue limit and serial dispatch, and closed sockets release queued frames without attaching a live handler.
+  - Windows crash injection binds the fault PID to the current app-owned Gateway and its creation time before native process-tree termination. Only confirmed exit after a termination request counts as an injected crash; initially replaced, unavailable or already-exited targets fail the trial. A delayed exit receives at most two same-identity read-only checks, never another termination request, and all observations are retained. The original fault windows and frozen manifest remain unchanged.
+  - Recovery trial failures retain incomplete receipts even before the first crash is attempted, including observed fault boundaries and the actual injection mechanism. A failed read-only exit check preserves prior process observations and the original error.
+  - Failed disk snapshots retain independently readable fault probes, decisions and effects with per-source errors. Native Windows tree injection requires PowerShell 7; single-process cleanup retains its Windows PowerShell fallback. Playwright test status and runner exit remain required alongside outcome receipts.
+  - Trial outcome receipts are finalized after app/provider cleanup. Recording or cleanup failures retain the measured outcome in failure evidence and produce an incomplete trial; incomplete native process or inspector cleanup rejects the run.
+  - A failed trial writes its snapshot and incomplete receipt before releasing a paused fault boundary. Cleanup errors are aggregated with the original failure and recorded separately, preserving the first snapshot unchanged.
+  - The effect-before-receipt window requires both the tool-return probe and a landed effect inside the existing boundary wait budget. A command that yields while still running must not trigger an early crash; exact effect identity/count and missing-receipt assertions remain unchanged.
   - Desktop build provenance hashes every declared output with bounded file reads and reuses a physical file's hash only within the same snapshot. Archive mappings and deterministic output order are preserved.
   - Goal-wake remains level-triggered and never respawns an uncertain durable helper; task terminal state and the wait reconciliation remain idempotent after restart.
   - ACP observed output prevents a fresh turn, and an early backend exit without effect truth is not treated as proof that no effect occurred.

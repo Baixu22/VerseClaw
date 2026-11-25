@@ -137,6 +137,17 @@ export function readProbeFiles(dir: string, prefix: string) {
     )
     .sort((left, right) => left.observedAt - right.observedAt || left.file.localeCompare(right.file));
 }
+export function readRecoveryFaultBoundary(
+  probeDir: string,
+  point: string,
+  seenPids: ReadonlySet<number>,
+  requiredEffectPath?: string,
+) {
+  const hit = readProbeFiles(probeDir, "hit-").find((entry) => entry.point === point && !seenPids.has(entry.pid));
+  // exec may return a running process before its effect lands. Keep the same boundary wait budget.
+  if (hit && requiredEffectPath && effectLines(requiredEffectPath).length === 0) return undefined;
+  return hit;
+}
 export async function eventually<T>(
   read: () => T | Promise<T>,
   accept: (value: T) => boolean,
@@ -186,18 +197,35 @@ export function persistEvidence(dir: string, name: string, value: unknown) {
 }
 
 /** Preserve a failure during a multi-crash sequence, even if its final snapshot is unreadable. */
-export function persistFailedRecoveryObservation(dir: string, read: () => unknown, error: unknown) {
-  let value: unknown = null;
-  let snapshotError = "";
-  try {
-    value = read();
-  } catch (failure) {
-    snapshotError = String(failure);
+export function persistFailedRecoveryObservation(
+  dir: string, reads: Record<string, () => unknown>, error: unknown, name = "failed-observation.json",
+) {
+  const value: Record<string, unknown> = {};
+  const snapshotErrors: Record<string, string> = {};
+  for (const [name, read] of Object.entries(reads)) {
+    try {
+      value[name] = read();
+    } catch (failure) {
+      value[name] = null;
+      snapshotErrors[name] = String(failure);
+    }
   }
-  return persistEvidence(dir, "failed-observation.json", {
-    error: String(error), value, snapshotError,
+  return persistEvidence(dir, name, {
+    error: String(error), value, snapshotErrors,
     driven_by: "agent", actor: "recovery-contract-matrix", realHumanEvidence: false,
   });
+}
+
+/** Attempt every cleanup and retain the original trial error alongside cleanup failures. */
+export async function finishRecoveryTrialCleanup(
+  trialErrors: readonly unknown[],
+  cleanups: Array<() => unknown | Promise<unknown>>,
+) {
+  const errors = [...trialErrors];
+  for (const cleanup of cleanups) {
+    try { await cleanup(); } catch (error) { errors.push(error); }
+  }
+  if (errors.length) throw new AggregateError(errors, errors.map(String).join("\n"));
 }
 
 /** Close the live child before closing Playwright's owning app connection. */
@@ -205,10 +233,7 @@ export async function closeRecoveryApp(app: ElectronApplication): Promise<void> 
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     await Promise.race([
-      (async () => {
-        await hostInvoke(app, "gateway", "stop");
-        await app.close();
-      })(),
+      hostInvoke(app, "gateway", "stop"),
       new Promise<never>((_, reject) => {
         timer = setTimeout(() => reject(new Error("recovery app cleanup timed out")), 15_000);
       }),
@@ -217,6 +242,10 @@ export async function closeRecoveryApp(app: ElectronApplication): Promise<void> 
     // The fixture's bounded cleanup below owns the native process tree.
   } finally {
     if (timer) clearTimeout(timer);
-    await closeElectronApp(app, 1_000);
+  }
+  // This owner closes Playwright once; a second concurrent close can force a blocking taskkill.
+  const closed = await closeElectronApp(app, 1_000);
+  if (!closed.mainExited || !closed.launcherExited || !closed.closeSettled) {
+    throw new Error(`Recovery app cleanup incomplete: ${JSON.stringify(closed)}`);
   }
 }

@@ -11,6 +11,35 @@ import * as processOwners from '../e2e/fixtures/windows-process';
 import { checkWindowsProcesses, discoverWindowsElectronProcesses } from '../e2e/fixtures/windows-process';
 import { cleanupElectronProcesses, ELECTRON_PID_LEDGER } from '../e2e/fixtures/electron-process-cleanup';
 
+test.skipIf(process.platform !== 'win32')('native tree termination verifies root identity and preserves unrelated processes', async () => {
+  const root = spawn(process.execPath, ['-e', `
+    const child = require('node:child_process').spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore', windowsHide: true });
+    child.once('spawn', () => process.send({ pid: child.pid }));
+    setInterval(() => {}, 1000);
+  `], { stdio: ['ignore', 'ignore', 'ignore', 'ipc'], windowsHide: true });
+  const unrelated = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore', windowsHide: true });
+  const [child] = await once(root, 'message') as [{ pid: number }];
+  let identities: Array<{ pid: number; creationTime: number }> = [];
+  try {
+    const { stdout } = await promisify(execFile)('pwsh.exe', ['-NoProfile', '-NonInteractive', '-Command',
+      '$rows = @($env:CLAWX_TEST_PIDS | ConvertFrom-Json | ForEach-Object { $p = [Diagnostics.Process]::GetProcessById($_); @{pid=$p.Id;creationTime=([DateTimeOffset]$p.StartTime).ToUnixTimeMilliseconds()} }); ConvertTo-Json -InputObject $rows -Compress',
+    ], { windowsHide: true, timeout: 10_000, env: { ...process.env, CLAWX_TEST_PIDS: JSON.stringify([root.pid, child.pid, unrelated.pid]) } });
+    identities = JSON.parse(stdout);
+    const wrong = { ...identities[0], creationTime: identities[0].creationTime - 1000 };
+    expect(await checkWindowsProcesses([wrong], true, { entireProcessTree: true })).toEqual([{ ...wrong, status: 'replaced' }]);
+    expect((await checkWindowsProcesses(identities)).map(({ status }) => status)).toEqual(['alive', 'alive', 'alive']);
+    expect(await checkWindowsProcesses([identities[0]], true, { entireProcessTree: true }))
+      .toEqual([{ ...identities[0], status: 'terminated' }]);
+    await vi.waitFor(async () => {
+      expect((await checkWindowsProcesses(identities)).map(({ status }) => status)).toEqual(['exited', 'exited', 'alive']);
+    }, { timeout: 5000, interval: 100 });
+  } finally {
+    if (root.exitCode === null && root.signalCode === null) root.kill();
+    if (unrelated.exitCode === null && unrelated.signalCode === null) unrelated.kill();
+    if (identities[1]) await checkWindowsProcesses([identities[1]], true);
+  }
+}, 30_000);
+
 test.skipIf(process.platform !== 'win32').each(['exited', 'unavailable'] as const)(
   'cleanup rechecks an unavailable identity without repeating termination (%s)', async (nextStatus) => {
     const root = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-run-'));
@@ -45,6 +74,14 @@ test.skipIf(process.platform !== 'win32')('cleanup preserves a reused PID and te
       '([DateTimeOffset]([Diagnostics.Process]::GetProcessById([int]$env:CLAWX_TEST_PID).StartTime)).ToUnixTimeMilliseconds()',
     ], { windowsHide: true, timeout: 10_000, env: { ...process.env, CLAWX_TEST_PID: String(child.pid) } });
     const identity = { pid: child.pid!, creationTime: Number(stdout.trim()) };
+    // PowerShell 5 can observe a process, but must never receive Kill(true).
+    vi.stubEnv('PATH', join(process.env.SystemRoot ?? 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0'));
+    try {
+      await expect(checkWindowsProcesses([identity], true, { entireProcessTree: true }))
+        .rejects.toThrow('requires PowerShell 7');
+      expect((await checkWindowsProcesses([identity]))[0].status).toBe('alive');
+      expect(child.exitCode).toBeNull();
+    } finally { vi.unstubAllEnvs(); }
     expect(await checkWindowsProcesses([identity])).toEqual([{ ...identity, status: 'alive' }]);
     expect(await checkWindowsProcesses([identity, { ...identity, creationTime: identity.creationTime - 1000 }]))
       .toEqual([{ ...identity, status: 'alive' }, { ...identity, creationTime: identity.creationTime - 1000, status: 'replaced' }]);
