@@ -16,6 +16,7 @@ import type {
   TaskQuery,
   TaskPage,
   TaskSessionSnapshot,
+  TaskWriterDelegation,
 } from "../../shared/task-system/types";
 import { getPersistedCoordinatorBinding, getProjectCoordinatorProfiles, getWorkspaceRootPathById } from "./workspaces-api";
 import type { GatewayManager } from "../gateway/manager";
@@ -204,11 +205,19 @@ type ManagedSessionEffectInput = {
 };
 
 /** Read a persisted session reference without acquiring execution ownership. */
-export function readManagedSessionReference(workspaceRoot: string, sessionKey: string, generation: string): TaskView | null {
+export function readManagedSessionReference(workspaceRoot: string, sessionKey: string, generation: string, taskNodeId?: string): TaskView | null {
   const access = createExecutionTaskAccess(workspaceRoot);
   if (!existsSync(access.domain.database)) return null;
   const store = new TaskSystemStore(access.domain, undefined, access);
-  try { return store.binding(sessionKey, generation); }
+  try {
+    const bound = store.binding(sessionKey, generation);
+    if (!taskNodeId || bound?.contract.taskNodeId === taskNodeId) return bound;
+    const reference = store.sessionReference(sessionKey, generation, taskNodeId);
+    if (reference) return reference;
+    if (!store.has(taskNodeId)) return null;
+    const task = store.get(taskNodeId);
+    return task.claim?.sessionKey === sessionKey && task.claim.generation === generation ? { ...task, referenceOnly: true } : null;
+  }
   finally { store.close(); }
 }
 
@@ -223,12 +232,15 @@ function resolveManagedSessionEffectTask(store: TaskSystemStore, input: ManagedS
 }
 
 /** Resolve admission against the task owner without claiming a selected task. */
-export function readManagedSessionEffect(input: ManagedSessionEffectInput): TaskView & { authorityBasis: ExecutionTaskAuthorityBasis } {
+export function readManagedSessionEffect(input: ManagedSessionEffectInput): TaskView & {
+  authorityBasis: ExecutionTaskAuthorityBasis; delegation: TaskWriterDelegation | null;
+} {
   const access = createExecutionTaskAccess(input.workspaceRoot);
   const domain = access.domain;
   if (!existsSync(domain.database)) throw new Error('TASK_CLAIM_REQUIRED');
   const store = new TaskSystemStore(domain, undefined, access);
-  try { return { ...resolveManagedSessionEffectTask(store, input), authorityBasis: access.basis }; }
+  try { return { ...resolveManagedSessionEffectTask(store, input), authorityBasis: access.basis,
+    delegation: store.delegationForChild(input.sessionKey) }; }
   finally { store.close(); }
 }
 
@@ -286,6 +298,16 @@ export function handoffManagedSessionTask(input: {
   } finally {
     store.close();
   }
+}
+
+export function restoreManagedSessionTask(input: {
+  workspaceRoot: string; sessionKey: string; previousGeneration: string; generation: string;
+}): TaskView | null {
+  const access = createExecutionTaskAccess(input.workspaceRoot);
+  if (!existsSync(access.domain.database)) return null;
+  const store = new TaskSystemStore(access.domain, undefined, access);
+  try { return store.restoreSessionScope(input.sessionKey, input.previousGeneration, input.generation); }
+  finally { store.close(); }
 }
 
 export async function persistentTaskChatContext(
@@ -483,14 +505,34 @@ export async function taskSystemCommand(
             const claim = view.claim;
             if (view.contract.state !== "cancelling") return;
             for (const id of view.childTaskNodeIds ?? []) await stopOwned(scoped.get(id));
-            if (!claim || claim.state === "released") return;
-            const delegation = scoped.writerDelegationFor(claim);
-            if (delegation?.phase === "returned") return;
-            const stopped = await gateway.rpc<{ ok: boolean; sessionId: string }>(
-              "sessions.stop", { key: claim.sessionKey, expectedSessionId: claim.generation }, 20_000,
-            );
-            if (!stopped.ok || stopped.sessionId !== claim.generation) throw new Error("TASK_CANCEL_STOP_UNCONFIRMED");
-            if (delegation) scoped.returnDelegatedWriter(claim.sessionKey, {
+            const running = scoped.activeTaskRun(view.contract.taskNodeId);
+            if (running && (!claim || claim.state === "released" || claim.sessionKey !== running.credential.sessionKey
+              || claim.generation !== running.credential.generation)) {
+              const state = await gateway.rpc<{ active?: boolean; currentGeneration?: string }>("taskScope.runState", {
+                runId: running.runId, sessionKey: running.credential.sessionKey, sessionGeneration: running.credential.generation,
+              }, 10_000);
+              if (state.currentGeneration !== running.credential.generation || typeof state.active !== "boolean")
+                throw new Error("TASK_CANCEL_RUN_UNCONFIRMED");
+              if (state.active) {
+                const aborted = await gateway.rpc<{ aborted?: boolean; runIds?: string[] }>("chat.abort", {
+                  sessionKey: running.credential.sessionKey, runId: running.runId,
+                }, 20_000);
+                if (!aborted.aborted || (aborted.runIds && !aborted.runIds.includes(running.runId)))
+                  throw new Error("TASK_CANCEL_STOP_UNCONFIRMED");
+              } else {
+                scoped.confirmStoppedRun(running.credential, running.runId, { owner: "taskScope.runState", sessionId: state.currentGeneration });
+              }
+            }
+            if (claim && claim.state !== "released") {
+              const stopped = await gateway.rpc<{ ok: boolean; sessionId: string }>(
+                "sessions.stop", { key: claim.sessionKey, expectedSessionId: claim.generation }, 20_000,
+              );
+              if (!stopped.ok || stopped.sessionId !== claim.generation) throw new Error("TASK_CANCEL_STOP_UNCONFIRMED");
+              if (running && claim.sessionKey === running.credential.sessionKey && claim.generation === running.credential.generation)
+                scoped.confirmStoppedRun(running.credential, running.runId, { owner: "sessions.stop", sessionId: stopped.sessionId });
+            }
+            const delegation = claim && scoped.writerDelegationFor(claim);
+            if (delegation && delegation.phase !== "returned") scoped.returnDelegatedWriter(claim!.sessionKey, {
               runId: delegation.childRunId, parentGeneration: delegation.parent.generation,
               endedAt: Date.now(), outcome: "cancelled",
             });

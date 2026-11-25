@@ -44,6 +44,13 @@ export function ManagedTasks({
   const taskCards = useRef(new Map<string, HTMLElement>());
   const [focusTaskId, setFocusTaskId] = useState<string | null>(null);
   const requestVersion = useRef(0);
+  const pendingOperation = useRef<object | null>(null);
+  useEffect(() => {
+    pendingOperation.current = null;
+    setBusy(false);
+    setError("");
+    return () => { pendingOperation.current = null; };
+  }, [workspaceId, sessionKey]);
   const load = useCallback(async () => {
     const version = ++requestVersion.current;
     dependencyRead.current = null;
@@ -128,6 +135,8 @@ export function ManagedTasks({
     if (!workspaceId || !nextCursor || busy) return;
     setBusy(true);
     const version = requestVersion.current;
+    const operation = {};
+    pendingOperation.current = operation;
     try {
       const result = await hostApi.taskLedger.queryTasks({
         workspaceId,
@@ -136,7 +145,7 @@ export function ManagedTasks({
         limit: 50,
         cursor: nextCursor,
       });
-      if (version !== requestVersion.current) return;
+      if (version !== requestVersion.current || pendingOperation.current !== operation) return;
       setTasks((old) => [
         ...old,
         ...result.tasks.filter(
@@ -146,24 +155,38 @@ export function ManagedTasks({
       ]);
       setNextCursor(result.nextCursor);
     } catch (e) {
-      if (version === requestVersion.current) setError(String(e));
+      if (version === requestVersion.current && pendingOperation.current === operation) setError(String(e));
     } finally {
-      setBusy(false);
+      if (pendingOperation.current === operation) {
+        pendingOperation.current = null;
+        setBusy(false);
+      }
     }
   };
   const command = async (command: TaskSystemCommand) => {
     if (!workspaceId) return;
+    const operation = {};
+    pendingOperation.current = operation;
+    let version = requestVersion.current;
+    const isCurrent = () => pendingOperation.current === operation && version === requestVersion.current;
     setBusy(true);
     setError("");
     try {
       const result = await hostApi.taskLedger.command({ workspaceId, command });
+      if (!isCurrent()) return;
       if (!result.success) throw new Error(result.error);
+      version += 1;
       await load();
     } catch (e) {
+      if (!isCurrent()) return;
+      version += 1;
       await load();
-      setError(e instanceof Error ? e.message : String(e));
+      if (isCurrent()) setError(e instanceof Error ? e.message : String(e));
     } finally {
-      setBusy(false);
+      if (pendingOperation.current === operation) {
+        pendingOperation.current = null;
+        setBusy(false);
+      }
     }
   };
   return (

@@ -59,6 +59,15 @@ vi.mock('@/lib/host-api', () => ({
 }));
 
 describe('useChatStore startup history retry', () => {
+  it('keeps a scoped send refusal when history has no newer terminal error', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const key = 'agent:main:refused-send';
+    useChatStore.setState({ currentSessionKey: key, currentAgentId: 'main', sessions: [{ key }], messages: [],
+      sending: false, activeRunId: null, lastUserMessageAt: null, runError: 'Owner resource refusal', error: null, loading: false });
+    gatewayRpcMock.mockResolvedValue({ messages: [] });
+    await useChatStore.getState().loadHistory(false);
+    expect(useChatStore.getState().runError).toBe('Owner resource refusal');
+  });
   beforeEach(async () => {
     vi.resetModules();
     vi.useFakeTimers();

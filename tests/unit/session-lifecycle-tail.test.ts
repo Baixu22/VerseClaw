@@ -7,6 +7,8 @@ import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promise
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
 import type { WorkspaceCoordinatorBinding, WorkspaceProfile } from '@shared/types/workspace';
 import { createTaskLedgerReference } from '@shared/types/task-ledger-reference';
 
@@ -132,6 +134,8 @@ beforeEach(async () => {
   await writeFile(join(sessions, `${generation}.jsonl`), '{"type":"session","id":"generation-source"}\n');
 });
 afterEach(async () => {
+  closeOpenClawAgentDatabasesForTest();
+  closeOpenClawStateDatabaseForTest();
   vi.unstubAllEnvs();
   await rm(fixture.root, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
 });
@@ -156,7 +160,8 @@ describe('U5 Main lifecycle tail on the original durable gate', () => {
     expect(retried).toMatchObject({ success: true, sessionId: saved.runtimeReceipt!.sessionId, operationId: saved.operationId });
     if (kind === 'restore') expect(retried).toMatchObject({ previousSessionId: generation });
     expect(gateway.commits()).toBe(1);
-    expect(coordinator).toHaveBeenLastCalledWith({ type: kind, workspaceId: 'workspace-a', sessionKey: key });
+    expect(coordinator).toHaveBeenLastCalledWith({ type: kind, workspaceId: 'workspace-a', sessionKey: key,
+      ...(kind === 'restore' ? { previousSessionGeneration: generation, sessionGeneration: restoredGeneration } : {}) });
     expect((await getPersistedCoordinatorBinding('workspace-a', key))?.bindingRevision).toBe(2);
     expect(await gateOnDisk()).toEqual([]);
   });

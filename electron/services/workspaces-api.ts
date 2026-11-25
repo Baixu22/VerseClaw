@@ -47,7 +47,7 @@ import {
 } from '@shared/types/workspace';
 import { createPermissionDecisionEvent } from '@shared/product-semantics';
 import { recordPermissionDecisionEvent } from './permissions-api';
-import { normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
+import { commitTaskLedgerEvents, normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
 import { normalizeRunScope, normalizeTaskReference } from '@shared/types/identity-scope';
 import type { SessionHandoffOperation } from '@shared/types/session-handoff';
 import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload } from '@shared/types/execution-migration';
@@ -155,7 +155,7 @@ type CoordinatorPauseBody = Omit<WorkspaceCoordinatorPausePayload, 'workspaceId'
 
 export type WorkspaceCoordinatorLifecycleEvent =
   | { type: 'archive'; workspaceId?: string | null; sessionKey: string }
-  | { type: 'restore'; workspaceId?: string | null; sessionKey: string }
+  | { type: 'restore'; workspaceId?: string | null; sessionKey: string; previousSessionGeneration?: string; sessionGeneration?: string }
   | { type: 'delete'; workspaceId?: string | null; sessionKey: string }
   | { type: 'handoff'; workspaceId?: string | null; sourceSessionKey: string; sessionKey: string; agentId: string; sessionGeneration?: string };
 
@@ -1355,11 +1355,19 @@ async function applyCoordinatorLifecycle(
           await markCoordinatorInvalid(profile.id, event.sessionKey, environment.reason);
           continue;
         }
+        if (event.sessionGeneration && session.sessionId !== event.sessionGeneration)
+          throw new Error('TASK_GENERATION_STALE');
+        const previousGeneration = event.previousSessionGeneration ?? binding.sessionGeneration;
+        if (!previousGeneration) throw new Error('TASK_SESSION_IDENTITY_REQUIRED');
+        const { restoreManagedSessionTask } = await import('./task-system-service');
+        restoreManagedSessionTask({ workspaceRoot: environment.environment.canonicalRoot,
+          sessionKey: event.sessionKey, previousGeneration, generation: session.sessionId });
         await persistCoordinatorBinding(profile.id, event.sessionKey, (current) => {
           const target = current ?? binding;
           return {
             ...target,
             sessionGeneration: session.sessionId,
+            writerClaim: undefined,
             state: 'active',
             invalidationReason: null,
             bindingRevision: target.bindingRevision + 1,
@@ -1509,39 +1517,27 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   const delegatedRoot = live.delegation?.workspaceDir;
   const root = await realpath(existing?.environment.canonicalRoot ?? delegatedRoot ?? profile.rootPath);
   if (!isSamePath(root, await realpath(request.projectWorkspaceDir ?? request.workspaceDir))) throw new Error('TASK_SCOPE_WORKSPACE_MISMATCH');
-  if (!ctx.taskLedgerApi?.appendEvents) throw new Error('TASK_SCOPE_LEDGER_UNAVAILABLE');
-  const result = await ctx.taskLedgerApi.snapshot({ workspaceId: profile.id });
-  if (!result.success || result.snapshot.workspaceId !== normalizeTaskLedgerWorkspaceId(profile.id)
-    || result.snapshot.warnings.length) throw new Error('TASK_SCOPE_LEDGER_UNAVAILABLE');
-  const snapshot = result.snapshot;
-  if (delegatedParentTask && !snapshot.nodes.some((node) => node.id === delegatedParentTask && node.kind === 'task')) throw new Error('TASK_SCOPE_PARENT_TASK_MISSING');
   const parentSession = live.delegation?.parentSessionKey ?? live.scheduled?.coordinator?.sessionKey;
   const parentGeneration = live.delegation?.parentGeneration ?? live.scheduled?.coordinator?.generation;
   const { readManagedSessionReference, readManagedSessionEffect, startManagedSessionEffect } = await import('./task-system-service');
-  if (delegatedParentTask && !snapshot.sessionLinks.some((link) => link.sessionKey === parentSession
-    && link.nodeId === delegatedParentTask && (!link.sessionGeneration || link.sessionGeneration === parentGeneration))) {
-    const parentReference = parentSession && parentGeneration ? readManagedSessionReference(root, parentSession, parentGeneration) : null;
-    if (parentReference?.contract.taskNodeId !== delegatedParentTask) throw new Error('TASK_SCOPE_PARENT_TASK_LINK_STALE');
-  }
-  const links = snapshot.sessionLinks.filter((link) => link.sessionKey === request.sessionKey && link.nodeId);
-  const currentLinks = links.filter((link) => !link.sessionGeneration || link.sessionGeneration === request.sessionGeneration);
-  const businessLinks = currentLinks.filter((link) => snapshot.nodes.some((node) => node.id === link.nodeId && node.kind === 'task'));
   const managedTask = readManagedSessionEffect({ workspaceRoot: root, sessionKey: request.sessionKey,
     generation: request.sessionGeneration, fallbackTaskNodeId: existing?.activeTaskNodeId });
-  const selectedIds = managedTask ? [managedTask.contract.taskNodeId] : existing?.activeTaskNodeId ? [existing.activeTaskNodeId]
-    : existing ? existing.taskLedgerReferences.map((ref) => ref.taskLedgerNodeId)
-      : [...new Set(businessLinks.map((link) => link.nodeId!))];
-  if (selectedIds.length > 1) throw new Error('TASK_SCOPE_TASK_SELECTION_REQUIRED');
-  const taskNodeId = selectedIds[0];
+  if (delegatedParentTask) {
+    const parentReference = parentSession && parentGeneration ? readManagedSessionReference(root, parentSession, parentGeneration, delegatedParentTask) : null;
+    const delegation = managedTask.delegation;
+    const recordedParent = delegation?.phase !== 'returned' && delegation?.taskNodeId === delegatedParentTask
+      && delegation.parent.sessionKey === parentSession && delegation.parent.generation === parentGeneration
+      && delegation.child.sessionKey === request.sessionKey && delegation.child.generation === request.sessionGeneration
+      && delegation.childRunId === request.runId;
+    if (parentReference?.contract.taskNodeId !== delegatedParentTask && !recordedParent) throw new Error('TASK_SCOPE_PARENT_TASK_LINK_STALE');
+  }
+  const taskNodeId = managedTask.contract.taskNodeId;
   const agentId = sessionAgentId(request.sessionKey);
   if (!agentId) throw new Error('TASK_SCOPE_AGENT_MISSING');
   const now = new Date().toISOString();
   const run = normalizeRunScope({ runId: request.runId, scope: { workspaceId: profile.id, sessionKey: request.sessionKey } });
-  if (taskNodeId) {
-    const node = snapshot.nodes.find((entry) => entry.id === taskNodeId);
-    if (!node || node.kind !== 'task') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
-    if (!currentLinks.some((link) => link.nodeId === taskNodeId)) throw new Error('TASK_SCOPE_TASK_LINK_STALE');
-  } else throw new Error('TASK_CLAIM_REQUIRED');
+  if (readManagedSessionReference(root, request.sessionKey, request.sessionGeneration)?.contract.taskNodeId !== taskNodeId)
+    throw new Error('TASK_SCOPE_TASK_LINK_STALE');
   const otherWriters = Object.values(profile.coordinatorBindings ?? {}).filter((binding) => {
     const claim = binding.writerClaim;
     return claim?.taskNodeId === taskNodeId && (claim.run.runId !== request.runId
@@ -1589,12 +1585,12 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   };
   if (claim.taskNodeId !== taskNodeId) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
   const linkId = createHash('sha256').update(JSON.stringify([taskNodeId, request.sessionKey, request.sessionGeneration])).digest('hex');
-  await ctx.taskLedgerApi.appendEvents({ workspaceId: profile.id, idempotencyKey: `execution-link:${linkId}`, events: [{
+  await commitTaskLedgerEvents(profile.id, [{
     id: `execution-link:${linkId}`, type: 'session_linked', actor: 'system', taskId: taskNodeId, sessionId: request.sessionKey,
     payload: { sessionLink: { id: `execution-link:${linkId}`, nodeId: taskNodeId, sessionKey: request.sessionKey,
       sessionGeneration: request.sessionGeneration, agentId, relation: 'related',
       createdAt: new Date(confirmedTask.contract.createdAt).toISOString() } },
-  }] });
+  }], `execution-link:${linkId}`);
   const binding = await persistCoordinatorBinding(profile.id, request.sessionKey, () => ({
     schemaVersion: 1, workspaceId: profile.id, agentId, sessionKey: request.sessionKey,
     sessionGeneration: request.sessionGeneration, activeTaskNodeId: taskNodeId,

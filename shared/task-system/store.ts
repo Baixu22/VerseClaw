@@ -989,6 +989,58 @@ export class TaskSystemStore {
     this.assertReadCurrent();
     return Boolean(this.db.prepare("SELECT 1 FROM task_references WHERE session_key=? AND generation=? AND role='selected'").get(sessionKey, generation));
   }
+  restoreSessionScope(sessionKey: string, previousGeneration: string, generation: string): TaskView | null {
+    text(sessionKey, "SESSION", 300);
+    text(previousGeneration, "GENERATION", 200);
+    text(generation, "GENERATION", 200);
+    return this.transaction(() => {
+      const writer = this.db.prepare("SELECT task_id,generation FROM task_bindings WHERE session_key=?")
+        .get(sessionKey) as { task_id: string; generation: string } | undefined;
+      const reference = this.db.prepare("SELECT task_id,generation FROM task_references WHERE session_key=?")
+        .get(sessionKey) as { task_id: string; generation: string } | undefined;
+      if (!writer && !reference) return null;
+      for (const row of [writer, reference]) {
+        if (row && row.generation !== previousGeneration && row.generation !== generation) throw new Error("TASK_GENERATION_STALE");
+      }
+      const delegations = this.db.prepare("SELECT json FROM task_writer_delegations WHERE child_session=? OR json_extract(json,'$.parent.sessionKey')=?")
+        .all(sessionKey, sessionKey) as Row[];
+      if (delegations.some(row => {
+        const delegation = JSON.parse(row.json) as TaskWriterDelegation;
+        return delegation.phase !== "returned" && (delegation.child.sessionKey === sessionKey && delegation.child.generation === previousGeneration
+          || delegation.parent.sessionKey === sessionKey && delegation.parent.generation === previousGeneration);
+      })) throw new Error("TASK_DELEGATION_RECOVERY_REQUIRED");
+      if (writer && writer.generation !== generation) {
+        const view = this.get(writer.task_id);
+        if (!view.claim) throw new Error("TASK_STALE_OWNER");
+        const owner = this.assertOwner(view.claim!, true);
+        if (owner.claim!.sessionKey !== sessionKey || owner.claim!.generation !== previousGeneration)
+          throw new Error("TASK_STALE_OWNER");
+        if (owner.pendingOperations || this.hasUnsettledRun(writer.task_id)) throw new Error("TASK_OPERATIONS_PENDING");
+        this.assertReviewTransferAllowed(owner);
+        const restored: TaskClaim = { ...owner.claim!, generation, epoch: owner.claim!.epoch + 1,
+          attemptId: randomUUID(), expiresAt: this.now() + LEASE_MS,
+          state: owner.claim!.state === "paused" ? "paused" : "active" };
+        this.saveClaim(restored);
+        this.db.prepare("UPDATE task_bindings SET generation=?,epoch=? WHERE session_key=? AND generation=?")
+          .run(generation, restored.epoch, sessionKey, previousGeneration);
+        this.saveContract({ ...owner.contract, updatedAt: this.now() });
+        this.event(writer.task_id, "session_restored", { sessionKey, previousGeneration, generation,
+          previous: credentialIdentity(owner.claim!), claim: restored });
+      }
+      if (reference && reference.generation !== generation) {
+        this.db.prepare("UPDATE task_references SET generation=? WHERE session_key=? AND generation=?")
+          .run(generation, sessionKey, previousGeneration);
+        this.event(reference.task_id, "reference_restored", { sessionKey, previousGeneration, generation });
+      }
+      return this.binding(sessionKey, generation);
+    });
+  }
+  sessionReference(sessionKey: string, generation: string, taskNodeId: string): TaskView | null {
+    this.assertReadCurrent();
+    const reference = this.db.prepare("SELECT 1 FROM task_references WHERE session_key=? AND generation=? AND task_id=?")
+      .get(sessionKey, generation, taskNodeId);
+    return reference ? { ...this.get(taskNodeId), referenceOnly: true } : null;
+  }
   selectReference(taskNodeId: string, sessionKey: string, generation: string, requestId: string): TaskView {
     text(sessionKey, "SESSION", 300); text(generation, "GENERATION", 200);
     this.transaction(() => this.request(`select:${requestId}`, {taskNodeId,sessionKey,generation}, () => {
@@ -1482,7 +1534,7 @@ export class TaskSystemStore {
         this.cancelPlan(credential.taskNodeId);
         return this.get(credential.taskNodeId);
       }
-      if (action === "cancel" && view.pendingOperations) {
+      if (action === "cancel" && (view.pendingOperations || this.hasUnsettledRun(credential.taskNodeId))) {
         this.saveContract({ ...view.contract, state: "cancelling", updatedAt: this.now() });
         this.event(credential.taskNodeId, "cancel_requested", {
           epoch: credential.epoch,
@@ -1509,6 +1561,22 @@ export class TaskSystemStore {
         this.event(credential.taskNodeId, action, { epoch: claim.epoch });
         if (action === "cancel" && view.parentTaskNodeId) this.settleCancellation(view.parentTaskNodeId);
       }
+      return this.get(credential.taskNodeId);
+    });
+  }
+  resume(credential: TaskCredential, runId?: string): TaskView {
+    return this.transaction(() => {
+      const view = this.assertOwner(credential, true);
+      if (view.claim!.state === "active") return view;
+      if (view.claim!.state !== "paused" || view.contract.state !== "paused")
+        throw new Error("TASK_RECOVERY_REQUIRED");
+      const run = this.db.prepare("SELECT epoch,run_id,owner_pid FROM task_active_runs WHERE task_id=?")
+        .get(credential.taskNodeId) as { epoch: number; run_id: string; owner_pid: number | null } | undefined;
+      const resumingRun = run?.epoch === credential.epoch && run.run_id === runId && run.owner_pid === process.pid;
+      if (view.pendingOperations || (!resumingRun && this.hasUnsettledRun(credential.taskNodeId))) throw new Error("TASK_OPERATIONS_PENDING");
+      this.saveClaim({ ...view.claim!, state: "active", expiresAt: this.now() + LEASE_MS });
+      this.saveContract({ ...view.contract, state: "doing", updatedAt: this.now() });
+      this.event(credential.taskNodeId, "resumed", { credential: credentialIdentity(credential) });
       return this.get(credential.taskNodeId);
     });
   }
@@ -1738,9 +1806,9 @@ export class TaskSystemStore {
         credential: credentialIdentity(credential), revision: view.contract.revision, runId: run?.run_id });
     });
   }
-  beginRun(credential: TaskCredential, runId: string): void {
+  beginRun(credential: TaskCredential, runId: string, allowPaused = false): void {
     this.transaction(() => {
-      const view = this.assertOwner(credential);
+      const view = this.assertOwner(credential, allowPaused);
       if (view.contract.state === "cancelling") throw new Error("TASK_EXECUTION_NOT_RUNNING");
       const prior = this.db
         .prepare("SELECT epoch,run_id,owner_pid FROM task_active_runs WHERE task_id=?")
@@ -1749,7 +1817,7 @@ export class TaskSystemStore {
         if (prior.run_id === runId && prior.owner_pid === process.pid) return;
         if (!runProcessExited(prior.owner_pid)) throw new Error("TASK_RUN_ALREADY_ACTIVE");
         if (view.pendingOperations) throw new Error("TASK_EFFECT_OWNER_RECONCILIATION_REQUIRED");
-        if (view.contract.state !== "doing") throw new Error("TASK_EXECUTION_NOT_RUNNING");
+        if (view.contract.state !== "doing" && !(allowPaused && view.contract.state === "paused")) throw new Error("TASK_EXECUTION_NOT_RUNNING");
         this.event(credential.taskNodeId, "interrupted_run_replaced", {
           generation: credential.generation, epoch: credential.epoch,
           previousRunId: prior.run_id, previousPid: prior.owner_pid, runId, pid: process.pid,
@@ -1847,6 +1915,37 @@ export class TaskSystemStore {
         .run(credential.taskNodeId, credential.epoch, runId, process.pid).changes;
       if (Number(changes) === 1) this.event(credential.taskNodeId, 'run_finished', { runId, credential: credentialIdentity(credential),
         provenance: this.access?.runProvenance?.(credential, runId) });
+      this.settleCancellation(credential.taskNodeId);
+    });
+  }
+  activeTaskRun(taskNodeId: string): { runId: string; credential: TaskCredential } | null {
+    this.assertReadCurrent();
+    const run = this.db.prepare("SELECT epoch,run_id FROM task_active_runs WHERE task_id=?")
+      .get(taskNodeId) as { epoch: number; run_id: string } | undefined;
+    if (!run) return null;
+    const event = this.read<{ credential?: TaskCredential }>(
+      "SELECT json FROM task_events WHERE task_id=? AND kind='run_started' AND json_extract(json,'$.runId')=? AND json_extract(json,'$.credential.epoch')=? ORDER BY seq DESC LIMIT 1",
+      taskNodeId, run.run_id, run.epoch);
+    const claim = event?.credential ?? this.read<TaskClaim>(
+      "SELECT json FROM task_events WHERE task_id=? AND kind IN ('claimed','handoff') AND json_extract(json,'$.epoch')=? ORDER BY seq DESC LIMIT 1",
+      taskNodeId, run.epoch);
+    if (!claim || claim.taskNodeId !== taskNodeId || claim.epoch !== run.epoch || !claim.sessionKey || !claim.generation)
+      throw new Error("TASK_RUN_OWNER_UNAVAILABLE");
+    return { runId: run.run_id, credential: credentialIdentity(claim) };
+  }
+  confirmStoppedRun(credential: TaskCredential, runId: string, receipt: {
+    owner: "sessions.stop" | "taskScope.runState"; sessionId: string;
+  }): void {
+    if (receipt.sessionId !== credential.generation) throw new Error("TASK_GENERATION_STALE");
+    this.transaction(() => {
+      const recorded = this.activeTaskRun(credential.taskNodeId);
+      if (!recorded) return;
+      if (recorded.runId !== runId || JSON.stringify(recorded.credential) !== JSON.stringify(credentialIdentity(credential)))
+        throw new Error("TASK_STALE_OWNER");
+      this.db.prepare("DELETE FROM task_active_runs WHERE task_id=? AND epoch=? AND run_id=?")
+        .run(credential.taskNodeId, credential.epoch, runId);
+      this.event(credential.taskNodeId, "run_finished", { runId, credential: credentialIdentity(credential), receipt });
+      this.settleCancellation(credential.taskNodeId);
     });
   }
   recover(
@@ -1970,11 +2069,22 @@ export class TaskSystemStore {
     for (const childId of view.childTaskNodeIds ?? []) this.cancelPlan(childId);
     this.settleCancellation(taskNodeId);
   }
+  private hasUnsettledRun(taskNodeId: string): boolean {
+    const run = this.db.prepare("SELECT epoch,run_id,owner_pid FROM task_active_runs WHERE task_id=?")
+      .get(taskNodeId) as { epoch: number; run_id: string; owner_pid: number | null } | undefined;
+    if (!run) return false;
+    if (!runProcessExited(run.owner_pid)) return true;
+    this.db.prepare("DELETE FROM task_active_runs WHERE task_id=? AND epoch=? AND run_id=? AND owner_pid=?")
+      .run(taskNodeId, run.epoch, run.run_id, run.owner_pid);
+    this.event(taskNodeId, "interrupted_run_reconciled", { runId: run.run_id, epoch: run.epoch, pid: run.owner_pid });
+    return false;
+  }
   private settleCancellation(taskNodeId: string): void {
     const view = this.get(taskNodeId);
     if (view.contract.state !== "cancelling" || view.pendingOperations || view.childTaskNodeIds?.some((id) => !["done", "cancelled"].includes(this.get(id).contract.state))) return;
     const worker = view.claim && this.writerDelegationFor(view.claim);
     if (worker && worker.phase !== "returned") return;
+    if (this.hasUnsettledRun(taskNodeId)) return;
     this.saveContract({ ...view.contract, state: "cancelled", updatedAt: this.now() });
     if (view.claim) this.saveClaim({ ...view.claim, state: "released", epoch: view.claim.epoch + 1 });
     this.db.prepare("DELETE FROM task_bindings WHERE task_id=?").run(taskNodeId);

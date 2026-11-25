@@ -165,4 +165,133 @@ describe('chat pending message queue', () => {
 
     expect(useChatStore.getState().pendingMessages).toHaveLength(0);
   });
+  it.each([true, false])('keeps a send to B in B during history loading (target cached: %s)', async (cached) => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-a' });
+    let finishHistory!: () => void;
+    const history = new Promise<void>(resolve => { finishHistory = resolve; });
+    const originalHistory = useChatStore.getState().loadHistory;
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false,
+      activeRunId: null, error: null, sessions: [{ key: 'agent:main:a', sessionId: 'a' }, ...(cached ? [{ key: 'agent:main:b', sessionId: 'b' }] : []),
+        { key: 'agent:main:c', sessionId: 'c' }], loadHistory: vi.fn(() => history) });
+    hostApiFetchMock.mockResolvedValue({ success: true, result: { runId: 'run-b' } });
+    const flight = useChatStore.getState().sendMessage('Message for B', { workspaceId: 'workspace-a', targetSessionKey: 'agent:main:b', expectedSessionGeneration: 'b' });
+    useChatStore.setState({ currentSessionKey: 'agent:main:c', messages: [{ id: 'c-message', role: 'user', content: 'C history' }],
+      sending: false, activeRunId: null, error: 'C error' });
+    finishHistory();
+    await flight;
+    expect(useChatStore.getState()).toMatchObject({ currentSessionKey: 'agent:main:c', sending: false, activeRunId: null, error: 'C error' });
+    expect(useChatStore.getState().messages.map(message => message.content)).toEqual(['C history']);
+    expect(JSON.parse(hostApiFetchMock.mock.calls[0][1].body).sessionKey).toBe('agent:main:b');
+    useChatStore.getState().switchSession('agent:main:b');
+    expect(useChatStore.getState().messages.map(message => message.content)).toContain('Message for B');
+    expect(useChatStore.getState().activeRunId).toBe('run-b');
+    useChatStore.setState({ loadHistory: originalHistory });
+  });
+  it('keeps a late resource denial out of the selected session', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-a' });
+    let finishHistory!: () => void;
+    const history = new Promise<void>(resolve => { finishHistory = resolve; });
+    const originalHistory = useChatStore.getState().loadHistory;
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false,
+      activeRunId: null, sessions: [{ key: 'agent:main:a', sessionId: 'a' }, { key: 'agent:main:b', sessionId: 'b' },
+        { key: 'agent:main:c', sessionId: 'c' }], loadHistory: vi.fn(() => history) });
+    hostApiFetchMock.mockResolvedValue({ success: false, denial: { code: 'global_concurrent_runs', used: 1, limit: 1 } });
+    const flight = useChatStore.getState().sendMessage('Rejected B message', { workspaceId: 'workspace-a', targetSessionKey: 'agent:main:b', expectedSessionGeneration: 'b' });
+    useChatStore.setState({ currentSessionKey: 'agent:main:c', messages: [{ id: 'c-message', role: 'user', content: 'C history' }],
+      sending: true, activeRunId: 'run-c', error: 'C error' });
+    finishHistory();
+    await flight;
+    expect(useChatStore.getState()).toMatchObject({ currentSessionKey: 'agent:main:c', sending: true, activeRunId: 'run-c', error: 'C error' });
+    expect(useChatStore.getState().messages.map(message => message.content)).toEqual(['C history']);
+    useChatStore.getState().switchSession('agent:main:b');
+    expect(useChatStore.getState().messages.map(message => message.content)).not.toContain('Rejected B message');
+    expect(useChatStore.getState().sending).toBe(false);
+    useChatStore.setState({ loadHistory: originalHistory });
+  });
+  it('does not write a delayed send into a reused session in another workspace', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-a' });
+    let finishHistory!: () => void;
+    const history = new Promise<void>(resolve => { finishHistory = resolve; });
+    const originalHistory = useChatStore.getState().loadHistory;
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false,
+      activeRunId: null, sessions: [{ key: 'agent:main:a', sessionId: 'a' }, { key: 'agent:main:b', sessionId: 'b' }, { key: 'agent:main:c', sessionId: 'c' }],
+      loadHistory: vi.fn(() => history) });
+    hostApiFetchMock.mockResolvedValue({ success: true, result: { runId: 'old-workspace-run' } });
+    const flight = useChatStore.getState().sendMessage('Old workspace message', { workspaceId: 'workspace-a', targetSessionKey: 'agent:main:b', expectedSessionGeneration: 'b' });
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-b' });
+    useChatStore.setState({ currentSessionKey: 'agent:main:b', messages: [{ role: 'user', content: 'New workspace history' }],
+      sending: false, activeRunId: null, runError: 'New workspace error' });
+    finishHistory();
+    await flight;
+    expect(useChatStore.getState().messages.map(message => message.content)).toEqual(['New workspace history']);
+    expect(useChatStore.getState().runError).toBe('New workspace error');
+    expect(useChatStore.getState().activeRunId).toBeNull();
+    useChatStore.getState().switchSession('agent:main:c');
+    useChatStore.getState().switchSession('agent:main:b');
+    expect(useChatStore.getState().messages.map(message => message.content)).not.toContain('Old workspace message');
+    expect(useChatStore.getState().runError).toBe('New workspace error');
+    useChatStore.setState({ loadHistory: originalHistory });
+  });
+  it('discards a successful reply after the target generation changed', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-a' });
+    let finish!: (reply: unknown) => void;
+    hostApiFetchMock.mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    useChatStore.setState({ currentSessionKey: 'agent:main:b', currentAgentId: 'main', messages: [], sending: false,
+      activeRunId: null, sessions: [{ key: 'agent:main:b', sessionId: 'old' }] });
+    const flight = useChatStore.getState().sendMessage('Old generation', { workspaceId: 'workspace-a', expectedSessionGeneration: 'old' });
+    useChatStore.setState({ sessions: [{ key: 'agent:main:b', sessionId: 'new' }], messages: [{ role: 'user', content: 'New generation history' }],
+      sending: false, activeRunId: null, runError: null });
+    finish({ success: true, result: { runId: 'old-run' } });
+    await flight;
+    expect(useChatStore.getState().messages.map(message => message.content)).toEqual(['New generation history']);
+    expect(useChatStore.getState().activeRunId).toBeNull();
+  });
+  it('settles the original cached send when its workspace was changed before failure', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-a' });
+    let finish!: (reply: unknown) => void;
+    hostApiFetchMock.mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    const originalHistory = useChatStore.getState().loadHistory;
+    useChatStore.setState({ currentSessionKey: 'agent:main:b', currentAgentId: 'main', messages: [], sending: false,
+      activeRunId: null, sessions: [{ key: 'agent:main:b', sessionId: 'b' }, { key: 'agent:main:c', sessionId: 'c' }], loadHistory: vi.fn(async () => undefined) });
+    const flight = useChatStore.getState().sendMessage('Unconfirmed old send', { workspaceId: 'workspace-a' });
+    useChatStore.getState().switchSession('agent:main:c');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-b' });
+    finish({ success: false, error: 'Original owner refused' });
+    await flight;
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-a' });
+    useChatStore.getState().switchSession('agent:main:b');
+    expect(useChatStore.getState().sending).toBe(false);
+    expect(useChatStore.getState().messages.map(message => message.content)).not.toContain('Unconfirmed old send');
+    useChatStore.setState({ loadHistory: originalHistory });
+  });
+  it('cleans an old cached send after generation refresh without reviving its message', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { useWorkspacesStore } = await import('@/stores/workspaces');
+    useWorkspacesStore.setState({ activeWorkspaceId: 'workspace-a' });
+    let finish!: (reply: unknown) => void;
+    hostApiFetchMock.mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    const originalHistory = useChatStore.getState().loadHistory;
+    useChatStore.setState({ currentSessionKey: 'agent:main:b', currentAgentId: 'main', messages: [], sending: false,
+      activeRunId: null, sessions: [{ key: 'agent:main:b', sessionId: 'old' }, { key: 'agent:main:c', sessionId: 'c' }],
+      loadHistory: vi.fn(async () => undefined) });
+    const flight = useChatStore.getState().sendMessage('Old cached generation', { workspaceId: 'workspace-a', expectedSessionGeneration: 'old' });
+    useChatStore.getState().switchSession('agent:main:c');
+    useChatStore.setState({ sessions: [{ key: 'agent:main:b', sessionId: 'new' }, { key: 'agent:main:c', sessionId: 'c' }] });
+    finish({ success: true, result: { runId: 'old-cached-run' } });
+    await flight;
+    useChatStore.getState().switchSession('agent:main:b');
+    expect(useChatStore.getState().sending).toBe(false);
+    expect(useChatStore.getState().messages.map(message => message.content)).not.toContain('Old cached generation');
+    useChatStore.setState({ loadHistory: originalHistory });
+  });
 });
