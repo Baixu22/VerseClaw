@@ -1,0 +1,499 @@
+{
+  "driven_by": "agent",
+  "actor": "session-task-fixes-electron",
+  "provider": "local-scripted",
+  "status": "passed",
+  "activeBeforeCancel": {
+    "success": true,
+    "tasks": [
+      {
+        "contract": {
+          "objective": "Review model cancellation",
+          "constraints": [],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Expected file",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "cancel.txt",
+                "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ],
+          "target": "cancel.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "cancel-contract"
+          },
+          "taskNodeId": "d47acc26-9584-4331-8722-153de31ccd93",
+          "domain": "e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48",
+          "revision": 1,
+          "digest": "aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754",
+          "state": "doing",
+          "createdAt": 1795615928490,
+          "updatedAt": 1795615936390
+        },
+        "claim": {
+          "taskNodeId": "d47acc26-9584-4331-8722-153de31ccd93",
+          "sessionKey": "agent:main:session-1795615913395-reviewruntime",
+          "generation": "ebaa66ee-5db9-4287-88df-662817e83148",
+          "epoch": 1,
+          "attemptId": "fbfc600a-af62-4d05-9262-9e697986c6cd",
+          "worktree": "d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace",
+          "contractRevision": 1,
+          "expiresAt": 1795616056390,
+          "state": "active"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      }
+    ]
+  },
+  "cancel": {
+    "session": {
+      "key": "agent:main:session-1795615913395-reviewruntime",
+      "kind": "direct",
+      "label": "Review runtime coordinator",
+      "displayName": "Review runtime coordinator",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1795615938469,
+      "sessionId": "ebaa66ee-5db9-4287-88df-662817e83148",
+      "systemSent": true,
+      "abortedLastRun": true,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "inputTokens": 120,
+      "outputTokens": 30,
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "killed",
+      "startedAt": 1795615936121,
+      "endedAt": 1795615938234,
+      "runtimeMs": 2113,
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    }
+  },
+  "historyResult": "{\n  \"sessionKey\": \"agent:main:dashboard:cf93200e-5328-474f-904a-e86b9949474d\",\n  \"messages\": [\n    {\n      \"role\": \"assistant\",\n      \"content\": [\n        {\n          \"type\": \"toolCall\",\n          \"id\": \"start-cancel\",\n          \"name\": \"task_control\",\n          \"arguments\": {\n            \"action\": \"start\",\n            \"requestId\": \"review-cancel\",\n            \"taskNodeId\": \"d47acc26-9584-4331-8722-153de31ccd93\"\n          }\n        }\n      ],\n      \"api\": \"openai-completions\",\n      \"provider\": \"custom-sessionc\",\n      \"model\": \"mock-coder\",\n      \"stopReason\": \"toolUse\",\n      \"timestamp\": 1795615936234,\n      \"__openclaw\": {\n        \"id\": \"af8139ab\",\n        \"recordTimestampMs\": 1795615936330,\n        \"seq\": 2\n      }\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": [],\n      \"api\": \"openai-completions\",\n      \"provider\": \"custom-sessionc\",\n      \"model\": \"mock-coder\",\n      \"stopReason\": \"aborted\",\n      \"timestamp\": 1795615936744,\n      \"errorMessage\": \"Request was aborted.\",\n      \"__openclaw\": {\n        \"id\": \"7aab2720\",\n        \"recordTimestampMs\": 1795615938208,\n        \"seq\": 4\n      }\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"REVIEW-READ-HISTORY\",\n      \"timestamp\": 1795615939396,\n      \"idempotencyKey\": \"review-reader-turn:user\",\n      \"__openclaw\": {\n        \"id\": \"76f8e10d\",\n        \"recordTimestampMs\": 1795615940510,\n        \"seq\": 5\n      }\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": [\n        {\n          \"type\": \"toolCall\",\n          \"id\": \"historyquery\",\n          \"name\": \"sessions_history\",\n          \"arguments\": {\n            \"sessionKey\": \"agent:main:dashboard:cf93200e-5328-474f-904a-e86b9949474d\",\n            \"limit\": 5\n          }\n        }\n      ],\n      \"api\": \"openai-completions\",\n      \"provider\": \"custom-sessionc\",\n      \"model\": \"mock-coder\",\n      \"stopReason\": \"toolUse\",\n      \"timestamp\": 1795615940568,\n      \"__openclaw\": {\n        \"id\": \"a23625c4\",\n        \"recordTimestampMs\": 1795615940615,\n        \"seq\": 6\n      }\n    }\n  ],\n  \"truncated\": true,\n  \"droppedMessages\": false,\n  \"contentTruncated\": true,\n  \"contentRedacted\": false,\n  \"bytes\": 1262\n}",
+  "restore": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Review restored agent execution",
+        "constraints": [],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Resumed artifact",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "resumed.txt",
+              "sha256": "a24bff5142b505f6f6ba8d2b94ec068e00268a8e92c0aea281ae74edfaa4d773"
+            }
+          }
+        ],
+        "target": "resumed.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "restore-goal"
+        },
+        "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+        "domain": "e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48",
+        "revision": 1,
+        "digest": "ff909833f428e3e9eccea468827b84a79b2787b98fe6339ea030afb6f4b7fcec",
+        "state": "doing",
+        "createdAt": 1795615938681,
+        "updatedAt": 1795615939014
+      },
+      "claim": {
+        "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+        "sessionKey": "agent:main:session-1795615913395-reviewruntime",
+        "generation": "72e1d322-e3b0-4dec-a0e9-a63a0087353f",
+        "epoch": 2,
+        "attemptId": "dbd9c3cf-0916-4ca2-90b6-61d8b8f4a8b7",
+        "worktree": "d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace",
+        "contractRevision": 1,
+        "expiresAt": 1795616059014,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "verificationReceipts": []
+  },
+  "reader": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Review restored agent execution",
+        "constraints": [],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Resumed artifact",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "resumed.txt",
+              "sha256": "a24bff5142b505f6f6ba8d2b94ec068e00268a8e92c0aea281ae74edfaa4d773"
+            }
+          }
+        ],
+        "target": "resumed.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "restore-goal"
+        },
+        "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+        "domain": "e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48",
+        "revision": 1,
+        "digest": "ff909833f428e3e9eccea468827b84a79b2787b98fe6339ea030afb6f4b7fcec",
+        "state": "paused",
+        "createdAt": 1795615938681,
+        "updatedAt": 1795615939149
+      },
+      "claim": {
+        "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+        "sessionKey": "agent:main:session-1795615913395-reviewruntime",
+        "generation": "72e1d322-e3b0-4dec-a0e9-a63a0087353f",
+        "epoch": 3,
+        "attemptId": "dbd9c3cf-0916-4ca2-90b6-61d8b8f4a8b7",
+        "worktree": "d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace",
+        "contractRevision": 1,
+        "expiresAt": 1795616059014,
+        "state": "paused"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": [],
+      "referenceOnly": true
+    },
+    "children": [],
+    "verificationReceipts": []
+  },
+  "providerLog": [
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:12 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "start-cancel"
+    },
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:12 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "startcancel": "{\"contract\":{\"objective\":\"Review model cancellation\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Expected file\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"cancel.txt\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\"}}],\"target\":\"cancel.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"cancel-contract\"},\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754\",\"state\":\"doing\",\"createdAt\":1795615928490,\"updatedAt\":1795615936390},\"claim\":{\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"ebaa66ee-5db9-4287-88df-662817e83148\",\"epoch\":1,\"attemptId\":\"fbfc600a-af62-4d05-9262-9e697986c6cd\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616056390,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "text:Cancelled model released by fixture"
+    },
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:12 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "startcancel": "{\"contract\":{\"objective\":\"Review model cancellation\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Expected file\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"cancel.txt\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\"}}],\"target\":\"cancel.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"cancel-contract\"},\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754\",\"state\":\"doing\",\"createdAt\":1795615928490,\"updatedAt\":1795615936390},\"claim\":{\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"ebaa66ee-5db9-4287-88df-662817e83148\",\"epoch\":1,\"attemptId\":\"fbfc600a-af62-4d05-9262-9e697986c6cd\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616056390,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "historyquery"
+    },
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:12 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "startcancel": "{\"contract\":{\"objective\":\"Review model cancellation\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Expected file\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"cancel.txt\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\"}}],\"target\":\"cancel.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"cancel-contract\"},\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754\",\"state\":\"doing\",\"createdAt\":1795615928490,\"updatedAt\":1795615936390},\"claim\":{\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"ebaa66ee-5db9-4287-88df-662817e83148\",\"epoch\":1,\"attemptId\":\"fbfc600a-af62-4d05-9262-9e697986c6cd\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616056390,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "historyquery": "{\n  \"sessionKey\": \"agent:main:dashboard:cf93200e-5328-474f-904a-e86b9949474d\",\n  \"messages\": [\n    {\n      \"role\": \"assistant\",\n      \"content\": [\n        {\n          \"type\": \"toolCall\",\n          \"id\": \"start-cancel\",\n          \"name\": \"task_control\",\n          \"arguments\": {\n            \"action\": \"start\",\n            \"requestId\": \"review-cancel\",\n            \"taskNodeId\": \"d47acc26-9584-4331-8722-153de31ccd93\"\n          }\n        }\n      ],\n      \"api\": \"openai-completions\",\n      \"provider\": \"custom-sessionc\",\n      \"model\": \"mock-coder\",\n      \"stopReason\": \"toolUse\",\n      \"timestamp\": 1795615936234,\n      \"__openclaw\": {\n        \"id\": \"af8139ab\",\n        \"recordTimestampMs\": 1795615936330,\n        \"seq\": 2\n      }\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": [],\n      \"api\": \"openai-completions\",\n      \"provider\": \"custom-sessionc\",\n      \"model\": \"mock-coder\",\n      \"stopReason\": \"aborted\",\n      \"timestamp\": 1795615936744,\n      \"errorMessage\": \"Request was aborted.\",\n      \"__openclaw\": {\n        \"id\": \"7aab2720\",\n        \"recordTimestampMs\": 1795615938208,\n        \"seq\": 4\n      }\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"REVIEW-READ-HISTORY\",\n      \"timestamp\": 1795615939396,\n      \"idempotencyKey\": \"review-reader-turn:user\",\n      \"__openclaw\": {\n        \"id\": \"76f8e10d\",\n        \"recordTimestampMs\": 1795615940510,\n        \"seq\": 5\n      }\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": [\n        {\n          \"type\": \"toolCall\",\n          \"id\": \"historyquery\",\n          \"name\": \"sessions_history\",\n          \"arguments\": {\n            \"sessionKey\": \"agent:main:dashboard:cf93200e-5328-474f-904a-e86b9949474d\",\n            \"limit\": 5\n          }\n        }\n      ],\n      \"api\": \"openai-completions\",\n      \"provider\": \"custom-sessionc\",\n      \"model\": \"mock-coder\",\n      \"stopReason\": \"toolUse\",\n      \"timestamp\": 1795615940568,\n      \"__openclaw\": {\n        \"id\": \"a23625c4\",\n        \"recordTimestampMs\": 1795615940615,\n        \"seq\": 6\n      }\n    }\n  ],\n  \"truncated\": true,\n  \"droppedMessages\": false,\n  \"contentTruncated\": true,\n  \"contentRedacted\": false,\n  \"bytes\": 1262\n}"
+      },
+      "issued": "text:HISTORY-READ-FINISHED"
+    },
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:12 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "startcancel": "{\"contract\":{\"objective\":\"Review model cancellation\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Expected file\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"cancel.txt\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\"}}],\"target\":\"cancel.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"cancel-contract\"},\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754\",\"state\":\"doing\",\"createdAt\":1795615928490,\"updatedAt\":1795615936390},\"claim\":{\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"ebaa66ee-5db9-4287-88df-662817e83148\",\"epoch\":1,\"attemptId\":\"fbfc600a-af62-4d05-9262-9e697986c6cd\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616056390,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "resumetask"
+    },
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:12 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "startcancel": "{\"contract\":{\"objective\":\"Review model cancellation\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Expected file\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"cancel.txt\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\"}}],\"target\":\"cancel.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"cancel-contract\"},\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754\",\"state\":\"doing\",\"createdAt\":1795615928490,\"updatedAt\":1795615936390},\"claim\":{\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"ebaa66ee-5db9-4287-88df-662817e83148\",\"epoch\":1,\"attemptId\":\"fbfc600a-af62-4d05-9262-9e697986c6cd\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616056390,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "resumetask": "{\"contract\":{\"objective\":\"Review restored agent execution\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Resumed artifact\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"resumed.txt\",\"sha256\":\"a24bff5142b505f6f6ba8d2b94ec068e00268a8e92c0aea281ae74edfaa4d773\"}}],\"target\":\"resumed.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"restore-goal\"},\"taskNodeId\":\"bf734b98-a8cc-41b4-8fdb-9175fc9bedef\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"ff909833f428e3e9eccea468827b84a79b2787b98fe6339ea030afb6f4b7fcec\",\"state\":\"doing\",\"createdAt\":1795615938681,\"updatedAt\":1795615943599},\"claim\":{\"taskNodeId\":\"bf734b98-a8cc-41b4-8fdb-9175fc9bedef\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"72e1d322-e3b0-4dec-a0e9-a63a0087353f\",\"epoch\":3,\"attemptId\":\"dbd9c3cf-0916-4ca2-90b6-61d8b8f4a8b7\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616063599,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "resumewrite"
+    },
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:12 GMT+8] Continuity context (owner-deriv",
+      "toolResults": {
+        "startcancel": "{\"contract\":{\"objective\":\"Review model cancellation\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Expected file\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"cancel.txt\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\"}}],\"target\":\"cancel.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"cancel-contract\"},\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754\",\"state\":\"doing\",\"createdAt\":1795615928490,\"updatedAt\":1795615936390},\"claim\":{\"taskNodeId\":\"d47acc26-9584-4331-8722-153de31ccd93\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"ebaa66ee-5db9-4287-88df-662817e83148\",\"epoch\":1,\"attemptId\":\"fbfc600a-af62-4d05-9262-9e697986c6cd\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616056390,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "resumetask": "{\"contract\":{\"objective\":\"Review restored agent execution\",\"constraints\":[],\"acceptance\":[{\"id\":\"file\",\"description\":\"Resumed artifact\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"resumed.txt\",\"sha256\":\"a24bff5142b505f6f6ba8d2b94ec068e00268a8e92c0aea281ae74edfaa4d773\"}}],\"target\":\"resumed.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"restore-goal\"},\"taskNodeId\":\"bf734b98-a8cc-41b4-8fdb-9175fc9bedef\",\"domain\":\"e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48\",\"revision\":1,\"digest\":\"ff909833f428e3e9eccea468827b84a79b2787b98fe6339ea030afb6f4b7fcec\",\"state\":\"doing\",\"createdAt\":1795615938681,\"updatedAt\":1795615943599},\"claim\":{\"taskNodeId\":\"bf734b98-a8cc-41b4-8fdb-9175fc9bedef\",\"sessionKey\":\"agent:main:session-1795615913395-reviewruntime\",\"generation\":\"72e1d322-e3b0-4dec-a0e9-a63a0087353f\",\"epoch\":3,\"attemptId\":\"dbd9c3cf-0916-4ca2-90b6-61d8b8f4a8b7\",\"worktree\":\"d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace\",\"contractRevision\":1,\"expiresAt\":1795616063599,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}",
+        "resumewrite": "Successfully wrote 22 bytes to D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--ed9a0-d-resumes-through-the-agent\\sdk-workspace\\resumed.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:RESUME-WRITE-FINISHED"
+    }
+  ],
+  "responses": [
+    {
+      "id": "19c3c857-86a9-44db-88e3-a6a552deaec1",
+      "ok": true,
+      "data": {
+        "success": true,
+        "result": {
+          "contract": {
+            "objective": "Review model cancellation",
+            "constraints": [],
+            "acceptance": [
+              {
+                "id": "file",
+                "description": "Expected file",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "cancel.txt",
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ],
+            "target": "cancel.txt",
+            "dependencies": [],
+            "origin": {
+              "source": "host-task-api",
+              "requestId": "cancel-contract"
+            },
+            "taskNodeId": "d47acc26-9584-4331-8722-153de31ccd93",
+            "domain": "e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48",
+            "revision": 1,
+            "digest": "aa76869b517546236e33fd3c2df7cb60915104949e97fe9fc45eff205ed76754",
+            "state": "cancelled",
+            "createdAt": 1795615928490,
+            "updatedAt": 1795615938277
+          },
+          "claim": {
+            "taskNodeId": "d47acc26-9584-4331-8722-153de31ccd93",
+            "sessionKey": "agent:main:session-1795615913395-reviewruntime",
+            "generation": "ebaa66ee-5db9-4287-88df-662817e83148",
+            "epoch": 2,
+            "attemptId": "fbfc600a-af62-4d05-9262-9e697986c6cd",
+            "worktree": "d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1795616056390,
+            "state": "released"
+          },
+          "checkpoint": null,
+          "pendingOperations": 0,
+          "pendingOperationDetails": [],
+          "childTaskNodeIds": []
+        }
+      }
+    },
+    {
+      "id": "fp-p1-1795615938663-0.18811387050414918",
+      "ok": true,
+      "data": {
+        "success": true,
+        "result": {
+          "kind": "created",
+          "task": {
+            "contract": {
+              "objective": "Review restored agent execution",
+              "constraints": [],
+              "acceptance": [
+                {
+                  "id": "file",
+                  "description": "Resumed artifact",
+                  "verification": {
+                    "kind": "file-sha256",
+                    "path": "resumed.txt",
+                    "sha256": "a24bff5142b505f6f6ba8d2b94ec068e00268a8e92c0aea281ae74edfaa4d773"
+                  }
+                }
+              ],
+              "target": "resumed.txt",
+              "dependencies": [],
+              "origin": {
+                "source": "host-task-api",
+                "requestId": "restore-goal"
+              },
+              "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+              "domain": "e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48",
+              "revision": 1,
+              "digest": "ff909833f428e3e9eccea468827b84a79b2787b98fe6339ea030afb6f4b7fcec",
+              "state": "ready",
+              "createdAt": 1795615938681,
+              "updatedAt": 1795615938681
+            },
+            "claim": null,
+            "checkpoint": null,
+            "pendingOperations": 0,
+            "pendingOperationDetails": [],
+            "childTaskNodeIds": []
+          }
+        }
+      }
+    },
+    {
+      "id": "fp-p1-1795615938694-0.8267941044820363",
+      "ok": true,
+      "data": {
+        "success": true,
+        "result": {
+          "contract": {
+            "objective": "Review restored agent execution",
+            "constraints": [],
+            "acceptance": [
+              {
+                "id": "file",
+                "description": "Resumed artifact",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "resumed.txt",
+                  "sha256": "a24bff5142b505f6f6ba8d2b94ec068e00268a8e92c0aea281ae74edfaa4d773"
+                }
+              }
+            ],
+            "target": "resumed.txt",
+            "dependencies": [],
+            "origin": {
+              "source": "host-task-api",
+              "requestId": "restore-goal"
+            },
+            "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+            "domain": "e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48",
+            "revision": 1,
+            "digest": "ff909833f428e3e9eccea468827b84a79b2787b98fe6339ea030afb6f4b7fcec",
+            "state": "doing",
+            "createdAt": 1795615938681,
+            "updatedAt": 1795615938727
+          },
+          "claim": {
+            "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+            "sessionKey": "agent:main:session-1795615913395-reviewruntime",
+            "generation": "ebaa66ee-5db9-4287-88df-662817e83148",
+            "epoch": 1,
+            "attemptId": "079ab867-06ab-4d32-b1d4-116e0b059138",
+            "worktree": "d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1795616058727,
+            "state": "active"
+          },
+          "checkpoint": null,
+          "pendingOperations": 0,
+          "pendingOperationDetails": [],
+          "childTaskNodeIds": []
+        }
+      }
+    },
+    {
+      "id": "fp-p1-1795615939097-0.4586082597311627",
+      "ok": true,
+      "data": {
+        "success": false,
+        "error": "TASK_GENERATION_STALE"
+      }
+    },
+    {
+      "id": "fp-p1-1795615939116-0.09227169971730342",
+      "ok": true,
+      "data": {
+        "success": true,
+        "result": {
+          "contract": {
+            "objective": "Review restored agent execution",
+            "constraints": [],
+            "acceptance": [
+              {
+                "id": "file",
+                "description": "Resumed artifact",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "resumed.txt",
+                  "sha256": "a24bff5142b505f6f6ba8d2b94ec068e00268a8e92c0aea281ae74edfaa4d773"
+                }
+              }
+            ],
+            "target": "resumed.txt",
+            "dependencies": [],
+            "origin": {
+              "source": "host-task-api",
+              "requestId": "restore-goal"
+            },
+            "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+            "domain": "e1b9ff62b97fa258d3f14e62c05e0558b157418c3bf1835addfaa99d86740c48",
+            "revision": 1,
+            "digest": "ff909833f428e3e9eccea468827b84a79b2787b98fe6339ea030afb6f4b7fcec",
+            "state": "paused",
+            "createdAt": 1795615938681,
+            "updatedAt": 1795615939149
+          },
+          "claim": {
+            "taskNodeId": "bf734b98-a8cc-41b4-8fdb-9175fc9bedef",
+            "sessionKey": "agent:main:session-1795615913395-reviewruntime",
+            "generation": "72e1d322-e3b0-4dec-a0e9-a63a0087353f",
+            "epoch": 3,
+            "attemptId": "dbd9c3cf-0916-4ca2-90b6-61d8b8f4a8b7",
+            "worktree": "d:/tmp/session-task-fixes-20261125-01a21019/e2e-r14/results/session-task-review-fixes--ed9a0-d-resumes-through-the-agent/sdk-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1795616059014,
+            "state": "paused"
+          },
+          "checkpoint": null,
+          "pendingOperations": 0,
+          "pendingOperationDetails": [],
+          "childTaskNodeIds": []
+        }
+      }
+    }
+  ]
+}
