@@ -342,7 +342,7 @@ export interface WorkspaceContextRange {
   usedTokens?: number | null;
   usageSource?: 'runtime' | 'last-request' | 'unavailable';
   measuredAt?: number | null;
-  composition?: import('./context-display').SessionContextComposition | null;
+  composition?: import('./context-display.js').SessionContextComposition | null;
   visibleMessageStartIndex?: number | null;
   visibleMessageEndIndex?: number | null;
   retainedMessageCount?: number;
