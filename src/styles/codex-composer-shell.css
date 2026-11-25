@@ -809,12 +809,12 @@
   transition: background-color 100ms ease, color 100ms ease;
 }
 
-.chat-context-source-row:is(button, summary, [role='button']) {
+.chat-context-details summary > .chat-context-source-row {
   cursor: pointer;
 }
 
-.chat-context-source-row:is(button, summary, [role='button']):hover:not(:disabled),
-.chat-context-details details[open] > .chat-context-source-row {
+.chat-context-details summary:hover > .chat-context-source-row,
+.chat-context-details details[open] > summary > .chat-context-source-row {
   background: var(--color-chat-tray-hover);
 }
 
@@ -860,8 +860,8 @@
   transition: transform 140ms ease, color 120ms ease;
 }
 
-.chat-context-source-row:is(button, summary, [role='button']):hover:not(:disabled) > :nth-child(5),
-.chat-context-details details[open] > .chat-context-source-row > :nth-child(5) {
+.chat-context-details summary:hover > .chat-context-source-row > :nth-child(5),
+.chat-context-details details[open] > summary > .chat-context-source-row > :nth-child(5) {
   color: var(--color-chat-foreground);
 }
 

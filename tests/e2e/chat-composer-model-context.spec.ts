@@ -51,7 +51,12 @@ for (const theme of ['light', 'dark'] as const) {
       await expect(tag).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
       expect(await tag.locator('circle').evaluateAll(circles => circles.every(circle => getComputedStyle(circle).fill === 'none'))).toBe(true);
       await expect(details.getByTestId('chat-context-composition-bar')).toHaveCSS('height', '2px');
-      await details.locator('summary').filter({ hasText: 'Project files' }).click();
+      const projectFiles = details.locator('summary').filter({ hasText: 'Project files' });
+      await projectFiles.click();
+      await projectFiles.focus();
+      await page.keyboard.press('Enter');
+      await expect(details.getByText('AGENTS.md', { exact: true })).toBeHidden();
+      await page.keyboard.press('Enter');
       await expect(details.getByText('AGENTS.md', { exact: true })).toBeVisible();
       await expect(details.getByTestId('chat-context-source-entries').filter({ hasText: 'TOOLS.md' })).toContainText(first.report.injectedWorkspaceFiles[1].injectedChars.toLocaleString('en-US'));
       await expect(details).toContainText('Input tokens measured for the last request.');
