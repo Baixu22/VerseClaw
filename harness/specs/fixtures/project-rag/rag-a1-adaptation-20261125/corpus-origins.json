@@ -1,0 +1,71 @@
+{
+  "actor": "codex-g2-adaptation-bootstrap",
+  "driven_by": "agent",
+  "origin": "agent-built-adaptation",
+  "userAuthorizedScope": "Current project documentation in an isolated knowledge base",
+  "sources": [
+    {
+      "source": "docs/dev/project-rag/SOURCE-CHUNK-CONTRACT.md",
+      "target": "concepts/source-01.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "54a5b537362bf90905232ddfa8eb2c5708820d9a7e49ac083f2888ec79dd73b7",
+      "bytes": 3058
+    },
+    {
+      "source": "docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md",
+      "target": "concepts/source-02.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "67e62460d44fc899eae9ccef7a9eb0ad40de805f9233cb96818e3fa40d5f5058",
+      "bytes": 3383
+    },
+    {
+      "source": "docs/dev/project-rag/RETRIEVAL-PLAN-CONTRACT.md",
+      "target": "concepts/source-03.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "f161bd5879271dfd5756045ea628af49205d5817e49a44778373c1aaf96178bf",
+      "bytes": 3735
+    },
+    {
+      "source": "docs/dev/project-rag/ANSWER-CITATION-CONTRACT.md",
+      "target": "concepts/source-04.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "353dc725fb12c477cb0f512ef569de3eeac556cdda1fb203ccbd4625014decf1",
+      "bytes": 1729
+    },
+    {
+      "source": "docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md",
+      "target": "concepts/source-05.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "9a7284d752433482107dcf9bdf33c11b581eb89546bd4c6105bb8bd47b2309f0",
+      "bytes": 4427
+    },
+    {
+      "source": "docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md",
+      "target": "concepts/source-06.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "9699fd8255389ad03b08e5fa82733dc2ed7125c29d18d2c539531caa1a336030",
+      "bytes": 3652
+    },
+    {
+      "source": "docs/modules/sessions.md",
+      "target": "concepts/source-07.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "cdc6486400de48fae62a966b6c24724a30c895da86c6129610c056381dd7ba62",
+      "bytes": 18035
+    },
+    {
+      "source": "docs/modules/workspace-and-coding.md",
+      "target": "concepts/source-08.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "6df199bda1a30d4ff80ef2284ec35050686f1dcae0c3790b53ef9b1451886b0f",
+      "bytes": 14514
+    },
+    {
+      "source": "docs/modules/context-and-memory.md",
+      "target": "concepts/source-09.md",
+      "commit": "c2a0245459d53454339df7c2689d3a058fbe69cc",
+      "originalSha256": "8d656df7ceef72a179e989c4e74f3485969385a3cb564ce6876d3e08c12be074",
+      "bytes": 24583
+    }
+  ]
+}

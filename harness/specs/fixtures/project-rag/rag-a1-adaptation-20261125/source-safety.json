@@ -1,0 +1,66 @@
+{
+  "schema": "G2AdaptationSourceSafety/v1",
+  "candidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+  "actor": "agent-derived-safety-probe",
+  "driven_by": "agent",
+  "fixtureKind": "controlled-mutations-of-authorized-project-document",
+  "cases": [
+    {
+      "name": "revoked",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:9a8602c202dedc04b44d0bc4965d4afda85a116ab35b1a288ccafcc00aa6e1f1",
+      "expected": "revoked",
+      "actual": "revoked",
+      "passed": true
+    },
+    {
+      "name": "stale",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:5c73fa1e92b54ce1192634ff4185cc53c363b7032b95d6ced6e1dd41705e75d5",
+      "expected": "stale",
+      "actual": "stale",
+      "passed": true
+    },
+    {
+      "name": "expired",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:db164eff0fea7db2700f522e37ee1713f2e47c8b72d5d94c09fd72bf65c2bdbb",
+      "expected": "expired",
+      "actual": "expired",
+      "passed": true
+    },
+    {
+      "name": "acl",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:7d3a93f87c6670b5fdf90eb91e33e3786a1c154b8beb5c2175dafa1be20987c0",
+      "expected": "acl_denied",
+      "actual": "acl_denied",
+      "passed": true
+    },
+    {
+      "name": "scope",
+      "sourceOrigin": "current-project-document-with-explicit-negative-metadata-mutation",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "mutatedDigest": "sha256:14e2a065724e63f9308f06cf108f3c691c063c841960c0d8317249aeb02a7c16",
+      "expected": "scope_mismatch",
+      "actual": "scope_mismatch",
+      "passed": true
+    },
+    {
+      "name": "conflict",
+      "sourceOrigin": "explicit-agent-derived-conflict-fixture",
+      "originalDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+      "expected": "two conflicting stances with owner citations",
+      "actual": {
+        "conflictSet": [],
+        "sourceCount": 2
+      },
+      "passed": false
+    }
+  ],
+  "passed": false
+}

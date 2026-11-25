@@ -1,0 +1,5 @@
+1. scripts/lib/project-rag-query-grade.mjs：`fact.rankGrades[rank]` 只在 `bytes > fact.bytes` 时写入。若某个 fact 已被前序 hit 完整覆盖，后续 hit 即使再次完整支持该 fact，也不会在对应 rank 记录 grade；而 `rankedGain` 又强制一个 hit 只能匹配一个 fact。当前序 hit 被分配给另一个 fact 时，后序重复证据无法承接该 fact，导致 nDCG5 被低估，Top5 与完整事实覆盖不一致。
+
+2. scripts/knowledge-rag-adaptation.ts：`freezeKnowledgeQuestions` 的独立复核只比较 `input.review.actor !== input.actor`，但两边此前只做了 `trim()` 非空校验，没有对比较值做归一化。因此 `"alice"` 与 `"alice "` 可通过校验，同一 actor 可绕过独立复核绑定，削弱封存时独立复核约束。
+
+3. scripts/knowledge-rag-adaptation.ts：`captureKnowledgeAdaptation` 用未 `realpath` 的 `vault = resolve(config.vault.path)` 做输出目录隔离检查，之后才取 `root = await realpath(vault)`。当 vault 是符号链接时，输出目录可以位于实际 vault 内却通过 `!inside(output, vault)`，随后 `mkdir`/`writeFile` 会把快照写入源 vault，破坏只读源与输出隔离。

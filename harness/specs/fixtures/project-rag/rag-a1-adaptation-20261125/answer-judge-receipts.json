@@ -1,0 +1,1803 @@
+[
+  {
+    "run": "answer-judging-r1\\family-01",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:13:29.238772+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 32077,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 13434,
+        "output_tokens_details": {
+          "reasoning_tokens": 12807
+        },
+        "total_tokens": 45511
+      },
+      "responseId": "chatcmpl-179cf0b3a4e74020886faddfd45bb3c7",
+      "durationSeconds": 73.21799999999348,
+      "outputBytes": 2021,
+      "outputSha256": "d81a9e595b2874d1ef9fa43cbf9a28202964c3ae0c42f76385684624691e7644"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整给出384 tokens、768 tokens/2400字符，来源与原文引句匹配证据。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项数值完整，chunk id与两段引文均与证据相符。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整覆盖目标、硬上限和字符上限，chunk id及引文匹配。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整覆盖三项事实，来源chunk id与原文引文一致。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold可答但证据未含切块配置，UNKNOWN明确拒答；无事实陈述故SUPPORT=1。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold可答但证据无overlap及引用前缀处理，UNKNOWN明确拒答且无事实陈述。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整回答overlap=0及检索前缀不得进入引用正文，两个chunk引文匹配。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整回答两项，overlap=0与前缀不得进入引用正文均有匹配refId及引文。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：仅答overlap=0；对引用中的检索前缀称证据未描述，未覆盖gold第二项；已述事实有匹配refId，非整体拒答。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据为空，UNKNOWN明确拒答；gold可答故CORRECT=0，拒答无事实陈述。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：OCR不在gold，UNKNOWN正确拒答，且无额外事实陈述。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：OCR不在gold，UNKNOWN正确拒答；但附加Markdown/chunker profile叙述未给来源标识或引文。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：OCR不在gold，UNKNOWN正确拒答；附加“仅涉及结构切块/检索/引用”无来源标识或真实引文。"
+        },
+        {
+          "caseId": "CASE-14",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：OCR不在gold，UNKNOWN正确拒答，无额外事实陈述。"
+        },
+        {
+          "caseId": "CASE-15",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据为空，OCR不在gold，UNKNOWN正确拒答，无事实陈述。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整给出384 tokens、768 tokens/2400字符，来源与原文引句匹配证据。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项数值完整，chunk id与两段引文均与证据相符。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整覆盖目标、硬上限和字符上限，chunk id及引文匹配。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整覆盖三项事实，来源chunk id与原文引文一致。\nCASE-05 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：gold可答但证据未含切块配置，UNKNOWN明确拒答；无事实陈述故SUPPORT=1。\nCASE-06 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：gold可答但证据无overlap及引用前缀处理，UNKNOWN明确拒答且无事实陈述。\nCASE-07 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整回答overlap=0及检索前缀不得进入引用正文，两个chunk引文匹配。\nCASE-08 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整回答两项，overlap=0与前缀不得进入引用正文均有匹配refId及引文。\nCASE-09 CORRECT=0 SUPPORT=1 ABSTAIN=0 理由：仅答overlap=0；对引用中的检索前缀称证据未描述，未覆盖gold第二项；已述事实有匹配refId，非整体拒答。\nCASE-10 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据为空，UNKNOWN明确拒答；gold可答故CORRECT=0，拒答无事实陈述。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：OCR不在gold，UNKNOWN正确拒答，且无额外事实陈述。\nCASE-12 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：OCR不在gold，UNKNOWN正确拒答；但附加Markdown/chunker profile叙述未给来源标识或引文。\nCASE-13 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：OCR不在gold，UNKNOWN正确拒答；附加“仅涉及结构切块/检索/引用”无来源标识或真实引文。\nCASE-14 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：OCR不在gold，UNKNOWN正确拒答，无额外事实陈述。\nCASE-15 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：证据为空，OCR不在gold，UNKNOWN正确拒答，无事实陈述。"
+  },
+  {
+    "run": "answer-judging-r1\\family-02-r2",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:16:20.433589+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 30805,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 12557,
+        "output_tokens_details": {
+          "reasoning_tokens": 12052
+        },
+        "total_tokens": 43362
+      },
+      "responseId": "chatcmpl-3cb1b9673cac41da9a2895b963d59912",
+      "durationSeconds": 65.73499999998603,
+      "outputBytes": 1717,
+      "outputSha256": "4c1273a556664703bef017c29274b317c3443cb7a4128e1b7bae15168da8d04d"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整给出SiliconFlow和精确模型名，refId与原文引文均匹配。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整覆盖gold事实，引用来源标识和原文引文一致。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整给出服务与精确模型名，source-02引文相符且无错误。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整覆盖gold事实，memory-wiki refId及原文引文匹配。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：只说明disabled状态和owner检查，遗漏“禁用删除选择并释放provider”；所述事实有source-05引文。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：只给出disabled状态，未覆盖删除选择和释放provider；引用有效。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整覆盖“禁用删除选择并释放provider”，附加说明有source-02证据和引文支持。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：仅说明disabled状态，未覆盖gold的删除选择/释放provider；引文有效。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold可回答但证据为空，答案明确UNKNOWN拒答且无事实陈述。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题明确UNKNOWN正确拒答；但附加服务、模型、端点事实无来源标识或引文。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题明确UNKNOWN正确拒答，无事实陈述。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答；但附加SiliconFlow和模型事实无来源标识或引文。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答；但附加服务与模型事实无来源标识或引文。"
+        }
+      ],
+      "missing": [
+        {
+          "questionId": "QA-02-1",
+          "arm": "hybrid-rerank",
+          "status": "failed"
+        },
+        {
+          "questionId": "QA-02-3",
+          "arm": "page",
+          "status": "started"
+        }
+      ]
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整给出SiliconFlow和精确模型名，refId与原文引文均匹配。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整覆盖gold事实，引用来源标识和原文引文一致。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整给出服务与精确模型名，source-02引文相符且无错误。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整覆盖gold事实，memory-wiki refId及原文引文匹配。\nCASE-05 CORRECT=0 SUPPORT=1 ABSTAIN=0 理由：只说明disabled状态和owner检查，遗漏“禁用删除选择并释放provider”；所述事实有source-05引文。\nCASE-06 CORRECT=0 SUPPORT=1 ABSTAIN=0 理由：只给出disabled状态，未覆盖删除选择和释放provider；引用有效。\nCASE-07 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整覆盖“禁用删除选择并释放provider”，附加说明有source-02证据和引文支持。\nCASE-08 CORRECT=0 SUPPORT=1 ABSTAIN=0 理由：仅说明disabled状态，未覆盖gold的删除选择/释放provider；引文有效。\nCASE-09 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：gold可回答但证据为空，答案明确UNKNOWN拒答且无事实陈述。\nCASE-10 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题明确UNKNOWN正确拒答；但附加服务、模型、端点事实无来源标识或引文。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题明确UNKNOWN正确拒答，无事实陈述。\nCASE-12 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题正确拒答；但附加SiliconFlow和模型事实无来源标识或引文。\nCASE-13 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题正确拒答；但附加服务与模型事实无来源标识或引文。"
+  },
+  {
+    "run": "answer-judging-r1\\family-03",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:15:09.180158+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 30705,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 12039,
+        "output_tokens_details": {
+          "reasoning_tokens": 11475
+        },
+        "total_tokens": 42744
+      },
+      "responseId": "chatcmpl-d0d2b4d3d12b4fdc87eccd5dcab89c7a",
+      "durationSeconds": 77.73499999998603,
+      "outputBytes": 1770,
+      "outputSha256": "d831f252d0adeb3dd6a541d0f13dc069f55617d25843af49b0e55bec587385eb"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：80/30/6 完全匹配证据表格，refId 与原文短引一致。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项数值正确，引用 refId 与原文表格短引一致。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项数值正确，分段引文均为同一表格行的真实子串，refId 一致。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：数值完整正确，引用 refId 与原文短引相符。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：数值正确，所用 memory-wiki refId 为证据实际标识，短引真实存在。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据未含金标公式与 parent 候选上限，回答明确拒答；因 gold 可回答故 CORRECT=0。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：公式与每 parent 最多两个候选均正确，refId 及两处引文与证据一致。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：两项事实完整正确，均附同一准确 refId 与真实引文。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 1,
+          "support": 0,
+          "abstain": 0,
+          "reason": "理由：核心公式和候选上限正确，但额外去重事实未附对应准确 refId 或原文引文，且来源仅文档名，不满足逐项引证。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：无证据且回答明确拒答；因 gold 可回答故 CORRECT=0。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold 为 absent，回答明确拒答且未编造 nDCG@5 实测值。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：正确识别缺少该日期 nDCG@5 实测数据并明确拒答。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold 不可回答，回答明确拒答且无虚构事实。"
+        },
+        {
+          "caseId": "CASE-14",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据无该实测值，回答明确拒答且未给出错误数值。"
+        }
+      ],
+      "missing": [
+        {
+          "questionId": "QA-03-3",
+          "arm": "page",
+          "status": "failed"
+        }
+      ]
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：80/30/6 完全匹配证据表格，refId 与原文短引一致。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项数值正确，引用 refId 与原文表格短引一致。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项数值正确，分段引文均为同一表格行的真实子串，refId 一致。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：数值完整正确，引用 refId 与原文短引相符。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：数值正确，所用 memory-wiki refId 为证据实际标识，短引真实存在。\nCASE-06 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据未含金标公式与 parent 候选上限，回答明确拒答；因 gold 可回答故 CORRECT=0。\nCASE-07 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：公式与每 parent 最多两个候选均正确，refId 及两处引文与证据一致。\nCASE-08 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：两项事实完整正确，均附同一准确 refId 与真实引文。\nCASE-09 CORRECT=1 SUPPORT=0 ABSTAIN=0 理由：核心公式和候选上限正确，但额外去重事实未附对应准确 refId 或原文引文，且来源仅文档名，不满足逐项引证。\nCASE-10 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：无证据且回答明确拒答；因 gold 可回答故 CORRECT=0。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold 为 absent，回答明确拒答且未编造 nDCG@5 实测值。\nCASE-12 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：正确识别缺少该日期 nDCG@5 实测数据并明确拒答。\nCASE-13 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold 不可回答，回答明确拒答且无虚构事实。\nCASE-14 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：证据无该实测值，回答明确拒答且未给出错误数值。"
+  },
+  {
+    "run": "answer-judging-r1\\family-04",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:15:09.348095+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 25670,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 11210,
+        "output_tokens_details": {
+          "reasoning_tokens": 10667
+        },
+        "total_tokens": 36880
+      },
+      "responseId": "chatcmpl-0417957fc8004e03ba361c28fdbd066c",
+      "durationSeconds": 60.98399999999674,
+      "outputBytes": 1741,
+      "outputSha256": "e426307ad336fffab38dfaea643387eb0b9810ef85f64d398c8bc5880f4af44c"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整答出unsupported/uncertain退出并进入unknowns，三条引文及refId均与source-04证据相符。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖gold并补充缺失/冲突证据与核验失败处理，引用句和chunk均匹配。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖gold，引文及809b、d07e等refId与证据一致。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：准确覆盖gold，来源路径与原文引句对应同一source-04证据块。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：明确回答共用60秒预算，引句与concepts/source-04.md证据一致。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答60秒并说明独立核验调用，引用chunk和原文均匹配。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 0,
+          "support": 0,
+          "abstain": 0,
+          "reason": "理由：未给出gold的60秒，误把检索120秒期限与答案/核验调用的期限混同，结论无直接证据。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据为空而明确拒答；gold可回答，故正确性0但拒答且无事实陈述支持1。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，但附带Qwen VL等事实未给准确refId或原文引文。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，但所述strict、向量模型、Qwen VL等事实无准确来源标识。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，相关Qwen VL/权重说明附有匹配refId和真实引文。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，但provider-unversioned事实无准确来源标识或引文。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据为空，正确拒答且无事实陈述，支持1。"
+        }
+      ],
+      "missing": [
+        {
+          "questionId": "QA-04-1",
+          "arm": "bm25",
+          "status": "failed"
+        },
+        {
+          "questionId": "QA-04-2",
+          "arm": "bm25",
+          "status": "incomplete"
+        }
+      ]
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整答出unsupported/uncertain退出并进入unknowns，三条引文及refId均与source-04证据相符。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖gold并补充缺失/冲突证据与核验失败处理，引用句和chunk均匹配。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖gold，引文及809b、d07e等refId与证据一致。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：准确覆盖gold，来源路径与原文引句对应同一source-04证据块。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：明确回答共用60秒预算，引句与concepts/source-04.md证据一致。\nCASE-06 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答60秒并说明独立核验调用，引用chunk和原文均匹配。\nCASE-07 CORRECT=0 SUPPORT=0 ABSTAIN=0 理由：未给出gold的60秒，误把检索120秒期限与答案/核验调用的期限混同，结论无直接证据。\nCASE-08 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据为空而明确拒答；gold可回答，故正确性0但拒答且无事实陈述支持1。\nCASE-09 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题正确拒答，但附带Qwen VL等事实未给准确refId或原文引文。\nCASE-10 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题正确拒答，但所述strict、向量模型、Qwen VL等事实无准确来源标识。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，相关Qwen VL/权重说明附有匹配refId和真实引文。\nCASE-12 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题正确拒答，但provider-unversioned事实无准确来源标识或引文。\nCASE-13 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：证据为空，正确拒答且无事实陈述，支持1。"
+  },
+  {
+    "run": "answer-judging-r1\\family-05-r2",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:21:50.460434+00:00",
+      "costUsd": null,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 20464,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 9446,
+        "output_tokens_details": {
+          "reasoning_tokens": 8794
+        },
+        "total_tokens": 29910
+      },
+      "responseId": "01a21202e9d8797ca654b0fe54e9fd2e",
+      "durationSeconds": 50.296999999991385,
+      "outputBytes": 2086,
+      "outputSha256": "170345ec31f27c1b2263762a00b17b6a24605c181ee539dee0c6cc29302928df"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项默认值齐全，表格与配置示例引文分别对应E-9c和E-57，标识及原文相符。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项默认值齐全，concepts/source-05.md引文对应E-9c；512 MiB为等价换算。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项默认值齐全，两个chunk引文分别对应E-9c和E-57且相符。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：默认值完整；额外有效范围上限有E-9c原文支持，无错误。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项默认值齐全，memory-wiki:adaa...对应E-1a且引文相符。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 0,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：明确UNKNOWN；允许证据无gold事实，且fail closed/.deleted.jsonl描述无准确来源标识。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 0,
+          "support": 0,
+          "abstain": 0,
+          "reason": "理由：漏“先失去检索资格、后台worker清理旧代际”，还错误称资格状态未说明；该断言与E-8de矛盾且无来源。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：未覆盖“先失去检索资格、后台worker清理旧代际”；但source-09/source-02/source-01引文与允许证据相符。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：未覆盖后台worker清理旧代际；source-01/source-09的chunk标识和引文与E-e787、E-7e相符。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：无证据且明确UNKNOWN，无事实陈述；gold可回答故未正确覆盖。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，说明证据缺备份日期和大小，未作无据事实断言。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，未提供实际日期或大小，仅说明现有证据缺失。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，未提供备份元数据，也无无据推断。"
+        },
+        {
+          "caseId": "CASE-14",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，说明缺少备份记录或文件元数据。"
+        },
+        {
+          "caseId": "CASE-15",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：无证据下明确UNKNOWN拒答，未陈述备份日期或大小。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项默认值齐全，表格与配置示例引文分别对应E-9c和E-57，标识及原文相符。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项默认值齐全，concepts/source-05.md引文对应E-9c；512 MiB为等价换算。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项默认值齐全，两个chunk引文分别对应E-9c和E-57且相符。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：默认值完整；额外有效范围上限有E-9c原文支持，无错误。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项默认值齐全，memory-wiki:adaa...对应E-1a且引文相符。\nCASE-06 CORRECT=0 SUPPORT=0 ABSTAIN=1 理由：明确UNKNOWN；允许证据无gold事实，且fail closed/.deleted.jsonl描述无准确来源标识。\nCASE-07 CORRECT=0 SUPPORT=0 ABSTAIN=0 理由：漏“先失去检索资格、后台worker清理旧代际”，还错误称资格状态未说明；该断言与E-8de矛盾且无来源。\nCASE-08 CORRECT=0 SUPPORT=1 ABSTAIN=0 理由：未覆盖“先失去检索资格、后台worker清理旧代际”；但source-09/source-02/source-01引文与允许证据相符。\nCASE-09 CORRECT=0 SUPPORT=1 ABSTAIN=0 理由：未覆盖后台worker清理旧代际；source-01/source-09的chunk标识和引文与E-e787、E-7e相符。\nCASE-10 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：无证据且明确UNKNOWN，无事实陈述；gold可回答故未正确覆盖。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，说明证据缺备份日期和大小，未作无据事实断言。\nCASE-12 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，未提供实际日期或大小，仅说明现有证据缺失。\nCASE-13 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，未提供备份元数据，也无无据推断。\nCASE-14 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，说明缺少备份记录或文件元数据。\nCASE-15 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：无证据下明确UNKNOWN拒答，未陈述备份日期或大小。"
+  },
+  {
+    "run": "answer-judging-r1\\family-06-r2",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:21:50.464436+00:00",
+      "costUsd": null,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 22646,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 4257,
+        "output_tokens_details": {
+          "reasoning_tokens": 3706
+        },
+        "total_tokens": 26903
+      },
+      "responseId": "01a21202e9e27e6c8acc96cf06c987ac",
+      "durationSeconds": 23.39100000000326,
+      "outputBytes": 1800,
+      "outputSha256": "953f3813fb59b314698680456489b7101e59bfb349fe385e0d0f14d693557c83"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖三次尝试预算与过期租约处置，引用chunk与原文相符，无错误。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖两项gold事实，额外预算耗尽说明同源支持，引用准确。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：两项事实均回答，引用来源文档与原文引句相符。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖最多3次与过期租约处置，引用chunk和引文均相符。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖两项gold事实，引用memory-wiki标识与原文相符。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：模型明确拒答且无事实陈述；gold可答但所给证据未含该规则。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：正确回答No，未完成或失败构建不能active，引用chunk与原文相符。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：正确回答No，引用完整chunk及原句，发布说明同源支持。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：正确回答No，引用chunk与原文相符，附加发布事实同源。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：模型明确拒答且无事实陈述；gold可答但证据为空。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，模型明确拒答未编造耗时，无事实陈述。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，模型正确拒答缺少毫秒实测数据。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，模型拒答并说明证据不足，无虚构数值。"
+        },
+        {
+          "caseId": "CASE-14",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，模型明确拒答缺少实测耗时记录。"
+        },
+        {
+          "caseId": "CASE-15",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，证据为空，模型正确拒答未编造数据。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖三次尝试预算与过期租约处置，引用chunk与原文相符，无错误。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖两项gold事实，额外预算耗尽说明同源支持，引用准确。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：两项事实均回答，引用来源文档与原文引句相符。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖最多3次与过期租约处置，引用chunk和引文均相符。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖两项gold事实，引用memory-wiki标识与原文相符。\nCASE-06 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：模型明确拒答且无事实陈述；gold可答但所给证据未含该规则。\nCASE-07 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：正确回答No，未完成或失败构建不能active，引用chunk与原文相符。\nCASE-08 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：正确回答No，引用完整chunk及原句，发布说明同源支持。\nCASE-09 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：正确回答No，引用chunk与原文相符，附加发布事实同源。\nCASE-10 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：模型明确拒答且无事实陈述；gold可答但证据为空。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，模型明确拒答未编造耗时，无事实陈述。\nCASE-12 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，模型正确拒答缺少毫秒实测数据。\nCASE-13 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，模型拒答并说明证据不足，无虚构数值。\nCASE-14 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，模型明确拒答缺少实测耗时记录。\nCASE-15 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，证据为空，模型正确拒答未编造数据。"
+  },
+  {
+    "run": "answer-judging-r1\\family-07",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:17:47.487996+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 30208,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 2754,
+        "output_tokens_details": {
+          "reasoning_tokens": 2261
+        },
+        "total_tokens": 32962
+      },
+      "responseId": "chatcmpl-d9666e41316c41c48804aabaa7465a5b",
+      "durationSeconds": 14.75,
+      "outputBytes": 1545,
+      "outputSha256": "5e0d068e6274d1fcad9bb8fccafdc50f8bab5054eb5a41348ca85dd082aa6c9a"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项数值完整，refId与原文引句一致。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项数值完整，分段引文均为证据原文且来源标识正确。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：答案完整，引用refId与整句原文相符。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：三项数值完整，引文为证据原文片段且来源正确。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：答案完整，依据的整段证据包含原句且refId相符。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：默认主会话key正确，refId和引文准确。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：答案正确，引用来源与原文一致。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：默认主会话key正确，证据引用准确。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：答案正确，refId与原文引句相符。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold可回答但证据为空而明确拒答，无事实错述。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，正确拒答且无编造数据。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：正确拒答absent问题，所述证据缺口与材料相符。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：正确拒答，未虚构DAU统计。"
+        },
+        {
+          "caseId": "CASE-14",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题明确拒答，未作无据事实断言。"
+        },
+        {
+          "caseId": "CASE-15",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据为空且gold为absent，正确说明无法计算并拒答。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项数值完整，refId与原文引句一致。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项数值完整，分段引文均为证据原文且来源标识正确。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：答案完整，引用refId与整句原文相符。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：三项数值完整，引文为证据原文片段且来源正确。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：答案完整，依据的整段证据包含原句且refId相符。\nCASE-06 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：默认主会话key正确，refId和引文准确。\nCASE-07 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：答案正确，引用来源与原文一致。\nCASE-08 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：默认主会话key正确，证据引用准确。\nCASE-09 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：答案正确，refId与原文引句相符。\nCASE-10 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：gold可回答但证据为空而明确拒答，无事实错述。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，正确拒答且无编造数据。\nCASE-12 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：正确拒答absent问题，所述证据缺口与材料相符。\nCASE-13 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：正确拒答，未虚构DAU统计。\nCASE-14 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题明确拒答，未作无据事实断言。\nCASE-15 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：证据为空且gold为absent，正确说明无法计算并拒答。"
+  },
+  {
+    "run": "answer-judging-r1\\family-08",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:17:59.272000+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 32812,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 11148,
+        "output_tokens_details": {
+          "reasoning_tokens": 10534
+        },
+        "total_tokens": 43960
+      },
+      "responseId": "chatcmpl-ccc6e9258b104611806905124b74820f",
+      "durationSeconds": 63.40600000001723,
+      "outputBytes": 2027,
+      "outputSha256": "618967736df62335234a1b73ba4ac7f79ed9cc17df5d4d31bc95a126d02512b2"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：准确说明不阻断工作区且强制只读回退，refId与原文相符，附加写工具被拒绝也有证据支持。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖不可写不阻断工作区并进入只读回退，补充文件写被拒绝有准确refId和原文。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：答案覆盖gold事实，文件行号定位与引文均与证据一致，附加写工具拒绝有支持。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：正确说明不拒绝工作区但强制只读回退，并准确引用refId与原文，补充文件写拒绝有证据。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据为空且答案明确拒答，但gold可回答，故CORRECT=0；无实质性答案事实。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据未含磁盘阈值，答案明确拒答；gold可回答故CORRECT=0。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：无证据且答案明确拒答；gold可回答故CORRECT=0。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，未编造仓库字节总量，明确表示无法回答。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，未给出虚构总量，明确说明证据不足。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，未提供虚构仓库占用数值。"
+        },
+        {
+          "caseId": "CASE-14",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，未编造总量；引用的证据内容真实，拒绝理由成立。"
+        },
+        {
+          "caseId": "CASE-15",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，未虚构总字节数；引用refId和原文与证据相符。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：准确说明不阻断工作区且强制只读回退，refId与原文相符，附加写工具被拒绝也有证据支持。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖不可写不阻断工作区并进入只读回退，补充文件写被拒绝有准确refId和原文。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：答案覆盖gold事实，文件行号定位与引文均与证据一致，附加写工具拒绝有支持。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：正确说明不拒绝工作区但强制只读回退，并准确引用refId与原文，补充文件写拒绝有证据。\nCASE-05 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据为空且答案明确拒答，但gold可回答，故CORRECT=0；无实质性答案事实。\nCASE-06 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据未含磁盘阈值，答案明确拒答；gold可回答故CORRECT=0。\nCASE-07 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。\nCASE-08 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。\nCASE-09 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。\nCASE-10 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：无证据且答案明确拒答；gold可回答故CORRECT=0。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，未编造仓库字节总量，明确表示无法回答。\nCASE-12 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，未给出虚构总量，明确说明证据不足。\nCASE-13 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，未提供虚构仓库占用数值。\nCASE-14 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，未编造总量；引用的证据内容真实，拒绝理由成立。\nCASE-15 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，未虚构总字节数；引用refId和原文与证据相符。"
+  },
+  {
+    "run": "answer-judging-r1\\family-09",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:18:02.592666+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 30460,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 12091,
+        "output_tokens_details": {
+          "reasoning_tokens": 11473
+        },
+        "total_tokens": 42551
+      },
+      "responseId": "chatcmpl-8cbd096dc4824ed590da5538af2fdb6b",
+      "durationSeconds": 73.4539999999979,
+      "outputBytes": 1973,
+      "outputSha256": "680bdd85c1a3ec4f826d3c6fc40cc03cd4cb5460acac71b53fa867251ac6ede5"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答给出6000并准确引用2050片段原文，事实完整且无错误。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答给出6000，引用2050片段及“可按配置覆盖”均与原文相符。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答给出6000，所引2050与5debf片段原文均准确支持。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答给出6000，并准确引用2050及5debf片段原文。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：明确UNKNOWN拒答；gold可回答但送入证据未含该数值，按缺证据拒答记CORRECT=0、SUPPORT=1。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答No，并准确引用7de91及032443原文，支持永久关闭且不因配置启用。"
+        },
+        {
+          "caseId": "CASE-07",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答No与gold一致；所引3a229原文支持其关于旧环境变量不能恢复的限定表述。"
+        },
+        {
+          "caseId": "CASE-08",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答No，并准确引用7de91及3a229原文，均支持所述事实。"
+        },
+        {
+          "caseId": "CASE-09",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答No，并准确引用7de91原文“不会因配置重新启用”，覆盖gold事实。"
+        },
+        {
+          "caseId": "CASE-10",
+          "correct": 0,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：证据为空而明确拒答；gold可回答，按缺证据拒答记CORRECT=0、SUPPORT=1。"
+        },
+        {
+          "caseId": "CASE-11",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，回答明确UNKNOWN且未编造数值，正确拒答。"
+        },
+        {
+          "caseId": "CASE-12",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，回答明确UNKNOWN；提及无关片段属实且未编造峰值。"
+        },
+        {
+          "caseId": "CASE-13",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，回答明确UNKNOWN；仅指出文档路径，未编造内存数据。"
+        },
+        {
+          "caseId": "CASE-14",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，回答明确UNKNOWN；仅指出文档路径，正确拒答。"
+        },
+        {
+          "caseId": "CASE-15",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent且证据为空，回答明确UNKNOWN并说明缺失信息，正确拒答。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答给出6000并准确引用2050片段原文，事实完整且无错误。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答给出6000，引用2050片段及“可按配置覆盖”均与原文相符。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答给出6000，所引2050与5debf片段原文均准确支持。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答给出6000，并准确引用2050及5debf片段原文。\nCASE-05 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：明确UNKNOWN拒答；gold可回答但送入证据未含该数值，按缺证据拒答记CORRECT=0、SUPPORT=1。\nCASE-06 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答No，并准确引用7de91及032443原文，支持永久关闭且不因配置启用。\nCASE-07 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答No与gold一致；所引3a229原文支持其关于旧环境变量不能恢复的限定表述。\nCASE-08 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答No，并准确引用7de91及3a229原文，均支持所述事实。\nCASE-09 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答No，并准确引用7de91原文“不会因配置重新启用”，覆盖gold事实。\nCASE-10 CORRECT=0 SUPPORT=1 ABSTAIN=1 理由：证据为空而明确拒答；gold可回答，按缺证据拒答记CORRECT=0、SUPPORT=1。\nCASE-11 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，回答明确UNKNOWN且未编造数值，正确拒答。\nCASE-12 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，回答明确UNKNOWN；提及无关片段属实且未编造峰值。\nCASE-13 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，回答明确UNKNOWN；仅指出文档路径，未编造内存数据。\nCASE-14 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，回答明确UNKNOWN；仅指出文档路径，正确拒答。\nCASE-15 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent且证据为空，回答明确UNKNOWN并说明缺失信息，正确拒答。"
+  },
+  {
+    "run": "answer-judging-r2\\family-01",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:27:39.819533+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 6768,
+        "input_tokens_details": {
+          "cached_tokens": 128
+        },
+        "output_tokens": 7202,
+        "output_tokens_details": {
+          "reasoning_tokens": 7056
+        },
+        "total_tokens": 13970
+      },
+      "responseId": "chatcmpl-6837e87db4e544a99e43082d5295598a",
+      "durationSeconds": 41.328000000008615,
+      "outputBytes": 457,
+      "outputSha256": "c700fd74c9803eca2aecbd1a1898d9660515cbde9d73ed62038d9ec08fe60231"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：384、768、2400 三项均与 gold 一致，引文可逐字核对并对应 E-aaeb5dd620d33347。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：overlap=0 有证据支持，但未回答“生成的检索前缀不能进入引用正文”，仅称证据未给出该规则。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold 为 absent，证据未涉及 OCR，回答以 UNKNOWN 明确拒答且未虚构事实。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：384、768、2400 三项均与 gold 一致，引文可逐字核对并对应 E-aaeb5dd620d33347。\nCASE-02 CORRECT=0 SUPPORT=1 ABSTAIN=0 理由：overlap=0 有证据支持，但未回答“生成的检索前缀不能进入引用正文”，仅称证据未给出该规则。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold 为 absent，证据未涉及 OCR，回答以 UNKNOWN 明确拒答且未虚构事实。"
+  },
+  {
+    "run": "answer-judging-r2\\family-02",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:27:39.822534+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 8240,
+        "input_tokens_details": {
+          "cached_tokens": 128
+        },
+        "output_tokens": 8372,
+        "output_tokens_details": {
+          "reasoning_tokens": 8164
+        },
+        "total_tokens": 16612
+      },
+      "responseId": "chatcmpl-3578efaf401b4102a470afa2626932e4",
+      "durationSeconds": 45.687000000005355,
+      "outputBytes": 673,
+      "outputSha256": "9a5dbbc1a53705cb7d17afa5ec96f9d9125a00b731ae8d16fa3e8e562fb5f4b8"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "完整给出SiliconFlow与精确模型，引用chunk及原文与E-7d1275b02e0466b0相符。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 0,
+          "support": 1,
+          "abstain": 0,
+          "reason": "仅回答索引disabled，未覆盖gold“禁用删除选择并释放provider”；所述状态有原文支持。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "gold为absent，明确UNKNOWN拒答且未作无据事实陈述。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "gold为absent，正确拒答；但提及默认服务为SiliconFlow等事实无准确来源标识或引文。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "gold为absent，正确拒答；但括号内SiliconFlow及模型事实无准确来源标识或引文。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 完整给出SiliconFlow与精确模型，引用chunk及原文与E-7d1275b02e0466b0相符。\nCASE-02 CORRECT=0 SUPPORT=1 ABSTAIN=0 仅回答索引disabled，未覆盖gold“禁用删除选择并释放provider”；所述状态有原文支持。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=1 gold为absent，明确UNKNOWN拒答且未作无据事实陈述。\nCASE-04 CORRECT=1 SUPPORT=0 ABSTAIN=1 gold为absent，正确拒答；但提及默认服务为SiliconFlow等事实无准确来源标识或引文。\nCASE-05 CORRECT=1 SUPPORT=0 ABSTAIN=1 gold为absent，正确拒答；但括号内SiliconFlow及模型事实无准确来源标识或引文。"
+  },
+  {
+    "run": "answer-judging-r2\\family-03",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:28:21.335541+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 11266,
+        "input_tokens_details": {
+          "cached_tokens": 128
+        },
+        "output_tokens": 6741,
+        "output_tokens_details": {
+          "reasoning_tokens": 6495
+        },
+        "total_tokens": 18007
+      },
+      "responseId": "chatcmpl-456a192c1d5f425ab64cc5807d0b5521",
+      "durationSeconds": 36.953999999997905,
+      "outputBytes": 786,
+      "outputSha256": "fd2991d4b72bfa44fdbfba1b7a760fab7bfd67afee92212b5069db3e5db3f3cc"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整给出 80、30、6，文档来源与表格行引文均与证据一致。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整给出 80、30、6，chunk 标识与证据 refId 相符且引文匹配。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整覆盖融合公式及每个 parent 最多两个候选，引文与 chunk 证据相符。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整覆盖融合公式及每个 parent 最多两个候选，引文与 chunk 证据相符。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：该问题无可用答案，回答明确以 UNKNOWN 拒答且未编造数值。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：该问题无可用答案，回答明确以 UNKNOWN 拒答且未编造数值。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整给出 80、30、6，文档来源与表格行引文均与证据一致。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整给出 80、30、6，chunk 标识与证据 refId 相符且引文匹配。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整覆盖融合公式及每个 parent 最多两个候选，引文与 chunk 证据相符。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整覆盖融合公式及每个 parent 最多两个候选，引文与 chunk 证据相符。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：该问题无可用答案，回答明确以 UNKNOWN 拒答且未编造数值。\nCASE-06 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：该问题无可用答案，回答明确以 UNKNOWN 拒答且未编造数值。"
+  },
+  {
+    "run": "answer-judging-r2\\family-04-r2",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:33:34.791481+00:00",
+      "costUsd": null,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 9687,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 6047,
+        "output_tokens_details": {
+          "reasoning_tokens": 5754
+        },
+        "total_tokens": 15734
+      },
+      "responseId": "01a2120dab197b39b9b50b6de4f41752",
+      "durationSeconds": 31.34299999999348,
+      "outputBytes": 969,
+      "outputSha256": "451da0872ab56ebc6036cee042226b03608fe51d71901657e557c3b514f32556"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖“unsupported/uncertain 退出答案并进入 unknowns”，引文与 source-04 对应 chunk 相符，附加流程有同源支持。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：准确覆盖gold事实，相关引文分别与 source-04 的 d07eca7d 和 809b7f16 chunk 原文相符。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 0,
+          "support": 0,
+          "abstain": 0,
+          "reason": "理由：gold为两次模型调用共享60秒预算；回答误用检索embedding的120秒期限并推断支持核验同期限，缺证据。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，但提及Qwen VL tokenizer及权重revision记录方式时无来源标识或引文。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，provider-unversioned/权重revision不可得引文与source-02相符。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，provider-unversioned引文、refId及原文与source-02 chunk相符。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖“unsupported/uncertain 退出答案并进入 unknowns”，引文与 source-04 对应 chunk 相符，附加流程有同源支持。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：准确覆盖gold事实，相关引文分别与 source-04 的 d07eca7d 和 809b7f16 chunk 原文相符。\nCASE-03 CORRECT=0 SUPPORT=0 ABSTAIN=0 理由：gold为两次模型调用共享60秒预算；回答误用检索embedding的120秒期限并推断支持核验同期限，缺证据。\nCASE-04 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题正确拒答，但提及Qwen VL tokenizer及权重revision记录方式时无来源标识或引文。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，provider-unversioned/权重revision不可得引文与source-02相符。\nCASE-06 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：absent问题正确拒答，provider-unversioned引文、refId及原文与source-02 chunk相符。"
+  },
+  {
+    "run": "answer-judging-r2\\family-05",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:28:58.491722+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 7987,
+        "input_tokens_details": {
+          "cached_tokens": 128
+        },
+        "output_tokens": 4325,
+        "output_tokens_details": {
+          "reasoning_tokens": 4169
+        },
+        "total_tokens": 12312
+      },
+      "responseId": "chatcmpl-b11ee31964ce4081b5a6290e575afe24",
+      "durationSeconds": 22.405999999988126,
+      "outputBytes": 466,
+      "outputSha256": "8a778163d4aeac5c0a793010c7a6db5977e359c276c03530e19d919ed74cba98"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整给出 local、strict、536870912，且引用refId及原文与E-9c9ac5f7ec56802b一致。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 0,
+          "support": 0,
+          "abstain": 0,
+          "reason": "理由：未答出“先失去检索资格、后台worker清理旧代际”，且“重建恢复资格”无证据支持并与gold及E-8fa6c060eceda7a6相悖。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，回答明确UNKNOWN且未作事实陈述，属正确拒答。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整给出 local、strict、536870912，且引用refId及原文与E-9c9ac5f7ec56802b一致。\nCASE-02 CORRECT=0 SUPPORT=0 ABSTAIN=0 理由：未答出“先失去检索资格、后台worker清理旧代际”，且“重建恢复资格”无证据支持并与gold及E-8fa6c060eceda7a6相悖。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，回答明确UNKNOWN且未作事实陈述，属正确拒答。"
+  },
+  {
+    "run": "answer-judging-r2\\family-06",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:29:21.087905+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 8207,
+        "input_tokens_details": {
+          "cached_tokens": 128
+        },
+        "output_tokens": 1834,
+        "output_tokens_details": {
+          "reasoning_tokens": 1663
+        },
+        "total_tokens": 10041
+      },
+      "responseId": "chatcmpl-11faa87d81564809b3583b129f8425c8",
+      "durationSeconds": 10.76600000000326,
+      "outputBytes": 546,
+      "outputSha256": "cded2393d3afe0b181b60145585e6d77dce867498ea947059985bf61610c9bc5"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：完整回答三次尝试预算及过期租约回 pending 或转 failed，引文与证据 E-a47a6f92faaa1e01 相符。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：明确回答未完成或失败构建不能成为 active，引文与同源事务发布陈述均有证据支持。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold 为 absent，回答明确 UNKNOWN 且未虚构耗时。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold 为 absent，回答明确 UNKNOWN 且未提供无据事实。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：完整回答三次尝试预算及过期租约回 pending 或转 failed，引文与证据 E-a47a6f92faaa1e01 相符。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：明确回答未完成或失败构建不能成为 active，引文与同源事务发布陈述均有证据支持。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold 为 absent，回答明确 UNKNOWN 且未虚构耗时。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold 为 absent，回答明确 UNKNOWN 且未提供无据事实。"
+  },
+  {
+    "run": "answer-judging-r2\\family-07",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:29:32.029278+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 10404,
+        "input_tokens_details": {
+          "cached_tokens": 128
+        },
+        "output_tokens": 2980,
+        "output_tokens_details": {
+          "reasoning_tokens": 2666
+        },
+        "total_tokens": 13384
+      },
+      "responseId": "chatcmpl-968a470ec81946e8a13f632ebc509b81",
+      "durationSeconds": 21.03100000001723,
+      "outputBytes": 876,
+      "outputSha256": "e3eeb9b89e131857002ae177f6cd5e25031992eb7171accfc67b22cd7cba41b8"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：300/200/120与gold一致，所引chunk:sha256:e040…原文与E-d95026221e58396d相符。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：300/200/120完整覆盖gold，引用chunk:sha256:e040…及原文与E-d95026221e58396d相符。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：默认主会话`agent:main:main`正确，补充的非runId/Task Ledger说明有E-66b0b9c0c6f8570d同refId原文支持。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：默认主会话`agent:main:main`正确，引用chunk:sha256:5133…及两句原文均与E-66b0b9c0c6f8570d相符。"
+        },
+        {
+          "caseId": "CASE-05",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：问题为absent，回答明确UNKNOWN并说明无DAU数据，未提供无据事实结论。"
+        },
+        {
+          "caseId": "CASE-06",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：问题为absent，回答明确UNKNOWN并说明证据无DAU，属正确拒答。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：300/200/120与gold一致，所引chunk:sha256:e040…原文与E-d95026221e58396d相符。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：300/200/120完整覆盖gold，引用chunk:sha256:e040…及原文与E-d95026221e58396d相符。\nCASE-03 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：默认主会话`agent:main:main`正确，补充的非runId/Task Ledger说明有E-66b0b9c0c6f8570d同refId原文支持。\nCASE-04 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：默认主会话`agent:main:main`正确，引用chunk:sha256:5133…及两句原文均与E-66b0b9c0c6f8570d相符。\nCASE-05 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：问题为absent，回答明确UNKNOWN并说明无DAU数据，未提供无据事实结论。\nCASE-06 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：问题为absent，回答明确UNKNOWN并说明证据无DAU，属正确拒答。"
+  },
+  {
+    "run": "answer-judging-r2\\family-08-r2",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:34:06.580916+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 6789,
+        "input_tokens_details": {
+          "cached_tokens": 6655
+        },
+        "output_tokens": 15614,
+        "output_tokens_details": {
+          "reasoning_tokens": 15436
+        },
+        "total_tokens": 22403
+      },
+      "responseId": "chatcmpl-31a6be3308b94bb5b8f77e4a902bc357",
+      "durationSeconds": 95.59400000001187,
+      "outputBytes": 620,
+      "outputSha256": "288a9b4b620bf804a411074a8958ba4652661c8e34fd038a443bb0dc08117871"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：覆盖gold的“不阻断Workspace、强制read-only fallback”，来源与原文引句相符，文件写入被拒也有对应证据。"
+        },
+        {
+          "caseId": "CASE-02",
+          "correct": 1,
+          "support": 1,
+          "abstain": 1,
+          "reason": "理由：gold为absent，回答明确UNKNOWN，未作实质性无据事实断言。"
+        },
+        {
+          "caseId": "CASE-03",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：absent问题正确拒答，但Git能力、实现文件等事实仅有短语引文，未标明准确来源标识。"
+        },
+        {
+          "caseId": "CASE-04",
+          "correct": 1,
+          "support": 0,
+          "abstain": 1,
+          "reason": "理由：正确拒答且未误报总量，但Git能力及maxStorageBytes默认值等事实缺准确来源标识。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：覆盖gold的“不阻断Workspace、强制read-only fallback”，来源与原文引句相符，文件写入被拒也有对应证据。\nCASE-02 CORRECT=1 SUPPORT=1 ABSTAIN=1 理由：gold为absent，回答明确UNKNOWN，未作实质性无据事实断言。\nCASE-03 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：absent问题正确拒答，但Git能力、实现文件等事实仅有短语引文，未标明准确来源标识。\nCASE-04 CORRECT=1 SUPPORT=0 ABSTAIN=1 理由：正确拒答且未误报总量，但Git能力及maxStorageBytes默认值等事实缺准确来源标识。"
+  },
+  {
+    "run": "answer-judging-r2\\family-09",
+    "receipt": {
+      "actor": "workbuddy-independent-answer-judge",
+      "driven_by": "agent",
+      "status": "completed",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "startedAt": "2026-11-25T09:29:53.211032+00:00",
+      "costUsd": null,
+      "usage": {
+        "input_tokens": 2901,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 445,
+        "output_tokens_details": {
+          "reasoning_tokens": 358
+        },
+        "total_tokens": 3346
+      },
+      "responseId": "chatcmpl-b3539c52e2fc4b3e86a4643923b77894",
+      "durationSeconds": 5.3289999999979045,
+      "outputBytes": 281,
+      "outputSha256": "91ea343f79b8f987dfc6caaa19e3dfcb9ceb1c921cfc3f7b02cb23eeeff7b9ba"
+    },
+    "parsed": {
+      "valid": true,
+      "verdicts": [
+        {
+          "caseId": "CASE-01",
+          "correct": 1,
+          "support": 1,
+          "abstain": 0,
+          "reason": "理由：回答正确否定配置可重新启用，完整覆盖“生产装配被 VTOKEN_RETIRED 永久关闭、不会因配置重新启用”的gold事实；所引 chunk:sha256:7de91afa... 与证据E-ef1da0adb869925d的refId及原文相符。"
+        }
+      ],
+      "missing": []
+    },
+    "resultText": "CASE-01 CORRECT=1 SUPPORT=1 ABSTAIN=0 理由：回答正确否定配置可重新启用，完整覆盖“生产装配被 VTOKEN_RETIRED 永久关闭、不会因配置重新启用”的gold事实；所引 chunk:sha256:7de91afa... 与证据E-ef1da0adb869925d的refId及原文相符。"
+  }
+]

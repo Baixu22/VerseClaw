@@ -1,0 +1,56 @@
+{
+  "schema": "G2KnowledgeAdaptationProfile/v1",
+  "actor": "codex-g2-profile",
+  "driven_by": "agent",
+  "origin": "agent-built-adaptation",
+  "snapshotDigest": "sha256:b6f998e7acae786bd8624e5ab390265c2d89f153d92eec525b33ca4cac303649",
+  "sources": 9,
+  "sourceBytes": 79480,
+  "sourceLengthBytes": {
+    "min": 1992,
+    "median": 3997,
+    "max": 24842
+  },
+  "sourceTypes": {
+    "local-file": 9
+  },
+  "languageSignals": {
+    "han": 9,
+    "latin": 9
+  },
+  "structures": {
+    "headings": 90,
+    "tableRows": 147,
+    "codeFences": 12,
+    "listItems": 544
+  },
+  "policyStatuses": {
+    "active": 9
+  },
+  "sensitivities": {
+    "workspace": 9
+  },
+  "normalizedDuplicateGroups": [],
+  "conflictMetadataCount": 0,
+  "freshness": "Snapshot documents retain their bootstrap timestamp; update frequency cannot be estimated from one capture.",
+  "chunkCount": 871,
+  "chunkChars": {
+    "min": 5,
+    "median": 33,
+    "p95": 216,
+    "max": 664
+  },
+  "queryCount": 27,
+  "querySplits": {
+    "calibration": 9,
+    "validation": 9,
+    "held-out": 9
+  },
+  "queryLocales": {
+    "zh": 18,
+    "en": 9
+  },
+  "answerable": 18,
+  "absent": 9,
+  "scope": "User-authorized current project documentation, not a snapshot of a configured daily-use Wiki. Existing v4 remains separate."
+}

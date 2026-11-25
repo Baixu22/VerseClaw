@@ -1,0 +1,4384 @@
+{
+  "schema": "G2AdaptationAnswerObservation/v1",
+  "actor": "codex-g2-answer-evaluation",
+  "driven_by": "agent",
+  "candidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+  "origin": "agent-built-adaptation",
+  "observations": 135,
+  "judged": 131,
+  "freshCurrentCandidateAnswers": 38,
+  "identicalInputReuses": 97,
+  "reuseRule": "Only byte-identical question and retained messages under identical generator settings; original candidate and receipt remain explicit.",
+  "textDigestContract": "Provider text digest uses LF-normalized UTF-8; raw persisted file digest is recorded separately for Windows newline encoding.",
+  "missingRule": "Missing, incomplete or unknown generation is not judged and counts as zero in all-attempt descriptive success. It is not relabeled as an agent reasoning failure.",
+  "qualityQualification": "insufficient-for-policy-promotion",
+  "costUsd": null,
+  "summaries": [
+    {
+      "arm": "page",
+      "total": 27,
+      "completeJudgments": 25,
+      "missingOrUnknown": 2,
+      "correctAllAttempts": 0.48148148148148145,
+      "answerableCorrectAllAttempts": 0.3333333333333333,
+      "absentCorrectAllAttempts": 0.7777777777777778,
+      "supportedCompleteAnswers": 1.0,
+      "p95GenerationSeconds": 16.875,
+      "unknownCost": true
+    },
+    {
+      "arm": "bm25",
+      "total": 27,
+      "completeJudgments": 25,
+      "missingOrUnknown": 2,
+      "correctAllAttempts": 0.7037037037037037,
+      "answerableCorrectAllAttempts": 0.5555555555555556,
+      "absentCorrectAllAttempts": 1.0,
+      "supportedCompleteAnswers": 0.88,
+      "p95GenerationSeconds": 40.405999999988126,
+      "unknownCost": true
+    },
+    {
+      "arm": "dense",
+      "total": 27,
+      "completeJudgments": 27,
+      "missingOrUnknown": 0,
+      "correctAllAttempts": 0.8888888888888888,
+      "answerableCorrectAllAttempts": 0.8333333333333334,
+      "absentCorrectAllAttempts": 1.0,
+      "supportedCompleteAnswers": 0.8888888888888888,
+      "p95GenerationSeconds": 20.484000000025844,
+      "unknownCost": true
+    },
+    {
+      "arm": "hybrid",
+      "total": 27,
+      "completeJudgments": 27,
+      "missingOrUnknown": 0,
+      "correctAllAttempts": 0.8148148148148148,
+      "answerableCorrectAllAttempts": 0.7222222222222222,
+      "absentCorrectAllAttempts": 1.0,
+      "supportedCompleteAnswers": 0.8518518518518519,
+      "p95GenerationSeconds": 74.42199999999139,
+      "unknownCost": true
+    },
+    {
+      "arm": "hybrid-rerank",
+      "total": 27,
+      "completeJudgments": 27,
+      "missingOrUnknown": 0,
+      "correctAllAttempts": 0.8148148148148148,
+      "answerableCorrectAllAttempts": 0.7222222222222222,
+      "absentCorrectAllAttempts": 1.0,
+      "supportedCompleteAnswers": 0.8518518518518519,
+      "p95GenerationSeconds": 13.875,
+      "unknownCost": true
+    }
+  ],
+  "rows": [
+    {
+      "queryId": "QA-01-1",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "083c31dd11731dc1381b39e6d0aabf17a143a7d0ed7c150067c3cf32e8a52a80",
+      "answerDigest": "ab082d22424a47e635f8e218115a3eb35e8f713c1dd7a3c87c1ed1760eb433cb",
+      "rawAnswerFileDigest": "ab082d22424a47e635f8e218115a3eb35e8f713c1dd7a3c87c1ed1760eb433cb",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold可答但证据未含切块配置，UNKNOWN明确拒答；无事实陈述故SUPPORT=1。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 2.4059999999881256,
+      "usage": {
+        "input_tokens": 2204,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 105,
+        "output_tokens_details": {
+          "reasoning_tokens": 78
+        },
+        "total_tokens": 2309
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-1",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "f50768f7908aee2923a862f49906debb1e87faf1dc663f2a9bcb3c20ac200782",
+      "answerDigest": "4bae2be9dbd7eaa30aef92c360ee347dc86e840a46ff14c8ec13e6ebb1b15661",
+      "rawAnswerFileDigest": "4bae2be9dbd7eaa30aef92c360ee347dc86e840a46ff14c8ec13e6ebb1b15661",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整给出384 tokens、768 tokens/2400字符，来源与原文引句匹配证据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 3.0460000000020955,
+      "usage": {
+        "input_tokens": 2327,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 215,
+        "output_tokens_details": {
+          "reasoning_tokens": 145
+        },
+        "total_tokens": 2542
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-1",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "f652a0287536b2b7afba8eade890bb62739334a182ab2e6a0ee208e5f28511b6",
+      "answerDigest": "4b91933dddacbe39fb863e9a27b86ea7bd84ccfd0a4ba4ae717a069db8e85e39",
+      "rawAnswerFileDigest": "4b91933dddacbe39fb863e9a27b86ea7bd84ccfd0a4ba4ae717a069db8e85e39",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：三项数值完整，chunk id与两段引文均与证据相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 5.453000000008615,
+      "usage": {
+        "input_tokens": 2588,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 354,
+        "output_tokens_details": {
+          "reasoning_tokens": 258
+        },
+        "total_tokens": 2942
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-1",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "5009bec4861b101d1187774dc53ffa769ee876aaacc6b4baf0dd2bcf72f88cdc",
+      "answerDigest": "d0b1f81b96b58fdbedab25c5a033aed979c390031496823a3ce8c52939579a62",
+      "rawAnswerFileDigest": "d0b1f81b96b58fdbedab25c5a033aed979c390031496823a3ce8c52939579a62",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整覆盖三项事实，来源chunk id与原文引文一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 4.60899999999674,
+      "usage": {
+        "input_tokens": 2492,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 434,
+        "output_tokens_details": {
+          "reasoning_tokens": 337
+        },
+        "total_tokens": 2926
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-1",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "5009bec4861b101d1187774dc53ffa769ee876aaacc6b4baf0dd2bcf72f88cdc",
+      "answerDigest": "d93a2ec0dd3c339ddebcac574f15fc6474970f3700a0fd6035e982b2d1ebc294",
+      "rawAnswerFileDigest": "c72e250d5d92d299cbf64024fd5b8cb4c545624ade34d76ead48b057cf5c1546",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：384、768、2400 三项均与 gold 一致，引文可逐字核对并对应 E-aaeb5dd620d33347。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-01",
+      "elapsedSeconds": 4.76500000001397,
+      "usage": {
+        "input_tokens": 2492,
+        "input_tokens_details": {
+          "cached_tokens": 2304
+        },
+        "output_tokens": 556,
+        "output_tokens_details": {
+          "reasoning_tokens": 481
+        },
+        "total_tokens": 3048
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-2",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "acdf225c1cd973a4fcb162b47c4cdf7dabbff7e33bb0307c77598b259f1f780c",
+      "answerDigest": "a52fa19ee564c6abad7b808779666c15d05d0e7a860df7a7f0ae896c451c736e",
+      "rawAnswerFileDigest": "a52fa19ee564c6abad7b808779666c15d05d0e7a860df7a7f0ae896c451c736e",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据为空，UNKNOWN明确拒答；gold可答故CORRECT=0，拒答无事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 2.312999999994645,
+      "usage": {
+        "input_tokens": 156,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 139,
+        "output_tokens_details": {
+          "reasoning_tokens": 115
+        },
+        "total_tokens": 295
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-2",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "7a22498cf04869444086739226761a620ee9bfd343ba4cea555b5ed5be7bc6ed",
+      "answerDigest": "92eedf91b2ec3046e1e0bfe5d5f97d3e5f87e35ef97065d46cfa16da23806bf5",
+      "rawAnswerFileDigest": "92eedf91b2ec3046e1e0bfe5d5f97d3e5f87e35ef97065d46cfa16da23806bf5",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold可答但证据无overlap及引用前缀处理，UNKNOWN明确拒答且无事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 3.9690000000118744,
+      "usage": {
+        "input_tokens": 2480,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 196,
+        "output_tokens_details": {
+          "reasoning_tokens": 173
+        },
+        "total_tokens": 2676
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-2",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "bb501909847140f2a19436bd9eb2e681b1a412258770cc5539aec02b7af7803c",
+      "answerDigest": "d4b43bcd1a4b0f9a6ade5e3b3f968b1fa5a72844e63e4a29d7a050cfba7c9888",
+      "rawAnswerFileDigest": "a5c4d8bc8552f1cc0e48bcfd2267e7e4d4374bfddc93efc6c8fa538e0faeb23f",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整回答overlap=0及检索前缀不得进入引用正文，两个chunk引文匹配。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 10.155999999988126,
+      "usage": {
+        "input_tokens": 2288,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 597,
+        "output_tokens_details": {
+          "reasoning_tokens": 413
+        },
+        "total_tokens": 2885
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-2",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "089f26978042346330d904c14c9ee2d06b835004290075f71f087989af3a657e",
+      "answerDigest": "ed25001d66126b3847d9b7b7ec7952facfbd597191003ab24476d4849c1db178",
+      "rawAnswerFileDigest": "c6902f0a67de90bbef9755d08a6113adf9befcfebffb94bc412153cfafa962c4",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：仅答overlap=0；对引用中的检索前缀称证据未描述，未覆盖gold第二项；已述事实有匹配refId，非整体拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 17.375,
+      "usage": {
+        "input_tokens": 2296,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 2863,
+        "output_tokens_details": {
+          "reasoning_tokens": 2646
+        },
+        "total_tokens": 5159
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-2",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "089f26978042346330d904c14c9ee2d06b835004290075f71f087989af3a657e",
+      "answerDigest": "0e9a64c2aa4b3d4e695554f21104db1219c93ff74ca0a1832803963a49dc1936",
+      "rawAnswerFileDigest": "8e656769540ab1477ea5917a5e0c5cabcd3ba0b93ff292386d4461afb5daeaa1",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：overlap=0 有证据支持，但未回答“生成的检索前缀不能进入引用正文”，仅称证据未给出该规则。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-01",
+      "elapsedSeconds": 15.0,
+      "usage": {
+        "input_tokens": 2296,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 2247,
+        "output_tokens_details": {
+          "reasoning_tokens": 2020
+        },
+        "total_tokens": 4543
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-3",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "e0ee48ad1944b27996e2864f49d8792c72f510ac2bd054c01d5a9091721362d6",
+      "answerDigest": "814c4c5bcd84f89f8d11ab5090b274f2a41be5df8e74687f77b75b6878cc5f14",
+      "rawAnswerFileDigest": "814c4c5bcd84f89f8d11ab5090b274f2a41be5df8e74687f77b75b6878cc5f14",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据为空，OCR不在gold，UNKNOWN正确拒答，无事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 2.2030000000086147,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 136,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 151,
+        "output_tokens_details": {
+          "reasoning_tokens": 132
+        },
+        "total_tokens": 287
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-3",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "d36fa46e59456fc3e48988b304afe698eefb19d002dd309a7c053731226039f1",
+      "answerDigest": "65a5bfee035fbf97a4dbb96539362cbef68d3af85eaffc7b932b74ca16cee734",
+      "rawAnswerFileDigest": "65a5bfee035fbf97a4dbb96539362cbef68d3af85eaffc7b932b74ca16cee734",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：OCR不在gold，UNKNOWN正确拒答，且无额外事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 3.484000000025844,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2417,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 119,
+        "output_tokens_details": {
+          "reasoning_tokens": 100
+        },
+        "total_tokens": 2536
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-3",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "dff5b030814231e9c3efb8737f1c69f59cd6cd0fba90fd4ccbc3405767dc5965",
+      "answerDigest": "065956f7b98ac4a8e2a892cfbad88abb51a23605dfa479436ede8573c7a17eba",
+      "rawAnswerFileDigest": "5585396e0b882ec276038941952bd2e4824fb02108b6b0daa659c25e0fadc6f6",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "理由：OCR不在gold，UNKNOWN正确拒答；但附加Markdown/chunker profile叙述未给来源标识或引文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 2.35999999998603,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2605,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 62,
+        "output_tokens_details": {
+          "reasoning_tokens": 14
+        },
+        "total_tokens": 2667
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-3",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "ca8ac87dc3231320dc9713063f79ea9241396e7e18b291453fae94819ca194cd",
+      "answerDigest": "c856e573666a2b15f08a7ed2c3192137760b76a05d3da730e2a6b0b878bb178d",
+      "rawAnswerFileDigest": "c856e573666a2b15f08a7ed2c3192137760b76a05d3da730e2a6b0b878bb178d",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：OCR不在gold，UNKNOWN正确拒答，无额外事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-01",
+      "elapsedSeconds": 3.3280000000086147,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2518,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 121,
+        "output_tokens_details": {
+          "reasoning_tokens": 96
+        },
+        "total_tokens": 2639
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-01-3",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "ca8ac87dc3231320dc9713063f79ea9241396e7e18b291453fae94819ca194cd",
+      "answerDigest": "49e5a4f628bb7f7f37ceb20a63e32786abd48a24bb4235d6140a4038c1c61b97",
+      "rawAnswerFileDigest": "49e5a4f628bb7f7f37ceb20a63e32786abd48a24bb4235d6140a4038c1c61b97",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold 为 absent，证据未涉及 OCR，回答以 UNKNOWN 明确拒答且未虚构事实。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-01",
+      "elapsedSeconds": 3.48499999998603,
+      "usage": {
+        "input_tokens": 2518,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 147,
+        "output_tokens_details": {
+          "reasoning_tokens": 118
+        },
+        "total_tokens": 2665
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-1",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "03b7fa3cbc50bd6c9169b6a986366f1e2be93dab6bfb158eaf1b3bc8e9b7088b",
+      "answerDigest": "089756c5e2eeeb59223734e3f9c26d071c435840408f10388a6ec0465b4563ed",
+      "rawAnswerFileDigest": "425aeb07f7cb730140c0134e36f31de0b42a206550ca26b7cf308123f46545a5",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整覆盖gold事实，memory-wiki refId及原文引文匹配。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 9.109000000025844,
+      "usage": {
+        "input_tokens": 2529,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 513,
+        "output_tokens_details": {
+          "reasoning_tokens": 429
+        },
+        "total_tokens": 3042
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-1",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "c5fa8536d5c0a08abc1f12c0455a8ff5a4e7073ae5bc84f5d95c6183fdbfb7e4",
+      "answerDigest": "f53841b6ebc1c4ac874b499cfa9d4979f103d26afe3f3d7fd305d28a54fe1156",
+      "rawAnswerFileDigest": "0bcd91a4a03fa199535de1b21c0b1ee95fef35fcffa704a2987a8a40ebd00e08",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整给出SiliconFlow和精确模型名，refId与原文引文均匹配。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 9.280999999988126,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2548,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 1278,
+        "output_tokens_details": {
+          "reasoning_tokens": 1104
+        },
+        "total_tokens": 3826
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-1",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "33fe9618a7f31fd887846de296807a88f8571ab79f1006ac91ce249c9c9850f5",
+      "answerDigest": "9901ec8444c3b2de48b5acb4735bb23fc2b46b45b250722c8418773a7e88f7b6",
+      "rawAnswerFileDigest": "1c20b7150a06b6149bfec49cdebe0f165d8c4ae0083c0778b85dded9dd242e8a",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整覆盖gold事实，引用来源标识和原文引文一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 8.764999999984866,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2569,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 1429,
+        "output_tokens_details": {
+          "reasoning_tokens": 1261
+        },
+        "total_tokens": 3998
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-1",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "a7d26d1db9f813a525002e143dde644e8596bcc542fe9a8061bd0cb6e806d993",
+      "answerDigest": "8b8232e8107afa8fdded9f5f8503ef84031221215a24055a86dbd90ab0ed4bcd",
+      "rawAnswerFileDigest": "8b8232e8107afa8fdded9f5f8503ef84031221215a24055a86dbd90ab0ed4bcd",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整给出服务与精确模型名，source-02引文相符且无错误。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 88.93799999999464,
+      "usage": {
+        "input_tokens": 3368,
+        "output_tokens": 314,
+        "output_tokens_details": {
+          "reasoning_tokens": 140
+        },
+        "total_tokens": 3682
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-1",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "a7d26d1db9f813a525002e143dde644e8596bcc542fe9a8061bd0cb6e806d993",
+      "answerDigest": "7187ba6ef5c1668f9a65829f969ac6c4873887c0ec49e462d36af22a5ec526cd",
+      "rawAnswerFileDigest": "7187ba6ef5c1668f9a65829f969ac6c4873887c0ec49e462d36af22a5ec526cd",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "完整给出SiliconFlow与精确模型，引用chunk及原文与E-7d1275b02e0466b0相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-02",
+      "elapsedSeconds": 3.0,
+      "usage": {
+        "input_tokens": 2560,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 457,
+        "output_tokens_details": {
+          "reasoning_tokens": 345
+        },
+        "total_tokens": 3017
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-2",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "f18b7a813044ba5fa48e8a7d35907dd405b8d73e58eac8d6ba2cb44f44d0e2f1",
+      "answerDigest": "7e7712ec0f5cde76758f8511729e68e7ad580b4bb8180204071eb38550b62b48",
+      "rawAnswerFileDigest": "7e7712ec0f5cde76758f8511729e68e7ad580b4bb8180204071eb38550b62b48",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold可回答但证据为空，答案明确UNKNOWN拒答且无事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 2.1560000000172295,
+      "usage": {
+        "input_tokens": 131,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 110,
+        "output_tokens_details": {
+          "reasoning_tokens": 62
+        },
+        "total_tokens": 241
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-2",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "364833e6ac3f759592ddbeb5dfa26c29b25497e8ac98911145d0d9bc859f5b68",
+      "answerDigest": "9cff2e2c817e48599e05a59efdc6dbc56623bb3c552a403316df63d95908d66c",
+      "rawAnswerFileDigest": "9cff2e2c817e48599e05a59efdc6dbc56623bb3c552a403316df63d95908d66c",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：只说明disabled状态和owner检查，遗漏“禁用删除选择并释放provider”；所述事实有source-05引文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 10.062000000005355,
+      "usage": {
+        "input_tokens": 2593,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 1306,
+        "output_tokens_details": {
+          "reasoning_tokens": 1208
+        },
+        "total_tokens": 3899
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-2",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "2ecdf3b15007e9ea91b2633223e21d0d16ca1279346047a5064f8dfc5c55d7c0",
+      "answerDigest": "57b6bdc977dc14a7df9b57af829d92fe32f5a21502680261d6cea403ad0389a6",
+      "rawAnswerFileDigest": "57b6bdc977dc14a7df9b57af829d92fe32f5a21502680261d6cea403ad0389a6",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：只给出disabled状态，未覆盖删除选择和释放provider；引用有效。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 15.35999999998603,
+      "usage": {
+        "input_tokens": 2391,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 2666,
+        "output_tokens_details": {
+          "reasoning_tokens": 2558
+        },
+        "total_tokens": 5057
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-2",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "f0de5253a70c6c06969d3d44026d5e3ae8f96be79e6b67b1266b9bee317ebc91",
+      "answerDigest": "22cb6f148997af42f0c12d09bb5d3898404f3657fa28c81e70a413cc39e4ea4a",
+      "rawAnswerFileDigest": "22cb6f148997af42f0c12d09bb5d3898404f3657fa28c81e70a413cc39e4ea4a",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：仅说明disabled状态，未覆盖gold的删除选择/释放provider；引文有效。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 7.437999999994645,
+      "usage": {
+        "input_tokens": 2262,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 1023,
+        "output_tokens_details": {
+          "reasoning_tokens": 910
+        },
+        "total_tokens": 3285
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-2",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "f0de5253a70c6c06969d3d44026d5e3ae8f96be79e6b67b1266b9bee317ebc91",
+      "answerDigest": "3cab73f0e0fe387aa2f1b3f702391f62aacef578533a13acb50276b9eb655446",
+      "rawAnswerFileDigest": "3cab73f0e0fe387aa2f1b3f702391f62aacef578533a13acb50276b9eb655446",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 0,
+      "reason": "仅回答索引disabled，未覆盖gold“禁用删除选择并释放provider”；所述状态有原文支持。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-02",
+      "elapsedSeconds": 10.953000000008615,
+      "usage": {
+        "input_tokens": 2262,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 1730,
+        "output_tokens_details": {
+          "reasoning_tokens": 1669
+        },
+        "total_tokens": 3992
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-3",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "14d04222ab5d9ac1a92e46f8c54f363ea01da173d3c529e0e407e1a2f86fb90f",
+      "answerDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawAnswerFileDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generationStatus": "started",
+      "correct": null,
+      "support": null,
+      "abstain": null,
+      "reason": "No complete final answer",
+      "judgeDirectory": null,
+      "elapsedSeconds": 0.5929999999934807,
+      "usage": null,
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-3",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "4c3b34a6dbc62cdda91dd8d803fbbda16f3c85d456f9c8e5cb52160d5ad1fa35",
+      "answerDigest": "b0d5c1eb3c3d471a65f5f22ed1973070071ac0895e08bcf486817051571738db",
+      "rawAnswerFileDigest": "b0d5c1eb3c3d471a65f5f22ed1973070071ac0895e08bcf486817051571738db",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "理由：absent问题明确UNKNOWN正确拒答；但附加服务、模型、端点事实无来源标识或引文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-02-r2",
+      "elapsedSeconds": 3.1559999999881256,
+      "usage": {
+        "input_tokens": 2613,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 291,
+        "output_tokens_details": {
+          "reasoning_tokens": 241
+        },
+        "total_tokens": 2904
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-3",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "d55a9719e5c4d520736d6228c0b76283af889a733dd840d7c0e6ed82e923026b",
+      "answerDigest": "9147fa4237cbdf33b277409ce78b2789546db9c3e4fbe80f232768025674c31a",
+      "rawAnswerFileDigest": "9147fa4237cbdf33b277409ce78b2789546db9c3e4fbe80f232768025674c31a",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "gold为absent，明确UNKNOWN拒答且未作无据事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-02",
+      "elapsedSeconds": 1.9690000000118744,
+      "usage": {
+        "input_tokens": 2567,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 115,
+        "output_tokens_details": {
+          "reasoning_tokens": 87
+        },
+        "total_tokens": 2682
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-3",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "e88b7ee6219b303e2ea46d2cf1a40742aa2548185d50b8eae83d655ec45522cb",
+      "answerDigest": "5003416f41be0bd6393eb9a97eec452645b40f1d3f8d5f1486e8672384dfeb35",
+      "rawAnswerFileDigest": "5003416f41be0bd6393eb9a97eec452645b40f1d3f8d5f1486e8672384dfeb35",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "gold为absent，正确拒答；但括号内SiliconFlow及模型事实无准确来源标识或引文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-02",
+      "elapsedSeconds": 2.9690000000118744,
+      "usage": {
+        "input_tokens": 2635,
+        "input_tokens_details": {
+          "cached_tokens": 2432
+        },
+        "output_tokens": 176,
+        "output_tokens_details": {
+          "reasoning_tokens": 130
+        },
+        "total_tokens": 2811
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-02-3",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "e88b7ee6219b303e2ea46d2cf1a40742aa2548185d50b8eae83d655ec45522cb",
+      "answerDigest": "24ce25ef9f8715f3d886dcc453e58b61f8cfc4c09b4283c1aa30b95b508dbc19",
+      "rawAnswerFileDigest": "24ce25ef9f8715f3d886dcc453e58b61f8cfc4c09b4283c1aa30b95b508dbc19",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "gold为absent，正确拒答；但提及默认服务为SiliconFlow等事实无准确来源标识或引文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-02",
+      "elapsedSeconds": 2.8589999999967404,
+      "usage": {
+        "input_tokens": 2635,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 204,
+        "output_tokens_details": {
+          "reasoning_tokens": 173
+        },
+        "total_tokens": 2839
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-1",
+      "arm": "page",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6fd806fb8618a2eca50806764c258c2d68a70a9f4f1ae95c2e3128ee7a7e6d09",
+      "answerDigest": "a45f3fb6c702096b8a43bbbff5b75bed9fe0c208552b97ddb070485e45b8be9f",
+      "rawAnswerFileDigest": "325ecf9a88cb7d378737b818f9840e12827574704db962f3522715e90414c1c9",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：数值正确，所用 memory-wiki refId 为证据实际标识，短引真实存在。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 2.76500000001397,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 1443,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 233,
+        "output_tokens_details": {
+          "reasoning_tokens": 162
+        },
+        "total_tokens": 1676
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-1",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "2d82850cff646c538dfb1dd201d8718bd7a2ffef3b4600cc29f4267e70c57590",
+      "answerDigest": "b0d831ef194eee7653ff1fa02ae2644f08d7a735159f251a906a4c6a63073fe9",
+      "rawAnswerFileDigest": "88926db33deb457869a72a1e781b559db2ad68fec4a470183f07a3f899462662",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：80/30/6 完全匹配证据表格，refId 与原文短引一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 3.1570000000065193,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2506,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 241,
+        "output_tokens_details": {
+          "reasoning_tokens": 148
+        },
+        "total_tokens": 2747
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-1",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "e886b339ccd36b3dba924e0abbf92eb124183e0be657964e4fc3582a4daf3417",
+      "answerDigest": "720a5f0d092c7cfab2f27467f79409a0210fa89cac947aa7681d872d91ed28fe",
+      "rawAnswerFileDigest": "53967cb0c5ac493e9bb0bfd7cd242b09add5520413d168b2b24db54ea02aefce",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：三项数值正确，引用 refId 与原文表格短引一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 4.51600000000326,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2263,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 612,
+        "output_tokens_details": {
+          "reasoning_tokens": 510
+        },
+        "total_tokens": 2875
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-1",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "da1f63398ca56035257923c3dc16ede24a2467d89fff70f23f9c0b6cdc3d5da9",
+      "answerDigest": "475ed25186b46190e80b38b5a25bd0f85b3b3b1e1159af842ac2c31b1c8df956",
+      "rawAnswerFileDigest": "475ed25186b46190e80b38b5a25bd0f85b3b3b1e1159af842ac2c31b1c8df956",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整给出 80、30、6，chunk 标识与证据 refId 相符且引文匹配。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-03",
+      "elapsedSeconds": 6.5,
+      "usage": {
+        "input_tokens": 2642,
+        "input_tokens_details": {
+          "cached_tokens": 2432
+        },
+        "output_tokens": 300,
+        "output_tokens_details": {
+          "reasoning_tokens": 211
+        },
+        "total_tokens": 2942
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-1",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "da1f63398ca56035257923c3dc16ede24a2467d89fff70f23f9c0b6cdc3d5da9",
+      "answerDigest": "2d0e3644eb30a898aa50c81f003745289d87a6c40915760edabafff4694ed762",
+      "rawAnswerFileDigest": "5714572a0ab93e7c4318258306d6fdf9eec60e3309dc05e3628cc2d91011b35d",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整给出 80、30、6，文档来源与表格行引文均与证据一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-03",
+      "elapsedSeconds": 4.280999999988126,
+      "usage": {
+        "input_tokens": 2642,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 566,
+        "output_tokens_details": {
+          "reasoning_tokens": 458
+        },
+        "total_tokens": 3208
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-2",
+      "arm": "page",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "2e690c7248bd05d130b6f36d5586a64afc2444ccea451b3f4a48b5f763afb7c7",
+      "answerDigest": "7034b65d61ffe53a760d51b15f9ab3027224c40618b8f7084ef4cb09998b567d",
+      "rawAnswerFileDigest": "7034b65d61ffe53a760d51b15f9ab3027224c40618b8f7084ef4cb09998b567d",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：无证据且回答明确拒答；因 gold 可回答故 CORRECT=0。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 1.6089999999967404,
+      "usage": {
+        "input_tokens": 156,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 168,
+        "output_tokens_details": {
+          "reasoning_tokens": 143
+        },
+        "total_tokens": 324
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-2",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "356f5e0fca852788765f2b9c099e5d44b457cc960b510b024c6d1cf717ba016e",
+      "answerDigest": "9ba288507a38188cf245dab70f6b6eba8f5719b64aec34c1f991aac9df1b2791",
+      "rawAnswerFileDigest": "9ba288507a38188cf245dab70f6b6eba8f5719b64aec34c1f991aac9df1b2791",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据未含金标公式与 parent 候选上限，回答明确拒答；因 gold 可回答故 CORRECT=0。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 4.6560000000172295,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2304,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 569,
+        "output_tokens_details": {
+          "reasoning_tokens": 518
+        },
+        "total_tokens": 2873
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-2",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "db12b59c8e9b462737ff91ce8adbab7dfe8fb19f2a5222e7637cf7bd3940714e",
+      "answerDigest": "a4803c2b5f7364e5f5f6228ea42a000eafdf0a08989b16e0a469927be4c2d870",
+      "rawAnswerFileDigest": "a4803c2b5f7364e5f5f6228ea42a000eafdf0a08989b16e0a469927be4c2d870",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整覆盖融合公式及每个 parent 最多两个候选，引文与 chunk 证据相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-03",
+      "elapsedSeconds": 2.6410000000032596,
+      "usage": {
+        "input_tokens": 2246,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 326,
+        "output_tokens_details": {
+          "reasoning_tokens": 229
+        },
+        "total_tokens": 2572
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-2",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "f29c8507a72004c6a0801bfe5f83a88bd4ea2307e60335f2ba3f9ec9032045f9",
+      "answerDigest": "2c1f4292d03c263397bb22611fac954ec5f69c1f9ab7af1efa90b8249131558e",
+      "rawAnswerFileDigest": "4f94f8edafcc61a70e9079a2eb35af79841678d0cc567aaa3e4a3b410e486ca6",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 0,
+      "reason": "理由：核心公式和候选上限正确，但额外去重事实未附对应准确 refId 或原文引文，且来源仅文档名，不满足逐项引证。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 74.42199999999139,
+      "usage": {
+        "input_tokens": 2992,
+        "input_tokens_details": {
+          "cached_tokens": 64
+        },
+        "output_tokens": 256,
+        "output_tokens_details": {
+          "reasoning_tokens": 134
+        },
+        "total_tokens": 3248
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-2",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "6cc6fd5a53eead937fd74c195a71d0669bec37e3f4c7de8663d02f24d39a10b8",
+      "answerDigest": "84519943434844b359198894cf32ea6a4ceacb6b322ebc44e956b27765a8dca3",
+      "rawAnswerFileDigest": "84519943434844b359198894cf32ea6a4ceacb6b322ebc44e956b27765a8dca3",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整覆盖融合公式及每个 parent 最多两个候选，引文与 chunk 证据相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-03",
+      "elapsedSeconds": 2.7339999999967404,
+      "usage": {
+        "input_tokens": 2584,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 332,
+        "output_tokens_details": {
+          "reasoning_tokens": 226
+        },
+        "total_tokens": 2916
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-3",
+      "arm": "page",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "4af27b50d1c4381917da879d873fa6900a3ff01517877c762e387641e7bc0aa2",
+      "answerDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawAnswerFileDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generationStatus": "failed",
+      "correct": null,
+      "support": null,
+      "abstain": null,
+      "reason": "TimeoutError: timed out",
+      "judgeDirectory": null,
+      "elapsedSeconds": 90.03099999998813,
+      "usage": null,
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-3",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "4e0b6bb450b0778e905f9cb34d0374393160a9fbd9978bec3fa888aa74323bab",
+      "answerDigest": "110574c9f84e16e898359da3d4f4dbbf89466c9b556b6da5c46a9e704ac9143b",
+      "rawAnswerFileDigest": "110574c9f84e16e898359da3d4f4dbbf89466c9b556b6da5c46a9e704ac9143b",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：该问题无可用答案，回答明确以 UNKNOWN 拒答且未编造数值。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-03",
+      "elapsedSeconds": 2.2030000000086147,
+      "usage": {
+        "input_tokens": 2070,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 146,
+        "output_tokens_details": {
+          "reasoning_tokens": 97
+        },
+        "total_tokens": 2216
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-3",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6c00639fdb9a54e25fb9fb3d948e10068b14c2c99146c086db71a657be5cf5ab",
+      "answerDigest": "8f7130f29f63b38ce3e63a9a1c0c9a1102dad65698343200a2101ee529378f36",
+      "rawAnswerFileDigest": "8f7130f29f63b38ce3e63a9a1c0c9a1102dad65698343200a2101ee529378f36",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：正确识别缺少该日期 nDCG@5 实测数据并明确拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 2.1719999999913853,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2637,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 153,
+        "output_tokens_details": {
+          "reasoning_tokens": 119
+        },
+        "total_tokens": 2790
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-3",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6e7707b6f3a0e010766542b30f62da6f87e2f57d7a6196bed9b5efee44e260b0",
+      "answerDigest": "6de3ed3e6ce9a5050c82d933c901e34f3d28e346babca69098a56db764830c18",
+      "rawAnswerFileDigest": "6de3ed3e6ce9a5050c82d933c901e34f3d28e346babca69098a56db764830c18",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据无该实测值，回答明确拒答且未给出错误数值。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-03",
+      "elapsedSeconds": 5.078000000008615,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2334,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 634,
+        "output_tokens_details": {
+          "reasoning_tokens": 578
+        },
+        "total_tokens": 2968
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-03-3",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "6e7707b6f3a0e010766542b30f62da6f87e2f57d7a6196bed9b5efee44e260b0",
+      "answerDigest": "6f05da6e74f694cc72b6ef79f9ec8bbb4aadb2342bb768d036a599e01b386dbe",
+      "rawAnswerFileDigest": "6f05da6e74f694cc72b6ef79f9ec8bbb4aadb2342bb768d036a599e01b386dbe",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：该问题无可用答案，回答明确以 UNKNOWN 拒答且未编造数值。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-03",
+      "elapsedSeconds": 8.094000000011874,
+      "usage": {
+        "input_tokens": 2365,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 298,
+        "output_tokens_details": {
+          "reasoning_tokens": 258
+        },
+        "total_tokens": 2663
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-1",
+      "arm": "page",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "fe2ddf5048acb2998a6e4f1bd4149a2b6522191a3e01905497bfff27a9d0f781",
+      "answerDigest": "4554c786d0b1a4d6ef7ced772033b99d95e850c22f602b430e1d26d7ea6aa6a8",
+      "rawAnswerFileDigest": "f43baa82fb1141a5944a563a6e1baa70031116179ddbe6d2d4bd78d28707701d",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：准确覆盖gold，来源路径与原文引句对应同一source-04证据块。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-04",
+      "elapsedSeconds": 4.64100000000326,
+      "usage": {
+        "input_tokens": 836,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 697,
+        "output_tokens_details": {
+          "reasoning_tokens": 569
+        },
+        "total_tokens": 1533
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-1",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "8738a1e73bc64e825e4ac37a93cd39be99d090fce0056885b3e861f550bf6c2b",
+      "answerDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawAnswerFileDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generationStatus": "failed",
+      "correct": null,
+      "support": null,
+      "abstain": null,
+      "reason": "TimeoutError: timed out",
+      "judgeDirectory": null,
+      "elapsedSeconds": 90.03099999998813,
+      "usage": null,
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-1",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "79152b68b96e012ad152bf8177c10b8f6b2c215cfdff2b908311ef679e85b884",
+      "answerDigest": "d895b8ec0a40f4b350eb0542dc492cb3034eb6008ce8e43985d341f606a9d570",
+      "rawAnswerFileDigest": "d895b8ec0a40f4b350eb0542dc492cb3034eb6008ce8e43985d341f606a9d570",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖“unsupported/uncertain 退出答案并进入 unknowns”，引文与 source-04 对应 chunk 相符，附加流程有同源支持。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-04-r2",
+      "elapsedSeconds": 6.76600000000326,
+      "usage": {
+        "input_tokens": 2472,
+        "input_tokens_details": {
+          "cached_tokens": 1920
+        },
+        "output_tokens": 1188,
+        "output_tokens_details": {
+          "reasoning_tokens": 1067
+        },
+        "total_tokens": 3660
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-1",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "a54e5a3ae98d5e083822781284bea144b138ae460f6c5be99d18edc0eef88f74",
+      "answerDigest": "b7f919e0d0367ba9e2f24d1b01e2fe94567450b17610e6d4107aa12c0078c086",
+      "rawAnswerFileDigest": "b7f919e0d0367ba9e2f24d1b01e2fe94567450b17610e6d4107aa12c0078c086",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖gold，引文及809b、d07e等refId与证据一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-04",
+      "elapsedSeconds": 6.578000000008615,
+      "usage": {
+        "input_tokens": 2585,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 1277,
+        "output_tokens_details": {
+          "reasoning_tokens": 1009
+        },
+        "total_tokens": 3862
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-1",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "a54e5a3ae98d5e083822781284bea144b138ae460f6c5be99d18edc0eef88f74",
+      "answerDigest": "a7cf9e5911208f69287e4cc3bb526de4b72c07631fa8a5c9ea6acfe56014259d",
+      "rawAnswerFileDigest": "a7cf9e5911208f69287e4cc3bb526de4b72c07631fa8a5c9ea6acfe56014259d",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：准确覆盖gold事实，相关引文分别与 source-04 的 d07eca7d 和 809b7f16 chunk 原文相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-04-r2",
+      "elapsedSeconds": 13.719000000011874,
+      "usage": {
+        "input_tokens": 2585,
+        "input_tokens_details": {
+          "cached_tokens": 2432
+        },
+        "output_tokens": 2866,
+        "output_tokens_details": {
+          "reasoning_tokens": 2562
+        },
+        "total_tokens": 5451
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-2",
+      "arm": "page",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "3b264e8791113ea7a225e7087642f060a11fb5d57454427515e63ed8ab9fc95d",
+      "answerDigest": "409940e62fea24df2a6e210c3a40230ac6a31c5c7e723ffa743416cd3b7d2775",
+      "rawAnswerFileDigest": "409940e62fea24df2a6e210c3a40230ac6a31c5c7e723ffa743416cd3b7d2775",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据为空而明确拒答；gold可回答，故正确性0但拒答且无事实陈述支持1。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-04",
+      "elapsedSeconds": 1.5320000000065193,
+      "usage": {
+        "input_tokens": 140,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 117,
+        "output_tokens_details": {
+          "reasoning_tokens": 68
+        },
+        "total_tokens": 257
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-2",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "7d43fa28ad4d0f5ec384664a8e51c7271533df0229b49f7ec6a54407e9d68b51",
+      "answerDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawAnswerFileDigest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generationStatus": "incomplete",
+      "correct": null,
+      "support": null,
+      "abstain": null,
+      "reason": "No complete final answer",
+      "judgeDirectory": null,
+      "elapsedSeconds": 40.405999999988126,
+      "usage": {
+        "input_tokens": 2532,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 8192,
+        "output_tokens_details": {
+          "reasoning_tokens": 8192
+        },
+        "total_tokens": 10724
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-2",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6f5f7148e4ffc89f2393ebbdd197bcd471da476c190f2f9b7ae6d53faaaf7fbd",
+      "answerDigest": "ad110591c189a9eb5e49bc30cea24b4c6631f6f14589c51d1564ce21bc9ef6c8",
+      "rawAnswerFileDigest": "ad110591c189a9eb5e49bc30cea24b4c6631f6f14589c51d1564ce21bc9ef6c8",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：明确回答共用60秒预算，引句与concepts/source-04.md证据一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-04",
+      "elapsedSeconds": 4.2810000000172295,
+      "usage": {
+        "input_tokens": 2284,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 591,
+        "output_tokens_details": {
+          "reasoning_tokens": 552
+        },
+        "total_tokens": 2875
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-2",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6fcc5ada99f111a083c9800a17e9bdf9e2e81c0d18cc3739ddd82a7bb907499c",
+      "answerDigest": "97556f9bc147851060ffc9f181bce54557633d1903eb4a3e9397dd6deb9c8b0a",
+      "rawAnswerFileDigest": "97556f9bc147851060ffc9f181bce54557633d1903eb4a3e9397dd6deb9c8b0a",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 0,
+      "abstain": 0,
+      "reason": "理由：未给出gold的60秒，误把检索120秒期限与答案/核验调用的期限混同，结论无直接证据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-04",
+      "elapsedSeconds": 24.71799999999348,
+      "usage": {
+        "input_tokens": 2224,
+        "input_tokens_details": {
+          "cached_tokens": 768
+        },
+        "output_tokens": 4954,
+        "output_tokens_details": {
+          "reasoning_tokens": 4771
+        },
+        "total_tokens": 7178
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-2",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "6fcc5ada99f111a083c9800a17e9bdf9e2e81c0d18cc3739ddd82a7bb907499c",
+      "answerDigest": "3b930875bc526413e8d213e52a1bf42857fec301018fbe8f8a887a78cdae83ea",
+      "rawAnswerFileDigest": "3b930875bc526413e8d213e52a1bf42857fec301018fbe8f8a887a78cdae83ea",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 0,
+      "abstain": 0,
+      "reason": "理由：gold为两次模型调用共享60秒预算；回答误用检索embedding的120秒期限并推断支持核验同期限，缺证据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-04-r2",
+      "elapsedSeconds": 9.73499999998603,
+      "usage": {
+        "input_tokens": 2224,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 1607,
+        "output_tokens_details": {
+          "reasoning_tokens": 1491
+        },
+        "total_tokens": 3831
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-3",
+      "arm": "page",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "5dadb252de95eb29b488f3dea092cd1fa5bfd0ccbfab0911098b3bef1a354a7c",
+      "answerDigest": "e9f0e5713c0dab681fe8c11bd0219da2f84fe40d16ca8b4bd31506eb607db1dd",
+      "rawAnswerFileDigest": "e9f0e5713c0dab681fe8c11bd0219da2f84fe40d16ca8b4bd31506eb607db1dd",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据为空，正确拒答且无事实陈述，支持1。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-04",
+      "elapsedSeconds": 2.2030000000086147,
+      "usage": {
+        "input_tokens": 136,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 145,
+        "output_tokens_details": {
+          "reasoning_tokens": 109
+        },
+        "total_tokens": 281
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-3",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "967dd5ff3af6eda9292159fa8e5a32f095daf9d51224b44e4b6499905685ccf4",
+      "answerDigest": "a55579487604b3f266cf34ed1a20fcd1094814f67b6ef78849d56cb430550577",
+      "rawAnswerFileDigest": "a55579487604b3f266cf34ed1a20fcd1094814f67b6ef78849d56cb430550577",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，但附带Qwen VL等事实未给准确refId或原文引文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-04",
+      "elapsedSeconds": 3.437999999994645,
+      "usage": {
+        "input_tokens": 2257,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 307,
+        "output_tokens_details": {
+          "reasoning_tokens": 232
+        },
+        "total_tokens": 2564
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-3",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "657bb1035032c20f7e0701f192b8e4132ca57609d40e1c6d3631b17c59527248",
+      "answerDigest": "e40530944c17131cf5589f6c2e7f4da515d91c59f8b9aea03c69563f11394e27",
+      "rawAnswerFileDigest": "e40530944c17131cf5589f6c2e7f4da515d91c59f8b9aea03c69563f11394e27",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，但提及Qwen VL tokenizer及权重revision记录方式时无来源标识或引文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-04-r2",
+      "elapsedSeconds": 3.125,
+      "usage": {
+        "input_tokens": 2272,
+        "input_tokens_details": {
+          "cached_tokens": 768
+        },
+        "output_tokens": 311,
+        "output_tokens_details": {
+          "reasoning_tokens": 257
+        },
+        "total_tokens": 2583
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-3",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "442a08f9e73591195cca3c024e03af540a3e0309c30b513bd62211738a066809",
+      "answerDigest": "e5837c965579c89d14922f843ddcfdf9db0c4bb80cdce8033d751ea5c00fbce9",
+      "rawAnswerFileDigest": "e5837c965579c89d14922f843ddcfdf9db0c4bb80cdce8033d751ea5c00fbce9",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，provider-unversioned引文、refId及原文与source-02 chunk相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-04-r2",
+      "elapsedSeconds": 11.171000000002095,
+      "usage": {
+        "input_tokens": 2250,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 691,
+        "output_tokens_details": {
+          "reasoning_tokens": 564
+        },
+        "total_tokens": 2941
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-04-3",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "442a08f9e73591195cca3c024e03af540a3e0309c30b513bd62211738a066809",
+      "answerDigest": "c1b7339ec6afc5e43902bb697b3bac79f321084a51dd602ab89b3038c8ed844b",
+      "rawAnswerFileDigest": "c1b7339ec6afc5e43902bb697b3bac79f321084a51dd602ab89b3038c8ed844b",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，provider-unversioned/权重revision不可得引文与source-02相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-04-r2",
+      "elapsedSeconds": 5.827999999979511,
+      "usage": {
+        "input_tokens": 2250,
+        "input_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "output_tokens": 882,
+        "output_tokens_details": {
+          "reasoning_tokens": 819
+        },
+        "total_tokens": 3132
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-1",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "07010d100fd31a219e087f5f25f340daaeff9e3dfba9e6498221829b82deb06a",
+      "answerDigest": "9ebd69c58b47d82b6b23e14de04c14a356e76d943ca3fa4536872d0321f916d9",
+      "rawAnswerFileDigest": "08ad43cdeb9caf4229d365d93de448cc48a049c189049f3425e07ab90c8a464c",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：三项默认值齐全，memory-wiki:adaa...对应E-1a且引文相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 2.2810000000172295,
+      "usage": {
+        "input_tokens": 1507,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 257,
+        "output_tokens_details": {
+          "reasoning_tokens": 174
+        },
+        "total_tokens": 1764
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-1",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6498723e6743a5d77939fbf1de418025854ecd0dd6069a5aa37eddc669759779",
+      "answerDigest": "73a043dd0976763ffb2468a0abc872479aeeb89ca9d0243a4fc9ca3f44f140c7",
+      "rawAnswerFileDigest": "73a043dd0976763ffb2468a0abc872479aeeb89ca9d0243a4fc9ca3f44f140c7",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：三项默认值齐全，表格与配置示例引文分别对应E-9c和E-57，标识及原文相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 4.952999999979511,
+      "usage": {
+        "input_tokens": 2478,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 749,
+        "output_tokens_details": {
+          "reasoning_tokens": 626
+        },
+        "total_tokens": 3227
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-1",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "3a5fbbb53690a5aa738c84cc100efb889c99d9b0b052f4f99899dd13a2d565cf",
+      "answerDigest": "2da71065e4ebd0a6cc6f9809c3d73069e2a7ddf53279c3d14b6228a2e4233921",
+      "rawAnswerFileDigest": "2da71065e4ebd0a6cc6f9809c3d73069e2a7ddf53279c3d14b6228a2e4233921",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：三项默认值齐全，concepts/source-05.md引文对应E-9c；512 MiB为等价换算。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 6.0310000000172295,
+      "usage": {
+        "input_tokens": 2272,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 146,
+        "output_tokens_details": {
+          "reasoning_tokens": 85
+        },
+        "total_tokens": 2418
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-1",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "c4970c0b96a3d6c9ca61f01eae406d35d5e7470d332c5cfacd2ccf45f22be701",
+      "answerDigest": "3d1f5b1be7c6ff1d1cf945b4bea6ad39b83d24dca93f9103fb987564ce613a32",
+      "rawAnswerFileDigest": "3d1f5b1be7c6ff1d1cf945b4bea6ad39b83d24dca93f9103fb987564ce613a32",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：默认值完整；额外有效范围上限有E-9c原文支持，无错误。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 9.655999999988126,
+      "usage": {
+        "input_tokens": 2239,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 1608,
+        "output_tokens_details": {
+          "reasoning_tokens": 1474
+        },
+        "total_tokens": 3847
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-1",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "c4970c0b96a3d6c9ca61f01eae406d35d5e7470d332c5cfacd2ccf45f22be701",
+      "answerDigest": "426726314281d781e98fe998ed2080d636002dbb66ba9d293d9d959a695feddf",
+      "rawAnswerFileDigest": "42d5a434965983df5ef4ccbd2651bb853cd60ef54521f27b4e7e3d10d2a0d46c",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整给出 local、strict、536870912，且引用refId及原文与E-9c9ac5f7ec56802b一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-05",
+      "elapsedSeconds": 4.14100000000326,
+      "usage": {
+        "input_tokens": 2239,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 690,
+        "output_tokens_details": {
+          "reasoning_tokens": 510
+        },
+        "total_tokens": 2929
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-2",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "4163116610f746972af38ab6d8e8350b2c82f1376dc149a96b230f32172a4ba9",
+      "answerDigest": "ddaadf6ae758805a063ce757212df27c82fc5904156ee6319bc736d70f6ac6fd",
+      "rawAnswerFileDigest": "ddaadf6ae758805a063ce757212df27c82fc5904156ee6319bc736d70f6ac6fd",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：无证据且明确UNKNOWN，无事实陈述；gold可回答故未正确覆盖。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 3.2190000000118744,
+      "usage": {
+        "input_tokens": 137,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 127,
+        "output_tokens_details": {
+          "reasoning_tokens": 105
+        },
+        "total_tokens": 264
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-2",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "27e30cb321c24d87fb320b532764069967b07c61bc512f6ed16ea1d6e31a85a8",
+      "answerDigest": "34f51656d1aac1b97d3dfa229f5bbf8d30182894ee0bf48ad64ccbe9ef7b9a54",
+      "rawAnswerFileDigest": "34f51656d1aac1b97d3dfa229f5bbf8d30182894ee0bf48ad64ccbe9ef7b9a54",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 0,
+      "abstain": 1,
+      "reason": "理由：明确UNKNOWN；允许证据无gold事实，且fail closed/.deleted.jsonl描述无准确来源标识。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 2.937999999994645,
+      "usage": {
+        "input_tokens": 2021,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 325,
+        "output_tokens_details": {
+          "reasoning_tokens": 270
+        },
+        "total_tokens": 2346
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-2",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "74fab6dcf6cb27ccb20654ab777ed7610de12c0fd76dda05ab361fe6a4271f29",
+      "answerDigest": "b197c92375fa2a645a07a8963c3aae2bb759de065ff61e64fde79b0c8d1328b2",
+      "rawAnswerFileDigest": "b197c92375fa2a645a07a8963c3aae2bb759de065ff61e64fde79b0c8d1328b2",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 0,
+      "abstain": 0,
+      "reason": "理由：漏“先失去检索资格、后台worker清理旧代际”，还错误称资格状态未说明；该断言与E-8de矛盾且无来源。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 20.90600000001723,
+      "usage": {
+        "input_tokens": 2269,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 2956,
+        "output_tokens_details": {
+          "reasoning_tokens": 2849
+        },
+        "total_tokens": 5225
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-2",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "3f158074dd3a2159779e0b04bc233c62ab2bcaa25821d0e468028ab77f8af836",
+      "answerDigest": "ea7329d2c46a9163cf11663015b746363cfb8531f1599ebd423ff26570c83b21",
+      "rawAnswerFileDigest": "ea7329d2c46a9163cf11663015b746363cfb8531f1599ebd423ff26570c83b21",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：未覆盖后台worker清理旧代际；source-01/source-09的chunk标识和引文与E-e787、E-7e相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 5.562000000005355,
+      "usage": {
+        "input_tokens": 2340,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 669,
+        "output_tokens_details": {
+          "reasoning_tokens": 542
+        },
+        "total_tokens": 3009
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-2",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "3f158074dd3a2159779e0b04bc233c62ab2bcaa25821d0e468028ab77f8af836",
+      "answerDigest": "911f989fb5a3e0fc35716e23aaa3db029e9e3afd6ed71d6693cce73e6c7186f0",
+      "rawAnswerFileDigest": "911f989fb5a3e0fc35716e23aaa3db029e9e3afd6ed71d6693cce73e6c7186f0",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 0,
+      "abstain": 0,
+      "reason": "理由：未答出“先失去检索资格、后台worker清理旧代际”，且“重建恢复资格”无证据支持并与gold及E-8fa6c060eceda7a6相悖。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-05",
+      "elapsedSeconds": 9.937000000005355,
+      "usage": {
+        "input_tokens": 2340,
+        "input_tokens_details": {
+          "cached_tokens": 2176
+        },
+        "output_tokens": 1492,
+        "output_tokens_details": {
+          "reasoning_tokens": 1328
+        },
+        "total_tokens": 3832
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-3",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "7ed993ee0e2a81d4f712f930ae525a5bb51713482849fe8b71404e1e770347bb",
+      "answerDigest": "53db34d59d1852d9979a39e351bb7dfe37374ba24821f8a64186227049f09373",
+      "rawAnswerFileDigest": "53db34d59d1852d9979a39e351bb7dfe37374ba24821f8a64186227049f09373",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：无证据下明确UNKNOWN拒答，未陈述备份日期或大小。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 16.875,
+      "usage": {
+        "input_tokens": 138,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 149,
+        "output_tokens_details": {
+          "reasoning_tokens": 123
+        },
+        "total_tokens": 287
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-3",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "579f61a09381da9643ad2b005aa177cdfe1b5128fda99051aa4f088f76e12f8d",
+      "answerDigest": "8041c89e05c0b0d434cef5f71f7bd6778c5a1c14a59872c50509e59767949298",
+      "rawAnswerFileDigest": "8041c89e05c0b0d434cef5f71f7bd6778c5a1c14a59872c50509e59767949298",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，说明证据缺备份日期和大小，未作无据事实断言。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 2.359000000025844,
+      "usage": {
+        "input_tokens": 2423,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 133,
+        "output_tokens_details": {
+          "reasoning_tokens": 103
+        },
+        "total_tokens": 2556
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-3",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "adce4aa6bbb32a040f24abcfa2f64d9d54b1e0a09805d07035e99c0c436a0c91",
+      "answerDigest": "86eb4f8c7d1631e7451aa89d1bfe08a7f342e1b93b707e635be1612e0323580f",
+      "rawAnswerFileDigest": "86eb4f8c7d1631e7451aa89d1bfe08a7f342e1b93b707e635be1612e0323580f",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，未提供实际日期或大小，仅说明现有证据缺失。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 3.077999999979511,
+      "usage": {
+        "input_tokens": 2391,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 188,
+        "output_tokens_details": {
+          "reasoning_tokens": 157
+        },
+        "total_tokens": 2579
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-3",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "8a237cc9d3d1421ae8734c4c0199fbe8dc27918f7f82faf98c7e053c8e57ffce",
+      "answerDigest": "0e85f7efefefbea582dfb15466e6b89c87e4c3423008b8d908f0130519850ea4",
+      "rawAnswerFileDigest": "0e85f7efefefbea582dfb15466e6b89c87e4c3423008b8d908f0130519850ea4",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，说明缺少备份记录或文件元数据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-05-r2",
+      "elapsedSeconds": 3.2820000000065193,
+      "usage": {
+        "input_tokens": 2651,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 173,
+        "output_tokens_details": {
+          "reasoning_tokens": 132
+        },
+        "total_tokens": 2824
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-05-3",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "8a237cc9d3d1421ae8734c4c0199fbe8dc27918f7f82faf98c7e053c8e57ffce",
+      "answerDigest": "569ea182181bdbd57e340e3fe3c6245d03eb8ee85cc48e5b24690da31ae4590f",
+      "rawAnswerFileDigest": "569ea182181bdbd57e340e3fe3c6245d03eb8ee85cc48e5b24690da31ae4590f",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，回答明确UNKNOWN且未作事实陈述，属正确拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-05",
+      "elapsedSeconds": 3.7189999999827705,
+      "usage": {
+        "input_tokens": 2651,
+        "input_tokens_details": {
+          "cached_tokens": 2432
+        },
+        "output_tokens": 146,
+        "output_tokens_details": {
+          "reasoning_tokens": 115
+        },
+        "total_tokens": 2797
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-1",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "3dd7a568527a4d64324ab2d7e70c2dd54a7b7668b5470a352b9278c2f8e04b27",
+      "answerDigest": "83b160b95ca88d08a74852fe0f444718217ff5d3563d9931fe0aeb330c2028e0",
+      "rawAnswerFileDigest": "1513af26919ebac83bee433827f80c824b3aba6ec2171baf1149da696540ccd1",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖两项gold事实，引用memory-wiki标识与原文相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 2.765999999974156,
+      "usage": {
+        "input_tokens": 2387,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 321,
+        "output_tokens_details": {
+          "reasoning_tokens": 196
+        },
+        "total_tokens": 2708
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-1",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "7974bd22d71769e4f8ab63d7b8b023b9215cf2c964fd87560858002f3e324aec",
+      "answerDigest": "91432d56c80a8ce00ee59c607f6c7af41e0ae30b2aede6ec0c835141791287d9",
+      "rawAnswerFileDigest": "6a13fbd04cd5d4a271cf4ae1c59150f097b209c7e78d5afb8a9ddb02a4018f78",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖三次尝试预算与过期租约处置，引用chunk与原文相符，无错误。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 15.905999999988126,
+      "usage": {
+        "input_tokens": 2441,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 625,
+        "output_tokens_details": {
+          "reasoning_tokens": 459
+        },
+        "total_tokens": 3066
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-1",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "70f3b0b0f786e86760d132e98d58f901cee8de15b2aa580d6bf47ba3b6c60625",
+      "answerDigest": "b8b4c68dc762ac2a431bd1b04dffa891e18b04cab8e2b6e4852bcd542c973a86",
+      "rawAnswerFileDigest": "fa776b61a653a0c2e8d10faa5b7dbae0d212c8cb916829e4410aa2c2ec9cc120",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖两项gold事实，额外预算耗尽说明同源支持，引用准确。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 20.484000000025844,
+      "usage": {
+        "input_tokens": 2480,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 834,
+        "output_tokens_details": {
+          "reasoning_tokens": 651
+        },
+        "total_tokens": 3314
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-1",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "208e0dc8476da7b00cd9bcca5f1bcddb7f2387ee54b0db62fae3639b4eeb259e",
+      "answerDigest": "729ae2e0b1b3b46ebe7ddb2bd9bd28dc755335a63394a812c234ac89e97d7e60",
+      "rawAnswerFileDigest": "729ae2e0b1b3b46ebe7ddb2bd9bd28dc755335a63394a812c234ac89e97d7e60",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖最多3次与过期租约处置，引用chunk和引文均相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 4.421999999991385,
+      "usage": {
+        "input_tokens": 2368,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 651,
+        "output_tokens_details": {
+          "reasoning_tokens": 507
+        },
+        "total_tokens": 3019
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-1",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "208e0dc8476da7b00cd9bcca5f1bcddb7f2387ee54b0db62fae3639b4eeb259e",
+      "answerDigest": "53eb019eff7fdeef2df9b397ccbdddbb8e0e8c1513e40bf306e6686cc45ffc30",
+      "rawAnswerFileDigest": "b954a8c741456195c4c8f4d7069eb23a89268681b896052ce75f31f19c8f8b79",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：完整回答三次尝试预算及过期租约回 pending 或转 failed，引文与证据 E-a47a6f92faaa1e01 相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-06",
+      "elapsedSeconds": 5.172000000020489,
+      "usage": {
+        "input_tokens": 2368,
+        "input_tokens_details": {
+          "cached_tokens": 2176
+        },
+        "output_tokens": 469,
+        "output_tokens_details": {
+          "reasoning_tokens": 331
+        },
+        "total_tokens": 2837
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-2",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "1cc2716d17739085532102495afc546c7dd482d4f2c986083e7e9648c7777f55",
+      "answerDigest": "fe2d602a424ef834e1ab1e117b553763bd20699e1b1f99d1c9e22aa4753a56b1",
+      "rawAnswerFileDigest": "dc4c04f520992a82becb889778e892808667365b42910261c21830e018766e3c",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：模型明确拒答且无事实陈述；gold可答但证据为空。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 1.875,
+      "usage": {
+        "input_tokens": 134,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 122,
+        "output_tokens_details": {
+          "reasoning_tokens": 62
+        },
+        "total_tokens": 256
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-2",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "065a64bf5f351996c228e1b8fdee39edc7dba6ef4ae8fc6f303b1ff45ff3ffba",
+      "answerDigest": "6af0c8a68066ba8d1d9ced9c3c86e9c7dc7029b1158630b25865927c9a572982",
+      "rawAnswerFileDigest": "6af0c8a68066ba8d1d9ced9c3c86e9c7dc7029b1158630b25865927c9a572982",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：模型明确拒答且无事实陈述；gold可答但所给证据未含该规则。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 2.687000000005355,
+      "usage": {
+        "input_tokens": 2414,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 281,
+        "output_tokens_details": {
+          "reasoning_tokens": 241
+        },
+        "total_tokens": 2695
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-2",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "99f32f7301a9f7e851d3d951c92fe63523d484774ac11ce38cd7a24ab437cc31",
+      "answerDigest": "fcd3782783067ca87cce8f205c384bb6bd9159ae082155f72ac2ce6c07d4948c",
+      "rawAnswerFileDigest": "fcd3782783067ca87cce8f205c384bb6bd9159ae082155f72ac2ce6c07d4948c",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：正确回答No，未完成或失败构建不能active，引用chunk与原文相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 4.562999999994645,
+      "usage": {
+        "input_tokens": 2155,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 442,
+        "output_tokens_details": {
+          "reasoning_tokens": 361
+        },
+        "total_tokens": 2597
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-2",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "393b872834d0a4ce8c11ad0c90ae3accd367c256b221046450748b642dc2a94f",
+      "answerDigest": "077e62580f7e158b3b8c10b663590e7262869d233a6e31e46bcdfb0e357e761c",
+      "rawAnswerFileDigest": "077e62580f7e158b3b8c10b663590e7262869d233a6e31e46bcdfb0e357e761c",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：正确回答No，引用chunk与原文相符，附加发布事实同源。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 6.546999999991385,
+      "usage": {
+        "input_tokens": 2303,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "reasoning_tokens": 326
+        },
+        "total_tokens": 2742
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-2",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "393b872834d0a4ce8c11ad0c90ae3accd367c256b221046450748b642dc2a94f",
+      "answerDigest": "c362e28f28d79d056c9790542e345bdca418c45e19ade2c6e381618585c6154f",
+      "rawAnswerFileDigest": "abdf0e97644e01e7eb98ed020a93cba90e906ef5f05d547905b20458d22ef710",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：明确回答未完成或失败构建不能成为 active，引文与同源事务发布陈述均有证据支持。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-06",
+      "elapsedSeconds": 3.4060000000172295,
+      "usage": {
+        "input_tokens": 2303,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 437,
+        "output_tokens_details": {
+          "reasoning_tokens": 328
+        },
+        "total_tokens": 2740
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-3",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6549ab5c0d9a87c60e750af37e3c198c9a9f4dd7f243538d6ed69f332e6bc1fc",
+      "answerDigest": "10033f721779483306ef3123458f1affd8b672f65679859363fd42001eb0a5ca",
+      "rawAnswerFileDigest": "10033f721779483306ef3123458f1affd8b672f65679859363fd42001eb0a5ca",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，证据为空，模型正确拒答未编造数据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 1.3280000000086147,
+      "usage": {
+        "input_tokens": 136,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 86,
+        "output_tokens_details": {
+          "reasoning_tokens": 46
+        },
+        "total_tokens": 222
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-3",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "13b809b28edf6ade66d2cf9c0ec842f83db0ff555e854326f7fb36d853a058d3",
+      "answerDigest": "0624ae05c792099db1fe2fa2897d2c4636d9dc255ca34e0f60e2c377dcbfb8b9",
+      "rawAnswerFileDigest": "0624ae05c792099db1fe2fa2897d2c4636d9dc255ca34e0f60e2c377dcbfb8b9",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，模型明确拒答未编造耗时，无事实陈述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 3.76500000001397,
+      "usage": {
+        "input_tokens": 2519,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 199,
+        "output_tokens_details": {
+          "reasoning_tokens": 165
+        },
+        "total_tokens": 2718
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-3",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "03ef6f35677a9de89b7fa12d47ad4264b6f59ce0fb618ab72c629d5754d40a14",
+      "answerDigest": "3bd01f12fa15313455f28dbae4a5b109371a9379159b36dd70587a8e36233bb8",
+      "rawAnswerFileDigest": "3bd01f12fa15313455f28dbae4a5b109371a9379159b36dd70587a8e36233bb8",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold 为 absent，回答明确 UNKNOWN 且未虚构耗时。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-06",
+      "elapsedSeconds": 2.3589999999967404,
+      "usage": {
+        "input_tokens": 2576,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 174,
+        "output_tokens_details": {
+          "reasoning_tokens": 142
+        },
+        "total_tokens": 2750
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-3",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "dfa642e60ef53d8c9fd769ce17635f7926afce0b5e7bad643be6dd3f2196418f",
+      "answerDigest": "084adcb5849f39d008dcc3b644c0642ad0c537a1a0c0d7fdc1a206421a440224",
+      "rawAnswerFileDigest": "084adcb5849f39d008dcc3b644c0642ad0c537a1a0c0d7fdc1a206421a440224",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，模型明确拒答缺少实测耗时记录。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-06-r2",
+      "elapsedSeconds": 8.672000000020489,
+      "usage": {
+        "input_tokens": 2334,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 172,
+        "output_tokens_details": {
+          "reasoning_tokens": 146
+        },
+        "total_tokens": 2506
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-06-3",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "dfa642e60ef53d8c9fd769ce17635f7926afce0b5e7bad643be6dd3f2196418f",
+      "answerDigest": "048550d2e79499aba610af971dbf0b4324ad57fa3228b27925a03fa2a2fa4de5",
+      "rawAnswerFileDigest": "048550d2e79499aba610af971dbf0b4324ad57fa3228b27925a03fa2a2fa4de5",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold 为 absent，回答明确 UNKNOWN 且未提供无据事实。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-06",
+      "elapsedSeconds": 1.6410000000032596,
+      "usage": {
+        "input_tokens": 2334,
+        "input_tokens_details": {
+          "cached_tokens": 2176
+        },
+        "output_tokens": 139,
+        "output_tokens_details": {
+          "reasoning_tokens": 117
+        },
+        "total_tokens": 2473
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-1",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "009f42b828dfefd1d6fab0934a0a099912ee9260d1164f1eb4337dee2cef2f4f",
+      "answerDigest": "5273f5c9392ecdb6a124d365b5eabecfd4f1f55bd71e9cff970db2cd157b86ae",
+      "rawAnswerFileDigest": "5273f5c9392ecdb6a124d365b5eabecfd4f1f55bd71e9cff970db2cd157b86ae",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：答案完整，依据的整段证据包含原句且refId相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 6.780999999988126,
+      "usage": {
+        "input_tokens": 1304,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 344,
+        "output_tokens_details": {
+          "reasoning_tokens": 246
+        },
+        "total_tokens": 1648
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-1",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "4e461b91ba7b80dbe138a1dbacf55aafac6d535d13e6079543dae0a7e5bd4863",
+      "answerDigest": "980fd7974d1506319f813186d0b4ced339df2368a89bd13f91a6021231598099",
+      "rawAnswerFileDigest": "595fbec712d1a117b8a117bede783e479e6270c6ca8de9fe8fa236eb767f7822",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：三项数值完整，refId与原文引句一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 3.4060000000172295,
+      "usage": {
+        "input_tokens": 2523,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 372,
+        "output_tokens_details": {
+          "reasoning_tokens": 262
+        },
+        "total_tokens": 2895
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-1",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "ed5759a8749dd0498839b0f2b1ca516f312682d756168d2498be592735c1593c",
+      "answerDigest": "1d9493be7de409b4f69ef8329b877016cf4c2601dacd8e9b7931973eefdc1906",
+      "rawAnswerFileDigest": "1d9493be7de409b4f69ef8329b877016cf4c2601dacd8e9b7931973eefdc1906",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：300/200/120与gold一致，所引chunk:sha256:e040…原文与E-d95026221e58396d相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-07",
+      "elapsedSeconds": 3.937000000005355,
+      "usage": {
+        "input_tokens": 2379,
+        "input_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "output_tokens": 593,
+        "output_tokens_details": {
+          "reasoning_tokens": 474
+        },
+        "total_tokens": 2972
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-1",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "b657a5272f97962904371b0022e38fe1c90020bd5778519fe39d8c982ea48bd2",
+      "answerDigest": "77e72a2a8ebd95cf013f002725e4f0c34854e3630fa3eca9863f0f169851cd1f",
+      "rawAnswerFileDigest": "d6e64f9e195e2e03dad862b575cab891e64aae0878aeaf71b721cfb4ca2e7421",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：三项数值完整，引文为证据原文片段且来源正确。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 7.969000000011874,
+      "usage": {
+        "input_tokens": 2572,
+        "input_tokens_details": {
+          "cached_tokens": 640
+        },
+        "output_tokens": 508,
+        "output_tokens_details": {
+          "reasoning_tokens": 390
+        },
+        "total_tokens": 3080
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-1",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "b657a5272f97962904371b0022e38fe1c90020bd5778519fe39d8c982ea48bd2",
+      "answerDigest": "c3ced314edbb28cec90dfff4d41a283a798450d92269c348ad521dade96e704d",
+      "rawAnswerFileDigest": "8419cfe8a8bc06bde2de75af30c7355d73149cdeb753909f1b4170f49506214a",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：300/200/120完整覆盖gold，引用chunk:sha256:e040…及原文与E-d95026221e58396d相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-07",
+      "elapsedSeconds": 3.0469999999913853,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2572,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 273,
+        "output_tokens_details": {
+          "reasoning_tokens": 164
+        },
+        "total_tokens": 2845
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-2",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "85d1fd9023e44bb0bd406d78563800e9c2e31228b6602f79b7e99be4274ef7ba",
+      "answerDigest": "5ba90ffd2ceb67cf4065af845a976e1016ac2258df029e6c913d4ade7d2fbc9d",
+      "rawAnswerFileDigest": "c4e25feccefbda4c6bbe0a2c8a184e6bf5f646f996079d456c496dcccc27b4d7",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold可回答但证据为空而明确拒答，无事实错述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 1.4530000000086147,
+      "usage": {
+        "input_tokens": 132,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 114,
+        "output_tokens_details": {
+          "reasoning_tokens": 59
+        },
+        "total_tokens": 246
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-2",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "bd73327a900a8eeeb9709d5b2805defb0454f9772854d58b6a2a2738dcd0de58",
+      "answerDigest": "b8ee2123fde21fd5fcfe7cdb5ed83b486a7d197ad58f1b90cb2294366c6221e5",
+      "rawAnswerFileDigest": "b8ee2123fde21fd5fcfe7cdb5ed83b486a7d197ad58f1b90cb2294366c6221e5",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：默认主会话key正确，refId和引文准确。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 3.264999999984866,
+      "usage": {
+        "input_tokens": 2261,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 325,
+        "output_tokens_details": {
+          "reasoning_tokens": 247
+        },
+        "total_tokens": 2586
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-2",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "ccc76b4b1f64a7fdaa34d30db4700e92c95c5265da5a7c3778ef0c3b54813fb6",
+      "answerDigest": "f23b429a5c8135a2257b8e8f35bee572d651b3bd60b2c5ac83fdf67706afe9fa",
+      "rawAnswerFileDigest": "f23b429a5c8135a2257b8e8f35bee572d651b3bd60b2c5ac83fdf67706afe9fa",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：答案正确，引用来源与原文一致。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 3.562999999994645,
+      "usage": {
+        "input_tokens": 2419,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 489,
+        "output_tokens_details": {
+          "reasoning_tokens": 396
+        },
+        "total_tokens": 2908
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-2",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "1b8f799c0a58754e3779d58853691971570c27b749109b5b9a48562012d870f2",
+      "answerDigest": "3b4021478f50dd9c8c53fab9e98951380112302a4dc8860187a9a38c56203bf6",
+      "rawAnswerFileDigest": "69992795ca40c8642d27ffd258c58cfd26f91a2ff8045b96cde390c70e4ecaa1",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：默认主会话`agent:main:main`正确，引用chunk:sha256:5133…及两句原文均与E-66b0b9c0c6f8570d相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-07",
+      "elapsedSeconds": 4.23499999998603,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2338,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 194,
+        "output_tokens_details": {
+          "reasoning_tokens": 69
+        },
+        "total_tokens": 2532
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-2",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "1b8f799c0a58754e3779d58853691971570c27b749109b5b9a48562012d870f2",
+      "answerDigest": "7c4dd71a896a1b1c7870061b606d05ccb0c06126c206e2ef31a47e7411aae56a",
+      "rawAnswerFileDigest": "335ca5bbe829267b2b755e4690333282625bc62e7f303fb2893f7bde39fa3a4d",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：默认主会话`agent:main:main`正确，补充的非runId/Task Ledger说明有E-66b0b9c0c6f8570d同refId原文支持。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-07",
+      "elapsedSeconds": 2.4210000000020955,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2338,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 232,
+        "output_tokens_details": {
+          "reasoning_tokens": 113
+        },
+        "total_tokens": 2570
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-3",
+      "arm": "page",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "be1a01c1fc852102aa2119995a0b595d19759c5a3e575b205451e897292cc789",
+      "answerDigest": "8e0182aeebb159ea9bdd753a20cd2d83ff99f3e85a59868a54d9e5d27ea71b41",
+      "rawAnswerFileDigest": "3f4ab319e494f021ffae69bcbe6f085e2738df601a4acf3565876997581d2349",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据为空且gold为absent，正确说明无法计算并拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 3.1089999999967404,
+      "usage": {
+        "input_tokens": 133,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 109,
+        "output_tokens_details": {
+          "reasoning_tokens": 65
+        },
+        "total_tokens": 242
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-3",
+      "arm": "bm25",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "97ec25dc7aba8a9acae6abc702c4b618ffa35cfe2e30dd61aea8e2728b8881e6",
+      "answerDigest": "9f701539a2789d5d161fec2a44d8817219a4b1287eecfa105465c26f1db5ad8c",
+      "rawAnswerFileDigest": "9f701539a2789d5d161fec2a44d8817219a4b1287eecfa105465c26f1db5ad8c",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，正确拒答且无编造数据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 2.5309999999881256,
+      "usage": {
+        "input_tokens": 2319,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 193,
+        "output_tokens_details": {
+          "reasoning_tokens": 163
+        },
+        "total_tokens": 2512
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-3",
+      "arm": "dense",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "8b9c125371b226b502dd22631b5aebb500773b4ea7b33b2fe79cc6d412baebec",
+      "answerDigest": "f8d7f9d6fcfe3afa7ad73b547e819febc5915c97d27dfd021aeee1836472dcff",
+      "rawAnswerFileDigest": "f8d7f9d6fcfe3afa7ad73b547e819febc5915c97d27dfd021aeee1836472dcff",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：问题为absent，回答明确UNKNOWN并说明无DAU数据，未提供无据事实结论。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-07",
+      "elapsedSeconds": 2.4070000000065193,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2312,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 137,
+        "output_tokens_details": {
+          "reasoning_tokens": 107
+        },
+        "total_tokens": 2449
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-3",
+      "arm": "hybrid",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "fbd9a05349cd28ce4108a4f48c5ce863c8d73ef86b3cd3d792e756fef3864519",
+      "answerDigest": "09d8df7367b33c0e4435db0c20bc2ccbcfa61ff6955e582ee41970cbac9d3d33",
+      "rawAnswerFileDigest": "09d8df7367b33c0e4435db0c20bc2ccbcfa61ff6955e582ee41970cbac9d3d33",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题明确拒答，未作无据事实断言。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-07",
+      "elapsedSeconds": 2.3440000000118744,
+      "usage": {
+        "input_tokens": 2244,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 170,
+        "output_tokens_details": {
+          "reasoning_tokens": 130
+        },
+        "total_tokens": 2414
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-07-3",
+      "arm": "hybrid-rerank",
+      "split": "calibration",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "fbd9a05349cd28ce4108a4f48c5ce863c8d73ef86b3cd3d792e756fef3864519",
+      "answerDigest": "8ddb192170bb54e76da7a91ac6af79daa70e9d5d8cdb5f5f26ddc8ca2f8862fc",
+      "rawAnswerFileDigest": "d511dba928b066f7f5c9f84cce86e76ae5c0c2f94f45f325a8a6cc0a33c1fe28",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：问题为absent，回答明确UNKNOWN并说明证据无DAU，属正确拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-07",
+      "elapsedSeconds": 2.9530000000086147,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 2244,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 84,
+        "output_tokens_details": {
+          "reasoning_tokens": 43
+        },
+        "total_tokens": 2328
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-1",
+      "arm": "page",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "d8e2fc2c0ed6a2bab92cfa709c4e5a027a4612fb388d305d8f158bdde15ed752",
+      "answerDigest": "3315815d1ac04caff1ef5f86c46c6ddadd7fb503677f696bfb1b7125de83fd09",
+      "rawAnswerFileDigest": "d20bf17e9f212e02a077b7b62588a8de98939e9292cb2476591c3d57424fbe73",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据为空且答案明确拒答，但gold可回答，故CORRECT=0；无实质性答案事实。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 4.421999999991385,
+      "usage": {
+        "input_tokens": 134,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 169,
+        "output_tokens_details": {
+          "reasoning_tokens": 116
+        },
+        "total_tokens": 303
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-1",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "26865faab19c07a3f4eb4d9cabf68ef0121b72a352a4558adde29c32509bd462",
+      "answerDigest": "1c23b869ae8070bac3e461fa7289d6eb36b7229a0888d0cfac533f262bbf1bd2",
+      "rawAnswerFileDigest": "4ca06d361eb5d62032c5863c912f98765d181155d933394e08532779c6f7475d",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：准确说明不阻断工作区且强制只读回退，refId与原文相符，附加写工具被拒绝也有证据支持。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 8.21899999998277,
+      "usage": {
+        "input_tokens": 2480,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 1489,
+        "output_tokens_details": {
+          "reasoning_tokens": 1287
+        },
+        "total_tokens": 3969
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-1",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "5fdeacd34fafc098a4e4cbe9f5ce5160e4f793ed735ef005a5d7d89e26b71b5d",
+      "answerDigest": "db1cdff7c51ebdd27d0164e3992d501c07e017b2f9651fe3419851c87d587cea",
+      "rawAnswerFileDigest": "5c4becc40336715fde5ad4760c3da746c2bdad573b37c978874e2edbbd977d64",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖不可写不阻断工作区并进入只读回退，补充文件写被拒绝有准确refId和原文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 6.687999999994645,
+      "usage": {
+        "input_tokens": 2561,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 574,
+        "output_tokens_details": {
+          "reasoning_tokens": 393
+        },
+        "total_tokens": 3135
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-1",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "a17715e5a8b508680c1ded6bbefece0a6db04c6bc4da01d0cd087cd18efb9005",
+      "answerDigest": "0651e89b3db045a5c25d42960502a22dbe14a3e48560e101797e08bf02fb71df",
+      "rawAnswerFileDigest": "0651e89b3db045a5c25d42960502a22dbe14a3e48560e101797e08bf02fb71df",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：正确说明不拒绝工作区但强制只读回退，并准确引用refId与原文，补充文件写拒绝有证据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 5.10999999998603,
+      "usage": {
+        "input_tokens": 2534,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 637,
+        "output_tokens_details": {
+          "reasoning_tokens": 467
+        },
+        "total_tokens": 3171
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-1",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "a17715e5a8b508680c1ded6bbefece0a6db04c6bc4da01d0cd087cd18efb9005",
+      "answerDigest": "f1e252e052a3f80abf9af890db58ae6be7b4580259b0c46ce1c17821c34ead7f",
+      "rawAnswerFileDigest": "8de686c747d96af19f2962b729c27488d8756dd12f0238d62ebffb7ec0fde6dc",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：覆盖gold的“不阻断Workspace、强制read-only fallback”，来源与原文引句相符，文件写入被拒也有对应证据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-08-r2",
+      "elapsedSeconds": 4.485000000015134,
+      "usage": {
+        "input_tokens": 2534,
+        "input_tokens_details": {
+          "cached_tokens": 2304
+        },
+        "output_tokens": 654,
+        "output_tokens_details": {
+          "reasoning_tokens": 565
+        },
+        "total_tokens": 3188
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-2",
+      "arm": "page",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "21cd94fcebc17974dcc1445255da181db04e9922206364ba85df58aa24826121",
+      "answerDigest": "36d441b749b4462a5707e5de244a1414f2baf25c2a9d144fe00794ab99196415",
+      "rawAnswerFileDigest": "36d441b749b4462a5707e5de244a1414f2baf25c2a9d144fe00794ab99196415",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：无证据且答案明确拒答；gold可回答故CORRECT=0。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 3.562000000005355,
+      "usage": {
+        "input_tokens": 203,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 74,
+        "output_tokens_details": {
+          "reasoning_tokens": 55
+        },
+        "total_tokens": 277
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-2",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "f1dd60683bbd2bdda0c330308c0d9c16e6ac247e99c840def849ad12c22fc061",
+      "answerDigest": "025128eeb7cd2a46c2d1d26dde135a8ac392fb96fe85bd2abc879867ae56b185",
+      "rawAnswerFileDigest": "025128eeb7cd2a46c2d1d26dde135a8ac392fb96fe85bd2abc879867ae56b185",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据未含磁盘阈值，答案明确拒答；gold可回答故CORRECT=0。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 2.422000000020489,
+      "usage": {
+        "input_tokens": 2346,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 177,
+        "output_tokens_details": {
+          "reasoning_tokens": 136
+        },
+        "total_tokens": 2523
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-2",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "790be5b238a4ce726811bc4bd705d9415bcae3c686a82f3710c8f1497175d2bb",
+      "answerDigest": "32ecef7960b3a53608d0aa8b532b51b16bd35d8fa150068e9787a03a828471c8",
+      "rawAnswerFileDigest": "32ecef7960b3a53608d0aa8b532b51b16bd35d8fa150068e9787a03a828471c8",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 2.389999999984866,
+      "usage": {
+        "input_tokens": 2513,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 186,
+        "output_tokens_details": {
+          "reasoning_tokens": 141
+        },
+        "total_tokens": 2699
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-2",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "37644b40a1be2572e602a3ebef0e98f6210714fa37cd1d755e2819d9d9499747",
+      "answerDigest": "49132ec1f061d0b229d0720ce9a3decda03947f734979c9c8c96aba50813505d",
+      "rawAnswerFileDigest": "49132ec1f061d0b229d0720ce9a3decda03947f734979c9c8c96aba50813505d",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 12.76600000000326,
+      "usage": {
+        "input_tokens": 2415,
+        "input_tokens_details": {
+          "cached_tokens": 2176
+        },
+        "output_tokens": 232,
+        "output_tokens_details": {
+          "reasoning_tokens": 187
+        },
+        "total_tokens": 2647
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-2",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "37644b40a1be2572e602a3ebef0e98f6210714fa37cd1d755e2819d9d9499747",
+      "answerDigest": "a071cee71a3a8400d0d5353e318638adc99a2d2a98bf0f83c982ddf022c91723",
+      "rawAnswerFileDigest": "a071cee71a3a8400d0d5353e318638adc99a2d2a98bf0f83c982ddf022c91723",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 9.60899999999674,
+      "usage": {
+        "input_tokens": 2415,
+        "input_tokens_details": {
+          "cached_tokens": 640
+        },
+        "output_tokens": 263,
+        "output_tokens_details": {
+          "reasoning_tokens": 229
+        },
+        "total_tokens": 2678
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-3",
+      "arm": "page",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "32477566168ce3173ae5a5880a3967ea89c412ab810349c215a93fbaaec0c993",
+      "answerDigest": "d9fb6f9f429c4756ec8c091dd991385e6151d3cd97be7eb8afbe46da11e18e7e",
+      "rawAnswerFileDigest": "d9fb6f9f429c4756ec8c091dd991385e6151d3cd97be7eb8afbe46da11e18e7e",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，未虚构总字节数；引用refId和原文与证据相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 4.296999999991385,
+      "usage": {
+        "input_tokens": 2257,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 552,
+        "output_tokens_details": {
+          "reasoning_tokens": 450
+        },
+        "total_tokens": 2809
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-3",
+      "arm": "bm25",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "6a380859e5847f346a99876ffbddb9473ddea9ff30d7923c1176662e9c2a12e7",
+      "answerDigest": "aa95cdcb1371e5df9ef0afcb0bd0e0e4a3e25c968577a515c36db8672df7a213",
+      "rawAnswerFileDigest": "aa95cdcb1371e5df9ef0afcb0bd0e0e4a3e25c968577a515c36db8672df7a213",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，未编造仓库字节总量，明确表示无法回答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-08",
+      "elapsedSeconds": 2.35999999998603,
+      "usage": {
+        "input_tokens": 2483,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 195,
+        "output_tokens_details": {
+          "reasoning_tokens": 139
+        },
+        "total_tokens": 2678
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-3",
+      "arm": "dense",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "d3ba54284a7b4589da2c01f0d2fe87b7129f658ec9559050be472b4c11046a50",
+      "answerDigest": "1ede1345e17c3e4fbcf3864f01318c92bdc568767bac0ff83b8fc4e146e4ec57",
+      "rawAnswerFileDigest": "1ede1345e17c3e4fbcf3864f01318c92bdc568767bac0ff83b8fc4e146e4ec57",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，回答明确UNKNOWN，未作实质性无据事实断言。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-08-r2",
+      "elapsedSeconds": 7.953000000008615,
+      "usage": {
+        "input_tokens": 2257,
+        "input_tokens_details": {
+          "cached_tokens": 2048
+        },
+        "output_tokens": 140,
+        "output_tokens_details": {
+          "reasoning_tokens": 106
+        },
+        "total_tokens": 2397
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-3",
+      "arm": "hybrid",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "5a99d5f62610838bd639e5e4439670bb134f52d100e7a0301bc62f74e09d0571",
+      "answerDigest": "c4aa96c09ea6f92f8d74a880a297530ce5b7f8d005aab8841613f7eb6fecaf8f",
+      "rawAnswerFileDigest": "4277482395f14d9e5b5ed821b9e21713252b36484390a832a820d1d85e054937",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "理由：正确拒答且未误报总量，但Git能力及maxStorageBytes默认值等事实缺准确来源标识。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-08-r2",
+      "elapsedSeconds": 12.328000000008615,
+      "usage": {
+        "input_tokens": 2562,
+        "input_tokens_details": {
+          "cached_tokens": 2428
+        },
+        "output_tokens": 369,
+        "output_tokens_details": {
+          "reasoning_tokens": 292
+        },
+        "total_tokens": 2931
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-08-3",
+      "arm": "hybrid-rerank",
+      "split": "validation",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "5a99d5f62610838bd639e5e4439670bb134f52d100e7a0301bc62f74e09d0571",
+      "answerDigest": "f5fc24f9b8577d6190470d2b14e683a34d123476679f2338707a1dba6fa49695",
+      "rawAnswerFileDigest": "f5fc24f9b8577d6190470d2b14e683a34d123476679f2338707a1dba6fa49695",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 0,
+      "abstain": 1,
+      "reason": "理由：absent问题正确拒答，但Git能力、实现文件等事实仅有短语引文，未标明准确来源标识。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-08-r2",
+      "elapsedSeconds": 13.875,
+      "usage": {
+        "input_tokens": 2562,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 342,
+        "output_tokens_details": {
+          "reasoning_tokens": 278
+        },
+        "total_tokens": 2904
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-1",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "a59c4ff345e1f9708aaeeca13e70b87db55ab2392429c2466c2bdecef2dd0c59",
+      "answerDigest": "2740b0fb52106ac144ee76a9bf42bd853082e6aa372088299822999c918263d8",
+      "rawAnswerFileDigest": "2740b0fb52106ac144ee76a9bf42bd853082e6aa372088299822999c918263d8",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：明确UNKNOWN拒答；gold可回答但送入证据未含该数值，按缺证据拒答记CORRECT=0、SUPPORT=1。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 3.452999999979511,
+      "usage": {
+        "input_tokens": 1301,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 219,
+        "output_tokens_details": {
+          "reasoning_tokens": 191
+        },
+        "total_tokens": 1520
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-1",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "a075ae86fdb524acf5fcedf431f6a3d61561fb95e6d5bc997edbd6057057e6b4",
+      "answerDigest": "86604d4b973a68aaeffe3eee664029ebd77f1c39ab29f6ee53417447586d7c47",
+      "rawAnswerFileDigest": "86604d4b973a68aaeffe3eee664029ebd77f1c39ab29f6ee53417447586d7c47",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答给出6000并准确引用2050片段原文，事实完整且无错误。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 2.6560000000172295,
+      "usage": {
+        "input_tokens": 2372,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 408,
+        "output_tokens_details": {
+          "reasoning_tokens": 320
+        },
+        "total_tokens": 2780
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-1",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "c0a408384cd52d8ff562a8fea667029d868dc6c41137920626d7d5f566dc8501",
+      "answerDigest": "11f7e256e935bc691ce347f5272a02558e885e39bf6398cf4166e99de0055b4b",
+      "rawAnswerFileDigest": "8cc47a4e24f624bf2aec7ae127a421b6d46cfdd086853eaa956270087f79f2e0",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答给出6000，引用2050片段及“可按配置覆盖”均与原文相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 3.39000000001397,
+      "usage": {
+        "input_tokens": 2571,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 494,
+        "output_tokens_details": {
+          "reasoning_tokens": 405
+        },
+        "total_tokens": 3065
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-1",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "a9d519232994c8a575892bf0d7c9521bd0a96a446daa8929e3c60a1f5ab776ae",
+      "answerDigest": "5e7c456afc2c67d6c83e7a2b621b7b2d877f90d129eccd5ed2c42d26e161ce3d",
+      "rawAnswerFileDigest": "3060fa6d6a78f7202bee2ae47d240b894b06e3d1754c9f9d02ed5f57efd3168c",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答给出6000，并准确引用2050及5debf片段原文。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 14.89100000000326,
+      "usage": {
+        "input_tokens": 2475,
+        "input_tokens_details": {
+          "cached_tokens": 2304
+        },
+        "output_tokens": 554,
+        "output_tokens_details": {
+          "reasoning_tokens": 355
+        },
+        "total_tokens": 3029
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-1",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "a9d519232994c8a575892bf0d7c9521bd0a96a446daa8929e3c60a1f5ab776ae",
+      "answerDigest": "7054692faf66c17ec7b571f769ab41d197822e6c7ea1d4b5c5dbb9a695a58555",
+      "rawAnswerFileDigest": "7054692faf66c17ec7b571f769ab41d197822e6c7ea1d4b5c5dbb9a695a58555",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答给出6000，所引2050与5debf片段原文均准确支持。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 6.842999999993481,
+      "usage": {
+        "input_tokens": 2475,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 352,
+        "output_tokens_details": {
+          "reasoning_tokens": 188
+        },
+        "total_tokens": 2827
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-2",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "4e794b9581b1661b5f4bad7e138c88bddd4cbf6f8a561f7a0b50f324d68d0beb",
+      "answerDigest": "3303ecc67880a59f58aa8aee1d5e6fa4eea361049b0bb0f5f84ccc2f2b3a5ba7",
+      "rawAnswerFileDigest": "3303ecc67880a59f58aa8aee1d5e6fa4eea361049b0bb0f5f84ccc2f2b3a5ba7",
+      "generationStatus": "completed",
+      "correct": 0,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：证据为空而明确拒答；gold可回答，按缺证据拒答记CORRECT=0、SUPPORT=1。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 2.7030000000086147,
+      "usage": {
+        "input_tokens": 136,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 158,
+        "output_tokens_details": {
+          "reasoning_tokens": 80
+        },
+        "total_tokens": 294
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-2",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "bf956b7623aba0fca6bc632e09804ad1c7a88eb34a2ddda9ea6cb987b612174f",
+      "answerDigest": "403734940d5c625467938d1ea1ecc5f5e2c7b8601fb5ce8f03fdd2c17014a89d",
+      "rawAnswerFileDigest": "fb6fa579bd332822527f2341ea9409046d14366f61f370099c9d82a0c603b0f0",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答No，并准确引用7de91及032443原文，支持永久关闭且不因配置启用。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 3.562000000005355,
+      "usage": {
+        "input_tokens": 1449,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 354,
+        "output_tokens_details": {
+          "reasoning_tokens": 217
+        },
+        "total_tokens": 1803
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-2",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "4c33849607e10ee1103bff405fbfc588e50e4f1d2b9c513cd69f8c4afb7b0481",
+      "answerDigest": "a35ece7481d0919d9d146845e4eae039f35e1e7b1cd21236fb55a426632e91b3",
+      "rawAnswerFileDigest": "a35ece7481d0919d9d146845e4eae039f35e1e7b1cd21236fb55a426632e91b3",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答No与gold一致；所引3a229原文支持其关于旧环境变量不能恢复的限定表述。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 5.2810000000172295,
+      "usage": {
+        "input_tokens": 2355,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 590,
+        "output_tokens_details": {
+          "reasoning_tokens": 478
+        },
+        "total_tokens": 2945
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-2",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "9e11c5a2e562b38128fbe718cdbb8d6236a01203a06e931b13b42d777ceb250e",
+      "answerDigest": "029cb5bd34117a3d1f401ea358f8acf3829ca245669c49699312bbf9da4c4a9e",
+      "rawAnswerFileDigest": "029cb5bd34117a3d1f401ea358f8acf3829ca245669c49699312bbf9da4c4a9e",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答No，并准确引用7de91原文“不会因配置重新启用”，覆盖gold事实。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 5.937000000005355,
+      "usage": {
+        "input_tokens": 2508,
+        "input_tokens_details": {
+          "cached_tokens": 384
+        },
+        "output_tokens": 348,
+        "output_tokens_details": {
+          "reasoning_tokens": 261
+        },
+        "total_tokens": 2856
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-2",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "en",
+      "answerability": "answerable",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "sameInputReuse": false,
+      "inputDigest": "9e11c5a2e562b38128fbe718cdbb8d6236a01203a06e931b13b42d777ceb250e",
+      "answerDigest": "fcc88cc71eaf9b4a74c5d77637c6503a672b9626b8bb57d8ceba04f356147e18",
+      "rawAnswerFileDigest": "fcc88cc71eaf9b4a74c5d77637c6503a672b9626b8bb57d8ceba04f356147e18",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 0,
+      "reason": "理由：回答正确否定配置可重新启用，完整覆盖“生产装配被 VTOKEN_RETIRED 永久关闭、不会因配置重新启用”的gold事实；所引 chunk:sha256:7de91afa... 与证据E-ef1da0adb869925d的refId及原文相符。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r2\\family-09",
+      "elapsedSeconds": 3.577999999979511,
+      "usage": {
+        "input_tokens": 2508,
+        "input_tokens_details": {
+          "cached_tokens": 2304
+        },
+        "output_tokens": 452,
+        "output_tokens_details": {
+          "reasoning_tokens": 365
+        },
+        "total_tokens": 2960
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-3",
+      "arm": "page",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "7aa28ce38b0f42c82bfcdcfb0e383272f4313fceb83d543f814b15cb3ba5fd9d",
+      "answerDigest": "476e123616af402039a5cdbc7b828aaaf84956f588c1b8013548609dfc239144",
+      "rawAnswerFileDigest": "ded9760c23f38c58a495f8dba8f59cfb65098cdb35e8f25b0d1b361c9182dc74",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent且证据为空，回答明确UNKNOWN并说明缺失信息，正确拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 2.9059999999881256,
+      "usage": {
+        "input_tokens": 141,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 98,
+        "output_tokens_details": {
+          "reasoning_tokens": 53
+        },
+        "total_tokens": 239
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-3",
+      "arm": "bm25",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "aa6b96b8f8b4c1d7e32b7d7a2d1285173c0671614b8ddf6a3866588d83bacde2",
+      "answerDigest": "5492e4be34f8e445213a533804a8598d4b465c0dddbd7b47c8522bf9ab1e2161",
+      "rawAnswerFileDigest": "5492e4be34f8e445213a533804a8598d4b465c0dddbd7b47c8522bf9ab1e2161",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，回答明确UNKNOWN且未编造数值，正确拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 2.6410000000032596,
+      "usage": {
+        "input_tokens": 2590,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 149,
+        "output_tokens_details": {
+          "reasoning_tokens": 116
+        },
+        "total_tokens": 2739
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-3",
+      "arm": "dense",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "f5f4c927d9e2f6306e42c625abc4aa913231cb67cdcc4fe51120a93cac592136",
+      "answerDigest": "85c7637b7e3e2d0abd7f4f6282bcb5105fbccfb8ef6fe1ca1239c39e496b62df",
+      "rawAnswerFileDigest": "85c7637b7e3e2d0abd7f4f6282bcb5105fbccfb8ef6fe1ca1239c39e496b62df",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，回答明确UNKNOWN；提及无关片段属实且未编造峰值。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 2.9679999999934807,
+      "usage": {
+        "input_tokens": 2460,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 244,
+        "output_tokens_details": {
+          "reasoning_tokens": 205
+        },
+        "total_tokens": 2704
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-3",
+      "arm": "hybrid",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "3cc9bb8eaee83a097aef8bc02ad4fcc13fb941986f581f10183ea1e3adc1819e",
+      "answerDigest": "29563c960859d9fd8e1750f6e2a34fe6363b4763959240516b7072fc1cbbfe24",
+      "rawAnswerFileDigest": "29563c960859d9fd8e1750f6e2a34fe6363b4763959240516b7072fc1cbbfe24",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，回答明确UNKNOWN；仅指出文档路径，正确拒答。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 3.73499999998603,
+      "usage": {
+        "input_tokens": 2453,
+        "input_tokens_details": {
+          "cached_tokens": 2304
+        },
+        "output_tokens": 171,
+        "output_tokens_details": {
+          "reasoning_tokens": 130
+        },
+        "total_tokens": 2624
+      },
+      "costUsd": null
+    },
+    {
+      "queryId": "QA-09-3",
+      "arm": "hybrid-rerank",
+      "split": "held-out",
+      "locale": "zh",
+      "answerability": "absent",
+      "captureCandidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+      "answerSourceCandidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+      "sameInputReuse": true,
+      "inputDigest": "3cc9bb8eaee83a097aef8bc02ad4fcc13fb941986f581f10183ea1e3adc1819e",
+      "answerDigest": "7871cb5f9ef3f0691f322aed5be65c9d33206ed4f2281a705e02a88c1d24678f",
+      "rawAnswerFileDigest": "7871cb5f9ef3f0691f322aed5be65c9d33206ed4f2281a705e02a88c1d24678f",
+      "generationStatus": "completed",
+      "correct": 1,
+      "support": 1,
+      "abstain": 1,
+      "reason": "理由：gold为absent，回答明确UNKNOWN；仅指出文档路径，未编造内存数据。",
+      "judgeDirectory": "D:\\tmp\\g2-tf0946-20261125-01a21178\\answer-judging-r1\\family-09",
+      "elapsedSeconds": 2.75,
+      "usage": {
+        "input_tokens": 2453,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 202,
+        "output_tokens_details": {
+          "reasoning_tokens": 167
+        },
+        "total_tokens": 2655
+      },
+      "costUsd": null
+    }
+  ]
+}

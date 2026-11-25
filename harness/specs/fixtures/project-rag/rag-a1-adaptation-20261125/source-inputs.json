@@ -1,0 +1,78 @@
+{
+  "candidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+  "tree": "13c89f758a38fa27fa6bb5e794760bd59323fc31",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "64a6e6150c2e8121b036837872c4744c7cfe71d1dcd3d9fd0c533c4cf27731b6"
+    },
+    {
+      "path": "README.md",
+      "sha256": "bf945fb06e7fab5205876e4baaeb550cfd1a3ce6a794661cc5bc3e7a2e0e86e9"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "acd7934b8862cee789f9ec953116bd03717e7142191005f49f1ebe2712136707"
+    },
+    {
+      "path": "docs/dev/project-rag/EVALUATION-CONTRACT.md",
+      "sha256": "b3b624f82f8829f952b27b88f570b3b2b31da9869445ebae580c4dadf1cf16c1"
+    },
+    {
+      "path": "docs/dev/project-rag/OFFLINE-DRIVERS.md",
+      "sha256": "61754891d66e3c70f6cc2f1e95afe5389785982a9fbdf5580afe2224c9767da0"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-knowledge-adaptation-baseline.md",
+      "sha256": "10eea62109114c7921e33bd88a4b4acb164d5b5d62fae5dc8d325b4a1f1ce222"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts",
+      "sha256": "2d78f56054456477fda9c58097bbf021e60ac2f7f2e036355512bbd30b8fc717"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/projection-store.ts",
+      "sha256": "3984584870e579fc716815f0e1685f0e09899f03d49b69b1c62136199ae9a798"
+    },
+    {
+      "path": "scripts/knowledge-rag-adaptation.ts",
+      "sha256": "f1c6c5f378ec0005b5777d9459dc6fdcff85d5b197fd4fbb78565bf116c9a7f4"
+    },
+    {
+      "path": "scripts/knowledge-rag-query-runner.ts",
+      "sha256": "df66ed7cae342d85619185b0a38435bce74c782e78a950d16cfd43e66037c714"
+    },
+    {
+      "path": "scripts/lib/project-rag-promotion.mjs",
+      "sha256": "84a550516d70cf13aed63c0ef557be6f40d4e19acc0ce7150e4bc8de424ef28e"
+    },
+    {
+      "path": "scripts/lib/project-rag-query-grade.d.mts",
+      "sha256": "362cce7d98f80c7ddf4f201492501b65dbddce0fe975d44a5d70908f73bed65e"
+    },
+    {
+      "path": "scripts/lib/project-rag-query-grade.mjs",
+      "sha256": "3f62fbd93dd853ada9d79e5ce191261ae9172af764592b36cde321daa3bc57ad"
+    },
+    {
+      "path": "tests/unit/project-rag-acceptance-readback.test.ts",
+      "sha256": "438f32954dc8c816dca37068195f3c892f7fefe20c7a96a3f2ec336f7689f1da"
+    },
+    {
+      "path": "tests/unit/project-rag-knowledge-adaptation.test.ts",
+      "sha256": "f170bea63e42e8854ce12e6be471a4f30352daf0e59ea10c52cf9e65e7e9b6c2"
+    },
+    {
+      "path": "tests/unit/project-rag-offline-package.test.ts",
+      "sha256": "b8737c8908abf96cbe687ae3f20d18fcd1188d7e96ec82cdd2597150a9afa4ab"
+    },
+    {
+      "path": "tests/unit/project-rag-query-grade.test.ts",
+      "sha256": "a76185a1f7f1cf0873db206fe99d36e7ec2b168da7e9f2a5c9de85dc2db46ddf"
+    },
+    {
+      "path": "tests/unit/project-rag-receipts-promotion.test.ts",
+      "sha256": "cdebd4fb3a39c083ea27dc6d33f9e287551c1ca11454142c8d74b2e8f2fb70d6"
+    }
+  ]
+}

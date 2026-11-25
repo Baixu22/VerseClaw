@@ -1,0 +1,27 @@
+{
+  "schema": "G2QuestionReviewReceipt/v1",
+  "actor": "workbuddy/deepseek-v4.1-flash-question-review",
+  "driven_by": "agent",
+  "planSha256": "8c06def037ed1e4e6fbd96456eecf1eaa0af7ca02f1a6395d91204ef0537661b",
+  "startedAt": "2026-11-25T08:55:18.737180+00:00",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "calls": 1,
+  "status": "completed",
+  "usage": {
+    "input_tokens": 6061,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 21331,
+    "output_tokens_details": {
+      "reasoning_tokens": 21004
+    },
+    "total_tokens": 27392
+  },
+  "costUsd": null,
+  "responseId": "as-baa1u98ra5",
+  "returnedModel": "deepseek-v4.1-flash",
+  "durationSeconds": 153.0779999999795,
+  "outputBytes": 1205,
+  "outputSha256": "ee836b757f5480ce9a446ae3df3dbef1935ed4da009b6f7d217f374f139d15b8"
+}

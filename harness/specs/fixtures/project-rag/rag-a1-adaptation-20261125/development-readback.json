@@ -1,0 +1,126 @@
+{
+  "schema": "G2KnowledgeAdaptationDevelopment/v1",
+  "actor": "codex-g2-knowledge-adaptation",
+  "driven_by": "agent",
+  "node": "TF-0946",
+  "candidate": "13edb1346827a8f6f13966c1ad404578669ef520",
+  "developmentStatus": "implemented",
+  "nodeStatus": "in_progress",
+  "progress": 85,
+  "qualityQualification": "hold",
+  "origin": "agent-built-adaptation",
+  "scopeAuthorization": "User selected current project documentation in an isolated knowledge base.",
+  "checks": {
+    "rootUnit": {
+      "passed": 95,
+      "failed": 0,
+      "artifact": "unit-results.json"
+    },
+    "projectionUnit": {
+      "passed": 22,
+      "failed": 0,
+      "artifact": "projection-unit-r1.log",
+      "sourceBytesUnchangedSinceRun": true
+    },
+    "focusedTypes": "passed",
+    "targetedLint": "passed",
+    "harnessValidate": "passed",
+    "commsReplayCompare": "passed"
+  },
+  "quality": {
+    "sources": 9,
+    "originalDocumentBytes": 77116,
+    "ownerSnapshotBytes": 79480,
+    "chunks": 871,
+    "questions": 27,
+    "retrievalObservations": 135,
+    "answerJudgments": 131,
+    "missingOrUnknownAnswers": 4,
+    "freshFinalCandidateAnswerInputs": 38,
+    "priorCandidateByteIdenticalInputReuses": 97,
+    "monetaryCostUsd": null,
+    "policyPromotion": "hold"
+  },
+  "review": {
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "format": "plain-text",
+    "questionReview": "27 accepted with per-question reasons",
+    "initialCodeFindings": 3,
+    "implementedFixes": [
+      "distinct evidence span ranking and separate union recall",
+      "trimmed author/reviewer identities",
+      "canonical vault/output isolation"
+    ],
+    "closureEvidence": "95 regression tests include each finding; final independent code-verdict attempts were incomplete or placeholder and were not accepted"
+  },
+  "openRequirements": [
+    "Final all-fresh same-candidate answer cohort and known fee envelope remain outstanding; four generation outcomes remain missing or unknown. Existing observations do not authorize policy promotion.",
+    "Structured Wiki claims are not forwarded by getMemoryWikiPage to SourceSet; the derived two-source conflict probe reports zero conflict groups. Original failure retained.",
+    "The five-arm diagnostic uses product modules and direct model generation, not the complete Electron/Gateway QA acceptance journey.",
+    "Research/quality deadline accounting causes frequent rerank fallback; the current fixed profile has not passed the latency/benefit qualification."
+  ],
+  "nextAction": "Finish the remaining evidence contract with a fresh bounded plan, repair the Wiki claim-to-SourceSet path with range-safe metadata, and validate budget-bound rerank/answer quality before closing TF-0946.",
+  "rawArchive": "D:\\tmp\\g2-tf0946-20261125-01a21178",
+  "originalFailures": [
+    "grader-first.json",
+    "typecheck-focused-r1.log",
+    "development-suite-r1.json",
+    "index-preparation-r1.log",
+    "retrieval-r1/terminal.json",
+    "retrieval-r2/terminal.json",
+    "retrieval-r3/terminal.json",
+    "source-safety-r1.log",
+    "answer-unknown-terminal.json"
+  ],
+  "acceptanceReadback": [
+    {
+      "criterion": 1,
+      "status": "verified",
+      "evidence": [
+        "unit-results.json"
+      ]
+    },
+    {
+      "criterion": 2,
+      "status": "verified-for-authorized-agent-built-corpus",
+      "evidence": [
+        "corpus-profile.json",
+        "corpus-origins.json"
+      ]
+    },
+    {
+      "criterion": 3,
+      "status": "dataset-and-negative-observations-produced",
+      "evidence": [
+        "question-review.txt",
+        "source-safety.json"
+      ],
+      "open": "conflict product path failed"
+    },
+    {
+      "criterion": 4,
+      "status": "diagnostic-comparison-complete-qualification-pending",
+      "evidence": [
+        "retrieval-observations.json",
+        "answer-observations.json"
+      ]
+    },
+    {
+      "criterion": 5,
+      "status": "versions-and-inputs-frozen-fee-envelope-unresolved",
+      "evidence": [
+        "source-inputs.json",
+        "answer-input-comparison.json"
+      ]
+    },
+    {
+      "criterion": 6,
+      "status": "development-checks-verified",
+      "evidence": [
+        "unit-results.json",
+        "projection-unit-r1.log",
+        "harness-final-r1.log"
+      ]
+    }
+  ]
+}

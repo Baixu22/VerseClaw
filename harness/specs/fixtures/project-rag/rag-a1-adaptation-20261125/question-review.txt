@@ -1,0 +1,27 @@
+QA-01-1 ACCEPT 引句明确给出目标 384 tokens、硬上限 768 tokens 和字符上限 2400，完整回答问题。
+QA-01-2 ACCEPT 引句分别回答默认 overlap=0 和检索前缀不得进入引用正文。
+QA-01-3 ACCEPT 文档未涉及 OCR 引擎及版本，确实缺少答案。
+QA-02-1 ACCEPT 引句精确给出默认服务 SiliconFlow 和模型 Qwen/Qwen3-VL-Embedding-8B。
+QA-02-2 ACCEPT 引句明确禁用时删除选择并释放 provider，回答核心行为。
+QA-02-3 ACCEPT 文档未提供每百万 token 合同单价，确实缺少答案。
+QA-03-1 ACCEPT 表格行明确 quality 的候选 80、重排池 30、最终候选 6。
+QA-03-2 ACCEPT 引句给出融合公式和每个 parent 最多保留两个候选，完整回答。
+QA-03-3 ACCEPT 文档未提供 2026 年 11 月 25 日 nDCG@5 实测值。
+QA-04-1 ACCEPT 引句明确 unsupported 或 uncertain 陈述退出答案并进入 unknowns。
+QA-04-2 ACCEPT 引句说明两次模型调用共享一个 60 秒预算，完整回答。
+QA-04-3 ACCEPT 文档未提供固定生成模型及精确权重版本。
+QA-05-1 ACCEPT 引句分别给出默认 profile=local、answerMode=strict、maxStorageBytes=536870912。
+QA-05-2 ACCEPT 引句说明删除或撤权来源先失去检索资格，再由后台清理旧代际记录。
+QA-05-3 ACCEPT 文档未提供本机最近备份的实际日期和文件大小。
+QA-06-1 ACCEPT 引句给出三次尝试预算及过期租约回到 pending 或转为 failed 的处理。
+QA-06-2 ACCEPT 引句明确未完成或失败的构建不能成为 active。
+QA-06-3 ACCEPT 文档未提供全部索引完整重建的实测毫秒耗时。
+QA-07-1 ACCEPT 引句明确消息上限 300、一次加载 200、DOM 同时渲染 120。
+QA-07-2 ACCEPT 引句明确默认主会话 key 是 agent:main:main。
+QA-07-3 ACCEPT 文档未提供会话每日活跃用户数。
+QA-08-1 ACCEPT 引句回答不可写不会阻断 Workspace，而是强制 read-only fallback。
+QA-08-2 ACCEPT 引句明确低于 1 GiB 时警告，完整回答阈值。
+QA-08-3 ACCEPT 文档未提供当前工作区所有 Git 仓库占用字节数。
+QA-09-1 ACCEPT 引句明确默认 TURN_INJECTION_CHAR_BUDGET = 6000。
+QA-09-2 ACCEPT 引句明确 VToken 生产装配被永久关闭，不会因配置重新启用。
+QA-09-3 ACCEPT 文档未提供 Context Orchestrator 运行 72 小时的实测峰值内存。
