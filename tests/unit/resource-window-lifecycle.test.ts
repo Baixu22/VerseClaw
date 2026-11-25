@@ -15,6 +15,8 @@ import { getEfficiencyShedState, startRuntimeEfficiency, stopRuntimeEfficiency, 
 import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
 import { getResourceFabric } from '../../electron/services/resource-fabric';
 import { managedProcessHostPressureLimit } from '../../openclaw_runtime/src/agents/verseshell/managed-process-reservation';
+import { getResourceEnvelopeLedger } from '../../openclaw_runtime/src/resources/resource-envelope';
+import { openExecutionStateDatabase } from '../../openclaw_runtime/src/state/execution-state-db';
 import { registerWindowVisibility } from '../../electron/main/window-visibility';
 import type { BrowserWindow } from 'electron';
 
@@ -117,5 +119,24 @@ describe('window resource lifetimes', () => {
     expect(mocks.snapshot).toHaveBeenCalledOnce();
     expect(powerMonitor.listenerCount('speed-limit-change')).toBe(1);
     expect(mocks.refresh).not.toBeNull();
+  });
+  it.runIf(process.platform === 'win32')('retains a measured pressure birth identity when a later process snapshot is missing', async () => {
+    vi.useFakeTimers(); vi.setSystemTime(1000);
+    const birth = '133000000000000000';
+    const pressured = { ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 5, totalPhysicalBytes: 100 } };
+    mocks.snapshot.mockResolvedValue({ ...pressured, entries: [{ id: 'main:process-tree',
+      processMeasurement: { ownerEpoch: getResourceEnvelopeLedger().ownerEpoch,
+        processes: [{ pid: process.pid, creationToken: birth }] } }] });
+    startRuntimeResourceProtection(); await flush();
+    const ownPressureBirth = () => {
+      const row = openExecutionStateDatabase().db.prepare(
+        'SELECT payload_json FROM state_leases WHERE scope = ? AND lease_key = ?',
+      ).get('verseshell-host-pressure/v1', String(process.pid)) as { payload_json: string };
+      return (JSON.parse(row.payload_json) as { ownerIncarnation: string | null }).ownerIncarnation;
+    };
+    expect(ownPressureBirth()).toBe(birth);
+    mocks.snapshot.mockResolvedValue(pressured);
+    await mocks.refresh?.();
+    expect(ownPressureBirth()).toBe(birth);
   });
 });

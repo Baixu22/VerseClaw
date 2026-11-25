@@ -15,10 +15,12 @@ import {
   withWorkspaceResourceLease,
 } from "./resource-leases.js";
 import { getResourceEnvelopeLedger, resetResourceEnvelopeLedgerForTest } from "../resources/resource-envelope.js";
+import { admitManagedProcess } from "./verseshell/managed-process-capacity.js";
 
 afterEach(() => {
   resetResourceLeasesForTest();
   resetResourceEnvelopeLedgerForTest();
+  vi.unstubAllEnvs();
   vi.useRealTimers();
 });
 
@@ -33,6 +35,19 @@ function deferred() {
 const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 describe("workspace resource leases", () => {
+  it('keeps advisory lease cleanup working when the native budget database is unavailable', async () => {
+    const manager = new ResourceLeaseManager();
+    const one = await manager.acquire('workspaceExec', 'db-read-failure');
+    const two = await manager.acquire('workspaceExec', 'db-read-failure');
+    const queued = manager.acquire('workspaceExec', 'db-read-failure');
+    vi.stubEnv('CLAWX_EXECUTION_STATE_PATH', 'relative-execution.sqlite');
+    expect(() => one.release()).not.toThrow();
+    const three = await queued;
+    expect(() => admitManagedProcess()).toThrow('execution_state_path_not_absolute');
+    two.release(); three.release();
+    expect(manager.getDiagnostics().active).toBe(0);
+  });
+
   it('cancels a queued request without waiting for the holder or invoking its effect', async () => {
     const hold = deferred();
     const controller = new AbortController();

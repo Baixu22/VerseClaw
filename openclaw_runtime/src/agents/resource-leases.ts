@@ -297,9 +297,13 @@ export class ResourceLeaseManager {
 
   private canGrant(request: PendingRequest): boolean {
     if (request.kind === "workspaceExec") {
-      const hostLimit = managedProcessCapacityLimit();
-      if (hostLimit !== undefined
-        && [...this.active.values()].filter(lease => lease.kind === "workspaceExec").length >= hostLimit) return false;
+      try {
+        const hostLimit = managedProcessCapacityLimit();
+        if (hostLimit !== undefined
+          && [...this.active.values()].filter(lease => lease.kind === "workspaceExec").length >= hostLimit) return false;
+      } catch {
+        // Native admission enforces the DB budget. An advisory read cannot fail owner cleanup.
+      }
     }
     if (leaseMode(request.kind) === "path") {
       return !this.hasActivePathConflict(request);

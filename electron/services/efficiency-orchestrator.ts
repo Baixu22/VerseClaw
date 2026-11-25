@@ -77,6 +77,8 @@ function startBackgroundWorkGate(
       if (pressured && process.platform !== 'win32') {
         try { incarnation = taskLedgerOwnIncarnation(); } catch { /* Unknown birth keeps conservative pressure. */ }
       }
+      // A missing observation cannot erase an already measured birth identity.
+      incarnation ??= publishedIncarnation;
       if (pressured !== publishedHostPressure || (pressured && incarnation !== publishedIncarnation)) {
         setManagedProcessHostPressure(pressured, incarnation);
         publishedHostPressure = pressured;

@@ -20,6 +20,9 @@ Use the existing SQLite managed-process owner for Main and Gateway host capacity
 Changing pressure limits never clears native or unknown reservations. A native
 close/terminal receipt releases the physical process slot. Keep transient pressure
 limits separate from the normal limit stored with a process reservation.
+Keep a measured observer birth identity across temporarily missing snapshots.
+Logical lease cleanup must complete if an advisory host-limit read fails; native
+admission still fails closed on an unavailable authoritative capacity database.
 
 The efficiency setting controls diagnostic recording. Minimum memory, commit,
 event-loop and power/visibility protection continues until application shutdown.

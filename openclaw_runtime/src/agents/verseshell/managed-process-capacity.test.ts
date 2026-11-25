@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { spawn } from "node:child_process";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   admitManagedProcess,
   configureManagedProcessCapacity,
@@ -203,5 +205,27 @@ describe("managed process capacity", () => {
     expect(managedProcessReservations()).toEqual([]);
     expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1 });
     expect(admitManagedProcess()).toMatchObject({ ok: true, live: 1 });
+  });
+
+  it("settles an asynchronous spawn failure on native close after the error event", async () => {
+    configureManagedProcessCapacity({ maxLiveProcesses: 1 });
+    const events: string[] = [];
+    const child = startManagedChildProcess(
+      () => spawn(join(process.cwd(), '.resource-review-nonexistent-executable')),
+      'missing-native-executable',
+    );
+    child.once('error', error => {
+      events.push((error as NodeJS.ErrnoException).code ?? 'error');
+      expect(child.pid).toBeUndefined();
+      expect(managedProcessReservations()).toHaveLength(1);
+    });
+    await new Promise<void>(resolve => child.once('close', () => { events.push('close'); resolve(); }));
+    expect(events).toEqual(['ENOENT', 'close']);
+    expect(managedProcessReservations()).toEqual([]);
+    expect(managedProcessCapacityStats()).toMatchObject({ live: 0, completed: 1, doubleRelease: 0 });
+    const reportPath = process.env.RESOURCE_SCHEDULING_SPAWN_ERROR_REPORT;
+    if (reportPath) writeFileSync(reportPath, JSON.stringify({ driven_by: 'agent', actor: 'codex-resource-native-error',
+      platform: process.platform, nodeVersion: process.version, events, nativePid: child.pid ?? null,
+      finalReservations: managedProcessReservations(), counters: managedProcessCapacityStats() }, null, 2) + '\n');
   });
 });
