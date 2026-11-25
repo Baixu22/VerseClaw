@@ -116,6 +116,57 @@ describe('ResourceTracker', () => {
   // ── Heartbeat / TCP ping ─────────────────────────────────────────────
 
   describe('heartbeat', () => {
+    it('keeps observed unreachable resources from consuming managed cleanup slots', async () => {
+      const stale = new Date(Date.now() - 6 * 60 * 1000).toISOString();
+      const observed: string[] = [];
+      for (let i = 0; i < 8; i++) {
+        const id = tracker.register({ port: 21900 + i, sessionKey: 'observed-cleanup', ownership: 'observed' });
+        const record = tracker.getSnapshot().resources.find(item => item.id === id)!;
+        record.status = 'unreachable'; record.lastHeartbeatAt = stale;
+        observed.push(id);
+      }
+      const managed = tracker.register({ port: 21920, pid: process.pid, sessionKey: 'managed-cleanup' });
+      const record = tracker.getSnapshot().resources.find(item => item.id === managed)!;
+      record.status = 'unreachable'; record.lastHeartbeatAt = stale;
+      const stop = vi.spyOn(tracker, 'stopResource').mockResolvedValue({ success: true });
+      await internals(tracker).autoCleanup();
+      expect(stop).toHaveBeenCalledWith(managed);
+      expect(stop.mock.calls.some(([id]) => observed.includes(id))).toBe(false);
+    });
+
+    it('rotates failed cleanup attempts so another managed resource is attempted next heartbeat', async () => {
+      const stale = new Date(Date.now() - 6 * 60 * 1000).toISOString();
+      const ids: string[] = [];
+      for (let i = 0; i < 9; i++) {
+        const id = tracker.register({ port: 21930 + i, pid: process.pid, sessionKey: 'failed-cleanup' });
+        const record = tracker.getSnapshot().resources.find(item => item.id === id)!;
+        record.status = 'unreachable'; record.lastHeartbeatAt = stale;
+        ids.push(id);
+      }
+      const stop = vi.spyOn(tracker, 'stopResource').mockResolvedValue({ success: false, error: 'owner-not-settled' });
+      await internals(tracker).autoCleanup();
+      expect(stop).toHaveBeenCalledTimes(8);
+      await internals(tracker).autoCleanup();
+      expect(stop).toHaveBeenCalledTimes(16);
+      expect(stop).toHaveBeenCalledWith(ids[8]);
+    });
+
+    it('rechecks inactivity after an earlier cleanup yields to newly active work', async () => {
+      const ids = [0, 1].map(index => tracker.register({ port: 21950 + index, pid: process.pid, sessionKey: 'active-cleanup' }));
+      for (const id of ids) {
+        const record = tracker.getSnapshot().resources.find(item => item.id === id)!;
+        record.status = 'idle'; record.sessionLastActiveAt = new Date(Date.now() - 31 * 60 * 1000).toISOString();
+      }
+      const stop = vi.spyOn(tracker, 'stopResource').mockImplementation(async () => {
+        const current = tracker.getSnapshot().resources.find(item => item.id === ids[1])!;
+        current.status = 'healthy'; current.sessionLastActiveAt = new Date().toISOString();
+        return { success: true };
+      });
+      await internals(tracker).autoCleanup();
+      expect(stop).toHaveBeenCalledOnce();
+      expect(stop).toHaveBeenCalledWith(ids[0]);
+    });
+
     it('reclaims managed idle resources while background work is deferred', async () => {
       const gate = getBackgroundWorkGate();
       gate.update({ shedSignal: true });

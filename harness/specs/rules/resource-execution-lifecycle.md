@@ -29,3 +29,5 @@ admission still fails closed on an unavailable authoritative capacity database.
 The efficiency setting controls diagnostic recording. Minimum memory, commit,
 event-loop and power/visibility protection continues until application shutdown.
 Bounded reclamation remains eligible while ordinary background work is deferred.
+Only managed candidates consume cleanup slots. Rotate failed attempts and recheck
+inactivity before dispatch so they neither starve other owners nor stop refreshed work.
