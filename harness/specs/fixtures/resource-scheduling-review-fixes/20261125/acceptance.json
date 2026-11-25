@@ -12,12 +12,13 @@
   "reviews": 4,
   "mainIntegration": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
   "implementationCriteriaStatus": "verified",
-  "localCloseoutStatus": "pending-task-forest",
+  "localCloseoutStatus": "complete",
   "overallHarnessCiStatus": "failed-existing-agent-dev-audit",
   "dependencies": "Existing installed third-party packages reused; VerseBrowser built from this checkout; Electron 40.8.4 reused from D:/tmp.",
   "normalDefaults": {
     "mainConcurrency": 64,
     "unconfiguredManagedCapacity": "unrestricted",
     "pressureManagedCapacity": 1
-  }
+  },
+  "taskForestNode": "TF-0949"
 }

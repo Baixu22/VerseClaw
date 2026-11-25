@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-relay",
+  "node": "TF-0949",
+  "nodeStatus": "done",
+  "nodeProgress": 100,
+  "proposal": "TFP-resource-scheduling-review-fixes-close-20261125",
+  "validated": true,
+  "exported": true,
+  "exportPath": "D:\\ClawX\\.agent-workbench\\task-forest\\exports\\task-forest.html",
+  "exportSha256": "bb600f70dfa574be344345619d66c4f71b3472b5a72b954d12ebe535803ef98f",
+  "evidenceCommit": "bfc323f4c941d5556327906ded1606a8cee68fc1",
+  "codeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "remoteIntegrationCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+  "completed": "2026-11-25T14:40:16.626Z"
+}
