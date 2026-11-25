@@ -1,0 +1,9 @@
+07:26:07 ALLOW model=gemini-4-carbon path=/v1beta/models/gemini-4-carbon:streamGenerateContent?alt=sse in=81860B method=POST
+07:26:13 UPSTREAM model=gemini-4-carbon status=200 out=914B stream
+07:26:13 ALLOW model=gemini-4-carbon path=/v1beta/models/gemini-4-carbon:streamGenerateContent?alt=sse in=319664B method=POST
+07:27:43 UPSTREAM model=gemini-4-carbon status=200 out=23207B stream
+07:27:43 BLOCKED model=gemini-3.1-flash-lite-preview path=/v1beta/models/gemini-3.1-flash-lite-preview:streamGenerateContent?alt=sse in=19377B
+07:27:43 BLOCKED model=gemini-3.8-flash path=/v1beta/models/gemini-3.8-flash:streamGenerateContent?alt=sse in=42219B
+07:27:43 BLOCKED model=gemini-3.1-flash-lite-preview path=/v1beta/models/gemini-3.1-flash-lite-preview:streamGenerateContent?alt=sse in=41904B
+07:27:43 BLOCKED model=gemini-3.8-flash path=/v1beta/models/gemini-3.8-flash:streamGenerateContent?alt=sse in=65274B
+07:27:43 ALLOW model=gemini-4-carbon path=/v1beta/models/gemini-4-carbon:streamGenerateContent?alt=sse in=342545B method=POST

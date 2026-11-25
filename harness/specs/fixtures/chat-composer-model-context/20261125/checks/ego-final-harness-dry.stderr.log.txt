@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/chat-composer-model-context-polish-20261125.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/chat-composer-model-context-polish-20261125.md" "--dry-run"

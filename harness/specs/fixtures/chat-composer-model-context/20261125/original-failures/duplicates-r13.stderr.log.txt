@@ -1,0 +1,2 @@
+Unapproved duplicate groups: 1
+  619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b harness/specs/fixtures/chat-planning-composer-ux/20261123/images/before-task-workbench.png == harness/specs/fixtures/task-system-ui-consolidation/20261122/after/ledger-light-1280.png

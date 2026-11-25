@@ -29,7 +29,7 @@ for stage in ['first','second']:
     data=chain[stage];folder=root/(stage+'-inputs')
     for item in data['sources']:assert digest((folder/item['archivedName']).read_bytes())==item['sha256']
     database=next(folder/item['archivedName'] for item in data['sources'] if item['archivedName'].endswith('.sqlite'))
-    connection=sqlite3.connect('file:'+database.as_posix()+'?mode=ro',uri=True)
+    connection=sqlite3.connect('file:'+database.as_posix()+'?mode=ro&immutable=1',uri=True)
     try:assert any(json.loads(value)==data['persistedEntry'] for value, in connection.execute('SELECT value_json FROM cache_entries WHERE scope=?',('session_entries',)).fetchall())
     finally:connection.close()
     assert chain[stage+'Snapshot']['usedTokens']==data['usedTokens']
