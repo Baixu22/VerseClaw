@@ -25,6 +25,31 @@ Main must validate the initial URL and every later navigation target. Only ordin
 
 Objective steps must be an explicit typed allow-list with bounded waits. The executor must check cancellation before and after each action. Cancel is the immediate kill path; it must prevent remaining steps and success verification from running.
 
+Progress, completion, failure and controller cleanup must retain their captured run identity.
+Pause aborts the current executor; resume and retry require a new approval. Late callbacks
+from an earlier run cannot change the successor or remove its cancellation controller.
+
+## R4a: Page grants and background requests keep their owner
+
+Full access binds the actual tab and exact origin at approval time. Moving to another
+origin or tab invalidates that binding; debugger attachment and caller payloads cannot
+replace it. Unredacted network reads use the same binding as full-access tools.
+Asynchronous reads retain the captured approval until their result is returned.
+Network details, comparisons, parameter candidates and JS snippets share that
+approval check before returning or deriving data from response bodies.
+Revocation, expiry or a replacement approval prevents an earlier read from returning raw data.
+The captured recorder must still own the current control session; debugger detachment
+or replacement cannot validate a late result from the earlier connection.
+
+A replay draft is consumed synchronously before network dispatch. Concurrent calls,
+timeouts and unknown outcomes cannot reuse it. Its URL, headers and request body
+share the module's canonical credential-name check before draft creation; ordinary
+identifiers such as sessionId and passThrough remain usable.
+JS, SourceMap and replay fetches use
+the existing session/profile proxy, including pinned destination addresses, per-request
+authorization, upstream proxy routing and revocation. A missing or refusing owner must
+never fall back to ambient fetch.
+
 ## R5: Verified outcome
 
 A run may become `completed` only after its success condition produces a typed passed result. Unsupported, missing, timed-out, or mismatched conditions must fail with a stable reason code and an explainable redacted message. Opening the initial URL alone is never proof of success.

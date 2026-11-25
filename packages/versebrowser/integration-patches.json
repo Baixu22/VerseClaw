@@ -196,16 +196,17 @@
     {
       "id": "vb-engine-policy-src-engine-service-ts",
       "driven_by": "agent",
-      "actor": "codex-verse-tools-fix",
+      "actor": "codex-browser-issues-265-268",
       "sourcePath": "src/engine/service.ts",
       "targetPath": "packages/versebrowser/src/engine/service.ts",
       "sourceNormalization": "lf",
       "originalRawSha256": "081b80a0524834f6571c4bf5da812471789aa698f38b732d512ace38812b1424",
       "originalLfSha256": "f8382356e892f130d99310ab73a97560485033c306af0b405ddc12b95bb3ebfc",
-      "patchedSha256": "ad478be4e072998611d06ffb6d2e804f07270f27458abe9b6f0e64046e9c4fa9",
+      "patchedSha256": "1b44e4de01434fe4a206d705fd8029ebf738571116b961819f6295474767b56f",
       "patchPath": "packages/versebrowser/patches/vb-engine-policy__src__engine__service.ts.patch",
-      "patchSha256": "1b422285e8ef3f099c30a54799a2e728af1624f6e6b606961fff26f2017ed122",
-      "reason": "Preserve existing host service adaptations and bind request guards to the real session, including additional tabs and window cleanup. The host retains network policy and approval authority."
+      "patchSha256": "46ce8350aa7cb4d46b47637a8e29bcc08f77ecc210666d0c5c13be6bbcaa50e1",
+      "reason": "Preserve the existing host, lifecycle and driver adaptations; bind full access and every asynchronous raw network detail consumer to the approved page and recorder, and route resource fetches through the host network owner.",
+      "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
     },
     {
       "id": "host-owned-tab-lifecycle",
@@ -220,6 +221,81 @@
       "patchPath": "packages/versebrowser/patches/host-owned-tab-lifecycle.patch",
       "patchSha256": "c2047ff31b6553753117765966ba3f7cb56d5b696c03cf34efe13599ece8eaea",
       "reason": "Destroy rejected initial-navigation windows and force explicit host-owned tab termination so beforeunload cannot leave an untracked browser resource."
+    },
+    {
+      "id": "browser-issues-265-268-task-service",
+      "sourcePath": "src/engine/task-service.ts",
+      "targetPath": "packages/versebrowser/src/engine/task-service.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "73b91538f8d0a68ec2cb08d676c0830d44f4acd7fc251b35f77d73feea491e5e",
+      "originalLfSha256": "b8ecb02c51e2899b967b80b274336d165dc01a7378726283b9b5873a49f7d95b",
+      "patchPath": "packages/versebrowser/patches/browser-issues-265-268__src__engine__task-service.ts.patch",
+      "driven_by": "agent",
+      "actor": "codex-browser-issues-265-268",
+      "reason": "Bind asynchronous progress, completion, errors and controller cleanup to the allocated run; pause aborts the current executor.",
+      "patchedSha256": "ed54101faead04f6e971d86a9a700e32168e82007d4b700d81e0b7629d9b89e4",
+      "patchSha256": "8384cc28bad4d7a8de02b06f23275fc942337d9acf27a4b892bcdb0a6cd7f464",
+      "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
+    },
+    {
+      "id": "browser-issues-265-268-replay-tool-executor",
+      "sourcePath": "src/engine/browser-control/replay-tool-executor.ts",
+      "targetPath": "packages/versebrowser/src/engine/browser-control/replay-tool-executor.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "2c2511f127474daf6973cc6bfe9311679d78c7f7fa3c3048c4c6ff9047feff70",
+      "originalLfSha256": "9fa0bc3306020cc6414a1aaba65ebfdc570b2372463ec04fc220a0409b0d1ada",
+      "patchPath": "packages/versebrowser/patches/browser-issues-265-268__src__engine__browser-control__replay-tool-executor.ts.patch",
+      "driven_by": "agent",
+      "actor": "codex-browser-issues-265-268",
+      "reason": "Claim the draft before dispatch and retain the claim after an unknown outcome; verify grant identity and share canonical credential checks across URLs, headers, JSON, form and text bodies.",
+      "patchedSha256": "ff85cb9423be4b7829242dfb5e47e1b551ac5ff412d0d321df03fedea9ef56fa",
+      "patchSha256": "bcfaebc20949347f404d3d85227c002c9aecab944cb02fb3aa92e952e4b43333",
+      "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
+    },
+    {
+      "id": "browser-issues-265-268-same-origin-js-fetcher",
+      "sourcePath": "src/engine/browser-control/same-origin-js-fetcher.ts",
+      "targetPath": "packages/versebrowser/src/engine/browser-control/same-origin-js-fetcher.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "30e44d5f71fdc40f2ebbd94dcad00adf071d118a4e775f9cdac72d5349683249",
+      "originalLfSha256": "21d564735ffa89e191da13456352a79f3bfbcd6315fc8378037f96240cc7f7ad",
+      "patchPath": "packages/versebrowser/patches/browser-issues-265-268__src__engine__browser-control__same-origin-js-fetcher.ts.patch",
+      "driven_by": "agent",
+      "actor": "codex-browser-issues-265-268",
+      "reason": "Require an injected session network transport; absent owners cannot fall back to ambient fetch.",
+      "patchedSha256": "d8c7bb0610523fb1a1b32099ac2e1f586970deb22d435382c297793f3507ee13",
+      "patchSha256": "871558e97e7b5385c016d7d9cdc74e75d91f26a36b0cfd8ad0f1d3111140a193",
+      "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
+    },
+    {
+      "id": "browser-issues-265-268-same-origin-source-map-fetcher",
+      "sourcePath": "src/engine/browser-control/same-origin-source-map-fetcher.ts",
+      "targetPath": "packages/versebrowser/src/engine/browser-control/same-origin-source-map-fetcher.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "5da189fb8f1a6253a62d40fa273406934922c94c1f1a6c1686a9df968f9f6d65",
+      "originalLfSha256": "06de921dd51a04e7e646e1dcb4ecd57933ad55beb165ad42a90b4a9917b7a943",
+      "patchPath": "packages/versebrowser/patches/browser-issues-265-268__src__engine__browser-control__same-origin-source-map-fetcher.ts.patch",
+      "driven_by": "agent",
+      "actor": "codex-browser-issues-265-268",
+      "reason": "Require an injected session network transport; absent owners cannot fall back to ambient fetch.",
+      "patchedSha256": "583e859f672c007a8e4fc22101fc97e5af388ca78a3a992419ba0be42287a9d8",
+      "patchSha256": "086b4843cd67ed8a302624ce1bb81221481618aece78c1a52ef4a6d48f87ea22",
+      "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
+    },
+    {
+      "id": "browser-issues-265-268-supervised-task-executor",
+      "sourcePath": "src/engine/supervised-task-executor.ts",
+      "targetPath": "packages/versebrowser/src/engine/supervised-task-executor.ts",
+      "sourceNormalization": "lf",
+      "originalRawSha256": "2ae4f90414ccf39ab6d493e84b3fb3a3baa08f0d9a6444025e8aefb28f7defc9",
+      "originalLfSha256": "404f426f99a570567b807dd039d3324e352c9fd24238c3d26608a779466a20ae",
+      "patchPath": "packages/versebrowser/patches/browser-issues-265-268__src__engine__supervised-task-executor.ts.patch",
+      "driven_by": "agent",
+      "actor": "codex-browser-issues-265-268",
+      "reason": "Restore the shared runtime switch only after every admitted executor has settled, including cancelled runs awaiting asynchronous owner cleanup.",
+      "patchedSha256": "f596f74952de25fe7dcb0071b418e59e9d5f46d80b6f437260c6c286824a148c",
+      "patchSha256": "214b8e53e51cdde37736017eb79b956f4ad56cfee99b931447f3dd76b8764f6e",
+      "regressionSpec": "harness/specs/tasks/browser-issues-265-268.md"
     }
   ]
 }

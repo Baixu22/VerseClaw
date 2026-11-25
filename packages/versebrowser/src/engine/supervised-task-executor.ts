@@ -16,6 +16,8 @@ type BrowserTaskRuntime = Pick<
   'openSupervised' | 'assertSupervisedRequestSafe' | 'navigate' | 'waitForSelector' | 'click' | 'evaluate' | 'close' | 'isEnabled' | 'setEnabled'
 >;
 
+const runtimeUsers = new WeakMap<BrowserTaskRuntime, { count: number; restoreDisabled: boolean }>();
+
 type LookupAddress = { address: string; family: number };
 export type BrowserTaskLookup = (hostname: string) => Promise<LookupAddress[]>;
 
@@ -208,8 +210,13 @@ export function createAgentBrowserSupervisedTaskExecutor(options: AgentBrowserSu
     await options.assertSandboxAllowed();
     signal.throwIfAborted();
 
-    const runtimeWasEnabled = options.service.isEnabled();
-    if (!runtimeWasEnabled) options.service.setEnabled(true);
+    let runtimeUse = runtimeUsers.get(options.service);
+    if (!runtimeUse) {
+      runtimeUse = { count: 0, restoreDisabled: !options.service.isEnabled() };
+      if (runtimeUse.restoreDisabled) options.service.setEnabled(true);
+      runtimeUsers.set(options.service, runtimeUse);
+    }
+    runtimeUse.count += 1;
     let sessionId: string | undefined;
     let keepSession = false;
     const steps = cloneSteps(task.steps);
@@ -393,7 +400,11 @@ export function createAgentBrowserSupervisedTaskExecutor(options: AgentBrowserSu
       try {
         if ((!keepSession || signal.aborted) && sessionId) await closeOwnedSession();
       } finally {
-        if (!runtimeWasEnabled && options.service.isEnabled()) options.service.setEnabled(false);
+        runtimeUse.count -= 1;
+        if (runtimeUse.count === 0) {
+          runtimeUsers.delete(options.service);
+          if (runtimeUse.restoreDisabled && options.service.isEnabled()) options.service.setEnabled(false);
+        }
       }
     }
   };
