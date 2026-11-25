@@ -11,6 +11,7 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/review-fixes-20261125/**
   - openclaw_runtime/src/gateway/server-methods/session-active-runs.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.shared.ts
@@ -434,6 +435,8 @@ acceptance:
   - A stale lifecycle, replaced payload, changed session generation, or stale ACP identity cannot receive an old admission acknowledgement or terminal callback.
   - Completed admitted recoveries reject replay; provider fallback within one unfinished command retains its admission until the command commits its terminal state.
   - Subagent failure attempts are persisted before RPC and cannot restart an unbounded retry burst; successful registry remapping stays owned by the existing subagent registry.
+  - Subagent authority continuations inherit consumed attempts after registry run-id adoption, elapsed rewedge windows and compaction. Ordinary session generation replacement clears the prior budget.
+  - Main restart recovery carries the owning agent for global continuation and failure-notice RPCs. Retry deduplication binds the store path, session key and physical generation so different agents and replacement generations recover independently.
   - Goal-wake remains level-triggered and never respawns an uncertain durable helper; task terminal state and the wait reconciliation remain idempotent after restart.
   - ACP observed output prevents a fresh turn, and an early backend exit without effect truth is not treated as proof that no effect occurred.
   - Final delivery reuses the existing durable send owner and intent; pending text is preserved when the outcome is uncertain.

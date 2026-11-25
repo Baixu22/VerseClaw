@@ -12,6 +12,8 @@ An idle task can continue after its lease expires in the same session generation
 
 After a Gateway restart, recovered tasks wait for the desktop's authenticated connection before admitting effects.
 
+Restart recovery keeps each agent's `global` session and failure notice bound to that agent. In authority mode, a subagent's automatic continuation chain shares a two-attempt budget across delays and compaction; a new session generation starts a fresh budget.
+
 Agents reuse compatible Gateway plugin state during startup; configuration and workspace changes retain their own loading scope.
 
 Native language parsers load when code analysis first needs the corresponding language.

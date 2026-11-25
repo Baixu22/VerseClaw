@@ -11,12 +11,14 @@ import { hasSamePendingFinalDelivery } from "./recovery-authority/final-delivery
 import { resolveStateDir } from "../config/paths.js";
 import {
   type SessionEntry,
+  type SessionStoreTarget,
   loadSessionStore,
   resolveAllAgentSessionStoreTargetsSync,
   resolveSessionFilePath,
   resolveSessionTranscriptPathInDir,
   updateSessionStore,
 } from "../config/sessions.js";
+import { resolveAgentIdFromSessionStorePath } from "../config/sessions/paths.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { callGateway } from "../gateway/call.js";
 import { readSessionMessagesAsync } from "../gateway/session-utils.fs.js";
@@ -290,6 +292,7 @@ async function markSessionFailed(params: {
 
 async function sendUnresumableSessionNotice(params: {
   cfg?: OpenClawConfig;
+  agentId?: string;
   entry: SessionEntry;
   reason: string;
   sessionKey: string;
@@ -317,6 +320,7 @@ async function sendUnresumableSessionNotice(params: {
     action: "send",
     sessionKey: params.sessionKey,
     sessionId: params.entry.sessionId,
+    ...(params.agentId ? { agentId: params.agentId } : {}),
     idempotencyKey: `main-session-restart-recovery:${params.entry.sessionId}:failed-notice`,
     params: messageParams,
   };
@@ -379,6 +383,7 @@ function resolveRestartRecoveryDeliveryContext(params: {
 
 async function resumeMainSession(params: {
   cfg?: OpenClawConfig;
+  agentId?: string;
   entry: SessionEntry;
   storePath: string;
   sessionKey: string;
@@ -462,6 +467,7 @@ async function resumeMainSession(params: {
       message: buildResumeMessage(sanitizedPendingText),
       sessionKey: params.sessionKey,
       sessionId: params.entry.sessionId,
+      ...(params.agentId ? { agentId: params.agentId } : {}),
       idempotencyKey: recoveryRunId,
       deliver: Boolean(deliveryContext),
       lane: CommandLane.Main,
@@ -612,6 +618,7 @@ export async function markRestartAbortedMainSessionsFromLocks(params: {
 
 async function recoverStore(params: {
   cfg?: OpenClawConfig;
+  agentId: string;
   storePath: string;
   resumedSessionKeys: Set<string>;
 }): Promise<{ recovered: number; failed: number; skipped: number }> {
@@ -645,7 +652,10 @@ async function recoverStore(params: {
       result.skipped++;
       continue;
     }
-    if (params.resumedSessionKeys.has(sessionKey)) {
+    // Global keys repeat across agent stores; a reset creates a new recoverable generation.
+    const recoveryIdentity = JSON.stringify([params.storePath, sessionKey, entry.sessionId]);
+    const agentId = sessionKey === "global" ? params.agentId : undefined;
+    if (params.resumedSessionKeys.has(recoveryIdentity)) {
       result.skipped++;
       continue;
     }
@@ -782,6 +792,7 @@ async function recoverStore(params: {
           });
           await sendUnresumableSessionNotice({
             cfg: params.cfg,
+            agentId,
             entry: recoveryEntry,
             sessionKey,
             reason: admitted.reason,
@@ -829,6 +840,7 @@ async function recoverStore(params: {
       });
       await sendUnresumableSessionNotice({
         cfg: params.cfg,
+        agentId,
         entry: recoveryEntry,
         sessionKey,
         reason: effectiveResumeBlockReason,
@@ -846,6 +858,7 @@ async function recoverStore(params: {
     recordRecoveryEvalDecision({ sessionKey, sessionId: entry.sessionId, action: "resume" });
     const resumed = await resumeMainSession({
       cfg: params.cfg,
+      agentId,
       entry: recoveryEntry,
       storePath: params.storePath,
       sessionKey,
@@ -855,7 +868,7 @@ async function recoverStore(params: {
     });
     recordShadow(resumed ? "resumed" : "failed");
     if (resumed) {
-      params.resumedSessionKeys.add(sessionKey);
+      params.resumedSessionKeys.add(recoveryIdentity);
       result.recovered++;
     } else {
       result.failed++;
@@ -865,22 +878,25 @@ async function recoverStore(params: {
   return result;
 }
 
-async function resolveRestartRecoveryStorePaths(params: {
+async function resolveRestartRecoveryStoreTargets(params: {
   cfg?: OpenClawConfig;
   stateDir?: string;
-}): Promise<string[]> {
-  const storePaths = new Set<string>();
+}): Promise<SessionStoreTarget[]> {
+  const targets = new Map<string, SessionStoreTarget>();
   const stateDir = params.stateDir ?? resolveStateDir(process.env);
   for (const sessionsDir of await resolveAgentSessionDirs(stateDir)) {
-    storePaths.add(path.join(sessionsDir, "sessions.json"));
+    const storePath = path.resolve(sessionsDir, "sessions.json");
+    const agentId = resolveAgentIdFromSessionStorePath(storePath);
+    if (agentId) targets.set(storePath, { storePath, agentId });
   }
   if (params.cfg) {
     const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
     for (const target of resolveAllAgentSessionStoreTargetsSync(params.cfg, { env })) {
-      storePaths.add(path.resolve(target.storePath));
+      const storePath = path.resolve(target.storePath);
+      targets.set(storePath, { ...target, storePath });
     }
   }
-  return [...storePaths].toSorted((a, b) => a.localeCompare(b));
+  return [...targets.values()].toSorted((a, b) => a.storePath.localeCompare(b.storePath));
 }
 
 export async function recoverRestartAbortedMainSessions(
@@ -900,10 +916,10 @@ export async function recoverRestartAbortedMainSessions(
     }
   }
 
-  for (const storePath of await resolveRestartRecoveryStorePaths(params)) {
+  for (const target of await resolveRestartRecoveryStoreTargets(params)) {
     const storeResult = await recoverStore({
       cfg: params.cfg,
-      storePath,
+      ...target,
       resumedSessionKeys,
     });
     result.recovered += storeResult.recovered;
@@ -928,7 +944,8 @@ export function scheduleRestartAbortedMainSessionRecovery(
   } = {},
 ): void {
   const candidateMode = isExecutionPhaseWriterEnabled();
-  const initialDelay = params.delayMs ?? (candidateMode ? CANDIDATE_RECOVERY_DELAY_MS : DEFAULT_RECOVERY_DELAY_MS);
+  const initialDelay =
+    params.delayMs ?? (candidateMode ? CANDIDATE_RECOVERY_DELAY_MS : DEFAULT_RECOVERY_DELAY_MS);
   const nextDelay = (delay: number) =>
     candidateMode ? CANDIDATE_RETRY_DELAY_MS : delay * RETRY_BACKOFF_MULTIPLIER;
   const maxRetries = params.maxRetries ?? MAX_RECOVERY_RETRIES;

@@ -156,7 +156,7 @@ export type SessionPluginNextTurnInjection = {
 export type SubagentRecoveryState = {
   /** Gated owner decision and attempts, persisted before the recovery RPC. */
   authority?: RecoveryOwnerAdmission;
-  /** Consecutive accepted automatic orphan-recovery resumes in the rapid re-wedge window. */
+  /** Consumed authority-chain attempts, or legacy resumes in the rapid re-wedge window. */
   automaticAttempts?: number;
   /** Timestamp (ms) of the latest accepted automatic orphan-recovery resume. */
   lastAttemptAt?: number;

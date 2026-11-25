@@ -43,6 +43,13 @@ An admitted subagent continuation writes the original session lifecycle while
 its synthetic prompt remains suppressed. An unknown RPC acknowledgement retains
 the admission: that exact run may consume its previously authorized tool call.
 A reconciliation decision that never admitted the run cannot execute the call.
+Registry adoption and compaction retain the automatic continuation chain's consumed
+attempts even after the legacy rewedge window expires. An ordinary new Session
+generation clears the prior recovery state.
+
+Main restart recovery retains the discovered or configured agent for global
+continuations and failure notices. Retry deduplication includes the owning store,
+session key and physical generation.
 
 Run-level admission hooks and the initialized tool lifecycle precede recovered
 tool execution. A blocked hook cannot leave an already executed recovery effect.

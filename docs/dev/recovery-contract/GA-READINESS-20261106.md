@@ -130,6 +130,8 @@ Goal-wake 在原 `task_runs.progress_summary` 中保存统一对账决定。原 
 
 该候选五窗口各三次全部达到正确终态，重复效果与丢失任务为零。连续三次中断到终态为 104.588、93.327、126.770 秒。尚未采集该候选的 30 对真实模型长会话，完整冻结评测返回 `EVIDENCE_INSUFFICIENT`；将缺少的 30 项耗时置零后，P95 下界仍为 90.593 秒。TF-0818 保持 `in_progress`，GA 为 **NO_GO**。逐槽结果、源码绑定与检查证据见[就绪探针验证报告](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/ready-probe-20261118/README.md)。
 
+主会话重启恢复保留存储所属的 agent，并将其传入 `global` 续跑与失败通知。重试去重按存储路径、会话键和物理代次隔离。子代理 authority 续跑链从持久 admission 继承已消耗次数，registry 更换 runId、等待超过两分钟和压缩均保留两次上限；普通会话换代重新计数。
+
 此前实测见 [恢复评测](FINAL-20261105.zh-CN.md) 与 [后续验证](FOLLOWUP-20261106.zh-CN.md)。最新节点证据完成后收录在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/`。
 
 2026-11-19 已修复恢复热路径中的重复文件权限写入。同一 POSIX 所有者或 Windows 原生权限匹配时跳过重复 `chmod`，不同 POSIX 所有者继续核对原修改权限；特殊位、只读转换和描述符身份仍在写入前检查。12 项回归、32.700 秒无缓存类型、runtime 重建与启动检查、目标 Harness 和固定 DeepSeek 独立复核通过。九对交替样本的每批 500 次追加中位耗时从 186.479 ms 降至 74.757 ms。精选原件见[文件追加验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/append-permissions-20261119/README.md)。当前 GA 为 **NO_GO**，干净候选的完整恢复指标和发布门禁继续执行。
