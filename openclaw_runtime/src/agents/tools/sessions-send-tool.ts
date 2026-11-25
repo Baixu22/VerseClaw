@@ -57,8 +57,17 @@ import {
 } from "./sessions-helpers.js";
 import { buildAgentToAgentMessageContext, resolvePingPongTurns } from "./sessions-send-helpers.js";
 import { runSessionsSendA2AFlow } from "./sessions-send-tool.a2a.js";
+import { SESSION_COLLABORATION_PURPOSES } from '../../../../shared/types/session-collaboration-message.js';
 
 const SessionsSendToolSchema = Type.Object({
+  collaboration: Type.Optional(Type.Boolean()),
+  id: Type.Optional(Type.String({ minLength: 1, maxLength: 160 })),
+  target: Type.Optional(Type.Unknown()),
+  purpose: Type.Optional(Type.String({ enum: [...SESSION_COLLABORATION_PURPOSES] })),
+  task: Type.Optional(Type.Unknown()),
+  evidenceRefs: Type.Optional(Type.Array(Type.String(), { maxItems: 16 })),
+  replyTo: Type.Optional(Type.String()),
+  expiresAt: Type.Optional(Type.Integer({ minimum: 0 })),
   sessionKey: Type.Optional(Type.String()),
   label: Type.Optional(Type.String({ minLength: 1, maxLength: SESSION_LABEL_MAX_LENGTH })),
   agentId: Type.Optional(Type.String({ minLength: 1, maxLength: 64 })),
@@ -311,6 +320,9 @@ async function startAgentRun(params: {
 
 export function createSessionsSendTool(opts?: {
   agentSessionKey?: string;
+  runSessionKey?: string;
+  agentSessionId?: string;
+  runId?: string;
   agentChannel?: GatewayMessageChannel;
   sandboxed?: boolean;
   config?: OpenClawConfig;
@@ -323,8 +335,13 @@ export function createSessionsSendTool(opts?: {
     description: describeSessionsSendTool(),
     parameters: SessionsSendToolSchema,
     prepareArguments: normalizeSessionsSendArguments,
-    execute: async (_toolCallId, args) => {
+    execute: async (_toolCallId, args, signal) => {
       const params = normalizeSessionsSendArguments(args);
+      if (params.collaboration === true) {
+        const { sendSessionCollaboration } = await import('./session-collaboration-send.js');
+        const { collaboration: _mode, ...intent } = params;
+        return jsonResult(await sendSessionCollaboration(opts, intent, signal));
+      }
       const gatewayCall = opts?.callGateway ?? callGateway;
       const message = readStringParam(params, "message", { required: true });
       const timeoutSeconds = readNonNegativeIntegerParam(params, "timeoutSeconds") ?? 30;

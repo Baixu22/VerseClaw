@@ -2,6 +2,8 @@ import { knowledgeHostApi } from './host-api/knowledge';
 import type { SessionActivityReadQuery } from '@shared/types/session-activity';
 import type { SessionCollaborationQuery } from '@shared/types/session-collaboration';
 import type { SessionCollaborationWatch } from '@shared/types/session-collaboration-watch';
+import type { SessionCollaborationMessageInput } from '@shared/types/session-collaboration-message';
+import type { AutonomySessionScope } from '@shared/types/identity-scope';
 import type { SystemProjectRead } from '@shared/types/system-portfolio';
 import type { SystemControlChange } from '@shared/types/system-control';
 import type { ProjectConfigurationApply, ProjectConfigurationInput, ProjectConfigurationRecovery } from '@shared/project-configuration';
@@ -1515,6 +1517,8 @@ export const hostApi = {
     ),
   },
   sessions: {
+    collaborationSender: () => invokeHost('sessions', 'collaborationSender'),
+    sendCollaborationMessage: (input: SessionCollaborationMessageInput & { expectedSource: AutonomySessionScope }) => invokeHost('sessions', 'sendCollaborationMessage', input),
     dispatchSystemProject: (input: SystemProjectDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchSystemProject', input),
     dispatchPlanTask: (input: ProjectPlanDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchPlanTask', input),
     delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (

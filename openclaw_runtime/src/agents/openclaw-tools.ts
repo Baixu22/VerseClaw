@@ -604,6 +604,9 @@ export function createOpenClawTools(
       : [
           createSessionsSendTool({
             agentSessionKey: options?.agentSessionKey,
+            runSessionKey: options?.runSessionKey,
+            agentSessionId: options?.sessionId,
+            runId: options?.runId,
             agentChannel: options?.agentChannel,
             sandboxed: options?.sandboxed,
             config: resolvedConfig,

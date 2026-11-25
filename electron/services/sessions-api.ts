@@ -59,7 +59,10 @@ import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contra
 import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
   getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
-import { normalizeRunScope } from '@shared/types/identity-scope';
+import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type WorkspaceId } from '@shared/types/identity-scope';
+import { createSessionCollaborationMessage, validateSessionCollaborationReceipt } from '@shared/session-collaboration-message';
+import { parseSessionCollaborationMessageInput } from '@shared/types/session-collaboration-message';
+import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
 import { classifyDerivation } from '@shared/types/session-derivation';
 import {
   executeSessionDelegation,
@@ -2016,6 +2019,21 @@ export function createSessionsApi(ctx: {
   };
 } = {}): CompleteHostServiceRegistry['sessions'] {
   const delegationStopEpochs = new Map<string, number>();
+  const readCollaborationSender = async () => {
+    const profile = await getActiveWorkspaceProfile();
+    if (!profile || !ctx.gatewayManager) return null;
+    const described = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string } }>('sessions.describe', { key: profile.activeSessionKey }, 10_000);
+    if (!described.session?.sessionId) return null;
+    const scope = { workspaceId: profile.id as WorkspaceId, projectId: resolveProjectIdForWorkspace(profile.id as WorkspaceId),
+      sessionKey: profile.activeSessionKey, sessionGeneration: described.session.sessionId };
+    const candidate = normalizeAutonomySessionScope(scope, scope as Parameters<typeof normalizeAutonomySessionScope>[1]);
+    const query = parseSessionCollaborationQuery({ requester: candidate, target: candidate, fields: [], limit: 1 });
+    const result = await ctx.gatewayManager.rpc<{ page: SessionCollaborationPage }>('session.activitySnapshot', { query }, 10_000);
+    const page = validateSessionCollaborationPage(query, result?.page);
+    const after = await getActiveWorkspaceProfile();
+    if (page.state !== 'ready' || after?.id !== profile.id || after.activeSessionKey !== profile.activeSessionKey) return null;
+    return { scope: candidate, name: profile.name };
+  };
   const delegationFlights = new Map<string, Promise<SessionDelegationResult>>();
   const delegationStore = ctx.delegationStore ?? {
     readAdmission: readSessionDelegationAdmission,
@@ -2372,6 +2390,27 @@ export function createSessionsApi(ctx: {
           return { success: false, error: 'Transcript not found' };
         }
         return { success: false, error: 'Failed to load transcript' };
+      }
+    },
+    collaborationSender: async () => {
+      try { return { success: true, source: await readCollaborationSender() }; }
+      catch { return { success: true, source: null, reason: 'owner-unavailable' }; }
+    },
+    sendCollaborationMessage: async (payload) => {
+      const { expectedSource, ...input } = payload;
+      const intent = parseSessionCollaborationMessageInput(input);
+      try {
+        const source = await readCollaborationSender();
+        if (!source || (await readSystemControl()).paused) return { success: false, phase: 'rejected', receipt: null, error: 'COLLABORATION_SOURCE_UNAVAILABLE' };
+        normalizeAutonomySessionScope(expectedSource, source.scope);
+        const message = createSessionCollaborationMessage(intent, { scope: source.scope, run: null, actor: 'operator' });
+        const result = await ctx.gatewayManager!.rpc<{ receipt: unknown }>('sessions.send', { key: intent.target.sessionKey,
+          expectedSessionId: intent.target.sessionGeneration, message: intent.message, idempotencyKey: intent.id, collaboration: message }, 30_000);
+        const receipt = validateSessionCollaborationReceipt(message, result?.receipt);
+        return { success: true, phase: receipt.phase, receipt };
+      } catch (error) {
+        return { success: false, phase: error instanceof GatewayRpcError && ['INVALID_REQUEST', '-32600', '-32602'].includes(String(error.payload.code)) ? 'rejected' : 'unknown',
+          receipt: null, error: error instanceof Error ? error.message : String(error) };
       }
     },
     sendWorker: async (payload) => {

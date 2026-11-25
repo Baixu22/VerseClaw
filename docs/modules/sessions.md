@@ -50,6 +50,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 系统总览和项目会话面板提供同一个会话协作视图，可搜索其他会话的目标、查看已观测动作并选中来源详情。列表分页读取，详情和历史按需打开；更新保留搜索、选择和键盘焦点。会话、worker 历史和任务入口使用既有导航，来源未读取或不可用时显示相应状态。
 
+协作消息使用 finding、status、request、handoff、result 用途和稳定意图 ID，携带源目标会话代次及原任务/证据引用。工具的来源绑定当前运行，Main 发送入口读取活动 Workspace/Session owner，并核对用户预览的源 scope。消息仍是 inter_session 数据；同 ID 异内容、过期意图、旧代和失效任务引用被原发送入口拒绝。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

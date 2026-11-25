@@ -192,6 +192,18 @@ async function handleSessionSend(params: {
   const requestedAgentId = requestedAgent.agentId;
   const loaded = loadSessionEntry(key, { agentId: requestedAgentId });
   let { entry, canonicalKey, storePath } = loaded;
+  let collaboration: Awaited<ReturnType<typeof import('./session-collaboration-message.js')['prepareSessionCollaborationMessage']>> | undefined;
+  if (p.collaboration !== undefined) {
+    try {
+      if (params.interruptIfActive) throw new Error('COLLABORATION_MESSAGE_IS_NOT_STEER');
+      const { prepareSessionCollaborationMessage } = await import('./session-collaboration-message.js');
+      collaboration = await prepareSessionCollaborationMessage(p.collaboration, params.context, params.client);
+      if (collaboration.message.target.sessionKey !== canonicalKey || collaboration.message.message !== p.message
+        || (p.idempotencyKey !== undefined && p.idempotencyKey !== collaboration.message.id)) throw new Error('COLLABORATION_MESSAGE_SCOPE_MISMATCH');
+    } catch (error) {
+      params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, error instanceof Error ? error.message : 'Invalid collaboration message')); return;
+    }
+  }
   if (typeof p.expectedSessionId === "string" && entry?.sessionId !== p.expectedSessionId) {
     params.respond(
       false,
@@ -200,7 +212,7 @@ async function handleSessionSend(params: {
     );
     return;
   }
-  if (p.requesterSessionKey || p.expectedRequesterSessionId) {
+  if (!collaboration && (p.requesterSessionKey || p.expectedRequesterSessionId)) {
     if (
       typeof p.requesterSessionKey !== "string" ||
       typeof p.expectedRequesterSessionId !== "string" ||
@@ -263,6 +275,7 @@ async function handleSessionSend(params: {
     params.interruptIfActive ? "sessions-steer" : "sessions-send",
   );
   let interruptedActiveRun = false;
+  let releaseCollaborationSource: (() => void) | undefined;
   // TF-0082: the permit must fence the whole run-start window (steer interrupt,
   // transcript seq read, chat.send preamble) so a reset/delete racing mid-send
   // cannot seed a run on a stale generation. It is released as soon as the run
@@ -273,6 +286,7 @@ async function handleSessionSend(params: {
     if (!sendStartPermitReleased) {
       sendStartPermitReleased = true;
       releaseSessionsSendPermit();
+      releaseCollaborationSource?.();
     }
   };
   let sendAcked = false;
@@ -280,6 +294,32 @@ async function handleSessionSend(params: {
   let sendCached = false;
   let startedRunId: string | undefined;
   try {
+    if (collaboration) {
+      releaseCollaborationSource = acquireSessionAdmissionPermit({ canonicalSessionKey: collaboration.message.source.sessionKey,
+        expectedSessionId: collaboration.message.source.sessionGeneration }, 'sessions-send');
+      const source = loadSessionEntry(collaboration.message.source.sessionKey, { readOnly: true, skipCache: true });
+      if (source.entry?.sessionId !== collaboration.message.source.sessionGeneration || source.entry.workspaceId !== collaboration.message.source.workspaceId) throw new Error('COLLABORATION_SOURCE_GENERATION_CHANGED');
+      const current = loadSessionEntry(canonicalKey, { readOnly: true, skipCache: true });
+      if (current.entry?.sessionId !== collaboration.message.target.sessionGeneration || current.entry.workspaceId !== collaboration.message.target.workspaceId) throw new Error('COLLABORATION_TARGET_GENERATION_CHANGED');
+      const { agentHandlers } = await import('./agent.js');
+      const { assertSessionCollaborationSource } = await import('./session-collaboration-message.js');
+      assertSessionCollaborationSource(collaboration.message, params.context, params.client);
+      await agentHandlers.agent({ req: params.req, client: params.client, context: params.context, isWebchatConnect: params.isWebchatConnect,
+        params: { message: collaboration.message.message, sessionKey: canonicalKey, expectedSessionId: collaboration.message.target.sessionGeneration,
+          workspaceId: collaboration.message.target.workspaceId, idempotencyKey: collaboration.message.id, deliver: false,
+          sourceReplyDeliveryMode: 'message_tool_only', inputProvenance: collaboration.provenance },
+        respond: (ok, payload, error, meta) => {
+          releaseSendStartPermitOnce();
+          const ack = payload as { runId?: string; status?: string } | undefined;
+          params.respond(ok, ok ? { receipt: { schemaVersion: 'SessionCollaborationReceipt/v1', message: collaboration!.message,
+            phase: ack?.status === 'queued' ? 'queued' : ['accepted', 'ok'].includes(ack?.status ?? '') ? 'accepted' : 'unknown', run: ack?.runId ? { runId: ack.runId, scope: {
+              workspaceId: collaboration!.message.target.workspaceId, projectId: collaboration!.message.target.projectId, sessionKey: collaboration!.message.target.sessionKey } } : null,
+            replyRef: null, updatedAt: Date.now() } } : payload, error, meta);
+        },
+      });
+      emitSessionsChanged(params.context, { sessionKey: canonicalKey, reason: 'send' });
+      return;
+    }
     if (params.interruptIfActive) {
       const interruptResult = await interruptSessionRunIfActive({
         req: params.req,
