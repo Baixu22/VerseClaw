@@ -2396,6 +2396,14 @@ export function createSessionsApi(ctx: {
       try { return { success: true, source: await readCollaborationSender() }; }
       catch { return { success: true, source: null, reason: 'owner-unavailable' }; }
     },
+    collaborationContext: async (payload) => {
+      const query = parseSessionCollaborationQuery(payload);
+      if (!query.target || query.limit !== 1) throw new TypeError('One context target required');
+      const result = await ctx.gatewayManager!.rpc<{ taskContext: import('../../shared/types/session-collaboration-context').SessionCollaborationTaskContext }>('session.activitySnapshot', { taskContext: query }, 15_000);
+      if (!result.taskContext || result.taskContext.schemaVersion !== 'SessionCollaborationTaskContext/v1') throw new Error('CONTEXT_PROTOCOL_UNVERIFIED');
+      normalizeAutonomySessionScope(result.taskContext.scope, query.target);
+      return { success: true, taskContext: result.taskContext };
+    },
     collaborationMessages: async (payload) => {
       const query = parseSessionCollaborationMessageQuery(payload);
       const unavailable = (state: 'unavailable' | 'unknown', reason: string): SessionCollaborationMessagePage => ({ schemaVersion: 'SessionCollaborationMessages/v1',

@@ -58,6 +58,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 同源目标代次、任务和完全相同内容的 finding/status 突发由原消息 owner 合并，回执携带 coalescedTo 原意图引用；request/handoff/result 保持独立。实际协作模型调用在原 Task Trace 标记 coordination，原价格、用量、预算和队列决定继续由各自 owner 提供。
 
+`sessions.collaborationContext` 读取当前目标 scope 的原 TaskSystem 合同、checkpoint、证据和有界上下文。observer 保留只读引用身份，读取不取得 claim；旧 Ledger WorkingContext 在缺少已验证关联时显示 association-not-verified，不隐式桥接或迁移。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

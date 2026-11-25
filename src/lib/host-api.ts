@@ -1518,6 +1518,7 @@ export const hostApi = {
   },
   sessions: {
     collaborationSender: () => invokeHost('sessions', 'collaborationSender'),
+    collaborationContext: (input: SessionCollaborationQuery) => invokeHost('sessions', 'collaborationContext', input),
     collaborationMessages: (input: SessionCollaborationMessageQuery) => invokeHost('sessions', 'collaborationMessages', input),
     sendCollaborationMessage: (input: SessionCollaborationMessageInput & { expectedSource: AutonomySessionScope }) => invokeHost('sessions', 'sendCollaborationMessage', input),
     dispatchSystemProject: (input: SystemProjectDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchSystemProject', input),
