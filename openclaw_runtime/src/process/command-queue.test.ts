@@ -10,6 +10,7 @@ import {
   enqueueCommandInLane,
   getCommandLaneSnapshot,
   waitForActiveTasks,
+  resetCommandLane,
   resetCommandQueueStateForTest,
   setCommandLaneConcurrency,
 } from "./command-queue.js";
@@ -185,6 +186,7 @@ describe("bounded lane queue", () => {
     ).catch((error) => error);
     await vi.advanceTimersByTimeAsync(10);
     expect(await first).toBeInstanceOf(CommandLaneTaskTimeoutError);
+    expect(resetCommandLane(LANE)).toBe(0);
     const next = vi.fn(async () => "next");
     const second = enqueueCommandInLane(LANE, () => enqueueCommandInLane(globalLane, next));
     await flush();
@@ -196,6 +198,23 @@ describe("bounded lane queue", () => {
     await flush();
     expect(getCommandLaneSnapshot(LANE).activeCount).toBe(0);
     expect(getCommandLaneSnapshot(globalLane).activeCount).toBe(0);
+  });
+
+  it("keeps active ownership when recovery resets a lane before execution settles", async () => {
+    const gate = deferred();
+    const running = enqueueCommandInLane(LANE, () => gate.promise);
+    const next = vi.fn(async () => undefined);
+    const queued = enqueueCommandInLane(LANE, next);
+    const generation = getCommandLaneSnapshot(LANE).generation;
+    expect(resetCommandLane(LANE)).toBe(0);
+    await flush();
+    expect(getCommandLaneSnapshot(LANE)).toMatchObject({ activeCount: 1, queuedCount: 1, generation });
+    expect(next).not.toHaveBeenCalled();
+    expect(await waitForActiveTasks(0)).toEqual({ drained: false });
+    gate.resolve();
+    await Promise.all([running, queued]);
+    expect(next).toHaveBeenCalledOnce();
+    expect(await waitForActiveTasks(0)).toEqual({ drained: true });
   });
 
   it("bounds 100 embedded-entry requests and expires them under one shared wait budget", async () => {

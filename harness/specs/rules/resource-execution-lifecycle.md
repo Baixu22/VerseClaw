@@ -8,6 +8,8 @@ severity: error
 An execution timeout may finish the caller's wait, but capacity stays reserved until
 the actual task settles. Carry terminal ownership through nested session/global
 queues; timeout propagation must not release an outer lane while inner work remains.
+Recovery resets also retain active slots until execution settles; clearing a run
+registry or requesting abort does not prove terminal execution.
 
 Bound waiting at the actual agent entry, share its waiting deadline across both
 queues, and forward its cancellation signal. Waiting limits exclude active work.

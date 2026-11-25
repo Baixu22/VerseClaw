@@ -624,25 +624,22 @@ export function clearCommandLane(lane: string = CommandLane.Main) {
 }
 
 /**
- * Force a single lane back to idle and immediately pump any queued entries.
- * Used only by recovery paths after the owner has already attempted to abort
- * the active work; stale completions from the previous generation are ignored.
+ * Resume an idle lane after recovery. An abort request or cleared run registry
+ * does not prove execution ended, so active owners keep their slots.
  */
 export function resetCommandLane(lane: string = CommandLane.Main): number {
   const cleaned = normalizeLane(lane);
   const state = getQueueState().lanes.get(cleaned);
-  if (!state) {
+  if (!state || state.activeTaskIds.size > 0) {
     return 0;
   }
-  const released = state.activeTaskIds.size;
   state.generation += 1;
-  state.activeTaskIds.clear();
   state.draining = false;
   if (state.queue.length > 0) {
     drainLane(cleaned);
   }
   notifyActiveTaskWaiters();
-  return released;
+  return 0;
 }
 
 /**

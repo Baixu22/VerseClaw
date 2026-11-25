@@ -61,7 +61,7 @@ requiredTests:
   - node harness/src/cli.mjs run --spec harness/specs/tasks/resource-scheduling-review-fixes-20261125.md --dry-run
   - git diff --check
 acceptance:
-  - A lane with concurrency one never runs two task owners after timeout; nested session/global lanes retain both reservations until terminal settlement.
+  - A lane with concurrency one never runs two task owners after timeout or recovery reset; nested session/global lanes retain both reservations until terminal settlement.
   - The actual embedded-agent entry supplies finite waiting capacity, one shared waiting deadline and its AbortSignal to both queue layers; host queue failures do not switch provider/model.
   - Queued abort, expiration, clear and grant clean up their timers and listeners, settle once and never execute cancelled work; zero waiting capacity still allows immediate admission.
   - Host capacity contracts without dropping existing owners; Main/Gateway process admissions use the same SQLite capacity owner, including Git and terminal execution.
