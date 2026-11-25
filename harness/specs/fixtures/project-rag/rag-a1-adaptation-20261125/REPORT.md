@@ -1,6 +1,6 @@
 # 当前知识库适配基线开发记录
 
-TF-0946 已实现评分修正、只读来源快照和问题集封存，并完成首轮实际检索与回答诊断。源码候选 `13edb1346827a8f6f13966c1ad404578669ef520`。节点保持 `in_progress / 85`，质量资格为 `hold`。
+TF-0946 已实现评分修正、只读来源快照和问题集封存，并完成首轮实际检索与回答诊断。源码候选 `13edb1346827a8f6f13966c1ad404578669ef520`。节点在初轮记录中为 `in_progress / 85`，质量资格为 `hold`。
 
 本轮由所有者明确选择“用当前项目文档建立隔离知识库，并标注为 agent 构建的适配语料”。9 份文档来自 `c2a024545` 的 Git 字节，原文合计 77,116 字节；添加可追溯 owner metadata 后为 79,480 字节。来源标识为 `agent-built-adaptation`。日常知识库配置未改写。
 
@@ -57,3 +57,9 @@ TF-0946 仍需完成：
 节点规格：`harness/specs/tasks/project-rag-knowledge-adaptation-baseline.md`。持续回归命令已写入该规格的 requiredTests。
 
 原始目录：`D:/tmp/g2-tf0946-20261125-01a21178`。其中 `kb-r1` 保存来源、owner 快照和索引；`retrieval-plan-r5.json`、`experiment-r5.ts`、`retrieval-r5` 保存最终检索；`evaluation-r2.json` 保存封存问题及 gold；`answers-r1/r2` 与 `answer-judging-r1/r2` 保存模型原件；`grade-retrieval-r2.ts`、`merge-answer-observations.py` 负责复算表格。所有调用、模拟与判断均为 agent 驱动。
+
+**冲突路径后续修复**
+
+候选 `7e9f8f096` 已补齐真实 Wiki → SourceSet 的 claim 传递，仅返回在当前 owner 读取正文中精确出现的 id/text。未读 metadata 不成为证据，撤权后不返回 claims。83 项相关回归与 6 个源文档派生负例通过；原失败保留在 source-safety.json，修复后结果在 source-safety-fixed.json。Electron 原有 DCS/引用旅程已补两来源结构化冲突断言，实际 Electron 执行待新构建及匹配窗口。
+
+本轮最终状态以 followup-readback.json 为准。首轮检索和回答观察继续绑定其真实候选；后续修复未改写历史数据或旧模型回执。

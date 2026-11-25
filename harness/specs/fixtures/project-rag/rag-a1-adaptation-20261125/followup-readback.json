@@ -1,0 +1,39 @@
+{
+  "schema": "G2KnowledgeAdaptationFollowup/v1",
+  "actor": "codex-g2-knowledge-adaptation",
+  "driven_by": "agent",
+  "candidate": "7e9f8f096b2c561f3049b5d4517d5a53420f0650",
+  "node": "TF-0946",
+  "implementationStatus": "implemented",
+  "status": "in_progress",
+  "progress": 90,
+  "nodeCompleted": false,
+  "unitTests": {
+    "passed": 178,
+    "failed": 0,
+    "result": "delivery-unit-results.json"
+  },
+  "indexTests": {
+    "passed": 22,
+    "sourceBytesUnchanged": true,
+    "result": "projection-unit-r1.txt"
+  },
+  "ownerSafety": {
+    "passed": 6,
+    "failed": 0,
+    "result": "source-safety-fixed.json"
+  },
+  "focusedTypes": "claims-types-r2.txt",
+  "targetedLint": "claims-lint.txt",
+  "harnessValidate": "claims-harness.txt",
+  "commsReplayCompare": "claims-comms-compare.txt",
+  "closedFinding": "Owner-verified Wiki claims now reach SourceSet only when their text is in the read range.",
+  "pending": [
+    "Actual Electron/Gateway QA journey with the newly updated conflict assertions and current build.",
+    "Complete fresh same-candidate answer/fee qualification; previous mixed-input diagnostic and four unknown/missing generation outcomes stay historical.",
+    "A known fee envelope and latency-compliant profile; no policy promotion is authorized by this development run."
+  ],
+  "nextAction": "Prepare a frozen current-candidate build and single-worker Electron QA plan, then run it under a matching resource window; keep budget and fee gaps explicit.",
+  "rawArchive": "D:\\tmp\\g2-tf0946-20261125-01a21178",
+  "priorDevelopmentReadback": "development-readback.json"
+}

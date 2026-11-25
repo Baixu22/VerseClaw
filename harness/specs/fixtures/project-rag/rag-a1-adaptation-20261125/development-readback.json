@@ -19,7 +19,7 @@
     "projectionUnit": {
       "passed": 22,
       "failed": 0,
-      "artifact": "projection-unit-r1.log",
+      "artifact": "projection-unit-r1.txt",
       "sourceBytesUnchangedSinceRun": true
     },
     "focusedTypes": "passed",
@@ -118,8 +118,8 @@
       "status": "development-checks-verified",
       "evidence": [
         "unit-results.json",
-        "projection-unit-r1.log",
-        "harness-final-r1.log"
+        "projection-unit-r1.txt",
+        "harness-final-r1.txt"
       ]
     }
   ]

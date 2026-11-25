@@ -1,0 +1,21 @@
+{
+  "candidate": "7e9f8f096b2c561f3049b5d4517d5a53420f0650",
+  "files": [
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/query.ts",
+      "sha256": "245f4c1585f070e5d780157f318107598be2a7c0b799726f5be1eb525aa1eec7"
+    },
+    {
+      "path": "tests/unit/project-rag-owner-read.test.ts",
+      "sha256": "8f3115644b0feaed1b5398c8c1b743a539e7f5f0e7353a1a5bf1b769581b25b8"
+    },
+    {
+      "path": "tests/e2e/project-rag-dcs-citation.spec.ts",
+      "sha256": "908b636411ec124332097682533bb138f0dd05cb45f5bd810d59226743e09545"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-knowledge-adaptation-baseline.md",
+      "sha256": "c8ceb218c477b0eb9d1c7ad8fe82a0d28654779bcd8b81f9d5ce02b9272ef044"
+    }
+  ]
+}
