@@ -3,6 +3,7 @@ import { Agent, createServer, request as httpRequest, type IncomingMessage, type
 import { connect, isIP, type Socket } from 'node:net';
 import type { Duplex } from 'node:stream';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
+import { ProxyAgent, fetch as undiciFetch } from 'undici';
 
 type Address = { address: string; family: number };
 type Authorize = (url: string, addresses: readonly string[], tunnel?: boolean) => Promise<number | void>;
@@ -24,6 +25,7 @@ export async function createBrowserNetworkProxy(options: {
     return received.length === expected.length && timingSafeEqual(received, expected);
   };
   let epoch = 0;
+  let closed = false;
   const resolveAddresses = (hostname: string): Promise<Address[]> => {
     let pending = destinations.get(hostname);
     if (!pending) {
@@ -174,12 +176,24 @@ export async function createBrowserNetworkProxy(options: {
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Browser proxy failed to bind');
   server.unref();
+  const proxyUrl = `http://127.0.0.1:${address.port}`;
+  const dispatcher = new ProxyAgent({ uri: proxyUrl, token: authorization, proxyTunnel: false });
   return {
-    url: `http://127.0.0.1:${address.port}`,
+    url: proxyUrl,
     credentials: { username: 'verse-browser', password },
     resolveAddresses,
+    async fetch(input: Parameters<typeof fetch>[0], init?: RequestInit): Promise<Response> {
+      if (closed) throw new Error('Browser network owner is closed');
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+      return await undiciFetch(url, {
+        ...init,
+        credentials: 'omit',
+        redirect: 'manual',
+        dispatcher,
+      } as Parameters<typeof undiciFetch>[1]) as unknown as Response;
+    },
     revokeConnections() { epoch += 1; for (const socket of sockets) socket.destroy(); },
-    close() { epoch += 1; for (const socket of sockets) socket.destroy(); destinations.clear(); server.close(); },
+    close() { closed = true; epoch += 1; for (const socket of sockets) socket.destroy(); destinations.clear(); void dispatcher.destroy(); server.close(); },
     onClose(callback: () => void) { server.once('close', callback); },
   };
 }

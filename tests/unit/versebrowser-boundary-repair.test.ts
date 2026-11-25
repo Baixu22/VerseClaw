@@ -7,8 +7,8 @@ vi.mock('@electron/services/workspaces-api', () => ({
 vi.mock('@electron/services/permissions-api', () => ({ recordPermissionDecisionEvent: vi.fn(async (event: unknown) => event) }));
 vi.mock('@electron/services/sensitive-capture-gate', () => ({ assertSensitiveCaptureAllowed: vi.fn(async () => ({ allowed: true })) }));
 vi.mock('@electron/services/session-delete-gate', () => ({ findSessionDeleteGateBySession: vi.fn(async () => undefined) }));
-const transportMock = vi.hoisted(() => ({ resolveHost: vi.fn(async (_hostname: string) => ({ endpoints: [{ address: '93.184.216.34', family: 'ipv4' }] })), resolveProxy: vi.fn(async () => 'DIRECT') }));
-vi.mock('@electron/services/agent-browser-network-proxy', () => ({ createBrowserNetworkProxy: vi.fn(async (options: { lookupAddresses: (hostname: string) => Promise<unknown> }) => ({ url: 'http://127.0.0.1:18080', credentials: { username: 'fixture', password: 'fixture' }, onClose: vi.fn(), resolveAddresses: options.lookupAddresses, revokeConnections: vi.fn(), close: vi.fn() })) }));
+const transportMock = vi.hoisted(() => ({ resolveHost: vi.fn(async (_hostname: string) => ({ endpoints: [{ address: '93.184.216.34', family: 'ipv4' }] })), resolveProxy: vi.fn(async () => 'DIRECT'), fetch: vi.fn() }));
+vi.mock('@electron/services/agent-browser-network-proxy', () => ({ createBrowserNetworkProxy: vi.fn(async (options: { lookupAddresses: (hostname: string) => Promise<unknown> }) => ({ url: 'http://127.0.0.1:18080', credentials: { username: 'fixture', password: 'fixture' }, onClose: vi.fn(), resolveAddresses: options.lookupAddresses, fetch: transportMock.fetch, revokeConnections: vi.fn(), close: vi.fn() })) }));
 vi.mock('electron', () => ({ app: { getPath: () => 'D:/tmp/verse-boundary-test', on: vi.fn(), off: vi.fn() }, session: { defaultSession: { resolveProxy: vi.fn(async () => 'DIRECT') }, fromPartition: () => ({ resolveHost: transportMock.resolveHost, resolveProxy: transportMock.resolveProxy, setProxy: vi.fn(async () => {}), closeAllConnections: vi.fn(async () => {}) }) } }));
 
 import {
@@ -29,6 +29,10 @@ let nextWindowId = 1;
 beforeEach(() => {
   transportMock.resolveHost.mockReset().mockResolvedValue({ endpoints: [{ address: '93.184.216.34', family: 'ipv4' }] });
   transportMock.resolveProxy.mockReset().mockResolvedValue('DIRECT');
+  transportMock.fetch.mockReset().mockImplementation(async (url: string) => new Response(url.endsWith('.map')
+    ? JSON.stringify({ version: 3, sources: ['original.ts'], sourcesContent: ['const fixture = 1;'], names: [], mappings: 'AAAA' })
+    : 'const fixture = 1;\n//# sourceMappingURL=app.js.map',
+  { headers: { 'content-type': url.endsWith('.map') ? 'application/json' : 'text/javascript' } }));
   vi.mocked(createBrowserNetworkProxy).mockClear();
   setSandboxHighRiskPolicyLoader(async () => ({ degraded: false }));
   setBrowserFirstPartyOriginProvider(() => []);
@@ -51,6 +55,11 @@ function hostFixture(optionalResource?: string, failFirstWindow = false) {
     let destroyed = false;
     const webContents = Object.assign(new EventEmitter(), {
       id: nextWindowId++, session,
+      debugger: Object.assign(new EventEmitter(), {
+        attach: vi.fn(), detach: vi.fn(),
+        sendCommand: vi.fn(async (method: string) => method === 'Accessibility.getFullAXTree'
+          ? { nodes: [{ nodeId: 'root', backendDOMNodeId: 1, role: { value: 'RootWebArea' }, name: { value: 'Fixture' } }] } : {}),
+      }),
       setWindowOpenHandler: vi.fn(), getURL: () => currentUrl, getTitle: () => 'Fixture',
       setWebRTCIPHandlingPolicy: vi.fn(),
       executeJavaScript: vi.fn(async () => 'fixture text'),
@@ -93,6 +102,43 @@ async function dispatch(fixture: ReturnType<typeof hostFixture>, action: string,
 }
 
 describe('Verse browser authority through the production Main API', () => {
+  it('routes JS and SourceMap through the live profile owner and refuses rebound private destinations', async () => {
+    const f = hostFixture();
+    const opened = await f.api.open({ sessionKey: 'resource-owner', url: 'https://example.com/' });
+    const sessionId = opened.session.id;
+    f.host.setEnabled(true);
+    await f.host.requestModeUpgrade({ sessionId, targetMode: 'controlled_enhanced', userApproval: true });
+    await f.host.takeSnapshot({ sessionId });
+    transportMock.resolveHost.mockResolvedValue({ endpoints: [{ address: '127.0.0.1', family: 'ipv4' }] });
+    const denied = await f.host.jsSearchSources({ sessionId, keywords: ['fixture'], urls: ['https://example.com/app.js'], allowSameOriginFetch: true });
+    expect(denied.failedFetches).toHaveLength(1);
+    expect(transportMock.fetch).not.toHaveBeenCalled();
+    approveBrowserPrivateNetwork({ sessionId, origin: 'https://example.com' });
+    const allowed = await f.host.jsSearchSources({ sessionId, keywords: ['fixture'], urls: ['https://example.com/app.js'], allowSameOriginFetch: true });
+    expect(allowed.failedFetches).toHaveLength(0);
+    expect(transportMock.fetch).toHaveBeenCalledWith('https://example.com/app.js', expect.objectContaining({ credentials: 'omit', redirect: 'manual' }));
+    const maps = await f.host.sourceMapListCandidates({ sessionId, allowSameOriginFetch: true });
+    expect(maps.candidates).toEqual([expect.objectContaining({ parsed: true })]);
+    expect(transportMock.fetch).toHaveBeenCalledWith('https://example.com/app.js.map', expect.objectContaining({ credentials: 'omit', redirect: 'manual' }));
+  });
+
+  it('refuses a background resource after its owner closes during DNS lookup', async () => {
+    const f = hostFixture();
+    const opened = await f.api.open({ sessionKey: 'resource-close', url: 'https://example.com/' });
+    const sessionId = opened.session.id;
+    f.host.setEnabled(true);
+    await f.host.requestModeUpgrade({ sessionId, targetMode: 'controlled_enhanced', userApproval: true });
+    await f.host.takeSnapshot({ sessionId });
+    let resolveDns!: (value: { endpoints: Array<{ address: string; family: string }> }) => void;
+    transportMock.resolveHost.mockImplementationOnce(() => new Promise(resolve => { resolveDns = resolve; }));
+    const result = f.host.jsSearchSources({ sessionId, keywords: ['fixture'], urls: ['https://example.com/app.js'], allowSameOriginFetch: true });
+    await vi.waitFor(() => expect(resolveDns).toBeTypeOf('function'));
+    await f.host.close(sessionId);
+    resolveDns({ endpoints: [{ address: '93.184.216.34', family: 'ipv4' }] });
+    expect((await result).failedFetches).toHaveLength(1);
+    expect(transportMock.fetch).not.toHaveBeenCalled();
+  });
+
   it.each(['proxy-resolution', 'window-creation'])('removes the failed owner after %s so the next private grant can be used', async (failure) => {
     const f = hostFixture(undefined, failure === 'window-creation');
     if (failure === 'proxy-resolution') transportMock.resolveProxy.mockRejectedValueOnce(new Error('proxy resolution failed'));

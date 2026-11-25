@@ -83,6 +83,61 @@ function prepareDraft(executor: ReplayToolExecutor): string {
 }
 
 describe('请求重放沙箱执行器', () => {
+  it.each(['query', 'json', 'form', 'text', 'header'] as const)('rejects credential names in %s before preparing a replay', (format) => {
+    const fetcher = vi.fn(async () => new Response(null)) as unknown as typeof fetch;
+    const makeMeta = (fields: Record<string, string>): NetworkRequestMeta => {
+      if (format === 'query') return createMeta({ url: `https://example.com/api/items?${new URLSearchParams(fields)}` });
+      if (format === 'header') return createMeta({ requestHeaders: Object.entries(fields).map(([name, value]) => ({ name, value })) });
+      return createMeta({ method: 'POST',
+        requestHeaders: [{ name: 'Content-Type', value: format === 'json' ? 'application/json' : format === 'form' ? 'application/x-www-form-urlencoded' : 'text/plain' }],
+        requestBody: format === 'json' ? JSON.stringify({ entries: [fields] }) : new URLSearchParams(fields).toString(),
+      });
+    };
+    for (const key of ['private_key', 'auth_token', 'client_secret', 'x-session-id', 'otp', 'pin', 'credentials']) {
+      expect(createExecutor({ meta: makeMeta({ [key]: 'fixture-value' }), fetcher }).prepareRequest({ requestId: 'req-1' }), key).toMatchObject({ isError: true });
+    }
+    const ordinary = { shipping: 'ground', mapping: 'fixture', sessionId: 'row-1', passThrough: 'enabled', author: 'fixture', page: '2' };
+    expect(createExecutor({ meta: makeMeta(ordinary), fetcher }).prepareRequest({ requestId: 'req-1' }).isError).toBeUndefined();
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it('claims a draft before dispatch so concurrent sends have one network effect', async () => {
+    let finish!: (response: Response) => void;
+    const fetcher = vi.fn(() => new Promise<Response>(resolve => { finish = resolve; }));
+    let grant: BoundaryGrantContext | undefined;
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const draftId = prepareDraft(executor);
+    grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    const first = executor.sendRequest({ draftId });
+    try {
+      expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+      expect(fetcher).toHaveBeenCalledOnce();
+    } finally { finish(new Response('{}')); await first; }
+    expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+    expect(fetcher).toHaveBeenCalledOnce();
+  });
+
+  it.each(['connection reset', 'AbortError'])('keeps a %s send consumed when the outcome is unknown', async (failure) => {
+    const fetcher = vi.fn(async () => { throw Object.assign(new Error(failure), { name: failure }); });
+    let grant: BoundaryGrantContext | undefined;
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const draftId = prepareDraft(executor);
+    grant = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    await expect(executor.sendRequest({ draftId })).rejects.toThrow(failure);
+    expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+    expect(fetcher).toHaveBeenCalledOnce();
+  });
+
+  it.each([{ tabId: 8 }, { origin: 'https://other.example' }, { expiresAt: 0 }])('rejects a mismatched or expired grant %j', async (override) => {
+    const fetcher = vi.fn(async () => new Response('{}'));
+    let grant: BoundaryGrantContext | undefined;
+    const executor = createExecutor({ fetcher: fetcher as typeof fetch, getGrant: () => grant });
+    const draftId = prepareDraft(executor);
+    grant = createGrant({ ...override, scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
+    expect((await executor.sendRequest({ draftId })).isError).toBe(true);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it('prepare 只生成草案且未确认时不能发送', async () => {
     const fetcher = vi.fn(async () => new Response('{}')) as unknown as typeof fetch;
     const executor = createExecutor({ fetcher });

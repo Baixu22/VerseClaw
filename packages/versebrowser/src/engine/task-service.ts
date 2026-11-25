@@ -426,18 +426,20 @@ export class AgentBrowserTaskService {
     });
     try {
       const result = await this.execute(cloneTask(task), controller.signal, (progress) => {
-        if (task.status !== 'running') return;
+        if (!this.isRunning(taskId, runId)) return;
         this.update(task, {
           ...progress,
+          runId,
           steps: progress.steps.map((step) => ({ ...step })),
           counters: { ...progress.counters },
         });
       });
-      if (this.isRunning(taskId)) {
+      if (this.isRunning(taskId, runId)) {
         const passed = result.verification.status === 'passed';
         const error = passed ? undefined : result.verification.message;
         this.update(task, {
           ...result,
+          runId,
           status: passed ? 'completed' : 'failed',
           statusExplain: statusExplainFor(passed ? 'completed' : 'failed', error),
           errorCode: passed ? undefined : result.verification.reasonCode,
@@ -445,7 +447,7 @@ export class AgentBrowserTaskService {
         });
       }
     } catch (error) {
-      if (this.isRunning(taskId)) {
+      if (this.isRunning(taskId, runId)) {
         const message = error instanceof Error ? error.message : String(error);
         this.update(task, {
           status: 'failed',
@@ -455,7 +457,7 @@ export class AgentBrowserTaskService {
         });
       }
     } finally {
-      this.controllers.delete(taskId);
+      if (this.controllers.get(taskId) === controller) this.controllers.delete(taskId);
     }
     return cloneTask(task);
   }
@@ -485,6 +487,7 @@ export class AgentBrowserTaskService {
       status: 'paused',
       statusExplain: statusExplainFor('paused'),
     });
+    this.controllers.get(taskId)?.abort();
     return cloneTask(task);
   }
 
@@ -585,12 +588,11 @@ export class AgentBrowserTaskService {
   }
 
   /**
-   * True while the task is still the run in flight. The progress callback already refuses to
-   * update a task that is no longer `running`; the completion and catch paths must use the same
-   * guard, or a pause()/cancel() that landed mid-run is silently overwritten by the result.
+   * Late callbacks may settle after retry has started a new run of the same task.
    */
-  private isRunning(taskId: string): boolean {
-    return this.tasks.get(taskId)?.status === 'running';
+  private isRunning(taskId: string, runId: string): boolean {
+    const task = this.tasks.get(taskId);
+    return task?.status === 'running' && task.runId === runId;
   }
 
   private update(task: AgentBrowserTask, patch: Partial<AgentBrowserTask>): void {

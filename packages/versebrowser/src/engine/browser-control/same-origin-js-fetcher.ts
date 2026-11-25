@@ -2,8 +2,8 @@
  * 同源 JS 资源抓取器 — 抄写自 browser-ai-assistant-master/src/background/browserControl/sameOriginJsFetcher.ts
  * 适配点：仅 import 路径（../../shared/types → ../core/types，
  * ../../shared/utils/text → ../core/text）。
- * 逻辑零改动：1MB 上限、8s 超时、同源校验、可信 MIME、凭证省略、禁止跨域重定向。
- * Electron main 进程中 Node 18+ 全局 fetch 可用，无需额外适配。
+ * 保留 1MB 上限、8s 超时、同源校验、可信 MIME、凭证省略、禁止跨域重定向。
+ * 网络读取由所属浏览器会话注入，缺少网络 owner 时拒绝回源。
  */
 import type { JsSourceFetchFailure } from '../../core/types.ts';
 import { truncateText } from '../../core/text.ts';
@@ -36,7 +36,7 @@ const PLAIN_TEXT_MIME_TYPE = 'text/plain';
 export class SameOriginJsFetcher {
   private readonly fetcher: typeof fetch;
 
-  constructor(fetcher: typeof fetch = fetch) {
+  constructor(fetcher: typeof fetch = async () => { throw new Error('Browser network owner is unavailable'); }) {
     this.fetcher = fetcher;
   }
 
