@@ -1,8 +1,10 @@
 // @vitest-environment node
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
+import { pathToFileURL } from 'node:url';
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
@@ -18,7 +20,7 @@ import { gradeAutonomyContinuation, sumAutonomyContinuationCosts, CONTINUATION_C
 import { buildDeterministicCompressionArtifact, type CompressionSemanticAtom } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact';
 import { applyContextMessageReplacement } from '../../openclaw_runtime/src/context-engine/context-candidate';
 import { buildObservationMaskingProjection } from '../../openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction';
-import { createContextArchiveHandleForPayloadSync, verifyContextArchiveHandle } from '../../openclaw_runtime/src/context-engine/registry/context-item-registry';
+import { createContextArchiveHandleForPayloadSync, createContextItemId, verifyContextArchiveHandle } from '../../openclaw_runtime/src/context-engine/registry/context-item-registry';
 import type { TaskContractInput } from '../../shared/task-system/types';
 import type { TaskLedgerEvent } from '../../shared/types/task-ledger';
 import type { WorkspaceProfile } from '../../shared/types/workspace';
@@ -57,6 +59,7 @@ if (existsSync(rawFile)) throw new Error('C01_RUN_ALREADY_EXISTS: choose a new o
 type Scenario = {
   id: string; family: string; split: string; taskGoal: string;
   owner: { sessionKey: string; generation: string; workspaceId: string };
+  environment: { files: Record<string, string> };
   rawInput: { old: string; new: string; exact: string; observation: string; decision: string;
     excludedDecision: string; fallbackDecision: string; temporaryTurn: number; temporaryFormat: string;
     experience: { title: string; status: string; stage: string; action: string }; firstFailure: string };
@@ -114,6 +117,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
   if (!policy.offline.defaultSplits.includes(s.split)) throw new Error('C01_FINAL_HOLDOUT_SEALED');
   const root = join(runRoot, `${s.id}-${arm}-${repetition}`);
   mkdirSync(root, { recursive: true });
+  for (const [path, content] of Object.entries(s.environment.files)) writeFileSync(join(root, path), content);
   const steps: Step[] = [];
   const step = async <T>(action: string, operation: () => T | Promise<T>): Promise<T> => {
     if (steps.length >= s.remainingBudget.actions) throw new Error('C01_ACTION_BUDGET_EXCEEDED');
@@ -163,7 +167,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
           : { polarity: 'negative' });
         const artifact = buildDeterministicCompressionArtifact({ messages: masking.messages, semanticAtoms: [atom] });
         const result = await preview(s, root, artifact);
-        if (!result.pack) throw new Error(`C01_PREVIEW_MISSING:${result.reason}`);
+        if (result.validation !== 'current' || !result.pack) throw new Error(`C01_PREVIEW_NOT_ADMITTED:${result.reason}`);
         const item = result.pack.items.find(item => item.kind === (temporary ? 'constraint' : 'decision'));
         // This deliberately simple scripted consumer treats a plain decision as
         // actionable and session constraints as current. Lost fields are visible.
@@ -178,7 +182,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
       }
       case 'exact': {
         const handle = masking.archiveHandles[0] ?? createContextArchiveHandleForPayloadSync({ sessionId: s.id,
-          itemId: `ctx:${s.id}`, payload: [{ type: 'text', text: s.rawInput.observation }], archiveRoot: join(root, 'archives') });
+          itemId: createContextItemId(s.id), payload: [{ type: 'text', text: s.rawInput.observation }], archiveRoot: join(root, 'archives') });
         const read = await step('archive-recall', () => verifyContextArchiveHandle(handle));
         if (read.ok) {
           const payload = read.payload as Array<{ text: string }>;
@@ -203,6 +207,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
       case 'experience': {
         const artifact = buildDeterministicCompressionArtifact({ messages: masking.messages });
         const result = await preview(s, root, artifact);
+        if (result.validation !== 'current') throw new Error(`C01_PREVIEW_NOT_ADMITTED:${result.reason}`);
         const items = result.pack?.items.filter(item => item.kind === 'knowledge-ref') ?? [];
         // Navigation-only references do not contain condition/action in this
         // entry point. A scripted eager consumer exposes the consequence.
@@ -264,11 +269,13 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
         break;
       }
       case 'readback': {
-        const handle = createContextArchiveHandleForPayloadSync({ sessionId: s.id, itemId: `ctx:${s.id}`, payload: s.rawInput.exact, archiveRoot: join(root, 'archives') });
+        const handle = createContextArchiveHandleForPayloadSync({ sessionId: s.id, itemId: createContextItemId(s.id), payload: s.rawInput.exact, archiveRoot: join(root, 'archives') });
         const wrong = await step('read-checksum-mismatch', () => verifyContextArchiveHandle({ ...handle, checksum: `sha256:${'0'.repeat(64)}` }));
         const missing = await step('read-missing-source', () => verifyContextArchiveHandle({ ...handle, uri: handle.uri.replace(/[^/]+$/, 'missing.context-archive.json') }));
         production = { wrong, missing };
-        observed = { checksumRejected: !wrong.ok && wrong.reason === 'checksum_mismatch', missingRejected: !missing.ok && missing.reason === 'missing', output: null, attempts: 2 };
+        const diskOutput = readFileSync(join(root, 'result.txt'), 'utf8');
+        observed = { checksumRejected: !wrong.ok && wrong.reason === 'checksum_mismatch', missingRejected: !missing.ok && missing.reason === 'missing',
+          output: diskOutput === s.environment.files['result.txt'] ? null : diskOutput, attempts: 2 };
         break;
       }
       case 'native': {
@@ -304,13 +311,25 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
       }
       case 'restart': {
         const id = claim.taskNodeId;
-        store.close(); store = new TaskSystemStore(resolveTaskDomain(root));
+        store.close();
+        const child = join(root, 'interrupted-run.mts');
+        writeFileSync(child, `import { TaskSystemStore } from ${JSON.stringify(pathToFileURL(join(ROOT, 'shared/task-system/store.ts')).href)};\n`
+          + `import { resolveTaskDomain } from ${JSON.stringify(pathToFileURL(join(ROOT, 'shared/task-system/identity.ts')).href)};\n`
+          + `const store = new TaskSystemStore(resolveTaskDomain(${JSON.stringify(root)}));\n`
+          + `const claim = store.binding(${JSON.stringify(claim.sessionKey)}, ${JSON.stringify(claim.generation)}).claim;\n`
+          + 'store.beginRun(claim, "interrupted-run"); store.close(); process.exit(0);\n');
+        await step('exit-with-unfinished-run', () => execFileSync(process.execPath,
+          ['--import', pathToFileURL(join(ROOT, 'node_modules/tsx/dist/loader.mjs')).href, child], { encoding: 'utf8' }));
+        store = new TaskSystemStore(resolveTaskDomain(root));
+        store.beginRun(claim, 'recovered-run');
+        expect(store.history(id).some(event => event.kind === 'interrupted_run_replaced')).toBe(true);
         guard = createTaskRuntimeGuard(root, claim.sessionKey, claim.generation);
         production = restored();
         await write(JSON.parse(readRestored(String(production)).core.constraints[0]).value);
         const off = await buildObservationMaskingProjection({ enabled: false, messages, sessionId: s.id, archiveRoot: join(root, 'archives') });
         observed = { output: readFileSync(join(root, 'result.txt'), 'utf8'), firstFailureRetained: store.get(id).checkpoint!.completed.includes(s.rawInput.firstFailure),
           offParity: JSON.stringify(off.messages) === JSON.stringify(messages), sameTask: store.binding(claim.sessionKey, claim.generation)?.contract.taskNodeId === id };
+        store.endRun(claim, 'recovered-run');
         break;
       }
       case 'isolation': {
@@ -339,7 +358,9 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
     // Reopen the actual trace and task output; the grader does not grade a planned result.
     const readback = JSON.parse(readFileSync(rawPath, 'utf8'));
     expect(readback.steps.length).toBe(steps.length);
-    return { observed: readback.observed as ContinuationObservation, steps: steps.map(entry => entry.action), rawPath, rawSha256: hash(readFileSync(rawPath)),
+    return { observed: readback.observed as ContinuationObservation, steps: steps.map(entry => entry.action),
+      operationOutcomes: steps.map(entry => ({ action: entry.action, success: !(entry.outcome && typeof entry.outcome === 'object' && 'error' in entry.outcome) })),
+      rawPath, rawSha256: hash(readFileSync(rawPath)),
       projectedChars: JSON.stringify(masking.messages).length, originalChars: JSON.stringify(messages).length, maskedCount: masking.maskedCount };
   } finally { store.close(); }
 }
@@ -385,8 +406,8 @@ describe('C01 frozen continuation baseline', () => {
           grade, negativeControl: { ...negativeControl, semanticMutation, detected: true },
           structural: { assertions: oracle.assertions, observed: first.observed },
           modelBehavior: { kind: 'scripted-probe', actions: first.steps }, productTaskGrade: null,
-          attribution: { retrieval: first.steps.some(action => action.includes('read') || action.includes('recall')),
-            citation: null, adoption: first.observed.adoption ?? null, operationSuccess: first.observed.output === null ? false : null,
+          attribution: { retrieval: scenario.family === 'experience' || first.steps.some(action => action.includes('read') || action.includes('recall')),
+            citation: null, adoption: first.observed.adoption ?? null, operationSuccess: first.operationOutcomes,
             independentTaskGrade: grade.status },
           costs: sumAutonomyContinuationCosts([{ id: 'unmeasured-offline', phase: 'execution', basis: 'unmeasured', terminal: 'unknown',
             values: Object.fromEntries(CONTINUATION_COST_FIELDS.map(field => [field, null])) as ContinuationCostEvent['values'] }]),
