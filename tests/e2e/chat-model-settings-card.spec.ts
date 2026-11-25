@@ -23,6 +23,9 @@ async function seed(app: ElectronApplication) {
       '["providers","accounts",null]': [
         { id: 'alpha1234', vendorId: 'custom', label: 'Alpha', authMode: 'api_key', baseUrl: 'https://alpha.invalid/v1', model: 'model-alpha', enabled: true, isDefault: true, createdAt: now, updatedAt: now },
         { id: 'custom-beta5678', vendorId: 'custom', label: 'Beta', authMode: 'api_key', baseUrl: 'https://beta.invalid/v1', model: BETA, enabled: true, isDefault: false, createdAt: now, updatedAt: now },
+        ...['Gamma', 'Delta', 'Epsilon', 'Zeta'].map(label => ({ id: `account-${label}`, vendorId: 'custom', label,
+          authMode: 'api_key', baseUrl: 'https://models.invalid/v1', model: `model-${label.toLowerCase()}`, enabled: true,
+          isDefault: false, createdAt: now, updatedAt: now })),
       ],
       '["providers","accountKeyInfo",null]': [{ accountId: 'alpha1234', hasKey: true, keyMasked: '***' }, { accountId: 'custom-beta5678', hasKey: true, keyMasked: '***' }],
       '["providers","vendors",null]': [],
@@ -152,6 +155,9 @@ test('keeps both layers usable across locales, themes, 375px and reduced motion'
           expect(bounds.left).toBeGreaterThanOrEqual(6); expect(bounds.right).toBeLessThanOrEqual(width - 6);
           expect(bounds.top).toBeGreaterThanOrEqual(6); expect(bounds.bottom).toBeLessThanOrEqual(794);
           expect(bounds.overflow).toBe(false); measurements.push({ lang, theme, width, ...bounds, cardGeometry, focusStyle });
+          const contextTrigger = await page.getByTestId('chat-context-indicator').boundingBox();
+          expect(contextTrigger).not.toBeNull();
+          expect(bounds.bottom).toBeLessThan(contextTrigger!.y);
           if (width === 375 && (lang === 'zh' || lang === 'ru')) await page.screenshot({ path: info.outputPath(`models-${lang}-${theme}-375.png`) });
           await page.keyboard.press('Escape');
           await expect(page.getByTestId('chat-agent-effort-slider')).toBeVisible();

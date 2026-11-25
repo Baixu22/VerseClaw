@@ -197,10 +197,11 @@ function ChatModelPicker({
         const column = root.closest('[data-testid="chat-conversation-column"]')
         const bounds = column?.getBoundingClientRect()
         const toolbar = column?.querySelector('[data-testid="chat-toolbar-shell"]')?.getBoundingClientRect()
+        const card = root.closest('.codex-model-settings-popover')?.getBoundingClientRect()
         const leftEdge = Math.max(EDGE, (bounds?.left ?? 0) + EDGE)
         const rightEdge = Math.min(window.innerWidth - EDGE, (bounds?.right ?? window.innerWidth) - EDGE)
         const topEdge = Math.max(EDGE, (toolbar?.bottom ?? bounds?.top ?? 0) + EDGE)
-        const bottomEdge = Math.min(window.innerHeight - EDGE, (bounds?.bottom ?? window.innerHeight) - EDGE)
+        const bottomEdge = Math.min(window.innerHeight - EDGE, (bounds?.bottom ?? window.innerHeight) - EDGE, card?.bottom ?? window.innerHeight)
         // screen rects include any zoom or scale above the picker, while offsets and styles are in local pixels
         const scale = rootRect.width / root.offsetWidth || 1
 

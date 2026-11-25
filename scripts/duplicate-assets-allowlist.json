@@ -11,6 +11,14 @@
       "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
     },
     {
+      "sha256": "0846f5a9c530b9fbc9c50d79cb0dde5fbfe4f60d37019c1ba6f183df33799bf2",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/live/runs.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/runs.jsonl"
+      ],
+      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes."
+    },
+    {
       "sha256": "12b85112e4da5d85579a5cb415cdd38ce66502e3c7210e5dd1c62052eea93799",
       "paths": [
         "harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement/calibration/tf-0297-a05/admission.json",
@@ -39,6 +47,15 @@
         "artifacts/system-maturity/P5-004/final-validation.log"
       ],
       "reason": "Historical evidence mirrors are retained because each task directory is an independent review record."
+    },
+    {
+      "sha256": "18631c50fa9022ef1f14b10e06f0183c2997d3d210b654d09b4247f024e334f1",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.jsonl"
+      ],
+      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance."
     },
     {
       "sha256": "1866cb8b57b3034d1c95d94b479bc79e12ffd2f48770634dea1a5068210737f4",
@@ -83,12 +100,29 @@
       "reason": "Preinstalled skill bundles are distributed independently and must remain self-contained."
     },
     {
+      "sha256": "619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b",
+      "paths": [
+        "harness/specs/fixtures/chat-planning-composer-ux/20261123/images/before-task-workbench.png",
+        "harness/specs/fixtures/task-system-ui-consolidation/20261122/after/ledger-light-1280.png"
+      ],
+      "reason": "The 2026-11-22 verified task-workbench screenshot is the 2026-11-23 composer design baseline. Both immutable evidence manifests and DESIGN-GUIDANCE.md require their retained paths."
+    },
+    {
       "sha256": "64924d72a45ad212a65c1b120a4ecbd7f27da17a1c23a46604daa584a18395c6",
       "paths": [
         "resources/icons/icon-dark.ico",
         "resources/icons/icon.ico"
       ],
       "reason": "Packaging path compatibility: Electron Builder and platform icon references require these stable asset paths."
+    },
+    {
+      "sha256": "727aa679f46127c188507b99148eb9a12f91a94429b0dee474d08e4c34502211",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/provider-calls.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/provider-calls.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/provider-calls.jsonl"
+      ],
+      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance."
     },
     {
       "sha256": "769011d7244bbeece7091afab1ca83e8080124abb89236fe60e1f483c0d0cef5",
@@ -100,12 +134,53 @@
       "reason": "Retained product-effect evidence mirrors: each profile keeps its own pre-restart capture path so a single profile can be reviewed without rewriting sibling evidence."
     },
     {
+      "sha256": "8be8bbf2e85d74eded7d06e6879f7dbfa2ea7ed721e72b7a3e0cd0c525bcf265",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/deterministic/provider-calls.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/mechanism/provider-calls.jsonl"
+      ],
+      "reason": "Round nine retains the candidate deterministic run and its pre-candidate bookmark mechanism comparison with their own immutable provenance and manifests."
+    },
+    {
+      "sha256": "8f7a4bf62fb27beeec2044a0561084f48679ce02ff99f8624296e802984989a6",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/runs.json",
+        "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/runs.json"
+      ],
+      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories."
+    },
+    {
+      "sha256": "983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.json",
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.json",
+        "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.json"
+      ],
+      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance."
+    },
+    {
       "sha256": "9a7db03e620cdd01f80fa8ee10bd623e29569e1f270e618846955dec40c8b372",
       "paths": [
         "harness/specs/fixtures/rsi-benefit-eval/coding-complete-20261106-v2/measurement/calibration/tf-0296-a04/admission.json",
         "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/calibration/tf-0296-a04/admission.json"
       ],
       "reason": "The completed frozen run and its independent admission pack retain the same immutable calibration receipt under their separately verified manifests."
+    },
+    {
+      "sha256": "9f31589fbcbd1f77365dc1de976a84c9bb929ea050d243d357e98f4b11025c30",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/live/provider-calls.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/provider-calls.jsonl"
+      ],
+      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes."
+    },
+    {
+      "sha256": "a2f8e5ebd01e0991133a15db78c88c6fe07e9a1870f3e8081f2f7c663638ffbf",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/live/archives.jsonl.gz",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/archives.jsonl.gz"
+      ],
+      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes."
     },
     {
       "sha256": "b96ac05ad95f4ada9565d02cd1c04068c1af4a21f6357cba9678e9ccfdee0bb1",
@@ -150,6 +225,14 @@
       "reason": "The frozen measurement retains an exact calibration receipt copied from the independently readable admission pack; both manifests and offline readback require their own stable paths."
     },
     {
+      "sha256": "cfb05e8e1c9a63575323b96673422de0f5d9ac1402fdeb1b8cf9348165b1a5dc",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/runs.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/runs.jsonl"
+      ],
+      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories."
+    },
+    {
       "sha256": "d2306726c1637b39f3acfd45517c255ab8bed3fe70837aab8a17ea471aa0f965",
       "paths": [
         "harness/specs/fixtures/rsi-benefit-eval/coding-20261106/measurement/calibration/tf-0298-a06/admission.json",
@@ -166,12 +249,28 @@
       "reason": "Vendored VerseConf WASM mirrors match the package layout needed by the runtime and verifier."
     },
     {
+      "sha256": "e0cc067dd6adff77cac1e1d34b7d29742c9bdec87eeac7bf55d35e11565c007c",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-curated.json",
+        "harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-recovered.json"
+      ],
+      "reason": "Round nine retains independently rerun verifications of the recovered and curated bundles; identical verifier facts confirm same-candidate replay without rewriting either receipt."
+    },
+    {
       "sha256": "e97a1d07edbf4cee930cdcdd61244bb967152701a3bbb4d73bf21dc9df709b51",
       "paths": [
         "harness/specs/fixtures/rsi-benefit-eval/coding-20261106/measurement/calibration/tf-0296-a04/admission.json",
         "harness/specs/fixtures/rsi-live-acceptance/reconstructed-cohort-20261106-v7/calibration/tf-0296-a04/admission.json"
       ],
       "reason": "The frozen measurement retains an exact calibration receipt copied from the independently readable admission pack; both manifests and offline readback require their own stable paths."
+    },
+    {
+      "sha256": "ed0dc2ec833abfc07918ea65fa9a996e5d08b2d43184d1a0870df6fb9ed820eb",
+      "paths": [
+        "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/provider-calls.jsonl",
+        "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/provider-calls.jsonl"
+      ],
+      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories."
     },
     {
       "sha256": "ed2270fced576ac55715727e50e36e1bec87e1f692b77ed691b651233b910a65",
@@ -189,97 +288,6 @@
         "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/calibration/tf-0298-a06/admission.json"
       ],
       "reason": "The completed frozen run and its independent admission pack retain the same immutable calibration receipt under their separately verified manifests."
-    },
-    {
-      "sha256": "0846f5a9c530b9fbc9c50d79cb0dde5fbfe4f60d37019c1ba6f183df33799bf2",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/live/runs.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/runs.jsonl"
-      ],
-      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes."
-    },
-    {
-      "sha256": "18631c50fa9022ef1f14b10e06f0183c2997d3d210b654d09b4247f024e334f1",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.jsonl"
-      ],
-      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance."
-    },
-    {
-      "sha256": "727aa679f46127c188507b99148eb9a12f91a94429b0dee474d08e4c34502211",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/provider-calls.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/provider-calls.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/provider-calls.jsonl"
-      ],
-      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance."
-    },
-    {
-      "sha256": "8be8bbf2e85d74eded7d06e6879f7dbfa2ea7ed721e72b7a3e0cd0c525bcf265",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/deterministic/provider-calls.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/mechanism/provider-calls.jsonl"
-      ],
-      "reason": "Round nine retains the candidate deterministic run and its pre-candidate bookmark mechanism comparison with their own immutable provenance and manifests."
-    },
-    {
-      "sha256": "8f7a4bf62fb27beeec2044a0561084f48679ce02ff99f8624296e802984989a6",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/runs.json",
-        "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/runs.json"
-      ],
-      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories."
-    },
-    {
-      "sha256": "983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.json",
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.json",
-        "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.json"
-      ],
-      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance."
-    },
-    {
-      "sha256": "9f31589fbcbd1f77365dc1de976a84c9bb929ea050d243d357e98f4b11025c30",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/live/provider-calls.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/provider-calls.jsonl"
-      ],
-      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes."
-    },
-    {
-      "sha256": "a2f8e5ebd01e0991133a15db78c88c6fe07e9a1870f3e8081f2f7c663638ffbf",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/live/archives.jsonl.gz",
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/archives.jsonl.gz"
-      ],
-      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes."
-    },
-    {
-      "sha256": "cfb05e8e1c9a63575323b96673422de0f5d9ac1402fdeb1b8cf9348165b1a5dc",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/runs.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/runs.jsonl"
-      ],
-      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories."
-    },
-    {
-      "sha256": "e0cc067dd6adff77cac1e1d34b7d29742c9bdec87eeac7bf55d35e11565c007c",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-curated.json",
-        "harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-recovered.json"
-      ],
-      "reason": "Round nine retains independently rerun verifications of the recovered and curated bundles; identical verifier facts confirm same-candidate replay without rewriting either receipt."
-    },
-    {
-      "sha256": "ed0dc2ec833abfc07918ea65fa9a996e5d08b2d43184d1a0870df6fb9ed820eb",
-      "paths": [
-        "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/provider-calls.jsonl",
-        "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/provider-calls.jsonl"
-      ],
-      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories."
     }
   ]
 }
