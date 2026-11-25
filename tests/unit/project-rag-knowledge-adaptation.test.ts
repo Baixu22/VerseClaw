@@ -124,6 +124,29 @@ describe('knowledge adaptation owner snapshot and question freeze', () => {
     await writeFile(join(f.output, f.snapshot.sources[0].path), 'changed');
     await expect(freezeKnowledgeQuestions(f.output, f.input)).rejects.toThrow('source changed');
   });
+  it('rejects an empty gold range through the pinned byte reader', async () => {
+    const f = await reviewed(), support = f.input.questions[0].support[0];
+    support.endByteExclusive = support.startByte; support.quote = ''; f.rebind();
+    await expect(freezeKnowledgeQuestions(f.output, f.input)).rejects.toThrow('invalid source range');
+  });
+
+  it('keeps short text differing only in punctuation in the same source family', async () => {
+    const f = await fixture();
+    for (const [i, body] of ['alpha beta', 'alpha beta!', 'distinct content'].entries())
+      await writeFile(join(f.vault, 'concepts', `${i}.md`), `---\ntitle: Short ${i}\nrevision: 1\nstatus: active\ntrust: confirmed\n---\n${body}\n`);
+    const snapshot = await captureKnowledgeAdaptation(f.options);
+    const splits = ['calibration', 'validation', 'held-out'] as const;
+    const questions = snapshot.sources.map((s, i) => ({ id: `q-${i}`, question: `What does source ${i} say?`, locale: 'en', intent: 'fact',
+      split: splits[i], familyId: `family-${i}`, sourceIds: [s.id], answerability: 'answerable' as const,
+      support: [{ sourceId: s.id, startByte: s.snapshot.source.locator!.startByte,
+        endByteExclusive: s.snapshot.source.locator!.endByteExclusive, quote: s.snapshot.content }] }));
+    const input = { actor: 'author', driven_by: 'agent' as const, snapshotDigest: snapshot.snapshotDigest,
+      families: snapshot.sources.map((s, i) => ({ id: `family-${i}`, sourceIds: [s.id] })), questions,
+      review: { actor: 'independent-review-fixture', driven_by: 'agent' as const, snapshotDigest: snapshot.snapshotDigest,
+        datasetDigest: '', acceptedQuestionIds: questions.map(q => q.id) } };
+    input.review.datasetDigest = sha256(jsonBytes({ families: input.families, questions: input.questions }));
+    await expect(freezeKnowledgeQuestions(f.output, input)).rejects.toThrow('Near-duplicate content crosses source families');
+  });
   it('rejects a source family split across calibration and held-out', async () => {
     const f = await reviewed();
     f.input.questions[2].familyId = f.input.questions[0].familyId;

@@ -253,6 +253,7 @@ export function createMemoryWikiRerankService(options: {
             return (await response.json()) as {
               results: Array<{ index: number; relevance_score: number }>;
               tokens?: { input_tokens?: number };
+              meta?: { tokens?: { input_tokens?: number } };
             };
           } finally {
             await release();

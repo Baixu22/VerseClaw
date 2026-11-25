@@ -164,7 +164,8 @@ export async function freezeKnowledgeQuestions(captureDirectory: string, input: 
     const words = source.snapshot.content.normalize('NFKC').toLowerCase().match(/\p{Script=Han}|[\p{L}\p{N}_]+/gu) ?? [];
     // The bounded authoring snapshot is compared before model execution. The
     // bottom 128 hashes keep near-duplicate checks independent of document size.
-    const hashes = new Set([...new Set(words.slice(0, -4).map((_, i) => sha256(words.slice(i, i + 5).join(' '))))].sort().slice(0, 128));
+    const width = Math.min(5, words.length);
+    const hashes = new Set([...new Set(words.slice(0, words.length - width + 1).map((_, i) => sha256(words.slice(i, i + width).join(' '))))].sort().slice(0, 128));
     for (const [other, signature] of shingles) {
       const union = new Set([...hashes, ...signature]);
       const overlap = [...hashes].filter(hash => signature.has(hash)).length;

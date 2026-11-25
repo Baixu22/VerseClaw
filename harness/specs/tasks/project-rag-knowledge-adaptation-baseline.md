@@ -22,7 +22,10 @@ touchedAreas:
   - "openclaw_runtime/src/knowledge/retrieval/projection-store.ts"
   - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
   - "openclaw_runtime/extensions/memory-wiki/src/query.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval-rerank.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/rerank.ts"
   - "tests/e2e/project-rag-dcs-citation.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
   - "README*.md"
 requiredProfiles:
   - fast
@@ -33,14 +36,16 @@ requiredRules:
   - knowledge-source-set-read-admission
   - project-rag-long-term-boundary
 requiredTests:
+  - "pnpm exec vitest run tests/unit/project-rag-rerank-provider.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec vitest run tests/unit/project-rag-query-grade.test.ts tests/unit/project-rag-knowledge-adaptation.test.ts tests/unit/project-rag-owner-read.test.ts tests/unit/knowledge-source-set-answer.test.ts tests/unit/project-rag-corpus-integrity.test.ts tests/unit/project-rag-acceptance-readback.test.ts tests/unit/project-rag-offline-package.test.ts tests/unit/project-rag-receipts-promotion.test.ts --maxWorkers=1 --cache=false"
   - "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs src/knowledge/retrieval/projection-store.test.ts"
-  - "pnpm exec playwright test tests/e2e/project-rag-dcs-citation.spec.ts --workers=1 --retries=0"
+  - "pnpm exec playwright test tests/e2e/project-rag-dcs-citation.spec.ts tests/e2e/project-rag-rerank.spec.ts --workers=1 --retries=0"
 plannedTests:
   - tests/unit/project-rag-query-grade.test.ts
   - tests/unit/project-rag-knowledge-adaptation.test.ts
 plannedE2E:
   - tests/e2e/project-rag-dcs-citation.spec.ts
+  - tests/e2e/project-rag-rerank.spec.ts
 expectedUserBehavior:
   - 根据当前知识库的真实来源和问题分布选定可验证的检索配置。
 acceptance:
@@ -70,3 +75,7 @@ RAG-A1 是 RAG-16 的质量前置，依赖已完成的 RAG-02、RAG-08、RAG-09 
 项目文档实测补充：长段落按 token/字符上限可以在同一来源行内切分。索引发布按原始字节连续性核对，只有前一片段以换行结束时才要求下一片段起始行递增；同一行的合法相邻片段可发布。
 
 结构化 claim 没有正文出现位置坐标时，所有精确文本出现位置都必须落在当前 owner 读取范围内，才向 SourceSet 传递其身份。部分读取遇到范围外的相同文本时省略该 claim，完整读取仍可识别冲突。UTF-8、CRLF 和真实 SourceSet 路径进入回归，Electron 旅程通过 knowledge.get 核对部分与完整读取。
+
+重排用量兼容顶层 `tokens.input_tokens` 和 SiliconFlow 的 `meta.tokens.input_tokens`。所有 batch 都返回非负安全整数且总和有效时才报告总 inputTokens；单批缺失或非法时总量保持 unknown。保存的原始响应按摘要复读恢复历史用量，原始空用量回执保留。
+
+近重复检查对少于五个词的正文使用完整词序列指纹，防止仅大小写、空白或标点不同的短文档进入不同来源族。已有字节读取器继续拒绝空支持范围。

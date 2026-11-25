@@ -15,6 +15,47 @@ const hit = (id: string): RetrievalHit<string> => ({ id, sourceRef: ref(id), raw
 const providerStub = () => ({ schema: 'RerankProvider/v1' as const, providerRef: 'fixture', model: 'Qwen/Qwen3-Reranker-0.6B' });
 
 describe('Project RAG RerankProvider/v1', () => {
+  it('reads SiliconFlow nested token usage for every completed batch', async () => {
+    const stored = JSON.parse(await readFile(resolve('harness/specs/fixtures/project-rag/rag-a1-adaptation-20261125/siliconflow-rerank-response.json'), 'utf8'));
+    const size = stored.results.length;
+    const provider = createEndpointRerankProvider({ providerRef: 'siliconflow', model: 'Qwen/Qwen3-Reranker-0.6B', endpoint: 'https://api.siliconflow.cn/v1/rerank',
+      request: async body => { expect(body.documents).toHaveLength(size); return stored; },
+    });
+    const result = await provider.rerank('query', Array.from({ length: size * 2 }, (_, index) => ({ id: String(index), text: 'stored candidate' })), {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: size, batchChars: 1000,
+    });
+    expect(result).toMatchObject({ status: 'complete', batchCount: 2, inputTokens: 5436 });
+  });
+
+  it.each([undefined, -1, 1.5, Number.MAX_SAFE_INTEGER + 1])('keeps the batch total unknown when one batch reports %s tokens', async tokens => {
+    let calls = 0;
+    const provider = createEndpointRerankProvider({ providerRef: 'fixture', model: 'rerank', endpoint: 'http://localhost/rerank',
+      request: async () => ({ results: [{ index: 0, relevance_score: 1 }], tokens: { input_tokens: ++calls === 1 ? 12 : tokens } }),
+    });
+    const result = await provider.rerank('query', [{ id: 'a', text: 'alpha' }, { id: 'b', text: 'beta' }], {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+    });
+    expect(result.status).toBe('complete'); expect(result.inputTokens).toBeUndefined();
+  });
+
+  it('retains the legacy token shape including a measured zero', async () => {
+    const provider = createEndpointRerankProvider({ providerRef: 'fixture', model: 'rerank', endpoint: 'http://localhost/rerank',
+      request: async () => ({ results: [{ index: 0, relevance_score: 1 }], tokens: { input_tokens: 0 } }),
+    });
+    expect((await provider.rerank('query', [{ id: 'a', text: 'alpha' }], {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+    })).inputTokens).toBe(0);
+  });
+
+  it('keeps an unsafe batch sum unknown', async () => {
+    const provider = createEndpointRerankProvider({ providerRef: 'fixture', model: 'rerank', endpoint: 'http://localhost/rerank',
+      request: async () => ({ results: [{ index: 0, relevance_score: 1 }], tokens: { input_tokens: Number.MAX_SAFE_INTEGER } }),
+    });
+    expect((await provider.rerank('query', [{ id: 'a', text: 'alpha' }, { id: 'b', text: 'beta' }], {
+      signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+    })).inputTokens).toBeUndefined();
+  });
+
   it('persists and restores a local endpoint within the same owner scope', async () => {
     const values = new Map<string, unknown>();
     const openKeyedStore = () => ({ lookup: async (key: string) => values.get(key), register: async (key: string, value: unknown) => { values.set(key, value); }, delete: async (key: string) => { values.delete(key); } });

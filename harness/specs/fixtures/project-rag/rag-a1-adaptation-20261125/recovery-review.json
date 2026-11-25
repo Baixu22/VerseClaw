@@ -1,0 +1,163 @@
+{
+  "actor": "codex-g2-tf0946",
+  "driven_by": "agent",
+  "sourceCandidate": "fe9d7b3af5dd56278714a2eb8acad0b7ffc9ddaf",
+  "surfaces": {
+    "grading": "unknown: 150-second stream deadline, no provider terminal or text",
+    "capture": "incomplete: 12000 reasoning tokens, no review text",
+    "freeze": "completed: four findings assessed below",
+    "owner": "incomplete: 12000 reasoning tokens, no review text"
+  },
+  "findings": [
+    {
+      "subject": "empty support range",
+      "disposition": "rejected-by-existing-owner-byte-reader",
+      "evidence": "scripts/lib/project-rag-corpus.mjs spanText requires safe integers and endByteExclusive > startByte. Added executable freeze-to-spanText regression passed on the original implementation."
+    },
+    {
+      "subject": "review.actor can be fabricated",
+      "disposition": "trusted-authoring-attestation-not-an-authentication-boundary",
+      "evidence": "freeze checks consistency of a trusted agent-authored input. Actual independent review is verified separately against saved provider prompt/result/terminal hashes. The full 27-question WorkBuddy review receipts remain on disk. No claim of cryptographic actor authentication is made."
+    },
+    {
+      "subject": "short near-duplicate documents across families",
+      "disposition": "reproduced-and-fixed",
+      "change": "Use a full token sequence when a document has fewer than five tokens. Punctuation-only differences now share the same fingerprint and cannot cross source families.",
+      "evidence": "short-family-before.json and short-family-after.json; new positive-valid question data is included in the final regression."
+    },
+    {
+      "subject": "sourceIds and familyId leak to tested generator",
+      "disposition": "not-observed-in-the-frozen-experiment",
+      "evidence": "The returned evaluation object is explicitly evaluator-only. questions-public-r1.json contains only id/question/locale/intent/split; all captured answer requests contain only question and DCS messages. Original source/family fields were not sent to generation."
+    }
+  ],
+  "finalIndependentWholeChangeVerdict": "unavailable",
+  "unknownRequestRetried": false,
+  "newReviewCalls": 4,
+  "receipts": [
+    {
+      "surface": "grading",
+      "receiptSha256": "f0d6705b25b138382d49e0c418b18e54230ef305a81fe9c0ad9537c240b65d40",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "01841bde7cbd6d34eb5db1b98eb6be69883387cad38c83d720e89337d6480e5a",
+        "startedAt": "2026-11-25T13:31:41.054392+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "unknown",
+        "usage": null,
+        "costUsd": null,
+        "error": "TimeoutError: Review deadline elapsed",
+        "durationSeconds": 150.06299999999464,
+        "outputBytes": 0,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "output": ""
+    },
+    {
+      "surface": "capture",
+      "receiptSha256": "58d9f5676c0d048572fce16290ea9a0647b58e90ce1f0cc63e44e1dce5facbd1",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "4f96e44858a9c360b8006034329bc0894f1370bf982451c1fc480d89a81ebe32",
+        "startedAt": "2026-11-25T13:34:11.274847+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "incomplete",
+        "usage": {
+          "input_tokens": 2781,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 12000,
+          "output_tokens_details": {
+            "reasoning_tokens": 12000
+          },
+          "total_tokens": 14781
+        },
+        "costUsd": null,
+        "responseId": "chatcmpl-00ebf7b73f49422ebc33dc0646f5f527",
+        "returnedModel": "deepseek-v4.1-flash",
+        "durationSeconds": 63.921999999991385,
+        "outputBytes": 0,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "output": ""
+    },
+    {
+      "surface": "freeze",
+      "receiptSha256": "60cf4ef7fdefe2cd993a1f95729e8a9fd3bccff081333cb213af1a73a2d86fe3",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "9f4620820efe10849c9e302e86c5a54071ccadb370ab73adc7b72b62222290d4",
+        "startedAt": "2026-11-25T13:35:15.424776+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "completed",
+        "usage": {
+          "input_tokens": 4782,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 17811,
+          "output_tokens_details": {
+            "reasoning_tokens": 17536
+          },
+          "total_tokens": 22593
+        },
+        "costUsd": null,
+        "responseId": "as-zgx4fb9wyp",
+        "returnedModel": "deepseek-v4.1-flash",
+        "durationSeconds": 98.67199999999139,
+        "outputBytes": 1048,
+        "outputSha256": "5702874bfed5d1053ab0d209a54a8789864723bca8868f64c7519cb9ac4aa462"
+      },
+      "output": "1) 高：freezeKnowledgeQuestions 未校验 support.quote 非空及 startByte<endByteExclusive。触发：answerable/conflicting 题提交零长度范围且 quote=\"\"（start=end 在 ownerRange 内），spanText 返回空串即通过；影响：空证据/伪冲突进入 gold，字节封存失效。\n2) 高：复核身份可伪造。review.datasetDigest 只哈希 families+questions，不含 review.actor、acceptedQuestionIds，且无签名；触发：作者自填不同 actor 字符串并把未审题加入 acceptedQuestionIds；影响：独立复核门可绕过/篡改。\n3) 中：来源族近重复隔离有洞。shingles 为 5-gram，文档少于 5 词时 hashes 为空；触发：两短页仅标点不同跨族（如 alpha beta / alpha beta!），normalizedDigest 不同而 union 为空通过；影响：近重复源跨 split。\n4) 中：gold 未完全隔离。queries 仅删 support/answerability，仍留 sourceIds/familyId；触发：生成器读取 queries 的 sourceIds 限定检索；影响：证据源泄漏，评测偏置。\nFINAL=FAIL"
+    },
+    {
+      "surface": "owner",
+      "receiptSha256": "b83efcaac52559315639a6e898ed1dcc5844430a784a12b1964ac5ed846ab513",
+      "receipt": {
+        "schema": "G2QuestionReviewReceipt/v1",
+        "actor": "workbuddy/deepseek-v4.1-flash-code-review",
+        "driven_by": "agent",
+        "planSha256": "8f06522a81460c85172ae0f295d767bd6794962ce0b4017e2849a5903c37b5bf",
+        "startedAt": "2026-11-25T13:36:54.376660+00:00",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "calls": 1,
+        "status": "incomplete",
+        "usage": {
+          "input_tokens": 2505,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 12000,
+          "output_tokens_details": {
+            "reasoning_tokens": 12000
+          },
+          "total_tokens": 14505
+        },
+        "costUsd": null,
+        "responseId": "chatcmpl-b0555885cfa14a98ad2de05085b61f7c",
+        "returnedModel": "deepseek-v4.1-flash",
+        "durationSeconds": 64.26600000000326,
+        "outputBytes": 0,
+        "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "output": ""
+    }
+  ],
+  "preflight": {
+    "actor": "codex-g2-review",
+    "driven_by": "agent",
+    "state": "preflight-failed-zero-dispatch",
+    "cause": "Generated runner looked for frozen input in its child directory. Original logs retained; read base directory corrected before any request.",
+    "actualProviderDispatches": 0
+  }
+}

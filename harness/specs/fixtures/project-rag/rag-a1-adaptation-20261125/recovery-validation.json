@@ -1,0 +1,978 @@
+{
+  "schema": "G2RagAdaptationRecoveryValidation/v1",
+  "actor": "codex-g2-tf0946",
+  "driven_by": "agent",
+  "observedAt": "2026-11-25T13:44:29.371232+00:00",
+  "sourceBase": "fe9d7b3af5dd56278714a2eb8acad0b7ffc9ddaf",
+  "implementationInputs": [
+    {
+      "path": "scripts/knowledge-rag-adaptation.ts",
+      "sha256": "3ac5e3b43110b3eab58abacc189f64b7608e1499a0d62c8192cc01549e28f6aa"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/rerank.ts",
+      "sha256": "9128d26e2e63029d1509dced2f52268fb965d4e1676e27105600e28d420d393d"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-rerank.ts",
+      "sha256": "c01c114f987cd6a8c302304b7cc471ec5e2601001ccfabc95dfe864856921d47"
+    },
+    {
+      "path": "tests/unit/project-rag-knowledge-adaptation.test.ts",
+      "sha256": "883de6a8a2bb9a688add18681e0bc75c76f1e79dcd02c92b943d641e2d8686eb"
+    },
+    {
+      "path": "tests/unit/project-rag-rerank-provider.test.ts",
+      "sha256": "121dc4c39490807029b8aa9281261fd3883bfcda099967cbc42c13e8f623e34b"
+    },
+    {
+      "path": "tests/e2e/project-rag-rerank.spec.ts",
+      "sha256": "32e0cfc12cbb3f241f8ca14ac8e94975308fb13a88ea1ec1087c7cb94d96499d"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-knowledge-adaptation-baseline.md",
+      "sha256": "5db10955b2a678ebc630657b853660e88c995b61cc4c14277c4ff9aa634d03a8"
+    }
+  ],
+  "checks": {
+    "actor": "codex-g2-rerank-usage",
+    "driven_by": "agent",
+    "sourceBase": "fe9d7b3af5dd56278714a2eb8acad0b7ffc9ddaf",
+    "status": "passed",
+    "steps": [
+      {
+        "name": "unit",
+        "exitCode": 0,
+        "elapsedSeconds": 53.98399999999674,
+        "logSha256": "b52b780235b7d3d966039bf7398a475794a686c2ccc0664718a82ccea85bc560"
+      },
+      {
+        "name": "types",
+        "exitCode": 0,
+        "elapsedSeconds": 38.485000000015134,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "lint",
+        "exitCode": 0,
+        "elapsedSeconds": 3.1559999999881256,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "harness",
+        "exitCode": 0,
+        "elapsedSeconds": 1.937000000005355,
+        "logSha256": "8ed0e714c3541d15069b777c9c1b2350d44220cac5e7819e088af88c82d4e01c"
+      },
+      {
+        "name": "harness-dry-run",
+        "exitCode": 0,
+        "elapsedSeconds": 1.8910000000032596,
+        "logSha256": "99e28931cdd6cf7fd9fb097ba0a9c9db78f92da0b516b49aa823728f2a843cac"
+      },
+      {
+        "name": "comms-replay",
+        "exitCode": 0,
+        "elapsedSeconds": 0.5939999999827705,
+        "logSha256": "c2a4a9584c7d8086fa59bec6c17a11f192a1d118649faf925efa0aae48852809"
+      },
+      {
+        "name": "comms-compare",
+        "exitCode": 0,
+        "elapsedSeconds": 0.5780000000086147,
+        "logSha256": "981a963bbb7301cc8aa5ec62d0eaf09ac191f2b8b8a91ddea17cfde259ffc368"
+      }
+    ],
+    "startedAt": "2026-11-25T13:41:52.415639+00:00",
+    "diffSha256": "5668a717c2dd8e4ec83b3e5e58863f5796792acac1c5fcb6b72e16f0cdc06971",
+    "activeStep": null,
+    "completedAt": "2026-11-25T13:43:33.153869+00:00"
+  },
+  "unit": {
+    "passed": 195,
+    "failed": 0,
+    "pending": 0,
+    "reportSha256": "1c7938792cd7382ccd594f229c8f143130639af8008673e92f9119af1161a3e2",
+    "cases": [
+      {
+        "name": "selected Source Set owner admission enforces the read budget for an explicit pinned source",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission revalidates distinct ranges of one native subject, later denial=false",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission revalidates distinct ranges of one native subject, later denial=true",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission preserves native-memory ownership through selected-source materialization",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission preserves role-memory ownership through selected-source materialization",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission retains owner revision, freshness, exact read bytes and advisory trust",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects owner status archived",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects owner status revoked",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects owner status deleted",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects owner status denied",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects owner status stale",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects owner status unexpected-state",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier sensitive",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier secret-adjacent",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier secret",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier personal",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier unknown-tier",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier __proto__",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier constructor",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects restricted or unknown privacy tier null",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":[\"another-operator\"]}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission cannot replace an owner ACL with operator access: null",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":\"operator\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission enforces a supplied workspace filter against the owner scope",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: null",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"title\":\"An empty source\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"   \",\"title\":\"No source body\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"\",\"body\":\"Stale fallback body\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"corpus\":\"memory\",\"content\":\"  Review before applying.\\nKeep the original read bytes.\\n\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission discloses a truncated range without pretending it read the complete page",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":null}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":{\"workspaceId\":42}}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects malformed owner scope metadata: {\"workspaceId\":0}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects an invalid supplied read range: {\"fromLine\":0}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects an invalid supplied read range: {\"totalLines\":2}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects an invalid supplied read range: {\"truncated\":\"false\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not invent an indexing timestamp for a legacy owner result",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"revision\":\"18\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"contentDigest\":\"sha256:2f04f3044eb15f46d7f1f6e22cbb7e34761eb9daa5d91ce425a4048dd82172eb\"}",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission rejects a supplied owner content digest that does not match the read bytes",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission passes only admitted content into the optional embedding provider",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not call the provider or refill rejected text when no source is admitted",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission preserves structured owner claim conflicts and their version-bound citations",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission deduplicates canonical aliases without duplicating the evidence",
+        "status": "passed"
+      },
+      {
+        "name": "selected Source Set owner admission does not let an active alias hide a later archived read of the same owner",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence supports an explicit Windows scope while preserving the full-platform contract",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence requires all supplied candidate identities to match the frozen manifest",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence requires continuous 72-hour wall and monotonic observations",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence keeps candidate drift, revocation leaks and failed states disqualifying",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence rejects failed lifecycle steps and errors despite a passed wrapper status",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence terminates its owned command when the fixed deadline expires",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on exit",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on timeout",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on missing",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on malformed",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on identity",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on policy",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on source",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence retains completed queries and the failing arm on start",
+        "status": "passed"
+      },
+      {
+        "name": "RAG acceptance preserves actual duration and failed evidence preserves a partial agent-driven cohort and returns a failing process exit",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus preserves the rejected v1 and v2 bytes under their original external freeze pins",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus reads 240 multilingual queries, 30 independent source families and 540 untouched trial slots",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus reopens every gold span through the actual Wiki owner and the exact same raw bytes",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus refuses changed bytes and a changed freeze manifest without the external release pin",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus rejects independently rehashed semantic drift in queries.json",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus rejects independently rehashed semantic drift in queries.json",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus rejects independently rehashed semantic drift in trial-plan.json",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus rejects independently rehashed semantic drift in trial-plan.json",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus rejects independently rehashed semantic drift in baseline.json",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus rejects independently rehashed semantic drift in oracle/query-gold.json",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus exports an anonymous selected request and same-split sources, keeping gold and held-out sealed",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus accepts a valid shorter supporting citation and rejects wrong byte, owner and duplicate-field citations",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus requires the incident cause, verification and cross-source decision beyond correct field values",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus omits evaluator family routing from every materialized research objective and nested request field",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus captures invalid JSON bytes and a missing delivery as ordinary agent failures",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus distinguishes a correct answer from an incomplete task and rejects modified owner bytes",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus calibrates all 60 file-delivery oracles with correct and wrong typed outputs",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen acl negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen scope negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen revoked negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen expired negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen sensitive negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen revision negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen digest negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen namespace negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen policy negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen cancelled negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus retains a real owner rejection for the frozen range negative class",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus keeps file deletion a missing-owner result after actual disk materialization",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus rejects UTF-8 offsets inside a multibyte code point",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus freezes provider, owner safety and exactly the same three-arm envelopes",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus does not promote a frozen plan or missing measurement as executed benefit",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG frozen evaluation corpus keeps measured agent failures paired and requires pinned safety, attempt and budget receipts",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze captures original owner bytes and structure without initializing the source vault",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze reports an unavailable owner and does not manufacture a vault",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze excludes revoked contents and keeps a rejection receipt",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects stale source content through the actual owner policy",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects expired source content through the actual owner policy",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects other principal source content through the actual owner policy",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects other workspace source content through the actual owner policy",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze marks bounded or invalid-source captures partial and prevents their release",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze removes evidence changed after its initial owner read",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze keeps outputs outside the vault and never overwrites a capture",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects output inside a vault reached through a directory alias",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze freezes exact supports while excluding oracle answers from public questions",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects wrong quotes, changed archives and changes after the independent review",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects an empty gold range through the pinned byte reader",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze keeps short text differing only in punctuation in the same source family",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze rejects a source family split across calibration and held-out",
+        "status": "passed"
+      },
+      {
+        "name": "knowledge adaptation owner snapshot and question freeze requires a distinct reviewer and complete question coverage",
+        "status": "passed"
+      },
+      {
+        "name": "sealed offline policy evidence replays pinned path semantics independently of the host platform",
+        "status": "passed"
+      },
+      {
+        "name": "sealed offline policy evidence rejects policy drift and manifest names that escape the selected directory",
+        "status": "passed"
+      },
+      {
+        "name": "sealed offline policy evidence rejects forged positive summaries after reopening the original query bytes",
+        "status": "passed"
+      },
+      {
+        "name": "sealed offline policy evidence checks source byte bounds and line coordinates before awarding precise references",
+        "status": "passed"
+      },
+      {
+        "name": "sealed offline policy evidence loads the bundled verifier outside the checkout without a compiler installation",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract binds the complete raw bytes, owner policy, namespace and raw locator",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract carries only claims quoted in the admitted slice into actual SourceSet conflicts",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract does not bind a repeated claim to an unrelated occurrence in a partial owner read",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract uses raw character offsets for repeated claims in UTF-8 CRLF owner slices",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for revoked (status: revoked\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for archived (status: archived\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for deleted (status: deleted\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for stale (status: stale\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (status: denied\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for sensitive (privacyTier: private\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for sensitive (privacyTier: secret\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for acl_denied (acl:\n  read: [another-principal]\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for acl_denied (acl:\n  read: []\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for scope_mismatch (scope:\n  workspaceId: another-workspace\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for scope_mismatch (scope:\n  agentId: another-agent\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for scope_mismatch (scope:\n  sessionKey: another-session\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for expired (retention:\n  expiresAt: \"2000-01-01T00:00:00Z\"\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for expired (retention:\n  expiresAt: invalid-date\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (status: unknown-owner-status\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (acl: invalid\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (status: null\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (status: [active]\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (scope:\n  workspaceId: null\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (retention: null\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (retention:\n  expiresAt: null\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for denied (revision: 0\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns no source bytes for sensitive (privacyTier: null\n)",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract rejects edits below the 80-line window instead of serving the newer version as a pin",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract checks current permissions before reopening a formerly valid citation",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract does not resurrect a deleted source from a retained pin",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract keeps full source identity when bounding the exact prompt excerpt",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract reopens a range pin with matching body-line and truncation metadata",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract rejects replacement candidate bytes before calling the embedding provider",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract requires a raw locator on a resolved SourceSet candidate",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract returns an explicit denial for a pin that ends inside a UTF-8 code point",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract does not turn a corpus selector into a different permission policy",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract records a late revoked pin as partial while retaining the other valid pin",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract rejects namespace, revision, digest and range drift",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG owner read contract rejects context changes, expiration, cancellation and unapproved egress at every use gate",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage separates one-byte overlap from complete support recall",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage credits a later complete hit at its own rank",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage unions complementary fragments and does not double-count overlap",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage does not fill a gap or improve ranking with duplicates",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage uses the support range rather than the larger citation envelope",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage keeps repeated and overlapping multi-fact hits within normalized ranking bounds",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage rejects a changed revision",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage rejects a changed sourceDigest",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage rejects a changed policyEpoch",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage rejects a changed namespaceId",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage does not lend earlier bytes to the relevance grade of a later rank",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage rejects changed raw bytes even when the submitted pin is unchanged",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage checks UTF-8 boundaries and source line numbers",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage limits coverage to the first twenty hits",
+        "status": "passed"
+      },
+      {
+        "name": "versioned owner support coverage fails closed on duplicate oracle support and absent safety counts",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts keeps the original default and admits only bounded policy changes",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts binds selected policy to the actual retrieval plan and fusion score",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts accepts complete positive evidence while preserving all frozen floors",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts holds promotion for unknown cost",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts holds promotion for unknown usage",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts holds promotion for missing task slot",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts holds promotion for partial queries",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts holds promotion for nonpositive interval",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts holds promotion for source leak",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts holds promotion for stale baseline",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts rejects a summary without the complete frozen raw report",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG offline policy and receipt contracts recomputes complete raw slots and rejects duplicate or missing evidence",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 reads SiliconFlow nested token usage for every completed batch",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 keeps the batch total unknown when one batch reports undefined tokens",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 keeps the batch total unknown when one batch reports -1 tokens",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 keeps the batch total unknown when one batch reports 1.5 tokens",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 keeps the batch total unknown when one batch reports 9007199254740992 tokens",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 retains the legacy token shape including a measured zero",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 keeps an unsafe batch sum unknown",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 persists and restores a local endpoint within the same owner scope",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 validates complete finite-score permutations and batches with a shared deadline",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 cancels an in-flight HTTP request and enforces the request deadline",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 reranks quality/research after admission, re-verifies, and never calls for local or explicit pins",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 preserves RRF on invalid, failed and owner-revoked rerank results",
+        "status": "passed"
+      },
+      {
+        "name": "Project RAG RerankProvider/v1 runs the multilingual fixed-pool ablation with explicit fixture or live provenance",
+        "status": "passed"
+      }
+    ]
+  },
+  "originalCandidateProcessRecovery": {
+    "actor": "codex-g2-process-recovery",
+    "driven_by": "agent",
+    "candidate": "fe9d7b3af5dd56278714a2eb8acad0b7ffc9ddaf",
+    "startedAt": "2026-11-25T13:25:49.703629+00:00",
+    "status": "passed",
+    "sourceClean": true,
+    "steps": [
+      {
+        "name": "process-recovery",
+        "exitCode": 0,
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/project-rag-acceptance-readback.test.ts",
+          "-t",
+          "terminates its owned command|retains completed queries and the failing arm on timeout",
+          "--maxWorkers=1",
+          "--cache=false",
+          "--reporter=json",
+          "--outputFile=D:\\tmp\\g2-tf0946-20261125-01a21178\\process-recovery-20261125-r1\\process-recovery.json"
+        ],
+        "durationSeconds": 8.65700000000652,
+        "reportSha256": "106d7e2ab612af18af2c2d8f115b87eaf432a55337f0b1ca1c432d51a243df76"
+      },
+      {
+        "name": "node-regression",
+        "exitCode": 0,
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/project-rag-query-grade.test.ts",
+          "tests/unit/project-rag-knowledge-adaptation.test.ts",
+          "tests/unit/project-rag-owner-read.test.ts",
+          "tests/unit/knowledge-source-set-answer.test.ts",
+          "tests/unit/project-rag-corpus-integrity.test.ts",
+          "tests/unit/project-rag-acceptance-readback.test.ts",
+          "tests/unit/project-rag-offline-package.test.ts",
+          "tests/unit/project-rag-receipts-promotion.test.ts",
+          "--maxWorkers=1",
+          "--cache=false",
+          "--reporter=json",
+          "--outputFile=D:\\tmp\\g2-tf0946-20261125-01a21178\\process-recovery-20261125-r1\\node-regression.json"
+        ],
+        "durationSeconds": 182.96799999999348,
+        "reportSha256": "75e888cdacf750af6cd126bd2c8a16d8da6b1fd6364d9baf3af9fb21ac7f2eed"
+      }
+    ],
+    "activeStep": null,
+    "completedAt": "2026-11-25T13:29:01.347181+00:00"
+  },
+  "taskkillRecovery": {
+    "actor": "codex-g2-process-diagnostic",
+    "driven_by": "agent",
+    "ownedPid": 47136,
+    "startedAt": "2026-11-25T13:23:20.746820+00:00",
+    "taskkillExitCode": 0,
+    "stdout": "�ɹ�: ����ֹ PID 40208 (���� PID 47136 �ӽ���)�Ľ��̡�\r\n�ɹ�: ����ֹ PID 47136 (���� PID 32856 �ӽ���)�Ľ��̡�\r\n",
+    "stderr": "",
+    "elapsedSeconds": 0.35899999999674037,
+    "ownedChildExitCode": 1,
+    "cleanupConfirmed": true
+  },
+  "originalTaskkillFailureDigest": "fec742c2d88f83eeab51620c733919ba2b5a004833938d8706f3354a45aaa7ca",
+  "probeProvenance": {
+    "actor": "codex-g2-tf0946",
+    "driven_by": "agent",
+    "reason": "Continuation re-used the previous diagnostic script and its output path. Preserve new observation separately and restore original bytes from committed evidence.",
+    "originalRestoredSha256": "fec742c2d88f83eeab51620c733919ba2b5a004833938d8706f3354a45aaa7ca",
+    "freshObservationPath": "D:\\tmp\\g2-tf0946-20261125-01a21178\\owned-taskkill-probe-recovered-20261125-r2.json",
+    "freshObservationSha256": "15666e985c0c9b9ac3c0ed97809d0cc5c128e68f172eda18381c87625adaf330",
+    "originalFirstFailurePreserved": true
+  },
+  "rerankRed": {
+    "passed": 7,
+    "failed": 5,
+    "reportSha256": "8183bd6ec8427b04788b8d0ecc3d12487a19c3a59976a81d2a9653325f821afb"
+  },
+  "shortFamilyRed": {
+    "passed": 16,
+    "failed": 1,
+    "reportSha256": "a3e6a30b57602d990bdca7d344657cc02c90de568c7599dceb36a1cf72fc6c7b"
+  },
+  "recordedResponseDigest": "9876806987420e6418871ae331dc5fa3d8ac3c4d405ef3e324607e247279506d",
+  "offlineReplayResponses": 52,
+  "offlineReplayModelCalls": 0,
+  "rerankReportedInputTokens": 121872,
+  "rerankBilledInputTokens": 121872,
+  "answerUnknownsUnchanged": 4,
+  "fullMonetaryCostUsd": null,
+  "policyPromotion": false,
+  "electronJourneys": "updated-not-run",
+  "nodeCompleted": false
+}

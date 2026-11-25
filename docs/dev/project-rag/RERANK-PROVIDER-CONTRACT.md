@@ -2,6 +2,8 @@
 
 `RerankProvider/v1` 使用 `RerankResult/v1` 返回模型、批次数、耗时、可用 token 用量及原始相关性分数。`scoreKind=raw-relevance`、`calibrated=false`；该分数只决定候选次序，不表示来源可信度或回答正确概率。
 
+输入用量兼容 `tokens.input_tokens` 和 SiliconFlow 的 `meta.tokens.input_tokens`。所有 batch 均报告非负安全整数、且累加结果为安全整数时才返回总 `inputTokens`；缺失或非法批次使总用量保持未知。`meta.billed_units` 由原始评测回执单列保存。
+
 模型清单列出 Qwen3-Reranker 的 0.6B、4B、8B 三种 cross-encoder，参考模型为 `Qwen/Qwen3-Reranker-0.6B`。本地适配器连接操作者提供的 loopback `/rerank` endpoint；远端适配器沿用已配置 provider 的 endpoint 与 SecretRef，或默认 SiliconFlow 环境变量。配置和日志不保存密钥。
 
 设置 > 模型提供模型清单、本地/远端选择、配置、取消、禁用与凭据刷新。默认未启用；取消后不会发起新调用。`local` 检索 profile 不依赖重排，`quality` 和 `research` 在非显式 pin 的普通检索中使用重排。
