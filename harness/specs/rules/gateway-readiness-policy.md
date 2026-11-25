@@ -5,6 +5,8 @@ type: ai-coding-rule
 appliesTo:
   - gateway-backend-communication
 requiredTests:
+  - openclaw_runtime/src/gateway/server/health-state.lazy.test.ts
+  - openclaw_runtime/src/infra/update-available-state.test.ts
   - tests/unit/gateway-lazy-harness-selection.test.ts
   - tests/unit/gateway-native-language-parser-loading.test.ts
   - tests/unit/gateway-lazy-builtin-harness.test.ts
@@ -29,3 +31,5 @@ Built-in harness support metadata leaves the embedded execution graph unloaded u
 Harness selection captures its decision and diagnostic trace before loading context-budget and lifecycle execution wrappers. Support queries leave those wrappers unloaded; execution uses the original budget and policy functions and persists available compilation at its runtime boundary.
 
 Trajectory connection cleanup remains synchronous. The cleanup module loads its session resolver on the first valid read; session and path resolution retain their original owner and error contract.
+
+Handshake snapshots read cached health and update availability synchronously without loading probe or updater execution. Health refreshes retain separate public and sensitive work, publish only public results, and release failed refreshes for retry. Updater notifications and handshake snapshots share the same update state.

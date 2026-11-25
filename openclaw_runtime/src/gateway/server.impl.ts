@@ -22,7 +22,7 @@ import {
 } from "../config/io.js";
 import { isNixMode, normalizeStateDirEnv, resolveStateDir } from "../config/paths.js";
 import { applyConfigOverrides } from "../config/runtime-overrides.js";
-import { resolveMainSessionKey } from "../config/sessions.js";
+import { resolveMainSessionKey } from "../config/sessions/main-session.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { resolveConfigDir } from "../utils.js";
 import {

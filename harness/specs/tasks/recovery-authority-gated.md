@@ -11,6 +11,11 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/gateway/server/health-state.ts
+  - openclaw_runtime/src/gateway/server/health-state.lazy.test.ts
+  - openclaw_runtime/src/infra/update-startup.ts
+  - openclaw_runtime/src/infra/update-available-state.ts
+  - openclaw_runtime/src/infra/update-available-state.test.ts
   - scripts/versebrowser-n9-stability-probe.test.mjs
   - openclaw_runtime/src/gateway/server-runtime-services.ts
   - openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts
@@ -326,6 +331,8 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - openclaw_runtime/src/gateway/server/health-state.lazy.test.ts
+  - openclaw_runtime/src/infra/update-available-state.test.ts
   - scripts/versebrowser-n9-stability-probe.test.mjs
   - openclaw_runtime/src/gateway/server-reload-handlers.lazy.test.ts
   - openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts
@@ -449,6 +456,7 @@ acceptance:
   - Main restart recovery carries the owning agent for global continuation and failure-notice RPCs. Retry deduplication binds the store path, session key and physical generation so different agents and replacement generations recover independently.
   - Registering the Gateway configuration watcher leaves cron, MCP disposal and provider rewarm execution unloaded. Actual reloads preserve cache invalidation, cron stop/start ordering, disposal timeouts and rewarm error reporting.
   - Empty startup delivery queues leave send/reply execution unloaded. The existing queue owners retain recovery admission, cutoff, claims, backoff and settlement for pending work.
+  - Handshake snapshots read health and update state without loading health probes or updater execution. Refreshes preserve public/sensitive isolation, coalescing and error propagation; update notifications share one state owner and retain change deduplication.
   - Desktop build provenance hashes every declared output with bounded file reads and reuses a physical file's hash only within the same snapshot. Archive mappings and deterministic output order are preserved.
   - Goal-wake remains level-triggered and never respawns an uncertain durable helper; task terminal state and the wait reconciliation remain idempotent after restart.
   - ACP observed output prevents a fresh turn, and an early backend exit without effect truth is not treated as proof that no effect occurred.

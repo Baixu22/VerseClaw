@@ -17,6 +17,7 @@ Restart recovery keeps each agent's `global` session and failure notice bound to
 Agents reuse compatible Gateway plugin state during startup; configuration and workspace changes retain their own loading scope.
 
 Gateway configuration watchers load cron, MCP disposal and provider refresh execution when a reload needs them. Empty startup delivery queues leave sending and reply execution unloaded.
+Handshake snapshots read cached health and update availability without loading probes or updater execution. Health refreshes keep sensitive results separate from the public cache.
 
 Native language parsers load when code analysis first needs the corresponding language.
 
