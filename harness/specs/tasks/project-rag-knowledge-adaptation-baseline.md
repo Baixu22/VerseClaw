@@ -21,6 +21,8 @@ touchedAreas:
   - "tests/unit/project-rag-*.test.ts"
   - "openclaw_runtime/src/knowledge/retrieval/projection-store.ts"
   - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/query.ts"
+  - "tests/e2e/project-rag-dcs-citation.spec.ts"
   - "README*.md"
 requiredProfiles:
   - fast
@@ -31,11 +33,14 @@ requiredRules:
   - knowledge-source-set-read-admission
   - project-rag-long-term-boundary
 requiredTests:
-  - "pnpm exec vitest run tests/unit/project-rag-query-grade.test.ts tests/unit/project-rag-knowledge-adaptation.test.ts tests/unit/project-rag-corpus-integrity.test.ts tests/unit/project-rag-acceptance-readback.test.ts tests/unit/project-rag-offline-package.test.ts tests/unit/project-rag-receipts-promotion.test.ts --maxWorkers=1 --cache=false"
+  - "pnpm exec vitest run tests/unit/project-rag-query-grade.test.ts tests/unit/project-rag-knowledge-adaptation.test.ts tests/unit/project-rag-owner-read.test.ts tests/unit/knowledge-source-set-answer.test.ts tests/unit/project-rag-corpus-integrity.test.ts tests/unit/project-rag-acceptance-readback.test.ts tests/unit/project-rag-offline-package.test.ts tests/unit/project-rag-receipts-promotion.test.ts --maxWorkers=1 --cache=false"
   - "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs src/knowledge/retrieval/projection-store.test.ts"
+  - "pnpm exec playwright test tests/e2e/project-rag-dcs-citation.spec.ts --workers=1 --retries=0"
 plannedTests:
   - tests/unit/project-rag-query-grade.test.ts
   - tests/unit/project-rag-knowledge-adaptation.test.ts
+plannedE2E:
+  - tests/e2e/project-rag-dcs-citation.spec.ts
 expectedUserBehavior:
   - 根据当前知识库的真实来源和问题分布选定可验证的检索配置。
 acceptance:

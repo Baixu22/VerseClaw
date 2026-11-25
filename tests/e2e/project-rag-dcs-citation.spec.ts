@@ -146,10 +146,18 @@ test('Project RAG packs real owner evidence for ordinary, media, queued, retry a
     expect(general.synthesisMode).toBe('model');
     expect(general.claims).toEqual(expect.arrayContaining([expect.objectContaining({ kind: 'general', citations: [] })]));
     await writeFile(join(vault, 'concepts/conflict-port.md'), document('Conflict port', 'The deployment port is 9999.'));
+    const withClaim = (body: string) => body.replace('revision: 1\n', 'revision: 1\nclaims:\n  - id: deployment-port\n    text: '
+      + (body.includes('9999') ? 'The deployment port is 9999.' : quote) + '\n');
+    await writeFile(join(vault, 'concepts/z-first.md'), withClaim(document('Z first', quote)));
+    await writeFile(join(vault, 'concepts/conflict-port.md'), withClaim(document('Conflict port', 'The deployment port is 9999.')));
     const conflict = await qaAnswer('RAG10 conflict deployment ports', 'strict', [...selected,
       { id: 'concepts/conflict-port.md', path: 'concepts/conflict-port.md', kind: 'wiki' }]);
     expect(conflict.synthesisMode).toBe('unknown'); expect(JSON.stringify(conflict.unknowns)).toContain('different deployment ports');
+    expect(conflict.conflictSet).toEqual(expect.arrayContaining([expect.objectContaining({
+      key: 'claim:deployment-port', stances: expect.arrayContaining([quote, 'The deployment port is 9999.']),
+    })]));
     receipt.answerContract = { unsupported, missing, general, conflict };
+    await writeFile(join(vault, 'concepts/z-first.md'), document('Z first', quote));
 
     await page.getByTestId('sidebar-nav-knowledge').click();
     await expect(page.getByTestId('knowledge-page')).toBeVisible();

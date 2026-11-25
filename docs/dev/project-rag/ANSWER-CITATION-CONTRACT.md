@@ -11,3 +11,5 @@ Citation/v2 保存原文 SourceRef/v2、整份原文 digest、已读取 chunk di
 引用点击经 Host knowledge.get 重新检查 owner 权限和版本，并显示对应原文范围。读取失效时清空原文正文并显示拒绝原因。治理动作保留原 chunk pin；答案的引句范围单独保存在 answerCitation，供回源使用。
 
 保存答案和错误经验继续创建 agent 驱动的 Draft 或 Inbox 候选，经 Proposal/apply 流程审核。前端模板摘录不根据检索排序分数生成回答 confidence。
+
+Wiki owner 读取会传递当前正文范围内能精确匹配的结构化 claim（id/text）。同一 claim ID 的不同文本可进入 SourceSet 冲突组，并保留 owner 版本和引用；未读范围、仅存在于 metadata 的文本及撤权来源不作为冲突证据。

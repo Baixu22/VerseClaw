@@ -11,6 +11,7 @@ import {
   matchOwnerReadPin, type OwnerReadSnapshotV1,
 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import { retrieveSourceSet, type SourceSetCandidate } from '../../openclaw_runtime/src/context-engine/source-set';
+import { retrieveSelectedSourceSetEvidence } from '../../electron/services/knowledge-source-set-answer';
 
 describe('Project RAG owner read contract', () => {
   let root: string;
@@ -59,6 +60,26 @@ describe('Project RAG owner read contract', () => {
     expect(snapshot.content).toContain('第80行');
     expect(snapshot.content).not.toContain('第81行');
     expect((await get(snapshot.source))?.ownerSnapshot?.content).toBe(snapshot.content);
+  });
+
+  it('carries only claims quoted in the admitted slice into actual SourceSet conflicts', async () => {
+    const claims = (value: number) => `claims:\n  - id: deployment-port\n    text: Port ${value}\n  - id: unread\n    text: Unread secret\n  - id: invented\n    text: Not in the body\n`;
+    await save(raw(claims(8080), 'Port 8080\nUnread secret\n'));
+    await writeFile(join(root, 'concepts/other.md'), raw(claims(9090), 'Port 9090\nUnread secret\n'));
+    const read = (lookup: string) => getMemoryWikiPage({ config: config(), lookup, fromLine: 1, lineCount: 1 });
+    expect((await read('concepts/owner.md'))?.claims).toEqual([{ id: 'deployment-port', text: 'Port 8080' }]);
+    const result = await retrieveSelectedSourceSetEvidence({ question: 'Which port?',
+      sourceRefs: ['owner', 'other'].map(name => ({ id: name, path: `concepts/${name}.md`, kind: 'wiki' })),
+      readPage: ref => read(ref.path!),
+    });
+    expect(result.sourceSet.conflictSet).toEqual([expect.objectContaining({
+      key: 'claim:deployment-port', stances: ['Port 8080', 'Port 9090'],
+      citations: expect.arrayContaining([expect.objectContaining({ revision: '1' })]),
+    })]);
+    expect(JSON.stringify(result.sourceSet.conflictSet)).not.toContain('Unread secret');
+    await save(raw('status: revoked\n' + claims(8080), 'Port 8080\n'));
+    const denied = await read('concepts/owner.md');
+    expect(denied?.status).toBe('denied'); expect(denied?.claims).toBeUndefined();
   });
 
   it.each([

@@ -219,6 +219,7 @@ type WikiGetResult = {
   reason?: string;
   pageType?: string;
   hasConflicts?: boolean;
+  claims?: Array<{ id: string; text: string }>;
 };
 
 export type QueryableWikiPage = WikiPageSummary & {
@@ -1796,6 +1797,13 @@ export async function getMemoryWikiPage(params: {
         hasConflicts:
           currentPage.contradictions.length > 0 ||
           currentPage.claims.some((claim) => isClaimContestedStatus(claim.status)),
+        // Metadata may describe unread sections. Only claims quoted in this
+        // owner-verified slice can contribute to downstream conflict evidence.
+        claims: currentPage.claims.flatMap((claim) =>
+          claim.id && claim.text.trim().length >= 2 && slice.includes(claim.text)
+            ? [{ id: claim.id, text: claim.text }]
+            : [],
+        ),
         sourceRef: snapshot.source,
         ownerSnapshot: snapshot,
       };

@@ -207,7 +207,7 @@ Main layers：
 - 監視フォルダーは追加・変更・削除を版付きの審査候補へ同期し、停止中の変更も再走査します。
 - ファイルと GitHub のソースは版を進める前に UTF-8 を検証し、不正な文字列はカーソルを保持してエラーにします。
 - Project RAG は workspace に紐付く明示的な index lifecycle API を備え、SQLite 公開、background worker、owner 引用検証を行います。[索引ライフサイクル契約](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md)を参照してください。
-- ナレッジ索引は長い段落を同じ原文行の途中で分割でき、バイト位置と行番号の正確な引用を保持します。オフライン検索評価は部分一致と完全な証拠の網羅を分けて計測します。[評価契約](docs/dev/project-rag/EVALUATION-CONTRACT.md)を参照してください。
+- ナレッジ索引は長い段落を同じ原文行の途中で分割でき、バイト位置と行番号の正確な引用を保持します。オフライン検索評価は部分一致と完全な証拠の網羅を分けて計測します。[評価契約](docs/dev/project-rag/EVALUATION-CONTRACT.md)を参照してください。 Wiki の構造化 claim は、owner が検証した読み取り範囲に同じ本文がある場合にのみ競合検出へ渡されます。
 - コードの関係探索は実際の相対パスと現在の owner／版を検証し、通常 1 段、最大 2 段で import と呼び出しを辿ります。各段は 512 件の候補走査予算を共有し、上限に達すると partial を返します。タスク hint は現在の binding の revision、制約、証拠参照を返します。[コード関係とタスク context](docs/dev/project-rag/CODE-TASK-CONTEXT-CONTRACT.md)を参照してください。
 - Chat の知識選択で明示的に Research を実行すると、不足する証拠を追跡します。固定された予算内で最大 3 ラウンド、8 検索、2 回の計画呼び出しを行い、進捗、取消、証拠、推論、矛盾、部分結果を表示します。要求に失敗した場合はバックエンドの処理も取り消し、停止後に起動応答が届いた場合も同じ要求を再度取り消します。最後の owner 確認中も取り消しを受け付けます。[Research 契約](docs/dev/project-rag/RESEARCH-CONTRACT.md)を参照してください。
 - DCS は許可された知識の順序を保ち、共有予算内で chunk や競合グループを丸ごと組み込み、Chat と model-only 知識 QA が保持した引用とバイト数を記録します。[証拠組み込み契約](docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md)を参照してください。
