@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ok 1 tests\e2e\session-task-review-fixes.spec.ts:80:5 › cancels an active model, restores its task identity, reads a fork and resumes through the agent (41.8s)
+  ok 2 tests\e2e\session-task-review-fixes.spec.ts:210:7 › acknowledges a background handoff without restoring its sent target draft (39.2s)
+  ok 3 tests\e2e\session-task-review-fixes.spec.ts:210:7 › acknowledges a background handoff while retaining a new same-text target draft (39.7s)
+  ok 4 tests\e2e\session-task-review-fixes.spec.ts:210:7 › acknowledges a background handoff while synchronizing an unedited remounted target (32.6s)
+  ok 5 tests\e2e\session-task-review-fixes.spec.ts:309:5 › keeps the new workspace list after an old real claim response arrives (30.7s)
+  ok 6 tests\e2e\session-task-review-fixes.spec.ts:342:5 › keeps C and its draft while a send to B is waiting for real history (27.7s)
+
+  6 passed (3.6m)

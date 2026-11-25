@@ -1,0 +1,33 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-final-validation",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/eslint/bin/eslint.js",
+    "electron/services/sessions-api.ts",
+    "electron/services/task-ledger-service.ts",
+    "electron/services/task-system-service.ts",
+    "electron/services/workspaces-api.ts",
+    "shared/task-system/runtime.ts",
+    "shared/task-system/store.ts",
+    "shared/task-system/tool-policy.ts",
+    "src/pages/Chat/index.tsx",
+    "src/pages/TaskLedger/ManagedTasks.tsx",
+    "src/stores/chat.ts",
+    "tests/e2e/session-task-review-fixes.spec.ts",
+    "tests/unit/chat-pending-message-queue.test.ts",
+    "tests/unit/chat-store-history-retry.test.ts",
+    "tests/unit/session-lifecycle-tail.test.ts",
+    "tests/unit/session-task-review-fixes.test.ts",
+    "tests/unit/session-task-scope-completion.test.ts",
+    "tests/unit/session-task-state-guidance.test.tsx",
+    "--max-warnings",
+    "2"
+  ],
+  "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+  "started": "2026-11-25T14:46:20.434Z",
+  "ended": "2026-11-25T14:46:29.848Z",
+  "exitCode": 0,
+  "signal": null,
+  "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+}
