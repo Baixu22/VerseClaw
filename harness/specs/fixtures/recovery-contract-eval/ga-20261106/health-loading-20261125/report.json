@@ -1,0 +1,313 @@
+{
+  "schema": "G3HealthLoadingReport/v1",
+  "sourceCommit": "9cf60e656a72379b8ecd898a8e9073ca97b2b036",
+  "baselineCommit": "f807d27ee9531958379a35d9aec6d7ecf5f81ff5",
+  "driven_by": "agent",
+  "actor": "codex/g3-r44",
+  "gaStatus": "NO_GO",
+  "result": "STARTUP_MODULES_REDUCED_RECOVERY_TARGET_REMAINS",
+  "measurements": {
+    "staticCompiledModules": {
+      "before": 416,
+      "after": 380
+    },
+    "isolatedWarmImports": {
+      "beforeMs": [
+        4138.2733,
+        2110.8722,
+        2558.8336999999997
+      ],
+      "afterMs": [
+        1221.1662,
+        1179.0593,
+        1132.0135
+      ],
+      "beforeMedianMs": 2558.8336999999997,
+      "afterMedianMs": 1179.0593,
+      "method": "Three isolated Node imports per source with a populated compile cache. Sequential development observations; host load varies."
+    },
+    "currentBaselineRestart": [
+      {
+        "windowId": "repeated-restart",
+        "recoveryLatencyMs": 112121,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "setupWaitMs": 0
+      }
+    ],
+    "candidateWindows": [
+      {
+        "windowId": "intent-after-persist-kill",
+        "recoveryLatencyMs": 17064,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "setupWaitMs": 0
+      },
+      {
+        "windowId": "effect-before-receipt-kill",
+        "recoveryLatencyMs": 8908,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "setupWaitMs": 105000
+      },
+      {
+        "windowId": "child-created-before-parent-advance-kill",
+        "recoveryLatencyMs": 9031,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "setupWaitMs": 0
+      },
+      {
+        "windowId": "store-write-failure",
+        "recoveryLatencyMs": 142,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "setupWaitMs": 0
+      },
+      {
+        "windowId": "repeated-restart",
+        "recoveryLatencyMs": 37840,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "setupWaitMs": 150000
+      }
+    ],
+    "priorCandidateRestartMs": 24179
+  },
+  "validation": {
+    "focusedTests": {
+      "files": 4,
+      "passed": 12,
+      "failed": 0
+    },
+    "runtimeSourceAndTestTypesExitCode": 0,
+    "runtimeBuild": {
+      "durationMs": 69763,
+      "driven_by": "agent",
+      "command": "pnpm run build:runtime",
+      "exitCode": 0,
+      "actor": "codex/g3-health-loading-r44"
+    },
+    "checks": [
+      {
+        "name": "final-focused",
+        "args": [
+          "node",
+          "scripts/run-vitest.mjs",
+          "src/gateway/server/health-state.lazy.test.ts",
+          "src/infra/update-available-state.test.ts",
+          "src/gateway/server-reload-handlers.lazy.test.ts",
+          "src/gateway/server-runtime-services.lazy-delivery.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=D:\\tmp\\g3-health-loading-20261125-r44\\final-focused.json"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32\\openclaw_runtime",
+        "exitCode": 0,
+        "durationMs": 27132,
+        "sha256": "7b456961fa25acf4332a138db935906cc51494e80c26254be3079bba3bf85363"
+      },
+      {
+        "name": "lint",
+        "args": [
+          "node",
+          "scripts/run-oxlint.mjs",
+          "--max-warnings=0",
+          "src/gateway/server.impl.ts",
+          "src/gateway/server/health-state.ts",
+          "src/gateway/server/health-state.lazy.test.ts",
+          "src/infra/update-startup.ts",
+          "src/infra/update-available-state.ts",
+          "src/infra/update-available-state.test.ts"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32\\openclaw_runtime",
+        "exitCode": 0,
+        "durationMs": 113646,
+        "sha256": "4718960f6865b1ff4941df0322d2cbb23ebae8bf235d72b344d5c56ebcbdfd59"
+      },
+      {
+        "name": "source-policy",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm run runtime:source:check"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 39262,
+        "sha256": "ed1186d313084c429c1da1f85eced7b7522117b2d7d31dedf2ba5ed867937b48"
+      },
+      {
+        "name": "comms-replay",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm run comms:replay"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 814,
+        "sha256": "2e8ae46a6cb8de081da432ebfd3ad78611883fb869a492bf5a699248ed1a8892"
+      },
+      {
+        "name": "comms-compare",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm run comms:compare"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 697,
+        "sha256": "bea0ae8612534b7af4ec743e87f3054e14a888d6963e1d7970cf54076fbe40fd"
+      },
+      {
+        "name": "harness",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm harness validate --spec harness/specs/tasks/recovery-authority-gated.md --since f807d27ee9531958379a35d9aec6d7ecf5f81ff5"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 1688,
+        "sha256": "af48dbbdeb4d2675b0b17b5c3b7719cb0c7d6e0dd4000d65dca611efc438724a"
+      },
+      {
+        "name": "harness-dry-run",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm harness run --spec harness/specs/tasks/recovery-authority-gated.md --since f807d27ee9531958379a35d9aec6d7ecf5f81ff5 --dry-run"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 1539,
+        "sha256": "0e444b04d4dc048a274ec3c1201bb916a2700ce0d57137822aefd866e8ffa0b2"
+      }
+    ],
+    "review": {
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "format": "plain_text",
+      "exitCode": 0,
+      "sourceStable": true,
+      "verdict": "no_actionable_findings",
+      "responseSha256": "2df69f04db1485e6e0b2e1aed52c9366fd94265e70f99c6c7ffcaef190fcc723"
+    },
+    "electron": {
+      "windows": 5,
+      "repeatsPerWindow": 1,
+      "sourceMutationGuard": "passed",
+      "processCleanup": "passed",
+      "survivors": [],
+      "provider": "local scripted provider"
+    },
+    "verifiedArtifactReferences": 28
+  },
+  "research": {
+    "route": "VerseSearch → Exa Search",
+    "subagents": "Two WorkBuddy subagents returned missing-task placeholders, including their follow-ups; parent completed research.",
+    "sources": [
+      "https://www.electronjs.org/docs/latest/tutorial/performance",
+      "https://nodejs.org/api/module.html#module-compile-cache",
+      "https://vite.dev/guide/performance",
+      "https://github.com/vitejs/vite/pull/10719"
+    ]
+  },
+  "retainedFailures": [
+    "Initial external tsconfig lacked typeRoots and failed to resolve node types; corrected temporary config passed.",
+    "Initial autoreview helper failed decoding UTF-8 with GBK. UTF-8 retry returned a context-free structured verdict; replaced by a concrete source-bound WorkBuddy plain-text review.",
+    "Current three-restart baseline was 112121 ms; candidate was 37840 ms. Older r43 candidate was 24179 ms. Host timing varied substantially; all remain retained."
+  ],
+  "pending": [
+    "Frozen 15-second tail and 5-second P50 recovery targets remain unmet; five windows have only one candidate sample each.",
+    "Both arms with three repeats, second legacy baseline, at least 30 live-provider pairs, and full release/package gates remain.",
+    "Last full Agent Dev build/typecheck/contract/i18n performance veto remains; this Runtime-only batch did not rerun those full gates."
+  ],
+  "sourceFiles": [
+    {
+      "path": "README.ja-JP.md",
+      "gitSha256": "a81c719873a347a9841304c92b0539fd677f729b6e06157db24592e138a82671",
+      "workingSha256": "a81c719873a347a9841304c92b0539fd677f729b6e06157db24592e138a82671",
+      "gitBytes": 46514
+    },
+    {
+      "path": "README.md",
+      "gitSha256": "78d39f89a0860269694af96dda605b075abe03450330e2c8fba288666b92afb3",
+      "workingSha256": "78d39f89a0860269694af96dda605b075abe03450330e2c8fba288666b92afb3",
+      "gitBytes": 39768
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitSha256": "ee8a8d90b983ab108024570b6f6e61367254135f02f16e029dbfb1f05b74341c",
+      "workingSha256": "ee8a8d90b983ab108024570b6f6e61367254135f02f16e029dbfb1f05b74341c",
+      "gitBytes": 35367
+    },
+    {
+      "path": "harness/specs/rules/gateway-readiness-policy.md",
+      "gitSha256": "b6b820f5a452e2740f85f363c96aeaf31bf0ab91ae0ba5dfd860301362a34852",
+      "workingSha256": "b6b820f5a452e2740f85f363c96aeaf31bf0ab91ae0ba5dfd860301362a34852",
+      "gitBytes": 3056
+    },
+    {
+      "path": "harness/specs/tasks/recovery-authority-gated.md",
+      "gitSha256": "fe4575e30fbda23dab8a0e7c9b713e90d21c573b1c68bc9a2b032f820726d53d",
+      "workingSha256": "fe4575e30fbda23dab8a0e7c9b713e90d21c573b1c68bc9a2b032f820726d53d",
+      "gitBytes": 39228
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server.impl.ts",
+      "gitSha256": "5ee8d5c39cf114476e69ae3dccb4f8342e5f5ddd3f0ef74e0167b8b21f991955",
+      "workingSha256": "5ee8d5c39cf114476e69ae3dccb4f8342e5f5ddd3f0ef74e0167b8b21f991955",
+      "gitBytes": 72388
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server/health-state.lazy.test.ts",
+      "gitSha256": "28eef10de8c5dbec09ba0e89bc8bec6716c389ccb1f41acde0ac705f32f62e46",
+      "workingSha256": "28eef10de8c5dbec09ba0e89bc8bec6716c389ccb1f41acde0ac705f32f62e46",
+      "gitBytes": 5530
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server/health-state.ts",
+      "gitSha256": "4cdb02cc1b2a542044e135129287a840121bbe9c413b233e2b93de329d1b8542",
+      "workingSha256": "4cdb02cc1b2a542044e135129287a840121bbe9c413b233e2b93de329d1b8542",
+      "gitBytes": 4467
+    },
+    {
+      "path": "openclaw_runtime/src/infra/update-available-state.test.ts",
+      "gitSha256": "0c881c51b74a8b1a6e3bcff2ccf2ed9d392b6f1b190dedad329c1649dd1b99c6",
+      "workingSha256": "0c881c51b74a8b1a6e3bcff2ccf2ed9d392b6f1b190dedad329c1649dd1b99c6",
+      "gitBytes": 1335
+    },
+    {
+      "path": "openclaw_runtime/src/infra/update-available-state.ts",
+      "gitSha256": "adf061afa9cefd23aed37cf46d57a341d6b6c22ad0f4406f4cf835ca141d70e1",
+      "workingSha256": "adf061afa9cefd23aed37cf46d57a341d6b6c22ad0f4406f4cf835ca141d70e1",
+      "gitBytes": 1097
+    },
+    {
+      "path": "openclaw_runtime/src/infra/update-startup.ts",
+      "gitSha256": "76cb7b1ab37624082ffa9c249e14626b82078e3716607435e518dc68846adfef",
+      "workingSha256": "76cb7b1ab37624082ffa9c249e14626b82078e3716607435e518dc68846adfef",
+      "gitBytes": 19551
+    }
+  ],
+  "archive": {
+    "path": "evidence.json.gz",
+    "sha256": "e3783098214e448047652fa8d81e1696f9599a1b0d7bd9c5e28556e3080aa47f",
+    "fileCount": 105
+  },
+  "environmentCredentialValueHits": 0
+}
