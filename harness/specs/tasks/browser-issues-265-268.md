@@ -4,7 +4,11 @@ title: 浏览器批准、运行代次和网络出口修复
 lifecycleStatus: active
 taskType: runtime-bridge
 scenario: gateway-backend-communication
+diffBase: 9b1044cc0cb90f83f751875019d59ee68f92095a
 intent: Bind browser effects to the approved page, current run and existing profile network owner.
+expectedUserBehavior:
+  - Browser access remains bound to the approved page, current task run and profile network policy.
+  - Closing a browser session immediately revokes private-network access, and a late opening result cannot restore it.
 touchedAreas:
   - .gitattributes
   - packages/versebrowser/src/engine/**
@@ -27,6 +31,7 @@ requiredRules:
   - comms-regression
   - docs-sync
 requiredProfiles:
+  - fast
   - comms
 requiredTests:
   - pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-runtime-mode.test.ts tests/agent-browser-task-service.test.ts tests/agent-browser-replay-tool-executor.test.ts tests/agent-browser-same-origin-source-map-fetcher.test.ts tests/same-origin-js-fetcher.test.ts --maxWorkers=1 --no-file-parallelism
