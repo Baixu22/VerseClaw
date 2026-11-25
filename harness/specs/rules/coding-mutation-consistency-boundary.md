@@ -39,6 +39,14 @@ appliesTo:
 
 ## Lease Ordering
 
+- Journal snapshots, per-file leases and stale-read keys use the native write/edit
+  input resolver before observing a target. Leading `~/` expands to home;
+  already resolved absolute paths retain literal `~` directories. `apply_patch`
+  keeps its existing target resolver and passes resolved paths to the journal.
+  File URL decoding happens once. Snapshot, stale and recovery checks preserve
+  the resolved filename, including encoded Unicode spaces, without applying
+  input expansion again.
+
 - Full-file stale-write admission runs after the native file mutation lease is
   acquired and before mkdir/write. Journal being disabled does not bypass it.
   A rejected stale write contributes no unapplied undo step.
@@ -51,6 +59,10 @@ appliesTo:
 - The lease is released after commit or rollback completes.
 
 ## Recovery Contract
+
+- Host external-file approval binds the normalized target path and a UTF-8
+  content digest. Changing content requires a new approval without consuming
+  the approval for the original content.
 
 - The existing write journal (`write-journal.ts`) remains the single mutation
   evidence authority. UAS-04 adds no second journal.

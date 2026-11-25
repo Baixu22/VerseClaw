@@ -1,12 +1,13 @@
 import { link, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { WorkspaceSnapshot } from '../../shared/types/workspace';
+import type { WorkspacePreflightResult } from '../../electron/services/workspace-preflight';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke } from './fixtures/fp-p1-harness';
 
-test('Coding Host save refuses a hard link and retains ordinary and approved external writes', async ({ userDataDir, launchElectronApp }, testInfo) => {
+test('Coding Host expands workspace paths and binds approved external content', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
   test.setTimeout(180_000);
-  const workspaceRoot = join(userDataDir, 'coding-save-workspace');
+  const workspaceRoot = join(homeDir, 'coding-save-workspace');
   const outsideRoot = join(userDataDir, 'coding-save-outside');
   await mkdir(workspaceRoot, { recursive: true });
   await mkdir(outsideRoot, { recursive: true });
@@ -30,8 +31,14 @@ test('Coding Host save refuses a hard link and retains ordinary and approved ext
   try {
     const page = await getStableWindow(app);
     await expect(page.getByTestId('main-layout')).toBeVisible();
+    const rootPath = '~/coding-save-workspace';
+    const preflight = await hostInvoke<WorkspacePreflightResult>(app, 'workspaces', 'preflight', { rootPath });
+    expect(preflight).toMatchObject({ ok: true, rootPath, resolvedPath: workspaceRoot });
+    const homePreflight = await hostInvoke<WorkspacePreflightResult>(app, 'workspaces', 'preflight', { rootPath: '~' });
+    expect(homePreflight.ok).toBe(false);
+    expect(homePreflight.checks).toContainEqual({ id: 'sensitivePath', status: 'fail', detail: 'homeRoot' });
     const workspace = await hostInvoke<WorkspaceSnapshot>(app, 'workspaces', 'create', {
-      name: 'Coding save boundary', rootPath: workspaceRoot, agentId: 'main', permissionMode: 'acceptEdits',
+      name: 'Coding save boundary', rootPath, agentId: 'main', permissionMode: 'acceptEdits',
     });
     expect(workspace.activeWorkspace?.rootPath).toBe(workspaceRoot);
     type SaveResult = { ok: boolean; error?: string; approvalRequired?: boolean; approval?: { id: string } };
@@ -50,14 +57,24 @@ test('Coding Host save refuses a hard link and retains ordinary and approved ext
     const pending = await hostInvoke<SaveResult>(app, 'files', 'writeText', { path: external, content: 'new external' });
     expect(pending.approvalRequired).toBe(true);
     await hostInvoke(app, 'permissions', 'decideApproval', { id: pending.approval!.id, decision: 'approved' });
+    const changedContent = await hostInvoke<SaveResult>(app, 'files', 'writeText', {
+      path: external, content: 'bad external', approvalId: pending.approval!.id,
+    });
+    expect(changedContent).toMatchObject({ ok: false, error: 'approvalRequired' });
+    expect(await readFile(external, 'utf8')).toBe('old external');
     const approved = await hostInvoke<SaveResult>(app, 'files', 'writeText', {
       path: external, content: 'new external', approvalId: pending.approval!.id,
     });
     expect(approved.ok).toBe(true);
     expect(await readFile(external, 'utf8')).toBe('new external');
     expect((await stat(external, { bigint: true })).ino).toBe(externalInode);
+    const reused = await hostInvoke<SaveResult>(app, 'files', 'writeText', {
+      path: external, content: 'new external', approvalId: pending.approval!.id,
+    });
+    expect(reused).toMatchObject({ ok: false, error: 'approvalRequired' });
     await writeFile(testInfo.outputPath('coding-save-boundary.json'), JSON.stringify({
-      driven_by: 'agent', actor: 'coding-write-fixes-269-271', denied, saved, pending, approved, literalSaved,
+      driven_by: 'agent', actor: 'coding-path-approval-issues-274-276', denied, saved, pending, changedContent, approved, reused, literalSaved,
+      preflight, homePreflight,
       outsideRetained: await readFile(original, 'utf8'), ordinary: await readFile(ordinary, 'utf8'),
       external: await readFile(external, 'utf8'),
       literal: await readFile(literal, 'utf8'), literalShadow: await readFile(literalShadow, 'utf8'),

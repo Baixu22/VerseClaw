@@ -67,11 +67,11 @@ function toRelativePathUnderRoot(params: {
   root: string;
   candidate: string;
   options?: RelativePathOptions;
+  resolvedInput?: string;
 }): string {
-  const resolvedInput = resolveSandboxInputPath(
-    params.candidate,
-    params.options?.cwd ?? params.root,
-  );
+  const resolvedInput =
+    params.resolvedInput ??
+    resolveSandboxInputPath(params.candidate, params.options?.cwd ?? params.root);
 
   if (process.platform === "win32") {
     // Windows comparisons need normalized separators and drive casing before
@@ -135,6 +135,19 @@ export function toRelativeWorkspacePath(
     candidate,
     options,
     boundaryLabel: "workspace root",
+  });
+}
+
+/** Validate an already resolved filesystem target without expanding its filename. */
+export function toRelativeWorkspacePathFromResolved(root: string, absolutePath: string): string {
+  if (!path.isAbsolute(absolutePath)) {
+    throw new Error(`Expected an absolute workspace target: ${absolutePath}`);
+  }
+  return toRelativePathUnderRoot({
+    root,
+    candidate: absolutePath,
+    resolvedInput: absolutePath,
+    options: { boundaryLabel: "workspace root" },
   });
 }
 

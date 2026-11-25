@@ -263,6 +263,34 @@ $acl.SetSecurityDescriptorSddlForm(${psLiteral(originalAcl)}, [Security.AccessCo
     });
   });
 
+  it.each([['abc', 'xyz'], ['甲', '乙']])('requires fresh approval for equal-byte content %s changed to %s', async (approvedContent, changedContent) => {
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-content-approval-ws-'));
+    const outsideDir = await mkdtemp(join(tmpdir(), 'clawx-content-approval-out-'));
+    const filePath = join(outsideDir, 'note.txt');
+    try {
+      await writeFile(filePath, 'old', 'utf8');
+      activeWorkspace.profile = workspace(workspaceDir);
+      const { createPermissionsApi } = await import('../../electron/services/permissions-api');
+      const { createFilesApi } = await import('../../electron/services/files-api');
+      const api = createFilesApi();
+      const permissions = createPermissionsApi();
+      expect(Buffer.byteLength(changedContent, 'utf8')).toBe(Buffer.byteLength(approvedContent, 'utf8'));
+      const first = await api.writeText({ path: filePath, content: approvedContent });
+      const approvalId = first.approval?.id;
+      expect(approvalId).toBeTruthy();
+      await permissions.decideApproval({ id: approvalId, decision: 'approved' } as never);
+
+      await expect(api.writeText({ path: filePath, content: changedContent, approvalId })).resolves.toMatchObject({ ok: false, error: 'approvalRequired' });
+      expect(await readFile(filePath, 'utf8')).toBe('old');
+      await expect(api.writeText({ path: filePath, content: approvedContent, approvalId })).resolves.toMatchObject({ ok: true });
+      expect(await readFile(filePath, 'utf8')).toBe(approvedContent);
+      await expect(api.writeText({ path: filePath, content: approvedContent, approvalId })).resolves.toMatchObject({ ok: false, error: 'approvalRequired' });
+    } finally {
+      await rm(outsideDir, { recursive: true, force: true });
+      await rm(workspaceDir, { recursive: true, force: true });
+    }
+  });
+
   it('blocks writes outright in plan mode', async () => {
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-workspace-'));
     const filePath = join(workspaceDir, 'note.txt');

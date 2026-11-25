@@ -17,6 +17,7 @@ import { access, constants, lstat, mkdtemp, readdir, rm, statfs } from 'node:fs/
 import { homedir } from 'node:os';
 import { basename, join, parse, resolve } from 'node:path';
 import { realpathOrResolve } from './path-broker';
+import { expandPath } from '../utils/paths';
 
 export type WorkspacePreflightCheckId =
   | 'exists'
@@ -105,7 +106,7 @@ export async function runWorkspacePreflight(rootPath: string): Promise<Workspace
   // exists + directory (after symlink resolution — the boundary is enforced on
   // realpaths, so preflight must judge the same target).
   try {
-    resolvedPath = await realpathOrResolve(rootPath);
+    resolvedPath = await realpathOrResolve(expandPath(rootPath.trim()));
     const stat = await lstat(resolvedPath);
     if (!stat.isDirectory()) {
       checks.push({ id: 'exists', status: 'fail', detail: 'notADirectory' });
