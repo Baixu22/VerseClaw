@@ -30,10 +30,13 @@ async function holdHostReply(app: ElectronApplication, module: string, action: s
     ipcMain.handle('host:invoke', async (event, request: { module?: string; action?: string; payload?: { workspaceId?: string; sessionKey?: string; method?: string; params?: { sessionKey?: string }; command?: { action?: string } } }) => {
       state.reviewCalls.push({ module: request.module, action: request.action, workspaceId: request.payload?.workspaceId });
       const response = await state.reviewOriginal(event, request);
-      if (request.module === 'taskLedger' && request.action === 'command') state.reviewReplies.push(response);
+      if ((request.module === 'taskLedger' && request.action === 'command') || (request.module === 'sessions' && request.action === 'handoffOperation')) state.reviewReplies.push(response);
       if (!state.reviewHeld && request.module === target.module && request.action === target.action
           && (target.sessionKey ? request.payload?.method === 'chat.history' && request.payload?.params?.sessionKey === target.sessionKey
-            : request.payload?.workspaceId === target.workspaceId && request.payload.command?.action === 'claim')) {
+            : request.payload?.workspaceId === target.workspaceId && (target.action === 'handoffOperation'
+              ? Boolean((request.payload as Record<string, unknown>).operationId) && (request.payload as Record<string, unknown>).reconcile === true
+                && ['accepted', 'sent'].includes((response as { data?: { operation?: { phase?: string } } }).data?.operation?.phase ?? '')
+              : request.payload.command?.action === 'claim'))) {
         state.reviewHeld = true;
         await held;
         state.reviewDelivered = true;
@@ -54,6 +57,24 @@ async function restoreHost(app: ElectronApplication) {
     state.reviewRelease?.();
     if (state.reviewOriginal) { ipcMain.removeHandler('host:invoke'); ipcMain.handle('host:invoke', state.reviewOriginal); }
   }).catch(() => undefined);
+}
+
+async function refreshWorkspaceProfiles(page: Page) {
+  const assets = await readdir(resolve('dist/assets'));
+  let workspaceAsset = '';
+  for (const asset of assets.filter(value => value.endsWith('.js'))) {
+    if (/fetchWorkspaces\s*:\s*async/.test(await readFile(resolve('dist/assets', asset), 'utf8'))) { workspaceAsset = asset; break; }
+  }
+  expect(workspaceAsset).toBeTruthy();
+  await page.evaluate(async asset => {
+    const module = await import(new URL(`assets/${asset}`, location.href).href);
+    const store = Object.values(module).find(value => typeof value === 'function' && typeof (value as { getState?: unknown }).getState === 'function'
+      && typeof (value as unknown as { getState: () => { fetchWorkspaces?: unknown } }).getState().fetchWorkspaces === 'function') as {
+        getState: () => { fetchWorkspaces: () => Promise<void> };
+      };
+    if (!store) throw new Error('The built Workspace store export is unavailable');
+    await store.getState().fetchWorkspaces();
+  }, workspaceAsset);
 }
 
 test('cancels an active model, restores its task identity, reads a fork and resumes through the agent', async ({ launchElectronApp }, info) => {
@@ -104,15 +125,20 @@ test('cancels an active model, restores its task identity, reads a fork and resu
     await expect.poll(() => held, { timeout: 60_000 }).toBe(true);
     const active = await hostInvoke<{ tasks: TaskView[] }>(app, 'taskLedger', 'managedTasks', { workspaceId: project.workspaceId });
     evidence.activeBeforeCancel = active;
-    expect(active.tasks.some(task => task.contract.objective === 'Review model cancellation')).toBe(true);
+    expect(active.tasks.find(task => task.contract.taskNodeId === cancellationTaskId)).toMatchObject({ contract: { state: 'doing' }, claim: { state: 'active', generation: project.generation } });
     await holdHostReply(app, 'observe', 'observe', project.workspaceId);
     await openLedger(page, project.workspaceId, projectSession);
     const cancellingTask = page.getByTestId('managed-task').filter({ hasText: 'Review model cancellation' });
     await cancellingTask.getByTestId('managed-task-details').locator('summary').click();
     await cancellingTask.getByRole('button', { name: 'Cancel task', exact: true }).click();
     await expect(cancellingTask).toContainText('Cancelled');
-    const stopped = await hostInvoke<{ session: { hasActiveRun: boolean } }>(app, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: projectSession } });
+    await expect.poll(async () => {
+      const current = await hostInvoke<{ session: { hasActiveRun: boolean; sessionId: string } }>(app, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: projectSession } });
+      return current.session.sessionId === project.generation && current.session.hasActiveRun === false;
+    }, { timeout: 15_000 }).toBe(true);
+    const stopped = await hostInvoke<{ session: { hasActiveRun: boolean; sessionId: string } }>(app, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: projectSession } });
     expect(stopped.session.hasActiveRun).toBe(false);
+    expect(stopped.session.sessionId).toBe(project.generation);
     release();
     evidence.cancel = stopped;
 
@@ -175,6 +201,110 @@ test('cancels an active model, restores its task identity, reads a fork and resu
     await new Promise<void>(resolve => llm.server.close(() => resolve()));
   }
 });
+
+for (const { editTarget, remount, stayTarget, name } of [
+  { editTarget: false, remount: false, stayTarget: false, name: 'without restoring its sent target draft' },
+  { editTarget: true, remount: true, stayTarget: false, name: 'while retaining a new same-text target draft' },
+  { editTarget: false, remount: true, stayTarget: true, name: 'while synchronizing an unedited remounted target' },
+]) {
+  test(`acknowledges a background handoff ${name}`, async ({ launchElectronApp }, info) => {
+    test.setTimeout(300_000);
+    const llm = await startScriptedLlm(text => ({ text: text.includes('REVIEW-HANDOFF-SCOPE')
+      ? 'HANDOFF-TARGET-ANSWER-FINISHED' : 'HANDOFF-SCOPE-ANSWER-FINISHED' }));
+    const app = await launchElectronApp({ skipSetup: true });
+    const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'session-task-fixes-electron', provider: 'local-scripted', editTarget, remount, stayTarget, status: 'running' };
+    try {
+      await configureSessionChainProvider(app, llm.port);
+      const project = await createSessionChainProject(app, info.outputPath('handoff-workspace'), 'Review handoff scope');
+      await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
+        expectedSessionGeneration: project.generation, message: 'Source session for handoff scope', idempotencyKey: 'review-handoff-source' });
+      await expect.poll(async () => JSON.stringify(await hostInvoke(app, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: project.sessionKey, limit: 50 } })).includes('HANDOFF-SCOPE-ANSWER-FINISHED'), { timeout: 60_000 }).toBe(true);
+      await expect.poll(async () => (await hostInvoke<{ session: { hasActiveRun: boolean } }>(app, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: project.sessionKey } })).session.hasActiveRun).toBe(false);
+      const selected = await hostInvoke<{ key: string }>(app, 'gateway', 'rpc', { method: 'sessions.create', params: { agentId: 'main', label: 'Handoff scope C' } });
+      await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: selected.key, state: { draftInput: 'C original draft' } });
+      const page = await getStableWindow(app);
+      await page.reload();
+      await page.getByTestId(`sidebar-project-open-${project.workspaceId}`).click();
+      await page.getByTestId('chat-toolbar-more').click();
+      await expect(page.getByTestId('chat-session-handoff')).toBeEnabled();
+      await page.getByTestId('chat-session-handoff').click();
+      await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
+      const sentDraft = 'REVIEW-HANDOFF-SCOPE: continue the recorded source';
+      await page.getByTestId('chat-handoff-draft').fill(sentDraft);
+      await holdHostReply(app, 'sessions', 'handoffOperation', project.workspaceId);
+      await page.getByTestId('chat-handoff-create').click();
+      await expect.poll(() => app.evaluate(() => (globalThis as unknown as { reviewHeld: boolean }).reviewHeld), { timeout: 60_000 }).toBe(true);
+      const snapshot = await hostInvoke<{ activeWorkspace: { activeSessionKey: string } }>(app, 'workspaces', 'list');
+      const targetSessionKey = snapshot.activeWorkspace.activeSessionKey;
+      expect(targetSessionKey).not.toBe(project.sessionKey);
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(sentDraft);
+      if (remount) {
+        await page.evaluate(() => { location.hash = '/settings'; });
+        await expect(page.getByTestId('chat-composer-input')).toHaveCount(0);
+        await page.goBack();
+        await expect(page.getByTestId('chat-composer-input')).toHaveValue(sentDraft);
+      }
+      if (editTarget) {
+        await page.getByTestId('chat-composer-input').fill('');
+        await page.getByTestId('chat-composer-input').fill(sentDraft);
+      }
+      if (!stayTarget) {
+        await page.getByTestId(`sidebar-session-drag-${selected.key}`).click();
+        await expect(page.getByTestId('chat-composer-input')).toHaveValue('C original draft');
+        await page.getByTestId('chat-composer-input').fill('C edited while handoff settles');
+      }
+      await releaseHostReply(app);
+      await expect.poll(() => app.evaluate(() => (globalThis as unknown as { reviewDelivered: boolean }).reviewDelivered)).toBe(true);
+      const expectedDraft = editTarget ? sentDraft : '';
+      await expect.poll(async () => (await hostInvoke<{ activeWorkspace: { sessionStates: Record<string, { draftInput?: string }> } }>(app, 'workspaces', 'list')).activeWorkspace.sessionStates[targetSessionKey]?.draftInput).toBe(expectedDraft);
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(stayTarget ? expectedDraft : 'C edited while handoff settles');
+      if (!stayTarget) await page.getByTestId(`sidebar-session-drag-${targetSessionKey}`).click();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(expectedDraft);
+      if (stayTarget) {
+        await page.evaluate(() => { location.hash = '/settings'; });
+        await expect(page.getByTestId('chat-composer-input')).toHaveCount(0);
+        await page.goBack();
+        await expect(page.getByTestId('chat-composer-input')).toHaveValue(expectedDraft);
+      }
+      await expect.poll(async () => JSON.stringify(await hostInvoke(app, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: targetSessionKey, limit: 50 } })).includes('HANDOFF-TARGET-ANSWER-FINISHED'), { timeout: 60_000 }).toBe(true);
+      const history = await hostInvoke<{ messages: Array<{ role: string; content: unknown }> }>(app, 'gateway', 'rpc', { method: 'chat.history', params: { sessionKey: targetSessionKey, limit: 50 } });
+      expect(history.messages.filter(message => message.role === 'user' && JSON.stringify(message.content).includes(sentDraft))).toHaveLength(1);
+      if (stayTarget) {
+        await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: targetSessionKey, state: { draftInput: 'Draft restored by the profile owner' } });
+        await refreshWorkspaceProfiles(page);
+        await page.getByTestId(`sidebar-session-drag-${selected.key}`).click();
+        await page.getByTestId(`sidebar-session-drag-${targetSessionKey}`).click();
+        await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft restored by the profile owner');
+        evidence.restoredOwnerDraft = await page.getByTestId('chat-composer-input').inputValue();
+      }
+      if (editTarget) {
+        await page.getByTestId('chat-composer-input').fill('');
+        await expect.poll(async () => (await hostInvoke<{ activeWorkspace: { sessionStates: Record<string, { draftInput?: string }> } }>(app, 'workspaces', 'list')).activeWorkspace.sessionStates[targetSessionKey]?.draftInput).toBe('');
+        await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: targetSessionKey, state: { draftInput: 'Owner draft after manual clearing' } });
+        await refreshWorkspaceProfiles(page);
+        await expect(page.getByTestId('chat-composer-input')).toHaveValue('Owner draft after manual clearing');
+        evidence.ownerDraftAfterManualClear = await page.getByTestId('chat-composer-input').inputValue();
+      }
+      evidence.targetSessionKey = targetSessionKey;
+      evidence.selectedSessionKey = selected.key;
+      evidence.targetDraft = await page.getByTestId('chat-composer-input').inputValue();
+      evidence.history = history;
+      evidence.status = 'passed';
+    } catch (error) {
+      evidence.status = 'failed'; evidence.error = String(error);
+      throw error;
+    } finally {
+      evidence.providerLog = llm.log;
+      evidence.responses = await app.evaluate(() => (globalThis as unknown as { reviewReplies?: unknown[] }).reviewReplies ?? []).catch(() => []);
+      await writeFile(info.outputPath('handoff-draft-scope.json'), JSON.stringify(evidence, null, 2));
+      await restoreHost(app);
+      await hostInvoke(app, 'gateway', 'stop').catch(() => undefined);
+      await closeElectronApp(app);
+      llm.server.closeAllConnections();
+      await new Promise<void>(resolve => llm.server.close(() => resolve()));
+    }
+  });
+}
 
 test('keeps the new workspace list after an old real claim response arrives', async ({ launchElectronApp }, info) => {
   test.setTimeout(240_000);
