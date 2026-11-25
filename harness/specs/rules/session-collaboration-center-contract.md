@@ -23,6 +23,7 @@ appliesTo:
 
 - 共用发现和详情读取绑定原 requester/target scope；模型参数不成为读取者身份。沿同一 Query 合同消费原 owner，先做 visibility/A2A/sandbox 筛选，再读取任务和动作。字段未选保留 not_read；cursor 绑定 metadata 身份，来源变化或 reset 拒绝旧页。只读状态请求跳过模型配置与转录统计，mutation/admission 分类同样保持只读。
 - 共用回复校验保留 generation-changed 与同代 scope-mismatch 的区别，当前会话行与 requester 身份一致。每页会话 key 唯一；not_read 没有观测时间并使用 source-not-read，来源原因码消费原 SessionActivity 合同。未知匹配不能写成 empty，失败或过期页不保留分页游标和计数。
+- 发现/详情的 owner 读取失败返回 unavailable/owner-unavailable，已完成读取但缺失合法 Query 页返回 unknown/protocol-unverified；Main、UI 与既有工具使用相同结果。输入和调用者身份的拒绝发生在读取前，不被此错误投影吞掉。
 
 - Renderer 使用 typed host-api / host:invoke；Main 持有 Gateway WebSocket。新增协作模块不直连 Gateway，也不恢复本地 HTTP fallback。
 - 优先扩展现有 sessions_list、session_status 的只读模式、sessions_history 和 sessions_send；新增有条件等待仅拥有订阅及结果引用。

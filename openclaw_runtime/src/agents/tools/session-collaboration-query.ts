@@ -42,8 +42,11 @@ export async function querySessionCollaborationTool(opts: SessionCollaborationTo
   }
   const request = parseSessionCollaborationQuery(query);
   if (owner.sessionGeneration !== opts.agentSessionId) return emptySessionCollaborationPage(request, 'stale', 'generation-changed');
-  const result = await (opts.callGateway ?? callGateway)<{ page: SessionCollaborationPage }>({
-    method: 'session.activitySnapshot', params: { query: request }, ...(opts.config ? { config: opts.config } : {}),
-  });
-  return validateSessionCollaborationPage(request, result.page);
+  let result: { page: SessionCollaborationPage };
+  try {
+    result = await (opts.callGateway ?? callGateway)<{ page: SessionCollaborationPage }>({
+      method: 'session.activitySnapshot', params: { query: request }, ...(opts.config ? { config: opts.config } : {}),
+    });
+  } catch { return emptySessionCollaborationPage(request, 'unavailable', 'owner-unavailable'); }
+  return validateSessionCollaborationPage(request, result?.page);
 }

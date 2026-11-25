@@ -94,6 +94,8 @@ docs:
 
 Main、UI 和现有工具共同拒绝重复会话行、未知原因码、带观测时间或缺失来源原因的 not_read，以及仍有未知匹配却声称 empty 的页。unavailable/stale 页带明确原因并清除分页游标与读取计数。回复中的 requester、当前会话行或详情引用换代返回 generation-changed；同代工作区、项目、key 或运行范围不符返回 scope-mismatch。
 
+原 Workspace/Gateway owner 的读取失败在 Main、UI 与两个会话工具返回 unavailable/owner-unavailable。读取已返回但 Query 页缺失、为空值或 UI success 信封不成立时返回 unknown/protocol-unverified，保留已解析的 requester，清除事实与分页。输入与当前 requester 身份仍在调用前验证，错误参数不能被改写成来源不可用。
+
 正反用例覆盖两个独立会话与子代理、跨工作区过滤、真实空任务与空闲、来源缺失、旧 generation/游标、读取中 reset、字段未选、分页上限、隐藏会话及 A2A/sandbox 拒绝。补充缺 owner 的搜索、旧 schema 单次连接尝试、Unicode 目标截断、原在途请求结清，以及 Main/UI/工具对异常来源、范围和字段的一致拒绝。记录查询前后 owner 内容和数据库哈希，检查 metadata 读取次数、连接复用和 transcript 字节读取为 0。证据区分原 SQLite / registry / native Git 与 fixture adapter，全部 driven_by: agent；首轮失败及原始回执放 D:/tmp。
 
 满足四项验收后提交实现、规格和精选证据，按匹配 base_graph_hash 收口 TF-0920，validate、既有流式完整历史 export 与回读后留下 A3 续接说明。回退撤回本叶查询挂接，保留原会话、任务、运行和用户数据。

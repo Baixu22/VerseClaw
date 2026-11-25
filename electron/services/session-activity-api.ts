@@ -131,13 +131,13 @@ export function createSessionActivityApi({
   return {
     query: async (input) => {
       const query = parseSessionCollaborationQuery(input);
-      const root = await getWorkspaceRootPathById(query.requester.workspaceId);
-      if (!root) return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-missing') };
       try {
+        const root = await getWorkspaceRootPathById(query.requester.workspaceId);
+        if (!root) return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-missing') };
         const response = await gatewayManager.rpc<{ page: SessionCollaborationPage }>('session.activitySnapshot', { query });
         if (await getWorkspaceRootPathById(query.requester.workspaceId) !== root)
           return { success: true, page: emptySessionCollaborationPage(query, 'stale', 'scope-mismatch') };
-        return { success: true, page: validateSessionCollaborationPage(query, response.page) };
+        return { success: true, page: validateSessionCollaborationPage(query, response?.page) };
       } catch { return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-unavailable') }; }
     },
     read: async (input) => {

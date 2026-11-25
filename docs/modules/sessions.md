@@ -44,6 +44,8 @@ agent 使用 `session_status({ readOnly: true, scope: row.detail.scope })` 读�
 
 回复的旧 requester、当前会话行或详情代次返回 `stale/generation-changed`，同代范围不符返回 `stale/scope-mismatch`。`not_read` 的 `readAt` 为 null，未知搜索匹配保留 unknown；重复会话行、未知原因码和失败页的分页游标被共同拒绝为 `unknown/protocol-unverified`。
 
+Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`；读取已返回但合法页缺失时为 `unknown/protocol-unverified`。Main、UI 与只读会话工具保留请求者身份并清除事实和分页，参数与发送者身份仍在读取前校验。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

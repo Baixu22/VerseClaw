@@ -182,6 +182,42 @@ describe('A2 shared session discovery and detail', () => {
     receipts.push({ case: 'owned-run-without-actions-and-empty-ready-rejection', input, ui, list: list.details, status: status.details,
       malformed, rejectedUi, rejectedList: rejectedList.details, rejectedStatus: rejectedStatus.details, beforeSha256: hash(before), afterSha256: hash(after) });
   });
+  it('distinguishes failed owner reads from missing reply envelopes across Main, UI and both tools', async () => {
+    const before = structuredClone(ownerState()), input = query(), good = (await runtime(input)).page;
+    const { api, rpc } = main();
+    const fail = async () => { throw new Error('Fixture Gateway unavailable'); };
+    rpc.mockImplementation(fail);
+    const opts = { agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: vi.fn(fail) as never };
+    const invalidInput = { ...input, limit: 51 }, unread = vi.fn(fail);
+    await expect(readSessionCollaborationPage(invalidInput, unread)).rejects.toThrow('Collaboration limit');
+    await expect(api.query(invalidInput)).rejects.toThrow('Collaboration limit');
+    await expect(createSessionsListTool(opts).execute('invalid-owner-query', { collaboration: true, limit: 51 })).rejects.toThrow('Collaboration limit');
+    expect(unread).not.toHaveBeenCalled(); expect(rpc).not.toHaveBeenCalled(); expect(opts.callGateway).not.toHaveBeenCalled();
+    const unavailable = await readSessionCollaborationPage(input, api.query);
+    expect(unavailable).toMatchObject({ state: 'unavailable', reason: 'owner-unavailable', items: [], nextCursor: null, scanned: 0 });
+    expect(await readSessionCollaborationPage(input, fail)).toEqual(unavailable);
+    const failedList = await createSessionsListTool(opts).execute('failed-owner-list', { collaboration: true });
+    const failedStatus = await createSessionStatusTool(opts).execute('failed-owner-status', { readOnly: true, scope: scope() });
+    expect(failedList.details).toEqual(unavailable); expect(failedStatus.details).toEqual(unavailable);
+    const callsBeforeWorkspaceFailure = rpc.mock.calls.length;
+    mocks.workspace.mockRejectedValueOnce(new Error('Fixture Workspace owner unavailable'));
+    expect(await readSessionCollaborationPage(input, api.query)).toEqual(unavailable);
+    expect(rpc).toHaveBeenCalledTimes(callsBeforeWorkspaceFailure);
+    const malformedResults: Array<{ envelope: unknown; result: SessionCollaborationPage }> = [];
+    for (const envelope of [null, undefined, { snapshot: good }]) {
+      rpc.mockResolvedValue(envelope as never); opts.callGateway = vi.fn(async () => envelope) as never;
+      const ui = await readSessionCollaborationPage(input, api.query);
+      const list = await createSessionsListTool(opts).execute('missing-query-list', { collaboration: true });
+      const status = await createSessionStatusTool(opts).execute('missing-query-status', { readOnly: true, scope: scope() });
+      expect(ui).toMatchObject({ state: 'unknown', reason: 'protocol-unverified', items: [] });
+      expect(await readSessionCollaborationPage(input, () => envelope as never)).toEqual(ui);
+      expect(list.details).toEqual(ui); expect(status.details).toEqual(ui);
+      malformedResults.push({ envelope, result: ui });
+    }
+    expect(await readSessionCollaborationPage(input, () => ({ success: false, page: good }) as never)).toMatchObject({ state: 'unknown', reason: 'protocol-unverified', items: [] });
+    const after = ownerState(); expect(after).toEqual(before);
+    receipts.push({ case: 'owner-failure-and-query-envelope', input, unavailable, malformedResults, beforeSha256: hash(before), afterSha256: hash(after) });
+  });
   it('filters by real TaskSystem goals and workspace without switching the active workspace', async () => {
     const goal = (await runtime(query({ search: 'quantum needle' }))).page;
     expect(goal.items.map(row => row.sessionKey)).toEqual([B]);
