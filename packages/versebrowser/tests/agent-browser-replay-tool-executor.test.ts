@@ -209,7 +209,7 @@ describe('请求重放沙箱执行器', () => {
       headers: { 'content-type': 'application/json', 'x-trace-id': 'abc' },
     })) as unknown as typeof fetch;
     const grant: { current?: BoundaryGrantContext } = {};
-    const executor = createExecutor({ fetcher, getGrant: () => approval.grant.current });
+    const executor = createExecutor({ fetcher, getGrant: () => grant.current });
 
     const draftId = prepareDraft(executor);
     grant.current = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
@@ -237,7 +237,7 @@ describe('请求重放沙箱执行器', () => {
       headers: { 'content-type': 'text/plain' },
     })) as unknown as typeof fetch;
     const grant: { current?: BoundaryGrantContext } = {};
-    const executor = createExecutor({ fetcher, getGrant: () => approval.grant.current });
+    const executor = createExecutor({ fetcher, getGrant: () => grant.current });
     const draftId = prepareDraft(executor);
     grant.current = createGrant({ scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }) });
     const sendResult = await executor.sendRequest({ draftId });
@@ -266,7 +266,7 @@ describe('请求重放沙箱执行器', () => {
     const grant: { current?: BoundaryGrantContext } = {};
     const executor = createExecutor({
       fetcher,
-      getGrant: () => approval.grant.current,
+      getGrant: () => grant.current,
       meta: createMeta({
         requestHeaders: [
           { name: 'x-repeat', value: 'one' },
