@@ -8,6 +8,8 @@ declare module "@lydell/node-pty" {
   export type PtyHandle = {
     pid: number;
     write: (data: string | Buffer) => void;
+    resize: (columns: number, rows: number, pixelSize?: { width: number; height: number }) => void;
+    kill: (signal?: string) => void;
     onData: (listener: PtyListener<string>) => void;
     onExit: (listener: PtyListener<PtyExitEvent>) => void;
   };
