@@ -1,0 +1,38 @@
+{
+  "selected": {
+    "model": "DeepSeekdeepseek-reasoner",
+    "calls": [
+      {
+        "module": "sessions",
+        "action": "patchRuntimeModel",
+        "payload": {
+          "sessionKey": "agent:main:main",
+          "modelRef": "deepseek/deepseek-reasoner"
+        }
+      }
+    ]
+  },
+  "actions": [
+    {
+      "module": "agents",
+      "action": "updateReasoningEffort",
+      "payload": {
+        "id": "main",
+        "reasoningEffort": "xhigh"
+      }
+    },
+    {
+      "module": "agents",
+      "action": "updateReasoningEffort",
+      "payload": {
+        "id": "main",
+        "reasoningEffort": "auto"
+      }
+    }
+  ],
+  "changed": "{\"stage\":\"second\",\"snapshot\":{\"sessionId\":\"composer-ego-20261125\",\"usedTokens\":4100,\"contextTokens\":32768,\"usageSource\":\"last-request\",\"measuredAt\":1795588751654,\"composition\":{\"sessionId\":\"composer-ego-20261125\",\"generatedAt\":1795588751654,\"source\":\"run\",\"modelRef\":\"custom-composerprobe/gpt-6.1-sol\",\"systemPromptChars\":6531,\"instructionsChars\":87,\"currentTurnChars\":65,\"runtimeContextChars\":0,\"workspaceFiles\":{\"chars\":6259,\"totalEntries\":2,\"entries\":[{\"name\":\"AGENTS.md\",\"path\":\"D:\\\\tmp\\\\clawx-composer-polish-20261125\\\\ego-validation\\\\home\\\\composer-workspace\\\\AGENTS.md\",\"chars\":4096,\"rawChars\":20840,\"status\":\"truncated\"},{\"name\":\"TOOLS.md\",\"path\":\"D:\\\\tmp\\\\clawx-composer-polish-20261125\\\\ego-validation\\\\home\\\\composer-workspace\\\\TOOLS.md\",\"chars\":2116,\"rawChars\":2115,\"status\":\"included\"}]},\"skills\":{\"chars\":141,\"totalEntries\":1,\"entries\":[{\"name\":\"context-review\",\"chars\":102,\"status\":\"included\"}]},\"tools\":{\"chars\":121,\"totalEntries\":1,\"entries\":[{\"name\":\"read_file\",\"chars\":121,\"status\":\"included\"}]}}}}",
+  "actual": {
+    "label": "Context: 4,100 of 32,768 tokens",
+    "text": "Context window\n13%\n\n4,100 / 32,768 tokens\n\n28,668 tokens available\n\ncustom-composerprobe/gpt-6.1-sol\n\nInput tokens measured for the last request.\n\nContext composition\nShare of recorded characters\n\nRecorded composition: 6,673 characters\n\nCurrent request\n65 characters\n1%\nTool definitions · 1\n121 characters\n1.8%\nread_file\n121\nRuntime context\n0 characters\n0%\nSystem instructions\n87 characters\n1.3%\nSkills · 1\n141 characters\n2.1%\ncontext-review\n102\nProject files · 2\n6259 characters\n93.8%\nAGENTS.md\n4,096\n\nD:\\tmp\\clawx-composer-polish-20261125\\ego-validation\\home\\composer-workspace\\AGENTS.md\n\nTrimmed to fit the context · Original: 20,840 characters\n\nTOOLS.md\n2,116\n\nD:\\tmp\\clawx-composer-polish-20261125\\ego-validation\\home\\composer-workspace\\TOOLS.md\n\nComponent sizes use runtime character counts. Total usage uses model tokens.\n\nLast runtime report · Nov 25, 2026, 2:39 PM\n\nLoaded conversation messages: 0\n\nMemory injection receipts\n\nRecent receipts for this conversation, recorded separately from the composition above.\n\nNo memory injection receipts recorded for this conversation.\n\nSee detailed breakdown\n\nDetails stay open. Press Escape or click outside to close."
+  }
+}

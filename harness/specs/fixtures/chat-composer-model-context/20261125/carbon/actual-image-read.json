@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "carbon-composer-ui-editor",
+  "conversationId": "d33179f1-2959-43e9-a1b2-8a1aef6e1293",
+  "source": "read-only SQLite tool-result step",
+  "step": 2,
+  "stepType": 132,
+  "status": 3,
+  "dimensions": [
+    1440,
+    1160
+  ],
+  "sourceSha256": "f6efcdd9983f35803f1e122662a3eebc55d1dfda10bfeca36317126712011034",
+  "returnedSha256": "77f2d940bbe4e1b8761c16d3cf732381d22c08ee6b21d5e84d9d36925919b4ba",
+  "returnedBytes": 177807,
+  "pixelMeanAbsoluteDifference": [
+    1.1042462883141761,
+    0.7756010536398468,
+    1.2915289750957855
+  ]
+}

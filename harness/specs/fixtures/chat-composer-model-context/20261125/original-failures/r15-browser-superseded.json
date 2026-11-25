@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-relay",
+  "status": "superseded-before-dispatch",
+  "reason": "User requested ego-browser frontend verification instead of full Electron process",
+  "at": "2026-11-25T06:32:02.9357632+00:00",
+  "waiterPid": 46248,
+  "actualDispatches": 0,
+  "originalPlanPreserved": true
+}

@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-polish",
+  "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+  "command": [
+    "C:/Program Files/nodejs/node.exe",
+    "scripts/check-duplicate-assets.mjs"
+  ],
+  "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+  "exitCode": 1,
+  "durationSeconds": 4.375,
+  "sourceUnchanged": true,
+  "stdout": {
+    "path": "D:\\tmp\\clawx-composer-polish-20261125\\duplicates-r13.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "D:\\tmp\\clawx-composer-polish-20261125\\duplicates-r13.stderr.log",
+    "sha256": "d91850ba2d20c120272cca5a019866a72315da586297912641a22e272e6b9e21"
+  }
+}

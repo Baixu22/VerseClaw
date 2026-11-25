@@ -1,0 +1,12 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-relay",
+  "sourceCommit": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+  "installedCommit": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+  "backup": "D:\\tmp\\clawx-composer-polish-20261125\\previous-main-build-composer-ego-r2",
+  "sourceRoot": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
+  "installedRoot": "D:\\ClawX",
+  "verifiedFiles": 1413,
+  "retainedOldAssetFiles": 277,
+  "status": "passed"
+}

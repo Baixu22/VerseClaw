@@ -1,0 +1,22 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-relay",
+  "status": "passed",
+  "previousMain": "1f87f31d5d7064e97b53eed03d1f12862ff43fc3",
+  "mergedCandidate": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+  "protectedFiles": [
+    {
+      "path": "openclaw_runtime/pnpm-workspace.yaml",
+      "sha256": "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910"
+    },
+    {
+      "path": "harness/specs/tasks/chat-activity-bell-unread-status-20261120.md",
+      "sha256": "1e170f3650805280d1b1886d87da9db4307f748f19aed4cb6ad8f7105f508f9c"
+    },
+    {
+      "path": "harness/specs/tasks/chat-effort-preview-slider-20261124.md",
+      "sha256": "4c425105df55ce7d51491469079c9b2cd8d94dae6daa75cb1086259a91d5ee34"
+    }
+  ],
+  "preservedStatus": "M openclaw_runtime/pnpm-workspace.yaml\n?? harness/specs/tasks/chat-activity-bell-unread-status-20261120.md\n?? harness/specs/tasks/chat-effort-preview-slider-20261124.md"
+}

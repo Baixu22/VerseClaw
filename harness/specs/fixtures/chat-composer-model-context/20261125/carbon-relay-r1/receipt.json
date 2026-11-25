@@ -1,0 +1,57 @@
+{
+  "driven_by": "agent",
+  "actor": "carbon-composer-ui-relay-editor",
+  "model": "Gemini 4 Carbon (Low)",
+  "startedAt": "2026-11-24T23:26:05.450Z",
+  "endedAt": "2026-11-24T23:29:06.814Z",
+  "exitCode": 3,
+  "stopReason": null,
+  "baseline": "7731f5ebe4b3fe27eb1571f9e861c1c942f39684",
+  "promptSha256": "fef908dad8a8367e6e8e950fa15ad47301164908c59bbd12496bfc47aba6dd49",
+  "imageSha256": "f6efcdd9983f35803f1e122662a3eebc55d1dfda10bfeca36317126712011034",
+  "before": [
+    {
+      "file": "src/styles/chat-model-settings.css",
+      "sha256": "396315b434b79cf098b6871c61077c259884ce47e698eb1505b36ab772e47177"
+    },
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "sha256": "32c984434e9f1786f4bcb5019f6192f92af450fce4d6f232c9839a61d5aba47a"
+    }
+  ],
+  "after": [
+    {
+      "file": "src/styles/chat-model-settings.css",
+      "sha256": "396315b434b79cf098b6871c61077c259884ce47e698eb1505b36ab772e47177"
+    },
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "sha256": "32c984434e9f1786f4bcb5019f6192f92af450fce4d6f232c9839a61d5aba47a"
+    }
+  ],
+  "changedFiles": [],
+  "unexpectedFiles": [],
+  "prefixPreserved": true,
+  "guardAllowedModels": [
+    "gemini-4-carbon",
+    "gemini-4-carbon",
+    "gemini-4-carbon"
+  ],
+  "guardBlockedModels": [
+    "gemini-3.1-flash-lite-preview",
+    "gemini-3.8-flash",
+    "gemini-3.1-flash-lite-preview",
+    "gemini-3.8-flash"
+  ],
+  "status": "ERROR",
+  "conversationId": "fd3e7fc9-b85d-445e-b236-1947e256cb92",
+  "usage": {
+    "input_tokens": 24213,
+    "output_tokens": 8134,
+    "thinking_tokens": 0,
+    "cache_read_tokens": 18860,
+    "total_tokens": 32347
+  },
+  "durationSeconds": 97.0258174,
+  "actualEditingPassed": false
+}

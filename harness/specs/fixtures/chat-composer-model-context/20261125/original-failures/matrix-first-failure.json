@@ -1,0 +1,5 @@
+{
+  "variant": "en-light-1280",
+  "error": "ElementResolutionError: page.click timed out after 3008ms: Selector [data-testid=\"chat-context-indicator\"] matched 1 elements, but none can receive input; dialog \"Model / Rea oning effort\" intercepts pointer events",
+  "measurements": []
+}

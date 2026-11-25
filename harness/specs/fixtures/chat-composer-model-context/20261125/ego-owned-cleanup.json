@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-ego",
+  "status": "passed",
+  "candidate": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+  "ownedPids": [
+    11648,
+    29548,
+    27244,
+    27944
+  ],
+  "survivors": [],
+  "browserSpace": 9,
+  "browserFinished": true,
+  "sourceUnchanged": true,
+  "at": "2026-11-25T07:01:55.6260380+00:00"
+}

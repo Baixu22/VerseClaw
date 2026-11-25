@@ -1,0 +1,152 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-polish",
+  "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+  "planSha256": "c0fed5e321b7d1d6760798818180ce81ce4c06593d313b7485b4e6f81e97fa0d",
+  "driverSha256": "cb388494062496af28f00401097dfa4b056e757273a9239828234158d56ea317",
+  "actualDispatches": 3,
+  "durationSeconds": 230.532,
+  "steps": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-composer-polish",
+      "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "label": "final-types-r12",
+      "admission": {
+        "processProbeFreeBytes": 4503199744,
+        "heavy": [],
+        "freeBytes": 4591878144,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys"
+      },
+      "timeoutSeconds": 180,
+      "startedAt": "2026-11-25T01:15:51.760369+00:00",
+      "driverSha256": "cb388494062496af28f00401097dfa4b056e757273a9239828234158d56ea317",
+      "status": "finished",
+      "resourceLimits": {
+        "nodeMiB": 768,
+        "goMiB": 700,
+        "cpu": 1,
+        "workers": 1,
+        "retries": 0
+      },
+      "pid": 40420,
+      "exitCode": 0,
+      "durationSeconds": 169.078,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-types-r12.stdout.log",
+        "sha256": "5df3395f259090872029acd52d50d70dffb299a44f851f8fc1cdda70efb4902e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-types-r12.stderr.log",
+        "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-composer-polish",
+      "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-context.test.ts",
+        "tests/unit/usage-live-scope.test.ts",
+        "tests/unit/chat-context-indicator.test.tsx",
+        "tests/unit/chat-model-settings-card.test.tsx",
+        "tests/unit/chat-agent-effort-popover.test.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/chat-model-selection.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\clawx-composer-polish-20261125\\final-unit-r12.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "label": "final-unit-r12",
+      "admission": {
+        "processProbeFreeBytes": 6803914752,
+        "heavy": [],
+        "freeBytes": 6891483136,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys"
+      },
+      "timeoutSeconds": 120,
+      "startedAt": "2026-11-25T01:18:42.284532+00:00",
+      "driverSha256": "cb388494062496af28f00401097dfa4b056e757273a9239828234158d56ea317",
+      "status": "finished",
+      "resourceLimits": {
+        "nodeMiB": 768,
+        "goMiB": 700,
+        "cpu": 1,
+        "workers": 1,
+        "retries": 0
+      },
+      "pid": 4520,
+      "exitCode": 0,
+      "durationSeconds": 32.546,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-unit-r12.stdout.log",
+        "sha256": "8d76449a99aa8c2b34168b22b76b36a9b107494df348ced68fcc002cb615e5d6"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-unit-r12.stderr.log",
+        "sha256": "21781bfcceb07faa7feb7aaaf9fd41b036bc148157e7d86f3b870c6791816564"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-composer-polish",
+      "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=1536",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "label": "final-build-r12",
+      "admission": {
+        "processProbeFreeBytes": 6568550400,
+        "heavy": [],
+        "freeBytes": 6671515648,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys"
+      },
+      "timeoutSeconds": 300,
+      "startedAt": "2026-11-25T01:19:15.652086+00:00",
+      "driverSha256": "cb388494062496af28f00401097dfa4b056e757273a9239828234158d56ea317",
+      "status": "finished",
+      "resourceLimits": {
+        "nodeMiB": 1536,
+        "goMiB": 700,
+        "cpu": 1,
+        "workers": 1,
+        "retries": 0
+      },
+      "pid": 28908,
+      "exitCode": 134,
+      "durationSeconds": 26.422,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-build-r12.stdout.log",
+        "sha256": "5511633d027dca8e33292849447d4fea3b23fa1b7d691a7f5bbfeef0fe7a6945"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-build-r12.stderr.log",
+        "sha256": "daba290158fc88839d66d7a68abbc9abdbe2a014df32f340ed459854586e4df7"
+      }
+    }
+  ],
+  "complete": false,
+  "passed": false,
+  "stopReason": "command-failed",
+  "sourceUnchanged": true
+}

@@ -1,0 +1,104 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-polish",
+  "candidate": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+  "planSha256": "54bb5375b9f067a6930309aa6696c580055022129625f4ca9192b15946ae729d",
+  "driverSha256": "f9b750accb004a9748b6f49f16be82567165cd7e3db072871f14567007b89b04",
+  "actualDispatches": 2,
+  "durationSeconds": 114.391,
+  "steps": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-composer-polish",
+      "candidate": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck:web"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "label": "ego-web-types-r1",
+      "admission": {
+        "processProbeFreeBytes": 2359545856,
+        "heavy": [],
+        "freeBytes": 2449301504,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+        "freeCommitBytes": 15413694464,
+        "totalCommitBytes": 50655170560
+      },
+      "timeoutSeconds": 90,
+      "startedAt": "2026-11-25T06:52:09.640711+00:00",
+      "driverSha256": "f9b750accb004a9748b6f49f16be82567165cd7e3db072871f14567007b89b04",
+      "status": "finished",
+      "resourceLimits": {
+        "nodeMiB": 768,
+        "goMiB": 700,
+        "cpu": 1,
+        "workers": 1,
+        "retries": 0
+      },
+      "pid": 8308,
+      "exitCode": 0,
+      "durationSeconds": 22.797,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-web-types-r1.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-web-types-r1.stderr.log",
+        "sha256": "4c6a5db0241dc9cb197b5cfb6af63ed04a35ec305fe459bfa8e886e2bcd904a4"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-composer-polish",
+      "candidate": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck:test"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "label": "ego-test-types-r1",
+      "admission": {
+        "processProbeFreeBytes": 2273083392,
+        "heavy": [],
+        "freeBytes": 2366316544,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+        "freeCommitBytes": 15543828480,
+        "totalCommitBytes": 50655170560
+      },
+      "timeoutSeconds": 90,
+      "startedAt": "2026-11-25T06:52:33.431511+00:00",
+      "driverSha256": "f9b750accb004a9748b6f49f16be82567165cd7e3db072871f14567007b89b04",
+      "status": "finished",
+      "resourceLimits": {
+        "nodeMiB": 768,
+        "goMiB": 700,
+        "cpu": 1,
+        "workers": 1,
+        "retries": 0
+      },
+      "pid": 36652,
+      "timedOut": true,
+      "exitCode": 124,
+      "durationSeconds": 90.297,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-test-types-r1.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-test-types-r1.stderr.log",
+        "sha256": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57"
+      }
+    }
+  ],
+  "complete": false,
+  "passed": false,
+  "stopReason": "command-failed",
+  "sourceUnchanged": true
+}

@@ -1,0 +1,54 @@
+{
+  "driven_by": "agent",
+  "authored_by": "Carbon",
+  "applied_by": "Codex",
+  "conversationId": "fd3e7fc9-b85d-445e-b236-1947e256cb92",
+  "cliStatus": "ERROR",
+  "cliTimedOut": true,
+  "actualStagedModelWrite": true,
+  "contextSource": "Exact unique replacement recovered from the interrupted edit_file tool request",
+  "toolPayloads": [
+    {
+      "step": 4,
+      "status": 3,
+      "sha256": "38210c19fb881dff47542929cc4d201740e12156334460130f0980ef4d198278"
+    },
+    {
+      "step": 5,
+      "status": 7,
+      "sha256": "00cbec26fddd805b95272937297a73b0a995b69dc9e32da61d85b64d280d559f"
+    }
+  ],
+  "sourcePrefixPreserved": true,
+  "records": [
+    {
+      "file": "src/styles/chat-model-settings.css",
+      "beforeSha256": "396315b434b79cf098b6871c61077c259884ce47e698eb1505b36ab772e47177",
+      "appliedSha256": "3094831ac46eccf56c511dbb3832dfbff91f9aa552af98d0ec27ab68185df6ef",
+      "carbonAuthoredSha256": "fdd41708a1f97405d827b18986a6aae0edff9088ffb8d9b52a5dcb8c30411891"
+    },
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "beforeSha256": "32c984434e9f1786f4bcb5019f6192f92af450fce4d6f232c9839a61d5aba47a",
+      "appliedSha256": "c6f2e9047b147651fe336f5a4268a72c882e5f34f4b8ceb391c74c09bbe3c4fb",
+      "carbonAuthoredSha256": "eb8f5d05d98103ad8c098d7d52e63e21be6503bc520a30e85d3c448f5d56b2f4"
+    }
+  ],
+  "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+  "reviewedBy": "Codex",
+  "reviewAdjustments": [
+    "Retain the 28px model-button contract",
+    "Apply usage emphasis to the actual child element",
+    "Use native summary/details state for source-row interaction"
+  ],
+  "finalSources": [
+    {
+      "file": "src/styles/chat-model-settings.css",
+      "sha256": "e94cf667298f847157ae20585598c6859209d79f3a655df7233aa39a5151d2e2"
+    },
+    {
+      "file": "src/styles/codex-composer-shell.css",
+      "sha256": "e80891664bf407b680f6fdc566d3e7bb8db8a23f6111947e4c5d2d467144fb32"
+    }
+  ]
+}
