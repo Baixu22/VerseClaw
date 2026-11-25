@@ -76,10 +76,10 @@
       "sourceNormalization": "lf",
       "originalRawSha256": "fba5e0e94a53681d69019f29a0eeb6528bb31d9e40578d79b9b6ea1f9146db62",
       "originalLfSha256": "fba5e0e94a53681d69019f29a0eeb6528bb31d9e40578d79b9b6ea1f9146db62",
-      "patchedSha256": "bd6dfcd2c8dc749f1f025ac2710bc1a2236f0eea2c7861c2bef334e4fa9b14f2",
+      "patchedSha256": "7aab31bfaf48652ed6446b475065232e1ff622f203884ab6aac5cb3100ead3c2",
       "patchPath": "packages/versebrowser/patches/tf0372-lint__src__engine__facade.ts.patch",
-      "patchSha256": "3852f661b5cef68ad91ea9a754e0f8ed7fbd4ecdeaab4a0237bf3f0010422678",
-      "reason": "Align the frozen import with the existing host lint rules: remove dead declarations/assignments, use explicit test types and preserve error causes without changing permissions or ID formats."
+      "patchSha256": "6ad723d697217e18d2397ca8322b028da23217ad37a120d6f3628234f26afe63",
+      "reason": "Preserve existing Kitesurf routing from 47303b189 and prior lint cleanup; remove the unused private sessionDir helper and import for Host type checking. Original imported bytes remain fixed."
     },
     {
       "id": "tf0372-lint-src-engine-persistent-sessions-ts",

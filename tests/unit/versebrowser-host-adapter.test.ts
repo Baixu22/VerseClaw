@@ -1,10 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => {
+  const sessions = new Map<string, { id: string }>();
   const service = {
-    open: vi.fn(async (_payload?: unknown) => ({ session: { id: 's1' }, textSample: 'ok' })),
-    list: vi.fn(() => []),
-    close: vi.fn(),
+    open: vi.fn(async (_payload?: unknown) => {
+      const session = { id: 's1' };
+      sessions.set(session.id, session);
+      return { session, textSample: 'ok' };
+    }),
+    list: vi.fn(() => [...sessions.values()]),
+    close: vi.fn((sessionId: string) => { sessions.delete(sessionId); }),
   };
   const moduleApi = {
     open: vi.fn(async (payload: unknown) => ({ success: true, session: { id: 's1' }, payload })),
@@ -34,6 +39,7 @@ const mocks = vi.hoisted(() => {
     getWorkspaceRoot: vi.fn(() => currentRoot),
   };
   return {
+    sessions,
     service,
     moduleApi,
     module,
@@ -58,6 +64,7 @@ import { approveBrowserPrivateNetwork, assertBrowserNavigationAllowed, createAge
 
 describe('VerseBrowser host adapter ownership', () => {
   beforeEach(() => {
+    mocks.sessions.clear();
     mocks.service.open.mockClear();
     mocks.service.close.mockClear();
     mocks.moduleApi.open.mockReset().mockImplementation(async (payload: unknown) => ({ success: true, session: { id: 's1' }, payload }));
@@ -279,7 +286,7 @@ it('rejects browser admission while a session lifecycle gate is open', async () 
         workspaceId: 'a',
         sessionKey: 'agent:main:one',
       }));
-      service.close('s1');
+      await service.close('s1');
 
       mocks.getProfile.mockResolvedValueOnce(null);
       await service.open({ url: 'https://example.com/global', sessionKey: 'agent:main:two' });
@@ -287,7 +294,7 @@ it('rejects browser admission while a session lifecycle gate is open', async () 
       const globalPayload = globalCall?.[0] as { workspaceId?: string; sessionKey?: string } | undefined;
       expect(globalPayload?.workspaceId).toBeUndefined();
       expect(globalPayload?.sessionKey).toBe('agent:main:two');
-      service.close('s1');
+      await service.close('s1');
     } finally {
       setSandboxHighRiskPolicyLoader(null);
     }

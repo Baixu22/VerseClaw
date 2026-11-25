@@ -43,7 +43,7 @@ afterEach(() => {
   setBrowserFirstPartyOriginProvider(null);
 });
 
-function hostFixture(optionalResource?: string, failFirstWindow = false) {
+function hostFixture(optionalResource?: string, failFirstWindow = false, textSample?: Promise<string>) {
   let requestHandler: RequestHandler;
   const session = {
     webRequest: { onBeforeRequest: vi.fn((handler: RequestHandler) => { requestHandler = handler; }) },
@@ -62,12 +62,12 @@ function hostFixture(optionalResource?: string, failFirstWindow = false) {
       }),
       setWindowOpenHandler: vi.fn(), getURL: () => currentUrl, getTitle: () => 'Fixture',
       setWebRTCIPHandlingPolicy: vi.fn(),
-      executeJavaScript: vi.fn(async () => 'fixture text'),
+      executeJavaScript: vi.fn(async () => textSample ?? 'fixture text'),
     });
     const request = (url: string, resourceType = 'xhr') => new Promise<{ cancel: boolean }>((resolve) => {
       requestHandler({ url, resourceType, webContentsId: webContents.id }, resolve);
     });
-    return {
+    return Object.assign(new EventEmitter(), {
       webContents, request, isDestroyed: () => destroyed, show: vi.fn(), setBounds: vi.fn(),
       close: vi.fn(() => webContents.emit('destroyed')),
       destroy: vi.fn(() => { destroyed = true; webContents.emit('destroyed'); }),
@@ -77,7 +77,7 @@ function hostFixture(optionalResource?: string, failFirstWindow = false) {
         currentUrl = url;
         webContents.emit('did-finish-load');
       },
-    };
+    });
   }
   const host = new HostAgentBrowserService({ managedEngine: 'browser-window', createWindow: () => {
     if (failFirstWindow) { failFirstWindow = false; throw new Error('window creation failed'); }
@@ -235,8 +235,29 @@ describe('Verse browser authority through the production Main API', () => {
     expect(f.windows).toHaveLength(1);
     const id = f.host.list()[0].id;
     expect(await f.windows[0].request(payload.url)).toEqual({ cancel: false });
-    f.host.close(id);
+    const closing = f.host.close(id);
     await expect(assertBrowserRequestAllowed(payload.url, { sessionId: id })).rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+    await closing;
+  });
+
+  it('revokes a closing session grant while native window destruction is still pending', async () => {
+    const f = hostFixture();
+    const first = await f.api.open({ sessionKey: 'pending-close' });
+    const second = await f.api.open({ sessionKey: 'still-live' });
+    const url = 'http://127.0.0.1:9967/';
+    approveBrowserPrivateNetwork({ sessionId: first.session.id, origin: 'http://127.0.0.1:9967' });
+    approveBrowserPrivateNetwork({ sessionId: second.session.id, origin: 'http://127.0.0.1:9967' });
+    f.windows[0].destroy.mockImplementationOnce(() => undefined);
+
+    const closing = f.host.close(first.session.id);
+    expect(f.host.list()).toHaveLength(2);
+    await expect(assertBrowserRequestAllowed(url, { sessionId: first.session.id })).rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+    await expect(assertBrowserRequestAllowed(url, { sessionId: second.session.id })).resolves.toBeUndefined();
+
+    f.windows[0].destroy();
+    f.windows[0].emit('closed');
+    await closing;
+    expect(f.host.list().map(session => session.id)).toEqual([second.session.id]);
   });
 
   it('transfers an explicit opening grant for a hostname whose DNS destination is private', async () => {
@@ -248,6 +269,56 @@ describe('Verse browser authority through the production Main API', () => {
     expect(await f.windows[0].request('http://intranet.example/next')).toEqual({ cancel: false });
     await expect(f.api.open({ sessionKey: 'dns-owner', url: 'http://intranet.example/' })).rejects.toThrow();
     expect(f.host.list()).toHaveLength(1);
+  });
+
+  it('keeps a replacement private approval when an earlier opening result settles', async () => {
+    let releaseSample!: (value: string) => void;
+    const sample = new Promise<string>(resolve => { releaseSample = resolve; });
+    const f = hostFixture(undefined, false, sample);
+    const origin = 'http://127.0.0.1:9969';
+    const original = approveBrowserPrivateNetwork({ sessionId: 'renewing-opening-owner', origin, ttlMs: 1000 });
+    const opening = f.api.open({ sessionKey: 'renewing-opening-owner', url: `${origin}/` });
+    await vi.waitFor(() => expect(f.windows[0]?.webContents.executeJavaScript).toHaveBeenCalledOnce());
+    const sessionId = f.host.list()[0].id;
+    approveBrowserPrivateNetwork({ sessionId, origin, ttlMs: 60_000 });
+    releaseSample('late page text');
+    await expect(opening).rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(original.expiresAt + 1);
+    try {
+      await expect(assertBrowserRequestAllowed(`${origin}/`, { sessionId })).resolves.toBeUndefined();
+    } finally {
+      clock.mockRestore();
+    }
+  });
+
+  it.each([false, true])('does not restore an opening grant after close with nativePending=%s', async (nativePending) => {
+    let releaseSample!: (value: string) => void;
+    const sample = new Promise<string>(resolve => { releaseSample = resolve; });
+    const f = hostFixture(undefined, false, sample);
+    const origin = 'http://127.0.0.1:9968';
+    approveBrowserPrivateNetwork({ sessionId: 'late-opening-owner', origin });
+    const opening = f.api.open({ sessionKey: 'late-opening-owner', url: `${origin}/` });
+    await vi.waitFor(() => expect(f.windows[0]?.webContents.executeJavaScript).toHaveBeenCalledOnce());
+    const sessionId = f.host.list()[0].id;
+    if (nativePending) f.windows[0].destroy.mockImplementationOnce(() => undefined);
+    const closing = f.host.close(sessionId);
+    try {
+      if (!nativePending) await closing;
+      releaseSample('late page text');
+      await expect(opening).rejects.toMatchObject({
+        code: nativePending ? 'E_BROWSER_PRIVATE_NETWORK_DENIED' : 'E_BROWSER_SESSION_CLOSED',
+      });
+      await expect(assertBrowserRequestAllowed(`${origin}/`, { sessionId })).rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+    } finally {
+      releaseSample('late page text');
+      if (nativePending) {
+        f.windows[0].destroy();
+        f.windows[0].emit('closed');
+      }
+      await closing;
+    }
+    expect(f.host.list()).toHaveLength(0);
+    await expect(assertBrowserRequestAllowed(`${origin}/`, { sessionId })).rejects.toMatchObject({ code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
   });
 
   it('destroys owned tabs and sessions even when a page would cancel ordinary close', async () => {

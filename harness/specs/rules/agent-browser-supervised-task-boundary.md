@@ -49,6 +49,10 @@ JS, SourceMap and replay fetches use
 the existing session/profile proxy, including pinned destination addresses, per-request
 authorization, upstream proxy routing and revocation. A missing or refusing owner must
 never fall back to ambient fetch.
+Closing a session revokes its private-network approvals synchronously, before
+waiting for native window destruction. Approvals owned by other sessions remain valid.
+Opening completion retains the originally prepared private approval. A late result
+cannot recreate that approval after closure or overwrite a replacement approval.
 
 ## R5: Verified outcome
 

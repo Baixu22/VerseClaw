@@ -4,7 +4,11 @@ title: 浏览器批准、运行代次和网络出口修复
 lifecycleStatus: active
 taskType: runtime-bridge
 scenario: gateway-backend-communication
+diffBase: 9b1044cc0cb90f83f751875019d59ee68f92095a
 intent: Bind browser effects to the approved page, current run and existing profile network owner.
+expectedUserBehavior:
+  - Browser access remains bound to the approved page, current task run and profile network policy.
+  - Closing a browser session immediately revokes private-network access, and a late opening result cannot restore it.
 touchedAreas:
   - .gitattributes
   - packages/versebrowser/src/engine/**
@@ -13,6 +17,7 @@ touchedAreas:
   - packages/versebrowser/patches/**
   - electron/services/agent-browser-api.ts
   - electron/services/agent-browser-network-proxy.ts
+  - openclaw_runtime/src/types/lydell-node-pty.d.ts
   - tests/unit/versebrowser-*.test.ts
   - harness/specs/tasks/browser-issues-265-268.md
   - harness/specs/rules/agent-browser-supervised-task-boundary.md
@@ -27,6 +32,7 @@ requiredRules:
   - comms-regression
   - docs-sync
 requiredProfiles:
+  - fast
   - comms
 requiredTests:
   - pnpm --dir packages/versebrowser exec vitest run tests/agent-browser-runtime-mode.test.ts tests/agent-browser-task-service.test.ts tests/agent-browser-replay-tool-executor.test.ts tests/agent-browser-same-origin-source-map-fetcher.test.ts tests/same-origin-js-fetcher.test.ts --maxWorkers=1 --no-file-parallelism
@@ -38,7 +44,7 @@ acceptance:
   - Full access records the approved tab and exact origin; navigation, replacement tabs and debugger reattachment cannot mint a new approval. Raw network details, comparisons, parameter candidates, JS snippets and pending full-access results retain that approval across asynchronous reads, including revocation, expiry and renewal.
   - Progress, completion, error and cleanup belong to the captured task run. Cancelling or pausing an old run cannot change or disable cancellation of its successor.
   - A replay draft is claimed before dispatch. Concurrent, failed, timed-out or unknown-result sends cannot reuse the same approval. URLs, headers and JSON, form or text bodies reject canonical credential fields before a draft is created while retaining ordinary identifiers.
-  - JS, SourceMap and replay requests use the existing session/profile network owner and pinned DNS, including redirects, expiry and revocation. No global fetch fallback is permitted.
+  - JS, SourceMap and replay requests use the existing session/profile network owner and pinned DNS, including redirects, expiry and revocation. Closing a session revokes its private-network approvals before asynchronous native cleanup, including closure outside the host API. An opening result cannot recreate a prepared private approval removed or replaced while awaiting completion. No global fetch fallback is permitted.
 docs:
   required: true
   paths:
