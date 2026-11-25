@@ -251,6 +251,8 @@ requiredProfiles:
   - "fast"
   - "comms"
   - "e2e"
+  - "release"
+  - "runtime"
 requiredRules:
   - "contract-first-boundary"
   - "backend-communication-boundary"
@@ -292,6 +294,8 @@ docs:
 本文件冻结实现合同。当前规划不代表产品实现已通过；执行该叶前复核绑定的工作树、前置证据与实际 HEAD，刷新 diffBase。新增测试必须实现并加入 requiredTests；plannedE2E 指定的是必须补齐的产品旅程。
 
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
+
+本叶显式要求 release 与 runtime profiles，使局部修复推进 diffBase 后仍执行完整 26 个工程门，包括 release-baseline-validate、runtime-unit 和 runtime-static-check。四条 requiredTests、命令、超时与跳过预算由原验收合同派生。
 
 Electron 的临时工作区初始化独立 Git 仓库并清除继承的 Git 环境，使 Task authority 从本场景的工作区派生。九问资料明确保留第九问的事实缺口，状态传输故障场景提供可检索的专用资料，使两项检查进入实际规划路径。悬挂模型夹具在所有退出路径释放。
 
