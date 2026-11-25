@@ -120,6 +120,8 @@ acceptance:
   - "有网首次安装、签名/校验、离线重启、低空间、半安装、模型更换、旧binary读取和增量schema回滚通过。"
   - "正式升级不整库覆盖、不丢governance/SEKB/Task Ledger资料；所有临时输出遵守D盘策略。"
   - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+  - "Windows 实际包按知识库画像验证安装、离线、增量更新与恢复；容量结果分别绑定本地 768 维及默认远端 4096 维的实际模型/后端，记录索引构建、查询、RAM、磁盘和退化。"
+  - "保留历史合成容量记录，新增实际知识库及实际模型容量证据；macOS/Linux 原生补验继续由独立暂缓节点承接。"
 docs:
   required: true
   readmeTranslations: required
@@ -145,3 +147,5 @@ docs:
 当前执行采用windows-only资格范围，先交付Windows安装、离线运行与升级回滚。macOS/Linux四目标在独立补验节点保留原生SDK、模型、容量及故障条件；当前Windows节点不依赖暂缓目标。恢复all-platforms范围后按原完整矩阵执行。范围与顺序见docs/dev/project-rag/WINDOWS-FIRST-PLAN.md。
 
 residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。
+
+2026-11-25 知识库适配补充：复用 RAG-A1 的实际知识库快照和版本化评测。具体输入和执行顺序见 `docs/dev/project-rag/EVALUATION-CONTRACT.md` 与 `WINDOWS-FIRST-PLAN.md`；以上新增验收项随本叶实现。

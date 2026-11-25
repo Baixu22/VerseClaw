@@ -276,6 +276,10 @@ acceptance:
   - "所有子查询继承同一scope与owner权限；Research不自动扩外网、跨项目或工具/写权限。"
   - "返回真实证据、推断、冲突与缺口，DCS预算截取后仍可复算；Electron展示进度、取消与partial结果。"
   - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+  - "问题覆盖必须区分精确引文、owner pin 和语义支持；无关引文、数值/单位或时间错配、否定及无答案不得使问题进入 covered，判断缺失或预算不足时返回明确缺口。"
+  - "复用现有 QA 支持判断与 Provider Spend，在原 30 秒、3 轮/8 query/2 次规划及费用上限内分配规划和最终支持判断；取消、未知用量和迟到结果保持原终态约束。"
+  - "本地及已选择远端 embedding/rerank 接入同一 Research 请求的能力、egress 与费用准入；已知费率和可结算用量时使用所选能力，缺合同或未知费用时显式降级，保留指定默认模型。"
+  - "使用 RAG-A1 的知识库快照与强单次基线比较单次/多轮；按最终 DCS retained evidence 核对真实跨文档覆盖、回答支持与成本，简单问题保持可走单次路径。"
 docs:
   required: true
   readmeTranslations: required
@@ -413,3 +417,5 @@ Windows CIM查询只请求进程ID、父进程ID和创建时间，三列身份�
 取消或期限先于Main准入时，迟到启动回执补发同一requestId与workspace/session的取消，不发布迟到结果。启动和状态回执交付前继续检查原取消与期限，终态观察回调停止请求时保留对应停止原因；scope-changed继续保留。持续单测覆盖迟到成功、失败、拒绝及启动/状态/观察回调竞态，Electron旅程延迟实际Main启动，核对首次取消拒绝、补偿取消接受与实际cancelled终态；原requiredTests、30秒期限、480秒用例上限及零重试保持。
 
 恢复读回必须在外层try内等待结算，随后清理取消监听；读回等待期间的显式取消向同一requestId与workspace/session派发并保留cancelled，owner拒绝与scope-changed继续按原权限合同处理。持续单测覆盖error/timeout恢复中的partial、scope-changed和拒绝三种回执；Electron旅程在实际Main读回后延迟交付，核对新增取消、最终界面与Main取消终态。原1.5秒读回上限、30秒Research期限、480秒用例上限、四requiredTests与零重试保持。
+
+2026-11-25 知识库适配补充：RAG-A1 为本叶新增前置。具体输入和执行顺序见 `docs/dev/project-rag/EVALUATION-CONTRACT.md` 与 `WINDOWS-FIRST-PLAN.md`；以上新增验收项随本叶实现。

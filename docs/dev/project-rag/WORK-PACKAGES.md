@@ -1,6 +1,6 @@
 # Project RAG 长期实现工作包
 
-本计划的终点是完整长期版本。RAG-01 至 RAG-19 为必交付；实际进度由本地 Task Forest 与每叶精选证据记录。阶段交付按各自规格验收，长期目标在全部实现与验收节点完成后收口。
+本计划的终点是完整长期版本。RAG-01 至 RAG-19 及知识库适配前置 RAG-A1 为必交付；实际进度由本地 Task Forest 与每叶精选证据记录。阶段交付按各自规格验收，长期目标在全部实现与验收节点完成后收口。
 
 2026-11-24 所有者指定优先 Windows 开发测试。RAG-16 至 RAG-19 的当前资格范围为 Windows x64，macOS/Linux 四目标进入暂缓补验节点；执行顺序与范围见[Windows 开发与测试顺序](WINDOWS-FIRST-PLAN.md)。原 Windows 验证门槛保持，跨平台补验恢复后按实际目标生成独立证据。
 
@@ -38,7 +38,8 @@
 | RAG-13 | [接通原生记忆与角色记忆的独立读取](../../../harness/specs/tasks/project-rag-memory-source-adapters.md) | RAG-09、RAG-12 | native memory / Role Memory / retrieval adapters |
 | RAG-14 | [接通已确认经验和可观察的采用归因](../../../harness/specs/tasks/project-rag-sekb-experience-lane.md) | RAG-09、RAG-12 | SEKB / attribution / retrieval |
 | RAG-15 | [接通代码关系和任务事实的受控检索线索](../../../harness/specs/tasks/project-rag-code-graph-task-context.md) | RAG-09、RAG-12 | FactStore / Task Ledger / retrieval |
-| RAG-16 | [实现有预算、能停止的 Research 检索](../../../harness/specs/tasks/project-rag-bounded-research.md) | RAG-08、RAG-10、RAG-13、RAG-14、RAG-15 | research retrieval planner / DCS / UI |
+| RAG-A1 | [建立当前知识库的检索质量基线](../../../harness/specs/tasks/project-rag-knowledge-adaptation-baseline.md) | RAG-02、RAG-08、RAG-09、RAG-12 | evaluation / knowledge owners |
+| RAG-16 | [实现有预算、能停止的 Research 检索](../../../harness/specs/tasks/project-rag-bounded-research.md) | RAG-08、RAG-10、RAG-13、RAG-14、RAG-15、RAG-A1 | research retrieval planner / DCS / UI |
 | RAG-17 | [完成检索可观测性和离线策略晋级](../../../harness/specs/tasks/project-rag-observability-offline-promotion.md) | RAG-12、RAG-14、RAG-16 | observability / evaluation / policy release |
 | RAG-18 | [完成跨平台安装、离线运行与升级回滚](../../../harness/specs/tasks/project-rag-packaging-portability.md) | RAG-06、RAG-08、RAG-12 | packaging / provider lifecycle / platform validation |
 | RAG-19 | [验收长期版本的完整能力、稳定性与任务收益](../../../harness/specs/tasks/project-rag-long-term-acceptance.md) | RAG-02、RAG-17、RAG-18 | independent evaluation / integration |
@@ -470,3 +471,40 @@ RAG-18 交付入口：bundle和afterPack在目标依赖清理后写入 `retrieva
 RAG-19执行工具：`scripts/knowledge-rag-task-runner.ts`逐槽物化隔离任务，固定产品adapter及其摘要后运行原540槽位，独立oracle留在participant目录之外；`scripts/knowledge-rag-query-runner.ts`按冻结查询集合运行page/full两臂并以owner/version/raw span计算排名。两驱动只接收已固定且实现真实产品调用、预算和用量回执的argv适配器；缺省适配器、provider binding、held-out release或实测用量时拒绝执行/晋级。`scripts/knowledge-rag-acceptance.ts soak`可复用索引生命周期probe，保存每次实际进程结果并执行原72小时观察；`readback`核验所有同候选叶子、原生平台、容量、收益、soak和完整工程双角色证据。
 
 开发和正式验收状态由本地Task Forest保存。以上工具的存在不替代实际运行结果；跨平台、真实模型和72小时产物在对应执行完成后登记。
+
+## 当前知识库适配与质量补充（2026-11-25）
+
+RAG-A1 是 Research 的独立质量前置，提前交付评分修正、真实知识库画像、版本化问题集与单次检索消融。依赖已完成的来源/重排/装配/配置能力，完成后再进入 RAG-16，避免将质量测量排在 Research 之后。
+
+### RAG-A1 新增交付与验收
+
+1. 评分器分别报告字节重叠、完整支持事实覆盖与排名质量；单字节命中不得计为完整召回，后续完整命中、合法片段联合覆盖、重复与错版本输入有可执行回归。
+2. 通过当前 workspace 的 owner 只读接口生成实际知识库快照及来源、语言、结构、长度、更新、重复、冲突和权限分布；记录缺失来源，保留当前知识库身份和每项摘要。
+3. agent 依据实际快照编写并独立复核问题、支持事实及无答案/冲突/时效/权限负例；来源族和近重复不跨 calibration、validation、held-out，盲测 gold 对被测模型隔离。
+4. 以相同生成器、owner 安全和预算配对比较 page、BM25、dense、hybrid、hybrid+rerank；按实际知识库切片报告召回、DCS 后证据覆盖、回答及引用支持、延迟、费用与降级。
+5. 冻结 evaluator、语料、模型、chunker 和策略版本；在盲测释放前确定样本量、判据及费用 envelope；保留旧 v4 gold、原始结果和首次失败，未知用量单列。
+6. 复用现有 owner、检索、评分与执行器，产物全部标为 agent 驱动；计划内回归实际进入 requiredTests 后执行，证据可从磁盘复算。
+
+### RAG-16 新增交付与验收
+
+1. 问题覆盖必须区分精确引文、owner pin 和语义支持；无关引文、数值/单位或时间错配、否定及无答案不得使问题进入 covered，判断缺失或预算不足时返回明确缺口。
+2. 复用现有 QA 支持判断与 Provider Spend，在原 30 秒、3 轮/8 query/2 次规划及费用上限内分配规划和最终支持判断；取消、未知用量和迟到结果保持原终态约束。
+3. 本地及已选择远端 embedding/rerank 接入同一 Research 请求的能力、egress 与费用准入；已知费率和可结算用量时使用所选能力，缺合同或未知费用时显式降级，保留指定默认模型。
+4. 使用 RAG-A1 的知识库快照与强单次基线比较单次/多轮；按最终 DCS retained evidence 核对真实跨文档覆盖、回答支持与成本，简单问题保持可走单次路径。
+
+### RAG-17 新增交付与验收
+
+1. 采用 RAG-A1 已冻结的评分器和实际知识库质量基线；策略包绑定 evaluator/语料/模型/分块/策略与 DCS 收据，旧版本指标不得混算为新版本收益。
+2. 诊断能定位来源未入库、解析丢失、召回失败、重排丢失、DCS 裁掉、模型误答和引用不支持，分别报告各切片的质量、延迟、费用及 effective profile。
+3. 策略晋级依据同条件配对和盲测证据；缺样本、未知费用或语义支持不足时记录具体缺口；回滚与撤销传播覆盖新诊断和评测身份。
+
+### RAG-18 新增交付与验收
+
+1. Windows 实际包按知识库画像验证安装、离线、增量更新与恢复；容量结果分别绑定本地 768 维及默认远端 4096 维的实际模型/后端，记录索引构建、查询、RAM、磁盘和退化。
+2. 保留历史合成容量记录，新增实际知识库及实际模型容量证据；macOS/Linux 原生补验继续由独立暂缓节点承接。
+
+### RAG-19 新增交付与验收
+
+1. 最终资格同时读回原 240 查询/540 任务槽/72 小时与 RAG-A1 实际知识库质量证据；普通知识问答效果与代码/诊断/研究任务收益分项报告。
+2. 按 evaluator 新版本复算部分、完整、重复和错版本证据；最终 DCS 覆盖、回答正确性、引用语义支持、冲突及无答案拒答均有固定判据与原始结果。
+3. 同候选完成 Research 语义覆盖、本地/远端有效能力、质量/费用和 Windows 包回归；开发回归、质量实验、完整集成三层证据分别登记，原工程门禁和双角色验收保持。

@@ -113,6 +113,9 @@ acceptance:
   - "临时score/confidence路径和重复装配收敛，page direct read成为永久显式ref/故障兼容入口，不保留第二排序或上下文权威。"
   - "源码/规格/证据同候选可复算、clean工作树、回滚可演练；RAG范围验收与产品发布授权分别记录。"
   - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+  - "最终资格同时读回原 240 查询/540 任务槽/72 小时与 RAG-A1 实际知识库质量证据；普通知识问答效果与代码/诊断/研究任务收益分项报告。"
+  - "按 evaluator 新版本复算部分、完整、重复和错版本证据；最终 DCS 覆盖、回答正确性、引用语义支持、冲突及无答案拒答均有固定判据与原始结果。"
+  - "同候选完成 Research 语义覆盖、本地/远端有效能力、质量/费用和 Windows 包回归；开发回归、质量实验、完整集成三层证据分别登记，原工程门禁和双角色验收保持。"
 docs:
   required: true
   readmeTranslations: required
@@ -142,3 +145,5 @@ docs:
 所有者于2026-11-24指定Windows优先。当前manifest显式采用qualificationScope=windows-only，仅平台原件范围收敛为win32-x64，结果保留四个deferred目标；18叶接线/失败路径、固定评测、容量、费用、安全、完整双角色及72小时条件照常验证。省略范围或指定all-platforms沿用五平台读回，未知范围拒绝。重新规划的节点与后继补验见docs/dev/project-rag/WINDOWS-FIRST-PLAN.md。
 
 residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。
+
+2026-11-25 知识库适配补充：复用 RAG-A1 的实际知识库快照和版本化评测。具体输入和执行顺序见 `docs/dev/project-rag/EVALUATION-CONTRACT.md` 与 `WINDOWS-FIRST-PLAN.md`；以上新增验收项随本叶实现。

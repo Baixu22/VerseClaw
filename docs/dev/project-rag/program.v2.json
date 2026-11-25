@@ -1,7 +1,7 @@
 {
   "schema": "ProjectRagProgram/v2",
-  "revision": "2026-11-09-long-term",
-  "purpose": "交付可维护、可验证的项目知识检索系统，具备持久混合检索、重排、多来源、Research、完整交互、生命周期和效果评测。",
+  "revision": "2026-11-25-knowledge-adaptation",
+  "purpose": "交付适配当前知识库的项目知识检索系统，以实际语料和问题评测驱动混合检索、重排、Research、生命周期及可验证任务效果。",
   "baseline": "806855309fb9d0ab4ffcf9f897f42fb0117e4f40",
   "phases": [
     {
@@ -689,6 +689,57 @@
       "minutes": 540
     },
     {
+      "key": "RAG-A1",
+      "slug": "project-rag-knowledge-adaptation-baseline",
+      "phase": "P5",
+      "title": "建立当前知识库的检索质量基线",
+      "purpose": "修正评分并建立实际知识库画像和单次检索对照，为 Research 与策略晋级提供可信输入。",
+      "owner": "evaluation / knowledge owners",
+      "depends": [
+        "RAG-02",
+        "RAG-08",
+        "RAG-09",
+        "RAG-12"
+      ],
+      "areas": [
+        "scripts/knowledge-*.ts",
+        "scripts/lib/project-rag-*.mjs",
+        "scripts/lib/project-rag-*.d.mts",
+        "scripts/lib/paired-ablation.mjs",
+        "harness/specs/fixtures/project-rag/**",
+        "harness/specs/tasks/project-rag-*.md",
+        "harness/specs/rules/project-rag-long-term-boundary.md",
+        "docs/dev/project-rag/**",
+        "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md",
+        "tests/unit/project-rag-*.test.ts",
+        "README*.md"
+      ],
+      "contracts": [
+        "ProjectRagCorpus/v1",
+        "SourceSpanGold/v1",
+        "RetainedEvidenceManifest/v1"
+      ],
+      "acceptance": [
+        "评分器分别报告字节重叠、完整支持事实覆盖与排名质量；单字节命中不得计为完整召回，后续完整命中、合法片段联合覆盖、重复与错版本输入有可执行回归。",
+        "通过当前 workspace 的 owner 只读接口生成实际知识库快照及来源、语言、结构、长度、更新、重复、冲突和权限分布；记录缺失来源，保留当前知识库身份和每项摘要。",
+        "agent 依据实际快照编写并独立复核问题、支持事实及无答案/冲突/时效/权限负例；来源族和近重复不跨 calibration、validation、held-out，盲测 gold 对被测模型隔离。",
+        "以相同生成器、owner 安全和预算配对比较 page、BM25、dense、hybrid、hybrid+rerank；按实际知识库切片报告召回、DCS 后证据覆盖、回答及引用支持、延迟、费用与降级。",
+        "冻结 evaluator、语料、模型、chunker 和策略版本；在盲测释放前确定样本量、判据及费用 envelope；保留旧 v4 gold、原始结果和首次失败，未知用量单列。",
+        "复用现有 owner、检索、评分与执行器，产物全部标为 agent 驱动；计划内回归实际进入 requiredTests 后执行，证据可从磁盘复算。"
+      ],
+      "existingTests": [
+        "tests/unit/project-rag-corpus-integrity.test.ts",
+        "tests/unit/project-rag-acceptance-readback.test.ts"
+      ],
+      "newTests": [
+        "tests/unit/project-rag-query-grade.test.ts",
+        "tests/unit/project-rag-knowledge-adaptation.test.ts"
+      ],
+      "e2e": [],
+      "rollback": "保留旧 evaluator、数据与策略，以版本选择回退，不改来源正文和旧 gold。",
+      "minutes": 480
+    },
+    {
       "key": "RAG-16",
       "slug": "project-rag-bounded-research",
       "phase": "P4",
@@ -700,7 +751,8 @@
         "RAG-10",
         "RAG-13",
         "RAG-14",
-        "RAG-15"
+        "RAG-15",
+        "RAG-A1"
       ],
       "areas": [
         "openclaw_runtime/src/knowledge/retrieval/**",
@@ -719,7 +771,11 @@
         "查询拆解和证据缺口决定后续检索；重复、无新证据、足够覆盖、超时和取消都能停止。",
         "所有子查询继承同一scope与owner权限；Research不自动扩外网、跨项目或工具/写权限。",
         "返回真实证据、推断、冲突与缺口，DCS预算截取后仍可复算；Electron展示进度、取消与partial结果。",
-        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。",
+        "问题覆盖必须区分精确引文、owner pin 和语义支持；无关引文、数值/单位或时间错配、否定及无答案不得使问题进入 covered，判断缺失或预算不足时返回明确缺口。",
+        "复用现有 QA 支持判断与 Provider Spend，在原 30 秒、3 轮/8 query/2 次规划及费用上限内分配规划和最终支持判断；取消、未知用量和迟到结果保持原终态约束。",
+        "本地及已选择远端 embedding/rerank 接入同一 Research 请求的能力、egress 与费用准入；已知费率和可结算用量时使用所选能力，缺合同或未知费用时显式降级，保留指定默认模型。",
+        "使用 RAG-A1 的知识库快照与强单次基线比较单次/多轮；按最终 DCS retained evidence 核对真实跨文档覆盖、回答支持与成本，简单问题保持可走单次路径。"
       ],
       "existingTests": [
         "tests/unit/knowledge-evidence-qa.test.ts"
@@ -762,7 +818,10 @@
         "默认日志只存refs/digests/status/usage；raw evidence需要明确的测试/诊断保留政策，删除传播覆盖反馈与缓存。",
         "attach/dismiss仅记弱反馈，新的排序参数经离线封存评测与版本化晋级；旧RSI verdict保持原含义。",
         "回滚能恢复前一policy，不改变owner确认权限、scope和产品锁。",
-        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。",
+        "采用 RAG-A1 已冻结的评分器和实际知识库质量基线；策略包绑定 evaluator/语料/模型/分块/策略与 DCS 收据，旧版本指标不得混算为新版本收益。",
+        "诊断能定位来源未入库、解析丢失、召回失败、重排丢失、DCS 裁掉、模型误答和引用不支持，分别报告各切片的质量、延迟、费用及 effective profile。",
+        "策略晋级依据同条件配对和盲测证据；缺样本、未知费用或语义支持不足时记录具体缺口；回滚与撤销传播覆盖新诊断和评测身份。"
       ],
       "existingTests": [
         "tests/unit/knowledge-api.test.ts"
@@ -806,7 +865,9 @@
         "Intel Mac等缺ANN预编译包的平台具备完整portable语义路径与容量边界；ANN tier仅在实测通过的目标声明。",
         "有网首次安装、签名/校验、离线重启、低空间、半安装、模型更换、旧binary读取和增量schema回滚通过。",
         "正式升级不整库覆盖、不丢governance/SEKB/Task Ledger资料；所有临时输出遵守D盘策略。",
-        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。",
+        "Windows 实际包按知识库画像验证安装、离线、增量更新与恢复；容量结果分别绑定本地 768 维及默认远端 4096 维的实际模型/后端，记录索引构建、查询、RAM、磁盘和退化。",
+        "保留历史合成容量记录，新增实际知识库及实际模型容量证据；macOS/Linux 原生补验继续由独立暂缓节点承接。"
       ],
       "existingTests": [
         "tests/unit/runtime-package-resolution.test.ts"
@@ -850,7 +911,10 @@
         "60任务×3repeats×3arms结果封存；按profile冻结门槛判定质量、成本与任务收益，区间/费用缺失不能晋级。",
         "临时score/confidence路径和重复装配收敛，page direct read成为永久显式ref/故障兼容入口，不保留第二排序或上下文权威。",
         "源码/规格/证据同候选可复算、clean工作树、回滚可演练；RAG范围验收与产品发布授权分别记录。",
-        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+        "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。",
+        "最终资格同时读回原 240 查询/540 任务槽/72 小时与 RAG-A1 实际知识库质量证据；普通知识问答效果与代码/诊断/研究任务收益分项报告。",
+        "按 evaluator 新版本复算部分、完整、重复和错版本证据；最终 DCS 覆盖、回答正确性、引用语义支持、冲突及无答案拒答均有固定判据与原始结果。",
+        "同候选完成 Research 语义覆盖、本地/远端有效能力、质量/费用和 Windows 包回归；开发回归、质量实验、完整集成三层证据分别登记，原工程门禁和双角色验收保持。"
       ],
       "existingTests": [
         "tests/unit/knowledge-retrieval.test.ts",

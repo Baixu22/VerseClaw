@@ -101,6 +101,9 @@ acceptance:
   - "attach/dismiss仅记弱反馈，新的排序参数经离线封存评测与版本化晋级；旧RSI verdict保持原含义。"
   - "回滚能恢复前一policy，不改变owner确认权限、scope和产品锁。"
   - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
+  - "采用 RAG-A1 已冻结的评分器和实际知识库质量基线；策略包绑定 evaluator/语料/模型/分块/策略与 DCS 收据，旧版本指标不得混算为新版本收益。"
+  - "诊断能定位来源未入库、解析丢失、召回失败、重排丢失、DCS 裁掉、模型误答和引用不支持，分别报告各切片的质量、延迟、费用及 effective profile。"
+  - "策略晋级依据同条件配对和盲测证据；缺样本、未知费用或语义支持不足时记录具体缺口；回滚与撤销传播覆盖新诊断和评测身份。"
 docs:
   required: true
   readmeTranslations: not-required
@@ -124,3 +127,5 @@ docs:
 检索回执沿现有 memory-wiki SQLite plugin state 持久化，只保存 refs/digests/status/usage。未知费用与token保留null；来源撤销/修改会使收据失效并删除弱反馈。Main选取策略包文件，owner在有界Node校验器中读回240查询、540任务原件和实际执行的策略digest，重算统计后原子比较当前policy digest并晋级。backend/admin的wiki.retrieval.evaluate沿同一owner读取与预算路径执行manual候选评测，普通wiki.retrieve拒绝策略覆盖。重复操作内容相异拒绝，回滚保留前一policy；排序候选、重排、来源数和最终条数保持既有profile上限。
 
 residualPaths精确列出同一工作树中由相邻工作包负责的变更；本叶验收按自身新增测试和接口要求执行，完整门槛与原始失败保留。
+
+2026-11-25 知识库适配补充：复用 RAG-A1 的实际知识库快照和版本化评测。具体输入和执行顺序见 `docs/dev/project-rag/EVALUATION-CONTRACT.md` 与 `WINDOWS-FIRST-PLAN.md`；以上新增验收项随本叶实现。

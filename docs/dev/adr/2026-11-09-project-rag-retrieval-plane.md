@@ -551,3 +551,9 @@ Task Forest：
 - README en/zh/ja：增加长期规划入口，实际功能逐节点验收后再更新能力声明。
 
 目前已完成的是此长期决策、研究、实施规格、节点规划与 Git 工作树整合。RAG runtime 尚待逐叶实现；初始 source review 的93项结果保持历史绑定。具体新提交、Task Forest proposal/readback、源代码复核和本次文档/Harness检查记录在长期决策证据中。
+
+## 2026-11-25 补充：以当前知识库质量驱动后续开发
+
+保留 owner、SQLite/ANN、结构切块、混合检索、重排及 DCS 主架构。新增 RAG-A1 质量前置：先修正完整证据召回的评分语义，再以实际知识库快照、代表性问题和相同预算建立强单次检索基线。Research 的覆盖判断需要语义支持与精确出处两类证据，并在既有总预算内接通已选择远端 embedding/rerank。
+
+开发回归、质量实验和完整集成验收分别提供对应证据；原 26 门、四 requiredTests、双角色、240 查询、540 任务槽和 72 小时要求保留。新增实际语料与 evaluator 使用版本化输入，Windows 优先、跨平台暂缓及指定默认模型保持。工作包及新增验收项见 WORK-PACKAGES.md、EVALUATION-CONTRACT.md 和各 task spec。
