@@ -6,7 +6,7 @@ import { runSqliteImmediateTransactionSync } from '../infra/sqlite-transaction.j
 import { openOpenClawStateDatabase } from '../state/openclaw-state-db.js';
 import { resolveOpenClawStateSqlitePath } from '../state/openclaw-state-db.paths.js';
 import { requireNodeSqlite } from '../infra/node-sqlite.js';
-import { verifySessionCollaborationMessage, validateSessionCollaborationReceipt } from '../../../shared/session-collaboration-message.js';
+import { verifySessionCollaborationMessage, validateSessionCollaborationReceipt, sessionCollaborationMessageDigest } from '../../../shared/session-collaboration-message.js';
 import type { SessionCollaborationMessage, SessionCollaborationMessageReceipt } from '../../../shared/types/session-collaboration-message.js';
 import type { AutonomySessionScope } from '../../../shared/types/identity-scope.js';
 
@@ -36,13 +36,30 @@ export class SessionCollaborationMessageStore {
       const existing = this.get(message.id);
       if (existing) { if (existing.payload_digest !== message.payloadDigest) throw new Error('COLLABORATION_MESSAGE_ID_CONFLICT'); return existing; }
       const { message: body, ...metadata } = message;
+      let coalesced: SessionCollaborationMessageReceipt | null = null;
+      if (['finding', 'status'].includes(message.purpose)) {
+        const content = sessionCollaborationMessageDigest({ ...message, id: 'notification-content' });
+        const recent = executeSqliteQuerySync(this.db, this.query().selectFrom('session_message_intents').selectAll()
+          .where('source_scope', '=', messageScopeKey(message.source)).where('target_scope', '=', messageScopeKey(message.target))
+          .where('updated_at', '>=', Date.now() - 10_000).orderBy('seq', 'desc').limit(20)).rows;
+        for (const row of recent) {
+          const original = verifySessionCollaborationMessage(JSON.parse(row.envelope_json));
+          if (sessionCollaborationMessageDigest({ ...original, id: 'notification-content' }) !== content) continue;
+          const receipt = this.receipt(row); if (['rejected', 'expired'].includes(receipt.phase)) continue;
+          coalesced = { ...receipt, message, coalescedTo: receipt.coalescedTo ?? original.id, updatedAt: Date.now() }; break;
+        }
+      }
       const preview = Array.from(body).slice(0, 256).join('');
+      let receiptMetadata: Omit<SessionCollaborationMessageReceipt, 'message' | 'reply'> | null = null;
+      let replyCopy: SessionCollaborationMessageReceipt['reply'];
+      if (coalesced) { const { message: _original, reply, ...rest } = coalesced; receiptMetadata = rest; replyCopy = reply; }
       executeSqliteQuerySync(this.db, this.query().insertInto('session_message_intents').values({ id: message.id,
         payload_digest: message.payloadDigest, envelope_json: JSON.stringify(message),
         header_json: JSON.stringify({ ...metadata, preview, truncated: preview.length < body.length }),
         source_scope: messageScopeKey(message.source), target_scope: messageScopeKey(message.target), task_node: message.task?.taskNodeId ?? null,
         dispatch_key: `collaboration:${createHash('sha256').update(message.payloadDigest).digest('hex')}`,
-        state: 'accepted', receipt_json: null, reply_json: null, updated_at: Date.now() }));
+        state: coalesced ? 'settled' : 'accepted', receipt_json: coalesced ? JSON.stringify(receiptMetadata) : null,
+        reply_json: replyCopy ? JSON.stringify(replyCopy) : null, updated_at: Date.now() }));
       return this.get(message.id)!;
     });
   }
@@ -63,10 +80,23 @@ export class SessionCollaborationMessageStore {
       reply_json: reply ? JSON.stringify(reply) : row.reply_json, updated_at: receipt.updatedAt })
       .where('id', '=', id).where('payload_digest', '=', original.payloadDigest));
   }
-  receipt(row: IntentRow): SessionCollaborationMessageReceipt {
+  receipt(row: IntentRow, seen = new Set<string>()): SessionCollaborationMessageReceipt {
+    if (seen.has(row.id) || seen.size >= 4) throw new Error('COLLABORATION_MESSAGE_REFERENCE_CYCLE');
+    seen.add(row.id);
     const message = verifySessionCollaborationMessage(JSON.parse(row.envelope_json));
-    if (row.receipt_json) return validateSessionCollaborationReceipt(message, { ...JSON.parse(row.receipt_json), message,
-      ...(row.reply_json ? { reply: JSON.parse(row.reply_json) } : {}) });
+    if (row.receipt_json) {
+      const metadata = JSON.parse(row.receipt_json) as SessionCollaborationMessageReceipt;
+      if (metadata.coalescedTo && metadata.coalescedTo !== row.id) {
+        const original = this.get(metadata.coalescedTo);
+        if (original) {
+          const source = verifySessionCollaborationMessage(JSON.parse(original.envelope_json));
+          if (sessionCollaborationMessageDigest({ ...source, id: 'notification-content' }) !== sessionCollaborationMessageDigest({ ...message, id: 'notification-content' })) throw new Error('COLLABORATION_COALESCED_SOURCE_MISMATCH');
+          const result = this.receipt(original, seen);
+          return validateSessionCollaborationReceipt(message, { ...result, message, coalescedTo: source.id });
+        }
+      }
+      return validateSessionCollaborationReceipt(message, { ...metadata, message, ...(row.reply_json ? { reply: JSON.parse(row.reply_json) } : {}) });
+    }
     return { schemaVersion: 'SessionCollaborationReceipt/v1', message, phase: row.state === 'accepted' ? 'accepted' : 'unknown',
       run: null, replyRef: null, updatedAt: row.updated_at, ...(row.state === 'dispatching' ? { reason: 'dispatch-outcome-unknown' } : {}) };
   }

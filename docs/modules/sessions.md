@@ -56,6 +56,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 选中会话后可展开消息区，查看用途、发件/收件代次、投递阶段、原正文和回复。发送前预览 Main 当前来源；草稿按源目标完整身份保留，明确接受后清空。unknown 保留原 ID 与内容，使用“回读原回执”核对结果。原会话控制目录继续打开对应 owner 的引导、分支、接力和迁移入口。
 
+同源目标代次、任务和完全相同内容的 finding/status 突发由原消息 owner 合并，回执携带 coalescedTo 原意图引用；request/handoff/result 保持独立。实际协作模型调用在原 Task Trace 标记 coordination，原价格、用量、预算和队列决定继续由各自 owner 提供。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

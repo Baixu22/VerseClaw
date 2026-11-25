@@ -1794,12 +1794,12 @@ export class TaskSystemStore {
         d.parent.generation === generation && d.contractRevision === view.contract.revision);
     return delegation ? { credential: credentialIdentity(delegation.parent), role: 'coordinator' } : null;
   }
-  beginModelCall(credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model'>): TaskModelCall {
+  beginModelCall(credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model' | 'category'>): TaskModelCall {
     return this.transaction(() => {
       for (const key of ['callId', 'runId', 'provider', 'model'] as const) text(identity[key], `MODEL_${key}`, 512);
       const existing = this.read<TaskModelCall>('SELECT result AS json FROM task_requests WHERE id=?', `model-call:${identity.callId}`);
       if (existing) {
-        if (!sameModelIdentity(existing, credential, identity)) throw new Error('TASK_MODEL_CALL_IDENTITY_CONFLICT');
+        if (!sameModelIdentity(existing, credential, identity) || (existing.category ?? 'task') !== (identity.category ?? 'task')) throw new Error('TASK_MODEL_CALL_IDENTITY_CONFLICT');
         return existing;
       }
       const scope = this.modelCallScope(credential.sessionKey, credential.generation, identity.runId);

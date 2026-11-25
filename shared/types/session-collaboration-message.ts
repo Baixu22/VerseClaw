@@ -27,6 +27,7 @@ export type SessionCollaborationMessageReceipt = {
   phase: 'accepted' | 'queued' | 'delivered' | 'replied' | 'rejected' | 'expired' | 'unknown';
   run: ScopedRunId | null;
   replyRef: string | null;
+  coalescedTo?: string;
   reply?: { text: string; sha256: string; run: ScopedRunId; truncated: boolean };
   reason?: string;
   updatedAt: number;
