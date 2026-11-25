@@ -1,0 +1,19 @@
+NO_ACTIONABLE_FINDINGS
+
+Traced the queue repairs end to end:
+
+- Embedded entry bounding: `openclaw_runtime/src/agents/embedded-agent-runner/lanes.ts:2-30` now supplies one absolute admission deadline, `maxQueueSize=64` for each layer, and combined abort signal propagation. `openclaw_runtime/src/agents/embedded-agent-runner/run.ts:523,538-548` applies those bounds to both session and global admission, including the injected-enqueue path. The global layer also keeps its execution task timeout separately from queue-wait deadline.
+
+- Execution timeout ownership: `openclaw_runtime/src/process/command-queue.ts:321-367` attaches `executionSettled` to `CommandLaneTaskTimeoutError`; `command-queue.ts:437-458` rejects the caller promptly but waits for physical settlement before `completeTask` and `pump`. The nested-lane test “keeps both session and global slots when an inner execution times out” verifies that an inner global timeout does not release the outer session slot.
+
+- Queued abort/deadline handling: `command-queue.ts:506-538` validates `maxQueueSize`, checks already-aborted/expired waits before reserving, registers `watchResourceWait`, removes the exact queue entry on abort/deadline, disposes listener/timer, rejects the waiter immediately, and pumps without touching active owners. `clearCommandLane` also cleans waiter registrations at `command-queue.ts:617-628`.
+
+- Recovery behavior: `resetCommandLane` at `command-queue.ts:617-628` no longer clears active task IDs; the diagnostic stuck-session caller in `openclaw_runtime/src/logging/diagnostic-stuck-session-recovery.runtime.ts` therefore cannot falsely free a lane merely because a run registry was force-cleared. The test “keeps active ownership when recovery resets a lane before execution settles” covers this.
+
+- Model fallback stop condition: `openclaw_runtime/src/agents/model-fallback.ts:19,336-342` rethrows both task timeouts and local waiting failures; `model-fallback.loop-termination.test.ts:29-39` enumerates overload, queue timeout, queue abort, cleared lane, task timeout, and gateway draining. This prevents host queue failures from being treated as provider/model failures.
+
+- Queue options contract: `openclaw_runtime/src/process/command-queue.types.ts:10-18` adds the absolute `deadline`, and `command-queue.ts:506-518` combines it with `queueDeadlineMs` so elapsed session wait carries into global admission.
+
+Evidence supplied shows 62 runtime tests and 140 main tests passing, including the new queue lifecycle, shared wait-budget, nested timeout ownership, resource-budget integration, and native receipt checks. These are scoped unit/integration results, not full product acceptance.
+
+No Windows-specific or non-Windows-specific queue regression is visible in this diff; the changed logic uses platform-neutral Node timers, promises, and AbortSignal paths. Practical limits: the evidence does not include a full Electron mixed-load soak, real low-memory host pressure run, or OS-level long-duration native hang test. Host pressure/SQLite transaction ownership, native spawn validation, observer pruning, and lease CAS are outside this queues-only review and were not treated as accepted by the queue tests here.

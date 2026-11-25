@@ -1,0 +1,14 @@
+NO_ACTIONABLE_FINDINGS
+
+I reassessed the prior claim and do not preserve it. The Windows Node v24.22.1 native receipt shows `ENOENT` then `close`, one admission before error, and final reservations empty with `completed: 1`. The Node `onexit` source also shows the `error` emit followed by stdio flush and `maybeClose`. Since `startManagedChildProcess` attaches its `close` listener synchronously after `spawn` returns, the asynchronous spawn failure is settled exactly once. No PID-only adoption or cleanup is required.
+
+Paths traced:
+
+- `startManagedChildProcess`: admission before launch; `markDispatched`; synchronous Node validation failures are compensated through terminal settlement and release; asynchronous failures stay owned until native `close`; unknown synchronous launch outcomes remain marked unknown rather than freed.
+- `managed-process-reservation.ts`: persistent live counting, pressure cap `1` applied at admission without overwriting the reservation’s normal limit, existing and unknown owners retained, unconfigured admission remains unlimited.
+- Main Git `execBinary`: capacity refusal prevents spawning and returns a failure result; normal spawn/exec behavior and stdin destruction remain unchanged; native close releases the lease.
+- Local Bash caller: capacity refusal rejects before shell spawn and listener setup; abort/timeout behavior remains unchanged; child close releases the slot.
+- Existing governed admission: uses the same admission path; terminal and unknown occupancy remain owned by its lease lifecycle.
+- Terminal persistence/retry: terminal settlement is retained when persistence fails and retried via `admitManagedProcess`, stats, and reset; completed/double-release accounting remains consistent.
+
+No different concrete failing path was found in the changed native launch or Main Git/local Bash integration.

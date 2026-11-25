@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-native-error",
+  "platform": "win32",
+  "nodeVersion": "v24.22.1",
+  "events": [
+    "ENOENT",
+    "close"
+  ],
+  "nativePid": null,
+  "finalReservations": [],
+  "counters": {
+    "live": 0,
+    "peakLive": 1,
+    "admitted": 1,
+    "completed": 1,
+    "rejectedCapacity": 0,
+    "doubleRelease": 0,
+    "limit": 1
+  }
+}
