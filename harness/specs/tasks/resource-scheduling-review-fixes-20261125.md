@@ -16,6 +16,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/lanes.ts
   - openclaw_runtime/src/agents/resource-leases.ts
+  - openclaw_runtime/src/agents/resource-leases.test.ts
   - openclaw_runtime/src/agents/model-fallback.ts
   - openclaw_runtime/src/agents/model-fallback.loop-termination.test.ts
   - openclaw_runtime/src/agents/sessions/tools/bash.ts
