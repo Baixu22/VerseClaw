@@ -11,7 +11,6 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
-  - scripts/lib/versebrowser-build-provenance.mjs
   - scripts/versebrowser-n9-stability-probe.test.mjs
   - openclaw_runtime/src/gateway/server-runtime-services.ts
   - openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts
