@@ -22,7 +22,7 @@ export function persistRuntimeContextEntries(stateDir: string, entries: Paramete
     console.log(JSON.stringify({ storePath, databasePath }));
   `;
   return JSON.parse(execFileSync(process.execPath, ['--import', 'tsx', '--input-type=module', '--eval', script], {
-    cwd: resolve('.'), input: JSON.stringify({ stateDir, entries }), encoding: 'utf8',
+    cwd: resolve('.'), input: JSON.stringify({ stateDir, entries }), encoding: 'utf8', windowsHide: true, timeout: 30_000,
   })) as { storePath: string; databasePath: string };
 }
 
