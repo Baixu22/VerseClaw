@@ -31,9 +31,12 @@
   "pending": [
     "Actual Electron/Gateway QA journey with the newly updated conflict assertions and current build.",
     "Complete fresh same-candidate answer/fee qualification; previous mixed-input diagnostic and four unknown/missing generation outcomes stay historical.",
-    "A known fee envelope and latency-compliant profile; no policy promotion is authorized by this development run."
+    "A known fee envelope and latency-compliant profile; no policy promotion is authorized by this development run.",
+    "Generate and judge answers for the corrected r6 contexts in a fresh bounded run; r4/r5 answers are retained historical observations."
   ],
   "nextAction": "Prepare a frozen current-candidate build and single-worker Electron QA plan, then run it under a matching resource window; keep budget and fee gaps explicit.",
   "rawArchive": "D:\\tmp\\g2-tf0946-20261125-01a21178",
-  "priorDevelopmentReadback": "development-readback.json"
+  "priorDevelopmentReadback": "development-readback.json",
+  "correctedRetrievalObservations": "retrieval-observations-corrected.json",
+  "driverCorrection": "retrieval-driver-correction.json"
 }

@@ -1,0 +1,16 @@
+{
+  "actor": "codex-g2-experiment-correction",
+  "driven_by": "agent",
+  "invalidRun": "retrieval-r5",
+  "invalidInference": "Its 27/27 rerank partial count is not a product performance result; 26 failed on fractional AbortSignal delay.",
+  "fractionalDelayFailures": 26,
+  "cause": "The experiment subtracted performance.now() fractional duration from an integer wall-clock deadline.",
+  "fix": "Floor the remaining milliseconds before creating the planner deadline; no product threshold changed.",
+  "correctedRun": "retrieval-r6",
+  "candidate": "afac8fe8bd6ecdbbec70ea0cd984bc4eed039d61",
+  "correctedRows": 135,
+  "originalsPreserved": true,
+  "oldDriverDigest": "5fb3e77cbc78a4ebe0f786adc4f736f5cd4e99068fcc01bc6ede7e0914aa40f4",
+  "newDriverDigest": "c6ad7aa6faf67aca000f979282940710915546a08d8c162767d6a11207f5ee4c",
+  "answerScope": "Existing answer observations belong to r4/r5 contexts. They remain historical and cannot be paired with corrected r6 retrieval as current end-to-end evidence."
+}
