@@ -17,7 +17,8 @@ type ContinuityPack = {
   complete: boolean;
   bindingRevision: number;
   budget: { maxChars: number; usedChars: number; truncated: boolean; droppedItems: number };
-  items: Array<{ kind: string; text: string; source: string; freshness: string; scope: { kind: string; key?: string | null } }>;
+  items: Array<{ kind: string; text: string; source: string; freshness: string; scope: { kind: string; key?: string | null };
+    semantic?: { sourceStatus: string; verification: string; scope: string; evidenceRefs: Array<{ type: string; ref: string }> } }>;
   sourceStates: Array<{ source: string; status: string; detail?: string }>;
   exclusions: Array<{ ref: string; reason: string }>;
   originalHistory: { transcriptRef: string; taskLedgerRef: string; taskLedgerEventCount: number; compressionAvailable: boolean };
@@ -256,6 +257,10 @@ test('real Host/Gateway continuity preview reads accepted owners and fails close
     expect(preview.validation).toBe('current');
     const pack = preview.pack;
     if (!pack) throw new Error('Continuity preview returned no pack');
+    const acceptedConstraint = pack.items.find(item => item.source === 'task-ledger-working-context' && item.kind === 'constraint');
+    expect(acceptedConstraint?.semantic).toMatchObject({ sourceStatus: 'confirmed', verification: 'unknown',
+      scope: `task:${taskNodeId}`, evidenceRefs: [{ type: 'session', ref: coordinatorSessionKey }] });
+    expect(preview.rendered).toContain('sourceStatus=confirmed; verification=unknown');
     expect(pack.schemaVersion).toBe('ContinuityContextPack/v1');
     expect(pack.complete).toBe(false);
     expect(pack.bindingRevision).toBe(1);

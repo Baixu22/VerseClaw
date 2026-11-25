@@ -27,6 +27,7 @@ import {
   withSessionDeleteGateLock,
   type SessionDeleteGateRecord,
 } from './session-delete-gate';
+import { normalizeSemanticAtoms } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact';
 import { buildResumeCheckpoint, renderResumeCheckpointSummary } from '../../shared/types/long-task-control';
 import type {
   LongTaskCheckpointRecord,
@@ -37,7 +38,6 @@ import type {
 import type {
   CompressionArtifact,
   CompressionArtifactQuality,
-  CompressionSemanticAtom,
   SessionCompactionResult,
   SessionContextFoldProjectionPayload,
   SessionContextFoldProjectionResult,
@@ -960,175 +960,11 @@ function mapCompressionQuality(value: unknown): CompressionArtifactQuality | und
   };
 }
 
-const SEMANTIC_ATOM_TYPES = new Set<CompressionSemanticAtom['type']>([
-  'goal',
-  'latest_user_ask',
-  'decision',
-  'constraint',
-  'failed_attempt',
-  'entity',
-  'next_action',
-  'outcome',
-  'safety_boundary',
-]);
-
-const SEMANTIC_ATOM_STATUSES = new Set<CompressionSemanticAtom['status']>([
-  'verified',
-  'unverified',
-  'stale',
-  'superseded',
-]);
-
-const SEMANTIC_ATOM_SEVERITIES = new Set<CompressionSemanticAtom['severity']>([
-  'critical',
-  'important',
-  'nice_to_have',
-]);
-
-const SEMANTIC_ATOM_POLARITIES = new Set<CompressionSemanticAtom['polarity']>([
-  'positive',
-  'negative',
-  'neutral',
-]);
-
-const SEMANTIC_ATOM_SOURCE_KINDS = new Set<NonNullable<CompressionSemanticAtom['source']>['kind']>([
-  'summary',
-  'message',
-  'ledger',
-  'cvk',
-  'archive',
-]);
-
-const SEMANTIC_ATOM_EVIDENCE_TYPES = new Set<NonNullable<CompressionSemanticAtom['evidenceRefs'][number]>['type']>([
-  'session',
-  'trace',
-  'file',
-  'tool',
-  'task_ledger',
-  'clawgraph',
-  'manual',
-  'archive',
-  'cvk',
-  'other',
-]);
-
-function redactSemanticAtomText(value: string): string {
-  return value
-    .replace(
-      /\b([A-Za-z0-9_]*(?:API[_-]?KEY|TOKEN|SECRET|PASSWORD|PASSWD|PRIVATE[_-]?KEY)[A-Za-z0-9_]*)\s*[=:]\s*([^\s"',;]+)/gi,
-      (_match, name: string) => `${name}=[REDACTED]`,
-    )
-    .replace(/\bsk-[A-Za-z0-9_-]{8,}\b/g, '[REDACTED]')
-    .replace(/\b(ghp|github_pat|gsk|xox[baprs]|xapp|pplx|npm|hf|r8)_[A-Za-z0-9_-]{8,}\b/g, '[REDACTED]')
-    .replace(/\bBearer\s+[A-Za-z0-9._\-+=]{18,}\b/gi, 'Bearer [REDACTED]');
-}
-
-function mapSemanticAtomEvidenceRefs(value: unknown): CompressionSemanticAtom['evidenceRefs'] {
-  if (!Array.isArray(value)) return [];
-  return value.flatMap((item) => {
-    if (!isRecord(item)) return [];
-    const ref = typeof item.ref === 'string' ? item.ref.trim().slice(0, 300) : '';
-    if (!ref) return [];
-    const type = typeof item.type === 'string'
-      && SEMANTIC_ATOM_EVIDENCE_TYPES.has(item.type as CompressionSemanticAtom['evidenceRefs'][number]['type'])
-      ? item.type as CompressionSemanticAtom['evidenceRefs'][number]['type']
-      : 'other';
-    return [{
-      type,
-      ref,
-      ...(typeof item.label === 'string' && item.label.trim()
-        ? { label: item.label.trim().slice(0, 120) }
-        : {}),
-    }];
-  }).slice(0, 8);
-}
-
-function mapSemanticAtoms(value: unknown): {
-  atoms?: CompressionSemanticAtom[];
-  warnings: string[];
-} {
-  if (!Array.isArray(value)) return { warnings: [] };
-  const warnings: string[] = [];
-  const atoms = value.flatMap((item) => {
-    if (!isRecord(item)) return [];
-    const type = typeof item.type === 'string' && SEMANTIC_ATOM_TYPES.has(item.type as CompressionSemanticAtom['type'])
-      ? item.type as CompressionSemanticAtom['type']
-      : undefined;
-    if (!type) return [];
-    const id = typeof item.id === 'string' && item.id.trim()
-      ? item.id.trim().slice(0, 120)
-      : `atom-${warnings.length + 1}`;
-    const textRaw = typeof item.text === 'string' ? item.text : '';
-    const text = redactSemanticAtomText(textRaw.replace(/\s+/g, ' ').trim()).slice(0, 240);
-    if (!text) return [];
-    const severity = typeof item.severity === 'string' && SEMANTIC_ATOM_SEVERITIES.has(item.severity as CompressionSemanticAtom['severity'])
-      ? item.severity as CompressionSemanticAtom['severity']
-      : 'nice_to_have';
-    const rawStatus = typeof item.status === 'string' && SEMANTIC_ATOM_STATUSES.has(item.status as CompressionSemanticAtom['status'])
-      ? item.status as CompressionSemanticAtom['status']
-      : 'unverified';
-    const evidenceRefs = mapSemanticAtomEvidenceRefs(item.evidenceRefs);
-    let status = rawStatus;
-    if (severity === 'critical' && evidenceRefs.length === 0) {
-      if (status === 'verified') status = 'unverified';
-      warnings.push('critical_atom_missing_evidence');
-    }
-    const sourceRecord = isRecord(item.source) ? item.source : undefined;
-    let source: CompressionSemanticAtom['source'] | undefined;
-    if (sourceRecord) {
-      const sourceKind = typeof sourceRecord.kind === 'string'
-        && SEMANTIC_ATOM_SOURCE_KINDS.has(sourceRecord.kind as NonNullable<CompressionSemanticAtom['source']>['kind'])
-        ? sourceRecord.kind as NonNullable<CompressionSemanticAtom['source']>['kind']
-        : 'ledger';
-      source = {
-        kind: sourceKind,
-        ref: typeof sourceRecord.ref === 'string' && sourceRecord.ref.trim()
-          ? sourceRecord.ref.trim().slice(0, 240)
-          : 'ledger',
-      };
-    }
-    return [{
-      id,
-      type,
-      canonicalIdentity: typeof item.canonicalIdentity === 'string' && item.canonicalIdentity.trim()
-        ? item.canonicalIdentity.trim().slice(0, 200)
-        : id,
-      severity,
-      confidence: typeof item.confidence === 'number' && Number.isFinite(item.confidence)
-        ? Math.max(0, Math.min(1, item.confidence))
-        : 0,
-      scope: typeof item.scope === 'string' && item.scope.trim()
-        ? item.scope.trim().slice(0, 120)
-        : 'session',
-      polarity: typeof item.polarity === 'string' && SEMANTIC_ATOM_POLARITIES.has(item.polarity as CompressionSemanticAtom['polarity'])
-        ? item.polarity as CompressionSemanticAtom['polarity']
-        : 'neutral',
-      status,
-      text,
-      evidenceRefs,
-      ...(Array.isArray(item.supersedes)
-        ? { supersedes: item.supersedes.filter((entry): entry is string => typeof entry === 'string' && Boolean(entry.trim())).map((entry) => entry.trim().slice(0, 160)).slice(0, 12) }
-        : {}),
-      ...(Array.isArray(item.conflicts)
-        ? { conflicts: item.conflicts.filter((entry): entry is string => typeof entry === 'string' && Boolean(entry.trim())).map((entry) => entry.trim().slice(0, 160)).slice(0, 12) }
-        : {}),
-      ...(typeof item.updatedAt === 'number' && Number.isFinite(item.updatedAt) && item.updatedAt >= 0
-        ? { updatedAt: Math.floor(item.updatedAt) }
-        : {}),
-      ...(source ? { source } : {}),
-    } satisfies CompressionSemanticAtom];
-  }).slice(0, 48);
-  return {
-    ...(atoms.length ? { atoms } : {}),
-    warnings: [...new Set(warnings)],
-  };
-}
-
 export function mapCompressionArtifact(value: unknown): CompressionArtifact | undefined {
   if (!isRecord(value) || value.schemaVersion !== 1) return undefined;
   const quality = mapCompressionQuality(value.quality);
   if (!quality) return undefined;
-  const mappedAtoms = mapSemanticAtoms(value.semanticAtoms);
+  const mappedAtoms = normalizeSemanticAtoms(value.semanticAtoms);
   const mappedQuality: CompressionArtifactQuality = {
     ...quality,
     warnings: [...new Set([...quality.warnings, ...mappedAtoms.warnings])],
@@ -1136,7 +972,8 @@ export function mapCompressionArtifact(value: unknown): CompressionArtifact | un
   return {
     ...(value as unknown as Omit<CompressionArtifact, 'quality'>),
     schemaVersion: 1,
-    ...(mappedAtoms.atoms ? { semanticAtoms: mappedAtoms.atoms } : {}),
+    // Always replace the raw field, including when every supplied atom is invalid.
+    semanticAtoms: mappedAtoms.atoms.length ? mappedAtoms.atoms : undefined,
     quality: mappedQuality,
   };
 }

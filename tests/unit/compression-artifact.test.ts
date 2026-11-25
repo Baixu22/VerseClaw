@@ -646,5 +646,102 @@ describe('compression artifact', () => {
     expect(mapped?.quality.warnings).toContain('critical_atom_missing_evidence');
   });
 
+  it('uses the same semantic normalization for session previews and runtime recovery', async () => {
+    const { mapCompressionArtifact } = await import('@electron/services/sessions-api');
+    const raw = {
+      ...buildDeterministicCompressionArtifact({ messages: [] }),
+      semanticAtoms: [{ id: 'unknown-state', type: 'decision', severity: 'critical', confidence: 1,
+        canonicalIdentity: 'decision', scope: 'turn:1', polarity: 'negative', status: 'agent_approved',
+        text: 'Probe A is excluded.', evidenceRefs: [{ type: 'tool', ref: 'result-A' }] }],
+    };
+    const mapped = mapCompressionArtifact(raw)!;
+    expect(mapped.semanticAtoms).toEqual(normalizeCompressionArtifact(raw)?.semanticAtoms);
+    expect(mapped.semanticAtoms?.[0]).toMatchObject({ status: 'unverified', sourceStatus: 'agent_approved',
+      scope: 'turn:1', polarity: 'negative' });
+    expect(mapCompressionArtifact({ ...raw, semanticAtoms: [{ type: 'invalid', text: 'INVALID' }] })?.semanticAtoms).toBeUndefined();
+    expect(mapCompressionArtifact(mapped)?.semanticAtoms).toEqual(mapped.semanticAtoms);
+  });
+
+  it('retains current goals and next actions before lower-priority semantic records under pressure', () => {
+    const base: CompressionSemanticAtom = { id: 'observation', type: 'entity', canonicalIdentity: 'observation',
+      severity: 'nice_to_have', confidence: 1, scope: 'session', polarity: 'neutral', status: 'verified',
+      text: 'Supporting observation.', evidenceRefs: [{ type: 'tool', ref: 'observed' }] };
+    const artifact = buildDeterministicCompressionArtifact({ messages: [], semanticAtoms: [
+      ...Array.from({ length: 32 }, (_, index) => ({ ...base, id: `entity-${index}`, text: `Observation ${index}.` })),
+      { ...base, id: 'goal', type: 'goal', severity: 'critical', text: 'Ship the owner-approved revision.' },
+      { ...base, id: 'next', type: 'next_action', severity: 'critical', text: 'Read the unresolved receipt.' },
+    ] });
+    const projection = renderRecoveryContextProjection(artifact, 200);
+    expect(projection.length).toBeLessThanOrEqual(800);
+    expect(projection).toContain('Ship the owner-approved revision.');
+    expect(projection).toContain('Read the unresolved receipt.');
+    expect(projection).toContain('omitted by budget');
+    expect(renderCompressionArtifactSummary(artifact)).not.toContain('- - [');
+    artifact.currentState = 'Supporting current state. '.repeat(20);
+    const withLargeState = renderRecoveryContextProjection(artifact, 200);
+    expect(withLargeState).toContain('Ship the owner-approved revision.');
+    expect(withLargeState).toContain('Read the unresolved receipt.');
+    expect(withLargeState.length).toBeLessThanOrEqual(800);
+  });
+
+  it('retains active legacy recovery fields before retired semantic records', () => {
+    const artifact = buildDeterministicCompressionArtifact({ messages: [], semanticAtoms: Array.from({ length: 30 }, (_, i) => ({
+      id: `retired-${i}`, type: 'decision', canonicalIdentity: `old-${i}`, severity: 'critical', confidence: 1,
+      scope: 'session', polarity: 'positive', status: 'superseded', text: `Old decision ${i}.`,
+      evidenceRefs: [{ type: 'tool', ref: `old-${i}` }],
+    })) });
+    artifact.objective = 'Current goal.';
+    artifact.nextAction = 'Current next step.';
+    artifact.currentState = 'Current state.';
+    artifact.constraints = [{ text: 'Current constraint.', evidenceRefs: [{ type: 'session', ref: 'current-rule' }] }];
+    artifact.blocked = [{ text: 'Current blocker.', evidenceRefs: [{ type: 'tool', ref: 'current-blocker' }] }];
+    const projection = renderRecoveryContextProjection(artifact, 200);
+    for (const text of ['Current goal.', 'Current next step.', 'Current state.', 'Current constraint.', 'Current blocker.']) {
+      expect(projection).toContain(text);
+    }
+    expect(projection.length).toBeLessThanOrEqual(800);
+  });
+
+  it('prioritizes semantic current state over earlier supporting entities', () => {
+    const base: CompressionSemanticAtom = { id: 'entity', type: 'entity', canonicalIdentity: 'support',
+      severity: 'important', confidence: 1, scope: 'session', polarity: 'neutral', status: 'verified',
+      text: 'Supporting observation.', evidenceRefs: [{ type: 'tool', ref: 'observation' }] };
+    const artifact = buildDeterministicCompressionArtifact({ messages: [], semanticAtoms: [
+      ...Array.from({ length: 32 }, (_, i) => ({ ...base, id: `entity-${i}` })),
+      { ...base, id: 'state', type: 'outcome', text: 'Current task remains blocked on reconciliation.' },
+    ] });
+    const projection = renderRecoveryContextProjection(artifact, 200);
+    expect(projection).toContain('Current task remains blocked on reconciliation.');
+    expect(projection.indexOf('Current task remains blocked')).toBeLessThan(projection.indexOf('Supporting observation.'));
+    expect(projection.length).toBeLessThanOrEqual(800);
+  });
+
+  it('places unconfirmed-turn preferences after confirmed recovery fields', () => {
+    const artifact = buildDeterministicCompressionArtifact({ messages: [], semanticAtoms: Array.from({ length: 24 }, (_, i) => ({
+      id: `turn-${i}`, type: 'constraint', canonicalIdentity: `turn-${i}`, severity: 'critical', confidence: 1,
+      scope: 'turn:1', polarity: 'positive', status: 'verified', text: `Temporary preference ${i}.`,
+      evidenceRefs: [{ type: 'session', ref: `turn-1-${i}` }],
+    })) });
+    artifact.currentState = 'Current known state.';
+    artifact.inProgress = [{ text: 'Current active work.', evidenceRefs: [{ type: 'tool', ref: 'current' }] }];
+    artifact.blocked = [{ text: 'Current unresolved effect.', evidenceRefs: [{ type: 'tool', ref: 'effect' }] }];
+    const projection = renderRecoveryContextProjection(artifact, 200);
+    for (const text of ['Current known state.', 'Current active work.', 'Current unresolved effect.']) expect(projection).toContain(text);
+    expect(projection.length).toBeLessThanOrEqual(800);
+  });
+
+  it('budgets independent legacy lists by individual records before historical atoms', () => {
+    const artifact = buildDeterministicCompressionArtifact({ messages: [], semanticAtoms: [{
+      id: 'history', type: 'entity', canonicalIdentity: 'history', severity: 'important', confidence: 1,
+      scope: 'session', polarity: 'positive', status: 'superseded', text: 'Historical observation.', evidenceRefs: [],
+    }] });
+    artifact.constraints = Array.from({ length: 5 }, (_, i) => ({ text: `Constraint ${i}: ${'x'.repeat(135)}`,
+      evidenceRefs: [{ type: 'session' as const, ref: `user-${i}` }] }));
+    const projection = renderRecoveryContextProjection(artifact, 200);
+    expect(projection).toContain(artifact.constraints[0].text);
+    expect(projection).toContain('omitted by budget');
+    expect(projection.length).toBeLessThanOrEqual(800);
+  });
+
 
 });

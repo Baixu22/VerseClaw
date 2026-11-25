@@ -13,6 +13,8 @@
 import type { AgentMessage } from "../runtime/index.js";
 import type { ArchiveHandle } from "../../../../shared/types/context-family.js";
 import {
+  formatSemanticAtomLedger,
+  orderCompressionSemanticAtoms,
   type CompressionArtifact,
   type CompressionEvidenceRef,
 } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
@@ -43,7 +45,6 @@ export type CompactionAddressabilityAudit = {
 const DEFAULT_ARCHIVE_EVIDENCE_LABEL = "pre-compaction checkpoint";
 const DEFAULT_LEDGER_MAX_CHARS = 2000;
 const LEDGER_ATOM_LIMIT = 12;
-const LEDGER_EVIDENCE_LIMIT = 4;
 const PREVIOUS_SUMMARY_REDISTILL_PREFIX =
   "Previous compaction summary to re-distill with the current conversation. " +
   "Prune stale, duplicate, or superseded details instead of preserving it verbatim.";
@@ -308,14 +309,6 @@ export function bindCompactionDetailsArchiveEvidence(params: {
   };
 }
 
-function ledgerLineForAtom(atom: NonNullable<CompressionArtifact["semanticAtoms"]>[number]): string {
-  const evidence = atom.evidenceRefs
-    .slice(0, LEDGER_EVIDENCE_LIMIT)
-    .map((ref) => `${ref.type}:${ref.ref}`)
-    .join(", ");
-  return `- [${atom.type}:${atom.status}:${atom.severity}] ${atom.canonicalIdentity} | ${atom.text}${evidence ? ` | evidence: ${evidence}` : ""}`;
-}
-
 export function buildPreviousCompactionLedgerMessage(params: {
   previousArtifact?: CompressionArtifact;
   previousSummary?: string;
@@ -323,17 +316,21 @@ export function buildPreviousCompactionLedgerMessage(params: {
 }): AgentMessage | undefined {
   const atoms = params.previousArtifact?.semanticAtoms;
   if (atoms?.length) {
-    const body = atoms
-      .slice(0, LEDGER_ATOM_LIMIT)
-      .map(ledgerLineForAtom)
-      .join("\n");
     const maxChars = Math.max(200, Math.floor(params.maxChars ?? DEFAULT_LEDGER_MAX_CHARS));
     const closeTag = "</previous-compaction-ledger>";
-    let text =
-      `<previous-compaction-ledger>\n${PREVIOUS_COMPACTION_LEDGER_PREFIX}\n\n${body}\n${closeTag}`;
-    if (text.length > maxChars) {
-      text = `${text.slice(0, Math.max(0, maxChars - closeTag.length - 16)).trim()} [truncated]\n${closeTag}`;
+    const opening = "<previous-compaction-ledger>\n";
+    const fullPrefix = `${opening}${PREVIOUS_COMPACTION_LEDGER_PREFIX}\n\n`;
+    const prefix = fullPrefix.length + closeTag.length + 60 <= maxChars ? fullPrefix : opening;
+    const lines: string[] = [];
+    let used = prefix.length + closeTag.length + 60;
+    for (const atom of orderCompressionSemanticAtoms(atoms).slice(0, LEDGER_ATOM_LIMIT)) {
+      const line = formatSemanticAtomLedger([atom]);
+      if (used + line.length + 1 > maxChars) continue;
+      lines.push(line);
+      used += line.length + 1;
     }
+    const omission = lines.length < atoms.length ? "\n[records omitted; recall original artifact]" : "";
+    const text = `${prefix}${lines.join("\n")}${omission}\n${closeTag}`;
     return {
       role: "user",
       content: [{ type: "text", text }],

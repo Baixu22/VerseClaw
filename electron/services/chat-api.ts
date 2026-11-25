@@ -26,6 +26,7 @@ import {
 } from '../../shared/long-session-continuity';
 import type { MemorySurfaceSnapshot } from '../../shared/types/memory';
 import type { SessionEffectivePolicy } from '../../shared/types/session-effective-policy';
+import { normalizeSemanticAtoms } from '../../openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact';
 import { getSetting } from '../utils/store';
 import { getHostDeadline } from '../utils/host-deadline-context';
 import { persistentTaskChatContext } from './task-system-service';
@@ -175,20 +176,50 @@ function readStringFacts(value: unknown): string[] {
   });
 }
 
-function compressionInputFromRpc(raw: unknown): ContinuityCompressionInput | null {
+function readCompressionEvidenceRefs(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry) => {
+    if (typeof entry === 'string' && entry.trim()) return [entry.trim()];
+    if (isRecord(entry) && typeof entry.ref === 'string' && entry.ref.trim()) {
+      return [typeof entry.type === 'string' ? `${entry.type}:${entry.ref}` : entry.ref];
+    }
+    return [];
+  });
+}
+
+function readCompressionFacts(value: unknown): NonNullable<ContinuityCompressionInput['constraints']> {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap<NonNullable<ContinuityCompressionInput['constraints']>[number]>((entry) => {
+    if (typeof entry === 'string' && entry.trim()) return [entry.trim()];
+    if (isRecord(entry) && typeof entry.text === 'string' && entry.text.trim()) {
+      return [{ text: entry.text.trim(), evidenceRefs: readCompressionEvidenceRefs(entry.evidenceRefs),
+        ...(typeof entry.semanticAtomId === 'string' ? { semanticAtomId: entry.semanticAtomId } : {}) }];
+    }
+    return [];
+  });
+}
+
+function compressionInputFromRpc(raw: unknown, ownerSessionKey: string): ContinuityCompressionInput | null {
   if (!isRecord(raw)) return null;
   const artifact = isRecord(raw.artifact) ? raw.artifact : undefined;
   if (!artifact) return null;
   return {
+    ownerSessionKey,
+    canonicalArtifact: artifact.schemaVersion === 1,
     ...(typeof raw.checkpointId === 'string' ? { checkpointId: raw.checkpointId } : {}),
     ...(typeof artifact.objective === 'string' ? { objective: artifact.objective } : {}),
-    constraints: readStringFacts(artifact.constraints),
-    decisions: readStringFacts(artifact.decisions),
-    blocked: readStringFacts(artifact.blocked),
-    inProgress: readStringFacts(artifact.inProgress),
+    constraints: readCompressionFacts(artifact.constraints),
+    decisions: readCompressionFacts(artifact.decisions),
+    blocked: readCompressionFacts(artifact.blocked),
+    inProgress: readCompressionFacts(artifact.inProgress),
     ...(typeof artifact.nextAction === 'string' ? { nextAction: artifact.nextAction } : {}),
-    evidenceRefs: readStringFacts(artifact.evidenceRefs),
+    evidenceRefs: readCompressionEvidenceRefs(artifact.evidenceRefs),
     unverifiedClaims: readStringFacts(artifact.unverifiedClaims),
+    ...(Array.isArray(artifact.semanticAtoms) ? { semanticAtoms: normalizeSemanticAtoms(artifact.semanticAtoms).atoms } : {}),
+    ...(isRecord(artifact.semanticOrigins) ? { semanticOrigins: {
+      ...(typeof artifact.semanticOrigins.objective === 'string' ? { objective: artifact.semanticOrigins.objective } : {}),
+      ...(typeof artifact.semanticOrigins.nextAction === 'string' ? { nextAction: artifact.semanticOrigins.nextAction } : {}),
+    } } : {}),
   };
 }
 
@@ -274,7 +305,7 @@ async function readLongSessionContinuityContext(input: {
       ),
     ]);
     const compression = compressionResult.status === 'fulfilled'
-      ? compressionInputFromRpc(compressionResult.value)
+      ? compressionInputFromRpc(compressionResult.value, input.sessionKey)
       : null;
     const memorySurface = memoryResult.status === 'fulfilled'
       ? memorySurfaceFromRpc(memoryResult.value)

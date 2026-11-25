@@ -209,7 +209,7 @@ function memorySurface(): MemorySurfaceSnapshot {
   };
 }
 
-function buildPack() {
+function buildPack(budgetChars = 1_800) {
   return buildLongSessionContinuityContext({
     sessionKey: SESSION_KEY,
     workspaceId: WORKSPACE_ID,
@@ -235,7 +235,7 @@ function buildPack() {
     knowledgeReferences: [{
       id: 'wiki:decision-1', title: 'Knowledge decision', lookup: 'notes/decision.md', corpus: 'wiki', freshnessLevel: 'fresh', matchedClaimStatus: 'supported',
     }],
-    budgetChars: 1_800,
+    budgetChars,
     now: NOW,
   });
 }
@@ -323,7 +323,9 @@ describe('long-session continuity context', () => {
     expect(gatewayManager.rpc.mock.calls.some(call => call[0] === 'chat.send')).toBe(false);
   });
   it('projects accepted owner facts with provenance, freshness, scope and bounded history refs', () => {
-    const pack = buildPack();
+    // This case checks every source. The separate budget cases cover omissions;
+    // semantic labels and per-item references also consume the projection budget.
+    const pack = buildPack(6_000);
     const rendered = renderLongSessionContinuityContext(pack);
 
     expect(pack.schemaVersion).toBe('ContinuityContextPack/v1');
