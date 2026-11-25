@@ -1,0 +1,553 @@
+{
+  "schema": "G3NativeParentScopeDevelopment/v1",
+  "actor": "codex/g3-low-cost-r17",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "taskNode": "TF-0818",
+  "codeCommit": "70ad6cd609e68cfd8ff5c7455cd7dfb24b60de82",
+  "baseCommit": "46a96b8d0e69e39c692511cf50e061469170919b",
+  "sourceFingerprint": "8a25e73caab33242c27deba891cf03019b59698eb2cdcb8910ec26e4fd64ae0a",
+  "sourceInputs": [
+    {
+      "path": "openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts",
+      "workingSha256": "c9e645d70019172c1428b537d2f84491e56cc9aecb3af0a63872c64b25e8fdc7",
+      "gitBlobSha256": "c9e645d70019172c1428b537d2f84491e56cc9aecb3af0a63872c64b25e8fdc7",
+      "exactWorkingBlobMatch": true,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "scripts/gateway-workspace-alias.test.mjs",
+      "workingSha256": "12b5614e25a2f8cd1d25402972010ae4f8b47cfc6ef5bab53c4ec70f190db584",
+      "gitBlobSha256": "12b5614e25a2f8cd1d25402972010ae4f8b47cfc6ef5bab53c4ec70f190db584",
+      "exactWorkingBlobMatch": true,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "harness/specs/tasks/gateway-startup-performance.md",
+      "workingSha256": "3b8a6a037f094166f7d32e12bc0d3bd16a93b2bfbe9c8d450a2d1cd3a5f0ce53",
+      "gitBlobSha256": "88e73d7d38598ea3e37b59581141bfe689dfca118731010d4408f58469b91476",
+      "exactWorkingBlobMatch": false,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "harness/specs/tasks/recovery-authority-gated.md",
+      "workingSha256": "7739220524935cc39baacd120a23020628ed70340f1d8df9b520216ebbfef3cd",
+      "gitBlobSha256": "947ccf4b1201a25b1f5f504c21f4c7cd7abadc0939eacbc03d4fd34c5d9afb4e",
+      "exactWorkingBlobMatch": false,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "harness/specs/guides/scoped-development-validation.md",
+      "workingSha256": "8f94352089faf3c631ffb7333bd515e0a6af9e18fb6c3f1576ee403a2b6052c7",
+      "gitBlobSha256": "8f94352089faf3c631ffb7333bd515e0a6af9e18fb6c3f1576ee403a2b6052c7",
+      "exactWorkingBlobMatch": true,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/sdk-alias.ts",
+      "workingSha256": "ecf9fc9cb55ddfaee7edce36c942dacfbcdb46e8fff6d89666026d7ae88fd651",
+      "gitBlobSha256": "ecf9fc9cb55ddfaee7edce36c942dacfbcdb46e8fff6d89666026d7ae88fd651",
+      "exactWorkingBlobMatch": true,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "README.md",
+      "workingSha256": "cb978f2f835190f8ea3ad955246a07bb0c83886d4bfe80abc75b3384e7d60124",
+      "gitBlobSha256": "cb978f2f835190f8ea3ad955246a07bb0c83886d4bfe80abc75b3384e7d60124",
+      "exactWorkingBlobMatch": true,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "README.zh-CN.md",
+      "workingSha256": "a419c6872caf53da59918205580e34d783f88ea073fec9048a4c8005f8fd357d",
+      "gitBlobSha256": "a419c6872caf53da59918205580e34d783f88ea073fec9048a4c8005f8fd357d",
+      "exactWorkingBlobMatch": true,
+      "canonicalLFMatch": true
+    },
+    {
+      "path": "README.ja-JP.md",
+      "workingSha256": "6d78fb52b38e2ddbca7c35aa91c26845fc7a4d2a87169bfe62b030a742b91529",
+      "gitBlobSha256": "6d78fb52b38e2ddbca7c35aa91c26845fc7a4d2a87169bfe62b030a742b91529",
+      "exactWorkingBlobMatch": true,
+      "canonicalLFMatch": true
+    }
+  ],
+  "modifiedPaths": [
+    "openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts",
+    "scripts/gateway-workspace-alias.test.mjs",
+    "harness/specs/tasks/gateway-startup-performance.md",
+    "harness/specs/tasks/recovery-authority-gated.md",
+    "harness/specs/guides/scoped-development-validation.md"
+  ],
+  "productionNetLines": -13,
+  "behavior": "One package-root scan supplies both the trusted loader root and nearest package boundary. Parent scopes reuse both facts while preserving normalization order and fresh subsequent lookups.",
+  "comparisonKind": "Production parent-scope functions executed with in-memory filesystem fixtures",
+  "comparison": [
+    {
+      "name": "no manifests",
+      "rootsEqual": true,
+      "readsEqual": true,
+      "normalizationEqual": true,
+      "beforeProbes": 24,
+      "afterProbes": 12
+    },
+    {
+      "name": "nearest ordinary ancestor",
+      "rootsEqual": true,
+      "readsEqual": true,
+      "normalizationEqual": true,
+      "beforeProbes": 15,
+      "afterProbes": 12
+    },
+    {
+      "name": "external below trusted ancestor",
+      "rootsEqual": true,
+      "readsEqual": true,
+      "normalizationEqual": true,
+      "beforeProbes": 9,
+      "afterProbes": 6
+    },
+    {
+      "name": "malformed nearest below trusted ancestor",
+      "rootsEqual": true,
+      "readsEqual": true,
+      "normalizationEqual": true,
+      "beforeProbes": 9,
+      "afterProbes": 6
+    },
+    {
+      "name": "bundled plugin control",
+      "rootsEqual": true,
+      "readsEqual": true,
+      "normalizationEqual": true,
+      "beforeProbes": 4,
+      "afterProbes": 4
+    }
+  ],
+  "tests": {
+    "red": {
+      "passed": 23,
+      "failed": 5
+    },
+    "final": {
+      "passed": 28,
+      "failed": 0
+    },
+    "committedSourceProjection": {
+      "passed": 28,
+      "failed": 0,
+      "files": 3,
+      "dependencies": "Node built-ins only"
+    }
+  },
+  "checks": {
+    "parent-scope-green-r17-r1": {
+      "name": "parent-scope-green-r17-r1",
+      "admissionFreeMiB": [
+        1253,
+        1230,
+        1168
+      ],
+      "minimumAdmissionMiB": 1024,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 1,
+      "profile": "tiny",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "--max-old-space-size=64",
+        "scripts/gateway-workspace-alias.test.mjs"
+      ],
+      "pid": 19872,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 140,
+      "peakRssMiB": 74.52,
+      "peakPrivateCommitMiB": 42.46,
+      "minimumSystemFreeMiB": 1146
+    },
+    "format-parent-r17-r1": {
+      "name": "format-parent-r17-r1",
+      "admissionFreeMiB": [
+        1933,
+        1935,
+        1853
+      ],
+      "minimumAdmissionMiB": 1024,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 1,
+      "profile": "tiny",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "--max-old-space-size=64",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/format-focused-r15.mjs",
+        "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/format-parent-r17-r1",
+        "write-fixture"
+      ],
+      "pid": 36812,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 203,
+      "peakRssMiB": 57.06,
+      "peakPrivateCommitMiB": 78.21,
+      "minimumSystemFreeMiB": 1813
+    },
+    "lint-parent-r17-r1": {
+      "name": "lint-parent-r17-r1",
+      "admissionFreeMiB": [
+        5869,
+        5865,
+        5861
+      ],
+      "minimumAdmissionMiB": 1024,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 1,
+      "profile": "tiny",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "--max-old-space-size=64",
+        "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/node_modules/oxlint/bin/oxlint",
+        "--threads=1",
+        "--deny-warnings",
+        "openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts",
+        "scripts/gateway-workspace-alias.test.mjs"
+      ],
+      "pid": 41836,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 203,
+      "peakRssMiB": 41.35,
+      "peakPrivateCommitMiB": 65.77,
+      "minimumSystemFreeMiB": 5842
+    },
+    "type-probe-r17-r1": {
+      "name": "type-probe-r17-r1",
+      "admissionFreeMiB": [
+        3839,
+        3837,
+        3832
+      ],
+      "minimumAdmissionMiB": 1024,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 1,
+      "profile": "tiny",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\node_modules\\.pnpm\\@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview-win32-x64\\lib\\tsgo.exe",
+        "--project",
+        "tsconfig.json",
+        "--singleThreaded",
+        "--checkers",
+        "1"
+      ],
+      "pid": 8200,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 437,
+      "peakRssMiB": 21.29,
+      "peakPrivateCommitMiB": 56.4,
+      "minimumSystemFreeMiB": 3814
+    },
+    "measure-parent-r17-r1": {
+      "name": "measure-parent-r17-r1",
+      "admissionFreeMiB": [
+        3728,
+        3694,
+        3696
+      ],
+      "minimumAdmissionMiB": 1024,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 1,
+      "profile": "tiny",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "--max-old-space-size=64",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/measure-parent-scope-r17.mjs"
+      ],
+      "pid": 25568,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 125,
+      "peakRssMiB": 44.02,
+      "peakPrivateCommitMiB": 37.12,
+      "minimumSystemFreeMiB": 3679
+    },
+    "harness-startup-r17-r1": {
+      "name": "harness-startup-r17-r1",
+      "admissionFreeMiB": [
+        3701,
+        3701,
+        3701
+      ],
+      "minimumAdmissionMiB": 1536,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 2,
+      "profile": "repo",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "--max-old-space-size=64",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "--since",
+        "46a96b8d0e69e39c692511cf50e061469170919b"
+      ],
+      "pid": 27792,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 6109,
+      "peakRssMiB": 45.69,
+      "peakPrivateCommitMiB": 69.91,
+      "minimumSystemFreeMiB": 3592
+    },
+    "harness-recovery-r17-r1": {
+      "name": "harness-recovery-r17-r1",
+      "admissionFreeMiB": [
+        5824,
+        5815,
+        5814
+      ],
+      "minimumAdmissionMiB": 1536,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 2,
+      "profile": "repo",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "--max-old-space-size=64",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "46a96b8d0e69e39c692511cf50e061469170919b"
+      ],
+      "pid": 44664,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 5125,
+      "peakRssMiB": 44.57,
+      "peakPrivateCommitMiB": 70.24,
+      "minimumSystemFreeMiB": 5686
+    },
+    "projection-tests-r17-r1": {
+      "name": "projection-tests-r17-r1",
+      "admissionFreeMiB": [
+        1762,
+        1760,
+        1695
+      ],
+      "minimumAdmissionMiB": 1024,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 1,
+      "profile": "tiny",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "--max-old-space-size=64",
+        "scripts/gateway-workspace-alias.test.mjs"
+      ],
+      "pid": 27568,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 469,
+      "peakRssMiB": 62.81,
+      "peakPrivateCommitMiB": 39.98,
+      "minimumSystemFreeMiB": 1466
+    }
+  },
+  "typeProbe": {
+    "source": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\src\\plugins\\plugin-sdk-native-resolver.ts",
+    "sourceSha256": "c9e645d70019172c1428b537d2f84491e56cc9aecb3af0a63872c64b25e8fdc7",
+    "probeSha256": "e15727313e702bff2761fbbb543fc2a4d735b4742639188fba779809123e192b",
+    "sourceLineStart": 121,
+    "sourceLineEnd": 184,
+    "scope": "Exact production root helpers and parent-scope selector, with narrow Node API ambient signatures and ES2024 library",
+    "compiler": "@typescript/native-preview 7.0.0-dev.20260527.2",
+    "fullProjectTypecheck": "not-run",
+    "actor": "codex/g3-low-cost-r17",
+    "driven_by": "agent",
+    "realHumanEvidence": false
+  },
+  "review": {
+    "engine": "codex",
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "findings": 0,
+    "resourceReceipt": {
+      "name": "autoreview-parent-r17-r1",
+      "admissionFreeMiB": [
+        3841,
+        3860,
+        3865
+      ],
+      "minimumAdmissionMiB": 1280,
+      "privateCommitLimitMiB": 96,
+      "maximumProcesses": 4,
+      "profile": "model",
+      "maximumElapsedSeconds": 1800,
+      "nodeHeapMiB": 64,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/review-focused-driver-r15.py",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/review-parent-r17-driver-r1.json",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--codex-bin",
+        "C:/Users/27933/AppData/Local/OpenAI/Codex/bin/c38161ad8494f88c/codex.exe",
+        "--model",
+        "ccs-workbuddy/deepseek-v4.1-flash",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--stream-engine-output",
+        "--prompt-file",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/review-r17-r1-notes.md",
+        "--json-output",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/autoreview-parent-r17-r1-result.json",
+        "--output",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/autoreview-parent-r17-r1-result.txt",
+        "--dataset",
+        "D:\\tmp\\g3-slim-development-20261122-01a1fe77\\review-r17-r1-native-current.md",
+        "--dataset",
+        "D:\\tmp\\g3-slim-development-20261122-01a1fe77\\review-r17-r1-native-before.md",
+        "--dataset",
+        "D:\\tmp\\g3-slim-development-20261122-01a1fe77\\review-r17-r1-tests-1.md",
+        "--dataset",
+        "D:\\tmp\\g3-slim-development-20261122-01a1fe77\\review-r17-r1-callers.md",
+        "--dataset",
+        "D:\\tmp\\g3-slim-development-20261122-01a1fe77\\review-r17-r1-type-probe.md",
+        "--dataset",
+        "D:\\tmp\\g3-slim-development-20261122-01a1fe77\\review-r17-r1-evidence.json"
+      ],
+      "pid": 29884,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 60360,
+      "peakRssMiB": 18.64,
+      "peakPrivateCommitMiB": 121.48,
+      "minimumSystemFreeMiB": 3663
+    }
+  },
+  "readmeReview": "Existing en/zh/ja test:recovery:tiny rows cover native package roots and parent boundaries; retained unchanged.",
+  "rawEvidence": {
+    "files": 118,
+    "gzipBytes": 373496,
+    "sha256": "2ec55b44c02b0a18a323c1bd891e23e80119a9cf244f6e409ac973b9710b95d7"
+  },
+  "resourcePolicy": "Serial bounded jobs, 10 percent CPU; Node heap64MiB/private128MiB. Git writes use sequential temporary-index plumbing in a private128MiB Job, 1GiB admission/768MiB pressure stop.",
+  "gitSplit": {
+    "parentCommit": "46a96b8d0e69e39c692511cf50e061469170919b",
+    "tree": "56388b35b09b498761cf8d46410192750231d3ed",
+    "realIndexBytesPreserved": true,
+    "modifiedPaths": [
+      "openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts",
+      "scripts/gateway-workspace-alias.test.mjs",
+      "harness/specs/tasks/gateway-startup-performance.md",
+      "harness/specs/tasks/recovery-authority-gated.md",
+      "harness/specs/guides/scoped-development-validation.md"
+    ],
+    "resourceReceipt": {
+      "name": "commit-source-parts-r17-r1",
+      "admissionFreeMiB": [
+        1381,
+        1336,
+        1324
+      ],
+      "minimumAdmissionMiB": 1024,
+      "privateCommitLimitMiB": 128,
+      "maximumProcesses": 2,
+      "profile": "parts",
+      "maximumElapsedSeconds": 60,
+      "nodeHeapMiB": null,
+      "cpuPercentLimit": 10,
+      "actor": "codex/g3-slim-development",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+        "D:/tmp/g3-slim-development-20261122-01a1fe77/commit-source-parts-r17.py"
+      ],
+      "pid": 38992,
+      "limitsInstalledBeforeResume": true,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 1516,
+      "peakRssMiB": 17.79,
+      "peakPrivateCommitMiB": 43.93,
+      "minimumSystemFreeMiB": 1295
+    }
+  },
+  "ga": {
+    "decision": "NO_GO",
+    "notRunOnThisCandidate": [
+      "full project typecheck",
+      "runtime/desktop build",
+      "five recovery windows each with at least three trials",
+      "at least thirty live-provider pairs",
+      "nine frozen metrics",
+      "two legacy rounds",
+      "package acceptance"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "G3BridgeReadinessReadback/v1",
+  "codeCommit": "e3384611c2fbdcf45d598b8632c4e3e23a512ed2",
+  "normalizedGitInputsMatched": 7,
+  "runtimeAndTestBytesMatched": 2,
+  "archiveFilesMatched": 147,
+  "attachmentsMatched": 18,
+  "credentialHits": 0,
+  "driven_by": "agent",
+  "actor": "codex/g3-ga-relay-01a1f836",
+  "realHumanEvidence": false,
+  "immutableSourceSnapshotsMatched": 7
+}

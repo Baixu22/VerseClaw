@@ -33,7 +33,8 @@ import { TaskSystemStore } from '@shared/task-system/store';
 import { resolveTaskDomain } from '@shared/task-system/identity';
 import { createTaskRuntimeGuard, executeTaskGuarded, finishPersistentTaskRun } from '@shared/task-system/runtime';
 import { createPersistentTaskTool } from '../../openclaw_runtime/src/agents/tools/persistent-task-tool';
-import { withSessionTaskScope, clearSessionTaskScopeRun } from '../../openclaw_runtime/src/agents/session-task-scope';
+import { withSessionTaskScope, clearSessionTaskScopeRun, sessionTaskOperationsInFlight } from '../../openclaw_runtime/src/agents/session-task-scope';
+import { executeManagedTaskTool, finishExecutionCheckoutRun } from '../../openclaw_runtime/src/agents/execution-checkout-tools';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
 
@@ -80,6 +81,7 @@ function api(onRunRead?: (runId: string, readCount: number) => void) {
       ? runs.get(payload.sessionKey === parent ? 'run-parent' : 'run-child') : undefined);
     return { ...payload, currentGeneration: run?.generation ?? null, workspaceId: run?.workspaceId ?? 'workspace-a',
       active: run?.active ?? false, quiescent: run?.quiescent ?? false, inFlightEffects: run?.quiescent ? 0 : 1,
+      inFlightProcesses: 0, inFlightOperationIds: sessionTaskOperationsInFlight(payload.runId),
       delegation: run?.delegation ?? null, scheduled: run?.scheduled };
   }) } as never, gitApi: {
     status: async () => ({ success: true, status: { isRepository: false, workspaceRoot: state.root } }),
@@ -122,6 +124,7 @@ beforeEach(async () => {
   });
 });
 afterEach(async () => {
+  finishExecutionCheckoutRun('run-parent'); finishExecutionCheckoutRun('run-child');
   clearSessionTaskScopeRun('run-parent'); clearSessionTaskScopeRun('run-child');
   finishPersistentTaskRun(state.root, parent, 'run-parent');
   finishPersistentTaskRun(state.root, child, 'run-child');
@@ -129,6 +132,7 @@ afterEach(async () => {
   closeOpenClawStateDatabaseForTest();
   closeOpenClawAgentDatabasesForTest();
   tasks?.close();
+  vi.restoreAllMocks();
   vi.unstubAllEnvs(); state.invoke.mockReset();
   await rm(state.root, { recursive: true, force: true });
 });
@@ -201,6 +205,31 @@ describe('first effect consumes the canonical execution contract', () => {
       managedWorktreeGeneration: worker.generation });
     const repeated = await api().admitTaskEffect({ ...request(child, 'run-child', 'generation-child'), workspaceDir: worker.root });
     expect(repeated.claim.credential?.epoch).toBe(admitted.claim.credential?.epoch);
+  });
+  it('retains the same Main writer through idle renewal and a lost admission ACK', async () => {
+    const initial = startTask();
+    const context = { sessionKey: parent, sessionId: 'generation-parent', runId: 'run-parent', workspaceDir: state.root };
+    const guard = createTaskRuntimeGuard(state.root, parent, context.sessionId, context.runId)!;
+    await executeManagedTaskTool(context, guard, 'first-write', 'write', {}, undefined, async () => ({}));
+    const siblingGuard = { ...guard, credential: { ...guard.credential! } };
+    const first = (await binding())!.writerClaim!;
+    vi.spyOn(Date, 'now').mockReturnValue(tasks.get(initial.contract.taskNodeId).claim!.expiresAt + 1);
+    const admit = state.invoke.getMockImplementation()!;
+    state.invoke.mockImplementationOnce(async payload => { await admit(payload); throw new Error('admission ACK lost'); });
+    const effect = vi.fn(async () => { await writeFile(join(state.root, 'second-effect.txt'), 'once'); return {}; });
+    const run = () => executeManagedTaskTool(context, guard, 'second-write', 'write', {}, undefined, effect);
+    await expect(run()).rejects.toThrow('admission ACK lost');
+    expect(effect).not.toHaveBeenCalled();
+    await run();
+    expect(effect).toHaveBeenCalledTimes(1);
+    const renewed = (await binding())!.writerClaim!;
+    expect(renewed.id).toBe(first.id);
+    expect(renewed.executionRevision).toBe(first.executionRevision);
+    expect(renewed.credential?.epoch).toBe(first.credential!.epoch + 1);
+    expect(guard.credential?.epoch).toBe(renewed.credential?.epoch);
+    expect(await readFile(join(state.root, 'second-effect.txt'), 'utf8')).toBe('once');
+    await executeManagedTaskTool(context, siblingGuard, 'sibling-write', 'write', {}, undefined, async () => ({}));
+    expect(siblingGuard.credential.epoch).toBe(renewed.credential?.epoch);
   });
   it('uses the canonical parent reference after transfer even before its navigation link was persisted', async () => {
     const task = startTask();

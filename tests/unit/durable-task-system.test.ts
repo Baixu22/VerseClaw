@@ -184,6 +184,49 @@ describe("durable product task ownership", () => {
     expect(next.epoch).toBeGreaterThan(c.epoch);
     expect(() => store.control(c, "renew")).toThrow("STALE_OWNER");
   });
+  it("resumes an idle expired owner in a new epoch after reopening its store", () => {
+    const c = setupOwner();
+    store.beginRun(c, "old-run");
+    now += 120_001;
+    store.close();
+    store = new TaskSystemStore(resolveTaskDomain(root), () => now);
+    const resumed = store.start({ taskNodeId: c.taskNodeId }, c.sessionKey, c.generation, "recovery");
+    expect(resumed.claim).toMatchObject({ sessionKey: c.sessionKey, generation: c.generation, state: "active", epoch: c.epoch + 1 });
+    expect(resumed.claim!.expiresAt).toBeGreaterThan(now);
+    expect(store.start({ taskNodeId: c.taskNodeId }, c.sessionKey, c.generation, "recovery").claim).toEqual(resumed.claim);
+    expect(() => store.beginOperation(c, "late-old-effect", "exec")).toThrow("STALE_OWNER");
+    expect(() => store.beginRun(resumed.claim!, "recovery-run")).not.toThrow();
+  });
+  it.each(["started", "unknown"])("does not revive an expired owner with a %s effect", (state) => {
+    const c = setupOwner();
+    store.beginOperation(c, "pending-exec", "exec");
+    if (state === "unknown") store.finishOperation(c, "pending-exec", "unknown", "receipt missing");
+    now += 120_001;
+    expect(() => store.start({ taskNodeId: c.taskNodeId }, c.sessionKey, c.generation, "recovery")).toThrow("ALREADY_CLAIMED");
+    expect(store.get(c.taskNodeId).claim?.epoch).toBe(c.epoch);
+    expect(store.get(c.taskNodeId).pendingOperations).toBe(1);
+  });
+  it("replays an owner-bound expired admission without checking its retired epoch again", () => {
+    const captured = setupOwner();
+    now += 120_001;
+    const input = { taskNodeId: captured.taskNodeId };
+    const resumed = store.start(input, captured.sessionKey, captured.generation, "owner-bound-resume", captured);
+    expect(resumed.claim?.epoch).toBe(captured.epoch + 1);
+    expect(store.start(input, captured.sessionKey, captured.generation, "owner-bound-resume", captured)).toEqual(resumed);
+    expect(() => store.start(input, captured.sessionKey, captured.generation, "different-run", captured)).toThrow("STALE_OWNER");
+    expect(() => store.beginOperation(captured, "old-effect", "exec")).toThrow("STALE_OWNER");
+  });
+  it("keeps generation changes, explicit pauses and clock rollback outside automatic renewal", () => {
+    const c = setupOwner();
+    now += 120_001;
+    expect(() => store.start({ taskNodeId: c.taskNodeId }, c.sessionKey, "other-generation", "different-generation")).toThrow("ALREADY_CLAIMED");
+    now -= 420_001;
+    expect(() => store.start({ taskNodeId: c.taskNodeId }, c.sessionKey, c.generation, "clock-rollback")).toThrow("ALREADY_CLAIMED");
+    now = 1_000_000;
+    store.control(c, "pause");
+    now += 120_001;
+    expect(() => store.start({ taskNodeId: c.taskNodeId }, c.sessionKey, c.generation, "paused")).toThrow("NOT_CLAIMABLE");
+  });
   it("keeps in-flight and unknown operations as a handoff barrier", () => {
     const c = setupOwner();
     store.beginOperation(c, "op", "write");

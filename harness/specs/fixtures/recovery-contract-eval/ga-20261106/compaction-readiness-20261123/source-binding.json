@@ -1,0 +1,87 @@
+{
+  "schema": "G3CompactionReadinessSourceBinding/v1",
+  "codeCommit": "eaf7e65fe530d7dbaedabd13bddf5c50fdb1334e",
+  "reviewCommit": "66a0e28a1de57c57b676ec4fa5fe7cecf46ba698",
+  "treeAtCodeCommit": "53e2659cd5b59f52018302e3998ec68efca25e59",
+  "reviewBundleFingerprint": "e8296b082fa2225e19a5f85d31b10d65f3a38c8bfd1345484463110db619ca5a",
+  "codeSourceFingerprint": "7f4d8e61b43d21e804888fe5157a650a73370246fb7437d63ee7d8ce8cc9d013",
+  "sourceInputs": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "198a00ba9e0897a27d61707081d1a4c0d1cb810431e508c8c4f5c4ce16451b8a"
+    },
+    {
+      "path": "README.md",
+      "sha256": "4c09b8c8de3f5d456d7d741cb124bbe1c5d3aee410108e8c59d59d118dbd0a7d"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "158c831da6533035cdf8bcd42f7b3734960a69da0ed9d919a165e764f8579d76"
+    },
+    {
+      "path": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "ce3012b006c675c6497b3fb12ff9730b30e2c95fee5042f8930b1080a510a2a9"
+    },
+    {
+      "path": "harness/specs/guides/scoped-development-validation.md",
+      "sha256": "e5368682519f2aaa6472b149e3353877a23c9d1672ac9429bdab1f2c168bb38d"
+    },
+    {
+      "path": "harness/specs/scenarios/gateway-backend-communication.md",
+      "sha256": "a4f5d54345bdbe0335d5545c4565a5a9f2140b6bde9d6a76ddab2a64d084a900"
+    },
+    {
+      "path": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "b58cc727f2f0370e1f86c6a6af0515a99e4d0aaaee95d1c1224dd316e5a49d56"
+    },
+    {
+      "path": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "4cffeaf2832716591646c7b66e863f4916658e9ee83c12721b62af496defb615"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-active-runs.ts",
+      "sha256": "f575693afd3b272b74c08a07c8dc9d0eb1939ab15d0707631c5b9b43dc54d9cb"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts",
+      "sha256": "3486fdbd7be02f394bdb4a82eca40fb0b84d23d664cf23266405fd88034531c5"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts",
+      "sha256": "aa0d34d6160cc6927fc31224f92ed4e85f0722c6fcdec1209845abff0fc5a48f"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-lineage.test.ts",
+      "sha256": "a7e2bb6cde39a565c065b8da7c45838f7cc42c42c88d3ab828aa614b2d77ce22"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-reject.test.ts",
+      "sha256": "5316333f0161d57e1207eb70c03e8c8dc6a97838c31dc17ab6d231f909b1d4bd"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts",
+      "sha256": "87a454504b4b86a968d3e8747a518703f2f4e86d1adbdecd061e26d2bfaad813"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+      "sha256": "27621c7c736c351c768c35731854675fb1ff467eeb9c5433e50979375710c491"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.shared.ts",
+      "sha256": "705d2257a0977f1f503b4b0267af6696f9576f0c479096a7181ac99051eacf86"
+    },
+    {
+      "path": "tests/e2e/recovery-longsession-eval.spec.ts",
+      "sha256": "72f88a25d9ca2e6f6e9f63a7471e105e722e502a0927400ff842002d57b935eb"
+    },
+    {
+      "path": "tests/unit/gateway-compaction-readiness.test.ts",
+      "sha256": "dcac023e247d2a3aaafb0ad57dfdef686e7937d04be79e6260d5d929ca999af0"
+    }
+  ],
+  "protectedUserFileUnchanged": true,
+  "pushed": false,
+  "driven_by": "agent",
+  "actor": "codex/g3-compaction-readiness-r22",
+  "realHumanEvidence": false
+}

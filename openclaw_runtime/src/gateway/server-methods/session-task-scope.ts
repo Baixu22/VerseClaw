@@ -1,4 +1,6 @@
 import { ErrorCodes, errorShape } from "../../../packages/gateway-protocol/src/index.js";
+import { normalizeStringifiedOptionalString } from "@openclaw/normalization-core/string-coerce";
+import { formatErrorMessage } from "../../infra/errors.js";
 import {
   GATEWAY_CLIENT_CAPS,
   hasGatewayClientCap,
@@ -27,13 +29,17 @@ import { getSubagentRunByRunId, getLatestSubagentRunByChildSessionKey } from "..
 import type { GatewayClient, GatewayRequestContext, GatewayRequestHandlers } from "./types.js";
 import type { SessionExecutionMigrationRequest } from '../../../../shared/types/execution-migration.js';
 
-type Pending = {
-  request: SessionTaskEffectRequest;
-  connId: string;
-  resolve: (admission: SessionTaskEffectAdmission) => void;
-  reject: (error: Error) => void;
-};
+type Pending = { request: SessionTaskEffectRequest } & (
+  | { state: "waiting" }
+  | {
+      state: "sent";
+      connId: string;
+      resolve: (admission: SessionTaskEffectAdmission) => void;
+      reject: (error: Error) => void;
+    }
+);
 const pending = new Map<string, Pending>();
+const ADMISSION_TIMEOUT_MS = 15_000;
 
 function isBridge(client: GatewayClient | null | undefined): boolean {
   return hasGatewayClientCap(client?.connect?.caps, GATEWAY_CLIENT_CAPS.SESSION_TASK_SCOPE_BRIDGE);
@@ -80,6 +86,8 @@ function assertLiveRun(context: GatewayRequestContext, request: SessionTaskEffec
     ) &&
     effect.projectWorkspaceDir === request.projectWorkspaceDir &&
     effect.expectedClaimId === request.expectedClaimId &&
+    effect.expectedTaskNodeId === request.expectedTaskNodeId &&
+    effect.expectedTaskEpoch === request.expectedTaskEpoch &&
     effect.operationId === request.operationId &&
     effect.checkoutAccess === request.checkoutAccess &&
     effect.expectedExecutionRevision === request.expectedExecutionRevision;
@@ -97,6 +105,26 @@ function assertLiveRun(context: GatewayRequestContext, request: SessionTaskEffec
   ) {
     throw new Error("TASK_SCOPE_RUN_STALE");
   }
+}
+
+async function waitForBridgeConnection(
+  context: GatewayRequestContext,
+  request: SessionTaskEffectRequest,
+  excludeConnId: string | undefined,
+  deadline: number,
+): Promise<string> {
+  while (Date.now() < deadline) {
+    assertLiveRun(context, request);
+    const connections = Array.from(
+      context.getApprovalClientConnIds?.({ excludeConnId, filter: isBridge }) ?? [],
+    );
+    if (connections.length > 1) throw new Error("TASK_SCOPE_BRIDGE_UNAVAILABLE");
+    if (connections.length === 1) return connections[0];
+    // Restart recovery can reach admission while Main is still authenticating.
+    // Wait before publication, within the same admission budget and live owner.
+    await new Promise((resolve) => setTimeout(resolve, Math.min(25, deadline - Date.now())));
+  }
+  throw new Error("TASK_SCOPE_BRIDGE_UNAVAILABLE");
 }
 
 export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
@@ -117,7 +145,7 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
   'taskScope.migration.read': async ({params,client,context,respond})=>{
     if(!isBridge(client)){respond(false,undefined,errorShape(ErrorCodes.INVALID_REQUEST,'TASK_SCOPE_BACKEND_REQUIRED'));return;}
     try{const {readSessionExecutionMigration}=await import('../session-execution-migration.js');
-      const result=await readSessionExecutionMigration(context.getRuntimeConfig(),String(params.sessionKey??''),String(params.operationId??''));
+      const result=await readSessionExecutionMigration(context.getRuntimeConfig(),normalizeStringifiedOptionalString(params.sessionKey)??'',normalizeStringifiedOptionalString(params.operationId)??'');
       respond(true,result,undefined);
     }catch(error){respond(false,undefined,errorShape(ErrorCodes.UNAVAILABLE,error instanceof Error?error.message:String(error)));}
   },
@@ -242,20 +270,27 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
       request = parseSessionTaskEffectRequest(params);
       assertLiveRun(context, request);
       if (pending.has(request.requestId)) throw new Error("TASK_SCOPE_DUPLICATE_REQUEST");
-      const connections = Array.from(
-        context.getApprovalClientConnIds?.({
-          excludeConnId: client?.connId,
-          filter: isBridge,
-        }) ?? [],
-      );
-      if (connections.length !== 1) throw new Error("TASK_SCOPE_BRIDGE_UNAVAILABLE");
+      pending.set(request.requestId, { request, state: "waiting" });
+      const deadline = Date.now() + ADMISSION_TIMEOUT_MS;
       let timer: ReturnType<typeof setTimeout> | undefined;
       try {
+        const connId = await waitForBridgeConnection(context, request, client?.connId, deadline);
+        assertLiveRun(context, request);
+        const currentConnections = Array.from(
+          context.getApprovalClientConnIds?.({ excludeConnId: client?.connId, filter: isBridge }) ??
+            [],
+        );
+        if (currentConnections.length !== 1 || currentConnections[0] !== connId)
+          throw new Error("TASK_SCOPE_BRIDGE_UNAVAILABLE");
+        if (Date.now() >= deadline) throw new Error("TASK_SCOPE_BRIDGE_TIMEOUT");
         const result = new Promise<SessionTaskEffectAdmission>((resolve, reject) => {
-          pending.set(request.requestId, { request, connId: connections[0], resolve, reject });
-          timer = setTimeout(() => reject(new Error("TASK_SCOPE_BRIDGE_TIMEOUT")), 15_000);
+          pending.set(request.requestId, { request, state: "sent", connId, resolve, reject });
+          timer = setTimeout(
+            () => reject(new Error("TASK_SCOPE_BRIDGE_TIMEOUT")),
+            Math.max(0, deadline - Date.now()),
+          );
         });
-        context.broadcastToConnIds("taskScope.admit.request", request, new Set(connections), {
+        context.broadcastToConnIds("taskScope.admit.request", request, new Set([connId]), {
           dropIfSlow: false,
         });
         const admission = await result;
@@ -263,7 +298,7 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
         respond(true, admission);
       } finally {
         if (timer) clearTimeout(timer);
-        pending.delete(request.requestId);
+        if (pending.get(request.requestId)?.request === request) pending.delete(request.requestId);
       }
     } catch (error) {
       respond(
@@ -277,6 +312,7 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
     const entry = pending.get(typeof params.requestId === "string" ? params.requestId : "");
     if (
       !entry ||
+      entry.state !== "sent" ||
       !isBridge(client) ||
       entry.connId !== client?.connId ||
       params.sessionKey !== entry.request.sessionKey ||
@@ -286,7 +322,7 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
       respond(true, { ignored: true });
       return;
     }
-    if (params.error) entry.reject(new Error(String(params.error)));
+    if (params.error) entry.reject(new Error(formatErrorMessage(params.error)));
     else {
       const admission = params.admission as SessionTaskEffectAdmission | undefined;
       const claim = admission?.claim;

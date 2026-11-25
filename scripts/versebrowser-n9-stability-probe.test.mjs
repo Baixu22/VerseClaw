@@ -150,6 +150,11 @@ test('the build seal rejects production source changed after capture', async () 
     assert.ok(proof.outputs.some(output=>output.archive==='main-runtime.asar' && output.path.endsWith('/service.d.ts')));
     assert.ok(!proof.outputs.some(output=>output.archive==='app.asar' && output.path.endsWith('/service.d.ts')));
     assert.ok(proof.outputs.some(output=>output.archive==='app.asar' && output.path.endsWith('/service.js')));
+    assert.equal(proof.outputs.length,5);
+    for(const output of proof.outputs) {
+      const content=output.path.endsWith('.d.ts')?'export declare class Service {}':'compiled fixture';
+      assert.equal(output.sha256,sha256(content));
+    }
     await writeFile(join(root,'shared/contract.ts'),'export const value = 2;\n');
     assert.equal((await recordBuildProvenance(root)).status,'source-changed-or-dirty');
     git('add','shared/contract.ts');git('-c','user.name=Agent fixture','-c','user.email=fixture@example.invalid','commit','-m','source changed');

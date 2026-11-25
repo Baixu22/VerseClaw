@@ -56,8 +56,8 @@ type SubagentRecoveryGate =
       shouldMarkWedged: boolean;
     };
 
-// Attempts outside the rewedge window start a new small burst instead of
-// permanently consuming the session's automatic recovery budget.
+// Legacy attempts outside the rewedge window start a new small burst.
+// An owned authority admission retains its durable count independently of time.
 function isRecentRecoveryAttempt(entry: SessionEntry, now: number): boolean {
   const lastAttemptAt = entry.subagentRecovery?.lastAttemptAt;
   return (
@@ -101,14 +101,23 @@ export function evaluateSubagentRecoveryGate(
     };
   }
 
-  const previousAttempts = isRecentRecoveryAttempt(entry, now)
-    ? Math.max(0, entry.subagentRecovery?.automaticAttempts ?? 0)
-    : 0;
+  const authority = entry.subagentRecovery?.authority;
+  // Registry adoption changes the run id, not the interrupted task's budget.
+  // Compaction may also advance its transcript while retaining this admission.
+  const continuingAdmission =
+    authority &&
+    matchesSubagentRecoveryGeneration(entry, authority) &&
+    (entry.lifecycleRunId === authority.ownerId ||
+      entry.lifecycleRunId === authority.idempotencyKey);
+  const previousAttempts = Math.max(
+    continuingAdmission ? authority.attempts : 0,
+    isRecentRecoveryAttempt(entry, now) ? (entry.subagentRecovery?.automaticAttempts ?? 0) : 0,
+  );
   if (previousAttempts >= SUBAGENT_RECOVERY_MAX_AUTOMATIC_ATTEMPTS) {
     return {
       allowed: false,
       reason:
-        `subagent orphan recovery blocked after ${previousAttempts} rapid accepted resume attempts; ` +
+        `subagent orphan recovery blocked after ${previousAttempts} automatic resume attempts; ` +
         `run "openclaw tasks maintenance --apply" or "openclaw doctor --fix" to reconcile it`,
       shouldMarkWedged: true,
     };

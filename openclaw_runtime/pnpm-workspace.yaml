@@ -30,3 +30,6 @@ allowBuilds:
 # TEMP: allow baileys@7.0.0-rc.9 -> libsignal git subdependency (same as root workspace).
 # Debt: upgrade baileys >=7.0.0-rc12 (GHSA-qvv5-jq5g-4cgg) then drop this flag.
 blockExoticSubdeps: false
+
+patchedDependencies:
+  '@openclaw/fs-safe@0.3.0': patches/@openclaw__fs-safe@0.3.0.patch

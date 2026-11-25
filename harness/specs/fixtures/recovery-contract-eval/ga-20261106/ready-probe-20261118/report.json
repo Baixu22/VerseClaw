@@ -1,0 +1,1127 @@
+{
+  "schema": "RecoveryWindowComparison/v1",
+  "actor": "codex",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "decision": "NO_GO",
+  "baselineTree": "dbb454a3a9bbbc33e9705044d8cb24d25d5866f2",
+  "candidateTree": "c8316999bb32da6386f60ebf128f3a22241cc93d",
+  "liveQualityPairsOnCandidate": 0,
+  "thresholdMs": {
+    "p50": 5000,
+    "p95": 15000,
+    "desktopBuild": 58000,
+    "typecheck": 45000
+  },
+  "reports": [
+    {
+      "commit": "e8dfb7e1af0707f5dbf1602baf2d794a6265145a",
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "windowCount": 15,
+      "artifactsChecked": 66,
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "correctTerminalCount": 15,
+      "unclassifiableCount": 0,
+      "fullFrozenP95LowerBoundMs": 83781.6,
+      "rows": [
+        {
+          "slot": "intent-after-persist-kill/0",
+          "latencyMs": 52490,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "1be55830ed9dd6aea06ee0ccc08a2f253d068a07d1e954110dffb683fce70472",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "51860161a7fc0f425adf07ff73cf5caeec01b20c37452a4f15c2e970690c5735"
+            },
+            {
+              "file": "before.json",
+              "sha256": "7e7b2ebae8d95c919245a828e0e8e68338b4b4a1a06431532695d5404988a4f3"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "326500eea6d7767b88787841136b28aec8979f8cfe6ee9800b42e84932991cd3"
+            },
+            {
+              "file": "after.json",
+              "sha256": "69abfccb230b5c724da6138ac53670dccd720cf40ad39a0e70e8fb5e5988cdbe"
+            }
+          ]
+        },
+        {
+          "slot": "intent-after-persist-kill/1",
+          "latencyMs": 51146,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "61ffc18fbb5bbad97f0783fa37cae452905d66da2a4476ceac18b1320b7e10f3",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "8a802ee5cbe26b307e74a121cb2c536309b649783aa910974d81b1b85cd2fa6b"
+            },
+            {
+              "file": "before.json",
+              "sha256": "a6f7fd8ec30a123ae9cfa5a59850be72cca7735c1e01c7bae1bd8b824fb793d2"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "8b27b45067ed9af1002ab1d2936b007ee4ed76f25e95b1e3aca3a8d6fcf0495c"
+            },
+            {
+              "file": "after.json",
+              "sha256": "669b8bfa34dea905c850bffe9334d5b6b7bab45c07c30d18273149145a74ee37"
+            }
+          ]
+        },
+        {
+          "slot": "intent-after-persist-kill/2",
+          "latencyMs": 102950,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "efa7c294c0b2abfc22165b139091f49e421e49abc75354b04ea82b7e03e75506",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "45821b0494aee962ec4fc344f9962ec131e9267281b9e9cb83b92c2bb54e7b99"
+            },
+            {
+              "file": "before.json",
+              "sha256": "2d0b1a8ccfb423317b02d6227e40277f734948c713a2a446a841a975507f188d"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "0d54285ba423c1b49a8d5b90fbc4e1494ca811164965c3056cd132976500661f"
+            },
+            {
+              "file": "after.json",
+              "sha256": "b1a474292677c03a0e96d210e6ea05ef54d13e5e0d62f52892a23a892e761203"
+            }
+          ]
+        },
+        {
+          "slot": "effect-before-receipt-kill/0",
+          "latencyMs": 37103,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "89a54fd64d7d01739eeba25677b88796dfba31a0be3eae699ba484cf4c325572",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "04f1a87915ed9352d06d2a32f05b6d5a48e36eda4174f2c1f1e8f51098ce6c48"
+            },
+            {
+              "file": "before.json",
+              "sha256": "23bd84379b6cb9ff063454ac95ccb390d6ba43b55caf248619a0cafdb7f69205"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "cbdef8501a167d73d15c5e16b7e0edd4d299bd0f575314202cb205cdba246b80"
+            },
+            {
+              "file": "after.json",
+              "sha256": "908d993c1a2b10dddb356c8360e26e849583cc3cbe0924af0a9bc749cb38db51"
+            }
+          ]
+        },
+        {
+          "slot": "effect-before-receipt-kill/1",
+          "latencyMs": 12861,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "38c5841fa787b7f24e2f33a3c3429d8615c8e86c90cd363327d5fe62eb7da864",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "6ab83d30e094b0d3c6bd5f51567f487ac5826dbc93bd5298d8fcd96f0d7e3345"
+            },
+            {
+              "file": "before.json",
+              "sha256": "b65a1f155a4683290298221273358c5ba1b394863b9f50a104abd1714f1dfa23"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "31074c8566341970ebd08427c50b4645edc8808e43ce09dbe3c7c7448646b8ef"
+            },
+            {
+              "file": "after.json",
+              "sha256": "ede20c8e933fa9f4597cbce134772cd07563d086613bc5e9dd43b6c0d9f97271"
+            }
+          ]
+        },
+        {
+          "slot": "effect-before-receipt-kill/2",
+          "latencyMs": 28308,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "3bb0eb0a46af4dd75715b9b804cb4592b74e06b637d1e6b8978fa0f700fb65b6",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "c586fdb5610e0563ddb47340abb9c079fe5e28eeb4c93ecae0918d55b695a0cf"
+            },
+            {
+              "file": "before.json",
+              "sha256": "519fc37bb318754ba1d3c952910050a5f3e428d9653788421a318ddd529117b1"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "4a97ed4e52f4682b13698ebfdd5c582e2dbea61dd814c9b1ac7f7f59180bf9d9"
+            },
+            {
+              "file": "after.json",
+              "sha256": "26de193a808fe2d5364d6851f4fc7fc034ffd127f58c85e7f07660d6b86cd19c"
+            }
+          ]
+        },
+        {
+          "slot": "child-created-before-parent-advance-kill/0",
+          "latencyMs": 15655,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "d0098205c6139a4f3d3da53dba379ea961aa9929da0ef2fbc6af7e506d8a8588",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "ed3fb374273dd8682e41c8a8e8fd2ba990d8bd3f95d774a8efdf24ab7eaa275c"
+            },
+            {
+              "file": "before.json",
+              "sha256": "c412c0064c0fc25dfa6502de89b90d12d0ddd6b8510ed06d3bd5293d6f512250"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "f9ed641367b3fab5b017fae2e64370bf895aeca47eddc77ea98c64207fde0aa0"
+            },
+            {
+              "file": "after.json",
+              "sha256": "079a62e4fd8b52494208ed22388f25207a781c738b96e5a526c8c98fc5ec8635"
+            }
+          ]
+        },
+        {
+          "slot": "child-created-before-parent-advance-kill/1",
+          "latencyMs": 23258,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "fd4f003b1d903c450d84dbe8c069a31c77c93bd98d821d7115e47839011f3d96",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "353c91341b53125a1e4699f9283ce8ba996576909da219fff97adc5cb75e43f3"
+            },
+            {
+              "file": "before.json",
+              "sha256": "5d7eaeab8e5e36206c1f324718c849bdadf49e3f24c51e1aebb5b3bc90fc486f"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "502ab31c461546a87b4a0b4c3698864e64474fa25c88d0e999ef47ba7658255f"
+            },
+            {
+              "file": "after.json",
+              "sha256": "6248030cab8ee63109833abef6484ed013120c71221a2e94591584b604c61c88"
+            }
+          ]
+        },
+        {
+          "slot": "child-created-before-parent-advance-kill/2",
+          "latencyMs": 81308,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "5dfa0355419758e2189da8004d0e898aacc74cf717501c198a3f64db89252ab0",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "b85e53104f5aae62e84e3e1768c8740fbb7fe8eeb45eec1165c2370bd8f23111"
+            },
+            {
+              "file": "before.json",
+              "sha256": "c054e4ec168572686d518d732115586afd87166478d6071998f402cc8ad9ee9c"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "21a969c2978267446fc01477b8872a84fa940a05c15130b4cd5c0b5cbc8ab8d6"
+            },
+            {
+              "file": "after.json",
+              "sha256": "ad5c7def14c6586b5c015ff7ae39c01ac252402f49f739392aed3a8807c07106"
+            }
+          ]
+        },
+        {
+          "slot": "store-write-failure/0",
+          "latencyMs": 217,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "4a4fffd39c8db9f35488e5c628d69cf3841184926dc8fb7a7c8c693828e8f9ef",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "3d29a35d39608cbf40b8b0bf5deaa5b6038f262147950a88e1913e41bc3c4ed3"
+            },
+            {
+              "file": "before.json",
+              "sha256": "5dec24d499103e7a780b383eae4fd5a551584bafff8699012537002e5fe2b4a0"
+            },
+            {
+              "file": "failed-write.json",
+              "sha256": "3262e1af0a4a3ceb86c7f365b8d3605a9edc59e08353be68bfe3424658132cbc"
+            },
+            {
+              "file": "retry.json",
+              "sha256": "455d937976d0c53ad7dcb2cf01740bf116cbf404a1680511bc676006bb545aeb"
+            }
+          ]
+        },
+        {
+          "slot": "store-write-failure/1",
+          "latencyMs": 230,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "271d58999c750bd351ac4fc1f614081823abae8e901ef8c5ec73a000240a7f35",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "2fce26722094c9833dc5b5450104d27dfa8271c330f77943a7f960e9d9d8464d"
+            },
+            {
+              "file": "before.json",
+              "sha256": "a7874297fc251b0a27943d574143bfac6f2252a47682cce4377450655fd19efd"
+            },
+            {
+              "file": "failed-write.json",
+              "sha256": "887f1d72afb719f4853f3cd9e89b4038eeb323140823efb359ea1a4784c217b7"
+            },
+            {
+              "file": "retry.json",
+              "sha256": "9cc4484141be57057acb358084afb24328965c511d22a7fb2f08771f99ee4208"
+            }
+          ]
+        },
+        {
+          "slot": "store-write-failure/2",
+          "latencyMs": 153,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "90e4421af2614f20b7739821b6cc541a43e6058ebcebbb178597af77047d4477",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "ef64bd0b79c7d21819616ba25b8e9f966527e392e9b02f07dc3b132a16f1d3da"
+            },
+            {
+              "file": "before.json",
+              "sha256": "b0078bb5a855632ebb8c21af8885b550b04765a8e8856878fdbdbb08210491c2"
+            },
+            {
+              "file": "failed-write.json",
+              "sha256": "8e4cff94486fd42429de48b30681778021842648ed0ac9bfa4033f22b3e2f1fa"
+            },
+            {
+              "file": "retry.json",
+              "sha256": "553c6916fbe7345fa90087aafba427c4f93ad6bfb3ade1cbe6534651424cd4d0"
+            }
+          ]
+        },
+        {
+          "slot": "repeated-restart/0",
+          "latencyMs": 133440,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "b08ed06424c8d245f7aaa3d842c012acbad3eba6404ed394b00c087d37ae0441",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "968e15e5eaedab1209afb9133709b1641eedb9ca9f926d8ba43c0e7b05de7590"
+            },
+            {
+              "file": "before.json",
+              "sha256": "ac07fa31226705b712b1ac819294f77b1604c8063091a51317805670837b8e6e"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "c15894f0e89bf87a444bfb6761f23ed625a7dcb00634727bba42243c1bb278f2"
+            },
+            {
+              "file": "crash-1.json",
+              "sha256": "bb0a4da42a468e0a2dc01c4f39850ad1921fc51ca00f77a29cf1b9432d1c71e9"
+            },
+            {
+              "file": "crash-2.json",
+              "sha256": "4562c2393f9673cc1d56eb4a1610a9e6c23e97a8c950ce4018af5b776cba4431"
+            },
+            {
+              "file": "after.json",
+              "sha256": "d42ac8f6d431a1c8dc09ed94fe2afdcc14b0623e4216206bed25935dfedf3dfe"
+            }
+          ],
+          "startupRejectedRetries": 2,
+          "challengeTimeouts": 0,
+          "restartPhases": [
+            {
+              "toResumeDecisionMs": 12661,
+              "fromDecisionToNextKillOrTerminalMs": 10364
+            },
+            {
+              "toResumeDecisionMs": 29252,
+              "fromDecisionToNextKillOrTerminalMs": 18323
+            },
+            {
+              "toResumeDecisionMs": 41481,
+              "fromDecisionToNextKillOrTerminalMs": 21359
+            }
+          ]
+        },
+        {
+          "slot": "repeated-restart/1",
+          "latencyMs": 84400,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "2feea05f4eae2b33515f0ed63d52d46449ee027ec525edbb09ffd77f6ce6786a",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "f01cebd15b49adc943b1a57873713b3e132a872e6f8cfa50c88613f96b323816"
+            },
+            {
+              "file": "before.json",
+              "sha256": "7653a043eaea4eb1dd776b51e8181f0a5c605e0e50e178e4b2fc3cd81e1f6172"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "e17f0d246184753a94e20681b7dcb225a3ce00dbf5b5fdfc9c8bedbd9cc9ac71"
+            },
+            {
+              "file": "crash-1.json",
+              "sha256": "62ca554bb338bf3a29a6a8b1b963a2b0a14736d0ee7268e6f4891c15de2c3a0b"
+            },
+            {
+              "file": "crash-2.json",
+              "sha256": "1a38fac0a57a5a54ae67e98dcbb72c4720b561a17f8036b3db7e79ff716076f9"
+            },
+            {
+              "file": "after.json",
+              "sha256": "58842054e4085cf625fc0e8dac375a3b58349b1c9009d9ef1e121efb570b43b3"
+            }
+          ],
+          "startupRejectedRetries": 1,
+          "challengeTimeouts": 0,
+          "restartPhases": [
+            {
+              "toResumeDecisionMs": 14119,
+              "fromDecisionToNextKillOrTerminalMs": 9878
+            },
+            {
+              "toResumeDecisionMs": 15739,
+              "fromDecisionToNextKillOrTerminalMs": 10912
+            },
+            {
+              "toResumeDecisionMs": 12029,
+              "fromDecisionToNextKillOrTerminalMs": 21723
+            }
+          ]
+        },
+        {
+          "slot": "repeated-restart/2",
+          "latencyMs": 75136,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "8e9e39ec96497c37aef0a2bc1764a456306335f7a18d8f40a41c2e659c0dd813",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "5d3ed3558f842df249ca25f0c4d836c9c9ac6fbbd3f9cb325a1c7039abc36d40"
+            },
+            {
+              "file": "before.json",
+              "sha256": "6ce6b9e04daf7df10037d6644afe4c10eac59bf7e85b327200ee47a045096f83"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "668b8ebe3313312da1e82cafc85fbceb0f715e996e76a20597ff40101f94a99a"
+            },
+            {
+              "file": "crash-1.json",
+              "sha256": "b58bc4cb877ae88ff08150f391e8a3074dc8c656cd8edcb70909f1aaabbec943"
+            },
+            {
+              "file": "crash-2.json",
+              "sha256": "e52356e04baed0b38768aad38065bcad9275a81f4d7f33083ce5632044557644"
+            },
+            {
+              "file": "after.json",
+              "sha256": "cfc98d54fc2931d8c852f5692db4aabae348042862b8a6fcee0444ac37d1570e"
+            }
+          ],
+          "startupRejectedRetries": 1,
+          "challengeTimeouts": 0,
+          "restartPhases": [
+            {
+              "toResumeDecisionMs": 14712,
+              "fromDecisionToNextKillOrTerminalMs": 10684
+            },
+            {
+              "toResumeDecisionMs": 13906,
+              "fromDecisionToNextKillOrTerminalMs": 9827
+            },
+            {
+              "toResumeDecisionMs": 11105,
+              "fromDecisionToNextKillOrTerminalMs": 14902
+            }
+          ]
+        }
+      ],
+      "localBundleSha256": "4a531663d61f037666c241d99803e947828378a817568f81388869b830d3fc99"
+    },
+    {
+      "commit": "bd672c7c94df82930a7de4fde6fb17578497d345",
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "windowCount": 15,
+      "artifactsChecked": 66,
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "correctTerminalCount": 15,
+      "unclassifiableCount": 0,
+      "fullFrozenP95LowerBoundMs": 90593.2,
+      "rows": [
+        {
+          "slot": "repeated-restart/0",
+          "latencyMs": 104588,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "353c52a012356f5fad820d8e7550b79c09c09c52ac17a216590e45eab6cac548",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "be1ded17050fcf0387399905064b0cd8af9ceaa3be67db667b6df2c938f648ad"
+            },
+            {
+              "file": "before.json",
+              "sha256": "00b354a4adafc23c8d08d0239b982b71133a1c74c25ca5177a62ddd80df43848"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "87d7b28b8c0e0c606569acb70d3ca79bc35208661beef18550a8b4293d818c66"
+            },
+            {
+              "file": "crash-1.json",
+              "sha256": "430cc4ed49e8dbccfce82b232389da226eeffb2a3ba0a38ddb1f91bd3a67efa2"
+            },
+            {
+              "file": "crash-2.json",
+              "sha256": "7d5527f5ed15d84f42e019c9cc21eff6fa7dcd99f2d1ec74c3394fc35715873b"
+            },
+            {
+              "file": "after.json",
+              "sha256": "ff6743ebdfc2e528bb0a031b809d8f201bbda4b3cee238fc70b0630d5e86d4ca"
+            }
+          ],
+          "startupRejectedRetries": 0,
+          "challengeTimeouts": 0,
+          "restartPhases": [
+            {
+              "toResumeDecisionMs": 19893,
+              "fromDecisionToNextKillOrTerminalMs": 12219
+            },
+            {
+              "toResumeDecisionMs": 19415,
+              "fromDecisionToNextKillOrTerminalMs": 12880
+            },
+            {
+              "toResumeDecisionMs": 22946,
+              "fromDecisionToNextKillOrTerminalMs": 17235
+            }
+          ]
+        },
+        {
+          "slot": "repeated-restart/1",
+          "latencyMs": 93327,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "44e73aec7315be88715553a8e2646861c4a13b988aa6085f1bca68883499d3d1",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "771b853635f0b59a3e97c639c9384ab87933f6b633b6c17756851967a01b571a"
+            },
+            {
+              "file": "before.json",
+              "sha256": "f4ade30a98eafc316a9eea716a4e448ef975caf2ae35f0a788b75fc0df4c5ab0"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "2614534a9d45cc11b06fff0214c31c35c17f5ad71aad81c5a3329debd5236005"
+            },
+            {
+              "file": "crash-1.json",
+              "sha256": "d5f9de54e4442077131733bebbd5acfb8f6095dff0af1f8a77554b1d277b921b"
+            },
+            {
+              "file": "crash-2.json",
+              "sha256": "6d8945e2d42966b8f0682b563be74a1669b8c27ec9cea20ea86e2e792fee5fcd"
+            },
+            {
+              "file": "after.json",
+              "sha256": "3ecefe6a996512ff2fcc70914ea57fa3bc5e1bec20a3cd0062b256f8f312b819"
+            }
+          ],
+          "startupRejectedRetries": 0,
+          "challengeTimeouts": 0,
+          "restartPhases": [
+            {
+              "toResumeDecisionMs": 18384,
+              "fromDecisionToNextKillOrTerminalMs": 13540
+            },
+            {
+              "toResumeDecisionMs": 15235,
+              "fromDecisionToNextKillOrTerminalMs": 9413
+            },
+            {
+              "toResumeDecisionMs": 15242,
+              "fromDecisionToNextKillOrTerminalMs": 21513
+            }
+          ]
+        },
+        {
+          "slot": "repeated-restart/2",
+          "latencyMs": 126770,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "c1dc51d5825bf1cfacf2d396fa958f5e69e867c412d717759592a8cfffc0e229",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "ca65e81ea8b142d0deb6cacc40d2a1c0a5a177007210f408e474d5cddbe36d8e"
+            },
+            {
+              "file": "before.json",
+              "sha256": "17290fa9d0a64c4ab66706c62116091e2c9ab2c86e73255e8abb564b799a89f7"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "25c4aa1ac18d4675902b146428a8abef1395b08365a232290dfd9b81c1f7aabe"
+            },
+            {
+              "file": "crash-1.json",
+              "sha256": "b5f37ee153771c6e076e554253bfeaae0712e954168b1bc58d1bb91bbf4cca73"
+            },
+            {
+              "file": "crash-2.json",
+              "sha256": "9aa0bd8f9a398e860299c6529f3f636c6a4e78efa83fbe9594418f80a8239e7b"
+            },
+            {
+              "file": "after.json",
+              "sha256": "590fe154ecfdb4a34c5c7454a428199086453761eab21627300ad4cfcfcc7620"
+            }
+          ],
+          "startupRejectedRetries": 0,
+          "challengeTimeouts": 0,
+          "restartPhases": [
+            {
+              "toResumeDecisionMs": 38695,
+              "fromDecisionToNextKillOrTerminalMs": 12882
+            },
+            {
+              "toResumeDecisionMs": 15022,
+              "fromDecisionToNextKillOrTerminalMs": 11630
+            },
+            {
+              "toResumeDecisionMs": 20734,
+              "fromDecisionToNextKillOrTerminalMs": 27807
+            }
+          ]
+        },
+        {
+          "slot": "intent-after-persist-kill/0",
+          "latencyMs": 38487,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "ef469350af9d4d7af12550f4e940e18a44b319cb5a8a9227f9fb090bab927b5f",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "af81e36f6bc2273afd2891f59e55b028832e12d7d8725584bb014d16704ad950"
+            },
+            {
+              "file": "before.json",
+              "sha256": "acef11b59cf86c14f7e01661de6ebb7b3367fc8834e36620dc534d23d3a3f75d"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "3fda4555a0437a9637d08e04817c2b07f97ef552b2e9496300032bf14b3a1b9f"
+            },
+            {
+              "file": "after.json",
+              "sha256": "22d4772eb7c529751e4c8a311fb8838e9e95fb9fb685d4fb6885f23d56d2f4c8"
+            }
+          ]
+        },
+        {
+          "slot": "intent-after-persist-kill/1",
+          "latencyMs": 39141,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "fa7ac36182429b59ef265d1a41260d7f5f38bbcdecc1884ddfd8f6736a01df68",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "1190a29d37d63775fb9c486ca3c8f8d22e67b3a82f1674e4a2ee724b05000e3b"
+            },
+            {
+              "file": "before.json",
+              "sha256": "bf82485f2ed00bc06d756b262befa69a04dc5bc9ef9d4011e921df2886befc2d"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "d9f0bea5da54b2e388dbdff281d3099adb7077f8d4c17d5a0eb5b98e7c2ea12a"
+            },
+            {
+              "file": "after.json",
+              "sha256": "66675e53adf509eb3bb22f425e1dca28cb3d0886f5140179ebd26a8e935ed2d2"
+            }
+          ]
+        },
+        {
+          "slot": "intent-after-persist-kill/2",
+          "latencyMs": 79658,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "65710785aceca6d567d073208c1051bb3b851f047e47de6a8a16f03f36df794e",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "1a8328907075fe06ca89d958d11a4d8473628495f9beb4859109be8796bab6af"
+            },
+            {
+              "file": "before.json",
+              "sha256": "d955d772814d48ce25cc054cf0725ca7f455442d9cdc0e87b0ff52a2a5f8f3af"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "d2737f4c291e9a4d6fa894b1383d368e529b9c8da4434802094dcda811103c73"
+            },
+            {
+              "file": "after.json",
+              "sha256": "0e5be5d2cc5faef55896c7d7fb742e7d89b6bec826e235b7f107839834e2eb63"
+            }
+          ]
+        },
+        {
+          "slot": "effect-before-receipt-kill/0",
+          "latencyMs": 15136,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "59259f01f16ed9fabf5365297d05f77098d7b63cd3c7aa9f9689cd4008434924",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "a5317bdf9fa472923e364fde06fcb0df63d849d802d731b06e8eab4b749bd4c8"
+            },
+            {
+              "file": "before.json",
+              "sha256": "cd6a9c0c1a313b715396a62c2e5722c25a16c2b573537ad56f9979c687730f7f"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "a917efafab87ce289cce371cf1cb7de5264e26c0e92e5b8da4ee3642dfc0a3b4"
+            },
+            {
+              "file": "after.json",
+              "sha256": "974a7c2a4eb9db91519802b857ceaddc6c8939e63b23d439b05575bd5047eb6d"
+            }
+          ]
+        },
+        {
+          "slot": "effect-before-receipt-kill/1",
+          "latencyMs": 17240,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "19327644373a52979100d244af690fa8786750276cb0990ba0ed406027a22a3e",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "92eafc6284a377788eae7cab4dec0c6e5380cbf8473c77e6c0cb43f99bce241c"
+            },
+            {
+              "file": "before.json",
+              "sha256": "d05384a33fcb203afb3a321c2c2caf801fa7afb72b66b70582f26ed1901aa062"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "7a7092e5100cc73dfe49ad1cdc9cd6888940d94f053c843cd46d745b605945f2"
+            },
+            {
+              "file": "after.json",
+              "sha256": "57fdcff3a3e9e1f6f0b2d463f51336fac6aa09efff3cf0ab9d82c5a9ef622761"
+            }
+          ]
+        },
+        {
+          "slot": "effect-before-receipt-kill/2",
+          "latencyMs": 14827,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "88dc3a4e25cb884d20c57b58aea7121a151c83dd3cb3066f4cec2b55674918b7",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "a2e02722ce94f02a271f03696b903573c0c2b526ba706c2b922df61377a44eae"
+            },
+            {
+              "file": "before.json",
+              "sha256": "25b426b2c18d1ae09fdd00ce19f193a4c46c7da570dc72e37b458e0031ce8f6d"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "2455fe46e47e9833e701391cd5055768c2b5cfafc95e932aa517caf762fdcb1b"
+            },
+            {
+              "file": "after.json",
+              "sha256": "3003a017f24788d984613ea3d9fd31b632c380c29d435a5a1c417b1800af57ee"
+            }
+          ]
+        },
+        {
+          "slot": "child-created-before-parent-advance-kill/0",
+          "latencyMs": 15664,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "9927b1376328e4e2172b132939870a01639f1b866832f3bb5cd58c5057833f83",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "95c33dfedeafc7bd79dd164149cb6a3b660aaadbe918c589eb30dd72e5d80a6c"
+            },
+            {
+              "file": "before.json",
+              "sha256": "efa448c273e98c85c242ce27fab4ec0af8db47321400b5950a7951e09d988ddc"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "644aeb531b96afe577d01db557db753fb469d201d1390c24a92632fa0be428dd"
+            },
+            {
+              "file": "after.json",
+              "sha256": "10cf79377bdaba78859a1e2dc8fc1fe80012d038a41b9c12c126beffc473ecbb"
+            }
+          ]
+        },
+        {
+          "slot": "child-created-before-parent-advance-kill/1",
+          "latencyMs": 13198,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "bbf247d977bccf80ae24f68c34c77b5c685889782d948fb96ac2861836989af3",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "d5b1e42e081708505ef88c2e7f178342e8df58964b0b15e1acbba57df46f63ce"
+            },
+            {
+              "file": "before.json",
+              "sha256": "3af6b6b9bec82d2fa0f2adce98c13169df52bcbdf4985c78a0fcaf261906762f"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "1a8fa702caea2197bfd381ca09bd16221d7df7bb7b61ef81e7970457ef962319"
+            },
+            {
+              "file": "after.json",
+              "sha256": "6289bc30e89ccc80ce3ee10bbf9e33790519079ef2037f5b7dc14d1a1feaaa84"
+            }
+          ]
+        },
+        {
+          "slot": "child-created-before-parent-advance-kill/2",
+          "latencyMs": 21462,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "3ada264880583593d2a4405f7a584caf1b6df69530899a331dfc883f663ef047",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "da024f6f6c61991fa0d6bc472e1f738739710fe8c52ea25abba4c36d86e86d09"
+            },
+            {
+              "file": "before.json",
+              "sha256": "7154b4d736b51d92b21d7a7d0fb78ada0a2b3ab513d619a1e347c5e7ff4712d0"
+            },
+            {
+              "file": "crash-0.json",
+              "sha256": "c59c7ddd3fe2b95f67f449ca50f2348dc219c8ef853c35b84d239ff164e898ad"
+            },
+            {
+              "file": "after.json",
+              "sha256": "a40ab5206d9f50733b73aae864bdcac392e34160d0c34b0a1c5abee0acedd345"
+            }
+          ]
+        },
+        {
+          "slot": "store-write-failure/0",
+          "latencyMs": 188,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "2752b6aadce19cc326cfce7753f2048f312cd870379e6ec246b4bf9dc183d90d",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "02eeb9c8e5bf52877fb4f2101671cf3be5b37c326859e0948fd996529a95da66"
+            },
+            {
+              "file": "before.json",
+              "sha256": "4c6b894bbbcd7225cc87ff52f9d0b75530a6c52919f5dfbb968efba3318b53ef"
+            },
+            {
+              "file": "failed-write.json",
+              "sha256": "3421985ee8e244b8e3e13e025b5a32f9b3b83a16e07ac1469c318f1d333bf2bf"
+            },
+            {
+              "file": "retry.json",
+              "sha256": "d28e9962760de284c673a2ef19e3da92f180213496d5d15468d7b9e2ad053375"
+            }
+          ]
+        },
+        {
+          "slot": "store-write-failure/1",
+          "latencyMs": 349,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "fe1275eb569933b889a3e6f28242868bd945fc052f41f8312977403393bcf113",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "8ae7366d653ed77ba4ac5690f35029ba54155bf919cca7c7a429b2d8dfaacb6c"
+            },
+            {
+              "file": "before.json",
+              "sha256": "40f7eb287b7be9c0fadda649032eac17dd2e3c950cec8270501b61c756117ea9"
+            },
+            {
+              "file": "failed-write.json",
+              "sha256": "61f53efbc1507211c6381684fca600141cefde6807fd0ccacc8d7c5f5ce5b2d4"
+            },
+            {
+              "file": "retry.json",
+              "sha256": "0c28a28093fdc62eccfac270da2d743b06f351b297487e039a86de81f3fc16d7"
+            }
+          ]
+        },
+        {
+          "slot": "store-write-failure/2",
+          "latencyMs": 156,
+          "terminalCorrect": true,
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "unclassifiable": false,
+          "receiptSha256": "c5f38c63a9e505f435099cb9000ff1e89174a7c9025b471e1258ed5b95f7d987",
+          "artifacts": [
+            {
+              "file": "task-owner.json",
+              "sha256": "12e77287b531c17c1d695eff098baedd4049a8f6e04439a5c6118585a29f235f"
+            },
+            {
+              "file": "before.json",
+              "sha256": "e31386fe05f2c0cd4dc111c9f9dd717b91202695fae70aa2d69d3d672da70682"
+            },
+            {
+              "file": "failed-write.json",
+              "sha256": "b9219dfaf14e8a8a84000878fd5cb560277cee9df0e4f465850e8b6f28ee6c21"
+            },
+            {
+              "file": "retry.json",
+              "sha256": "0d4ec6408e447e102548d3f5728e4dcf8a3a158ac6a46dc2ae4429028936493a"
+            }
+          ]
+        }
+      ],
+      "localBundleSha256": "2896cee4906b685c6ba1c534e984c1d9e4a3af9f2785e6d65fb9c1f0b7d4432d"
+    }
+  ],
+  "checks": {
+    "desktop": {
+      "elapsedMs": 79535,
+      "stageSha256": "e52739ac975e5f15fbad40fccc0da3be79e2b6816acdc8e3a8ccffa4c067add1"
+    },
+    "runtime": {
+      "elapsedMs": 134356,
+      "stageSha256": "ce005b32785316843f9c4b728455402bda7e7e8f293f353614fde2f21c40c6fa"
+    },
+    "unit": {
+      "elapsedMs": 41297,
+      "stageSha256": "592fe21d629d32bdd3fd68e29ef003c2efe3c78a0c56084078ebf8ffbd7c6a23"
+    },
+    "unitTests": 70,
+    "typecheckMs": 33744,
+    "managedElectron": {
+      "elapsedMs": 71284,
+      "stageSha256": "c242cca3f239f9b9889cdfcfde605074ded1c67c15ca0ad130a9bdf8628bf927"
+    },
+    "communication": "PASS",
+    "harness": "pass",
+    "source-gates": {
+      "durationMs": 35851,
+      "logSha256": "0ba15f931ca72176789362f0edf7a389c34ae8d64dd5d250375254955d98c3ee"
+    },
+    "packaged-helper": {
+      "durationMs": 2595,
+      "logSha256": "1a65cefb51b679918840932ac1d42a1512a8d93ac8730f0b6b6c1e877279c84a"
+    },
+    "goal-canary": {
+      "durationMs": 104458,
+      "logSha256": "0b8f1b136a44c23e614d86a523f8101eb2b863c9dbf4b3036b38e9c8b0dd2ece"
+    },
+    "preload-study": {
+      "durationMs": 47358,
+      "logSha256": "8f93a1f9863c312c9061cd72ee8b551204205eb5ec555342c269deea96845c3b"
+    },
+    "deepTest": {
+      "buildMs": 47325,
+      "typecheckMs": 24990,
+      "decision": "daily-loop-ok",
+      "requiredFullGates": []
+    },
+    "harnessCI": {
+      "exitCode": 0,
+      "auditStatus": "warn",
+      "grade": "B",
+      "score": 88,
+      "disqualifiers": []
+    }
+  },
+  "preloadStudy": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "source": "bd672c7c94df82930a7de4fde6fb17578497d345",
+    "method": "Isolated fresh home, Electron Node runtime, serial six attempts, existing desktop build, system-presence RPC, alternating startup order. Warm activation begins only after module imports. Resident bytes apply to the entire waiting child.",
+    "modules": [
+      {
+        "name": "server.impl-oPLoRHlO.js",
+        "sha256": "e5e42344df5032a42e0cb7cbd4503f454779ad3ce356aca9c6f7fe914530eb0b"
+      },
+      {
+        "name": "agent-tools-CWxlnhNt.js",
+        "sha256": "289877683d03f4dd2d21dc78ad9ed53475a5bdf7ec5d8b81e63924995f913e57"
+      },
+      {
+        "name": "selection-BLS970t3.js",
+        "sha256": "28293a8ed36329c74793ded3d862bed2452131f7fe5d793d45ce2e3df3432992"
+      }
+    ],
+    "observations": [
+      {
+        "arm": "cold",
+        "ok": true,
+        "activationToAuthenticatedRpcMs": 7364,
+        "totalFromForkMs": 7364,
+        "preloadMs": 0,
+        "idlePreloadedRssMiB": null,
+        "stateFilesBeforeActivation": null
+      },
+      {
+        "arm": "warm",
+        "ok": true,
+        "activationToAuthenticatedRpcMs": 4489,
+        "totalFromForkMs": 7631,
+        "preloadMs": 3031,
+        "idlePreloadedRssMiB": 386,
+        "stateFilesBeforeActivation": []
+      },
+      {
+        "arm": "warm",
+        "ok": true,
+        "activationToAuthenticatedRpcMs": 4465,
+        "totalFromForkMs": 7637,
+        "preloadMs": 3058,
+        "idlePreloadedRssMiB": 393,
+        "stateFilesBeforeActivation": []
+      },
+      {
+        "arm": "cold",
+        "ok": true,
+        "activationToAuthenticatedRpcMs": 7586,
+        "totalFromForkMs": 7586,
+        "preloadMs": 0,
+        "idlePreloadedRssMiB": null,
+        "stateFilesBeforeActivation": null
+      },
+      {
+        "arm": "cold",
+        "ok": true,
+        "activationToAuthenticatedRpcMs": 7885,
+        "totalFromForkMs": 7885,
+        "preloadMs": 0,
+        "idlePreloadedRssMiB": null,
+        "stateFilesBeforeActivation": null
+      },
+      {
+        "arm": "warm",
+        "ok": true,
+        "activationToAuthenticatedRpcMs": 4497,
+        "totalFromForkMs": 8128,
+        "preloadMs": 3495,
+        "idlePreloadedRssMiB": 377,
+        "stateFilesBeforeActivation": []
+      }
+    ]
+  }
+}

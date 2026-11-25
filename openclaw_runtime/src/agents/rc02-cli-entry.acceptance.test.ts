@@ -7,8 +7,6 @@
 // transport boundary and the receipts are production code; bundled plugin
 // discovery is not exercised, and that narrowing is recorded in the RC-02 census.
 //
-// The `compact` half of the spec's "CLI/compact" surface is not driven here: it
-// shares the same bootstrap and is left as a named residual in the census.
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
@@ -28,13 +26,40 @@ import { clearTaskStateHandlerConfig } from "./harness/lifecycle-hook-helpers.js
 import { closeTrackedSqliteHandlesUnder } from "../infra/node-sqlite.js";
 import { ReceiptStore, type RuntimeReceiptRow } from "./receipt-store.js";
 import { resolveDefaultAgentDir } from "./agent-scope-config.js";
-import { agentCommand } from "./agent-command.js";
+import { agentCommand, agentCommandFromIngress } from "./agent-command.js";
+import {
+  loadSessionStore,
+  resolveStorePath,
+  updateSessionStoreAtomic,
+} from "../config/sessions.js";
+import { clearRuntimeConfigSnapshot } from "../config/config.js";
+import { buildRunClaudeCliAgentParams, runCliAgent } from "./cli-runner.js";
+import { LegacyContextEngine } from "../context-engine/legacy.js";
+import {
+  getContextEngineFactory,
+  registerContextEngineForOwner,
+} from "../context-engine/registry.js";
+import { ensureContextEnginesInitialized } from "../context-engine/init.js";
+import { SessionManager } from "./sessions/index.js";
+import type { AssistantMessage } from "../llm/types.js";
+import { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "../context-engine/cvk/engine.js";
+import { admitMainSessionRecovery } from "./recovery-authority/main-session-admission.js";
+import { getRecoveryAdmissionIdentity } from "./recovery-authority/owner-admission.js";
+import { onAgentEvent } from "../infra/agent-events.js";
+import { mergeSessionEntryWithPolicy } from "../config/sessions.js";
 
 const tempRoots: string[] = [];
+
+// This generic CLI fixture does not load the bundled Anthropic provider facade.
+vi.mock("../plugin-sdk/anthropic-cli.js", () => ({
+  CLAUDE_CLI_BACKEND_ID: "claude-cli",
+  isClaudeCliProvider: (provider: string) => provider === "claude-cli",
+}));
 
 const store = () => new ReceiptStore({ env: process.env });
 
 beforeEach(() => {
+  clearRuntimeConfigSnapshot();
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "rc02-cli-entry-"));
   tempRoots.push(root);
   const stateDir = path.join(root, "state");
@@ -49,6 +74,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  clearRuntimeConfigSnapshot();
   resetPluginRuntimeStateForTest();
   clearTaskStateHandlerConfig();
   providerRuntimeTesting.clearProviderRuntimePluginCacheForTest();
@@ -65,6 +91,7 @@ afterEach(() => {
   delete process.env.OPENAI_API_KEY;
   delete process.env.OPENCLAW_TEST_FAST;
   delete process.env.OPENCLAW_CONFIG_PATH;
+  vi.unstubAllEnvs();
   for (const root of tempRoots.splice(0)) {
     closeTrackedSqliteHandlesUnder(root);
     try {
@@ -208,7 +235,240 @@ function cliConfig(workspaceDir: string) {
 }
 
 describe("RC-02R CLI entry (bounded bootstrap)", () => {
-  it("cli agentCommand entry: the real entry drives a model call through the guarded boundary with dual receipts", async () => {
+  it("keeps an admitted recovery open through provider fallback and commits one command terminal", async () => {
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    const root = tempRoots.at(-1)!;
+    const workspaceDir = path.join(root, "workspace");
+    fs.mkdirSync(workspaceDir, { recursive: true });
+    const cfg = cliConfig(workspaceDir);
+    const fallbackModel = {
+      ...CLI_MODEL,
+      id: "gpt-admission-fallback",
+      name: "admission fallback",
+    };
+    cfg.models.providers.openai.models.push(fallbackModel);
+    Object.assign(cfg.agents.defaults.model, { fallbacks: ["openai/gpt-admission-fallback"] });
+    const agentDir = resolveDefaultAgentDir(cfg as never);
+    fs.mkdirSync(agentDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(agentDir, "models.json"),
+      JSON.stringify({ providers: cfg.models.providers }),
+    );
+    const configPath = path.join(root, "openclaw.json");
+    fs.writeFileSync(configPath, JSON.stringify(cfg));
+    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    const key = "agent:main:admitted-fallback";
+    const storePath = resolveStorePath(undefined, { agentId: "main" });
+    await updateSessionStoreAtomic(storePath, (sessions) => {
+      sessions[key] = {
+        sessionId: "admitted-generation",
+        updatedAt: 1,
+        status: "running",
+        startedAt: 1,
+        lifecycleRunId: "original",
+        abortedLastRun: true,
+        recoveryOutput: {
+          sessionId: "admitted-generation",
+          runId: "original",
+          effect: "not_applied",
+          visibleOutputObserved: false,
+        },
+      };
+    });
+    const admitted = await admitMainSessionRecovery({
+      entry: loadSessionStore(storePath, { skipCache: true })[key],
+      storePath,
+      sessionKey: key,
+      boundary: "original-intent",
+      phase: { action: "none", phases: [], reason: "no pending tool" },
+      resumeBlockReason: null,
+      maxAttempts: 3,
+    });
+    if (admitted.kind !== "admitted") throw Error("missing admitted fixture");
+    const phases: string[] = [];
+    const unsubscribe = onAgentEvent((event) => {
+      if (event.runId === admitted.record.idempotencyKey && event.stream === "lifecycle") {
+        phases.push(String(event.data.phase));
+      }
+    });
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const request = input instanceof Request ? input : new Request(input, init);
+      const body = JSON.parse(await request.clone().text());
+      calls++;
+      return new Response(
+        body.model === CLI_MODEL.id
+          ? `data: ${JSON.stringify({ type: "response.failed", response: { status: "failed", error: { code: "model_not_found", message: "model not found" } } })}\n\n`
+          : openAiResponsesTextSse(),
+        { status: 200, headers: { "content-type": "text/event-stream" } },
+      );
+    }) as typeof fetch;
+    try {
+      await agentCommand({
+        message: "original intent",
+        sessionKey: key,
+        sessionId: "admitted-generation",
+        runId: admitted.record.idempotencyKey,
+        recoveryAdmission: getRecoveryAdmissionIdentity(admitted.record),
+        deliver: false,
+        json: true,
+      });
+      expect(calls).toBe(2);
+      expect(phases.filter((phase) => phase === "end" || phase === "error")).toEqual(["end"]);
+      expect(loadSessionStore(storePath, { skipCache: true })[key]).toMatchObject({
+        status: "done",
+        lifecycleRunId: admitted.record.idempotencyKey,
+      });
+    } finally {
+      globalThis.fetch = originalFetch;
+      unsubscribe();
+    }
+  }, 90_000);
+
+  it.each(["local", "ingress"])(
+    "commits a failed command terminal before another turn starts (%s)",
+    async (entrypoint) => {
+      vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+      const root = tempRoots.at(-1)!;
+      const workspaceDir = path.join(root, "workspace");
+      fs.mkdirSync(workspaceDir, { recursive: true });
+      const cfg = cliConfig(workspaceDir);
+      const agentDir = resolveDefaultAgentDir(cfg as never);
+      fs.mkdirSync(agentDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(agentDir, "models.json"),
+        JSON.stringify({ providers: cfg.models.providers }),
+      );
+      const configPath = path.join(root, "openclaw.json");
+      fs.writeFileSync(configPath, JSON.stringify(cfg));
+      process.env.OPENCLAW_CONFIG_PATH = configPath;
+      const key = `agent:main:failed-${entrypoint}`;
+      const originalFetch = globalThis.fetch;
+      let fail = true;
+      globalThis.fetch = vi.fn(
+        async () =>
+          new Response(
+            fail
+              ? `data: ${JSON.stringify({ type: "response.failed", response: { status: "failed", error: { code: "model_not_found", message: "model not found" } } })}\n\n`
+              : openAiResponsesTextSse(),
+            { status: 200, headers: { "content-type": "text/event-stream" } },
+          ),
+      ) as typeof fetch;
+      const command = entrypoint === "local" ? agentCommand : agentCommandFromIngress;
+      try {
+        const options = {
+          message: "first turn",
+          sessionKey: key,
+          sessionId: "failed-generation",
+          runId: "failed-run",
+          provider: "openai",
+          model: CLI_MODEL.id,
+          deliver: false,
+          json: true,
+          allowModelOverride: true,
+        };
+        await expect(command(options)).rejects.toThrow();
+        expect(
+          loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), { skipCache: true })[
+            key
+          ],
+        ).toMatchObject({ status: "failed", lifecycleRunId: "failed-run" });
+        fail = false;
+        await command({ ...options, message: "next turn", runId: "next-run" });
+        expect(
+          loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), { skipCache: true })[
+            key
+          ],
+        ).toMatchObject({ status: "done", lifecycleRunId: "next-run" });
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    },
+    90_000,
+  );
+
+  it("preserves the visible Session binding through the public Claude wrapper", () => {
+    const params = {
+      sessionId: "generation",
+      sessionKey: "agent:main:wrapper",
+      sessionStorePath: "D:/tmp/wrapper-session-store.json",
+      sessionFile: "D:/tmp/wrapper-transcript.jsonl",
+      workspaceDir: "D:/tmp",
+      prompt: "request",
+      timeoutMs: 20_000,
+      runId: "wrapper-run",
+    };
+    expect(buildRunClaudeCliAgentParams(params).sessionStorePath).toBe(params.sessionStorePath);
+  });
+
+  it.each(["new-local-turn", "same-run-fallback"])(
+    "commits unknown output before the actual CLI backend starts (%s)",
+    async (turn) => {
+      vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+      const root = tempRoots.at(-1)!;
+      const workspaceDir = path.join(root, "workspace");
+      fs.mkdirSync(workspaceDir, { recursive: true });
+      const cfg = cliConfig(workspaceDir);
+      const script = path.join(root, "cli-fixture.cjs");
+      fs.writeFileSync(script, 'process.stdout.write("cli fixture completed");');
+      Object.assign(cfg.agents.defaults, {
+        cliBackends: {
+          "fixture-cli": {
+            command: process.execPath,
+            args: [script],
+            input: "stdin",
+            output: "text",
+            sessionMode: "none",
+            systemPromptWhen: "never",
+          },
+        },
+      });
+      const sessionKey = "agent:main:cli-output-owner";
+      const storePath = resolveStorePath(undefined, { agentId: "main" });
+      await updateSessionStoreAtomic(storePath, (sessions) => {
+        sessions[sessionKey] = {
+          sessionId: "cli-generation",
+          updatedAt: 1,
+          startedAt: 1,
+          status: turn === "new-local-turn" ? "done" : "running",
+          lifecycleRunId: turn === "new-local-turn" ? "old-run" : "current-run",
+          recoveryOutput: {
+            sessionId: "cli-generation",
+            runId: turn === "new-local-turn" ? "old-run" : "current-run",
+            effect: "not_applied",
+            visibleOutputObserved: false,
+          },
+        };
+      });
+      const observed = vi.fn(() => {
+        expect(loadSessionStore(storePath, { skipCache: true })[sessionKey]).toMatchObject({
+          lifecycleRunId: "current-run",
+          status: "running",
+          recoveryOutput: { runId: "current-run", effect: "unknown" },
+        });
+      });
+      const result = await runCliAgent({
+        sessionId: "cli-generation",
+        sessionKey,
+        sessionStorePath: storePath,
+        sessionFile: path.join(root, "cli-transcript.jsonl"),
+        workspaceDir,
+        config: cfg as never,
+        provider: "fixture-cli",
+        prompt: "run the local fixture",
+        timeoutMs: 20_000,
+        runId: "current-run",
+        onExecutionStarted: observed,
+      });
+      expect(observed).toHaveBeenCalledOnce();
+      expect(result.payloads?.[0]?.text).toBe("cli fixture completed");
+    },
+    90_000,
+  );
+
+  it("starts each sequential local turn with its own running lifecycle", async () => {
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
     const root = tempRoots.at(-1)!;
     const workspaceDir = path.join(root, "workspace");
     fs.mkdirSync(workspaceDir, { recursive: true });
@@ -217,43 +477,478 @@ describe("RC-02R CLI entry (bounded bootstrap)", () => {
     fs.mkdirSync(agentDir, { recursive: true });
     fs.writeFileSync(
       path.join(agentDir, "models.json"),
-      `${JSON.stringify(
-        {
-          providers: {
-            openai: {
-              baseUrl: "http://127.0.0.1:40123/v1",
-              api: "openai-responses",
-              apiKey: "fixture-key",
-              models: [CLI_MODEL],
-            },
-          },
-        },
-        null,
-        2,
-      )}\n`,
-      "utf8",
+      JSON.stringify({ providers: cfg.models.providers }),
     );
-    // agentCommand reads the runtime config from the config path.
     const configPath = path.join(root, "openclaw.json");
-    fs.writeFileSync(configPath, `${JSON.stringify(cfg, null, 2)}\n`, "utf8");
+    fs.writeFileSync(configPath, JSON.stringify(cfg));
     process.env.OPENCLAW_CONFIG_PATH = configPath;
+    const sessionKey = "agent:main:local-sequential";
+    const observed: Array<{ status?: string; runId?: string }> = [];
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn(async () => {
+      const current = loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
+        skipCache: true,
+      })[sessionKey];
+      observed.push({ status: current.status, runId: current.lifecycleRunId });
+      return new Response(openAiResponsesTextSse(), {
+        status: 200,
+        headers: { "content-type": "text/event-stream" },
+      });
+    }) as typeof fetch;
+    try {
+      for (const message of ["first turn", "second turn"])
+        await agentCommand({
+          message,
+          sessionKey,
+          sessionId: "same-session",
+          provider: "openai",
+          model: CLI_MODEL.id,
+          deliver: false,
+          json: true,
+        } as never);
+      expect(observed).toHaveLength(2);
+      expect(observed.map((row) => row.status)).toEqual(["running", "running"]);
+      expect(new Set(observed.map((row) => row.runId)).size).toBe(2);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  }, 90_000);
 
-    const spy = installTransportSpy();
+  it.each([
+    "retry",
+    "outer-fallback",
+    "primary-probe",
+    "legacy-retry",
+    "legacy-primary-probe",
+    "subagent-retry",
+    "omitted-file",
+    "pending-delivery",
+    "pending-delivery-replaced",
+    "pending-delivery-settled",
+  ])(
+    "persists a native compaction successor before retries (path=%s)",
+    async (pathKind) => {
+      const outerFallback = pathKind === "outer-fallback";
+      const primaryProbe = pathKind === "primary-probe" || pathKind === "legacy-primary-probe";
+      const subagent = pathKind === "subagent-retry";
+      const omittedFile = pathKind === "omitted-file";
+      const pendingDelivery = pathKind.startsWith("pending-delivery");
+      const authority = !pathKind.startsWith("legacy-");
+      vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", authority ? "authority" : "legacy");
+      const root = tempRoots.at(-1)!;
+      const workspaceDir = path.join(root, "workspace");
+      fs.mkdirSync(workspaceDir, { recursive: true });
+      const cfg = cliConfig(workspaceDir);
+      const fallbackModel = { ...CLI_MODEL, id: "gpt-fallback-fixture", name: "fallback fixture" };
+      if (outerFallback || primaryProbe) {
+        cfg.models.providers.openai.models.push(fallbackModel);
+        Object.assign(cfg.agents.defaults.model, { fallbacks: ["openai/gpt-fallback-fixture"] });
+      }
+      const agentDir = resolveDefaultAgentDir(cfg as never);
+      fs.mkdirSync(agentDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(agentDir, "models.json"),
+        JSON.stringify({ providers: cfg.models.providers }),
+      );
+      const configPath = path.join(root, "openclaw.json");
+      fs.writeFileSync(configPath, JSON.stringify(cfg));
+      process.env.OPENCLAW_CONFIG_PATH = configPath;
+      ensureContextEnginesInitialized();
+      const originalFactory = getContextEngineFactory(CONTEXT_RUNTIME_KIT_ENGINE_ID)!;
+      const sessionKey = subagent
+        ? "agent:main:subagent:compaction-retry"
+        : `agent:main:compaction-${pathKind}`;
+      if (subagent)
+        await updateSessionStoreAtomic(
+          resolveStorePath(undefined, { agentId: "main" }),
+          (sessions) => {
+            sessions[sessionKey] = {
+              sessionId: "compaction-predecessor",
+              updatedAt: 1,
+              status: "running",
+              lifecycleRunId: "subagent-owner",
+              abortedLastRun: true,
+            };
+          },
+        );
+      if (primaryProbe)
+        await updateSessionStoreAtomic(
+          resolveStorePath(undefined, { agentId: "main" }),
+          (sessions) => {
+            sessions[sessionKey] = {
+              sessionId: "compaction-predecessor",
+              updatedAt: 1,
+              providerOverride: "openai",
+              modelOverride: fallbackModel.id,
+              modelOverrideSource: "auto",
+              modelOverrideFallbackOriginProvider: "openai",
+              modelOverrideFallbackOriginModel: CLI_MODEL.id,
+            };
+          },
+        );
+      let successor: string | undefined;
+      let successorFile: string | undefined;
+      let compactCalls = 0;
+      let requestCalls = 0;
+      const storedIdsBeforeRetry: Array<string | undefined> = [];
+      registerContextEngineForOwner(
+        CONTEXT_RUNTIME_KIT_ENGINE_ID,
+        () => {
+          const engine = new LegacyContextEngine(cfg, workspaceDir);
+          Object.assign(engine.info, { ownsCompaction: true });
+          engine.compact = async ({ sessionFile }) => {
+            compactCalls++;
+            const manager = SessionManager.open(sessionFile);
+            manager.appendMessage({
+              role: "user",
+              content: "compacted original intent",
+              timestamp: Date.now(),
+            });
+            manager.appendMessage({
+              role: "assistant",
+              content: [{ type: "text", text: "context summary" }],
+              api: "openai-responses",
+              provider: "openai",
+              model: CLI_MODEL.id,
+              stopReason: "stop",
+              timestamp: Date.now(),
+              usage: {
+                input: 0,
+                output: 0,
+                cacheRead: 0,
+                cacheWrite: 0,
+                totalTokens: 0,
+                cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+              },
+            } as AssistantMessage);
+            successorFile = manager.createBranchedSession(manager.getLeafId()!);
+            if (!successorFile) {
+              throw new Error("Compaction fixture did not create a transcript");
+            }
+            successor = manager.getSessionId();
+            if (omittedFile) {
+              const ownedFile = path.join(path.dirname(sessionFile), `${successor}.jsonl`);
+              fs.renameSync(successorFile, ownedFile);
+              successorFile = ownedFile;
+            }
+            return {
+              ok: true,
+              compacted: true,
+              result: {
+                tokensBefore: 200_001,
+                tokensAfter: 10,
+                summary: "compaction fixture",
+                sessionId: successor,
+                ...(!omittedFile ? { sessionFile: successorFile } : {}),
+              },
+            };
+          };
+          return engine;
+        },
+        "core",
+        { allowSameOwnerRefresh: true },
+      );
+      const originalFetch = globalThis.fetch;
+      globalThis.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const request = input instanceof Request ? input : new Request(input, init);
+        if (request.url.includes("/responses")) {
+          requestCalls++;
+          const body = JSON.parse(await request.clone().text());
+          if (body.model === CLI_MODEL.id && (requestCalls === 1 || outerFallback))
+            return new Response(
+              `data: ${JSON.stringify({
+                type: "response.failed",
+                response: {
+                  status: "failed",
+                  error: {
+                    code: requestCalls === 1 ? "context_length_exceeded" : "model_not_found",
+                    message:
+                      requestCalls === 1 ? "maximum context length exceeded" : "model not found",
+                  },
+                },
+              })}\n\n`,
+              { status: 200, headers: { "content-type": "text/event-stream" } },
+            );
+          storedIdsBeforeRetry.push(
+            loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), { skipCache: true })[
+              sessionKey
+            ]?.sessionId,
+          );
+        }
+        return new Response(openAiResponsesTextSse(), {
+          status: 200,
+          headers: { "content-type": "text/event-stream" },
+        });
+      }) as typeof fetch;
+      const deliveryModule = pendingDelivery ? await import("./command/delivery.js") : undefined;
+      const deliverSpy = deliveryModule
+        ? vi
+            .spyOn(deliveryModule, "deliverAgentCommandResult")
+            .mockImplementation(async (params) => {
+              expect(
+                loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
+                  skipCache: true,
+                })[sessionKey],
+              ).toMatchObject({
+                sessionId: successor,
+                pendingFinalDelivery: true,
+                pendingFinalDeliveryText: "ok",
+              });
+              expect(params.pendingFinalDelivery?.expected.sessionId).toBe(successor);
+              if (pathKind === "pending-delivery-replaced") {
+                await updateSessionStoreAtomic(
+                  resolveStorePath(undefined, { agentId: "main" }),
+                  (sessions) => {
+                    Object.assign(sessions[sessionKey], {
+                      pendingFinalDelivery: true,
+                      pendingFinalDeliveryText: "newer pending answer",
+                      pendingFinalDeliveryRunId: "newer-producer-run",
+                      pendingFinalDeliveryIntentId: "newer-intent",
+                      pendingFinalDeliveryCreatedAt: Date.now(),
+                    });
+                  },
+                );
+              }
+              if (pathKind === "pending-delivery-settled") {
+                const { bindPendingFinalDeliveryIntent, settlePendingFinalDeliveryIntent } =
+                  await import("./recovery-authority/final-delivery-session.js");
+                const binding = params.pendingFinalDelivery;
+                if (!binding) throw new Error("pending delivery binding missing");
+                const intentId = "completed-intent";
+                await bindPendingFinalDeliveryIntent({
+                  ...binding,
+                  intent: {
+                    id: intentId,
+                    channel: "telegram",
+                    to: "fixture-target",
+                    queuePolicy: "required",
+                  },
+                });
+                await settlePendingFinalDeliveryIntent({
+                  ...binding,
+                  expected: { ...binding.expected, pendingFinalDeliveryIntentId: intentId },
+                });
+              }
+              return { deliverySucceeded: true } as never;
+            })
+        : undefined;
+      try {
+        await agentCommand({
+          message: "original request",
+          sessionKey,
+          sessionId: "compaction-predecessor",
+          ...(!outerFallback && !primaryProbe ? { provider: "openai", model: CLI_MODEL.id } : {}),
+          agentId: "main",
+          runId: "compaction-fixture-run",
+          deliver: pendingDelivery,
+          ...(pendingDelivery ? { channel: "telegram", to: "fixture-target" } : {}),
+          ...(subagent ? { sessionEffects: "visible" } : {}),
+          json: true,
+          timeout: "20",
+        } as never);
+        expect(compactCalls).toBe(1);
+        expect(requestCalls).toBe(outerFallback ? 3 : 2);
+        expect(storedIdsBeforeRetry).toEqual([
+          authority && !subagent ? successor : "compaction-predecessor",
+        ]);
+        expect(
+          loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), { skipCache: true })[
+            sessionKey
+          ],
+        ).toMatchObject({
+          sessionId: successor,
+          sessionFile: successorFile,
+          ...(authority && !subagent
+            ? {
+                status: "done",
+                lifecycleRunId: "compaction-fixture-run",
+                recoveryOutput: {
+                  runId: "compaction-fixture-run",
+                  effect: "unknown",
+                  visibleOutputObserved: true,
+                },
+              }
+            : {}),
+        });
+        if (pendingDelivery) {
+          expect(deliverSpy).toHaveBeenCalledOnce();
+          const completed = loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
+            skipCache: true,
+          })[sessionKey];
+          if (pathKind === "pending-delivery-replaced") {
+            expect(completed).toMatchObject({
+              pendingFinalDelivery: true,
+              pendingFinalDeliveryText: "newer pending answer",
+              pendingFinalDeliveryRunId: "newer-producer-run",
+              pendingFinalDeliveryIntentId: "newer-intent",
+            });
+          } else {
+            expect(completed.pendingFinalDelivery).toBeUndefined();
+          }
+          expect(completed.restartRecoveryDeliveryContext).toBeUndefined();
+        }
+        if (primaryProbe) {
+          const completed = loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
+            skipCache: true,
+          })[sessionKey];
+          expect(completed.modelOverride).toBeUndefined();
+          expect(completed.modelOverrideFallbackOriginModel).toBeUndefined();
+        }
+      } finally {
+        deliverSpy?.mockRestore();
+        globalThis.fetch = originalFetch;
+        registerContextEngineForOwner(CONTEXT_RUNTIME_KIT_ENGINE_ID, originalFactory, "core", {
+          allowSameOwnerRefresh: true,
+        });
+      }
+    },
+    90_000,
+  );
+
+  it("adopts the committed identity returned by post-turn CLI compaction", async () => {
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    const root = tempRoots.at(-1)!;
+    const workspaceDir = path.join(root, "workspace");
+    fs.mkdirSync(workspaceDir, { recursive: true });
+    const cfg = cliConfig(workspaceDir);
+    const agentDir = resolveDefaultAgentDir(cfg as never);
+    fs.mkdirSync(agentDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(agentDir, "models.json"),
+      JSON.stringify({ providers: cfg.models.providers }),
+    );
+    const configPath = path.join(root, "openclaw.json");
+    fs.writeFileSync(configPath, JSON.stringify(cfg));
+    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    const sessionKey = "agent:main:post-turn-compaction";
+    const storePath = resolveStorePath(undefined, { agentId: "main" });
+    let successor: string | undefined;
+    let successorFile: string | undefined;
+    const terminalIds: Array<string | undefined> = [];
+    const unsubscribe = onAgentEvent((event) => {
+      if (
+        event.runId === "post-turn-run" &&
+        event.stream === "lifecycle" &&
+        event.data.phase === "end"
+      )
+        terminalIds.push(event.sessionId);
+    });
+    const module = await import("./command/cli-compaction.js");
+    const compact = vi
+      .spyOn(module, "runCliTurnCompactionLifecycle")
+      .mockImplementation(async () => {
+        const current = loadSessionStore(storePath, { skipCache: true })[sessionKey];
+        const manager = SessionManager.open(current.sessionFile!);
+        successorFile = manager.createBranchedSession(manager.getLeafId()!);
+        successor = manager.getSessionId();
+        await updateSessionStoreAtomic(storePath, (sessions) => {
+          sessions[sessionKey] = mergeSessionEntryWithPolicy(
+            sessions[sessionKey],
+            { sessionId: successor!, sessionFile: successorFile },
+            { identityTransition: "compaction" },
+          );
+        });
+        return loadSessionStore(storePath, { skipCache: true })[sessionKey];
+      });
+    const transport = installTransportSpy();
     try {
       await agentCommand({
-        message: "hello",
-        sessionKey: "agent:main:rc02-cli",
-        sessionId: "rc02-cli-session",
-        agentId: "main",
-        provider: "openai",
-        model: "gpt-rc02-cli",
+        message: "post-turn request",
+        sessionKey,
+        sessionId: "post-turn-predecessor",
+        runId: "post-turn-run",
         deliver: false,
         json: true,
-      } as never);
+      });
+      expect(compact).toHaveBeenCalledOnce();
+      expect(terminalIds).toEqual([successor]);
+      expect(loadSessionStore(storePath, { skipCache: true })[sessionKey]).toMatchObject({
+        sessionId: successor,
+        sessionFile: successorFile,
+        status: "done",
+      });
     } finally {
-      spy.restore();
+      transport.restore();
+      compact.mockRestore();
+      unsubscribe();
     }
-    const wire = expectDualReceiptsForSurface("cli-agent-command", spy.captured);
-    expect(wire.map((row) => row.adapter_id)).toEqual(wire.map(() => "openai-responses"));
   }, 90_000);
+
+  it.each(["legacy", "authority"])(
+    "cli agentCommand entry: real model call and durable completion in %s mode",
+    async (mode) => {
+      vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", mode);
+      const root = tempRoots.at(-1)!;
+      const workspaceDir = path.join(root, "workspace");
+      fs.mkdirSync(workspaceDir, { recursive: true });
+      const cfg = cliConfig(workspaceDir);
+      const agentDir = resolveDefaultAgentDir(cfg as never);
+      fs.mkdirSync(agentDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(agentDir, "models.json"),
+        `${JSON.stringify(
+          {
+            providers: {
+              openai: {
+                baseUrl: "http://127.0.0.1:40123/v1",
+                api: "openai-responses",
+                apiKey: "fixture-key",
+                models: [CLI_MODEL],
+              },
+            },
+          },
+          null,
+          2,
+        )}\n`,
+        "utf8",
+      );
+      // agentCommand reads the runtime config from the config path.
+      const configPath = path.join(root, "openclaw.json");
+      fs.writeFileSync(configPath, `${JSON.stringify(cfg, null, 2)}\n`, "utf8");
+      process.env.OPENCLAW_CONFIG_PATH = configPath;
+
+      const spy = installTransportSpy();
+      try {
+        await agentCommand({
+          message: "hello",
+          sessionKey: "agent:main:rc02-cli",
+          sessionId: "rc02-cli-session",
+          runId: "rc02-cli-fixture-run",
+          agentId: "main",
+          provider: "openai",
+          model: "gpt-rc02-cli",
+          deliver: false,
+          json: true,
+        } as never);
+      } finally {
+        spy.restore();
+      }
+      const wire = expectDualReceiptsForSurface("cli-agent-command", spy.captured);
+      expect(wire.map((row) => row.adapter_id)).toEqual(wire.map(() => "openai-responses"));
+      if (mode === "authority") {
+        const actual = loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
+          skipCache: true,
+        })["agent:main:rc02-cli"];
+        expect(
+          actual,
+          JSON.stringify({
+            runId: actual.lifecycleRunId,
+            status: actual.status,
+            endedAt: actual.endedAt,
+            output: actual.recoveryOutput,
+          }),
+        ).toMatchObject({
+          lifecycleRunId: "rc02-cli-fixture-run",
+          status: "done",
+          abortedLastRun: false,
+          recoveryOutput: {
+            runId: "rc02-cli-fixture-run",
+            effect: "unknown",
+            visibleOutputObserved: true,
+          },
+        });
+      }
+    },
+    90_000,
+  );
 });

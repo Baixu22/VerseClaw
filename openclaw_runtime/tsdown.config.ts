@@ -1,4 +1,3 @@
-// tsdown config defines package build entrypoints and output options.
 import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type UserConfig } from "tsdown";
@@ -12,7 +11,7 @@ import {
   publicPluginSdkEntrypoints,
 } from "./scripts/lib/plugin-sdk-entries.mjs";
 import { tsdownPackageOutputRoot } from "./scripts/lib/tsdown-output-roots.mjs";
-
+import { fsSafeExports } from "./scripts/lib/fs-safe-build-resolver.mjs";
 type InputOptionsFactory = Extract<
   NonNullable<UserConfig["inputOptions"]>,
   (...args: never[]) => unknown
@@ -141,6 +140,7 @@ function nodeBuildConfig(config: UserConfig): UserConfig {
     ...config,
     env,
     fixedExtension: false,
+    plugins: [fsSafeExports, ...(config.plugins ?? [])],
     platform: "node",
     sourcemap: OUTPUT_SOURCE_MAPS,
     inputOptions: buildInputOptions,
@@ -152,6 +152,7 @@ function nodeWorkspacePackageBuildConfig(config: UserConfig): UserConfig {
     ...config,
     env,
     format: "esm",
+    plugins: [fsSafeExports, ...(config.plugins ?? [])],
     platform: "node",
     sourcemap: OUTPUT_SOURCE_MAPS,
     inputOptions: buildInputOptions,
@@ -810,8 +811,7 @@ const configurations = [
   }),
 ];
 
-// The wrapper sets this only for one isolated build process in serial mode.
-// The unified runtime entry remains one configuration and one module graph.
+// Serial mode selects one configuration without splitting its module graph.
 const selectedConfig = process.env.OPENCLAW_TSDOWN_CONFIG_INDEX;
 if (selectedConfig !== undefined && (!/^\d+$/.test(selectedConfig) || Number(selectedConfig) >= configurations.length)) {
   throw new Error("OPENCLAW_TSDOWN_CONFIG_INDEX does not identify a build configuration");

@@ -1,0 +1,372 @@
+{
+  "schema": "G3StartupLoadingReport/v1",
+  "actor": "codex/g3-integration-r43",
+  "driven_by": "agent",
+  "sourceCommit": "d6b4dfc20e0ce31b4fa22e60d1d147f86778e0cd",
+  "runtimeSourceCommit": "58064038f631582adc15d0dfaf6ae4aa12723052",
+  "baselineCommit": "6b08b87822545e35221526c59a6be346ba47d4ef",
+  "result": "FIXES_VERIFIED_PERFORMANCE_TARGETS_REMAIN",
+  "gaStatus": "NO_GO",
+  "changes": [
+    "Load cron, MCP cleanup and provider rewarm execution only on actual configuration reloads.",
+    "Let delivery owners select retained work before loading send/reply execution.",
+    "Reuse canonical agent store discovery; split recovery owner/budget regression suites without dropping assertions.",
+    "Hash every desktop output with at most 16 concurrent file reads; share duplicate physical reads only within one snapshot."
+  ],
+  "measurements": {
+    "reloadImport": {
+      "beforeMs": 3132.567799999999,
+      "afterMs": 101.47170000000006,
+      "beforeExtraModules": 605,
+      "afterExtraModules": 59,
+      "method": "isolated Node imports of real compiled chunks; no claim of full recovery latency"
+    },
+    "artifactHashing": {
+      "before": {
+        "sourceMs": 157.9307,
+        "outputsMs": 1354.5076999999999,
+        "outputs": 2296,
+        "distinctPaths": 1915
+      },
+      "after": {
+        "outputs": 2296,
+        "identical": true,
+        "durationMs": 193.81220000000002
+      },
+      "allOutputRecordsIdentical": true
+    },
+    "initialDesktopBuild": {
+      "actor": "codex/g3-integration-r43",
+      "source": "6b08b87822545e35221526c59a6be346ba47d4ef",
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "execution": "development measurement in G3 worktree",
+      "startedAt": "2026-11-25T08:57:23.6622820Z",
+      "withinLimit": false,
+      "limitMs": 58000,
+      "durationMs": 66830,
+      "driven_by": "agent"
+    },
+    "initialRepeatedRestartMs": 42935,
+    "finalDevelopmentWindows": [
+      {
+        "windowId": "child-created-before-parent-advance-kill",
+        "recoveryLatencyMs": 7140,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0
+      },
+      {
+        "windowId": "effect-before-receipt-kill",
+        "recoveryLatencyMs": 6707,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0
+      },
+      {
+        "windowId": "intent-after-persist-kill",
+        "recoveryLatencyMs": 12544,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0
+      },
+      {
+        "windowId": "repeated-restart",
+        "recoveryLatencyMs": 24179,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0
+      },
+      {
+        "windowId": "store-write-failure",
+        "recoveryLatencyMs": 87,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0
+      }
+    ],
+    "latestDeepTestSteps": [
+      {
+        "id": "typecheck",
+        "ok": true,
+        "durationMs": 47738
+      },
+      {
+        "id": "contract",
+        "ok": true,
+        "durationMs": 4092
+      },
+      {
+        "id": "i18n",
+        "ok": true,
+        "durationMs": 3704
+      },
+      {
+        "id": "workbench",
+        "ok": true,
+        "durationMs": 950
+      },
+      {
+        "id": "harness-agent-dev",
+        "ok": true,
+        "durationMs": 6968
+      },
+      {
+        "id": "vitest-agent-dev",
+        "ok": true,
+        "durationMs": 19727
+      },
+      {
+        "id": "comms-replay",
+        "ok": true,
+        "durationMs": 955
+      },
+      {
+        "id": "comms-compare",
+        "ok": true,
+        "durationMs": 849
+      },
+      {
+        "id": "e2e-build",
+        "ok": true,
+        "durationMs": 75012
+      },
+      {
+        "id": "playwright-agent-dev",
+        "ok": true,
+        "durationMs": 29221
+      },
+      {
+        "id": "workbench-refresh",
+        "ok": true,
+        "durationMs": 698
+      }
+    ]
+  },
+  "validation": {
+    "runtimeTests": {
+      "files": 16,
+      "passed": 199,
+      "failed": 0
+    },
+    "provenanceTests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "runtimeTypesExitCode": 0,
+    "strictLintExitCode": 0,
+    "fullRuntimeSourceCheckExitCode": 0,
+    "runtimeBuildAndStartupSmoke": "passed",
+    "comms": "passed",
+    "targetHarness": "passed_with_user_AGENTS_residual",
+    "windows": {
+      "count": 5,
+      "repeatsPerWindow": 1,
+      "sourceMutationGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n",
+          "trackedFilesSha256": "64acd095fe2cc609c9047cc00b700993e31faaacd1f06437360f0f2b69208682",
+          "diffSha256": "16e4e87ad42102ae2f52bee91464bb39b046313c8751841b791b9b62b380de21"
+        },
+        "after": {
+          "status": " M AGENTS.md\n",
+          "trackedFilesSha256": "64acd095fe2cc609c9047cc00b700993e31faaacd1f06437360f0f2b69208682",
+          "diffSha256": "16e4e87ad42102ae2f52bee91464bb39b046313c8751841b791b9b62b380de21"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    },
+    "agentDev": {
+      "functionalSuccess": true,
+      "unitTests": 188,
+      "electronTests": 4,
+      "decision": {
+        "status": "blocked",
+        "reason": "e2e-build, typecheck, contract, i18n exceeded hard performance limits.",
+        "dailyLoopReady": false,
+        "releaseReady": false,
+        "fullGateComplete": true,
+        "budgetStatus": "limit",
+        "fastPathModes": [],
+        "requiredFullGates": [],
+        "watchSteps": [
+          "vitest-agent-dev",
+          "playwright-agent-dev",
+          "harness-agent-dev"
+        ],
+        "limitSteps": [
+          "e2e-build",
+          "typecheck",
+          "contract",
+          "i18n"
+        ]
+      },
+      "fullStages": [
+        {
+          "name": "fresh2-agent-dev",
+          "command": [
+            "node",
+            "scripts/agent-dev-deep-test.mjs"
+          ],
+          "exitCode": 0,
+          "durationMs": 190149,
+          "log": "D:\\tmp\\g3-integration-20261125-r43\\fresh2-agent-dev.log",
+          "sha256": "d50077ce672505d3ce5fe1cccfea6c0aedb30e6d264dbc09c18e73e887c14be1"
+        },
+        {
+          "name": "fresh2-agent-dev-audit",
+          "command": [
+            "node",
+            "scripts/agent-dev-audit.mjs"
+          ],
+          "exitCode": 1,
+          "durationMs": 2826,
+          "log": "D:\\tmp\\g3-integration-20261125-r43\\fresh2-agent-dev-audit.log",
+          "sha256": "14c408a5b87d3dfda3342b1d62acfe171131715952fdc50e08515d5a2bd9e0ac"
+        },
+        {
+          "name": "fresh2-harness-ci",
+          "command": [
+            "cmd.exe",
+            "/d",
+            "/s",
+            "/c",
+            "pnpm run harness:ci"
+          ],
+          "exitCode": 1,
+          "durationMs": 21609,
+          "log": "D:\\tmp\\g3-integration-20261125-r43\\fresh2-harness-ci.log",
+          "sha256": "45e38d175a185c4be968ef786d7e27026e54282635e018d960b96f59368b6ae2"
+        }
+      ],
+      "disqualifiers": [
+        {
+          "dimension": "performance-discipline",
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: e2e-build, typecheck, contract, i18n exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:e2e-build",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "e2e-build exceeded hard limit: 75012ms > 58000ms.",
+          "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 47738ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:contract",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "contract exceeded hard limit: 4092ms > 3000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:i18n",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "i18n exceeded hard limit: 3704ms > 3000ms.",
+          "recommendation": "Keep literal namespace scans bounded to source and locale directories."
+        }
+      ]
+    }
+  },
+  "retainedFailures": [
+    "Prior 58.122s build and 61.587s Agent Dev Electron timing retained.",
+    "Latest full run: 75.012s build, 47.738s typecheck, 4.092s contract and 3.704s i18n exceed original limits; all functional steps passed.",
+    "restart-fixed-r4 completed its scenario but source guard failed because requiredTests metadata changed during the run; excluded from final accepted batch.",
+    "Initial test extraction failed on hoisted export and re-exported imported values; corrected, all 199 final cases passed.",
+    "Initial source LOC check failed; final full source check passed with the original baseline unchanged."
+  ],
+  "pending": [
+    "Continuous-three-restart sample is 24.179s against the frozen 15s tail target.",
+    "Each final development fault window has one sample; frozen validation requires three per window, both arms, second legacy baseline and at least 30 live-provider pairs.",
+    "Full root/runtime/package release gates and independent final candidate review remain."
+  ],
+  "sourceFiles": [
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts",
+      "gitBlobSha256": "430f09a1adacad73e0a674c78b98358465cf5e46a3139efbfe3b366491648d88",
+      "workingSha256": "430f09a1adacad73e0a674c78b98358465cf5e46a3139efbfe3b366491648d88"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.owners.test.ts",
+      "gitBlobSha256": "b8586badf3511603ebfe81a6d70723929593e21b2f70778e89a87fe4881e771e",
+      "workingSha256": "b8586badf3511603ebfe81a6d70723929593e21b2f70778e89a87fe4881e771e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+      "gitBlobSha256": "89a72d7cdb87675e6647db74a42f855fc1484480c3083418bc377029707c9645",
+      "workingSha256": "89a72d7cdb87675e6647db74a42f855fc1484480c3083418bc377029707c9645"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+      "gitBlobSha256": "b910fb1b8e2504c366074d5025f657e8ef30e2e6e251f9c3cb2d66da3b3cdb85",
+      "workingSha256": "b910fb1b8e2504c366074d5025f657e8ef30e2e6e251f9c3cb2d66da3b3cdb85"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-orphan-recovery.budget.test.ts",
+      "gitBlobSha256": "8c9872cf3aecd4be574a357f0243be2720172d4ad57e432a7ed9f143be0b668f",
+      "workingSha256": "8c9872cf3aecd4be574a357f0243be2720172d4ad57e432a7ed9f143be0b668f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-orphan-recovery.test-support.ts",
+      "gitBlobSha256": "013dc769b9e954756f4c657bd5fe8045efc18d3b36aba5ea79f42d077df6a72e",
+      "workingSha256": "013dc769b9e954756f4c657bd5fe8045efc18d3b36aba5ea79f42d077df6a72e"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-reload-handlers.lazy.test.ts",
+      "gitBlobSha256": "f141008089f0ad54d62cb9f7efa4c76fc3782c3685eb01bb69bfd36d3b55af52",
+      "workingSha256": "f141008089f0ad54d62cb9f7efa4c76fc3782c3685eb01bb69bfd36d3b55af52"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-reload-handlers.ts",
+      "gitBlobSha256": "08de242c287da1d65a47d7a80b9761cac7bd9af589d374520567546d43a8641a",
+      "workingSha256": "08de242c287da1d65a47d7a80b9761cac7bd9af589d374520567546d43a8641a"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts",
+      "gitBlobSha256": "6e7949b39e67782aa8915d752e95c942a34b6b220d371bd5d07cb4e44cc7a06b",
+      "workingSha256": "6e7949b39e67782aa8915d752e95c942a34b6b220d371bd5d07cb4e44cc7a06b"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-runtime-services.ts",
+      "gitBlobSha256": "c6fcbda949a40d9e31ae1e3f2ae7bd58aabfd15fd737696071f3d36b8c3ff3f5",
+      "workingSha256": "c6fcbda949a40d9e31ae1e3f2ae7bd58aabfd15fd737696071f3d36b8c3ff3f5"
+    },
+    {
+      "path": "scripts/lib/versebrowser-build-provenance.mjs",
+      "gitBlobSha256": "e135b34daf9679177dacbf1034a39bfd0da2150eba4c2173d412e088efbd0786",
+      "workingSha256": "e135b34daf9679177dacbf1034a39bfd0da2150eba4c2173d412e088efbd0786"
+    },
+    {
+      "path": "scripts/versebrowser-n9-stability-probe.test.mjs",
+      "gitBlobSha256": "0599769f9838a4433168222a57ff66e15c32cb7b44d025957b6b7c02269decf0",
+      "workingSha256": "0599769f9838a4433168222a57ff66e15c32cb7b44d025957b6b7c02269decf0"
+    }
+  ],
+  "archive": {
+    "path": "evidence.json.gz",
+    "sha256": "82aa9f7834d76c27e0dee66546c73280c0309e07f2fa6f162af80bc0b3d2fe1a",
+    "fileCount": 213
+  },
+  "credentialValueHits": 0
+}

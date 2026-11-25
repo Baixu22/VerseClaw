@@ -16,7 +16,9 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { freemem } from "node:os";
 import { gzipSync } from "node:zlib";
+import { createRequire } from "node:module";
 import { buildRecoveryContractManifest } from "../shared/recovery-contract-eval.ts";
+import { assertRecoveryBuildInputs, recoveryAcceptancePassed } from "./recovery-acceptance-checks.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const arg = (key, fallback) => {
@@ -30,6 +32,7 @@ const git = (...args) =>
     .toString()
     .trim();
 if (git("status", "--porcelain")) throw new Error("freeze a clean candidate before sampling");
+assertRecoveryBuildInputs(root, createRequire(import.meta.url)("electron"));
 mkdirSync(out, { recursive: true });
 const freezeFile = join(out, "candidate.json");
 const candidate = {
@@ -125,6 +128,8 @@ for (const arm of ["candidate", "legacy"])
           "test",
           "tests/e2e/recovery-longsession-eval.spec.ts",
           "--reporter=list",
+          "--retries=0",
+          `--output=${join(runDir, "test-results")}`,
         ],
         {
           RECOVERY_ARM: arm,
@@ -207,13 +212,21 @@ for (const arm of ["legacy", "candidate"])
     "--output",
     join(out, arm + "-report.json"),
   ]);
-console.log(
-  JSON.stringify({
+const candidateReport = JSON.parse(readFileSync(join(out, "candidate-report.json"), "utf8"));
+const legacyReport = JSON.parse(readFileSync(join(out, "legacy-report.json"), "utf8"));
+const passed = recoveryAcceptancePassed({ windowSamples: windows.length, qualitySamples: quality.length, candidateReport, legacyReport });
+const summary = {
+    schema: "RecoveryAcceptance/v1",
+    status: passed ? "PASS" : "FAIL",
     candidate,
     windowSamples: windows.length,
     qualitySamples: quality.length,
+    candidateEvaluation: candidateReport.evaluation,
+    legacyStatus: legacyReport.evaluation.status,
     bundleSha256: sha(readFileSync(bundlePath)),
     out,
-  }),
-);
-process.exitCode = windows.length === 30 && quality.length === 60 ? 0 : 1;
+    driven_by: "agent", actor: "recovery-acceptance", realHumanEvidence: false,
+};
+writeFileSync(join(out, "acceptance.json"), JSON.stringify(summary, null, 2) + "\n");
+console.log(JSON.stringify(summary));
+process.exitCode = passed ? 0 : 1;

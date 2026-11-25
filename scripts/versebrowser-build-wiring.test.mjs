@@ -5,12 +5,14 @@ import { test } from 'node:test';
 const { scripts } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
 test('normal install, dev and build compile the embedded package before consuming dist', () => {
-  assert.equal(scripts['versebrowser:build'], 'pnpm --filter @verse-claw/versebrowser build');
+  assert.equal(scripts['versebrowser:build'], 'node scripts/build-versebrowser.mjs');
+  const embedded = JSON.parse(readFileSync(new URL('../packages/versebrowser/package.json', import.meta.url), 'utf8'));
+  assert.equal(embedded.scripts.build, 'node ../../scripts/build-versebrowser.mjs');
   assert.ok(scripts.postinstall.startsWith('node scripts/assert-pnpm-toolchain.mjs && pnpm run versebrowser:build && '));
   for (const entry of ['predev', 'predev:mock']) {
     assert.ok(scripts[entry].startsWith('pnpm run versebrowser:build && '), entry);
   }
-  assert.ok(scripts['prebuild:vite'].startsWith('node scripts/versebrowser-build-provenance.mjs --capture && pnpm run versebrowser:build && '));
+  assert.ok(scripts['prebuild:vite'].startsWith('node scripts/versebrowser-build-provenance.mjs --capture && node scripts/generate-ext-bridge.mjs && '));
   assert.equal(scripts['postbuild:vite'], 'node scripts/versebrowser-build-provenance.mjs');
 });
 

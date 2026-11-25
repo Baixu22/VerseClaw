@@ -3,7 +3,7 @@ import fs from "node:fs";
 import { createRequire } from "node:module";
 import Module from "node:module";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const nodeRequire = createRequire(import.meta.url);
 type ResolveFilename = (
@@ -70,6 +70,8 @@ export function tryNativeRequireJavaScriptModule(
   if (process.platform === "win32" && options.allowWindows !== true) {
     return { ok: false };
   }
+  // ESM-facing callers use file URLs on Windows; require() expects a native path.
+  if (modulePath.startsWith("file:")) modulePath = fileURLToPath(modulePath);
   if (!isJavaScriptModulePath(modulePath)) {
     return { ok: false };
   }
@@ -95,6 +97,7 @@ export function clearNativeRequireJavaScriptModuleCache(
   modulePath: string,
   options: { dependencyRoot?: string } = {},
 ): void {
+  if (modulePath.startsWith("file:")) modulePath = fileURLToPath(modulePath);
   if (!isJavaScriptModulePath(modulePath)) {
     return;
   }

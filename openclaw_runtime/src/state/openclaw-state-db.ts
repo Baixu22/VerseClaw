@@ -127,7 +127,13 @@ function ensureOpenClawStatePermissions(pathname: string, env: NodeJS.ProcessEnv
   for (const suffix of OPENCLAW_STATE_SIDECAR_SUFFIXES) {
     const candidate = `${pathname}${suffix}`;
     if (existsSync(candidate)) {
-      chmodSync(candidate, OPENCLAW_STATE_FILE_MODE);
+      try {
+        chmodSync(candidate, OPENCLAW_STATE_FILE_MODE);
+      } catch (error) {
+        // Another SQLite connection may remove a WAL/SHM file after the existence check.
+        if (suffix && (error as NodeJS.ErrnoException)?.code === "ENOENT") continue;
+        throw error;
+      }
     }
   }
 }
@@ -599,14 +605,16 @@ function backfillDeliveryQueueEntriesFromEntryJson(db: DatabaseSync): void {
             recovery_state = COALESCE(?, recovery_state),
             platform_send_started_at = COALESCE(?, platform_send_started_at)
       WHERE queue_name = ?
-        AND id = ?`,
+        AND id = ?
+        AND entry_json = ?`,
   );
   for (const row of rows) {
     const entry = parseJsonRecord(row.entry_json);
     if (!entry) {
       continue;
     }
-    // Queue metadata is denormalized for recovery queries but entry_json remains source of truth.
+    // Bind the backfill to its snapshot so a concurrent owner cannot lose a
+    // newly committed budget or claim to metadata from an older entry_json.
     const session = recordField(entry, "session");
     const route = recordField(entry, "route");
     const deliveryContext = recordField(entry, "deliveryContext");
@@ -630,11 +638,13 @@ function backfillDeliveryQueueEntriesFromEntryJson(db: DatabaseSync): void {
       numberField(entry, "platformSendStartedAt"),
       row.queue_name,
       row.id,
+      row.entry_json,
     );
   }
 }
 
 function ensureAdditiveStateColumns(db: DatabaseSync): void {
+  ensureColumn(db, "acp_sessions", "recovery_json TEXT");
   ensureColumn(db, "node_pairing_pending", "client_id TEXT");
   ensureColumn(db, "node_pairing_pending", "client_mode TEXT");
   ensureColumn(db, "node_pairing_paired", "client_id TEXT");

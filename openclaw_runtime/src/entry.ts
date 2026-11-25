@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import process from "node:process";
 import { parseArgs } from "node:util";
+import { flushRuntimeCompileCache } from "./infra/runtime-compile-cache.js";
 import { VERSION } from "./version.js";
 
 const help = `Usage: openclaw <command> [options]
@@ -57,7 +58,8 @@ if (args.length === 1 && ["--version", "-V"].includes(args[0])) {
     if (!["loopback", "lan", "tailnet", "auto", "custom"].includes(bind)) {
       throw new Error("Invalid Gateway bind mode");
     }
-    const deferStartupSidecars = values["defer-startup-sidecars"] ??
+    const deferStartupSidecars =
+      values["defer-startup-sidecars"] ??
       /^(1|true|yes|on)$/i.test(process.env.OPENCLAW_DEFER_STARTUP_SIDECARS ?? "");
     if (token) {
       process.env.OPENCLAW_GATEWAY_TOKEN = token;
@@ -68,6 +70,8 @@ if (args.length === 1 && ["--version", "-V"].includes(args[0])) {
       auth: token ? { token } : undefined,
       deferStartupSidecars,
     });
+    // Persist startup bytecode for restart; the attempt barrel flushes code loaded later.
+    flushRuntimeCompileCache();
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;

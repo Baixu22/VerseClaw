@@ -156,7 +156,7 @@ export type SessionPluginNextTurnInjection = {
 export type SubagentRecoveryState = {
   /** Gated owner decision and attempts, persisted before the recovery RPC. */
   authority?: RecoveryOwnerAdmission;
-  /** Consecutive accepted automatic orphan-recovery resumes in the rapid re-wedge window. */
+  /** Consumed authority-chain attempts, or legacy resumes in the rapid re-wedge window. */
   automaticAttempts?: number;
   /** Timestamp (ms) of the latest accepted automatic orphan-recovery resume. */
   lastAttemptAt?: number;
@@ -409,7 +409,15 @@ export type SessionEntry = {
     boundary: string;
     runId: string;
     attempts: number;
-    state: "admitted" | "accepted" | "wedged";
+    state: "admitted" | "accepted" | "reconcile" | "wedged";
+    authority?: RecoveryOwnerAdmission;
+  };
+  /** Write-ahead public-output boundary owned by the current session run. */
+  recoveryOutput?: {
+    sessionId: string;
+    runId: string;
+    effect: "not_applied" | "unknown";
+    visibleOutputObserved?: boolean;
   };
   /**
    * Whether totalTokens reflects a fresh context snapshot for the latest run.
@@ -630,6 +638,7 @@ export function mergeSessionEntryWithPolicy(
     if (options?.identityTransition !== "compaction") {
       delete next.subagentRecovery;
       delete next.restartRecovery;
+      delete next.recoveryOutput;
     }
     // Session id rotations should move transcript paths when they match known reset/fork shapes.
     const patchHasSessionFile = Object.hasOwn(patch, "sessionFile");

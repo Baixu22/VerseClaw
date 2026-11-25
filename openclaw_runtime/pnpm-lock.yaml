@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@openclaw/fs-safe@0.3.0': 2b786baf32d269048dfb41cf315839272f2a50afeb711248f0847e6d71a6f440
+
 importers:
 
   .:
@@ -43,7 +46,7 @@ importers:
         version: 0.6.0
       '@openclaw/fs-safe':
         specifier: 0.3.0
-        version: 0.3.0
+        version: 0.3.0(patch_hash=2b786baf32d269048dfb41cf315839272f2a50afeb711248f0847e6d71a6f440)
       '@openclaw/proxyline':
         specifier: 0.3.3
         version: 0.3.3(undici@8.3.0)
@@ -9767,7 +9770,7 @@ snapshots:
   '@openai/codex@0.137.0-win32-x64':
     optional: true
 
-  '@openclaw/fs-safe@0.3.0':
+  '@openclaw/fs-safe@0.3.0(patch_hash=2b786baf32d269048dfb41cf315839272f2a50afeb711248f0847e6d71a6f440)':
     optionalDependencies:
       jszip: 3.10.1
       tar: 7.5.13
@@ -13396,7 +13399,7 @@ snapshots:
       '@mistralai/mistralai': 2.2.5
       '@modelcontextprotocol/sdk': 1.29.0(zod@4.4.3)
       '@mozilla/readability': 0.6.0
-      '@openclaw/fs-safe': 0.3.0
+      '@openclaw/fs-safe': 0.3.0(patch_hash=2b786baf32d269048dfb41cf315839272f2a50afeb711248f0847e6d71a6f440)
       '@openclaw/proxyline': 0.3.3(undici@8.3.0)
       '@silvia-odwyer/photon-node': 0.3.4
       chalk: 5.6.2

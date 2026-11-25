@@ -1,0 +1,13 @@
+{
+  "schema": "G3DevelopmentEvidenceBinding/v1",
+  "actor": "codex/g3-low-cost-r18",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "codeCommit": "eb63f45e9207459460b5ab49418739e134308881",
+  "workingSourceUnchanged": true,
+  "sourceGitCanonicalLFMatches": 15,
+  "archiveFilesVerified": 249,
+  "archiveSha256": "d48484df167216c43afe04b0e9c8dfb7e8b194da5ccf6ce78ac51dbc2f31d542",
+  "checksumPolicy": "CRLF normalized to LF for text; exact gzip and SHA256SUMS Git bytes",
+  "gaDecision": "NO_GO"
+}

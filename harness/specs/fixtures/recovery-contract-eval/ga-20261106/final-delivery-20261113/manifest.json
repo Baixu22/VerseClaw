@@ -1,0 +1,1025 @@
+{
+  "schema": "RecoveryDeliveryAcceptance/v3",
+  "driven_by": "agent",
+  "actor": "codex-recovery-ga-relay-20261113-01a1d4d8",
+  "realHumanEvidence": false,
+  "createdAt": "2026-11-13T19:36:10.288902+00:00",
+  "node": "TF-0814",
+  "decision": {
+    "status": "PASS",
+    "gaStatus": "NO_GO"
+  },
+  "candidate": {
+    "commit": "aacbe24397c6fd8d7b9d67f0147932de25ab8a72",
+    "tree": "3fb56ec1b61b0564ba33d575a6e083573745e18c",
+    "dirty": false
+  },
+  "source": {
+    "schema": "RecoveryDeliverySource/v2",
+    "driven_by": "agent",
+    "actor": "codex-recovery-ga-relay-20261113-01a1d4d8",
+    "realHumanEvidence": false,
+    "baseCommit": "6fdfd94497a5cf54c7afed799f03c834e49b140d",
+    "frozenAt": "2026-11-13T19:00:00.294Z",
+    "parentSnapshot": {
+      "path": "D:\\tmp\\recovery-ga-20261113-01a1d350\\r5-red-source.json",
+      "sha256": "acbdf8752b40d7fb9cb47e874347fc2d3518e4e125bf1591fbd27236ec4e49c8"
+    },
+    "files": [
+      {
+        "path": "README.ja-JP.md",
+        "sha256": "5bd8d85716fc9d26feff1554c00a31322028f8c0e4d5f89ef580e8e4645e7ed3"
+      },
+      {
+        "path": "README.md",
+        "sha256": "cc68f8b8a4b0652cfe92e34a91d8f32d0679dbb2fde84e550d810894d0bf1844"
+      },
+      {
+        "path": "README.ru-RU.md",
+        "sha256": "992e09a75f3dedd2058601b3210f404dda3146a6bd9809dc7eedfb1158de8ab0"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "sha256": "a5b164c75ce09f4485bc6cd2b437c6f4c7363d643967a4f4b272e6941c028102"
+      },
+      {
+        "path": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+        "sha256": "952c8b4fb6aa25f86409c97008ab89a4e8ef32536f8757f539d9967a303b0577"
+      },
+      {
+        "path": "docs/modules/resources-and-observability.md",
+        "sha256": "797cce59a48ea0b1b9d428177f58f83ec39e8b78d4506a84e03a33b5cd29b47c"
+      },
+      {
+        "path": "harness/specs/rules/recovery-authority-owner-admission.md",
+        "sha256": "a3eae2753d89405ad7e9fbab39d459069df06c8629ffb44fb2604796b96bd1af"
+      },
+      {
+        "path": "harness/specs/tasks/recovery-authority-gated.md",
+        "sha256": "3400fb7e9346c4949a1c3f6427081f3fa5802aa2550f94392a3e0e0ea9a1dcdc"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/agent-command.ts",
+        "sha256": "926ae1d9e148f867d7c19539bb7fc39b9b341cb79059d0f8bdf4c26066880ce6"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/command/delivery.ts",
+        "sha256": "10de91e8a7851faadcec0d61ab99cb12ef0508425b97accc698292c2ce5ed668"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+        "sha256": "4ac0714dd7317198d87a6676e5b61abd662068c9a2d65f43affc83d53fe20920"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts",
+        "sha256": "e37d93f22fc905f5f029dd8c284ca8e5ab27ed76a7ab1cec0f1ca22a61a1c2ef"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/recovery-authority/final-delivery-session.ts",
+        "sha256": "995a916c8907ed8c829da6db2c9c74d81bef009142f2580099cdb9d2efc39d95"
+      },
+      {
+        "path": "openclaw_runtime/src/agents/recovery-authority/owner-admission.ts",
+        "sha256": "e8bcbec345c67ecbe004e17a33463469b18bc14d5e16c0fc70955b51a775b96f"
+      },
+      {
+        "path": "openclaw_runtime/src/channels/message/send.ts",
+        "sha256": "a4f10cf2ebb1d1d4f8d8005209c1d226d047446c7fddab6ca50008a1b2f6b545"
+      },
+      {
+        "path": "openclaw_runtime/src/infra/delivery-queue-sqlite.ts",
+        "sha256": "61e60d5728c3972233890183d72ad8a87ec532707683a3236f8f2bab5324a878"
+      },
+      {
+        "path": "openclaw_runtime/src/infra/outbound/deliver.ts",
+        "sha256": "5d47ebdca726f2f1cab87ff7e1ee60bc122aab3864a03eb270ec80407d1b5115"
+      },
+      {
+        "path": "openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts",
+        "sha256": "cce54f4749da6ff265b77b2e82efe514f94641ccddd31bc3b6a8b2a874b3562c"
+      },
+      {
+        "path": "openclaw_runtime/src/infra/outbound/delivery-queue-recovery.ts",
+        "sha256": "a4708d5d7edb6e590af44e281f5e24f5b09751c6ada65df113bef0a84827eab5"
+      },
+      {
+        "path": "openclaw_runtime/src/infra/outbound/delivery-queue-storage.ts",
+        "sha256": "390e8ef80d8a94e8ffc197e9c47adb884d66037b126ab584fb72ae5c1e5a379a"
+      },
+      {
+        "path": "openclaw_runtime/src/infra/outbound/delivery-queue.ts",
+        "sha256": "40ea00c9aa4c473b258d329ba35c90df4ead63f855c95ac09dac784182d3c895"
+      },
+      {
+        "path": "openclaw_runtime/src/infra/outbound/delivery-recovery.flow.test.ts",
+        "sha256": "d0e26cfce49069046958539d09a85221b315bf40e4b84a563634f37c6ccd4738"
+      },
+      {
+        "path": "openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts",
+        "sha256": "4cf07786e1807c6b950e3619eeb46f59d1933e2c070c815aa95e43b1b2544da0"
+      },
+      {
+        "path": "openclaw_runtime/src/state/openclaw-state-db.ts",
+        "sha256": "bf30ed318e82cab2c65bdb1d01865f7c6885ba4beb6f254c15d342c23de2e09b"
+      },
+      {
+        "path": "scripts/recovery-delivery-process-proof-child.mts",
+        "sha256": "55a42d6d96dc7b5b8458c581a24680c9d03b0020bc7e8aa3a95e7d457f304cc2"
+      },
+      {
+        "path": "scripts/recovery-delivery-process-proof.mjs",
+        "sha256": "b5dfcd4d0afcd6215ff8dd537030b4c84e62dac6345b2b03d6994cd8f262b4ee"
+      }
+    ],
+    "changesFromParent": {
+      "documentationOnly": false,
+      "paths": [
+        "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+        "harness/specs/rules/recovery-authority-owner-admission.md",
+        "openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts",
+        "openclaw_runtime/src/infra/outbound/delivery-queue-recovery.ts"
+      ]
+    },
+    "phase": "R15 original intent notification contract and typed queue fixtures",
+    "parentManifest": {
+      "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r13-final-source.json",
+      "sha256": "0335fb40402daa0c5ae9a6eddd6d98728c8a8f7ade5aac1cc744ca9917977449"
+    },
+    "candidate": {
+      "commit": "aacbe24397c6fd8d7b9d67f0147932de25ab8a72",
+      "tree": "3fb56ec1b61b0564ba33d575a6e083573745e18c",
+      "dirty": false
+    },
+    "sourceManifestSha256": "005368d454e1faf2bfefe422e10eba2aab8e2d29bec72aec12d7a579cad64b6e",
+    "readback": "26 frozen files match primary, private projection and Git blobs"
+  },
+  "historicalSourceArchiveIndex": {
+    "schema": "RecoveryHistoricalSourceArchiveIndex/v1",
+    "driven_by": "agent",
+    "actor": "codex-recovery-ga-relay-20261113-01a1d4d8",
+    "realHumanEvidence": false,
+    "path": "D:\\tmp\\recovery-ga-20261113-01a1d350\\r6-retained-source.tar",
+    "bytes": 332431360,
+    "sha256": "25ba4afabd6a6a23c7b38fdc6f7ea34022b7027e13c566177d0bcfb0b19fa47f",
+    "members": 20505,
+    "credentialShapeMembers": [
+      {
+        "member": "artifacts/first-product-preview/FP-P1-06/evidence.md",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "artifacts/system-maturity/P1-001/canary-scan.json",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "harness/specs/fixtures/ontology-lite-existing-contracts/final/credential-scan.json",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "harness/specs/fixtures/ontology-lite-existing-contracts/negatives/credential-scan.json",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "harness/specs/fixtures/ontology-lite-existing-contracts/provenance/credential-scan.json",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "harness/specs/fixtures/ontology-lite-existing-contracts/report/credential-scan-c5.json",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "harness/specs/fixtures/ontology-lite-existing-contracts/report/credential-scan.json",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/extensions/qa-lab/src/live-transports/telegram/telegram-live.runtime.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/codex-on-demand-docker.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/cron-mcp-cleanup-seed.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/codex-on-demand/assertions.mjs",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/npm-onboard-channel-agent/assertions.mjs",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/release-media-memory/scenario.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/release-typed-onboarding/scenario.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/release-upgrade-user-journey/scenario.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/release-user-journey/assertions.mjs",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/release-user-journey/scenario.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/lib/upgrade-survivor/run.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/npm-onboard-channel-agent-docker.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/npm-telegram-live-docker.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/openai-web-search-minimal-docker.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/scripts/e2e/upgrade-survivor-docker.sh",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/src/agents/goal-wake-helper-protocol.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/src/agents/provider-outbound-budget.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/src/infra/push-apns-http2.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/src/knowledge/sekb/batch-distillation-assistant.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/src/plugins/contracts/tts-contract-suites.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "openclaw_runtime/test/proof/thinking-signature-real-proof.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "packages/versebrowser/tests/agent-browser-network-context.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "packages/versebrowser/tests/security-audit-trail.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "scripts/p1-001-canary-scan.cjs",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/fixtures/runtime-replay/tool-error.json",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/channel-secret-residual-p8-001.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/committed-secret-guard.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/configure-deepseek-runtime.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/context-runtime-kit-eval-report.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/context-runtime-kit-recovery-default.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/handoff-artifacts.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/logger-p5-003.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/memory-dual-gate-p3-003.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-failure-evidence-envelope-failure-summary.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-failure-intelligence-passive-shadow.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-failure-task-outcome-scorecard-replay-reports.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-failure-tool-invocation-governance-advisory-rules.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-failure-tool-invocation-governance-destructive-operation-guard-evidence-proof.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-failure-tool-invocation-governance-destructive-operation-guard-internal-evaluation-scorecard.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-failure-tool-invocation-governance-destructive-operation-guard-preflight-pilot.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-memory-consumer-llm-judge.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/runtime-memory-write-path-llm-judge.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/secret-store-broker.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/sekb-trajectory-redaction-p3-001.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/support-bundle-redaction.test.ts",
+        "credentialShapedContent": true
+      },
+      {
+        "member": "tests/unit/system-maturity-privacy-p7-003.test.ts",
+        "credentialShapedContent": true
+      }
+    ],
+    "retention": "original archive preserved outside Git; current candidate files, historical snapshots and failed run evidence are curated separately"
+  },
+  "restoration": {
+    "files": 24,
+    "reportSha256": "b9e3057db0f984acb25eb02fa8b4c3220a2be8ff64159561fcf0e8dbfe06759f"
+  },
+  "counterexample": {
+    "schema": "RecoveryP1CounterexampleReadback/v1",
+    "driven_by": "agent",
+    "actor": "codex-recovery-ga-20261113-01a1d350",
+    "realHumanEvidence": false,
+    "candidate": {
+      "commit": "6f0c82905f7670297b9b0036b96234e393ae2356",
+      "tree": "85b5ceae299e89716ad70f1592d440d41392cabd",
+      "branch": "codex/recovery-ga-20261113-01a1d350",
+      "dirty": false,
+      "status": "## codex/recovery-ga-20261113-01a1d350"
+    },
+    "reportPath": "D:\\tmp\\recovery-ga-20261113-01a1d350\\r5-counterexample.tests.json",
+    "reportSha256": "c0e09aaa1979f723487caf903ae2e56274792744e22bb914782b6fc09338fa13",
+    "exitCode": 1,
+    "passed": 1,
+    "failed": 1,
+    "failedCases": [
+      {
+        "ancestorTitles": [
+          "final Session reply bound to the original durable send intent"
+        ],
+        "fullName": "final Session reply bound to the original durable send intent commits direct recovery hooks only for a complete batch: partial=true",
+        "status": "failed",
+        "title": "commits direct recovery hooks only for a complete batch: partial=true",
+        "duration": 284.0479000000014,
+        "failureMessages": [
+          "AssertionError: expected \"vi.fn()\" to be called +0 times, but got 1 times\n    at D:/ClawX-work/recovery-ga-20261113-01a1d350/openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts:319:32\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///D:/tmp/recovery-ga-20261113-01a1d350/deps/runtime/@vitest+runner@4.1.7/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+        ],
+        "location": {
+          "line": 289,
+          "column": 24
+        },
+        "meta": {},
+        "tags": []
+      }
+    ],
+    "observedCommitHooks": 1,
+    "expectedCommitHooks": 0,
+    "productionSourceUnchangedFromR5": true
+  },
+  "reviewDisposition": {
+    "schema": "RecoveryReviewDisposition/v4",
+    "driven_by": "agent",
+    "actor": "codex-recovery-ga-relay-20261113-01a1d4d8",
+    "realHumanEvidence": false,
+    "source": {
+      "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-final-source.json",
+      "sha256": "005368d454e1faf2bfefe422e10eba2aab8e2d29bec72aec12d7a579cad64b6e"
+    },
+    "acceptedPreviousFindings": {
+      "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r12-review-disposition.json",
+      "sha256": "fbdc510575039b3d16de7ed601b1dc8b499b4f4ad64bd7f01159342a984a4cb0",
+      "note": "global identity and fenced settlement fixes retain their original source-bound red/green evidence"
+    },
+    "reviewPath": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r13-review-gpt.json",
+    "reviewSha256": "74fb1003c42d9e6065f5dee88c9e377204b94686692ef2eb830efe484e2093bb",
+    "reviewCandidate": "522a9a6b0c468364932c07e8c78adf1990c9d6c9",
+    "findings": [
+      {
+        "finding": {
+          "body": "未知发送的对账是异步的。若答复在 `reconcileUnknownQueuedDelivery` 执行期间被替换，但 Session 的 `sessionId` 未变，开始对账前获取的 permit 仍会使此条件成立，随后旧 intent 的 `afterCommit` 生命周期回调会针对已替换的答复运行。结算函数会保留仍引用该 intent 的新答复，但无法撤销已经运行的回调。调用回调前应重新核对当前答复身份与 intent；身份已变化时只记录已确认效果并结算队列真值，不运行回调。",
+          "category": "bug",
+          "code_location": {
+            "file_path": "openclaw_runtime/src/infra/outbound/delivery-queue-recovery.ts",
+            "line": 550
+          },
+          "confidence": 0.91,
+          "priority": "P2",
+          "title": "对账期间替换答复后仍运行旧回调"
+        },
+        "disposition": "rejected",
+        "reason": "afterCommit 确认原队列已发送效果。buildReconciledCommitContext 从原 entry.payloads、目标和 receipt 构造上下文，没有读取后来的答复；Session 引用结算独立按原身份/CAS 校验。既有回归要求确认通知在引用延后结算时执行一次，新增四种替换回归验证原上下文与新答复保留。",
+        "evidence": [
+          "openclaw_runtime/src/infra/outbound/delivery-queue-recovery.ts:buildReconciledCommitContext",
+          "openclaw_runtime/src/channels/message/types.ts:ChannelMessageSendCommitContext",
+          "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-final-session-after.tests.json"
+        ]
+      }
+    ],
+    "rejectedExperiment": {
+      "before": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r14-reconcile-before.tests.json",
+      "beforeFailed": 4,
+      "after": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r14-final-session-after.tests.json",
+      "afterFailed": 1,
+      "explanation": "试加的回调限制与既有确认通知契约冲突，已撤回；原始发现、试验和失败均保留。"
+    },
+    "currentDevelopmentProof": {
+      "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-final-session-after.tests.json",
+      "sha256": "e0ead76ddd6e4790b692b114db95d2d6791747b6ac5d8b172d6a4403d828e623",
+      "passed": 43,
+      "failed": 0,
+      "testTypes": {
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-dev-test-types/report.json",
+        "sha256": "599e5944da8f5b4d4c55411f20908ecfc34362f72e80a89afeaba8b9b0662e7d",
+        "exitCode": 0
+      }
+    },
+    "retainedTypeFailures": [
+      {
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r12-sdk-prepare/report.json",
+        "correction": "R13 accepts the existing nullable intent ID type"
+      },
+      {
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r13-changed-test-types/report.json",
+        "correction": "R15 fixtures use the existing QueuedDelivery type"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "r15-sdk-prepare",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-sdk-prepare/report.json",
+      "exitCode": 0,
+      "sha256": "8ca05d81d45fbde94b2dfc54ef43a9afd2177c8aef385c3c5aa9accaee3556c0"
+    },
+    {
+      "name": "r15-core-types",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-core-types/report.json",
+      "exitCode": 0,
+      "sha256": "c82c770df397dc258bda7b64b4c3e703991cebcc5b8e222bde7d8bcec70504f9"
+    },
+    {
+      "name": "r15-changed-test-types",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-changed-test-types/report.json",
+      "exitCode": 0,
+      "sha256": "973251a672f00bfa4be17ad7fadb4a65e085cb73a31285b958d1965d9d55e49e"
+    },
+    {
+      "name": "r15-delivery-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-delivery-tests/report.json",
+      "exitCode": 0,
+      "sha256": "86d2df997a5cb868df5a6d2840ef7f77e1ecbbb53fd958985f740bf501e26bfc"
+    },
+    {
+      "name": "r15-state-backfill-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-state-backfill-tests/report.json",
+      "exitCode": 0,
+      "sha256": "c5c8becb8bad6e63743ac6822b122273e641197d682a28861fe1944044c28eb6"
+    },
+    {
+      "name": "r15-cli-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-cli-tests/report.json",
+      "exitCode": 0,
+      "sha256": "37ed8440103476c034e3047f2188cd5dcff9ac19a2df107ba8c2aaaf61aa92b6"
+    },
+    {
+      "name": "r15-main-owner-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-main-owner-tests/report.json",
+      "exitCode": 0,
+      "sha256": "31822ad1863a0f764960cb3524a2dc694e1a61ca9e7625cae765837aca45b52d"
+    },
+    {
+      "name": "r15-authority-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-authority-tests/report.json",
+      "exitCode": 0,
+      "sha256": "3e8cccf9a333bbaa7b72b0fbb1d6e6ca6ad2167530898d31ddea2980f10f31f6"
+    },
+    {
+      "name": "r15-root-recovery-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-root-recovery-tests/report.json",
+      "exitCode": 0,
+      "sha256": "ace117a0534f6d01737df93588059c156092d718c8f741b67922bf296ee28494"
+    },
+    {
+      "name": "r15-format-all",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-format-all/report.json",
+      "exitCode": 0,
+      "sha256": "77e0915e88ef90ce13c71bfa3b39a8674432dcd5817b0ebba5dbd4d1994a8963"
+    },
+    {
+      "name": "r15-runtime-lint",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-runtime-lint/report.json",
+      "exitCode": 0,
+      "sha256": "d9ca6791804a9d58a4331fc906526e41536b6f5629a1037b43994b27fb41b4a4"
+    },
+    {
+      "name": "r15-child-lint",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-child-lint/report.json",
+      "exitCode": 0,
+      "sha256": "244dd184feb455b221d45040167701907b8ea664ef43bc162f9677dd13e0873e"
+    },
+    {
+      "name": "r15-root-lint",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-root-lint/report.json",
+      "exitCode": 0,
+      "sha256": "3a9cd6ebb07d97bade187daac7f6e4bf14bbdfe5732a6c7ff2f32e114d35f791"
+    },
+    {
+      "name": "r15-comms-replay",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-comms-replay/report.json",
+      "exitCode": 0,
+      "sha256": "09d7fae6f2f2631005ead191e0aa7967638d6a9250f3239f50cd885dc0852132"
+    },
+    {
+      "name": "r15-comms-compare",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-comms-compare/report.json",
+      "exitCode": 0,
+      "sha256": "c65cae874772e7cdb5ee642d3492f01121bf194dbc0d0b45e660b10bf25fa071"
+    },
+    {
+      "name": "r15-contract-check",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-contract-check/report.json",
+      "exitCode": 0,
+      "sha256": "0e014c701abb51f700995565927838011ea92f3e341d4b33d822e257f519b46c"
+    },
+    {
+      "name": "r15-harness-validate",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-harness-validate/report.json",
+      "exitCode": 0,
+      "sha256": "e67dc87839c2ee6583099375170b27d01dd62548f1e20bff4dcc2baeab02262a"
+    },
+    {
+      "name": "r15-harness-dry-run",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-harness-dry-run/report.json",
+      "exitCode": 0,
+      "sha256": "538554e106a1f924305e11351a6b07b8f406a3e95d54e56ec4eaa2132360f964"
+    },
+    {
+      "name": "r15-retention",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-retention/report.json",
+      "exitCode": 0,
+      "sha256": "7311f05008a0b210e949fc89b2ab25d8a9ff0d24b81a22bb8690cd5af1f6a435"
+    },
+    {
+      "name": "r15-runtime-build",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-runtime-build/report.json",
+      "exitCode": 0,
+      "sha256": "c36b2bf407a63dd97056b8170964da58ff2ff223ef1fed47ac23b4f926b950a8"
+    },
+    {
+      "name": "r15-process-proof",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-process-proof/report.json",
+      "exitCode": 0,
+      "sha256": "d1498cbf8e5873e74814dea2db9b1a3ce23025f8b94b806a0e5ee53fe6d7359a"
+    },
+    {
+      "name": "r15-private-runtime-build",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-runtime-build/report.json",
+      "exitCode": 0,
+      "sha256": "0ea93fe26d79ae88b2b1aef4557cc04bf8c83c2fbc3e48c67de2afda237efa56"
+    },
+    {
+      "name": "r15-private-process-proof",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-process-proof/report.json",
+      "exitCode": 0,
+      "sha256": "e252327d1318a861271aa5c984199a46e5d87a47e698aac2f573d4b49b4ae54a"
+    },
+    {
+      "name": "r15-private-delivery-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-delivery-tests/report.json",
+      "exitCode": 0,
+      "sha256": "a9827099df708cfa74ce960032b4d5e6935e8fe86f852d552cb930770158089a"
+    },
+    {
+      "name": "r15-private-cli-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-cli-tests/report.json",
+      "exitCode": 0,
+      "sha256": "e5e493f08a754108b3ad6d24975618fcea87a23e6980604b8d144730219c1607"
+    },
+    {
+      "name": "r15-private-root-recovery-tests",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-root-recovery-tests/report.json",
+      "exitCode": 0,
+      "sha256": "7eabf514aa96dc139c4ba045f52ee45647c66e415f071447ddf8cf0b98cc2a3f"
+    },
+    {
+      "name": "r15-private-comms-replay",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-comms-replay/report.json",
+      "exitCode": 0,
+      "sha256": "5da7af2ee880319a225f68169d1dff3ab0f527587dcd783a037da89d94cd3cc8"
+    },
+    {
+      "name": "r15-private-comms-compare",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-comms-compare/report.json",
+      "exitCode": 0,
+      "sha256": "68db2a797858c1a1f34c878887055e6d1586b2018a8ed072b5ff61dc52faf0be"
+    },
+    {
+      "name": "r15-private-contract",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-contract/report.json",
+      "exitCode": 0,
+      "sha256": "89c2ebffeeed062f80e30b6444549683ffec48b8df5bf1a86dbde4c090090f09"
+    },
+    {
+      "name": "r15-private-harness-validate",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-harness-validate/report.json",
+      "exitCode": 0,
+      "sha256": "9cdeff99c0e7be075eaca8b24b129667111de89a5920bc8aedb30526589db768"
+    },
+    {
+      "name": "r15-private-harness-dry-run",
+      "report": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/commands/r15-private-harness-dry-run/report.json",
+      "exitCode": 0,
+      "sha256": "7695d8cfec9bcf3fc1d6de56f01a8f4eee93e32da2aa870db4c9477f2efaa62f"
+    }
+  ],
+  "tests": {
+    "primary": [
+      {
+        "name": "r15-delivery-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-delivery-tests.tests.json",
+        "sha256": "c731aacd0c7bbc4e2de3538c824a5135063931f5179074cf5997b9b16610a71e",
+        "passed": 63,
+        "failed": 0
+      },
+      {
+        "name": "r15-state-backfill-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-state-backfill-tests.tests.json",
+        "sha256": "4d434cd4338b520f3fbaea67a2df971e9fa79f00215b8b1835fd76036258d5cc",
+        "passed": 2,
+        "failed": 0
+      },
+      {
+        "name": "r15-cli-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-cli-tests.tests.json",
+        "sha256": "8b456c5043237cafd4de452fbceec83a2d10c9adc9dddec7d2b5c3f20dd791f2",
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "name": "r15-main-owner-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-main-owner-tests.tests.json",
+        "sha256": "5578c6d1ad03c0ca31c7f0e4fa790def202d3d34913b8813983f8be8b8c09ae2",
+        "passed": 61,
+        "failed": 0
+      },
+      {
+        "name": "r15-authority-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-authority-tests.tests.json",
+        "sha256": "de8cfcc9715a17332a98c334f6ab7b048668a5e40be4f15509dcfef6474eb8d9",
+        "passed": 39,
+        "failed": 0
+      },
+      {
+        "name": "r15-root-recovery-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-root-recovery-tests.tests.json",
+        "sha256": "950fbda5050a3e37def94ae859fb7034443245cd71059283e593d61e2c93bafa",
+        "passed": 56,
+        "failed": 0
+      }
+    ],
+    "primaryPassed": 241,
+    "private": [
+      {
+        "name": "r15-private-delivery-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-private-delivery-tests.tests.json",
+        "sha256": "0a4dc809219c3c641f2198a20df5eba2b9104c3a32f31ccde4329cdc70d04b7f",
+        "passed": 63,
+        "failed": 0
+      },
+      {
+        "name": "r15-private-cli-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-private-cli-tests.tests.json",
+        "sha256": "5223b8ae1333c66cee1409c29cb3d956f60451b431c7bd614829ce828549040a",
+        "passed": 20,
+        "failed": 0
+      },
+      {
+        "name": "r15-private-root-recovery-tests",
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/reports/r15-private-root-recovery-tests.tests.json",
+        "sha256": "608b44729f45d3c175d6fc9d5da614b0c34b1c594272cc6f709d02a93f5a851d",
+        "passed": 56,
+        "failed": 0
+      }
+    ],
+    "privatePassed": 139
+  },
+  "privateProjection": {
+    "schema": "RecoveryPrivateGitProjection/v2",
+    "driven_by": "agent",
+    "actor": "codex-recovery-ga-relay-20261113-01a1d4d8",
+    "realHumanEvidence": false,
+    "createdAt": "2026-11-13T19:03:46.630288+00:00",
+    "root": "D:\\tmp\\recovery-ga-relay-20261113-01a1d4d8\\r15-private-source",
+    "candidate": {
+      "commit": "aacbe24397c6fd8d7b9d67f0147932de25ab8a72",
+      "tree": "3fb56ec1b61b0564ba33d575a6e083573745e18c",
+      "dirty": false
+    },
+    "source": {
+      "schema": "RecoveryDeliverySource/v2",
+      "driven_by": "agent",
+      "actor": "codex-recovery-ga-relay-20261113-01a1d4d8",
+      "realHumanEvidence": false,
+      "baseCommit": "6fdfd94497a5cf54c7afed799f03c834e49b140d",
+      "frozenAt": "2026-11-13T19:00:00.294Z",
+      "parentSnapshot": {
+        "path": "D:\\tmp\\recovery-ga-20261113-01a1d350\\r5-red-source.json",
+        "sha256": "acbdf8752b40d7fb9cb47e874347fc2d3518e4e125bf1591fbd27236ec4e49c8"
+      },
+      "files": [
+        {
+          "path": "README.ja-JP.md",
+          "sha256": "5bd8d85716fc9d26feff1554c00a31322028f8c0e4d5f89ef580e8e4645e7ed3"
+        },
+        {
+          "path": "README.md",
+          "sha256": "cc68f8b8a4b0652cfe92e34a91d8f32d0679dbb2fde84e550d810894d0bf1844"
+        },
+        {
+          "path": "README.ru-RU.md",
+          "sha256": "992e09a75f3dedd2058601b3210f404dda3146a6bd9809dc7eedfb1158de8ab0"
+        },
+        {
+          "path": "README.zh-CN.md",
+          "sha256": "a5b164c75ce09f4485bc6cd2b437c6f4c7363d643967a4f4b272e6941c028102"
+        },
+        {
+          "path": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+          "sha256": "952c8b4fb6aa25f86409c97008ab89a4e8ef32536f8757f539d9967a303b0577"
+        },
+        {
+          "path": "docs/modules/resources-and-observability.md",
+          "sha256": "797cce59a48ea0b1b9d428177f58f83ec39e8b78d4506a84e03a33b5cd29b47c"
+        },
+        {
+          "path": "harness/specs/rules/recovery-authority-owner-admission.md",
+          "sha256": "a3eae2753d89405ad7e9fbab39d459069df06c8629ffb44fb2604796b96bd1af"
+        },
+        {
+          "path": "harness/specs/tasks/recovery-authority-gated.md",
+          "sha256": "3400fb7e9346c4949a1c3f6427081f3fa5802aa2550f94392a3e0e0ea9a1dcdc"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/agent-command.ts",
+          "sha256": "926ae1d9e148f867d7c19539bb7fc39b9b341cb79059d0f8bdf4c26066880ce6"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/command/delivery.ts",
+          "sha256": "10de91e8a7851faadcec0d61ab99cb12ef0508425b97accc698292c2ce5ed668"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+          "sha256": "4ac0714dd7317198d87a6676e5b61abd662068c9a2d65f43affc83d53fe20920"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts",
+          "sha256": "e37d93f22fc905f5f029dd8c284ca8e5ab27ed76a7ab1cec0f1ca22a61a1c2ef"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/recovery-authority/final-delivery-session.ts",
+          "sha256": "995a916c8907ed8c829da6db2c9c74d81bef009142f2580099cdb9d2efc39d95"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/recovery-authority/owner-admission.ts",
+          "sha256": "e8bcbec345c67ecbe004e17a33463469b18bc14d5e16c0fc70955b51a775b96f"
+        },
+        {
+          "path": "openclaw_runtime/src/channels/message/send.ts",
+          "sha256": "a4f10cf2ebb1d1d4f8d8005209c1d226d047446c7fddab6ca50008a1b2f6b545"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/delivery-queue-sqlite.ts",
+          "sha256": "61e60d5728c3972233890183d72ad8a87ec532707683a3236f8f2bab5324a878"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/deliver.ts",
+          "sha256": "5d47ebdca726f2f1cab87ff7e1ee60bc122aab3864a03eb270ec80407d1b5115"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts",
+          "sha256": "cce54f4749da6ff265b77b2e82efe514f94641ccddd31bc3b6a8b2a874b3562c"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/delivery-queue-recovery.ts",
+          "sha256": "a4708d5d7edb6e590af44e281f5e24f5b09751c6ada65df113bef0a84827eab5"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/delivery-queue-storage.ts",
+          "sha256": "390e8ef80d8a94e8ffc197e9c47adb884d66037b126ab584fb72ae5c1e5a379a"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/delivery-queue.ts",
+          "sha256": "40ea00c9aa4c473b258d329ba35c90df4ead63f855c95ac09dac784182d3c895"
+        },
+        {
+          "path": "openclaw_runtime/src/infra/outbound/delivery-recovery.flow.test.ts",
+          "sha256": "d0e26cfce49069046958539d09a85221b315bf40e4b84a563634f37c6ccd4738"
+        },
+        {
+          "path": "openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts",
+          "sha256": "4cf07786e1807c6b950e3619eeb46f59d1933e2c070c815aa95e43b1b2544da0"
+        },
+        {
+          "path": "openclaw_runtime/src/state/openclaw-state-db.ts",
+          "sha256": "bf30ed318e82cab2c65bdb1d01865f7c6885ba4beb6f254c15d342c23de2e09b"
+        },
+        {
+          "path": "scripts/recovery-delivery-process-proof-child.mts",
+          "sha256": "55a42d6d96dc7b5b8458c581a24680c9d03b0020bc7e8aa3a95e7d457f304cc2"
+        },
+        {
+          "path": "scripts/recovery-delivery-process-proof.mjs",
+          "sha256": "b5dfcd4d0afcd6215ff8dd537030b4c84e62dac6345b2b03d6994cd8f262b4ee"
+        }
+      ],
+      "changesFromParent": {
+        "documentationOnly": false,
+        "paths": [
+          "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+          "harness/specs/rules/recovery-authority-owner-admission.md",
+          "openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts",
+          "openclaw_runtime/src/infra/outbound/delivery-queue-recovery.ts"
+        ]
+      },
+      "phase": "R15 original intent notification contract and typed queue fixtures",
+      "parentManifest": {
+        "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r13-final-source.json",
+        "sha256": "0335fb40402daa0c5ae9a6eddd6d98728c8a8f7ade5aac1cc744ca9917977449"
+      }
+    },
+    "sourceFilesMatched": 26,
+    "gitDir": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-private-source/.git",
+    "sharedGitMetadata": false,
+    "sharedReadonlyObjects": true,
+    "commands": [
+      [
+        "git",
+        "clone",
+        "--shared",
+        "--no-hardlinks",
+        "--no-checkout",
+        "D:/ClawX",
+        "D:\\tmp\\recovery-ga-relay-20261113-01a1d4d8\\r15-private-source"
+      ],
+      [
+        "git",
+        "-c",
+        "core.autocrlf=false",
+        "checkout",
+        "--detach",
+        "aacbe24397c6fd8d7b9d67f0147932de25ab8a72"
+      ]
+    ],
+    "exitCodes": [
+      0,
+      0
+    ]
+  },
+  "privateDependencyManifestSha256": "e350df0be007ac6ca9916e397feaec76be346860c42cd6b4753f54e0a63456c1",
+  "process": [
+    {
+      "name": "r15-process-proof",
+      "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-process-proof/report.json",
+      "sha256": "05dad47d2f74486ab5b3bea1b2c0f69457ceb1dfe12c3b758941ff1212ae09aa"
+    },
+    {
+      "name": "r15-private-process-proof",
+      "path": "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-private-process-proof/report.json",
+      "sha256": "8a1aa02d57a1f5fef29b27ffccfeaba3e3480e242a41ffd2856de99a82d9a258"
+    }
+  ],
+  "review": {
+    "engine": "codex",
+    "model": "gpt-6.1-sol",
+    "thinking": "high",
+    "exitCode": 0,
+    "findings": [],
+    "reportSha256": "102ca202afc229d222e0e6a273195ad6041c1750ae73d5044332caf65bbc7cb6",
+    "command": [
+      "python",
+      "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-private-source/openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+      "--mode",
+      "branch",
+      "--base",
+      "6fdfd94497a5cf54c7afed799f03c834e49b140d",
+      "--engine",
+      "codex",
+      "--model",
+      "gpt-6.1-sol",
+      "--thinking",
+      "high",
+      "--codex-bin",
+      "C:/Users/27933/AppData/Local/OpenAI/Codex/bin/9e1da79431da526b/codex.exe",
+      "--no-web-search",
+      "--stream-engine-output",
+      "--dataset",
+      "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-review-context.json",
+      "--prompt-file",
+      "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-review-notes.md",
+      "--output",
+      "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-review-gpt.md",
+      "--json-output",
+      "D:/tmp/recovery-ga-relay-20261113-01a1d4d8/r15-review-gpt.json"
+    ]
+  },
+  "fullHarnessCI": {
+    "exitCode": 1,
+    "reportSha256": "c653edf1f54724a35a0bc4fc78ea7bd3cc570e50cdb7dd821de2f0ac220c5ed0",
+    "disqualifiers": [
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:workbench",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-workbench/evidence.json is 279.48h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/report.json is 279.48h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test-history",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/history.json is 279.48h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:quality",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-quality/report.json is 279.48h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      }
+    ]
+  },
+  "raw": {
+    "file": "raw-evidence.json.gz",
+    "sha256": "77a654f244de21670d668f8f37a6a89323b2a82d57f41f1004c493d2a0beacc6",
+    "entries": 841,
+    "bytes": 1482747
+  },
+  "credentialScan": {
+    "files": 841,
+    "hits": 0
+  },
+  "nextNode": "TF-0815"
+}

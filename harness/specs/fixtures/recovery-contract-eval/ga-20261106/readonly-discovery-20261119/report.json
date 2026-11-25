@@ -1,0 +1,529 @@
+{
+  "schema": "G3ReadonlyDiscoveryDevelopment/v1",
+  "decision": "NO_GO",
+  "codeCommit": "6ab34b48ce993b5ad04856ab6dc92113a34d768d",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/channels/config-presence.ts",
+      "sha256": "7d152abdb21611af297d71ddc2bcd71a46b11058541b12f75c1caa6966007a94",
+      "gitBlob": "89fece393523c3eae08ec9472b4e3b02db5f5f3e",
+      "gitBlobSha256": "7d152abdb21611af297d71ddc2bcd71a46b11058541b12f75c1caa6966007a94",
+      "diskSha256": "7d152abdb21611af297d71ddc2bcd71a46b11058541b12f75c1caa6966007a94",
+      "byteIdentical": true
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/channel-presence-policy.ts",
+      "sha256": "64cc7480a81189b33c64bdda143678e2d808dcea84a69149cae2d43ab66899a4",
+      "gitBlob": "86ed921ab55cdbbe290a5781473f6e494f3c36d2",
+      "gitBlobSha256": "64cc7480a81189b33c64bdda143678e2d808dcea84a69149cae2d43ab66899a4",
+      "diskSha256": "64cc7480a81189b33c64bdda143678e2d808dcea84a69149cae2d43ab66899a4",
+      "byteIdentical": true
+    },
+    {
+      "file": "openclaw_runtime/src/channels/plugins/read-only.ts",
+      "sha256": "d64530b234b7e4859ed9196be99b8ec36db9f146a89eaebc07dbb40c3d4d9081",
+      "gitBlob": "4771fd62e50adb5351925def70f9c071a6462cde",
+      "gitBlobSha256": "d64530b234b7e4859ed9196be99b8ec36db9f146a89eaebc07dbb40c3d4d9081",
+      "diskSha256": "d64530b234b7e4859ed9196be99b8ec36db9f146a89eaebc07dbb40c3d4d9081",
+      "byteIdentical": true
+    },
+    {
+      "file": "tests/unit/gateway-readonly-prepared-discovery.test.ts",
+      "sha256": "0d6dbb382d4cd383ec52c1ff15705942af20636e544a245b8bf9566f9be6b964",
+      "gitBlob": "f8cc8990cb8babc2dd7c75cc3a9e5a117c6863d7",
+      "gitBlobSha256": "0d6dbb382d4cd383ec52c1ff15705942af20636e544a245b8bf9566f9be6b964",
+      "diskSha256": "0d6dbb382d4cd383ec52c1ff15705942af20636e544a245b8bf9566f9be6b964",
+      "byteIdentical": true
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "9c4bf08bf3a60d34b738c1d5335a718dca7c4d02a3e4114e85517c22dadb1c64",
+      "gitBlob": "c224d9f8867276df7ab90e6ad09787ea72515831",
+      "gitBlobSha256": "9c4bf08bf3a60d34b738c1d5335a718dca7c4d02a3e4114e85517c22dadb1c64",
+      "diskSha256": "9c4bf08bf3a60d34b738c1d5335a718dca7c4d02a3e4114e85517c22dadb1c64",
+      "byteIdentical": true
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "4fcf745ee2508b428aefa060cdad856c8b4b9cc7d28e94478a4a05026a9da79d",
+      "gitBlob": "c0f7d4fa6cbfa6289f123407aa4191a59070da9e",
+      "gitBlobSha256": "4fcf745ee2508b428aefa060cdad856c8b4b9cc7d28e94478a4a05026a9da79d",
+      "diskSha256": "4fcf745ee2508b428aefa060cdad856c8b4b9cc7d28e94478a4a05026a9da79d",
+      "byteIdentical": true
+    }
+  ],
+  "tests": {
+    "original": {
+      "total": 6,
+      "passed": 3,
+      "failed": 3
+    },
+    "overlapRed": {
+      "total": 9,
+      "passed": 7,
+      "failed": 2
+    },
+    "latestRelated": {
+      "total": 39,
+      "passed": 39
+    }
+  },
+  "benchmark": [
+    {
+      "distinct": false,
+      "queriesPerArm": 9,
+      "beforeBundledReads": 9,
+      "afterBundledReads": 0,
+      "beforeMedianMs": 2.396900000000187,
+      "afterMedianMs": 0.4214000000001761,
+      "viewsIdentical": true
+    },
+    {
+      "distinct": true,
+      "queriesPerArm": 9,
+      "beforeBundledReads": 18,
+      "afterBundledReads": 0,
+      "beforeMedianMs": 5.027799999999843,
+      "afterMedianMs": 1.0070000000000618,
+      "viewsIdentical": true
+    }
+  ],
+  "review": {
+    "model": "ccs-ai/gpt-6.1-sol",
+    "findings": [],
+    "elapsedMs": 250705,
+    "acceptedFinding": "Config load-path overlap hid bundled auth; shared presence owner now retains the environment catalog fallback.",
+    "rejectedFinding": "R1 inferred missing auth from a fixture slot-convergence exception. Omitted the invalid explicit legacy fixture slot; related-r2 passed 39/39 with unchanged product validation."
+  },
+  "stages": [
+    {
+      "name": "readonly-related-tests",
+      "exitCode": 0,
+      "elapsedMs": 34440,
+      "sourceUnchanged": true,
+      "memoryMiB": 793,
+      "minimumObservedMiB": 524
+    },
+    {
+      "name": "readonly-related-tests-r1",
+      "exitCode": 1,
+      "elapsedMs": 19049,
+      "sourceUnchanged": true,
+      "memoryMiB": 1045,
+      "minimumObservedMiB": 525
+    },
+    {
+      "name": "readonly-related-tests-r2",
+      "exitCode": 0,
+      "elapsedMs": 22558,
+      "sourceUnchanged": true,
+      "memoryMiB": 5292,
+      "minimumObservedMiB": 4079
+    },
+    {
+      "name": "readonly-review",
+      "exitCode": 1,
+      "elapsedMs": 251633,
+      "sourceUnchanged": true,
+      "memoryMiB": 798,
+      "minimumObservedMiB": 354
+    },
+    {
+      "name": "readonly-review-r1",
+      "exitCode": 1,
+      "elapsedMs": 112127,
+      "sourceUnchanged": true,
+      "memoryMiB": 1695,
+      "minimumObservedMiB": 103
+    },
+    {
+      "name": "readonly-review-r2",
+      "exitCode": 0,
+      "elapsedMs": 250705,
+      "sourceUnchanged": true,
+      "memoryMiB": 869,
+      "minimumObservedMiB": 337
+    },
+    {
+      "name": "readonly-eslint",
+      "exitCode": 0,
+      "elapsedMs": 23134,
+      "sourceUnchanged": true,
+      "memoryMiB": 941,
+      "minimumObservedMiB": 610
+    },
+    {
+      "name": "readonly-eslint-r1",
+      "exitCode": 0,
+      "elapsedMs": 6041,
+      "sourceUnchanged": true,
+      "memoryMiB": 1284,
+      "minimumObservedMiB": 1047
+    },
+    {
+      "name": "readonly-eslint-r2",
+      "exitCode": 0,
+      "elapsedMs": 8576,
+      "sourceUnchanged": true,
+      "memoryMiB": 629,
+      "minimumObservedMiB": 325
+    },
+    {
+      "name": "readonly-runtime-lint",
+      "exitCode": 0,
+      "elapsedMs": 303692,
+      "sourceUnchanged": true,
+      "memoryMiB": 4088,
+      "minimumObservedMiB": 360
+    },
+    {
+      "name": "readonly-runtime-lint-r1",
+      "exitCode": 0,
+      "elapsedMs": 35932,
+      "sourceUnchanged": true,
+      "memoryMiB": 3551,
+      "minimumObservedMiB": 72
+    },
+    {
+      "name": "readonly-harness",
+      "exitCode": 0,
+      "elapsedMs": 6098,
+      "sourceUnchanged": true,
+      "memoryMiB": 743,
+      "minimumObservedMiB": 751
+    },
+    {
+      "name": "readonly-harness-r1",
+      "exitCode": 0,
+      "elapsedMs": 1615,
+      "sourceUnchanged": true,
+      "memoryMiB": 1426,
+      "minimumObservedMiB": 1428
+    },
+    {
+      "name": "readonly-harness-r2",
+      "exitCode": 0,
+      "elapsedMs": 1593,
+      "sourceUnchanged": true,
+      "memoryMiB": 2374,
+      "minimumObservedMiB": 2410
+    },
+    {
+      "name": "readonly-harness-startup",
+      "exitCode": 0,
+      "elapsedMs": 6815,
+      "sourceUnchanged": true,
+      "memoryMiB": 1177,
+      "minimumObservedMiB": 1350
+    },
+    {
+      "name": "readonly-harness-startup-r1",
+      "exitCode": 0,
+      "elapsedMs": 1520,
+      "sourceUnchanged": true,
+      "memoryMiB": 5231,
+      "minimumObservedMiB": 5233
+    },
+    {
+      "name": "readonly-harness-startup-r2",
+      "exitCode": 0,
+      "elapsedMs": 1410,
+      "sourceUnchanged": true,
+      "memoryMiB": 5116,
+      "minimumObservedMiB": 5100
+    },
+    {
+      "name": "readonly-harness-flow",
+      "exitCode": 0,
+      "elapsedMs": 6114,
+      "sourceUnchanged": true,
+      "memoryMiB": 1648,
+      "minimumObservedMiB": 1705
+    },
+    {
+      "name": "readonly-harness-flow-r1",
+      "exitCode": 0,
+      "elapsedMs": 1800,
+      "sourceUnchanged": true,
+      "memoryMiB": 5205,
+      "minimumObservedMiB": 5200
+    },
+    {
+      "name": "readonly-harness-flow-r2",
+      "exitCode": 0,
+      "elapsedMs": 1860,
+      "sourceUnchanged": true,
+      "memoryMiB": 4871,
+      "minimumObservedMiB": 4867
+    },
+    {
+      "name": "readonly-comms-replay",
+      "exitCode": 0,
+      "elapsedMs": 2343,
+      "sourceUnchanged": true,
+      "memoryMiB": 1607,
+      "minimumObservedMiB": 1602
+    },
+    {
+      "name": "readonly-comms-replay-r1",
+      "exitCode": 0,
+      "elapsedMs": 1248,
+      "sourceUnchanged": true,
+      "memoryMiB": 5180,
+      "minimumObservedMiB": 5170
+    },
+    {
+      "name": "readonly-comms-replay-r2",
+      "exitCode": 0,
+      "elapsedMs": 1025,
+      "sourceUnchanged": true,
+      "memoryMiB": 4781,
+      "minimumObservedMiB": 4841
+    },
+    {
+      "name": "readonly-comms-compare",
+      "exitCode": 0,
+      "elapsedMs": 2080,
+      "sourceUnchanged": true,
+      "memoryMiB": 1854,
+      "minimumObservedMiB": 1856
+    },
+    {
+      "name": "readonly-comms-compare-r1",
+      "exitCode": 0,
+      "elapsedMs": 1146,
+      "sourceUnchanged": true,
+      "memoryMiB": 5128,
+      "minimumObservedMiB": 5127
+    },
+    {
+      "name": "readonly-comms-compare-r2",
+      "exitCode": 0,
+      "elapsedMs": 921,
+      "sourceUnchanged": true,
+      "memoryMiB": 4543,
+      "minimumObservedMiB": 4508
+    },
+    {
+      "name": "readonly-built-baseline",
+      "exitCode": 0,
+      "elapsedMs": 3814,
+      "sourceUnchanged": true,
+      "memoryMiB": 1132,
+      "minimumObservedMiB": 853
+    },
+    {
+      "name": "readonly-types",
+      "exitCode": 0,
+      "elapsedMs": 35017,
+      "sourceUnchanged": true,
+      "memoryMiB": 3923,
+      "minimumObservedMiB": 60
+    },
+    {
+      "name": "readonly-runtime",
+      "exitCode": 0,
+      "elapsedMs": 338991,
+      "sourceUnchanged": true,
+      "memoryMiB": 3899,
+      "minimumObservedMiB": 1
+    },
+    {
+      "name": "readonly-built-candidate",
+      "exitCode": 0,
+      "elapsedMs": 3650,
+      "sourceUnchanged": true,
+      "memoryMiB": 2545,
+      "minimumObservedMiB": 2098
+    },
+    {
+      "name": "readonly-source-gates",
+      "exitCode": 0,
+      "elapsedMs": 49534,
+      "sourceUnchanged": true,
+      "memoryMiB": 3253,
+      "minimumObservedMiB": 866
+    },
+    {
+      "name": "readonly-desktop",
+      "exitCode": 0,
+      "elapsedMs": 111805,
+      "sourceUnchanged": true,
+      "memoryMiB": 6822,
+      "minimumObservedMiB": 416
+    },
+    {
+      "name": "readonly-native",
+      "exitCode": 0,
+      "elapsedMs": 363547,
+      "sourceUnchanged": true,
+      "memoryMiB": 6873,
+      "minimumObservedMiB": 130
+    }
+  ],
+  "native": {
+    "trials": [
+      {
+        "index": 0,
+        "testStatus": "passed",
+        "measurement": {
+          "lostTasks": 0,
+          "duplicateEffects": 0,
+          "terminalCorrect": true,
+          "recoveryLatencyMs": 43096
+        },
+        "receiptSha256": "f45685926bcb90af9e9bfb7a1c9ed950a29850809ea2a34d1bb5a9f74b11179f",
+        "attachments": [
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-0\\task-owner.json",
+            "sha256": "95f208ae8ee6222ecb4896908d8fda0fb74e1c94de48f3b226e6b20d256afb75",
+            "bytes": 1534
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-0\\before.json",
+            "sha256": "cbc0b7be81c0f9ffc9eb585fbbb1dca2dd7613a05b6807588fb9ca4a610499f1",
+            "bytes": 81869
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-0\\crash-0.json",
+            "sha256": "f8d4b8d92be41ca339d277db9a601fe8f3b4fa83b278dac547ceef5d3694ccac",
+            "bytes": 86772
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-0\\crash-1.json",
+            "sha256": "d640c62c2c76342f02c32088e86329d6c5e9f832a801567d6efbafc28e269574",
+            "bytes": 90550
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-0\\crash-2.json",
+            "sha256": "2d6f2a88ac2142238094fd29cb5d9196583f35acbec4aeb52ad3da57ed31d50a",
+            "bytes": 90544
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-0\\after.json",
+            "sha256": "8daaa0831a5957d50ef6fa3639769e60a98553e5de307c468830c127059bde58",
+            "bytes": 98433
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "testStatus": "passed",
+        "measurement": {
+          "lostTasks": 0,
+          "duplicateEffects": 0,
+          "terminalCorrect": true,
+          "recoveryLatencyMs": 43280
+        },
+        "receiptSha256": "b89d2c906fa8347c0068e8ca0527871b951f069012296aaa1cbf51a1eef669a0",
+        "attachments": [
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-1\\task-owner.json",
+            "sha256": "ab6d20b357651efeae121269bc60f9b49b5afc159172b0d6f2461fa883248eb1",
+            "bytes": 1534
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-1\\before.json",
+            "sha256": "b6264ce829cdaabb96d8006dbec6f93391d02b13815082674a4b9803fa5aa556",
+            "bytes": 81869
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-1\\crash-0.json",
+            "sha256": "ce342d44c931db3f98eb1e0fb76fbea7c19df6cc4c1fa1bf3a3b697c0b46e5b6",
+            "bytes": 86772
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-1\\crash-1.json",
+            "sha256": "6d510c27b11f50edece71170ad45be74208875c662fba806dd17979354c3bb29",
+            "bytes": 90550
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-1\\crash-2.json",
+            "sha256": "738f5628c6923f287092698fb8f14840bc238cff92c604ded9623c77e8d458e0",
+            "bytes": 90548
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-1\\after.json",
+            "sha256": "40c1c022b1d2119d501bb8fe722ae918c22fce5b0776e6f69028ceef9dc7f25f",
+            "bytes": 98435
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "testStatus": "passed",
+        "measurement": {
+          "lostTasks": 0,
+          "duplicateEffects": 0,
+          "terminalCorrect": true,
+          "recoveryLatencyMs": 150929
+        },
+        "receiptSha256": "58f6a1afddea9cec9473e6dac2ad055729e6eb95bb2253b42f6b92ac20494bbf",
+        "attachments": [
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-2\\task-owner.json",
+            "sha256": "8e54824266e904715b344691d5a798408d890883011c260be3102bfc28fdbc31",
+            "bytes": 1534
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-2\\before.json",
+            "sha256": "a51217ab9cd722299f88e5851c7507d64c3b32c7f9a146d4078fbe3033be32d0",
+            "bytes": 81869
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-2\\crash-0.json",
+            "sha256": "4160377ba93031e6067ebbf7321401db21e253c06ec565d832967e520257eb9e",
+            "bytes": 86772
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-2\\crash-1.json",
+            "sha256": "4374f0341d74e6f626e8033388e000d45da1749f1c162a09ba663be886b617f8",
+            "bytes": 90550
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-2\\crash-2.json",
+            "sha256": "6c64b6587eac6880f99234e739a585f366d38a2fd89ea7072e99bba9a405c436",
+            "bytes": 90548
+          },
+          {
+            "path": "D:\\tmp\\g3-readonly-discovery-20261119-01a1f36c\\readonly-native\\candidate\\evidence-repeated-restart-2\\after.json",
+            "sha256": "aa4c9bc1e2d4f6a23288dea98b465052284e86511149c1286936136cab439bf2",
+            "bytes": 98437
+          }
+        ]
+      }
+    ],
+    "sourceUnchanged": true,
+    "memoryMiB": 6873,
+    "minimumObservedMiB": 130
+  },
+  "budgets": {
+    "typecheck": {
+      "elapsedMs": 35017,
+      "limitMs": 45000,
+      "passed": true
+    },
+    "desktopBuild": {
+      "elapsedMs": 111805,
+      "limitMs": 58000,
+      "passed": false
+    },
+    "recovery": {
+      "limitP50Ms": 5000,
+      "limitP95Ms": 15000
+    }
+  },
+  "archive": {
+    "file": "readonly-raw.json.gz",
+    "sha256": "7ecb5275f8e1e9099a9e54b0464aee9a7554891895782bae2eb2b6bff48d6b13",
+    "files": 107
+  },
+  "remaining": [
+    "Recovery 5/15-second thresholds",
+    "Desktop build 58-second budget",
+    "Same clean candidate two-arm matrix, 30 live-provider pairs, second legacy round and full source/packaged acceptance"
+  ],
+  "driven_by": "agent",
+  "actor": "codex/g3-readonly-discovery",
+  "realHumanEvidence": false
+}

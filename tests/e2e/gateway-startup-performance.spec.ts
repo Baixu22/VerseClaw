@@ -1,10 +1,10 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { freemem, totalmem } from 'node:os';
 import { join } from 'node:path';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
-test('managed Gateway starts with plugins, serves authenticated RPC, and stops its child', async ({
+test('managed Gateway authenticates, reconnects with unreadable pending requests, and stops its child', async ({
   homeDir, userDataDir, launchElectronApp,
 }, testInfo) => {
   test.setTimeout(240_000);
@@ -34,7 +34,7 @@ test('managed Gateway starts with plugins, serves authenticated RPC, and stops i
   const evidence = {
     driven_by: 'agent', actor: 'playwright-gateway-startup', pluginsEnabled: true, rpcMethod: 'health',
     memory: { freeBytes: freemem(), totalBytes: totalmem() },
-    startSucceeded: false, authenticatedRpc: false, stopped: false,
+    startSucceeded: false, authenticatedRpc: false, authenticatedReconnect: false, stopped: false,
     readyMs: null as number | null, pid: null as number | null,
   };
   const app = await launchElectronApp({ skipSetup: true, env: {
@@ -66,11 +66,26 @@ test('managed Gateway starts with plugins, serves authenticated RPC, and stops i
     expect(health.ok).toBe(true);
     expect(Array.isArray(health.agents)).toBe(true);
     evidence.authenticatedRpc = true;
+    evidence.readyMs = Date.now() - startedAt;
+    const pendingPath = join(userDataDir, 'openclaw-source-state/devices/pending.json');
+    const pending = await readFile(pendingPath);
+    try {
+      await writeFile(pendingPath, '{interrupted pending request');
+      expect((await invoke('gateway', 'restart')).success).toBe(true);
+      await expect.poll(async () => {
+        const status = await invoke('gateway', 'status');
+        return status.state === 'running' && status.gatewayReady === true;
+      }, { timeout: 90_000 }).toBe(true);
+      expect((await invoke('gateway', 'rpc', { method: 'health', params: { probe: false }, timeoutMs: 10_000 })).ok).toBe(true);
+      expect(await readFile(pendingPath, 'utf8')).toBe('{interrupted pending request');
+      evidence.authenticatedReconnect = true;
+    } finally {
+      await writeFile(pendingPath, pending);
+    }
     const status = await invoke('gateway', 'status');
     const pid = status.pid as number;
     expect(pid).toBeGreaterThan(0);
     evidence.pid = pid;
-    evidence.readyMs = Date.now() - startedAt;
     expect((await invoke('gateway', 'stop')).success).toBe(true);
     expect((await invoke('gateway', 'status')).state).toBe('stopped');
     await expect.poll(() => {

@@ -1563,31 +1563,48 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   }
   const rechecked = await readTaskScopeRun(ctx, request);
   if (!rechecked.active || rechecked.currentGeneration !== request.sessionGeneration) throw new Error('TASK_SCOPE_RUN_STALE');
+  // A later tool may renew an idle lease; ACK retries retain the same operation key.
+  const claimRequestId = 'session-effect:' + createHash('sha256').update(JSON.stringify([
+    request.sessionKey, request.sessionGeneration, request.runId, request.operationId ?? null, request.expectedTaskEpoch ?? null,
+  ])).digest('hex');
   const confirmedTask = startManagedSessionEffect({ workspaceRoot: root, sessionKey: request.sessionKey,
-    generation: request.sessionGeneration, taskNodeId, requestId: `session-effect:${request.sessionKey}:${request.sessionGeneration}:${request.runId}`,
+    generation: request.sessionGeneration, taskNodeId, requestId: claimRequestId,
     expectedContract: { revision: managedTask.contract.revision, digest: managedTask.contract.digest },
-    expectedAuthority: managedTask.authorityBasis });
+    expectedAuthority: managedTask.authorityBasis,
+    ...(request.expectedTaskNodeId && request.expectedTaskEpoch !== undefined ? { expectedOwner: {
+      taskNodeId: request.expectedTaskNodeId, epoch: request.expectedTaskEpoch,
+      sessionKey: run.scope.sessionKey!, generation: request.sessionGeneration,
+    } } : {}) });
   if (!confirmedTask.claim || confirmedTask.contract.taskNodeId !== taskNodeId) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
-  if (request.expectedClaimId && request.expectedClaimId !== confirmedTask.claim.attemptId) throw new Error('TASK_SCOPE_CLAIM_STALE');
+  const credential = { taskNodeId: confirmedTask.claim.taskNodeId, sessionKey: confirmedTask.claim.sessionKey,
+    generation: confirmedTask.claim.generation, epoch: confirmedTask.claim.epoch };
+  const previous = existing?.writerClaim?.credential;
+  const sameTaskOwner = previous?.taskNodeId === credential.taskNodeId
+    && previous.sessionKey === credential.sessionKey && previous.generation === credential.generation
+    && (previous.epoch === credential.epoch || (request.expectedTaskNodeId === credential.taskNodeId
+      && request.expectedTaskEpoch === previous.epoch && credential.epoch === previous.epoch + 1));
+  // The session grant remains owned by this run while its task lease rotates.
+  const sameWriter = existing?.writerClaim?.run.runId === request.runId
+    && existing.writerClaim.run.scope.sessionKey === request.sessionKey
+    && existing.writerClaim.sessionGeneration === request.sessionGeneration
+    && existing.writerClaim.taskNodeId === taskNodeId
+    && (existing.writerClaim.id === confirmedTask.claim.attemptId || sameTaskOwner);
+  const task = normalizeTaskReference({ kind: 'ledger', taskNodeId });
+  if (task.kind !== 'ledger') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
+  const claim: SessionTaskWriterClaim = sameWriter ? { ...existing!.writerClaim!,
+    credential, executionRevision: existing!.writerClaim!.executionRevision ?? existing!.bindingRevision } : {
+    id: confirmedTask.claim.attemptId, taskNodeId: task.taskNodeId, run, sessionGeneration: request.sessionGeneration, createdAt: now,
+    executionRevision: (existing?.bindingRevision ?? 0) + 1,
+    credential,
+  };
+  if (claim.taskNodeId !== taskNodeId) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
+  if (request.expectedClaimId && request.expectedClaimId !== claim.id) throw new Error('TASK_SCOPE_CLAIM_STALE');
   for (const owner of otherWriters) {
     if (owner.sessionKey === request.sessionKey) continue;
     await persistCoordinatorBinding(profile.id, owner.sessionKey, (current) => ({
       ...current!, writerClaim: undefined, bindingRevision: current!.bindingRevision + 1, updatedAt: now,
     }));
   }
-  const sameWriter = existing?.writerClaim?.run.runId === request.runId
-    && existing.writerClaim.sessionGeneration === request.sessionGeneration
-    && existing.writerClaim.id === confirmedTask.claim.attemptId;
-  const task = normalizeTaskReference({ kind: 'ledger', taskNodeId });
-  if (task.kind !== 'ledger') throw new Error('TASK_SCOPE_TASK_NOT_FOUND');
-  const claim: SessionTaskWriterClaim = sameWriter ? { ...existing!.writerClaim!,
-    executionRevision: existing!.writerClaim!.executionRevision ?? existing!.bindingRevision } : {
-    id: confirmedTask.claim.attemptId, taskNodeId: task.taskNodeId, run, sessionGeneration: request.sessionGeneration, createdAt: now,
-    executionRevision: (existing?.bindingRevision ?? 0) + 1,
-    credential: { taskNodeId: confirmedTask.claim.taskNodeId, sessionKey: confirmedTask.claim.sessionKey,
-      generation: confirmedTask.claim.generation, epoch: confirmedTask.claim.epoch },
-  };
-  if (claim.taskNodeId !== taskNodeId) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
   const linkId = createHash('sha256').update(JSON.stringify([taskNodeId, request.sessionKey, request.sessionGeneration])).digest('hex');
   await ctx.taskLedgerApi.appendEvents({ workspaceId: profile.id, idempotencyKey: `execution-link:${linkId}`, events: [{
     id: `execution-link:${linkId}`, type: 'session_linked', actor: 'system', taskId: taskNodeId, sessionId: request.sessionKey,

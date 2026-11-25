@@ -1,0 +1,13 @@
+{
+  "codeCommit": "140af7c59998a0a92c6804bd82cfb25267e2c07b",
+  "sourceInputs": 18,
+  "normalizedGitIdentityMatched": true,
+  "archiveEntries": 2143,
+  "archiveReadbackMatched": true,
+  "nativeArtifactHashesMatched": true,
+  "baselineFailuresMatched": true,
+  "credentialValueHits": 0,
+  "driven_by": "agent",
+  "actor": "codex/g3-evidence-readback",
+  "realHumanEvidence": false
+}

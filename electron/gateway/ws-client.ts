@@ -59,9 +59,9 @@ export async function probeGatewayReady(
 
     testWs.on('message', (data) => {
       try {
-        const message = JSON.parse(data.toString()) as { type?: string; event?: string };
+        const message = JSON.parse(data.toString()) as { type?: string; event?: string; payload?: { startupPending?: boolean } };
         if (message.type === 'event' && message.event === 'connect.challenge') {
-          resolveOnce(true);
+          resolveOnce(message.payload?.startupPending !== true);
         }
       } catch {
         // ignore malformed probe payloads

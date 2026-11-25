@@ -66,6 +66,7 @@ const IGNORED_PATH_PARTS = ['/node_modules/', '/.git/', '/dist/', '/dist-electro
 const EXCLUDED_FILES = new Set(['scripts/runtime-deep-refs-baseline.json']);
 
 const IMPORT_RE = /(?:from\s*|import\s*\(\s*|require\s*\(\s*)['"]([^'"]+)['"]/g;
+const MODULE_URL_RE = /\bnew\s+URL\s*\(\s*(['"])([^'"]+)\1\s*,\s*import\.meta\.url\s*\)/g;
 const BARE_PATH_RE = /['"`]([^'"`\s]*openclaw_runtime\/[^'"`\s]+)['"`]/g;
 
 /** Read the exemption ledger; missing file means "nothing exempted yet". */
@@ -136,11 +137,15 @@ export function collectReferences(root = ROOT, files = listScannedFiles(root)) {
       // Import specifiers first, so a quoted import path is not also reported as a
       // bare string reference on the same line.
       const imported = new Set();
-      for (const match of line.matchAll(IMPORT_RE)) {
-        const target = normalizeSpecifier(match[1], file);
+      const specifiers = [
+        ...Array.from(line.matchAll(IMPORT_RE), (match) => match[1]),
+        ...Array.from(line.matchAll(MODULE_URL_RE), (match) => match[2]),
+      ];
+      for (const specifier of specifiers) {
+        const target = normalizeSpecifier(specifier, file);
         if (!target || !target.includes(VENDOR_PREFIX)) continue;
-        imported.add(match[1]);
-        references.push({ file, line: index + 1, kind: 'import', specifier: match[1], target });
+        imported.add(specifier);
+        references.push({ file, line: index + 1, kind: 'import', specifier, target });
       }
       for (const match of line.matchAll(BARE_PATH_RE)) {
         const raw = match[1];

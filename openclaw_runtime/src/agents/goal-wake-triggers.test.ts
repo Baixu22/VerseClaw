@@ -5,10 +5,8 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
 import { armGoalWaitProcess } from "./goal-wake-arm.js";
-import {
-  buildMissionContinuation,
-  runGoalWakeLevelCheckForTask,
-} from "./goal-wake-dispatch.js";
+import { runDurableHelperSweepOnce } from "./goal-wake-recovery.js";
+import { buildMissionContinuation, runGoalWakeLevelCheckForTask } from "./goal-wake-dispatch.js";
 import { missionFencingController } from "./goal-wake-fencing.js";
 import { armGoalWaitTimer } from "./goal-wake-timer.js";
 import {
@@ -141,6 +139,15 @@ describe("goal-wake trigger kinds", () => {
       const wait = parseGoalWakeWaitJson(getGoalWakeFlowRow(arm.flowId)?.wait_json);
       expect(wait?.dependency.kind).toBe(trigger.kind);
       expect(getGoalWakeTaskRunRow(arm.taskId)?.task_kind).toBe(`goal-owned-${trigger.kind}`);
+
+      // Trigger-owned waits have no helper run; a helper sweep preserves their pending task.
+      expect(getGoalWakeTaskRunRow(arm.taskId)?.run_id).toBeNull();
+      expect(
+        await runDurableHelperSweepOnce({
+          options: { rootDir: path.join(process.env.OPENCLAW_STATE_DIR!, "background-processes") },
+        }),
+      ).toEqual([]);
+      expect(getGoalWakeTaskRunRow(arm.taskId)?.status).toBe("queued");
 
       await finalizeGoalWaitTaskProcess({ taskId: arm.taskId, status: "succeeded" });
       await ackGoalWaitYield({ flowId: arm.flowId });

@@ -31,9 +31,7 @@ import {
 } from "../subagent-capabilities.js";
 import { expandToolGroups, normalizeToolName } from "../tool-policy.js";
 import { createOpenClawAgentHarness } from "./builtin-openclaw.js";
-import { runWithHarnessContextBudget } from "./context-engine-lifecycle.js";
 import { MissingAgentHarnessError } from "./errors.js";
-import { runAgentHarnessLifecycleAttempt } from "./lifecycle.js";
 import {
   resolveAgentHarnessPolicy as resolveConfiguredAgentHarnessPolicy,
   type AgentHarnessPolicy,
@@ -286,6 +284,8 @@ export async function runAgentHarnessAttempt(
     sessionKey: params.sessionKey,
     agentId: params.agentId,
   });
+  const { runWithHarnessContextBudget, runAgentHarnessLifecycleAttempt } =
+    await import("./selection.runtime.js");
   const runAttempt = () =>
     runWithHarnessContextBudget(params, harness.id !== "openclaw", (prepared) =>
       runAgentHarnessLifecycleAttempt(

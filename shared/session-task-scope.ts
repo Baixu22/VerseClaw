@@ -51,6 +51,9 @@ export type SessionTaskEffectRequest = {
   projectWorkspaceDir?: string;
   toolName: string;
   expectedClaimId?: string;
+  /** Bind first admission to the task owner captured while preparing this run. */
+  expectedTaskNodeId?: TaskId;
+  expectedTaskEpoch?: number;
   /** Stable runtime tool identity; the transport requestId remains a separate correlation. */
   operationId?: string;
   checkoutAccess?: 'write' | 'control';
@@ -87,6 +90,11 @@ export function parseSessionTaskEffectRequest(value: unknown): SessionTaskEffect
   if (record.expectedClaimId !== undefined && (typeof record.expectedClaimId !== 'string' || !record.expectedClaimId)) {
     throw new Error('TASK_SCOPE_REQUEST_INVALID: expectedClaimId');
   }
+  if ((record.expectedTaskNodeId === undefined) !== (record.expectedTaskEpoch === undefined)
+    || (record.expectedTaskNodeId !== undefined && (typeof record.expectedTaskNodeId !== 'string'
+      || !record.expectedTaskNodeId.trim() || record.expectedTaskNodeId.length > 300
+      || !Number.isSafeInteger(record.expectedTaskEpoch) || Number(record.expectedTaskEpoch) < 1)))
+    throw new Error('TASK_SCOPE_REQUEST_INVALID: expectedTaskOwner');
   if (record.projectWorkspaceDir !== undefined && (typeof record.projectWorkspaceDir !== 'string' || !record.projectWorkspaceDir.trim())) {
     throw new Error('TASK_SCOPE_REQUEST_INVALID: projectWorkspaceDir');
   }
@@ -97,7 +105,7 @@ export function parseSessionTaskEffectRequest(value: unknown): SessionTaskEffect
   if (record.checkoutAccess && !record.operationId) throw new Error('TASK_SCOPE_REQUEST_INVALID: operationId');
   if (record.expectedExecutionRevision !== undefined && (!Number.isSafeInteger(record.expectedExecutionRevision) || Number(record.expectedExecutionRevision) < 1))
     throw new Error('TASK_SCOPE_REQUEST_INVALID: expectedExecutionRevision');
-  return Object.fromEntries([...fields, 'expectedClaimId', 'projectWorkspaceDir', 'operationId', 'checkoutAccess', 'expectedExecutionRevision'].filter((field) => record[field] !== undefined)
+  return Object.fromEntries([...fields, 'expectedClaimId', 'expectedTaskNodeId', 'expectedTaskEpoch', 'projectWorkspaceDir', 'operationId', 'checkoutAccess', 'expectedExecutionRevision'].filter((field) => record[field] !== undefined)
     .map((field) => [field, record[field]])) as SessionTaskEffectRequest;
 }
 

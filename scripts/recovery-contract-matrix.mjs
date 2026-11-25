@@ -62,6 +62,8 @@ if (process.argv.includes("--batch")) {
       "test",
       "tests/e2e/recovery-contract-eval.spec.ts",
       "--reporter=json",
+      "--retries=0",
+      `--output=${join(out, "test-results")}`,
     ],
     {
       cwd: root,
@@ -192,6 +194,8 @@ for (const arm of arms)
           "test",
           "tests/e2e/recovery-contract-eval.spec.ts",
           "--reporter=list",
+          "--retries=0",
+          `--output=${join(dir, `test-results-${window.id}-${index}`)}`,
         ],
         {
           cwd: root,

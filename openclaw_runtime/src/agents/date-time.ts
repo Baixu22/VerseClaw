@@ -155,16 +155,21 @@ function detectSystemTimeFormat(): boolean {
 
   if (process.platform === "win32") {
     try {
-      const result = execFileSync(
-        "powershell",
-        ["-Command", "(Get-Culture).DateTimeFormat.ShortTimePattern"],
-        { encoding: "utf8", timeout: 1000 },
-      ).trim();
-      if (result.startsWith("H")) {
-        return true;
-      }
-      if (result.startsWith("h")) {
-        return false;
+      const systemRoot = process.env.SystemRoot || process.env.WINDIR;
+      if (systemRoot) {
+        // Query the OS pattern directly; interactive shell profiles delay host detection.
+        const output = execFileSync(
+          `${systemRoot}\\System32\\reg.exe`,
+          ["query", "HKCU\\Control Panel\\International", "/v", "sShortTime"],
+          { encoding: "utf8", timeout: 1000, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] },
+        );
+        const pattern = output.match(/\bsShortTime\s+REG_SZ\s+([^\r\n]*)/i)?.[1]?.trim();
+        if (pattern?.startsWith("H")) {
+          return true;
+        }
+        if (pattern?.startsWith("h")) {
+          return false;
+        }
       }
     } catch {
       // Windows detection is best-effort; Intl below is the portable fallback.

@@ -16,9 +16,23 @@ export function hasPersistedToolRecoveryAdmission(
 ): boolean {
   const main = entry?.restartRecovery;
   const subagent = entry?.subagentRecovery?.authority;
+  const mainAdmitted = main?.authority
+    ? main.authority.decision.entry === "main-session-restart" &&
+      main.authority.decision.kind === "resume" &&
+      main.authority.attempts > 0 &&
+      main.authority.idempotencyKey === runId &&
+      entry?.lifecycleRunId === runId &&
+      entry.status === "running" &&
+      ["pending", "accepted", "reconcile"].includes(main.authority.state)
+    : main?.state !== "wedged";
   return (
     entry?.sessionId === sessionId &&
-    ((main?.sessionId === sessionId && main.runId === runId && main.state !== "wedged") ||
+    (((main?.sessionId === sessionId ||
+      (entry?.lifecycleRunId === main?.runId &&
+        main &&
+        entry?.usageFamilySessionIds?.includes(main.sessionId))) &&
+      main?.runId === runId &&
+      mainAdmitted) ||
       (subagent?.idempotencyKey === runId &&
         subagent.decision.entry === "subagent-orphan" &&
         subagent.decision.kind === "resume" &&

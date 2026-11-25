@@ -1,0 +1,767 @@
+{
+  "schema": "G3NativeInjectionReport/v1",
+  "sourceCommit": "f53604f6ebca455fe08a21ecb667585086366b8d",
+  "baselineCommit": "990584fcf324cb0c3717317a888f7afabd32f268",
+  "driven_by": "agent",
+  "actor": "codex/g3-r46",
+  "gaStatus": "NO_GO",
+  "result": "NATIVE_INJECTION_AND_EVIDENCE_FAILURE_PATHS_REPAIRED",
+  "changes": [
+    "Bind crash target to current app Gateway PID and native creation time; use existing held-handle native tree termination instead of taskkill.",
+    "One termination request followed only by bounded same-identity exit observations; preserve all observations and unknown failures.",
+    "One Electron close owner; require confirmed process/inspector cleanup before outcome receipt finalization.",
+    "Effect window waits for durable tool-return probe and landed effect inside the unchanged120s budget; exact-effect and missing-receipt assertions retained.",
+    "Record incomplete trials before releasing failed paused boundary, read disk/hits/decisions/effects independently, preserve original/cleanup/recording errors and before/after snapshots."
+  ],
+  "validation": {
+    "focusedTests": {
+      "files": 3,
+      "passed": 34,
+      "failed": 0
+    },
+    "fullTestTypesExitCode": 0,
+    "strictLintFiles": 7,
+    "strictLintExitCode": 0,
+    "harness": "passed_with_preexisting_AGENTS_residual",
+    "commsReplayCompare": "passed",
+    "review": {
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "format": "plain_text",
+      "exitCode": 0,
+      "sourceStable": true,
+      "verdict": "no_actionable_findings",
+      "responseSha256": "078a6a2a9bec424da3d75078996784895f15b4d89833133de363e2141970639d"
+    },
+    "finalSourceNativeSmoke": {
+      "name": "final34-smoke",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 2,
+      "passed": 2,
+      "missingReceipts": 0,
+      "verifiedArtifactReferences": 9,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 11889
+          }
+        ],
+        "store-write-failure": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 84
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "75489f5cefc4407dd8f82f2d3c5530b4e820c9ab085fa0d1af0da1c564974d73"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "75489f5cefc4407dd8f82f2d3c5530b4e820c9ab085fa0d1af0da1c564974d73"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    }
+  },
+  "developmentMatrices": [
+    {
+      "name": "candidate-three-repeats",
+      "runnerExit": {
+        "code": 1,
+        "signal": null
+      },
+      "trials": 15,
+      "passed": 13,
+      "missingReceipts": 0,
+      "verifiedArtifactReferences": 82,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "intent-after-persist-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 33850
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 28338
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "failed",
+            "lostTasks": null,
+            "duplicateEffects": null,
+            "terminalCorrect": false,
+            "recoveryLatencyMs": 3142
+          }
+        ],
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 12569
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "failed",
+            "lostTasks": null,
+            "duplicateEffects": null,
+            "terminalCorrect": false,
+            "recoveryLatencyMs": 2921
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 10955
+          }
+        ],
+        "child-created-before-parent-advance-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 8423
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 8098
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 78147
+          }
+        ],
+        "store-write-failure": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 149
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 116
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 505
+          }
+        ],
+        "repeated-restart": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 34701
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 33320
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 39657
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nA  tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nA  tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "d9a14a989aed6c1bac4541aa97ba7f1220786d88ea30102cf42a58d46c90d074"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nA  tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nA  tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "d9a14a989aed6c1bac4541aa97ba7f1220786d88ea30102cf42a58d46c90d074"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    },
+    {
+      "name": "final-candidate-three-repeats",
+      "runnerExit": {
+        "code": 1,
+        "signal": null
+      },
+      "trials": 15,
+      "passed": 14,
+      "missingReceipts": 1,
+      "verifiedArtifactReferences": 79,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "intent-after-persist-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 10508
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 12403
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 17127
+          }
+        ],
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 7580
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 8072
+          }
+        ],
+        "child-created-before-parent-advance-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 25181
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 11042
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 11657
+          }
+        ],
+        "store-write-failure": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 128
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 185
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 225
+          }
+        ],
+        "repeated-restart": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 35961
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 48711
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 40964
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "39975efe5d73b24f9c26649e49f8fd2cdd905fe582def3863b904dc1fe71ae36"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "39975efe5d73b24f9c26649e49f8fd2cdd905fe582def3863b904dc1fe71ae36"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    },
+    {
+      "name": "closeout-recovery",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 2,
+      "passed": 2,
+      "missingReceipts": 0,
+      "verifiedArtifactReferences": 14,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 7051
+          }
+        ],
+        "repeated-restart": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 31774
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "dcc878c05cc11d8b53f55a6c6f277816457212d3516b3fc9453be0c246fb3925"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "dcc878c05cc11d8b53f55a6c6f277816457212d3516b3fc9453be0c246fb3925"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    },
+    {
+      "name": "final-effect-three-repeats",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 3,
+      "passed": 3,
+      "missingReceipts": 0,
+      "verifiedArtifactReferences": 15,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 7560
+          },
+          {
+            "trialIndex": 1,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 8992
+          },
+          {
+            "trialIndex": 2,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 6037
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "828d4381d15a13028b3153e5b26d611ccf048835ecf0fa92d188998b1536903c"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "828d4381d15a13028b3153e5b26d611ccf048835ecf0fa92d188998b1536903c"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    },
+    {
+      "name": "final-evidence-smoke",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 2,
+      "passed": 2,
+      "missingReceipts": 0,
+      "verifiedArtifactReferences": 9,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 6353
+          }
+        ],
+        "store-write-failure": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 67
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "ed2a86ada23fcb738cda8609fd2a608716acccaa5f86717b72beda846699dfd4"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "ed2a86ada23fcb738cda8609fd2a608716acccaa5f86717b72beda846699dfd4"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    },
+    {
+      "name": "last-recovery",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 2,
+      "passed": 2,
+      "missingReceipts": 0,
+      "verifiedArtifactReferences": 14,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 7570
+          }
+        ],
+        "repeated-restart": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 32662
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "9aaab27eccb6d8131ec5c7018a31f85129170c155043ab7f8850ef37612b1e73"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "9aaab27eccb6d8131ec5c7018a31f85129170c155043ab7f8850ef37612b1e73"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    },
+    {
+      "name": "final34-smoke",
+      "runnerExit": {
+        "code": 0,
+        "signal": null
+      },
+      "trials": 2,
+      "passed": 2,
+      "missingReceipts": 0,
+      "verifiedArtifactReferences": 9,
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "groups": {
+        "effect-before-receipt-kill": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 11889
+          }
+        ],
+        "store-write-failure": [
+          {
+            "trialIndex": 0,
+            "testStatus": "passed",
+            "lostTasks": 0,
+            "duplicateEffects": 0,
+            "terminalCorrect": true,
+            "recoveryLatencyMs": 84
+          }
+        ]
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "75489f5cefc4407dd8f82f2d3c5530b4e820c9ab085fa0d1af0da1c564974d73"
+        },
+        "after": {
+          "status": " M AGENTS.md\n M harness/specs/tasks/recovery-authority-gated.md\n M tests/e2e/fixtures/recovery-contract-probe.ts\nAM tests/e2e/fixtures/recovery-process.ts\n M tests/e2e/fixtures/windows-process.ts\n M tests/e2e/recovery-contract-eval.spec.ts\n M tests/unit/electron-process-identity.test.ts\n M tests/unit/recovery-observation.test.ts\nAM tests/unit/recovery-process.test.ts\n",
+          "trackedFilesSha256": "ecbeeb6d774c2a55feb18f2bfedc4b6a5235db713db11bffac30efa7bd3242b3",
+          "diffSha256": "75489f5cefc4407dd8f82f2d3c5530b4e820c9ab085fa0d1af0da1c564974d73"
+        }
+      },
+      "cleanup": "passed",
+      "survivors": []
+    }
+  ],
+  "retainedFailures": [
+    "taskkill.exe timed out with and without /T on independent owned children. Native tree kill37ms diagnostic and actual parent/child/unrelated regression passed.",
+    "First native smoke recovered correctly but worker teardown failed after duplicate app.close reached Playwright synchronous taskkill. Single close owner smoke-r2 exited0.",
+    "First15-case candidate run13passed/2failed: native Kill issued but WaitForExit2000ms did not yet confirm root exit. Bounded read-only exit confirmation subsequently added.",
+    "Second15-case candidate run14passed/1failed: exec returned running before effect file landed, so exact effect assertion rejected before crash; pre-crash failed receipt gap also found. Both fixed; final effect3/3 passed.",
+    "One33-test run had native process spawning/read failures and passed30/33; final34 passed34/34. Empty r2 review rejected; all later review findings/resolutions retained.",
+    "All previous candidate source fingerprints, logs and failures remain historical; no failed run relabeled or combined into a fresh15/15 acceptance."
+  ],
+  "measurements": {
+    "secondMatrixRepeatedRestartMs": [
+      35961,
+      48711,
+      40964
+    ],
+    "secondMatrixRepeatedRestartMedianMs": 40964,
+    "afterEffectFixThreeSamplesMs": [
+      7560,
+      8992,
+      6037
+    ],
+    "nativeTreeDiagnostic": {
+      "nativeTreeKill": true,
+      "creationTime": 1795608225723,
+      "driven_by": "agent",
+      "durationMs": 37,
+      "exited": true,
+      "pid": 30360
+    }
+  },
+  "pending": [
+    "Full final-source15-trial candidate and30-trial both-arm frozen acceptance remain incomplete; two development15-case batches preceded later test-driver evidence fixes.",
+    "Recovery tail target15s/P50 target5s remain unmet. Repeated-restart latest three-sample development median40.964s.",
+    "Second legacy baseline, >=30 live-provider pairs, full root/Runtime/package release gates remain; prior AgentDev build/types/contract/i18n performance veto remains."
+  ],
+  "researchSources": [
+    "https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.process.kill",
+    "https://github.com/dotnet/runtime/blob/main/src/libraries/System.Diagnostics.Process/src/System/Diagnostics/Process.Windows.cs"
+  ],
+  "sourceFiles": [
+    {
+      "path": "harness/specs/tasks/recovery-authority-gated.md",
+      "gitSha256": "6b6991488b52d11cda4ad3161d61391f1c9e08d7614e59237114df17c61686eb",
+      "workingSha256": "6b6991488b52d11cda4ad3161d61391f1c9e08d7614e59237114df17c61686eb"
+    },
+    {
+      "path": "tests/e2e/fixtures/recovery-contract-probe.ts",
+      "gitSha256": "ca8485c3ed2170dbc095a86e125f81e6aa497dd4645066e893e361679687f279",
+      "workingSha256": "ca8485c3ed2170dbc095a86e125f81e6aa497dd4645066e893e361679687f279"
+    },
+    {
+      "path": "tests/e2e/fixtures/recovery-process.ts",
+      "gitSha256": "e8baff6d6bfe20a17685b02626a4a3b7acaa6a0a00b22629a1d9ed27d6ef7f41",
+      "workingSha256": "e8baff6d6bfe20a17685b02626a4a3b7acaa6a0a00b22629a1d9ed27d6ef7f41"
+    },
+    {
+      "path": "tests/e2e/fixtures/windows-process.ts",
+      "gitSha256": "d6afd9ed27219be8105458b35c15a787ea52006525d4b307cb5fdd9bdf52ea9d",
+      "workingSha256": "d6afd9ed27219be8105458b35c15a787ea52006525d4b307cb5fdd9bdf52ea9d"
+    },
+    {
+      "path": "tests/e2e/recovery-contract-eval.spec.ts",
+      "gitSha256": "992e0f4ae344598c4d59165064e74c3139584671d28d936ec00994369fbe85ea",
+      "workingSha256": "eb41a12f5299ce70871c6bfa5e1c3c71b61d0573944273c715cf047269d9389f"
+    },
+    {
+      "path": "tests/unit/electron-process-identity.test.ts",
+      "gitSha256": "52835d9e56e4b59a7708491237f3081f614d9c4e788c4114cd53a2c150bdc279",
+      "workingSha256": "52835d9e56e4b59a7708491237f3081f614d9c4e788c4114cd53a2c150bdc279"
+    },
+    {
+      "path": "tests/unit/recovery-observation.test.ts",
+      "gitSha256": "f1007f05222153badcb9b048ea53b78a515c638dbe2839838eb9c1fdcbfc5b7a",
+      "workingSha256": "f1007f05222153badcb9b048ea53b78a515c638dbe2839838eb9c1fdcbfc5b7a"
+    },
+    {
+      "path": "tests/unit/recovery-process.test.ts",
+      "gitSha256": "d455a758802d842ed873ef4d343d15396c79553aa36d5ce4555d3ce59c8e8de9",
+      "workingSha256": "d455a758802d842ed873ef4d343d15396c79553aa36d5ce4555d3ce59c8e8de9"
+    }
+  ],
+  "archive": {
+    "path": "evidence.json.gz",
+    "sha256": "600917ae3c81cb0c7b44eb5fa15ceb6da3feaaa2e9a2f939d69c1a7e960db71c",
+    "fileCount": 583,
+    "omittedLargeFiles": []
+  },
+  "environmentCredentialValueHits": 0
+}

@@ -4,14 +4,14 @@ import type {
   SessionTaskEffectAdmission,
   SessionTaskEffectRequest,
   SessionTaskRequesterReference,
+  SessionTaskWriterClaim,
 } from "../../../shared/session-task-scope.js";
 import type { OpenClawConfig } from "../config/types.js";
 import { requiresSessionTaskScope } from "./tool-mutation.js";
 
 // These are in-flight tool effects, not cached activity or task completion facts.
 const effectsByRun = new Map<string, number>();
-const claimsByRun = new Map<string, string>();
-const executionRevisionsByRun = new Map<string, number>();
+const claimsByRun = new Map<string, SessionTaskWriterClaim>();
 const closingRuns = new Set<string>();
 const effectRequests = new Map<string, Readonly<SessionTaskEffectRequest>>();
 const terminalIdentities = new Map<string, { sessionKey: string; sessionGeneration: string }>();
@@ -39,7 +39,7 @@ export function clearSessionTaskScopeRun(runId: string, identity?: { sessionKey:
   if (identity) terminalIdentities.set(runId, identity);
   if (sessionTaskEffectsInFlight(runId)) closingRuns.add(runId);
   else {
-    claimsByRun.delete(runId); executionRevisionsByRun.delete(runId);
+    claimsByRun.delete(runId);
     const terminalIdentity = terminalIdentities.get(runId); terminalIdentities.delete(runId);
     void import('./execution-checkout-tools.js').then(owner => owner.finishExecutionCheckoutRun(runId, terminalIdentity))
       .catch(error => console.warn('Checkout terminal reconciliation retained ownership', error));
@@ -71,7 +71,8 @@ export async function withSessionTaskScope<T>(
   args: unknown,
   signal: AbortSignal | undefined,
   execute: (admission?: SessionTaskEffectAdmission) => Promise<T>,
-  effect?: { operationId: string; checkoutAccess: 'write' | 'control' },
+  effect?: { operationId: string; checkoutAccess: 'write' | 'control' }
+    & Pick<SessionTaskEffectRequest, 'expectedTaskNodeId' | 'expectedTaskEpoch'>,
 ): Promise<T> {
   if (process.env.CLAWX_TASK_SCOPE_BRIDGE !== "1" || !requiresSessionTaskScope(toolName, args))
     return execute();
@@ -83,6 +84,12 @@ export async function withSessionTaskScope<T>(
     throw new Error("TASK_SCOPE_RUNTIME_OWNER_MISSING");
   signal?.throwIfAborted();
   effectsByRun.set(runId, sessionTaskEffectsInFlight(runId) + 1);
+  const previousClaim = claimsByRun.get(runId);
+  const admittedTask = previousClaim?.credential;
+  const currentRunTask = previousClaim && admittedTask && previousClaim.run.scope.sessionKey === sessionKey
+    && previousClaim.sessionGeneration === sessionGeneration
+    && effect?.expectedTaskNodeId === admittedTask.taskNodeId
+    && effect.expectedTaskEpoch !== undefined && effect.expectedTaskEpoch < admittedTask.epoch;
   const request: SessionTaskEffectRequest = {
     requestId: randomUUID(),
     sessionKey,
@@ -93,9 +100,10 @@ export async function withSessionTaskScope<T>(
     ...(context?.taskScopeProjectWorkspaceDir
       ? { projectWorkspaceDir: context.taskScopeProjectWorkspaceDir }
       : {}),
-    ...(claimsByRun.has(runId) ? { expectedClaimId: claimsByRun.get(runId) } : {}),
-    ...(executionRevisionsByRun.has(runId) ? { expectedExecutionRevision: executionRevisionsByRun.get(runId) } : {}),
+    ...(previousClaim ? { expectedClaimId: previousClaim.id } : {}),
+    ...(previousClaim?.executionRevision !== undefined ? { expectedExecutionRevision: previousClaim.executionRevision } : {}),
     ...(effect ?? {}),
+    ...(currentRunTask ? { expectedTaskEpoch: admittedTask.epoch } : {}),
   };
   effectRequests.set(request.requestId, Object.freeze({ ...request }));
   try {
@@ -124,8 +132,7 @@ export async function withSessionTaskScope<T>(
       }
       signal.throwIfAborted();
     }
-    claimsByRun.set(runId, claim.id);
-    if (claim.executionRevision !== undefined) executionRevisionsByRun.set(runId, claim.executionRevision);
+    claimsByRun.set(runId, { ...claim, executionRevision: claim.executionRevision ?? previousClaim?.executionRevision });
     return await withSessionTaskRequesterReference(
       {
         taskRef: claim.taskNodeId,

@@ -372,12 +372,12 @@ export function toToolDefinitions(
   tools: AnyAgentTool[],
   hookContext?: HookContext,
 ): ToolDefinition[] {
+  const taskGuard = tools.some(tool => !isToolWrappedWithBeforeToolCallHook(tool)) ? createExecutionTaskGuard(hookContext?.workspaceDir ?? hookContext?.cwd,
+    hookContext?.sessionKey, hookContext?.sessionId, hookContext?.runId) : null;
   return tools.map((tool) => {
     const name = tool.name || "tool";
     const normalizedName = normalizeToolName(name);
     const beforeHookWrapped = isToolWrappedWithBeforeToolCallHook(tool);
-    const taskGuard = beforeHookWrapped ? null : createExecutionTaskGuard(hookContext?.workspaceDir ?? hookContext?.cwd,
-      hookContext?.sessionKey, hookContext?.sessionId, hookContext?.runId);
     return {
       name,
       label: tool.label ?? name,

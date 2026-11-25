@@ -13,7 +13,7 @@ import { executeManagedTaskTool, finishExecutionCheckoutRun, reconcileExecutionC
 import { clearSessionTaskScopeRun, sessionTaskEffectsInFlight, sessionTaskOperationsInFlight } from '../../openclaw_runtime/src/agents/session-task-scope';
 import { resolveExecutionCheckout } from '../../openclaw_runtime/src/agents/worktree-service';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
-import { finishPersistentTaskRun } from '../../shared/task-system/runtime';
+import { finishPersistentTaskRun, restoreTaskModelContext } from '../../shared/task-system/runtime';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { admitManagedProcess, resetManagedProcessCapacity } from '../../openclaw_runtime/src/agents/verseshell/managed-process-capacity';
 import { toToolDefinitions } from '../../openclaw_runtime/src/agents/agent-tool-definition-adapter';
@@ -44,7 +44,15 @@ beforeEach(()=>{
   if(!context||context.sessionKey!==request.sessionKey||context.sessionId!==request.sessionGeneration)throw new Error('TASK_SCOPE_RUN_STALE');
   if(request.expectedExecutionRevision!==undefined&&request.expectedExecutionRevision!==1)throw new Error('TASK_SCOPE_BINDING_FENCED');
   const access=createExecutionTaskAccess(root),store=openExecutionTaskStore(root);
-  let task;try{task=store.binding(context.sessionKey,context.sessionId);if(!task?.claim||task.referenceOnly)throw new Error('TASK_REFERENCE_READ_ONLY');store.assertOwner(task.claim);}finally{store.close();}
+  let task;try{
+    task=store.binding(context.sessionKey,context.sessionId);if(!task?.claim||task.referenceOnly)throw new Error('TASK_REFERENCE_READ_ONLY');
+    const expected=request.expectedTaskNodeId&&request.expectedTaskEpoch!==undefined?{
+      taskNodeId:request.expectedTaskNodeId,sessionKey:task.claim.sessionKey,generation:request.sessionGeneration,epoch:request.expectedTaskEpoch,
+    }:undefined;
+    task=store.start({taskNodeId:task.contract.taskNodeId},context.sessionKey,context.sessionId,
+      `session-effect:${context.runId}:${request.operationId??'initial'}:epoch:${request.expectedTaskEpoch??'initial'}`,expected);
+    if(!task.claim)throw new Error('TASK_CLAIM_REQUIRED');store.assertOwner(task.claim);
+  }finally{store.close();}
   const claim={id:task.claim.attemptId,taskNodeId:task.contract.taskNodeId,credential:task.claim,
     run:normalizeRunScope({runId:request.runId,scope:{workspaceId:'workspace',sessionKey:request.sessionKey}}),
     sessionGeneration:request.sessionGeneration,executionRevision:1,createdAt:new Date().toISOString()};
@@ -57,11 +65,54 @@ beforeEach(()=>{
  });
 });
 afterEach(async()=>{
- for(const context of executions){try{finishExecutionCheckoutRun(context.runId);}catch{};try{finishPersistentTaskRun(root,context.sessionKey,context.runId);}catch{};clearSessionTaskScopeRun(context.runId);}
+ for(const context of executions){try{finishExecutionCheckoutRun(context.runId);}catch{/* Fixtures may retain an unresolved effect. */};try{finishPersistentTaskRun(root,context.sessionKey,context.runId);}catch{/* Fixtures may fence their captured credential. */};clearSessionTaskScopeRun(context.runId);}
  await Promise.resolve();resetManagedProcessCapacity();vi.restoreAllMocks();closeOpenClawStateDatabaseForTest();vi.unstubAllEnvs();rmSync(root,{recursive:true,force:true});
 });
 
 describe('joint task and checkout effect boundary',()=>{
+ it('renews only the captured idle owner and replays its admission after a lost ACK',async()=>{
+  const original=execution('expired'),initial=start(original);
+  const current={...original,runId:'expired-recovery-'+randomUUID()};executions.push(current);
+  const captured=createExecutionTaskGuard(root,current.sessionKey,current.sessionId,current.runId)!;
+  const model=createExecutionTaskGuard(root,current.sessionKey,current.sessionId,current.runId)!;
+  const oldModel=createExecutionTaskGuard(root,original.sessionKey,original.sessionId,original.runId)!;
+  vi.spyOn(Date,'now').mockReturnValue(initial.expiresAt+1);
+  const admit=bridge.call.getMockImplementation()!;
+  bridge.call.mockImplementationOnce(async request=>{await admit(request);throw new Error('admission ACK lost');});
+  const effect=vi.fn(async()=>{writeFileSync(join(root,'result.txt'),'recovered');return{details:{status:'completed'}};});
+  const run=()=>executeManagedTaskTool(current,captured,'recovered-write','write',{},undefined,effect);
+  await expect(run()).rejects.toThrow('admission ACK lost');
+  expect(effect).not.toHaveBeenCalled();expect(captured.credential?.epoch).toBe(initial.epoch);
+  await run();expect(effect).toHaveBeenCalledTimes(1);
+  expect(captured.credential?.epoch).toBe(initial.epoch+1);
+  expect(restoreTaskModelContext(model,'context')).toContain(current.sessionKey);
+  expect(model.credential?.epoch).toBe(initial.epoch+1);
+  expect(()=>restoreTaskModelContext(oldModel,'context')).toThrow('TASK_STALE_OWNER');
+  await expect(executeManagedTaskTool(original,oldModel,'late-old-write','write',{},undefined,effect)).rejects.toThrow('TASK_STALE_OWNER');
+  expect(effect).toHaveBeenCalledTimes(1);expect(readFileSync(join(root,'result.txt'),'utf8')).toBe('recovered');
+ });
+ it('rejects a prepared run after an explicit handoff back to the same session',async()=>{
+  const context=execution('handoff'),initial=start(context);
+  const guard=createExecutionTaskGuard(root,context.sessionKey,context.sessionId,context.runId)!;
+  const store=openExecutionTaskStore(root);try{store.handoff(initial,context.sessionKey,context.sessionId);}finally{store.close();}
+  const effect=vi.fn(async()=>({}));
+  await expect(executeManagedTaskTool(context,guard,'old-write','write',{},undefined,effect)).rejects.toThrow('TASK_STALE_OWNER');
+  expect(()=>restoreTaskModelContext(guard,'context')).toThrow('TASK_STALE_OWNER');
+  expect(effect).not.toHaveBeenCalled();
+ });
+ it.each(['started','unknown'])('keeps an expired %s effect outside automatic admission',async state=>{
+  const context=execution('pending-'+state),initial=start(context);
+  const guard=createExecutionTaskGuard(root,context.sessionKey,context.sessionId,context.runId)!;
+  const store=openExecutionTaskStore(root);let expiresAt:number;try{
+    store.beginOperation(initial,'pending-write','write');
+    if(state==='unknown')store.finishOperation(initial,'pending-write','unknown','ACK lost');
+    expiresAt=store.get(initial.taskNodeId).claim!.expiresAt;
+  }finally{store.close();}
+  vi.spyOn(Date,'now').mockReturnValue(expiresAt+1);
+  const effect=vi.fn(async()=>({}));
+  await expect(executeManagedTaskTool(context,guard,'another-write','write',{},undefined,effect)).rejects.toThrow('TASK_ALREADY_CLAIMED');
+  expect(effect).not.toHaveBeenCalled();
+ });
  it('retains one writer between tool calls and refuses another task before touching its file',async()=>{
   const first=execution('one'),second=execution('two');start(first);start(second);
   const file=join(root,'result.txt');

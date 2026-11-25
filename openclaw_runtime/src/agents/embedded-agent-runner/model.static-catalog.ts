@@ -1,14 +1,10 @@
-/**
- * Resolves bundled static catalog rows for embedded-agent model selection.
- */
+/** Resolves bundled static catalog rows for embedded-agent model selection. */
 import type { NormalizedModelCatalogRow } from "@openclaw/model-catalog-core/model-catalog-types";
 import { normalizeProviderId } from "@openclaw/model-catalog-core/provider-id";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { planManifestModelCatalogRows } from "../../model-catalog/manifest-planner.js";
-import { listOpenClawPluginManifestMetadata } from "../../plugins/manifest-metadata-scan.js";
-import { loadPluginManifestRegistry } from "../../plugins/manifest-registry.js";
+import { loadPluginManifestRegistryForPluginRegistry } from "../../plugins/plugin-registry.js";
 import type { PluginManifestRecord } from "../../plugins/manifest-registry.js";
-import { loadPluginManifest } from "../../plugins/manifest.js";
 import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.types.js";
 import { DEFAULT_CONTEXT_TOKENS } from "../defaults.js";
 import { normalizeStaticProviderModelId } from "../model-ref-shared.js";
@@ -75,20 +71,26 @@ type StaticCatalogPlugin = Parameters<
   typeof planManifestModelCatalogRows
 >[0]["registry"]["plugins"][number];
 
-function listBundledStaticCatalogPlugins(env: NodeJS.ProcessEnv): StaticCatalogPlugin[] {
-  return listOpenClawPluginManifestMetadata(env).flatMap((record): StaticCatalogPlugin[] => {
-    if (record.origin !== "bundled") {
-      return [];
-    }
-    const loaded = loadPluginManifest(record.pluginDir);
-    if (!loaded.ok || !loaded.manifest.modelCatalog) {
+function listBundledStaticCatalogPlugins(params: {
+  cfg?: OpenClawConfig;
+  workspaceDir?: string;
+  env?: NodeJS.ProcessEnv;
+}): StaticCatalogPlugin[] {
+  const registry = loadPluginManifestRegistryForPluginRegistry({
+    config: params.cfg,
+    workspaceDir: params.workspaceDir,
+    env: params.env ?? process.env,
+    includeDisabled: true,
+  });
+  return registry.plugins.flatMap((record): StaticCatalogPlugin[] => {
+    if (record.origin !== "bundled" || !record.modelCatalog) {
       return [];
     }
     return [
       {
-        id: loaded.manifest.id,
-        providers: loaded.manifest.providers,
-        modelCatalog: loaded.manifest.modelCatalog,
+        id: record.id,
+        providers: record.providers,
+        modelCatalog: record.modelCatalog,
       },
     ];
   });
@@ -133,10 +135,11 @@ export function canonicalizeManifestModelCatalogProviderAlias(params: {
   return (
     resolveManifestModelCatalogProviderAlias({
       provider,
-      plugins: loadPluginManifestRegistry({
+      plugins: loadPluginManifestRegistryForPluginRegistry({
         config: params.cfg,
         workspaceDir: params.workspaceDir,
         env: params.env ?? process.env,
+        includeDisabled: true,
       }).plugins,
     }) ?? params.provider
   );
@@ -145,13 +148,15 @@ export function canonicalizeManifestModelCatalogProviderAlias(params: {
 /** Returns whether a bundled static catalog asks runtime discovery to augment its rows. */
 export function bundledStaticCatalogProviderUsesRuntimeAugment(params: {
   provider: string;
+  cfg?: OpenClawConfig;
+  workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): boolean {
   const provider = normalizeProviderId(params.provider);
   if (!provider) {
     return false;
   }
-  return listBundledStaticCatalogPlugins(params.env ?? process.env).some((plugin) => {
+  return listBundledStaticCatalogPlugins(params).some((plugin) => {
     const catalog = plugin.modelCatalog;
     if (catalog?.runtimeAugment !== true) {
       return false;
@@ -180,7 +185,7 @@ export function resolveBundledStaticCatalogModel(params: {
   if (!provider || !params.modelId.trim()) {
     return undefined;
   }
-  const bundledStaticPlugins = listBundledStaticCatalogPlugins(params.env ?? process.env);
+  const bundledStaticPlugins = listBundledStaticCatalogPlugins(params);
   if (bundledStaticPlugins.length === 0) {
     return undefined;
   }

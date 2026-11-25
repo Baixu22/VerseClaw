@@ -417,6 +417,14 @@ describe('probeGatewayReady', () => {
     wsState.sockets.length = 0;
   });
 
+  it('keeps probing while the Gateway reports that connect is still unavailable', async () => {
+    const probe = probeGatewayReady(18789, 5000);
+    const socket = getLatestSocket();
+    socket.emitJsonMessage({ type: 'event', event: 'connect.challenge', payload: { nonce: 'probe-nonce', startupPending: true } });
+    await expect(probe).resolves.toBe(false);
+    expect(socket.terminate).toHaveBeenCalledOnce();
+  });
+
   it('resolves true when connect.challenge message is received', async () => {
     const probePromise = probeGatewayReady(18789, 5000);
     const socket = getLatestSocket();

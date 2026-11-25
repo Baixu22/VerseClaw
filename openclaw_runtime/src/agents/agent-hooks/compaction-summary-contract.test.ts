@@ -54,7 +54,12 @@ describe("TF-0124 canonical compaction summary contract", () => {
     }
   });
 
-  it("sends the canonical section contract in the real agent-core model prompt", async () => {
+  it.each([false, true])("passes sections and verbatim facts through the model prompt, update=%s", async (update) => {
+    const statements = [
+      "Objective COHORT-05 remains active after the boundary",
+      "Acceptance: build-A=ready, receipt-B=missing.",
+    ];
+    const previousSummary = update ? `${canonicalSummary()}\n${statements.join("\n")}` : undefined;
     const captured: Context[] = [];
     const response: AssistantMessage = {
       role: "assistant",
@@ -80,7 +85,13 @@ describe("TF-0124 canonical compaction summary contract", () => {
       }),
     );
     const result = await generateSummary(
-      [{ role: "user", content: "Continue the task.", timestamp: 0 }],
+      [{
+        role: "user",
+        content: update
+          ? "Continue the task; keep the active statements verbatim."
+          : `Keep these active statements verbatim:\n${statements.join("\n")}\nContinue the task.`,
+        timestamp: 0,
+      }],
       {
         id: "test-model",
         name: "test-model",
@@ -98,7 +109,7 @@ describe("TF-0124 canonical compaction summary contract", () => {
       undefined,
       undefined,
       undefined,
-      undefined,
+      previousSummary,
       undefined,
       streamFn,
     );
@@ -108,6 +119,13 @@ describe("TF-0124 canonical compaction summary contract", () => {
     for (const section of REQUIRED_COMPACTION_SECTIONS) {
       expect(prompt).toContain(section);
     }
+    for (const statement of statements) expect(prompt).toContain(statement);
+    expect(prompt).toMatch(/preserved verbatim, copy[^\n]*exactly/u);
+    expect(prompt).toContain("one complete original line");
+    expect(prompt).toContain("do not extract a new label, add a colon, repeat an identifier");
+    for (const detail of ["labels", "wording", "punctuation"]) expect(prompt).toContain(detail);
+    expect(prompt).toContain("each fact in one relevant section");
+    expect(prompt.includes("<previous-summary>")).toBe(update);
   });
 
   it("aligns merge instructions with the canonical section order", () => {

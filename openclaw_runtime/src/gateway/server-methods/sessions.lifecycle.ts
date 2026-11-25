@@ -46,7 +46,6 @@ import { isPluginJsonValue } from "../../plugins/host-hooks.js";
 import {
   normalizeAgentId,
   parseAgentSessionKey,
-  resolveAgentIdFromSessionKey,
   toAgentStoreSessionKey,
 } from "../../routing/session-key.js";
 import { ADMIN_SCOPE } from "../operator-scopes.js";
@@ -81,6 +80,7 @@ import {
 import { applySessionsPatchToStore } from "../sessions-patch.js";
 import { chatHandlers } from "./chat.js";
 import { emitSessionsChanged } from "./session-change-event.js";
+import { isSessionBusyForManualCompaction } from "./session-active-runs.js";
 import { assertValidParams } from "./validation.js";
 import { readTrackedSessionRunState } from "./session-active-runs.js";
 
@@ -96,7 +96,6 @@ import {
   buildDashboardSessionKey,
   ensureSessionTranscriptFile,
   resolveRequestedGlobalAgentId,
-  isSessionBusyForManualCompaction,
 } from "./sessions.shared.js";
 
 function resolveBackendSessionWorkspace(
@@ -204,11 +203,8 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       !resolveOptionalInitialSessionMessage(p) &&
       cfg.session?.dmScope === "main"
     ) {
-      const parentAgentId = normalizeAgentId(
-        parentSelectedAgentId ??
-          resolveAgentIdFromSessionKey(canonicalParentSessionKey) ??
-          resolveDefaultAgentId(cfg),
-      );
+      const parentAgentId =
+        parentSelectedAgentId ?? resolveSessionStoreAgentId(cfg, canonicalParentSessionKey);
       const parentMainKey = resolveAgentMainSessionKey({ cfg, agentId: parentAgentId });
       if (canonicalParentSessionKey === parentMainKey) {
         const { performGatewaySessionReset } = await loadSessionsRuntimeModule();
@@ -248,11 +244,8 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
         canonicalParentSessionKey,
         parentSelectedAgentId ? { agentId: parentSelectedAgentId } : undefined,
       );
-      const parentAgentId = normalizeAgentId(
-        parentSelectedAgentId ??
-          resolveAgentIdFromSessionKey(canonicalParentSessionKey) ??
-          resolveDefaultAgentId(cfg),
-      );
+      const parentAgentId =
+        parentSelectedAgentId ?? resolveSessionStoreAgentId(cfg, canonicalParentSessionKey);
       const workspaceDir = resolveAgentWorkspaceDir(cfg, parentAgentId);
       if (hasInternalHookListeners("command", "new")) {
         const hookEvent = createInternalHookEvent("command", "new", canonicalParentSessionKey, {
@@ -495,12 +488,9 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    const sourceAgentId = normalizeAgentId(
-      requestedAgent.agentId ??
-        resolveAgentIdFromSessionKey(source.canonicalKey) ??
-        resolveSessionStoreAgentId(cfg, source.canonicalKey) ??
-        resolveDefaultAgentId(cfg),
-    );
+    // Global keys encode no agent; store lookup and admission use the configured owner.
+    const sourceAgentId =
+      requestedAgent.agentId ?? resolveSessionStoreAgentId(cfg, source.canonicalKey);
     if (
       isSessionBusyForManualCompaction({
         context,

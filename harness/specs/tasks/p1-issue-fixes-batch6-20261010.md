@@ -10,6 +10,8 @@ expectedUserBehavior:
   - Conditional DeepSeek suites report their skipped counts in CI, including the exact per-file counts.
   - Historical SHA256SUMS drift is explicit and verified through INTEGRITY.json annotations; unannotated drift fails.
   - Shared evidence refs and root package script paths into openclaw_runtime are checked for existence.
+residualPaths:
+  - AGENTS.md
 touchedAreas:
   - .github/workflows/**
   - .gitignore
@@ -19,6 +21,7 @@ touchedAreas:
   - scripts/**
   - tests/**
   - harness/specs/tasks/p1-issue-fixes-batch6-20261010.md
+  - harness/specs/tasks/p1-runtime-deep-references-20261011.md
   - docs/dev/p1-issue-fixes-batch6-20261010.md
 requiredRules:
   - backend-communication-boundary
@@ -55,3 +58,5 @@ This batch removes a false capability surface, makes conditional test skips
 visible, adds a real evidence-hash verifier with historical annotations, and
 extends deep-path validation to runtime scripts referenced from the root
 package.
+
+Historical drift annotations retain the original SHA256SUMS and identify the original commit and exact source hash. Subsequent generated reports and source revisions are recorded separately; they do not replace the historical bytes or result.

@@ -120,7 +120,7 @@ import {
   classifyProviderRequestError,
   PROVIDER_CONVERSATION_STATE_ERROR_USER_MESSAGE,
 } from "./provider-request-error-classifier.js";
-import type { FollowupRun } from "./queue.js";
+import { refreshQueuedFollowupSession, type FollowupRun } from "./queue.js";
 import { createBlockReplyDeliveryHandler } from "./reply-delivery.js";
 import type { ReplyMediaContext } from "./reply-media-paths.js";
 import { createReplyMediaContext } from "./reply-media-paths.runtime.js";
@@ -1523,6 +1523,20 @@ export async function runAgentTurnWithFallback(params: {
           ...runnableRun,
           config: runtimeConfig,
         };
+  const adoptSessionIdentity = (identity: { sessionId: string; sessionFile?: string }) => {
+    if (params.sessionKey)
+      refreshQueuedFollowupSession({
+        key: params.sessionKey,
+        previousSessionId: effectiveRun.sessionId,
+        nextSessionId: identity.sessionId,
+        nextSessionFile: identity.sessionFile,
+      });
+    params.replyOperation?.updateSessionId(identity.sessionId);
+    for (const run of new Set([effectiveRun, params.followupRun.run])) {
+      run.sessionId = identity.sessionId;
+      if (identity.sessionFile) run.sessionFile = identity.sessionFile;
+    }
+  };
   const preserveUserFacingSessionState = shouldPreserveUserFacingSessionStateForInputProvenance(
     effectiveRun.inputProvenance,
   );
@@ -2167,6 +2181,7 @@ export async function runAgentTurnWithFallback(params: {
                   runParams: {
                     sessionId: params.followupRun.run.sessionId,
                     sessionKey: params.sessionKey,
+                    sessionStorePath: params.storePath,
                     agentId: params.followupRun.run.agentId,
                     trigger: params.isHeartbeat ? "heartbeat" : "user",
                     sessionFile: params.followupRun.run.sessionFile,
@@ -2297,6 +2312,8 @@ export async function runAgentTurnWithFallback(params: {
                 const result = await agentTurnTiming.measure("embedded_run", () =>
                   runEmbeddedAgent({
                     ...embeddedContext,
+                    sessionStorePath: params.storePath,
+                    onSessionIdentityChanged: adoptSessionIdentity,
                     allowGatewaySubagentBinding: true,
                     trigger: params.isHeartbeat ? "heartbeat" : "user",
                     groupId: resolveGroupSessionKey(params.sessionCtx)?.id,
