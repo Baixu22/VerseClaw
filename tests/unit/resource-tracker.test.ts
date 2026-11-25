@@ -120,7 +120,7 @@ describe('ResourceTracker', () => {
       const stale = new Date(Date.now() - 6 * 60 * 1000).toISOString();
       const observed: string[] = [];
       for (let i = 0; i < 8; i++) {
-        const id = tracker.register({ port: 21900 + i, sessionKey: 'observed-cleanup', ownership: 'observed' });
+        const id = tracker.register({ port: 21900 + i, pid: process.pid, sessionKey: 'observed-cleanup', ownership: 'observed' });
         const record = tracker.getSnapshot().resources.find(item => item.id === id)!;
         record.status = 'unreachable'; record.lastHeartbeatAt = stale;
         observed.push(id);
