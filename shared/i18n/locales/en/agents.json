@@ -1,5 +1,50 @@
 {
     "collaboration": {
+        "messages": {
+            "title": "Messages and replies",
+            "from": "From",
+            "to": "To",
+            "reply": "Reply",
+            "replyUnknown": "The reply source has not been read.",
+            "sender": "Sending from {{name}}",
+            "sourceMissing": "The current sender identity is unavailable.",
+            "purpose": "Purpose",
+            "body": "Message",
+            "send": "Send",
+            "check": "Read original receipt",
+            "purposes": {
+                "finding": "Finding",
+                "status": "Status",
+                "request": "Request",
+                "handoff": "Handoff",
+                "result": "Result"
+            },
+            "states": {
+                "not_read": "Messages have not been read.",
+                "ready": "Message sources are available.",
+                "empty": "No messages in this view.",
+                "unavailable": "Message sources are unavailable.",
+                "stale": "The session identity changed.",
+                "unknown": "Delivery is unknown; read the original receipt.",
+                "accepted": "Intent accepted",
+                "queued": "Queued",
+                "delivered": "Handed to agent",
+                "replied": "Replied",
+                "rejected": "Rejected",
+                "expired": "Expired"
+            }
+        },
+        "controls": {
+            "title": "Original session controls",
+            "guide": "Open run guidance",
+            "interruptSend": "Open interrupt and send",
+            "stop": "Stop session",
+            "compact": "Compact context",
+            "truncate": "Open transcript boundary",
+            "fork": "Open fork",
+            "handoff": "Open handoff",
+            "migrate": "Open execution migration"
+        },
         "title": "Session collaboration",
         "description": "Find ongoing work and read its original sources.",
         "refresh": "Refresh",

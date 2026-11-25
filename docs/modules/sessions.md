@@ -54,6 +54,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 消息意图在原 shared state SQLite 中保留首次来源和派发回执。相同意图重试返回原记录；缺失派发回执时保持 unknown。`sessions.collaborationMessages` 按当前读取者和目标 scope 分页读取有界摘要，指定原 ID 后读取完整意图与回执；读取不创建数据库或修改投递状态。
 
+选中会话后可展开消息区，查看用途、发件/收件代次、投递阶段、原正文和回复。发送前预览 Main 当前来源；草稿按源目标完整身份保留，明确接受后清空。unknown 保留原 ID 与内容，使用“回读原回执”核对结果。原会话控制目录继续打开对应 owner 的引导、分支、接力和迁移入口。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

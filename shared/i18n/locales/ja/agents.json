@@ -1,5 +1,50 @@
 {
     "collaboration": {
+        "messages": {
+            "title": "メッセージと返信",
+            "from": "送信元",
+            "to": "送信先",
+            "reply": "返信",
+            "replyUnknown": "返信の情報源は未読です。",
+            "sender": "{{name}} から送信",
+            "sourceMissing": "現在の送信元を確認できません。",
+            "purpose": "用途",
+            "body": "メッセージ",
+            "send": "送信",
+            "check": "元の受領記録を読む",
+            "purposes": {
+                "finding": "発見",
+                "status": "状態",
+                "request": "依頼",
+                "handoff": "引き継ぎ",
+                "result": "結果"
+            },
+            "states": {
+                "not_read": "メッセージは未読です。",
+                "ready": "メッセージの情報源を読みました。",
+                "empty": "この範囲にメッセージはありません。",
+                "unavailable": "メッセージの情報源を利用できません。",
+                "stale": "セッションの識別情報が変わりました。",
+                "unknown": "配信状況は不明です。元の受領記録を確認してください。",
+                "accepted": "意図を受理",
+                "queued": "待機列に追加",
+                "delivered": "agent に受け渡し",
+                "replied": "返信済み",
+                "rejected": "拒否",
+                "expired": "期限切れ"
+            }
+        },
+        "controls": {
+            "title": "元のセッション操作",
+            "guide": "実行ガイドを開く",
+            "interruptSend": "中断後の送信を開く",
+            "stop": "セッション停止",
+            "compact": "コンテキスト整理",
+            "truncate": "履歴境界を開く",
+            "fork": "分岐を開く",
+            "handoff": "引き継ぎを開く",
+            "migrate": "実行環境移行を開く"
+        },
         "title": "セッション連携",
         "description": "進行中の作業を探し、元の情報を必要に応じて読みます。",
         "refresh": "更新",

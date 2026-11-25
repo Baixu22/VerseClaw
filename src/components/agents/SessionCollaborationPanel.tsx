@@ -13,6 +13,9 @@ import { EMPTY_COLLABORATION_VIEW, subscribeSessionCollaboration, useSessionColl
 import { parseSessionCollaborationQuery, type SessionCollaborationPage, type SessionCollaborationRow } from '@shared/types/session-collaboration';
 import type { AutonomyProjectScope, AutonomySessionScope } from '@shared/types/identity-scope';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
+import { SessionCollaborationMessages } from './SessionCollaborationMessages';
+import { invokeSessionCollaborationControl } from '@/lib/session-collaboration-control';
+import { SESSION_COLLABORATION_CONTROLS, type SessionCollaborationControl } from '@shared/types/session-collaboration-control';
 
 export const collaborationScopeKey = (scope: AutonomySessionScope) => JSON.stringify([scope.workspaceId, scope.projectId, scope.sessionKey, scope.sessionGeneration]);
 
@@ -134,6 +137,13 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
             <dt>{t('collaboration.resources')}</dt><dd>{snapshot ? sourceText(snapshot.readModel?.sources.resources.state ?? 'unknown') : sourceText('not_read')}</dd>
             <dt>{t('collaboration.results')}</dt><dd>{sourceText('not_read')}</dd>
           </dl>
+          {requester && row.detail && <SessionCollaborationMessages requester={requester} target={row.detail.scope} />}
+          {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>
+            <div className="flex flex-wrap gap-2 pt-3">{(Object.keys(SESSION_COLLABORATION_CONTROLS) as SessionCollaborationControl[]).filter(action => action !== 'message').map(action => <Button type="button" key={action} variant="outline"
+              disabled={SESSION_COLLABORATION_CONTROLS[action].requiresRun && !row.sources.run.value}
+              onClick={() => void invokeSessionCollaborationControl({ action, requester, target: row.detail!.scope, run: row.sources.run.value }, () => openSession()).catch(() => setReadState('unavailable'))}>
+              {t(`collaboration.controls.${action}`)}</Button>)}</div>
+          </details>}
           <details className="rounded-md border border-border p-2 text-xs text-muted-foreground"><summary className="cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.sourcesTitle')}</summary>
             <div className="space-y-1 break-all pt-2"><p>{view.selected.workspaceId} · {view.selected.projectId}</p><p>{view.selected.sessionKey} · {view.selected.sessionGeneration}</p>
               <p>{row.sources.session.readAt === null ? sourceText('unknown') : new Date(row.sources.session.readAt).toLocaleString(i18n.language)}</p>

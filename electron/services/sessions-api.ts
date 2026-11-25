@@ -2410,17 +2410,19 @@ export function createSessionsApi(ctx: {
     sendCollaborationMessage: async (payload) => {
       const { expectedSource, ...input } = payload;
       const intent = parseSessionCollaborationMessageInput(input);
+      let dispatched = false;
       try {
         const source = await readCollaborationSender();
         if (!source || (await readSystemControl()).paused) return { success: false, phase: 'rejected', receipt: null, error: 'COLLABORATION_SOURCE_UNAVAILABLE' };
         normalizeAutonomySessionScope(expectedSource, source.scope);
         const message = createSessionCollaborationMessage(intent, { scope: source.scope, run: null, actor: 'operator' });
+        dispatched = true;
         const result = await ctx.gatewayManager!.rpc<{ receipt: unknown }>('sessions.send', { key: intent.target.sessionKey,
           expectedSessionId: intent.target.sessionGeneration, message: intent.message, idempotencyKey: intent.id, collaboration: message }, 30_000);
         const receipt = validateSessionCollaborationReceipt(message, result?.receipt);
         return { success: true, phase: receipt.phase, receipt };
       } catch (error) {
-        return { success: false, phase: error instanceof GatewayRpcError && ['INVALID_REQUEST', '-32600', '-32602'].includes(String(error.payload.code)) ? 'rejected' : 'unknown',
+        return { success: false, phase: !dispatched || (error instanceof GatewayRpcError && ['INVALID_REQUEST', '-32600', '-32602'].includes(String(error.payload.code))) ? 'rejected' : 'unknown',
           receipt: null, error: error instanceof Error ? error.message : String(error) };
       }
     },
