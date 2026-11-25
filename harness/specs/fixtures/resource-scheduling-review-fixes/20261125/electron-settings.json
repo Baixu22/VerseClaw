@@ -1,0 +1,128 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\resource-scheduling-fixes-20261125\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/resource-scheduling-fixes-20261125/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\resource-scheduling-fixes-20261125\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/resource-scheduling-relay-20261125/validation-delivery-r2/electron-settings-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/resource-scheduling-fixes-20261125/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "settings-efficiency-sampling.spec.ts",
+      "file": "settings-efficiency-sampling.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw runtime efficiency sampling settings",
+          "file": "settings-efficiency-sampling.spec.ts",
+          "line": 30,
+          "column": 6,
+          "specs": [
+            {
+              "title": "toggles recording while retaining resource protection and persists",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9626,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-25T13:31:13.666Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "sampling-disabled-protection.json",
+                          "contentType": "application/json",
+                          "body": "eyJkcml2ZW5fYnkiOiJhZ2VudCIsImVuYWJsZWQiOmZhbHNlLCJydW5uaW5nIjpmYWxzZSwiYmFja2dyb3VuZFdvcmsiOnsiZGVmZXJyaW5nIjpmYWxzZSwicmVhc29uIjpudWxsLCJhY3RpdmVSZWFzb25zIjpbXSwiZGVmZXJyZWRDb3VudCI6MCwicmVzdW1lQ291bnQiOjAsImxhc3REZWZlclJlYXNvbiI6bnVsbCwibGFzdFRyYW5zaXRpb25BdCI6bnVsbCwidHJhbnNpdGlvbkNvdW50IjowLCJwZW5kaW5nQ291bnQiOjAsImZvcmVncm91bmRDaGVja3MiOjAsImZvcmVncm91bmREZWZlcnJlZENvdW50IjowfSwic2hlZCI6eyJzaGVkZGluZyI6ZmFsc2UsInJlYXNvbiI6bnVsbCwiYWN0aXZlUmVhc29ucyI6W10sInRyYW5zaXRpb25Db3VudCI6MiwibGFzdFRyYW5zaXRpb25BdCI6MTc5NTYxMzQ3ODcxM319"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5a699293ed6d547e44e-0063e371ab165e825726",
+              "file": "settings-efficiency-sampling.spec.ts",
+              "line": 36,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-25T13:31:12.647Z",
+    "duration": 12069.644,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

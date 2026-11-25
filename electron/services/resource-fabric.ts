@@ -542,13 +542,17 @@ export class ResourceFabric {
       !!loop?.ownerEpoch && typeof loop.degraded === 'boolean' && Number.isFinite(loop.delayP99Ms) && loop.delayP99Ms >= 0
         && Number.isFinite(loop.utilization) && loop.utilization >= 0 && loop.utilization <= 1);
     const active = [...this.pressureSignals.values()].some(signal => signal.active);
+    this.drf.setCapacity({ processes: 64, concurrency: active ? 1 : 64 });
     for (const account of this.accounts.values()) account.setPressure(active);
     this.reclaimIdleAccounts();
+    this.wakeAccounts();
   }
 
   clearObservationPressure(): void {
     this.pressureSignals.clear();
+    this.drf.setCapacity({ processes: 64, concurrency: 64 });
     for (const account of this.accounts.values()) account.setPressure(false);
+    this.wakeAccounts();
   }
 
   reclaimIdleAccounts(): number {
@@ -619,21 +623,22 @@ export class ResourceFabric {
       config,
       this.drf,
       this.now,
-      () => {
-        // Re-evaluate shares after each grant so one account cannot consume a
-        // whole release wave ahead of equally prioritized tenants.
-        for (;;) {
-          const waiting = [...this.accounts.values()].filter(account => Number.isFinite(account.oldestWaiterAt))
-            .sort((a, b) => a.waitingPriority - b.waitingPriority
-              || (a.waitingPriority < 0 ? 0 : a.waitingShare - b.waitingShare)
-              || a.oldestWaiterAt - b.oldestWaiterAt);
-          if (!waiting.some(account => account.drain(1) > 0)) break;
-        }
-      },
+      () => this.wakeAccounts(),
     );
     this.accounts.set(accountKey, account);
     account.setPressure([...this.pressureSignals.values()].some(signal => signal.active));
     return account;
+  }
+
+  private wakeAccounts(): void {
+    // Re-evaluate shares after each grant, including after pressure recovery.
+    for (;;) {
+      const waiting = [...this.accounts.values()].filter(account => Number.isFinite(account.oldestWaiterAt))
+        .sort((a, b) => a.waitingPriority - b.waitingPriority
+          || (a.waitingPriority < 0 ? 0 : a.waitingShare - b.waitingShare)
+          || a.oldestWaiterAt - b.oldestWaiterAt);
+      if (!waiting.some(account => account.drain(1) > 0)) break;
+    }
   }
 }
 

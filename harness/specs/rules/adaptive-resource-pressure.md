@@ -20,7 +20,8 @@ recovery. Record pressure causes, thresholds and unavailable signals in diagnost
 Contract admission without interrupting an active lease. Recover after fresh
 low-pressure observations spanning the dwell period, then normal healthy-demand
 sampling. Reclaim only empty accounts idle beyond the retention interval. Never
-evict an active or queued owner. Stop observation clears its pressure gate.
+evict an active or queued owner. Diagnostic opt-out stops recording; the protection
+observer and its pressure gate continue until explicit application shutdown.
 
 Retain negative controls, fixed-input pressure traces and paired actual-work
 measurements on the same candidate. Report throughput and tail latency together;

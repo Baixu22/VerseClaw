@@ -6,8 +6,25 @@ import {
 import type { DB } from "../../state/openclaw-state-db.generated.js";
 import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionStateWriteTransaction as runOpenClawStateWriteTransaction } from "../../state/execution-state-db.js";
 
+import { resolveGlobalSingleton } from "../../shared/global-singleton.js";
+import { readTaskLedgerProcessIncarnation } from "../../../../shared/task-ledger-process.js";
+
 const SCOPE = "verseshell-process-capacity/v1";
+const PRESSURE_SCOPE = "verseshell-host-pressure/v1";
 type CapacityDatabase = Pick<DB, "state_leases">;
+type HostPressure = {
+  ownerPid: number;
+  ownerEpoch: string;
+  ownerIncarnation: string | null;
+  limit: 1;
+};
+const pressureObserver = resolveGlobalSingleton(
+  Symbol.for("openclaw.managedHostPressureObserver"),
+  () => ({
+    epoch: randomUUID(),
+    checks: new Map<string, { at: number; incarnation: string | null }>(),
+  }),
+);
 export type ManagedProcessIdentity = {
   sessionKey: string;
   sessionGeneration: string;
@@ -59,6 +76,144 @@ export function managedProcessReservations(): ManagedProcessReservation[] {
   return executeSqliteQuerySync(db, query.selectFrom("state_leases").select("payload_json").where("scope", "=", SCOPE)).rows.map(row => decode(row.payload_json));
 }
 
+/** Pressure declarations share the process owner's DB, but never count as processes. */
+export function setManagedProcessHostPressure(
+  active: boolean,
+  ownerIncarnation: string | null = null,
+): void {
+  runOpenClawStateWriteTransaction(({ db }) => {
+    const query = getNodeSqliteKysely<CapacityDatabase>(db);
+    const leaseKey = String(process.pid);
+    if (!active) {
+      executeSqliteQuerySync(
+        db,
+        query
+          .deleteFrom("state_leases")
+          .where("scope", "=", PRESSURE_SCOPE)
+          .where("lease_key", "=", leaseKey),
+      );
+      return;
+    }
+    const now = Date.now();
+    const payload = JSON.stringify({
+      ownerPid: process.pid,
+      ownerEpoch: pressureObserver.epoch,
+      ownerIncarnation,
+      limit: 1,
+    } satisfies HostPressure);
+    executeSqliteQuerySync(
+      db,
+      query
+        .insertInto("state_leases")
+        .values({
+          scope: PRESSURE_SCOPE,
+          lease_key: leaseKey,
+          owner: `main:${process.pid}`,
+          expires_at: null,
+          heartbeat_at: null,
+          payload_json: payload,
+          created_at: now,
+          updated_at: now,
+        })
+        .onConflict((conflict) =>
+          conflict.columns(["scope", "lease_key"]).doUpdateSet({
+            payload_json: payload,
+            updated_at: now,
+          }),
+        ),
+    );
+  });
+}
+
+function hostPressureRecords() {
+  const { db } = openOpenClawStateDatabase();
+  const query = getNodeSqliteKysely<CapacityDatabase>(db);
+  const rows = executeSqliteQuerySync(
+    db,
+    query
+      .selectFrom("state_leases")
+      .select(["lease_key", "payload_json"])
+      .where("scope", "=", PRESSURE_SCOPE),
+  ).rows;
+  return rows.map((row) => {
+    const pressure = JSON.parse(row.payload_json ?? "null") as HostPressure | null;
+    if (
+      !pressure ||
+      !Number.isSafeInteger(pressure.ownerPid) ||
+      pressure.ownerPid < 1 ||
+      pressure.limit !== 1 ||
+      typeof pressure.ownerEpoch !== "string" ||
+      !pressure.ownerEpoch ||
+      !(
+        pressure.ownerIncarnation === null ||
+        (typeof pressure.ownerIncarnation === "string" &&
+          pressure.ownerIncarnation.length > 0 &&
+          pressure.ownerIncarnation.length <= 128)
+      )
+    )
+      throw new Error("E_PROCESS_PRESSURE_INVALID");
+    return { row, pressure };
+  });
+}
+
+export function managedProcessHostPressureLimit(): number | undefined {
+  return hostPressureRecords().length ? 1 : undefined;
+}
+
+/** Observer maintenance verifies identity outside the native admission transaction. */
+export function pruneManagedProcessHostPressure(): number {
+  const removable = hostPressureRecords().filter(({ pressure }) => {
+    if (pressure.ownerPid === process.pid) return false;
+    try {
+      process.kill(pressure.ownerPid, 0);
+    } catch (error) {
+      return (error as NodeJS.ErrnoException).code === "ESRCH";
+    }
+    if (pressure.ownerIncarnation === null) return false;
+    const key = `${pressure.ownerPid}:${pressure.ownerEpoch}`;
+    let observed = pressureObserver.checks.get(key);
+    if (!observed || Date.now() - observed.at >= 30_000) {
+      observed = {
+        at: Date.now(),
+        incarnation: readTaskLedgerProcessIncarnation(pressure.ownerPid),
+      };
+      pressureObserver.checks.set(key, observed);
+      if (pressureObserver.checks.size > 256)
+        pressureObserver.checks.delete(pressureObserver.checks.keys().next().value!);
+    }
+    if (observed.incarnation === null) return false;
+    if (
+      process.platform === "win32" &&
+      /^\d+$/u.test(observed.incarnation) &&
+      /^\d+$/u.test(pressure.ownerIncarnation)
+    ) {
+      // CIM creation dates retain microseconds; GetProcessTimes may retain 100 ns.
+      const difference = BigInt(observed.incarnation) - BigInt(pressure.ownerIncarnation);
+      return difference >= 10n || difference <= -10n;
+    }
+    return observed.incarnation !== pressure.ownerIncarnation;
+  });
+  if (!removable.length) return 0;
+  return runOpenClawStateWriteTransaction(({ db }) => {
+    const query = getNodeSqliteKysely<CapacityDatabase>(db);
+    let removed = 0;
+    for (const { row } of removable) {
+      // Compare the publication bytes so a replacement observer keeps its signal.
+      removed += Number(
+        executeSqliteQuerySync(
+          db,
+          query
+            .deleteFrom("state_leases")
+            .where("scope", "=", PRESSURE_SCOPE)
+            .where("lease_key", "=", row.lease_key)
+            .where("payload_json", "=", row.payload_json),
+        ).numAffectedRows,
+      );
+    }
+    return removed;
+  });
+}
+
 function normalizeManagedProcessIdentity(identity: ManagedProcessIdentity): ManagedProcessIdentity {
   const values = [identity.sessionKey, identity.sessionGeneration, identity.runId];
   if (values.some(value => typeof value !== "string" || !value.trim() || value.length > 2048))
@@ -80,7 +235,12 @@ export function reserveManagedProcess(input: {
   return runOpenClawStateWriteTransaction(({ db }) => {
     const existing = managedProcessReservations();
     const limits = [input.limit, ...existing.map(row => row.limit)].filter((value): value is number => value !== undefined);
-    const limit = limits.length ? Math.min(...limits) : undefined;
+    const normalLimit = limits.length ? Math.min(...limits) : undefined;
+    const pressureLimit = managedProcessHostPressureLimit();
+    const effectiveLimits = [normalLimit, pressureLimit].filter(
+      (value): value is number => value !== undefined,
+    );
+    const limit = effectiveLimits.length ? Math.min(...effectiveLimits) : undefined;
     const live = existing.length;
     if (limit !== undefined && live >= limit) return { ok: false, reason: "capacity", live, limit };
     const conflict = existing.find(row => row.ports.some(port => ports.includes(port)));
@@ -88,7 +248,7 @@ export function reserveManagedProcess(input: {
     const now = Date.now();
     const reservation: ManagedProcessReservation = {
       id: randomUUID(), ownerPid: process.pid, owner: input.owner ?? `runtime:${process.pid}`,
-      ...(limit !== undefined ? { limit } : {}), ports, phase: "reserved", createdAt: now,
+      ...(normalLimit !== undefined ? { limit: normalLimit } : {}), ports, phase: "reserved", createdAt: now,
       ...(identity ?? {}),
     };
     const query = getNodeSqliteKysely<CapacityDatabase>(db);

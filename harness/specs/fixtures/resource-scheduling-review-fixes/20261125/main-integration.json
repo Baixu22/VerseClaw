@@ -1,0 +1,256 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-integration",
+  "operationId": "d6ecd729-9279-40b2-b1f8-34e1540323dc",
+  "baseCommit": "526645345fac24c0ecb0f7e4170d920e57d37153",
+  "candidateCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "mainHead": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "fastForward": true,
+  "unrelatedIndexEntriesPreserved": true,
+  "proposedIndexPublished": true,
+  "mergedExistingEdits": [
+    {
+      "path": "README.ja-JP.md",
+      "beforeSha256": "ad57e1b65b23be34e2061ba21fd8e7846c181e0d7d7dc020f453238901043b14",
+      "afterSha256": "afef1ae0241be5ee81b2dadc21e4f8e926a2886258e537e169f4d69e6c45e83b",
+      "staged": false
+    },
+    {
+      "path": "README.md",
+      "beforeSha256": "f1bbfea4125ba7d522cbbf5d123597c9ca8b9bf18c2d71d38bfcc18ed9cf8af7",
+      "afterSha256": "ec65fc155b82792ce95a74a70378e1f26bfeac1f06a8af747ff03537ce8f40ab",
+      "staged": false
+    },
+    {
+      "path": "README.zh-CN.md",
+      "beforeSha256": "2c03806d59b4c9aa1a2058e914169965e72c0d6ec2499d74d5f7dc6562bd0bfd",
+      "afterSha256": "d2e14556ec0a4ece03085f9695c3aa36e697f9c7bdd381f80d42c16cbed34172",
+      "staged": false
+    },
+    {
+      "path": "shared/i18n/locales/en/settings.json",
+      "beforeSha256": "ebfcab4efa2796bc3ecadb52d53fe5c05c714514bad80da14258492f217cf41c",
+      "afterSha256": "2f556a2fecad07b84e1697ceb667527a96ccaee2c42ac9f473449204ab98d151",
+      "staged": false
+    },
+    {
+      "path": "shared/i18n/locales/ja/settings.json",
+      "beforeSha256": "752e36d31012ee758ba015257a3e00a15ce0587006a438410aa29666d4fc59cb",
+      "afterSha256": "a8bed556b1fdc00a793546fc94ba1f095ad0014febb5eda005844d58ec49b5bb",
+      "staged": false
+    },
+    {
+      "path": "shared/i18n/locales/ru/settings.json",
+      "beforeSha256": "409e6cb8234fdf923f10845b3864edac047270c81319a8a902028dd3487278eb",
+      "afterSha256": "4851eed2ca342b998b56149746f8679808c6f119b2da1d4ba4f9b2ec1d02d920",
+      "staged": false
+    },
+    {
+      "path": "shared/i18n/locales/zh/settings.json",
+      "beforeSha256": "2a5c20ef3527d2b7a09c5106caf4dbd7512d5a87a662ffb175a7e194dcfc852a",
+      "afterSha256": "0ac9242600457f5cac8b1e57effa65d5f2ecb2e700afd2829ab8c85d1f186796",
+      "staged": false
+    }
+  ],
+  "protectedFiles": [
+    {
+      "path": "openclaw_runtime/pnpm-workspace.yaml",
+      "sha256": "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910",
+      "afterSha256": "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910"
+    },
+    {
+      "path": "shared/dcs/component-disposition-catalog.ts",
+      "sha256": "0c052bcc287d0ad6b1ae3969e7ae1cecde398d93396837d43f9957de3167eea0",
+      "afterSha256": "0c052bcc287d0ad6b1ae3969e7ae1cecde398d93396837d43f9957de3167eea0"
+    },
+    {
+      "path": "src/App.tsx",
+      "sha256": "7da18a0c8f0c90bcf7d45717cd357549030299f65b16c10744d49c4e6cde4558",
+      "afterSha256": "7da18a0c8f0c90bcf7d45717cd357549030299f65b16c10744d49c4e6cde4558"
+    },
+    {
+      "path": "src/components/settings/DcsProdFlagsPanel.tsx",
+      "sha256": "20de4eae8b2326bb7c3b75c353615a2441f66990b81d1ba633b69f20d932c744",
+      "afterSha256": "20de4eae8b2326bb7c3b75c353615a2441f66990b81d1ba633b69f20d932c744"
+    },
+    {
+      "path": "src/components/settings/EfficiencySamplingPanel.tsx",
+      "sha256": "716d0b748f3122a749c5f45c1c966c5258669fc5a8ba9d8779809b7c106d8b51",
+      "afterSha256": "716d0b748f3122a749c5f45c1c966c5258669fc5a8ba9d8779809b7c106d8b51"
+    },
+    {
+      "path": "src/lib/settings-search.ts",
+      "sha256": "f35ee8145423f9321535d9ada49b037a82d8dabafd4df2e841605406daa9a832",
+      "afterSha256": "f35ee8145423f9321535d9ada49b037a82d8dabafd4df2e841605406daa9a832"
+    },
+    {
+      "path": "src/pages/ImageGeneration/index.tsx",
+      "sha256": "83f47bd945c284d6e6446ff3bac54c88ed7db3a15419ac35547498bf77a643cc",
+      "afterSha256": "83f47bd945c284d6e6446ff3bac54c88ed7db3a15419ac35547498bf77a643cc"
+    },
+    {
+      "path": "src/pages/Settings/SettingsRoute.tsx",
+      "sha256": "4d3c501f4c747d7a8f7f31d5036fc4f14f65eba15d91e17488052c7b15e27b5f",
+      "afterSha256": "4d3c501f4c747d7a8f7f31d5036fc4f14f65eba15d91e17488052c7b15e27b5f"
+    },
+    {
+      "path": "src/pages/Settings/SettingsSidebar.tsx",
+      "sha256": "c7510f93e7d668334e2244fa6058f534828ede3ef5a65b370c061f1087618d92",
+      "afterSha256": "c7510f93e7d668334e2244fa6058f534828ede3ef5a65b370c061f1087618d92"
+    },
+    {
+      "path": "src/pages/Settings/index.tsx",
+      "sha256": "cc41911a44b5d1201359d45ab5e3042499872e6aecb21a0ab3c6d72637214bba",
+      "afterSha256": "cc41911a44b5d1201359d45ab5e3042499872e6aecb21a0ab3c6d72637214bba"
+    },
+    {
+      "path": "src/pages/Settings/route-config.ts",
+      "sha256": "7618b3f3809657e6914403ad6751b834e629e177ed95879b7256bbdfc84e72a6",
+      "afterSha256": "7618b3f3809657e6914403ad6751b834e629e177ed95879b7256bbdfc84e72a6"
+    },
+    {
+      "path": "src/styles/codex-settings.css",
+      "sha256": "d644cd218650340a6464562f7834f9560f69157f30d1a9f6af1296ef154d37aa",
+      "afterSha256": "d644cd218650340a6464562f7834f9560f69157f30d1a9f6af1296ef154d37aa"
+    },
+    {
+      "path": "tests/e2e/image-generation-settings.spec.ts",
+      "sha256": "a0b949ed2c13d4cce952f6eb7ee4d7d24518a9969a5e00022da600c409042746",
+      "afterSha256": "a0b949ed2c13d4cce952f6eb7ee4d7d24518a9969a5e00022da600c409042746"
+    },
+    {
+      "path": "tests/unit/component-disposition-catalog.test.ts",
+      "sha256": "9585631fcdf745d2c34d624b062a8e3082babfbc2e05d132a7fb068e3b26f05f",
+      "afterSha256": "9585631fcdf745d2c34d624b062a8e3082babfbc2e05d132a7fb068e3b26f05f"
+    },
+    {
+      "path": "tests/unit/settings-search.test.ts",
+      "sha256": "51d4ef62a76034a10361dbb245b5d151cf0d44a71aedf396ade9f13d6e6cc59a",
+      "afterSha256": "51d4ef62a76034a10361dbb245b5d151cf0d44a71aedf396ade9f13d6e6cc59a"
+    },
+    {
+      "path": "harness/specs/fixtures/agent-resource-queue/20261125/REPORT.json",
+      "sha256": "610db81f6853b174d8004ec7a2e9de5f3ecc84d91575921de1375d31d1a8d586",
+      "afterSha256": "610db81f6853b174d8004ec7a2e9de5f3ecc84d91575921de1375d31d1a8d586"
+    },
+    {
+      "path": "harness/specs/fixtures/settings-capability-discovery/20261125/REPORT.md",
+      "sha256": "d481e032df2e9b268e465a730b5d1b53f2a9eb0af0958d00227b054ed58b7102",
+      "afterSha256": "d481e032df2e9b268e465a730b5d1b53f2a9eb0af0958d00227b054ed58b7102"
+    },
+    {
+      "path": "harness/specs/fixtures/settings-capability-discovery/20261125/RESULT.json",
+      "sha256": "3ec224821843d38a77fca0943e84cddf8f1162ba2834fc9f2b01847d7d020640",
+      "afterSha256": "3ec224821843d38a77fca0943e84cddf8f1162ba2834fc9f2b01847d7d020640"
+    },
+    {
+      "path": "harness/specs/fixtures/settings-capability-discovery/20261125/SHA256SUMS",
+      "sha256": "9872dea65d21b097f64330a5f831ccb3498c033931683c7fb5b70f4bd8733e9a",
+      "afterSha256": "9872dea65d21b097f64330a5f831ccb3498c033931683c7fb5b70f4bd8733e9a"
+    },
+    {
+      "path": "harness/specs/fixtures/settings-capability-discovery/20261125/capabilities-zh-dark-1280.png",
+      "sha256": "51ba95f8c2d1557de3e5882718a876647acf122fd9c6d9a65eca7ac7375c7867",
+      "afterSha256": "51ba95f8c2d1557de3e5882718a876647acf122fd9c6d9a65eca7ac7375c7867"
+    },
+    {
+      "path": "harness/specs/fixtures/settings-capability-discovery/20261125/capabilities-zh-dark-375.png",
+      "sha256": "c8a0faf43198b33c50f9e089c8dd9bd2327f7ac778d7c13142a7ba76adaf08c4",
+      "afterSha256": "c8a0faf43198b33c50f9e089c8dd9bd2327f7ac778d7c13142a7ba76adaf08c4"
+    },
+    {
+      "path": "harness/specs/fixtures/settings-capability-discovery/20261125/capabilities-zh-light-1280.png",
+      "sha256": "a4a58bab93233b774a9655a65dd03aa2f5cdd473c4e66235da1c6c4f0ad43a75",
+      "afterSha256": "a4a58bab93233b774a9655a65dd03aa2f5cdd473c4e66235da1c6c4f0ad43a75"
+    },
+    {
+      "path": "harness/specs/fixtures/settings-capability-discovery/20261125/source-manifest.json",
+      "sha256": "3b2c9acd42cac3785b32469c1a17995dd3b10c0ccee913d0ea7ea2a03b10d7f9",
+      "afterSha256": "3b2c9acd42cac3785b32469c1a17995dd3b10c0ccee913d0ea7ea2a03b10d7f9"
+    },
+    {
+      "path": "harness/specs/rules/agent-resource-queue-authority.md",
+      "sha256": "1846331e9fa4ec806fefae3c97353402c356bad438a5fa51c00163e556c954dd",
+      "afterSha256": "1846331e9fa4ec806fefae3c97353402c356bad438a5fa51c00163e556c954dd"
+    },
+    {
+      "path": "harness/specs/rules/settings-capability-discovery.md",
+      "sha256": "d0350d5a39fb74715ec285052265cf8ba629352ebbbdd11efe7d467508670ee0",
+      "afterSha256": "d0350d5a39fb74715ec285052265cf8ba629352ebbbdd11efe7d467508670ee0"
+    },
+    {
+      "path": "harness/specs/scenarios/settings-capability-discovery.md",
+      "sha256": "13907703bf7aff04ac920e8270988e2c0a7d0bddeeda67962fd5637ea938f40b",
+      "afterSha256": "13907703bf7aff04ac920e8270988e2c0a7d0bddeeda67962fd5637ea938f40b"
+    },
+    {
+      "path": "harness/specs/tasks/agent-resource-queue.md",
+      "sha256": "762ddc80f68fed6e2f41685d3ab870bfbe9a74d3f419a98a9ffaf7c1621db0b2",
+      "afterSha256": "762ddc80f68fed6e2f41685d3ab870bfbe9a74d3f419a98a9ffaf7c1621db0b2"
+    },
+    {
+      "path": "harness/specs/tasks/chat-activity-bell-unread-status-20261120.md",
+      "sha256": "1e170f3650805280d1b1886d87da9db4307f748f19aed4cb6ad8f7105f508f9c",
+      "afterSha256": "1e170f3650805280d1b1886d87da9db4307f748f19aed4cb6ad8f7105f508f9c"
+    },
+    {
+      "path": "harness/specs/tasks/chat-effort-preview-slider-20261124.md",
+      "sha256": "4c425105df55ce7d51491469079c9b2cd8d94dae6daa75cb1086259a91d5ee34",
+      "afterSha256": "4c425105df55ce7d51491469079c9b2cd8d94dae6daa75cb1086259a91d5ee34"
+    },
+    {
+      "path": "harness/specs/tasks/settings-capability-discovery-20261125.md",
+      "sha256": "9481402336953b8a46edbc610e1ac3a9978e3cdc1836f645f67b99bbabe54e81",
+      "afterSha256": "9481402336953b8a46edbc610e1ac3a9978e3cdc1836f645f67b99bbabe54e81"
+    },
+    {
+      "path": "scripts/resource-queue/README.md",
+      "sha256": "c41e4f98ebcb98dfe75800e8d867fd6e82eebdbadd924fbfa381e00169e24a65",
+      "afterSha256": "0e1b2ced45b4bec9d8b023d0715456370e7ce4228408a68c41a8f6ba7547ce1f"
+    },
+    {
+      "path": "scripts/resource-queue/resource_queue.py",
+      "sha256": "7fee66e6f272195e6e14638a6fa8cc0cc982fecafb44bb63ffe8385439faff61",
+      "afterSha256": "4be05022c86832b85698f2fae582e5d6a8c972829a0d17d070e500ac20a44d34"
+    },
+    {
+      "path": "scripts/resource-queue/test_resource_queue.py",
+      "sha256": "9971bd8cf48675ee281b7a2f2147f44ebd4170cf28da7664c26c954bc960f5aa",
+      "afterSha256": "a546022367dcd7aaf01d7c6b1fc1579e096c8ae8d3275c4b972262017dceff7c"
+    },
+    {
+      "path": "scripts/resource-queue/windows_processes.py",
+      "sha256": "499fa061fa113a21fd57b1bd752ebe6c7c3af77b188af3f460b102783c7b616d",
+      "afterSha256": "499fa061fa113a21fd57b1bd752ebe6c7c3af77b188af3f460b102783c7b616d"
+    },
+    {
+      "path": "src/pages/Settings/sections/CapabilitiesSection.tsx",
+      "sha256": "f22123c78eb0bf3caf97197cf36b1d2b96402d398217a486f3a919c14bb31d15",
+      "afterSha256": "f22123c78eb0bf3caf97197cf36b1d2b96402d398217a486f3a919c14bb31d15"
+    },
+    {
+      "path": "src/pages/Settings/sections/KnowledgeSettingsSection.tsx",
+      "sha256": "a200bafaf226010a347a6ed2245c22232f65d81a38b9d86c75da6c897c22d125",
+      "afterSha256": "a200bafaf226010a347a6ed2245c22232f65d81a38b9d86c75da6c897c22d125"
+    },
+    {
+      "path": "tests/e2e/settings-capabilities.spec.ts",
+      "sha256": "f8984ac1c217c9c6b4d60b1c7ccaaf022293e7f645d737841b14578fde4c362f",
+      "afterSha256": "f8984ac1c217c9c6b4d60b1c7ccaaf022293e7f645d737841b14578fde4c362f"
+    },
+    {
+      "path": "tests/unit/settings-capabilities.test.tsx",
+      "sha256": "dcf1eb4b8414bc955c1858aa6681db71ce2ad9d0a6e69c4d5548572c8aa6ff72",
+      "afterSha256": "dcf1eb4b8414bc955c1858aa6681db71ce2ad9d0a6e69c4d5548572c8aa6ff72"
+    }
+  ],
+  "protectedWorkingFilesUnchanged": false,
+  "protectedPathsNotWritten": true,
+  "concurrentProtectedUpdates": [
+    "scripts/resource-queue/README.md",
+    "scripts/resource-queue/resource_queue.py",
+    "scripts/resource-queue/test_resource_queue.py"
+  ],
+  "completed": "2026-11-25T13:42:21.549Z",
+  "verificationRecovery": "Resumed read-only validation with a larger output buffer after reference and index publication completed. Updates outside the integration write set retain their current bytes."
+}

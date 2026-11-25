@@ -46,7 +46,7 @@ import {
 import { getMacTrafficLightPosition, syncMacTrafficLightPosition } from './traffic-light-layout';
 import { getSetting } from '../utils/store';
 import { reconcileAppVersionRollback } from '../utils/app-version-rollback';
-import { startRuntimeEfficiency, stopRuntimeEfficiency } from '../services/efficiency-orchestrator';
+import { startRuntimeEfficiency, stopRuntimeEfficiency, startRuntimeResourceProtection, stopRuntimeResourceProtection } from '../services/efficiency-orchestrator';
 import { applyProxySettings } from './proxy';
 import { syncLaunchAtStartupSettingFromStore } from './launch-at-startup';
 import {
@@ -1458,6 +1458,7 @@ if (gotTheLock) {
     disposeCronMaintenance();
     // Release the efficiency sampling timer so quit never waits on it.
     stopRuntimeEfficiency();
+    stopRuntimeResourceProtection();
     releaseProcessInstanceFileLock();
   });
 
@@ -1497,6 +1498,7 @@ if (gotTheLock) {
     traceStartup('app-ready-callback');
     markPerformance('app-ready');
     installHtmlPreviewProtocol();
+    startRuntimeResourceProtection();
     // Runtime efficiency sampling (P2 #161); cheap unref'd timer, local only.
     // Honour the persisted opt-out: start only when enabled (default true).
     void getSetting('efficiencySamplingEnabled')

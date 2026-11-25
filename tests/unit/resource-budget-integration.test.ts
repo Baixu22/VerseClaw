@@ -14,6 +14,24 @@ async function fillHost(fabric: ResourceFabric) {
 }
 
 describe('integrated host budget and bounded waiting', () => {
+  it('contracts all cross-workspace admission under one-percent free memory and wakes it after fresh recovery', async () => {
+    const fabric = new ResourceFabric();
+    fabric.observePressure({ machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 1, totalPhysicalBytes: 100 } });
+    const held: FabricLease[] = [];
+    const requests = Array.from({ length: 64 }, (_, i) => fabric.acquire('workspaceExec', `pressured-${i}`).then(lease => { held.push(lease); return lease; }));
+    await flush();
+    const totals = () => Object.values(fabric.getDiagnostics().accounts).reduce((total, account) => ({ active: total.active + account.active, queued: total.queued + account.queued }), { active: 0, queued: 0 });
+    expect(totals()).toEqual({ active: 1, queued: 63 });
+    vi.setSystemTime(Date.now() + 1000);
+    fabric.observePressure({ machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 30, totalPhysicalBytes: 100 } });
+    vi.setSystemTime(Date.now() + 10_000);
+    fabric.observePressure({ machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 30, totalPhysicalBytes: 100 } });
+    await Promise.all(requests);
+    expect(totals()).toEqual({ active: 64, queued: 0 });
+    held.forEach(lease => lease.release());
+    expect(totals()).toEqual({ active: 0, queued: 0 });
+    expect(vi.getTimerCount()).toBe(0);
+  });
   it('classifies 200 cross-workspace requests within the host cap and releases every wait resource', async () => {
     const fabric=new ResourceFabric();
     const controllers=Array.from({length:200},()=>new AbortController());

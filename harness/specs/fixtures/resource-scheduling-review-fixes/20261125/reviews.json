@@ -1,0 +1,253 @@
+{
+  "driven_by": "agent",
+  "actor": "workbuddy-resource-review",
+  "codeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "reviews": [
+    {
+      "scope": "queues",
+      "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+      "returnedModel": "deepseek-v4.1-flash",
+      "sourceTree": "b38f6a6f7fdd4a22d252b7b2d00fcbe44a2a885e",
+      "currentCodeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "comparedSources": [
+        {
+          "path": "openclaw_runtime/src/process/command-queue.ts",
+          "sha256": "82c1c90e4e4c45d54639736d5e87578037ecc4da519af6d1068e1abc134a4d8c"
+        },
+        {
+          "path": "openclaw_runtime/src/process/command-queue.types.ts",
+          "sha256": "b4ea30647778bb494e476b53aadce7e48d765ef8cfc90e114c43f984aef1e4c4"
+        },
+        {
+          "path": "openclaw_runtime/src/process/command-queue.test.ts",
+          "sha256": "0636812d4bb3a045c88974da7a9ebb225e2ea7e3c17f1d597ed4d57dede2d757"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/lanes.ts",
+          "sha256": "1691e9e64dd609c091d9af87275e1e5cb01e3e54605637b6c3b30aa17086c558"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+          "sha256": "95acbd060ead64450b2ffa0837eea8cb6a0d26e951edb04f25a97b13f488e624"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/model-fallback.ts",
+          "sha256": "b52d566076a6dbfaf17ab12627685efaba563169a3229092d66d37841fdea389"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/model-fallback.loop-termination.test.ts",
+          "sha256": "fc4014782b718852f75231df9799f3b35917e0558125a1176c4041a636118e77"
+        },
+        {
+          "path": "openclaw_runtime/src/logging/diagnostic-stuck-session-recovery.runtime.ts",
+          "sha256": "f2ebd10c058c46c3ff1027db3a1c76dc4ec2a4317bc8730c368308b5cd303f2d"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/runs.ts",
+          "sha256": "01fd9fb9daf8ec14ae03cb4a2537dd046d9aa0291f3c968f4531be4946d16b9a"
+        },
+        {
+          "path": "shared/resources/wait.ts",
+          "sha256": "9d569be0fb2878e1f5f6b86b0404b9011dddfa96a5788098aae45f2f4e958f84"
+        }
+      ],
+      "sourceMatches": true,
+      "plainText": true,
+      "verdict": "NO_ACTIONABLE_FINDINGS",
+      "verdictSha256": "2b7d628bc43ef04ad34f24d3896b0bd141d61b9ab25fa821eb645a551c92de20",
+      "bundleSha256": "9a732ce9173269590b196174d01683a580105b2703dfd3e2544c5b9c624432a0",
+      "responseSha256": "203e890d64aab8c49cdc120e767e97262dc4ead415eda3764fe24253d09735c0",
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 92807,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 8854,
+        "output_tokens_details": {
+          "reasoning_tokens": 8145
+        },
+        "total_tokens": 101661
+      },
+      "completed": "2026-11-25T11:09:54.345Z"
+    },
+    {
+      "scope": "native",
+      "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+      "returnedModel": "deepseek-v4.1-flash",
+      "sourceTree": "17f7654852a07ab93f431d49fcb95e0bd729d509",
+      "currentCodeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "comparedSources": [
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+          "sha256": "3b7d338ac15f5a34133ee94c6e5444f535e02434ee1fd3f916fb458ad73c5ded"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+          "sha256": "f963d397327210f4fcc80bc8fdbff54044e303795294ac8ec315967a1c316fde"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/governed-process.ts",
+          "sha256": "cad0347964c76bb5687023075e411b39faa3e26da80cf3b47e1c457da324d940"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/sessions/tools/bash.ts",
+          "sha256": "f8748960aa9ab74d827759574491206d6d9f7a8f732dc618160e88e4b8ae738e"
+        },
+        {
+          "path": "electron/services/git-api.ts",
+          "sha256": "a9feaddb60ee2486420d491eb7165c1f142936c15ac4b62803b297c981d898ff"
+        },
+        {
+          "path": "electron/utils/counted-child-process.ts",
+          "sha256": "53fa8feb8a8b3ec5a11a0bb313ad6be1817b476ed8bea0f263a030c33062f18b"
+        },
+        {
+          "path": "tests/unit/git-api.test.ts",
+          "sha256": "e6b8a02fad6c2e581b0b122c9875179d3b99c1b8b0b40d27516948d62ed751ec"
+        },
+        {
+          "path": "tests/unit/resource-host-capacity-native.test.ts",
+          "sha256": "150994c4b0d4d8baf76542785dfd6d01534e551849058038aa6e40ea5e812787"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.test.ts",
+          "sha256": "35805f12227ac848048d8266a88c768f82197c1a6012a9c88193fb417d9d332b"
+        }
+      ],
+      "sourceMatches": true,
+      "plainText": true,
+      "verdict": "NO_ACTIONABLE_FINDINGS",
+      "verdictSha256": "1980a131b976d769d6319dc44379bdc0a83bcc345c6ce78a807533a1bcb0f1a8",
+      "bundleSha256": "87cff5eeda7fe9a86c069e21592e5e598619853d497be045064ded8a0649d718",
+      "responseSha256": "6f615e2d7eacf02989fb2e8e67324691ef089628bd74e3ae3e68304d0504c514",
+      "usage": {
+        "input_tokens": 68921,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 33062,
+        "output_tokens_details": {
+          "reasoning_tokens": 32703
+        },
+        "total_tokens": 101983
+      },
+      "completed": "2026-11-25T12:08:26.751Z"
+    },
+    {
+      "scope": "pressure",
+      "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+      "returnedModel": "deepseek-v4.1-flash",
+      "sourceTree": "d15e175133e4585b5c008ce21ac2550f5011bc7e",
+      "currentCodeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "comparedSources": [
+        {
+          "path": "electron/services/efficiency-orchestrator.ts",
+          "sha256": "29b9fe414fffb612d091c3c1d466d1aa01d0150eac0114e1d10edb482237bc05"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/resource-leases.ts",
+          "sha256": "bcc6874248ec03a2b8047061afc13b9e37c5278c9de06eef9ccc5cb178bef17b"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+          "sha256": "f963d397327210f4fcc80bc8fdbff54044e303795294ac8ec315967a1c316fde"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+          "sha256": "3b7d338ac15f5a34133ee94c6e5444f535e02434ee1fd3f916fb458ad73c5ded"
+        },
+        {
+          "path": "shared/task-ledger-process.ts",
+          "sha256": "021a5fb39b556735ee60dc935323ba7522ab0d189e90c90da7b4997a8720f04e"
+        },
+        {
+          "path": "tests/unit/resource-window-lifecycle.test.ts",
+          "sha256": "d2ce9c362b24509e63d3c03659436ca4840eb4e858f5748d3328f4432299c423"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/resource-leases.test.ts",
+          "sha256": "d204ad40c8f87f0db5bc1c3b928172332e03956d29413261699190da45e13bb9"
+        }
+      ],
+      "sourceMatches": true,
+      "plainText": true,
+      "verdict": "NO_ACTIONABLE_FINDINGS",
+      "verdictSha256": "9ede408777498d24d8616fd30cc181d02081aa50241527b064031e6c719c7793",
+      "bundleSha256": "c9265d3be7fa98bbd209c04bc5c4a52731ae9c380772cbd5a983ef2a4b614087",
+      "responseSha256": "cc4233b340b2220ae80d9565b4ec7c41e1c328cd606d7f2cbb798965c4935164",
+      "usage": {
+        "input_tokens": 34820,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 19908,
+        "output_tokens_details": {
+          "reasoning_tokens": 19211
+        },
+        "total_tokens": 54728
+      },
+      "completed": "2026-11-25T12:52:18.135Z"
+    },
+    {
+      "scope": "protection",
+      "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+      "returnedModel": "deepseek-v4.1-flash",
+      "sourceTree": "ff7fb7eceefcff6555f9d1bbd060b089b08083c7",
+      "currentCodeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "comparedSources": [
+        {
+          "path": "electron/services/efficiency-orchestrator.ts",
+          "sha256": "29b9fe414fffb612d091c3c1d466d1aa01d0150eac0114e1d10edb482237bc05"
+        },
+        {
+          "path": "electron/services/efficiency-api.ts",
+          "sha256": "ed5c5c7c4fd3f21ff0735f70f78a56af765f87213b31804f410f56af4864718e"
+        },
+        {
+          "path": "electron/services/efficiency-sampler.ts",
+          "sha256": "da5499034953f8e9a16d46d9bfbabf64afdfa740057921fa8f72ca687ffaae64"
+        },
+        {
+          "path": "electron/services/efficiency-power-policy.ts",
+          "sha256": "4e18eaa2807f120e405852f3616fa2cd0f59b2610f4ed47f0af7021b7ffb9583"
+        },
+        {
+          "path": "electron/services/resource-tracker.ts",
+          "sha256": "7697b9b52f55e657b01a25bb8a3f49b9fc0df0e5d041b0fd25fba0e0d6c5ab51"
+        },
+        {
+          "path": "electron/main/index.ts",
+          "sha256": "6f024fac38f664b3fdfe2596971acd57742dc05bf699ffdac4e919922eef0078"
+        },
+        {
+          "path": "shared/resources/timer-aligner.ts",
+          "sha256": "bb5bc08695da1c2d0f60e983d4e74e116ed842af96a17a3b77fb20a6461a153a"
+        },
+        {
+          "path": "openclaw_runtime/src/resources/background-work-gate.ts",
+          "sha256": "d5dd54a337748aa17b496952071b295cae95ec093fbbf06d03f63d1fb883ef06"
+        },
+        {
+          "path": "tests/unit/resource-window-lifecycle.test.ts",
+          "sha256": "d2ce9c362b24509e63d3c03659436ca4840eb4e858f5748d3328f4432299c423"
+        }
+      ],
+      "sourceMatches": true,
+      "plainText": true,
+      "verdict": "NO_ACTIONABLE_FINDINGS",
+      "verdictSha256": "c62b1515caec0b614de76ff43a143273b23cda0ceb2e78a62985054cdc2bcfaf",
+      "bundleSha256": "b414e08b432565a5748f86666de74a9b52ed360dc54ce25a928cd1a1dd938a27",
+      "responseSha256": "5b2e95d59aee4eb3977f25b70eceaea62420ac4f2eee7dbec478a693f89a1d65",
+      "usage": {
+        "input_tokens": 33708,
+        "output_tokens": 7464,
+        "output_tokens_details": {
+          "reasoning_tokens": 6862
+        },
+        "total_tokens": 41172
+      },
+      "completed": "2026-11-25T13:08:10.271Z"
+    }
+  ]
+}

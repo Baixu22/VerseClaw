@@ -1,19 +1,22 @@
 // @vitest-environment node
 import { EventEmitter } from 'node:events';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-const mocks = vi.hoisted(() => ({ windows: [] as FakeWindow[], snapshot: vi.fn(), refresh: null as null | (() => Promise<void>) }));
+const mocks = vi.hoisted(() => ({ windows: [] as FakeWindow[], snapshot: vi.fn(), sampleStart: vi.fn(), sampleStop: vi.fn(), refresh: null as null | (() => Promise<void>) }));
 vi.mock('electron', async () => {
   const { EventEmitter } = await import('node:events');
   return { app: new EventEmitter(), powerMonitor: Object.assign(new EventEmitter(), { isOnBatteryPower: () => false }), BrowserWindow: { getAllWindows: () => mocks.windows } };
 });
 vi.mock('../../electron/utils/logger', () => ({ logger: { info() {}, warn() {} } }));
 vi.mock('../../electron/services/resource-envelope', () => ({ getAggregatedResourceEnvelopeSnapshot: mocks.snapshot }));
-vi.mock('../../electron/services/efficiency-sampler', () => ({ EfficiencySampler: class { start() {} stop() {} } }));
+vi.mock('../../electron/services/efficiency-sampler', () => ({ EfficiencySampler: class { start() { mocks.sampleStart(); } stop() { mocks.sampleStop(); } } }));
 vi.mock('../../shared/resources', async importOriginal => ({ ...await importOriginal<typeof import('../../shared/resources')>(), getTimerAligner: () => ({ setShedding() {}, register: (task: { run: () => Promise<void> }) => { mocks.refresh = task.run; return () => { mocks.refresh = null; }; } }) }));
 import { app, powerMonitor } from 'electron';
-import { getEfficiencyShedState, startRuntimeEfficiency, stopRuntimeEfficiency, resetRuntimeEfficiencyForTests } from '../../electron/services/efficiency-orchestrator';
+import { getEfficiencyShedState, startRuntimeEfficiency, stopRuntimeEfficiency, startRuntimeResourceProtection, stopRuntimeResourceProtection, isRuntimeEfficiencyRunning, resetRuntimeEfficiencyForTests } from '../../electron/services/efficiency-orchestrator';
 import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
 import { getResourceFabric } from '../../electron/services/resource-fabric';
+import { managedProcessHostPressureLimit } from '../../openclaw_runtime/src/agents/verseshell/managed-process-reservation';
+import { getResourceEnvelopeLedger } from '../../openclaw_runtime/src/resources/resource-envelope';
+import { openExecutionStateDatabase } from '../../openclaw_runtime/src/state/execution-state-db';
 import { registerWindowVisibility } from '../../electron/main/window-visibility';
 import type { BrowserWindow } from 'electron';
 
@@ -28,8 +31,8 @@ class FakeWindow extends EventEmitter {
 }
 const flush = async () => { for (let i = 0; i < 12; i++) await Promise.resolve(); };
 const healthy = { totals: { queuedCount: 0 }, processTotals: { cpuPercent: 0, rssBytes: 0 } };
-beforeEach(() => { mocks.windows = []; mocks.snapshot.mockReset().mockResolvedValue(healthy); });
-afterEach(() => { resetRuntimeEfficiencyForTests(); app.removeAllListeners(); powerMonitor.removeAllListeners(); });
+beforeEach(() => { mocks.windows = []; mocks.snapshot.mockReset().mockResolvedValue(healthy); mocks.sampleStart.mockClear(); mocks.sampleStop.mockClear(); });
+afterEach(() => { resetRuntimeEfficiencyForTests(); app.removeAllListeners(); powerMonitor.removeAllListeners(); vi.useRealTimers(); });
 
 describe('window resource lifetimes', () => {
   it('publishes per-window native visibility and releases bridge listeners on close', () => {
@@ -51,25 +54,37 @@ describe('window resource lifetimes', () => {
     second.close(); expect(second.listenerCount('hide')).toBe(0);
     third.close(); expect(getEfficiencyShedState()?.shedding).toBe(true);
     first.close(); expect(first.listenerCount('show')).toBe(0);
-    stopRuntimeEfficiency(); expect(app.listenerCount('browser-window-created')).toBe(0);
+    stopRuntimeEfficiency();
+    expect(app.listenerCount('browser-window-created')).toBe(1);
+    stopRuntimeResourceProtection(); expect(app.listenerCount('browser-window-created')).toBe(0);
   });
-  it('releases power listeners on stop and creates one set on restart', () => {
+  it('keeps one set of protection listeners across sampling restarts and releases it on shutdown', () => {
     startRuntimeEfficiency(); stopRuntimeEfficiency(); startRuntimeEfficiency();
     for (const name of ['speed-limit-change', 'resume', 'suspend', 'unlock-screen']) expect(powerMonitor.listenerCount(name)).toBe(1);
     stopRuntimeEfficiency();
+    stopRuntimeResourceProtection();
     for (const name of ['speed-limit-change', 'resume', 'suspend', 'unlock-screen']) expect(powerMonitor.listenerCount(name)).toBe(0);
+  });
+  it('clears display-sleep protection when the OS resumes without an unlock event', async () => {
+    mocks.windows = [new FakeWindow()];
+    startRuntimeResourceProtection(); await flush();
+    powerMonitor.emit('suspend');
+    expect(getEfficiencyShedState()?.activeReasons).toContain('display-sleep');
+    powerMonitor.emit('resume');
+    expect(getEfficiencyShedState()?.shedding).toBe(false);
+    expect(getEfficiencyShedState()?.activeReasons).not.toContain('display-sleep');
   });
   it('ignores a late pressure result after stopping and restarting its generation', async () => {
     mocks.windows = [new FakeWindow()];
     let resolve!: (value: typeof healthy) => void;
     mocks.snapshot.mockImplementationOnce(() => new Promise<typeof healthy>(done => { resolve = done; }));
-    startRuntimeEfficiency(); stopRuntimeEfficiency(); startRuntimeEfficiency(); await flush();
+    startRuntimeEfficiency(); stopRuntimeEfficiency(); stopRuntimeResourceProtection(); startRuntimeEfficiency(); await flush();
     resolve({ totals: { queuedCount: 100 }, processTotals: { cpuPercent: 400, rssBytes: 0 } }); await flush();
     expect(mocks.snapshot).toHaveBeenCalledTimes(2);
     expect(getBackgroundWorkGate().getState().deferring).toBe(false);
     expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual([]);
   });
-  it('releases observation pressure on stop without dropping queued work', async () => {
+  it('keeps deferred work while sampling stops and releases it on protection shutdown', async () => {
     startRuntimeEfficiency(); await flush();
     const work = vi.fn(async () => 'completed');
     const gate = getBackgroundWorkGate();
@@ -77,14 +92,60 @@ describe('window resource lifetimes', () => {
     const pending = gate.runBackground('task', work);
     expect(work).not.toHaveBeenCalled();
     stopRuntimeEfficiency();
+    await flush();
+    expect(work).not.toHaveBeenCalled();
+    expect(gate.getState().pendingCount).toBe(1);
+    stopRuntimeResourceProtection();
     expect(await pending).toBe('completed'); expect(work).toHaveBeenCalledOnce();
     expect(gate.getState().pendingCount).toBe(0);
   });
-  it('feeds fresh memory pressure to admission and clears it when sampling stops', async () => {
+  it('continues fresh pressure observations while diagnostic sampling is disabled', async () => {
+    vi.useFakeTimers(); vi.setSystemTime(1000);
     mocks.snapshot.mockResolvedValue({ ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 5, totalPhysicalBytes: 100 } });
     startRuntimeEfficiency(); await flush();
     expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual(['physical-memory']);
+    expect(managedProcessHostPressureLimit()).toBe(1);
     stopRuntimeEfficiency();
+    expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual(['physical-memory']);
+    expect(managedProcessHostPressureLimit()).toBe(1);
+    expect(mocks.refresh).not.toBeNull();
+    vi.setSystemTime(2000);
+    mocks.snapshot.mockResolvedValue({ ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 30, totalPhysicalBytes: 100 } });
+    await mocks.refresh?.();
+    vi.setSystemTime(12_000);
+    mocks.snapshot.mockResolvedValue({ ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 30, totalPhysicalBytes: 100 } });
+    await mocks.refresh?.();
     expect(getResourceFabric().getDiagnostics().pressure.reasons).toEqual([]);
+    expect(managedProcessHostPressureLimit()).toBeUndefined();
+    expect(mocks.sampleStart).toHaveBeenCalledOnce();
+    expect(mocks.sampleStop).toHaveBeenCalledOnce();
+  });
+  it('starts protection on a sampling-disabled launch without recording diagnostics', async () => {
+    mocks.windows = [new FakeWindow()];
+    startRuntimeResourceProtection(); await flush();
+    expect(isRuntimeEfficiencyRunning()).toBe(false);
+    expect(mocks.sampleStart).not.toHaveBeenCalled();
+    expect(mocks.snapshot).toHaveBeenCalledOnce();
+    expect(powerMonitor.listenerCount('speed-limit-change')).toBe(1);
+    expect(mocks.refresh).not.toBeNull();
+  });
+  it.runIf(process.platform === 'win32')('retains a measured pressure birth identity when a later process snapshot is missing', async () => {
+    vi.useFakeTimers(); vi.setSystemTime(1000);
+    const birth = '133000000000000000';
+    const pressured = { ...healthy, machineMemory: { sampledAt: Date.now(), availablePhysicalBytes: 5, totalPhysicalBytes: 100 } };
+    mocks.snapshot.mockResolvedValue({ ...pressured, entries: [{ id: 'main:process-tree',
+      processMeasurement: { ownerEpoch: getResourceEnvelopeLedger().ownerEpoch,
+        processes: [{ pid: process.pid, creationToken: birth }] } }] });
+    startRuntimeResourceProtection(); await flush();
+    const ownPressureBirth = () => {
+      const row = openExecutionStateDatabase().db.prepare(
+        'SELECT payload_json FROM state_leases WHERE scope = ? AND lease_key = ?',
+      ).get('verseshell-host-pressure/v1', String(process.pid)) as { payload_json: string };
+      return (JSON.parse(row.payload_json) as { ownerIncarnation: string | null }).ownerIncarnation;
+    };
+    expect(ownPressureBirth()).toBe(birth);
+    mocks.snapshot.mockResolvedValue(pressured);
+    await mocks.refresh?.();
+    expect(ownPressureBirth()).toBe(birth);
   });
 });

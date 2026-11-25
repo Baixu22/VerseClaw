@@ -3,8 +3,9 @@
  *
  * The Job Object limits one process tree; this module bounds how many managed trees this runtime
  * state directory keeps alive at once, so sessions, workspaces and runtime processes cannot each
- * believe they own the whole budget. Nothing is limited until an operator declares a capacity:
- * with no declaration and no existing host reservation, admission allocates no slot.
+ * believe they own the whole budget. Explicit capacity is shared by all launchers. Resource
+ * pressure contracts admission to one tree without releasing an existing or unknown execution.
+ * Without a declaration or pressure, the existing unrestricted admission stays available.
  *
  * Environment surface (all optional):
  * - `OPENCLAW_VERSESHELL_MAX_LIVE_PROCESSES` - host-shared live managed process cap
@@ -15,9 +16,17 @@
  * exit it verified; it never scans for, adopts or kills unknown PIDs (see #98/#99/#103).
  */
 
+import type { ChildProcess } from "node:child_process";
+import { createSubsystemLogger } from "../../logging/subsystem.js";
+import { resolveGlobalSingleton } from "../../shared/global-singleton.js";
 import {
-  managedProcessReservations, normalizeManagedPorts, observeManagedProcessReservation,
-  releaseManagedProcessReservation, reserveManagedProcess, updateManagedProcessReservation,
+  managedProcessReservations,
+  normalizeManagedPorts,
+  observeManagedProcessReservation,
+  releaseManagedProcessReservation,
+  reserveManagedProcess,
+  updateManagedProcessReservation,
+  managedProcessHostPressureLimit,
   type ManagedProcessIdentity,
 } from "./managed-process-reservation.js";
 
@@ -63,8 +72,13 @@ export type ManagedProcessCapacityStats = {
 
 let config: ManagedProcessCapacityConfig | undefined;
 let envLoaded = false;
+const log = createSubsystemLogger("managed-process");
 let live = 0;
 const heldReservations = new Set<string>();
+const terminalReceipts = resolveGlobalSingleton(
+  Symbol.for("openclaw.managedProcessTerminalReceipts"),
+  () => new Set<ManagedProcessLease>(),
+);
 const counters = {
   peakLive: 0,
   admitted: 0,
@@ -106,14 +120,17 @@ export function readManagedProcessCapacityFromEnv(
   };
 }
 
-/** Replaces the declared capacity; `undefined` disables enforcement (test helper). */
-export function configureManagedProcessCapacity(next: ManagedProcessCapacityConfig | undefined): void {
+/** Replaces the declaration; `undefined` restores unconfigured admission (test helper). */
+export function configureManagedProcessCapacity(
+  next: ManagedProcessCapacityConfig | undefined,
+): void {
   config = next;
   envLoaded = true;
 }
 
 /** Drops the declaration, restores environment derivation and zeroes the counters (test helper). */
 export function resetManagedProcessCapacity(): void {
+  retryTerminalManagedProcesses();
   for (const id of heldReservations) releaseManagedProcessReservation(id);
   heldReservations.clear();
   config = undefined;
@@ -134,40 +151,58 @@ function activeConfig(): ManagedProcessCapacityConfig | undefined {
   return config;
 }
 
-
 export function resolveManagedProcessDefaultLimits(): ManagedProcessDefaultLimits {
   return activeConfig()?.defaultLimits ?? {};
 }
 
 /** Current live count and declared limit. */
 export function managedProcessCapacityStats(): ManagedProcessCapacityStats {
-  const limit = activeConfig()?.maxLiveProcesses;
-  if (limit !== undefined) live = managedProcessReservations().length;
+  retryTerminalManagedProcesses();
+  const limit = managedProcessCapacityLimit();
+  live = managedProcessReservations().length;
   return { live, ...counters, ...(limit === undefined ? {} : { limit }) };
+}
+
+function declaredCapacity(): number | undefined {
+  const limits = managedProcessReservations().flatMap((record) =>
+    record.limit === undefined ? [] : [record.limit],
+  );
+  const configured = activeConfig()?.maxLiveProcesses;
+  if (configured !== undefined) limits.push(configured);
+  return limits.length ? Math.min(...limits) : undefined;
+}
+
+/** Logical workspace admission reads the same effective cap as native launch. */
+export function managedProcessCapacityLimit(): number | undefined {
+  const limits = [declaredCapacity(), managedProcessHostPressureLimit()].filter(
+    (value): value is number => value !== undefined,
+  );
+  return limits.length ? Math.min(...limits) : undefined;
 }
 
 /**
  * Requests one instance-wide slot for a managed process.
  *
- * With no declared `maxLiveProcesses` this always admits and does not allocate a counter.
+ * Every accepted launch has an owner reservation so later pressure can count it.
  */
-export function admitManagedProcess(options: {
-  ports?: readonly number[];
-  owner?: string;
-  identity?: ManagedProcessIdentity;
-} = {}): ManagedProcessAdmission {
-  const configured = activeConfig()?.maxLiveProcesses;
-  const activeLimits = managedProcessReservations().map(record => record.limit).filter((value): value is number => value !== undefined);
-  const declared = configured ?? (activeLimits.length ? Math.min(...activeLimits) : undefined);
+export function admitManagedProcess(
+  options: {
+    ports?: readonly number[];
+    owner?: string;
+    identity?: ManagedProcessIdentity;
+  } = {},
+): ManagedProcessAdmission {
+  retryTerminalManagedProcesses();
+  const declared = declaredCapacity();
   const ports = normalizeManagedPorts(options.ports);
-  if (declared === undefined && ports.length === 0 && !options.identity) {
-    return { ok: true, lease: noopLease(), live };
-  }
   const result = reserveManagedProcess({
-    limit: declared, ports, owner: options.owner,
+    limit: declared,
+    ports,
+    owner: options.owner,
     ...(options.identity ? { identity: options.identity } : {}),
   });
-  if (!result.ok && result.reason === "port") throw new Error(`E_PROCESS_PORT_RESERVED:${result.port}:${result.owner}`);
+  if (!result.ok && result.reason === "port")
+    throw new Error(`E_PROCESS_PORT_RESERVED:${result.port}:${result.owner}`);
   if (!result.ok) {
     counters.rejectedCapacity += 1;
     return result;
@@ -181,35 +216,86 @@ export function admitManagedProcess(options: {
   return { ok: true, lease: createLease(result.reservation.id), live, limit: result.limit };
 }
 
-function noopLease(): ManagedProcessLease {
-  let released = false;
-  return {
-    markDispatched() {},
-    markTerminal() {},
-    markUnknown(_reason: string) {},
-    async observeProcess(_pid: number) {},
-    get released() {
-      return released;
-    },
-    release(): boolean {
-      if (released) {
-        counters.doubleRelease += 1;
-        return false;
-      }
-      released = true;
-      return true;
-    },
-  };
+export class ManagedProcessCapacityError extends Error {
+  readonly code = "E_PROCESS_CAPACITY_LIMIT";
+  constructor(
+    readonly live: number,
+    readonly limit: number,
+  ) {
+    super(`E_PROCESS_CAPACITY_LIMIT: live=${live} limit=${limit}`);
+    this.name = "ManagedProcessCapacityError";
+  }
+}
+
+/** Shared native lifetime for Node subprocesses launched by Main and the runtime. */
+export function startManagedChildProcess<T extends ChildProcess>(start: () => T, owner: string): T {
+  const admission = admitManagedProcess({ owner });
+  if (!admission.ok) throw new ManagedProcessCapacityError(admission.live, admission.limit);
+  const lease = admission.lease;
+  try {
+    lease.markDispatched();
+  } catch (error) {
+    lease.release();
+    throw error;
+  }
+  let child: T;
+  try {
+    child = start();
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (
+      code === "ERR_INVALID_ARG_TYPE" ||
+      code === "ERR_INVALID_ARG_VALUE" ||
+      code === "ERR_OUT_OF_RANGE"
+    ) {
+      // Node validates these arguments before calling its native spawn handle.
+      settleTerminalManagedProcess(lease);
+    } else lease.markUnknown("native-child-start-did-not-return-owner-handle");
+    throw error;
+  }
+  child.once("close", () => settleTerminalManagedProcess(lease));
+  return child;
+}
+
+/** Known no-start and native-close receipts share the same terminal settlement. */
+function settleTerminalManagedProcess(lease: ManagedProcessLease): void {
+  try {
+    lease.markTerminal();
+    lease.release();
+  } catch (error) {
+    terminalReceipts.add(lease);
+    log.warn(`Managed process terminal settlement failed: ${String(error)}`);
+  }
+}
+
+function retryTerminalManagedProcesses(): void {
+  for (const lease of terminalReceipts) {
+    try {
+      lease.markTerminal();
+      lease.release();
+      terminalReceipts.delete(lease);
+    } catch {
+      // Retain the close receipt until the store accepts terminal settlement.
+    }
+  }
 }
 
 function createLease(id: string): ManagedProcessLease {
   let released = false;
   return {
     reservationId: id,
-    markDispatched() { updateManagedProcessReservation(id, { phase: "dispatched" }); },
-    markTerminal() { updateManagedProcessReservation(id, { phase: "terminal" }); },
-    markUnknown(reason: string) { updateManagedProcessReservation(id, { phase: "unknown", failure: reason }); },
-    async observeProcess(pid: number) { if (!released) await observeManagedProcessReservation(id, pid); },
+    markDispatched() {
+      updateManagedProcessReservation(id, { phase: "dispatched" });
+    },
+    markTerminal() {
+      updateManagedProcessReservation(id, { phase: "terminal" });
+    },
+    markUnknown(reason: string) {
+      updateManagedProcessReservation(id, { phase: "unknown", failure: reason });
+    },
+    async observeProcess(pid: number) {
+      if (!released) await observeManagedProcessReservation(id, pid);
+    },
     get released() {
       return released;
     },

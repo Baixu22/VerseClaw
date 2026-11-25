@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-relay",
+  "originalReview": "D:/tmp/clawx-resource-review-20261125-6387a1/REVIEW.md",
+  "originalBaseline": "526645345fac24c0ecb0f7e4170d920e57d37153",
+  "retainedFailures": [
+    {
+      "before": "validation-r4/native-close-store-before.json",
+      "after": "validation-r4/native-terminal-settlement.json",
+      "purpose": "Native terminal-store failure retains a receipt and retries before new admission.",
+      "beforeSha256": "b9993ddb96f492cb8c81676e9c5cc3940928d74f1c3a0fee369851bf19e9302e",
+      "afterSha256": "56015f65faa06034cc15c1b8923dd633237a77c06a5ee5efc47e5737d5f8c7cc",
+      "beforeFailedTests": 1,
+      "afterPassedTests": 12,
+      "localRoot": "D:/tmp/resource-scheduling-relay-20261125"
+    },
+    {
+      "before": "validation-r5/power-resume-before.json",
+      "after": "validation-r5/power-resume-after.json",
+      "purpose": "Resume clears display-sleep without requiring unlock.",
+      "beforeSha256": "b848457e94332afe9d0443e62bc6117db4d46e7d1efbe02e247e41cbc9d1587f",
+      "afterSha256": "c4d72151ba544492fbb88f065b31dc7785faccf9c7c162e5b7b21a305ed1493b",
+      "beforeFailedTests": 1,
+      "afterPassedTests": 9,
+      "localRoot": "D:/tmp/resource-scheduling-relay-20261125"
+    },
+    {
+      "before": "validation-r6/cleanup-fairness-before-r2.json",
+      "after": "validation-r6/cleanup-fairness-after.json",
+      "purpose": "Observed/failed prefixes do not starve managed cleanup; renewed activity is preserved.",
+      "beforeSha256": "838de729c3072990da5d08999d7bbc9c2eb642831fcf4ca0e4fef6dc1b90e7bc",
+      "afterSha256": "51614c514ab2533f81cc31d80d5abad6cb1d84711c3ff72cbd3590f66401dabe",
+      "beforeFailedTests": 3,
+      "afterPassedTests": 24,
+      "localRoot": "D:/tmp/resource-scheduling-relay-20261125"
+    }
+  ]
+}

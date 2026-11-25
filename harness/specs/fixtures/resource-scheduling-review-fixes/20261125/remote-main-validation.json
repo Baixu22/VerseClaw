@@ -1,0 +1,459 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-relay",
+  "mergeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+  "remoteMain": "9b1044cc0cb90f83f751875019d59ee68f92095a",
+  "resourceTests": 214,
+  "sourceReviewsUnchanged": true,
+  "checks": [
+    {
+      "name": "versebrowser-build",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "packages/versebrowser/tsconfig.build.json"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completed": "2026-11-25T14:04:00.822Z"
+    },
+    {
+      "name": "main-tests",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/git-api.test.ts",
+        "tests/unit/resource-adaptive-pressure.test.ts",
+        "tests/unit/resource-budget-integration.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-host-capacity-native.test.ts",
+        "tests/unit/resource-tracker.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "tests/unit/runtime-efficiency-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/resource-scheduling-relay-20261125/validation-remote-main/main-tests.json"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "7c1c9107ec991b66255cd0350750109a67502e1449f6d6fbe7ae7e04b361b23f",
+      "completed": "2026-11-25T14:04:31.485Z"
+    },
+    {
+      "name": "runtime-tests",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.resource-budget.config.ts",
+        "src/process/command-queue.test.ts",
+        "src/agents/model-fallback.loop-termination.test.ts",
+        "src/agents/resource-leases.test.ts",
+        "src/agents/sessions/tools/bash-workspace-lease.test.ts",
+        "src/agents/sessions/tools/bounded-waiting-lease.test.ts",
+        "src/agents/verseshell/managed-process-capacity.test.ts",
+        "src/agents/verseshell/managed-process-pressure.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/resource-scheduling-relay-20261125/validation-remote-main/runtime-tests.json"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "109b8652b88cdf9167c5176fae5e02fae6fe7c24df5cacff6f6f83289dfaa3e0",
+      "completed": "2026-11-25T14:20:12.407Z"
+    },
+    {
+      "name": "typecheck-node",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completed": "2026-11-25T14:04:50.541Z"
+    },
+    {
+      "name": "typecheck-web",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completed": "2026-11-25T14:04:58.433Z"
+    },
+    {
+      "name": "typecheck-test",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completed": "2026-11-25T14:05:33.166Z"
+    },
+    {
+      "name": "desktop-build",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "811e55d5bfc624c141dc6adb065953f02565a0cacfced49ca122f0db6173f98a",
+      "completed": "2026-11-25T14:09:01.046Z"
+    },
+    {
+      "name": "build-source-bind",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/versebrowser-build-provenance.mjs"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "fcd06f297e643749985740429728cffbf6baff78b119c5da2eb0d9b426bdea8e",
+      "completed": "2026-11-25T14:09:10.441Z"
+    },
+    {
+      "name": "electron-settings",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/settings-efficiency-sampling.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/resource-scheduling-relay-20261125/validation-remote-main/electron-settings-results"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "57ed1e73465e1d1a381b058795e5ccc1ca48b342647edab9ee140181576a13b7",
+      "completed": "2026-11-25T14:14:31.227Z"
+    },
+    {
+      "name": "contract",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "completed": "2026-11-25T14:14:33.713Z"
+    },
+    {
+      "name": "comms-replay",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "40f541a3b51ba5b133e7212d8da36575d0f231f6cece811fd18542b6584ebbf1",
+      "completed": "2026-11-25T14:14:34.103Z"
+    },
+    {
+      "name": "comms-compare",
+      "codeCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "sourceStable": true,
+      "logSha256": "51dce265fbc8f4d128e87963e7e22482c5d20980b6773c418560605220f8e258",
+      "completed": "2026-11-25T14:14:34.404Z"
+    }
+  ],
+  "integration": {
+    "driven_by": "agent",
+    "actor": "codex-resource-integration",
+    "operationId": "434e6ff7-9e96-4603-b5e9-739f37f59b55",
+    "baseCommit": "175d2cc8db7762dec05a563cc07221e5069c99f9",
+    "candidateCommit": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+    "mainHead": "e82b5ff1d626a8fb2d47f4d978a0302b7504e165",
+    "fastForward": true,
+    "unrelatedIndexEntriesPreserved": true,
+    "proposedIndexPublished": true,
+    "mergedExistingEdits": [
+      {
+        "path": "README.ja-JP.md",
+        "beforeSha256": "afef1ae0241be5ee81b2dadc21e4f8e926a2886258e537e169f4d69e6c45e83b",
+        "afterSha256": "e28791c8243ccde5b465af3feccd500e203356518ef3803a54f35e9a61fed305",
+        "staged": false
+      },
+      {
+        "path": "README.md",
+        "beforeSha256": "ec65fc155b82792ce95a74a70378e1f26bfeac1f06a8af747ff03537ce8f40ab",
+        "afterSha256": "3f0c8c9d23e8d4b1a979b354cbf5ecf13d31a9cd37d0a5c69f59aa4e4493844a",
+        "staged": false
+      },
+      {
+        "path": "README.zh-CN.md",
+        "beforeSha256": "d2e14556ec0a4ece03085f9695c3aa36e697f9c7bdd381f80d42c16cbed34172",
+        "afterSha256": "44f81c3d2fb679f30539e8823e9f6012a8db0d6a90529589473bed78a9138de3",
+        "staged": false
+      }
+    ],
+    "protectedFiles": [
+      {
+        "path": "openclaw_runtime/pnpm-workspace.yaml",
+        "sha256": "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910",
+        "afterSha256": "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910"
+      },
+      {
+        "path": "shared/dcs/component-disposition-catalog.ts",
+        "sha256": "0c052bcc287d0ad6b1ae3969e7ae1cecde398d93396837d43f9957de3167eea0",
+        "afterSha256": "0c052bcc287d0ad6b1ae3969e7ae1cecde398d93396837d43f9957de3167eea0"
+      },
+      {
+        "path": "shared/i18n/locales/en/settings.json",
+        "sha256": "2f556a2fecad07b84e1697ceb667527a96ccaee2c42ac9f473449204ab98d151",
+        "afterSha256": "2f556a2fecad07b84e1697ceb667527a96ccaee2c42ac9f473449204ab98d151"
+      },
+      {
+        "path": "shared/i18n/locales/ja/settings.json",
+        "sha256": "a8bed556b1fdc00a793546fc94ba1f095ad0014febb5eda005844d58ec49b5bb",
+        "afterSha256": "a8bed556b1fdc00a793546fc94ba1f095ad0014febb5eda005844d58ec49b5bb"
+      },
+      {
+        "path": "shared/i18n/locales/ru/settings.json",
+        "sha256": "4851eed2ca342b998b56149746f8679808c6f119b2da1d4ba4f9b2ec1d02d920",
+        "afterSha256": "4851eed2ca342b998b56149746f8679808c6f119b2da1d4ba4f9b2ec1d02d920"
+      },
+      {
+        "path": "shared/i18n/locales/zh/settings.json",
+        "sha256": "0ac9242600457f5cac8b1e57effa65d5f2ecb2e700afd2829ab8c85d1f186796",
+        "afterSha256": "0ac9242600457f5cac8b1e57effa65d5f2ecb2e700afd2829ab8c85d1f186796"
+      },
+      {
+        "path": "src/App.tsx",
+        "sha256": "7da18a0c8f0c90bcf7d45717cd357549030299f65b16c10744d49c4e6cde4558",
+        "afterSha256": "7da18a0c8f0c90bcf7d45717cd357549030299f65b16c10744d49c4e6cde4558"
+      },
+      {
+        "path": "src/components/settings/DcsProdFlagsPanel.tsx",
+        "sha256": "20de4eae8b2326bb7c3b75c353615a2441f66990b81d1ba633b69f20d932c744",
+        "afterSha256": "20de4eae8b2326bb7c3b75c353615a2441f66990b81d1ba633b69f20d932c744"
+      },
+      {
+        "path": "src/components/settings/EfficiencySamplingPanel.tsx",
+        "sha256": "716d0b748f3122a749c5f45c1c966c5258669fc5a8ba9d8779809b7c106d8b51",
+        "afterSha256": "716d0b748f3122a749c5f45c1c966c5258669fc5a8ba9d8779809b7c106d8b51"
+      },
+      {
+        "path": "src/lib/settings-search.ts",
+        "sha256": "f35ee8145423f9321535d9ada49b037a82d8dabafd4df2e841605406daa9a832",
+        "afterSha256": "f35ee8145423f9321535d9ada49b037a82d8dabafd4df2e841605406daa9a832"
+      },
+      {
+        "path": "src/pages/ImageGeneration/index.tsx",
+        "sha256": "83f47bd945c284d6e6446ff3bac54c88ed7db3a15419ac35547498bf77a643cc",
+        "afterSha256": "83f47bd945c284d6e6446ff3bac54c88ed7db3a15419ac35547498bf77a643cc"
+      },
+      {
+        "path": "src/pages/Settings/SettingsRoute.tsx",
+        "sha256": "4d3c501f4c747d7a8f7f31d5036fc4f14f65eba15d91e17488052c7b15e27b5f",
+        "afterSha256": "4d3c501f4c747d7a8f7f31d5036fc4f14f65eba15d91e17488052c7b15e27b5f"
+      },
+      {
+        "path": "src/pages/Settings/SettingsSidebar.tsx",
+        "sha256": "c7510f93e7d668334e2244fa6058f534828ede3ef5a65b370c061f1087618d92",
+        "afterSha256": "c7510f93e7d668334e2244fa6058f534828ede3ef5a65b370c061f1087618d92"
+      },
+      {
+        "path": "src/pages/Settings/index.tsx",
+        "sha256": "cc41911a44b5d1201359d45ab5e3042499872e6aecb21a0ab3c6d72637214bba",
+        "afterSha256": "cc41911a44b5d1201359d45ab5e3042499872e6aecb21a0ab3c6d72637214bba"
+      },
+      {
+        "path": "src/pages/Settings/route-config.ts",
+        "sha256": "7618b3f3809657e6914403ad6751b834e629e177ed95879b7256bbdfc84e72a6",
+        "afterSha256": "7618b3f3809657e6914403ad6751b834e629e177ed95879b7256bbdfc84e72a6"
+      },
+      {
+        "path": "src/styles/codex-settings.css",
+        "sha256": "d644cd218650340a6464562f7834f9560f69157f30d1a9f6af1296ef154d37aa",
+        "afterSha256": "d644cd218650340a6464562f7834f9560f69157f30d1a9f6af1296ef154d37aa"
+      },
+      {
+        "path": "tests/e2e/image-generation-settings.spec.ts",
+        "sha256": "a0b949ed2c13d4cce952f6eb7ee4d7d24518a9969a5e00022da600c409042746",
+        "afterSha256": "a0b949ed2c13d4cce952f6eb7ee4d7d24518a9969a5e00022da600c409042746"
+      },
+      {
+        "path": "tests/unit/component-disposition-catalog.test.ts",
+        "sha256": "9585631fcdf745d2c34d624b062a8e3082babfbc2e05d132a7fb068e3b26f05f",
+        "afterSha256": "9585631fcdf745d2c34d624b062a8e3082babfbc2e05d132a7fb068e3b26f05f"
+      },
+      {
+        "path": "tests/unit/settings-search.test.ts",
+        "sha256": "51d4ef62a76034a10361dbb245b5d151cf0d44a71aedf396ade9f13d6e6cc59a",
+        "afterSha256": "51d4ef62a76034a10361dbb245b5d151cf0d44a71aedf396ade9f13d6e6cc59a"
+      },
+      {
+        "path": "harness/specs/fixtures/agent-resource-queue/20261125/REPORT.json",
+        "sha256": "610db81f6853b174d8004ec7a2e9de5f3ecc84d91575921de1375d31d1a8d586",
+        "afterSha256": "610db81f6853b174d8004ec7a2e9de5f3ecc84d91575921de1375d31d1a8d586"
+      },
+      {
+        "path": "harness/specs/fixtures/settings-capability-discovery/20261125/REPORT.md",
+        "sha256": "d481e032df2e9b268e465a730b5d1b53f2a9eb0af0958d00227b054ed58b7102",
+        "afterSha256": "d481e032df2e9b268e465a730b5d1b53f2a9eb0af0958d00227b054ed58b7102"
+      },
+      {
+        "path": "harness/specs/fixtures/settings-capability-discovery/20261125/RESULT.json",
+        "sha256": "3ec224821843d38a77fca0943e84cddf8f1162ba2834fc9f2b01847d7d020640",
+        "afterSha256": "3ec224821843d38a77fca0943e84cddf8f1162ba2834fc9f2b01847d7d020640"
+      },
+      {
+        "path": "harness/specs/fixtures/settings-capability-discovery/20261125/SHA256SUMS",
+        "sha256": "9872dea65d21b097f64330a5f831ccb3498c033931683c7fb5b70f4bd8733e9a",
+        "afterSha256": "9872dea65d21b097f64330a5f831ccb3498c033931683c7fb5b70f4bd8733e9a"
+      },
+      {
+        "path": "harness/specs/fixtures/settings-capability-discovery/20261125/capabilities-zh-dark-1280.png",
+        "sha256": "51ba95f8c2d1557de3e5882718a876647acf122fd9c6d9a65eca7ac7375c7867",
+        "afterSha256": "51ba95f8c2d1557de3e5882718a876647acf122fd9c6d9a65eca7ac7375c7867"
+      },
+      {
+        "path": "harness/specs/fixtures/settings-capability-discovery/20261125/capabilities-zh-dark-375.png",
+        "sha256": "c8a0faf43198b33c50f9e089c8dd9bd2327f7ac778d7c13142a7ba76adaf08c4",
+        "afterSha256": "c8a0faf43198b33c50f9e089c8dd9bd2327f7ac778d7c13142a7ba76adaf08c4"
+      },
+      {
+        "path": "harness/specs/fixtures/settings-capability-discovery/20261125/capabilities-zh-light-1280.png",
+        "sha256": "a4a58bab93233b774a9655a65dd03aa2f5cdd473c4e66235da1c6c4f0ad43a75",
+        "afterSha256": "a4a58bab93233b774a9655a65dd03aa2f5cdd473c4e66235da1c6c4f0ad43a75"
+      },
+      {
+        "path": "harness/specs/fixtures/settings-capability-discovery/20261125/source-manifest.json",
+        "sha256": "3b2c9acd42cac3785b32469c1a17995dd3b10c0ccee913d0ea7ea2a03b10d7f9",
+        "afterSha256": "3b2c9acd42cac3785b32469c1a17995dd3b10c0ccee913d0ea7ea2a03b10d7f9"
+      },
+      {
+        "path": "harness/specs/rules/agent-resource-queue-authority.md",
+        "sha256": "1846331e9fa4ec806fefae3c97353402c356bad438a5fa51c00163e556c954dd",
+        "afterSha256": "1846331e9fa4ec806fefae3c97353402c356bad438a5fa51c00163e556c954dd"
+      },
+      {
+        "path": "harness/specs/rules/settings-capability-discovery.md",
+        "sha256": "d0350d5a39fb74715ec285052265cf8ba629352ebbbdd11efe7d467508670ee0",
+        "afterSha256": "d0350d5a39fb74715ec285052265cf8ba629352ebbbdd11efe7d467508670ee0"
+      },
+      {
+        "path": "harness/specs/scenarios/settings-capability-discovery.md",
+        "sha256": "13907703bf7aff04ac920e8270988e2c0a7d0bddeeda67962fd5637ea938f40b",
+        "afterSha256": "13907703bf7aff04ac920e8270988e2c0a7d0bddeeda67962fd5637ea938f40b"
+      },
+      {
+        "path": "harness/specs/tasks/agent-resource-queue.md",
+        "sha256": "762ddc80f68fed6e2f41685d3ab870bfbe9a74d3f419a98a9ffaf7c1621db0b2",
+        "afterSha256": "762ddc80f68fed6e2f41685d3ab870bfbe9a74d3f419a98a9ffaf7c1621db0b2"
+      },
+      {
+        "path": "harness/specs/tasks/chat-activity-bell-unread-status-20261120.md",
+        "sha256": "1e170f3650805280d1b1886d87da9db4307f748f19aed4cb6ad8f7105f508f9c",
+        "afterSha256": "1e170f3650805280d1b1886d87da9db4307f748f19aed4cb6ad8f7105f508f9c"
+      },
+      {
+        "path": "harness/specs/tasks/chat-effort-preview-slider-20261124.md",
+        "sha256": "4c425105df55ce7d51491469079c9b2cd8d94dae6daa75cb1086259a91d5ee34",
+        "afterSha256": "4c425105df55ce7d51491469079c9b2cd8d94dae6daa75cb1086259a91d5ee34"
+      },
+      {
+        "path": "harness/specs/tasks/settings-capability-discovery-20261125.md",
+        "sha256": "9481402336953b8a46edbc610e1ac3a9978e3cdc1836f645f67b99bbabe54e81",
+        "afterSha256": "9481402336953b8a46edbc610e1ac3a9978e3cdc1836f645f67b99bbabe54e81"
+      },
+      {
+        "path": "scripts/resource-queue/README.md",
+        "sha256": "0e1b2ced45b4bec9d8b023d0715456370e7ce4228408a68c41a8f6ba7547ce1f",
+        "afterSha256": "0e1b2ced45b4bec9d8b023d0715456370e7ce4228408a68c41a8f6ba7547ce1f"
+      },
+      {
+        "path": "scripts/resource-queue/resource_queue.py",
+        "sha256": "4be05022c86832b85698f2fae582e5d6a8c972829a0d17d070e500ac20a44d34",
+        "afterSha256": "8ecf17204afd40eaaf15bbdbfd4521edd6d3b2a7f67ba882b445478987604f30"
+      },
+      {
+        "path": "scripts/resource-queue/test_resource_queue.py",
+        "sha256": "78e1837b4dceb2aeadf4a541ce51c3100debf6df7a981569d0fdbed1aa144d41",
+        "afterSha256": "e9c152d6c34887c1126736ec52c3c30af7cc158d78b7db8ecb20459fe1cc5b45"
+      },
+      {
+        "path": "scripts/resource-queue/windows_processes.py",
+        "sha256": "499fa061fa113a21fd57b1bd752ebe6c7c3af77b188af3f460b102783c7b616d",
+        "afterSha256": "499fa061fa113a21fd57b1bd752ebe6c7c3af77b188af3f460b102783c7b616d"
+      },
+      {
+        "path": "src/pages/Settings/sections/CapabilitiesSection.tsx",
+        "sha256": "f22123c78eb0bf3caf97197cf36b1d2b96402d398217a486f3a919c14bb31d15",
+        "afterSha256": "f22123c78eb0bf3caf97197cf36b1d2b96402d398217a486f3a919c14bb31d15"
+      },
+      {
+        "path": "src/pages/Settings/sections/KnowledgeSettingsSection.tsx",
+        "sha256": "a200bafaf226010a347a6ed2245c22232f65d81a38b9d86c75da6c897c22d125",
+        "afterSha256": "a200bafaf226010a347a6ed2245c22232f65d81a38b9d86c75da6c897c22d125"
+      },
+      {
+        "path": "tests/e2e/settings-capabilities.spec.ts",
+        "sha256": "f8984ac1c217c9c6b4d60b1c7ccaaf022293e7f645d737841b14578fde4c362f",
+        "afterSha256": "f8984ac1c217c9c6b4d60b1c7ccaaf022293e7f645d737841b14578fde4c362f"
+      },
+      {
+        "path": "tests/unit/settings-capabilities.test.tsx",
+        "sha256": "dcf1eb4b8414bc955c1858aa6681db71ce2ad9d0a6e69c4d5548572c8aa6ff72",
+        "afterSha256": "dcf1eb4b8414bc955c1858aa6681db71ce2ad9d0a6e69c4d5548572c8aa6ff72"
+      }
+    ],
+    "protectedWorkingFilesUnchanged": false,
+    "protectedPathsNotWritten": true,
+    "concurrentProtectedUpdates": [
+      "scripts/resource-queue/resource_queue.py",
+      "scripts/resource-queue/test_resource_queue.py"
+    ],
+    "completed": "2026-11-25T14:18:21.949Z",
+    "verificationRecovery": "Resumed read-only validation with a larger output buffer after reference and index publication completed. Updates outside the integration write set retain their current bytes."
+  },
+  "electronRemaining": 0,
+  "electronSourceStable": true
+}

@@ -635,7 +635,7 @@
     "installDetail": "这将创建 ~/.local/bin/openclaw。确保 ~/.local/bin 在您的 PATH 中。",
     "efficiencySampling": {
       "title": "运行时效率采样",
-      "description": "本地记录真实的进程 CPU 与内存样本，用于诊断高负载界面状态，不上传任何数据。关闭后定时器完全停止。",
+      "description": "本地记录真实的进程 CPU 与内存样本，用于诊断高负载界面状态，不上传任何数据。关闭后停止诊断记录，资源保护与空闲回收继续运行。",
       "toggleAria": "开关运行时效率采样",
       "notSampled": "尚未采样，没有可用的运行时效率实测数据。",
       "disabledHint": "采样已关闭。开启后才会开始采集本地测量数据。",

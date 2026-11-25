@@ -1,0 +1,73 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-host-native",
+  "receipts": [
+    {
+      "phase": "started",
+      "ownerPid": 5620,
+      "nativePid": 10604,
+      "reservationId": "37d51207-9935-4dda-abe5-5215d68b3210",
+      "limit": 1,
+      "nativeStarted": true
+    },
+    {
+      "phase": "refused",
+      "admission": {
+        "ok": false,
+        "reason": "capacity",
+        "live": 1,
+        "limit": 1
+      },
+      "ownerPid": 28856,
+      "nativeStarted": false
+    },
+    {
+      "phase": "started",
+      "ownerPid": 32100,
+      "nativePid": 38804,
+      "reservationId": "aeecfa6a-dfe2-4155-bda6-0b35f8b8e0c1",
+      "limit": 2,
+      "nativeStarted": true
+    },
+    {
+      "phase": "refused",
+      "admission": {
+        "ok": false,
+        "reason": "capacity",
+        "live": 2,
+        "limit": 2
+      },
+      "ownerPid": 24256,
+      "nativeStarted": false
+    },
+    {
+      "phase": "terminal",
+      "nativeExitCode": 0,
+      "released": true,
+      "stats": {
+        "live": 1,
+        "peakLive": 1,
+        "admitted": 1,
+        "completed": 1,
+        "rejectedCapacity": 0,
+        "doubleRelease": 0,
+        "limit": 2
+      }
+    },
+    {
+      "phase": "terminal",
+      "nativeExitCode": 0,
+      "released": true,
+      "stats": {
+        "live": 0,
+        "peakLive": 2,
+        "admitted": 1,
+        "completed": 1,
+        "rejectedCapacity": 0,
+        "doubleRelease": 0,
+        "limit": 2
+      }
+    }
+  ],
+  "finalReservations": []
+}

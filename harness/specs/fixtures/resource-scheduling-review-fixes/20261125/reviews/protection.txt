@@ -1,0 +1,18 @@
+NO_ACTIONABLE_FINDINGS
+
+Rechecked scope: lifecycle/maintenance separation and the prior P2. The P2 is fixed in `electron/services/resource-tracker.ts`, `autoCleanup`.
+
+Prior P2 (starvation of managed reclamation behind non-managed candidates) — resolved:
+- `canAutoCleanup` now short-circuits on `resource.ownership !== 'managed'` before any status test, so non-managed resources can never occupy the eight-slot budget. The observed-prefix and failed-prefix starvation paths are gone.
+- Candidate selection is `eligible` (managed-only) with a round-robin `cleanupCursor`. When `eligible.length <= 8` all candidates are attempted each cycle; when larger, the window advances by `min(length, 8) mod length`, so every index is covered across cycles (e.g. lengths 12/16/20 all sweep fully). No residual index-based starvation from cursor arithmetic.
+- Each candidate is re-fetched (`this.resources.get(id)`) and re-checked with fresh `Date.now()` immediately before `stopResource`, so activity refreshed during prior awaits prevents a stale kill. `cleanupCursor` is recomputed only against the captured `eligible.length`, so a shrinking set cannot index past bounds; the `eligible.length === 0` guard resets the cursor.
+- `cleaned` counts only `result.success`, so failed removals are retried rather than miscounted. Equivalent non-deletion behavior for observed resources as before (stopResource refuses them); no new leak introduced.
+
+Requested lifecycle aspects confirmed:
+- Diagnostic/protection split: `startRuntimeEfficiency` delegates to `startRuntimeResourceProtection`; `stopRuntimeEfficiency` now only stops the sampler. Protection owns the gate timer, power listeners and window bridge; sampling owns its own timer.
+- Ownership/generation: `backgroundGateUnregister` guard makes registration idempotent; `stopRuntimeResourceProtection` increments `efficiencyGeneration` and clears `protectionStarted`, so a late snapshot resolves into a stale generation check and cannot observe pressure or drain-after-stop. Listener detach is nulled to prevent double-unsubscribe.
+- Resume: `onResume` explicitly sets `displaySleep: false` (plus powerSaver), so display-sleep shedding clears without reliance on `unlock-screen`; suspend/unlock behavior unchanged.
+- Shedding reclamation: heartbeat is no longer wrapped in `runBackground`; probes run four at a time with `Promise.allSettled`, cleanups bounded to eight, and `heartbeatInFlight` prevents overlap.
+- Shutdown: `will-quit` invokes both stops; protection clears gate/fabric pressure and publishes `setManagedProcessHostPressure(false)` with error containment, and resets published identity.
+
+No concrete introduced or unresolved bug found in these lifecycle/maintenance methods.
