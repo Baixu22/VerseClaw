@@ -17,6 +17,7 @@ touchedAreas:
   - packages/versebrowser/patches/**
   - electron/services/agent-browser-api.ts
   - electron/services/agent-browser-network-proxy.ts
+  - openclaw_runtime/src/types/lydell-node-pty.d.ts
   - tests/unit/versebrowser-*.test.ts
   - harness/specs/tasks/browser-issues-265-268.md
   - harness/specs/rules/agent-browser-supervised-task-boundary.md
