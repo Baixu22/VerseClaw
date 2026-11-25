@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveSessionTaskScope, type SessionTaskScopeInput } from "../../shared/session-task-scope";
+import { parseSessionTaskEffectRequest, resolveSessionTaskScope, type SessionTaskScopeInput } from "../../shared/session-task-scope";
 
 function input(overrides: Partial<SessionTaskScopeInput> = {}): SessionTaskScopeInput {
   return {
@@ -17,6 +17,15 @@ function input(overrides: Partial<SessionTaskScopeInput> = {}): SessionTaskScope
 }
 
 describe("A4 session task scope", () => {
+  it("preserves the captured task owner and rejects incomplete or invalid epochs", () => {
+    const request = { requestId: "request", sessionKey: "session", sessionGeneration: "generation", runId: "run",
+      workspaceDir: "workspace", toolName: "write", expectedTaskNodeId: "task", expectedTaskEpoch: 1 };
+    expect(parseSessionTaskEffectRequest(request)).toEqual(request);
+    for (const value of [undefined, 0, -1, 1.5, "1"]) {
+      expect(() => parseSessionTaskEffectRequest({ ...request, expectedTaskEpoch: value })).toThrow("expectedTaskOwner");
+    }
+    expect(() => parseSessionTaskEffectRequest({ ...request, expectedTaskNodeId: undefined })).toThrow("expectedTaskOwner");
+  });
   it("resolves a ready read-only binding only from an explicit task link", () => {
     expect(resolveSessionTaskScope(input())).toMatchObject({
       status: "ready",

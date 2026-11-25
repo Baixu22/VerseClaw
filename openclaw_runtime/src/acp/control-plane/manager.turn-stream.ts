@@ -31,6 +31,7 @@ async function consumeAcpTurnEvents(params: {
   let streamError: AcpRuntimeError | null = null;
   let sawOutput = false;
   let sawTerminalEvent = false;
+  let terminalEvent: Extract<AcpRuntimeEvent, { type: "done" }> | undefined;
 
   for await (const event of params.events) {
     if (!params.eventGate.open) {
@@ -38,6 +39,8 @@ async function consumeAcpTurnEvents(params: {
     }
     if (event.type === "done") {
       sawTerminalEvent = true;
+      terminalEvent = event;
+      continue;
     } else if (event.type === "error") {
       streamError = new AcpRuntimeError(
         normalizeAcpErrorCode(event.code),
@@ -53,6 +56,8 @@ async function consumeAcpTurnEvents(params: {
   if (params.eventGate.open && streamError) {
     throw streamError;
   }
+  // A done followed by an error cannot publish a successful terminal boundary.
+  if (params.eventGate.open && terminalEvent) await params.onEvent?.(terminalEvent);
 
   return {
     sawOutput,
@@ -122,7 +127,8 @@ export async function consumeAcpTurnStream(params: {
     const eventsPromise = consumeAcpTurnEvents({
       events: turn.events,
       eventGate: params.eventGate,
-      onEvent: params.onEvent,
+      // The independent result owns startTurn completion; raw event done is provisional.
+      onEvent: (event) => (event.type === "done" ? undefined : params.onEvent?.(event)),
       onOutputEvent: params.onOutputEvent,
     }).then(
       (outcome) => ({ kind: "events" as const, outcome }),

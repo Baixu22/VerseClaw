@@ -60,6 +60,15 @@ describe('gateway process launcher env', () => {
     expect(env.OPENCLAW_FALLBACK_SKIP_TTL_MS).toBe('60000');
   });
 
+  it('uses a temporary bytecode cache and preserves explicit cache controls', async () => {
+    const { buildGatewayRuntimeEnv } = await import('@electron/gateway/process-launcher');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    expect(buildGatewayRuntimeEnv({}).NODE_COMPILE_CACHE).toBe(join(tmpdir(), 'verse-claw-node-compile-cache'));
+    expect(buildGatewayRuntimeEnv({ NODE_COMPILE_CACHE: 'D:/tmp/custom-cache' }).NODE_COMPILE_CACHE).toBe('D:/tmp/custom-cache');
+    expect(buildGatewayRuntimeEnv({ NODE_DISABLE_COMPILE_CACHE: '1' }).NODE_COMPILE_CACHE).toBeUndefined();
+  });
+
   it('treats a blank inherited OPENCLAW_FALLBACK_SKIP_TTL_MS as unset', async () => {
     setPlatform('win32');
     const { buildGatewayRuntimeEnv } = await import('@electron/gateway/process-launcher');

@@ -1,4 +1,5 @@
 import type { PreparedCompassContext } from "../../context-engine/compass-context.js";
+import type { RecoveryAdmissionIdentity } from "../../../../shared/recovery-authority/contract.js";
 /**
  * Shared types for preparing and executing CLI-backed agent runs.
  */
@@ -39,6 +40,8 @@ export type RunCliAgentParams = {
   agentId?: string;
   trigger?: EmbeddedRunTrigger;
   sessionFile: string;
+  sessionStorePath?: string;
+  recoveryAdmission?: RecoveryAdmissionIdentity;
   workspaceDir: string;
   /** Task working directory for CLI execution. Defaults to workspaceDir. */
   cwd?: string;

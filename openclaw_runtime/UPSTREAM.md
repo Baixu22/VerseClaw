@@ -21,7 +21,9 @@ npm `openclaw` package.
    integrations silently.
 4. Run runtime typecheck, unit tests, `check:import-cycles`,
    `check:deprecated-api-usage`, `deadcode:unused-files`, and
-   `check:loc:baseline`.
+   `check:loc:baseline`. Refresh the checked-in offender snapshot with
+   `check:loc:baseline:refresh` in the same change set as a reviewed source
+   update; this keeps the 500-line limit and rejects later new or grown files.
 5. Update this file and `PRUNE-MANIFEST.json` in the same change set.
 
 The historical `PRUNE-MANIFEST.json` is a snapshot of the original import. It is

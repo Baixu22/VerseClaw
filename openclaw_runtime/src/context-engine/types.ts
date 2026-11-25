@@ -253,10 +253,7 @@ export type ContextEngineRuntimeContext = Record<string, unknown> & {
   };
 };
 
-export type ContextEngineToolMetadata = Pick<
-  AgentTool,
-  "name" | "description" | "parameters"
-> & {
+export type ContextEngineToolMetadata = Pick<AgentTool, "name" | "description" | "parameters"> & {
   label?: string;
   permissions?: string[];
   sideEffects?: string[];
@@ -444,3 +441,4 @@ export interface ContextEngine {
    */
   dispose?(): Promise<void>;
 }
+export { CONTEXT_RUNTIME_KIT_ENGINE_ID } from "./cvk/identity.js";

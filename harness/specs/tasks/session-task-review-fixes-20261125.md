@@ -4,7 +4,7 @@ title: 修复已合并会话与持久任务机制的七项缺陷
 lifecycleStatus: active
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: bfc323f4c941d5556327906ded1606a8cee68fc1
+diffBase: 638b2cb1609378ff071a888cc2fdd6f9bed67eb8
 intent: 完成任务取消和会话恢复闭环，统一只读工具与运行凭证，隔离迟到的界面更新，并使副作用准入按任务点查。
 requiredRules:
   - backend-communication-boundary
@@ -63,11 +63,11 @@ acceptance:
   - 活动模型、进行中的文件操作和委派取消均等待原运行及效果回执，失败停止保留 cancelling。
   - 会话恢复按原代次迁移 writer 和只读引用，重试幂等；旧代次、旧 epoch 和未决效果继续拒绝。
   - 暂停恢复不复活暂停前运行，新的恢复运行可以调用模型和受管工具。
-  - 只读查询在前后工具边界使用同一判定，带副作用的 shell、未知工具和写入仍受控。
+  - 只读查询在前后工具边界使用同一判定，带副作用的 shell、未知工具和写入仍受控；rg 的预处理和 hostname helper 不能绕过任务领取。
   - 原会话历史等待、资源拒绝和工作区任务操作的迟到响应不会污染新视图或草稿。
   - 接力在后台获得接收回执后，按目标草稿记录版本清理并保存原草稿，保留目标中的新编辑和其它会话草稿。
   - 副作用准入不读取全量 Task Ledger；一千和一万任务的同机样本分别保存。
-  - 单测、类型、契约、通信、Electron、规范及指定 WorkBuddy 审查绑定同一候选，并核对主线整合结果。
+  - 单测、类型、契约、通信、Electron、规范及指定 ccs-ai/gpt-6.1-sol 子代理验收绑定同一候选，并核对主线整合结果。
 docs:
   required: true
   files:

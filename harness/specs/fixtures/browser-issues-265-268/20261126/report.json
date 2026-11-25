@@ -1,0 +1,1032 @@
+{
+  "schema": "BrowserIssueFixEvidence/v1",
+  "driven_by": "agent",
+  "actor": "codex/issues-closeout-01a21263",
+  "issues": [
+    265,
+    266,
+    267,
+    268
+  ],
+  "candidate": {
+    "commit": "a3b60409f061b0b89904c65774e7c04673808168",
+    "tree": "8bf00a9c2bc774fe7a444a4775b587747a320847",
+    "dirty": false
+  },
+  "sourceFiles": [
+    {
+      "path": ".gitattributes",
+      "sha256": "9829ff1dfee56e5c07b91b057aeb595e761dd8ca79b42e24f9a3ab981bc8717b"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "16e673347012b1244c4638cc7a2b93910698d22f91b54a5d2607c402ef1c5375"
+    },
+    {
+      "path": "README.md",
+      "sha256": "a145f22ad1c9529327fa061b5a129fc0eed547d18ecc32c0620946979e8fe1d7"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "2bfe5b3a4aeba80370d84dcd22b8b61dea224bf6b73cd1c7a31cbd02b71219b6"
+    },
+    {
+      "path": "electron/services/agent-browser-api.ts",
+      "sha256": "03f91da2d1b3c9dd726ab72bb7cf7117519eabf21f300fbc223782d3075b220c"
+    },
+    {
+      "path": "harness/specs/rules/agent-browser-supervised-task-boundary.md",
+      "sha256": "acfe821a0dc0c8040d02ffdbc25066717e7cb8807a118bb67270002af99a55f6"
+    },
+    {
+      "path": "harness/specs/tasks/browser-issues-265-268.md",
+      "sha256": "342b27e83053c4ebdc31d88b4118fa9356c871ef46d4f59ce7c20d276a8320be"
+    },
+    {
+      "path": "openclaw_runtime/src/types/lydell-node-pty.d.ts",
+      "sha256": "ea440241ffbcaa2098d6106fdced6f0f243a4ed6de63d843c7947f9921108328"
+    },
+    {
+      "path": "packages/versebrowser/integration-patches.json",
+      "sha256": "6e15278a8e31c2112a541b4d3f80598cf031a39c19cca2e5dbe9073139d784a3"
+    },
+    {
+      "path": "packages/versebrowser/patches/tf0372-lint__src__engine__facade.ts.patch",
+      "sha256": "6ad723d697217e18d2397ca8322b028da23217ad37a120d6f3628234f26afe63"
+    },
+    {
+      "path": "packages/versebrowser/src/engine/facade.ts",
+      "sha256": "7aab31bfaf48652ed6446b475065232e1ff622f203884ab6aac5cb3100ead3c2"
+    },
+    {
+      "path": "packages/versebrowser/tests/agent-browser-replay-tool-executor.test.ts",
+      "sha256": "73e6b9967ca6a2ac9b8b5a8d7c2e1438d235d6538c4513fb382df7d5b51f3f53"
+    },
+    {
+      "path": "tests/unit/versebrowser-boundary-repair.test.ts",
+      "sha256": "2d4622a6cc78ebf62984a0ceb13bb4ecf087e9cd1efef3b174759bcafc569cf6"
+    },
+    {
+      "path": "tests/unit/versebrowser-host-adapter.test.ts",
+      "sha256": "f93e08335cf7d33e1235aeae96c9f203756d25df68689b39152095528c5236c3"
+    },
+    {
+      "path": "tests/unit/versebrowser-network-proxy.test.ts",
+      "sha256": "bfeae38445a5e153bb15ea399db96eb2aeabae7fb178221786ed58dbee87e4af"
+    }
+  ],
+  "types": {
+    "host": "passed on a2e4f931c; final diff changes only fixtures and their byte policy",
+    "browser": "passed on final candidate"
+  },
+  "receipts": {
+    "host-types": {
+      "job": "browser-265-268-host-types-bounded-20261126-r18",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "a695addf75254cde9ec492263c9e88b7b1e2f496d47ce1c94740f04591b7129b"
+    },
+    "regression": {
+      "job": "browser-265-268-regression-20261126-r19",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "e4fcb8f7beda54e54cdfdc758037624945c835800079fd98fbacdbd6f76b4ca9"
+    },
+    "static": {
+      "job": "browser-265-268-static-20261126-r19",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "5e6b49f007309da5f26263a4e51833dfff995db7708e57663bc8535dff4b142d"
+    },
+    "review": {
+      "job": "browser-265-268-review-20261126-r19",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "517bd2bd559ef0addb1a5df77e6ef98fb9cb86ecef81f5208914cd1a870f7ee5"
+    }
+  },
+  "tests": [
+    {
+      "scope": "browser",
+      "passed": 124,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "完全访问工具执行器 非完全访问模式下 fail closed",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 execute_script 执行任意脚本并返回 Runtime 原始结果",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 fetch 默认携带页面凭据并返回原始响应",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 get_network_details 返回未脱敏 Network 原文",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 read_storage 返回 Cookie 和 Web Storage 原文",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 revoke 会撤销完全访问运行态",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 execute_script 参数无效时返回错误",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 fetch 在 headers 非对象时返回错误",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 get_network_details 拒绝过多 requestIds",
+          "status": "passed"
+        },
+        {
+          "name": "完全访问工具执行器 recorder 未启用时 canExpose 返回 false",
+          "status": "passed"
+        },
+        {
+          "name": "JS 源码工具执行器 列出、搜索并提取已采集 JS 资源",
+          "status": "passed"
+        },
+        {
+          "name": "JS 源码工具执行器 搜索时按需执行同源补位，部分失败不阻断成功资源",
+          "status": "passed"
+        },
+        {
+          "name": "JS 源码工具执行器 用 listResources 返回的长 id 仍能提取上下文",
+          "status": "passed"
+        },
+        {
+          "name": "JS 源码工具执行器 未启用 Network recorder 或参数非法时返回中文错误内容",
+          "status": "passed"
+        },
+        {
+          "name": "P4-002 filesystem boundary sanitizes segments and rejects traversal",
+          "status": "passed"
+        },
+        {
+          "name": "P4-002 filesystem boundary keeps run/screenshot paths under agent-browser root",
+          "status": "passed"
+        },
+        {
+          "name": "P4-002 filesystem boundary builds profile-isolated partitions",
+          "status": "passed"
+        },
+        {
+          "name": "P4-002 multi-tab / multi-profile isolation does not serialize tabs across profiles and uses distinct partitions",
+          "status": "passed"
+        },
+        {
+          "name": "P4-002 multi-tab / multi-profile isolation rejects restricted schemes on newPage/navigatePage",
+          "status": "passed"
+        },
+        {
+          "name": "P4-002 grant tab+origin+expiry binding expires and rejects wrong tab/origin replay",
+          "status": "passed"
+        },
+        {
+          "name": "P4-002 grant tab+origin+expiry binding full-access fails closed on tab/origin mismatch or expiry",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects credential names in query before preparing a replay",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects credential names in json before preparing a replay",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects credential names in form before preparing a replay",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects credential names in text before preparing a replay",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects credential names in header before preparing a replay",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 claims a draft before dispatch so concurrent sends have one network effect",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 keeps a connection reset send consumed when the outcome is unknown",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 keeps a AbortError send consumed when the outcome is unknown",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects a mismatched or expired grant {\"tabId\":8}",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects a mismatched or expired grant {\"origin\":\"https://other.example\"}",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 rejects a mismatched or expired grant {\"expiresAt\":0}",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 prepare 只生成草案且未确认时不能发送",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 拒绝非 JSON 文本 body 里的凭据键名",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 拒绝危险 method、敏感 header 和跨当前 origin 目标",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 授权后发送请求必须由 background fetch 且不携带凭据",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 free-text responses go through the shared redactor instead of URLSearchParams",
+          "status": "passed"
+        },
+        {
+          "name": "请求重放沙箱执行器 发送时保留重复 Header 且只跟随一次同源重定向",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode binds full access to the approved origin and requires reapproval after leaving it",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode does not transfer approval to a new tab, back to the old tab, or after closing an approved tab",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode does not mint full access from the open payload or debugger reattachment",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode revokes the origin binding on browser-driven navigation before the next service call",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode uses the same approval binding for unredacted network data",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode redacts a pending network wait when another origin supplies the matching request",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode keeps networkGetRequestDetails bound to the original approval while its body read is pending",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode keeps networkFindParameterCandidates bound to the original approval while its body read is pending",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode keeps networkExtractJsCandidates bound to the original approval while its body read is pending",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode keeps fullAccessGetNetworkDetails bound to the original approval while its body read is pending",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode withholds a pending storage result after approval navigation",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode withholds a pending storage result after approval renewal",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode withholds a pending storage result after approval revocation",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode withholds a pending storage result after approval expiry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode withholds a pending storage result after approval disable",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode withholds a pending storage result after approval reattachment",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode withholds a pending storage result after approval debugger-detach",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode open 默认 normal_restricted 模式",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode normal_restricted 下 takeSnapshot/clickByUid/fillByUid/pressKey 被拒",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade 升级到 controlled_enhanced 后动作可用",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade 升级到 full_access 后动作可用",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade 带 expiresInMs 过期后自动回退 normal_restricted",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode 降级回 normal_restricted 清理过期时间",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode respondBoundaryChoice 对不存在会话返回 false",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode setBoundaryChoiceNotifier 注册回调可被调用",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode open 时指定 runtimeMode=controlled_enhanced 生效",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser runtime mode requestModeUpgrade without userApproval is rejected (approval gate)",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 按同源规则读取 map 且不携带凭据",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 接受浏览器已自动解压的 gzip Source Map 响应",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 拒绝跨域 URL 和跨域重定向",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 拒绝非法 MIME 和超大小响应",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 只允许 .map 路径上的文本响应，不接受 octet-stream 或普通脚本文本",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 区分请求失败、超时、状态码失败和响应体读取失败",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 流式响应体读取阶段超时时仍返回超时摘要",
+          "status": "passed"
+        },
+        {
+          "name": "同源 Source Map 读取器 取消它不会读取的响应体，而不是把它弃置",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 列出 Source Map 候选并按需读取同源 map",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 候选列表工具正文不直接输出完整 Source Map URL",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 解析 bundle 位置并从 sourcesContent 提取脱敏后的原始源码片段",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 响应头 SourceMap 优先于源码注释候选",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 支持 inline data URL Source Map 且不执行同源 fetch",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 map 不含 sourcesContent 时返回明确中文原因",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 外部读取失败时复用已采集的同源 Source Map 响应体",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 Source Map 回退详情仍拒绝非法状态、失败请求、非法 MIME、截断、超大和无效 JSON",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 Source Map 回退详情仍拒绝与当前页面不同源的同 URL 缓存",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 提取原始上下文时始终将结果标记为已脱敏",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 当 JS 资源已截断时会提示 sourceMappingURL 可能不准确",
+          "status": "passed"
+        },
+        {
+          "name": "Source Map 工具执行器 未启用 recorder 或参数非法时返回中文错误内容",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task network policy denies private, local, and special-use addresses",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task network policy denies DNS rebinding, unapproved domains, and URL credentials",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task network policy accepts public addresses inside the approved domain set",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor keeps the shared runtime enabled until a retry finishes after the old close settles",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor awaits one asynchronous owner cleanup before completing cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor executes ordered steps and verifies success with progress counters",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor returns an explainable verification failure instead of completing on navigation alone",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor fails closed when the request guard blocks traffic during success verification",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor fails before opening a session when the target resolves private",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor closes the session and skips verification when cancelled during a step",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor completes 20 sequential synthetic public runs with a fresh approval each time",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser supervised task executor fails an unknown step action instead of recording it as a passed no-op",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service ignores old progress after cancellation and immediate retry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service ignores old success after cancellation and immediate retry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service ignores old error after cancellation and immediate retry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service ignores old paused-success after cancellation and immediate retry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service aborts a paused executor and fences its result after resume and approval",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service runs a task through queued -> running -> completed",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service refuses sensitive query parameters in the task URL",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service cancels an in-flight task and aborts the executor",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service does not let an in-flight result overwrite a task paused mid-run",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service retries failed tasks with a clean queued lifecycle",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service approval gate: waitForApproval blocks run until approve",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service approve rejects non-waiting tasks",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service persists tasks and recovers running as interrupted with explainable status",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service recoverTasksAfterRestart leaves waiting-approval explainable and does not clear it",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service persists approval state to disk",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service persists workspace context as metadata without changing its approval gate",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service rejects before execution and requires a fresh approval after retry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service refuses a step whose action is not one it can execute",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service does not let a late cancel rewrite a completed outcome or unlock retry",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service does not pause or resume a finished task back into the approval gate",
+          "status": "passed"
+        },
+        {
+          "name": "agent browser task service still pauses a queued task and resumes it through the approval gate",
+          "status": "passed"
+        },
+        {
+          "name": "same-origin js fetcher body hygiene cancels an oversized body instead of abandoning it",
+          "status": "passed"
+        },
+        {
+          "name": "same-origin js fetcher body hygiene discards the body when it rejects a non-2xx response",
+          "status": "passed"
+        },
+        {
+          "name": "same-origin js fetcher body hygiene discards the body when it rejects an untrusted MIME type",
+          "status": "passed"
+        },
+        {
+          "name": "same-origin js fetcher body hygiene discards the body when it rejects an opaque redirect",
+          "status": "passed"
+        },
+        {
+          "name": "same-origin js fetcher body hygiene still returns the fetched source on the happy path",
+          "status": "passed"
+        },
+        {
+          "name": "same-origin js fetcher body hygiene rejects cross-origin and non-script targets before fetching at all",
+          "status": "passed"
+        }
+      ],
+      "rawSha256": "e25854583cbb5576d8f2ac20462faf58907dd19061ac8c9e1c3a71e3c87c1635"
+    },
+    {
+      "scope": "host",
+      "passed": 78,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://127.0.0.1:18789/admin as non-public (loopback)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://localhost:8080 as non-public (local-name)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://192.168.1.1 as non-public (rfc1918)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://10.0.0.5 as non-public (rfc1918)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://172.16.4.4 as non-public (rfc1918)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://169.254.169.254/latest/meta-data as non-public (link-local)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://[::1]:9000 as non-public (loopback)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://[::ffff:0:127.0.0.1] as non-public (loopback)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://[::ffff:0:192.168.1.1] as non-public (rfc1918)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://[ff02::1] as non-public (ipv6-local)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies http://[fec0::1] as non-public (ipv6-local)",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny treats a public https URL as public",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny classifies expanded IPv4-translatable DNS answers before allowing the request",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny denies multicast and deprecated site-local addresses in URLs and DNS answers",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny denies every private class by default when no approval exists",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny allows a private origin only with a live approval bound to session and origin",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny never allows an approval to leak across sessions or become global",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny never lets the first-party preview exception cover non-loopback ranges",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny public URLs bypass approval entirely and need none",
+          "status": "passed"
+        },
+        {
+          "name": "TF-0503 browser private-network default deny requires a grant when any DNS answer is private beyond loopback, even for a persisted local preview",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API routes JS and SourceMap through the live profile owner and refuses rebound private destinations",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API refuses a background resource after its owner closes during DNS lookup",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API removes the failed owner after proxy-resolution so the next private grant can be used",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API removes the failed owner after window-creation so the next private grant can be used",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API recovers the live main page when the active extra tab is closed natively",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API preserves owner correlation through the model click preflight and actual Main action",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API preserves owner correlation through the model type preflight and actual Main action",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API rejects host-only action requestModeUpgrade before service effects",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API rejects host-only action setEnabled before service effects",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API rejects host-only action fullAccessRevoke before service effects",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API rejects host-only action newPage before service effects",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API refuses model-authored authority on open: {\"userApproval\":true}",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API refuses model-authored authority on open: {\"runtimeMode\":\"full_access\"}",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API refuses model-authored authority on open: {\"privateNetworkApprovedBy\":\"agent\"}",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API rejects absent/mismatched owners and payload impersonation, but allows the owning caller",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API guards ordinary-session requests, DNS resolution and additional tabs with the same owner",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API consumes an opening grant exactly once and transfers it to the created session before navigation",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API revokes a closing session grant while native window destruction is still pending",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API transfers an explicit opening grant for a hostname whose DNS destination is private",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API keeps a replacement private approval when an earlier opening result settles",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API does not restore an opening grant after close with nativePending=false",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API does not restore an opening grant after close with nativePending=true",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API destroys owned tabs and sessions even when a page would cancel ordinary close",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API destroys a new tab whose initial private request is denied before registration",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API retires a session and its grants when its main window is closed outside the host API",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API preserves long runtime owners and disables direct WebRTC UDP on every managed window",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API never lends another live session grant to an unattributed request in a shared profile",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API blocks a failed optional resource without destroying an otherwise loaded ordinary page",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API revokes a pending owned request when its window closes during DNS lookup",
+          "status": "passed"
+        },
+        {
+          "name": "Verse browser authority through the production Main API revokes a pending unattributed request when its window closes during DNS lookup",
+          "status": "passed"
+        },
+        {
+          "name": "Request-time network policy rejects expired grants, mapped private IPv6, failed DNS and cross-session reuse",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership injects host hooks and routes allowed calls through the module API",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership keeps the desktop capability snapshot free of CLI-dependent actions (N8 F1)",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership fails closed when the embedded module cannot be created",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership raises typed denial before the module call and records the deny decision",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership fails closed when permission audit recording is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership preserves ToolResult content, evidence, recovery data, and error details",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership rejects browser admission while a session lifecycle gate is open",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership ignores caller approval claims and consumes a trusted session-and-origin approval",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership admits only one concurrent open for one trusted private-network approval",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership refreshes the workspace root between calls so separate workspaces do not share state",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership resolves the browser resource scope from the active workspace, never from sessionKey",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser host adapter ownership rejects a caller-selected workspace that differs from the active workspace",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination sends background resources through the same checked DNS and keeps the dispatcher profile-owned",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination blocks JS, SourceMap and replay at the actual private destination with no global fetch fallback",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination never uses ambient fetch when a resource reader has no session network owner",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination allows one real POST for concurrent sends and retains the claim after response loss",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination returns redirects to the caller and rechecks policy before the next hop",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination resolves once and connects to that exact approved address without a second hostname lookup",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination rejects a denied destination before HTTP or CONNECT reaches it",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination revokes connections waiting on DNS before they can reach a destination",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination tries another checked address before sending bytes and retries a previously failed DNS lookup",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination closes an active CONNECT tunnel at grant expiry even when the client remains connected",
+          "status": "passed"
+        },
+        {
+          "name": "browser egress uses the checked numeric destination preserves a required upstream HTTP proxy while sending only the checked numeric destination",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser task and session conservation (M05) preserves every task identity and lifecycle field across a version-2 store restart",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser task and session conservation (M05) keeps completed and cancelled outcomes unchanged when late lifecycle calls arrive",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser task and session conservation (M05) rejects unknown steps before persisting a task",
+          "status": "passed"
+        },
+        {
+          "name": "VerseBrowser task and session conservation (M05) keeps other sessions alive when one owned session is unloaded",
+          "status": "passed"
+        }
+      ],
+      "rawSha256": "a2a39b044c15fc156fe3278b463124c4a6d339e226f936c81224fb5df0e665a3"
+    }
+  ],
+  "checks": [
+    {
+      "id": "lint",
+      "argv": [
+        "node_modules/eslint/bin/eslint.js",
+        "packages/versebrowser/src/engine/facade.ts",
+        "electron/services/agent-browser-api.ts",
+        "electron/services/agent-browser-network-proxy.ts",
+        "packages/versebrowser/src/engine/service.ts",
+        "packages/versebrowser/src/engine/task-service.ts",
+        "packages/versebrowser/src/engine/supervised-task-executor.ts",
+        "packages/versebrowser/src/engine/browser-control/replay-tool-executor.ts",
+        "packages/versebrowser/src/engine/browser-control/same-origin-js-fetcher.ts",
+        "packages/versebrowser/src/engine/browser-control/same-origin-source-map-fetcher.ts",
+        "packages/versebrowser/tests/agent-browser-runtime-mode.test.ts",
+        "packages/versebrowser/tests/agent-browser-task-service.test.ts",
+        "packages/versebrowser/tests/agent-browser-replay-tool-executor.test.ts",
+        "packages/versebrowser/tests/agent-browser-supervised-task-executor.test.ts",
+        "tests/unit/versebrowser-boundary-repair.test.ts",
+        "tests/unit/versebrowser-network-proxy.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 6325
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 262
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "durationMs": 149
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/browser-issues-265-268.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 888
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/browser-issues-265-268.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "durationMs": 645
+    }
+  ],
+  "modulePatchReplay": {
+    "driven_by": "agent",
+    "originalCommit": "d23271215",
+    "originalHash": "fba5e0e94a53681d69019f29a0eeb6528bb31d9e40578d79b9b6ea1f9146db62",
+    "priorDeclaredTargetHash": "bd6dfcd2c8dc749f1f025ac2710bc1a2236f0eea2c7861c2bef334e4fa9b14f2",
+    "priorActualTargetHash": "580052b4ab742238d91c30dbb6bddec0667303b7c0992b1b68a88c82e17dc01c",
+    "preservedPriorFeatureCommit": "47303b189",
+    "targetHash": "7aab31bfaf48652ed6446b475065232e1ff622f203884ab6aac5cb3100ead3c2",
+    "patchHash": "6ad723d697217e18d2397ca8322b028da23217ad37a120d6f3628234f26afe63",
+    "replayedBytesMatch": true,
+    "change": "remove unused private sessionDir and its only import; preserve current Kitesurf implementation"
+  },
+  "review": {
+    "findings": [],
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "The final diff removes only the uncalled private facade helper and its import; the regenerated patch replays cleanly and its declared patch and target hashes match the checked-out bytes. The host approval changes synchronously revoke grants on close, preserve replacement approvals across late opening results, and reject late results for already-closed sessions, with tests covering both pending and completed native cleanup. The PTY declarations match the installed dependency contract. No actionable defect was found in the reviewed change.",
+    "overall_confidence": 0.95
+  },
+  "ci": {
+    "status": "not_started",
+    "reason": "GitHub account payments/spending limit",
+    "exampleCheckRun": 139220072015
+  },
+  "priorFailures": {
+    "r12": "temporary rootDir excluded source",
+    "r15": "implicit glob omitted tar declaration",
+    "r17": "ambient PtyHandle missing resize/kill",
+    "r18static": "five deferred-grant fixture prefer-const errors"
+  },
+  "rawArchiveKey": "browser-issues-closeout-20261125"
+}

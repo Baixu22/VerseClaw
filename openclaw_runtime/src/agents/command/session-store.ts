@@ -51,6 +51,7 @@ function removeLifecycleStateFromMetadataPatch(entry: SessionEntry): SessionEntr
   const next = { ...entry };
   // Only lifecycle events transfer run ownership; metadata uses a pre-run snapshot.
   delete next.lifecycleRunId;
+  delete next.recoveryOutput;
   delete next.status;
   delete next.startedAt;
   delete next.endedAt;

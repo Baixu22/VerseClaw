@@ -1,0 +1,719 @@
+{
+  "schema": "G3TrajectoryLoadingDevelopment/v1",
+  "date": "2026-11-21",
+  "taskNode": "TF-0818",
+  "codeCommit": "7b5da98252c4fe947ee1875e1552a1b3e397e4a6",
+  "executionBaseHead": "2907d30348ecf83c4373568c6dd5e64fa701139c",
+  "sourceRevision": "r12",
+  "sourceInputs": [
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "f9bdb526e6d7b771854f4128783eb99848eeb9252076feec40c802a1521153db",
+      "bytes": 44881,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\README.ja-JP.md",
+      "baselineSha256": "a75782e7150250eef768143441f12f05a045bc3c9ab719896b14bd75bbb15404",
+      "gitBlob": "914901637062de6b6084b1abc44c1397e884d998",
+      "gitBlobSha256": "f9bdb526e6d7b771854f4128783eb99848eeb9252076feec40c802a1521153db",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "README.md",
+      "sha256": "122fb637af4da1f5443687b7ded5b065061965fdec3eb6ae13575b95be70db3f",
+      "bytes": 38576,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\README.md",
+      "baselineSha256": "0f6a335b32da81dceafb9d8da69775c8d49a68481a28c3c7e19a9bf32cfb3a54",
+      "gitBlob": "684eae72ab176298b24d2e01de0eced9e88680f8",
+      "gitBlobSha256": "122fb637af4da1f5443687b7ded5b065061965fdec3eb6ae13575b95be70db3f",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "d6804e7bf575b0fc28e0340ba228d2d4f9f196c082a70904657bfe0eb9593f8b",
+      "bytes": 34311,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\README.zh-CN.md",
+      "baselineSha256": "57ad1f8b6ae0e2ad939aa064ba64e4d834e7e191e6702661ef2912c99b800bea",
+      "gitBlob": "5f01058b12c03d1a0e44a09adbf73265253832a1",
+      "gitBlobSha256": "d6804e7bf575b0fc28e0340ba228d2d4f9f196c082a70904657bfe0eb9593f8b",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "harness/specs/rules/gateway-readiness-policy.md",
+      "sha256": "b324954b1fc8fcab3d1773ff3e38151e20043ae619ed7e05ca2c5039417244dd",
+      "bytes": 2602,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\harness\\specs\\rules\\gateway-readiness-policy.md",
+      "baselineSha256": "977a448d8d5a63ee327459d5a4f934108d46a8fab7118b2268bacbfc6d8fe6a8",
+      "gitBlob": "1934b144b306766a8ca91ec3aa8f2c0d9f6e07b2",
+      "gitBlobSha256": "b324954b1fc8fcab3d1773ff3e38151e20043ae619ed7e05ca2c5039417244dd",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "5f96d44ccb57fe7b6351467f754dc90fa43bfd5dc52da0e043cb5b8633f1dede",
+      "bytes": 16199,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\harness\\specs\\tasks\\gateway-startup-performance.md",
+      "baselineSha256": "06a77606d16ffdfdfea87521cf407006efe0853b1753bbe9b97b5c02132a5f2e",
+      "gitBlob": "787818fd0c42bcf2cca7998f5348f9d7c3cf4378",
+      "gitBlobSha256": "2ea368b7fa4f1573f9a8149ebab65708fb24cd072246d2acadf5fae547c1f031",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "6e3be5e21661b29c4bd64892bb2215e09bc23c5f02d9a0bebc7844fa4fedfd35",
+      "bytes": 31644,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\harness\\specs\\tasks\\recovery-authority-gated.md",
+      "baselineSha256": "754fdcc66b72b24911be30c3ef55f1a8fbea188ff7a7a0fd81481487d646ad75",
+      "gitBlob": "73a33c83f4345665d3a5217eee7a7f40d5d76491",
+      "gitBlobSha256": "4a4a0568b586ca4ef4f0802d09e03ae94f91dc5a62a70524cbdc0a2c61e9ed5b",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/trajectory-gateway.test.ts",
+      "sha256": "52645c0e2fe1e79de6b6f64efcc591a58009db2d93625703ff252b61c9f70b62",
+      "bytes": 6482,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\gateway\\trajectory-gateway.test.ts",
+      "baselineSha256": "b1cf532852daca7b00ccc132c4dce13e85b1cb08d1cc9e0c1d23008d8ef9afa3",
+      "gitBlob": "5340260a32d667f28d631874d637562377cf0a92",
+      "gitBlobSha256": "52645c0e2fe1e79de6b6f64efcc591a58009db2d93625703ff252b61c9f70b62",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/trajectory-gateway.ts",
+      "sha256": "269891f0915b2d5ddc39d64092788eb941371b8f6b7a0d8b6f9897646e670ceb",
+      "bytes": 9110,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\gateway\\trajectory-gateway.ts",
+      "baselineSha256": "e39aa23b306356bf1e8db2d1641854ffdd8390a371451cf4fd5b35ea9fccd5ce",
+      "gitBlob": "210faf1a19a03b84cae5607f19ec9177c6157f6b",
+      "gitBlobSha256": "269891f0915b2d5ddc39d64092788eb941371b8f6b7a0d8b6f9897646e670ceb",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts",
+      "sha256": "c79686c7f245ea39a11daaa7dcca0cdc24e351244fb5b0038ca0372b246ccefa",
+      "bytes": 1132,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\gateway\\trajectory-gateway.runtime.ts",
+      "baselineSha256": null,
+      "gitBlob": "3dd17e9f94d9d42490f613add4f668bc13f84725",
+      "gitBlobSha256": "c79686c7f245ea39a11daaa7dcca0cdc24e351244fb5b0038ca0372b246ccefa",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server.impl.ts",
+      "sha256": "463dd5f646e6e7d647f8d3a3be46c7824ee8572593c13b114c1777eb8472cf16",
+      "bytes": 72375,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\gateway\\server.impl.ts",
+      "baselineSha256": "463dd5f646e6e7d647f8d3a3be46c7824ee8572593c13b114c1777eb8472cf16",
+      "gitBlob": "1454399784fc8c1198fe99dcf91f6e1c1a0d6042",
+      "gitBlobSha256": "463dd5f646e6e7d647f8d3a3be46c7824ee8572593c13b114c1777eb8472cf16",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/session-utils.ts",
+      "sha256": "7aaf347ce75cf5c0317c80c795c14be51455395b946a08d674f214686a2a8406",
+      "bytes": 92330,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\gateway\\session-utils.ts",
+      "baselineSha256": "7aaf347ce75cf5c0317c80c795c14be51455395b946a08d674f214686a2a8406",
+      "gitBlob": "e7581ab5055595640aab27883db85b7a70f2a10f",
+      "gitBlobSha256": "7aaf347ce75cf5c0317c80c795c14be51455395b946a08d674f214686a2a8406",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+      "sha256": "bf9d1eb9546f4d714712872c0cead8ea818fba583e275a780b6c62e056d7221d",
+      "bytes": 70340,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\gateway\\server-methods\\role-orchestration-methods.ts",
+      "baselineSha256": "bf9d1eb9546f4d714712872c0cead8ea818fba583e275a780b6c62e056d7221d",
+      "gitBlob": "e1886b506f70f65d5200b81169cf7efad3bf316b",
+      "gitBlobSha256": "bf9d1eb9546f4d714712872c0cead8ea818fba583e275a780b6c62e056d7221d",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/gateway/server-startup-config.ts",
+      "sha256": "1cc8cef3b9d71e5f40e2af262999f1812e5582f79c05a057a5241a6237e7a637",
+      "bytes": 24487,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\gateway\\server-startup-config.ts",
+      "baselineSha256": "1cc8cef3b9d71e5f40e2af262999f1812e5582f79c05a057a5241a6237e7a637",
+      "gitBlob": "0e96233db8569953fe5749c52d9a9e35a596b0b9",
+      "gitBlobSha256": "1cc8cef3b9d71e5f40e2af262999f1812e5582f79c05a057a5241a6237e7a637",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/config/sessions/paths.ts",
+      "sha256": "6e6b7463ca8ba601b02b1d4b8c522dafefb3676edb119dada9498135e0d402e4",
+      "bytes": 12174,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\config\\sessions\\paths.ts",
+      "baselineSha256": "6e6b7463ca8ba601b02b1d4b8c522dafefb3676edb119dada9498135e0d402e4",
+      "gitBlob": "c27f9781ae58fce7c615d5cacd6e8901ea26c245",
+      "gitBlobSha256": "6e6b7463ca8ba601b02b1d4b8c522dafefb3676edb119dada9498135e0d402e4",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "openclaw_runtime/src/routing/session-key.ts",
+      "sha256": "3a2ab4ee0e7380e346a0b0e717dced17b22748ebfe342b645fea463ce5b97288",
+      "bytes": 10960,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\openclaw_runtime\\src\\routing\\session-key.ts",
+      "baselineSha256": "3a2ab4ee0e7380e346a0b0e717dced17b22748ebfe342b645fea463ce5b97288",
+      "gitBlob": "16d7405e399926385ac0329b16f8f0c7dba5368c",
+      "gitBlobSha256": "3a2ab4ee0e7380e346a0b0e717dced17b22748ebfe342b645fea463ce5b97288",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "package.json",
+      "sha256": "8422a8a3ca9635ef5ef587c346a80dec2b79fd09372f73ddffaef8771b599752",
+      "bytes": 41674,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\package.json",
+      "baselineSha256": "8422a8a3ca9635ef5ef587c346a80dec2b79fd09372f73ddffaef8771b599752",
+      "gitBlob": "2367a759a9f83eff0843dbcf0ae7a68a847911e4",
+      "gitBlobSha256": "8422a8a3ca9635ef5ef587c346a80dec2b79fd09372f73ddffaef8771b599752",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "scripts/recovery-contract-matrix.mjs",
+      "sha256": "9f551e8ab59e3ee09dd5cb2040678a9de2f506d6c55e420e25b71778372086c1",
+      "bytes": 9180,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\scripts\\recovery-contract-matrix.mjs",
+      "baselineSha256": "9f551e8ab59e3ee09dd5cb2040678a9de2f506d6c55e420e25b71778372086c1",
+      "gitBlob": "ae7bfdc60882eb5c0c54851a58f73c5b41be562f",
+      "gitBlobSha256": "9f551e8ab59e3ee09dd5cb2040678a9de2f506d6c55e420e25b71778372086c1",
+      "normalizedGitIdentityMatched": true
+    },
+    {
+      "file": "tests/e2e/recovery-contract-eval.spec.ts",
+      "sha256": "907ac85987ad293032a96b8412d31fd288f8b74adc7c481e9899477ccf4832b6",
+      "bytes": 22984,
+      "snapshot": "D:\\tmp\\g3-trajectory-relay-20261121-01a1fe77\\source-r12\\tests\\e2e\\recovery-contract-eval.spec.ts",
+      "baselineSha256": "907ac85987ad293032a96b8412d31fd288f8b74adc7c481e9899477ccf4832b6",
+      "gitBlob": "efbf8691945e512589fe6daf3adb2c7e240c9936",
+      "gitBlobSha256": "907ac85987ad293032a96b8412d31fd288f8b74adc7c481e9899477ccf4832b6",
+      "normalizedGitIdentityMatched": true
+    }
+  ],
+  "stages": [
+    {
+      "name": "trajectory-current-r1",
+      "exitCode": 0,
+      "elapsedMs": 24220,
+      "minimumSystemFreeMiB": 344,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-harness-loading-20261120-01a1f836/run-runtime-targets.mjs",
+        "src/gateway/trajectory-gateway.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-trajectory-relay-20261121-01a1fe77/trajectory-current-r1-tests.json"
+      ]
+    },
+    {
+      "name": "trajectory-format-check-r1",
+      "exitCode": 1,
+      "elapsedMs": 997,
+      "minimumSystemFreeMiB": 2948,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/oxfmt/bin/oxfmt",
+        "--check",
+        "openclaw_runtime/src/gateway/trajectory-gateway.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.test.ts"
+      ]
+    },
+    {
+      "name": "trajectory-format-r1",
+      "exitCode": 0,
+      "elapsedMs": 1123,
+      "minimumSystemFreeMiB": 2430,
+      "sourceUnchanged": false,
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/oxfmt/bin/oxfmt",
+        "openclaw_runtime/src/gateway/trajectory-gateway.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.test.ts"
+      ]
+    },
+    {
+      "name": "trajectory-format-r2",
+      "exitCode": 0,
+      "elapsedMs": 1104,
+      "minimumSystemFreeMiB": 2347,
+      "sourceUnchanged": false,
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/oxfmt/bin/oxfmt",
+        "openclaw_runtime/src/gateway/trajectory-gateway.test.ts"
+      ]
+    },
+    {
+      "name": "trajectory-final-r11",
+      "exitCode": 0,
+      "elapsedMs": 18860,
+      "minimumSystemFreeMiB": 1591,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-harness-loading-20261120-01a1f836/run-runtime-targets.mjs",
+        "src/gateway/trajectory-gateway.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-trajectory-relay-20261121-01a1fe77/trajectory-final-r11-tests.json"
+      ]
+    },
+    {
+      "name": "startup-harness-r11",
+      "exitCode": 0,
+      "elapsedMs": 1300,
+      "minimumSystemFreeMiB": 2234,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "--since",
+        "2907d30348ecf83c4373568c6dd5e64fa701139c"
+      ]
+    },
+    {
+      "name": "recovery-harness-r11",
+      "exitCode": 0,
+      "elapsedMs": 1149,
+      "minimumSystemFreeMiB": 2204,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "2907d30348ecf83c4373568c6dd5e64fa701139c"
+      ]
+    },
+    {
+      "name": "startup-profile-plan-r11",
+      "exitCode": 1,
+      "elapsedMs": 1723,
+      "minimumSystemFreeMiB": 2162,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "--dry-run"
+      ]
+    },
+    {
+      "name": "startup-profile-plan-r12",
+      "exitCode": 0,
+      "elapsedMs": 1282,
+      "minimumSystemFreeMiB": 2943,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "--dry-run",
+        "--since",
+        "2907d30348ecf83c4373568c6dd5e64fa701139c"
+      ]
+    },
+    {
+      "name": "trajectory-review-r11",
+      "exitCode": 1,
+      "elapsedMs": 321518,
+      "minimumSystemFreeMiB": 317,
+      "sourceUnchanged": true,
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "ccs-ai/gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/review-notes-r11.md",
+        "--json-output",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/trajectory-review-r11-result.json",
+        "--output",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/trajectory-review-r11-result.txt"
+      ]
+    },
+    {
+      "name": "trajectory-format-check-r2",
+      "exitCode": 0,
+      "elapsedMs": 1279,
+      "minimumSystemFreeMiB": 1980,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/oxfmt/bin/oxfmt",
+        "--check",
+        "openclaw_runtime/src/gateway/trajectory-gateway.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.test.ts"
+      ]
+    },
+    {
+      "name": "trajectory-typed-lint-r11",
+      "exitCode": 0,
+      "elapsedMs": 135589,
+      "minimumSystemFreeMiB": 318,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "Set-Location -LiteralPath \"C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\"; node scripts/run-oxlint.mjs --type-aware --type-check --tsconfig=tsconfig.json --deny-warnings --threads=1 src/gateway/trajectory-gateway.ts src/gateway/trajectory-gateway.runtime.ts; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "trajectory-syntax-lint-r11",
+      "exitCode": 0,
+      "elapsedMs": 5280,
+      "minimumSystemFreeMiB": 4193,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/gateway/trajectory-gateway.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts",
+        "openclaw_runtime/src/gateway/trajectory-gateway.test.ts"
+      ]
+    },
+    {
+      "name": "recovery-light-r11",
+      "exitCode": 0,
+      "elapsedMs": 7636,
+      "minimumSystemFreeMiB": 3988,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "pnpm run test:recovery:light; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "comms-replay-r11",
+      "exitCode": 0,
+      "elapsedMs": 1995,
+      "minimumSystemFreeMiB": 4147,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "pnpm run comms:replay; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "comms-compare-r11",
+      "exitCode": 0,
+      "elapsedMs": 1577,
+      "minimumSystemFreeMiB": 4272,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "pnpm run comms:compare; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "startup-harness-r12",
+      "exitCode": 0,
+      "elapsedMs": 1277,
+      "minimumSystemFreeMiB": 5834,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "--since",
+        "2907d30348ecf83c4373568c6dd5e64fa701139c"
+      ]
+    },
+    {
+      "name": "recovery-harness-r12",
+      "exitCode": 0,
+      "elapsedMs": 1167,
+      "minimumSystemFreeMiB": 5820,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "2907d30348ecf83c4373568c6dd5e64fa701139c"
+      ]
+    },
+    {
+      "name": "trajectory-review-r12",
+      "exitCode": 0,
+      "elapsedMs": 161228,
+      "minimumSystemFreeMiB": 2779,
+      "sourceUnchanged": true,
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "ccs-ai/gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/review-notes-r12.md",
+        "--json-output",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/trajectory-review-r12-result.json",
+        "--output",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/trajectory-review-r12-result.txt"
+      ]
+    },
+    {
+      "name": "runtime-build-r12",
+      "exitCode": 0,
+      "elapsedMs": 45107,
+      "minimumSystemFreeMiB": 2781,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ]
+    },
+    {
+      "name": "startup-built-graph-r12",
+      "exitCode": 0,
+      "elapsedMs": 712,
+      "minimumSystemFreeMiB": 5064,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/startup-static-graph-r12.mjs"
+      ]
+    },
+    {
+      "name": "native-startup-trace-r12",
+      "exitCode": 0,
+      "elapsedMs": 73179,
+      "minimumSystemFreeMiB": 1162,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "scripts/recovery-contract-matrix.mjs",
+        "--batch",
+        "--arm",
+        "candidate",
+        "--repeats",
+        "1",
+        "--windows",
+        "repeated-restart",
+        "--out",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/native-r12"
+      ]
+    },
+    {
+      "name": "source-gates-r12",
+      "exitCode": 0,
+      "elapsedMs": 50268,
+      "minimumSystemFreeMiB": 845,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "pnpm run runtime:source:check; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "types-original-r12",
+      "exitCode": 0,
+      "elapsedMs": 28864,
+      "minimumSystemFreeMiB": 517,
+      "sourceUnchanged": true,
+      "argv": [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "pnpm run typecheck; exit $LASTEXITCODE"
+      ]
+    },
+    {
+      "name": "config-cpu-profile-r12",
+      "exitCode": 0,
+      "elapsedMs": 4438,
+      "minimumSystemFreeMiB": 4274,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/profile-config-r12.mjs"
+      ]
+    },
+    {
+      "name": "config-fs-census-r12",
+      "exitCode": 1,
+      "elapsedMs": 997,
+      "minimumSystemFreeMiB": 810,
+      "sourceUnchanged": true,
+      "argv": [
+        "node",
+        "D:/tmp/g3-trajectory-relay-20261121-01a1fe77/census-config-r12.mjs"
+      ]
+    }
+  ],
+  "trajectoryTests": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+  },
+  "lightAcceptance": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "elapsedMs": 7636
+  },
+  "review": {
+    "model": "ccs-ai/gpt-6.1-sol",
+    "firstFindings": 1,
+    "acceptedCorrection": "Scope the contract to the trajectory cleanup module and readTrajectoryPage.",
+    "finalFindings": 0,
+    "elapsedMs": 161228
+  },
+  "types": {
+    "command": "pnpm run typecheck",
+    "cache": "disabled",
+    "priority": "Normal",
+    "elapsedMs": 28864,
+    "innerDurationMs": 25643,
+    "results": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 60
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 9830
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 5863
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 15747,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ],
+    "budgetMs": 45000,
+    "withinBudget": true
+  },
+  "compiledGraph": {
+    "server": {
+      "beforeModules": 489,
+      "afterModules": 411,
+      "beforeBytes": 7263693,
+      "afterBytes": 5644174
+    },
+    "trajectory": {
+      "beforeModules": 381,
+      "afterModules": 10,
+      "beforeBytes": 6031656,
+      "afterBytes": 468176
+    }
+  },
+  "runtimeBuild": {
+    "elapsedMs": 45107,
+    "profile": "cliStartup",
+    "serial": true,
+    "heapMiB": 2048,
+    "smokeReady": true
+  },
+  "native": {
+    "samples": 1,
+    "window": "repeated-restart",
+    "crashes": 3,
+    "terminalCorrect": true,
+    "duplicateEffects": 0,
+    "lostTasks": 0,
+    "recoveryLatencyMs": 41935,
+    "modelRequests": 0,
+    "provider": "loopback scripted fixture",
+    "cleanup": "passed",
+    "survivors": 0,
+    "buildInputs": 6778,
+    "buildReadbackMatched": true
+  },
+  "startupDiagnosis": {
+    "spawnToReady": {
+      "min": 7807,
+      "max": 8799
+    },
+    "readyToConnect": {
+      "min": 2319,
+      "max": 2617
+    },
+    "configSync": {
+      "min": 157,
+      "max": 168
+    }
+  },
+  "configDiagnostic": {
+    "nodeVersion": "24.22.1",
+    "elapsedMs": 1596.4112,
+    "source": "cloned native state",
+    "profile": "config-read-r12-r1.cpuprofile"
+  },
+  "archive": {
+    "file": "raw-evidence.json.gz",
+    "sha256": "d2944bd64780d77ca9fbf9db3b548d486bee15fe9187b0c490d0256e2284bb61",
+    "entries": 7468,
+    "bytes": 38489549,
+    "credentialValueHits": 0
+  },
+  "ga": "NO_GO",
+  "remaining": [
+    "降低恢复时延至原 P50 5 秒 / P95 15 秒门槛。",
+    "冻结性能达标的同一候选，执行两臂五窗口、至少 30 对 live-provider、第二轮 legacy、九指标及源码和打包门禁。"
+  ],
+  "actor": "codex/g3-trajectory-relay",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

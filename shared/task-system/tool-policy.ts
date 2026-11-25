@@ -26,7 +26,7 @@ const READ_ONLY_GIT_SUBCOMMANDS = new Set([
 const READ_ONLY_GH_PR_SUBCOMMANDS = new Set(["checks", "diff", "list", "status", "view"]);
 const READ_ONLY_GH_ISSUE_SUBCOMMANDS = new Set(["list", "status", "view"]);
 
-const UNSAFE_RG_FLAGS = new Set(["--pre", "--pre-glob"]);
+const UNSAFE_RG_FLAGS = new Set(["--pre", "--pre-glob", "--hostname-bin"]);
 const UNSAFE_GIT_FLAGS = new Set(["--ext-diff", "--output", "-o", "--open-files-in-pager"]);
 
 /** Git global flags that consume the next token as their value, so that value
@@ -144,12 +144,7 @@ function isReadOnlySedCommand(tokens: readonly string[]): boolean {
 
 function hasUnsafeRipgrepFlag(tokens: readonly string[]): boolean {
   return tokens.some((token) => {
-    const normalized = normalizeLowercaseStringOrEmpty(token);
-    return (
-      UNSAFE_RG_FLAGS.has(normalized) ||
-      normalized.startsWith("--pre=") ||
-      normalized.startsWith("--pre-glob=")
-    );
+    return UNSAFE_RG_FLAGS.has(normalizeLowercaseStringOrEmpty(token).split("=", 1)[0]);
   });
 }
 

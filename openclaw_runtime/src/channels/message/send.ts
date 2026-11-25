@@ -33,7 +33,7 @@ const log = createSubsystemLogger("channels/message/send");
 
 export type DurableMessageBatchSendParams = Omit<
   DeliverOutboundPayloadsParams,
-  "abortSignal" | "onDeliveryIntent" | "payloads" | "queuePolicy"
+  "abortSignal" | "payloads" | "queuePolicy"
 > & {
   payloads: ReplyPayload[];
   attempt?: number;
@@ -169,6 +169,7 @@ export async function withDurableMessageSendContext<T>(
     onPreviewUpdate,
     onSendFailure,
     onPayloadDeliveryOutcome,
+    onDeliveryIntent,
     payloads,
     preview,
     previousReceipt,
@@ -213,9 +214,10 @@ export async function withDurableMessageSendContext<T>(
             payloadOutcomes.push(outcome);
             onPayloadDeliveryOutcome?.(outcome);
           },
-          onDeliveryIntent: (intent) => {
+          onDeliveryIntent: async (intent) => {
             deliveryIntent = intent;
             ctx.intent = toDurableMessageIntent(intent, rendered);
+            await onDeliveryIntent?.(intent);
           },
         });
         const receipt = createMessageReceiptFromOutboundResults({

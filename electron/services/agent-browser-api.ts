@@ -52,6 +52,13 @@ const privateNetworkApprovals = new Map<string, BrowserPrivateNetworkApproval>()
 // Only the host wrapper can reserve an opening grant. It is consumed by the
 // first request's real session id, before initial navigation or redirects.
 const privateNetworkOpenApprovals = new WeakMap<object, BrowserPrivateNetworkApproval>();
+const privateNetworkPreparedApprovals = new WeakMap<BrowserPrivateNetworkApproval, BrowserPrivateNetworkApproval>();
+
+function revokeBrowserPrivateNetworkApprovals(sessionId: string): void {
+  for (const [key, approval] of privateNetworkApprovals) {
+    if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
+  }
+}
 
 /** Actions whose payload carries a navigation target subject to the private-network guard. */
 const NAVIGATION_ACTIONS = new Set<string>(['navigate', 'open', 'createTask']);
@@ -386,7 +393,9 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
     const openingGrant = session.sessionKey ? this.openingNetworkGrants.get(session.sessionKey) : undefined;
     if (openingGrant) {
       this.openingNetworkGrants.delete(session.sessionKey!);
-      privateNetworkApprovals.set(`${session.id}|${openingGrant.origin}`, { ...openingGrant, sessionId: session.id });
+      const preparedApproval = { ...openingGrant, sessionId: session.id };
+      privateNetworkPreparedApprovals.set(openingGrant, preparedApproval);
+      privateNetworkApprovals.set(`${session.id}|${openingGrant.origin}`, preparedApproval);
     }
     let pending = this.networkProfiles.get(session.profile);
     if (!pending) {
@@ -480,6 +489,9 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
     } finally {
       if (sessionKey) this.openingNetworkGrants.delete(sessionKey);
     }
+    if (!super.list().some(session => session.id === result.session.id)) {
+      throw Object.assign(new Error('Agent browser session closed while opening'), { code: 'E_BROWSER_SESSION_CLOSED' });
+    }
     recordResourceEnvelopeEntry({
       id: `main:browser-session:${result.session.id}`,
       // Resource accounting needs an owner-resolved scope. A host-global browser
@@ -500,6 +512,7 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
   }
 
   async close(sessionId: string): Promise<void> {
+    revokeBrowserPrivateNetworkApprovals(sessionId);
     try {
       await super.close(sessionId);
     } finally {
@@ -514,9 +527,7 @@ export class HostAgentBrowserService extends ModuleAgentBrowserService {
           void pending?.then(proxy => profileActive ? proxy.revokeConnections() : proxy.close()).catch(() => undefined);
         }
         removeResourceEnvelopeEntry(`main:browser-session:${sessionId}`);
-        for (const [key, approval] of privateNetworkApprovals) {
-          if (approval.sessionId === sessionId) privateNetworkApprovals.delete(key);
-        }
+        revokeBrowserPrivateNetworkApprovals(sessionId);
       }
     }
   }
@@ -772,12 +783,17 @@ function withHostGuards<T extends object>(api: T): T {
             ? (result as { session?: { id?: string } }).session
             : undefined;
           if (session?.id && privateApproval.expiresAt > Date.now()) {
-            privateNetworkApprovals.set(`${session.id}|${privateApproval.origin}`, { ...privateApproval, sessionId: session.id });
+            const prepared = privateNetworkPreparedApprovals.get(privateApproval);
+            if (prepared) {
+              if (prepared.sessionId !== session.id || privateNetworkApprovals.get(`${session.id}|${prepared.origin}`) !== prepared) {
+                throw Object.assign(new Error('Private-network opening approval changed before completion'), { code: 'E_BROWSER_PRIVATE_NETWORK_DENIED' });
+              }
+            } else {
+              privateNetworkApprovals.set(`${session.id}|${privateApproval.origin}`, { ...privateApproval, sessionId: session.id });
+            }
           }
         } else if (prop === 'close') {
-          for (const [key, approval] of privateNetworkApprovals) {
-            if (approval.sessionId === sessionIdOf(payload)) privateNetworkApprovals.delete(key);
-          }
+          revokeBrowserPrivateNetworkApprovals(sessionIdOf(payload));
         }
         return result;
       };

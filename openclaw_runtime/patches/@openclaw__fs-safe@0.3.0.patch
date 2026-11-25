@@ -1,0 +1,43 @@
+diff --git a/dist/regular-file.js b/dist/regular-file.js
+index 35059a4b1ba4356365185c6ab308705d6c272485..78830814807bca53a2479b6f95fe5f9be88b96b7 100644
+--- a/dist/regular-file.js
++++ b/dist/regular-file.js
+@@ -202,6 +202,16 @@ function verifyStableAppendTarget(params) {
+         throw new Error(`Refusing to append after file changed: ${params.filePath}`);
+     }
+ }
++function needsAppendModeChange(stat, desiredMode) {
++    // Windows chmod controls the read-only attribute; POSIX also checks special bits.
++    const windows = process.platform === "win32";
++    // Retain chmod's POSIX owner authorization when the effective user differs.
++    if (!windows && stat.uid !== process.geteuid?.()) {
++        return true;
++    }
++    const mask = windows ? 0o200 : 0o7777;
++    return (stat.mode & mask) !== (desiredMode & mask);
++}
+ export async function appendRegularFile(options) {
+     if (options.rejectSymlinkParents === true) {
+         const resolvedDir = path.resolve(path.dirname(options.filePath));
+@@ -244,7 +254,9 @@ export async function appendRegularFile(options) {
+         if (options.maxFileBytes !== undefined && stat.size + contentBytes > options.maxFileBytes) {
+             return;
+         }
+-        await handle.chmod(options.mode ?? 0o600);
++        if (needsAppendModeChange(stat, options.mode ?? 0o600)) {
++            await handle.chmod(options.mode ?? 0o600);
++        }
+         await handle.appendFile(options.content, options.encoding ?? "utf8");
+     }
+     finally {
+@@ -294,7 +306,9 @@ export function appendRegularFileSync(options) {
+             stat.size + contentBuffer.byteLength > options.maxFileBytes) {
+             return;
+         }
+-        fsSync.fchmodSync(fd, options.mode ?? 0o600);
++        if (needsAppendModeChange(stat, options.mode ?? 0o600)) {
++            fsSync.fchmodSync(fd, options.mode ?? 0o600);
++        }
+         fsSync.writeSync(fd, contentBuffer, 0, contentBuffer.byteLength);
+     }
+     finally {

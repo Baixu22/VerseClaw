@@ -749,28 +749,6 @@ export function listCompactionHistoryEntries(entry: SessionEntry | undefined, li
     : entries;
 }
 
-export function isSessionBusyForManualCompaction(params: {
-  context: GatewayRequestContext;
-  cfg: OpenClawConfig;
-  requestedKey: string;
-  canonicalKey: string;
-  agentId?: string;
-  sessionId?: string;
-}): boolean {
-  const hasTrackedRun = hasTrackedActiveSessionRun({
-    context: params.context,
-    requestedKey: params.requestedKey,
-    canonicalKey: params.canonicalKey,
-    agentId: params.agentId,
-    defaultAgentId: resolveDefaultAgentId(params.cfg),
-  });
-  const hasEmbeddedRun =
-    typeof params.sessionId === "string" && params.sessionId
-      ? isEmbeddedAgentRunActive(params.sessionId)
-      : false;
-  return hasTrackedRun || hasEmbeddedRun;
-}
-
 export function resolveCompactionPressure(params: {
   usedTokens?: number;
   maxTokens?: number;

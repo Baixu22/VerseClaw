@@ -1,0 +1,5 @@
+# Preserve the bytes recorded by SHA256SUMS on every checkout.
+REPORT.md -text
+report.json -text
+SHA256SUMS -text
+evidence.json.gz -text

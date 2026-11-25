@@ -874,36 +874,30 @@ export function resolveReadOnlyChannelPluginsForConfig(
   if (cached) {
     return cloneReadOnlyChannelPluginResolution(cached);
   }
-  const manifestRecords = resolvePluginMetadataSnapshot({
+  const metadataSnapshot = resolvePluginMetadataSnapshot({
     config: cfg,
     stateDir: options.stateDir,
     workspaceDir,
     env,
     allowWorkspaceScopedCurrent: true,
-  }).plugins;
+  });
+  const manifestRecords = metadataSnapshot.plugins;
   const bundledManifestRecords = listBundledChannelManifestRecords(manifestRecords);
   const externalManifestRecords = listExternalChannelManifestRecords(manifestRecords);
   const activationSourceConfig = options.activationSourceConfig ?? cfg;
-  const configuredChannelIds = uniqueStrings([
-    ...listConfiguredChannelIdsForReadOnlyScope({
-      config: cfg,
-      activationSourceConfig,
-      workspaceDir,
-      env,
-      includePersistedAuthState: options.includePersistedAuthState,
-      manifestRecords,
-    }),
-    ...(activationSourceConfig === cfg
-      ? []
-      : listConfiguredChannelIdsForReadOnlyScope({
-          config: activationSourceConfig,
-          activationSourceConfig,
-          workspaceDir,
-          env,
-          includePersistedAuthState: options.includePersistedAuthState,
-          manifestRecords,
-        })),
-  ]).filter(isSafeManifestChannelId);
+  const configuredChannelIds = uniqueStrings(
+    [...new Set([cfg, activationSourceConfig])].flatMap((config) =>
+      listConfiguredChannelIdsForReadOnlyScope({
+        config,
+        activationSourceConfig,
+        workspaceDir,
+        env,
+        includePersistedAuthState: options.includePersistedAuthState,
+        manifestRecords,
+        discovery: metadataSnapshot.discovery,
+      }),
+    ),
+  ).filter(isSafeManifestChannelId);
   const byId = new Map<string, ChannelPlugin>();
   const loadFailures: ReadOnlyChannelPluginLoadFailure[] = [];
 

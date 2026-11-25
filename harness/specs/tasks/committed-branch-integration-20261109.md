@@ -9,9 +9,12 @@ intent: Merge current committed branches in an independent checkout, reconcile o
 touchedAreas:
   - .gitignore
   - artifacts/agent-dev-workbench/evidence.json
+  - artifacts/stepfun-basic-live-evidence-20261008/INTEGRITY.json
+  - artifacts/windows-alpha-closeout-20261008/INTEGRITY.json
   - README*.md
   - package.json
   - pnpm-lock.yaml
+  - vite.config.ts
   - packages/versebrowser/package.json
   - resources/verseshell-mcp/package.json
   - docs/**

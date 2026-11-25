@@ -29,7 +29,7 @@ import {
 } from '../contracts/index.ts';
 import type { AgentBrowserHostApi, AgentBrowserOpenPayload, AgentBrowserSnapshotItem, AgentBrowserPointerPayload, AgentBrowserDragPayload, AgentBrowserActionResult, AgentBrowserFindPayload, AgentBrowserUploadPayload, AgentBrowserDownloadPayload, AgentBrowserSemanticPayload } from '../types/host-api.ts';
 import type { AgentBrowserPdfPayload } from '../types/host-api.ts';
-import { getWorkspaceRoot, getWorkspaceEvidenceRoot, getWorkspaceSessionDir, getWorkspaceSessionsRoot, toWorkspaceRelative } from '../host/workspace-paths.ts';
+import { getWorkspaceRoot, getWorkspaceEvidenceRoot, getWorkspaceSessionsRoot, toWorkspaceRelative } from '../host/workspace-paths.ts';
 import { explainError, type SourceMapResolver } from '../mcp/explain-error.ts';
 import { TimelineWriter, readTimeline } from '../evidence/timeline.ts';
 import { diagnoseTimeline, writeDiagnosisPack } from '../evidence/diagnosis.ts';
@@ -392,10 +392,6 @@ export class AgentBrowserFacade {
   /** Workspace-relative ref path when possible; otherwise absolute. */
   private refPath(absolutePath: string): string {
     return toWorkspaceRelative(absolutePath, this.workspaceRoot) ?? absolutePath;
-  }
-
-  private sessionDir(sessionId: string): string {
-    return getWorkspaceSessionDir(sessionId, this.workspaceRoot);
   }
 
   open(payload: AgentBrowserOpenPayload = {}, options?: { signal?: AbortSignal }): Promise<ToolResult> {

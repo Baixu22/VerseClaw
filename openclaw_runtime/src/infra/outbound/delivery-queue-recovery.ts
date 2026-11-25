@@ -9,6 +9,8 @@ import type {
   ChannelMessageUnknownSendReconciliationResult,
 } from "../../channels/message/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { RecoveryAdmissionIdentity } from "../../../../shared/recovery-authority/contract.js";
+import { getRecoveryAdmissionIdentity } from "../../agents/recovery-authority/owner-admission.js";
 import { formatErrorMessage } from "../errors.js";
 import { resolveOutboundChannelMessageAdapter } from "./channel-resolution.js";
 import type { OutboundDeliveryResult } from "./deliver-types.js";
@@ -22,6 +24,13 @@ import {
   loadPendingDelivery,
   loadPendingDeliveries,
   moveToFailed,
+  admitQueuedDeliveryRecovery,
+  finishQueuedDeliveryRecovery,
+  recordQueuedDeliveryEffect,
+  queuedDeliveryEffect,
+  usesQueuedDeliveryAuthority,
+  MAX_DELIVERY_RECOVERY_ATTEMPTS,
+  DELIVERY_RECOVERY_BACKOFF_MS,
   type QueuedDelivery,
   type QueuedDeliveryPayload,
 } from "./delivery-queue-storage.js";
@@ -33,6 +42,13 @@ export type RecoverySummary = {
   deferredBackoff: number;
 };
 
+type DeliveryRecoveryOutcome =
+  | "recovered"
+  | "failed"
+  | "moved-to-failed"
+  | "already-gone"
+  | "deferred-backoff";
+
 export type DeliverFn = (
   params: {
     cfg: OpenClawConfig;
@@ -41,6 +57,8 @@ export type DeliverFn = (
       deliveryQueueStateDir?: string;
       skipQueue?: boolean;
       deferCommitHooks?: boolean;
+      recoveryAdmission?: RecoveryAdmissionIdentity;
+      onError?: (error: unknown) => void;
     },
 ) => Promise<unknown>;
 
@@ -59,15 +77,10 @@ export type ActiveDeliveryClaimResult<T> =
   | { status: "claimed"; value: T }
   | { status: "claimed-by-other-owner" };
 
-const MAX_RETRIES = 5;
+const MAX_RETRIES = MAX_DELIVERY_RECOVERY_ATTEMPTS;
 
 /** Backoff delays in milliseconds indexed by retry count (1-based). */
-const BACKOFF_MS: readonly number[] = [
-  5_000, // retry 1: 5s
-  25_000, // retry 2: 25s
-  120_000, // retry 3: 2m
-  600_000, // retry 4: 10m
-];
+const BACKOFF_MS = DELIVERY_RECOVERY_BACKOFF_MS;
 
 const PERMANENT_ERROR_PATTERNS: readonly RegExp[] = [
   /no conversation reference found/i,
@@ -164,6 +177,9 @@ function buildRecoveryDeliverParams(entry: QueuedDelivery, cfg: OpenClawConfig, 
     deliveryQueueStateDir: stateDir,
     skipQueue: true, // Prevent re-enqueueing during recovery.
     deferCommitHooks: true,
+    ...(entry.recoveryAdmission
+      ? { recoveryAdmission: getRecoveryAdmissionIdentity(entry.recoveryAdmission) }
+      : {}),
   } satisfies Parameters<DeliverFn>[0];
 }
 
@@ -370,9 +386,13 @@ async function drainQueuedEntry(opts: {
   deliver: DeliverFn;
   log: RecoveryLogger;
   stateDir?: string;
+  bypassBackoff?: boolean;
   onRecovered?: (entry: QueuedDelivery) => void;
   onFailed?: (entry: QueuedDelivery, errMsg: string) => void;
-}): Promise<"recovered" | "failed" | "moved-to-failed" | "already-gone"> {
+}): Promise<DeliveryRecoveryOutcome> {
+  if (usesQueuedDeliveryAuthority(opts.entry)) {
+    return await drainAdmittedQueuedEntry(opts);
+  }
   const { entry } = opts;
   if (
     entry.recoveryState === "send_attempt_started" ||
@@ -482,6 +502,164 @@ async function drainQueuedEntry(opts: {
   }
 }
 
+/** The existing queue supplies effect truth; every continuation uses its committed admission. */
+async function drainAdmittedQueuedEntry(
+  opts: Parameters<typeof drainQueuedEntry>[0],
+): Promise<DeliveryRecoveryOutcome> {
+  let prepared: ReturnType<typeof admitQueuedDeliveryRecovery> | undefined;
+  let entry = opts.entry;
+  let releaseSessionPermit: (() => void) | undefined;
+  const acquireReplyPermit = async () => {
+    if (entry.pendingFinalDelivery && !releaseSessionPermit) {
+      const { acquirePendingFinalDeliveryPermit } =
+        await import("../../agents/recovery-authority/final-delivery-session.js");
+      releaseSessionPermit = acquirePendingFinalDeliveryPermit(
+        entry.pendingFinalDelivery,
+        entry.session?.agentId,
+      );
+    }
+  };
+  try {
+    const effect = queuedDeliveryEffect(entry);
+    if (entry.pendingFinalDelivery && effect !== "applied" && effect !== "reconciled") {
+      const { hasCurrentPendingFinalDelivery } =
+        await import("../../agents/recovery-authority/final-delivery-session.js");
+      if (await hasCurrentPendingFinalDelivery(entry.pendingFinalDelivery))
+        await acquireReplyPermit();
+    }
+    prepared = admitQueuedDeliveryRecovery(entry, opts.stateDir);
+    if (!prepared) return "already-gone";
+    entry = prepared.entry;
+    let reconciliation: ChannelMessageUnknownSendReconciliationResult | null = null;
+    if (queuedDeliveryEffect(entry) === "unknown") {
+      reconciliation = await reconcileUnknownQueuedDelivery({
+        entry,
+        cfg: opts.cfg,
+        log: opts.log,
+      });
+      const effect =
+        reconciliation?.status === "sent"
+          ? "applied"
+          : reconciliation?.status === "not_sent"
+            ? "not_applied"
+            : "unknown";
+      const current = recordQueuedDeliveryEffect(entry, effect, opts.stateDir);
+      if (!current) return "already-gone";
+      // A retired Session cannot admit a new lifecycle notification. Its
+      // queue owner still reconciles and settles the confirmed platform effect.
+      // An admitted notification describes the original queue payload and receipt;
+      // Session reference settlement independently protects a later reply.
+      if (
+        reconciliation?.status === "sent" &&
+        (!entry.pendingFinalDelivery || releaseSessionPermit)
+      ) {
+        await runReconciledSentCommitHooks({
+          entry: current,
+          cfg: opts.cfg,
+          reconciliation,
+          log: opts.log,
+        });
+      }
+      finishQueuedDeliveryRecovery(
+        current,
+        effect === "unknown"
+          ? "effect reconciliation unresolved"
+          : "effect reconciliation completed",
+        opts.stateDir,
+      );
+      if (effect === "unknown") {
+        opts.log.warn(`Delivery entry ${entry.id} remains pending for effect reconciliation`);
+        return "failed";
+      }
+      if (effect === "not_applied" && current.retryCount < MAX_RETRIES && !opts.bypassBackoff) {
+        const eligibility = isEntryEligibleForRecoveryRetry(current, Date.now());
+        if (!eligibility.eligible) return "deferred-backoff";
+      }
+      prepared = admitQueuedDeliveryRecovery(current, opts.stateDir);
+      if (!prepared) return "already-gone";
+      entry = prepared.entry;
+    }
+    if (prepared.decision.kind === "settle") {
+      // Commit hooks are process-local best-effort notifications. Applied
+      // restart recovery settles queue truth without replaying these callbacks
+      // or requiring a permit from a fenced generation.
+      if (!(await ackDelivery(entry.id, opts.stateDir, entry)))
+        return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
+      opts.onRecovered?.(entry);
+      return "recovered";
+    }
+    if (!prepared.admitted) {
+      if (prepared.record?.state === "wedged") {
+        await moveToFailed(entry.id, opts.stateDir, entry);
+        return "moved-to-failed";
+      }
+      return "failed";
+    }
+    let failed = false;
+    if (entry.pendingFinalDelivery) {
+      const { bindPendingFinalDeliveryIntent } =
+        await import("../../agents/recovery-authority/final-delivery-session.js");
+      const bound = await bindPendingFinalDeliveryIntent({
+        ...entry.pendingFinalDelivery,
+        intent: {
+          id: entry.id,
+          channel: entry.channel,
+          to: entry.to,
+          accountId: entry.accountId,
+          queuePolicy: "required",
+        },
+      });
+      if (!bound) {
+        finishQueuedDeliveryRecovery(
+          entry,
+          "final delivery no longer owns its pending reply",
+          opts.stateDir,
+        );
+        await moveToFailed(entry.id, opts.stateDir, entry);
+        return "moved-to-failed";
+      }
+    }
+    await acquireReplyPermit();
+    const boundary = recordQueuedDeliveryEffect(entry, "unknown", opts.stateDir);
+    if (!boundary) return "already-gone";
+    const result = await opts.deliver({
+      ...buildRecoveryDeliverParams(entry, opts.cfg, opts.stateDir),
+      onError: () => {
+        failed = true;
+      },
+    });
+    if (failed || !isOutboundDeliveryResultArray(result)) {
+      finishQueuedDeliveryRecovery(
+        entry,
+        "delivery result requires effect reconciliation",
+        opts.stateDir,
+      );
+      return "failed";
+    }
+    const applied = recordQueuedDeliveryEffect(entry, "applied", opts.stateDir);
+    if (!applied) return "already-gone";
+    await runOutboundDeliveryCommitHooks(result);
+    if (!(await ackDelivery(entry.id, opts.stateDir, applied))) {
+      finishQueuedDeliveryRecovery(
+        applied,
+        "final delivery awaits Session settlement",
+        opts.stateDir,
+      );
+      return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
+    }
+    opts.onRecovered?.(entry);
+    return "recovered";
+  } catch (error) {
+    if (getErrnoCode(error) === "ENOENT") return "already-gone";
+    const message = formatErrorMessage(error);
+    if (prepared) finishQueuedDeliveryRecovery(entry, message, opts.stateDir);
+    opts.onFailed?.(entry, message);
+    return "failed";
+  } finally {
+    releaseSessionPermit?.();
+  }
+}
+
 export async function drainPendingDeliveries(opts: {
   drainKey: string;
   logLabel: string;
@@ -534,7 +712,8 @@ export async function drainPendingDeliveries(opts: {
           continue;
         }
 
-        if (currentEntry.retryCount >= MAX_RETRIES) {
+        const gated = usesQueuedDeliveryAuthority(currentEntry);
+        if (!gated && currentEntry.retryCount >= MAX_RETRIES) {
           try {
             await moveToFailed(currentEntry.id, opts.stateDir);
           } catch (err) {
@@ -550,7 +729,10 @@ export async function drainPendingDeliveries(opts: {
           continue;
         }
 
-        if (!currentDecision.bypassBackoff) {
+        if (
+          !currentDecision.bypassBackoff &&
+          (!gated || queuedDeliveryEffect(currentEntry) === "not_applied")
+        ) {
           const retryEligibility = isEntryEligibleForRecoveryRetry(currentEntry, Date.now());
           if (!retryEligibility.eligible) {
             opts.log.info(
@@ -566,6 +748,7 @@ export async function drainPendingDeliveries(opts: {
           deliver,
           log: opts.log,
           stateDir: opts.stateDir,
+          bypassBackoff: currentDecision.bypassBackoff,
           onFailed: (failedEntry, errMsg) => {
             if (isPermanentDeliveryError(errMsg)) {
               opts.log.warn(
@@ -634,7 +817,8 @@ export async function recoverPendingDeliveries(opts: {
         continue;
       }
 
-      if (currentEntry.retryCount >= MAX_RETRIES) {
+      const gated = usesQueuedDeliveryAuthority(currentEntry);
+      if (!gated && currentEntry.retryCount >= MAX_RETRIES) {
         opts.log.warn(
           `Delivery ${currentEntry.id} exceeded max retries (${currentEntry.retryCount}/${MAX_RETRIES}) — moving to failed/`,
         );
@@ -644,7 +828,10 @@ export async function recoverPendingDeliveries(opts: {
       }
 
       const currentRetryEligibility = isEntryEligibleForRecoveryRetry(currentEntry, Date.now());
-      if (!currentRetryEligibility.eligible) {
+      if (
+        !currentRetryEligibility.eligible &&
+        (!gated || queuedDeliveryEffect(currentEntry) === "not_applied")
+      ) {
         summary.deferredBackoff += 1;
         opts.log.info(
           `Delivery ${currentEntry.id} not ready for retry yet — backoff ${currentRetryEligibility.remainingBackoffMs}ms remaining`,
@@ -676,6 +863,7 @@ export async function recoverPendingDeliveries(opts: {
       if (result === "moved-to-failed") {
         continue;
       }
+      if (result === "deferred-backoff") summary.deferredBackoff += 1;
     } finally {
       releaseRecoveryEntry(entry.id);
     }

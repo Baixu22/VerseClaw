@@ -6,7 +6,11 @@ export {
   loadPendingDelivery,
   loadPendingDeliveries,
   markDeliveryPlatformOutcomeUnknown,
+  markDeliveryPlatformOutcomeApplied,
+  markDeliveryPlatformAttemptNotStarted,
   markDeliveryPlatformSendAttemptStarted,
+  releaseQueuedDeliveryClaim,
+  usesQueuedDeliveryAuthority,
   moveToFailed,
 } from "./delivery-queue-storage.js";
 export type {

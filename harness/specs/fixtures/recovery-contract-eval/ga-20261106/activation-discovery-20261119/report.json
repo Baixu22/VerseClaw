@@ -1,0 +1,544 @@
+{
+  "schema": "G3ActivationDiscoveryDevelopment/v1",
+  "actor": "codex/g3-relay-20261119-01a1f21b",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "decision": "NO_GO",
+  "sourceBase": "d53a254f0baf249ccda3b1ad53a96669ece629e5",
+  "sourceChangesSha256": "8878abff0feda147b72e8895e8cb36dc26896d53f81fae39c6c14dbe696e04c8",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/plugins/activation-context.ts",
+      "sha256": "8dcb12c8e004395f7e42ceb578bfc8e35dcf1f422821de5d6388beb637efa0c0"
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/providers.runtime.ts",
+      "sha256": "b085a8d9130f3bad78e0969f7ca655d3871d827222e6c2c89f6634e043b028fe"
+    },
+    {
+      "file": "openclaw_runtime/src/plugins/plugin-metadata-snapshot.types.ts",
+      "sha256": "a3744fcb5b9e1266f214e47227777ec91bcaa62461807207e8af0118f8f1cf0a"
+    },
+    {
+      "file": "tests/unit/gateway-plugin-activation-discovery.test.ts",
+      "sha256": "157241b063109104e6ca3c3542a0fd1495bea70eb73bd96e0fe9b8d0b655fad5"
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "0346933ed0ed9a713f319e4225bee7210a0e2a2561d8818fa6fc0f805317ab8d"
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "5b70413d28252a3d62e24b237d92de17d8ced7ce8e4b6995b9291ba7a966e0b9"
+    },
+    {
+      "file": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "687e8526da7fd03080709c77f88b5d2a2c499041561057fca66b015e715b9f7f"
+    },
+    {
+      "file": "README.md",
+      "sha256": "05bb8d323a88bbfaafd740853fc16c278bb60f52dbed79abdb565b6644ab8b09"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "26ac1d4acf01a79630431fd796b405f2c9636bba09a870448f843584aba860ff"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "39341606310e21c613ba090a6c78342ff7ee4d8aa75f464cd5a499a39f55d45e"
+    }
+  ],
+  "stages": [
+    {
+      "name": "activation-red",
+      "exitCode": 1,
+      "elapsedMs": 8977,
+      "memoryMiB": 3725,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-red.json",
+        "sha256": "cf2f7dc8c1b4ebba29cb22b60a7eced6878428bcb4e12e103d406f59e06c3f98"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-red.log",
+        "sha256": "4d66ac292fe3e150dee3400856244c12a6422ff2aa855b10b8d3e38238d8936c"
+      }
+    },
+    {
+      "name": "activation-provider-red",
+      "exitCode": 1,
+      "elapsedMs": 14792,
+      "memoryMiB": 3365,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-provider-red.json",
+        "sha256": "45bf19c6caad7e797f3a7db0ebda6af49571b25b54509236c2a95c949f589981"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-provider-red.log",
+        "sha256": "26e73b445aaeaa66e7d70fb4e6ecbd2ec1cf5d4f89ac5e88f6315c16cafac815"
+      }
+    },
+    {
+      "name": "activation-green",
+      "exitCode": 0,
+      "elapsedMs": 13393,
+      "memoryMiB": 5251,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-green.json",
+        "sha256": "44bd0406f912616cc7fe885daa76fbad999ffbcd7f526b37ec63c48398b87887"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-green.log",
+        "sha256": "c128ab0a1c008c417ba8b07d8dc5fc1b78954d296c0c46dd16f77d7092bb77bf"
+      }
+    },
+    {
+      "name": "activation-types",
+      "exitCode": 0,
+      "elapsedMs": 55142,
+      "memoryMiB": 6598,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-types.json",
+        "sha256": "b7530eb54b0446f8e03dd2cdea17016f5ddb89357891006b16e02f8055d5a86c"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-types.log",
+        "sha256": "76bcd5ddb1ced07a7b572abac3f59de66fa9e31bfb6c9ea535021333ba392552"
+      }
+    },
+    {
+      "name": "activation-runtime",
+      "exitCode": 0,
+      "elapsedMs": 49493,
+      "memoryMiB": 4776,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-runtime.json",
+        "sha256": "3ee4d1301532b7faf31174caf1646fddad5b1ebc5bd79ab3498576c34c67e637"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-runtime.log",
+        "sha256": "e5b3f7c5a8ae1d8d4db3391563b49bde88661da196c0aec166e61536050a0a08"
+      }
+    },
+    {
+      "name": "activation-native",
+      "exitCode": 0,
+      "elapsedMs": 272526,
+      "memoryMiB": 2804,
+      "minimumObservedMiB": 1179,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native.json",
+        "sha256": "add899670026e221e04dcff35b788f75b4e0d408d25ab4f68d713d790c5fd69a"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native.log",
+        "sha256": "78c485080a4892d01d2c66ca8ab22ba35a5c93c72b0fd18b19467ca415ee3af3"
+      }
+    },
+    {
+      "name": "activation-runtime-lint",
+      "exitCode": 0,
+      "elapsedMs": 5594,
+      "memoryMiB": 5180,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-runtime-lint.json",
+        "sha256": "ef47d90c530cab9407dce5587283c97fccd8e44897d5ed517058419289ea0c2e"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-runtime-lint.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "activation-test-lint",
+      "exitCode": 0,
+      "elapsedMs": 20690,
+      "memoryMiB": 3091,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-test-lint.json",
+        "sha256": "eaa7cf2c678c43a277920960f258f43e155d9b0055a9ae766a6f2abe4142ec12"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-test-lint.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "activation-harness",
+      "exitCode": 0,
+      "elapsedMs": 1664,
+      "memoryMiB": 2774,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-harness.json",
+        "sha256": "c0b8848fa11ffbe961eafa38c482990dfd25c4e9dc3fb4948f7021bf04c2d13d"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-harness.log",
+        "sha256": "66256961710d20cfeeb1d346b155f00f3b86be6c9d6e2c535fef89e4cb6b997f"
+      }
+    },
+    {
+      "name": "activation-harness-plan",
+      "exitCode": 0,
+      "elapsedMs": 2035,
+      "memoryMiB": 5687,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-harness-plan.json",
+        "sha256": "db4e4d4e15fa658b72cb0653ecb2b4fb262abbc8c54e456b10f619fa4675f550"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-harness-plan.log",
+        "sha256": "ed1a852c0010f75daa7c7b230d6cc967a3476c77e6c15facbdc2d2f44be6faf2"
+      }
+    },
+    {
+      "name": "activation-comms-replay",
+      "exitCode": 0,
+      "elapsedMs": 1275,
+      "memoryMiB": 5442,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-comms-replay.json",
+        "sha256": "76ca9e5936ea1824febe923f92df7cd7e15ba106e9e98fa47801da12174e0a79"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-comms-replay.log",
+        "sha256": "ef8afa4618061946a9e8a73d78094658e666fa14d6b970cbfd6ca3ea6dc17ae1"
+      }
+    },
+    {
+      "name": "activation-comms-compare",
+      "exitCode": 0,
+      "elapsedMs": 971,
+      "memoryMiB": 5475,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-comms-compare.json",
+        "sha256": "a73c71c38c47a59922783b6a4fabbd6b2f83a5feaff5d1a281d1f7863580dbd7"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-comms-compare.log",
+        "sha256": "8d22ded56c0b7bc8e925ffd0e04f57fb47d61b7b4c033a7bd7a192ed74c3acc3"
+      }
+    },
+    {
+      "name": "activation-source-gates",
+      "exitCode": 0,
+      "elapsedMs": 156866,
+      "memoryMiB": 4884,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-source-gates.json",
+        "sha256": "a546905f612b11a57a5a4a24493da3fc50f0b2f0af66cce5df126382d4cca0d8"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-source-gates.log",
+        "sha256": "e67706609bb0110e6fb29615c4eca6a795e61ee6ed4a00e1d4a2cf7765f5387f"
+      }
+    },
+    {
+      "name": "activation-review-retry-1",
+      "exitCode": 0,
+      "elapsedMs": 479528,
+      "memoryMiB": 5180,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-review-retry-1.json",
+        "sha256": "70f382938c4be7605f45eb878801597c1a84cad7e6a50a16bde23ff4664bdf36"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-review-retry-1.log",
+        "sha256": "1d0025c948c9aa039b7644731578b8be45e1b0b828f7fada6746b2f103a4f39d"
+      }
+    }
+  ],
+  "unit": {
+    "passed": 29,
+    "failed": 0,
+    "receipt": {
+      "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-green.tests.json",
+      "sha256": "d07bfb1ade0d371872d842dce46f1963300a08db7017219d405eee6f8a50b447"
+    }
+  },
+  "review": {
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "engine": "codex",
+    "findingCount": 0,
+    "correctness": "patch is correct",
+    "receipt": {
+      "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-review-result-r1.json",
+      "sha256": "dd5c45dd450013c0852dcf20913d062f2d146ace616afd0f74ac54681a648433"
+    }
+  },
+  "typecheck": {
+    "cacheEnabled": false,
+    "totalDurationMs": 53605,
+    "budgetMs": 45000
+  },
+  "native": {
+    "correct": 3,
+    "duplicate": 0,
+    "lost": 0,
+    "minimumObservedMiB": 1179,
+    "rows": [
+      {
+        "index": 0,
+        "latencyMs": 67624,
+        "receipt": {
+          "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\trial-repeated-restart-0.json",
+          "sha256": "e4179303e0a18ef7d2d8ab30d949540d17cc3ede263ebaa729ffc7d641c01303"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-0\\task-owner.json",
+            "sha256": "9b105538859bec9805d671aa7ff858536e292a85e285f61244f50cc5d77b3a20",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-0\\before.json",
+            "sha256": "fc30493ce9b1ab2571546992802c9ac3cfafef2206ca73a8c34682d70f937cff",
+            "bytes": 81750
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-0\\crash-0.json",
+            "sha256": "3ea36b8117088d5f9d2ea75251c3ff167161591e6952aca79497a53c0a866394",
+            "bytes": 86640
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-0\\crash-1.json",
+            "sha256": "36d0ed732fb38cda59d0b70ffe8532b44af52ccc99df38f3bc817b7842b9c7fb",
+            "bytes": 90420
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-0\\crash-2.json",
+            "sha256": "10128fed3591d506689f1a164ec4b4c3ad9e5af3e24a77758d63179c560e0028",
+            "bytes": 90418
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-0\\after.json",
+            "sha256": "db814824ec20fe5eba16360cbc1c8eeb10176c7dc228e1bb11e209ea9a9b0c26",
+            "bytes": 98318
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "latencyMs": 55427,
+        "receipt": {
+          "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\trial-repeated-restart-1.json",
+          "sha256": "62595001acbc4b4ef6a6d2b2b1d9956aca9c0b8c62f2c5a108caae4b4d1fa14f"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-1\\task-owner.json",
+            "sha256": "c603f5d4f8bd365e4b1d651497ca9bd6a22cdc886a3329540e612462279d76f7",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-1\\before.json",
+            "sha256": "9d7c6c09b61d6892cd0f9b5398271cd978066dec5f57343b7a48ea68ad8d7ecf",
+            "bytes": 81750
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-1\\crash-0.json",
+            "sha256": "2684f3cc93531f05af836248bf22878c07d14292cfeb8f3152c283fb55b8a7f3",
+            "bytes": 86642
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-1\\crash-1.json",
+            "sha256": "21f9f56f44079183a1be35edfa2968000997b8fe1bf5fb43f4b056c3a9667111",
+            "bytes": 90420
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-1\\crash-2.json",
+            "sha256": "c3c9297ac333f24d136fd57f6166916a3b3dbbccb816d78313325e9c0ec9d457",
+            "bytes": 90418
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-1\\after.json",
+            "sha256": "f9e0e9055b133d9ed2adcfc4dd3739dba327bfe8a54af64917c7fb3aa0514617",
+            "bytes": 98318
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "latencyMs": 59518,
+        "receipt": {
+          "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\trial-repeated-restart-2.json",
+          "sha256": "35407690d51dd0c56d906ff2be3610f09e6735b027849729cc2892ec6e2bb589"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-2\\task-owner.json",
+            "sha256": "842e3a6b8b17699de7649d75f707260e8069153e6394d42fe1a5007620467a04",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-2\\before.json",
+            "sha256": "a305a9d98daa12feafa672a38aa32b60850c8dec690233568f3fe0a37b740068",
+            "bytes": 81750
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-2\\crash-0.json",
+            "sha256": "713f58f0587dfb4041a88d183ad6ad18d2a26f2f79a7f253bb591a94869201cd",
+            "bytes": 86642
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-2\\crash-1.json",
+            "sha256": "85842c7887b2f4829b62d4aded75981f2662360fdb2a3fdf9e48e948e0f785d0",
+            "bytes": 90420
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-2\\crash-2.json",
+            "sha256": "6603a81936a74128a62f1c768fa1fbdd74d981df1697467eb6c487394d6aeaf1",
+            "bytes": 90418
+          },
+          {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\activation-native\\candidate\\evidence-repeated-restart-2\\after.json",
+            "sha256": "049502d104fcdea05663bae42c5eaaaa17e661c01d858d9fda903ee4ca9bb9f6",
+            "bytes": 98316
+          }
+        ]
+      }
+    ]
+  },
+  "comparison": [
+    {
+      "name": "ab-before-0",
+      "latencyMs": 107433,
+      "phases": [
+        {
+          "pid": 21948,
+          "discoveries": 20,
+          "providerCalls": 18,
+          "forwardedDiscovery": 0,
+          "minimumMemoryMiB": 340,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-before-0\\phases\\phases-21948.jsonl",
+            "sha256": "141aed0feb28786d1b548e755e4fe04dceab0ba4ef28f94b5cbea097ff62152a"
+          }
+        },
+        {
+          "pid": 24200,
+          "discoveries": 20,
+          "providerCalls": 18,
+          "forwardedDiscovery": 0,
+          "minimumMemoryMiB": 1009,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-before-0\\phases\\phases-24200.jsonl",
+            "sha256": "92c0480acae4498851729992129473cdc028d14c61154d3715c6984029062d3e"
+          }
+        },
+        {
+          "pid": 37884,
+          "discoveries": 34,
+          "providerCalls": 42,
+          "forwardedDiscovery": 0,
+          "minimumMemoryMiB": 586,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-before-0\\phases\\phases-37884.jsonl",
+            "sha256": "ab02d232021a2d8ce8d24677cde63e9702143ce8d1a54215a2f6c2918fdc84c7"
+          }
+        },
+        {
+          "pid": 39248,
+          "discoveries": 22,
+          "providerCalls": 18,
+          "forwardedDiscovery": 0,
+          "minimumMemoryMiB": 2303,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-before-0\\phases\\phases-39248.jsonl",
+            "sha256": "f82676ef15c5f7504e696ea2a9c94053d34d5e2b600ae2057a645bbb665f1cfc"
+          }
+        }
+      ],
+      "instrumentation": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-before-0-instrumentation.json",
+        "sha256": "e4e8a3c0c69c36bb1aa26186e7bf69929797890644337f19fa7154fed54a4e26"
+      },
+      "matrix": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-before-0\\matrix-run.json",
+        "sha256": "0db1b7537d465fe5836feeb1193b1e75f58d880297c5680d4d917ce562463156"
+      }
+    },
+    {
+      "name": "ab-after-0",
+      "latencyMs": 73538,
+      "phases": [
+        {
+          "pid": 13536,
+          "discoveries": 12,
+          "providerCalls": 18,
+          "forwardedDiscovery": 18,
+          "minimumMemoryMiB": 2999,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-after-0\\phases\\phases-13536.jsonl",
+            "sha256": "5f2f133c017c5ba22c7622e4573e4650f2cfb1cdd15e56e62f8d3435fd028c9c"
+          }
+        },
+        {
+          "pid": 31348,
+          "discoveries": 9,
+          "providerCalls": 42,
+          "forwardedDiscovery": 42,
+          "minimumMemoryMiB": 2925,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-after-0\\phases\\phases-31348.jsonl",
+            "sha256": "9f55d1b33296b63e282b6bdb6c209114ed2b510ba1e7c7bd076e3a9d062df6c4"
+          }
+        },
+        {
+          "pid": 38936,
+          "discoveries": 10,
+          "providerCalls": 18,
+          "forwardedDiscovery": 18,
+          "minimumMemoryMiB": 2758,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-after-0\\phases\\phases-38936.jsonl",
+            "sha256": "dd733525eb01eb6224624db5fad128afcfdb0f03b59ce5d790a82b08f1af97ce"
+          }
+        },
+        {
+          "pid": 42540,
+          "discoveries": 10,
+          "providerCalls": 18,
+          "forwardedDiscovery": 18,
+          "minimumMemoryMiB": 3513,
+          "receipt": {
+            "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-after-0\\phases\\phases-42540.jsonl",
+            "sha256": "35597f9f32cee9e8ad24b65cc6a0ab70c246ceafb0e237af506d80773488c1e3"
+          }
+        }
+      ],
+      "instrumentation": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-after-0-instrumentation.json",
+        "sha256": "5bce1521b80e8c56229937dd91f6a16e37c7f57d94369d9847332f89f68e66a2"
+      },
+      "matrix": {
+        "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\ab-after-0\\matrix-run.json",
+        "sha256": "635d6c60490188fcb43fa96bb8dc409d52d766847d790c16ba4d5808ecedef94"
+      }
+    }
+  ],
+  "latencyQualification": "The baseline comparison reached 340 MiB available memory; native samples reached 1179 MiB. These runs establish production-path behavior and discovery forwarding, but do not establish stable latency improvement.",
+  "inherited": {
+    "file": "D:\\tmp\\g3-relay-20261119-01a1f21b\\inherited-readback.json",
+    "sha256": "b74283f95908276c2447ca27c8a9898a89aa94c85ecb18784818a7f8200383a7"
+  },
+  "remaining": [
+    "unchanged 5/15-second recovery latency gates",
+    "45-second uncached typecheck gate",
+    "same-candidate full frozen matrix and legacy consistency",
+    "full source/package acceptance"
+  ],
+  "rawRoot": "D:/tmp/g3-relay-20261119-01a1f21b"
+}

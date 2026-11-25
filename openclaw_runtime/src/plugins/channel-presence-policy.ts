@@ -9,6 +9,7 @@ import {
   type ChannelPresenceSignalSource,
 } from "../channels/config-presence.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { PluginDiscoveryResult } from "./discovery.js";
 import { isSafeChannelEnvVarTriggerName } from "../secrets/channel-env-var-names.js";
 import { resolveManifestActivationPluginIds } from "./activation-planner.js";
 import {
@@ -335,6 +336,7 @@ export function resolveConfiguredChannelPresencePolicy(params: {
   env?: NodeJS.ProcessEnv;
   includePersistedAuthState?: boolean;
   manifestRecords?: readonly PluginManifestRecord[];
+  discovery?: PluginDiscoveryResult;
 }): ConfiguredChannelPresencePolicyEntry[] {
   const env = params.env ?? process.env;
   const workspaceDir =
@@ -355,6 +357,7 @@ export function resolveConfiguredChannelPresencePolicy(params: {
   }
   for (const signal of listPotentialConfiguredChannelPresenceSignals(params.config, env, {
     includePersistedAuthState: params.includePersistedAuthState,
+    discovery: params.discovery,
   })) {
     if (signal.source === "config") {
       continue;
@@ -377,8 +380,7 @@ export function resolveConfiguredChannelPresencePolicy(params: {
     config: params.activationSourceConfig ?? params.config,
   });
   const normalizedConfig = activationSource.plugins;
-  const entries: ConfiguredChannelPresencePolicyEntry[] = [];
-  for (const channelId of normalizeChannelIds(entrySources.keys())) {
+  return normalizeChannelIds(entrySources.keys()).map((channelId) => {
     const owningRecords = records.filter((record) => recordDeclaresChannel(record, channelId));
     const evaluations = owningRecords.map((plugin) =>
       evaluateEffectiveChannelPlugin({
@@ -397,12 +399,10 @@ export function resolveConfiguredChannelPresencePolicy(params: {
         ? ["no-channel-owner" as const]
         : [
             ...new Set(
-              evaluations
-                .map((entry) => entry.blockedReason)
-                .filter((reason): reason is ConfiguredChannelBlockedReason => Boolean(reason)),
+              evaluations.flatMap(({ blockedReason }) => (blockedReason ? [blockedReason] : [])),
             ),
           ].toSorted((left, right) => left.localeCompare(right));
-    entries.push({
+    return {
       channelId,
       sources: [...(entrySources.get(channelId) ?? [])].toSorted((left, right) =>
         left.localeCompare(right),
@@ -410,9 +410,8 @@ export function resolveConfiguredChannelPresencePolicy(params: {
       effective: effectivePluginIds.length > 0,
       pluginIds: sortUniqueStrings(effectivePluginIds),
       blockedReasons,
-    });
-  }
-  return entries;
+    };
+  });
 }
 
 /** Lists effective channel ids available to read-only scoped discovery. */

@@ -1,0 +1,42 @@
+{
+  "schema": "RecoveryMainIntegrationAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-g3-main-integration-20261116",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5",
+    "tree": "b56ce210f3d540dd142a83ee9d0fd7f931d2fe80",
+    "dirty": false
+  },
+  "status": "DEVELOPMENT_VERIFIED",
+  "gaStatus": "NO_GO",
+  "regressionExecutions": 200,
+  "freshReviewModel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "freshReviewFindings": 0,
+  "uncachedTypecheck": "PASS: node/web/test",
+  "desktopBuild": "PASS",
+  "runtimeBuild": "PASS",
+  "gatewayBuildSmoke": "PASS: port 65419",
+  "commsReplay": "PASS",
+  "commsCompare": "PASS",
+  "contract": "PASS",
+  "targetHarness": "PASS: diff from c3521cfc4",
+  "repositoryArtifactRetention": "PASS",
+  "agentCoreExports": 26,
+  "sourceLocFailures": 203,
+  "sourceLocNew": 38,
+  "sourceLocGrown": 165,
+  "frozenMeasurement": {
+    "candidate": "6115256e882051a154945b5b7298ef8a83d756cc",
+    "manifest": "../final-candidate-6115256e-20261116/manifest.json",
+    "status": "FAIL",
+    "p50Ms": 17439,
+    "p95Ms": 83204
+  },
+  "newCandidateFrozenMeasurement": "NOT_RUN",
+  "filesArchived": 43,
+  "rawEvidenceSha256": "d5964cac7aaef613fbb0ba9fb05c0fa89839d2ff01f7b573f00884799893ae21",
+  "credentialHits": 0,
+  "productDefaultsChanged": false,
+  "recordedAt": "2026-11-16T04:55:28.852Z"
+}

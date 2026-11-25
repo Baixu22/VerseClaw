@@ -39,11 +39,15 @@ export function handleAgentStart(ctx: EmbeddedAgentSubscribeContext) {
     data: {
       phase: "start",
       startedAt: Date.now(),
+      ...(ctx.params.onBeforeVisibleOutput ? { outputBoundaryGuarded: true } : {}),
     },
   });
   void ctx.params.onAgentEvent?.({
     stream: "lifecycle",
-    data: { phase: "start" },
+    data: {
+      phase: "start",
+      ...(ctx.params.onBeforeVisibleOutput ? { outputBoundaryGuarded: true } : {}),
+    },
   });
 }
 
@@ -53,7 +57,7 @@ export function handleAgentEnd(
 ): void | Promise<void> {
   type BeforeTerminalDeliveryDecision = void | { suppressTerminalDelivery?: boolean };
   const lastAssistant = ctx.state.lastAssistant;
-  const isError = isAssistantMessage(lastAssistant) && lastAssistant.stopReason === "error";
+  let isError = isAssistantMessage(lastAssistant) && lastAssistant.stopReason === "error";
   let lifecycleErrorText: string | undefined;
   const hasAssistantVisibleText =
     Array.isArray(ctx.state.assistantTexts) &&
@@ -82,10 +86,10 @@ export function handleAgentEnd(
         (!hasAssistantVisibleText || incompleteTerminalAssistant)
       ? "abandoned"
       : ctx.state.livenessState;
-  const livenessState =
+  let livenessState =
     ctx.state.livenessState === "working" ? derivedWorkingTerminalState : ctx.state.livenessState;
 
-  if (isError && lastAssistant) {
+  if (isError && isAssistantMessage(lastAssistant)) {
     const rawError = lastAssistant.errorMessage?.trim();
     const failoverReason = classifyFailoverReason(rawError ?? "", {
       provider: lastAssistant.provider,
@@ -148,14 +152,24 @@ export function handleAgentEnd(
     };
     const usageTotals = ctx.getUsageTotals();
     const tokenUsageMeta = usageTotals
-      ? { tokenUsage: { input: usageTotals.input, output: usageTotals.output, cacheRead: usageTotals.cacheRead ?? 0, cacheWrite: usageTotals.cacheWrite ?? 0, total: usageTotals.total } }
+      ? {
+          tokenUsage: {
+            input: usageTotals.input,
+            output: usageTotals.output,
+            cacheRead: usageTotals.cacheRead ?? 0,
+            cacheWrite: usageTotals.cacheWrite ?? 0,
+            total: usageTotals.total,
+          },
+        }
       : {};
+    const terminalPhase =
+      ctx.params.terminalLifecyclePhase === "finishing" ? "finishing" : isError ? "error" : "end";
     if (isError) {
       emitAgentEvent({
         runId: ctx.params.runId,
         stream: "lifecycle",
         data: {
-          phase: "error",
+          phase: terminalPhase,
           error: lifecycleErrorText ?? GENERIC_ASSISTANT_ERROR_TEXT,
           ...terminalMeta,
           ...(livenessState ? { livenessState } : {}),
@@ -167,7 +181,7 @@ export function handleAgentEnd(
       void ctx.params.onAgentEvent?.({
         stream: "lifecycle",
         data: {
-          phase: "error",
+          phase: terminalPhase,
           error: lifecycleErrorText ?? GENERIC_ASSISTANT_ERROR_TEXT,
           ...terminalMeta,
           ...(livenessState ? { livenessState } : {}),
@@ -176,12 +190,11 @@ export function handleAgentEnd(
       });
       return;
     }
-    const successPhase = ctx.params.terminalLifecyclePhase ?? "end";
     emitAgentEvent({
       runId: ctx.params.runId,
       stream: "lifecycle",
       data: {
-        phase: successPhase,
+        phase: terminalPhase,
         ...terminalMeta,
         ...(livenessState ? { livenessState } : {}),
         ...(replayInvalid ? { replayInvalid } : {}),
@@ -192,7 +205,7 @@ export function handleAgentEnd(
     void ctx.params.onAgentEvent?.({
       stream: "lifecycle",
       data: {
-        phase: successPhase,
+        phase: terminalPhase,
         ...terminalMeta,
         ...(livenessState ? { livenessState } : {}),
         ...(replayInvalid ? { replayInvalid } : {}),
@@ -274,7 +287,7 @@ export function handleAgentEnd(
       return Promise.resolve(flushPendingMediaAndChannelResult).then(
         () => emitLifecycleTerminalOnce(),
         (error: unknown) => {
-          const emitted = emitLifecycleTerminalOnce();
+          const emitted = emitLifecycleTerminalOnce(error);
           if (isPromiseLike<void>(emitted)) {
             return Promise.resolve(emitted).then(() => {
               throw error;
@@ -291,7 +304,7 @@ export function handleAgentEnd(
     try {
       return deliverTerminal();
     } catch (error) {
-      const emitted = emitLifecycleTerminalOnce();
+      const emitted = emitLifecycleTerminalOnce(error);
       if (isPromiseLike<void>(emitted)) {
         return Promise.resolve(emitted).then(() => {
           throw error;
@@ -308,9 +321,14 @@ export function handleAgentEnd(
   };
 
   let lifecycleTerminalEmitted = false;
-  const emitLifecycleTerminalOnce = (): void | Promise<void> => {
+  const emitLifecycleTerminalOnce = (error?: unknown): void | Promise<void> => {
     if (lifecycleTerminalEmitted) {
       return;
+    }
+    if (error !== undefined) {
+      isError = true;
+      lifecycleErrorText = GENERIC_ASSISTANT_ERROR_TEXT;
+      livenessState = "blocked";
     }
     lifecycleTerminalEmitted = true;
     let beforeLifecycleTerminal: void | Promise<void> = undefined;

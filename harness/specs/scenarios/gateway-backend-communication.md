@@ -72,6 +72,14 @@ Renderer code must not own transport selection, direct IPC channels, direct Gate
 
 Renderer code must not create direct Gateway WebSocket connections. Gateway frame diagnostics must be emitted by Main-process Gateway logging.
 
+Manual compaction status and writes use the same generation-bound admission check.
+Active runs and lifecycle fences keep compression unavailable until release.
+Automated readbacks wait within their existing turn budget and pin the mutation
+to the observed session generation so a replacement session rejects stale work.
+
+Global session keys use the selected agent or the captured configuration's default
+for admission, fork child ownership and parent command-hook workspace resolution.
+
 Provider readiness must recognize resolvable environment SecretRefs in Main without persisting their values. Missing variables, incompatible secret provider sources, and allowlist exclusions must remain unavailable; renderer receives only the existing masked key status.
 
 Channel/plugin migration behavior is also part of this scenario when Verse Claw rewrites OpenClaw config before Gateway launch. Upgrades must preserve single-owner channel registration for migrated plugin-backed channels such as Feishu/Lark.
@@ -103,6 +111,16 @@ reconciliation and never authorize a repeated tool effect. The read-only authori
 shadow records the observed owner outcome, including failed RPC admission.
 See `recovery-tool-redispatch` for the frozen fault-window and post-boundary
 assistant-readback validation.
+
+After a Gateway restart exceeds a task lease, the same Session generation and
+worktree may resume an idle task by advancing its existing owner epoch. Pending
+or unknown effects remain a reconciliation barrier, and stale credentials cannot
+start a tool under the new epoch.
+The first tool request carries its prepared task ID and epoch. Main checks that
+owner in the original task transaction before renewing it; a lost admission ACK
+replays that decision. A prepared model context adopts the renewed credential only
+after the original task table records admission for that exact run. Explicit
+handoffs and prior run identities remain fenced.
 
 ## Explicit coding diagnostics
 

@@ -19,6 +19,30 @@
     {
       "path": "scripts/check-live-model-evidence.mjs",
       "reason": "Evidence checker evolved after the run; historical snapshot is annotated."
+    },
+    {
+      "path": ".gitattributes",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 6336350898688f9d54c889d9295d7b60b19a7fa5; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "6336350898688f9d54c889d9295d7b60b19a7fa5",
+      "originalSha256": "6fc8db304416e66dd4c5b2c588f2ec3ceab505efd2ae6f42330810a1f419f756",
+      "verifiedCurrentSha256": "ea4b600ebf080deb999c3a6b77cec8e7d585f0a43515a53633cc50568da9c931",
+      "latestChangeCommit": "c3521cfc4252fab0a6c19c75eb3231cbf0f8e9af"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/openai-transport-stream.test.ts",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 6336350898688f9d54c889d9295d7b60b19a7fa5; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "6336350898688f9d54c889d9295d7b60b19a7fa5",
+      "originalSha256": "a9678f92ab8cd12177fbbc48130e2a853122d43f4b06e1c42594198c6af97ccb",
+      "verifiedCurrentSha256": "97ce55bf02de45a231d3d11f4d54fe0ddcb98ff43c90d6d7d53fbb4f7bdc90fa",
+      "latestChangeCommit": "6b414bb8a3da26ebdb0d665afdcc621173fa77df"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/openai-transport-stream.ts",
+      "reason": "Historical SHA256SUMS matches the exact Git blob at 6336350898688f9d54c889d9295d7b60b19a7fa5; this evolving source or generated report changed afterward. Original manifest bytes remain retained.",
+      "originalCommit": "6336350898688f9d54c889d9295d7b60b19a7fa5",
+      "originalSha256": "79156251ac02a5b8704c33d49fd4960469ecffe47ec6d7d519f2fca4f079a639",
+      "verifiedCurrentSha256": "b4d54db96271aea7ca0d2a4aaa8e9c09bf4c2376bf0721736373738e38e94015",
+      "latestChangeCommit": "6b414bb8a3da26ebdb0d665afdcc621173fa77df"
     }
   ]
 }

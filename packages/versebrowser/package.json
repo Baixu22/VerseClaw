@@ -97,7 +97,7 @@
     "node": ">=22.18.0"
   },
   "scripts": {
-    "build": "node scripts/patch-upstream.mjs && tsc -p tsconfig.build.json",
+    "build": "node ../../scripts/build-versebrowser.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "patch:upstream": "node scripts/patch-upstream.mjs",
     "patch:upstream:check": "node scripts/patch-upstream.mjs --check"

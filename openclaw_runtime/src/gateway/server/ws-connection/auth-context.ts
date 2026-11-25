@@ -1,5 +1,10 @@
 // WebSocket auth context resolves handshake credentials before device pairing and capability checks run.
 import type { IncomingMessage } from "node:http";
+import {
+  GATEWAY_CLIENT_IDS,
+  GATEWAY_CLIENT_MODES,
+} from "../../../../packages/gateway-protocol/src/client-info.js";
+import { normalizeDeviceMetadataForAuth } from "../../device-auth.js";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import {
   AUTH_RATE_LIMIT_SCOPE_BOOTSTRAP_TOKEN,
@@ -24,6 +29,85 @@ type HandshakeConnectAuth = {
 };
 
 export type DeviceTokenCandidateSource = "explicit-device-token" | "shared-token-fallback";
+
+export function resolvePinnedClientMetadata(params: {
+  clientId?: string;
+  clientMode?: string;
+  claimedPlatform?: string;
+  claimedDeviceFamily?: string;
+  pairedPlatform?: string;
+  pairedDeviceFamily?: string;
+}): {
+  platformMismatch: boolean;
+  deviceFamilyMismatch: boolean;
+  pinnedPlatform?: string;
+  pinnedDeviceFamily?: string;
+  refreshPairedPlatform?: string;
+} {
+  function normalizeLegacyNodeHostPlatformPin(value: string): string {
+    switch (value) {
+      case "darwin":
+      case "macos":
+        return "macos";
+      case "win32":
+      case "windows":
+        return "windows";
+      default:
+        return value;
+    }
+  }
+
+  function normalizeMobileAppPlatformPin(clientId: string | undefined, value: string): string {
+    if (clientId === GATEWAY_CLIENT_IDS.IOS_APP && /^(?:ios|ipados)(?:\s|$)/.test(value)) {
+      return "ios-family";
+    }
+    if (clientId === GATEWAY_CLIENT_IDS.ANDROID_APP && /^android(?:\s|$)/.test(value)) {
+      return "android";
+    }
+    return value;
+  }
+
+  const claimedPlatform = normalizeDeviceMetadataForAuth(params.claimedPlatform);
+  const claimedDeviceFamily = normalizeDeviceMetadataForAuth(params.claimedDeviceFamily);
+  const pairedPlatform = normalizeDeviceMetadataForAuth(params.pairedPlatform);
+  const pairedDeviceFamily = normalizeDeviceMetadataForAuth(params.pairedDeviceFamily);
+  const hasPinnedPlatform = pairedPlatform !== "";
+  const hasPinnedDeviceFamily = pairedDeviceFamily !== "";
+  const isLegacyNodeHostPlatformPin =
+    params.clientId === GATEWAY_CLIENT_IDS.NODE_HOST &&
+    params.clientMode === GATEWAY_CLIENT_MODES.NODE &&
+    hasPinnedPlatform &&
+    claimedPlatform !== "" &&
+    normalizeLegacyNodeHostPlatformPin(claimedPlatform) ===
+      normalizeLegacyNodeHostPlatformPin(pairedPlatform);
+  const isMobileAppPlatformVersionRefresh =
+    hasPinnedPlatform &&
+    claimedPlatform !== "" &&
+    claimedPlatform !== pairedPlatform &&
+    normalizeMobileAppPlatformPin(params.clientId, claimedPlatform) ===
+      normalizeMobileAppPlatformPin(params.clientId, pairedPlatform);
+  const platformMismatch =
+    hasPinnedPlatform &&
+    claimedPlatform !== pairedPlatform &&
+    !isLegacyNodeHostPlatformPin &&
+    !isMobileAppPlatformVersionRefresh;
+  const deviceFamilyMismatch = hasPinnedDeviceFamily && claimedDeviceFamily !== pairedDeviceFamily;
+  const pinnedPlatform =
+    claimedPlatform === pairedPlatform
+      ? params.pairedPlatform
+      : isLegacyNodeHostPlatformPin
+        ? normalizeLegacyNodeHostPlatformPin(pairedPlatform)
+        : isMobileAppPlatformVersionRefresh
+          ? params.claimedPlatform
+          : undefined;
+  return {
+    platformMismatch,
+    deviceFamilyMismatch,
+    pinnedPlatform: hasPinnedPlatform ? pinnedPlatform : undefined,
+    pinnedDeviceFamily: hasPinnedDeviceFamily ? params.pairedDeviceFamily : undefined,
+    ...(isMobileAppPlatformVersionRefresh ? { refreshPairedPlatform: params.claimedPlatform } : {}),
+  };
+}
 
 export type ConnectAuthState = {
   authResult: GatewayAuthResult;

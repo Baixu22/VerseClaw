@@ -1,0 +1,203 @@
+{
+  "schema": "G3DeferredMetadataValidation/v1",
+  "at": "2026-11-21T08:19:07.729Z",
+  "gates": [
+    {
+      "name": "deferred-final-recovery-harness-r1",
+      "record": {
+        "schema": "G3WorkflowRecoveryStage/v1",
+        "name": "deferred-final-recovery-harness-r1",
+        "argv": [
+          "node",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/recovery-authority-gated.md",
+          "--since",
+          "074b7f6ad"
+        ],
+        "startedAt": "2026-11-21T08:11:43.751Z",
+        "elapsedMs": 1406,
+        "exitCode": 0,
+        "signal": null,
+        "before": {
+          "head": "9c52d611dfca761d792260754b928f46b3e861ca",
+          "patchSha256": "ab89790f69138ef6f2b118752c60524f7118aa555190d3d2895f6f4fb32ade9f",
+          "untracked": [
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/.gitattributes",
+              "sha256": "ebb8e17dccc3f598161c2826db3f2f1d247dfd07ca8d6b7b2a0e2fbe55c9a73e"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/README.md",
+              "sha256": "b0bd7ca6eeb5671176e10014809515152c760a4a2875262c5fe1c7264886dd6a"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/SHA256SUMS",
+              "sha256": "e47776d7faba6e600a9ae00130e27065a60e58a15574e9be0f3ad2b9a3af1219"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/raw-evidence.json.gz",
+              "sha256": "6e3cedee2431dfbd2f5279f1718e5f0f7468df9de197e6e600b50b925b368cd6"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/report.json",
+              "sha256": "dadd489d45547968915de6e55a476ea4267db132d5db67bab2c4215e0961885d"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/verification.json",
+              "sha256": "7836c862abdbd13166df10a907430d5673fa05ea3c54aa2b4fe78e8650117a32"
+            }
+          ]
+        },
+        "after": {
+          "head": "9c52d611dfca761d792260754b928f46b3e861ca",
+          "patchSha256": "ab89790f69138ef6f2b118752c60524f7118aa555190d3d2895f6f4fb32ade9f",
+          "untracked": [
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/.gitattributes",
+              "sha256": "ebb8e17dccc3f598161c2826db3f2f1d247dfd07ca8d6b7b2a0e2fbe55c9a73e"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/README.md",
+              "sha256": "b0bd7ca6eeb5671176e10014809515152c760a4a2875262c5fe1c7264886dd6a"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/SHA256SUMS",
+              "sha256": "e47776d7faba6e600a9ae00130e27065a60e58a15574e9be0f3ad2b9a3af1219"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/raw-evidence.json.gz",
+              "sha256": "6e3cedee2431dfbd2f5279f1718e5f0f7468df9de197e6e600b50b925b368cd6"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/report.json",
+              "sha256": "dadd489d45547968915de6e55a476ea4267db132d5db67bab2c4215e0961885d"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/verification.json",
+              "sha256": "7836c862abdbd13166df10a907430d5673fa05ea3c54aa2b4fe78e8650117a32"
+            }
+          ]
+        },
+        "sourceUnchanged": true,
+        "startMemoryMiB": 2503,
+        "minimumMemoryMiB": 2503,
+        "resourceSamples": [
+          {
+            "at": 1795248703750,
+            "freeMiB": 2503
+          }
+        ],
+        "actor": "codex/g3-lazy-language-parsers",
+        "driven_by": "agent",
+        "realHumanEvidence": false
+      }
+    },
+    {
+      "name": "deferred-final-startup-harness-r1",
+      "record": {
+        "schema": "G3WorkflowRecoveryStage/v1",
+        "name": "deferred-final-startup-harness-r1",
+        "argv": [
+          "node",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/gateway-startup-performance.md",
+          "--since",
+          "074b7f6ad"
+        ],
+        "startedAt": "2026-11-21T08:11:43.748Z",
+        "elapsedMs": 1438,
+        "exitCode": 0,
+        "signal": null,
+        "before": {
+          "head": "9c52d611dfca761d792260754b928f46b3e861ca",
+          "patchSha256": "ab89790f69138ef6f2b118752c60524f7118aa555190d3d2895f6f4fb32ade9f",
+          "untracked": [
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/.gitattributes",
+              "sha256": "ebb8e17dccc3f598161c2826db3f2f1d247dfd07ca8d6b7b2a0e2fbe55c9a73e"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/README.md",
+              "sha256": "b0bd7ca6eeb5671176e10014809515152c760a4a2875262c5fe1c7264886dd6a"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/SHA256SUMS",
+              "sha256": "e47776d7faba6e600a9ae00130e27065a60e58a15574e9be0f3ad2b9a3af1219"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/raw-evidence.json.gz",
+              "sha256": "6e3cedee2431dfbd2f5279f1718e5f0f7468df9de197e6e600b50b925b368cd6"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/report.json",
+              "sha256": "dadd489d45547968915de6e55a476ea4267db132d5db67bab2c4215e0961885d"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/verification.json",
+              "sha256": "7836c862abdbd13166df10a907430d5673fa05ea3c54aa2b4fe78e8650117a32"
+            }
+          ]
+        },
+        "after": {
+          "head": "9c52d611dfca761d792260754b928f46b3e861ca",
+          "patchSha256": "ab89790f69138ef6f2b118752c60524f7118aa555190d3d2895f6f4fb32ade9f",
+          "untracked": [
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/.gitattributes",
+              "sha256": "ebb8e17dccc3f598161c2826db3f2f1d247dfd07ca8d6b7b2a0e2fbe55c9a73e"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/README.md",
+              "sha256": "b0bd7ca6eeb5671176e10014809515152c760a4a2875262c5fe1c7264886dd6a"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/SHA256SUMS",
+              "sha256": "e47776d7faba6e600a9ae00130e27065a60e58a15574e9be0f3ad2b9a3af1219"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/raw-evidence.json.gz",
+              "sha256": "6e3cedee2431dfbd2f5279f1718e5f0f7468df9de197e6e600b50b925b368cd6"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/report.json",
+              "sha256": "dadd489d45547968915de6e55a476ea4267db132d5db67bab2c4215e0961885d"
+            },
+            {
+              "file": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/deferred-runtime-20261121/verification.json",
+              "sha256": "7836c862abdbd13166df10a907430d5673fa05ea3c54aa2b4fe78e8650117a32"
+            }
+          ]
+        },
+        "sourceUnchanged": true,
+        "startMemoryMiB": 2501,
+        "minimumMemoryMiB": 2501,
+        "resourceSamples": [
+          {
+            "at": 1795248703747,
+            "freeMiB": 2501
+          }
+        ],
+        "actor": "codex/g3-lazy-language-parsers",
+        "driven_by": "agent",
+        "realHumanEvidence": false
+      }
+    }
+  ],
+  "documents": [
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "815a9d686effa35e00f97e587de6e434ed81ff52cc37089bfeac8ee7dfe815ee"
+    },
+    {
+      "file": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "450dbbb425b6ba1c615061c2d568ac4a706b3711131b1b85695a21ad6646a533"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "codex/g3-deferred-metadata-validation",
+  "realHumanEvidence": false
+}

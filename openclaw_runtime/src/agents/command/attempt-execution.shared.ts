@@ -41,7 +41,7 @@ export async function persistSessionEntry(
       if (params.shouldPersist && !params.shouldPersist(current)) {
         return current;
       }
-      if (current && current.sessionId !== params.entry.sessionId && !params.shouldPersist) {
+      if (current && current.sessionId !== params.entry.sessionId) {
         // Generation changes belong to the session owner. Ordinary metadata
         // cannot restore the generation from an earlier run snapshot.
         return current;
@@ -52,6 +52,7 @@ export async function persistSessionEntry(
       // save cannot restore an old run or resurrect a completed one.
       if (current?.sessionId === merged.sessionId) {
         merged.lifecycleRunId = current.lifecycleRunId;
+        merged.recoveryOutput = current.recoveryOutput;
         merged.status = current.status;
         merged.startedAt = current.startedAt;
         merged.endedAt = current.endedAt;

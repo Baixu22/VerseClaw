@@ -15,12 +15,11 @@ import {
   TELEGRAM_BOT_INFO_CACHE_NAMESPACE,
 } from "./bot-info-cache.js";
 import {
-  listTelegramLegacyMessageCacheEntries,
   resolveTelegramMessageCachePath,
   resolveTelegramMessageCachePersistentScopeKey,
   TELEGRAM_MESSAGE_CACHE_PERSISTENT_MAX_MESSAGES,
   TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE,
-} from "./message-cache.js";
+} from "./message-cache-contract.js";
 import {
   listTelegramLegacyMessageDispatchDedupeEntries,
   resolveTelegramMessageDispatchLegacyPath,
@@ -38,11 +37,10 @@ import {
   TELEGRAM_STICKER_CACHE_NAMESPACE,
 } from "./sticker-cache-store.js";
 import {
-  listTelegramLegacyThreadBindingEntries,
+  resolveBindingsPath,
   TELEGRAM_THREAD_BINDINGS_MAX_ENTRIES,
   TELEGRAM_THREAD_BINDINGS_NAMESPACE,
-  testing as telegramThreadBindingTesting,
-} from "./thread-bindings.js";
+} from "./thread-bindings-contract.js";
 import { resolveTelegramToken } from "./token.js";
 import {
   listTelegramLegacyTopicNameCacheEntries,
@@ -133,7 +131,8 @@ function detectTelegramMessageCacheLegacyStateMigration(params: {
       scopeKey,
       cleanupSource: "rename",
       preview: `- Telegram prompt-context message cache: ${persistedPath} → plugin state (${TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE})`,
-      readEntries: () => {
+      readEntries: async () => {
+        const { listTelegramLegacyMessageCacheEntries } = await import("./message-cache.js");
         return listTelegramLegacyMessageCacheEntries({
           persistedPath,
           maxMessages: TELEGRAM_MESSAGE_CACHE_PERSISTENT_MAX_MESSAGES,
@@ -295,7 +294,7 @@ function detectTelegramThreadBindingLegacyStateMigration(params: {
     prefix: "thread-bindings-",
     suffix: ".json",
   }).flatMap((accountId) => {
-    const persistedPath = telegramThreadBindingTesting.resolveBindingsPath(accountId, params.env);
+    const persistedPath = resolveBindingsPath(accountId, params.env);
     if (!fileExists(persistedPath)) {
       return [];
     }
@@ -310,7 +309,10 @@ function detectTelegramThreadBindingLegacyStateMigration(params: {
       scopeKey: "",
       cleanupSource: "rename",
       preview: `- Telegram thread bindings: ${persistedPath} → plugin state (${TELEGRAM_THREAD_BINDINGS_NAMESPACE})`,
-      readEntries: () => listTelegramLegacyThreadBindingEntries({ accountId, persistedPath }),
+      readEntries: async () => {
+        const { listTelegramLegacyThreadBindingEntries } = await import("./thread-bindings.js");
+        return listTelegramLegacyThreadBindingEntries({ accountId, persistedPath });
+      },
     };
   });
 }

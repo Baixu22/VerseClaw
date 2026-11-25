@@ -64,11 +64,11 @@ describe('browser egress uses the checked numeric destination', () => {
     const fetcher: typeof fetch = (input, init) => proxy.fetch(input, init);
     expect((await new SameOriginJsFetcher(fetcher).fetch(`${origin}/app.js`, `${origin}/page`)).ok).toBe(false);
     expect((await new SameOriginSourceMapFetcher(fetcher).fetch(`${origin}/app.js.map`, `${origin}/page`)).ok).toBe(false);
-    let grant: BoundaryGrantContext | undefined;
+    const approval: { grant?: BoundaryGrantContext } = {};
     const replay = new ReplayToolExecutor({ isEnabled: true, getRawRequestMeta: () => ({ id: 'post', url: `${origin}/items`, method: 'POST', requestHeaders: [{ name: 'Content-Type', value: 'application/json' }], requestBody: '{"item":1}' }), getDetails: async () => [] }, fetcher,
-      () => ({ tabId: 7, origin, enhanced: true, grant }));
+      () => ({ tabId: 7, origin, enhanced: true, grant: approval.grant }));
     const draftId = replay.prepareRequest({ requestId: 'post' }).content.match(/draftId：(\S+)/)![1];
-    grant = { id: 'single-send', tabId: 7, origin, toolCallId: 'call', scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }), grants: ['send_single_confirmed_replay_request_without_credentials'], selectedChoiceIds: ['send'], createdAt: Date.now(), expiresAt: Date.now() + 30_000 };
+    approval.grant = { id: 'single-send', tabId: 7, origin, toolCallId: 'call', scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }), grants: ['send_single_confirmed_replay_request_without_credentials'], selectedChoiceIds: ['send'], createdAt: Date.now(), expiresAt: Date.now() + 30_000 };
     const result = await replay.sendRequest({ draftId });
     expect(result.content).toContain('403');
     expect(fixture.requests()).toBe(0);
@@ -97,11 +97,11 @@ describe('browser egress uses the checked numeric destination', () => {
     if (!address || typeof address === 'string') throw new Error('fixture missing');
     const origin = `http://127.0.0.1:${address.port}`;
     const proxy = await createBrowserNetworkProxy({ authorize: async () => {} }); cleanup.push(proxy.close);
-    let grant: BoundaryGrantContext | undefined;
+    const approval: { grant?: BoundaryGrantContext } = {};
     const replay = new ReplayToolExecutor({ isEnabled: true, getRawRequestMeta: () => ({ id: 'post', url: `${origin}/items`, method: 'POST', requestHeaders: [{ name: 'Content-Type', value: 'application/json' }], requestBody: '{"item":1}' }), getDetails: async () => [] },
-      (input, init) => proxy.fetch(input, init), () => ({ tabId: 7, origin, enhanced: true, grant }));
+      (input, init) => proxy.fetch(input, init), () => ({ tabId: 7, origin, enhanced: true, grant: approval.grant }));
     const draftId = replay.prepareRequest({ requestId: 'post' }).content.match(/draftId：(\S+)/)![1];
-    grant = { id: 'single-send', tabId: 7, origin, toolCallId: 'call', scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }), grants: ['send_single_confirmed_replay_request_without_credentials'], selectedChoiceIds: ['send'], createdAt: Date.now(), expiresAt: Date.now() + 30_000 };
+    approval.grant = { id: 'single-send', tabId: 7, origin, toolCallId: 'call', scopeKey: createBoundaryGrantScopeKey({ name: REPLAY_SEND_REQUEST_TOOL_NAME, arguments: { draftId } }), grants: ['send_single_confirmed_replay_request_without_credentials'], selectedChoiceIds: ['send'], createdAt: Date.now(), expiresAt: Date.now() + 30_000 };
     const first = replay.sendRequest({ draftId }).catch(error => error as Error);
     try {
       expect((await replay.sendRequest({ draftId })).isError).toBe(true);

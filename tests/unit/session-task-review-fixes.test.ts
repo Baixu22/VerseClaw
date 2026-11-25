@@ -249,12 +249,25 @@ describe('all tool boundaries use the same read-only policy', () => {
     expect(store.get(task.contract.taskNodeId).claim).toEqual(task.claim);
     expect(execute).toHaveBeenCalledTimes(1);
   });
-  it.each(['git -c core.pager=bad status', 'git -ccore.pager=bad status', 'git -C/tmp status', 'rg --pre=bad query', 'echo hello > result.txt', 'git status; touch result.txt'])('still requires admission for shell effects: %s', async (command) => {
+  it.each(['git -c core.pager=bad status', 'git -ccore.pager=bad status', 'git -C/tmp status',
+    'rg --pre=bad query', 'rg --pre bad query', 'rg --hostname-bin=bad query', 'rg --hostname-bin bad query',
+    'echo hello > result.txt', 'git status; touch result.txt'])('still requires admission for shell effects: %s', async (command) => {
     const execute = vi.fn(async () => 1);
     const guard = createTaskRuntimeGuard(state.root, 'agent:main:unbound', 'unbound-generation', 'run');
     expect(requiresSessionTaskScope('exec', { command })).toBe(true);
     await expect(executeTaskGuarded(guard, 'unsafe', 'exec', execute, { command })).rejects.toThrow('TASK_CLAIM_REQUIRED');
     expect(execute).not.toHaveBeenCalled();
+  });
+  it.each(['rg --hostname-bin=bad query', 'rg --hostname-bin bad query'])('does not execute a hostname helper through an observer: %s', async (command) => {
+    const task = start();
+    store.inheritReference(sessionKey, generation, 'agent:main:reader', 'reader-generation');
+    const guard = createTaskRuntimeGuard(state.root, 'agent:main:reader', 'reader-generation', 'read-run');
+    const execute = vi.fn(async () => 'unexpected helper execution');
+    vi.stubEnv('CLAWX_TASK_SCOPE_BRIDGE', '1');
+    await expect(executeManagedTaskTool({ sessionKey: 'agent:main:reader', sessionId: 'reader-generation', runId: 'read-run', workspaceDir: state.root },
+      guard, 'hostname-helper', 'exec', { command }, undefined, execute)).rejects.toThrow('TASK_CLAIM_REQUIRED');
+    expect(execute).not.toHaveBeenCalled();
+    expect(store.get(task.contract.taskNodeId).claim).toEqual(task.claim);
   });
   it('does not classify unknown tools or model changes as reads', () => {
     expect(isReadOnlyTaskTool('unknown_extension', { action: 'read' })).toBe(false);

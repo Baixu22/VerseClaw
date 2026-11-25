@@ -1,0 +1,13 @@
+{
+  "schema": "G3ActivationProvenanceReadback/v1",
+  "codeCommit": "133a98d1fe8d72b46a9d2a943aa9b73a72727276",
+  "sourceGitInputsMatched": 9,
+  "immutableSourcesMatched": 9,
+  "archiveFilesMatched": 255,
+  "attachmentsMatched": 18,
+  "instrumentedFilesRestored": 5,
+  "credentialHits": 0,
+  "driven_by": "agent",
+  "actor": "codex/g3-activation-provenance",
+  "realHumanEvidence": false
+}

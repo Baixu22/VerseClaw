@@ -1093,14 +1093,15 @@ export function listWorkspacePackageExportAliasEntries(params: {
     params.packageDir,
     "package.json",
   );
-  const fallbackPackageRoot = resolveOpenClawPackageRootSync({ cwd: process.cwd() });
-  const packageJson =
-    tryReadJsonSync<PluginSdkPackageJson>(packageJsonPath) ??
-    (fallbackPackageRoot
+  let packageJson = tryReadJsonSync<PluginSdkPackageJson>(packageJsonPath);
+  if (packageJson === null || packageJson === undefined) {
+    const fallbackPackageRoot = resolveOpenClawPackageRootSync({ cwd: process.cwd() });
+    packageJson = fallbackPackageRoot
       ? tryReadJsonSync<PluginSdkPackageJson>(
           path.join(fallbackPackageRoot, "packages", params.packageDir, "package.json"),
         )
-      : null);
+      : null;
+  }
   const exports = packageJson?.exports;
   if (!exports || typeof exports !== "object" || Array.isArray(exports)) {
     return listRootPackagedWorkspacePackageAliasEntries(params);
@@ -1127,26 +1128,22 @@ export function listWorkspacePackageExportAliasEntries(params: {
     : listRootPackagedWorkspacePackageAliasEntries(params);
 }
 
-function isUsableDistPluginSdkArtifact(candidate: string): boolean {
-  if (!fs.existsSync(candidate)) {
-    return false;
-  }
-  switch (normalizeLowercaseStringOrEmpty(path.extname(candidate))) {
-    case ".js":
-    case ".mjs":
-    case ".cjs":
-      break;
-    default:
-      return true;
+function isUsableDistPluginSdkArtifact(candidate: string, seen = new Set<string>()): boolean {
+  const extension = normalizeLowercaseStringOrEmpty(path.extname(candidate));
+  if (![".js", ".mjs", ".cjs"].includes(extension)) {
+    return fs.existsSync(candidate);
   }
   try {
     const source = fs.readFileSync(candidate, "utf-8");
     for (const match of source.matchAll(JS_STATIC_RELATIVE_DEPENDENCY_PATTERN)) {
-      const specifier = match[1];
-      if (!specifier || fs.existsSync(path.resolve(path.dirname(candidate), specifier))) {
+      const dependency = match[1] && path.resolve(path.dirname(candidate), match[1]);
+      if (!dependency || seen.has(dependency)) {
         continue;
       }
-      return false;
+      if (!fs.existsSync(dependency)) {
+        return false;
+      }
+      seen.add(dependency);
     }
   } catch {
     return false;
@@ -1617,6 +1614,8 @@ export function resolvePluginSdkScopedAliasMap(
     return cached;
   }
   const aliasMap: Record<string, string> = {};
+  // SDK barrels share compiled chunks; reuse their checks only within this map.
+  const checkedDistDependencies = new Set<string>();
   const distPluginSdkArtifacts = orderedKinds.includes("dist")
     ? listDistPluginSdkArtifactSubpaths(packageRoot)
     : new Set<string>();
@@ -1633,7 +1632,7 @@ export function resolvePluginSdkScopedAliasMap(
           continue;
         }
         const candidate = path.join(packageRoot, "dist", "plugin-sdk", `${subpath}.js`);
-        if (isUsableDistPluginSdkArtifact(candidate)) {
+        if (isUsableDistPluginSdkArtifact(candidate, checkedDistDependencies)) {
           for (const packageName of PLUGIN_SDK_PACKAGE_NAMES) {
             aliasMap[`${packageName}/${subpath}`] = candidate;
           }

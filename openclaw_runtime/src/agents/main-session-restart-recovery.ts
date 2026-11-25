@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { sanitizePendingFinalDeliveryText } from "../auto-reply/reply/pending-final-delivery.js";
+import { hasSamePendingFinalDelivery } from "./recovery-authority/final-delivery-session.js";
 import { resolveStateDir } from "../config/paths.js";
 import {
   type SessionEntry,
@@ -36,6 +37,16 @@ import { resolveMainSessionResumeBlockReason } from "./main-session-restart-reco
 import { recoveryAuthorityV1 } from "./recovery-authority/authority.js";
 import { buildMainSessionRecoveryRequest } from "./recovery-authority/main-session-adapter.js";
 import {
+  admitMainSessionRecovery,
+  finishMainSessionRecovery,
+  hasRetainedMainSessionRecovery,
+} from "./recovery-authority/main-session-admission.js";
+import {
+  getRecoveryAdmissionIdentity,
+  isRecoveryAuthorityEnabled,
+} from "./recovery-authority/owner-admission.js";
+import type { RecoveryOwnerAdmission } from "../../../shared/recovery-authority/contract.js";
+import {
   compareRecoveryShadow,
   isRecoveryAuthorityShadowEnabled,
   recoveryShadowSink,
@@ -55,6 +66,8 @@ import type { SessionLockInspection } from "./session-write-lock.js";
 const log = createSubsystemLogger("main-session-restart-recovery");
 
 const DEFAULT_RECOVERY_DELAY_MS = 5_000;
+const CANDIDATE_RECOVERY_DELAY_MS = 0;
+const CANDIDATE_RETRY_DELAY_MS = 250;
 const MAX_RECOVERY_RETRIES = 3;
 const RETRY_BACKOFF_MULTIPLIER = 2;
 const UNRESUMABLE_SESSION_NOTICE =
@@ -231,23 +244,6 @@ function buildResumeMessage(pendingFinalDeliveryText?: string | null): string {
   return base;
 }
 
-function hasSamePendingFinalDelivery(current: SessionEntry, expected: SessionEntry): boolean {
-  return (
-    current.pendingFinalDelivery === expected.pendingFinalDelivery &&
-    current.pendingFinalDeliveryRunId === expected.pendingFinalDeliveryRunId &&
-    current.pendingFinalDeliveryRecoveryRunId === expected.pendingFinalDeliveryRecoveryRunId &&
-    current.pendingFinalDeliveryText === expected.pendingFinalDeliveryText &&
-    current.pendingFinalDeliveryCreatedAt === expected.pendingFinalDeliveryCreatedAt &&
-    current.pendingFinalDeliveryIntentId === expected.pendingFinalDeliveryIntentId &&
-    current.pendingFinalDeliveryContext?.channel ===
-      expected.pendingFinalDeliveryContext?.channel &&
-    current.pendingFinalDeliveryContext?.to === expected.pendingFinalDeliveryContext?.to &&
-    current.pendingFinalDeliveryContext?.accountId ===
-      expected.pendingFinalDeliveryContext?.accountId &&
-    current.pendingFinalDeliveryContext?.threadId === expected.pendingFinalDeliveryContext?.threadId
-  );
-}
-
 async function markSessionFailed(params: {
   entry: SessionEntry;
   storePath: string;
@@ -271,7 +267,7 @@ async function markSessionFailed(params: {
       entry.endedAt = Date.now();
       entry.updatedAt = entry.endedAt;
       // A previous or concurrently replaced delivery remains owned by its sender.
-      if (hasSamePendingFinalDelivery(entry, params.entry)) {
+      if (!isRecoveryAuthorityEnabled() && hasSamePendingFinalDelivery(entry, params.entry)) {
         entry.pendingFinalDelivery = undefined;
         entry.pendingFinalDeliveryText = undefined;
         entry.pendingFinalDeliveryRunId = undefined;
@@ -294,6 +290,7 @@ async function markSessionFailed(params: {
 
 async function sendUnresumableSessionNotice(params: {
   cfg?: OpenClawConfig;
+  agentId?: string;
   entry: SessionEntry;
   reason: string;
   sessionKey: string;
@@ -321,6 +318,7 @@ async function sendUnresumableSessionNotice(params: {
     action: "send",
     sessionKey: params.sessionKey,
     sessionId: params.entry.sessionId,
+    ...(params.agentId ? { agentId: params.agentId } : {}),
     idempotencyKey: `main-session-restart-recovery:${params.entry.sessionId}:failed-notice`,
     params: messageParams,
   };
@@ -383,11 +381,13 @@ function resolveRestartRecoveryDeliveryContext(params: {
 
 async function resumeMainSession(params: {
   cfg?: OpenClawConfig;
+  agentId?: string;
   entry: SessionEntry;
   storePath: string;
   sessionKey: string;
   pendingFinalDeliveryText?: string | null;
   recoveryBoundary: string;
+  authorityAdmission?: RecoveryOwnerAdmission;
 }): Promise<boolean> {
   const sanitizedPendingText =
     typeof params.pendingFinalDeliveryText === "string"
@@ -406,9 +406,11 @@ async function resumeMainSession(params: {
     // Reuse the admitted continuation while this exact payload remains pending.
     // Replacing it before RPC start can orphan the prior lifecycle on a failed RPC.
     let recoveryRunId =
-      (carriesPendingFinal && params.entry.pendingFinalDeliveryRecoveryRunId) || crypto.randomUUID();
+      params.authorityAdmission?.idempotencyKey ||
+      (carriesPendingFinal && params.entry.pendingFinalDeliveryRecoveryRunId) ||
+      crypto.randomUUID();
     let pendingSnapshot = params.entry;
-    if (phaseWriter || carriesPendingFinal) {
+    if (!params.authorityAdmission && (phaseWriter || carriesPendingFinal)) {
       let admitted = false;
       await updateSessionStore(
         params.storePath,
@@ -463,10 +465,15 @@ async function resumeMainSession(params: {
       message: buildResumeMessage(sanitizedPendingText),
       sessionKey: params.sessionKey,
       sessionId: params.entry.sessionId,
+      ...(params.agentId ? { agentId: params.agentId } : {}),
       idempotencyKey: recoveryRunId,
       deliver: Boolean(deliveryContext),
       lane: CommandLane.Main,
     };
+    if (params.authorityAdmission) {
+      agentParams.recoveryAdmission = getRecoveryAdmissionIdentity(params.authorityAdmission);
+      agentParams.suppressPromptPersistence = true;
+    }
     if (deliveryContext) {
       agentParams.channel = deliveryContext.channel;
       agentParams.to = deliveryContext.to;
@@ -478,11 +485,22 @@ async function resumeMainSession(params: {
         agentParams.threadId = String(deliveryContext.threadId);
       }
     }
-    await callGateway<{ runId: string }>({
+    const acknowledgement = await callGateway<{ runId: string }>({
       method: "agent",
       params: agentParams,
       timeoutMs: 10_000,
     });
+    if (params.authorityAdmission) {
+      const accepted = acknowledgement.runId === recoveryRunId;
+      const committed = await finishMainSessionRecovery({
+        entry: params.entry,
+        storePath: params.storePath,
+        sessionKey: params.sessionKey,
+        record: params.authorityAdmission,
+        state: accepted ? "accepted" : "reconcile",
+      });
+      return accepted && committed;
+    }
     await updateSessionStore(
       params.storePath,
       (store) => {
@@ -537,6 +555,15 @@ async function resumeMainSession(params: {
     );
     return true;
   } catch (err) {
+    if (params.authorityAdmission) {
+      await finishMainSessionRecovery({
+        entry: params.entry,
+        storePath: params.storePath,
+        sessionKey: params.sessionKey,
+        record: params.authorityAdmission,
+        state: "reconcile",
+      });
+    }
     log.warn(`failed to resume interrupted main session ${params.sessionKey}: ${String(err)}`);
     return false;
   }
@@ -589,6 +616,7 @@ export async function markRestartAbortedMainSessionsFromLocks(params: {
 
 async function recoverStore(params: {
   cfg?: OpenClawConfig;
+  agentId: string;
   storePath: string;
   resumedSessionKeys: Set<string>;
 }): Promise<{ recovered: number; failed: number; skipped: number }> {
@@ -612,7 +640,20 @@ async function recoverStore(params: {
       result.skipped++;
       continue;
     }
-    if (params.resumedSessionKeys.has(sessionKey)) {
+    if (!isRecoveryAuthorityEnabled() && hasRetainedMainSessionRecovery(entry)) {
+      recordRecoveryEvalDecision({
+        sessionKey,
+        sessionId: entry.sessionId,
+        action: "reconcile",
+        reason: "saved main recovery uncertainty remains reserved after authority rollback",
+      });
+      result.skipped++;
+      continue;
+    }
+    // Global keys repeat across agent stores; a reset creates a new recoverable generation.
+    const recoveryIdentity = JSON.stringify([params.storePath, sessionKey, entry.sessionId]);
+    const agentId = sessionKey === "global" ? params.agentId : undefined;
+    if (params.resumedSessionKeys.has(recoveryIdentity)) {
       result.skipped++;
       continue;
     }
@@ -665,7 +706,10 @@ async function recoverStore(params: {
           maxAttempts: MAX_RECOVERY_RETRIES,
           resumable: !resumeBlockReason,
           approvalPending: Boolean(resumeBlockReason?.includes("approval-pending")),
-          visibleOutputObserved: false,
+          visibleOutputObserved:
+            entry.recoveryOutput?.sessionId === entry.sessionId &&
+            entry.recoveryOutput.runId === entry.lifecycleRunId &&
+            entry.recoveryOutput.visibleOutputObserved === true,
           pendingFinalDelivery: Boolean(recoveryEntry.pendingFinalDeliveryText),
         });
         const decision = recoveryAuthorityV1.decide(request);
@@ -684,6 +728,11 @@ async function recoverStore(params: {
     // TF-0719: with the execution-phase writer on, an open effect may already
     // have been applied. Resuming blindly would duplicate it.
     let effectiveResumeBlockReason = resumeBlockReason;
+    let phaseRecovery = {
+      action: "reconcile" as "none" | "resume" | "reconcile",
+      phases: [] as string[],
+      reason: "durable tool writer disabled",
+    };
     if (isExecutionPhaseWriterEnabled()) {
       for (const message of messages) {
         settlePersistedToolResult(message as import("./runtime/index.js").AgentMessage, {
@@ -691,7 +740,7 @@ async function recoverStore(params: {
           sessionId: entry.sessionId,
         });
       }
-      const phaseRecovery = resolveExecutionPhaseRecovery(
+      phaseRecovery = resolveExecutionPhaseRecovery(
         sessionKey,
         process.env,
         {},
@@ -703,11 +752,79 @@ async function recoverStore(params: {
       if (phaseRecovery.action === "reconcile") {
         effectiveResumeBlockReason =
           "execution phase requires reconciliation: " + phaseRecovery.reason;
-      } else if (!effectiveResumeBlockReason && phaseRecovery.action === "resume") {
+      } else if (
+        !isRecoveryAuthorityEnabled() &&
+        !effectiveResumeBlockReason &&
+        phaseRecovery.action === "resume"
+      ) {
         try {
           authorizePendingToolRecovery({ sessionKey, sessionId: entry.sessionId, messages });
         } catch (error) {
           effectiveResumeBlockReason = "execution recovery authorization failed: " + String(error);
+        }
+      }
+    }
+    const recoveryBoundary = crypto
+      .createHash("sha256")
+      .update(JSON.stringify(messages.slice(-1)))
+      .digest("hex");
+    let authorityAdmission: RecoveryOwnerAdmission | undefined;
+    if (isRecoveryAuthorityEnabled()) {
+      const admitted = await admitMainSessionRecovery({
+        entry: recoveryEntry,
+        storePath: params.storePath,
+        sessionKey,
+        boundary: recoveryBoundary,
+        phase: phaseRecovery,
+        resumeBlockReason,
+        maxAttempts: MAX_RECOVERY_RETRIES,
+        cfg: params.cfg,
+      });
+      if (admitted.kind !== "admitted") {
+        if (admitted.kind === "rejected") {
+          await markSessionFailed({
+            entry: recoveryEntry,
+            storePath: params.storePath,
+            sessionKey,
+            reason: admitted.reason,
+          });
+          await sendUnresumableSessionNotice({
+            cfg: params.cfg,
+            agentId,
+            entry: recoveryEntry,
+            sessionKey,
+            reason: admitted.reason,
+          });
+        }
+        recordRecoveryEvalDecision({
+          sessionKey,
+          sessionId: entry.sessionId,
+          action: "reconcile",
+          reason: admitted.reason,
+        });
+        result.failed++;
+        continue;
+      }
+      authorityAdmission = admitted.record;
+      if (phaseRecovery.action === "resume") {
+        try {
+          authorizePendingToolRecovery({ sessionKey, sessionId: entry.sessionId, messages });
+        } catch (error) {
+          await finishMainSessionRecovery({
+            entry: recoveryEntry,
+            storePath: params.storePath,
+            sessionKey,
+            record: admitted.record,
+            state: "reconcile",
+          });
+          recordRecoveryEvalDecision({
+            sessionKey,
+            sessionId: entry.sessionId,
+            action: "reconcile",
+            reason: String(error),
+          });
+          result.failed++;
+          continue;
         }
       }
     }
@@ -721,6 +838,7 @@ async function recoverStore(params: {
       });
       await sendUnresumableSessionNotice({
         cfg: params.cfg,
+        agentId,
         entry: recoveryEntry,
         sessionKey,
         reason: effectiveResumeBlockReason,
@@ -738,18 +856,17 @@ async function recoverStore(params: {
     recordRecoveryEvalDecision({ sessionKey, sessionId: entry.sessionId, action: "resume" });
     const resumed = await resumeMainSession({
       cfg: params.cfg,
+      agentId,
       entry: recoveryEntry,
       storePath: params.storePath,
       sessionKey,
       pendingFinalDeliveryText: recoveryEntry.pendingFinalDeliveryText,
-      recoveryBoundary: crypto
-        .createHash("sha256")
-        .update(JSON.stringify(messages.slice(-1)))
-        .digest("hex"),
+      recoveryBoundary,
+      authorityAdmission,
     });
     recordShadow(resumed ? "resumed" : "failed");
     if (resumed) {
-      params.resumedSessionKeys.add(sessionKey);
+      params.resumedSessionKeys.add(recoveryIdentity);
       result.recovered++;
     } else {
       result.failed++;
@@ -757,24 +874,6 @@ async function recoverStore(params: {
   }
 
   return result;
-}
-
-async function resolveRestartRecoveryStorePaths(params: {
-  cfg?: OpenClawConfig;
-  stateDir?: string;
-}): Promise<string[]> {
-  const storePaths = new Set<string>();
-  const stateDir = params.stateDir ?? resolveStateDir(process.env);
-  for (const sessionsDir of await resolveAgentSessionDirs(stateDir)) {
-    storePaths.add(path.join(sessionsDir, "sessions.json"));
-  }
-  if (params.cfg) {
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
-    for (const target of resolveAllAgentSessionStoreTargetsSync(params.cfg, { env })) {
-      storePaths.add(path.resolve(target.storePath));
-    }
-  }
-  return [...storePaths].toSorted((a, b) => a.localeCompare(b));
 }
 
 export async function recoverRestartAbortedMainSessions(
@@ -794,10 +893,15 @@ export async function recoverRestartAbortedMainSessions(
     }
   }
 
-  for (const storePath of await resolveRestartRecoveryStorePaths(params)) {
+  const stateDir = params.stateDir ?? resolveStateDir(process.env);
+  const targets = resolveAllAgentSessionStoreTargetsSync(params.cfg ?? {}, {
+    env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+  }).toSorted((a, b) => a.storePath.localeCompare(b.storePath));
+  for (const target of targets) {
     const storeResult = await recoverStore({
       cfg: params.cfg,
-      storePath,
+      ...target,
+      storePath: path.resolve(target.storePath),
       resumedSessionKeys,
     });
     result.recovered += storeResult.recovered;
@@ -822,11 +926,10 @@ export function scheduleRestartAbortedMainSessionRecovery(
   } = {},
 ): void {
   const candidateMode = isExecutionPhaseWriterEnabled();
-  const initialDelay = params.delayMs ?? (candidateMode ? 1_000 : DEFAULT_RECOVERY_DELAY_MS);
+  const initialDelay =
+    params.delayMs ?? (candidateMode ? CANDIDATE_RECOVERY_DELAY_MS : DEFAULT_RECOVERY_DELAY_MS);
   const nextDelay = (delay: number) =>
-    candidateMode
-      ? Math.min(delay * RETRY_BACKOFF_MULTIPLIER, 10_000)
-      : delay * RETRY_BACKOFF_MULTIPLIER;
+    candidateMode ? CANDIDATE_RETRY_DELAY_MS : delay * RETRY_BACKOFF_MULTIPLIER;
   const maxRetries = params.maxRetries ?? MAX_RECOVERY_RETRIES;
   const resumedSessionKeys = new Set<string>();
 

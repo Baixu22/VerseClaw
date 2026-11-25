@@ -11,6 +11,7 @@ import {
   buildPluginLoaderJitiOptions,
   createPluginLoaderModuleCacheKey,
   resolvePluginLoaderModuleConfig,
+  resolvePluginLoaderTryNative,
   type PluginSdkResolutionPreference,
 } from "./sdk-alias.js";
 
@@ -148,26 +149,22 @@ export function resolvePluginModuleLoaderCacheEntry(
   params: ResolvePluginModuleLoaderCacheEntryParams,
 ): PluginModuleLoaderCacheEntry {
   const loaderFilename = toSafeImportPath(params.loaderFilename ?? params.modulePath);
-  const hasAliasOverride = Boolean(params.aliasMap);
-  const hasTryNativeOverride = typeof params.tryNative === "boolean";
-  const defaultConfig =
-    hasAliasOverride || hasTryNativeOverride
-      ? resolveDefaultPluginModuleLoaderConfig(params)
-      : null;
-  const canReuseDefaultCacheKey =
-    defaultConfig !== null &&
-    (!hasAliasOverride || params.aliasMap === defaultConfig.aliasMap) &&
-    (!hasTryNativeOverride || params.tryNative === defaultConfig.tryNative);
-  const resolved = defaultConfig
+  const resolved = params.aliasMap
     ? {
-        tryNative: params.tryNative ?? defaultConfig.tryNative,
-        aliasMap: params.aliasMap ?? defaultConfig.aliasMap,
-        cacheKey: canReuseDefaultCacheKey ? defaultConfig.cacheKey : undefined,
+        aliasMap: params.aliasMap,
+        tryNative:
+          params.tryNative ??
+          resolvePluginLoaderTryNative(
+            params.modulePath,
+            params.preferBuiltDist ? { preferBuiltDist: true } : {},
+          ),
+        cacheKey: undefined,
       }
     : resolveDefaultPluginModuleLoaderConfig(params);
-  const { tryNative, aliasMap } = resolved;
+  const { aliasMap } = resolved;
+  const tryNative = params.tryNative ?? resolved.tryNative;
   const cacheKey =
-    resolved.cacheKey ??
+    (tryNative === resolved.tryNative ? resolved.cacheKey : undefined) ??
     createPluginLoaderModuleCacheKey({
       tryNative,
       aliasMap,

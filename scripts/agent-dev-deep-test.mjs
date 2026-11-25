@@ -749,7 +749,7 @@ function runStep(step) {
     const args = process.platform === 'win32' && step.command === 'pnpm'
       ? ['/d', '/s', '/c', commandLine]
       : step.args;
-    const child = spawn(command, args, { cwd: ROOT });
+    const child = spawn(command, args, { cwd: ROOT, windowsHide: true });
     child.stdout.on('data', (chunk) => {
       stdout += chunk.toString();
       process.stdout.write(chunk);

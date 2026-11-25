@@ -1,6 +1,8 @@
 import { app, utilityProcess } from 'electron';
 import { existsSync, writeFileSync } from 'fs';
 import path from 'path';
+import { tmpdir } from 'node:os';
+import { createInterface } from 'node:readline';
 import type { GatewayLaunchContext } from './config-sync';
 import type { GatewayLifecycleState } from './process-policy';
 import { logger } from '../utils/logger';
@@ -141,6 +143,9 @@ export function buildGatewayRuntimeEnv(
   officeCliOptions?: OfficeCliPathOptions,
 ): Record<string, string | undefined> {
   const runtimeEnv = prependOfficeCliPathToEnv({ ...forkEnv }, officeCliOptions).env;
+  if (runtimeEnv.NODE_COMPILE_CACHE === undefined && runtimeEnv.NODE_DISABLE_COMPILE_CACHE === undefined) {
+    runtimeEnv.NODE_COMPILE_CACHE = path.join(tmpdir(), 'verse-claw-node-compile-cache');
+  }
 
   // Disable OpenClaw's mDNS/Bonjour gateway advertiser unconditionally.
   //
@@ -270,9 +275,15 @@ export async function launchGatewayProcess(options: {
       serviceName: 'OpenClaw Gateway',
     });
     observeOwnedGatewayProcess(child);
-    // Only stderr is forwarded, but stdout is also piped. Drain it so a full
-    // Windows pipe cannot block Gateway requests behind routine log output.
-    child.stdout?.on('data', () => {});
+    // Drain stdout so a full Windows pipe cannot block Gateway requests.
+    // Startup tracing forwards phase lines from the runtime's stdout logger.
+    if (child.stdout && /^(1|true|yes|on)$/i.test(runtimeEnv.OPENCLAW_GATEWAY_STARTUP_TRACE?.trim() ?? '')) {
+      createInterface({ input: child.stdout, crlfDelay: Infinity }).on('line', line => {
+        if (line.includes('startup trace:')) options.onStderrLine(line);
+      });
+    } else {
+      child.stdout?.on('data', () => {});
+    }
 
     let settled = false;
     const resolveOnce = () => {

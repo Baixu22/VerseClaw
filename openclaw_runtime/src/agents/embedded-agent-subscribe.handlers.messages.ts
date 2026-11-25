@@ -141,7 +141,7 @@ function emitReasoningEnd(ctx: EmbeddedAgentSubscribeContext) {
     return;
   }
   ctx.state.reasoningStreamOpen = false;
-  void ctx.params.onReasoningEnd?.();
+  ctx.emitReasoningEnd();
 }
 
 function openReasoningStream(ctx: EmbeddedAgentSubscribeContext) {
@@ -561,7 +561,7 @@ export function handleMessageStart(
   // re-trigger block replies.
   ctx.resetAssistantMessageState(ctx.state.assistantTexts.length);
   // Use assistant message_start as the earliest "writing" signal for typing.
-  void ctx.params.onAssistantMessageStart?.();
+  ctx.emitAssistantMessageStart();
 }
 
 /** Handles assistant message deltas, reasoning, directives, and block replies. */
@@ -669,9 +669,16 @@ export function handleMessageUpdate(
     const previousStreamItemId = ctx.state.lastAssistantStreamItemId;
     if (previousStreamItemId && previousStreamItemId !== streamItemId) {
       streamItemChanged = true;
-      void ctx.flushBlockReplyBuffer({ assistantMessageIndex: ctx.state.assistantMessageIndex });
+      const flush = ctx.flushBlockReplyBuffer({
+        assistantMessageIndex: ctx.state.assistantMessageIndex,
+      });
+      if (isPromiseLike<void>(flush)) {
+        void flush.catch((error: unknown) =>
+          ctx.log.debug(`text-item block reply flush failed: ${String(error)}`),
+        );
+      }
       ctx.resetAssistantMessageState(ctx.state.assistantTexts.length);
-      void ctx.params.onAssistantMessageStart?.();
+      ctx.emitAssistantMessageStart();
     }
     ctx.state.lastAssistantStreamItemId = streamItemId;
   }

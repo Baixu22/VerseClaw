@@ -1,5 +1,4 @@
 // Telegram plugin module implements message cache behavior.
-import { createHash } from "node:crypto";
 import fs from "node:fs";
 import type { Message } from "grammy/types";
 import { formatLocationText } from "openclaw/plugin-sdk/channel-inbound";
@@ -7,13 +6,25 @@ import { parseStrictPositiveInteger } from "openclaw/plugin-sdk/number-runtime";
 import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
 import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
 import { isRecord } from "openclaw/plugin-sdk/string-coerce-runtime";
-import { resolveTelegramPrimaryMedia } from "./bot/body-helpers.js";
 import {
   buildSenderName,
   extractTelegramLocation,
   getTelegramTextParts,
   normalizeForwardedContext,
-} from "./bot/helpers.js";
+  resolveTelegramPrimaryMedia,
+} from "./bot/body-helpers.js";
+import {
+  resolveTelegramMessageCachePath,
+  resolveTelegramMessageCachePersistentScopeKey,
+  TELEGRAM_MESSAGE_CACHE_PERSISTENT_MAX_MESSAGES,
+  TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE,
+} from "./message-cache-contract.js";
+export {
+  resolveTelegramMessageCachePath,
+  resolveTelegramMessageCachePersistentScopeKey,
+  TELEGRAM_MESSAGE_CACHE_PERSISTENT_MAX_MESSAGES,
+  TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE,
+} from "./message-cache-contract.js";
 import { parseTelegramMessageThreadId } from "./outbound-params.js";
 import { getOptionalTelegramRuntime } from "./runtime.js";
 
@@ -87,8 +98,6 @@ type TelegramCachedMessageObservation = {
 type TelegramEmbeddedReplyMessage = NonNullable<Message["reply_to_message"]>;
 
 const DEFAULT_MAX_MESSAGES = 5000;
-export const TELEGRAM_MESSAGE_CACHE_PERSISTENT_MAX_MESSAGES = 3000;
-export const TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE = "telegram.message-cache";
 const PERSISTENT_BUCKET_KEY = `plugin-state:${TELEGRAM_MESSAGE_CACHE_PERSISTENT_NAMESPACE}`;
 const persistedMessageCacheBuckets = new Map<string, TelegramMessageCacheBucket>();
 
@@ -123,10 +132,6 @@ function telegramMessageCacheKeyPrefix(params: {
 }) {
   const prefix = `${params.accountId}:${params.chatId}:`;
   return params.scopeKey ? `${params.scopeKey}:${prefix}` : prefix;
-}
-
-export function resolveTelegramMessageCachePath(storePath: string): string {
-  return `${storePath}.telegram-messages.json`;
 }
 
 export function resolveTelegramMessageCacheScope(storePath: string): string {
@@ -485,14 +490,6 @@ function toPersistedCacheValue(
   };
 }
 
-function resolvePersistentScopeKey(scope: string): string {
-  return createHash("sha256").update(scope).digest("hex").slice(0, 24);
-}
-
-export function resolveTelegramMessageCachePersistentScopeKey(scope: string): string {
-  return resolvePersistentScopeKey(scope);
-}
-
 export function listTelegramLegacyMessageCacheEntries(params: {
   persistedPath: string;
   maxMessages?: number;
@@ -617,7 +614,7 @@ export function createTelegramMessageCache(params?: {
     params?.maxMessages ??
     (persistentStore ? TELEGRAM_MESSAGE_CACHE_PERSISTENT_MAX_MESSAGES : DEFAULT_MAX_MESSAGES);
   const scopeKey = persistentStore
-    ? resolvePersistentScopeKey(params?.scope ?? "default")
+    ? resolveTelegramMessageCachePersistentScopeKey(params?.scope ?? "default")
     : undefined;
   const bucketKey =
     params?.bucketKey ?? (persistentStore ? `${PERSISTENT_BUCKET_KEY}:${scopeKey}` : undefined);

@@ -1,0 +1,654 @@
+{
+  "schema": "G3HostStartupDevelopment/v1",
+  "actor": "codex/g3-relay-20261119-01a1f21b",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "decision": "NO_GO",
+  "sourceBase": "5c0c72d2ec0173230b678f7d8ccc79ea8bc7e5d1",
+  "validatedChangesSha256": "1649ad9d76152c4f80b2d9be5a6fbf2afb9b840fe1863951b2596e1237212bf9",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/agents/date-time.ts",
+      "sha256": "0403913813f0beb8a5dfd0f44f0cceab8cf4960770ca4f6aea5ac6660699a668"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/runtime-plugins.ts",
+      "sha256": "8047e81228526ee078b03f7c7ed94318739dd1f482840043dbf0719b46a338dd"
+    },
+    {
+      "file": "tests/unit/gateway-host-time-format.test.ts",
+      "sha256": "68ca14d22a46b4f64a388492643dac8c450c48da7f21a2d80ae7e970b2e221f3"
+    },
+    {
+      "file": "tests/unit/gateway-agent-startup-scope.test.ts",
+      "sha256": "6f4efe0b4a84131ff7c38c86a9a412854e99de03f8064a49658a8653a22f59d0"
+    }
+  ],
+  "stages": [
+    {
+      "name": "host-startup-green-4",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/gateway-host-time-format.test.ts",
+        "tests/unit/gateway-agent-startup-scope.test.ts",
+        "tests/unit/gateway-plugin-env-contract.test.ts",
+        "tests/unit/gateway-plugin-startup-scope.test.ts",
+        "tests/unit/gateway-plugin-activation-discovery.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-host-startup-20261119-01a1f21b/host-startup-green-4.tests.json"
+      ],
+      "elapsedMs": 9893,
+      "exitCode": 0,
+      "memoryMiB": 5014,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-green-4.json",
+        "sha256": "236bc19d9ba96d429a4348d57bff27f0cf47fa6e4469e87915a40ba9fe61f951"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-green-4.log",
+        "sha256": "c9d60b16788a706f2e6fa68eb4305d58d920cdd0bd04ae474f4a9f3216c93c51"
+      }
+    },
+    {
+      "name": "host-startup-types-4",
+      "argv": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs",
+        "--no-cache"
+      ],
+      "elapsedMs": 22996,
+      "exitCode": 0,
+      "memoryMiB": 5006,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-types-4.json",
+        "sha256": "3070de06fb80f94ed434fb91922da12c7dbe833d507d8d6520bb37fb82a274e2"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-types-4.log",
+        "sha256": "8fa1870c71e9514936b4cec539fae48f483fd0b51738f9f282fd59c81480c9fa"
+      }
+    },
+    {
+      "name": "host-startup-harness-4",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "5c0c72d2e"
+      ],
+      "elapsedMs": 1317,
+      "exitCode": 0,
+      "memoryMiB": 7294,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-harness-4.json",
+        "sha256": "27c3a20b98230be547e36c27c06054588da3f3f6e2d747dc48e32ddfaeb28167"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-harness-4.log",
+        "sha256": "66256961710d20cfeeb1d346b155f00f3b86be6c9d6e2c535fef89e4cb6b997f"
+      }
+    },
+    {
+      "name": "host-startup-runtime-final",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "elapsedMs": 41137,
+      "exitCode": 0,
+      "memoryMiB": 3534,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-runtime-final.json",
+        "sha256": "cbcb49b0bad0e3fc205b59bfed3b064452b93b0f6de9dc4bebaefbb99ff8fa75"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-runtime-final.log",
+        "sha256": "1faf4e068df3a86044e4adfe9d0d14954cbeb2471d36c99603bf5b95a59a8689"
+      }
+    },
+    {
+      "name": "host-startup-runtime-lint-final",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/oxlint/bin/oxlint",
+        "--deny=warnings",
+        "--config",
+        "openclaw_runtime/.oxlintrc.json",
+        "--tsconfig",
+        "openclaw_runtime/config/tsconfig/oxlint.core.json",
+        "openclaw_runtime/src/agents/date-time.ts",
+        "openclaw_runtime/src/agents/runtime-plugins.ts"
+      ],
+      "elapsedMs": 857,
+      "exitCode": 0,
+      "memoryMiB": 4420,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-runtime-lint-final.json",
+        "sha256": "f8eb7516bccb71530b243525089553c19fa7a11c762b2e0205b1e16d414d5c16"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-runtime-lint-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "host-startup-lint-final",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "tests/unit/gateway-host-time-format.test.ts",
+        "tests/unit/gateway-agent-startup-scope.test.ts",
+        "--max-warnings=0"
+      ],
+      "elapsedMs": 3347,
+      "exitCode": 0,
+      "memoryMiB": 3394,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-lint-final.json",
+        "sha256": "5de19cd163167bac8c805c95d655e82e57b9b308bc7af2d2e2502d8393ae986b"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-lint-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "host-startup-source-gates",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run runtime:source:check"
+      ],
+      "elapsedMs": 25384,
+      "exitCode": 0,
+      "memoryMiB": 4082,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-source-gates.json",
+        "sha256": "b6787df821bfd1285191865d62d2ea16a2023e77551ee8fa6d4789c6af5b9ed9"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-source-gates.log",
+        "sha256": "0ba15f931ca72176789362f0edf7a389c34ae8d64dd5d250375254955d98c3ee"
+      }
+    },
+    {
+      "name": "host-startup-comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "elapsedMs": 1318,
+      "exitCode": 0,
+      "memoryMiB": 3120,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-comms-replay.json",
+        "sha256": "538f11f2ba23df60b97df8d9f677b1ff76927d6de0fc36400ffe3c2f492de739"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-comms-replay.log",
+        "sha256": "ef8afa4618061946a9e8a73d78094658e666fa14d6b970cbfd6ca3ea6dc17ae1"
+      }
+    },
+    {
+      "name": "host-startup-comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "elapsedMs": 1000,
+      "exitCode": 0,
+      "memoryMiB": 2546,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-comms-compare.json",
+        "sha256": "422a15e9c02ef10f648b91222f27c25ffb0a1b5f9d28d7ef51b11f8738f48298"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-comms-compare.log",
+        "sha256": "72cf7befb25a85447c2f2699b4b172b90c8daec340ed5c13fa293d7f81f5b52d"
+      }
+    },
+    {
+      "name": "host-startup-review-r3",
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\review-context-r3.md",
+        "--json-output",
+        "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\review-result-r3.json",
+        "--output",
+        "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\review-r3.md"
+      ],
+      "elapsedMs": 128430,
+      "exitCode": 0,
+      "memoryMiB": 4356,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-review-r3.json",
+        "sha256": "4488e0334ab6bc0847094ae0def324649242fe32c97655d61bb0988d4600910d"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-review-r3.log",
+        "sha256": "0fd5622922115b35216a3a7e5af655962f64f7a67935362e297833f97a050539"
+      }
+    },
+    {
+      "name": "host-startup-native-r1",
+      "argv": [
+        "node",
+        "scripts/recovery-contract-matrix.mjs",
+        "--batch",
+        "--arm",
+        "candidate",
+        "--repeats",
+        "3",
+        "--windows",
+        "repeated-restart",
+        "--out",
+        "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1"
+      ],
+      "elapsedMs": 318434,
+      "exitCode": 0,
+      "memoryMiB": 4807,
+      "minimumObservedMiB": 101,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1.json",
+        "sha256": "50a4b8823554f1e56e78ae3cbd514b9236b707290495db6efebf75be6b58fff8"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1.log",
+        "sha256": "78c485080a4892d01d2c66ca8ab22ba35a5c93c72b0fd18b19467ca415ee3af3"
+      }
+    },
+    {
+      "name": "host-startup-desktop",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "elapsedMs": 54580,
+      "exitCode": 0,
+      "memoryMiB": 4435,
+      "minimumObservedMiB": 857,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-desktop.json",
+        "sha256": "89f02694585030e56b97b09510a933f0a7af2175b136701a29cefbde5cc7792a"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-desktop.log",
+        "sha256": "a7078957bedfee786017ebd1ffd836e93e4d6307f050ee4ce6e82c131fa433d7"
+      }
+    }
+  ],
+  "unit": {
+    "passed": 30,
+    "failed": 0,
+    "receipt": {
+      "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-green-4.tests.json",
+      "sha256": "b524158fedf5fdaba6c80cc926419b99efb164f5f529d9723532b8aa93ca1726"
+    },
+    "initialRed": {
+      "passed": 5,
+      "failed": 3,
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-red.tests.json",
+        "sha256": "214585ad5570d1a568c7b2fcdadd6a26ea78df36eeeb30d204fee8ebc70e37bd"
+      }
+    }
+  },
+  "review": {
+    "engine": "codex",
+    "model": "gpt-6.1-sol",
+    "ownerSelectedModelOverride": true,
+    "findingCount": 0,
+    "receipt": {
+      "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\review-result-r3.json",
+      "sha256": "72a1e114c4d7744f428a58c98cfd8d98639179ca484dd3d0d2aed17b8e611c82"
+    },
+    "previousFinding": {
+      "disposition": "accepted and fixed; startup scope test now has two IDs",
+      "receipt": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\review-result-r1.json",
+        "sha256": "f9babac4873db7724ceb5c43e03063515ccaf27cd43a72efe4a02d258ed75592"
+      }
+    },
+    "failedSameModelAttempt": {
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "stage": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-review-r2.json",
+        "sha256": "61254004610d92b19d3bacf231dfad7a62b35a4e548670308faa56f6ca89eb81"
+      },
+      "log": {
+        "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-review-r2.log",
+        "sha256": "b8f6b583368dffbff4122307f4cd6e0ccef803f6c7cbbdcf111abe51fc16e043"
+      },
+      "serviceErrors": [
+        403,
+        429
+      ]
+    }
+  },
+  "timeFormatBenchmark": {
+    "receipt": {
+      "file": "D:/tmp/g3-registry-view-20261119-01a1f21b/time-format-benchmark/report.json",
+      "sha256": "dbb130ab4d4a555176c64d8041925528039c5b22e355f0c908463c6721418edf"
+    },
+    "hostSettingReadback": {
+      "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-time-setting-readback.json",
+      "sha256": "a2d6b0b4b1bfb0c134ce0c4981c46429047a1f09d1f56da282ffa62e08067b7d"
+    }
+  },
+  "typecheck": {
+    "cacheEnabled": false,
+    "durationMs": 22008,
+    "budgetMs": 45000,
+    "passed": true
+  },
+  "desktop": {
+    "durationMs": 54580,
+    "budgetMs": 58000,
+    "passed": true
+  },
+  "native": {
+    "correct": 3,
+    "duplicate": 0,
+    "lost": 0,
+    "memoryAtStartMiB": 4807,
+    "minimumObservedMiB": 101,
+    "fullFrozenP95LowerBoundMs": 34271.200000000004,
+    "lowerBoundMethod": "45 frozen latency slots; all 42 missing slots set to zero; interpolate the 95th percentile at sorted index 41.8",
+    "rows": [
+      {
+        "index": 0,
+        "latencyMs": 107062,
+        "phases": [
+          {
+            "pid": 23244,
+            "toDecisionMs": 33661,
+            "afterDecisionMs": 18450
+          },
+          {
+            "pid": 43344,
+            "toDecisionMs": 35337,
+            "afterDecisionMs": 4103
+          },
+          {
+            "pid": 42388,
+            "toDecisionMs": 8374,
+            "afterDecisionMs": 7137
+          }
+        ],
+        "startups": [
+          {
+            "configSyncMs": 672,
+            "spawnToReadyMs": 35623,
+            "readyToConnectMs": 2324,
+            "totalMs": 38619
+          },
+          {
+            "configSyncMs": 62475,
+            "spawnToReadyMs": 14250,
+            "readyToConnectMs": 3200,
+            "totalMs": 79925
+          },
+          {
+            "configSyncMs": 226,
+            "spawnToReadyMs": 6327,
+            "readyToConnectMs": 3488,
+            "totalMs": 10041
+          }
+        ],
+        "receipt": {
+          "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\trial-repeated-restart-0.json",
+          "sha256": "8525dbf6681aef0b06bd640165c0ba447121eff66474925dfd38ea5be1a7b242"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-0\\task-owner.json",
+            "sha256": "016124d3ce075796a51691d2c42182e97a0315f781b9f5f34e24a96514849562",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-0\\before.json",
+            "sha256": "834e78b684d280dd9f89197bd43470fa8a667c210faabbca731b11db4ea29d8f",
+            "bytes": 81876
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-0\\crash-0.json",
+            "sha256": "429b6e6eb6d6e92a51e54b23de145c82e1d13a285da6d2972ba628b6fea6532f",
+            "bytes": 86780
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-0\\crash-1.json",
+            "sha256": "f2ba5f1dd82a0d92f1917747ce6c40f9632cb4ff08146e82fd2422a523eda377",
+            "bytes": 90558
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-0\\crash-2.json",
+            "sha256": "2cbe194c82e5dd407202272b72c8d7313f76c54ad153a4f3d7e3fe7cc75f79db",
+            "bytes": 90556
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-0\\after.json",
+            "sha256": "74a8dd0cc87374023242b591d7278d1746ed7cd364edc35aa1a9a9cee61f9f52",
+            "bytes": 98442
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "latencyMs": 42839,
+        "phases": [
+          {
+            "pid": 23656,
+            "toDecisionMs": 7728,
+            "afterDecisionMs": 3712
+          },
+          {
+            "pid": 41576,
+            "toDecisionMs": 9369,
+            "afterDecisionMs": 3903
+          },
+          {
+            "pid": 31648,
+            "toDecisionMs": 12021,
+            "afterDecisionMs": 6106
+          }
+        ],
+        "startups": [
+          {
+            "configSyncMs": 533,
+            "spawnToReadyMs": 6097,
+            "readyToConnectMs": 750,
+            "totalMs": 7380
+          },
+          {
+            "configSyncMs": 146,
+            "spawnToReadyMs": 6586,
+            "readyToConnectMs": 1444,
+            "totalMs": 8176
+          },
+          {
+            "configSyncMs": 198,
+            "spawnToReadyMs": 7863,
+            "readyToConnectMs": 2978,
+            "totalMs": 11039
+          },
+          {
+            "configSyncMs": 434,
+            "spawnToReadyMs": 9597,
+            "readyToConnectMs": 2446,
+            "totalMs": 12477
+          }
+        ],
+        "receipt": {
+          "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\trial-repeated-restart-1.json",
+          "sha256": "cebcb97f32365a49df8dc4a7912288671b289df128bc0bafb165a94a2842b017"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-1\\task-owner.json",
+            "sha256": "6b0ca068726ccdbcfcb9f1a2ff29fc5343256f76fce5b7bbd3df600bb4225aab",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-1\\before.json",
+            "sha256": "7b315e90dedbb6bc70b511b689c6c054758c799159bdd98ea2ff6290914fcc04",
+            "bytes": 81876
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-1\\crash-0.json",
+            "sha256": "beda82c5d4c098543912a609318faa39d050a2108534ace4c31528af3346cb03",
+            "bytes": 86780
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-1\\crash-1.json",
+            "sha256": "f66b54de0a04aaf89fc2ddd9edb86984b212780f5c3612279468cf0899002976",
+            "bytes": 90558
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-1\\crash-2.json",
+            "sha256": "e55b0e2e8f7e46097cfdc796c1f9ece7a902bb642b09414fd565c93368bf8cbd",
+            "bytes": 90556
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-1\\after.json",
+            "sha256": "d28eb803b38691bb0d73568290659b6b3a0252c170a9962ad08bf21c9f74b7f2",
+            "bytes": 98442
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "latencyMs": 64295,
+        "phases": [
+          {
+            "pid": 43812,
+            "toDecisionMs": 18650,
+            "afterDecisionMs": 9711
+          },
+          {
+            "pid": 18024,
+            "toDecisionMs": 15462,
+            "afterDecisionMs": 3517
+          },
+          {
+            "pid": 39956,
+            "toDecisionMs": 9433,
+            "afterDecisionMs": 7522
+          }
+        ],
+        "startups": [
+          {
+            "configSyncMs": 448,
+            "spawnToReadyMs": 6389,
+            "readyToConnectMs": 689,
+            "totalMs": 7526
+          },
+          {
+            "configSyncMs": 156,
+            "spawnToReadyMs": 17551,
+            "readyToConnectMs": 5796,
+            "totalMs": 23503
+          },
+          {
+            "configSyncMs": 308,
+            "spawnToReadyMs": 13395,
+            "readyToConnectMs": 1481,
+            "totalMs": 15184
+          },
+          {
+            "configSyncMs": 165,
+            "spawnToReadyMs": 7630,
+            "readyToConnectMs": 1426,
+            "totalMs": 9221
+          }
+        ],
+        "receipt": {
+          "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\trial-repeated-restart-2.json",
+          "sha256": "f060d086ea1b3448538e1cc4177ceb73d303a31c11cac553b91620aa8713bffe"
+        },
+        "artifacts": [
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-2\\task-owner.json",
+            "sha256": "3eef8171f5923901fbf62f2a8f8c73f429b639ea6beb6a89c1d85d4c79d33094",
+            "bytes": 1534
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-2\\before.json",
+            "sha256": "647da423c81e5c8b97e4c9c1ca02c60da200adf67e8b4ac3dbb40104d4b37b8b",
+            "bytes": 81876
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-2\\crash-0.json",
+            "sha256": "7f329bd3fce8daaa67376595599b5d4c205b7955ed4f7c54c29f615a0c09f10e",
+            "bytes": 86780
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-2\\crash-1.json",
+            "sha256": "24457ac11e535564f919af94e7915d31bf843492460608e8ed2d35ebaa0027b5",
+            "bytes": 90558
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-2\\crash-2.json",
+            "sha256": "ef528730c28dd0b0042ef4b5f7f0522f409ca8daa30e4084b73bcc786386509e",
+            "bytes": 90556
+          },
+          {
+            "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\candidate\\evidence-repeated-restart-2\\after.json",
+            "sha256": "6fa16b116e93b922e28f9891deba3835f3c9803e000b845d37c4775c682e64d7",
+            "bytes": 98442
+          }
+        ]
+      }
+    ],
+    "matrix": {
+      "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1\\matrix-run.json",
+      "sha256": "f7e23f92813daca230d06f394bf41dfe7ded421de5d8220d6fab268829725df9"
+    },
+    "readback": {
+      "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-r1-readback.json",
+      "sha256": "3ce329fa20b08b44102989d5820574175db1ccfc6615b47f7acdd67252a459b4"
+    },
+    "interruptedAttempt": {
+      "file": "D:\\tmp\\g3-host-startup-20261119-01a1f21b\\host-startup-native-interruption.json",
+      "sha256": "9a8fe284047562d5d2c7106493c82d58a64ef276504a4df90c60eeca0841fe7b"
+    }
+  },
+  "remaining": [
+    "5/15-second recovery latency gates",
+    "same-candidate full frozen windows and at least thirty live-provider pairs",
+    "second legacy repeat consistency",
+    "same-candidate full source and packaged gates"
+  ],
+  "rawRoot": "D:/tmp/g3-host-startup-20261119-01a1f21b"
+}

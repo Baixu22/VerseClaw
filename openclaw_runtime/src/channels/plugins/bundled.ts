@@ -4,7 +4,6 @@
  * Loads generated bundled channel entries, setup metadata, secrets, and legacy migration hooks.
  */
 import path from "node:path";
-import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { extractErrorCode, formatErrorMessage } from "../../infra/errors.js";
 import { isPathInside } from "../../infra/path-guards.js";
@@ -17,11 +16,11 @@ import type {
 import {
   listBundledChannelPluginMetadata,
   resolveBundledChannelGeneratedPath,
+  shouldIncludeBundledChannelSetupFeatureForConfig,
   type BundledChannelPluginMetadata,
 } from "../../plugins/bundled-channel-runtime.js";
-import { normalizePluginsConfig } from "../../plugins/config-state.js";
-import { passesManifestOwnerBasePolicy } from "../../plugins/manifest-owner-policy.js";
 import { unwrapDefaultModuleExport } from "../../plugins/module-export.js";
+import { registerPluginMetadataProcessMemoLifecycleClear } from "../../plugins/plugin-metadata-lifecycle.js";
 import {
   getCachedPluginModuleLoader,
   type PluginModuleLoaderCache,
@@ -97,7 +96,7 @@ type BundledChannelLoadContext = {
     NonNullable<ChannelPlugin["config"]["inspectAccount"]> | null
   >;
   metadataById: Map<ChannelId, BundledChannelPluginMetadata | null>;
-  metadataLoaded: boolean;
+  metadata: readonly BundledChannelPluginMetadata[] | undefined;
 };
 
 const log = createSubsystemLogger("channels");
@@ -106,6 +105,13 @@ const MAX_BUNDLED_CHANNEL_BOUNDARY_ROOTS = 256;
 const bundledChannelLoadContextsByRoot = new Map<string, BundledChannelLoadContext>();
 const bundledChannelBoundaryRoots = new Map<string, string>();
 const sourceBundledEntryLoaderCache: PluginModuleLoaderCache = new Map();
+
+// Registry refresh and Gateway teardown invalidate metadata and its loaded entries together.
+registerPluginMetadataProcessMemoLifecycleClear(() => {
+  bundledChannelLoadContextsByRoot.clear();
+  bundledChannelBoundaryRoots.clear();
+  sourceBundledEntryLoaderCache.clear();
+});
 
 function isSourceModulePath(modulePath: string): boolean {
   return /\.(?:c|m)?tsx?$/iu.test(modulePath);
@@ -404,7 +410,7 @@ function createBundledChannelLoadContext(): BundledChannelLoadContext {
     lazySetupSecretsById: new Map(),
     lazyAccountInspectorsById: new Map(),
     metadataById: new Map(),
-    metadataLoaded: false,
+    metadata: undefined,
   };
 }
 
@@ -438,71 +444,47 @@ function resolveActiveBundledChannelLoadScope(env: NodeJS.ProcessEnv = process.e
 }
 
 function listBundledChannelMetadata(
-  rootScope = resolveBundledChannelRootScope(),
+  rootScope: BundledChannelRootScope,
+  loadContext: BundledChannelLoadContext,
 ): readonly BundledChannelPluginMetadata[] {
+  if (loadContext.metadata) {
+    return loadContext.metadata;
+  }
   const scanDir = resolveBundledChannelScanDir(rootScope);
-  return listBundledChannelPluginMetadata({
+  const metadata = listBundledChannelPluginMetadata({
     rootDir: rootScope.packageRoot,
     ...(scanDir ? { scanDir } : {}),
     includeChannelConfigs: false,
     includeSyntheticChannelConfigs: false,
   }).filter((metadata) => (metadata.manifest.channels?.length ?? 0) > 0);
+  // Listing and ID lookup share the root-owned view used by loaded entries.
+  // Keep the original list so channel aliases do not duplicate plugin identities.
+  for (const entry of metadata) {
+    for (const id of new Set([entry.manifest.id, ...(entry.manifest.channels ?? [])])) {
+      loadContext.metadataById.set(id, entry);
+    }
+  }
+  loadContext.metadata = metadata;
+  return metadata;
 }
 
 function listBundledChannelPluginIdsForRoot(
   rootScope: BundledChannelRootScope,
+  loadContext: BundledChannelLoadContext,
 ): readonly ChannelId[] {
-  return listBundledChannelMetadata(rootScope)
+  return listBundledChannelMetadata(rootScope, loadContext)
     .map((metadata) => metadata.manifest.id)
     .toSorted((left, right) => left.localeCompare(right));
 }
 
-function shouldIncludeBundledChannelSetupFeatureForConfig(params: {
-  metadata: BundledChannelPluginMetadata;
-  config?: OpenClawConfig;
-}): boolean {
-  if (!params.config) {
-    return true;
-  }
-  const pluginId = params.metadata.manifest.id;
-  if (
-    !passesManifestOwnerBasePolicy({
-      plugin: { id: pluginId },
-      normalizedConfig: normalizePluginsConfig(params.config.plugins),
-      allowRestrictiveAllowlistBypass: true,
-    })
-  ) {
-    return false;
-  }
-
-  let hasExplicitChannelDisable = false;
-  for (const channelId of params.metadata.manifest.channels ?? [pluginId]) {
-    const normalizedChannelId = normalizeOptionalLowercaseString(channelId);
-    if (!normalizedChannelId) {
-      continue;
-    }
-    const channelConfig = (params.config.channels as Record<string, unknown> | undefined)?.[
-      normalizedChannelId
-    ];
-    if (!channelConfig || typeof channelConfig !== "object" || Array.isArray(channelConfig)) {
-      continue;
-    }
-    if ((channelConfig as { enabled?: unknown }).enabled === false) {
-      hasExplicitChannelDisable = true;
-      continue;
-    }
-    return true;
-  }
-
-  return !hasExplicitChannelDisable;
-}
-
 function listBundledChannelPluginIdsForSetupFeature(
   rootScope: BundledChannelRootScope,
+  loadContext: BundledChannelLoadContext,
   feature: keyof NonNullable<BundledChannelSetupEntryRuntimeContract["features"]>,
   options: { config?: OpenClawConfig } = {},
 ): readonly ChannelId[] {
-  const hinted = listBundledChannelMetadata(rootScope)
+  const metadata = listBundledChannelMetadata(rootScope, loadContext);
+  const hinted = metadata
     .filter(
       (metadata) =>
         metadata.packageManifest?.setupFeatures?.[feature] === true &&
@@ -515,7 +497,7 @@ function listBundledChannelPluginIdsForSetupFeature(
     .toSorted((left, right) => left.localeCompare(right));
   return hinted.length > 0
     ? hinted
-    : listBundledChannelMetadata(rootScope)
+    : metadata
         .filter((metadata) =>
           shouldIncludeBundledChannelSetupFeatureForConfig({
             metadata,
@@ -527,7 +509,8 @@ function listBundledChannelPluginIdsForSetupFeature(
 }
 
 export function listBundledChannelPluginIds(): readonly ChannelId[] {
-  return listBundledChannelPluginIdsForRoot(resolveBundledChannelRootScope());
+  const { rootScope, loadContext } = resolveActiveBundledChannelLoadScope();
+  return listBundledChannelPluginIdsForRoot(rootScope, loadContext);
 }
 
 export function hasBundledChannelPackageSetupFeature(
@@ -550,17 +533,7 @@ function resolveBundledChannelMetadata(
   if (loadContext.metadataById.has(id)) {
     return loadContext.metadataById.get(id) ?? undefined;
   }
-  if (loadContext.metadataLoaded) {
-    loadContext.metadataById.set(id, null);
-    return undefined;
-  }
-  for (const metadata of listBundledChannelMetadata(rootScope)) {
-    const ids = new Set<ChannelId>([metadata.manifest.id, ...(metadata.manifest.channels ?? [])]);
-    for (const metadataId of ids) {
-      loadContext.metadataById.set(metadataId, metadata);
-    }
-  }
-  loadContext.metadataLoaded = true;
+  listBundledChannelMetadata(rootScope, loadContext);
   const metadata = loadContext.metadataById.get(id);
   if (metadata) {
     return metadata;
@@ -802,7 +775,7 @@ function getBundledChannelSetupSecretsForRoot(
 
 export function listBundledChannelPlugins(): readonly ChannelPlugin[] {
   const { rootScope, loadContext } = resolveActiveBundledChannelLoadScope();
-  return listBundledChannelPluginIdsForRoot(rootScope).flatMap((id) => {
+  return listBundledChannelPluginIdsForRoot(rootScope, loadContext).flatMap((id) => {
     const plugin = getBundledChannelPluginForRoot(id, rootScope, loadContext);
     return plugin ? [plugin] : [];
   });
@@ -810,7 +783,7 @@ export function listBundledChannelPlugins(): readonly ChannelPlugin[] {
 
 export function listBundledChannelSetupPlugins(): readonly ChannelPlugin[] {
   const { rootScope, loadContext } = resolveActiveBundledChannelLoadScope();
-  return listBundledChannelPluginIdsForRoot(rootScope).flatMap((id) => {
+  return listBundledChannelPluginIdsForRoot(rootScope, loadContext).flatMap((id) => {
     const plugin = getBundledChannelSetupPluginForRoot(id, rootScope, loadContext);
     return plugin ? [plugin] : [];
   });
@@ -821,7 +794,7 @@ export function listBundledChannelSetupPluginsByFeature(
   options: { config?: OpenClawConfig } = {},
 ): readonly ChannelPlugin[] {
   const { rootScope, loadContext } = resolveActiveBundledChannelLoadScope();
-  return listBundledChannelPluginIdsForSetupFeature(rootScope, feature, {
+  return listBundledChannelPluginIdsForSetupFeature(rootScope, loadContext, feature, {
     config: options.config,
   }).flatMap((id) => {
     const setupEntry = getLazyGeneratedBundledChannelSetupEntryForRoot(id, rootScope, loadContext);
@@ -839,9 +812,14 @@ export function listBundledChannelLegacySessionSurfaces(
   } = {},
 ): readonly BundledChannelLegacySessionSurface[] {
   const { rootScope, loadContext } = resolveActiveBundledChannelLoadScope();
-  return listBundledChannelPluginIdsForSetupFeature(rootScope, "legacySessionSurfaces", {
-    config: options.config,
-  }).flatMap((id) => {
+  return listBundledChannelPluginIdsForSetupFeature(
+    rootScope,
+    loadContext,
+    "legacySessionSurfaces",
+    {
+      config: options.config,
+    },
+  ).flatMap((id) => {
     const setupEntry = getLazyGeneratedBundledChannelSetupEntryForRoot(id, rootScope, loadContext);
     const surface = setupEntry?.loadLegacySessionSurface?.();
     if (surface) {
@@ -861,9 +839,14 @@ export function listBundledChannelLegacyStateMigrationDetectors(
   } = {},
 ): readonly BundledChannelLegacyStateMigrationDetector[] {
   const { rootScope, loadContext } = resolveActiveBundledChannelLoadScope();
-  return listBundledChannelPluginIdsForSetupFeature(rootScope, "legacyStateMigrations", {
-    config: options.config,
-  }).flatMap((id) => {
+  return listBundledChannelPluginIdsForSetupFeature(
+    rootScope,
+    loadContext,
+    "legacyStateMigrations",
+    {
+      config: options.config,
+    },
+  ).flatMap((id) => {
     const setupEntry = getLazyGeneratedBundledChannelSetupEntryForRoot(id, rootScope, loadContext);
     const detector = setupEntry?.loadLegacyStateMigrationDetector?.();
     if (detector) {

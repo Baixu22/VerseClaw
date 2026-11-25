@@ -1,12 +1,12 @@
 // Gateway health state builds snapshots, caches health probes, and broadcasts health/presence version changes.
 import type { Snapshot } from "../../../packages/gateway-protocol/src/index.js";
-import { resolveDefaultAgentId } from "../../agents/agent-scope.js";
-import { getHealthSnapshot, type HealthSummary } from "../health-summary.js";
+import { resolveDefaultAgentId } from "../../agents/agent-scope-config.js";
+import type { HealthSummary } from "../health-summary.js";
 import { createConfigIO, getRuntimeConfig } from "../../config/io.js";
 import { STATE_DIR } from "../../config/paths.js";
-import { resolveMainSessionKey } from "../../config/sessions.js";
+import { resolveMainSessionKey } from "../../config/sessions/main-session.js";
 import { listSystemPresence } from "../../infra/system-presence.js";
-import { getUpdateAvailable } from "../../infra/update-startup.js";
+import { getUpdateAvailable } from "../../infra/update-available-state.js";
 import { normalizeMainKey } from "../../routing/session-key.js";
 import { resolveGatewayAuth } from "../auth.js";
 import type { ChannelRuntimeSnapshot } from "../server-channel-runtime.types.js";
@@ -91,6 +91,8 @@ export async function refreshGatewayHealthSnapshot(opts?: {
         runtimeSnapshot = undefined;
       }
       const eventLoop = opts?.getEventLoopHealth?.();
+      // Handshake snapshots use cached health; load probes only when a refresh starts.
+      const { getHealthSnapshot } = await import("../health-summary.js");
       const snap = await getHealthSnapshot({
         probe: opts?.probe,
         includeSensitive,

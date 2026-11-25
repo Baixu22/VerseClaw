@@ -1,10 +1,7 @@
 import fsp from "node:fs/promises";
-import { parseAgentSessionKey } from "../routing/session-key.js";
-import { resolveSessionFilePath, resolveSessionFilePathOptions } from "../config/sessions/paths.js";
 import { resolveTrajectoryRuntimeFile } from "../trajectory/runtime-file.js";
 import { safeParseTrajectoryEvent } from "../trajectory/schema.js";
 import type { TrajectoryReadableEvent } from "../trajectory/types.js";
-import { loadSessionEntry } from "./session-utils.js";
 import type { GatewayBroadcastToConnIdsFn } from "./server-broadcast-types.js";
 
 const MAX_PAGE_EVENTS = 1_000;
@@ -61,7 +58,8 @@ function normalizeInteger(value: unknown, fallback: number, name: string): numbe
 
 function resolveReadRange(params: ReadParams): { fromSeq: number; toSeq?: number; limit: number } {
   const fromSeq = normalizeInteger(params.fromSeq, 0, "fromSeq");
-  const toSeq = params.toSeq === undefined ? undefined : normalizeInteger(params.toSeq, -1, "toSeq");
+  const toSeq =
+    params.toSeq === undefined ? undefined : normalizeInteger(params.toSeq, -1, "toSeq");
   const limit = normalizeInteger(params.limit, 200, "limit");
   if (fromSeq < 0 || (toSeq !== undefined && (toSeq < 0 || toSeq < fromSeq))) {
     throw new TrajectoryGatewayRequestError(
@@ -76,27 +74,6 @@ function resolveReadRange(params: ReadParams): { fromSeq: number; toSeq?: number
     );
   }
   return { fromSeq, toSeq, limit };
-}
-
-function resolveSessionSource(sessionKey: string): { sessionId: string; sessionFile: string } {
-  const loaded = loadSessionEntry(sessionKey);
-  const parsed = parseAgentSessionKey(sessionKey);
-  const sessionId = loaded.entry?.sessionId ?? parsed?.rest ?? sessionKey;
-  try {
-    const pathOptions = resolveSessionFilePathOptions({
-      storePath: loaded.storePath,
-      agentId: parsed?.agentId,
-    });
-    return {
-      sessionId,
-      sessionFile: resolveSessionFilePath(sessionId, loaded.entry, pathOptions),
-    };
-  } catch (error) {
-    throw new TrajectoryGatewayRequestError(
-      "invalid-session",
-      `Invalid session key ${sessionKey}: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
 }
 
 async function readRuntimeRows(params: {
@@ -146,7 +123,9 @@ export async function readTrajectoryPage(params: ReadParams): Promise<Trajectory
     throw new TrajectoryGatewayRequestError("invalid-session", "sessionKey is required");
   }
   const { fromSeq, toSeq, limit } = resolveReadRange(params);
-  const source = resolveSessionSource(sessionKey);
+  // Connection cleanup uses this module before any trajectory read is requested.
+  const { resolveTrajectorySessionSource } = await import("./trajectory-gateway.runtime.js");
+  const source = resolveTrajectorySessionSource(sessionKey);
   const runtimeFile = await resolveTrajectoryRuntimeFile({
     sessionFile: source.sessionFile,
     sessionId: source.sessionId,
@@ -182,9 +161,10 @@ export async function readTrajectoryPage(params: ReadParams): Promise<Trajectory
   );
   const events = eligible.slice(0, limit);
   const first = events[0];
-  const gap = first && first.seq > fromSeq + 1
-    ? { expectedSeq: fromSeq + 1, actualSeq: first.seq, fromSeq }
-    : undefined;
+  const gap =
+    first && first.seq > fromSeq + 1
+      ? { expectedSeq: fromSeq + 1, actualSeq: first.seq, fromSeq }
+      : undefined;
   const nextSeq = events.at(-1)?.seq ?? fromSeq;
   return {
     sessionKey,
@@ -213,7 +193,10 @@ type TrajectorySubscription = {
 
 const subscriptions = new Map<string, TrajectorySubscription>();
 
-function emitSubscriptionGap(subscription: TrajectorySubscription, page: TrajectoryGatewayReadResult): void {
+function emitSubscriptionGap(
+  subscription: TrajectorySubscription,
+  page: TrajectoryGatewayReadResult,
+): void {
   const gap = page.gap;
   if (!gap) {
     return;

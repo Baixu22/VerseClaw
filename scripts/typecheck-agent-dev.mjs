@@ -27,8 +27,7 @@ const CACHE_INPUTS = [
   'tests',
   'extensions',
   'resources/openclaw-plugins',
-  'packages/versebrowser/package.json',
-  'packages/versebrowser/src',
+  'packages/versebrowser',
   'packages/versebrowser/dist',
   'openclaw_runtime/package.json',
   'openclaw_runtime/pnpm-lock.yaml',
@@ -66,9 +65,20 @@ const force = args.has('--force');
 const cacheEnabled = (args.has('--cache') || force) && !noCache;
 const startedAt = performance.now();
 
-const bridge = await run('node', ['scripts/generate-ext-bridge.mjs']);
-if (bridge.exitCode !== 0) {
-  process.exitCode = bridge.exitCode;
+// Refresh declarations before resolving either the compiler graphs or a cached verdict.
+const browser = await run('node', ['scripts/build-versebrowser.mjs']);
+const prerequisites = [browser];
+if (browser.exitCode === 0) prerequisites.push(await run('node', ['scripts/generate-ext-bridge.mjs']));
+const failedPrerequisite = prerequisites.find((result) => result.exitCode !== 0);
+if (failedPrerequisite) {
+  console.log(JSON.stringify({
+    success: false,
+    mode: 'parallel',
+    cache: { enabled: cacheEnabled, status: 'not-checked', key: null, inputCount: 0, report: CACHE_REPORT },
+    totalDurationMs: Math.round(performance.now() - startedAt),
+    results: prerequisites,
+  }, null, 2));
+  process.exitCode = failedPrerequisite.exitCode;
 } else {
   const fingerprint = cacheEnabled ? await createTypecheckFingerprint() : { key: null, files: [] };
   const cached = cacheEnabled && !force
@@ -76,7 +86,7 @@ if (bridge.exitCode !== 0) {
     : null;
 
   if (cached) {
-    const report = createCacheHitReport({ bridge, cached, fingerprint, startedAt });
+    const report = createCacheHitReport({ prerequisites, cached, fingerprint, startedAt });
     console.log(JSON.stringify(report, null, 2));
   } else {
     const [nodeCheck, webCheck] = await Promise.all([
@@ -85,7 +95,7 @@ if (bridge.exitCode !== 0) {
     ]);
     // Avoid loading the app and test compiler graphs into memory together.
     const testCheck = await runTestCheck('pnpm', ['run', 'typecheck:test']);
-    const results = [bridge, nodeCheck, webCheck, testCheck];
+    const results = [...prerequisites, nodeCheck, webCheck, testCheck];
     const success = results.every((result) => result.exitCode === 0);
     const report = {
       success,
@@ -99,7 +109,7 @@ if (bridge.exitCode !== 0) {
         report: CACHE_REPORT,
       },
       totalDurationMs: Math.round(performance.now() - startedAt),
-      coverageNote: 'Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.',
+      coverageNote: 'Checks node, web and tests after building VerseBrowser declarations and generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.',
       results,
     };
     console.log(JSON.stringify(report, null, 2));
@@ -160,7 +170,7 @@ function runTestCheck(command, args) {
       const errorLog = resolve(CACHE_DIR, 'test-typecheck-errors.log');
       const result = {
         commandLine,
-        exitCode: code ?? 1,
+        exitCode: errorCount > 0 ? (code || 1) : (code ?? 1),
         durationMs: Math.round(performance.now() - commandStartedAt),
         observationMode: false,
         errorCount,
@@ -276,9 +286,9 @@ async function readUsableCache(key) {
   return null;
 }
 
-function createCacheHitReport({ bridge, cached, fingerprint, startedAt }) {
+function createCacheHitReport({ prerequisites, cached, fingerprint, startedAt }) {
   const cachedPhases = cached.results
-    .filter((result) => result.commandLine !== 'node scripts/generate-ext-bridge.mjs')
+    .filter((result) => !prerequisites.some((current) => current.commandLine === result.commandLine))
     .map((result) => ({
       commandLine: result.commandLine,
       exitCode: 0,
@@ -302,7 +312,7 @@ function createCacheHitReport({ bridge, cached, fingerprint, startedAt }) {
     },
     totalDurationMs: Math.round(performance.now() - startedAt),
     coverageNote: 'Reused successful node/web/test checks with unchanged source inputs; run pnpm run typecheck for an uncached full gate.',
-    results: [bridge, ...cachedPhases],
+    results: [...prerequisites, ...cachedPhases],
   };
 }
 

@@ -126,43 +126,17 @@ function normalizePathForBoundary(candidate: string): string {
   }
 }
 
-function findNearestPackageRoot(modulePath: string): string {
-  let cursor = path.dirname(path.resolve(modulePath));
-  for (let i = 0; i < 12; i += 1) {
-    if (fs.existsSync(path.join(cursor, "package.json"))) {
-      return cursor;
-    }
-    const parent = path.dirname(cursor);
-    if (parent === cursor) {
-      break;
-    }
-    cursor = parent;
-  }
-  return path.dirname(path.resolve(modulePath));
-}
-
-function findBundledPluginRoot(modulePath: string): string | undefined {
-  const resolvedModulePath = normalizePathForBoundary(modulePath);
-  const packageRoot = normalizePathForBoundary(resolveLoaderPackageRootFromModulePath(modulePath));
-  for (const relativeRoot of ["extensions", "dist/extensions", "dist-runtime/extensions"]) {
-    const bundledRoot = path.join(packageRoot, relativeRoot);
-    const relative = path.relative(bundledRoot, resolvedModulePath);
-    if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
-      continue;
-    }
-    const [pluginId] = relative.split(path.sep);
-    if (pluginId) {
-      return path.join(bundledRoot, pluginId);
-    }
-  }
-  return undefined;
-}
-
-function resolveLoaderPackageRootFromModulePath(modulePath: string): string {
-  let cursor = path.dirname(path.resolve(modulePath));
+function resolveNativePackageRoots(modulePath: string): {
+  packageRoot: string;
+  nearestPackageRoot: string;
+} {
+  const moduleDirectory = path.dirname(path.resolve(modulePath));
+  let cursor = moduleDirectory;
+  let nearestPackageRoot: string | undefined;
   for (let i = 0; i < 12; i += 1) {
     const packageJsonPath = path.join(cursor, "package.json");
     if (fs.existsSync(packageJsonPath)) {
+      nearestPackageRoot ??= cursor;
       try {
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as {
           bin?: unknown;
@@ -174,7 +148,7 @@ function resolveLoaderPackageRootFromModulePath(modulePath: string): string {
             packageJson.bin !== null &&
             typeof (packageJson.bin as { openclaw?: unknown }).openclaw === "string")
         ) {
-          return cursor;
+          return { packageRoot: cursor, nearestPackageRoot };
         }
       } catch {
         // Keep walking; malformed package metadata should not widen alias scope.
@@ -186,11 +160,27 @@ function resolveLoaderPackageRootFromModulePath(modulePath: string): string {
     }
     cursor = parent;
   }
-  return findNearestPackageRoot(modulePath);
+  const fallbackRoot = nearestPackageRoot ?? moduleDirectory;
+  return { packageRoot: fallbackRoot, nearestPackageRoot: fallbackRoot };
 }
 
 function resolveAllowedParentRoot(modulePath: string): string {
-  return findBundledPluginRoot(modulePath) ?? findNearestPackageRoot(modulePath);
+  const resolvedModulePath = normalizePathForBoundary(modulePath);
+  const { packageRoot, nearestPackageRoot } = resolveNativePackageRoots(modulePath);
+  const normalizedPackageRoot = normalizePathForBoundary(packageRoot);
+  for (const relativeRoot of ["extensions", "dist/extensions", "dist-runtime/extensions"]) {
+    const bundledRoot = path.join(normalizedPackageRoot, relativeRoot);
+    const relative = path.relative(bundledRoot, resolvedModulePath);
+    if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
+      continue;
+    }
+    const [pluginId] = relative.split(path.sep);
+    if (pluginId) {
+      return path.join(bundledRoot, pluginId);
+    }
+  }
+  // External plugins keep their own nearest package scope, even inside an OpenClaw tree.
+  return nearestPackageRoot;
 }
 
 function resolveAllowedParentRoots(
@@ -206,8 +196,8 @@ function resolveAllowedParentRoots(
   return [...roots];
 }
 
-function isWithinRoot(candidate: string, root: string): boolean {
-  const relative = path.relative(root, normalizePathForBoundary(candidate));
+function isWithinRoot(normalizedCandidate: string, root: string): boolean {
+  const relative = path.relative(root, normalizedCandidate);
   return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
@@ -240,7 +230,8 @@ function resolveAliasTargetForParentPath(
   if (!entries || !parentFilename) {
     return undefined;
   }
-  return entries.find((entry) => isWithinRoot(parentFilename, entry.parentRoot))?.target;
+  const normalizedParentFilename = normalizePathForBoundary(parentFilename);
+  return entries.find((entry) => isWithinRoot(normalizedParentFilename, entry.parentRoot))?.target;
 }
 
 function listPluginSdkNativeAliases(
@@ -278,7 +269,7 @@ function listInternalCorePackageNativeAliases(
   target: string;
   parentRoots: string[];
 }> {
-  const packageRoot = resolveLoaderPackageRootFromModulePath(resolveLoaderModulePath(options));
+  const { packageRoot } = resolveNativePackageRoots(resolveLoaderModulePath(options));
   const parentRoots = ["src", "scripts", "packages", "test"]
     .map((segment) => path.join(packageRoot, segment))
     .filter((candidate) => fs.existsSync(candidate))
@@ -368,6 +359,9 @@ function clearNativeAliasesForParentRoots(parentRoots: readonly string[]): void 
   }
   const parentRootSet = new Set(parentRoots);
   for (const [request, entries] of pluginSdkNativeAliases) {
+    if (!entries.some((entry) => parentRootSet.has(entry.parentRoot))) {
+      continue;
+    }
     const nextEntries = entries.filter((entry) => !parentRootSet.has(entry.parentRoot));
     if (nextEntries.length === 0) {
       pluginSdkNativeAliases.delete(request);

@@ -1,0 +1,506 @@
+{
+  "schema": "G3ActivationProvenanceDevelopment/v1",
+  "codeCommit": "133a98d1fe8d72b46a9d2a943aa9b73a72727276",
+  "decision": "NO_GO",
+  "taskNode": "TF-0818",
+  "inputs": [
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "881e860d4070b5b96f0fe045e08a5057f528d6e520f42d66a94af8dc1d5064a7",
+      "gitBlob": "74d6a20ec22b5d202e797eb5e77b34e9b5d9119a",
+      "gitBlobSha256": "881e860d4070b5b96f0fe045e08a5057f528d6e520f42d66a94af8dc1d5064a7",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\README.ja-JP.md"
+    },
+    {
+      "file": "README.md",
+      "sha256": "7d5ff800b91eb0bf51feaad71c7d37084f8f477f6c32b31a91feba95f92d0b5e",
+      "gitBlob": "69d665d8c8068d420f3306b7ec1ad4e2ff2e0a72",
+      "gitBlobSha256": "7d5ff800b91eb0bf51feaad71c7d37084f8f477f6c32b31a91feba95f92d0b5e",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\README.md"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "0302aa4df60958c7f9a2c85343940ecd1d1aa474edfafc604bddae882724c83a",
+      "gitBlob": "d4fcaac7cc6bd33d2e4874c275ca76096355b676",
+      "gitBlobSha256": "0302aa4df60958c7f9a2c85343940ecd1d1aa474edfafc604bddae882724c83a",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\README.zh-CN.md"
+    },
+    {
+      "file": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "3c6b11f5524d89641ad2d48fee74e4ef0266a13c30a4f0e0f2a009858266c08c",
+      "gitBlob": "eb589dac41c3c0ea06a5f10c34b3e44305eeb966",
+      "gitBlobSha256": "3c6b11f5524d89641ad2d48fee74e4ef0266a13c30a4f0e0f2a009858266c08c",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\docs\\dev\\recovery-contract\\GA-READINESS-20261106.md"
+    },
+    {
+      "file": "harness/specs/rules/recovery-authority-owner-admission.md",
+      "sha256": "d68770fc93b571b00f88589ea7c734eab432d7de3f908bf951e8831d7481f806",
+      "gitBlob": "09312cb318685b1c03ecbaaa6f0c2e2690fdcb9c",
+      "gitBlobSha256": "d68770fc93b571b00f88589ea7c734eab432d7de3f908bf951e8831d7481f806",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\harness\\specs\\rules\\recovery-authority-owner-admission.md"
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "890fbc1acf62c21bca1ac662625f1834454a5298fb24aee4519e02acee50c3e9",
+      "gitBlob": "c1e34cc184299f845ce864dc1534c2f2954e2fe8",
+      "gitBlobSha256": "a826f8ca4c01e624f5cc6c63ca000f01c65ded9a505571598e738fd6a0ab7150",
+      "byteIdentical": false,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\harness\\specs\\tasks\\gateway-startup-performance.md"
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "7f0a7655edc106199acc0b48dfb7aca1e9a9695c81edeac33bd2feb82a58f2b0",
+      "gitBlob": "31c2531eae84d8340d47cd440b7176579f8f2090",
+      "gitBlobSha256": "7334571c98ba155b640c5db8219e2b5dc3b5d0e91934391984be5eb403358d72",
+      "byteIdentical": false,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\harness\\specs\\tasks\\recovery-authority-gated.md"
+    },
+    {
+      "file": "openclaw_runtime/src/agents/runtime-plugins.ts",
+      "sha256": "7075b8bf5b9ce70a3b486117d713651648881b83da888bd77d8a00657555efa3",
+      "gitBlob": "20bff600b82fd5ac6f025041e67f44ada06ec5f8",
+      "gitBlobSha256": "7075b8bf5b9ce70a3b486117d713651648881b83da888bd77d8a00657555efa3",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\openclaw_runtime\\src\\agents\\runtime-plugins.ts"
+    },
+    {
+      "file": "tests/unit/gateway-agent-activation-provenance.test.ts",
+      "sha256": "c06df3a15f872bcc15d5c836b029414e35ba74e2b60403991a5b1c8800390d64",
+      "gitBlob": "2a3257a733e498afcd77cdc2265bd6a88711b042",
+      "gitBlobSha256": "c06df3a15f872bcc15d5c836b029414e35ba74e2b60403991a5b1c8800390d64",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\immutable-source\\tests\\unit\\gateway-agent-activation-provenance.test.ts"
+    }
+  ],
+  "tests": {
+    "passed": 45,
+    "failed": 0,
+    "files": [
+      "tests/unit/gateway-agent-activation-provenance.test.ts",
+      "tests/unit/gateway-agent-startup-scope.test.ts",
+      "tests/unit/gateway-late-bytecode-cache.test.ts",
+      "tests/unit/gateway-workflow-recovery-loading.test.ts",
+      "tests/unit/session-task-scope-bridge.test.ts"
+    ]
+  },
+  "regression": {
+    "redPassed": 2,
+    "redFailed": 1,
+    "greenPassed": 7,
+    "relatedPassed": 45
+  },
+  "review": {
+    "model": "ccs-ai/gpt-6.1-sol",
+    "findings": [],
+    "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-review-r1-result.json"
+  },
+  "typecheck": {
+    "uncached": true,
+    "internalDurationMs": 36626,
+    "gateDurationMs": 40963,
+    "projects": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 102
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 16509
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 9575
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 20010,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  },
+  "desktop": {
+    "durationMs": 89118,
+    "budgetMs": 58000,
+    "passedBudget": false
+  },
+  "stages": [
+    {
+      "name": "activation-related-r1",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/gateway-agent-activation-provenance.test.ts",
+        "tests/unit/gateway-agent-startup-scope.test.ts",
+        "tests/unit/session-task-scope-bridge.test.ts",
+        "tests/unit/gateway-late-bytecode-cache.test.ts",
+        "tests/unit/gateway-workflow-recovery-loading.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-tool-dispatch-loading-20261120-01a1f836/activation-related-r1-tests.json"
+      ],
+      "elapsedMs": 21962,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 4598,
+      "minimumMemoryMiB": 1089,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-related-r1.json"
+    },
+    {
+      "name": "activation-eslint-r1",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "tests/unit/gateway-agent-activation-provenance.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "elapsedMs": 7478,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1069,
+      "minimumMemoryMiB": 930,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-eslint-r1.json"
+    },
+    {
+      "name": "activation-runtime-lint-r1",
+      "argv": [
+        "pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-runtime-lint-r1.ps1"
+      ],
+      "elapsedMs": 269316,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 4754,
+      "minimumMemoryMiB": 134,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-runtime-lint-r1.json"
+    },
+    {
+      "name": "activation-review-r1",
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "ccs-ai/gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-review-notes-r1.md",
+        "--json-output",
+        "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-review-r1-result.json",
+        "--output",
+        "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-review-r1-result.txt"
+      ],
+      "elapsedMs": 430589,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 4598,
+      "minimumMemoryMiB": 44,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-review-r1.json"
+    },
+    {
+      "name": "activation-types-r2",
+      "argv": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs",
+        "--no-cache"
+      ],
+      "elapsedMs": 40963,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 5643,
+      "minimumMemoryMiB": 406,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-types-r2.json"
+    },
+    {
+      "name": "activation-harness-r1",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm harness validate --spec harness/specs/tasks/recovery-authority-gated.md --since 6467dd0a7"
+      ],
+      "elapsedMs": 2724,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 5380,
+      "minimumMemoryMiB": 4917,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-harness-r1.json"
+    },
+    {
+      "name": "activation-startup-harness-r2",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm harness validate --spec harness/specs/tasks/gateway-startup-performance.md --since 6467dd0a7"
+      ],
+      "elapsedMs": 3333,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 5168,
+      "minimumMemoryMiB": 4597,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-startup-harness-r2.json"
+    },
+    {
+      "name": "activation-harness-flow-r2",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm harness run --spec harness/specs/tasks/recovery-authority-gated.md --since 6467dd0a7 --dry-run"
+      ],
+      "elapsedMs": 4345,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1416,
+      "minimumMemoryMiB": 1338,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-harness-flow-r2.json"
+    },
+    {
+      "name": "activation-comms-replay-r2",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "elapsedMs": 1311,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1559,
+      "minimumMemoryMiB": 1559,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-comms-replay-r2.json"
+    },
+    {
+      "name": "activation-comms-compare-r2",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "elapsedMs": 1150,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1409,
+      "minimumMemoryMiB": 1409,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-comms-compare-r2.json"
+    },
+    {
+      "name": "activation-runtime-build-r1",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "elapsedMs": 82492,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 5811,
+      "minimumMemoryMiB": 861,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-runtime-build-r1.json"
+    },
+    {
+      "name": "activation-source-gates-r1",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run runtime:source:check"
+      ],
+      "elapsedMs": 35772,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 5716,
+      "minimumMemoryMiB": 4229,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-source-gates-r1.json"
+    },
+    {
+      "name": "activation-desktop-r1",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "elapsedMs": 89118,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 6353,
+      "minimumMemoryMiB": 809,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-desktop-r1.json"
+    },
+    {
+      "name": "activation-registry-trace-r1",
+      "argv": [
+        "node",
+        "scripts/recovery-contract-matrix.mjs",
+        "--batch",
+        "--arm",
+        "candidate",
+        "--repeats",
+        "1",
+        "--windows",
+        "store-write-failure",
+        "--out",
+        "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-registry-trace-r1"
+      ],
+      "elapsedMs": 56877,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 2775,
+      "minimumMemoryMiB": 398,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-registry-trace-r1.json"
+    },
+    {
+      "name": "activation-native-r1",
+      "argv": [
+        "node",
+        "scripts/recovery-contract-matrix.mjs",
+        "--batch",
+        "--arm",
+        "candidate",
+        "--repeats",
+        "3",
+        "--windows",
+        "repeated-restart",
+        "--out",
+        "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-native-r1"
+      ],
+      "elapsedMs": 591991,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1618,
+      "minimumMemoryMiB": 154,
+      "record": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-native-r1.json"
+    }
+  ],
+  "registryReuse": {
+    "initialAdmission": "reuse",
+    "startupPluginCount": 9,
+    "sourceActivationReasonKeys": [
+      "openai"
+    ],
+    "traceRecord": "D:\\tmp\\g3-tool-dispatch-loading-20261120-01a1f836\\activation-registry-trace-r1\\matrix-run.json"
+  },
+  "native": {
+    "measurementBasis": "development-built-source",
+    "diagnosticTrace": false,
+    "trials": [
+      {
+        "index": 0,
+        "lostTasks": 0,
+        "duplicateEffects": 0,
+        "terminalCorrect": true,
+        "recoveryLatencyMs": 64275,
+        "crashes": 3,
+        "setupWaitMs": 105000,
+        "receiptSha256": "ab4ac8154b5ebc79646e77a48df9bb0d9665f417e88455123c6124826a5bc377"
+      },
+      {
+        "index": 1,
+        "lostTasks": 0,
+        "duplicateEffects": 0,
+        "terminalCorrect": true,
+        "recoveryLatencyMs": 104411,
+        "crashes": 3,
+        "setupWaitMs": 0,
+        "receiptSha256": "9f5de9a2ec4eaf10859827023811b5a6dbe7c9ce6d1efd51d981c008d0623867"
+      },
+      {
+        "index": 2,
+        "lostTasks": 0,
+        "duplicateEffects": 0,
+        "terminalCorrect": true,
+        "recoveryLatencyMs": 91944,
+        "crashes": 3,
+        "setupWaitMs": 0,
+        "receiptSha256": "9b25257a25aee2f36a4c58358d407481b5ffb93b606c32b5954c06d2b0184756"
+      }
+    ],
+    "attachmentsMatched": 18
+  },
+  "restoredInstrumentation": [
+    {
+      "run": "dispatch-baseline-cpu",
+      "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\entry.js",
+      "originalSha256": "7256e52a444d4498d852835b9f9feac38a761e5f9d20ad33740c03a5bb16ae61",
+      "restoredSha256": "7256e52a444d4498d852835b9f9feac38a761e5f9d20ad33740c03a5bb16ae61"
+    },
+    {
+      "run": "dispatch-baseline-cpu",
+      "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\recovery-eval-probe-BkDDp-Zb.js",
+      "originalSha256": "21255fffe8c40a034a1a5a1a38a5d86ac5a4284ae02556a8285ff4fdb0f81756",
+      "restoredSha256": "21255fffe8c40a034a1a5a1a38a5d86ac5a4284ae02556a8285ff4fdb0f81756"
+    },
+    {
+      "run": "registry-reload-trace-r2",
+      "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\standalone-runtime-registry-loader-DMg6Jcty.js",
+      "originalSha256": "b6d81ce2714c15ce25505fbd11bca94ad2d324a8c2a775bec38c694139ce4043",
+      "restoredSha256": "b6d81ce2714c15ce25505fbd11bca94ad2d324a8c2a775bec38c694139ce4043"
+    },
+    {
+      "run": "registry-key-diff",
+      "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\loader-B_FLl4v7.js",
+      "originalSha256": "c64fa9dedbc8a7662501ccd2d4be616c9b0286f140e539d41eabab1d744ccd55",
+      "restoredSha256": "c64fa9dedbc8a7662501ccd2d4be616c9b0286f140e539d41eabab1d744ccd55"
+    },
+    {
+      "run": "activation-registry-trace-r1",
+      "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\standalone-runtime-registry-loader-DMg6Jcty.js",
+      "originalSha256": "b6d81ce2714c15ce25505fbd11bca94ad2d324a8c2a775bec38c694139ce4043",
+      "restoredSha256": "b6d81ce2714c15ce25505fbd11bca94ad2d324a8c2a775bec38c694139ce4043"
+    }
+  ],
+  "formalAcceptance": {
+    "status": "NOT_RUN",
+    "requiredWindows": 5,
+    "repeatsPerWindow": 3,
+    "requiredLiveProviderPairs": 30,
+    "legacyRepeatRequired": true,
+    "recoveryP50BudgetMs": 5000,
+    "recoveryP95BudgetMs": 15000,
+    "liveModel": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  "archive": {
+    "file": "raw-evidence.json.gz",
+    "sha256": "5f2496e0256ebb7e5cdf79c91efbaf69259f8a6844d3b4979628b1fb8c9d17ab",
+    "files": 255,
+    "bytes": 3657723
+  },
+  "credentialScan": {
+    "valuesChecked": 6,
+    "hits": 0
+  },
+  "driven_by": "agent",
+  "actor": "codex/g3-activation-provenance",
+  "realHumanEvidence": false
+}

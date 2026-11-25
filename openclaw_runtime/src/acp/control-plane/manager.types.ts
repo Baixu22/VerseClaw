@@ -16,12 +16,39 @@ import type {
 } from "../../config/sessions/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { AcpRuntimeError } from "../../runtime/errors.ts";
+import type {
+  EffectCertainty,
+  RecoveryOwnerAdmission,
+} from "../../../../shared/recovery-authority/contract.js";
 import { getAcpRuntimeBackend, requireAcpRuntimeBackend } from "../../runtime/registry.ts";
 import {
   listAcpSessionEntries,
   readAcpSessionEntry,
   upsertAcpSessionMeta,
 } from "../../runtime/session-meta.ts";
+
+export type ManagerTurnRecoveryState = {
+  sessionId: string;
+  requestId: string;
+  boundary: string;
+  identity: string;
+  attempts: number;
+  maxAttempts: number;
+  effect: EffectCertainty;
+  visibleOutputObserved: boolean;
+  processId?: number;
+  authority?: RecoveryOwnerAdmission;
+};
+
+export type ManagerTurnRecovery = {
+  cfg: OpenClawConfig;
+  sessionKey: string;
+  storePath: string;
+  storeKey: string;
+  state: ManagerTurnRecoveryState;
+  claim?: { key: string; token: symbol };
+  writeSessionMeta: WriteManagerSessionMeta;
+};
 
 /** Result of resolving persisted ACP metadata for a session key. */
 export type AcpSessionResolution =
@@ -162,6 +189,7 @@ export type WriteManagerSessionMeta = (params: {
     entry: SessionEntry | undefined,
   ) => SessionAcpMeta | null | undefined;
   failOnError?: boolean;
+  expectedSessionId?: string;
   skipMaintenance?: boolean;
   takeCacheOwnership?: boolean;
 }) => Promise<SessionEntry | null>;
@@ -175,6 +203,7 @@ export type EnsureManagerRuntimeHandle = (params: {
   cfg: OpenClawConfig;
   sessionKey: string;
   meta: SessionAcpMeta;
+  expectedRecovery?: ManagerTurnRecoveryState;
 }) => Promise<{ runtime: AcpRuntime; handle: AcpRuntimeHandle; meta: SessionAcpMeta }>;
 
 export type ReconcileManagerRuntimeSessionIdentifiers = (params: {
@@ -185,6 +214,7 @@ export type ReconcileManagerRuntimeSessionIdentifiers = (params: {
   meta: SessionAcpMeta;
   runtimeStatus?: AcpRuntimeStatus;
   failOnStatusError: boolean;
+  expectedRecovery?: ManagerTurnRecoveryState;
 }) => Promise<{
   handle: AcpRuntimeHandle;
   meta: SessionAcpMeta;

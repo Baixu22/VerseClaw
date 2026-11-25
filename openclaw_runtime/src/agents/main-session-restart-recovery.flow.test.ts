@@ -6,6 +6,7 @@ import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
 import { recordToolDispatch } from "./execution-phase/tool-boundary.js";
 import { readOpenExecutionPhases } from "./execution-phase/store.js";
 import { recoveryShadowSink } from "./recovery-authority/shadow.js";
+import { recoveryAuthorityV1 } from "./recovery-authority/authority.js";
 
 const recoveryMocks = vi.hoisted(() => ({
   callGateway: vi.fn(),
@@ -15,7 +16,9 @@ const recoveryMocks = vi.hoisted(() => ({
 
 vi.mock("../config/sessions.js", () => ({
   loadSessionStore: () => structuredClone(recoveryMocks.store),
-  resolveAllAgentSessionStoreTargetsSync: () => [],
+  resolveAllAgentSessionStoreTargetsSync: () => [
+    { agentId: "main", storePath: "C:/state/agents/main/sessions/sessions.json" },
+  ],
   resolveSessionFilePath: (sessionId: string) => `${sessionId}.jsonl`,
   resolveSessionTranscriptPathInDir: (sessionId: string, sessionsDir: string) =>
     `${sessionsDir}/${sessionId}.jsonl`,
@@ -25,6 +28,10 @@ vi.mock("../config/sessions.js", () => ({
   ) => {
     update(recoveryMocks.store);
   },
+  updateSessionStoreAtomic: async <T>(
+    _storePath: string,
+    update: (store: Record<string, Record<string, unknown>>) => T,
+  ) => update(recoveryMocks.store),
 }));
 
 vi.mock("../gateway/call.js", () => ({
@@ -43,16 +50,46 @@ import { recoverRestartAbortedMainSessions } from "./main-session-restart-recove
 
 const sessionKey = "agent:main:long-run";
 
-function runningInterruptedSession() {
-  return {
-    sessionId: "long-run",
-    updatedAt: 1,
-    status: "running",
-    abortedLastRun: true,
-  };
-}
+const runningInterruptedSession = () => ({
+  sessionId: "long-run",
+  updatedAt: 1,
+  status: "running",
+  abortedLastRun: true,
+});
 
 describe("main session restart recovery flow", () => {
+  it("finishes an empty interrupted authority session without retrying its rejected tail", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "main-rejected-"));
+    vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    vi.stubEnv("OPENCLAW_EXECUTION_PHASE_WRITER", "taskflow");
+    vi.stubEnv("OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER", "taskflow");
+    Object.assign(recoveryMocks.store[sessionKey], {
+      lifecycleRunId: "original",
+      recoveryOutput: { sessionId: "long-run", runId: "original", effect: "not_applied" },
+    });
+    recoveryMocks.messages = [];
+    try {
+      expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({
+        failed: 1,
+        recovered: 0,
+      });
+      expect(recoveryMocks.store[sessionKey]).toMatchObject({
+        status: "failed",
+        abortedLastRun: true,
+      });
+      expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({
+        failed: 0,
+        recovered: 0,
+      });
+      expect(recoveryMocks.callGateway).not.toHaveBeenCalled();
+    } finally {
+      closeOpenClawStateDatabase();
+      vi.unstubAllEnvs();
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it("persists one recovery key and wedges the same boundary after its finite budget", async () => {
     const dir = mkdtempSync(join(tmpdir(), "recovery-budget-"));
     vi.stubEnv("OPENCLAW_STATE_DIR", dir);
@@ -82,6 +119,128 @@ describe("main session restart recovery flow", () => {
     recoveryMocks.callGateway.mockResolvedValue({ runId: "recovered-run" });
     recoveryMocks.messages = [];
     recoveryMocks.store = { [sessionKey]: runningInterruptedSession() };
+  });
+
+  it("commits the main authority identity before an admitted continuation RPC", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "main-authority-"));
+    vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    vi.stubEnv("OPENCLAW_EXECUTION_PHASE_WRITER", "taskflow");
+    vi.stubEnv("OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER", "taskflow");
+    Object.assign(recoveryMocks.store[sessionKey], {
+      lifecycleRunId: "original-run",
+      recoveryOutput: { sessionId: "long-run", runId: "original-run", effect: "not_applied" },
+    });
+    recoveryMocks.messages = [{ role: "user", content: "original intent", timestamp: 1 }];
+    const decide = vi.spyOn(recoveryAuthorityV1, "decide");
+    recoveryMocks.callGateway.mockImplementation(async (call) => {
+      const saved = recoveryMocks.store[sessionKey].restartRecovery as {
+        attempts: number;
+        authority: { idempotencyKey: string; attempts: number; state: string };
+      };
+      expect(saved.attempts).toBe(1);
+      expect(saved.authority).toMatchObject({
+        idempotencyKey: call.params.idempotencyKey,
+        attempts: 1,
+        state: "pending",
+      });
+      expect(call.params).toMatchObject({
+        suppressPromptPersistence: true,
+        recoveryAdmission: { idempotencyKey: saved.authority.idempotencyKey, attempts: 1 },
+      });
+      return { runId: call.params.idempotencyKey };
+    });
+    try {
+      await recoverRestartAbortedMainSessions({ stateDir: dir });
+      expect(recoveryMocks.callGateway).toHaveBeenCalledTimes(1);
+      expect(decide).toHaveBeenCalledWith(
+        expect.objectContaining({ entry: "main-session-restart" }),
+      );
+    } finally {
+      decide.mockRestore();
+      closeOpenClawStateDatabase();
+      vi.unstubAllEnvs();
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("retains an unknown main output and pending reply without requesting another model turn", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "main-output-unknown-"));
+    vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    vi.stubEnv("OPENCLAW_EXECUTION_PHASE_WRITER", "taskflow");
+    vi.stubEnv("OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER", "taskflow");
+    Object.assign(recoveryMocks.store[sessionKey], {
+      lifecycleRunId: "original-run",
+      recoveryOutput: { sessionId: "long-run", runId: "original-run", effect: "unknown" },
+      pendingFinalDelivery: true,
+      pendingFinalDeliveryRunId: "original-run",
+      pendingFinalDeliveryText: "retained original reply",
+    });
+    recoveryMocks.messages = [{ role: "user", content: "original intent", timestamp: 1 }];
+    try {
+      await recoverRestartAbortedMainSessions({ stateDir: dir });
+      expect(recoveryMocks.callGateway).not.toHaveBeenCalled();
+      expect(recoveryMocks.store[sessionKey]).toMatchObject({
+        pendingFinalDelivery: true,
+        pendingFinalDeliveryText: "retained original reply",
+        restartRecovery: { authority: { state: "reconcile" } },
+      });
+    } finally {
+      closeOpenClawStateDatabase();
+      vi.unstubAllEnvs();
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("retains an unresolved main admission when authority mode rolls back to legacy", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "main-rollback-"));
+    vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    vi.stubEnv("OPENCLAW_EXECUTION_PHASE_WRITER", "taskflow");
+    vi.stubEnv("OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER", "taskflow");
+    Object.assign(recoveryMocks.store[sessionKey], {
+      lifecycleRunId: "original-run",
+      recoveryOutput: { sessionId: "long-run", runId: "original-run", effect: "unknown" },
+    });
+    recoveryMocks.messages = [{ role: "user", content: "original intent", timestamp: 1 }];
+    try {
+      await recoverRestartAbortedMainSessions({ stateDir: dir });
+      const saved = structuredClone(recoveryMocks.store[sessionKey].restartRecovery);
+      vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "legacy");
+      await recoverRestartAbortedMainSessions({ stateDir: dir });
+      expect(recoveryMocks.callGateway).not.toHaveBeenCalled();
+      expect(recoveryMocks.store[sessionKey].restartRecovery).toEqual(saved);
+    } finally {
+      closeOpenClawStateDatabase();
+      vi.unstubAllEnvs();
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("keeps the main admission uncertain when the RPC acknowledges a different run", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "main-ack-identity-"));
+    vi.stubEnv("OPENCLAW_STATE_DIR", dir);
+    vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", "authority");
+    vi.stubEnv("OPENCLAW_EXECUTION_PHASE_WRITER", "taskflow");
+    vi.stubEnv("OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER", "taskflow");
+    Object.assign(recoveryMocks.store[sessionKey], {
+      lifecycleRunId: "original-run",
+      recoveryOutput: { sessionId: "long-run", runId: "original-run", effect: "not_applied" },
+    });
+    recoveryMocks.messages = [{ role: "user", content: "original intent", timestamp: 1 }];
+    recoveryMocks.callGateway.mockResolvedValue({ runId: "different-run" });
+    try {
+      await recoverRestartAbortedMainSessions({ stateDir: dir });
+      expect(recoveryMocks.store[sessionKey]).toMatchObject({
+        abortedLastRun: true,
+        restartRecovery: { attempts: 1, authority: { state: "reconcile" } },
+      });
+    } finally {
+      closeOpenClawStateDatabase();
+      vi.unstubAllEnvs();
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it.each(["aborted", "toolUse"])(
@@ -334,12 +493,18 @@ describe("main session restart recovery flow", () => {
         return { runId: call.params.idempotencyKey };
       });
       try {
-        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({ recovered: 1 });
+        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({
+          recovered: 1,
+        });
         recoveryMocks.store[sessionKey].abortedLastRun = true;
         recoveryMocks.messages = [{ role: "assistant", stopReason: "aborted", timestamp: 200 }];
         recoveryMocks.callGateway.mockRejectedValueOnce(new Error("RPC failed before start"));
-        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({ failed: 1 });
-        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({ recovered: 1 });
+        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({
+          failed: 1,
+        });
+        expect(await recoverRestartAbortedMainSessions({ stateDir: dir })).toMatchObject({
+          recovered: 1,
+        });
         const calls = recoveryMocks.callGateway.mock.calls.map(([call]) => call.params);
         expect(new Set(calls.map((call) => call.idempotencyKey)).size).toBe(1);
         for (const call of calls) {

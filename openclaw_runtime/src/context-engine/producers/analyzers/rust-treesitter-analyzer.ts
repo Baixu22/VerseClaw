@@ -1,19 +1,14 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
-// Source: src/indexing/analyzers/rust-treesitter-analyzer.ts (verbatim; import paths localized).
-import Parser from "tree-sitter";
-import Rust from "tree-sitter-rust";
+// Source: src/indexing/analyzers/rust-treesitter-analyzer.ts (local imports and lazy native dependencies).
+import type Parser from "tree-sitter";
 import type { AnalyzeFileInput, FileAnalysis, LanguageAnalyzer } from "./types.js";
-import { analyzeWithTreeSitter, type TreeSitterLanguageConfig } from "./tree-sitter-base.js";
+import {
+  analyzeWithTreeSitter,
+  createTreeSitterParser,
+  type TreeSitterLanguageConfig,
+} from "./tree-sitter-base.js";
 
 let parser: Parser | null = null;
-
-function getParser(): Parser {
-  if (!parser) {
-    parser = new Parser();
-    parser.setLanguage(Rust);
-  }
-  return parser;
-}
 
 const rustConfig: TreeSitterLanguageConfig = {
   symbolPatterns: [
@@ -22,39 +17,47 @@ const rustConfig: TreeSitterLanguageConfig = {
       kind: "function",
       nameField: "name",
       exportModifierCheck: (node) => {
-        return node.children.some((child) => child.type === "visibility_modifier" && child.text === "pub");
-      }
+        return node.children.some(
+          (child) => child.type === "visibility_modifier" && child.text === "pub",
+        );
+      },
     },
     {
       type: "struct_item",
       kind: "type",
       nameField: "name",
       exportModifierCheck: (node) => {
-        return node.children.some((child) => child.type === "visibility_modifier" && child.text === "pub");
-      }
+        return node.children.some(
+          (child) => child.type === "visibility_modifier" && child.text === "pub",
+        );
+      },
     },
     {
       type: "enum_item",
       kind: "type",
       nameField: "name",
       exportModifierCheck: (node) => {
-        return node.children.some((child) => child.type === "visibility_modifier" && child.text === "pub");
-      }
+        return node.children.some(
+          (child) => child.type === "visibility_modifier" && child.text === "pub",
+        );
+      },
     },
     {
       type: "trait_item",
       kind: "type",
       nameField: "name",
       exportModifierCheck: (node) => {
-        return node.children.some((child) => child.type === "visibility_modifier" && child.text === "pub");
-      }
+        return node.children.some(
+          (child) => child.type === "visibility_modifier" && child.text === "pub",
+        );
+      },
     },
     {
       type: "impl_item",
       kind: "type",
       nameField: "type",
-      exportModifierCheck: () => false // impl blocks are internal implementation details
-    }
+      exportModifierCheck: () => false, // impl blocks are internal implementation details
+    },
   ],
   importPatterns: [
     {
@@ -66,8 +69,8 @@ const rustConfig: TreeSitterLanguageConfig = {
 
         const path = argNode.text;
         return [{ imported: path, local: path.split("::").pop() ?? path }];
-      }
-    }
+      },
+    },
   ],
   callPatterns: [
     {
@@ -87,15 +90,16 @@ const rustConfig: TreeSitterLanguageConfig = {
         }
 
         return undefined;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 export const rustTreeSitterAnalyzer: LanguageAnalyzer = {
   language: "rust",
   capabilities: ["symbols", "imports", "exports", "calls"],
   analyzeFile: ({ repoRoot, file, content }: AnalyzeFileInput): FileAnalysis => {
-    return analyzeWithTreeSitter(getParser(), rustConfig, repoRoot, file, content);
-  }
+    parser ??= createTreeSitterParser("tree-sitter-rust");
+    return analyzeWithTreeSitter(parser, rustConfig, repoRoot, file, content);
+  },
 };

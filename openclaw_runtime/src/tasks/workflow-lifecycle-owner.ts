@@ -174,6 +174,17 @@ export function listWorkflowLifecycles(
   );
 }
 
+/** Checks durable recovery work before startup loads a full workflow controller. */
+export function hasWorkflowLifecycleRecoveryWork(domain: WorkflowLifecycleDomain): boolean {
+  const mode = resolveWorkflowLifecycleMode(domain);
+  if (mode === "legacy" || (domain === "mission" && mode !== "taskflow")) return false;
+  return listWorkflowLifecycles(domain).some((row) =>
+    domain === "mission"
+      ? row.status === "running"
+      : !isTerminalFlowStatus(row.status as FlowStatus),
+  );
+}
+
 /**
  * Restart recovery: a non-terminal lifecycle whose live controller is gone
  * after a process restart can no longer progress, so it is settled as lost

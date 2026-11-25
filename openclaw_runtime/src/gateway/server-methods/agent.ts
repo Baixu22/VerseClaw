@@ -1753,9 +1753,14 @@ export const agentHandlers: GatewayRequestHandlers = {
             !isCurrentRecoverySession({
               sessionId: candidate?.sessionId,
               lifecycleRunId: candidate?.lifecycleRunId,
+              status: candidate?.status,
+              abortedLastRun: candidate?.abortedLastRun,
               requestedSessionId,
               runId,
-              admission: candidate?.subagentRecovery?.authority,
+              admission:
+                candidate?.restartRecovery?.authority?.decision.entry === "main-session-restart"
+                  ? candidate.restartRecovery.authority
+                  : candidate?.subagentRecovery?.authority,
               expected: request.recoveryAdmission,
             })
           )
@@ -2706,6 +2711,7 @@ export const agentHandlers: GatewayRequestHandlers = {
                   inputProvenance,
                   internalEvents: request.internalEvents,
                 }),
+              recoveryAdmission: request.recoveryAdmission,
               cleanupBundleMcpOnRunEnd: request.cleanupBundleMcpOnRunEnd,
               abortSignal: activeRunAbort.controller.signal,
               onActiveModelSelected: ({ provider }) => {

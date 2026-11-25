@@ -87,6 +87,7 @@ export type GatewayRequestContext = {
     record?: ExecApprovalRecord<TPayload>;
   }) => ReadonlySet<string>;
   disconnectClientsForDevice?: (deviceId: string, opts?: { role?: string }) => void;
+  getDeviceCredentialRevision?: (deviceId: string, role: string) => number;
   invalidateClientsForDevice?: (
     deviceId: string,
     opts?: { role?: string; reason?: string },

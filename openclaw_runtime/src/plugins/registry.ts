@@ -2637,7 +2637,6 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
           }
         };
         if (prop === "state") {
-          const baseState = getRuntimeProperty();
           const assertPluginStateAllowed = () => {
             const record =
               pluginRuntimeRecordById.get(pluginId) ??
@@ -2649,7 +2648,7 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
             }
           };
           return {
-            ...baseState,
+            resolveStateDir: (...args) => getRuntimeProperty().resolveStateDir(...args),
             openKeyedStore: <T>(options: OpenKeyedStoreOptions): PluginStateKeyedStore<T> => {
               assertPluginStateAllowed();
               return createPluginStateKeyedStore<T>(pluginId, options);
@@ -2664,7 +2663,7 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
               options?: Omit<Parameters<typeof createChannelIngressQueue>[0], "channelId">,
             ) => {
               assertPluginStateAllowed();
-              const stateDir = options?.stateDir ?? baseState.resolveStateDir();
+              const stateDir = options?.stateDir ?? getRuntimeProperty().resolveStateDir();
               return createChannelIngressQueue<TPayload, TMetadata, TCompletedMetadata>({
                 ...options,
                 channelId: pluginId,

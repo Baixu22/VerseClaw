@@ -1,8 +1,6 @@
 // Telegram plugin module implements thread bindings behavior.
 import { createHash } from "node:crypto";
 import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 import { readAcpSessionEntry } from "openclaw/plugin-sdk/acp-runtime";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/config-contracts";
 import {
@@ -19,17 +17,23 @@ import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
 import type { PluginStateSyncKeyedStore } from "openclaw/plugin-sdk/plugin-state-runtime";
 import { normalizeAccountId, isAcpSessionKey } from "openclaw/plugin-sdk/routing";
 import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
 import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
 import { getTelegramRuntime } from "./runtime.js";
+import {
+  resolveBindingsPath,
+  TELEGRAM_THREAD_BINDINGS_MAX_ENTRIES,
+  TELEGRAM_THREAD_BINDINGS_NAMESPACE,
+} from "./thread-bindings-contract.js";
 import { resolveTelegramToken } from "./token.js";
+export {
+  TELEGRAM_THREAD_BINDINGS_MAX_ENTRIES,
+  TELEGRAM_THREAD_BINDINGS_NAMESPACE,
+} from "./thread-bindings-contract.js";
 
 const DEFAULT_THREAD_BINDING_IDLE_TIMEOUT_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_THREAD_BINDING_MAX_AGE_MS = 0;
 const THREAD_BINDINGS_SWEEP_INTERVAL_MS = 60_000;
 const STORE_VERSION = 1;
-export const TELEGRAM_THREAD_BINDINGS_NAMESPACE = "telegram.thread-bindings";
-export const TELEGRAM_THREAD_BINDINGS_MAX_ENTRIES = 5_000;
 
 let telegramSendModulePromise: Promise<typeof import("./send.js")> | undefined;
 let threadBindingStoreForTest: PluginStateSyncKeyedStore<TelegramThreadBindingRecord> | undefined;
@@ -246,11 +250,6 @@ function fromSessionBindingInput(params: {
   }
 
   return record;
-}
-
-function resolveBindingsPath(accountId: string, env: NodeJS.ProcessEnv = process.env): string {
-  const stateDir = resolveStateDir(env, os.homedir);
-  return path.join(stateDir, "telegram", `thread-bindings-${accountId}.json`);
 }
 
 function normalizeMetadataForStore(

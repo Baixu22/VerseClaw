@@ -10,6 +10,23 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 Activating a project keeps its directory and permission policy aligned with the runtime while preserving the selected model.
 
+An idle task can continue after its lease expires in the same session generation and worktree. Recovery advances its ownership epoch to reject stale credentials; unresolved effects still require reconciliation.
+
+After a Gateway restart, recovered tasks wait for the desktop's authenticated connection before admitting effects.
+
+Restart recovery keeps each agent's `global` session and failure notice bound to that agent. In authority mode, a subagent's automatic continuation chain shares a two-attempt budget across delays and compaction; a new session generation starts a fresh budget.
+
+Agents reuse compatible Gateway plugin state during startup; configuration and workspace changes retain their own loading scope.
+
+Gateway configuration watchers load cron, MCP disposal and provider refresh execution when a reload needs them. Empty startup delivery queues leave sending and reply execution unloaded.
+Handshake snapshots read cached health and update availability without loading probes or updater execution. Health refreshes keep sensitive results separate from the public cache.
+Readiness challenge probes leave authentication and RPC execution unloaded until the connection sends its first request frame.
+
+Native language parsers load when code analysis first needs the corresponding language.
+
+Agent context and lifecycle execution modules load when a selected run starts; harness selection uses existing metadata.
+Trajectory reads prepare their session data when requested; closing a connection releases its subscription.
+
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
@@ -172,7 +189,11 @@ Queued configuration reloads already included in a successful Gateway launch are
 
 Source launches initialize session services through the normal runtime startup path in both ordinary and test windows.
 
-Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
+Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Windows plugin file URLs are converted to filesystem paths for native loading and cache invalidation. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. Bundled channel lists and ID lookups share metadata within each root scope; channel aliases and per-request disablement use the same view. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
+
+Gateway reuses its current plugin metadata for runtime entry, static model catalog and model alias lookups, and plugin activation. Telegram and Matrix migration discovery loads legacy data readers only when matching files exist. Reach Readers initializes browser and transcription services when its first tool executes. Desktop builds overlap renderer compilation with the embedded browser's patch/compiler steps and Electron builds, wait for every output, and retain source and output provenance.
+
+Gateway reconnects reuse an authenticated device token for the same device, endpoint and shared credential. A device-token mismatch triggers one shared-credential bootstrap in the same connection attempt. Paired devices authenticate from their approved record independently of pending pairing requests. Managed processes retain Node bytecode in the temporary directory and flush it after startup for reuse across crashes. Explicit `NODE_COMPILE_CACHE` and `NODE_DISABLE_COMPILE_CACHE` settings take precedence.
 
 First session:
 
@@ -254,7 +275,7 @@ No separate database server is required.
 
 Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.
 
-VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation). Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access. Full access stays bound to the approved tab and origin. Network details, request comparisons, parameter candidates and JS snippets are redacted when the approval changes during a read. Background JS, SourceMap and replay requests use the same profile network policy. A replay approval permits one dispatch, including when its response is lost. Replay rejects credential fields in URLs, headers and request bodies before preparing a draft. Cancelling or pausing a task aborts its run; late callbacks cannot overwrite a retry. Failed navigation clears its wait state so subsequent navigation starts independently. Browser cleanup releases occupancy after the original window confirms it has closed.
+VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation). Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access. Full access stays bound to the approved tab and origin. Network details, request comparisons, parameter candidates and JS snippets are redacted when the approval changes during a read. Background JS, SourceMap and replay requests use the same profile network policy. A replay approval permits one dispatch, including when its response is lost. Replay rejects credential fields in URLs, headers and request bodies before preparing a draft. Cancelling or pausing a task aborts its run; late callbacks cannot overwrite a retry. Failed navigation clears its wait state so subsequent navigation starts independently. Closing a browser session immediately revokes its private-network approvals and releases occupancy after the original window confirms it has closed. A late opening result cannot restore a revoked approval or overwrite its replacement.
 
 <a id="development"></a>
 
@@ -267,9 +288,11 @@ Common commands:
 | `pnpm dev` | Prepare resources/runtime and start Electron development |
 | `pnpm run build:vite` | Build renderer and Electron bundles |
 | `pnpm run build:runtime` | Build embedded runtime and smoke-test Gateway startup |
-| `pnpm run typecheck` | Full node/web/test typecheck |
+| `pnpm run typecheck` | Rebuild VerseBrowser declarations, then check all node/web/test types |
 | `pnpm run lint:check` | Lint without modifying files |
 | `pnpm test` | Root test groups and selected regressions |
+| `pnpm run test:recovery:light` | Focused harness loading and interrupted bytecode-cache checks with one worker |
+| `pnpm run test:recovery:tiny` | Workspace exports, native SDK boundaries and plugin loader configuration in one Node process with a 96 MiB heap limit |
 | `pnpm run test:e2e` | Build and run Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract and four-language coverage |
 | `pnpm run harness:ci` | Repository Harness baseline |
@@ -381,3 +404,21 @@ Project configuration supports typed previews for an exclusive project Agent. It
 Mission experience remains a reviewable candidate, bound to the originating session with source references and a 24-hour expiry. Mission Control and the main chat can reuse approved experience only in its originating session. The 24-hour limit also applies to cold cards; revocation, replacement and expiry stop subsequent reuse. Delivery to a model also depends on the existing shared context budget. The panel follows lifecycle events from its current session. Running Missions can be paused or cancelled while their request is pending; the panel retains confirmed control state when an older run response arrives. Once pause, cancel or resume is accepted, Runtime settles the older tick and retains its execution evidence. Changing the default Agent or its session resets the Mission projection; delayed replies keep their original session scope. The role catalog loads when the panel opens; an empty catalog stays idle until reopened or manually refreshed.
 
 The task ledger opens a compact persistent-task list. Rows show the objective, state and next step; ownership, acceptance and actions expand on demand. Task reports show recorded timing in a short summary, with usage and complete records in details. The system overview uses the same list hierarchy for project goals, progress, evidence and configuration.
+
+Gated main-session recovery uses the same admission policy and preserves its existing three-attempt budget. Public-output boundaries are recorded by the Session owner before response data is dispatched; unknown output and pending replies stay available for reconciliation.
+
+Completed recoveries reject admission replay. Model fallback within an unfinished command keeps the same admission, and the command commits its final state after all attempts and persistence finish.
+
+Gated final delivery binds the pending Session reply to its existing durable send intent. The queue commits the recovery decision and consumed attempt before sending, preserves unknown outcomes for reconciliation, and settles confirmed sends without repeating them. Reply cleanup checks the producer, Session generation, text and intent; the five-attempt limit and existing backoff remain in force. Queue write failures stop sending. Reconciliation claims and releases the existing owner without consuming a send attempt.
+
+Gated ACP recovery persists the original request, runtime identity, output boundary and consumed attempts in the existing ACP row. Fresh handles and backend fallback use the same admission and retain the original two-attempt-per-backend ceiling across controller restarts. Core-proven unstarted turns may continue; unknown results remain available for reconciliation and completed requests settle without another turn.
+
+A process holds one turn claim through identity cleanup. If SQLite cannot clear that claim, its budget remains durable; a rebuilt controller in the same process can continue a confirmed unstarted request while uncertain results stay in reconciliation.
+
+Committed ensure/status identity writes are confirmed from the same ACP row and current Session generation when an acknowledgement is lost. Goal-wake uses the same authority to reconcile the original durable helper and task. It checks the helper nonce and Session epoch, persists terminal task truth before cleanup, and resumes pending waits after restart through the existing Mission CAS without starting another helper.
+
+Manual compression becomes available after the current session's runs and lifecycle operations have finished.
+
+Global-session forks and command hooks use the selected agent, or the configured default agent when none is selected.
+
+Initial and updated compaction summaries preserve active user-designated statements as complete verbatim lines. The [2026-11-16 recovery acceptance](harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-candidate-6115256e-20261116/REPORT.zh-CN.md) records 505 passing regression executions, 120/120 preserved facts and 15/15 correct candidate fault outcomes; two legacy runs match all 15 slots. GA remains NO_GO: recovery P50/P95 is 17.439/83.204 seconds, and the build timing and source LOC gates fail.

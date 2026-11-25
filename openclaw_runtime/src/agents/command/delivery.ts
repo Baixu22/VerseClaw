@@ -12,7 +12,10 @@ import { createReplyMediaPathNormalizer } from "../../auto-reply/reply/reply-med
 import { sendDurableMessageBatch } from "../../channels/message/runtime.js";
 import { getChannelPlugin, normalizeChannelId } from "../../channels/plugins/index.js";
 import { createReplyPrefixContext } from "../../channels/reply-prefix.js";
-import { createOutboundSendDeps, type CliDeps } from "../../gateway/cli-runtime/outbound-send-deps.js";
+import {
+  createOutboundSendDeps,
+  type CliDeps,
+} from "../../gateway/cli-runtime/outbound-send-deps.js";
 import type { SessionEntry } from "../../config/sessions.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { formatErrorMessage } from "../../infra/errors.js";
@@ -109,6 +112,8 @@ type DeliverAgentCommandResultParams = {
   sessionEntry: SessionEntry | undefined;
   result: RunResult;
   payloads: RunResult["payloads"];
+  onDeliveryIntent?: NonNullable<Parameters<typeof sendDurableMessageBatch>[0]["onDeliveryIntent"]>;
+  pendingFinalDelivery?: Parameters<typeof sendDurableMessageBatch>[0]["pendingFinalDelivery"];
 } & FreshSessionDeliveryRefreshParams;
 
 function normalizeDeliverySessionId(value: string | undefined): string | undefined {
@@ -724,6 +729,8 @@ export async function deliverAgentCommandResult(
         onError: logDeliveryError,
         onPayload: logPayload,
         deps: createOutboundSendDeps(deps),
+        onDeliveryIntent: params.onDeliveryIntent,
+        pendingFinalDelivery: params.pendingFinalDelivery,
       });
       deliveryStatus = deliveryStatusFromDurableSend(send);
       if (!bestEffortDeliver && (send.status === "failed" || send.status === "partial_failed")) {

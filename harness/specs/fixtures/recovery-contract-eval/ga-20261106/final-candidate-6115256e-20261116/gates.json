@@ -1,0 +1,111 @@
+{
+  "schema": "RecoveryDevelopmentGates/v1",
+  "driven_by": "agent",
+  "actor": "codex-g3-development-closeout-20261116",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "6115256e882051a154945b5b7298ef8a83d756cc",
+    "tree": "5446a4a8046a697c5de23b0898e2f78e012d82fe",
+    "dirty": false
+  },
+  "nativeStages": 22,
+  "ownerRegressionExecutions": 378,
+  "parentRegressionExecutions": 127,
+  "processProofs": 4,
+  "packagedCycles": 2,
+  "canaryCycles": 10,
+  "review": {
+    "schema": "IndependentReviewReadback/v2",
+    "driven_by": "agent",
+    "actor": "codex-recovery-ga-closeout",
+    "realHumanEvidence": false,
+    "candidate": "6115256e882051a154945b5b7298ef8a83d756cc",
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "agentId": "01a1e00e-1413-7fc2-af17-ffeeb545ea8d",
+    "status": "PASS",
+    "findings": [],
+    "reportSha256": "a72ee624e41410148428df281cc5585eb561d4322a024169a112115fd0e3edbc",
+    "sourceFiles": 51,
+    "sourceUnchanged": true,
+    "verifiedAt": "2026-11-15T16:37:53.891Z"
+  },
+  "functionalFullGatePassed": true,
+  "agentDevAuditStatus": "fail",
+  "build": {
+    "observedMs": 1621766,
+    "hardLimitMs": 58000,
+    "passed": false
+  },
+  "typecheck": {
+    "observedMs": 27079,
+    "hardLimitMs": 45000,
+    "passed": true
+  },
+  "loc": {
+    "total": 165,
+    "new": 34,
+    "grown": 131,
+    "logSha256": "98bc0c9b290019529adc89a57b8672bfb6232213b12a655c79165957cbd8b90c"
+  },
+  "fullGates": [
+    {
+      "name": "native-22",
+      "exitCode": 0
+    },
+    {
+      "name": "agent-core-exports",
+      "exitCode": 0
+    },
+    {
+      "name": "parent-root",
+      "exitCode": 0
+    },
+    {
+      "name": "parent-runtime",
+      "exitCode": 0
+    },
+    {
+      "name": "native-disk-readback",
+      "exitCode": 0
+    },
+    {
+      "name": "packaged-2-and-canary-10",
+      "exitCode": 0
+    },
+    {
+      "name": "packaged-disk-readback",
+      "exitCode": 0
+    },
+    {
+      "name": "agent-dev-full-and-strict-audit",
+      "exitCode": 1
+    },
+    {
+      "name": "full-harness-source-evidence",
+      "exitCode": 1
+    }
+  ],
+  "harnessGates": [
+    {
+      "name": "harness-ci",
+      "exitCode": 1,
+      "report": "D:/tmp/recovery-ga-closeout-20261114-01a1d4d8/commands/owners-r3m-harness-ci/report.json"
+    },
+    {
+      "name": "source-mandatory",
+      "exitCode": 1,
+      "report": "D:/tmp/recovery-ga-closeout-20261114-01a1d4d8/commands/owners-r3m-source-mandatory/report.json"
+    },
+    {
+      "name": "harness-evidence-tail",
+      "exitCode": 0,
+      "report": "D:/tmp/recovery-ga-closeout-20261114-01a1d4d8/commands/owners-r3m-harness-evidence-tail/report.json"
+    },
+    {
+      "name": "harness-coverage-tail",
+      "exitCode": 0,
+      "report": "D:/tmp/recovery-ga-closeout-20261114-01a1d4d8/commands/owners-r3m-harness-coverage-tail/report.json"
+    }
+  ],
+  "gaStatus": "NO_GO"
+}

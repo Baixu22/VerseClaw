@@ -1,0 +1,130 @@
+{
+  "schema": "G3ConfigFilesystemSupplement/v1",
+  "date": "2026-11-22",
+  "codeCommit": "7b5da98252c4fe947ee1875e1552a1b3e397e4a6",
+  "snapshotValid": true,
+  "elapsedMs": 1562.3976000000002,
+  "sourceUnchanged": true,
+  "operations": {
+    "existsSync": {
+      "calls": 2892,
+      "paths": 1691,
+      "repeatedPaths": 505,
+      "maxCalls": 8
+    },
+    "readFileSync": {
+      "calls": 1197,
+      "filesystemPathCalls": 573,
+      "descriptorCalls": 624
+    },
+    "realpathSync": {
+      "calls": 1140,
+      "paths": 402,
+      "repeatedPaths": 364,
+      "maxCalls": 6
+    },
+    "statSync": {
+      "calls": 1764,
+      "paths": 516,
+      "repeatedPaths": 513,
+      "maxCalls": 252
+    },
+    "lstatSync": {
+      "calls": 2081,
+      "paths": 536,
+      "repeatedPaths": 525,
+      "maxCalls": 14
+    }
+  },
+  "sdkOperations": {
+    "existsSync": {
+      "calls": 1,
+      "paths": 1,
+      "repeatedPaths": 0,
+      "maxCalls": 1
+    },
+    "readFileSync": {
+      "calls": 317,
+      "paths": 317,
+      "repeatedPaths": 0,
+      "maxCalls": 1
+    }
+  },
+  "repeatedPaths": [
+    {
+      "operation": "statSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/extensions",
+      "calls": 252
+    },
+    {
+      "operation": "lstatSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/openai/package.json",
+      "calls": 14
+    },
+    {
+      "operation": "existsSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/extensions",
+      "calls": 8
+    },
+    {
+      "operation": "lstatSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/openai/openclaw.plugin.json",
+      "calls": 8
+    },
+    {
+      "operation": "statSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/openai/openclaw.plugin.json",
+      "calls": 7
+    },
+    {
+      "operation": "existsSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/openai",
+      "calls": 6
+    },
+    {
+      "operation": "lstatSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/acpx/openclaw.plugin.json",
+      "calls": 6
+    },
+    {
+      "operation": "lstatSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/active-memory/openclaw.plugin.json",
+      "calls": 6
+    },
+    {
+      "operation": "lstatSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/admin-http-rpc/openclaw.plugin.json",
+      "calls": 6
+    },
+    {
+      "operation": "lstatSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/alibaba/openclaw.plugin.json",
+      "calls": 6
+    },
+    {
+      "operation": "realpathSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/anthropic",
+      "calls": 6
+    },
+    {
+      "operation": "lstatSync",
+      "path": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350/openclaw_runtime/dist/extensions/anthropic/openclaw.plugin.json",
+      "calls": 6
+    }
+  ],
+  "stage": {
+    "name": "config-fs-census-r13",
+    "exitCode": 0,
+    "elapsedMs": 4237,
+    "minimumMemoryMiB": 4736
+  },
+  "resourceWindow": {
+    "owner": "G4",
+    "sourceThreadId": "01a1fe8c-c54e-7652-b2cb-58b5c3c6767d",
+    "newHeavyValidation": "wait for resume notice"
+  },
+  "actor": "codex/g3-trajectory-relay",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "descriptorReadCounting": "File descriptor numbers can be reused across files; these calls are counted separately from filesystem paths."
+}
