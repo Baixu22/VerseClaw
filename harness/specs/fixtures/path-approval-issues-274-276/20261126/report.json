@@ -1,0 +1,1338 @@
+{
+  "schema": "PathApprovalIssueEvidence/v1",
+  "driven_by": "agent",
+  "actor": "codex/issues-closeout-01a21263",
+  "issues": [
+    274,
+    275,
+    276
+  ],
+  "candidate": {
+    "commit": "456ee94e330ccab40b440053ea1c6ab9d5565ffb",
+    "tree": "2a0f3fea6b82c339c730318f62f216fd25f679b8",
+    "dirty": false
+  },
+  "sourceFiles": [
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "sha256": "24b0df38a588f3f6c249f0edc5018fe2b24846d631923f6939f188aa92ead4ac"
+    },
+    {
+      "path": "electron/services/files-api.ts",
+      "sha256": "ad8b318e799c0a04b6b9ac84a76935aa83879e1603b89ca7b97c5e75b001619d"
+    },
+    {
+      "path": "electron/services/workspace-preflight.ts",
+      "sha256": "c09c005f72d35bfc043eb173bfba5b32f47796ef2b160633b2643a4fe6e356d3"
+    },
+    {
+      "path": "harness/specs/rules/coding-mutation-consistency-boundary.md",
+      "sha256": "c48d67cccf00df65ff32e769a14afbe93649c4f2c10a187589d9bfa613b848a4"
+    },
+    {
+      "path": "harness/specs/tasks/path-approval-issues-274-276.md",
+      "sha256": "8e45e45664edc0eee53bfde828250f2540054464fdb39cb6b1cdc8d9e694019f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/fact-rel-path.ts",
+      "sha256": "143941ce30970197fab4fe56d547e2584381628490aa5c9754e60a0bd9c7425e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/path-policy.ts",
+      "sha256": "5ca630cd13a65fde627e651da716dfa601f7ae4e9dba8c31d3a907199e4d5575"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/session-read-hashes.ts",
+      "sha256": "fde1bb13d70e663627b3a2be6cc93a9ff9c575c2fbba911a67176213455b3453"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/stale-write-guard.ts",
+      "sha256": "93ef3316f21b39dfa47830b89bf4caa708b3caa1040047005914e19e8896fc6c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/coding-path-identity.test.ts",
+      "sha256": "fd2cf2c411a0523c78b52ef542c80bc1e4afc181813d401926e8c3e7fa8644a0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+      "sha256": "c0f3f2a376d9b2b1c86ceb828bfb24dfe86fa86d9fdb24aefcf4d63d3fd5a220"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+      "sha256": "bd65bc2ebf39d73beeb3f3a4d6d2a5b1c4595c1bf5046dd14acdcc02ebe1db6d"
+    },
+    {
+      "path": "shared/types/sandbox.ts",
+      "sha256": "1599b09722f4e6cbc6721beb045f5f59279f084d65e0073e214a1f7eeac1873f"
+    },
+    {
+      "path": "shared/types/workspace.ts",
+      "sha256": "8f298e9bec5c678ce8b847118304381996a4ef58e7615fdc5e393f8840a3e79a"
+    },
+    {
+      "path": "tests/e2e/coding-file-save-boundary.spec.ts",
+      "sha256": "4a15deb6a779ab1377fbaccbcd08b54ed47e3529df4dbae2abd10aabe35321e4"
+    },
+    {
+      "path": "tests/unit/files-permissions-api.test.ts",
+      "sha256": "235a396f857b0d390b2e2b24d080c4d752416d1ad5fa0d9b72731296986cb2b4"
+    },
+    {
+      "path": "tests/unit/workspace-preflight.test.ts",
+      "sha256": "0dec9e6932c9e5241cebd5dd99d9f8b28b80a4d4ecbd6cc1bb5a9674db33528a"
+    }
+  ],
+  "tests": [
+    {
+      "scope": "host",
+      "passed": 36,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "files api permission approval flow rejects an in-workspace hard link without changing its external inode",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow saves the exact literal ~ path with homeInsideWorkspace=true",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow saves the exact literal ~ path with homeInsideWorkspace=false",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow updates the existing inode, metadata and open readers when saving shorter content",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow saves a writable file when its parent denies sibling creation",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow returns an approval event for workspace-external writes and consumes it once",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow requires fresh approval for equal-byte content abc changed to xyz",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow requires fresh approval for equal-byte content 甲 changed to 乙",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow blocks writes outright in plan mode",
+          "status": "passed"
+        },
+        {
+          "name": "files api permission approval flow P2-001: readOnly default blocks files.writeText without silent acceptEdits",
+          "status": "passed"
+        },
+        {
+          "name": "files api read allowlist (P1-003) rejects arbitrary local path reads outside workspace and write roots",
+          "status": "passed"
+        },
+        {
+          "name": "files api read allowlist (P1-003) allows reading files inside the active workspace",
+          "status": "passed"
+        },
+        {
+          "name": "workspace junction write escape (P1-003 / F-SEC-006) denies writes that realpath outside workspace via symlink/junction",
+          "status": "passed"
+        },
+        {
+          "name": "permissions api approvals consumes an approved approval only once",
+          "status": "passed"
+        },
+        {
+          "name": "permissions api approvals filters approvals by workspace, status, source, and limit",
+          "status": "passed"
+        },
+        {
+          "name": "permissions api approvals reuses an existing pending approval for the same request",
+          "status": "passed"
+        },
+        {
+          "name": "permissions api approvals expires stale pending approvals before listing or deciding",
+          "status": "passed"
+        },
+        {
+          "name": "permissions api approvals P2-002: concurrent consumers only one succeeds (atomic single-use)",
+          "status": "passed"
+        },
+        {
+          "name": "permissions api approvals P2-002: parameter/path/hash mismatch must deny consume",
+          "status": "passed"
+        },
+        {
+          "name": "permissions api approvals P2-002: timed-out pending approvals default deny and cannot be approved",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 isSensitiveWorkspacePath blocks drive/home/system/credential roots",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 isSensitiveWorkspacePath allows ordinary project folders (including inside home)",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 summarizePreflight decision table all ok → usable, writable",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 summarizePreflight decision table missing/unreadable/sensitive fail → blocked outright",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 summarizePreflight decision table only writable fails → usable but read-only (explicit degradation, not silent)",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 summarizePreflight decision table warnings never block",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 runWorkspacePreflight (real fs) preflights a real home directory through the same tilde target as workspace creation",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 runWorkspacePreflight (real fs) rejects the home root after expanding a tilde input",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 runWorkspacePreflight (real fs) a normal directory passes with git=no",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 runWorkspacePreflight (real fs) a git repo is reported (drives the undo-strategy hint)",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 runWorkspacePreflight (real fs) a missing path is blocked with an explaining check",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 runWorkspacePreflight (real fs) credential material inside the folder is surfaced as a warning",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 write-boundary escapes `../` traversal is judged against the resolved target, not the raw string",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 write-boundary escapes symlink escape is judged after realpath (hard lock)",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 write-boundary escapes readOnly mode rejects even in-workspace writes",
+          "status": "passed"
+        },
+        {
+          "name": "FP-P1-02 write-boundary escapes acceptEdits allows in-workspace writes without approval",
+          "status": "passed"
+        }
+      ],
+      "rawSha256": "36867e066ce7cfdad7c27a08afb3e10243690d82b9b877350606af0d7b7f7fb8"
+    },
+    {
+      "scope": "runtime",
+      "passed": 86,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "coding mutation workspace boundary does not journal rejected write pre-images through paths or aliases",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary does not journal rejected edit pre-images through paths or aliases",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary journals allowed writes and edits and restores their pre-images",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary refuses create undo after a parent is replaced by an external junction",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary refuses modify undo after a parent is replaced by an external junction",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary refuses undo through a hardlinked target and retains its snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary allows trusted operator write, edit, and apply_patch outside the workspace",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before write mutates outside the workspace",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before edit mutates outside the workspace",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary blocks external, derived, invalid, and missing provenance before apply_patch mutates outside the workspace",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary keeps in-workspace writes usable for external and missing provenance",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary treats a sibling of cwd as in-workspace when workspaceDir is broader",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary uses cwd as the fallback workspace when workspaceDir is omitted",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary fails missing provenance closed for an external target",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary preserves the existing malformed apply_patch validation error",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary denies workspace paths whose existing alias resolves outside the workspace",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary fails closed for an in-workspace hardlink alias",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary keeps the fs workspace-only policy authoritative for every mutation tool",
+          "status": "passed"
+        },
+        {
+          "name": "coding mutation workspace boundary supports an explicit apply_patch-only workspace restriction",
+          "status": "passed"
+        },
+        {
+          "name": "S03 workspace external-write path-escape matrix denies relative-parent-escape for external provenance without modifying the target",
+          "status": "passed"
+        },
+        {
+          "name": "S03 workspace external-write path-escape matrix denies absolute-outside for external provenance without modifying the target",
+          "status": "passed"
+        },
+        {
+          "name": "S03 workspace external-write path-escape matrix denies win32-case-variant for external provenance without modifying the target",
+          "status": "passed"
+        },
+        {
+          "name": "S03 workspace external-write path-escape matrix keeps a trusted operator external write authoritative (content preserved exactly)",
+          "status": "passed"
+        },
+        {
+          "name": "checkpointContentDiff (Cline checkpoint-diff parity) surfaces post-boundary modifications with a unified diff",
+          "status": "passed"
+        },
+        {
+          "name": "checkpointContentDiff (Cline checkpoint-diff parity) marks files created after the boundary as created",
+          "status": "passed"
+        },
+        {
+          "name": "checkpointContentDiff (Cline checkpoint-diff parity) skips files unchanged since the checkpoint instant",
+          "status": "passed"
+        },
+        {
+          "name": "checkpointContentDiff (Cline checkpoint-diff parity) reports snapshot loss as an error without fabricating a diff",
+          "status": "passed"
+        },
+        {
+          "name": "checkpointContentDiff (Cline checkpoint-diff parity) falls back to createdAt filtering when the checkpoint has no journalSeq stamp",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity tracks actual reads for fresh and stale tilde writes",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity tracks actual reads for fresh and stale file-url writes",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity restores the real tilde target with shadow=false",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity restores the real tilde target with shadow=true",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity journals the native write target for at-tilde input",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity journals the native write target for file-url input",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity keeps decoded file URL and raw absolute targets distinct with workspaceOnly=false",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity keeps decoded file URL and raw absolute targets distinct with workspaceOnly=true",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity blocks stale content at the exact decoded file URL target with journal=false",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity blocks stale content at the exact decoded file URL target with journal=true",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity uses the same tilde target for a direct journal snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity undoes creation at the expanded target",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity journals the actual edit target before changing its contents",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity serializes tilde and absolute writes under the same journal lease",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity rejects a home escape before a restricted journal or write reads it",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity matches stale admission to the real tilde target with journal=true",
+          "status": "passed"
+        },
+        {
+          "name": "coding input path identity matches stale admission to the real tilde target with journal=false",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits keeps a fresh full rewrite valid beyond the generic root reader limit",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits confirms sandbox absence after a numeric bridge failure with missing=true",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits confirms sandbox absence after a numeric bridge failure with missing=false",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits keeps literal ~ files and recovery targets exact with journal=true",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits keeps literal ~ files and recovery targets exact with journal=false",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits rejects unknown remote existence output and retains explicit absence",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits preserves an explicit override and its ordinary journal entry",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits allows the existing flag-off and unread-file paths",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits rechecks the read hash after the journal lease and leaves no unapplied undo step",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits rechecks after the native mutation queue with journal=true",
+          "status": "passed"
+        },
+        {
+          "name": "coding write admission after owner waits rechecks after the native mutation queue with journal=false",
+          "status": "passed"
+        },
+        {
+          "name": "stale-write-guard (C2-2) blocks read -> external change -> write",
+          "status": "passed"
+        },
+        {
+          "name": "stale-write-guard (C2-2) allows read -> write without external change",
+          "status": "passed"
+        },
+        {
+          "name": "stale-write-guard (C2-2) does not block writes for unread files",
+          "status": "passed"
+        },
+        {
+          "name": "stale-write-guard (C2-2) flag off allows all writes",
+          "status": "passed"
+        },
+        {
+          "name": "stale-write-guard (C2-2) TASK-P1-07: force/allowStaleWrite override bypasses block and records allowance",
+          "status": "passed"
+        },
+        {
+          "name": "stale-write-guard (C2-2) TASK-P1-07: error message is explainable and mentions override",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) preserves an orphan snapshot and corrupt sidecar across restart",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) reserves filenames of meta-only and snapshot-only entries",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) does not overwrite a filename occupied after the journal was cached",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) 3 writes then undo restores prior content",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) journal failure does not block write",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) wrapper marks undoable and undo_write restores",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) keeps an outside-workspace entry intact when restricted undo refuses it",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) projects an existing full-file write from the journal snapshot and verified after content",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) projects a new full-file write as an added artifact",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) represents a newly created empty file as a complete metadata artifact",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) keeps CRLF content verified while projecting normalized logical lines",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) fails closed when the workspace after content cannot be verified",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) binds patch artifact lineage to the same request and journal snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) fails closed when patch artifact lineage has no matching journal snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) session clear removes journal dir",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) refuses a snapshot replaced by an outside hardlink without restoring its bytes",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal (C2-8) does not consume a new journal tail while asynchronous undo reads its snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal FP-P1-04 semantics multi-file batch undo restores everything (create + modify)",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal FP-P1-04 semantics HARD LOCK: partial restore is a failure — stops at first error, journal retained",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal FP-P1-04 semantics journal rehydrates from disk after a restart (fresh in-memory state)",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal FP-P1-04 semantics rehydrates prepared apply_patch batches and persists recovery_required",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal FP-P1-04 semantics every snapshot meta carries lineage (session/workspace)",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal FP-P1-04 semantics journalDirFor normalizes Windows-illegal characters in session ids",
+          "status": "passed"
+        },
+        {
+          "name": "write-journal FP-P1-04 semantics successful undo cleans consumed snapshots; journal stays consistent with disk",
+          "status": "passed"
+        }
+      ],
+      "rawSha256": "43ae1f4458eacc0cc1b266624b41418212a49cf5748ce364e9599787ccd9e3ec"
+    }
+  ],
+  "electron": {
+    "passed": 1,
+    "failed": 0,
+    "rawSha256": "82f0b8cfe7bcdc53b8a083d925f15baf6421dcf3481f5b6260382d15c551f459",
+    "result": {
+      "driven_by": "agent",
+      "actor": "coding-path-approval-issues-274-276",
+      "denied": {
+        "ok": false,
+        "error": "unsafePath"
+      },
+      "saved": {
+        "ok": true
+      },
+      "pending": {
+        "ok": false,
+        "error": "approvalRequired",
+        "approvalRequired": true,
+        "approval": {
+          "id": "approval-mwwgf770-yey33u",
+          "workspaceId": "coding-save-boundary",
+          "sessionKey": "agent:main:main",
+          "runId": null,
+          "mode": "acceptEdits",
+          "source": "file",
+          "requestedAt": 1795631145516,
+          "status": "pending",
+          "risk": "external-write",
+          "paths": [
+            "D:\\ClawX-work\\path-approval-closeout-20261125\\.tmp\\e2e-runs\\verse-claw-e2e-run-CLi70e\\verse-claw-e2e-user-data-1NLavS\\coding-save-outside\\approved.txt"
+          ],
+          "requestHash": "D:\\ClawX-work\\path-approval-closeout-20261125\\.tmp\\e2e-runs\\verse-claw-e2e-run-CLi70e\\verse-claw-e2e-user-data-1NLavS\\coding-save-outside\\approved.txt:15c399aaf18be1b631adf2333a18b5789c6e5683e28854ecf035e058efb0ac04",
+          "paramsPreview": "D:\\ClawX-work\\path-approval-closeout-20261125\\.tmp\\e2e-runs\\verse-claw-e2e-run-CLi70e\\verse-claw-e2e-user-data-1NLavS\\coding-save-outside\\approved.txt (12 bytes)",
+          "reason": "Write target is outside the workspace boundary (D:\\ClawX-work\\path-approval-closeout-20261125\\.tmp\\e2e-runs\\verse-claw-e2e-run-CLi70e\\verse-claw-e2e-home-NWFNPT\\coding-save-workspace); external writes require approval"
+        }
+      },
+      "changedContent": {
+        "ok": false,
+        "error": "approvalRequired"
+      },
+      "approved": {
+        "ok": true
+      },
+      "reused": {
+        "ok": false,
+        "error": "approvalRequired"
+      },
+      "literalSaved": {
+        "ok": true
+      },
+      "preflight": {
+        "success": true,
+        "rootPath": "~/coding-save-workspace",
+        "resolvedPath": "D:\\ClawX-work\\path-approval-closeout-20261125\\.tmp\\e2e-runs\\verse-claw-e2e-run-CLi70e\\verse-claw-e2e-home-NWFNPT\\coding-save-workspace",
+        "ok": true,
+        "readOnlyOnly": false,
+        "isGitRepo": false,
+        "checks": [
+          {
+            "id": "exists",
+            "status": "ok",
+            "detail": "directory"
+          },
+          {
+            "id": "readable",
+            "status": "ok",
+            "detail": "readable"
+          },
+          {
+            "id": "writable",
+            "status": "ok",
+            "detail": "writable"
+          },
+          {
+            "id": "git",
+            "status": "info",
+            "detail": "notGitRepo"
+          },
+          {
+            "id": "sensitivePath",
+            "status": "ok",
+            "detail": "clear"
+          },
+          {
+            "id": "diskSpace",
+            "status": "ok",
+            "detail": "sufficient"
+          }
+        ]
+      },
+      "homePreflight": {
+        "success": true,
+        "rootPath": "~",
+        "resolvedPath": "D:\\ClawX-work\\path-approval-closeout-20261125\\.tmp\\e2e-runs\\verse-claw-e2e-run-CLi70e\\verse-claw-e2e-home-NWFNPT",
+        "ok": false,
+        "readOnlyOnly": false,
+        "isGitRepo": false,
+        "checks": [
+          {
+            "id": "exists",
+            "status": "ok",
+            "detail": "directory"
+          },
+          {
+            "id": "readable",
+            "status": "ok",
+            "detail": "readable"
+          },
+          {
+            "id": "writable",
+            "status": "ok",
+            "detail": "writable"
+          },
+          {
+            "id": "git",
+            "status": "info",
+            "detail": "notGitRepo"
+          },
+          {
+            "id": "sensitivePath",
+            "status": "fail",
+            "detail": "homeRoot"
+          },
+          {
+            "id": "diskSpace",
+            "status": "ok",
+            "detail": "sufficient"
+          }
+        ]
+      },
+      "outsideRetained": "retained outside",
+      "ordinary": "new ordinary",
+      "external": "new external",
+      "literal": "new literal",
+      "literalShadow": "retained literal shadow"
+    },
+    "cleanup": {
+      "status": "passed",
+      "survivors": 0,
+      "pendingLaunches": 0,
+      "rawSha256": "cc6e479c0239878697e21a57fd181d4a3630b41bf25bbf8e1cbb6af26c74acf2"
+    },
+    "sourceMutationGuard": {
+      "ok": true,
+      "sourceChanged": false,
+      "trackedFilesSha256": "3679534733b051869c0e87086699bd9b4216006a5edeb5a8b2a8b973c1d957a2",
+      "rawSha256": "7fd04953899dcec81db5a57a77501c6758abbb0db6f5bddaf27da4f0927b2ee4"
+    }
+  },
+  "checks": [
+    {
+      "phase": "regression",
+      "id": "host-unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "D:\\tmp\\path-approval-closeout-20261125\\host-vitest-r2.config.mts",
+        "tests/unit/workspace-preflight.test.ts",
+        "tests/unit/files-permissions-api.test.ts",
+        "tests/unit/path-broker-resolved.test.ts",
+        "tests/unit/permissions-api.test.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\path-approval-closeout-20261125\\r11\\host-unit.json"
+      ],
+      "exitCode": 0,
+      "seconds": 5.031,
+      "logSha256": "aac87ab59bf45d69a4f28887b934ed42dd6114fc1bdebaac47981669f244b361"
+    },
+    {
+      "phase": "regression",
+      "id": "runtime-unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "D:\\tmp\\path-approval-closeout-20261125\\runtime-vitest-r2.config.mts",
+        "src/agents/tools/coding-path-identity.test.ts",
+        "src/agents/tools/write-journal.test.ts",
+        "src/agents/tools/coding-write-admission.test.ts",
+        "src/agents/tools/stale-write-guard.test.ts",
+        "src/agents/agent-tools.workspace-boundary.test.ts",
+        "src/agents/checkpoint-diff.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--retry=0",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\path-approval-closeout-20261125\\r11\\runtime-unit.json"
+      ],
+      "exitCode": 0,
+      "seconds": 21.922,
+      "logSha256": "82039257f195b54494523090b66445a484fee4b6388db2d4baf50b2c21f801f0"
+    },
+    {
+      "phase": "types",
+      "id": "runtime-types",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\ClawX-work\\path-approval-closeout-20261125\\node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+        "--project",
+        "D:\\tmp\\path-approval-closeout-20261125\\runtime-types-r10-final.json",
+        "--noEmit",
+        "--composite",
+        "false",
+        "--incremental",
+        "false"
+      ],
+      "exitCode": 0,
+      "seconds": 106.359,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "phase": "static",
+      "id": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/files-api.ts",
+        "electron/services/workspace-preflight.ts",
+        "tests/unit/workspace-preflight.test.ts",
+        "tests/unit/files-permissions-api.test.ts",
+        "tests/e2e/coding-file-save-boundary.spec.ts",
+        "shared/types/workspace.ts"
+      ],
+      "exitCode": 0,
+      "seconds": 3.078,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "phase": "static",
+      "id": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.328,
+      "logSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "phase": "static",
+      "id": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.234,
+      "logSha256": "1cb90e2af821d19bcb74a5ece99925ecab0a17b679d4d48cd8c2fbac1a6abf5b"
+    },
+    {
+      "phase": "static",
+      "id": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.187,
+      "logSha256": "0ebd01687c9b6737078ff66b43fc5076e3c26ff93c15a7ddea5ff4f97bcde636"
+    },
+    {
+      "phase": "static",
+      "id": "harness-validate",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/path-approval-issues-274-276.md"
+      ],
+      "exitCode": 0,
+      "seconds": 0.828,
+      "logSha256": "925cf33cd930d0c2e9c4c9a453a50156427d8f202200ddd7b97dc1bf84a10771"
+    },
+    {
+      "phase": "static",
+      "id": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/path-approval-issues-274-276.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "seconds": 0.75,
+      "logSha256": "0d49e504c357d035b0a9a148b2aefc5496b30750abaa697e8ed37764acf22f3f"
+    },
+    {
+      "phase": "static",
+      "id": "artifact-policy",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 5.406,
+      "logSha256": "4e150f2ac5655e8a384b3ec09aaaf7845a1320b9d60c29bcd23075791088a722"
+    },
+    {
+      "phase": "desktop-build",
+      "id": "browser-patch-check",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/patch-upstream.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.344,
+      "logSha256": "30a2b45f17467afd7819594d0b7f550aaac92e1ea3e6f0bd2d883b1d8068ec21"
+    },
+    {
+      "phase": "desktop-build",
+      "id": "browser-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "exitCode": 0,
+      "seconds": 6.703,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "phase": "desktop-build",
+      "id": "extension-bridge",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.047,
+      "logSha256": "da57202f9a8cd6ece51b8fc02f165f5825369e65b1ab4dac616835af15a8c506"
+    },
+    {
+      "phase": "desktop-build",
+      "id": "icons",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/sync-lobe-icons.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.953,
+      "logSha256": "419a5916b21161174f9f8ce17e52861a5d0fe1d011e95f98bd283d57b6b0dadb"
+    },
+    {
+      "phase": "desktop-build",
+      "id": "build-source",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/versebrowser-build-provenance.mjs",
+        "--capture"
+      ],
+      "exitCode": 0,
+      "seconds": 0.203,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "phase": "desktop-build",
+      "id": "vite-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "exitCode": 0,
+      "seconds": 46.813,
+      "logSha256": "591044f51bfbc982ba61260a49791185a4001f756d824a061002a1a082864e36"
+    },
+    {
+      "phase": "desktop-build",
+      "id": "build-provenance",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/versebrowser-build-provenance.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.344,
+      "logSha256": "fcd06f297e643749985740429728cffbf6baff78b119c5da2eb0d9b426bdea8e"
+    },
+    {
+      "phase": "runtime-build",
+      "id": "runtime-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 29.484,
+      "logSha256": "3d3978645cb88642751ea2f34204bae6a2373bb2e31c45d17e3074593a026aba"
+    },
+    {
+      "phase": "electron",
+      "id": "coding-file-save",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-file-save-boundary.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=list,json",
+        "--output=D:\\tmp\\path-approval-closeout-20261125\\r10\\electron-results"
+      ],
+      "exitCode": 0,
+      "seconds": 14.422,
+      "logSha256": "4dd65bea909863fdf8a227eae6e669f723f475342eb6c175ed4509a76c74fd80"
+    }
+  ],
+  "receipts": {
+    "regression": {
+      "job": "path-approval-final-regression-20261126-r11",
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "4add01cc89da54b0421f3a9955c5ffac19e35566b8ae6561222b7d99052b44e0",
+      "seconds": 28.307,
+      "logHashes": {
+        "stdout.log": "c8539647100d9400f137625f6495234cdb69cef8770d42724b2357cfbce8e99d",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "types": {
+      "job": "path-approval-final-types-20261126-r10",
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "b6dc078c2ee51660ca152d6bf32dcb05a9d823169bd029bd1d8d01cc4b309e4c",
+      "seconds": 108.177,
+      "logHashes": {
+        "stdout.log": "ec67f6e1d49592d04625f4104dfe25f33b2e2bae3afafa3fd3d4c4f4cb9b6125",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "static": {
+      "job": "path-approval-final-static-20261126-r10",
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "b9067a94476629343eecc8fe497cdd266fbb8e4db36a00567a81d71828314ce4",
+      "seconds": 15.759,
+      "logHashes": {
+        "stdout.log": "799cd8c4bb2f208ebc6ac4994280e68d87ccc9cb864c65af92be58804bf53734",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "desktop-build": {
+      "job": "path-approval-final-desktop-build-20261126-r10",
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "87067e96f266e8135ecc6bb1fe7222bb3c041cbd19e60034a27d78fb2148e9b0",
+      "seconds": 60.253,
+      "logHashes": {
+        "stdout.log": "583d9e8b9e6a23af20b46d5b840e72d5ef4696ee6518252c4087e6cee3de3d0b",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "runtime-build": {
+      "job": "path-approval-final-runtime-build-20261126-r10",
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "da45a476b961c520fd5cfc78d7393cb2f874ff90a1c43aba545595de7eb32c30",
+      "seconds": 30.434,
+      "logHashes": {
+        "stdout.log": "dd26c47b894b1a8fae2c75a8b758e0a9ea1b9622ec4352fe258f4787c4b5c728",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "electron": {
+      "job": "path-approval-final-electron-20261126-r10",
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "199a619541eecd72b15ce4da39a1c4d5a61d0bd8b1c3cb807f8927ab2a267350",
+      "seconds": 15.907,
+      "logHashes": {
+        "stdout.log": "7e0e02c4f4bbd694296eefb1b2522f70c8fbbd84478a000dcd508286cf64b73e",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "review": {
+      "job": "path-approval-main-review-20261126-r9",
+      "status": "failed",
+      "exitCode": 4,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "4e1b3fc53ff7f02a87c0a7adf23abb9a7d04f1576edbb274534bfadf240e668b",
+      "seconds": 123.644,
+      "logHashes": {
+        "stdout.log": "7d2bbfa720f797a3e96ea43109562e802012b5c8053b4fc6817cd6613ff0b07a",
+        "stderr.log": "828dc4cd9a29109bf8e6530b1b74145df58c1429ca6a1b1d8ea82d7902a28119"
+      }
+    },
+    "harness-ci": {
+      "job": "path-approval-final-harness-ci-20261126-r10",
+      "status": "failed",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "receiptSha256": "0c580e474cfcf23b3e956ae1c0c476111997c706b4aab4e4b2a3a7068b8e7ff1",
+      "seconds": 24.142,
+      "logHashes": {
+        "stdout.log": "910dcb0103875d6961fc21dbf06a3065fdf7dbf2cc7626abe2a4607151ef0dff",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "review": {
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "rawVerdict": "patch is correct",
+    "rawConfidence": 0.5,
+    "findings": 2,
+    "accepted": 0,
+    "rejected": 2,
+    "actionableRemaining": 0,
+    "reportFile": "review.json",
+    "adjudicationFile": "review-adjudication.json",
+    "candidate": "824e6e1776818049b36e047bf95f1ecedba14a97",
+    "automatedValidity": false,
+    "adjudicatedCompletedReview": true,
+    "receiptNote": "exit4 retained: wrapper overmatched pending in a completed conditional semantic verdict; both source checks are resolved in adjudication."
+  },
+  "harnessCI": {
+    "status": "failed",
+    "exitCode": 1,
+    "assessment": {
+      "driven_by": "agent",
+      "candidate": "456ee94e330ccab40b440053ea1c6ab9d5565ffb",
+      "mainBaseline": "638b2cb1609378ff071a888cc2fdd6f9bed67eb8",
+      "classification": "pre-existing repository Agent Dev audit evidence and performance baseline",
+      "originalHarnessStatus": "failed",
+      "originalHarnessExitCode": 1,
+      "scopeDecision": "Path issue behavior is validated and eligible for private main integration; retain repository audit failure rather than replacing historical performance evidence or changing budgets.",
+      "passedBeforeAudit": [
+        "59 harness tests",
+        "spec lifecycle",
+        "34 duplicate groups",
+        "policy docs",
+        "generated catalogs"
+      ],
+      "remainingChecks": {
+        "driven_by": "agent",
+        "candidate": "456ee94e330ccab40b440053ea1c6ab9d5565ffb",
+        "steps": [
+          {
+            "id": "evidence-refs",
+            "argv": [
+              "node",
+              "scripts/check-evidence-refs.mjs"
+            ],
+            "exitCode": 0,
+            "seconds": 0.079,
+            "logSha256": "093a582d51e725a9e806df6b01a9a2cd9b353b6e5c1544fa04dca750ad8111dc"
+          },
+          {
+            "id": "test-coverage",
+            "argv": [
+              "node",
+              "scripts/check-test-coverage-baseline.mjs"
+            ],
+            "exitCode": 0,
+            "seconds": 0.671,
+            "logSha256": "b31f78b79028509cc83a3dc4b5536a10831da08b5c5c8fefbef752218f2376c9"
+          }
+        ],
+        "sourceUnchanged": true
+      },
+      "baselineSources": [
+        {
+          "path": "scripts/agent-dev-audit.mjs",
+          "unchangedFromMain": true,
+          "sha256": "b9dc50f0372ea7078aa51f9253a3b38e42c841848e7296976ca387018f1532ae"
+        },
+        {
+          "path": "artifacts/agent-dev-deep-test/report.json",
+          "unchangedFromMain": true,
+          "sha256": "9275e09aecc59f3f230df166fcea4280a9e3ea65400d935292aaeffbaecd91d1"
+        },
+        {
+          "path": "artifacts/agent-dev-deep-test/history.json",
+          "unchangedFromMain": true,
+          "sha256": "dced6418066ffebf12bc72f0ccc1058ec0dab4e35b06e0e978672c3591809464"
+        },
+        {
+          "path": "artifacts/agent-dev-workbench/evidence.json",
+          "unchangedFromMain": true,
+          "sha256": "a7a474a52d376d0ac7b4d8e329ccaf21ccfd0e14af4312640f49673f64f79d97"
+        },
+        {
+          "path": "artifacts/agent-dev-quality/report.json",
+          "unchangedFromMain": true,
+          "sha256": "6bedb0543cc2f59a38b0af07b07f98d13ef266721b30b63ef3e0b23e18919ea5"
+        },
+        {
+          "path": "package.json",
+          "unchangedFromMain": true,
+          "sha256": "ab70f4c808e614b146d309980ba8649c11a79be609851c2ad04d8597ec7d20a6"
+        }
+      ],
+      "auditGeneratedAt": "2026-11-25T18:26:13.113Z",
+      "auditDisqualifiers": [
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:workbench",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-workbench/evidence.json is 50.92h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:deep-test",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/report.json is 171.33h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:deep-test-history",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/history.json is 171.33h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:quality",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-quality/report.json is 171.33h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: typecheck, playwright-agent-dev, contract exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 68533ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:playwright-agent-dev",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "playwright-agent-dev exceeded hard limit: 46635ms > 40000ms.",
+          "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:contract",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "contract exceeded hard limit: 3388ms > 3000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        }
+      ],
+      "deepTestRecordedAt": "2026-11-18T15:06:23.218Z"
+    }
+  },
+  "ci": {
+    "status": "not_started",
+    "reason": "GitHub account payments/spending limit",
+    "exampleCheckRuns": [
+      139377062099,
+      139377068836,
+      139377061624
+    ]
+  },
+  "priorFailures": {
+    "types-r3": "workspace package exports pointed at missing dist via shared dependency link",
+    "types-r4": "runtime config referenced old worktree and shared type import missed .js",
+    "review-r5": "placeholder report with no final verdict",
+    "runtime-build-r5": "worker admission changed before command launch",
+    "runtime-build-r6": "pnpm attempted linked dependency reconciliation and required an interactive purge confirmation",
+    "regression-r10": "Existing Windows inode/ACL/open-reader test timed out at unchanged20s;35 of36Hostcases passed, Runtime not started. r11 reruns identical assertions and timeout."
+  },
+  "rawArchiveKey": "path-approval-closeout-20261125",
+  "inheritedTypes": {
+    "candidate": {
+      "commit": "824e6e1776818049b36e047bf95f1ecedba14a97",
+      "tree": "306fe1cb28203075224b76a43cfe4423f9cafd32",
+      "dirty": false
+    },
+    "originalPhaseExitCode": 2,
+    "successfulSteps": [
+      {
+        "id": "main-types",
+        "exitCode": 0,
+        "seconds": 60.171,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "web-types",
+        "exitCode": 0,
+        "seconds": 13.062,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "test-types",
+        "exitCode": 0,
+        "seconds": 173.094,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "transferProof": {
+      "driven_by": "agent",
+      "before": "824e6e1776818049b36e047bf95f1ecedba14a97",
+      "after": "456ee94e330ccab40b440053ea1c6ab9d5565ffb",
+      "changed": [
+        "harness/specs/tasks/path-approval-issues-274-276.md",
+        "shared/types/workspace.ts"
+      ],
+      "file": "shared/types/workspace.ts",
+      "typescriptVersion": "5.9.3",
+      "beforeSourceSha256": "6c3bfb4011ed8fcba758f579bf24fa3b2c7964e480ddd3690f297e598eef8718",
+      "afterSourceSha256": "8f298e9bec5c678ce8b847118304381996a4ef58e7615fdc5e393f8840a3e79a",
+      "emittedRuntimeSha256": "2c9b3fe9af02c681a90cab9cfe8ed29344f07ad1ffa82afdcee3d3d15ac470ab",
+      "emittedRuntimeUnchanged": true,
+      "typeResolutionValidation": "Fresh Runtime NodeNext validation is required in r10; Main/Web/Test r8 successful phase receipts are retained with their original candidate."
+    }
+  }
+}

@@ -8,7 +8,8 @@ import { Type } from "typebox";
 import { getToolParamsRecord } from "../agent-tools.params.js";
 import { acquirePatchBatchLocks } from "../apply-patch-batch-lock.js";
 import type { AnyAgentTool } from "../agent-tools.types.js";
-import { toRelativeWorkspacePath } from "../path-policy.js";
+import { resolvePathFromInput, toRelativeWorkspacePathFromResolved } from "../path-policy.js";
+import { resolveWorkspaceFile } from "../session-read-hashes.js";
 import { FsSafeError, root as fsRoot } from "../../infra/fs-safe.js";
 import { generateUnifiedPatch } from "../sessions/tools/edit-diff.js";
 import { jsonResult } from "./common.js";
@@ -39,9 +40,9 @@ import {
 import { isWriteAdmissionRejection } from "../stale-write-guard.js";
 export * from "./write-journal-core.js";
 
-/** Preserve the original workspace path policy at the existing tool entrypoint. */
+/** Recovery validates the stored target without expanding its filename again. */
 export function undoLastWrites(params: Parameters<typeof undoJournalWrites>[0]) {
-  return undoJournalWrites(params, toRelativeWorkspacePath);
+  return undoJournalWrites(params, toRelativeWorkspacePathFromResolved);
 }
 
 export const UNDO_WRITE_TOOL_NAME = "undo_write";
@@ -220,18 +221,15 @@ export function wrapToolWithWriteJournal(
       const paths: string[] = [];
       if (tool.name === "apply_patch") {
         const input = typeof record?.input === "string" ? record.input : "";
-        paths.push(...extractPatchTargetPaths(input));
+        paths.push(
+          ...extractPatchTargetPaths(input).map((filePath) =>
+            resolvePathFromInput(filePath, options.workspaceRoot),
+          ),
+        );
       } else if (typeof record?.path === "string" && record.path.trim()) {
-        paths.push(record.path);
+        paths.push(resolveWorkspaceFile(options.workspaceRoot, record.path));
       }
-      const lockTargets =
-        tool.name === "apply_patch"
-          ? []
-          : paths.map((filePath) =>
-              path.isAbsolute(filePath)
-                ? path.resolve(filePath)
-                : path.resolve(options.workspaceRoot, filePath),
-            );
+      const lockTargets = tool.name === "apply_patch" ? [] : paths;
       const release = await acquirePatchBatchLocks(lockTargets);
       const snapshots: WriteJournalEntry[] = [];
       try {
@@ -252,7 +250,7 @@ export function wrapToolWithWriteJournal(
           // lease: a path swapped while waiting must not leak into a snapshot.
           let entry: WriteJournalEntry | null;
           if (confinedRoot) {
-            const relative = toRelativeWorkspacePath(options.workspaceRoot, filePath);
+            const relative = toRelativeWorkspacePathFromResolved(options.workspaceRoot, filePath);
             let prior: Buffer | undefined;
             try {
               prior = (await confinedRoot.read(path.resolve(confinedRoot.rootReal, relative)))

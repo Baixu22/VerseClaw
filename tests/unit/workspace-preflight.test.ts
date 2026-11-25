@@ -9,7 +9,7 @@
  */
 import { mkdtemp, mkdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   isSensitiveWorkspacePath,
@@ -91,6 +91,28 @@ describe('FP-P1-02 summarizePreflight decision table', () => {
 });
 
 describe('FP-P1-02 runWorkspacePreflight (real fs)', () => {
+  it('preflights a real home directory through the same tilde target as workspace creation', async () => {
+    const dir = await mkdtemp(join(homedir(), '.clawx-preflight-tilde-'));
+    try {
+      const input = `  ~/${basename(dir)}  `;
+      const absolute = await runWorkspacePreflight(dir);
+      const tilde = await runWorkspacePreflight(input);
+      expect(tilde.rootPath).toBe(input);
+      expect(tilde.resolvedPath).toBe(absolute.resolvedPath);
+      expect(tilde.ok).toBe(true);
+      expect(tilde.readOnlyOnly).toBe(absolute.readOnlyOnly);
+      expect(tilde.checks.find(check => check.id === 'exists')).toMatchObject({ status: 'ok', detail: 'directory' });
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects the home root after expanding a tilde input', async () => {
+    const result = await runWorkspacePreflight(' ~ ');
+    expect(result.ok).toBe(false);
+    expect(result.checks.find(check => check.id === 'sensitivePath')).toMatchObject({ status: 'fail', detail: 'homeRoot' });
+  });
+
   it('a normal directory passes with git=no', async () => {
     const dir = join(baseDir, 'plain');
     await mkdir(dir, { recursive: true });

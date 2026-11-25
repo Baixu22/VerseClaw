@@ -3,6 +3,7 @@
  * Only blocks files this session has read when disk content diverged since last read.
  * Edit tool is intentionally not wrapped (oldText is implicit protection).
  */
+import path from "node:path";
 import { codingObservability } from "../context-engine/coding-observability.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { checkFileFreshness } from "../context-engine/factstore/freshness.js";
@@ -14,7 +15,7 @@ import {
   hashFileOnDisk,
   resolveWorkspaceFile,
 } from "./session-read-hashes.js";
-import { toFactRelPath } from "./fact-rel-path.js";
+import { toResolvedFactRelPath } from "./fact-rel-path.js";
 
 export type StaleWriteGuardOptions = {
   workspaceRoot: string;
@@ -66,7 +67,10 @@ export function shouldBlockStaleWrite(params: {
   factStore?: Pick<FactStore, "getFileRecord">;
   readDiskHash?: (absolutePath: string) => string | undefined;
 }): { block: boolean; relPath?: string; reason?: string } {
-  const rel = toFactRelPath(params.filePath, params.workspaceRoot);
+  const abs = path.isAbsolute(params.filePath)
+    ? path.resolve(params.filePath)
+    : resolveWorkspaceFile(params.workspaceRoot, params.filePath);
+  const rel = toResolvedFactRelPath(abs, params.workspaceRoot);
   if (!rel) {
     return { block: false };
   }
@@ -75,7 +79,6 @@ export function shouldBlockStaleWrite(params: {
     // Never read in this session — do not block generators/external outputs.
     return { block: false, relPath: rel, reason: "unread" };
   }
-  const abs = resolveWorkspaceFile(params.workspaceRoot, params.filePath);
   const diskHash = (params.readDiskHash ?? hashFileOnDisk)(abs);
   if (!diskHash) {
     // File missing: full write is create, not stale overwrite.
@@ -114,9 +117,9 @@ export function createStaleWriteGuard(
   return async (absolutePath, args) => {
     try {
       const record = getToolParamsRecord(args);
-      const filePath = typeof record?.path === "string" ? record.path : undefined;
+      const filePath = typeof record?.path === "string" ? absolutePath : undefined;
       if (filePath) {
-        const relPath = toFactRelPath(filePath, options.workspaceRoot);
+        const relPath = toResolvedFactRelPath(absolutePath, options.workspaceRoot);
         let diskHash: string | undefined;
         if (relPath && getSessionReadHash(options.sessionId, relPath)) {
           if (options.readDiskHash) {

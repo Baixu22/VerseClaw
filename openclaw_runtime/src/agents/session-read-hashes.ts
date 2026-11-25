@@ -5,6 +5,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { resolveToCwd } from "./sessions/tools/path-utils.js";
 
 /** sessionId -> relPath -> content hash */
 const registry = new Map<string, Map<string, string>>();
@@ -65,10 +66,7 @@ function normalizeRel(relPath: string): string {
   return relPath.replace(/\\/g, "/").replace(/^\.\//, "");
 }
 
-/** Resolve absolute path under workspace for hashing. */
+/** Resolve the same input target as the native read/write tools for hashing. */
 export function resolveWorkspaceFile(workspaceRoot: string, relOrAbs: string): string {
-  if (path.isAbsolute(relOrAbs)) {
-    return path.resolve(relOrAbs);
-  }
-  return path.resolve(workspaceRoot, relOrAbs);
+  return path.normalize(resolveToCwd(relOrAbs, workspaceRoot));
 }
