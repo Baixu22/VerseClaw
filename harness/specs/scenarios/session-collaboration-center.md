@@ -19,6 +19,8 @@ A2 通过 typed sessionActivity.query 与 sessions_list(collaboration=true)、se
 
 Workspace/Gateway 读取抛错和 UI Host 读取失败保留 unavailable/owner-unavailable；空值、缺少 page 的旧信封和未成功的 UI 信封保留 unknown/protocol-unverified，两个会话工具与 Main/UI 清除相同事实和游标。参数错误仍在原读取调用前拒绝。
 
+工具请求待 Main 准入时动作保持 unknown，准入后回读原 ScopedRun；修改阅读副本后原 owner 身份仍一致。同 key/generation 的异工作区准入在 Main、UI 和两个工具返回 unavailable/scope-mismatch；目标换代后不读取旧代在途动作。
+
 本场景定义后续 A–E 叶的自动验收旅程。节点与读写合同见 session-collaboration-center-plan，范围为本机已配置、原权限允许的工作区与会话。
 
 A1 的共用读取入口是 typed `hostApi.sessionActivity.read`。每个目标传入原 workspace/project/sessionKey/sessionGeneration，并可固定 Workspace binding revision 与执行域引用。`readModel.sources` 明确区分已读事实、真实为空、未读取、不可用、过期和未知；读取前后从原 owner 核对会话、任务、配置、检出与资源资格。正反例包含同 key 跨工作区、旧 generation、旧 binding/执行域 revision、缺失 owner，以及 Runtime 读取和 Main 等待期间的 reset。

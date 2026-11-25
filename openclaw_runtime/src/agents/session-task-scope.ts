@@ -13,13 +13,17 @@ const effectsByRun = new Map<string, number>();
 const claimsByRun = new Map<string, string>();
 const executionRevisionsByRun = new Map<string, number>();
 const closingRuns = new Set<string>();
-const effectRequests = new Map<string, Readonly<SessionTaskEffectRequest>>();
+type InFlightEffect = {
+  request: Readonly<SessionTaskEffectRequest>;
+  run: SessionTaskEffectAdmission['claim']['run'] | null;
+};
+const effectRequests = new Map<string, InFlightEffect>();
 const terminalIdentities = new Map<string, { sessionKey: string; sessionGeneration: string }>();
 
 export function getSessionTaskEffectRequest(
   requestId: string,
 ): Readonly<SessionTaskEffectRequest> | undefined {
-  return effectRequests.get(requestId);
+  return effectRequests.get(requestId)?.request;
 }
 const requesterReferences = new AsyncLocalStorage<SessionTaskRequesterReference>();
 
@@ -51,14 +55,15 @@ export function sessionTaskEffectsInFlight(runId: string): number {
 }
 
 export function sessionTaskOperationsInFlight(runId: string): string[] {
-  return [...effectRequests.values()].filter(request => request.runId === runId)
-    .map(request => request.operationId).filter((id): id is string => Boolean(id));
+  return [...effectRequests.values()].filter(({ request }) => request.runId === runId)
+    .map(({ request }) => request.operationId).filter((id): id is string => Boolean(id));
 }
 
-/** Read original in-flight tool identities; this does not claim admission or execution. */
+/** Only the original Main admission can qualify an in-flight request's run scope. */
 export function readSessionTaskEffectRequests(sessionKey: string, generation: string) {
-  return [...effectRequests.values()].filter(request => request.sessionKey === sessionKey && request.sessionGeneration === generation)
-    .map(request => ({ requestId: request.requestId, operationId: request.operationId, runId: request.runId, toolName: request.toolName }));
+  return [...effectRequests.values()].filter(({ request }) => request.sessionKey === sessionKey && request.sessionGeneration === generation)
+    .map(({ request, run }) => ({ requestId: request.requestId, operationId: request.operationId, toolName: request.toolName,
+      run: run ? structuredClone(run) : null }));
 }
 
 export async function withSessionTaskScope<T>(
@@ -103,7 +108,8 @@ export async function withSessionTaskScope<T>(
     ...(executionRevisionsByRun.has(runId) ? { expectedExecutionRevision: executionRevisionsByRun.get(runId) } : {}),
     ...(effect ?? {}),
   };
-  effectRequests.set(request.requestId, Object.freeze({ ...request }));
+  const effectRequest: InFlightEffect = { request: Object.freeze({ ...request }), run: null };
+  effectRequests.set(request.requestId, effectRequest);
   try {
     const { callGateway } = await import("../gateway/call.js");
     const admission = await callGateway<SessionTaskEffectAdmission>({
@@ -132,6 +138,7 @@ export async function withSessionTaskScope<T>(
     }
     claimsByRun.set(runId, claim.id);
     if (claim.executionRevision !== undefined) executionRevisionsByRun.set(runId, claim.executionRevision);
+    effectRequest.run = structuredClone(claim.run);
     return await withSessionTaskRequesterReference(
       {
         taskRef: claim.taskNodeId,

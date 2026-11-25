@@ -38,7 +38,7 @@ agent:<agentId>:<suffix>
 
 agent 使用 `session_status({ readOnly: true, scope: row.detail.scope })` 读取目标详情；不指定 scope 时读取当前运行的会话。只读模式拒绝模型更改，跳过转录用量与状态卡的配置写入。读取结果包含原任务目标、writer/observer 引用、ScopedRun、实际工具/进程动作和逐来源状态。
 
-查询先应用既有 visibility、A2A allow 与 sandbox 读取策略，再读取任务和动作；它不读取完整 transcript，不调用摘要模型，也不切换活动工作区。实际动作从原 session-task effect request 和 bash process owner 投影，缺少归属或运行中尚未观测到动作时保留 unknown。搜索无法核验的目标计入 unknownMatches；每个执行根在一次查询中只尝试一个任务连接，旧 schema 保持原数据并返回 unavailable。
+查询先应用既有 visibility、A2A allow 与 sandbox 读取策略，再读取任务和动作；它不读取完整 transcript，不调用摘要模型，也不切换活动工作区。实际动作从原 session-task effect request 和 bash process owner 投影，工具的 ScopedRun 使用 Main 原准入结果；待准入、缺少归属或运行中尚未观测到动作时保留 unknown。同 key/generation 的准入工作区或项目不符返回 unavailable/scope-mismatch。搜索无法核验的目标计入 unknownMatches；每个执行根在一次查询中只尝试一个任务连接，旧 schema 保持原数据并返回 unavailable。
 
 协作模式使用上述 workspace、search、fields、limit、cursor 参数；混入旧列表模式的过滤或转录参数会被拒绝。Main、UI 和工具共同校验返回范围、字段选择与读取预算，缺少 session owner 的行不携带任务或运行事实。
 

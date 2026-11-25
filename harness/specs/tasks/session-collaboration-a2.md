@@ -88,7 +88,7 @@ docs:
 
 单页最多 50 个结果，单次最多检查 100 个可见候选；默认页长 20。游标绑定 requester、过滤条件和原 metadata 身份，来源改变或 reset 返回 stale。搜索包含会话 metadata 与原 TaskSystem 目标；无法核验的目标保留 unknown，不把读取失败当作已确认的无匹配结果。查询和详情均不读取完整 transcript，不调用模型或改变活动工作区。
 
-实际动作消费原 session-task effect request 与 bash process owner。已确认工具/进程按原 session/generation/run 归因；运行存在而动作未观测时保留 unknown，缺少 owner 身份不借当前运行补签。已核验的 run ready 使行保持 running；动作 ready 必须包含已观测动作，ready 与空数组的组合由 Main、UI 和工具共同拒绝。任务引用保持 TaskSystem writer/observer 身份，不据此建立会话血缘。
+实际动作消费原 session-task effect request 与 bash process owner。工具动作的 ScopedRun 复制原 Main 准入结果；尚未准入时保留 unknown，同 key/generation 的准入工作区或项目不符时返回 unavailable/scope-mismatch，不用当前行重新构造 run。已确认工具/进程按原 session/generation/run 归因；运行存在而动作未观测时保留 unknown，缺少 owner 身份不借当前运行补签。已核验的 run ready 使行保持 running；动作 ready 必须包含已观测动作，ready 与空数组的组合由 Main、UI 和工具共同拒绝。任务引用保持 TaskSystem writer/observer 身份，不据此建立会话血缘。
 
 复用既有 session visibility、A2A allow 与 sandbox 读取策略，先筛选可见会话，再读取目标、任务和动作。只读 session_status 使用显式 readOnly 模式，拒绝同时传入模型修改；原状态工具的模型配置入口继续由既有 owner 执行。
 
@@ -96,6 +96,6 @@ Main、UI 和现有工具共同拒绝重复会话行、未知原因码、带观�
 
 原 Workspace/Gateway owner 的读取失败在 Main、UI 与两个会话工具返回 unavailable/owner-unavailable。读取已返回但 Query 页缺失、为空值或 UI success 信封不成立时返回 unknown/protocol-unverified，保留已解析的 requester，清除事实与分页。输入与当前 requester 身份仍在调用前验证，错误参数不能被改写成来源不可用。
 
-正反用例覆盖两个独立会话与子代理、跨工作区过滤、真实空任务与空闲、来源缺失、旧 generation/游标、读取中 reset、字段未选、分页上限、隐藏会话及 A2A/sandbox 拒绝。补充缺 owner 的搜索、旧 schema 单次连接尝试、Unicode 目标截断、原在途请求结清，以及 Main/UI/工具对异常来源、范围和字段的一致拒绝。记录查询前后 owner 内容和数据库哈希，检查 metadata 读取次数、连接复用和 transcript 字节读取为 0。证据区分原 SQLite / registry / native Git 与 fixture adapter，全部 driven_by: agent；首轮失败及原始回执放 D:/tmp。
+正反用例覆盖两个独立会话与子代理、跨工作区过滤、真实空任务与空闲、来源缺失、旧 generation/游标、读取中 reset、字段未选、分页上限、隐藏会话及 A2A/sandbox 拒绝。补充缺 owner 的搜索、旧 schema 单次连接尝试、Unicode 目标截断、原在途请求的待准入/结清、同 key/generation 的异工作区准入、只读 run 副本隔离，以及 Main/UI/工具对异常来源、范围和字段的一致拒绝。记录查询前后 owner 内容和数据库哈希，检查 metadata 读取次数、连接复用和 transcript 字节读取为 0。证据区分原 SQLite / registry / native Git 与 fixture adapter，全部 driven_by: agent；首轮失败及原始回执放 D:/tmp。
 
 满足四项验收后提交实现、规格和精选证据，按匹配 base_graph_hash 收口 TF-0920，validate、既有流式完整历史 export 与回读后留下 A3 续接说明。回退撤回本叶查询挂接，保留原会话、任务、运行和用户数据。

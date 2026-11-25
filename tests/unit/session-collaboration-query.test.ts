@@ -60,7 +60,8 @@ import { registerAgentRunContext, clearAgentRunContext } from '../../openclaw_ru
 import { subagentRuns } from '../../openclaw_runtime/src/agents/subagent-registry-memory';
 import { addSession, deleteSession } from '../../openclaw_runtime/src/agents/bash-process-registry';
 import { isMutatingToolCall, requiresSessionTaskScope } from '../../openclaw_runtime/src/agents/tool-mutation';
-import { clearSessionTaskScopeRun, withSessionTaskScope } from '../../openclaw_runtime/src/agents/session-task-scope';
+import { clearSessionTaskScopeRun, getSessionTaskEffectRequest, readSessionTaskEffectRequests, sessionTaskOperationsInFlight,
+  withSessionTaskScope } from '../../openclaw_runtime/src/agents/session-task-scope';
 
 const A = 'agent:main:a2-a', B = 'agent:main:a2-b', C = 'agent:main:a2-child';
 let root: string, workspaceA: string, workspaceB: string, sessionStore: string;
@@ -268,25 +269,79 @@ describe('A2 shared session discovery and detail', () => {
   });
   it('reads an original in-flight tool request with its own run identity and removes it when the owner settles', async () => {
     vi.stubEnv('CLAWX_TASK_SCOPE_BRIDGE', '1');
-    mocks.taskAdmission.mockResolvedValue({ status: 'granted', bindingRevision: 1,
+    const admission = { status: 'granted', bindingRevision: 1,
       claim: { id: 'fixture-admission', taskNodeId: tasksA.sessionSnapshot(A, 'generation-a').task!.contract.taskNodeId,
-        sessionGeneration: 'generation-a', run: { runId: 'effect-run-a', scope: { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: A } } } });
-    let started!: () => void, finish!: () => void;
+        sessionGeneration: 'generation-a', run: { runId: 'effect-run-a', scope: { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: A } } } };
+    let requested!: () => void, grant!: (value: typeof admission) => void, started!: () => void, finish!: () => void;
+    const requestSeen = new Promise<void>(resolve => { requested = resolve; });
+    const approval = new Promise<typeof admission>(resolve => { grant = resolve; });
     const entered = new Promise<void>(resolve => { started = resolve; });
+    const completion = new Promise<void>(resolve => { finish = resolve; });
+    mocks.taskAdmission.mockImplementation(async () => { requested(); return approval; });
     const pending = withSessionTaskScope({ config: mocks.cfg, sessionKey: A, sessionId: 'generation-a', runId: 'effect-run-a', workspaceDir: workspaceA },
-      'write', { path: 'fixture.txt' }, undefined, async () => { started(); await new Promise<void>(resolve => { finish = resolve; }); },
+      'write', { path: 'fixture.txt' }, undefined, async () => { started(); await completion; },
       { operationId: 'a2-tool-effect', checkoutAccess: 'write' });
     try {
+      await requestSeen;
+      const waitingBefore = structuredClone(ownerState()), waitingOwner = readSessionTaskEffectRequests(A, 'generation-a');
+      const originalRequest = getSessionTaskEffectRequest(waitingOwner[0].requestId);
+      expect(originalRequest).toMatchObject({ sessionKey: A, sessionGeneration: 'generation-a', workspaceDir: workspaceA, runId: 'effect-run-a' });
+      expect(Object.isFrozen(originalRequest)).toBe(true);
+      const waiting = (await runtime(query({ target: scope() }))).page;
+      expect(waitingOwner[0].run).toBeNull();
+      expect(waiting.items[0].sources.actions).toMatchObject({ state: 'unknown', reason: 'run-identity-missing', value: null });
+      expect(ownerState()).toEqual(waitingBefore); expect(readSessionTaskEffectRequests(A, 'generation-a')).toEqual(waitingOwner);
+      expect(getSessionTaskEffectRequest(waitingOwner[0].requestId)).toBe(originalRequest);
+      expect(sessionTaskOperationsInFlight('effect-run-a')).toEqual(['a2-tool-effect']);
+      grant(admission);
       await entered;
       const before = structuredClone(ownerState());
+      const original = readSessionTaskEffectRequests(A, 'generation-a');
+      expect(original[0].run).toEqual(admission.claim.run);
+      original[0].run!.scope.workspaceId = scope(B, 'workspace-b', 'generation-b').workspaceId;
       const active = (await runtime(query({ target: scope() }))).page;
-      expect(active.items[0].sources.actions).toMatchObject({ state: 'ready', value: [{ id: 'a2-tool-effect', kind: 'tool', state: 'inflight', run: { runId: 'effect-run-a' } }] });
+      expect(active.items[0].sources.actions).toMatchObject({ state: 'ready', value: [{ id: 'a2-tool-effect', kind: 'tool', state: 'inflight', run: admission.claim.run }] });
+      expect(readSessionTaskEffectRequests(A, 'generation-a')[0].run).toEqual(admission.claim.run);
+      expect(getSessionTaskEffectRequest(waitingOwner[0].requestId)).toBe(originalRequest);
       expect(ownerState()).toEqual(before);
       finish(); await pending;
+      expect(getSessionTaskEffectRequest(waitingOwner[0].requestId)).toBeUndefined();
+      expect(sessionTaskOperationsInFlight('effect-run-a')).toEqual([]);
       const settled = (await runtime(query({ target: scope() }))).page;
       expect(settled.items[0].sources.actions).toMatchObject({ state: 'unknown', value: null });
-      receipts.push({ case: 'inflight-tool-owner-and-settlement', admissionAdapter: 'fixture', active, settled, beforeSha256: hash(before), afterSha256: hash(ownerState()) });
-    } finally { finish?.(); await pending; clearSessionTaskScopeRun('effect-run-a'); }
+      receipts.push({ case: 'inflight-tool-owner-and-settlement', admissionAdapter: 'fixture', waiting, active, settled, beforeSha256: hash(before), afterSha256: hash(ownerState()) });
+    } finally { grant(admission); finish(); await pending; clearSessionTaskScopeRun('effect-run-a'); }
+  });
+  it('preserves a foreign admission scope for the same key and generation and rejects its actions across consumers', async () => {
+    vi.stubEnv('CLAWX_TASK_SCOPE_BRIDGE', '1'); runs.delete('run-a');
+    const foreignRun = { runId: 'effect-run-foreign', scope: { workspaceId: 'workspace-b', projectId: 'workspace-b', sessionKey: A } };
+    mocks.taskAdmission.mockResolvedValue({ status: 'granted', bindingRevision: 1,
+      claim: { id: 'fixture-foreign-admission', taskNodeId: tasksA.sessionSnapshot(A, 'generation-a').task!.contract.taskNodeId,
+        sessionGeneration: 'generation-a', run: foreignRun } });
+    let started!: () => void, finish!: () => void;
+    const entered = new Promise<void>(resolve => { started = resolve; }), completion = new Promise<void>(resolve => { finish = resolve; });
+    const pending = withSessionTaskScope({ config: mocks.cfg, sessionKey: A, sessionId: 'generation-a', runId: foreignRun.runId, workspaceDir: workspaceB },
+      'write', { path: 'foreign.txt' }, undefined, async () => { started(); await completion; }, { operationId: 'a2-foreign-effect', checkoutAccess: 'write' });
+    try {
+      await entered;
+      const before = structuredClone(ownerState()), original = readSessionTaskEffectRequests(A, 'generation-a'), input = query({ target: scope(), limit: 1 });
+      expect(original[0].run).toEqual(foreignRun);
+      const ui = await readSessionCollaborationPage(input, main().api.query);
+      const call = vi.fn(async (request: { params?: unknown }) => runtime((request.params as { query: SessionCollaborationQuery }).query));
+      const opts = { agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: call as never };
+      const listed = await createSessionsListTool(opts).execute('foreign-action-list', { collaboration: true, target: scope(), limit: 1 });
+      const status = await createSessionStatusTool(opts).execute('foreign-action-status', { readOnly: true, scope: scope() });
+      expect(listed.details).toEqual(ui); expect(status.details).toEqual(ui);
+      expect(ui.items[0].sources.actions).toMatchObject({ state: 'unavailable', reason: 'scope-mismatch', value: null });
+      expect(ui.items[0].sources.run.state).toBe('empty'); expect(ui.items[0].status).toBe('unknown');
+      const after = ownerState(); expect(after).toEqual(before); expect(readSessionTaskEffectRequests(A, 'generation-a')).toEqual(original);
+      put(A, { sessionId: 'generation-new' });
+      const current = scope(A, 'workspace-a', 'generation-new'), resetBefore = structuredClone(ownerState());
+      const reset = (await runtime(query({ requester: current, target: current }))).page;
+      expect(reset.items[0].sources.actions).toMatchObject({ state: 'empty', value: [] }); expect(reset.items[0].status).toBe('idle');
+      expect(readSessionTaskEffectRequests(A, 'generation-new')).toEqual([]); expect(ownerState()).toEqual(resetBefore);
+      receipts.push({ case: 'same-key-generation-foreign-action-scope', admissionAdapter: 'fixture', original, ui, reset, beforeSha256: hash(before), afterSha256: hash(after) });
+    } finally { finish(); await pending; clearSessionTaskScopeRun(foreignRun.runId); }
   });
   it('pages using a scoped metadata cursor and rejects old generations and cursor identities', async () => {
     const input = query({ limit: 1 });

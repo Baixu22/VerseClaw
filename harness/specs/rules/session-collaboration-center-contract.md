@@ -17,6 +17,7 @@ appliesTo:
 - 新边界复用 shared/types/identity-scope.ts、ScopedRunId 与原 task/session/checkout 引用。逻辑 key、物理 generation、run、claim epoch、绑定 revision 和检出实例分别携带，不从字符串或目录猜测。
 - SessionActivity 是共用跨 owner 读模型。TaskSystem 持有任务目标、依赖、领取和完成；会话、消息、进程、资源及经验状态各由已有 owner 写入。材料投影与索引不成为第二状态源。
 - 每次查询和控制绑定显式 scope。部分来源 unavailable/stale/unknown 逐来源返回；相同 key 在不同工作区不能共用观测或草稿。
+- 工具动作的 ScopedRun 保留原 Main 准入身份；待准入请求保持 unknown，同 key/generation 的工作区或项目不符返回 unavailable/scope-mismatch。只读副本不改写原在途请求或准入结果。
 - Task 链接只关联工作，不产生会话血缘；真实来源消费 SessionDerivation 与 session store。读取不隐式创建任务、claim、会话或数据库。
 
 ## 通信与控制

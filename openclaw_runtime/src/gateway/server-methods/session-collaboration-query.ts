@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { normalizeAutonomySessionScope, normalizeRunScope, type AutonomySessionScope, type SessionKey } from '../../../../shared/types/identity-scope.js';
+import { normalizeAutonomySessionScope, type AutonomySessionScope, type SessionKey } from '../../../../shared/types/identity-scope.js';
 import { emptySessionCollaborationPage, parseSessionCollaborationQuery, type SessionCollaborationAction, type SessionCollaborationPage,
   type SessionCollaborationRow } from '../../../../shared/types/session-collaboration.js';
 import type { SessionActivityReadReason, SessionActivityTaskReference } from '../../../../shared/types/session-activity.js';
@@ -34,17 +34,21 @@ function boundedText(text: string, size: number) {
 function readActions(scope: AutonomySessionScope, run: SessionCollaborationRow['sources']['run']): SessionCollaborationRow['sources']['actions'] {
   try {
     const effects = readSessionTaskEffectRequests(scope.sessionKey, scope.sessionGeneration);
+    // A matching key/generation cannot relabel an admission from another workspace.
+    if (effects.some(effect => effect.run && (effect.run.scope.workspaceId !== scope.workspaceId
+      || effect.run.scope.projectId !== scope.projectId || effect.run.scope.sessionKey !== scope.sessionKey)))
+      return unavailable('session-task-effects/bash-processes', 'scope-mismatch');
     const processes = listRunningSessions().filter(process => bashSessionMatches(process, scope.sessionKey));
     const owned = processes.filter(process => process.lifecycleExpectedSessionId === scope.sessionGeneration);
     const projected = buildSessionActivityReadProjection({ sessionKey: scope.sessionKey, bashProcesses: owned }).processes;
     const actions: SessionCollaborationAction[] = [
-      ...effects.map(effect => ({ id: effect.operationId ?? effect.requestId, kind: 'tool' as const, label: boundedText(effect.toolName, 160),
-        state: 'inflight' as const, run: normalizeRunScope({ runId: effect.runId, scope: { workspaceId: scope.workspaceId, projectId: scope.projectId, sessionKey: scope.sessionKey } }), observedAt: Date.now() })),
+      ...effects.flatMap(effect => effect.run ? [{ id: effect.operationId ?? effect.requestId, kind: 'tool' as const, label: boundedText(effect.toolName, 160),
+        state: 'inflight' as const, run: effect.run, observedAt: Date.now() }] : []),
       ...projected.filter(process => process.status === 'running').map(process => ({ id: process.id, kind: 'process' as const,
         label: boundedText(process.label, 160), state: 'running' as const, run: null, observedAt: process.updatedAt })),
     ].sort((a, b) => b.observedAt - a.observedAt).slice(0, 8);
     if (actions.length) return { owner: 'session-task-effects/bash-processes', state: 'ready', value: actions, readAt: Date.now() };
-    if (processes.some(process => !process.lifecycleExpectedSessionId) || run.state !== 'empty')
+    if (effects.some(effect => !effect.run) || processes.some(process => !process.lifecycleExpectedSessionId) || run.state !== 'empty')
       return unavailable('session-task-effects/bash-processes', 'run-identity-missing', 'unknown');
     return { owner: 'session-task-effects/bash-processes', state: 'empty', value: [], readAt: Date.now() };
   } catch { return unavailable('session-task-effects/bash-processes'); }
