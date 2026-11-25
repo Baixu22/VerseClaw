@@ -11,14 +11,12 @@ import { hasSamePendingFinalDelivery } from "./recovery-authority/final-delivery
 import { resolveStateDir } from "../config/paths.js";
 import {
   type SessionEntry,
-  type SessionStoreTarget,
   loadSessionStore,
   resolveAllAgentSessionStoreTargetsSync,
   resolveSessionFilePath,
   resolveSessionTranscriptPathInDir,
   updateSessionStore,
 } from "../config/sessions.js";
-import { resolveAgentIdFromSessionStorePath } from "../config/sessions/paths.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { callGateway } from "../gateway/call.js";
 import { readSessionMessagesAsync } from "../gateway/session-utils.fs.js";
@@ -878,27 +876,6 @@ async function recoverStore(params: {
   return result;
 }
 
-async function resolveRestartRecoveryStoreTargets(params: {
-  cfg?: OpenClawConfig;
-  stateDir?: string;
-}): Promise<SessionStoreTarget[]> {
-  const targets = new Map<string, SessionStoreTarget>();
-  const stateDir = params.stateDir ?? resolveStateDir(process.env);
-  for (const sessionsDir of await resolveAgentSessionDirs(stateDir)) {
-    const storePath = path.resolve(sessionsDir, "sessions.json");
-    const agentId = resolveAgentIdFromSessionStorePath(storePath);
-    if (agentId) targets.set(storePath, { storePath, agentId });
-  }
-  if (params.cfg) {
-    const env = { ...process.env, OPENCLAW_STATE_DIR: stateDir };
-    for (const target of resolveAllAgentSessionStoreTargetsSync(params.cfg, { env })) {
-      const storePath = path.resolve(target.storePath);
-      targets.set(storePath, { ...target, storePath });
-    }
-  }
-  return [...targets.values()].toSorted((a, b) => a.storePath.localeCompare(b.storePath));
-}
-
 export async function recoverRestartAbortedMainSessions(
   params: {
     cfg?: OpenClawConfig;
@@ -916,10 +893,15 @@ export async function recoverRestartAbortedMainSessions(
     }
   }
 
-  for (const target of await resolveRestartRecoveryStoreTargets(params)) {
+  const stateDir = params.stateDir ?? resolveStateDir(process.env);
+  const targets = resolveAllAgentSessionStoreTargetsSync(params.cfg ?? {}, {
+    env: { ...process.env, OPENCLAW_STATE_DIR: stateDir },
+  }).toSorted((a, b) => a.storePath.localeCompare(b.storePath));
+  for (const target of targets) {
     const storeResult = await recoverStore({
       cfg: params.cfg,
       ...target,
+      storePath: path.resolve(target.storePath),
       resumedSessionKeys,
     });
     result.recovered += storeResult.recovered;

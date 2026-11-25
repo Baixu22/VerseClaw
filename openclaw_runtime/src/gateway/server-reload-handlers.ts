@@ -1,16 +1,11 @@
 // Gateway hot-reload handlers.
 // Applies config reload plans to hooks, cron, heartbeat, plugins, channels, and restarts.
-import { disposeAllSessionMcpRuntimes } from "../agents/agent-bundle-mcp-tools.js";
 import {
   getActiveEmbeddedRunCount,
   listActiveEmbeddedRunSessionIds,
   listActiveEmbeddedRunSessionKeys,
 } from "../agents/embedded-agent-runner/run-state.js";
-import { resetModelCatalogCache } from "../agents/model-catalog.js";
-import {
-  clearCurrentProviderAuthState,
-  warmCurrentProviderAuthStateOffMainThread,
-} from "../agents/model-provider-auth.js";
+import { clearCurrentProviderAuthState } from "../agents/model-provider-auth-state.js";
 import { getTotalPendingReplies } from "../auto-reply/reply/dispatcher-registry.js";
 import type { CliDeps } from "./types/deps.js";
 import { isRestartEnabled } from "../config/commands.flags.js";
@@ -19,7 +14,6 @@ import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import type { HeartbeatRunner } from "../infra/heartbeat-runner.js";
-import { resetDirectoryCache } from "../infra/outbound/target-resolver.js";
 import {
   deferGatewayRestartUntilIdle,
   emitGatewayRestart,
@@ -40,14 +34,13 @@ import type { ChannelHealthMonitor } from "./channel-health-monitor.js";
 import type { ChannelKind } from "./config-reload-plan.js";
 import { startGatewayConfigReloader, type GatewayReloadPlan } from "./config-reload.js";
 import { resolveHooksConfig } from "./hooks.js";
-import { buildGatewayCronService, type GatewayCronState } from "./server-cron.js";
+import type { GatewayCronState } from "./server-cron.js";
 import { applyGatewayLaneConcurrency } from "./server-lanes.js";
 import { markGatewayModelCatalogStaleForReload } from "./server-model-catalog.js";
 import {
   type GatewayChannelManager,
   startGatewayChannelHealthMonitor,
-  startGatewayCronWithLogging,
-} from "./server-runtime-services.js";
+} from "./server-runtime-startup-services.js";
 import {
   disconnectStaleSharedGatewayAuthClients,
   setCurrentSharedGatewaySessionGeneration,
@@ -92,7 +85,9 @@ const MCP_RUNTIME_RELOAD_DISPOSE_TIMEOUT_MS = 5_000;
 const CHANNEL_RELOAD_DEFERRAL_POLL_MS = 500;
 const CHANNEL_RELOAD_STILL_PENDING_WARN_MS = 30_000;
 
-function resetPreparedModelRuntimeStateForHotReload(): void {
+async function resetPreparedModelRuntimeStateForHotReload(): Promise<void> {
+  // Watcher registration stays lightweight; execution caches load on a real reload.
+  const { resetModelCatalogCache } = await import("../agents/model-catalog.js");
   resetModelCatalogCache();
   clearCurrentProviderAuthState();
   markGatewayModelCatalogStaleForReload();
@@ -239,15 +234,9 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
     const omitted = blockers.length - shown.length;
     return omitted > 0 ? `${shown.join("; ")}; +${omitted} more` : shown.join("; ");
   };
-  const collectActiveRestartSessionKeys = () => {
-    return new Set<string>(listActiveEmbeddedRunSessionKeys());
-  };
-  const collectActiveRestartSessionIds = () => {
-    return new Set<string>(listActiveEmbeddedRunSessionIds());
-  };
   const markActiveMainSessionsForRestart = async (nextConfig: OpenClawConfig, reason: string) => {
-    const sessionKeys = collectActiveRestartSessionKeys();
-    const sessionIds = collectActiveRestartSessionIds();
+    const sessionKeys = new Set(listActiveEmbeddedRunSessionKeys());
+    const sessionIds = new Set(listActiveEmbeddedRunSessionIds());
     if (sessionKeys.size === 0 && sessionIds.size === 0) {
       return;
     }
@@ -316,7 +305,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
     const state = params.getState();
     const nextState = { ...state };
 
-    resetPreparedModelRuntimeStateForHotReload();
+    await resetPreparedModelRuntimeStateForHotReload();
 
     if (plan.reloadHooks) {
       try {
@@ -331,6 +320,7 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
       nextState.heartbeatRunner.updateConfig(nextConfig);
     }
 
+    const { resetDirectoryCache } = await import("../infra/outbound/target-resolver.js");
     resetDirectoryCache();
 
     const channelsToRestart = new Set(plan.restartChannels);
@@ -402,10 +392,14 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
         channelsToRestart.add(channel);
       }
       activePluginChannelsAfterReload = pluginReloadResult.activeChannels;
-      resetPreparedModelRuntimeStateForHotReload();
+      await resetPreparedModelRuntimeStateForHotReload();
     }
 
     if (plan.restartCron) {
+      const [{ buildGatewayCronService }, { startGatewayCronWithLogging }] = await Promise.all([
+        import("./server-cron.js"),
+        import("./server-runtime-services.js"),
+      ]);
       params.onCronRestart?.();
       state.cronState.cron.stop();
       nextState.cronState = buildGatewayCronService({
@@ -426,7 +420,11 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
 
     if (plan.disposeMcpRuntimes) {
       await disposeMcpRuntimesWithTimeout({
-        dispose: disposeAllSessionMcpRuntimes,
+        dispose: async () => {
+          const { disposeAllSessionMcpRuntimes } =
+            await import("../agents/agent-bundle-mcp-tools.js");
+          await disposeAllSessionMcpRuntimes();
+        },
         timeoutMs: MCP_RUNTIME_RELOAD_DISPOSE_TIMEOUT_MS,
         onWarn: params.logReload.warn,
         label: "bundle-mcp runtime disposal during config reload",
@@ -504,9 +502,11 @@ export function createGatewayReloadHandlers(params: GatewayReloadHandlerParams) 
 
     applyGatewayLaneConcurrency(nextConfig);
 
-    void warmCurrentProviderAuthStateOffMainThread(nextConfig).catch((err: unknown) => {
-      params.logReload.warn(`provider auth state rewarm failed: ${String(err)}`);
-    });
+    void import("../agents/model-provider-auth.js")
+      .then((auth) => auth.warmCurrentProviderAuthStateOffMainThread(nextConfig))
+      .catch((err: unknown) => {
+        params.logReload.warn(`provider auth state rewarm failed: ${String(err)}`);
+      });
 
     if (plan.hotReasons.length > 0) {
       params.logReload.info(`config hot reload applied (${plan.hotReasons.join(", ")})`);

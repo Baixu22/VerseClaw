@@ -16,6 +16,8 @@ Restart recovery keeps each agent's `global` session and failure notice bound to
 
 Agents reuse compatible Gateway plugin state during startup; configuration and workspace changes retain their own loading scope.
 
+Gateway configuration watchers load cron, MCP disposal and provider refresh execution when a reload needs them. Empty startup delivery queues leave sending and reply execution unloaded.
+
 Native language parsers load when code analysis first needs the corresponding language.
 
 Agent context and lifecycle execution modules load when a selected run starts; harness selection uses existing metadata.

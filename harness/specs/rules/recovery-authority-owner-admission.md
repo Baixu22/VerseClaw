@@ -51,6 +51,10 @@ Main restart recovery retains the discovered or configured agent for global
 continuations and failure notices. Retry deduplication includes the owning store,
 session key and physical generation.
 
+Gateway startup registers configuration watchers without loading reload-only
+execution. Empty delivery queues do not load send/reply runtimes. The original
+queue owners still control claims, admission, backoff and settlement when work exists.
+
 Run-level admission hooks and the initialized tool lifecycle precede recovered
 tool execution. A blocked hook cannot leave an already executed recovery effect.
 Recovered tool events use the current session subscriber, preserving delivery

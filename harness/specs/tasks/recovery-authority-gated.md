@@ -11,6 +11,10 @@ residualPaths:
   # Concurrent repository reviewer-model policy synchronization.
   - AGENTS.md
 touchedAreas:
+  - openclaw_runtime/src/gateway/server-runtime-services.ts
+  - openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts
+  - openclaw_runtime/src/gateway/server-reload-handlers.ts
+  - openclaw_runtime/src/gateway/server-reload-handlers.lazy.test.ts
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/review-fixes-20261125/**
   - openclaw_runtime/src/gateway/server-methods/session-active-runs.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
@@ -321,6 +325,10 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - openclaw_runtime/src/gateway/server-reload-handlers.lazy.test.ts
+  - openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts
+  - openclaw_runtime/src/agents/main-session-restart-recovery.owners.test.ts
+  - openclaw_runtime/src/agents/subagent-orphan-recovery.budget.test.ts
   - tests/unit/gateway-compaction-readiness.test.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
   - tests/unit/gateway-bundled-channel-metadata.test.ts
@@ -437,6 +445,8 @@ acceptance:
   - Subagent failure attempts are persisted before RPC and cannot restart an unbounded retry burst; successful registry remapping stays owned by the existing subagent registry.
   - Subagent authority continuations inherit consumed attempts after registry run-id adoption, elapsed rewedge windows and compaction. Ordinary session generation replacement clears the prior budget.
   - Main restart recovery carries the owning agent for global continuation and failure-notice RPCs. Retry deduplication binds the store path, session key and physical generation so different agents and replacement generations recover independently.
+  - Registering the Gateway configuration watcher leaves cron, MCP disposal and provider rewarm execution unloaded. Actual reloads preserve cache invalidation, cron stop/start ordering, disposal timeouts and rewarm error reporting.
+  - Empty startup delivery queues leave send/reply execution unloaded. The existing queue owners retain recovery admission, cutoff, claims, backoff and settlement for pending work.
   - Goal-wake remains level-triggered and never respawns an uncertain durable helper; task terminal state and the wait reconciliation remain idempotent after restart.
   - ACP observed output prevents a fresh turn, and an early backend exit without effect truth is not treated as proof that no effect occurred.
   - Final delivery reuses the existing durable send owner and intent; pending text is preserved when the outcome is uncertain.
