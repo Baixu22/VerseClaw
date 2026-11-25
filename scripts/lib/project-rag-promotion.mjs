@@ -10,7 +10,7 @@ import { readFileSync, realpathSync, statSync } from 'node:fs';
 import { basename, isAbsolute, relative, resolve, sep } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { loadFrozenRagCorpus, evaluateRagTaskPromotion, gradeRagTaskArtifact, sha256 } from './project-rag-corpus.mjs';
-import { gradeRagQuery } from './project-rag-query-grade.mjs';
+import { gradeRagQuery, RAG_QUERY_EVALUATOR_VERSION } from './project-rag-query-grade.mjs';
 import { normalizeRetrievalPolicy, retrievalPolicyDigest } from '../../openclaw_runtime/src/knowledge/retrieval/policy.ts';
 
 const digest = value => 'sha256:' + createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -21,6 +21,7 @@ const mean = values => values.length ? values.reduce((sum, value) => sum + value
 /** Recompute summary from every frozen query and trial slot; imported verdicts are ignored. */
 export function evaluateOfflineRagReport(input) {
   assert(input && input.schema === 'ProjectRagOfflineReport/v1' && input.driven_by === 'agent', 'Invalid offline report');
+  assert.equal(input.evaluatorVersion, RAG_QUERY_EVALUATOR_VERSION, 'Offline report evaluator version mismatch');
   assert(input.executionProvenance === 'native-product-observation' && /^sha256:[a-f0-9]{64}$/.test(input.experimentBindingDigest),
     'Native product execution binding is required');
   assert(input.corpusDigest === release.freezeDigest, 'Offline report uses an unrecognized frozen corpus');
@@ -39,8 +40,11 @@ export function evaluateOfflineRagReport(input) {
     assert(expected && !seen.has(row.queryId), 'Unknown or duplicate frozen query'); seen.add(row.queryId);
     for (const arm of ['page', 'full']) {
       const value = row[arm];
+      assert.equal(value?.evaluatorVersion, input.evaluatorVersion, 'Query evaluator versions must not be mixed');
       assert(/^sha256:[a-f0-9]{64}$/.test(value?.rawDigest), 'Missing raw query capture digest');
-      assert(value && fraction(value.ndcg5) && fraction(value.recallAt20) && fraction(value.exactRefPrecision)
+      assert(value && fraction(value.ndcg5) && fraction(value.recallAt20) && fraction(value.overlapRecallAt20)
+        && fraction(value.supportCoverageAt20) && value.recallAt20 <= value.supportCoverageAt20
+        && value.supportCoverageAt20 <= value.overlapRecallAt20 && fraction(value.exactRefPrecision)
         && Number.isSafeInteger(value.safetyViolations) && value.safetyViolations >= 0, 'Invalid query measurement');
       safetyViolations += value.safetyViolations;
       const group = arm === 'page' ? familyBaseline : familyFull;
@@ -134,7 +138,7 @@ export function verifyOfflineRagPolicyPackage(directory, expectedManifestDigest,
     if (capture.arm === 'full') assert.equal(raw.plan?.policyDigest, evaluation.candidateDigest, 'Raw query did not execute the candidate policy');
     const measured = gradeRagQuery(bundle, capture.queryId, raw);
     const summary = report.queries.find(row => row.queryId === capture.queryId)?.[capture.arm];
-    for (const key of ['ndcg5', 'recallAt20', 'exactRefPrecision', 'safetyViolations'])
+    for (const key of ['evaluatorVersion', 'ndcg5', 'recallAt20', 'overlapRecallAt20', 'supportCoverageAt20', 'exactRefPrecision', 'safetyViolations'])
       assert.equal(summary?.[key], measured[key], 'Query summary differs from the raw owner capture');
     assert.equal(summary.rawDigest, capture.digest);
   }

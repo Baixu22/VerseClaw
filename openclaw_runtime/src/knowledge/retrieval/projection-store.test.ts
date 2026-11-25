@@ -225,6 +225,29 @@ describe("ProjectionStore real SQLite lifecycle", () => {
     expect(() => f.store.publish(job, [bad])).toThrow(/byte locator|without gaps|cover/);
   });
 
+  it("publishes contiguous fragments split within one raw source line", () => {
+    const f = fixture();
+    f.store.observe(f.intent());
+    const job = f.store.claim({ namespaceId: "ns-1", leaseOwner: "worker", leaseMs: 30_000 })!;
+    const parts = [
+      { quote: "alp", startByte: 0, endByteExclusive: 3, startLine: 1, endLine: 1 },
+      { quote: "ha\n", startByte: 3, endByteExclusive: 6, startLine: 1, endLine: 1 },
+      { quote: "配置", startByte: 6, endByteExclusive: 12, startLine: 2, endLine: 2 },
+    ];
+    const chunks = parts.map(({ quote, ...range }, ordinal) => {
+      const source = { ...f.source, locator: { ...f.source.locator, ...range } };
+      return { ...f.chunk, ordinal, quote, source, chunkDigest: digestOwnerReadContent(quote),
+        chunkId: knowledgeChunkId(source, f.chunk.chunker), retrievalText: quote, searchTokens: [quote.trim()] };
+    });
+    const invalid = structuredClone(chunks);
+    invalid[1]!.source.locator.startLine = 2;
+    invalid[1]!.source.locator.endLine = 2;
+    expect(() => f.store.publish(job, invalid)).toThrow("adjacent source lines");
+    expect(f.store.publish(job, chunks)?.state).toBe("active");
+    expect(f.store.search({ namespaceId: "ns-1", query: "配置", limit: 10, context: f.context }).candidates)
+      .toHaveLength(1);
+  });
+
   it("keeps the subject row stable when its byte locator changes during a stop", () => {
     const f = fixture();
     const first = f.store.observe(f.intent());

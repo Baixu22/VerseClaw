@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { RAG_QUERY_EVALUATOR_VERSION } from '../../scripts/lib/project-rag-query-grade.mjs';
 import { defaultRetrievalPolicy, evaluateOfflineRetrievalPromotion, normalizeRetrievalPolicy, retrievalPolicyDigest } from '../../openclaw_runtime/src/knowledge/retrieval/policy';
 import { createRetrievalPlan, fuseRetrievalLanes } from '../../openclaw_runtime/src/knowledge/retrieval/plan';
 import { evaluateOfflineRagReport } from '../../scripts/lib/project-rag-promotion.mjs';
@@ -64,19 +65,19 @@ describe('Project RAG offline policy and receipt contracts', () => {
 
   it('rejects a summary without the complete frozen raw report', () => {
     expect(() => evaluateOfflineRagReport(evaluation())).toThrow('Invalid offline report');
-    expect(() => evaluateOfflineRagReport({ schema: 'ProjectRagOfflineReport/v1', driven_by: 'agent',
+    expect(() => evaluateOfflineRagReport({ schema: 'ProjectRagOfflineReport/v1', evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, driven_by: 'agent',
       corpusDigest: pin, queries: [], trials: [] })).toThrow();
   });
 
   it('recomputes complete raw slots and rejects duplicate or missing evidence', () => {
     const report = {
-      schema: 'ProjectRagOfflineReport/v1', driven_by: 'agent', corpusDigest: frozenRelease.freezeDigest,
+      schema: 'ProjectRagOfflineReport/v1', evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, driven_by: 'agent', corpusDigest: frozenRelease.freezeDigest,
       executionProvenance: 'native-product-observation', experimentBindingDigest: pin,
       candidateDigest: retrievalPolicyDigest(candidate), baselineDigest: retrievalPolicyDigest(baseline),
       calibrationDigest: pin, candidateCommit: 'b'.repeat(40), profile: 'quality', sealedAt: 1000,
       queries: frozenQueries.map((query, index) => ({ queryId: query.id,
-        page: { ndcg5: 0.5, recallAt20: 0.8, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin },
-        full: { ndcg5: 0.6 + (index % 7) / 100, recallAt20: 0.9, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin } })),
+        page: { evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, ndcg5: 0.5, recallAt20: 0.8, supportCoverageAt20: 0.85, overlapRecallAt20: 0.9, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin },
+        full: { evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, ndcg5: 0.6 + (index % 7) / 100, recallAt20: 0.9, supportCoverageAt20: 0.95, overlapRecallAt20: 1, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin } })),
       trials: frozenTasks.flatMap((task, index) => [1, 2, 3].flatMap(repeat => ['off', 'page', 'full'].map(arm => ({
         taskId: task.id, repeat, arm, outcome: arm === 'full' && index % 4 !== 0 ? 'pass' : 'fail',
         attemptDigest: pin, experimentBindingDigest: pin,
@@ -89,6 +90,10 @@ describe('Project RAG offline policy and receipt contracts', () => {
     expect(result.unknownUsageSlots).toBe(0);
     expect(result.ndcg5Gain).toBeGreaterThan(0.05);
     expect(result.successGain).toBeGreaterThan(0.05);
+    expect(() => evaluateOfflineRagReport({ ...report, evaluatorVersion: 'legacy/v1' })).toThrow('evaluator version');
+    const mixed = structuredClone(report);
+    mixed.queries[0].page.evaluatorVersion = 'legacy/v1' as typeof RAG_QUERY_EVALUATOR_VERSION;
+    expect(() => evaluateOfflineRagReport(mixed)).toThrow('versions must not be mixed');
     expect(() => evaluateOfflineRagReport({ ...report, trials: report.trials.slice(1) })).toThrow();
     expect(() => evaluateOfflineRagReport({ ...report, queries: report.queries.map((row, index) => index === 1 ? report.queries[0] : row) })).toThrow();
     const unknown = structuredClone(report);

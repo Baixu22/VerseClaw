@@ -67,3 +67,9 @@ RAG-A1 在 Research 完整收口前建立质量基线。现有 v4 继续作为�
 在相同 owner 安全、生成器、DCS、费用和时间预算下，对 page、BM25、dense、hybrid、hybrid+rerank 做配对消融。每项结果同时报告召回候选、最终保留证据、回答正确性、引用支持、无答案/冲突判断、延迟、实际费用和有效降级路径；按语料及问题切片分析错误。样本量和判据在盲测释放前冻结，不能观察 treatment 后挑选样本。
 
 Research 复用该基线比较单次/多轮收益，并以最终 retained units 和语义支持判断问题是否覆盖。实现沿用原预算、指定默认模型、owner 和 DCS；正式晋级继续执行原质量/费用门槛。RAG-19 同时读取原 240 查询、540 任务槽、72 小时观察及新增实际知识库证据。
+
+评分实现版本 `owner-support-coverage/v2` 分开返回 `overlapRecallAt20`（存在非零重叠）、`supportCoverageAt20`（每项事实联合字节覆盖率的均值）和 `recallAt20`（完整支持范围被覆盖的事实比例）。Top-5 排名在事实与名次之间选择最大增益的一对一分配；后续新增覆盖可改善该事实等级，重复片段不再次贡献。同一结果包含多个事实时排名只计一次，完整事实召回仍逐项计算。
+
+查询执行计划、逐查询分数和离线报告必须显式绑定上述 evaluatorVersion；原始捕获重算时同时核对版本及三种覆盖指标。旧版本报告保持原件，新版本晋级入口拒绝混用。
+
+`knowledge-rag-adaptation.ts capture <plan.json> <new-directory>` 通过 Wiki owner 的策略与版本读取现有来源，生成只读快照；`freeze <plan.json> <new-file>` 绑定独立复核和原文支持范围。origin 必须为 `existing-owner` 或 `agent-built-adaptation`。来源撤回、变更、路径逃逸和读取预算缺口不能进入完整冻结数据。问题集按来源族划分，重复内容、相同来源和高相似文本须同族；gold 留在 evaluator 目录。所有者已指定本轮可使用当前项目文档构建隔离适配语料，运行记录保留该来源标识。

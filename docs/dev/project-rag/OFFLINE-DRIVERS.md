@@ -9,7 +9,7 @@ pnpm --dir openclaw_runtime exec tsx ../scripts/knowledge-rag-query-runner.ts <q
 pnpm --dir openclaw_runtime exec tsx ../scripts/knowledge-rag-task-runner.ts <task-plan.json> <new-task-output>
 ```
 
-查询计划使用 `ProjectRagQueryExecutionPlan/v1`，包含 `sourceRoot`、`candidate`、`corpusRoot`、`corpusDigest`、`profile`、`candidatePolicy`、`argv`、`adapterInputs` 与 `heldOutRelease`。固定 240 条查询，各执行 page/full 两臂。适配器接收 `RAG_QUERY_*` 环境变量；full 臂从 `RAG_QUERY_POLICY_JSON` 取得排序候选，通过 backend/admin 的 `wiki.retrieval.evaluate` 执行，保存实际返回的 `plan.policyDigest`。普通 `wiki.retrieve` 使用当前 owner 策略。候选评测沿同一来源准入、检索与预算路径运行，模式为 manual。
+查询计划使用 `ProjectRagQueryExecutionPlan/v1`，包含 `evaluatorVersion`（当前 `owner-support-coverage/v2`）、`sourceRoot`、`candidate`、`corpusRoot`、`corpusDigest`、`profile`、`candidatePolicy`、`argv`、`adapterInputs` 与 `heldOutRelease`。固定 240 条查询，各执行 page/full 两臂。适配器接收 `RAG_QUERY_*` 环境变量；full 臂从 `RAG_QUERY_POLICY_JSON` 取得排序候选，通过 backend/admin 的 `wiki.retrieval.evaluate` 执行，保存实际返回的 `plan.policyDigest`。普通 `wiki.retrieve` 使用当前 owner 策略。候选评测沿同一来源准入、检索与预算路径运行，模式为 manual。
 
 `queries.json` 在执行前建立，逐臂原子保存检查点。`queries` 保存两臂均完成的查询，`partialQuery` 保存当前查询已获得的测量，`completedQueries` 只计完整查询。失败时 `failure` 记录 queryId、arm、失败阶段及原始原因，队列立即停止并返回非零退出码；启动或终止结果未确认时，命令回执的 `exitCode`、`timedOut` 保留 `null`。仅全 240 条查询完成后 `complete` 才为 `true`。每次执行使用新目录，日志、命令回执和已有 raw JSON 均保留。
 

@@ -4,13 +4,14 @@ import { runRagCommand } from './lib/project-rag-process.mjs';
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { isAbsolute, join, resolve } from 'node:path';
 import { loadFrozenRagCorpus, jsonBytes, sha256 } from './lib/project-rag-corpus.mjs';
-import { gradeRagQuery } from './lib/project-rag-query-grade.mjs';
+import { gradeRagQuery, RAG_QUERY_EVALUATOR_VERSION } from './lib/project-rag-query-grade.mjs';
 import { normalizeRetrievalPolicy, retrievalPolicyDigest } from '../openclaw_runtime/src/knowledge/retrieval/policy';
 
 async function main() {
 const [planPath, outputPath] = process.argv.slice(2);
 assert(planPath && outputPath, 'Usage: knowledge-rag-query-runner <plan.json> <new-output>');
 const plan = JSON.parse(readFileSync(resolve(planPath), 'utf8'));
+assert.equal(plan.evaluatorVersion, RAG_QUERY_EVALUATOR_VERSION, 'Freeze the current query evaluator version before execution');
 assert(plan.schema === 'ProjectRagQueryExecutionPlan/v1' && Array.isArray(plan.argv)
   && plan.argv.length > 0 && plan.argv.every((part: unknown) => typeof part === 'string')
   && isAbsolute(plan.argv[0]) && Array.isArray(plan.adapterInputs) && plan.adapterInputs.length > 0);
@@ -33,7 +34,7 @@ let failure: ({ queryId: string; arm: string | null; stage: string; reason: stri
 const save = (complete = false) => {
   writeFileSync(join(output, 'queries.next.json'), jsonBytes({ schema: 'ProjectRagQueryExecution/v1',
     actor: 'codex/project-rag-query', driven_by: 'agent', candidate: plan.candidate, corpusDigest: bundle.freezeDigest,
-    profile: plan.profile, complete, expectedQueries: bundle.queries.length, completedQueries: rows.length,
+    profile: plan.profile, evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, complete, expectedQueries: bundle.queries.length, completedQueries: rows.length,
     queries: rows, partialQuery, failure }));
   renameSync(join(output, 'queries.next.json'), join(output, 'queries.json'));
   writeFileSync(join(output, 'progress.json'), jsonBytes({ expectedQueries: bundle.queries.length, completedQueries: rows.length }));

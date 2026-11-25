@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { RAG_QUERY_EVALUATOR_VERSION } from '../../scripts/lib/project-rag-query-grade.mjs';
 import { describe, expect, it } from 'vitest';
 import { RAG_SOAK_MINIMUM_MS, readProjectRagAcceptance, validateRagSoak, validateRagSoakProbe } from '../../scripts/lib/project-rag-acceptance.mjs';
 import { runRagCommand } from '../../scripts/lib/project-rag-process.mjs';
@@ -142,7 +143,7 @@ else {
     plan: { policyDigest: fail && mode === 'policy' ? 'sha256:' + 'b'.repeat(64) : ${JSON.stringify(retrievalPolicyDigest(policy))} } }));
 }
 `);
-        const plan = { schema: 'ProjectRagQueryExecutionPlan/v1', sourceRoot: source, candidate, corpusRoot,
+        const plan = { schema: 'ProjectRagQueryExecutionPlan/v1', evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, sourceRoot: source, candidate, corpusRoot,
           corpusDigest: bundle.freezeDigest, profile: 'local', candidatePolicy: policy,
           argv: mode === 'start' ? [join(root, 'absent.exe')] : [process.execPath, adapter],
           adapterInputs: [{ path: adapter, digest: sha256(readFileSync(adapter)) }],

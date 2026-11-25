@@ -6,7 +6,7 @@ import { basename, dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { loadFrozenRagCorpus } from '../../scripts/lib/project-rag-corpus.mjs';
 import { verifyOfflineRagPolicyPackage } from '../../scripts/lib/project-rag-promotion.mjs';
-import { gradeRagQuery } from '../../scripts/lib/project-rag-query-grade.mjs';
+import { gradeRagQuery, RAG_QUERY_EVALUATOR_VERSION } from '../../scripts/lib/project-rag-query-grade.mjs';
 import { defaultRetrievalPolicy, retrievalPolicyDigest } from '../../openclaw_runtime/src/knowledge/retrieval/policy';
 import queries from '../../harness/specs/fixtures/project-rag/v4/queries.json';
 import tasks from '../../harness/specs/fixtures/project-rag/v4/tasks.json';
@@ -22,14 +22,14 @@ const roots: string[] = [];
 const policy = { ...defaultRetrievalPolicy('quality'), version: 'agent-fixture/v3', rrfK: 50 };
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), 'rag-offline-package-')); roots.push(root);
-  const report = { schema: 'ProjectRagOfflineReport/v1', driven_by: 'agent', corpusDigest: release.freezeDigest,
+  const report = { schema: 'ProjectRagOfflineReport/v1', evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, driven_by: 'agent', corpusDigest: release.freezeDigest,
     executionProvenance: 'native-product-observation', experimentBindingDigest: pin,
     candidateCommit: 'b'.repeat(40), candidateDigest: retrievalPolicyDigest(policy),
     baselineDigest: retrievalPolicyDigest(defaultRetrievalPolicy('quality')), calibrationDigest: pin,
     profile: 'quality', sealedAt: Date.now(),
     queries: queries.map(query => ({ queryId: query.id,
-      page: { ndcg5: 0.2, recallAt20: 0.5, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin },
-      full: { ndcg5: 1, recallAt20: 1, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin } })),
+      page: { evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, ndcg5: 0.2, recallAt20: 0.5, supportCoverageAt20: 0.5, overlapRecallAt20: 0.5, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin },
+      full: { evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, ndcg5: 1, recallAt20: 1, supportCoverageAt20: 1, overlapRecallAt20: 1, exactRefPrecision: 1, safetyViolations: 0, rawDigest: pin } })),
     trials: tasks.flatMap(task => [1, 2, 3].flatMap(repeat => ['off', 'page', 'full'].map(arm => ({
       taskId: task.id, repeat, arm, outcome: arm === 'full' ? 'pass' : 'fail',
       attemptDigest: pin, experimentBindingDigest: pin, costUsd: 0.001, tokens: 100,

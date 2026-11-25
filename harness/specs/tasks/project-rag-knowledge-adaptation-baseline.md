@@ -1,13 +1,13 @@
 ---
 lifecycleStatus: active
-implementationStatus: planning
+implementationStatus: in_progress
 id: project-rag-knowledge-adaptation-baseline
 title: 建立当前知识库的检索质量基线
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-A1
 intent: 修正评测语义，依据实际知识库选择有效的单次检索基线，为 Research 和策略晋级提供可信输入。
-diffBase: 731c6659e7d7dca4c1e5c9ac92bb22d05fb85170
+diffBase: c2a0245459d53454339df7c2689d3a058fbe69cc
 touchedAreas:
   - "scripts/knowledge-*.ts"
   - "scripts/lib/project-rag-*.mjs"
@@ -19,6 +19,8 @@ touchedAreas:
   - "docs/dev/project-rag/**"
   - "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md"
   - "tests/unit/project-rag-*.test.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/projection-store.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
   - "README*.md"
 requiredProfiles:
   - fast
@@ -29,7 +31,8 @@ requiredRules:
   - knowledge-source-set-read-admission
   - project-rag-long-term-boundary
 requiredTests:
-  - "pnpm exec vitest run tests/unit/project-rag-corpus-integrity.test.ts tests/unit/project-rag-acceptance-readback.test.ts --maxWorkers=1 --cache=false"
+  - "pnpm exec vitest run tests/unit/project-rag-query-grade.test.ts tests/unit/project-rag-knowledge-adaptation.test.ts tests/unit/project-rag-corpus-integrity.test.ts tests/unit/project-rag-acceptance-readback.test.ts tests/unit/project-rag-offline-package.test.ts tests/unit/project-rag-receipts-promotion.test.ts --maxWorkers=1 --cache=false"
+  - "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs src/knowledge/retrieval/projection-store.test.ts"
 plannedTests:
   - tests/unit/project-rag-query-grade.test.ts
   - tests/unit/project-rag-knowledge-adaptation.test.ts
@@ -58,3 +61,5 @@ RAG-A1 是 RAG-16 的质量前置，依赖已完成的 RAG-02、RAG-08、RAG-09 
 新增测试在实现时加入 requiredTests，运行时接口变化按原 Host/Gateway 边界补契约与对应旅程。模型实验按冻结 candidate、输入、provider、费用与资源计划执行。节点完成要求实际质量结果，文档和夹具通过只登记对应证据。
 
 回滚：保留旧 evaluator 与冻结数据，通过版本选择恢复旧策略；不修改来源正文或旧 gold。
+
+项目文档实测补充：长段落按 token/字符上限可以在同一来源行内切分。索引发布按原始字节连续性核对，只有前一片段以换行结束时才要求下一片段起始行递增；同一行的合法相邻片段可发布。
