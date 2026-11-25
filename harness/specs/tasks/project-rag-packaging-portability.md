@@ -7,8 +7,11 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-18
 intent: 让目标系统在实际发布平台可安装、可恢复、可持续维护。
-diffBase: 5d45cf79f769a1a3d8f994f965e5d63d24d5c40c
+diffBase: 3ea722b98c144f2a311130613a84b981372b79b5
 touchedAreas:
+  - "scripts/knowledge-rag-vector-capacity.ts"
+  - "scripts/lib/project-rag-capacity-input.ts"
+  - "tests/unit/project-rag-capacity-input.test.ts"
   - "scripts/lib/project-rag-package.*"
   - "playwright.config.ts"
   - "playwright.rag-packaged.config.ts"
@@ -105,6 +108,7 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "pnpm exec vitest run tests/unit/project-rag-capacity-input.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec vitest run tests/unit/runtime-package-resolution.test.ts tests/unit/project-rag-package-manifest.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec playwright test --config playwright.rag-packaged.config.ts --workers=1 --retries=0"
 plannedTests:

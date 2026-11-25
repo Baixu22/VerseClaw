@@ -1,0 +1,154 @@
+{
+  "schema": "G2DevelopmentValidation/v1",
+  "node": "TF-0895",
+  "actor": "codex-g2-development-first",
+  "driven_by": "agent",
+  "status": "development-verified",
+  "acceptance": "deferred-by-owner-20261126",
+  "candidateBase": "3ea722b98c144f2a311130613a84b981372b79b5",
+  "tests": 10,
+  "validation": {
+    "actor": "codex-g2-development-first",
+    "driven_by": "agent",
+    "status": "passed",
+    "steps": [
+      {
+        "name": "unit",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/project-rag-capacity-input.test.ts",
+          "tests/unit/project-rag-package-manifest.test.ts",
+          "tests/unit/runtime-package-resolution.test.ts",
+          "--maxWorkers=1",
+          "--cache=false",
+          "--reporter=json",
+          "--outputFile=D:\\tmp\\g2-development-first-20261126-01a21178\\capacity-followup\\unit.json"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 2.329,
+        "logSha256": "452af97025841c4fa0d85cd2d82bb7f6c4f0e6055f6ef2ae170c0935647c22a9"
+      },
+      {
+        "name": "types",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "tsgo",
+          "-p",
+          "D:\\tmp\\g2-development-first-20261126-01a21178\\tsconfig.capacity.json",
+          "--pretty",
+          "false"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 4.187,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "lint",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "eslint",
+          "scripts/knowledge-rag-vector-capacity.ts",
+          "scripts/lib/project-rag-capacity-input.ts",
+          "tests/unit/project-rag-capacity-input.test.ts"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 3.5,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "harness",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/project-rag-packaging-portability.md"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 1.609,
+        "logSha256": "bf6c3ae54d988fca92c0870d48d702cdbda7a3ebb001ead0984cc7f010b4837a"
+      },
+      {
+        "name": "dry-run",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/tasks/project-rag-packaging-portability.md",
+          "--dry-run"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 1.61,
+        "logSha256": "5c685dc4b3f0d90de0ec854fb740dac1efdb7da1a359b7aee6fb07c8a80013d3"
+      },
+      {
+        "name": "comms-replay",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "run",
+          "comms:replay"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.531,
+        "logSha256": "c2a4a9584c7d8086fa59bec6c17a11f192a1d118649faf925efa0aae48852809"
+      },
+      {
+        "name": "comms-compare",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "run",
+          "comms:compare"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.438,
+        "logSha256": "d16ba4d5801677a5a2aac59953fbd45e4af115542c2a6d7a474b083cd8e4498b"
+      }
+    ],
+    "startedAt": "2026-11-25T17:13:25.213588+00:00",
+    "activeStep": null,
+    "completedAt": "2026-11-25T17:13:39.419660+00:00"
+  },
+  "sourceInputs": [
+    {
+      "path": "scripts/knowledge-rag-vector-capacity.ts",
+      "sha256": "8f5f9da93be94c155eb4696f4ef8dc09eca0d866ac30a370a620aeb50f4fc543"
+    },
+    {
+      "path": "scripts/lib/project-rag-capacity-input.ts",
+      "sha256": "0415f6006603dc7a3deb756445af240426408a993b220f2c0fba2e26115a0b39"
+    },
+    {
+      "path": "tests/unit/project-rag-capacity-input.test.ts",
+      "sha256": "f0f6102b8e256c538f51ee13dbde25231e324919ffe43fac5ade7bca5be9c213"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-packaging-portability.md",
+      "sha256": "09208f3f94975308f3256ed28d24e11f7d34f2a0fed5a9b5f8e8f50da54d47d0"
+    },
+    {
+      "path": "docs/dev/project-rag/VECTOR-CAPACITY-INPUT.md",
+      "sha256": "de7167295f454303006c850e68e27e6e95832cde5de95ca1c9523a6dfb893da4"
+    }
+  ],
+  "deferred": [
+    "20k/100k actual capacity matrix",
+    "Windows package install/offline/upgrade journeys"
+  ],
+  "firstFailures": [
+    "Test tried to mutate immutable EmbeddingSpace; test creates changed copy now.",
+    "Capacity metadata was initially inserted in the space descriptor; moved to the report."
+  ]
+}
