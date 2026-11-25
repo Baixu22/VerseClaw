@@ -9,20 +9,684 @@
  import { randomUUID } from 'node:crypto';
  import {
    createEvidenceRef,
-@@ -2255,7 +2255,6 @@
+@@ -28,7 +28,8 @@
+   type VerifySelectorResult,
+ } from '../contracts/index.ts';
+ import type { AgentBrowserHostApi, AgentBrowserOpenPayload, AgentBrowserSnapshotItem, AgentBrowserPointerPayload, AgentBrowserDragPayload, AgentBrowserActionResult, AgentBrowserFindPayload, AgentBrowserUploadPayload, AgentBrowserDownloadPayload, AgentBrowserSemanticPayload } from '../types/host-api.ts';
+-import { getWorkspaceRoot, getWorkspaceEvidenceRoot, getWorkspaceSessionDir, getWorkspaceSessionsRoot, toWorkspaceRelative } from '../host/workspace-paths.ts';
++import type { AgentBrowserPdfPayload } from '../types/host-api.ts';
++import { getWorkspaceRoot, getWorkspaceEvidenceRoot, getWorkspaceSessionsRoot, toWorkspaceRelative } from '../host/workspace-paths.ts';
+ import { explainError, type SourceMapResolver } from '../mcp/explain-error.ts';
+ import { TimelineWriter, readTimeline } from '../evidence/timeline.ts';
+ import { diagnoseTimeline, writeDiagnosisPack } from '../evidence/diagnosis.ts';
+@@ -52,6 +53,8 @@
+ import {
+   profileFromHostApi,
+   ASSUMED_FULL_DRIVER_PROFILE,
++  profileForKitesurf,
++  driverSupports,
+   type DriverProfile,
+ } from './driver-profile.ts';
+ 
+@@ -334,6 +337,7 @@
+   private acceptingSessions = true;
+   private disposal?: Promise<ToolResult>;
+   private readonly api: AgentBrowserHostApi;
++  private readonly kitesurfApis = new Map<string, AgentBrowserHostApi>();
+   private readonly evidenceRoot: string;
+   private readonly resolveSourceMap?: SourceMapResolver;
+   private readonly consoleBaselines = new Map<string, SignalWindow>();
+@@ -390,10 +394,6 @@
+     return toWorkspaceRelative(absolutePath, this.workspaceRoot) ?? absolutePath;
+   }
+ 
+-  private sessionDir(sessionId: string): string {
+-    return getWorkspaceSessionDir(sessionId, this.workspaceRoot);
+-  }
+-
+   open(payload: AgentBrowserOpenPayload = {}, options?: { signal?: AbortSignal }): Promise<ToolResult> {
+     if (!this.acceptingSessions) return Promise.resolve(errResult('E_DISPOSED', 'browser toolbox is disposing or disposed'));
+     const pending = this.openSession(payload, options);
+@@ -404,11 +404,16 @@
+ 
+   private async openSession(payload: AgentBrowserOpenPayload, options?: { signal?: AbortSignal }): Promise<ToolResult> {
+     try {
+-      const result = await (options ? this.api.open(payload, options) : this.api.open(payload));
++      const result = payload.browser === 'kitesurf'
++        ? await (await import('./kitesurf-session.ts')).openKitesurfSession(payload, this.workspaceRoot)
++        : await (options ? this.api.open(payload, options) : this.api.open(payload));
+       if (!result.success) {
+         throw new Error(result.error ?? 'open failed');
+       }
+       this.ownedSessions.add(result.session.id);
++      if (payload.browser === 'kitesurf') {
++        this.kitesurfApis.set(result.session.id, (await import('./kitesurf-session.ts')).createKitesurfHostApi(result.session.id, this.workspaceRoot));
++      }
+       return okResult(`session ${result.session.id} opened${result.pendingDialog?'; navigation waiting for a dialog':''}`, { session: result.session,...(result.pendingDialog?{pendingDialog:result.pendingDialog}:{}) });
+     } catch (error) {
+       const recoverySessionId = (error as { recoverySessionId?: unknown } | null)?.recoverySessionId;
+@@ -418,6 +423,37 @@
+       }
+       return errResult('E_OPEN', toMessage(error), { recoveryHint: recoveryHint(error,false) });
+     }
++  }
++
++  private async sessionApi(sessionId: string): Promise<AgentBrowserHostApi> {
++    const cached = this.kitesurfApis.get(sessionId);
++    if (cached) return cached;
++    if (this.ownedSessions.has(sessionId)) return this.api;
++    const { loadSessionRecord } = await import('./persistent-sessions.ts');
++    const record = await loadSessionRecord(sessionId, this.workspaceRoot);
++    if (record?.engine === 'kitesurf' && record.pid > 0) {
++      const api = (await import('./kitesurf-session.ts')).createKitesurfHostApi(sessionId, this.workspaceRoot);
++      this.kitesurfApis.set(sessionId, api);
++      return api;
++    }
++    return this.api;
++  }
++
++  private get sessionRoutingApi(): AgentBrowserHostApi {
++    const local = this.api;
++    return new Proxy(local, {
++      get: (target, property) => {
++        const value = Reflect.get(target, property, target);
++        if (typeof property !== 'string' || property === 'open' || property === 'status') return value;
++        if (typeof value !== 'function' && !this.driverProfile.methods?.has(property)) return value;
++        return async (payload: { sessionId?: string }, ...args: unknown[]) => {
++          const api = typeof payload?.sessionId === 'string' ? await this.sessionApi(payload.sessionId) : local;
++          const method = (api as unknown as Record<string, (...args: unknown[]) => unknown>)[property];
++          if (!method) throw new Error(`E_CAPABILITY_UNAVAILABLE: session does not provide ${property}`);
++          return await method.apply(api, [payload, ...args]);
++        };
++      },
++    });
+   }
+ 
+   /** Drain pending opens and close only sessions created here. Failed cleanup can be retried. */
+@@ -448,7 +484,7 @@
+       this.consoleWindow(sessionId),
+     ]);
+     try {
+-      const result = await this.api.navigate({ sessionId, url, ...(waitUntil ? { waitUntil } : {}) });
++      const result = await this.sessionRoutingApi.navigate({ sessionId, url, ...(waitUntil ? { waitUntil } : {}) });
+       if (!result.success) throw new Error(result.error ?? 'navigation failed');
+       if(result.pendingDialog)return okResult('navigation waiting for a dialog; inspect vb_dialogs before continuing',{session:result.session,pendingDialog:result.pendingDialog});
+       if (networkWatermark) this.networkBaselines.set(sessionId, networkWatermark);
+@@ -473,9 +509,10 @@
+   ): Promise<ToolResult> {
+     try {
+       if ((options.selector !== undefined || options.paged || options.cursor !== undefined) && (options.includeText || options.diff)) return errResult('E_ARG', 'scoped/paged snapshots require includeText and diff to be omitted; read text separately');
+-      if (options.selector !== undefined && !this.driverProfile.readFeatures?.has('scopedSnapshot')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare scoped snapshots');
+-      if ((options.paged || options.cursor !== undefined) && !this.driverProfile.readFeatures?.has('pagedSnapshot')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare paged snapshots');
+-      const result = await this.api.takeSnapshot({ sessionId, ...(options.selector !== undefined ? { selector: options.selector } : {}), ...(options.paged ? { paged: true } : {}), ...(options.cursor !== undefined ? { cursor: options.cursor } : {}) });
++      const profile = await this.sessionDriverProfile(sessionId);
++      if (options.selector !== undefined && !profile.readFeatures?.has('scopedSnapshot')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare scoped snapshots');
++      if ((options.paged || options.cursor !== undefined) && !profile.readFeatures?.has('pagedSnapshot')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare paged snapshots');
++      const result = await this.sessionRoutingApi.takeSnapshot({ sessionId, ...(options.selector !== undefined ? { selector: options.selector } : {}), ...(options.paged ? { paged: true } : {}), ...(options.cursor !== undefined ? { cursor: options.cursor } : {}) });
+       if (result.success === false) throw new Error(result.error ?? 'E_WAIT_COLLECTION: snapshot observation failed');
+       // TF-0167: a plain observation satisfies the post-human "re-observe before acting" rule.
+       if (options.selector === undefined && !options.paged && options.cursor === undefined) this.hitlNeedsReobserve.delete(sessionId);
+@@ -519,11 +556,11 @@
+       if (options.includeText) {
+         // Honour the caller's budget (only capped, never silently raised).
+         const budget = Math.min(Math.max(Math.trunc(options.textChars ?? 4_000), 1), 20_000);
+-        if (!this.servesDriverMethod('extractPageText')) {
++        if (!await this.servesDriverMethod('extractPageText', sessionId)) {
+           content += '\n\n## Text\n(unavailable: this driver does not serve extractPageText)';
+           data.textUnavailable = true;
+         } else {
+-          const extracted = await this.api.extractPageText({
++          const extracted = await this.sessionRoutingApi.extractPageText({
+             sessionId,
+             rules: [],
+             extractMode: 'text',
+@@ -552,16 +589,17 @@
+       });
+       return okResult(content, data);
+     } catch (error) {
+-      return errResult('E_SNAPSHOT', toMessage(error), { recoveryHint: recoveryHint(error,true) });
++      const code = (error as { code?: string } | null)?.code === 'E_NO_SESSION' ? 'E_NO_SESSION' : 'E_SNAPSHOT';
++      return errResult(code, toMessage(error), { recoveryHint: recoveryHint(error,true) });
+     }
+   }
+ 
+   async downloadFile(payload:AgentBrowserDownloadPayload):Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(payload.sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(payload.sessionId, payload.selector); if (needsReobserve) return needsReobserve;
+-    if(!this.api.downloadFile || !this.servesDriverMethod('downloadFile'))return errResult('E_NOT_IMPLEMENTED','driver does not support authorized downloads');
+-    try {
+-      const result=await this.api.downloadFile(payload);
++    if(!this.sessionRoutingApi.downloadFile || !await this.servesDriverMethod('downloadFile', payload.sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support authorized downloads');
++    try {
++      const result=await this.sessionRoutingApi.downloadFile(payload);
+       if(!result.success)throw Object.assign(new Error(result.error??'file download failed'),{observation:result.observation});
+       await this.note(payload.sessionId,'action','download',{selector:payload.selector},true);
+       this.snapshotFacts.delete(payload.sessionId);
+@@ -575,9 +613,9 @@
+   async uploadFiles(payload:AgentBrowserUploadPayload):Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(payload.sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(payload.sessionId, payload.selector); if (needsReobserve) return needsReobserve;
+-    if(!this.api.uploadFiles || !this.servesDriverMethod('uploadFiles'))return errResult('E_NOT_IMPLEMENTED','driver does not support authorized uploads');
+-    try {
+-      const result=await this.api.uploadFiles(payload);
++    if(!this.sessionRoutingApi.uploadFiles || !await this.servesDriverMethod('uploadFiles', payload.sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support authorized uploads');
++    try {
++      const result=await this.sessionRoutingApi.uploadFiles(payload);
+       if(!result.success)throw Object.assign(new Error(result.error??'file upload failed'),{observation:result.observation});
+       await this.note(payload.sessionId,'action','upload',{selector:payload.selector,fileCount:payload.paths.length},true);
+       this.snapshotFacts.delete(payload.sessionId);
+@@ -589,18 +627,18 @@
+   }
+ 
+   async listPages(sessionId:string):Promise<ToolResult> {
+-    if(!this.servesDriverMethod('listPages'))return errResult('E_NOT_IMPLEMENTED','driver does not support page inventory');
+-    try {
+-      const result=await this.api.listPages({sessionId});
++    if(!await this.servesDriverMethod('listPages', sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support page inventory');
++    try {
++      const result=await this.sessionRoutingApi.listPages({sessionId});
+       if(!result.success)throw new Error(result.error??'page inventory failed');
+       return okResult(`${result.pages.length} page(s)`,redactSecretsInValue({pages:result.pages,activePageId:result.activePageId}));
+     }catch(error){return errResult('E_PAGES',toMessage(error),{recoveryHint:recoveryHint(error,true)});}
+   }
+ 
+   async readDialogs(sessionId:string):Promise<ToolResult> {
+-    if(!this.api.readDialogs||!this.servesDriverMethod('readDialogs'))return errResult('E_NOT_IMPLEMENTED','driver does not support dialog observation');
+-    try {
+-      const result=await this.api.readDialogs({sessionId});
++    if(!this.sessionRoutingApi.readDialogs||!await this.servesDriverMethod('readDialogs', sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support dialog observation');
++    try {
++      const result=await this.sessionRoutingApi.readDialogs({sessionId});
+       if(!result.success)throw new Error(result.error??'dialog observation failed');
+       return okResult(`${result.dialogs.length} pending dialog(s); page-provided text is untrusted`,redactSecretsInValue({dialogs:result.dialogs,trust:'untrusted'}));
+     }catch(error){return errResult('E_DIALOGS',toMessage(error),{recoveryHint:recoveryHint(error,true)});}
+@@ -608,9 +646,9 @@
+ 
+   async respondDialog(sessionId:string,dialogId:string,options:{accept:boolean;promptText?:string}):Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+-    if(!this.api.respondDialog||!this.servesDriverMethod('respondDialog'))return errResult('E_NOT_IMPLEMENTED','driver does not support dialog responses');
+-    try {
+-      const result=await this.api.respondDialog({...options,sessionId,dialogId});
++    if(!this.sessionRoutingApi.respondDialog||!await this.servesDriverMethod('respondDialog', sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support dialog responses');
++    try {
++      const result=await this.sessionRoutingApi.respondDialog({...options,sessionId,dialogId});
+       if(!result.success)throw new Error(result.error??'dialog response failed');
+       this.snapshotFacts.delete(sessionId);
+       return okResult('dialog response acknowledged; business outcome unknown',{dialogId:result.dialogId,pageId:result.pageId,accepted:result.accepted,businessOutcome:'unknown'});
+@@ -618,9 +656,9 @@
+   }
+ 
+   async selectPage(sessionId:string,pageId:string):Promise<ToolResult> {
+-    if(!this.servesDriverMethod('selectPage'))return errResult('E_NOT_IMPLEMENTED','driver does not support page selection');
+-    try {
+-      const result=await this.api.selectPage({sessionId,pageId});
++    if(!await this.servesDriverMethod('selectPage', sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support page selection');
++    try {
++      const result=await this.sessionRoutingApi.selectPage({sessionId,pageId});
+       if(!result.success)throw new Error(result.error??'page selection failed');
+       this.networkBaselines.delete(sessionId);this.consoleBaselines.delete(sessionId);this.snapshotFacts.delete(sessionId);
+       return okResult(`selected page ${pageId}`,redactSecretsInValue({pages:result.pages,activePageId:result.activePageId}));
+@@ -629,9 +667,9 @@
+ 
+   async newPage(sessionId:string,options:{url?:string;background?:boolean}={}):Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+-    if(!this.servesDriverMethod('newPage'))return errResult('E_NOT_IMPLEMENTED','driver does not support new pages');
+-    try {
+-      const result=await this.api.newPage({...options,sessionId});
++    if(!await this.servesDriverMethod('newPage', sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support new pages');
++    try {
++      const result=await this.sessionRoutingApi.newPage({...options,sessionId});
+       if(!result.success)throw new Error(result.error??'new page failed');
+       this.networkBaselines.delete(sessionId);this.consoleBaselines.delete(sessionId);this.snapshotFacts.delete(sessionId);
+       return okResult(result.pendingDialog?'page created; navigation waiting for a dialog':'page created',redactSecretsInValue({pages:result.pages,activePageId:result.activePageId,createdPageId:result.createdPageId,...(result.pendingDialog?{pendingDialog:result.pendingDialog}:{})}));
+@@ -639,9 +677,9 @@
+   }
+ 
+   async closePage(sessionId:string,pageId?:string):Promise<ToolResult> {
+-    if(!this.servesDriverMethod('closePage'))return errResult('E_NOT_IMPLEMENTED','driver does not support closing pages');
+-    try {
+-      const result=await this.api.closePage({sessionId,...(pageId===undefined?{}:{pageId})});
++    if(!await this.servesDriverMethod('closePage', sessionId))return errResult('E_NOT_IMPLEMENTED','driver does not support closing pages');
++    try {
++      const result=await this.sessionRoutingApi.closePage({sessionId,...(pageId===undefined?{}:{pageId})});
+       if(!result.success)throw new Error(result.error??'page close failed');
+       this.networkBaselines.delete(sessionId);this.consoleBaselines.delete(sessionId);this.snapshotFacts.delete(sessionId);
+       return okResult(result.activePageId?'page closed':'page closed; explicitly select a remaining page',redactSecretsInValue({pages:result.pages,activePageId:result.activePageId,closedPageId:result.closedPageId}));
+@@ -649,9 +687,9 @@
+   }
+ 
+   async semanticRead(payload: AgentBrowserSemanticPayload, options?: { signal?: AbortSignal }): Promise<ToolResult> {
+-    if (!this.api.semanticRead) return errResult('E_SEMANTIC_CONFIG', 'semantic read requires a host-configured model gateway');
+-    try {
+-      const result = await this.api.semanticRead(payload, options);
++    if (!this.sessionRoutingApi.semanticRead || !driverSupports(this.driverProfile, 'semanticRead')) return errResult('E_SEMANTIC_CONFIG', 'semantic read requires a host-configured model gateway');
++    try {
++      const result = await this.sessionRoutingApi.semanticRead(payload, options);
+       if (!result.success) throw new Error(result.error ?? 'semantic read failed');
+       const data = redactSecretsInValue({ mode: 'semantic', action: payload.action, value: result.value, source: result.source, model: result.model, trust: 'untrusted', businessOutcome: 'unknown' });
+       const output = okResult('Model-assisted read; independently verify extracted facts and reobserve before acting.', data);
+@@ -663,9 +701,10 @@
+   }
+ 
+   async readForms(sessionId: string, selector?: string): Promise<ToolResult> {
+-    if (!this.api.readForms) return errResult('E_NOT_IMPLEMENTED','driver does not support form overview');
+-    try {
+-      const result = await this.api.readForms({sessionId,selector});
++    const api = await this.sessionApi(sessionId);
++    if (!api.readForms) return errResult('E_NOT_IMPLEMENTED','driver does not support form overview');
++    try {
++      const result = await api.readForms({sessionId,selector});
+       if (!result.success) throw new Error(result.error ?? 'E_WAIT_COLLECTION: form observation failed');
+       const data = redactSecretsInValue({fields:result.fields,scope:{...result.scope,sessionId},trust:'untrusted'});
+       const output = okResult('Read-only form fields; server validation remains unknown.',data);
+@@ -675,9 +714,10 @@
+   }
+ 
+   async findElement(query: AgentBrowserFindPayload): Promise<ToolResult> {
+-    if (!this.api.findElement) return errResult('E_NOT_IMPLEMENTED', 'driver does not support exact reference queries');
+-    try {
+-      const result = await this.api.findElement(query);
++    const api = await this.sessionApi(query.sessionId);
++    if (!api.findElement) return errResult('E_NOT_IMPLEMENTED', 'driver does not support exact reference queries');
++    try {
++      const result = await api.findElement(query);
+       if (!result.success) throw new Error(result.error ?? 'E_WAIT_COLLECTION: query failed');
+       return okResult(`${result.match}: ${result.count} exact target(s)${result.match === 'ambiguous' ? '; narrow the query before acting' : ''}`, {
+         match: result.match, count: result.count, scope: result.scope, ...(result.item ? { item: result.item } : {}), ...(result.details ? { details: redactSecretsInValue(result.details) } : {}),
+@@ -686,9 +726,16 @@
+   }
+ 
+   /** Does the active driver really serve this host-api method? */
+-  private servesDriverMethod(method: string): boolean {
+-    const methods = this.driverProfile.methods;
+-    return methods === null || methods.has(method);
++  private async sessionDriverProfile(sessionId: string): Promise<DriverProfile> {
++    if (this.kitesurfApis.has(sessionId)) return profileForKitesurf();
++    if (this.ownedSessions.has(sessionId)) return this.driverProfile;
++    const { loadSessionRecord } = await import('./persistent-sessions.ts');
++    return (await loadSessionRecord(sessionId, this.workspaceRoot))?.engine === 'kitesurf'
++      ? profileForKitesurf() : this.driverProfile;
++  }
++
++  private async servesDriverMethod(method: string, sessionId: string): Promise<boolean> {
++    return driverSupports(await this.sessionDriverProfile(sessionId), method);
+   }
+ 
+   /**
+@@ -703,7 +750,7 @@
+     const oldItem = this.snapshotFacts.get(sessionId)?.items?.find((item) => item.ref === ref);
+     if (!oldItem) return refHint(selector);
+     try {
+-      const fresh = await this.api.takeSnapshot({ sessionId });
++      const fresh = await this.sessionRoutingApi.takeSnapshot({ sessionId });
+       const items = (fresh.items ?? []).map(indexSnapshotItem);
+       this.snapshotFacts.set(sessionId, {
+         ...parseSnapshotFacts(fresh.snapshot),
+@@ -740,8 +787,9 @@
+     frameId?: string;
+   }): Promise<ToolResult> {
+     try {
+-      if ((options.rows || options.metadata) && !this.driverProfile.readFeatures?.has('rowExtraction')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare deterministic extraction');
+-      if (options.structured && !this.driverProfile.readFeatures?.has('structuredText')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare structured text');
++      const profile = await this.sessionDriverProfile(options.sessionId);
++      if ((options.rows || options.metadata) && !profile.readFeatures?.has('rowExtraction')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare deterministic extraction');
++      if (options.structured && !profile.readFeatures?.has('structuredText')) return errResult('E_NOT_IMPLEMENTED', 'driver does not declare structured text');
+       const selector = options.selector?.trim();
+       /*
+        * 2026-10-03：调用方**给了 selector** 时不再允许静默回退。
+@@ -752,7 +800,7 @@
+        * 现在：给了 selector 却没产出可见正文 → 稳定错误码 + 指名 selector；不给 selector 时保持整页语义。
+        */
+       const allowFallback = !selector;
+-      const result = await this.api.extractPageText({
++      const result = await this.sessionRoutingApi.extractPageText({
+         ...(options.metadata ? { metadata: true } : {}),
+         ...(options.rows ? { rows: options.rows } : {}),
+         ...(options.structured ? { structured: true } : {}),
+@@ -883,7 +931,7 @@
+     };
+     try {
+       if (options.selector && !options.text && !options.urlIncludes && !scopedCondition) {
+-        const waited = await boundedRead(() => this.api.waitForSelector({
++        const waited = await boundedRead(() => this.sessionRoutingApi.waitForSelector({
+           sessionId: options.sessionId,
+           selector: options.selector!,
+           timeoutMs,
+@@ -898,7 +946,7 @@
+           let probe;
+           let transient = false;
+           try {
+-            probe = await boundedRead(() => this.api.evaluate({ sessionId: options.sessionId, expression }));
++            probe = await boundedRead(() => this.sessionRoutingApi.evaluate({ sessionId: options.sessionId, expression }));
+           } catch (error) {
+             if (!isNavigationReadError(error)) throw error;
+             transient = true;
+@@ -953,7 +1001,7 @@
+    * 其它错误（未知会话、页面已关闭等）**不重试**，失败语义不变。
+    */
+   private async captureScreenshot(sessionId: string, fullPage?: boolean, selector?: string) {
+-    const take = () => this.api.screenshot({ sessionId, ...(fullPage ? { fullPage: true } : {}), ...(selector !== undefined ? { selector } : {}) });
++    const take = () => this.sessionRoutingApi.screenshot({ sessionId, ...(fullPage ? { fullPage: true } : {}), ...(selector !== undefined ? { selector } : {}) });
+     // The upstream adapter retries once inside its original deadline and pinned page/element.
+     if (this.driverProfile.kind === 'upstream') return take();
+     try {
+@@ -986,6 +1034,18 @@
+     }
+   }
+ 
++  async pdfToDisk(sessionId: string, options: Omit<AgentBrowserPdfPayload, 'sessionId'> & { fileName?: string } = {}): Promise<ToolResult> {
++    if (!this.sessionRoutingApi.pdf) return errResult('E_NOT_IMPLEMENTED', 'driver does not provide PDF rendering');
++    try {
++      const result = await this.sessionRoutingApi.pdf({ ...options, sessionId });
++      const encoded = /^data:application\/pdf;base64,(.+)$/s.exec(result.dataUrl)?.[1];
++      if (!encoded) throw new Error('E_PDF: driver did not return PDF base64');
++      const path = assertInsideRoot(this.evidenceRoot, join(this.evidenceRoot, 'pdf', sessionId, options.fileName ?? 'page.pdf'), 'pdf');
++      await writeEvidenceBinary(this.evidenceRoot, path, Buffer.from(encoded, 'base64'));
++      return okResult(`PDF saved: ${this.refPath(path)}`, { path: this.refPath(path), bytes: result.bytes, format: 'pdf' }, [createEvidenceRef({ kind: 'summary', label: 'page PDF', path: this.refPath(path), mimeType: 'application/pdf', size: result.bytes })]);
++    } catch (error) { return errResult('E_PDF', toMessage(error)); }
++  }
++
+   async click(sessionId: string, selector: string, timeoutMs?: number, after?: 'popup' | 'download' | 'navigation'): Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(sessionId, selector); if (needsReobserve) return needsReobserve;
+@@ -995,7 +1055,7 @@
+       const timeout = timeoutMs ?? 5000;
+       if (!Number.isFinite(timeout) || timeout <= 0 || timeout > 60000) throw new Error('E_ARG: timeoutMs must be within (0, 60000]');
+       const deadline = Date.now() + timeout;
+-      const waited = await this.api.waitForSelector({
++      const waited = await this.sessionRoutingApi.waitForSelector({
+         sessionId,
+         selector,
+         timeoutMs: timeout,
+@@ -1003,7 +1063,7 @@
+       if (!waited.success) throw new Error(waited.error ?? 'target wait failed; click not performed');
+       const remaining = deadline - Date.now();
+       if (remaining <= 0) throw new Error('E_CLICK_TIMEOUT: deadline expired before click; action not performed');
+-      const result = await this.api.click({
++      const result = await this.sessionRoutingApi.click({
+         sessionId,
+         selector,
+         timeoutMs: remaining,
+@@ -1023,9 +1083,9 @@
+   async pointer(payload: AgentBrowserPointerPayload): Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(payload.sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(payload.sessionId, payload.selector); if (needsReobserve) return needsReobserve;
+-    if (!this.api.pointer) return errResult('E_NOT_IMPLEMENTED', 'driver does not support pointer actions');
+-    try {
+-      const result = await this.api.pointer(payload);
++    if (!this.sessionRoutingApi.pointer) return errResult('E_NOT_IMPLEMENTED', 'driver does not support pointer actions');
++    try {
++      const result = await this.sessionRoutingApi.pointer(payload);
+       if (!result.success) throw Object.assign(new Error(result.error ?? 'pointer action failed'),{observation:result.observation});
+       await this.note(payload.sessionId, 'action', payload.action, { selector: payload.selector }, true);
+       return this.observedActionResult(`${payload.action} executed; observe the page to confirm its effect`, result);
+@@ -1038,9 +1098,9 @@
+   async drag(payload: AgentBrowserDragPayload): Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(payload.sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(payload.sessionId, payload.sourceSelector) ?? this.reobserveGate(payload.sessionId, payload.targetSelector); if (needsReobserve) return needsReobserve;
+-    if (!this.api.drag) return errResult('E_NOT_IMPLEMENTED', 'driver does not support drag');
+-    try {
+-      const result = await this.api.drag(payload);
++    if (!this.sessionRoutingApi.drag) return errResult('E_NOT_IMPLEMENTED', 'driver does not support drag');
++    try {
++      const result = await this.sessionRoutingApi.drag(payload);
+       if (!result.success) throw Object.assign(new Error(result.error ?? 'drag failed'),{observation:result.observation});
+       await this.note(payload.sessionId, 'action', 'drag', { sourceSelector: payload.sourceSelector, targetSelector: payload.targetSelector }, true);
+       return this.observedActionResult('drag executed; observe the target to confirm its effect', result);
+@@ -1059,7 +1119,7 @@
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(sessionId, selector); if (needsReobserve) return needsReobserve;
+     try {
+-      const result = await this.api.type({
++      const result = await this.sessionRoutingApi.type({
+         sessionId,
+         selector,
+         text,
+@@ -1085,7 +1145,7 @@
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(sessionId, selector); if (needsReobserve) return needsReobserve;
+     try {
+-      const result = await this.api.pressKey({
++      const result = await this.sessionRoutingApi.pressKey({
+         sessionId,
+         key,
+         ...(selector ? { selector } : {}),
+@@ -1109,9 +1169,9 @@
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(sessionId, selector); if (needsReobserve) return needsReobserve;
+     if (typeof label !== 'string') return errResult('E_ARG', 'label must be a string');
+-    if (!this.api.selectOption) return errResult('E_NOT_IMPLEMENTED', 'driver does not support selectOption');
+-    try {
+-      const result = await this.api.selectOption({ sessionId, selector, label, timeoutMs });
++    if (!this.sessionRoutingApi.selectOption) return errResult('E_NOT_IMPLEMENTED', 'driver does not support selectOption');
++    try {
++      const result = await this.sessionRoutingApi.selectOption({ sessionId, selector, label, timeoutMs });
+       if (!result.success) throw Object.assign(new Error(result.error ?? 'selection failed'),{observation:result.observation});
+       await this.note(sessionId, 'action', 'select', { selector }, true);
+       return this.fieldResult(`selected option in ${selector}`, result);
+@@ -1125,9 +1185,9 @@
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(sessionId, selector); if (needsReobserve) return needsReobserve;
+     if (typeof checked !== 'boolean') return errResult('E_ARG', 'checked must be a boolean');
+-    if (!this.api.setChecked) return errResult('E_NOT_IMPLEMENTED', 'driver does not support setChecked');
+-    try {
+-      const result = await this.api.setChecked({ sessionId, selector, checked, timeoutMs });
++    if (!this.sessionRoutingApi.setChecked) return errResult('E_NOT_IMPLEMENTED', 'driver does not support setChecked');
++    try {
++      const result = await this.sessionRoutingApi.setChecked({ sessionId, selector, checked, timeoutMs });
+       if (!result.success) throw Object.assign(new Error(result.error ?? 'check failed'),{observation:result.observation});
+       await this.note(sessionId, 'action', 'check', { selector, checked }, true);
+       return this.fieldResult(`set checked=${checked} on ${selector}`, result);
+@@ -1161,9 +1221,9 @@
+   async selectValues(sessionId: string, selector: string, values: string[], timeoutMs?: number): Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(sessionId, selector); if (needsReobserve) return needsReobserve;
+-    if (!this.api.selectValues) return errResult('E_NOT_IMPLEMENTED', 'driver does not support value selection');
+-    try {
+-      const result = await this.api.selectValues({ sessionId, selector, values, timeoutMs });
++    if (!this.sessionRoutingApi.selectValues) return errResult('E_NOT_IMPLEMENTED', 'driver does not support value selection');
++    try {
++      const result = await this.sessionRoutingApi.selectValues({ sessionId, selector, values, timeoutMs });
+       if (!result.success) throw Object.assign(new Error(result.error ?? 'selection failed'),{observation:result.observation});
+       await this.note(sessionId, 'action', 'select-values', { selector }, true);
+       return this.fieldResult(`selected values in ${selector}`, result);
+@@ -1173,9 +1233,9 @@
+   async appendText(sessionId: string, selector: string, text: string, timeoutMs?: number): Promise<ToolResult> {
+     const hitlBlocked = await this.hitlGate(sessionId); if (hitlBlocked) return hitlBlocked;
+     const needsReobserve = this.reobserveGate(sessionId, selector); if (needsReobserve) return needsReobserve;
+-    if (!this.api.appendText) return errResult('E_NOT_IMPLEMENTED', 'driver does not support appendText');
+-    try {
+-      const result = await this.api.appendText({ sessionId, selector, text, timeoutMs });
++    if (!this.sessionRoutingApi.appendText) return errResult('E_NOT_IMPLEMENTED', 'driver does not support appendText');
++    try {
++      const result = await this.sessionRoutingApi.appendText({ sessionId, selector, text, timeoutMs });
+       if (!result.success) throw Object.assign(new Error(result.error ?? 'append failed'),{observation:result.observation});
+       await this.note(sessionId, 'action', 'append', { selector }, true);
+       return this.fieldResult(`appended into ${selector}`, result);
+@@ -1183,7 +1243,7 @@
+   }
+ 
+   async console(sessionId: string): Promise<ToolResult> {    try {
+-      const result = await this.api.getConsoleMessages({ sessionId });
++      const result = await this.sessionRoutingApi.getConsoleMessages({ sessionId });
+       if(result.success===false)throw new Error(result.error??'console collection failed');
+       return okResult((result.collection==='degraded'?`Console collection degraded: ${result.collectionError ?? 'earlier observations unavailable'}\n`:'')+result.content,
+         { content: result.content,...(result.collection==='degraded'?{collection:result.collection,collectionError:result.collectionError}:{}) });
+@@ -1195,7 +1255,7 @@
+   /** Current console watermark candidate: line count plus the last line as anchor. */
+   private async consoleWindow(sessionId: string): Promise<SignalWindow> {
+     const result = await Promise.resolve(
+-      this.api.getConsoleMessages({ sessionId }),
++      this.sessionRoutingApi.getConsoleMessages({ sessionId }),
+     ).catch(() => undefined);
+     const lines = (result?.content ?? '').split('\n').filter(Boolean);
+     const last = lines[lines.length - 1];
+@@ -1220,7 +1280,7 @@
+    */
+   private async sessionExists(sessionId: string): Promise<boolean | 'unknown'> {
+     try {
+-      const result = await this.api.getConsoleMessages({ sessionId });
++      const result = await this.sessionRoutingApi.getConsoleMessages({ sessionId });
+       // A driver that answers at all proves the session resolved.
+       return result !== undefined;
+     } catch (error) {
+@@ -1260,7 +1320,7 @@
+   /** Current network watermark candidate; undefined when the list is unavailable. */
+   private async networkWindow(sessionId: string): Promise<SignalWindow | undefined> {
+     try {
+-      const result = await this.api.networkListRequests({ sessionId, redacted: true });
++      const result = await this.sessionRoutingApi.networkListRequests({ sessionId, redacted: true });
+       if (!result?.success) return undefined;
+       const rows = result.requests as NetworkListRow[];
+       const last = rows[rows.length - 1];
+@@ -1286,7 +1346,7 @@
+     filter?: { urlIncludes?: string; method?: string; status?: number; limit?: number },
+   ): Promise<ToolResult> {
+     try {
+-      const result = await this.api.networkListRequests({
++      const result = await this.sessionRoutingApi.networkListRequests({
+         sessionId,
+         ...(filter ? { filter } : {}),
+       });
+@@ -1309,7 +1369,7 @@
+       return errResult('E_NETWORK_DETAIL', 'networkDetail requires at least one request id');
+     }
+     try {
+-      const result = await this.api.networkGetRequestDetails({ sessionId, requestIds: ids });
++      const result = await this.sessionRoutingApi.networkGetRequestDetails({ sessionId, requestIds: ids });
+       if (result.success === false) {
+         return errResult('E_NETWORK_DETAIL', result.error ?? 'networkGetRequestDetails reported failure');
+       }
+@@ -1352,7 +1412,7 @@
+       ? `request matching ${JSON.stringify(options.filter)}`
+       : 'network idle';
+     try {
+-      const result = await Promise.race([this.api.networkWaitForRequests({
++      const result = await Promise.race([this.sessionRoutingApi.networkWaitForRequests({
+         sessionId,
+         ...(options.responseComplete ? { responseComplete: true } : {}),
+         ...(options.sinceCursor !== undefined ? { sinceCursor: options.sinceCursor } : {}),
+@@ -1400,7 +1460,7 @@
+     window: SignalWindow = { count: 0 },
+   ): Promise<NetworkFailureSummary> {
+     try {
+-      const result = await this.api.networkListRequests({ sessionId, redacted: true });
++      const result = await this.sessionRoutingApi.networkListRequests({ sessionId, redacted: true });
+       if (!result?.success) {
+         return {
+           count: 0,
+@@ -1489,7 +1549,7 @@
+     let snapshotText = '';
+     if (options.snapshot !== false) {
+       try {
+-        const snap = await this.api.takeSnapshot({ sessionId });
++        const snap = await this.sessionRoutingApi.takeSnapshot({ sessionId });
+         snapshotText = snap.snapshot;
+       } catch (error) {
+         snapshotText = `# snapshot unavailable\n- ${toMessage(error)}`;
+@@ -1726,7 +1786,7 @@
+     }
+ 
+     try {
+-      const listed = await this.api.networkListRequests({ sessionId, redacted: true });
++      const listed = await this.sessionRoutingApi.networkListRequests({ sessionId, redacted: true });
+       for (const request of listed.requests as NetworkListRow[]) {
+         const failed = request.failed || (request.status ?? 0) >= 400;
+         if (!failed) continue;
+@@ -1751,7 +1811,7 @@
+     }
+ 
+     try {
+-      const consoleResult = await this.api.getConsoleMessages({ sessionId });
++      const consoleResult = await this.sessionRoutingApi.getConsoleMessages({ sessionId });
+       const lines = (consoleResult.content ?? '').split('\n').filter(Boolean);
+       for (const line of lines) {
+         if (classifyConsoleLine(line) !== 'error') continue;
+@@ -1989,7 +2049,7 @@
+       );
+     }
+     try {
+-      const result = await this.api.runtimeInspectGlobals({
++      const result = await this.sessionRoutingApi.runtimeInspectGlobals({
+         sessionId: options.sessionId,
+         paths: options.paths,
+         ...(options.maxDepth !== undefined ? { maxDepth: options.maxDepth } : {}),
+@@ -2080,7 +2140,7 @@
+   /** Offline compare of two captured requests (status / outcome). */
+   async networkCompare(sessionId: string, requestIds: [string, string]): Promise<ToolResult> {
+     try {
+-      const listed = await this.api.networkListRequests({ sessionId, redacted: true });
++      const listed = await this.sessionRoutingApi.networkListRequests({ sessionId, redacted: true });
+       const rows = listed.requests as NetworkListRow[];
+       const [a, b] = requestIds.map((id) => rows.find((r) => r.id === id));
+       if (!a || !b) {
+@@ -2127,7 +2187,7 @@
+     const selectorResults: VerifySelectorResult[] = [];
+     for (const selector of selectors) {
+       try {
+-        await this.api.waitForSelector({ sessionId, selector, timeoutMs: 3000 });
++        await this.sessionRoutingApi.waitForSelector({ sessionId, selector, timeoutMs: 3000 });
+         selectorResults.push({ selector, found: true, visible: true });
+       } catch (error) {
+         selectorResults.push({ selector, found: false, detail: toMessage(error) });
+@@ -2255,7 +2315,6 @@
      );
-
+ 
      // Flight Recorder + Trajectory Diagnosis land in the same pack (M6).
 -    let diagnosisReport: DiagnosisReport | undefined;
      let timelineRecord: TimelineRecord | undefined;
      const activeRecorder = this.recorders.get(sessionId);
      if (activeRecorder) {
-@@ -2308,7 +2307,7 @@
+@@ -2308,7 +2367,7 @@
        }
      }
      if (activeRecorder) timelineRecord = activeRecorder.toRecord();
 -    diagnosisReport = diagnoseTimeline({ dir, timeline: timelineRecord });
 +    const diagnosisReport: DiagnosisReport = diagnoseTimeline({ dir, timeline: timelineRecord });
      await writeDiagnosisPack(dir, diagnosisReport);
-
+ 
      const prComment = formatVerifyPrComment(report, {
+@@ -2366,7 +2425,7 @@
+         const stopped = await this.recordStop(sessionId);
+         if (!stopped.ok) return errResult('E_CLOSE', stopped.error?.message ?? 'recording could not be saved');
+       }
+-      const closed = await this.api.close({ sessionId });
++      const closed = await this.sessionRoutingApi.close({ sessionId });
+       // A host that reports failure without throwing must not look like success:
+       // callers (e.g. the CLI one-shot) report whether the browser really closed.
+       if (closed && closed.success === false) {
+@@ -2378,6 +2437,7 @@
+       this.consoleBaselines.delete(sessionId);
+       this.snapshotFacts.delete(sessionId);
+       this.ownedSessions.delete(sessionId);
++      this.kitesurfApis.delete(sessionId);
+       return okResult(`session ${sessionId} closed`);
+     } catch (error) {
+       /*
+@@ -2431,7 +2491,7 @@
+         : `${expectation.type} ${expectation.selector}`);
+     try {
+       if (expectation.type === 'url') {
+-        const result = await this.api.evaluate({
++        const result = await this.sessionRoutingApi.evaluate({
+           sessionId,
+           expression: 'location.href',
+         });
+@@ -2447,7 +2507,7 @@
+         return matchTextExpectation('url', label, href, expectation);
+       }
+ 
+-      const probe = await this.api.evaluate({
++      const probe = await this.sessionRoutingApi.evaluate({
+         sessionId,
+         expression: `(() => {
+           const el = document.querySelector(${JSON.stringify(expectation.selector)});
+@@ -2516,7 +2576,7 @@
+     window: SignalWindow,
+   ): Promise<ConsoleIncrementalDiff> {
+     try {
+-      const result = await this.api.getConsoleMessages({ sessionId });
++      const result = await this.sessionRoutingApi.getConsoleMessages({ sessionId });
+       if (!result?.success) {
+         return {
+           baselineCount: window.count,
