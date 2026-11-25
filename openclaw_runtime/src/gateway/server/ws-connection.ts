@@ -2,14 +2,13 @@
 import { randomUUID } from "node:crypto";
 import type { Socket } from "node:net";
 import { normalizeLowercaseStringOrEmpty } from "@openclaw/normalization-core/string-coerce";
-import type { RawData, WebSocket, WebSocketServer } from "ws";
+import type { WebSocket, WebSocketServer } from "ws";
 import {
   GATEWAY_STARTUP_CLOSE_CODE,
   GATEWAY_STARTUP_PENDING_CLOSE_CAUSE,
 } from "../../../packages/gateway-protocol/src/startup-unavailable.js";
 import { getRuntimeConfig } from "../../config/io.js";
-import { listSystemPresence, upsertPresence } from "../../infra/system-presence.js";
-import { rawDataToString } from "../../infra/ws.js";
+import { upsertPresence } from "../../infra/system-presence.js";
 import { logRejectedLargePayload } from "../../logging/diagnostic-payload.js";
 import type { createSubsystemLogger } from "../../logging/subsystem.js";
 import { removeRemoteNodeInfo } from "../../skills/runtime/remote.js";
@@ -19,7 +18,6 @@ import type { AuthRateLimiter } from "../auth-rate-limit.js";
 import type { ResolvedGatewayAuth } from "../auth.js";
 import { resolvePreauthHandshakeTimeoutMs } from "../handshake-timeouts.js";
 import { resolveHostedPluginSurfaceUrl } from "../hosted-plugin-surface-url.js";
-import { ADMIN_SCOPE } from "../method-scopes.js";
 import type { GatewayMethodRegistry } from "../methods/registry.js";
 import { isLoopbackAddress } from "../net.js";
 import type { PluginNodeCapabilitySurface } from "../plugin-node-capability.js";
@@ -40,10 +38,8 @@ import {
   HandshakeAuthLogLimiter,
   shouldLimitMissingCredentialAuthLog,
 } from "./ws-connection/handshake-auth-log-limiter.js";
-import type {
-  GatewayWsMessageHandlerParams,
-  WsOriginCheckMetrics,
-} from "./ws-connection/message-handler.js";
+import type { WsOriginCheckMetrics } from "./ws-connection/message-handler.js";
+import { attachGatewayWsMessageHandlerOnDemand } from "./ws-connection/message-handler-loader.js";
 import { resolveSharedGatewaySessionGeneration } from "./ws-shared-generation.js";
 import type { GatewayWsClient } from "./ws-types.js";
 
@@ -51,13 +47,7 @@ type SubsystemLogger = ReturnType<typeof createSubsystemLogger>;
 
 const LOG_HEADER_MAX_LEN = 300;
 const LOG_HEADER_FORMAT_REGEX = /\p{Cf}/gu;
-const MAX_QUEUED_MESSAGE_HANDLER_FRAMES = 16;
 const unauthorizedCloseBeforeConnectLogLimiter = new HandshakeAuthLogLimiter();
-
-function hasOperatorReadScope(client: GatewayWsClient): boolean {
-  const scopes = client.connect.scopes ?? [];
-  return scopes.includes(ADMIN_SCOPE) || scopes.includes("operator.read");
-}
 
 function replaceControlChars(value: string): string {
   let cleaned = "";
@@ -185,81 +175,6 @@ export type AttachGatewayWsConnectionHandlerParams = GatewayWsSharedHandlerParam
   ) => void;
   buildRequestContext: () => GatewayRequestContext;
 };
-
-function attachGatewayWsMessageHandlerOnDemand(params: GatewayWsMessageHandlerParams): void {
-  const queued: RawData[] = [];
-  const queueMessage = (data: RawData) => {
-    const client = params.getClient();
-    if (client) {
-      try {
-        const parsed = JSON.parse(rawDataToString(data)) as {
-          type?: unknown;
-          id?: unknown;
-          method?: unknown;
-        };
-        if (
-          parsed?.type === "req" &&
-          parsed.method === "system-presence" &&
-          typeof parsed.id === "string" &&
-          hasOperatorReadScope(client)
-        ) {
-          params.send({
-            type: "res",
-            id: parsed.id,
-            ok: true,
-            payload: listSystemPresence(),
-          });
-          return;
-        }
-      } catch {
-        // Let the full message handler report malformed frames once it loads.
-      }
-    }
-    if (queued.length >= MAX_QUEUED_MESSAGE_HANDLER_FRAMES) {
-      params.setCloseCause("message-handler-loading-overflow", {
-        queuedFrames: queued.length,
-      });
-      params.close(1008, "gateway message handler loading");
-      return;
-    }
-    queued.push(data);
-  };
-  params.socket.on("message", queueMessage);
-  void import("./ws-connection/message-handler.js")
-    .then(async ({ attachGatewayWsMessageHandler, createGatewayWsMessageProcessor, runGatewayWsMessageProcessor }) => {
-      if (params.isClosed()) {
-        return;
-      }
-      const handleMessage = createGatewayWsMessageProcessor(params);
-      for (;;) {
-        const data = queued.shift();
-        if (!data || params.isClosed()) {
-          break;
-        }
-        try {
-          await runGatewayWsMessageProcessor(handleMessage, data);
-        } catch (error) {
-          params.logWsControl.warn(
-            `ws message handler failed conn=${params.connId}: ${formatError(error)}`,
-          );
-        }
-      }
-      params.socket.off("message", queueMessage);
-      if (!params.isClosed()) {
-        attachGatewayWsMessageHandler(params);
-      }
-    })
-    .catch((error: unknown) => {
-      params.socket.off("message", queueMessage);
-      params.setCloseCause("message-handler-load-failed", {
-        error: formatError(error),
-      });
-      params.logWsControl.warn(
-        `failed to load ws message handler conn=${params.connId}: ${formatError(error)}`,
-      );
-      params.close(1011, "gateway message handler unavailable");
-    });
-}
 
 export function attachGatewayWsConnectionHandler(params: AttachGatewayWsConnectionHandlerParams) {
   const {
@@ -431,7 +346,11 @@ export function attachGatewayWsConnectionHandler(params: AttachGatewayWsConnecti
     send({
       type: "event",
       event: "connect.challenge",
-      payload: { nonce: connectNonce, ts: Date.now(), ...(isStartupPending?.() ? { startupPending: true } : {}) },
+      payload: {
+        nonce: connectNonce,
+        ts: Date.now(),
+        ...(isStartupPending?.() ? { startupPending: true } : {}),
+      },
     });
 
     socket.once("error", (err) => {

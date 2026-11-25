@@ -5,6 +5,7 @@ type: ai-coding-rule
 appliesTo:
   - gateway-backend-communication
 requiredTests:
+  - openclaw_runtime/src/gateway/server/ws-connection.lazy.test.ts
   - openclaw_runtime/src/gateway/server/health-state.lazy.test.ts
   - openclaw_runtime/src/infra/update-available-state.test.ts
   - tests/unit/gateway-lazy-harness-selection.test.ts
@@ -17,6 +18,8 @@ requiredTests:
 ---
 
 A Gateway whose startup owner still rejects `connect` sets `startupPending: true` on its WebSocket challenge. The desktop readiness probe keeps polling until the owner accepts connections. Authenticated connection and capability checks still own the running transition.
+
+Challenge-only probes leave the authentication/RPC handler unloaded. Incoming frames trigger one load per connection and retain the bounded, serial startup queue. Closing a socket clears its queued frames and prevents late handler attachment; idle connections retain their handshake timeout.
 
 `gatewayReady: false` means runtime-dependent refreshes should wait. `gatewayReady: true` means the Gateway reported readiness. `gatewayReady: undefined` is backward-compatible with older Gateway versions and must be treated as ready when the Gateway state is running.
 

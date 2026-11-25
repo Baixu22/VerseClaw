@@ -18,6 +18,7 @@ Agents reuse compatible Gateway plugin state during startup; configuration and w
 
 Gateway configuration watchers load cron, MCP disposal and provider refresh execution when a reload needs them. Empty startup delivery queues leave sending and reply execution unloaded.
 Handshake snapshots read cached health and update availability without loading probes or updater execution. Health refreshes keep sensitive results separate from the public cache.
+Readiness challenge probes leave authentication and RPC execution unloaded until the connection sends its first request frame.
 
 Native language parsers load when code analysis first needs the corresponding language.
 
