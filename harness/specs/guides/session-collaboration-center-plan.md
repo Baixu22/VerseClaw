@@ -600,6 +600,8 @@ flowchart LR
 
 A5 记录规模与查询基线，再固定后续的延迟/开销目标；D4 使用配对任务记录结果正确性、重复探索、读取次数、通知/排队 p50/p95、CPU/RSS、token/费用和未知比例。本计划不把未测量数值填写成实际结果。
 
+A5 的可执行规模入口为 tests/e2e/session-collaboration-scale.spec.ts，保留 2/20/100/500 的原始列表与详情样本、扫描次数、进程 RSS 样本及 owner/model 读前读后计数。真实 owner 会话与 agent 合成 metadata 分开标记；验收延期期间不生成基线或阈值结论。
+
 源码检查、结构/Mock、真实本地 Gateway 和 live 模型证据分开记录。模拟一律 driven_by: agent；独立审查/子代理按用户指定使用 ccs-workbuddy/deepseek-v4.1-flash，保存请求路由及实际返回身份。用户不提供真人操作或真人数据。
 
 节点完成需满足自身全部 acceptance，并读取磁盘证据；应用提案前核对 base_graph_hash，应用后 validate 与完整历史 export，最后通过 CLI 和派生产物回读。任务图/交接保留本地，正式合同与精选最终证据纳入源码。

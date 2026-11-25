@@ -7,6 +7,8 @@ import { parseSessionCollaborationQuery } from '../../../shared/types/session-co
 import type { TaskLedgerSnapshotResult } from '../../../shared/host-api/contract';
 import { hostInvoke, startGateway } from './fp-p1-harness';
 import { createSessionChainProject } from './session-task-chain';
+import { resolveStorePath } from '../../../openclaw_runtime/src/config/sessions/paths';
+import { resolve } from 'node:path';
 
 /** Fixture setup uses the original Workspace/Session/Task owners and one scripted turn. */
 export async function createCollaborationProject(app: ElectronApplication, root: string, name: string) {
@@ -46,4 +48,28 @@ export async function establishCollaborationScope(app: ElectronApplication, proj
     message: 'Fixture setup: acknowledge the existing session without tools.', idempotencyKey: `collaboration-setup:${project.sessionKey}:${project.generation}`,
   } });
   if (result.runId) await hostInvoke(app, 'gateway', 'rpc', { method: 'agent.wait', params: { runId: result.runId, timeoutMs: 60_000 }, timeoutMs: 65_000 });
+}
+
+export async function collaborationFixtureStorePath(app: ElectronApplication) {
+  const config = await hostInvoke<{ config: { session?: { store?: string } } }>(app, 'gateway', 'rpc', { method: 'config.get' });
+  const env = await app.evaluate(() => ({ HOME: process.env.HOME, USERPROFILE: process.env.USERPROFILE,
+    OPENCLAW_STATE_DIR: process.env.OPENCLAW_STATE_DIR, OPENCLAW_HOME: process.env.OPENCLAW_HOME }));
+  const path = resolveStorePath(config.config.session?.store, { agentId: 'main', env });
+  const home = env.HOME ?? env.USERPROFILE;
+  if (!home || !resolve(path).toLowerCase().startsWith(`${resolve(home).toLowerCase()}${process.platform === 'win32' ? '\\' : '/'}`))
+    throw new Error('Collaboration fixture store escaped its private home');
+  return path;
+}
+
+export async function createCollaborationChild(app: ElectronApplication, parent: Awaited<ReturnType<typeof createCollaborationProject>>) {
+  const child = await hostInvoke<{ key: string; sessionId: string }>(app, 'gateway', 'rpc', { method: 'sessions.create',
+    params: { agentId: 'main', parentSessionKey: parent.sessionKey, label: 'Original observer child' } });
+  await hostInvoke(app, 'workspaces', 'saveState', { id: parent.workspaceId, sessionKey: child.key, state: {} });
+  await hostInvoke(app, 'gateway', 'rpc', { method: 'sessions.patch', params: { key: child.key, workspaceDir: parent.rootPath, expectedSessionId: child.sessionId } });
+  const store = new TaskSystemStore(resolveTaskDomain(parent.rootPath));
+  try { store.inheritReference(parent.sessionKey, parent.generation, child.key, child.sessionId); } finally { store.close(); }
+  const project = { workspaceId: parent.workspaceId, rootPath: parent.rootPath, sessionKey: child.key, generation: child.sessionId };
+  await establishCollaborationScope(app, project);
+  return { ...project, scope: parseSessionCollaborationQuery({ requester: { workspaceId: parent.workspaceId, projectId: parent.workspaceId,
+    sessionKey: child.key, sessionGeneration: child.sessionId } }).requester };
 }
