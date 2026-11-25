@@ -1,5 +1,5 @@
 import type { ExecutionEnvironment } from './execution-environment.js';
-import type { WorkspacePermissionMode } from './workspace';
+import type { WorkspacePermissionMode } from './workspace.js';
 
 export type SandboxProviderId =
   | 'policy-light'

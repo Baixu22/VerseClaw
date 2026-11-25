@@ -13,6 +13,7 @@ expectedUserBehavior:
 touchedAreas:
   - electron/services/workspace-preflight.ts
   - electron/services/files-api.ts
+  - shared/types/sandbox.ts
   - openclaw_runtime/src/agents/session-read-hashes.ts
   - openclaw_runtime/src/agents/path-policy.ts
   - openclaw_runtime/src/agents/fact-rel-path.ts
