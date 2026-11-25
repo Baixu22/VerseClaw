@@ -12,6 +12,7 @@ import { createTaskRuntimeGuard, restoreTaskModelContext, executeTaskGuarded,
   createTaskModelUsageRecorder } from '../../shared/task-system/runtime';
 import { readTaskTrace } from '../../shared/task-system/trace';
 import { projectCoordinatorScope, assertSystemExecutionAllowed } from '../../shared/task-system/project-coordinator';
+import { normalizeSystemControl } from '../../shared/types/system-control';
 import { createTaskLedgerWorkingContextProposal, createTaskLedgerWorkingContextDecision,
   projectTaskLedgerWorkingContext, emptyTaskLedgerWorkingContextSnapshot,
   STAGE3_WORKING_CONTEXT_POLICY_DIGEST } from '../../shared/task-ledger-working-context';
@@ -341,7 +342,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
         const foreignRejected = await rejected('foreign-project', () => projectCoordinatorScope(profile, claim.sessionKey, claim.generation, foreignRoot), 'TASK_SESSION_DOMAIN_MISMATCH');
         const staleRejected = await rejected('stale-generation', () => projectCoordinatorScope(profile, claim.sessionKey, 'stale', root), 'TASK_GENERATION_STALE');
         const ownerPath = join(root, 'workspace-owner.json');
-        writeFileSync(ownerPath, JSON.stringify({ systemControl: { paused: true } }));
+        writeFileSync(ownerPath, JSON.stringify({ systemControl: { ...normalizeSystemControl(undefined), paused: true } }));
         vi.stubEnv('CLAWX_WORKSPACE_OWNER_PATH', ownerPath);
         let systemPauseRejected: boolean;
         try { systemPauseRejected = await rejected('paused-system', () => assertSystemExecutionAllowed(), 'SYSTEM_EXECUTION_PAUSED'); }
@@ -368,6 +369,8 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
 describe('C01 frozen continuation baseline', () => {
   it('pins all fifteen families and seals the final holdout before execution', async () => {
     const matrix = JSON.parse(readFileSync(join(EVIDENCE, 'scenario-matrix.json'), 'utf8'));
+    const preregistration = JSON.parse(readFileSync(join(EVIDENCE, 'preregistration-portable.json'), 'utf8'));
+    for (const entry of preregistration.inputs) expect(fileHash(join(ROOT, entry.path)), entry.path).toBe(entry.sha256);
     expect(fileHash(fixturePath)).toBe(matrix.fixtureLfSha256);
     expect(hash(readFileSync(join(ROOT, fixture.legacyFixture.path)))).toBe(fixture.legacyFixture.sha256);
     expect(new Set(fixture.cases.map(entry => entry.family)).size).toBe(15);

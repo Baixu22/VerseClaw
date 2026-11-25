@@ -10,6 +10,7 @@ touchedAreas:
   - harness/specs/tasks/autonomy-context-baseline.md
   - harness/specs/guides/autonomy-context-system-design.md
   - shared/long-session-paired-evaluation.ts
+  - scripts/verify-autonomy-context-baseline.mjs
   - tests/unit/autonomy-context-paired.test.ts
   - tests/unit/fixtures/autonomy-context-baseline.json
   - tests/unit/autonomy-context-baseline.test.ts
@@ -41,6 +42,7 @@ expectedUserBehavior:
   - 基线明确当前实际任务/上下文能力及证据空白，不改变生产prompt或产品默认。
   - 后续策略使用同一任务环境、输入、模型和剩余预算，能定位状态失真和重复工作。
 requiredTests:
+  - node scripts/verify-autonomy-context-baseline.mjs
   - pnpm exec vitest run tests/unit/autonomy-context-baseline.test.ts tests/unit/autonomy-context-paired.test.ts tests/unit/long-session-paired-evaluation.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm harness validate --spec harness/specs/tasks/autonomy-context-baseline.md --since f18b0d7ea9d4b4a34f231a49178225a01e71ca0f
   - pnpm harness run --spec harness/specs/tasks/autonomy-context-baseline.md --since f18b0d7ea9d4b4a34f231a49178225a01e71ca0f --dry-run
@@ -69,3 +71,5 @@ C01 的离线输入为 `tests/unit/fixtures/autonomy-context-baseline.v2.json`�
 冻结源码以本叶起点 f18b0d7ea9d4b4a34f231a49178225a01e71ca0f 为 diffBase；提交后的 Harness 仍使用此基线。类型检查覆盖新增 grader 与测试入口的真实依赖；原项目无关诊断与本叶诊断分别记录。README en/zh/ja 已核对，本叶新增评测入口和规格，不改变其产品能力描述。
 
 冻结协议在任何收益实验之前确定质量、全成本与功效规则。C01 不启用生产 context_update。未来 live 计划须另绑定真实模型/后端/语料/候选和预算，执行匹配授权。
+
+复算入口：`node scripts/verify-autonomy-context-baseline.mjs` 核对源码、冻结输入、精选报告和独立 grader；传入 `--run-report <新跑次的 offline-run.json>` 比较继续执行观察值的语义摘要。原始文件字节 SHA256 与跨检出的 UTF-8/LF 源码摘要分别记录。
