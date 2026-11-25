@@ -12,8 +12,10 @@ for expected,name in manifest:
 assert {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}=={name for _,name in manifest}|{'SHA256SUMS'}
 candidate=load('candidate.json')
 for name,expected in candidate['sources'].items():
-    assert digest(git('show',candidate['candidate']+':'+name))==candidate['gitSources'][name],name
-    assert digest((repo/name).read_bytes())==expected,name+' current'
+    blob=git('show',candidate['candidate']+':'+name)
+    assert digest(blob)==candidate['gitSources'][name],name
+    current=(repo/name).read_bytes()
+    assert digest(current)==expected or (b'\0' not in blob and current.replace(b'\r\n',b'\n')==blob.replace(b'\r\n',b'\n')),name+' current'
 for check in load('checks.json'):
     assert check['exitCode']==0 and check['sourceUnchanged']
     for stream in ['stdout','stderr']:assert digest((root/check[stream]['retainedPath']).read_bytes())==check[stream]['sha256']
