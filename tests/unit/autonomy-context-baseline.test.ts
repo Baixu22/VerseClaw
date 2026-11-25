@@ -42,6 +42,7 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const EVIDENCE = join(ROOT, 'harness/specs/fixtures/autonomy-context-system/baseline/v1');
 const ACTOR = 'codex/autonomy-context-tf0955';
 const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
+const fileHash = (path: string) => hash(readFileSync(path, 'utf8').replaceAll('\r\n', '\n'));
 const fixturePath = join(ROOT, 'tests/unit/fixtures/autonomy-context-baseline.v2.json');
 const fixture = JSON.parse(readFileSync(fixturePath, 'utf8')) as { clock: string; cases: Scenario[]; legacyFixture: { path: string; sha256: string } };
 const policy = JSON.parse(readFileSync(join(EVIDENCE, 'frozen-evaluation-policy.json'), 'utf8'));
@@ -346,7 +347,7 @@ async function continueScenario(s: ExecutableScenario, arm: Arm, repetition: num
 describe('C01 frozen continuation baseline', () => {
   it('pins all fifteen families and seals the final holdout before execution', async () => {
     const matrix = JSON.parse(readFileSync(join(EVIDENCE, 'scenario-matrix.json'), 'utf8'));
-    expect(hash(readFileSync(fixturePath))).toBe(matrix.fixtureSha256);
+    expect(fileHash(fixturePath)).toBe(matrix.fixtureLfSha256);
     expect(hash(readFileSync(join(ROOT, fixture.legacyFixture.path)))).toBe(fixture.legacyFixture.sha256);
     expect(new Set(fixture.cases.map(entry => entry.family)).size).toBe(15);
     expect(fixture.cases).toHaveLength(45);
@@ -426,7 +427,7 @@ describe('C01 frozen continuation baseline', () => {
 
 afterAll(() => {
   const report = { schema: 'AutonomyContextOfflineRun/v1', actor: ACTOR, driven_by: 'agent', generatedAt: new Date().toISOString(),
-    fixtureSha256: hash(readFileSync(fixturePath)), policySha256: hash(readFileSync(join(EVIDENCE, 'frozen-evaluation-policy.json'))),
+    fixtureSha256: fileHash(fixturePath), policySha256: fileHash(join(EVIDENCE, 'frozen-evaluation-policy.json')), hashScheme: 'sha256-utf8-lf',
     families: [...new Set(results.map(row => row.family))], rows: results, executedRows: results.length,
     semanticDigest: hash(JSON.stringify(results.map(row => ({ id: row.id, arm: row.arm, observed: row.observed, grade: row.grade })))),
     heldoutExecuted: 0, liveProviderCalls: 0, liveQuality: 'not-measured', productTaskResult: 'not-measured',

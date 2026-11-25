@@ -1297,5 +1297,7 @@
       },
       "expectedContinuation": "项目 scope 来自持久负责人绑定，错误项目及陈旧代次拒绝"
     }
-  ]
+  ],
+  "fixtureLfSha256": "22f3a74c895690c161247567743532077e8a5b1e01f6656983cf3e6c303521e0",
+  "portableHashScheme": "sha256-utf8-lf"
 }
