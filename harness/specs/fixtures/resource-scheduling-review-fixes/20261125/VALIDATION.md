@@ -9,3 +9,5 @@
 Main 以快进方式接纳修复，七个重叠文档/语言文件通过三方合并保留既有改动，其他暂存条目保留。38 个非写集文件未被本次集成写入；其中三个文件的并行更新保留当前内容。
 
 完整 Harness CI 的 Agent Dev 严格审计仍失败：四份既有证据超过 24 小时有效期，旧 deep-test 报告的 typecheck、Playwright、contract 超过冻结预算。该失败及原始反例保留，见 baseline-agent-dev-audit.json、negative-probes.json。
+
+远端 main 的八个提交已整合为 e82b5ff1d626a8fb2d47f4d978a0302b7504e165。资源审查所读源码保持一致；新候选重新通过 214 项资源测试、三组类型检查、VerseBrowser/Main 构建、Electron 设置场景和通信回放比较。整合过程继续保留主线已有改动，详情见 remote-main-validation.json。
