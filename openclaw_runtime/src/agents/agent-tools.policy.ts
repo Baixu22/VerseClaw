@@ -67,6 +67,7 @@ const SUBAGENT_TOOL_DENY_ALWAYS = [
 const SUBAGENT_TOOL_DENY_LEAF = [
   "subagents",
   "sessions_list",
+  "sessions_watch",
   "sessions_history",
   "team_orchestrate",
   "sessions_spawn",

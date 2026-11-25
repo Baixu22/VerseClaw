@@ -129,7 +129,17 @@ function taskStatus(status: string) {
 }
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
-  "session.activitySnapshot": async ({ params, respond, context }) => {
+  "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.watch !== undefined || params.cancelWatch !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One watch operation required');
+        const owner = client?.connect.device?.id ?? client?.connect.client.id ?? 'embedded';
+        const { watchSessionCollaboration, cancelSessionCollaborationWatch } = await import('./session-collaboration-watch.js');
+        respond(true, params.cancelWatch !== undefined ? cancelSessionCollaborationWatch(params.cancelWatch, context, owner)
+          : { watch: await watchSessionCollaboration(params.watch, context, owner) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration watch' }); }
+      return;
+    }
     if (params.query !== undefined) {
       try {
         const { readSessionCollaborationQuery } = await import('./session-collaboration-query.js');

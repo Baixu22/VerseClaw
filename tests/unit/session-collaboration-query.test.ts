@@ -329,9 +329,10 @@ describe('A2 shared session discovery and detail', () => {
       const ui = await readSessionCollaborationPage(input, main().api.query);
       const call = vi.fn(async (request: { params?: unknown }) => runtime((request.params as { query: SessionCollaborationQuery }).query));
       const opts = { agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: call as never };
-      const listed = await createSessionsListTool(opts).execute('foreign-action-list', { collaboration: true, target: scope(), limit: 1 });
+      const listed = await createSessionsListTool(opts).execute('foreign-action-list', { collaboration: true });
       const status = await createSessionStatusTool(opts).execute('foreign-action-status', { readOnly: true, scope: scope() });
-      expect(listed.details).toEqual(ui); expect(status.details).toEqual(ui);
+      expect((listed.details as SessionCollaborationPage).items.find(row => row.sessionKey === A)).toEqual(ui.items[0]);
+      expect(status.details).toEqual(ui);
       expect(ui.items[0].sources.actions).toMatchObject({ state: 'unavailable', reason: 'scope-mismatch', value: null });
       expect(ui.items[0].sources.run.state).toBe('empty'); expect(ui.items[0].status).toBe('unknown');
       const after = ownerState(); expect(after).toEqual(before); expect(readSessionTaskEffectRequests(A, 'generation-a')).toEqual(original);

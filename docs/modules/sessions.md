@@ -46,6 +46,8 @@ agent 使用 `session_status({ readOnly: true, scope: row.detail.scope })` 读�
 
 Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`；读取已返回但合法页缺失时为 `unknown/protocol-unverified`。Main、UI 与只读会话工具保留请求者身份并清除事实和分页，参数与发送者身份仍在读取前校验。
 
+`sessions_watch({ scope, condition, run?, cursor?, timeoutMs? })` 与 typed `sessionActivity.watch` 按原 owner 条件等待。`run-terminal` 使用原 ScopedRun，`task-receipt` 等待 TaskSystem 回执，`idle` 仅表示会话空闲；`changed` 和 `blocking-changed` 补读已变化的原来源。单次最长 25 秒，返回游标可供重连与去重；页面卸载通过 `cancelWatch` 释放该读取者的等待，不发送消息或调用目标模型。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

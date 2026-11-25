@@ -482,6 +482,7 @@ export function requiresSessionTaskScope(toolName: string, args: unknown): boole
       "memory_search",
       "memory_get",
       "sessions_list",
+      "sessions_watch",
       "sessions_history",
       "sessions_yield",
       "get_goal",

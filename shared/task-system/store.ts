@@ -596,11 +596,12 @@ export class TaskSystemStore {
     taskNodeId: string,
     afterSequence = 0,
     limit = 100,
+    direction: 'asc' | 'desc' = 'asc',
   ): Array<{ seq: number; kind: string; at: number; json: string }> {
     this.assertReadCurrent();
     return this.db
       .prepare(
-        "SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? ORDER BY seq LIMIT ?",
+        `SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? ORDER BY seq ${direction === 'desc' ? 'DESC' : 'ASC'} LIMIT ?`,
       )
       .all(taskNodeId, Math.max(0, afterSequence), Math.min(500, Math.max(1, limit))) as Array<{
       seq: number;

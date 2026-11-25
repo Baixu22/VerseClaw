@@ -10,6 +10,7 @@ import { normalizeAutonomySessionScope } from '@shared/types/identity-scope';
 import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from './workspaces-api';
 import { canonicalPath } from '../../shared/task-system/identity';
 import { emptySessionCollaborationPage, parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
+import { parseSessionCollaborationWatch, validateSessionCollaborationWatch, type SessionCollaborationWatchResult } from '@shared/types/session-collaboration-watch';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
@@ -129,6 +130,23 @@ export function createSessionActivityApi({
   const taskLedgerApi = createTaskLedgerApi();
 
   return {
+    watch: async (input) => {
+      const request = parseSessionCollaborationWatch(input);
+      const failed = (state: 'unknown' | 'unavailable', reason: 'protocol-unverified' | 'owner-unavailable' | 'owner-missing'): SessionCollaborationWatchResult =>
+        ({ schemaVersion: 'SessionCollaborationWatch/v1', id: request.id, state, cursor: null, event: null,
+          page: emptySessionCollaborationPage(request.query, state, reason) });
+      try {
+        if (!await getWorkspaceRootPathById(request.query.requester.workspaceId)) return { success: true, watch: failed('unavailable', 'owner-missing') };
+        const result = await ctx.gatewayManager!.rpc<{ watch: SessionCollaborationWatchResult }>('session.activitySnapshot', { watch: request }, request.timeoutMs! + 5_000);
+        return { success: true, watch: validateSessionCollaborationWatch(request, result?.watch) ?? failed('unknown', 'protocol-unverified') };
+      } catch { return { success: true, watch: failed('unavailable', 'owner-unavailable') }; }
+    },
+    cancelWatch: async (input) => {
+      const query = parseSessionCollaborationQuery(input.query);
+      if (typeof input.id !== 'string' || !/^[A-Za-z0-9._:-]{1,160}$/.test(input.id)) throw new TypeError('Watch ID required');
+      const result = await ctx.gatewayManager!.rpc<{ cancelled: boolean }>('session.activitySnapshot', { cancelWatch: { id: input.id, query } }, 5_000);
+      return { success: true, cancelled: result.cancelled === true };
+    },
     query: async (input) => {
       const query = parseSessionCollaborationQuery(input);
       try {

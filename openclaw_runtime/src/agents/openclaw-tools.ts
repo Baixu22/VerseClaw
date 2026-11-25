@@ -81,6 +81,7 @@ import { createSessionsNewContextTool } from "./tools/sessions-new-context-tool.
 import { isCheckpointedContextResetEnabled } from "./checkpointed-context-reset.js";
 import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
 import { createSessionsListTool } from "./tools/sessions-list-tool.js";
+import { createSessionsWatchTool } from './tools/sessions-watch-tool.js';
 import { createSessionsSendTool } from "./tools/sessions-send-tool.js";
 import { createSessionsSpawnTool } from "./tools/sessions-spawn-tool.js";
 import { createSessionsYieldTool } from "./tools/sessions-yield-tool.js";
@@ -590,6 +591,8 @@ export function createOpenClawTools(
       config: resolvedConfig,
       callGateway: effectiveCallGateway,
     }),
+    createSessionsWatchTool({ agentSessionKey: options?.agentSessionKey, runSessionKey: options?.runSessionKey,
+      agentSessionId: options?.sessionId, config: resolvedConfig, callGateway: effectiveCallGateway }),
     createSessionsHistoryTool({
       agentSessionKey: options?.agentSessionKey,
       sandboxed: options?.sandboxed,
