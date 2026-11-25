@@ -65,6 +65,15 @@ describe('window resource lifetimes', () => {
     stopRuntimeResourceProtection();
     for (const name of ['speed-limit-change', 'resume', 'suspend', 'unlock-screen']) expect(powerMonitor.listenerCount(name)).toBe(0);
   });
+  it('clears display-sleep protection when the OS resumes without an unlock event', async () => {
+    mocks.windows = [new FakeWindow()];
+    startRuntimeResourceProtection(); await flush();
+    powerMonitor.emit('suspend');
+    expect(getEfficiencyShedState()?.activeReasons).toContain('display-sleep');
+    powerMonitor.emit('resume');
+    expect(getEfficiencyShedState()?.shedding).toBe(false);
+    expect(getEfficiencyShedState()?.activeReasons).not.toContain('display-sleep');
+  });
   it('ignores a late pressure result after stopping and restarting its generation', async () => {
     mocks.windows = [new FakeWindow()];
     let resolve!: (value: typeof healthy) => void;

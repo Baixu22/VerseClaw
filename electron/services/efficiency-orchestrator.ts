@@ -126,7 +126,7 @@ export function startRuntimeResourceProtection(): void {
     const onSpeedLimit = (event: Electron.Event<{ limit: number }>): void => {
       activePolicy.update({ powerSaver: event.limit < 100 });
     };
-    const onResume = () => activePolicy.update({ powerSaver: powerMonitor.isOnBatteryPower() });
+    const onResume = () => activePolicy.update({ displaySleep: false, powerSaver: powerMonitor.isOnBatteryPower() });
     const onSuspend = () => activePolicy.update({ displaySleep: true });
     const onUnlock = () => activePolicy.update({ displaySleep: false });
     unsubscribePowerEvents = () => {
