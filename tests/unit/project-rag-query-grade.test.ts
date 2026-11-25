@@ -65,11 +65,23 @@ describe('versioned owner support coverage', () => {
     const combined = f.grade([f.hit(), f.hit()]);
     expect(combined.recallAt20).toBe(1); expect(combined.ndcg5).toBeLessThanOrEqual(1);
     expect(combined.ndcg5).toBe(f.grade([f.hit()]).ndcg5);
+    expect(f.grade([f.hit(), f.hit(10)]).ndcg5).toBeCloseTo(1);
     expect(f.grade([f.hit(0, 10), f.hit(10)]).ndcg5).toBeCloseTo(1);
   });
   it.each(['revision', 'sourceDigest', 'policyEpoch', 'namespaceId'] as const)('rejects a changed %s', field => {
     const f = fixture(), result = f.grade([f.hit(0, f.raw.length, { [field]: 'changed' })]);
     expect(result).toMatchObject({ recallAt20: 0, ndcg5: 0, exactRefPrecision: 0, safetyViolations: 1 });
+  });
+  it('does not lend earlier bytes to the relevance grade of a later rank', () => {
+    const f = fixture();
+    f.bundle.gold[0].facts = [
+      { sourceRef: f.ref, support: { startByte: 0, endByteExclusive: 10 } },
+      { sourceRef: f.ref, support: { startByte: 0, endByteExclusive: 20 } },
+    ];
+    const measured = f.grade([f.hit(0, 10), f.hit(10, 20)]);
+    expect(measured.recallAt20).toBe(1);
+    expect(measured.ndcg5).toBeCloseTo((7 + 1 / Math.log2(3)) / (7 + 7 / Math.log2(3)));
+    expect(f.grade([f.hit(0, 10), f.hit(0, 10), f.hit(10, 20)]).ndcg5).toBeLessThan(measured.ndcg5);
   });
   it('rejects changed raw bytes even when the submitted pin is unchanged', () => {
     const f = fixture(); writeFileSync(join(f.root, 'source.md'), Buffer.alloc(f.raw.length, 65));

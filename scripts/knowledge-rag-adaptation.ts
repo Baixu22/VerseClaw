@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { lstat, mkdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
-import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveMemoryWikiConfig } from '../openclaw_runtime/extensions/memory-wiki/src/config';
 import { listMemoryWikiPagePaths } from '../openclaw_runtime/extensions/memory-wiki/src/query';
@@ -33,7 +33,8 @@ export async function captureKnowledgeAdaptation(input: { configFile: string; ou
   const maxSources = input.maxSources ?? 1000, maxBytes = input.maxBytes ?? 32 * 1024 * 1024;
   assert(Number.isSafeInteger(maxSources) && maxSources > 0 && maxSources <= 10000
     && Number.isSafeInteger(maxBytes) && maxBytes > 0 && maxBytes <= 128 * 1024 * 1024, 'Invalid snapshot budget');
-  const output = resolve(input.output), configFile = await realpath(input.configFile);
+  const output = join(await realpath(dirname(resolve(input.output))), basename(input.output));
+  const configFile = await realpath(input.configFile);
   const configBytes = await readFile(configFile);
   assert(configBytes.length <= 4 * 1024 * 1024, 'Configuration exceeds read budget');
   const appConfig = JSON.parse(configBytes.toString('utf8'));
@@ -54,7 +55,9 @@ export async function captureKnowledgeAdaptation(input: { configFile: string; ou
     });
     if (!vaultExists) issues.push('wiki-vault-not-found');
     else {
-      const root = await realpath(vault), paths = await listMemoryWikiPagePaths(root);
+      const root = await realpath(vault);
+      assert(!inside(output, root) && !inside(root, output), 'Snapshot output must be separate from the canonical source vault');
+      const paths = await listMemoryWikiPagePaths(root);
       discovered = paths.length;
       if (paths.length > maxSources) issues.push('source-count-budget');
       for (const lookup of paths.slice(0, maxSources)) {
@@ -133,7 +136,7 @@ export async function freezeKnowledgeQuestions(captureDirectory: string, input: 
   assert.equal(captureDigest(value), snapshotDigest, 'Knowledge snapshot changed');
   assert(snapshot.status === 'complete' && snapshot.sources.length > 0, 'A complete nonempty knowledge snapshot is required');
   assert(input.snapshotDigest === snapshotDigest && input.driven_by === 'agent' && input.actor.trim(), 'Authored snapshot mismatch');
-  assert(input.review.driven_by === 'agent' && input.review.actor.trim() && input.review.actor !== input.actor
+  assert(input.review.driven_by === 'agent' && input.review.actor.trim() && input.review.actor.trim() !== input.actor.trim()
     && input.review.snapshotDigest === snapshotDigest && input.review.datasetDigest === sha256(jsonBytes({ families: input.families, questions: input.questions })), 'Independent question review binding required');
   const sources = new Map(snapshot.sources.map(source => [source.id, source])), familyBySource = new Map<string, string>();
   const families = new Set<string>(), familySplit = new Map<string, string>(), questionIds = new Set<string>();

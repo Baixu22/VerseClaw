@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { safeCorpusFile, sha256, spanText } from './project-rag-corpus.mjs';
 
-export const RAG_QUERY_EVALUATOR_VERSION = 'owner-support-coverage/v2';
+export const RAG_QUERY_EVALUATOR_VERSION = 'owner-support-coverage/v3';
 
 const identity = source => JSON.stringify([source.domain, source.authorityId, source.namespaceId,
   source.subjectId, source.revision, source.sourceDigest, source.policyEpoch]);
@@ -53,6 +53,7 @@ export function gradeRagQuery(bundle, queryId, observation) {
     return { pin, start: required.startByte, end: required.endByteExclusive, ranges: [], bytes: 0, rankGrades: Array(5).fill(0) };
   });
   const rawSources = new Map();
+  const seenHits = new Set();
   let pinErrors = 0;
   for (const [rank, hit] of observation.results.entries()) {
     const source = hit?.sourceRef;
@@ -73,6 +74,9 @@ export function gradeRagQuery(bundle, queryId, observation) {
       spanText(raw, source.locator);
     } catch { pinErrors += 1; continue; }
     if (rank >= 20) continue;
+    const hitKey = JSON.stringify([identity(source), source.locator.startByte, source.locator.endByteExclusive]);
+    if (seenHits.has(hitKey)) continue;
+    seenHits.add(hitKey);
     for (const fact of facts) {
       if (identity(source) !== fact.pin) continue;
       const start = Math.max(source.locator.startByte, fact.start);
@@ -80,8 +84,10 @@ export function gradeRagQuery(bundle, queryId, observation) {
       if (end <= start) continue;
       fact.ranges = mergeRanges(fact.ranges, [start, end]);
       const bytes = fact.ranges.reduce((sum, range) => sum + range[1] - range[0], 0);
-      if (rank < 5 && bytes > fact.bytes) {
-        const fraction = bytes / (fact.end - fact.start);
+      if (rank < 5) {
+        // Ranking grades this hit alone; union coverage is a separate recall
+        // metric and cannot lend another hit's bytes to this rank.
+        const fraction = (end - start) / (fact.end - fact.start);
         fact.rankGrades[rank] = fraction === 1 ? 3 : fraction >= 0.8 ? 2 : 1;
       }
       fact.bytes = bytes;

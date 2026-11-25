@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as fs from 'node:fs/promises';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -63,6 +63,18 @@ describe('knowledge adaptation owner snapshot and question freeze', () => {
     expect(result.admitted).toBe(2); expect(result.rejected).toHaveLength(1); expect(result.rejected[0].reason).toBe('revoked');
     expect(JSON.stringify(result)).not.toContain('Budget is 100');
   });
+  it.each([
+    ['stale', 'status: stale', 'stale'],
+    ['expired', 'status: active\nretention:\n  policy: ephemeral\n  expiresAt: "2000-01-01T00:00:00Z"', 'expired'],
+    ['other principal', 'status: active\nacl:\n  read: [other-principal]', 'acl_denied'],
+    ['other workspace', 'status: active\nscope:\n  workspaceId: another-workspace', 'scope_mismatch'],
+  ])('rejects %s source content through the actual owner policy', async (_name, policy, reason) => {
+    const f = await fixture(), file = join(f.vault, 'concepts/0.md');
+    await writeFile(file, (await readFile(file, 'utf8')).replace('status: active', policy));
+    const result = await captureKnowledgeAdaptation(f.options);
+    expect(result.admitted).toBe(2); expect(result.rejected[0].reason).toBe(reason);
+    expect(JSON.stringify(result)).not.toContain('Budget is 100');
+  });
   it('marks bounded or invalid-source captures partial and prevents their release', async () => {
     const f = await fixture();
     const result = await captureKnowledgeAdaptation({ ...f.options, maxSources: 1 });
@@ -89,6 +101,15 @@ describe('knowledge adaptation owner snapshot and question freeze', () => {
     await captureKnowledgeAdaptation(f.options);
     await expect(captureKnowledgeAdaptation(f.options)).rejects.toThrow();
   });
+  it('rejects output inside a vault reached through a directory alias', async () => {
+    const f = await fixture(), alias = join(f.root, 'vault-alias');
+    await symlink(f.vault, alias, process.platform === 'win32' ? 'junction' : 'dir');
+    const config = JSON.parse(await readFile(f.configFile, 'utf8'));
+    config.plugins.entries['memory-wiki'].config.vault.path = alias;
+    await writeFile(f.configFile, jsonBytes(config));
+    await expect(captureKnowledgeAdaptation({ ...f.options, output: join(f.vault, 'export') })).rejects.toThrow('canonical source vault');
+    expect(existsSync(join(f.vault, 'export'))).toBe(false);
+  });
   it('freezes exact supports while excluding oracle answers from public questions', async () => {
     const f = await reviewed(), result = await freezeKnowledgeQuestions(f.output, f.input);
     expect(result.gold).toHaveLength(3); expect(result.queries).toHaveLength(3);
@@ -111,6 +132,8 @@ describe('knowledge adaptation owner snapshot and question freeze', () => {
   });
   it('requires a distinct reviewer and complete question coverage', async () => {
     const f = await reviewed(); f.input.review.actor = f.input.actor;
+    await expect(freezeKnowledgeQuestions(f.output, f.input)).rejects.toThrow('review binding');
+    f.input.review.actor = ' ' + f.input.actor + ' ';
     await expect(freezeKnowledgeQuestions(f.output, f.input)).rejects.toThrow('review binding');
     f.input.review.actor = 'agent-unit-independent-review-fixture'; f.input.review.acceptedQuestionIds.pop();
     await expect(freezeKnowledgeQuestions(f.output, f.input)).rejects.toThrow('each question exactly once');

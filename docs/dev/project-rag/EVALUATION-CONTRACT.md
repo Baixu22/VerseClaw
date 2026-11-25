@@ -68,8 +68,10 @@ RAG-A1 在 Research 完整收口前建立质量基线。现有 v4 继续作为�
 
 Research 复用该基线比较单次/多轮收益，并以最终 retained units 和语义支持判断问题是否覆盖。实现沿用原预算、指定默认模型、owner 和 DCS；正式晋级继续执行原质量/费用门槛。RAG-19 同时读取原 240 查询、540 任务槽、72 小时观察及新增实际知识库证据。
 
-评分实现版本 `owner-support-coverage/v2` 分开返回 `overlapRecallAt20`（存在非零重叠）、`supportCoverageAt20`（每项事实联合字节覆盖率的均值）和 `recallAt20`（完整支持范围被覆盖的事实比例）。Top-5 排名在事实与名次之间选择最大增益的一对一分配；后续新增覆盖可改善该事实等级，重复片段不再次贡献。同一结果包含多个事实时排名只计一次，完整事实召回仍逐项计算。
+评分实现版本 `owner-support-coverage/v3` 分开返回 `overlapRecallAt20`（存在非零重叠）、`supportCoverageAt20`（每项事实联合字节覆盖率的均值）和 `recallAt20`（完整支持范围被覆盖的事实比例）。Top-5 排名在事实与名次之间选择最大增益的一对一分配，单条命中的等级只由该片段自身覆盖决定；后续完整命中可替换较早的部分命中，重复片段不再次贡献且保留其占用的真实名次。联合片段只参与完整召回与覆盖率。同一结果包含多个事实时排名只计一次，完整事实召回仍逐项计算。
 
 查询执行计划、逐查询分数和离线报告必须显式绑定上述 evaluatorVersion；原始捕获重算时同时核对版本及三种覆盖指标。旧版本报告保持原件，新版本晋级入口拒绝混用。
 
 `knowledge-rag-adaptation.ts capture <plan.json> <new-directory>` 通过 Wiki owner 的策略与版本读取现有来源，生成只读快照；`freeze <plan.json> <new-file>` 绑定独立复核和原文支持范围。origin 必须为 `existing-owner` 或 `agent-built-adaptation`。来源撤回、变更、路径逃逸和读取预算缺口不能进入完整冻结数据。问题集按来源族划分，重复内容、相同来源和高相似文本须同族；gold 留在 evaluator 目录。所有者已指定本轮可使用当前项目文档构建隔离适配语料，运行记录保留该来源标识。
+
+`owner-support-coverage/v2` 的首次适配实验原件保留。v3 在 Top-5 一对一分配中允许不同来源范围为多个事实分别承接名次，同时拒绝同一 pin/range 的重复奖励；跨版本比较需用相同原始捕获重新评分并保留重算身份。
