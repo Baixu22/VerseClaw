@@ -9,6 +9,7 @@ packages/versebrowser/src/engine/supervised-task-executor.ts -text
 packages/versebrowser/src/engine/browser-control/replay-tool-executor.ts -text
 packages/versebrowser/src/engine/browser-control/same-origin-js-fetcher.ts -text
 packages/versebrowser/src/engine/browser-control/same-origin-source-map-fetcher.ts -text
+packages/versebrowser/tests/agent-browser-replay-tool-executor.test.ts -text
 # Unified-diff blank context markers are significant patch bytes.
 packages/versebrowser/patches/*.patch -text whitespace=-trailing-space
 
