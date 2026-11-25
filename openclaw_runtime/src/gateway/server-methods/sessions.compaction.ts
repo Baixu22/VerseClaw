@@ -54,6 +54,7 @@ import {
 } from "../../agents/long-task-control/store.js";
 import { assertValidParams } from "./validation.js";
 import { resolveRangeCompactionKeepEntry } from "./sessions.compaction-range.js";
+import { isSessionBusyForManualCompaction } from "./session-active-runs.js";
 import {
   requireSessionKey,
   resolveGatewaySessionTargetFromKey,
@@ -66,7 +67,6 @@ import {
   interruptSessionRunIfActive,
   compressionArtifactFromCheckpoint,
   listCompactionHistoryEntries,
-  isSessionBusyForManualCompaction,
   resolveCompactionPressure,
 } from "./sessions.shared.js";
 
@@ -670,8 +670,7 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
         return;
       }
     }
-    const admission = sessionAdmissionRegistry.snapshot(identity);
-    if (admission?.active || admission?.fenced || isSessionBusyForManualCompaction({
+    if (isSessionBusyForManualCompaction({
       context, cfg, requestedKey: key, canonicalKey, agentId: requestedAgent.agentId, sessionId,
     })) {
       respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "Session is active or fenced; restore after the current operation finishes."));
@@ -944,15 +943,14 @@ export const sessionsCompactionHandlers: GatewayRequestHandlers = {
       }
     }
     const identity = { agentId: target.agentId, canonicalSessionKey: target.canonicalKey, expectedSessionId: sessionId };
-    const admission = sessionAdmissionRegistry.snapshot(identity);
-    if (admission?.active || admission?.fenced || isSessionBusyForManualCompaction({
+    if (isSessionBusyForManualCompaction({
       context, cfg, requestedKey: key, canonicalKey: target.canonicalKey,
       agentId: requestedAgentId, sessionId,
     })) {
       respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "Session is active or fenced; compact after the current operation finishes."));
       return;
     }
-    // snapshot and fence have no intervening await: refuse busy instead of draining a writer.
+    // Busy check and fence have no intervening await: refuse busy instead of draining a writer.
     const fence = await sessionAdmissionRegistry.fence(identity, { operation: "session-compact" });
     try {
       const currentGeneration = await updateSessionStore(storePath, (store) => {

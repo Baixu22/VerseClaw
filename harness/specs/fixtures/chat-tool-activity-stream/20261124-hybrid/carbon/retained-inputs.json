@@ -1,0 +1,37 @@
+[
+  {
+    "input": "reference-expanded.png",
+    "retainedPath": "harness/specs/fixtures/chat-tool-activity-stream/20261124-hybrid/carbon/reference-expanded.png",
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\carbon\\reference-expanded.png",
+    "bytes": 11713,
+    "sha256": "a95574fcfa8fa0d3a7ef4c708e5d93454724bb8c2f65c4d4afed2a19f5d035e1"
+  },
+  {
+    "input": "reference-collapsed.png",
+    "retainedPath": "harness/specs/fixtures/chat-tool-activity-stream/20261123/carbon/reference-01.png",
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\carbon\\reference-collapsed.png",
+    "bytes": 169616,
+    "sha256": "ede03004908f288ad032cb8f66d3bf4a83283964f9d54e8bf1cc2c29dad08713"
+  },
+  {
+    "input": "prototype-wide.png",
+    "retainedPath": "harness/specs/fixtures/chat-tool-activity-stream/20261124-hybrid/carbon/prototype-wide.png",
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\carbon\\prototype-wide.png",
+    "bytes": 71169,
+    "sha256": "d296a231b242be6763bc8c52b6e6ed2fcc42856d51f96b3b9b1d9248bc8177de"
+  },
+  {
+    "input": "prototype-narrow.png",
+    "retainedPath": "harness/specs/fixtures/chat-tool-activity-stream/20261124-hybrid/carbon/prototype-narrow.png",
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\carbon\\prototype-narrow.png",
+    "bytes": 69556,
+    "sha256": "b3f0c54e47b47e01680ff7c027413fd37ee7aed1e66ab8484db1f939f07952a6"
+  },
+  {
+    "input": "icon-catalog.png",
+    "retainedPath": "harness/specs/fixtures/chat-tool-activity-stream/20261124-hybrid/carbon/icon-catalog.png",
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\carbon\\icon-catalog.png",
+    "bytes": 63895,
+    "sha256": "29361e502f765cb9e4e1b215444b45c16567b1964e3abc4c8a26443de42f11dd"
+  }
+]

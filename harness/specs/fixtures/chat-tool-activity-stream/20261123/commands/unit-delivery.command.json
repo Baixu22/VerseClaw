@@ -1,0 +1,60 @@
+{
+  "actor": "codex-output-ui",
+  "driven_by": "agent",
+  "label": "unit-delivery",
+  "command": [
+    "pnpm.cmd",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/tool-activity-groups.test.ts",
+    "tests/unit/tool-activity-group.test.tsx",
+    "tests/unit/chat-page-execution-graph.test.tsx",
+    "tests/unit/chat-render-reachability.test.tsx",
+    "tests/unit/task-visualization.test.ts",
+    "tests/unit/tool-ui-run-surfaces.test.ts",
+    "tests/unit/runtime-approval-prompt.test.tsx",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile=D:/tmp/clawx-output-stream-20261124/unit-delivery.json"
+  ],
+  "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+  "candidate": {
+    "commit": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+    "tree": "429491c8daf9692739df8358d6f6452e7c3def21",
+    "dirty": false
+  },
+  "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+  "timeoutSeconds": 300,
+  "admission": {
+    "freeBytes": 5749809152,
+    "minimumFreeBytes": 2147483648,
+    "heavy": []
+  },
+  "startedAt": "2026-11-23T23:43:53.263104+00:00",
+  "status": "finished",
+  "resourceLimits": {
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "GOMEMLIMIT": "900MiB",
+    "GOMAXPROCS": "2",
+    "workers": 1
+  },
+  "electronRuntime": {
+    "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+    "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+  },
+  "independentUIAuthorized": true,
+  "driverPid": 15148,
+  "exitCode": 0,
+  "durationSeconds": 23.281,
+  "sourceUnchanged": true,
+  "stdout": {
+    "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-delivery.stdout.log",
+    "sha256": "040362e98907dd0b9c4f36320fe0ff96c0df79130047644d405f6684417fc8f0"
+  },
+  "stderr": {
+    "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-delivery.stderr.log",
+    "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+  }
+}

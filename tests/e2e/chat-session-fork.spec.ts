@@ -439,7 +439,8 @@ test.describe('Verse Claw chat session fork', () => {
       await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-fork')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
-      await expect(page.getByTestId('chat-session-fork-recommended')).toBeVisible();
+      await expect(page.getByTestId('chat-session-fork-recommended')).toHaveCount(0);
+      await expect(page.getByTestId('chat-session-fork')).toContainText('you send the next message');
       await expect(page.getByTestId('chat-session-handoff-recommended')).toHaveCount(0);
       await page.getByTestId('chat-session-fork').click();
 

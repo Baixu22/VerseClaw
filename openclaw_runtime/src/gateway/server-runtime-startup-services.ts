@@ -58,3 +58,42 @@ export function startGatewayRuntimeServices(params: {
     stopModelPricingRefresh: () => {},
   };
 }
+
+/** Reconciles persisted workflow lifecycles through their original controllers. */
+export async function recoverGatewayWorkflowLifecycles(log: {
+  info: (message: string) => void;
+  warn: (message: string) => void;
+}): Promise<void> {
+  for (const [domain, label] of [
+    ["clawgraph", "ClawGraph"],
+    ["mission", "Mission"],
+    ["task-loop", "Task Loop"],
+  ] as const) {
+    try {
+      const { hasWorkflowLifecycleRecoveryWork } =
+        await import("../tasks/workflow-lifecycle-owner.js");
+      // The durable owner selects work before controller import; the controller
+      // retains its live-run, pending-effect and CAS reconciliation checks.
+      if (!hasWorkflowLifecycleRecoveryWork(domain)) continue;
+      const recovered =
+        domain === "clawgraph"
+          ? (await import("../agents/clawgraph/runtime.js")).settleOrphanedClawGraphLifecycles()
+          : domain === "mission"
+            ? (
+                await import("../agents/mission-control/controller.js")
+              ).recoverInterruptedMissionLifecycles()
+            : (
+                await import("../agents/task-loop-controller.js")
+              ).settleOrphanedTaskLoopLifecycles();
+      if (recovered.length > 0) {
+        log.info(
+          domain === "mission"
+            ? `gateway: recovered ${recovered.length} interrupted mission tick(s)`
+            : `gateway: settled ${recovered.length} orphaned ${label} lifecycle(s) as lost`,
+        );
+      }
+    } catch (err) {
+      log.warn(`gateway: ${label} lifecycle restart recovery failed: ${String(err)}`);
+    }
+  }
+}

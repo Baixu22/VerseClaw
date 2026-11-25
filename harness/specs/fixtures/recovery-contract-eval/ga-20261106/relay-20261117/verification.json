@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "archiveFiles": 115,
+  "sourceFiles": 20,
+  "sourceCandidate": "da1125874d0850833d2c358d28d9c867a4ec95b6",
+  "driven_by": "agent",
+  "actor": "g3-relay",
+  "realHumanEvidence": false,
+  "ownedElectronSurvivors": 0,
+  "sourceUnchangedDuringE2E": true
+}

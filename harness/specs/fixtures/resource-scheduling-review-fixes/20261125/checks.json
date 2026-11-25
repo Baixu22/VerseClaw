@@ -1,0 +1,470 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-relay",
+  "codeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "receipts": [
+    {
+      "name": "main-tests",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/git-api.test.ts",
+        "tests/unit/resource-adaptive-pressure.test.ts",
+        "tests/unit/resource-budget-integration.test.ts",
+        "tests/unit/resource-fabric-primitives.test.ts",
+        "tests/unit/resource-host-capacity-native.test.ts",
+        "tests/unit/resource-tracker.test.ts",
+        "tests/unit/resource-window-lifecycle.test.ts",
+        "tests/unit/terminal-session-manager.test.ts",
+        "tests/unit/runtime-efficiency-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/resource-scheduling-relay-20261125/validation-delivery/main-tests.json"
+      ],
+      "started": "2026-11-25T13:12:51.414Z",
+      "completed": "2026-11-25T13:13:38.958Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "ff2c580ffe85f1ef08b5800bcf9b316ee754d69eddc3daf9744cac38c8b43ecf",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery\\main-tests.receipt.json"
+    },
+    {
+      "name": "runtime-tests",
+      "validatedCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.resource-budget.config.ts",
+        "src/process/command-queue.test.ts",
+        "src/agents/model-fallback.loop-termination.test.ts",
+        "src/agents/resource-leases.test.ts",
+        "src/agents/sessions/tools/bash-workspace-lease.test.ts",
+        "src/agents/sessions/tools/bounded-waiting-lease.test.ts",
+        "src/agents/verseshell/managed-process-capacity.test.ts",
+        "src/agents/verseshell/managed-process-pressure.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\resource-scheduling-relay-20261125\\validation-final/runtime-tests.json"
+      ],
+      "started": "2026-11-25T12:10:27.871Z",
+      "completed": "2026-11-25T12:10:45.327Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "b50119bc29e7cee8da2e31a6660268af3f45be61a18b1ee9fff478d4ab56afed",
+      "logSha256": "7121c4beed0c8c048d6d9972114a5b7b7d793ad9b1031aec3407fd5f5c95cb9d",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-final\\runtime-tests.receipt.json"
+    },
+    {
+      "name": "typecheck-node",
+      "validatedCommit": "882d07ffac19b239b2bf927884ec292144d45350",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "started": "2026-11-25T13:07:42.279Z",
+      "completed": "2026-11-25T13:07:58.756Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "02064d9790f778a0eb3497ae5ea20f3826a156281a9e0fdf16a5576b05df6345",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-closeout\\typecheck-node.receipt.json"
+    },
+    {
+      "name": "typecheck-web",
+      "validatedCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "started": "2026-11-25T12:10:53.580Z",
+      "completed": "2026-11-25T12:10:56.978Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "b50119bc29e7cee8da2e31a6660268af3f45be61a18b1ee9fff478d4ab56afed",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-final\\typecheck-web.receipt.json"
+    },
+    {
+      "name": "typecheck-test",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "started": "2026-11-25T13:13:39.024Z",
+      "completed": "2026-11-25T13:14:21.691Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery\\typecheck-test.receipt.json"
+    },
+    {
+      "name": "desktop-build",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "started": "2026-11-25T13:26:33.653Z",
+      "completed": "2026-11-25T13:28:56.577Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "7530f2ab0d8c7af34b1f18953f886905e02d3baa4b4426cd25a6a4d7e04f6938",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\desktop-build.receipt.json"
+    },
+    {
+      "name": "build-source-bind",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/versebrowser-build-provenance.mjs"
+      ],
+      "started": "2026-11-25T13:28:56.905Z",
+      "completed": "2026-11-25T13:28:58.631Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "fcd06f297e643749985740429728cffbf6baff78b119c5da2eb0d9b426bdea8e",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\build-source-bind.receipt.json"
+    },
+    {
+      "name": "runtime-build",
+      "validatedCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "started": "2026-11-25T12:20:03.295Z",
+      "completed": "2026-11-25T12:21:31.275Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "b50119bc29e7cee8da2e31a6660268af3f45be61a18b1ee9fff478d4ab56afed",
+      "logSha256": "3ab996bd142f902e7c8583b052630b18b7d5a3c4e2a143b2cc01be8cc148faaf",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-final\\runtime-build.receipt.json"
+    },
+    {
+      "name": "electron-settings",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/settings-efficiency-sampling.spec.ts",
+        "--workers=1",
+        "--reporter=list,json",
+        "--output=D:/tmp/resource-scheduling-relay-20261125/validation-delivery-r2/electron-settings-results"
+      ],
+      "started": "2026-11-25T13:31:11.785Z",
+      "completed": "2026-11-25T13:31:24.782Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "1bedf06b19fbf2201fae6cb32fd290eb6db65dd5f643b5734f9c4fcc0eb665eb",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\electron-settings.receipt.json"
+    },
+    {
+      "name": "ci-units",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/harness-specs.test.ts",
+        "tests/unit/harness-git.test.ts",
+        "tests/unit/harness-spec-lifecycle.test.ts",
+        "tests/unit/docs-index.test.ts",
+        "tests/unit/runtime-source-policy.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/resource-scheduling-relay-20261125/validation-delivery-r2/ci-units.json"
+      ],
+      "started": "2026-11-25T13:44:46.664Z",
+      "completed": "2026-11-25T13:45:02.575Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "e8a94e87c59c16e72ad140ea49e85f84b7037088eef8c4ae54a571103d4e2938",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\ci-units.receipt.json"
+    },
+    {
+      "name": "lint",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\resource-scheduling-relay-20261125\\lint-reviewed-source.cjs"
+      ],
+      "started": "2026-11-25T13:44:37.553Z",
+      "completed": "2026-11-25T13:44:41.827Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "5ee4f3132492c5255961d233d6532962918900d0046b221f1e9ab7cc61a5c9ee",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\lint.receipt.json"
+    },
+    {
+      "name": "contract",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "started": "2026-11-25T13:44:41.900Z",
+      "completed": "2026-11-25T13:44:43.436Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\contract.receipt.json"
+    },
+    {
+      "name": "i18n",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/i18n-lint.mjs"
+      ],
+      "started": "2026-11-25T13:44:43.493Z",
+      "completed": "2026-11-25T13:44:43.990Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\i18n.receipt.json"
+    },
+    {
+      "name": "comms-replay",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "started": "2026-11-25T13:44:44.054Z",
+      "completed": "2026-11-25T13:44:44.347Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "40f541a3b51ba5b133e7212d8da36575d0f231f6cece811fd18542b6584ebbf1",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\comms-replay.receipt.json"
+    },
+    {
+      "name": "comms-compare",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "started": "2026-11-25T13:44:44.407Z",
+      "completed": "2026-11-25T13:44:44.588Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "7969249b5a8097ebeeba5ba02e5e533359e79f8316fcc9ae0299de8035d18654",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\comms-compare.receipt.json"
+    },
+    {
+      "name": "task-validate",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/resource-scheduling-review-fixes-20261125.md"
+      ],
+      "started": "2026-11-25T13:44:44.647Z",
+      "completed": "2026-11-25T13:44:45.482Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "d32fbe965a12fb8617274a209474addbabb3d9b77a3b13aaa0f9a75cc6c37e98",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\task-validate.receipt.json"
+    },
+    {
+      "name": "task-dry-run",
+      "validatedCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/resource-scheduling-review-fixes-20261125.md",
+        "--dry-run"
+      ],
+      "started": "2026-11-25T13:44:45.544Z",
+      "completed": "2026-11-25T13:44:46.275Z",
+      "exitCode": 0,
+      "sourceStable": true,
+      "sourceDigest": "1049d8be60f75e1cfde1d90eedc09b601323bc112646e4caf187646bd6c5d4cd",
+      "logSha256": "380dd2d6e79edd2985b97e6c8beef4e90cd80d917f3d64cb310e6e5fd68515a0",
+      "localReceipt": "D:\\tmp\\resource-scheduling-relay-20261125\\validation-delivery-r2\\task-dry-run.receipt.json"
+    }
+  ],
+  "sourceEquivalence": {
+    "runtime": {
+      "validatedCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "currentCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "scopes": [
+        "openclaw_runtime",
+        "shared",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "changedPaths": []
+    },
+    "runtimeBuild": {
+      "validatedCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "currentCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "scopes": [
+        "openclaw_runtime",
+        "shared",
+        "scripts/build-openclaw-runtime.mjs",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "changedPaths": []
+    },
+    "webTypes": {
+      "validatedCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "currentCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "scopes": [
+        "src",
+        "shared",
+        "tsconfig.web.json",
+        "tsconfig.json",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "changedPaths": []
+    },
+    "nodeTypes": {
+      "validatedCommit": "882d07ffac19b239b2bf927884ec292144d45350",
+      "currentCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "scopes": [
+        "electron",
+        "shared",
+        "openclaw_runtime/src",
+        "packages/versebrowser",
+        "tsconfig.node.json",
+        "tsconfig.json",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "changedPaths": []
+    },
+    "counterfactual": {
+      "validatedCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "currentCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+      "comparedFiles": [
+        {
+          "path": "electron/services/resource-fabric.ts",
+          "sha256": "36761c2c5aaa1828cd2f7b4f1fa9ca7b2f94cdf4a0701fdfc81e2de63df8a0d7"
+        },
+        {
+          "path": "openclaw_runtime/src/process/command-queue.ts",
+          "sha256": "82c1c90e4e4c45d54639736d5e87578037ecc4da519af6d1068e1abc134a4d8c"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/lanes.ts",
+          "sha256": "1691e9e64dd609c091d9af87275e1e5cb01e3e54605637b6c3b30aa17086c558"
+        },
+        {
+          "path": "openclaw_runtime/src/process/lanes.ts",
+          "sha256": "313d94695dd34ac859a4595a4b8af8c053b84de00dd999edd4f7cb0fd4f7354c"
+        },
+        {
+          "path": "shared/resources/index.ts",
+          "sha256": "6cc3231a2cd43bd43937031bbe0d15c250ff98366d9488d3b8bc9c8d4b939f76"
+        },
+        {
+          "path": "electron/utils/host-deadline-context.ts",
+          "sha256": "0bd0f5ddf87ccbe58e4b8f3a532470a33a238b4a15c476678cfe8d45afbb1ea7"
+        },
+        {
+          "path": "shared/types/resources.ts",
+          "sha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713"
+        },
+        {
+          "path": "openclaw_runtime/src/resources/resource-envelope.ts",
+          "sha256": "8e31b61b42fb156a0019c03f87b542981a1f4562f2288f1b09393d2c03969dbb"
+        },
+        {
+          "path": "shared/resources/wait.ts",
+          "sha256": "9d569be0fb2878e1f5f6b86b0404b9011dddfa96a5788098aae45f2f4e958f84"
+        },
+        {
+          "path": "openclaw_runtime/src/shared/global-singleton.ts",
+          "sha256": "7169168dcaf0689acc38b44bed3a232291699e87ee79cfd00c5a7048bfa797d8"
+        },
+        {
+          "path": "shared/resources/bounded-cache.ts",
+          "sha256": "c86fc2a7e65c9bf2b30e43101680b79b92456ef74be7c4e9413dca323f5c9149"
+        },
+        {
+          "path": "shared/resources/priority-queue.ts",
+          "sha256": "2b05c7c673ddad49951b4ee1dd4ebfdb99db0143c673332e67f19c12fc0c46a0"
+        },
+        {
+          "path": "shared/resources/watcher-hub.ts",
+          "sha256": "c257bc9be394abe44e631846c8e97af45eea3f4ee062653b1dc3935012eedc66"
+        },
+        {
+          "path": "shared/resources/adaptive-limit.ts",
+          "sha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf"
+        },
+        {
+          "path": "shared/resources/token-bucket.ts",
+          "sha256": "7ba02f07493173f5f218596794eec3a71b28b41906af4c33c5e8188c7a93ec7c"
+        },
+        {
+          "path": "shared/resources/write-coalescer.ts",
+          "sha256": "0f93f8d52b4ccc04468df09c7b969c8ba251ef45e882f0dc0918c89890cea88c"
+        },
+        {
+          "path": "shared/resources/singleflight.ts",
+          "sha256": "b64ecaa252e1208ad02f245f6724ac5d9cba327af9f7810bffd4bc6629e2abd8"
+        },
+        {
+          "path": "shared/resources/drf-share.ts",
+          "sha256": "3d9a1637c6d00fe33b020927dfa6e695545e5f7e626c0377f2079d5d132d57ec"
+        },
+        {
+          "path": "shared/resources/timer-aligner.ts",
+          "sha256": "bb5bc08695da1c2d0f60e983d4e74e116ed842af96a17a3b77fb20a6461a153a"
+        }
+      ],
+      "changedPaths": []
+    }
+  },
+  "lint": {
+    "errors": 0,
+    "newWarnings": 0,
+    "preExistingWarnings": 1
+  }
+}

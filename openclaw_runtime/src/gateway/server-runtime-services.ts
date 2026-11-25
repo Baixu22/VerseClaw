@@ -141,10 +141,13 @@ function recoverPendingOutboundDeliveries(params: {
   // to import or queued delivery replay fails.
   void (async () => {
     const { recoverPendingDeliveries } = await import("../infra/outbound/delivery-queue.js");
-    const { deliverOutboundPayloadsInternal } = await import("../infra/outbound/deliver.js");
     const logRecovery = params.log.child("delivery-recovery");
     await recoverPendingDeliveries({
-      deliver: deliverOutboundPayloadsInternal,
+      // The queue owner decides whether work can run before loading the sender.
+      deliver: async (delivery) => {
+        const { deliverOutboundPayloadsInternal } = await import("../infra/outbound/deliver.js");
+        return await deliverOutboundPayloadsInternal(delivery);
+      },
       log: logRecovery,
       cfg: params.cfg,
     });
@@ -160,6 +163,11 @@ function recoverPendingSessionDeliveries(params: {
   // request routing before replaying restart-sentinel deliveries.
   const timer = setTimeout(() => {
     void (async () => {
+      const { loadPendingSessionDeliveries } = await import("../infra/session-delivery-queue.js");
+      const pending = await loadPendingSessionDeliveries();
+      // Empty startup queues need no reply runtime. The original recovery owner
+      // still rechecks eligibility and claims when a retained entry exists.
+      if (!pending.some((entry) => entry.enqueuedAt <= params.maxEnqueuedAt)) return;
       const { recoverPendingRestartContinuationDeliveries } =
         await import("./server-restart-sentinel.js");
       const logRecovery = params.log.child("session-delivery-recovery");
@@ -221,7 +229,11 @@ export function activateGatewayScheduledServices(params: {
   logCron: { error: (message: string) => void };
   log: GatewayRuntimeServiceLogger;
   pluginLookUpTable?: PluginMetadataRegistryView;
-}): { heartbeatRunner: HeartbeatRunner; stopModelPricingRefresh: () => void; stopMemoryConsolidation?: () => void } {
+}): {
+  heartbeatRunner: HeartbeatRunner;
+  stopModelPricingRefresh: () => void;
+  stopMemoryConsolidation?: () => void;
+} {
   if (params.minimalTestGateway) {
     // Minimal gateways keep handles callable but inert so tests can share shutdown paths with
     // production starts without launching background loops.

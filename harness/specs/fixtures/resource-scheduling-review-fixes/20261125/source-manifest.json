@@ -1,0 +1,222 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-relay",
+  "root": "D:/ClawX-work/resource-scheduling-fixes-20261125",
+  "baseCommit": "526645345fac24c0ecb0f7e4170d920e57d37153",
+  "candidateCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "tree": "e9fd9347d71c770b31c54f123052fdc6f1f7a834",
+  "files": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "d380045efb71824a77566e4bb9578523875bbec77fd1c0cac75c450170327583",
+      "bytes": 51690
+    },
+    {
+      "path": "README.md",
+      "sha256": "846d8679218b638d07b51b106aa7493659733155b96b8468addb5a95fee871f0",
+      "bytes": 44143
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "a97fc28e351c51d43a9977ad7f5ffe6bff38c4d5a3fbdaacea44983523f72e57",
+      "bytes": 38996
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "4ceea18d385a4c5180f6ef74702dd08ec1fdba5417bf95c96eccadcb4718a87a",
+      "bytes": 29868
+    },
+    {
+      "path": "electron/main/index.ts",
+      "sha256": "6f024fac38f664b3fdfe2596971acd57742dc05bf699ffdac4e919922eef0078",
+      "bytes": 59800
+    },
+    {
+      "path": "electron/services/efficiency-api.ts",
+      "sha256": "ed5c5c7c4fd3f21ff0735f70f78a56af765f87213b31804f410f56af4864718e",
+      "bytes": 3351
+    },
+    {
+      "path": "electron/services/efficiency-orchestrator.ts",
+      "sha256": "29b9fe414fffb612d091c3c1d466d1aa01d0150eac0114e1d10edb482237bc05",
+      "bytes": 11382
+    },
+    {
+      "path": "electron/services/git-api.ts",
+      "sha256": "a9feaddb60ee2486420d491eb7165c1f142936c15ac4b62803b297c981d898ff",
+      "bytes": 89440
+    },
+    {
+      "path": "electron/services/resource-fabric.ts",
+      "sha256": "36761c2c5aaa1828cd2f7b4f1fa9ca7b2f94cdf4a0701fdfc81e2de63df8a0d7",
+      "bytes": 26856
+    },
+    {
+      "path": "electron/services/resource-tracker.ts",
+      "sha256": "7697b9b52f55e657b01a25bb8a3f49b9fc0df0e5d041b0fd25fba0e0d6c5ab51",
+      "bytes": 15396
+    },
+    {
+      "path": "harness/specs/rules/adaptive-resource-pressure.md",
+      "sha256": "b89039bc7a820fb2e80412e2cacdb98806f76d16705ac0c91ada089c63c19838",
+      "bytes": 1552
+    },
+    {
+      "path": "harness/specs/rules/resource-execution-lifecycle.md",
+      "sha256": "901e7f6c133d4a1f7624dec41d753c9af3b5013836a4fc36a203038c8317af07",
+      "bytes": 1940
+    },
+    {
+      "path": "harness/specs/scenarios/resource-pressure-protection.md",
+      "sha256": "7e77940f6ead83c95a129b60c6198b8ab0bff9aac1a2a7deedbcbe30a3374f85",
+      "bytes": 1401
+    },
+    {
+      "path": "harness/specs/tasks/resource-scheduling-review-fixes-20261125.md",
+      "sha256": "dda6bde90bd7144e57d1af8b6a9fa6ba3cf61d458353c47429533b5d786b6b1f",
+      "bytes": 5105
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/lanes.ts",
+      "sha256": "1691e9e64dd609c091d9af87275e1e5cb01e3e54605637b6c3b30aa17086c558",
+      "bytes": 1606
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+      "sha256": "95acbd060ead64450b2ffa0837eea8cb6a0d26e951edb04f25a97b13f488e624",
+      "bytes": 176497
+    },
+    {
+      "path": "openclaw_runtime/src/agents/model-fallback.loop-termination.test.ts",
+      "sha256": "fc4014782b718852f75231df9799f3b35917e0558125a1176c4041a636118e77",
+      "bytes": 7172
+    },
+    {
+      "path": "openclaw_runtime/src/agents/model-fallback.ts",
+      "sha256": "b52d566076a6dbfaf17ab12627685efaba563169a3229092d66d37841fdea389",
+      "bytes": 59444
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-leases.test.ts",
+      "sha256": "d204ad40c8f87f0db5bc1c3b928172332e03956d29413261699190da45e13bb9",
+      "bytes": 10808
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-leases.ts",
+      "sha256": "bcc6874248ec03a2b8047061afc13b9e37c5278c9de06eef9ccc5cb178bef17b",
+      "bytes": 17302
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/bash.ts",
+      "sha256": "f8748960aa9ab74d827759574491206d6d9f7a8f732dc618160e88e4b8ae738e",
+      "bytes": 19288
+    },
+    {
+      "path": "openclaw_runtime/src/agents/sessions/tools/bounded-waiting-lease.test.ts",
+      "sha256": "3d22a3774a162012e789ce112240921b126afbb71788da610140b65926773340",
+      "bytes": 7807
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.test.ts",
+      "sha256": "35805f12227ac848048d8266a88c768f82197c1a6012a9c88193fb417d9d332b",
+      "bytes": 10582
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/managed-process-capacity.ts",
+      "sha256": "3b7d338ac15f5a34133ee94c6e5444f535e02434ee1fd3f916fb458ad73c5ded",
+      "bytes": 10591
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/managed-process-pressure.test.ts",
+      "sha256": "fd40b8379d4d38cd494ab5f4e22af6a9ad65d1cafaf0763de2d3fe34c26ccbd3",
+      "bytes": 3413
+    },
+    {
+      "path": "openclaw_runtime/src/agents/verseshell/managed-process-reservation.ts",
+      "sha256": "f963d397327210f4fcc80bc8fdbff54044e303795294ac8ec315967a1c316fde",
+      "bytes": 13894
+    },
+    {
+      "path": "openclaw_runtime/src/process/command-queue.test.ts",
+      "sha256": "0636812d4bb3a045c88974da7a9ebb225e2ea7e3c17f1d597ed4d57dede2d757",
+      "bytes": 10119
+    },
+    {
+      "path": "openclaw_runtime/src/process/command-queue.ts",
+      "sha256": "82c1c90e4e4c45d54639736d5e87578037ecc4da519af6d1068e1abc134a4d8c",
+      "bytes": 24484
+    },
+    {
+      "path": "openclaw_runtime/src/process/command-queue.types.ts",
+      "sha256": "b4ea30647778bb494e476b53aadce7e48d765ef8cfc90e114c43f984aef1e4c4",
+      "bytes": 804
+    },
+    {
+      "path": "openclaw_runtime/test/vitest/vitest.resource-budget.config.ts",
+      "sha256": "3c3c5a2d9e81a029ac88a9466b5eeb9e47ad497eb1d158a9a6af09b136198f4e",
+      "bytes": 1083
+    },
+    {
+      "path": "shared/i18n/locales/en/settings.json",
+      "sha256": "cb2dfbba1c11683b39a2cac130653945e3967aee707d3d673147d935eca5a329",
+      "bytes": 54717
+    },
+    {
+      "path": "shared/i18n/locales/ja/settings.json",
+      "sha256": "47dba036555c7753dfd123cfa926b13acd7bd8ccf705e6597af4aba6e14257a2",
+      "bytes": 66372
+    },
+    {
+      "path": "shared/i18n/locales/ru/settings.json",
+      "sha256": "197cd19b72a477bdaeb8011b87896dd1802e412be24cc599eac28d55a9147ab3",
+      "bytes": 78996
+    },
+    {
+      "path": "shared/i18n/locales/zh/settings.json",
+      "sha256": "a58194125b361fe718d4ca9b8003b091af0433274eab0bf5f92534d27cb6d91d",
+      "bytes": 51544
+    },
+    {
+      "path": "shared/resources/drf-share.ts",
+      "sha256": "3d9a1637c6d00fe33b020927dfa6e695545e5f7e626c0377f2079d5d132d57ec",
+      "bytes": 4035
+    },
+    {
+      "path": "tests/e2e/settings-efficiency-sampling.spec.ts",
+      "sha256": "0ee2b19f9a074a7aca0065fb5cb42675799310b429a003a51b0d4f785aaae324",
+      "bytes": 3675
+    },
+    {
+      "path": "tests/unit/fixtures/resource-host-capacity-worker.mts",
+      "sha256": "5aa35e4f116c47b913b6952e4ed99bfc9c244b73ce8610a15513f4baf3965e89",
+      "bytes": 1970
+    },
+    {
+      "path": "tests/unit/git-api.test.ts",
+      "sha256": "e6b8a02fad6c2e581b0b122c9875179d3b99c1b8b0b40d27516948d62ed751ec",
+      "bytes": 76013
+    },
+    {
+      "path": "tests/unit/resource-budget-integration.test.ts",
+      "sha256": "462ca4e287c0e2941f92871ff5a252af5c3def9627e09f95a8f0b4fed9c9a6f9",
+      "bytes": 7157
+    },
+    {
+      "path": "tests/unit/resource-host-capacity-native.test.ts",
+      "sha256": "150994c4b0d4d8baf76542785dfd6d01534e551849058038aa6e40ea5e812787",
+      "bytes": 5421
+    },
+    {
+      "path": "tests/unit/resource-tracker.test.ts",
+      "sha256": "b9946a680a01c5905211fabab3e68a9705cd0f5b48b4c2a253f2f1a740751635",
+      "bytes": 18029
+    },
+    {
+      "path": "tests/unit/resource-window-lifecycle.test.ts",
+      "sha256": "d2ce9c362b24509e63d3c03659436ca4840eb4e858f5748d3328f4432299c423",
+      "bytes": 10458
+    }
+  ],
+  "codeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "sourceTree": "e9fd9347d71c770b31c54f123052fdc6f1f7a834"
+}

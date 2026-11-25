@@ -7,17 +7,199 @@ taskType: runtime-bridge
 intent: Complete TF-0715 with owner-bound, durable recovery decisions and finite attempts for main sessions, subagents, final delivery, ACP, and goal-wake; prepare the existing frozen GA acceptance without changing defaults or thresholds.
 diffBase: 05d787213
 humanEvidence: not-required
+residualPaths:
+  # Concurrent repository reviewer-model policy synchronization.
+  - AGENTS.md
 touchedAreas:
+  - tests/e2e/fixtures/recovery-contract-probe.ts
+  - tests/unit/recovery-observation.test.ts
+  - tests/e2e/recovery-contract-eval.spec.ts
+  - tests/e2e/fixtures/recovery-process.ts
+  - tests/e2e/fixtures/windows-process.ts
+  - tests/unit/recovery-process.test.ts
+  - tests/unit/electron-process-identity.test.ts
+  - openclaw_runtime/src/gateway/server/ws-connection.ts
+  - openclaw_runtime/src/gateway/server/ws-connection/message-handler-loader.ts
+  - openclaw_runtime/src/gateway/server/ws-connection.lazy.test.ts
+  - openclaw_runtime/src/gateway/server/health-state.ts
+  - openclaw_runtime/src/gateway/server/health-state.lazy.test.ts
+  - openclaw_runtime/src/infra/update-startup.ts
+  - openclaw_runtime/src/infra/update-available-state.ts
+  - openclaw_runtime/src/infra/update-available-state.test.ts
+  - scripts/versebrowser-n9-stability-probe.test.mjs
+  - openclaw_runtime/src/gateway/server-runtime-services.ts
+  - openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts
+  - openclaw_runtime/src/gateway/server-reload-handlers.ts
+  - openclaw_runtime/src/gateway/server-reload-handlers.lazy.test.ts
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/review-fixes-20261125/**
+  - openclaw_runtime/src/gateway/server-methods/session-active-runs.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.shared.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-lineage.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-reject.test.ts
+  - tests/unit/gateway-compaction-readiness.test.ts
+  - tests/e2e/recovery-longsession-eval.spec.ts
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/compaction-readiness-20261123/**
+  - openclaw_runtime/src/plugins/bundled-channel-runtime.ts
+  - openclaw_runtime/src/channels/plugins/bundled.ts
+  - tests/unit/gateway-bundled-channel-metadata.test.ts
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/bundled-metadata-20261123/**
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/native-alias-clear-20261122/**
+  - openclaw_runtime/src/plugins/plugin-module-loader-cache.ts
+  - scripts/gateway-plugin-loader-cache.test.mjs
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/loader-config-20261122/**
+  - openclaw_runtime/src/plugins/sdk-alias.ts
+  - openclaw_runtime/src/plugins/plugin-sdk-native-resolver.ts
+  - scripts/gateway-workspace-alias.test.mjs
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/native-package-root-20261122/**
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/native-parent-scope-20261122/**
+  - package.json
+  - openclaw_runtime/src/gateway/trajectory-gateway.runtime.ts
+  - openclaw_runtime/src/gateway/trajectory-gateway.ts
+  - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
+  - harness/specs/guides/scoped-development-validation.md
+  - openclaw_runtime/src/agents/harness/selection.ts
+  - openclaw_runtime/src/agents/harness/selection.runtime.ts
+  - openclaw_runtime/src/agents/harness/selection.compass.test.ts
+  - tests/unit/gateway-lazy-harness-selection.test.ts
+  - tests/unit/gateway-native-language-parser-loading.test.ts
+  - openclaw_runtime/src/agents/harness/builtin-openclaw.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.runtime.ts
+  - tests/unit/gateway-lazy-builtin-harness.test.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/tree-sitter-base.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/python-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/go-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/rust-treesitter-analyzer.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/java-treesitter-analyzer.ts
+  - tests/unit/gateway-lazy-language-parsers.test.ts
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/activation-provenance-20261120/**
+  - tests/unit/session-task-scope-bridge.test.ts
+  - openclaw_runtime/src/infra/runtime-compile-cache.ts
+  - openclaw_runtime/src/agents/command/attempt-execution.runtime.ts
+  - tests/unit/gateway-late-bytecode-cache.test.ts
+  - openclaw_runtime/src/gateway/server-runtime-startup-services.ts
+  - openclaw_runtime/src/gateway/server.impl.ts
+  - openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts
+  - tests/unit/gateway-workflow-recovery-loading.test.ts
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/startup-discovery-20261119/**
+  - harness/specs/fixtures/recovery-contract-eval/ga-20261106/readonly-discovery-20261119/**
+  - openclaw_runtime/src/plugins/channel-presence-policy.ts
+  - openclaw_runtime/src/channels/plugins/read-only.ts
+  - tests/unit/gateway-readonly-prepared-discovery.test.ts
+  - openclaw_runtime/src/plugins/plugin-lookup-table.ts
+  - tests/unit/gateway-startup-prepared-discovery.test.ts
+  - openclaw_runtime/src/plugins/sdk-alias.ts
+  - tests/unit/gateway-sdk-alias-dependencies.test.ts
+  - openclaw_runtime/src/agents/date-time.ts
+  - openclaw_runtime/src/agents/runtime-plugins.ts
+  - tests/unit/gateway-host-time-format.test.ts
+  - tests/unit/gateway-agent-startup-scope.test.ts
+  - tests/unit/gateway-agent-activation-provenance.test.ts
+  - openclaw_runtime/src/plugins/activation-context.ts
+  - openclaw_runtime/src/plugins/providers.runtime.ts
+  - openclaw_runtime/src/plugins/plugin-metadata-snapshot.types.ts
+  - tests/unit/gateway-plugin-activation-discovery.test.ts
+  - openclaw_runtime/patches/@openclaw__fs-safe@0.3.0.patch
+  - openclaw_runtime/pnpm-workspace.yaml
+  - openclaw_runtime/pnpm-lock.yaml
+  - tests/unit/fs-safe-append-mode.test.ts
+  - tests/unit/gateway-ready-fallback.test.ts
+  - electron/gateway/ws-client.ts
+  - openclaw_runtime/src/gateway/server/ws-connection.ts
+  - tests/unit/gateway-ws-client.test.ts
+  - tests/unit/gateway-loopback-connect.test.ts
+  - openclaw_runtime/src/channels/config-presence.ts
+  - tests/unit/gateway-channel-presence-discovery.test.ts
+  - scripts/build-openclaw-runtime.mjs
+  - openclaw_runtime/scripts/runtime-postbuild.mjs
+  - tests/unit/sekb-runtime-build-contract.test.ts
+  - openclaw_runtime/src/infra/approval-handler-runtime.ts
+  - openclaw_runtime/src/infra/pairing-token.ts
+  - openclaw_runtime/src/gateway/server-request-context.ts
+  - openclaw_runtime/src/gateway/server-methods/shared-types.ts
+  - openclaw_runtime/src/gateway/server/ws-connection/auth-context.ts
+  - openclaw_runtime/src/gateway/server/ws-connection/message-handler.ts
+  - tests/unit/gateway-device-credential-invalidation.test.ts
+  - openclaw_runtime/src/gateway/control-ui.ts
+  - tests/e2e/gateway-startup-performance.spec.ts
+  - openclaw_runtime/src/infra/device-pairing.ts
+  - tests/unit/gateway-device-pairing-state.test.ts
+  - electron/gateway/manager.ts
+  - electron/gateway/process-launcher.ts
+  - openclaw_runtime/src/entry.ts
+  - openclaw_runtime/src/plugins/plugin-control-plane-context.ts
+  - openclaw_runtime/src/plugins/gateway-startup-plugin-ids.ts
+  - tests/unit/gateway-plugin-startup-scope.test.ts
+  - tests/unit/gateway-device-token-reuse.test.ts
+  - tests/unit/gateway-process-launcher-trace.test.ts
+  - tests/unit/gateway-process-launcher-env.test.ts
+  - vite.config.ts
+  - scripts/lib/consolidated-icons.mjs
+  - scripts/lib/consolidated-icons.d.mts
+  - scripts/lib/parallel-desktop-build.mjs
+  - scripts/lib/parallel-desktop-build.d.mts
+  - scripts/parallel-desktop-build.test.mjs
+  - tests/unit/gateway-plugin-snapshot-reuse.test.ts
+  - tests/unit/gateway-plugin-derived-snapshot.test.ts
+  - tests/unit/gateway-plugin-env-contract.test.ts
+  - openclaw_runtime/src/plugins/current-plugin-metadata-snapshot.ts
+  - openclaw_runtime/src/plugins/current-plugin-metadata-state.ts
+  - openclaw_runtime/src/plugins/plugin-registry-snapshot.ts
+  - openclaw_runtime/src/plugins/plugin-registry-contributions.ts
+  - openclaw_runtime/src/agents/tools/image-tool.ts
+  - openclaw_runtime/src/plugins/runtime/runtime-plugin-boundary.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/model.static-catalog.ts
+  - scripts/consolidated-icons.test.mjs
+  - tests/unit/vite-config-openclaw-runtime.test.ts
   - harness/specs/tasks/recovery-authority-gated.md
   - harness/specs/rules/recovery-authority-owner-admission.md
   - harness/specs/scenarios/gateway-backend-communication.md
   - shared/recovery-authority/**
+  - shared/task-system/store.ts
+  - shared/task-system/runtime.ts
+  - shared/session-task-scope.ts
+  - electron/services/task-system-service.ts
+  - electron/services/workspaces-api.ts
+  - openclaw_runtime/src/agents/execution-checkout-tools.ts
+  - openclaw_runtime/src/agents/execution-checkout-admission.ts
+  - openclaw_runtime/src/agents/session-task-scope.ts
+  - openclaw_runtime/src/gateway/server-methods/session-task-scope.ts
+  - tests/unit/unified-effect-admission.test.ts
+  - tests/unit/session-task-scope.test.ts
+  - tests/unit/session-task-scope-completion.test.ts
+  - tests/unit/durable-task-system.test.ts
+  - harness/specs/rules/durable-task-system-boundary.md
+  - harness/specs/rules/gateway-readiness-policy.md
   - openclaw_runtime/src/agents/recovery-authority/**
   - openclaw_runtime/src/agents/execution-phase/**
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.recovery-admission.test.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.spawn-workspace.test-support.ts
   - openclaw_runtime/src/agents/embedded-agent-subscribe.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.types.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.lifecycle.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.messages.ts
+  - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.types.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
+  - openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts
+  - openclaw_runtime/src/agents/agent-hooks/compaction-summary-contract.test.ts
+  - openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts
+  - openclaw_runtime/src/agents/command/attempt-execution.ts
+  - openclaw_runtime/src/agents/command/types.ts
+  - openclaw_runtime/src/agents/cli-runner.ts
+  - openclaw_runtime/src/agents/cli-runner/types.ts
+  - openclaw_runtime/src/agents/harness/lifecycle.ts
+  - openclaw_runtime/src/agents/failover-error.ts
+  - openclaw_runtime/src/auto-reply/reply/agent-runner-execution.ts
+  - openclaw_runtime/src/auto-reply/reply/followup-runner.ts
+  - openclaw_runtime/src/auto-reply/reply/followup-runner.recovery-identity.test.ts
+  - openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts
+  - openclaw_runtime/src/gateway/session-lifecycle-state.ts
+  - openclaw_runtime/src/agents/recovery-authority/main-session-admission.test.ts
   - openclaw_runtime/src/agents/main-session-restart-recovery*
   - openclaw_runtime/src/agents/subagent-orphan-recovery*
   - openclaw_runtime/src/agents/subagent-recovery-state*
@@ -29,14 +211,28 @@ touchedAreas:
   - openclaw_runtime/src/agents/subagent-registry-lifecycle.ts
   - openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts
   - openclaw_runtime/src/agents/goal-wake-recovery*
+  - openclaw_runtime/src/agents/goal-wake-triggers.test.ts
   - openclaw_runtime/src/agents/goal-wake-dispatch.ts
+  - openclaw_runtime/src/agents/tools/context-agent-tools.ts
+  - openclaw_runtime/src/agents/tools/context-view-tool-surface.ts
+  - openclaw_runtime/src/context-engine/cvk/engine.ts
+  - openclaw_runtime/src/context-engine/types.ts
+  - openclaw_runtime/src/context-engine/registry.ts
+  - openclaw_runtime/src/context-engine/enhancement-kill-switch.ts
+  - openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts
   - openclaw_runtime/src/agents/command/delivery*
   - openclaw_runtime/src/agents/command/attempt-execution.shared.ts
   - openclaw_runtime/src/agents/command/session-store.ts
   - openclaw_runtime/src/agents/agent-command.ts
   - openclaw_runtime/src/channels/message/send.ts
   - openclaw_runtime/src/acp/control-plane/manager.runtime-resume-state.ts
+  - openclaw_runtime/src/acp/control-plane/manager.recovery-admission.ts
+  - openclaw_runtime/src/acp/control-plane/manager.core.ts
+  - openclaw_runtime/src/acp/control-plane/manager.runtime-handle-ensure.ts
+  - openclaw_runtime/src/acp/control-plane/manager.identity-reconcile.ts
+  - openclaw_runtime/src/acp/runtime/session-meta.ts
   - openclaw_runtime/src/acp/control-plane/manager.turn-runner.ts
+  - openclaw_runtime/src/acp/control-plane/manager.turn-stream.ts
   - openclaw_runtime/src/acp/control-plane/manager.types.ts
   - openclaw_runtime/src/acp/control-plane/manager*.test.ts
   - openclaw_runtime/src/config/sessions/types.ts
@@ -50,23 +246,86 @@ touchedAreas:
   - openclaw_runtime/packages/gateway-protocol/src/schema/agent.workspace.test.ts
   - openclaw_runtime/src/plugins/session-entry-slot-keys.ts
   - openclaw_runtime/src/infra/outbound/**
+  - openclaw_runtime/src/infra/delivery-queue-sqlite.ts
+  - openclaw_runtime/src/state/openclaw-state-db.ts
+  - openclaw_runtime/src/state/openclaw-agent-db.ts
+  - openclaw_runtime/src/state/openclaw-state-db.generated.d.ts
+  - openclaw_runtime/src/state/openclaw-state-schema.sql
+  - openclaw_runtime/src/state/openclaw-state-schema.generated.ts
+  - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - tests/unit/recovery-authority*.test.ts
+  - tests/unit/recovery-observation.test.ts
   - tests/unit/session-lifecycle-generation-barrier.test.ts
   - tests/e2e/recovery*.spec.ts
+  - tests/e2e/fixtures/recovery-contract-probe.ts
   - scripts/recovery*.mjs
+  - scripts/recovery*.d.mts
+  - tests/unit/recovery-acceptance-checks.test.ts
+  - tests/unit/gateway-native-module-loading.test.ts
+  - openclaw_runtime/src/plugins/native-module-require.ts
+  - openclaw_runtime/src/plugin-sdk/channel-entry-contract.ts
+  - tests/unit/gateway-channel-sidecar-loading.test.ts
+  - tests/unit/gateway-telegram-migration-loading.test.ts
+  - tests/unit/gateway-matrix-migration-loading.test.ts
+  - openclaw_runtime/extensions/matrix/doctor-contract-api.ts
+  - openclaw_runtime/extensions/reach-readers/src/index.ts
+  - openclaw_runtime/src/plugins/registry.ts
+  - tests/unit/gateway-plugin-state-loading.test.ts
+  - tests/unit/recovery-tool-guard-capture.test.ts
+  - openclaw_runtime/src/agents/agent-tools.ts
+  - openclaw_runtime/src/agents/agent-tools.before-tool-call.ts
+  - openclaw_runtime/src/agents/agent-tool-definition-adapter.ts
+  - tests/unit/gateway-reach-readers-loading.test.ts
+  - package.json
+  - packages/versebrowser/package.json
+  - scripts/build-versebrowser.mjs
+  - scripts/lib/versebrowser-build-provenance.mjs
+  - scripts/versebrowser-build-wiring.test.mjs
+  - openclaw_runtime/extensions/telegram/src/message-cache*.ts
+  - openclaw_runtime/extensions/telegram/src/thread-bindings*.ts
+  - openclaw_runtime/extensions/telegram/src/state-migrations.ts
+  - openclaw_runtime/ui/vite.config.ts
+  - openclaw_runtime/tsdown.config.ts
+  - openclaw_runtime/scripts/lib/fs-safe-build-resolver.mjs
+  - openclaw_runtime/scripts/fs-safe-build-resolver.test.mjs
+  - harness/specs/tasks/gateway-startup-performance.md
+  - scripts/typecheck-agent-dev.mjs
+  - src/components/file-preview/MonacoViewer.tsx
+  - src/components/layout/Sidebar.tsx
+  - artifacts/agent-dev-deep-test/history.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/agent-dev-deep-test/report.md
+  - artifacts/agent-dev-quality/report.json
+  - artifacts/agent-dev-workbench/evidence.json
   - scripts/recovery-owner-process-proof-child.mts
+  - scripts/recovery-delivery-process-proof-child.mts
+  - scripts/recovery-acp-process-proof-child.mts
+  - scripts/recovery-goal-process-proof-child.mts
+  - docs/modules/resources-and-observability.md
   - docs/dev/recovery-contract/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/**
+  - openclaw_runtime/UPSTREAM.md
+  - openclaw_runtime/package.json
+  - openclaw_runtime/scripts/generate-ts-max-loc-baseline.mjs
+  - openclaw_runtime/scripts/ts-max-loc-baseline.json
+  - openclaw_runtime/src/agents/main-session-restart-recovery.schedule.test.ts
+  - scripts/agent-dev-deep-test.mjs
+  - electron/gateway/manager.ts
+  - electron/gateway/process-policy.ts
+  - openclaw_runtime/src/agents/main-session-restart-recovery.ts
   - scripts/repository-artifacts.json
   - .gitignore
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - README.ru-RU.md
 requiredProfiles:
   - fast
   - comms
 requiredRules:
   - backend-communication-boundary
+  - gateway-readiness-policy
+  - durable-task-system-boundary
   - comms-regression
   - docs-sync
   - disk-temp-policy
@@ -76,10 +335,69 @@ requiredRules:
   - runtime-lifecycle-governance-boundary
   - recovery-authority-owner-admission
 expectedUserBehavior:
+  - Manual compaction stays unavailable while the current session generation has an active admission permit or lifecycle fence, and becomes available after release.
+  - Initial and updated compaction summaries preserve active user-designated statements verbatim, including their labels, wording, and punctuation.
   - An explicit authority gate makes all five existing recovery owners consult the same decision policy before mutation or continuation.
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/recovery-observation.test.ts
+  - tests/unit/recovery-process.test.ts
+  - tests/unit/electron-process-identity.test.ts
+  - openclaw_runtime/src/gateway/server/ws-connection.lazy.test.ts
+  - openclaw_runtime/src/gateway/server/health-state.lazy.test.ts
+  - openclaw_runtime/src/infra/update-available-state.test.ts
+  - scripts/versebrowser-n9-stability-probe.test.mjs
+  - openclaw_runtime/src/gateway/server-reload-handlers.lazy.test.ts
+  - openclaw_runtime/src/gateway/server-runtime-services.lazy-delivery.test.ts
+  - openclaw_runtime/src/agents/main-session-restart-recovery.owners.test.ts
+  - openclaw_runtime/src/agents/subagent-orphan-recovery.budget.test.ts
+  - tests/unit/gateway-compaction-readiness.test.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts
+  - tests/unit/gateway-bundled-channel-metadata.test.ts
+  - scripts/gateway-plugin-loader-cache.test.mjs
+  - scripts/gateway-workspace-alias.test.mjs
+  - openclaw_runtime/src/gateway/trajectory-gateway.test.ts
+  - openclaw_runtime/src/agents/harness/selection.compass.test.ts
+  - tests/unit/gateway-lazy-harness-selection.test.ts
+  - tests/unit/gateway-native-language-parser-loading.test.ts
+  - tests/unit/gateway-lazy-builtin-harness.test.ts
+  - tests/unit/gateway-lazy-language-parsers.test.ts
+  - openclaw_runtime/src/context-engine/producers/analyzers/analyzers.test.ts
+  - tests/unit/gateway-agent-activation-provenance.test.ts
+  - tests/unit/session-task-scope-bridge.test.ts
+  - tests/unit/gateway-late-bytecode-cache.test.ts
+  - openclaw_runtime/src/agents/clawgraph/clawgraph-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/agents/mission-control/mission-lifecycle-cutover.test.ts
+  - openclaw_runtime/src/agents/task-loop-lifecycle-cutover.test.ts
+  - tests/unit/gateway-workflow-recovery-loading.test.ts
+  - tests/unit/gateway-readonly-prepared-discovery.test.ts
+  - tests/unit/gateway-startup-prepared-discovery.test.ts
+  - tests/unit/gateway-sdk-alias-dependencies.test.ts
+  - tests/unit/gateway-host-time-format.test.ts
+  - tests/unit/gateway-agent-startup-scope.test.ts
+  - tests/unit/gateway-plugin-activation-discovery.test.ts
+  - tests/unit/fs-safe-append-mode.test.ts
+  - tests/unit/gateway-ws-client.test.ts
+  - tests/unit/gateway-loopback-connect.test.ts
+  - tests/unit/gateway-channel-presence-discovery.test.ts
+  - tests/unit/sekb-runtime-build-contract.test.ts
+  - tests/unit/gateway-device-credential-invalidation.test.ts
+  - tests/e2e/gateway-startup-performance.spec.ts
+  - tests/unit/gateway-device-pairing-state.test.ts
+  - tests/unit/gateway-plugin-startup-scope.test.ts
+  - tests/unit/gateway-device-token-reuse.test.ts
+  - tests/unit/gateway-process-launcher-env.test.ts
+  - tests/unit/gateway-process-launcher-trace.test.ts
+  - tests/unit/gateway-plugin-env-contract.test.ts
+  - node --test scripts/parallel-desktop-build.test.mjs
+  - tests/unit/gateway-plugin-snapshot-reuse.test.ts
+  - tests/unit/gateway-plugin-derived-snapshot.test.ts
+  - tests/unit/recovery-observation.test.ts
+  - openclaw_runtime/src/agents/agent-hooks/compaction-summary-contract.test.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/prepare-compaction.test.ts
+  - openclaw_runtime/src/acp/control-plane/manager.recovery.flow.test.ts
+  - node scripts/recovery-acp-process-proof.mjs
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.recovery-admission.test.ts
   - openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts
   - node scripts/recovery-owner-process-proof.mjs
@@ -91,19 +409,81 @@ requiredTests:
   - openclaw_runtime/src/agents/subagent-registry-run-manager.recovery.test.ts
   - openclaw_runtime/src/config/sessions.owner-admission.test.ts
   - openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts
+  - openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts
+  - openclaw_runtime/src/infra/outbound/delivery-recovery.flow.test.ts
+  - openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts
+  - node scripts/recovery-delivery-process-proof.mjs
+  - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - openclaw_runtime/src/agents/goal-wake-recovery.test.ts
+  - openclaw_runtime/src/agents/goal-wake-triggers.test.ts
+  - node scripts/recovery-goal-process-proof.mjs
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Global-session fork admission, child ownership and parent command hooks resolve the selected agent or the configured default through the existing session-store resolver; canonical scoped keys retain their encoded agent.
+  - Compaction status, compact, transcript restore and checkpoint restore share one generation-bound busy predicate. Automated long-session readbacks wait for the same generation within the existing turn budget; ranged compaction carries expectedSessionId and retains generation-mismatch rejection before mutation.
+  - Bundled channel enumeration and ID lookup share one metadata view in the existing root-owned load context. Plugin identities retain sorted enumeration and alias ownership, setup hints retain their fallback, and channel/plugin disablement is evaluated for each request. Failed reads remain retryable, empty results remain cached, and root switching or eviction uses the corresponding context. Registry refresh and Gateway teardown clear metadata, loaded entries and their loader caches through the existing lifecycle owner.
+  - Clearing native plugin aliases copies and rewrites only entries containing a selected parent root. Unrelated owners retain their arrays and resolution order; selected owners are removed, empty aliases are deleted, and repeated cleanup leaves survivors untouched. CJS and ESM parent boundaries retain their existing resolution behavior.
+  - Plugin loader cache entries use caller-supplied aliases directly. An omitted native mode uses the existing Node/Bun and built-dist policy; an omitted alias map retains cached default SDK configuration. Content keys, filename and explicit scope precedence, source-mode loader reuse, and native alias installation on cache hits retain their existing behavior. A tiny ESM projection links the production SDK import declaration to its real exported policy functions and detects missing imports and exports.
+  - Native parent-scope selection reuses the loader root and nearest package root from one ancestor scan. Bundled plugins retain their normalized plugin boundary; external plugins retain their nearest package boundary even under a trusted OpenClaw ancestor. Module normalization stays before scanning, and subsequent calls read current metadata and symlink destinations.
+  - Native loader package-root resolution probes each ancestor manifest once within its twelve-directory search. A trusted OpenClaw name or executable retains priority over the nearest ordinary package; missing, malformed and unreadable metadata retain the nearest observed package or module directory. Later calls read current metadata, and bundled and external parent scopes retain their existing boundaries.
+  - Native CJS and ESM alias resolution normalizes each parent path once before testing registered roots. First-match ordering, missing-path lexical fallback, outside-root rejection and fresh symlink targets on subsequent calls retain their existing behavior; unknown aliases and absent parents skip filesystem normalization.
+  - Workspace export alias enumeration reads the selected package manifest before resolving a fallback package root. Missing or invalid selected manifests retain fallback resolution; selected packaged-entry discovery, alias ordering and non-null JSON handling retain their existing behavior.
+  - Importing trajectory subscription cleanup hooks leaves that module's session resolver deferred. readTrajectoryPage validates session and range inputs before loading its resolver; session and path guards, pagination, error identity and subscription delivery retain their current behavior.
+  - Harness selection captures its original decision and diagnostic trace before lazy context-budget/lifecycle loading. Native and plugin execution keep their existing policy, budget, result and error handling; the runtime boundary persists available compilation before an interrupted attempt.
+  - Built-in harness support metadata defers the embedded execution graph until runAttempt. The runner receives the original parameters and retains result/error identity and host capabilities. Its lazy runtime boundary persists loaded bytecode before interruption without changing optional cache controls or recovery admission.
+  - Analyzer metadata and fallback analysis defer native parsers and grammars until the corresponding language is analyzed. Successful language initialization owns parser reuse; loading failures remain retryable and existing parse-fallback warnings remain intact.
+  - Agent startup passes source activation reasons, manifests and install records from its compatible Gateway metadata scope to the existing runtime registry owner. Missing or incompatible scope retains standalone loading; runtime configuration and registry compatibility checks stay authoritative.
+  - Task-scope effect admission waits for one authenticated Main bridge after restart within its original fifteen-second budget. Waiting reserves the request id and rechecks the live owner; ambiguous bridges, stale runs and late or mismatched results cannot grant effects. Readiness waiting and Main response share that budget without new dispatch attempts.
+  - Workflow restart recovery checks the lifecycle owner's current writer and durable rows before loading each controller. Legacy and empty or terminal-only domains stay unloaded; Mission recovery remains taskflow-only for running rows. Live-controller, pending-effect and CAS decisions stay with the original recovery entry, and a domain failure does not suppress the other domains.
+  - Read-only channel views share the selected metadata discovery with configuration and stored-auth probes. Config/workspace discovery retains the environment catalog fallback so load-path overlaps preserve bundled environment and authentication signals. Channel and plugin disablement, denial reasons and source roots retain their checks.
+  - Gateway startup plans and lookup tables reuse discovery from a compatible prepared metadata snapshot for channel scope and final activation. Missing discovery and changed roots retain discovery fallback; explicit channel disables and stored-auth exclusion remain intact.
+  - Compiled SDK alias resolution checks each shared dependency once per map. Missing dependencies and unreadable barrels retain source fallback or omit unavailable exports; availability remains scoped to the resolved package root.
+  - Windows host time detection reads the OS short-time pattern without loading shell profiles. Explicit 12/24-hour settings and the existing Intl fallback remain available.
+  - Agent startup borrows the compatible Gateway startup plugin scope through its metadata owner. Missing plans and mismatched workspaces retain standalone resolution; existing runtime-registry ownership controls reuse and subagent bindings.
+  - Runtime plugin auto-enable borrows discovery and manifests from the provider's prepared metadata view. Requests without a prepared view retain the current/default snapshot scope checks and existing discovery path; explicit discovery stays authoritative.
+  - A device credential mutation invalidates both registered clients and pending handshakes for that device/role. Registration checks the original revision after asynchronous pairing work, and device-token reuse requires the credential that authenticated the connection. Explicit authorized rotation and shared-secret bootstrap retain their issuance path.
+  - Gateway paired-device authentication, Control UI token lookup, token rotation/revocation and presence updates do not read the pending pairing queue. The paired-device owner still rejects revoked tokens, unauthorized scopes and corrupt paired records; cross-table removal validates pending repair requests before mutation.
+  - Managed Gateway restarts reuse an authenticated device token only within its original device, endpoint and shared credential. A rejected cached token falls back once on a device-token mismatch; transport errors and startup unavailability retain it. Node bytecode cache controls are preserved, and startup plus the first lazy agent-attempt load retain compilation across a real process kill. Disabled or unavailable cache storage preserves execution.
+  - Current plugin snapshots retain discovery environment and model normalization registration across capture/restore. Changed roots, overlays, Nix mode or effective host version reject reuse with either a cached config object or an omitted config; the existing persisted-registry disable switch selects the derived path and returns its diagnostic in both lookup entry points.
+  - Runtime entry, static catalog and model alias lookups reuse the compatible Gateway-owned plugin snapshot, preserve disabled metadata and ambiguous identity handling, and use the existing installed-registry fallback when no compatible snapshot exists. Diagnostics about initial persisted-index repairs remain available while the resolved current snapshot is reused.
+  - Desktop builds overlap renderer compilation with embedded-browser and Electron preparation; success waits for all outputs and browser preparation failures fail the entire build.
+  - The full runtime build stages the bundled plugin overlay once and copies declared static assets into both package trees; the stable SEKB entry remains importable.
+  - Gateway channel presence checks share discovery across environment and stored-auth probes within one query. Subsequent queries use the current plugin roots and state.
+  - Regular-file append checks the opened descriptor identity and current mode on every write. Matching modes avoid redundant chmod for the same POSIX owner; a different effective owner retains the original chmod authorization. POSIX mode comparison includes special bits, Windows mode comparison preserves the read-only attribute, and a required chmod failure stops the append.
+  - First tool admission carries the prepared task ID and epoch. Main renews only that same idle owner; committed admission retries retain the original precondition, and only the admitted run can refresh its model context. Explicit handoff, prior runs, and unresolved effects remain fenced.
+  - An expired idle task resumes only for the same session generation and worktree with a new fencing epoch; unresolved effects, changed identities, paused owners and clock rollback remain rejected.
+  - The runtime Control UI build resolves the installed Lit decorator entry through its package exports and completes without externalizing it.
+  - Native fault fixtures create and claim the real workspace task before injection; handoff/fork fixtures consume the typed active workspace owner returned by the Host API.
+  - Frozen acceptance rejects missing build inputs before live calls and returns failure for a failed candidate evaluation even when all sample receipts are present.
+  - Initial and update model calls pass active statements as complete original lines without synthesized labels, colons, or repeated identifiers; branch regressions and same-candidate live compression readback verify preservation.
+  - A recovery observer accepts a running Session reconciliation only after its original execution phase records needsReconciliation; owner reservation decisions remain pending within the original observation budget.
+  - Probe decisions retain observation order independently of PID filenames; the frozen baseline projection and its retained fields remain unchanged.
   - All five real entry points query recoveryAuthorityV1 in gated mode; adapters describe observed facts rather than independently authorizing effects.
   - Owner identity, boundary digest, decision, attempt consumption, and pending admission commit together in the existing owner store before a continuation.
   - Concurrent and repeated admissions of the same boundary produce one continuation; failed, ambiguous, and unacknowledged attempts remain recorded across a real process restart.
   - Unknown effects always reconcile; applied or reconciled delivery effects settle without another send; a receipt or transcript alone cannot authorize replay.
   - A stale lifecycle, replaced payload, changed session generation, or stale ACP identity cannot receive an old admission acknowledgement or terminal callback.
+  - Completed admitted recoveries reject replay; provider fallback within one unfinished command retains its admission until the command commits its terminal state.
   - Subagent failure attempts are persisted before RPC and cannot restart an unbounded retry burst; successful registry remapping stays owned by the existing subagent registry.
+  - Subagent authority continuations inherit consumed attempts after registry run-id adoption, elapsed rewedge windows and compaction. Ordinary session generation replacement clears the prior budget.
+  - Main restart recovery carries the owning agent for global continuation and failure-notice RPCs. Retry deduplication binds the store path, session key and physical generation so different agents and replacement generations recover independently.
+  - Registering the Gateway configuration watcher leaves cron, MCP disposal and provider rewarm execution unloaded. Actual reloads preserve cache invalidation, cron stop/start ordering, disposal timeouts and rewarm error reporting.
+  - Empty startup delivery queues leave send/reply execution unloaded. The existing queue owners retain recovery admission, cutoff, claims, backoff and settlement for pending work.
+  - Handshake snapshots read health and update state without loading health probes or updater execution. Refreshes preserve public/sensitive isolation, coalescing and error propagation; update notifications share one state owner and retain change deduplication.
+  - Challenge-only readiness probes leave authentication and RPC execution unloaded. The first incoming frame starts one handler load, preserves the 16-frame queue limit and serial dispatch, and closed sockets release queued frames without attaching a live handler.
+  - Windows crash injection binds the fault PID to the current app-owned Gateway and its creation time before native process-tree termination. Only confirmed exit after a termination request counts as an injected crash; initially replaced, unavailable or already-exited targets fail the trial. A delayed exit receives at most two same-identity read-only checks, never another termination request, and all observations are retained. The original fault windows and frozen manifest remain unchanged.
+  - Recovery trial failures retain incomplete receipts even before the first crash is attempted, including observed fault boundaries and the actual injection mechanism. A failed read-only exit check preserves prior process observations and the original error.
+  - Failed disk snapshots retain independently readable fault probes, decisions and effects with per-source errors. Native Windows tree injection requires PowerShell 7; single-process cleanup retains its Windows PowerShell fallback. Playwright test status and runner exit remain required alongside outcome receipts.
+  - Trial outcome receipts are finalized after app/provider cleanup. Recording or cleanup failures retain the measured outcome in failure evidence and produce an incomplete trial; incomplete native process or inspector cleanup rejects the run.
+  - A failed trial writes its snapshot and incomplete receipt before releasing a paused fault boundary. Cleanup errors are aggregated with the original failure and recorded separately, preserving the first snapshot unchanged.
+  - The effect-before-receipt window requires both the tool-return probe and a landed effect inside the existing boundary wait budget. A command that yields while still running must not trigger an early crash; exact effect identity/count and missing-receipt assertions remain unchanged.
+  - Desktop build provenance hashes every declared output with bounded file reads and reuses a physical file's hash only within the same snapshot. Archive mappings and deterministic output order are preserved.
   - Goal-wake remains level-triggered and never respawns an uncertain durable helper; task terminal state and the wait reconciliation remain idempotent after restart.
   - ACP observed output prevents a fresh turn, and an early backend exit without effect truth is not treated as proof that no effect occurred.
   - Final delivery reuses the existing durable send owner and intent; pending text is preserved when the outcome is uncertain.
+  - Final-delivery reconciliation binds and releases one current PID/epoch in the original queue without consuming a dispatch attempt; an uncertain or failed observation remains recoverable.
+  - Authority queue write failures stop the platform send, and applied queue truth remains while an unmatched Session still references that intent.
   - A single authority-mode switch restores legacy behavior; no product default, product lock, frozen workload, retry limit, or acceptance threshold is relaxed.
   - A clean source candidate, production-path tests, fresh structured autoreview, source-bound artifacts, hash verification, and zero credential scan hits precede node closure.
   - GA readiness requires the unchanged five windows, at least three repeats per window, at least thirty live-provider pairs, nine passing frozen metrics, baseline repeat consistency, and required full source/package gates; incomplete evidence stays NO-GO.

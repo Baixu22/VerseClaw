@@ -18,6 +18,12 @@ pathPatterns:
 
 # Cross-platform FakeCoding UI v2
 
+The chat composer includes a Lobe UI TokenTag for current context usage. Hover,
+focus or click reveals the runtime report's source composition; source groups
+expand to file, skill and tool metadata. Settings > General > Appearance persists
+its display switch. Validate unknown readings, generation changes, keyboard,
+four locales and narrow light/dark layouts with `tests/e2e/chat-context-display.spec.ts`.
+
 ## Purpose
 
 Give the Electron application a coherent FakeCoding-aligned grayscale shell, compact control system, and route-driven settings surface while preserving all existing product workflows.
@@ -38,6 +44,12 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
 
 ## Validation
 
+The reasoning section of the model menu uses the supplied Aceternity Preview
+Slider with a floating text tooltip. Seven existing levels remain accessible
+through pointer dragging, arrow keys, Home and End. Moving previews the level;
+releasing saves it. Agent-driven Electron captures check light, dark, narrow
+and reduced-motion layouts; see `tasks/chat-effort-preview-slider-20261124.md`.
+
 Composer model, knowledge, permission and agent menus share the add control's
 blur-to-clear motion, neutral surface and selection marks. Opening one closes
 the previous menu; Escape and outside click dismiss it. Short and narrow windows
@@ -52,14 +64,21 @@ action. Its menu retains governed branch search, checkout and worktree actions.
 The three starter actions live in a single Quick start disclosure; drafting
 hides this entry without shifting the composer.
 
-Chat's assistant output has no avatar gutter. Progress text and the final answer
-share one reading column; active process details start folded and show only the
-current tool's existing progress animation. Completed passive tool records open
-on demand. Errors, approval requests and questions remain visible. The shared
-summary owns the live status so a second Thinking row does not compete with it.
+Chat output has no avatar gutter and shares the available conversation width
+with the input. Adjacent operations form a folded group after their progress
+explanation. Folded summaries use an unboxed operation icon and the latest action
+text, entering left to right once with a continuous white running shimmer.
+Only the current running folded summary loops its Lucide icon animation.
+Expanded rows, background groups and settled states keep static icons even on
+hover; reduced motion keeps all operation icons static.
+Expanded tool and command rows use CallChip progress strips with a background,
+timer and completion check. Icons reflect the actual tool and its captured target.
+Calls, late results and command output keep their original group. Completed
+records remain static and preserve manual disclosure. Final replies, delivered
+resources, errors and pending requests remain accessible.
 
 Live planning has one primary entry in the task strip attached to the composer.
-The durable objective remains visible while current run steps open below it;
+The solid task/input frame has a 16px radius. The collapsed row shows the objective, neutral count and necessary actions; current steps open below it. State uses a small muted icon, without a progress ring or border beam. Sent messages use opaque 12px cards with a fine border and contact shadow;
 finishing the run steps preserves the task owner's acceptance status. Archived
 plans remain in their turn disclosure. Knowledge scope, invocation mode and
 retrieval profile share one menu, with non-local profiles labelled on the input.
@@ -96,3 +115,9 @@ See `tasks/knowledge-bot-avatar.md` and `rules/knowledge-bot-runtime-state.md`.
 - `pnpm run typecheck`
 - `pnpm run build:vite`
 - `pnpm run test:e2e:run tests/e2e/windows-ui-v2.spec.ts tests/e2e/settings-drawer.spec.ts`
+
+The execution context refinement in `tasks/chat-execution-context-20261123.md` moves project, directory and branch actions into one inset tray above the 22px composer. Task progress shares this tray. New worktrees use generated branch names with optional custom settings; current drafts are saved before switching.
+
+The conversation controls in `tasks/chat-continuity-controls-20261123.md` explain the effect of queue, guide, interrupt, branch and summary handoff. Continuation drafts take priority over collapsed sources; compaction shows one usage reading. Menus stay within the conversation column as the sidebar or artifact panel changes its width.
+
+The conversation model control opens a compact reasoning card. The owner-selected Preview Slider uses a localized text tooltip in place of image previews. Opening the model row unfolds the Rare UI model list while the reasoning region is hidden and inert with its layout preserved. Search, keyboard selection and runtime writes use the existing model owner; closing the model layer restores the reasoning card.

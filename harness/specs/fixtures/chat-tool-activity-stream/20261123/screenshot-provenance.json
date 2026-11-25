@@ -1,0 +1,56 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "images": [
+    {
+      "curated": "screenshots/history-collapsed-dark-1280.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-collapsed-dark-1280.png",
+      "sha256": "a28a006226f070548ed5ec3495ab2b8d84d03bff6087a4b619c2c3333526a592"
+    },
+    {
+      "curated": "screenshots/history-expanded-dark-1280.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-expanded-dark-1280.png",
+      "sha256": "15d67ee1c9808c8418ab7d33384654d6a94457cbcd06682c186e6c980f53ef1c"
+    },
+    {
+      "curated": "screenshots/history-zh-light-375.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-light-375.png",
+      "sha256": "8b9a32bde9b9a6c88732430a38c2219eb1e993f72d97411df63afbd9ab43370b"
+    },
+    {
+      "curated": "screenshots/history-zh-dark-375.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-dark-375.png",
+      "sha256": "f106ecbc7c593b3173195d56f9f9ae54354bd4df323864f4b2a6b5a7d56a0373"
+    },
+    {
+      "curated": "screenshots/history-ru-light-375.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-ru-light-375.png",
+      "sha256": "42471ed37486ec6a63e88fe4e0387e0f2d98dc5fc067538b9e5f87b738872450"
+    },
+    {
+      "curated": "screenshots/history-ru-dark-375.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-ru-dark-375.png",
+      "sha256": "824ab9c5618abde6a3a72e641652292b4150e928cb509f58339b5c2a14a89d3b"
+    },
+    {
+      "curated": "screenshots/live-shimmer-dark-1280.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\live-shimmer-dark-1280.png",
+      "sha256": "cfafa3a69bc7ee48c03e77c0835166b0a967850ff1c4925f7996af8292cc923f"
+    },
+    {
+      "curated": "screenshots/live-expanded-reduced-motion.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\live-expanded-reduced-motion.png",
+      "sha256": "7d7f90b3841525666c586504bfc66e3c5aeab6ab2c0b14c48598aa478c8ddedd"
+    },
+    {
+      "curated": "screenshots/completed-command-dark-1280.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\completed-command-dark-1280.png",
+      "sha256": "89e6d3481c21f05514c226fcf1ee8514a0a665e665d3363f7c8571a431b996ee"
+    },
+    {
+      "curated": "screenshots/runtime-approval-inline-with-git.png",
+      "original": "D:\\tmp\\clawx-output-stream-20261124\\electron-delivery\\chat-composer-git-strip-Ch-21555--the-composer-and-Git-strip\\runtime-approval-inline-with-git.png",
+      "sha256": "043f39acf5fad19e3f1d76b2aa2db742cdf26871401b47863a0c91b801428299"
+    }
+  ]
+}

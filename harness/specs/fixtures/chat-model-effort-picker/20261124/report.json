@@ -1,0 +1,103 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "status": "passed",
+  "candidate": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+  "unit": {
+    "passed": 128,
+    "total": 128
+  },
+  "electron": {
+    "passed": 6,
+    "total": 6,
+    "skipped": 0,
+    "variants": 16,
+    "fixtureType": "typed host and gateway snapshots; actual native Electron renderer"
+  },
+  "types": "uncached Main/Web/Test passed on final integration candidate",
+  "carbon": {
+    "cliInvocations": 1,
+    "guardPostRequests": 2,
+    "requestedModel": "Gemini 4 Carbon (Low)",
+    "reportedTokens": 29359,
+    "actualImageRead": "carbon/actual-image-read.json"
+  },
+  "card": {
+    "desktop": [
+      320,
+      156
+    ],
+    "narrow": [
+      294,
+      156
+    ],
+    "tooltipSeparated": true,
+    "blueSearchOutlineRemoved": true
+  },
+  "build": {
+    "driven_by": "agent",
+    "actor": "codex-model-ui",
+    "sourceCommit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+    "sourceRoot": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
+    "installedRoot": "D:\\ClawX",
+    "backup": "D:\\tmp\\clawx-model-effort-picker-20261124\\previous-main-build-r14",
+    "copiedFiles": 1413,
+    "verifiedFiles": 1413,
+    "retainedOldAssetFiles": 178,
+    "status": "passed"
+  },
+  "sourceAndStagingPreserved": {
+    "driven_by": "agent",
+    "actor": "codex-model-ui",
+    "base": "49aa08031a2a1a1f88d16a7bf6bc9911b1ae9989",
+    "sourceCommit": "07d6cf9f9f8c1fbc5a6dde00bd434f1de79682a9",
+    "backup": "D:\\tmp\\clawx-model-effort-picker-20261124\\main-before-model-integration-r2",
+    "restoredPreparation": [
+      "docs/dev/chat-model-selection.md",
+      "src/components/chat/ChatAgentEffortPopover.tsx",
+      "tests/e2e/chat-agent-effort.spec.ts",
+      "tests/unit/chat-agent-effort-popover.test.tsx"
+    ],
+    "preserved": [
+      {
+        "path": "openclaw_runtime/pnpm-workspace.yaml",
+        "originalSha256": "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910",
+        "integratedSha256": "97865507e9db99443579e27f91aa50287d13f227a48db1f9396d13c877723910",
+        "threeWayMerged": false
+      }
+    ],
+    "ownedSourceHashes": {
+      "src/styles/chat-model-settings.css": "81997c5b54a93efbe6f292638baf880dcae57afdeed317fe3424e510f7d361b3",
+      "shared/i18n/locales/ru/chat.json": "916bb026ab6ba23f7f642f1ca8717d9c33063baf95a82b2c7f4a4f17b5054578",
+      "shared/i18n/locales/zh/chat.json": "2859bee60eb93b5cef9dd1ce739e43c90db351d693d227d709990b691506aaa5",
+      "shared/i18n/locales/ja/chat.json": "84130ef3a7801e7617886907001f40aa918e4c2c206f7cf5d44cbcdcb9f352df",
+      "src/components/chat/EffortPreviewSlider.tsx": "289afbad0b38ec8e78c93dad48cec4b9a98cf9e32f2be05ca23955852e98219a",
+      "shared/i18n/locales/en/chat.json": "984bd5b001474199fc3793d924bc9c94be49aed33f656d1608eee96ec45e0616",
+      "src/components/chat/ChatModelPicker.tsx": "0f04f43349d8385bb5634f1ba44e2ac36e75d4c90119049a88cc80b3660c8b85",
+      "src/pages/Chat/ChatInput.tsx": "ebace2ffa0f79eb45ee61d550d7035623af8666c801347653a7da5c8a75f8ea7",
+      "src/components/chat/ChatAgentEffortPopover.tsx": "f924f9690dcfa20271df9fd508d36ebd7fbac872b816e8bc3fd0607d4e82c4d0",
+      "src/components/chat/ChatModelSettingsCard.tsx": "3e8aa3f381c038f55532c6a57aaaf374139b606ca089a5551ace7d189f4f5873"
+    },
+    "stagingPreserved": true,
+    "statusAfter": [
+      " M openclaw_runtime/pnpm-workspace.yaml",
+      "?? harness/specs/tasks/chat-activity-bell-unread-status-20261120.md",
+      "?? harness/specs/tasks/chat-effort-preview-slider-20261124.md"
+    ]
+  },
+  "rawRoot": "D:\\tmp\\clawx-model-effort-picker-20261124",
+  "checks": [
+    "i18n-r9",
+    "contract-r9",
+    "comms-replay-r9",
+    "comms-compare-r9",
+    "harness-validate-r12",
+    "harness-dry-run-r12",
+    "lint-r14",
+    "unit-r14",
+    "typecheck-r14",
+    "build-r14",
+    "electron-r14"
+  ],
+  "additionalRegressions": "scope-and-pointer-regressions.json"
+}

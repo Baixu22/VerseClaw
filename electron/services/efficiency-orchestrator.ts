@@ -18,14 +18,20 @@ import { getBackgroundWorkGate, resetBackgroundWorkGateForTest, type BackgroundW
 import { getAggregatedResourceEnvelopeSnapshot } from './resource-envelope';
 import { getResourceFabric } from './resource-fabric';
 import { getTimerAligner } from '../../shared/resources';
+import { setManagedProcessHostPressure, pruneManagedProcessHostPressure } from '../../openclaw_runtime/src/agents/verseshell/managed-process-reservation';
+import { taskLedgerOwnIncarnation } from '../../shared/task-ledger-process';
+import { getResourceEnvelopeLedger } from '../../openclaw_runtime/src/resources/resource-envelope';
 
 let sampler: EfficiencySampler | null = null;
 let policy: EfficiencyPowerPolicy | null = null;
 let started = false;
+let protectionStarted = false;
 let unsubscribeWindowEvents: (() => void) | null = null;
 let unsubscribePowerEvents: (() => void) | null = null;
 let backgroundGateUnregister: (() => void) | null = null;
 let efficiencyGeneration = 0;
+let publishedHostPressure: boolean | null = null;
+let publishedIncarnation: string | null = null;
 
 function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPolicy } {
   if (!sampler) {
@@ -48,12 +54,7 @@ function getOrCreate(): { sampler: EfficiencySampler; policy: EfficiencyPowerPol
   return { sampler: sampler as EfficiencySampler, policy: policy as EfficiencyPowerPolicy };
 }
 
-/**
- * Start efficiency sampling. Safe to call more than once.
- *
- * Sampling is opt-out via settings in the future; today the default is enabled
- * because the cost is a single unref'd 5s timer and one cheap counter read.
- */
+/** The single protection observer continues independently of diagnostic recording. */
 function startBackgroundWorkGate(
   activePolicy: EfficiencyPowerPolicy,
 ): void {
@@ -61,22 +62,39 @@ function startBackgroundWorkGate(
   const generation = efficiencyGeneration;
   let inFlight = false;
   const update = async (): Promise<void> => {
-    if (!started || generation !== efficiencyGeneration || inFlight) return;
+    if (!protectionStarted || generation !== efficiencyGeneration || inFlight) return;
     inFlight = true;
     try {
       const snapshot = await getAggregatedResourceEnvelopeSnapshot();
-      if (!started || generation !== efficiencyGeneration) return;
-      getResourceFabric().observePressure(snapshot);
+      if (!protectionStarted || generation !== efficiencyGeneration) return;
+      const fabric = getResourceFabric();
+      fabric.observePressure(snapshot);
+      const pressured = fabric.getDiagnostics().pressure.reasons.length > 0;
+      const ownProcess = snapshot.entries?.find(entry => entry.id === 'main:process-tree'
+        && entry.processMeasurement?.ownerEpoch === getResourceEnvelopeLedger().ownerEpoch)
+        ?.processMeasurement?.processes.find(record => record.pid === process.pid);
+      let incarnation = process.platform === 'win32' ? ownProcess?.creationToken ?? null : null;
+      if (pressured && process.platform !== 'win32') {
+        try { incarnation = taskLedgerOwnIncarnation(); } catch { /* Unknown birth keeps conservative pressure. */ }
+      }
+      // A missing observation cannot erase an already measured birth identity.
+      incarnation ??= publishedIncarnation;
+      if (pressured !== publishedHostPressure || (pressured && incarnation !== publishedIncarnation)) {
+        setManagedProcessHostPressure(pressured, incarnation);
+        publishedHostPressure = pressured;
+        publishedIncarnation = incarnation;
+      }
+      pruneManagedProcessHostPressure();
       const physical = snapshot.processTotals;
       getBackgroundWorkGate().update({
-        shedSignal: activePolicy.shedding,
+        shedSignal: activePolicy.shedding || pressured,
         queueDepth: snapshot.totals.queuedCount,
         ...(physical?.rssBytes != null ? { treeRssBytes: physical.rssBytes } : {}),
         ...(physical?.cpuPercent != null ? { treeCpuPercent: physical.cpuPercent } : {}),
         ...(snapshot.eventLoopPressure ? { eventLoopDegraded: snapshot.eventLoopPressure.degraded } : {}),
       });
     } catch (error) {
-      if (started && generation === efficiencyGeneration) getResourceFabric().observePressure({});
+      if (protectionStarted && generation === efficiencyGeneration) getResourceFabric().observePressure({});
       logger.warn('[efficiency] background work gate update failed', error);
     } finally {
       inFlight = false;
@@ -86,22 +104,16 @@ function startBackgroundWorkGate(
   backgroundGateUnregister = getTimerAligner().register({
     id: 'efficiency-background-gate',
     intervalMs: 5_000,
-    priority: 'background',
+    priority: 'interactive',
     run: update,
   });
 }
-export function startRuntimeEfficiency(): void {
-  if (started) return;
-  const { sampler: activeSampler, policy: activePolicy } = getOrCreate();
-
-  activeSampler.start();
+export function startRuntimeResourceProtection(): void {
+  if (protectionStarted) return;
+  const { policy: activePolicy } = getOrCreate();
   efficiencyGeneration += 1;
-  started = true;
+  protectionStarted = true;
   startBackgroundWorkGate(activePolicy);
-  logger.info('[efficiency] runtime efficiency sampling started', {
-    intervalMs: 5000,
-    platform: process.platform,
-  });
 
   // Power state. Guarded because powerMonitor is unavailable in some headless
   // or E2E environments.
@@ -114,7 +126,7 @@ export function startRuntimeEfficiency(): void {
     const onSpeedLimit = (event: Electron.Event<{ limit: number }>): void => {
       activePolicy.update({ powerSaver: event.limit < 100 });
     };
-    const onResume = () => activePolicy.update({ powerSaver: powerMonitor.isOnBatteryPower() });
+    const onResume = () => activePolicy.update({ displaySleep: false, powerSaver: powerMonitor.isOnBatteryPower() });
     const onSuspend = () => activePolicy.update({ displaySleep: true });
     const onUnlock = () => activePolicy.update({ displaySleep: false });
     unsubscribePowerEvents = () => {
@@ -136,6 +148,15 @@ export function startRuntimeEfficiency(): void {
   // Window visibility. Tracked per window so closing one window does not leave
   // a stale listener behind.
   unsubscribeWindowEvents = attachWindowVisibility();
+}
+
+/** Recording is optional; the single protection observer has the app's lifetime. */
+export function startRuntimeEfficiency(): void {
+  startRuntimeResourceProtection();
+  if (started) return;
+  getOrCreate().sampler.start();
+  started = true;
+  logger.info('[efficiency] runtime efficiency sampling started');
 }
 
 /**
@@ -182,16 +203,23 @@ export function attachWindowVisibility(): () => void {
   };
 }
 
-/** Stop sampling and detach listeners. Safe to call when not started. */
+/** Stop diagnostic recording while protection continues. */
 export function stopRuntimeEfficiency(): void {
   if (!started) return;
   started = false;
+  sampler?.stop();
+  logger.info('[efficiency] runtime efficiency sampling stopped');
+}
+
+/** Application shutdown owns the pressure observer and power/window listeners. */
+export function stopRuntimeResourceProtection(): void {
+  if (!protectionStarted) return;
+  protectionStarted = false;
   efficiencyGeneration += 1;
   if (backgroundGateUnregister) {
     backgroundGateUnregister();
     backgroundGateUnregister = null;
   }
-  sampler?.stop();
   unsubscribeWindowEvents?.();
   unsubscribeWindowEvents = null;
   unsubscribePowerEvents?.();
@@ -199,7 +227,10 @@ export function stopRuntimeEfficiency(): void {
   getTimerAligner().setShedding(false);
   getBackgroundWorkGate().clearObservationPressure();
   getResourceFabric().clearObservationPressure();
-  logger.info('[efficiency] runtime efficiency sampling stopped');
+  try { setManagedProcessHostPressure(false); }
+  catch (error) { logger.warn('[efficiency] pressure owner shutdown failed', error); }
+  publishedHostPressure = null;
+  publishedIncarnation = null;
 }
 
 export function getEfficiencySummary(): EfficiencySummary | null {
@@ -211,11 +242,11 @@ export function getEfficiencySamples(): ReturnType<EfficiencySampler['getSamples
 }
 
 export function getEfficiencyShedState(): EfficiencyShedState | null {
-  return started ? policy?.getState() ?? null : null;
+  return protectionStarted ? policy?.getState() ?? null : null;
 }
 
 export function getBackgroundWorkGateState(): BackgroundWorkGateState | null {
-  return started ? getBackgroundWorkGate().getState() : null;
+  return protectionStarted ? getBackgroundWorkGate().getState() : null;
 }
 
 export function isRuntimeEfficiencyRunning(): boolean {
@@ -225,8 +256,10 @@ export function isRuntimeEfficiencyRunning(): boolean {
 /** Test seam: drop all module state. */
 export function resetRuntimeEfficiencyForTests(): void {
   stopRuntimeEfficiency();
+  stopRuntimeResourceProtection();
   sampler = null;
   policy = null;
   started = false;
+  protectionStarted = false;
   resetBackgroundWorkGateForTest();
 }

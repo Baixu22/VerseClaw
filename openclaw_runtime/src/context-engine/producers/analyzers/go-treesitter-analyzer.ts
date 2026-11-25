@@ -1,19 +1,14 @@
 // Adapted from ragcode-context-engine (MIT), https://github.com/MarshallEriksen-Neura/ragcode
-// Source: src/indexing/analyzers/go-treesitter-analyzer.ts (verbatim; import paths localized).
-import Parser from "tree-sitter";
-import Go from "tree-sitter-go";
+// Source: src/indexing/analyzers/go-treesitter-analyzer.ts (local imports and lazy native dependencies).
+import type Parser from "tree-sitter";
 import type { AnalyzeFileInput, FileAnalysis, LanguageAnalyzer } from "./types.js";
-import { analyzeWithTreeSitter, type TreeSitterLanguageConfig } from "./tree-sitter-base.js";
+import {
+  analyzeWithTreeSitter,
+  createTreeSitterParser,
+  type TreeSitterLanguageConfig,
+} from "./tree-sitter-base.js";
 
 let parser: Parser | null = null;
-
-function getParser(): Parser {
-  if (!parser) {
-    parser = new Parser();
-    parser.setLanguage(Go);
-  }
-  return parser;
-}
 
 const goConfig: TreeSitterLanguageConfig = {
   symbolPatterns: [
@@ -24,7 +19,7 @@ const goConfig: TreeSitterLanguageConfig = {
       exportModifierCheck: (node) => {
         const name = node.childForFieldName("name")?.text;
         return name ? /^[A-Z]/.test(name) : false;
-      }
+      },
     },
     {
       type: "method_declaration",
@@ -33,7 +28,7 @@ const goConfig: TreeSitterLanguageConfig = {
       exportModifierCheck: (node) => {
         const name = node.childForFieldName("name")?.text;
         return name ? /^[A-Z]/.test(name) : false;
-      }
+      },
     },
     {
       type: "type_declaration",
@@ -42,8 +37,8 @@ const goConfig: TreeSitterLanguageConfig = {
       exportModifierCheck: (node) => {
         const name = typeDeclarationName(node);
         return name ? /^[A-Z]/.test(name) : false;
-      }
-    }
+      },
+    },
   ],
   importPatterns: [
     {
@@ -58,8 +53,8 @@ const goConfig: TreeSitterLanguageConfig = {
         const name = nameNode?.text ?? path.split("/").pop() ?? path;
 
         return [{ imported: path, local: name }];
-      }
-    }
+      },
+    },
   ],
   callPatterns: [
     {
@@ -76,17 +71,18 @@ const goConfig: TreeSitterLanguageConfig = {
         }
 
         return undefined;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 export const goTreeSitterAnalyzer: LanguageAnalyzer = {
   language: "go",
   capabilities: ["symbols", "imports", "exports", "calls", "tests"],
   analyzeFile: ({ repoRoot, file, content }: AnalyzeFileInput): FileAnalysis => {
-    return analyzeWithTreeSitter(getParser(), goConfig, repoRoot, file, content);
-  }
+    parser ??= createTreeSitterParser("tree-sitter-go");
+    return analyzeWithTreeSitter(parser, goConfig, repoRoot, file, content);
+  },
 };
 
 function typeDeclarationName(node: Parser.SyntaxNode): string | undefined {

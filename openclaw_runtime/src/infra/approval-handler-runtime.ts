@@ -178,9 +178,9 @@ async function applyApprovalFinalAction(params: {
         phase: params.phase,
       });
 
-    // `clear-actions` updates interaction controls but leaves the delivered content in place.
-    // falls through
+      return;
     case "leave":
+      return;
   }
 }
 

@@ -152,6 +152,25 @@ Gate 是 backpressure，不是 kill switch。它延迟/排队后台工作，不�
 
 ## 4. Efficiency / Power Policy
 
+效率采样开关控制本地诊断记录。资源保护观察者在应用启动后持续运行，关闭采样后仍
+读取新鲜的内存、系统提交量和事件循环信号，并保持窗口与电源状态监听。应用退出时
+才注销保护观察者。压力声明写入既有 SQLite 进程 owner，使 Main 的终端/Git 与 runtime
+受管命令、本地 Bash 共用当前有效额度；未声明容量的正常负载保持原有准入语义。
+高压时新进程准入收缩到一个，已启动或结果未知的占用持续保留，压力恢复不会改写
+进程原来声明的容量。Main 的总调度额度也随压力收缩，并在新鲜低压驻留期结束后唤醒等待者。
+原生退出确认后的临时写入失败会保留退出回执，后续准入和诊断查询继续结算。
+压力观察者绑定进程 epoch 与可用的出生标识，已测得的标识在暂缺测量时持续保留。
+已退出或出生标识已改变的旧观察者声明会回收，身份不可确认的声明继续保留。
+这项维护不清除实际进程和 unknown 执行的占用。
+
+Agent 的会话与全局 command lane 分别最多保留 64 个等待项，并共享 30 秒等待期限与
+取消信号。取消、期限到达及清队列会移除等待项、监听器和定时器。执行超时及时返回错误，
+两层队列仍保持槽位直到实际任务结束；这类本地排队错误不会触发提供方或模型降级重试。
+
+资源心跳作为回收维护持续运行，每批最多 4 个 TCP 探测、每轮最多 8 个自动清理，
+并排除重叠的心跳。普通后台工作延迟期间，空闲受管进程仍可回收，observed 资源保持原有归属守卫。
+清理名额只分配给受管资源，失败尝试轮转；每次停止前重新核对活动状态，日志只统计成功清理。
+
 实现：
 
 - `electron/services/efficiency-sampler.ts`
@@ -159,7 +178,8 @@ Gate 是 backpressure，不是 kill switch。它延迟/排队后台工作，不�
 - `efficiency-orchestrator.ts`
 - `efficiency-api.ts`
 
-每 5 秒采样：
+保护观察者每 5 秒读取汇总快照，物理测量保持其采样器原有时间戳。诊断采样独立保存
+进程 CPU 与 Main 内存样本。汇总快照包含：
 
 - process tree CPU；
 - process count；
@@ -335,6 +355,14 @@ Windows树终止不可用时，对原PID施加SIGKILL并等待原exit事件；PI
 - 保留 owner/evidence；
 - stop 后再次尝试；
 - task/Task Ledger 真相不因清理失败而被重置。
+
+### 自动恢复与最终答复投递
+
+`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority` 将最终投递的恢复准入接到原 `delivery_queue_entries`。队列行保存决定、已消耗尝试、owner 身份和 Session 待答复引用；发送前完成 intent 绑定。
+
+已确认应用的发送只结算。未知结果保留原文本与 intent，等待渠道 owner 对账；确认未发送后，继续遵守原五次上限与退避时间。Session 清理核对生产运行、代次、文本、创建时间和 intent，保留后来产生的答复；仍引用旧 intent 的不匹配答复保留 applied 队列记录。对账使用原队列的 PID/epoch claim，观察完成后释放，入队和发送边界写入失败时停止发送。切回 legacy 后，已保存的统一恢复 intent 继续按原效果真相处理。
+
+ACP 和 goal-wake 也使用同一恢复开关。ACP 保存请求预算与输出边界，提交后的身份 ACK 通过原行和当前世代确认。Goal-wake 校验原 helper nonce 与 Session epoch，先保存 task 终态，再以现有 Mission CAS 推进 wait；过期或已清理的 helper 文件不会遗漏已提交的待处理终态。
 
 ## 8. 会话/渲染资源上限
 
@@ -588,3 +616,6 @@ pnpm runtime:memory:inspect
 实际脚本名以根 `package.json` 为准；不存在或需要 provider/凭据的命令必须明确报告，而不是临时拼一个替代步骤。
 
 延伸阅读：[运行时控制平面](../dev/runtime-control-planes.md)、[Windows 运行时效率观测](../dev/windows-runtime-efficiency-observability.md)、[资源调度规划](../dev/resource-scheduling-plan-20261018.md)。
+
+
+ACP 恢复沿现有 `acp_sessions` 记录持久预算、运行时身份和输出边界。原请求的 fresh handle 与 backend fallback 共用准入，控制器重建保留消耗；进入 turn 后的未知结果保持对账。身份 ACK 校验 Session 和准确预算快照，提交后丢失 ACK 的尝试仍保留预算并释放自己的 claim。验证入口为 `node scripts/recovery-acp-process-proof.mjs --out <fresh-dir>`，使用真实 PID 与原 SQLite 所有者。

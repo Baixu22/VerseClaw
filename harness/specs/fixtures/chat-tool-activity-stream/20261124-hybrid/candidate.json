@@ -1,0 +1,98 @@
+{
+  "commit": "ae41d30c393dc0ef3c9013d87adac3d0f319ae2b",
+  "tree": "c0212c1b4e8e97b1392af929bf0c7230aea62dbb",
+  "diffBase": "f2e1ca783db026e50bd79d6ffba7db3cd0646ac7",
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "66fcfa5e58bb97ee5e7675e185eb42ad953278fe",
+      "sha256": "00a47c0c500210e791918b603f844d0fcd5da0f00a3058306f796098c4947cde",
+      "bytes": 50506
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "bee1b75d89101369d3cbb5fa85df069bb69b78a9",
+      "sha256": "1f4a9489539ccb30509b95c3dad55e9a62d0799d80271e6b80637fd28d93d447",
+      "bytes": 43253
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "4f48b7de648c1d8b32f4abb4ade01bd904c7ad78",
+      "sha256": "2a827c0026bdad505fcedf5ad9b58b4fcced20027899d2cb6958d1d3de58ec37",
+      "bytes": 38216
+    },
+    {
+      "path": "docs/dev/chat-tool-activity-stream.md",
+      "gitBlob": "7bde5794ddf5fc62913202882686f708559dad6d",
+      "sha256": "95f291b53e37bff2775a426b82e6b7e392c302da066fedb3db32cfb12cc912ee",
+      "bytes": 2167
+    },
+    {
+      "path": "harness/specs/rules/ui-motion-material-system.md",
+      "gitBlob": "559d97f653d2dde8ca16265e37526624a726c1d7",
+      "sha256": "4d4552d73fe65c137b6209010b9dce79b0052dcca4ae19d8d8556930c24c1c1f",
+      "bytes": 5566
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "gitBlob": "9f82918ae1f132a2fb4d21305e162d43d984065a",
+      "sha256": "cca302ce37a01ad68cdfe38c6d3e97c178667537b463f9999a9b351e086af0d1",
+      "bytes": 9461
+    },
+    {
+      "path": "harness/specs/tasks/chat-tool-activity-stream-20261123.md",
+      "gitBlob": "a4cc5836c22e0d2387fc808566c149360d71f78a",
+      "sha256": "a0914f3bbb0c6417383ad0ba4b59479f45f70841a273ebab94a515f18b870d6e",
+      "bytes": 5982
+    },
+    {
+      "path": "src/components/assistant-render/ToolActivityGroup.tsx",
+      "gitBlob": "9b36538c153fe6219756be203fc62df395438b5f",
+      "sha256": "06154b1824e4b5c5d53bdca00d0662617be035f4c4d3ca2628d03fa05f3dedab",
+      "bytes": 5401
+    },
+    {
+      "path": "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "gitBlob": "a2b7b64b1fe867c36603e22b4d6d2b55380907c3",
+      "sha256": "05139a2a7d565b052cbfc62e353b3ca3182b757ba114561b4ac3a731cfd08379",
+      "bytes": 5053
+    },
+    {
+      "path": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "gitBlob": "f140b743df79db2667c21953da365ef606caf334",
+      "sha256": "c0eb8a72ba5362bfc03db6d40c8822f2e8249b1dc09c4374a46c915a986982c7",
+      "bytes": 18944
+    },
+    {
+      "path": "src/pages/Chat/tool-activity-groups.ts",
+      "gitBlob": "073ec43f8174c52e4c022db03c59ad7366443333",
+      "sha256": "4ba79e696934aae2ebeac923d9a58d2730948653023adf9a9911463c5a080454",
+      "bytes": 15611
+    },
+    {
+      "path": "src/styles/codex-conversation.css",
+      "gitBlob": "5160c7aeae0de8aeead63f6ba062bde8933e698d",
+      "sha256": "0cbcd1def867260d5cb9613e0a6884fb76cda2df99424822778cd836d86c8eef",
+      "bytes": 21505
+    },
+    {
+      "path": "tests/e2e/chat-tool-activity-stream.spec.ts",
+      "gitBlob": "278e0a63a1a4dbbb830f4a97e8883a46e7a3f06a",
+      "sha256": "5eecf90121cc253f5a30d259daaf3c517d97aae718d347b4fcc845b9f57edd3c",
+      "bytes": 21428
+    },
+    {
+      "path": "tests/unit/tool-activity-group.test.tsx",
+      "gitBlob": "53ac4239edfce2ce7c9a017956938ba26a477533",
+      "sha256": "1ca2169f028606bcdc8cfeab2539efa8af0503f34d098fa28589816cca8b1fc8",
+      "bytes": 7496
+    },
+    {
+      "path": "tests/unit/tool-activity-groups.test.ts",
+      "gitBlob": "e7380608192c6d2c94d76250746a07972a7f18f3",
+      "sha256": "1f2c21cc8720f96f10cb029506fb42ac76dbb4f250ecb00e943925264017dcbf",
+      "bytes": 7948
+    }
+  ],
+  "validationRoot": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout"
+}

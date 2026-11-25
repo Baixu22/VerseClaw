@@ -1,0 +1,698 @@
+{
+  "driven_by": "agent",
+  "dataSource": "Electron renderer with deterministic Host API and Runtime event fixtures",
+  "originalBatchStats": {
+    "startTime": "2026-11-23T13:31:02.447Z",
+    "duration": 372078.41,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "passed": 14,
+  "cases": [
+    {
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+      "file": "chat-composer-popovers.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 15818,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+      "file": "chat-composer-popovers.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 14979,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "touch composer targets fit at 375px and the closed add menu skips its actions",
+      "file": "chat-composer-popovers.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6103,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "shows recovery status and drains queued follow-up through Host API",
+      "file": "chat-long-task-control.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9958,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "opens confirmation dialog and calls the session compaction Host API",
+      "file": "chat-manual-compaction.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7329,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "creates and selects a forked session with inherited history and copied draft without auto-send",
+      "file": "chat-session-fork.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6917,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "offers handoff preparation when fork fails because the parent is too large",
+      "file": "chat-session-fork.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7608,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "disables fork entry points while a run is active",
+      "file": "chat-session-fork.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7622,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "keeps a sidebar handoff intent until a cold session generation hydrates",
+      "file": "chat-session-handoff.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9887,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "keeps the current handoff draft when an old conversation responds late",
+      "file": "chat-session-handoff.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7516,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "previews, edits, creates and sends the reviewed handoff with a recoverable child draft",
+      "file": "chat-session-handoff.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 25825,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "disables handoff entry points while a run is active",
+      "file": "chat-session-handoff.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5967,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "refuses a relay once the handoff depth limit is reached (#179)",
+      "file": "chat-session-handoff.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6705,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "keeps the editable draft and session when creation rejects changed ancestry",
+      "file": "chat-session-handoff.spec.ts",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7682,
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "cleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-Sps4nS",
+    "ledgerEntries": 80,
+    "checks": [
+      {
+        "pid": 41200,
+        "creationTime": 1795440663959,
+        "status": "exited"
+      },
+      {
+        "pid": 29264,
+        "creationTime": 1795440667634,
+        "status": "exited"
+      },
+      {
+        "pid": 41864,
+        "creationTime": 1795440667861,
+        "status": "exited"
+      },
+      {
+        "pid": 42136,
+        "creationTime": 1795440679437,
+        "status": "exited"
+      },
+      {
+        "pid": 18152,
+        "creationTime": 1795440683035,
+        "status": "exited"
+      },
+      {
+        "pid": 41020,
+        "creationTime": 1795440683146,
+        "status": "exited"
+      },
+      {
+        "pid": 37204,
+        "creationTime": 1795440694432,
+        "status": "exited"
+      },
+      {
+        "pid": 27580,
+        "creationTime": 1795440698249,
+        "status": "exited"
+      },
+      {
+        "pid": 39364,
+        "creationTime": 1795440698358,
+        "status": "exited"
+      },
+      {
+        "pid": 38212,
+        "creationTime": 1795440700539,
+        "status": "exited"
+      },
+      {
+        "pid": 10936,
+        "creationTime": 1795440704160,
+        "status": "exited"
+      },
+      {
+        "pid": 27844,
+        "creationTime": 1795440704277,
+        "status": "exited"
+      },
+      {
+        "pid": 42404,
+        "creationTime": 1795440710524,
+        "status": "exited"
+      },
+      {
+        "pid": 408,
+        "creationTime": 1795440714333,
+        "status": "exited"
+      },
+      {
+        "pid": 37428,
+        "creationTime": 1795440714441,
+        "status": "exited"
+      },
+      {
+        "pid": 41556,
+        "creationTime": 1795440717852,
+        "status": "exited"
+      },
+      {
+        "pid": 33872,
+        "creationTime": 1795440721566,
+        "status": "exited"
+      },
+      {
+        "pid": 41760,
+        "creationTime": 1795440721675,
+        "status": "exited"
+      },
+      {
+        "pid": 31612,
+        "creationTime": 1795440724786,
+        "status": "exited"
+      },
+      {
+        "pid": 29872,
+        "creationTime": 1795440728635,
+        "status": "exited"
+      },
+      {
+        "pid": 31092,
+        "creationTime": 1795440728763,
+        "status": "exited"
+      },
+      {
+        "pid": 41204,
+        "creationTime": 1795440732391,
+        "status": "exited"
+      },
+      {
+        "pid": 39480,
+        "creationTime": 1795440736338,
+        "status": "exited"
+      },
+      {
+        "pid": 27952,
+        "creationTime": 1795440736485,
+        "status": "exited"
+      },
+      {
+        "pid": 36588,
+        "creationTime": 1795440740054,
+        "status": "exited"
+      },
+      {
+        "pid": 41556,
+        "creationTime": 1795440744350,
+        "status": "exited"
+      },
+      {
+        "pid": 26924,
+        "creationTime": 1795440744562,
+        "status": "exited"
+      },
+      {
+        "pid": 25936,
+        "creationTime": 1795440749936,
+        "status": "exited"
+      },
+      {
+        "pid": 25268,
+        "creationTime": 1795440753733,
+        "status": "exited"
+      },
+      {
+        "pid": 32484,
+        "creationTime": 1795440753854,
+        "status": "exited"
+      },
+      {
+        "pid": 2764,
+        "creationTime": 1795440757466,
+        "status": "exited"
+      },
+      {
+        "pid": 22368,
+        "creationTime": 1795440761649,
+        "status": "exited"
+      },
+      {
+        "pid": 27076,
+        "creationTime": 1795440761755,
+        "status": "exited"
+      },
+      {
+        "pid": 44916,
+        "creationTime": 1795440783291,
+        "status": "exited"
+      },
+      {
+        "pid": 33148,
+        "creationTime": 1795440786886,
+        "status": "exited"
+      },
+      {
+        "pid": 18768,
+        "creationTime": 1795440787017,
+        "status": "exited"
+      },
+      {
+        "pid": 40856,
+        "creationTime": 1795440789267,
+        "status": "exited"
+      },
+      {
+        "pid": 31740,
+        "creationTime": 1795440793051,
+        "status": "exited"
+      },
+      {
+        "pid": 44284,
+        "creationTime": 1795440793156,
+        "status": "exited"
+      },
+      {
+        "pid": 1664,
+        "creationTime": 1795440795982,
+        "status": "exited"
+      },
+      {
+        "pid": 44652,
+        "creationTime": 1795440799781,
+        "status": "exited"
+      },
+      {
+        "pid": 42728,
+        "creationTime": 1795440799890,
+        "status": "exited"
+      },
+      {
+        "pid": 31908,
+        "creationTime": 1795440803691,
+        "status": "exited"
+      },
+      {
+        "pid": 8660,
+        "creationTime": 1795440809248,
+        "status": "exited"
+      },
+      {
+        "pid": 45280,
+        "creationTime": 1795440809434,
+        "status": "exited"
+      },
+      {
+        "pid": 6044,
+        "creationTime": 1795440925069,
+        "status": "exited"
+      },
+      {
+        "pid": 22836,
+        "creationTime": 1795440928728,
+        "status": "exited"
+      },
+      {
+        "pid": 31952,
+        "creationTime": 1795440928885,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 41200,
+          "creationTime": 1795440663959,
+          "status": "exited"
+        },
+        {
+          "pid": 29264,
+          "creationTime": 1795440667634,
+          "status": "exited"
+        },
+        {
+          "pid": 41864,
+          "creationTime": 1795440667861,
+          "status": "exited"
+        },
+        {
+          "pid": 42136,
+          "creationTime": 1795440679437,
+          "status": "exited"
+        },
+        {
+          "pid": 18152,
+          "creationTime": 1795440683035,
+          "status": "exited"
+        },
+        {
+          "pid": 41020,
+          "creationTime": 1795440683146,
+          "status": "exited"
+        },
+        {
+          "pid": 37204,
+          "creationTime": 1795440694432,
+          "status": "exited"
+        },
+        {
+          "pid": 27580,
+          "creationTime": 1795440698249,
+          "status": "exited"
+        },
+        {
+          "pid": 39364,
+          "creationTime": 1795440698358,
+          "status": "exited"
+        },
+        {
+          "pid": 38212,
+          "creationTime": 1795440700539,
+          "status": "exited"
+        },
+        {
+          "pid": 10936,
+          "creationTime": 1795440704160,
+          "status": "exited"
+        },
+        {
+          "pid": 27844,
+          "creationTime": 1795440704277,
+          "status": "exited"
+        },
+        {
+          "pid": 42404,
+          "creationTime": 1795440710524,
+          "status": "exited"
+        },
+        {
+          "pid": 408,
+          "creationTime": 1795440714333,
+          "status": "exited"
+        },
+        {
+          "pid": 37428,
+          "creationTime": 1795440714441,
+          "status": "exited"
+        },
+        {
+          "pid": 41556,
+          "creationTime": 1795440717852,
+          "status": "exited"
+        },
+        {
+          "pid": 33872,
+          "creationTime": 1795440721566,
+          "status": "exited"
+        },
+        {
+          "pid": 41760,
+          "creationTime": 1795440721675,
+          "status": "exited"
+        },
+        {
+          "pid": 31612,
+          "creationTime": 1795440724786,
+          "status": "exited"
+        },
+        {
+          "pid": 29872,
+          "creationTime": 1795440728635,
+          "status": "exited"
+        },
+        {
+          "pid": 31092,
+          "creationTime": 1795440728763,
+          "status": "exited"
+        },
+        {
+          "pid": 41204,
+          "creationTime": 1795440732391,
+          "status": "exited"
+        },
+        {
+          "pid": 39480,
+          "creationTime": 1795440736338,
+          "status": "exited"
+        },
+        {
+          "pid": 27952,
+          "creationTime": 1795440736485,
+          "status": "exited"
+        },
+        {
+          "pid": 36588,
+          "creationTime": 1795440740054,
+          "status": "exited"
+        },
+        {
+          "pid": 41556,
+          "creationTime": 1795440744350,
+          "status": "exited"
+        },
+        {
+          "pid": 26924,
+          "creationTime": 1795440744562,
+          "status": "exited"
+        },
+        {
+          "pid": 25936,
+          "creationTime": 1795440749936,
+          "status": "exited"
+        },
+        {
+          "pid": 25268,
+          "creationTime": 1795440753733,
+          "status": "exited"
+        },
+        {
+          "pid": 32484,
+          "creationTime": 1795440753854,
+          "status": "exited"
+        },
+        {
+          "pid": 2764,
+          "creationTime": 1795440757466,
+          "status": "exited"
+        },
+        {
+          "pid": 22368,
+          "creationTime": 1795440761649,
+          "status": "exited"
+        },
+        {
+          "pid": 27076,
+          "creationTime": 1795440761755,
+          "status": "exited"
+        },
+        {
+          "pid": 44916,
+          "creationTime": 1795440783291,
+          "status": "exited"
+        },
+        {
+          "pid": 33148,
+          "creationTime": 1795440786886,
+          "status": "exited"
+        },
+        {
+          "pid": 18768,
+          "creationTime": 1795440787017,
+          "status": "exited"
+        },
+        {
+          "pid": 40856,
+          "creationTime": 1795440789267,
+          "status": "exited"
+        },
+        {
+          "pid": 31740,
+          "creationTime": 1795440793051,
+          "status": "exited"
+        },
+        {
+          "pid": 44284,
+          "creationTime": 1795440793156,
+          "status": "exited"
+        },
+        {
+          "pid": 1664,
+          "creationTime": 1795440795982,
+          "status": "exited"
+        },
+        {
+          "pid": 44652,
+          "creationTime": 1795440799781,
+          "status": "exited"
+        },
+        {
+          "pid": 42728,
+          "creationTime": 1795440799890,
+          "status": "exited"
+        },
+        {
+          "pid": 31908,
+          "creationTime": 1795440803691,
+          "status": "exited"
+        },
+        {
+          "pid": 8660,
+          "creationTime": 1795440809248,
+          "status": "exited"
+        },
+        {
+          "pid": 45280,
+          "creationTime": 1795440809434,
+          "status": "exited"
+        },
+        {
+          "pid": 6044,
+          "creationTime": 1795440925069,
+          "status": "exited"
+        },
+        {
+          "pid": 22836,
+          "creationTime": 1795440928728,
+          "status": "exited"
+        },
+        {
+          "pid": 31952,
+          "creationTime": 1795440928885,
+          "status": "exited"
+        }
+      ]
+    ],
+    "owned": [],
+    "remaining": [],
+    "survivors": [],
+    "detectedPendingLaunches": 0,
+    "pendingLaunches": 0,
+    "status": "passed"
+  },
+  "sourceGuard": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "69939a7646e82ee56451d9712b58efe0f43eb0e68b72351f56c0ce87bb73aa78",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "69939a7646e82ee56451d9712b58efe0f43eb0e68b72351f56c0ce87bb73aa78",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

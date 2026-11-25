@@ -76,6 +76,8 @@ requiredProfiles:
   are redacted or retained only behind an artifact handle.
 - An operator kill switch rejects new work, terminates in-flight work and prevents restart. It never
   transfers execution to native shell, MCP, legacy eval or another owner.
+- Confirmed executor shutdown retires its manager entry. Clearing the kill switch can acquire a
+  fresh executor; old clients and acquisitions cancelled before reset remain rejected.
 
 ## Rollout Locks
 

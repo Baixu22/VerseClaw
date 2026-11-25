@@ -96,7 +96,6 @@ import { resolveRuntimeServiceVersion } from "../../../version.js";
 import { AUTH_RATE_LIMIT_SCOPE_NODE_PAIRING, type AuthRateLimiter } from "../../auth-rate-limit.js";
 import type { GatewayAuthResult, ResolvedGatewayAuth } from "../../auth.js";
 import { hasForwardedRequestHeaders, isLocalDirectRequest } from "../../auth.js";
-import { normalizeDeviceMetadataForAuth } from "../../device-auth.js";
 import { ADMIN_SCOPE, APPROVALS_SCOPE } from "../../method-scopes.js";
 import type { GatewayMethodRegistry } from "../../methods/registry.js";
 import {
@@ -140,7 +139,11 @@ import {
 } from "../health-state.js";
 import { resolveSharedGatewaySessionGeneration } from "../ws-shared-generation.js";
 import type { GatewayWsClient } from "../ws-types.js";
-import { resolveConnectAuthDecision, resolveConnectAuthState } from "./auth-context.js";
+import {
+  resolveConnectAuthDecision,
+  resolveConnectAuthState,
+  resolvePinnedClientMetadata,
+} from "./auth-context.js";
 import { formatGatewayAuthFailureMessage } from "./auth-messages.js";
 import {
   evaluateMissingDeviceIdentity,
@@ -263,85 +266,6 @@ function resolveTrustedProxyControlUiScopes(params: {
     return [];
   }
   return params.requestedScopes.filter((scope) => declaredScopes.has(scope));
-}
-
-function resolvePinnedClientMetadata(params: {
-  clientId?: string;
-  clientMode?: string;
-  claimedPlatform?: string;
-  claimedDeviceFamily?: string;
-  pairedPlatform?: string;
-  pairedDeviceFamily?: string;
-}): {
-  platformMismatch: boolean;
-  deviceFamilyMismatch: boolean;
-  pinnedPlatform?: string;
-  pinnedDeviceFamily?: string;
-  refreshPairedPlatform?: string;
-} {
-  function normalizeLegacyNodeHostPlatformPin(value: string): string {
-    switch (value) {
-      case "darwin":
-      case "macos":
-        return "macos";
-      case "win32":
-      case "windows":
-        return "windows";
-      default:
-        return value;
-    }
-  }
-
-  function normalizeMobileAppPlatformPin(clientId: string | undefined, value: string): string {
-    if (clientId === GATEWAY_CLIENT_IDS.IOS_APP && /^(?:ios|ipados)(?:\s|$)/.test(value)) {
-      return "ios-family";
-    }
-    if (clientId === GATEWAY_CLIENT_IDS.ANDROID_APP && /^android(?:\s|$)/.test(value)) {
-      return "android";
-    }
-    return value;
-  }
-
-  const claimedPlatform = normalizeDeviceMetadataForAuth(params.claimedPlatform);
-  const claimedDeviceFamily = normalizeDeviceMetadataForAuth(params.claimedDeviceFamily);
-  const pairedPlatform = normalizeDeviceMetadataForAuth(params.pairedPlatform);
-  const pairedDeviceFamily = normalizeDeviceMetadataForAuth(params.pairedDeviceFamily);
-  const hasPinnedPlatform = pairedPlatform !== "";
-  const hasPinnedDeviceFamily = pairedDeviceFamily !== "";
-  const isLegacyNodeHostPlatformPin =
-    params.clientId === GATEWAY_CLIENT_IDS.NODE_HOST &&
-    params.clientMode === GATEWAY_CLIENT_MODES.NODE &&
-    hasPinnedPlatform &&
-    claimedPlatform !== "" &&
-    normalizeLegacyNodeHostPlatformPin(claimedPlatform) ===
-      normalizeLegacyNodeHostPlatformPin(pairedPlatform);
-  const isMobileAppPlatformVersionRefresh =
-    hasPinnedPlatform &&
-    claimedPlatform !== "" &&
-    claimedPlatform !== pairedPlatform &&
-    normalizeMobileAppPlatformPin(params.clientId, claimedPlatform) ===
-      normalizeMobileAppPlatformPin(params.clientId, pairedPlatform);
-  const platformMismatch =
-    hasPinnedPlatform &&
-    claimedPlatform !== pairedPlatform &&
-    !isLegacyNodeHostPlatformPin &&
-    !isMobileAppPlatformVersionRefresh;
-  const deviceFamilyMismatch = hasPinnedDeviceFamily && claimedDeviceFamily !== pairedDeviceFamily;
-  const pinnedPlatform =
-    claimedPlatform === pairedPlatform
-      ? params.pairedPlatform
-      : isLegacyNodeHostPlatformPin
-        ? normalizeLegacyNodeHostPlatformPin(pairedPlatform)
-        : isMobileAppPlatformVersionRefresh
-          ? params.claimedPlatform
-          : undefined;
-  return {
-    platformMismatch,
-    deviceFamilyMismatch,
-    pinnedPlatform: hasPinnedPlatform ? pinnedPlatform : undefined,
-    pinnedDeviceFamily: hasPinnedDeviceFamily ? params.pairedDeviceFamily : undefined,
-    ...(isMobileAppPlatformVersionRefresh ? { refreshPairedPlatform: params.claimedPlatform } : {}),
-  };
 }
 
 export type GatewayWsMessageHandlerParams = {
@@ -767,6 +691,19 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
           deviceRaw,
         });
         const device = controlUiAuthPolicy.device;
+        const deviceCredentialRevision = device
+          ? buildRequestContext().getDeviceCredentialRevision?.(device.id, role)
+          : undefined;
+        if (
+          device &&
+          (deviceCredentialRevision === undefined ||
+            !Number.isSafeInteger(deviceCredentialRevision) ||
+            deviceCredentialRevision < 0)
+        ) {
+          sendHandshakeErrorResponse(ErrorCodes.UNAVAILABLE, "device credential state unavailable");
+          close(1011, "device credential state unavailable");
+          return;
+        }
         const connectAuthState = await resolveConnectAuthState({
           resolvedAuth,
           connectAuth: connectParams.auth,
@@ -1570,8 +1507,13 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
                 role,
                 scopes,
                 issuer: sharedGatewayAuthIssuer,
+                expectedToken: authMethod === "device-token" ? deviceTokenCandidate : undefined,
               })
             : null;
+        if (authMethod === "device-token" && (!deviceTokenCandidate || !deviceToken)) {
+          rejectUnauthorized({ ok: false, reason: "device_token_mismatch" });
+          return;
+        }
         const bootstrapDeviceTokens: Array<{
           deviceToken: string;
           role: string;
@@ -1795,6 +1737,14 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
           }
         }
 
+        if (
+          device &&
+          deviceCredentialRevision !==
+            buildRequestContext().getDeviceCredentialRevision?.(device.id, role)
+        ) {
+          rejectUnauthorized({ ok: false, reason: "device_token_mismatch" });
+          return;
+        }
         if (!setClient(nextClient)) {
           setCloseCause("connect-aborted-before-register", {
             ...clientMeta,
@@ -1997,8 +1947,8 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
         // serialized behind the first health snapshot.
         const rawPostConnectDelay =
           process.env.OPENCLAW_DEFER_STARTUP_SIDECARS === "1"
-            ? process.env.OPENCLAW_DEFERRED_POST_CONNECT_HEALTH_DELAY_MS ??
-              process.env.OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS
+            ? (process.env.OPENCLAW_DEFERRED_POST_CONNECT_HEALTH_DELAY_MS ??
+              process.env.OPENCLAW_DEFERRED_SIDECAR_START_DELAY_MS)
             : undefined;
         const parsedPostConnectDelay =
           rawPostConnectDelay !== undefined ? Number(rawPostConnectDelay) : 0;
@@ -2141,7 +2091,9 @@ export function createGatewayWsMessageProcessor(params: GatewayWsMessageHandlerP
           context: buildRequestContext(),
         });
         if (req.method === "chat.send") {
-          console.error(`[gateway.ws.trace] chat.send dispatch returned conn=${connId} id=${req.id}`);
+          console.error(
+            `[gateway.ws.trace] chat.send dispatch returned conn=${connId} id=${req.id}`,
+          );
         }
       })().catch((err: unknown) => {
         logGateway.error(`request handler failed: ${formatForLog(err)}`);

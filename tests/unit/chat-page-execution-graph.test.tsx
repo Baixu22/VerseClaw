@@ -4,6 +4,14 @@ import { MemoryRouter } from 'react-router-dom';
 
 const render = (view: Parameters<typeof renderView>[0]) => renderView(view, { wrapper: MemoryRouter });
 
+function activityToggle() {
+  return screen.queryAllByTestId('chat-tool-activity-toggle')[0] ?? screen.getByTestId('chat-turn-summary-toggle');
+}
+function activityDetails() {
+  return screen.queryByTestId('chat-tool-activity-details') ?? screen.queryByTestId('chat-turn-summary-details');
+}
+
+
 const hostApiFetchMock = vi.fn();
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
@@ -293,7 +301,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+      expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
     });
 
     expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
@@ -312,10 +320,10 @@ describe('Chat execution graph lifecycle', () => {
         ] } } });
     const { Chat } = await import('@/pages/Chat/index');
     render(<Chat />);
-    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    await waitFor(() => expect(activityToggle()).toBeInTheDocument());
     act(() => useChatStore.setState({ messages: [trigger, { role: 'assistant', content: 'Finished reading.' }],
       runtimeRuns: {}, sending: false, activeRunId: null, pendingFinal: false }));
-    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    await waitFor(() => expect(activityToggle()).toBeInTheDocument());
     expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-sending', 'false');
   });
 
@@ -356,7 +364,7 @@ describe('Chat execution graph lifecycle', () => {
     expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '222');
   });
 
-  it('keeps completed long task work visible by default and remembers a manual collapse', async () => {
+  it('starts completed tool groups folded and remembers manual expansion', async () => {
     const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
@@ -406,9 +414,10 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-tool-activity-group')).toBeInTheDocument();
     });
-    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(activityToggle());
     expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
     expect(screen.getAllByText('Workspace summary is ready.').length).toBeGreaterThan(0);
 
@@ -418,12 +427,12 @@ describe('Chat execution graph lifecycle', () => {
     fireEvent.click(stepToggle!);
     expect(screen.getByTestId('chat-execution-step-detail')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
-    expect(screen.queryByTestId('chat-turn-summary-details')).not.toBeInTheDocument();
+    fireEvent.click(activityToggle());
+    expect(activityDetails()).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
-    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+    fireEvent.click(activityToggle());
+    expect(activityDetails()).toBeInTheDocument();
     expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
     expect(screen.getByTestId('chat-execution-step-detail')).toBeInTheDocument();
   });
@@ -466,7 +475,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+      expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
     });
     expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
   });
@@ -606,6 +615,7 @@ describe('Chat execution graph lifecycle', () => {
       expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
     });
     expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.click(activityToggle());
     expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
 
     expect(screen.getAllByTestId('chat-team-orchestration-card').length).toBeGreaterThan(0);
@@ -765,18 +775,18 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
-      expect(screen.getAllByText('read').length).toBeGreaterThan(0);
+      expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
+      expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('/tmp/demo.md');
     });
-    expect(screen.getByTestId('chat-turn-current-activity')).toBeVisible();
+    expect(screen.getByTestId('chat-tool-activity-group')).toHaveAttribute('data-status', 'running');
     expect(screen.getByTestId('mock-streaming-message')).toHaveTextContent('I will read the file first.');
-    expect(screen.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
     expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-streaming-tool-status-bar')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
+    fireEvent.click(activityToggle());
     expect(screen.getByTestId('chat-execution-graph')).toBeVisible();
-    expect(screen.queryByTestId('chat-turn-current-activity')).not.toBeInTheDocument();
-    expect(screen.getAllByTestId('chat-call-chip')).toHaveLength(1);
+    expect(activityToggle().querySelector('[data-testid=ai-element-shimmer]')).toBeNull();
+    expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
   });
 
   it('renders a single compact working status before any stream content arrives', async () => {
@@ -814,7 +824,7 @@ describe('Chat execution graph lifecycle', () => {
     await waitFor(() => {
       expect(screen.getByTestId('chat-turn-summary-card')).toHaveAttribute('data-status', 'running');
     });
-    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+    expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
     expect(screen.queryByTestId('assistant-stream-status')).not.toBeInTheDocument();
   });
@@ -922,8 +932,9 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
+      expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
     });
+    fireEvent.click(activityToggle());
 
     expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('demo.ts');
     expect(screen.getByTestId('chat-mutation-code-diff')).toHaveTextContent('+1 -1');
@@ -1014,7 +1025,8 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-execution-graph')).toBeInTheDocument();
+      expect(screen.getAllByText('404 Resource not found').length).toBeGreaterThan(0);
+      expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
     });
 
     expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
@@ -1071,7 +1083,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'false');
+      expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
     });
 
     expect(screen.queryByTestId('chat-execution-graph')).not.toBeInTheDocument();
@@ -1128,7 +1140,7 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-tool-activity-group')).toBeInTheDocument();
     });
 
     expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
@@ -1302,10 +1314,10 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-turn-summary-card')).toBeInTheDocument();
+      expect(screen.getByTestId('chat-tool-activity-group')).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(activityToggle()).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-typing-indicator')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-activity-indicator')).not.toBeInTheDocument();
@@ -1351,8 +1363,8 @@ describe('Chat execution graph lifecycle', () => {
     render(<Chat />);
 
     await waitFor(() => {
-      expect(screen.getAllByText('browser').length).toBeGreaterThan(0);
-      expect(screen.getByTestId('chat-turn-current-activity')).toBeVisible();
+      expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('browser');
+      expect(screen.getByTestId('chat-tool-activity-group')).toHaveAttribute('data-status', 'running');
     });
     expect(screen.queryByTestId('chat-execution-step-thinking-trailing')).not.toBeInTheDocument();
   });

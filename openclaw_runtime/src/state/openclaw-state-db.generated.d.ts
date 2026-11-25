@@ -37,6 +37,7 @@ export interface AcpSessions {
   last_activity_at: number;
   last_error: string | null;
   mode: string;
+  recovery_json: string | null;
   runtime_options_json: string | null;
   runtime_session_name: string;
   session_id: string | null;

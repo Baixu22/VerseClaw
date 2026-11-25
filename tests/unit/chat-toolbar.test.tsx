@@ -48,12 +48,14 @@ it('keeps migration open after dismissing More, then returns focus without start
 
 it('keeps guarded lifecycle actions in More and supports keyboard dismissal', async () => {
   const checkpoints = vi.fn();
-  render(toolbar({ onCheckpoints: checkpoints, onForkSession: vi.fn(), forkDisabled: true, onHandoffSession: vi.fn(), handoffDisabled: true }));
+  render(toolbar({ onCheckpoints: checkpoints, onForkSession: vi.fn(), forkDisabled: true, forkDisabledReason: 'Wait for this run', onHandoffSession: vi.fn(), handoffDisabled: true, handoffDisabledReason: 'Session identity is loading' }));
   expect(screen.getByTestId('chat-session-checkpoints')).not.toBeVisible();
   fireEvent.click(screen.getByTestId('chat-toolbar-more'));
   await waitFor(() => expect(screen.getByTestId('chat-toolbar-more-menu')).toHaveFocus());
   expect(screen.getByTestId('chat-session-fork')).toBeDisabled();
+  expect(screen.getByTestId('chat-session-fork')).toHaveTextContent('Wait for this run');
   expect(screen.getByTestId('chat-session-handoff')).toBeDisabled();
+  expect(screen.getByTestId('chat-session-handoff')).toHaveTextContent('Session identity is loading');
   fireEvent.keyDown(screen.getByTestId('chat-toolbar-more-menu'), { key: 'ArrowDown' });
   expect(screen.getByTestId('chat-session-checkpoints')).toHaveFocus();
   fireEvent.click(screen.getByTestId('chat-session-checkpoints'));
@@ -69,6 +71,16 @@ it('clears a recovered cache warning even when the session retains its risk hist
   expect(screen.getByTestId('chat-prompt-cache-status')).toBeVisible();
   view.rerender(toolbar({ promptCacheStatus: { ...assessment, status: 'warm' } }));
   expect(screen.queryByTestId('chat-prompt-cache-status')).toBeNull();
+});
+
+it('offers summary handoff before branching and recommends it only under context pressure', () => {
+  const props = { onHandoffSession: vi.fn(), onForkSession: vi.fn() };
+  const view = render(toolbar({ ...props, continuityRecommendation: { action: 'handoff', reason: 'high_pressure', disabled: false } }));
+  const handoff = screen.getByTestId('chat-session-handoff');
+  expect(handoff.compareDocumentPosition(screen.getByTestId('chat-session-fork')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(screen.getByTestId('chat-session-handoff-recommended')).toBeInTheDocument();
+  view.rerender(toolbar({ ...props, continuityRecommendation: { action: 'handoff', reason: 'recovery_checkpoint', disabled: false } }));
+  expect(screen.queryByTestId('chat-session-handoff-recommended')).not.toBeInTheDocument();
 });
 
 it('keeps the environment control reachable while workspace tabs are open', () => {

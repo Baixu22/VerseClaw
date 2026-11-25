@@ -1,0 +1,281 @@
+{
+  "schema": "G3ReviewFixReport/v1",
+  "actor": "codex/g3-bugfix-r42",
+  "driven_by": "agent",
+  "sourceCommit": "4b90116de89a5df6e8730340ddb124be81f407c9",
+  "baselineCommit": "24f0606de91fc2560284860e169a219ef3df9c33",
+  "result": "THREE_REVIEW_BUGS_FIXED",
+  "gaStatus": "NO_GO",
+  "findings": [
+    {
+      "id": "G3-REV-01",
+      "beforeAttempts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "afterAttempts": [
+        1,
+        2,
+        2
+      ],
+      "afterKinds": [
+        "admitted",
+        "admitted",
+        "failed"
+      ]
+    },
+    {
+      "id": "G3-REV-02",
+      "beforeAgentId": null,
+      "afterAgentId": "reviewer"
+    },
+    {
+      "id": "G3-REV-03",
+      "beforeScan": {
+        "recovered": 1,
+        "failed": 0,
+        "skipped": 1
+      },
+      "afterScan": {
+        "recovered": 2,
+        "failed": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "validation": {
+    "relatedRecoveryTests": {
+      "passed": 135,
+      "failed": 0,
+      "files": 9
+    },
+    "finalChangedFileTests": {
+      "passed": 59,
+      "failed": 0,
+      "files": 2,
+      "overlapWithRelatedRecoveryTests": true
+    },
+    "appTypes": {
+      "success": true,
+      "mode": "parallel",
+      "testTypes": {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 15250,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      },
+      "cache": {
+        "enabled": false,
+        "status": "disabled",
+        "key": null,
+        "inputCount": 0,
+        "report": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32\\artifacts\\typecheck-cache\\report.json"
+      },
+      "totalDurationMs": 33585,
+      "coverageNote": "Checks node, web and tests after building VerseBrowser declarations and generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+      "results": [
+        {
+          "commandLine": "node scripts/build-versebrowser.mjs",
+          "exitCode": 0,
+          "durationMs": 6527
+        },
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 66
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 11735
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 8273
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 0,
+          "durationMs": 15250,
+          "observationMode": false,
+          "errorCount": 0,
+          "errorLog": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    },
+    "runtimeTypes": {
+      "name": "final-runtime-types",
+      "command": [
+        "node",
+        "scripts/run-tsgo.mjs",
+        "-p",
+        "D:\\tmp\\g3-bugfix-20261125-r42\\tsconfig.runtime.json"
+      ],
+      "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32\\openclaw_runtime",
+      "exitCode": 0,
+      "durationMs": 19710,
+      "log": "D:\\tmp\\g3-bugfix-20261125-r42\\final-runtime-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runtimeLint": {
+      "exitCode": 0,
+      "maxWarnings": 0,
+      "files": 5,
+      "log": "runtime-lint-r2.log"
+    },
+    "commsReplayExitCode": 0,
+    "commsCompareExitCode": 0,
+    "targetHarness": {
+      "validation": "PASS_WITH_RESIDUAL",
+      "dryRun": "PASS_WITH_RESIDUAL",
+      "since": "24f0606de91fc2560284860e169a219ef3df9c33",
+      "residualPaths": [
+        "AGENTS.md"
+      ]
+    },
+    "ownerProcessProof": {
+      "status": "PASS",
+      "scope": "owner admission kernel, Session SQLite and local journal fixture",
+      "admissions": 2,
+      "duplicateAdmissions": 0,
+      "effectCount": 1,
+      "cleanup": {
+        "activeOwnedChildren": 0
+      }
+    },
+    "fullHarnessCI": {
+      "exitCode": 1,
+      "unitTestsPassed": 59,
+      "unitFiles": 5,
+      "stoppedAt": "agent-dev:audit",
+      "disqualifiers": [
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:workbench",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-workbench/evidence.json is 61.82h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:deep-test",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/report.json is 61.82h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:deep-test-history",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-deep-test/history.json is 61.82h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "evidence-completeness",
+          "id": "evidence-stale:quality",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "artifacts/agent-dev-quality/report.json is 61.82h old, beyond the 24h freshness window.",
+          "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:vitest-agent-dev",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "vitest-agent-dev exceeded hard limit: 89508ms > 21000ms.",
+          "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 67982ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "dimension": "performance-discipline",
+          "id": "performance-limit:contract",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "contract exceeded hard limit: 16971ms > 3000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        }
+      ],
+      "auditSummary": {
+        "pass": 4,
+        "warn": 0,
+        "fail": 2,
+        "disqualifierCount": 8
+      }
+    }
+  },
+  "sourceFiles": [
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+      "sha256": "c4cc9ff7fa934bcfacc5df5cace14610afb54a02fbaaa2b99f5f8a0e48d123cf"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-recovery-state.ts",
+      "sha256": "6935d099989ded5d13b092cbffce6078e01749a32660e230bbb2b8c58b860875"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/types.ts",
+      "sha256": "233a4bc3a05fed106ea9056b8008a0318570a2db731f3a113e6f024fffb353e8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts",
+      "sha256": "c2f2f766d659e2aadccab825c95338655b7ab4c4259d6394bfdf59e9c2201688"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/subagent-orphan-recovery.admission.test.ts",
+      "sha256": "f3422dfa490e7cd27f5e7bf6ba0904c36a42295935adbac3dd170c16075caa8a"
+    }
+  ],
+  "retainedFirstRuns": [
+    {
+      "path": "runtime-types.log",
+      "result": "temporary tsconfig could not resolve node types; corrected typeRoots and final runtime typecheck passed"
+    },
+    {
+      "path": "owner-process-proof/report.json",
+      "result": "source launch could not resolve unbuilt package exports; r2 uses existing Runtime tsconfig through TSX_TSCONFIG_PATH"
+    },
+    {
+      "path": "harness-validate.log",
+      "result": "original diffBase includes earlier branch-wide changes; r2 checks actual bugfix delta from 24f0606de"
+    },
+    {
+      "path": "runtime-lint.log",
+      "result": "one missing sort comparator warning; corrected and strict rerun passed"
+    }
+  ],
+  "pendingFullAcceptance": [
+    "fresh production build",
+    "Electron recovery matrix",
+    "live-provider pairs",
+    "remaining full source/package gates"
+  ],
+  "evidenceArchive": {
+    "path": "evidence.json.gz",
+    "sha256": "bdbb40e25c8b6e3f9c6ad549a2049571ef128fec8fe1511b4ac1d5fa2179df2f",
+    "entries": 46
+  }
+}

@@ -20,7 +20,8 @@ export function ComposerDecisionSurface({ title, description, icon: Icon, count 
   const titleId = useId();
   const { t } = useTranslation('chat');
   return (
-    <div className={cn('codex-composer-host composer-decision-host mx-auto w-full max-w-[768px] px-4 pb-5 pt-2', hero && 'codex-composer-host--hero')}>
+    <div className={cn('codex-composer-host composer-decision-host mx-auto w-full pb-5 pt-2',
+      hero ? 'codex-composer-host--hero max-w-[768px] px-4' : 'chat-conversation-measure')}>
       <section className="codex-composer-shell composer-decision-panel" aria-labelledby={titleId} data-testid={testId} data-decision-kind={kind}
         data-decision-tone={tone ?? (kind === 'runtime-approval' || kind === 'permission' ? 'warning' : 'neutral')}>
         <header className="composer-decision-header">

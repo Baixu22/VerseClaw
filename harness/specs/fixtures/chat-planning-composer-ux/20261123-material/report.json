@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "candidate": "8573ae572aebe9c83aba3a64e858599a8c4da93f",
+  "buildCommit": "5b86fb04f",
+  "driven_by": "agent",
+  "actor": "codex-carbon-material",
+  "unitTests": 184,
+  "electronJourneys": 7,
+  "visualDecision": "Carbon",
+  "mainBuildInstalled": true,
+  "rawRoot": "D:\\tmp\\carbon-chat-material-20261123-01a203cc"
+}

@@ -475,6 +475,10 @@ export async function runAgentAttempt(params: {
   sessionHasHistory?: boolean;
   suppressPromptPersistenceOnRetry?: boolean;
   onUserMessagePersisted?: (message: Extract<AgentMessage, { role: "user" }>) => void;
+  onSessionIdentityChanged?: (identity: {
+    sessionId: string;
+    sessionFile?: string;
+  }) => void | Promise<void>;
 }) {
   const isRawModelRun = params.opts.modelRun === true || params.opts.promptMode === "none";
   const claudeCliFallbackPrelude =
@@ -609,6 +613,8 @@ export async function runAgentAttempt(params: {
       runCliAgent({
         sessionId: params.sessionId,
         sessionKey: params.sessionKey,
+        sessionStorePath: params.opts.sessionEffects === "internal" ? undefined : params.storePath,
+        recoveryAdmission: params.opts.recoveryAdmission,
         sessionEntry: params.sessionEntry,
         agentId: params.sessionAgentId,
         trigger: "user",
@@ -742,6 +748,8 @@ export async function runAgentAttempt(params: {
       chatKnowledgeRefs,
     sessionId: params.sessionId,
     sessionKey: params.sessionKey,
+    recoveryAdmission: params.opts.recoveryAdmission,
+    onSessionIdentityChanged: params.onSessionIdentityChanged,
     agentId: params.sessionAgentId,
     trigger: "user",
     messageChannel: params.messageChannel,
@@ -762,6 +770,7 @@ export async function runAgentAttempt(params: {
     hasRepliedRef: params.runContext.hasRepliedRef,
     senderIsOwner: params.opts.senderIsOwner,
     sessionFile: params.sessionFile,
+    sessionStorePath: params.opts.sessionEffects === "internal" ? undefined : params.storePath,
     workspaceDir: params.workspaceDir,
       workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
     cwd: params.cwd,

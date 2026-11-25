@@ -1,0 +1,33 @@
+<script src="./boot-theme.js"> in "/index.html" can't be bundled without type="module" attribute
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+warn - The class `duration-[280ms]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `duration-&lsqb;280ms&rsqb;` to silence this warning.
+
+warn - The class `ease-[cubic-bezier(0.22,1,0.36,1)]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;` to silence this warning.
+
+<--- Last few GCs --->
+
+[28908:000001B310B38000]    25779 ms: Mark-Compact 1523.0 (1541.0) -> 1515.8 (1541.2) MB, pooled: 0 MB, 522.40 / 0.00 ms  (average mu = 0.255, current mu = 0.153) allocation failure; scavenge might not succeed
+[28908:000001B310B38000]    26238 ms: Mark-Compact 1520.1 (1542.0) -> 1516.5 (1539.7) MB, pooled: 5 MB, 451.84 / 0.00 ms  (average mu = 0.150, current mu = 0.017) allocation failure; scavenge might not succeed
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF778D16536 node::SetAbortHandler+54
+ 2: 00007FF778D16A74 node::OnFatalError+1284
+ 3: 00007FF777902387 v8::Function::NewInstance+423
+ 4: 00007FF777702BC7 v8::HeapStatistics::used_global_handles_size+54423
+ 5: 00007FF7777068D4 v8::HeapStatistics::used_global_handles_size+70052
+ 6: 00007FF77771583C v8::internal::StrongRootAllocatorBase::deallocate_impl+16604
+ 7: 00007FF77771507B v8::internal::StrongRootAllocatorBase::deallocate_impl+14619
+ 8: 00007FF77904922D node::AsyncResource::CallbackScope::CallbackScope+2124493
+ 9: 00007FF777700690 v8::HeapStatistics::used_global_handles_size+44896
+10: 00007FF77771AEEA X509_STORE_set_cleanup+5098
+11: 00007FF777727386 uv_timer_set_repeat+20694
+12: 00007FF7772F9247 v8::CodeEvent::GetFunctionName+131959
+13: 00007FF778EFA2BA node::AsyncResource::CallbackScope::CallbackScope+752474
+14: 000001B329C92E13 

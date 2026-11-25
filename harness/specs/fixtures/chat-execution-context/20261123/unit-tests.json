@@ -1,0 +1,433 @@
+{
+  "candidate": "b3933e15d",
+  "tests": 85,
+  "passed": 85,
+  "failed": 0,
+  "cases": [
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Run-log replay provenance badge renders the translated badge instead of the raw i18n key",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a tool-only assistant turn",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a mixed text + tool_use turn whose text was folded into the graph",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a question the run is blocked on, with no final reply yet",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders one fenced question while the same reply is both streaming and in history",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment still hides a plain tool call that has no card renderer",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface replays an update_plan tool call from history into the turn summary",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface does not also render the plan as a message card",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface omits the execution graph entirely when every row was promoted",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals surfaces a pending host approval in the transcript",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals renders exactly one approval card when a tool call also parses as one",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals surfaces a pending approval even when no turn produced an activity card",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals keeps an undecided approval visible after the next run starts",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals forces the turn summary open while an approval is pending",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning shows reasoning from a message thinking block",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps reasoning on a turn whose narration text was folded away",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning hides reasoning entirely while the process fold is shut",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps thought counts out of the compact header while retaining reasoning details",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning merges reasoning from every message in the run segment into one panel",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps progress text visible when a referenced attachment fails to materialize",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning shows live reasoning from the runtime run while streaming",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Generated file ownership shows a diffable file as a diff only, never also as a chip",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Generated file ownership still chips a file the diff projection cannot render",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn summary contents badges labels contents while collapsed, then shows them when opened",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn summary contents badges keeps a pending approval visible while process details open and close",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn disclosure survives the optimistic→server id swap keeps the turn open after the trigger message id changes",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "live plan display ownership keeps the active plan in the task strip while process details open",
+      "status": "passed"
+    },
+    {
+      "file": "chat-workspace-session-target.test.ts",
+      "name": "resolveWorkspaceSessionTarget inherits the current agent when switching workspace",
+      "status": "passed"
+    },
+    {
+      "file": "chat-workspace-session-target.test.ts",
+      "name": "resolveWorkspaceSessionTarget uses the current agent binding inside the target workspace when present",
+      "status": "passed"
+    },
+    {
+      "file": "chat-workspace-session-target.test.ts",
+      "name": "resolveWorkspaceSessionTarget restores the selected conversation even without an agent binding",
+      "status": "passed"
+    },
+    {
+      "file": "chat-workspace-session-target.test.ts",
+      "name": "resolveWorkspaceHeaderSessions keeps the current conversation and more than twelve searchable entries",
+      "status": "passed"
+    },
+    {
+      "file": "chat-workspace-session-target.test.ts",
+      "name": "resolveWorkspaceHeaderSessions only shows sessions that belong to the active workspace and current agent",
+      "status": "passed"
+    },
+    {
+      "file": "chat-workspace-session-target.test.ts",
+      "name": "resolveWorkspaceHeaderSessions keeps the current session visible while its backend summary is still loading",
+      "status": "passed"
+    },
+    {
+      "file": "chat-workspace-session-target.test.ts",
+      "name": "resolveWorkspaceHeaderSessions names fresh workspace sessions with the new session label format",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip shows branch and change context while keeping branch details behind the menu",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip ignores a late Git response from the previous workspace",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip hides when the active workspace is not a repository",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip stays hidden before work starts and on a clean repository",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip counts a file once when it appears in both staged and unstaged buckets",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip checks out a branch through the host Git API and refreshes context",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip reports blocked branch checkouts and refreshes context afterward",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip creates a branch with checkout enabled",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip blocks duplicate worktree branches and adds valid worktrees",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip switches worktree workspace through the parent callback",
+      "status": "passed"
+    },
+    {
+      "file": "composer-git-strip.test.tsx",
+      "name": "ComposerGitStrip labels worktrees by folder, branch, and short commit",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock shows an initial rejected read and keeps retry in place until the owner responds",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock shows an initial unsuccessful read and keeps retry in place until the owner responds",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock returns to an empty surface when a retry confirms there is no task",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps a late initial failure in its original session",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps a blank conversation free of task controls and performs no task lookup",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock docks beside the composer with a quiet objective and opens steps on demand",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock ignores an old session response and preserves the new task when calls finish out of order",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock refreshes after the matching task tool completes, without reopening a hidden task",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps the last task marked stale when the owner is unavailable and recovers without changing ownership",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock reveals a new task without inheriting the previous task's hidden preference",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock shows the goal once and uses checkpoint facts as steps without inventing a percentage",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock derives progress from known child tasks and retains the parent acceptance state",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles shortens UUIDs like a commit and keeps short owner IDs whole",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles copies the full task ID from its menu without showing IDs in the task strip",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles reports a copy failure instead of claiming success",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles opens the task and each child task in the ledger by their own IDs",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles offers no ID or ledger actions for a run plan that has no durable task",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles supports arrow keys and Escape in the menu, returning focus to its trigger",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime retires an incomplete run plan when its run ends",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime keeps a finished plan active until its run settles, then leaves the transcript record",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime folds a finished durable task to a one-line receipt instead of removing its ID",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales reveals a hidden task when paused and opens its blockers without sending a task command",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales shows current run steps under the durable objective and restores durable steps after the run",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales folds an accepted task once and permits opening the receipt again",
+      "status": "passed"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales reveals a stale status and retry action even when its healthy display was hidden",
+      "status": "passed"
+    },
+    {
+      "file": "session-workspace-picker.test.tsx",
+      "name": "composer execution settings shows real creation stages and can retain the new tree without switching the conversation",
+      "status": "passed"
+    },
+    {
+      "file": "session-workspace-picker.test.tsx",
+      "name": "composer execution settings creates with two clicks and no typed configuration, saving before Git and opening the returned path",
+      "status": "passed"
+    },
+    {
+      "file": "session-workspace-picker.test.tsx",
+      "name": "composer execution settings keeps a failed creation editable without changing the current draft",
+      "status": "passed"
+    },
+    {
+      "file": "session-workspace-picker.test.tsx",
+      "name": "composer execution settings retries opening an already created tree without creating another",
+      "status": "passed"
+    },
+    {
+      "file": "session-workspace-picker.test.tsx",
+      "name": "composer execution settings ignores an old creation after moving to another session and prevents duplicate submits",
+      "status": "passed"
+    },
+    {
+      "file": "session-workspace-picker.test.tsx",
+      "name": "composer execution settings allows inspection during a run while disabling all mutations",
+      "status": "passed"
+    },
+    {
+      "file": "session-workspace-picker.test.tsx",
+      "name": "composer execution settings opens branches directly in the same panel and invokes the existing checkout action",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker names the active workspace on the trigger and keeps the menu closed until asked",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker switches workspace on selection and closes",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker does not re-switch when the active workspace is picked again",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker uses the owning conversation switch handler when supplied",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker shows the workspace path in each shared dropdown row",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker closes on Escape",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker offers the folder picker only when a handler is supplied",
+      "status": "passed"
+    },
+    {
+      "file": "welcome-project-picker.test.tsx",
+      "name": "WelcomeProjectPicker falls back to the folder name when the workspace is unnamed",
+      "status": "passed"
+    }
+  ]
+}

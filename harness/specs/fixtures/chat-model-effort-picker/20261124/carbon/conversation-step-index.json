@@ -1,0 +1,44 @@
+[
+  {
+    "index": 0,
+    "stepType": 14,
+    "status": 3,
+    "payloadBytes": 25080,
+    "imageFilePresent": true,
+    "viewFilePresent": true,
+    "imageMarkers": [],
+    "sha256": "93b6b27fc5b34643f653ef79fc7dbcefba5e073913f8bd9fe794c875dacdfb02"
+  },
+  {
+    "index": 1,
+    "stepType": 15,
+    "status": 3,
+    "payloadBytes": 695,
+    "imageFilePresent": true,
+    "viewFilePresent": false,
+    "imageMarkers": [],
+    "sha256": "871044d50587b3c3d56e4ed7cf722da4a19d6530bda8ef04384f01714888355e"
+  },
+  {
+    "index": 2,
+    "stepType": 132,
+    "status": 3,
+    "payloadBytes": 97586,
+    "imageFilePresent": true,
+    "viewFilePresent": false,
+    "imageMarkers": [
+      "image/png"
+    ],
+    "sha256": "631030265f76e85597b41402f79897505033dd2c0cee0e037bd6e39fccccc3d6"
+  },
+  {
+    "index": 3,
+    "stepType": 15,
+    "status": 3,
+    "payloadBytes": 14135,
+    "imageFilePresent": true,
+    "viewFilePresent": false,
+    "imageMarkers": [],
+    "sha256": "cc967bdc7aab470c108f46fd529b30b703101608301d54e7c88b89349c857e0b"
+  }
+]

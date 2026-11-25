@@ -1,0 +1,61 @@
+{
+  "actor": "codex-output-ui",
+  "driven_by": "agent",
+  "label": "electron-r7",
+  "command": [
+    "pnpm.cmd",
+    "exec",
+    "playwright",
+    "test",
+    "tests/e2e/chat-tool-activity-stream.spec.ts",
+    "--workers=1",
+    "--retries=0",
+    "--reporter=json",
+    "--output=D:/tmp/clawx-tool-progress-20261124/electron-r7"
+  ],
+  "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+  "candidate": {
+    "commit": "22b8e1633b9faad2f66b43fb6876d84c9193c5ee",
+    "tree": "b10d178448fce822bdf65473e755baf5e099b584",
+    "dirty": false
+  },
+  "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+  "timeoutSeconds": 900,
+  "admission": {
+    "freeBytes": 4925403136,
+    "minimumFreeBytes": 2147483648,
+    "heavy": [
+      {
+        "ProcessId": 19356,
+        "ParentProcessId": 20052,
+        "Name": "node.exe",
+        "CreationDate": "/Date(1795501915242)/"
+      }
+    ]
+  },
+  "startedAt": "2026-11-24T06:31:58.985018+00:00",
+  "status": "finished",
+  "resourceLimits": {
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "GOMEMLIMIT": "900MiB",
+    "GOMAXPROCS": "2",
+    "workers": 1
+  },
+  "electronRuntime": {
+    "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+    "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+  },
+  "independentUIAuthorized": true,
+  "driverPid": 13164,
+  "exitCode": 0,
+  "durationSeconds": 38.64,
+  "sourceUnchanged": true,
+  "stdout": {
+    "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7.stdout.log",
+    "sha256": "b9bf90cead1764fb979ecd73e0585110cd32c8653fd78d1ecce9c690d04f2252"
+  },
+  "stderr": {
+    "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r7.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

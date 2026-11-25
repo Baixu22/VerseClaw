@@ -8,6 +8,11 @@ import { updateSessionStoreEntry, type SessionEntry } from "../config/sessions.j
 import type { AgentEventPayload } from "../infra/agent-events.js";
 import { loadSessionEntry } from "./session-utils.js";
 import type { GatewaySessionRow, SessionRunStatus } from "./session-utils.types.js";
+import {
+  getRecoveryAdmissionIdentity,
+  isCurrentRecoverySession,
+  isRecoveryAuthorityEnabled,
+} from "../agents/recovery-authority/owner-admission.js";
 
 type LifecyclePhase = "start" | "end" | "error";
 
@@ -23,6 +28,7 @@ type LifecycleEventLike = Pick<AgentEventPayload, "ts" | "sessionId"> & {
     livenessState?: unknown;
     timeoutPhase?: unknown;
     providerStarted?: unknown;
+    outputBoundaryGuarded?: unknown;
   };
 };
 
@@ -40,6 +46,8 @@ type PersistedLifecycleSessionShape = Pick<
   | "runtimeMs"
   | "abortedLastRun"
   | "lifecycleRunId"
+  | "sessionId"
+  | "recoveryOutput"
 >;
 
 type GatewaySessionLifecycleSnapshot = Partial<LifecycleSessionShape>;
@@ -177,8 +185,29 @@ export function derivePersistedSessionLifecyclePatch(params: {
     session: params.entry ?? undefined,
     event: params.event,
   });
+  const sessionId = params.event.sessionId ?? params.entry?.sessionId;
+  const runId = params.event.runId;
+  const outputStart =
+    resolveLifecyclePhase(params.event) === "start" &&
+    runId &&
+    sessionId &&
+    isRecoveryAuthorityEnabled();
+  const output = outputStart
+    ? params.event.data?.outputBoundaryGuarded === true &&
+      params.entry?.recoveryOutput?.runId === runId
+      ? params.entry.recoveryOutput
+      : {
+          sessionId,
+          runId,
+          effect: "unknown" as const,
+          visibleOutputObserved:
+            params.entry?.recoveryOutput?.runId === runId &&
+            params.entry.recoveryOutput.visibleOutputObserved === true,
+        }
+    : undefined;
   return {
     ...snapshot,
+    ...(output ? { recoveryOutput: output } : {}),
     // Attempt timestamps change on recovery; the actual lifecycle run identifies
     // whether a pending final belongs to this work or to an older user turn.
     ...(resolveLifecyclePhase(params.event) === "start" || params.event.runId
@@ -239,6 +268,34 @@ export async function persistGatewaySessionLifecycleEvent(params: {
       if (isStaleLifecycleEventForSession({ owningSessionId, currentSessionId: entry.sessionId })) {
         return null;
       }
+      const admission = entry.restartRecovery?.authority;
+      if (
+        isRecoveryAuthorityEnabled() &&
+        admission &&
+        params.event.runId &&
+        params.event.runId === admission.idempotencyKey &&
+        admission.decision.entry === "main-session-restart" &&
+        !isCurrentRecoverySession({
+          sessionId: entry.sessionId,
+          requestedSessionId: entry.sessionId,
+          lifecycleRunId: entry.lifecycleRunId,
+          status: entry.status,
+          abortedLastRun: entry.abortedLastRun,
+          runId: params.event.runId,
+          admission,
+          expected: getRecoveryAdmissionIdentity(admission),
+        })
+      )
+        return null;
+      if (
+        isRecoveryAuthorityEnabled() &&
+        entry.status === "running" &&
+        entry.abortedLastRun !== true &&
+        params.event.runId &&
+        entry.lifecycleRunId &&
+        params.event.runId !== entry.lifecycleRunId
+      )
+        return null;
       // Runs share a sessionId. A delayed terminal from a previous run must not
       // finish the current run or clear its restart marker. Start events can
       // transfer ownership, but an older start must not roll it back.

@@ -2,6 +2,7 @@ import { EventEmitter, getEventListeners } from "node:events";
 import { PassThrough } from "node:stream";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { normalizeWorkspaceLeaseKey, withWorkspaceResourceLease, resetResourceLeasesForTest } from "../../resource-leases.js";
+import { closeOpenClawStateDatabaseForTest } from "../../../state/openclaw-state-db.js";
 import { createLocalBashOperations } from "./bash.js";
 import { createFindToolDefinition } from "./find.js";
 import { createGrepToolDefinition } from "./grep.js";
@@ -22,7 +23,7 @@ function child() {
   return Object.assign(new EventEmitter(), { pid: 123, killed: false, stdout: new PassThrough(), stderr: new PassThrough(), kill: vi.fn() });
 }
 beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(100_000); vi.clearAllMocks(); mocks.ensure.mockResolvedValue("tool-fixture"); });
-afterEach(() => { resetResourceLeasesForTest(); vi.useRealTimers(); });
+afterEach(() => { resetResourceLeasesForTest(); closeOpenClawStateDatabaseForTest(); vi.useRealTimers(); });
 async function hold(kind: "workspaceExec" | "workspaceSearch" | "fileMutation", leaseKey = key) {
   const gate = deferred();
   const runs = Array.from({ length: kind === "fileMutation" ? 1 : 2 }, () => withWorkspaceResourceLease(kind, leaseKey, () => gate.promise));
@@ -52,6 +53,7 @@ describe("direct resource wait consumers", () => {
     const isMutation = name === "write" || name === "edit";
     const held = await hold(name === "bash" ? "workspaceExec" : isMutation ? "fileMutation" : "workspaceSearch",
       isMutation ? normalizeWorkspaceLeaseKey("bounded-waiting-fixture.txt") : key);
+    const baselineTimers = vi.getTimerCount();
     const c = new AbortController();
     const operations = { writeFile: vi.fn(), mkdir: vi.fn(), readFile: vi.fn(), access: vi.fn() };
     const ctx = {} as ExtensionContext;
@@ -67,7 +69,7 @@ describe("direct resource wait consumers", () => {
     await held.release();
     expect(mocks.spawn).not.toHaveBeenCalled(); expect(mocks.ensure).not.toHaveBeenCalled();
     expect(operations.writeFile).not.toHaveBeenCalled(); expect(operations.readFile).not.toHaveBeenCalled();
-    expect(vi.getTimerCount()).toBe(0);
+    expect(vi.getTimerCount()).toBe(baselineTimers);
   });
   it("uses remaining bash time and retains the lease until observed child close", async () => {
     const held = await hold("workspaceExec"); const proc = child(); mocks.spawn.mockReturnValue(proc);

@@ -1,3 +1,4 @@
+import { writeFile } from 'node:fs/promises';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
@@ -23,7 +24,7 @@ const WORKSPACE_SNAPSHOT = {
 };
 
 test.describe('Verse Claw combined model and reasoning settings', () => {
-  test('opens the reasoning section in the shared menu, slides to max, and commits max', async ({ launchElectronApp }, testInfo) => {
+  test('previews pointer and keyboard effort changes and commits after release', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -130,7 +131,15 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       });
 
       await installIpcMocks(app, {
-        gatewayStatus: { state: 'running', port: 18789, pid: 12345 },
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        hostApi: {
+          '["agents","list",null]': {
+            success: true,
+            agents: [{ id: 'main', name: 'Main', isDefault: true, modelRef: 'test/model', modelDisplay: 'test/model',
+              mainSessionKey: SESSION_KEY, reasoningEffort: 'high', channelTypes: [], workspace: '~/.openclaw/workspace' }],
+            defaultAgentId: 'main', defaultModelRef: 'test/model', configuredChannelTypes: [], channelOwners: {}, channelAccountOwners: {},
+          },
+        },
         gatewayRpcByMethod: {
           'sessions.list': { success: true, result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] } },
           'chat.history': { success: true, result: { messages: [] } },
@@ -163,9 +172,53 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await expect(slider).toHaveAttribute('min', '0');
       await expect(slider).toHaveAttribute('max', '6');
 
-      // Slide to max (index 6)
-      await slider.fill('6');
-      await slider.dispatchEvent('pointerup');
+      await expect(slider).toHaveAttribute('aria-valuetext', 'High');
+      await slider.evaluate(element => {
+        const trace: unknown[] = [];
+        (window as typeof window & { __effortPointerTrace?: unknown[] }).__effortPointerTrace = trace;
+        for (const type of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'lostpointercapture', 'blur', 'input', 'change']) {
+          element.addEventListener(type, event => {
+            const pointer = event as PointerEvent;
+            const track = element.parentElement!.getBoundingClientRect();
+            trace.push({ type, clientX: pointer.clientX, clientY: pointer.clientY,
+              value: (element as HTMLInputElement).value, focused: document.hasFocus(),
+              captured: pointer.pointerId ? element.hasPointerCapture(pointer.pointerId) : undefined,
+              track: track.toJSON() });
+          });
+        }
+      });
+      await slider.hover();
+      const tooltip = page.getByTestId('chat-agent-effort-tooltip');
+      await expect(tooltip).toHaveAttribute('aria-label', 'High');
+      await expect.poll(() => tooltip.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42)).toBeCloseTo(-36, 0);
+      await expect(page.getByTestId('chat-agent-effort-popover').locator('img')).toHaveCount(0);
+      const bounds = await slider.boundingBox();
+      expect(bounds).not.toBeNull();
+      const y = bounds!.y + bounds!.height / 2;
+      await page.mouse.move(bounds!.x + bounds!.width * 4.5 / 7, y);
+      await page.mouse.down();
+      await page.mouse.move(bounds!.x + bounds!.width * 0.8, y, { steps: 12 });
+      await writeFile(testInfo.outputPath('pointer-geometry.json'), JSON.stringify({
+        driven_by: 'agent', actor: 'codex-model-ui', requestedBounds: bounds,
+        requestedTarget: { x: bounds!.x + bounds!.width * 0.8, y },
+        observed: await page.evaluate(() => ({
+          viewport: { width: innerWidth, height: innerHeight, scale: devicePixelRatio },
+          events: (window as typeof window & { __effortPointerTrace?: unknown[] }).__effortPointerTrace,
+        })),
+      }, null, 2));
+      await expect(slider).toHaveAttribute('aria-valuetext', 'Extra high');
+      await expect(tooltip).toHaveAttribute('aria-label', 'Extra high');
+      expect(await app.evaluate(() => (globalThis as unknown as {
+        __clawxEffortRequests: unknown[];
+      }).__clawxEffortRequests.length)).toBe(0);
+      await page.mouse.move(bounds!.x + bounds!.width, y, { steps: 8 });
+      await expect(tooltip).toHaveAttribute('aria-label', 'Max');
+      await expect.poll(async () => tooltip.evaluate((el) => new DOMMatrixReadOnly(getComputedStyle(el).transform).m42)).toBeCloseTo(-36, 0);
+
+      const previewPath = testInfo.outputPath('effort-text-preview-drag.png');
+      await page.screenshot({ path: previewPath });
+      await testInfo.attach('effort-text-preview-drag', { path: previewPath, contentType: 'image/png' });
+      await page.mouse.up();
 
       // Max is a first-class persisted effort value in the shared agent contract.
       await expect.poll(async () => {
@@ -176,6 +229,9 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
           return requests.at(-1)?.effort;
         });
       }).toBe('max');
+      expect(await app.evaluate(() => (globalThis as unknown as {
+        __clawxEffortRequests: unknown[];
+      }).__clawxEffortRequests.length)).toBe(1);
 
       const effortScreenshotPath = testInfo.outputPath('combined-effort-max.png');
       await page.screenshot({ path: effortScreenshotPath, animations: 'disabled' });
@@ -184,6 +240,14 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
         contentType: 'image/png',
       });
 
+      await page.keyboard.press('Home');
+      await expect(slider).toHaveAttribute('aria-valuetext', 'Auto');
+      await expect(tooltip).toHaveAttribute('aria-label', 'Auto');
+      await page.keyboard.press('End');
+      await expect(slider).toHaveAttribute('aria-valuetext', 'Max');
+      await page.keyboard.press('ArrowLeft');
+      await expect(slider).toHaveAttribute('aria-valuetext', 'Extra high');
+
       // Escape closes the whole shared menu.
       await page.keyboard.press('Escape');
       await expect(page.getByTestId('chat-agent-effort-popover')).toHaveCount(0);
@@ -191,9 +255,11 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await page.getByTestId('chat-model-picker-button').click();
       const settingsMenu = page.getByTestId('chat-model-picker-menu');
       await expect(settingsMenu).toBeVisible();
-      const settingRows = settingsMenu.locator('.codex-execution-settings__row');
-      await expect(settingRows).toHaveCount(1);
+      await expect(settingsMenu.getByTestId('chat-model-settings-card')).toBeVisible();
+      await expect(page.getByTestId('chat-agent-effort-slider')).toBeVisible();
+      await page.getByTestId('chat-model-picker-current').click();
       await expect(page.getByTestId('chat-model-options')).toBeVisible();
+      await expect(page.getByTestId('chat-agent-effort-slider')).toBeHidden();
       const screenshotPath = testInfo.outputPath('combined-model-effort-menu.png');
       await page.screenshot({ path: screenshotPath, animations: 'disabled' });
       await testInfo.attach('combined-model-effort-menu', {
@@ -205,7 +271,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
     }
   });
 
-  test('keeps the reasoning slider inside the shared dropdown surface', async ({ launchElectronApp }) => {
+  test('keeps the text preview inside light, dark and narrow dropdowns', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -326,10 +392,10 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
           const style = getComputedStyle(track);
           return {
             background: getComputedStyle(surface).backgroundColor,
-            borderRadius: style.borderRadius,
             clipPath: style.clipPath,
             height: style.height,
-            thumbSize: style.getPropertyValue('--effort-thumb-size').trim(),
+            thumbWidth: getComputedStyle(document.querySelector('[data-testid="chat-agent-effort-thumb"]')!).width,
+            thumbHeight: getComputedStyle(document.querySelector('[data-testid="chat-agent-effort-thumb"]')!).height,
           };
         };
         const light = readTheme('light');
@@ -342,8 +408,8 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       expect(trackMetrics.light.background).not.toBe(trackMetrics.dark.background);
       expect(trackMetrics.light.background).not.toMatch(/rgb\((?:0|12), (?:0|12), (?:0|12)\)/);
       expect(trackMetrics.dark.background).not.toMatch(/rgb\((?:0|12), (?:0|12), (?:0|12)\)/);
-      expect(trackMetrics.light).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '28px', thumbSize: '24px' });
-      expect(trackMetrics.dark).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '28px', thumbSize: '24px' });
+      expect(trackMetrics.light).toMatchObject({ clipPath: 'none', height: '32px', thumbWidth: '12px', thumbHeight: '20px' });
+      expect(trackMetrics.dark).toMatchObject({ clipPath: 'none', height: '32px', thumbWidth: '12px', thumbHeight: '20px' });
 
       const card = popover.locator('.effort-card');
       await expect(card).toHaveClass(/effort-card--inline/);
@@ -351,6 +417,39 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
         return window.getComputedStyle(el).boxShadow;
       });
       expect(boxShadow).toBe('none');
+
+      for (const variant of [
+        { name: 'light', theme: 'light', width: 1280, height: 800, reduced: false },
+        { name: 'dark', theme: 'dark', width: 1280, height: 800, reduced: false },
+        { name: 'narrow-dark', theme: 'dark', width: 760, height: 560, reduced: false },
+        { name: 'narrow-reduced', theme: 'light', width: 760, height: 560, reduced: true },
+      ] as const) {
+        await app.evaluate(({ BrowserWindow }, size) => {
+          const win = BrowserWindow.getAllWindows()[0];
+          win?.setMinimumSize(640, 480);
+          win?.setSize(size.width, size.height);
+        }, variant);
+        await page.evaluate((theme) => {
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(theme);
+        }, variant.theme);
+        await page.emulateMedia({ reducedMotion: variant.reduced ? 'reduce' : 'no-preference' });
+        await slider.hover();
+        const tooltip = page.getByTestId('chat-agent-effort-tooltip');
+        await expect(tooltip).toBeVisible();
+        await expect(tooltip).toBeInViewport();
+        await expect(slider).toBeInViewport();
+        const previewBounds = await tooltip.boundingBox();
+        const surfaceBounds = await surface.boundingBox();
+        expect(previewBounds!.x).toBeGreaterThanOrEqual(surfaceBounds!.x);
+        expect(previewBounds!.x + previewBounds!.width).toBeLessThanOrEqual(surfaceBounds!.x + surfaceBounds!.width);
+        if (variant.reduced) {
+          expect(await page.getByTestId('chat-agent-effort-track-shiver').evaluate((el) => getComputedStyle(el).filter)).toBe('none');
+        }
+        const path = testInfo.outputPath(`effort-preview-${variant.name}.png`);
+        await page.screenshot({ path, animations: 'disabled' });
+        await testInfo.attach(`effort-preview-${variant.name}`, { path, contentType: 'image/png' });
+      }
     } finally {
       await closeElectronApp(app);
     }

@@ -1,8 +1,8 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { join, resolve } from 'node:path';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   createVerseGitCleanupBarrier,
   cleanupInventoryFromResources,
@@ -193,6 +193,8 @@ function makeEntry(input: { runId: string; worktreeId: string; attachmentsDir?: 
 }
 
 afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
   __resetWorktreeRegistry();
   clearVerseGitRuntimeBindingsForTest();
   if (originalCleanupRoot === undefined) delete process.env.CLAWX_VERSGIT_CLEANUP_ROOT;
@@ -203,6 +205,29 @@ afterEach(() => {
 });
 
 describe('VerseGit cleanup barrier protocol', () => {
+  it('preserves the sealed record when replacement fails and resumes after reopening', () => {
+    const root = makeRoot('versegit-replace-');
+    const output = execFileSync(process.execPath, [resolve('node_modules/tsx/dist/cli.mjs'),
+      resolve('tests/fixtures/versegit-receipt-replacement.mts'), 'cleanup', root], { encoding: 'utf8', windowsHide: true, timeout: 15_000 });
+    expect(JSON.parse(output)).toMatchObject({ mode: 'cleanup', preserved: true, retried: true });
+  });
+
+  it('rechecks transient drain and reference failures while retaining immutable identity', () => {
+    const root = makeRoot('versegit-retry-');
+    const input = sealInput();
+    const barrier = createVerseGitCleanupBarrier(root);
+    const rejected = barrier.seal({ ...input, references: ['delivery:pending'], drain: { ok: false, issues: ['processes_still_running'] } });
+    expect(rejected.ok).toBe(false);
+    expect(barrier.seal({ ...input, current: identity({ epoch: 9 }) }).ok).toBe(false);
+    const other = sealInput({ runId: 'transient-only' });
+    const pending = barrier.seal({ ...other, references: ['delivery:pending'], drain: { ok: false, issues: ['processes_still_running'] } });
+    expect(barrier.seal({ ...other, references: ['delivery:pending'] }).ok).toBe(false);
+    const resumed = createVerseGitCleanupBarrier(root).seal(other);
+    expect(resumed).toMatchObject({ ok: true, sealId: pending.sealId, record: { status: 'sealed', references: [] } });
+    expect(barrier.seal({ ...other, resources: [] })).toMatchObject({ ok: false, issues: ['cleanup_seal_conflict'] });
+    expect(barrier.seal({ ...other, drain: { ok: false, issues: ['processes_still_running'] } }).ok).toBe(false);
+  });
+
   it('seals, detaches, completes and rejects every identity drift before deletion', () => {
     const root = makeRoot('versegit-f2-barrier-');
     const driftCases: Array<[string, VerseGitCleanupIdentity]> = [
@@ -275,6 +300,48 @@ describe('VerseGit cleanup barrier protocol', () => {
 });
 
 describe('production cleanup caller', () => {
+  it.each(['stop', 'delivery', 'restart'] as const)('resumes cleanup after a transient %s failure without replaying completed deletion', async (failure) => {
+    const baseRoot = initRepo();
+    const cleanupRoot = join(makeRoot('versegit-retry-owner-'), 'records');
+    process.env.CLAWX_VERSGIT_CLEANUP_ROOT = cleanupRoot;
+    const runId = `retry-${failure}`;
+    const binding = makeBinding({ runId, worktreePath: join(baseRoot, 'absent'), ...bindingIdentityFor(baseRoot) });
+    registerVerseGitRuntimeBinding(runId, binding, fakePort());
+    const attachmentsDir = join(baseRoot, '.openclaw/attachments');
+    mkdirSync(attachmentsDir, { recursive: true });
+    writeFileSync(join(attachmentsDir, 'evidence.txt'), 'retained until drain');
+    const entry = makeEntry({ runId, worktreeId: runId, attachmentsDir });
+    if (failure === 'delivery') entry.delivery = { status: 'pending' };
+    const stop = vi.fn(async () => {});
+    if (failure !== 'delivery') stop.mockRejectedValueOnce(new Error('transient stop timeout'));
+    const deleted = vi.fn(async () => {});
+    const invoke = () => runSubagentVerseGitCleanup({ runId, entry, cleanup: 'delete', sessionPresent: true,
+      bindingEndReason: 'completed', actions: { stopSession: stop, deleteSession: deleted,
+        deleteAttachments: async () => { rmSync(attachmentsDir, { recursive: true, force: true }); }, cleanupWorktree: () => {} } });
+    const first = await invoke();
+    expect(first.ok).toBe(false);
+    expect(deleted).not.toHaveBeenCalled();
+    expect(existsSync(attachmentsDir)).toBe(true);
+    entry.delivery = { status: 'delivered' };
+    if (failure === 'restart') {
+      clearVerseGitRuntimeBindingsForTest();
+      entry.orchestration!.verseGitCleanup = { ...binding };
+      vi.stubEnv('CLAWX_VERSGIT_BINDING_ENABLED', '1');
+      vi.stubEnv('CLAWX_VERSGIT_RUNTIME_BINDING_URL', 'http://127.0.0.1:1');
+      vi.stubEnv('CLAWX_VERSGIT_BINDING_TOKEN', 'fixture-token');
+      vi.stubEnv('CLAWX_VERSGIT_OWNER_ID', binding.ownerId);
+      vi.stubEnv('CLAWX_VERSGIT_EPOCH', String(binding.epoch));
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ ok: true,
+        data: { bindingId: binding.bindingId, endedAt: new Date().toISOString(), reason: 'completed' } })));
+    }
+    const second = await invoke();
+    expect(second).toMatchObject({ ok: true, record: { status: 'deleted', sealId: first.record?.sealId } });
+    expect(deleted).toHaveBeenCalledTimes(1);
+    expect(existsSync(attachmentsDir)).toBe(false);
+    expect((await invoke()).ok).toBe(true);
+    expect(deleted).toHaveBeenCalledTimes(1);
+  });
+
   it.each([
     ['normal', 'completed'],
     ['failure', 'failed'],
@@ -289,12 +356,16 @@ describe('production cleanup caller', () => {
     const runId = `run-${_case}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const record = service.create(runId, { writeSet: ['owned.txt'] });
     writeFileSync(join(record.root, 'owned.txt'), 'agent change\n', 'utf8');
+    git(record.root, ['add', 'owned.txt']);
+    git(record.root, ['commit', '-m', 'retain completed worker result']);
+    git(record.root, ['branch', `retained-${_case}`]);
+    git(record.root, ['checkout', '--detach', record.baseOid!]);
     const attachmentsDir = join(baseRoot, `.openclaw/${runId}-attachments`);
     const transcriptFile = join(baseRoot, `.openclaw/${runId}-transcript.jsonl`);
     mkdirSync(attachmentsDir, { recursive: true });
     writeFileSync(join(attachmentsDir, 'a.txt'), 'attachment\n', 'utf8');
     writeFileSync(transcriptFile, 'transcript\n', 'utf8');
-    const repo = bindingIdentityFor(baseRoot);
+    const repo = bindingIdentityFor(record.root);
     const binding = makeBinding({ runId, worktreePath: record.root, ...repo });
     const port = fakePort();
     registerVerseGitRuntimeBinding(runId, binding, port);
@@ -314,7 +385,7 @@ describe('production cleanup caller', () => {
         cleanupWorktree: (authorization) => { service.cleanup(runId, authorization ? { authorization } : undefined); },
       },
     });
-    expect(result.ok).toBe(true);
+    expect(result.ok, result.issues.join(',')).toBe(true);
     expect(result.record?.status).toBe('deleted');
     expect(result.record?.inventoryAfter).toMatchObject({ observed: true, processes: 0, managers: 0, worktrees: 0, tempRoots: 0 });
     expect(managerPresent).toBe(false);
@@ -322,7 +393,26 @@ describe('production cleanup caller', () => {
     expect(existsSync(attachmentsDir)).toBe(false);
     expect(existsSync(transcriptFile)).toBe(false);
     expect(existsSync(baseRoot)).toBe(true);
+    expect(git(baseRoot, ['show', `retained-${_case}:owned.txt`])).toBe('agent change');
     expect(port.ended).toEqual([bindingReason]);
+  });
+
+  it('retains uncommitted worker content during cleanup', async () => {
+    const baseRoot = initRepo();
+    process.env.CLAWX_VERSGIT_CLEANUP_ROOT = join(makeRoot('versegit-uncommitted-'), 'records');
+    const service = createWorktreeService(baseRoot, { backend: 'git' });
+    const record = service.create('uncommitted', { writeSet: ['owned.txt'] });
+    writeFileSync(join(record.root, 'owned.txt'), 'uncommitted result\n');
+    registerVerseGitRuntimeBinding('uncommitted', makeBinding({ runId: 'uncommitted', worktreePath: record.root,
+      ...bindingIdentityFor(record.root) }), fakePort());
+    const result = await runSubagentVerseGitCleanup({ runId: 'uncommitted',
+      entry: makeEntry({ runId: 'uncommitted', worktreeId: record.id }), cleanup: 'delete', sessionPresent: false,
+      bindingEndReason: 'completed', actions: { cleanupWorktree: authorization => service.cleanup(record.id,
+        { expectedGeneration: record.generation, ...(authorization ? { authorization } : {}) }) } });
+    expect(result.ok).toBe(false);
+    expect(result.issues.join(',')).toContain('worktree_cleanup_user_content_present');
+    expect(existsSync(record.root)).toBe(true);
+    expect(git(record.root, ['diff', '--', 'owned.txt'])).toContain('uncommitted result');
   });
 
   it('preserves user changes outside the agent write set and reports recovery_required', async () => {

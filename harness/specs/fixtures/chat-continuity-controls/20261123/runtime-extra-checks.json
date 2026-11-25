@@ -1,0 +1,189 @@
+{
+  "status": "blocked-before-model-call",
+  "driven_by": "agent",
+  "dataSource": "Real local Runtime and scripted local provider",
+  "receipts": [
+    {
+      "runId": "U3_PROSE_ONLY",
+      "status": "error",
+      "endedAt": 1795441397159,
+      "error": "Error: EPERM: operation not permitted, open 'D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-runtime-diagnosis-r1\\session-fork-intent-U3-pla-32849-ncellation-creates-no-child\\workspace\\AGENTS.md'"
+    },
+    {
+      "runId": "U3_FIRST_QUESTION",
+      "status": "error",
+      "endedAt": 1795441378476,
+      "error": "Error: EPERM: operation not permitted, open 'D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-runtime-diagnosis-r1\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\workspace\\AGENTS.md'"
+    }
+  ],
+  "providerRequestCounts": [
+    0,
+    0
+  ],
+  "originalCases": [
+    {
+      "title": "U3 rejects question Fork without an assistant ancestor and disables missing-entry projections",
+      "file": "session-fork-intent.spec.ts",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 120627,
+          "errors": [
+            {
+              "location": {
+                "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                "column": 3,
+                "line": 32
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate\n\n  30 |   if (!sent.success || !sent.result?.runId) throw new Error('U3 turn not acknowledged: ' + JSON.stringify(sent));\n  31 |   let receipt: unknown;\n> 32 |   await expect.poll(async () => {\n     |   ^\n  33 |     const read = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });\n  34 |     receipt = read; return read.status;\n  35 |   }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe('ok');\n    at modelTurn (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:32:3)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:112:26"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "U3 plain model advice needs explicit Handoff preview and cancellation creates no child",
+      "file": "session-fork-intent.spec.ts",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 108210,
+          "errors": [
+            {
+              "location": {
+                "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts",
+                "column": 3,
+                "line": 32
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"ok\"\u001b[39m\nReceived: \u001b[31m\"error\"\u001b[39m\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate\n\n  30 |   if (!sent.success || !sent.result?.runId) throw new Error('U3 turn not acknowledged: ' + JSON.stringify(sent));\n  31 |   let receipt: unknown;\n> 32 |   await expect.poll(async () => {\n     |   ^\n  33 |     const read = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });\n  34 |     receipt = read; return read.status;\n  35 |   }, { timeout: 90_000, intervals: [250, 500, 1000] }).toBe('ok');\n    at modelTurn (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:32:3)\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\session-fork-intent.spec.ts:224:21"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diagnosisCommand": {
+    "actor": "codex-chat-ux",
+    "driven_by": "agent",
+    "command": [
+      "pnpm.cmd",
+      "exec",
+      "playwright",
+      "test",
+      "tests/e2e/session-fork-intent.spec.ts",
+      "--workers=1",
+      "--retries=0",
+      "--reporter=json",
+      "--output=D:/tmp/carbon-continuity-ux-20261123-01a203cc/e2e-runtime-diagnosis-r1"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "startedAt": "2026-11-23T13:42:36.209844+00:00",
+    "durationSeconds": 43.613,
+    "exitCode": 1,
+    "stdout": {
+      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-runtime-diagnosis-r1.stdout.log",
+      "sha256": "0f863144b3f9a3342ef512af2de3910b2c357614df302823c85532f61b87d873"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\e2e-runtime-diagnosis-r1.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "cleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-VRttl8",
+    "ledgerEntries": 10,
+    "checks": [
+      {
+        "pid": 32332,
+        "creationTime": 1795441358705,
+        "status": "exited"
+      },
+      {
+        "pid": 45864,
+        "creationTime": 1795441363433,
+        "status": "exited"
+      },
+      {
+        "pid": 42740,
+        "creationTime": 1795441363740,
+        "status": "exited"
+      },
+      {
+        "pid": 8924,
+        "creationTime": 1795441381222,
+        "status": "exited"
+      },
+      {
+        "pid": 8276,
+        "creationTime": 1795441385123,
+        "status": "exited"
+      },
+      {
+        "pid": 33900,
+        "creationTime": 1795441385252,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 32332,
+          "creationTime": 1795441358705,
+          "status": "exited"
+        },
+        {
+          "pid": 45864,
+          "creationTime": 1795441363433,
+          "status": "exited"
+        },
+        {
+          "pid": 42740,
+          "creationTime": 1795441363740,
+          "status": "exited"
+        },
+        {
+          "pid": 8924,
+          "creationTime": 1795441381222,
+          "status": "exited"
+        },
+        {
+          "pid": 8276,
+          "creationTime": 1795441385123,
+          "status": "exited"
+        },
+        {
+          "pid": 33900,
+          "creationTime": 1795441385252,
+          "status": "exited"
+        }
+      ]
+    ],
+    "owned": [],
+    "remaining": [],
+    "survivors": [],
+    "detectedPendingLaunches": 0,
+    "pendingLaunches": 0,
+    "status": "passed"
+  },
+  "sourceGuard": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "69939a7646e82ee56451d9712b58efe0f43eb0e68b72351f56c0ce87bb73aa78",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "69939a7646e82ee56451d9712b58efe0f43eb0e68b72351f56c0ce87bb73aa78",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

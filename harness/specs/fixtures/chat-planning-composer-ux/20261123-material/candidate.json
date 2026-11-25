@@ -1,0 +1,124 @@
+{
+  "commit": "8573ae572aebe9c83aba3a64e858599a8c4da93f",
+  "baseCommit": "d3e95fd54",
+  "driven_by": "agent",
+  "dirty": false,
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "944c28a27bc9a0d4c47064aa95cc0738ce5ef329",
+      "sha256": "9fb7b296d0b33d975413f875448a024b083d47d27cb06faa83d1429ff48e9b43"
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "0fa7c15fda4c530ac2fa17582069ee13c0ceb3b0",
+      "sha256": "2389a73245ded7bb97e7c8e19a1c9a1f39068241328e55117991836826bef853"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "f1c65bcc363dcf0d35e17f1a76c0d010dfed4581",
+      "sha256": "84daf0fb013c31966b7fc1217a86100a467cc3a5446ead52c53e4431ea3a27f3"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "gitBlob": "19ce0805bbf3a3cae7cb8b74aa20db06dd257949",
+      "sha256": "90639457670ec48586a241bd401e49f51611c25fdb8c53dc602318c59b2294b9"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "gitBlob": "8c618a3ae4abc74049eb26dafbbb12bb0691a843",
+      "sha256": "428145797370d24f3e19bbb187c567367e5b017f1ea03230d6fbcc6d5df74878"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "gitBlob": "f24f0b92161fdf3493b5f8ed4d98131cd2f0d220",
+      "sha256": "f9ff5aea5f33bc50e29590053d8040e0553783dd15cd75fe33207ce5611ade07"
+    },
+    {
+      "path": "harness/specs/tasks/chat-planning-composer-ux-20261123.md",
+      "gitBlob": "106cfb3f623843e095bbb136de1d66c200f6e04a",
+      "sha256": "42b74c5cfb9da53b29fc6c4be09efaf652c7c2d8abe7b37a527b85fa5f445092"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "gitBlob": "62988cc99bbd4375f3a9946990e9cd8a46bd6c94",
+      "sha256": "d4b81667fab0b331762e9ea21176f0982aa8748c0a9bed536e11f363fa09597c"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "gitBlob": "b5d83a2235b5278d96049594ff639f8fbd8cbd60",
+      "sha256": "7a5cca9a499259c566b34bfb1a0a2f58804520b233eeb9a496eaeae51fd84f88"
+    },
+    {
+      "path": "src/pages/Chat/SessionTaskDock.tsx",
+      "gitBlob": "60c4de09723ba1db02d0f30ecbd9cecd7d3e1ee5",
+      "sha256": "4525f1304556e8e5815cfc8d68cccb692f4d662cf1aa56e8361f7d027afa900b"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "gitBlob": "3a71234b05b206df27f85cad435b097f14a8439c",
+      "sha256": "33d407596fc2f0ce5cd3e0225abfd882afa7673971276d5481e48dfeee46fc0b"
+    },
+    {
+      "path": "src/styles/codex-composer-material.css",
+      "gitBlob": "60b160f0954322561a1cac5d423c739defb61332",
+      "sha256": "b69483b212ecc36a13ae1535e5f132335842aa8f414732b467fd116f5ae69ae8"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "gitBlob": "3609ed336a0cc0e3cdc5875acf6d05b3ba71897d",
+      "sha256": "c6664309a0368a68e4d1b17573d7faa06cd83ea097e97c0af86969f3d7e1f239"
+    },
+    {
+      "path": "src/styles/codex-tokens.css",
+      "gitBlob": "f22e429a7be5e75b6eb35a2b98f5dda044579ea9",
+      "sha256": "20daa35959bfeac6d7ca536172a1fae4a84aec8cdb4bcc46ab801121c1151123"
+    },
+    {
+      "path": "tests/e2e/beam-composer-verify.spec.ts",
+      "gitBlob": "f104414754b20a79e45c842ce76b8b635043da4d",
+      "sha256": "bd93eb22f9b96a8ba438d4ff006f48d32be2e6033e2dd22ab871bd6597c300b1"
+    },
+    {
+      "path": "tests/e2e/chat-layout-cdp.spec.ts",
+      "gitBlob": "0f35ee8d4a7a021f7040a96195796c8306447273",
+      "sha256": "6aa6646afc190819d319a5c8cb10e3041ce4f1de9ed8c7be9bedca76a0a6e32f"
+    },
+    {
+      "path": "tests/e2e/chat-planning-composer-ux.spec.ts",
+      "gitBlob": "deb50f86936631c86c53849ce636d4fb871c1134",
+      "sha256": "632dc31ad50780b01501c5f639623825ef74fb200308b6efc5ae63c222a5469b"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "gitBlob": "ab8231aab78dec7ed953b151148a612ed2e8eb9a",
+      "sha256": "05e29e9a9ec45e78854ec1a0aa4a359b9b6f059c2934ebfbb38faa6383deea88"
+    },
+    {
+      "path": "tests/unit/chat-render-reachability.test.tsx",
+      "gitBlob": "01c35859933465824f212623ed5d2127b87a4cc1",
+      "sha256": "f85cc6e608cfbe33f8b77c3ba37fe819b341c2bbc0657695908e380e68fdbc64"
+    },
+    {
+      "path": "tests/unit/session-task-dock.test.tsx",
+      "gitBlob": "38229894b2843384eb1dd84d2d5a9dff694512ce",
+      "sha256": "c89a40cbbf6e2462457367afe60976f74a7d32fc52c582ccdae8ca9ca15e4cfa"
+    }
+  ],
+  "buildCommit": "5b86fb04f",
+  "productionSourcesMatchBuild": true,
+  "buildOutputs": [
+    {
+      "path": "dist/index.html",
+      "sha256": "8962c2352132121f6f5cf75348d1850034262c64eb7d27b0fd8df4694a2b3d44"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "98a16bc204c7245f95b521188f3a9d45060f44e33a5c371c0c424b03cb76ee09"
+    },
+    {
+      "path": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ]
+}

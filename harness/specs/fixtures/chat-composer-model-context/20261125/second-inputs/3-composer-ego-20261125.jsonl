@@ -1,0 +1,1 @@
+{"type":"message","timestamp":"2026-11-25T06:39:11.654Z","message":{"role":"assistant","content":[{"type":"text","text":"Context sources inspected."}],"usage":{"input":2700,"output":250,"cacheRead":1300,"cacheWrite":100,"total":4350}}}

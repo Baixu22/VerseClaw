@@ -6,6 +6,7 @@ import { ComposerDecisionSurface } from '@/components/chat/ComposerDecisionSurfa
 import { useCopyToClipboard } from '@/components/tool-ui/shared/use-copy-to-clipboard';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { cn } from '@/lib/utils';
 import type { RuntimeApprovalRequestedEvent } from '@shared/host-events/contract';
 
 /**
@@ -45,10 +46,12 @@ export function RuntimeApprovalPrompt({
   children,
   requestContent,
   requestPending = false,
+  leadingContent,
 }: {
   sessionKey: string;
   agentId?: string;
   hero?: boolean;
+  leadingContent?: ReactNode;
   children?: ReactNode;
   requestContent?: ReactNode;
   requestPending?: boolean;
@@ -151,6 +154,8 @@ export function RuntimeApprovalPrompt({
 
   return (
     <div className="relative shrink-0" data-testid="chat-composer-slot" data-composer-decision-active={Boolean(request) || requestPending}>
+      {leadingContent && <div className={cn('codex-composer-host mx-auto w-full pt-2',
+        hero ? 'max-w-[768px] px-4' : 'chat-conversation-measure')}>{leadingContent}</div>}
       <div ref={requestRef} hidden={Boolean(request)} inert={Boolean(request)}>{requestContent}</div>
       <div ref={inputRef} hidden={Boolean(request) || requestPending} inert={Boolean(request) || requestPending}>
         {children}

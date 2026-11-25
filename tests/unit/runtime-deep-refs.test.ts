@@ -80,6 +80,28 @@ describe('runtime deep reference guard (#93)', () => {
     expect(kinds).toContain('package-script:openclaw_runtime/scripts/inspect.mjs');
   });
 
+  it('resolves module-relative URL references and still rejects removed targets', () => {
+    const { root, write } = fixtureRepo();
+    write('scripts/probe.mjs', [
+      "const good = new URL('../openclaw_runtime/src/state/openclaw-state-db.ts', import.meta.url);",
+      "const gone = new URL('../openclaw_runtime/src/missing.ts', import.meta.url);",
+      "const otherBase = new URL('../openclaw_runtime/src/state/openclaw-state-db.ts', baseUrl);",
+      "const cwdPath = '../openclaw_runtime/src/state/openclaw-state-db.ts';",
+    ].join('\n'));
+    const files = ['scripts/probe.mjs'];
+    const refs = collectReferences(root, files).filter((entry) => entry.file === files[0]);
+    expect(refs).toHaveLength(4);
+    expect(refs[0]).toMatchObject({ kind: 'import', target: 'openclaw_runtime/src/state/openclaw-state-db.ts', line: 1 });
+    expect(refs[1]).toMatchObject({ kind: 'import', target: 'openclaw_runtime/src/missing.ts', line: 2 });
+    expect(refs[2]).toMatchObject({ kind: 'string', target: '../openclaw_runtime/src/state/openclaw-state-db.ts' });
+    expect(refs[3]).toMatchObject({ kind: 'string', target: '../openclaw_runtime/src/state/openclaw-state-db.ts' });
+    const report = checkRuntimeDeepRefs({ root, baseline: { entries: [] }, files });
+    expect(report.ok).toBe(false);
+    expect(report.dangling.map((entry) => entry.line)).toEqual([2, 3, 4]);
+    write('scripts/probe.mjs', "const good = new URL('../openclaw_runtime/src/state/openclaw-state-db.ts', import.meta.url);");
+    expect(checkRuntimeDeepRefs({ root, baseline: { entries: [] }, files }).ok).toBe(true);
+  });
+
   it('fails closed on a dangling reference and passes when it is exempted with a reason', () => {
     const { root, write } = fixtureRepo();
     write('electron/services/stale.ts', "import { gone } from '../../openclaw_runtime/src/removed-module';\n");

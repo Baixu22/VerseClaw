@@ -1,0 +1,86 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "journeys": 11,
+  "stats": {
+    "startTime": "2026-11-24T08:29:18.707Z",
+    "duration": 123641.707,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "identifies a linked worktree in the composer and session status (light)",
+      "status": "expected",
+      "durationMs": 15338
+    },
+    {
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "identifies a linked worktree in the composer and session status (dark)",
+      "status": "expected",
+      "durationMs": 8902
+    },
+    {
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "renders runtime approval inline with the composer and Git strip",
+      "status": "expected",
+      "durationMs": 8797
+    },
+    {
+      "file": "chat-composer-git-strip.spec.ts",
+      "title": "aligns the review summary and preserves the draft when opening repository changes",
+      "status": "expected",
+      "durationMs": 9174
+    },
+    {
+      "file": "chat-tool-activity-stream.spec.ts",
+      "title": "keeps operation groups in conversation order with shared width, accessible details and four locales",
+      "status": "expected",
+      "durationMs": 25170
+    },
+    {
+      "file": "chat-tool-activity-stream.spec.ts",
+      "title": "shows the current white shimmer once, preserves folding and settles runtime command output",
+      "status": "expected",
+      "durationMs": 9374
+    },
+    {
+      "file": "chat-tool-ui-execution-surfaces.spec.ts",
+      "title": "renders official execution surfaces in light, dark, and narrow layouts",
+      "status": "expected",
+      "durationMs": 11164
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "keeps live activity compact, animated and readable without assistant avatars",
+      "status": "expected",
+      "durationMs": 9402
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "keeps interleaved command output in the execution order with separate tool inputs and results",
+      "status": "expected",
+      "durationMs": 8612
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "collapses completed long task process and expands details on demand",
+      "status": "expected",
+      "durationMs": 7957
+    },
+    {
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "title": "leaves short conversations unwrapped",
+      "status": "expected",
+      "durationMs": 6969
+    }
+  ],
+  "raw": {
+    "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4.stdout.log",
+    "bytes": 17858,
+    "sha256": "52c8bbc9bffe8798482ce031a1e77bee0ed3b089e43c95b8d077a279bd143fa8"
+  }
+}

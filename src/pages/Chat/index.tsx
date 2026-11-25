@@ -120,6 +120,8 @@ import { AssistantErrorCard, SelectionQuoteToolbar } from '@/components/assistan
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { CodingRunEvidence } from '@/components/assistant-render/CodingRunEvidence';
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
+import { ToolActivityGroup } from '@/components/assistant-render/ToolActivityGroup';
+import { attachToolActivityArtifacts, buildToolActivityGroups, type ToolActivityGroupModel } from './tool-activity-groups';
 import { extractAssistantReasoning, type AssistantReasoning } from '@/components/assistant-render/model';
 import { ComposerRequestDock } from './ComposerRequestDock';
 import { collectComposerInteractions } from './composer-interactions';
@@ -128,9 +130,8 @@ import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileDiff, projectRunProcesses, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
 import { useRunApprovals } from './use-run-approvals';
-import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
-import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
+import { WorktreeCreationProgress, type WorktreeCreationProgressState } from '@/components/chat/WorktreeCreationProgress';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -182,6 +183,7 @@ type ChatMessageRenderRow = {
   suppressReasoning: boolean;
   textOverride?: string;
   runCards: UserRunCard[];
+  toolGroups: ToolActivityGroupModel[];
 };
 
 type KnowledgeAdvisorySource = {
@@ -384,20 +386,14 @@ function getHeaderSessionDotState(input: {
 
 function ProjectSessionHeader({
   showProject = true,
-  workspaceId,
   projectName,
   projectPath,
-  workspaceProfiles,
-  switchWorkspace,
-  pickWorkspaceFolder,
   sessions,
   currentSessionKey,
   sessionLabels,
   workspaceSessionKeys,
   switchSession,
   renameSession,
-  onSelectWorktree,
-  worktreeSwitchDisabled = false,
   derivation,
   onRefresh,
   runtimeRuns,
@@ -419,8 +415,6 @@ function ProjectSessionHeader({
   workspaceSessionKeys: string[];
   switchSession: (key: string) => void;
   renameSession: (key: string, label: string) => Promise<void>;
-  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
-  worktreeSwitchDisabled?: boolean;
   derivation?: SessionDerivation;
   onRefresh: () => void;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
@@ -436,7 +430,6 @@ function ProjectSessionHeader({
   const [sessionSearch, setSessionSearch] = useState('');
   const [renaming, setRenaming] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
   const { triggerRef: sessionTriggerRef, layerRef: sessionLayerRef, setOpen: setSessionMenuOpen, style: sessionMenuStyle } = usePopover<HTMLButtonElement>({ align: 'left', gap: 4 });
   const overlayContainer = useOverlayPortalContainer();
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
@@ -470,7 +463,7 @@ function ProjectSessionHeader({
       if (target instanceof Node && (rootRef.current?.contains(target) || sessionLayerRef.current?.contains(target))) return;
       setOpen(null);
     };
-    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); (open === 'session' ? sessionTriggerRef : projectTriggerRef).current?.focus(); } };
+    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); sessionTriggerRef.current?.focus(); } };
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKey);
     return () => { document.removeEventListener('pointerdown', handlePointerDown); document.removeEventListener('keydown', handleKey); };
@@ -521,41 +514,9 @@ function ProjectSessionHeader({
   return (
     <div ref={rootRef} className="chat-project-session-header flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
       {showProject && <div className="chat-header-environment-project relative order-1 min-w-0" data-testid="chat-header-environment-project">
-        {/* Project selection stays secondary to the task header. */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-        <button
-          ref={projectTriggerRef}
-          type="button"
-          className={cn('chat-header-dropdown-trigger chat-header-project-trigger inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs font-normal text-muted-foreground hover:text-foreground', open === 'workspace' && 'is-open')}
-          aria-haspopup="menu"
-          aria-expanded={open === 'workspace'}
-          onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
-        >
-          <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <span className="truncate">{projectName}</span>
-          <ChevronDown className="chat-header-session-chevron h-3 w-3 shrink-0 opacity-60" />
-        </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{projectPath}</TooltipContent>
-        </Tooltip>
-        {open === 'workspace' && (
-          <WorkspacePickerMenu
-            profiles={workspaceProfiles}
-            activeWorkspaceId={workspaceId}
-            onSelect={(id) => {
-              setOpen(null);
-              return switchWorkspace(id);
-            }}
-            onPickFolder={() => {
-              setOpen(null);
-              return pickWorkspaceFolder();
-            }}
-            extraActions={onSelectWorktree ? <SessionWorkspacePicker embedded disabled={worktreeSwitchDisabled} onSelect={async tree => { setOpen(null); await onSelectWorktree(tree); }} /> : undefined}
-            menuTestId="chat-header-workspace-menu"
-            className="chat-header-project-menu"
-          />
-        )}
+        <span className="inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs text-muted-foreground" title={projectPath}>
+          <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span className="truncate">{projectName}</span>
+        </span>
       </div>}
       {showProject && <span className="chat-header-separator order-1 text-muted-foreground/30" aria-hidden="true">/</span>}
       <div className="relative order-2 min-w-0 max-w-[360px]">
@@ -1012,6 +973,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     return () => { if (controlScopeRef.current === controlScope) controlScopeRef.current = null; };
   }, [controlScope]);
   const [composerDraft, setComposerDraft] = useState('');
+  const [executionBusy, setExecutionBusy] = useState(false);
+  const [worktreeProgress, setWorktreeProgress] = useState<WorktreeCreationProgressState | null>(null);
   const composerDraftRevision = useRef(0);
   const draftEditedSessionsRef = useRef(new Set<string>());
   const [composerPaused, setComposerPaused] = useState(false);
@@ -1280,17 +1243,20 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, resetSessionView, t, workspaceProfiles]);
   const handleSwitchWorktreeWorkspace = async (worktree: GitWorktree) => {
     const source = useChatStore.getState();
+    const sourceWorkspaceId = useWorkspacesStore.getState().activeWorkspaceId;
     const isCurrent = () => {
       const current = useChatStore.getState();
-      return !current.sending && !current.pendingFinal && current.currentSessionKey === source.currentSessionKey
+      return useWorkspacesStore.getState().activeWorkspaceId === sourceWorkspaceId
+        && !current.sending && !current.pendingFinal && current.currentSessionKey === source.currentSessionKey
         && current.viewRevision === source.viewRevision;
     };
-    if (inputRunActive || !isCurrent()) return;
+    if (inputRunActive || !isCurrent()) throw new Error(t('workspace.switchBusy'));
     await persistCurrentWorkspaceSessionState({ activeSessionKey: source.currentSessionKey, sessionKey: source.currentSessionKey });
-    if (!isCurrent()) return;
-    const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
+    if (!isCurrent()) throw new Error(t('workspace.switchBusy'));
+    const existing = useWorkspacesStore.getState().profiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
     const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: worktree.branch || basenameFromPath(worktree.path), agentId: currentAgentId, activeSessionKey: createFreshWorkspaceSessionKey(currentAgentId), activate: false });
-    if (profile && isCurrent()) await handleSwitchWorkspace(profile.id);
+    if (!profile || !isCurrent()) throw new Error(t('workspace.switchBusy'));
+    await handleSwitchWorkspace(profile.id);
   };
   useEffect(() => {
     const previousSessionKey = lastObservedSessionKeyRef.current;
@@ -1927,9 +1893,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     const timer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
       void hostApi.usage.contextRange({
         sessionKey: currentSessionKey,
+        expectedSessionId: controlGeneration,
         modelRef: currentModelRef,
         messageCount: messages.length,
-        usedTokens: liveUsageRef.current?.totalTokens ?? null,
+        usedTokens: null,
       })
         .then((result) => {
           if (!cancelled) setContextRange(result.range);
@@ -1942,7 +1909,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [controlScope, currentModelRef, currentSessionKey, messages.length]);
+  }, [controlScope, controlGeneration, currentModelRef, currentSessionKey, messages.length, sending, pendingFinal]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2116,11 +2083,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         toast.error(result.error || t('composer.longTaskControl.drainFailed'));
         return;
       }
-      if (result.drained) {
-        toast.success(t('composer.longTaskControl.drainSuccess', {
-          count: result.messageCount ?? 0,
-        }));
-      } else {
+      if (!result.drained) {
         toast.message(t(`composer.longTaskControl.reason.${result.reason ?? 'empty_queue'}`, {
           defaultValue: result.reason ?? t('composer.longTaskControl.reason.empty_queue'),
         }));
@@ -2185,9 +2148,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           refreshLongTaskControlStatus(),
           hostApi.usage.contextRange({
             sessionKey: currentSessionKey,
+            expectedSessionId: controlGeneration,
             modelRef: currentModelRef,
             messageCount: messages.length,
-            usedTokens: liveUsage?.totalTokens ?? null,
+            usedTokens: null,
           }).then((contextResult) => { if (isCurrentControlScope()) setContextRange(contextResult.range); })
             .catch(() => { if (isCurrentControlScope()) setContextRange(null); }),
         ]);
@@ -2203,7 +2167,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     } finally {
       if (isCurrentControlScope()) setCompactionBusy(false);
     }
-  }, [controlGeneration, currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
+  }, [controlGeneration, currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
@@ -2220,6 +2184,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const handoffDisabledReason = !controlGeneration ? t('operationGenerationUnavailable')
     : continuityPreflight.handoff.disabled ? t('composer.handoff.disabledActiveRun') : undefined;
   const forkDisabled = continuityPreflight.fork.disabled;
+  const forkDisabledReason = forkDisabled
+    ? t(continuityPreflight.fork.reasons.includes('active_run') ? 'composer.fork.disabledActiveRun' : 'composer.fork.disabledGateway')
+    : undefined;
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
 
@@ -2698,6 +2665,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const pendingImageGeneration = executionProjection.pendingImageGeneration;
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
+  const showStartupSetup = isEmpty && !inputRunActive && !composerPaused
+    && !currentSession.hasActiveRun && !(currentSession.messageCount ?? 0)
+    && !Object.values(runtimeRuns).some(run => run.sessionKey === currentSessionKey && run.startedAt != null);
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
     if ((!inputRunActive && !useChatStore.getState().sending) || pauseComposerPendingRef.current) return;
@@ -3056,6 +3026,16 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     ...(sending ? [buildStreamingRenderMessage({ stream: streamState, streamingReplyText, streamingTimestamp })] : []),
   ], interactionSend?.sessionKey === currentSessionKey ? interactionSend.text : undefined),
   [messages, sending, streamState, streamingReplyText, streamingTimestamp, interactionSend, currentSessionKey]);
+  const toolGroupsByRun = useMemo(() => new Map(userRunCards.map(card => [card.runKey,
+    buildToolActivityGroups(card, messages, [], [], new Set(composerInteractions.map(interaction => interaction.id)), `${turnDisclosureKey(currentSessionKey, card)}:${currentSession.sessionId ?? 'legacy'}`),
+  ])), [userRunCards, messages, composerInteractions, currentSessionKey, currentSession.sessionId]);
+  const toolGroupsByAnchor = useMemo(() => {
+    const groups = new Map<number, ToolActivityGroupModel[]>();
+    for (const runGroups of toolGroupsByRun.values()) for (const group of runGroups) {
+      groups.set(group.anchorIndex, [...(groups.get(group.anchorIndex) ?? []), group]);
+    }
+    return groups;
+  }, [toolGroupsByRun]);
   const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => {
     let hasAssistantForkAncestor = false;
     const liveReplyText = visibleStreamingText?.trim();
@@ -3097,7 +3077,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         suppressReasoning,
         textOverride,
       });
-      const hidden = isInternalMessage(msg) && !hasUserFacingMedia
+      const toolGroups = toolGroupsByAnchor.get(idx) ?? [];
+      const hidden = toolGroups.length > 0 ? false : isInternalMessage(msg) && !hasUserFacingMedia
         ? true
         : !projection.hasRenderableContent;
 
@@ -3112,6 +3093,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         suppressReasoning,
         textOverride,
         runCards: userRunCardsByTriggerIndex.get(idx) ?? [],
+        toolGroups,
       };
     });
   }, [
@@ -3123,12 +3105,23 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     userRunCardsByTriggerIndex,
     userRunCards,
     visibleStreamingText,
+    toolGroupsByAnchor,
   ]);
   const visibleMessageRows = useMemo(() => messageRenderRows.filter(row => !row.hidden), [messageRenderRows]);
   const getMessageScrollElement = useCallback(() => scrollElementRef.current, []);
   const messageViewport = useMessageViewport(visibleMessageRows, getMessageScrollElement,
     `${currentSessionKey}:${currentSession.sessionId ?? ''}`, getAgentResourceLimits().maxDomRenderMessages,
     preserveReadingPosition ? savedReadingPosition : undefined);
+  useEffect(() => {
+    const element = scrollElementRef.current;
+    const column = element?.closest<HTMLElement>('[data-testid="chat-conversation-column"]');
+    if (!element || !column) return;
+    const update = () => column.style.setProperty('--conversation-scrollbar-width', `${Math.max(0, element.offsetWidth - element.clientWidth)}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [currentSessionKey]);
   const scrollToMessageIndex = messageViewport.scrollToIndex;
   const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
     const rows = visibleMessageRows;
@@ -3336,6 +3329,19 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     }
     return map;
   }, [filesByRun, diffsByRun]);
+  const toolGroupsWithArtifacts = useMemo(() => new Map(userRunCards.flatMap(card =>
+    attachToolActivityArtifacts(toolGroupsByRun.get(card.runKey) ?? [], chipFilesByRun.get(card.triggerIndex) ?? [], diffsByRun.get(card.triggerIndex) ?? [])
+      .map(group => [group.id, group] as const),
+  )), [userRunCards, toolGroupsByRun, chipFilesByRun, diffsByRun]);
+  const handleOpenGeneratedFile = useCallback((file: GeneratedFile) => {
+    const target = generatedFileToTarget(file);
+    if (isHtmlPreviewExt(file.ext)) {
+      openWorkspacePanel({ panel: 'files', filePath: target.filePath });
+      return;
+    }
+    useArtifactPanel.getState().setFocusedFile(target);
+    openWorkspacePanel({ panel: 'review', view: 'changes', filePath: target.filePath });
+  }, [openWorkspacePanel]);
 
   // Derive WorkArtifacts from generated files (docx/xlsx/pdf/html/csv/md)
   const artifacts = useMemo(() => {
@@ -3433,8 +3439,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 workspaceSessionKeys={Object.keys(activeWorkspace?.sessionStates ?? {})}
                 switchSession={(key) => { void openFamilySession(key); }}
                 renameSession={renameSession}
-                onSelectWorktree={handleSwitchWorktreeWorkspace}
-                worktreeSwitchDisabled={inputRunActive}
                 derivation={sessionActivitySnapshot?.derivation}
                 onRefresh={() => { void loadSessions(); }}
                 runtimeRuns={runtimeRuns}
@@ -3479,6 +3483,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             checkpointsDisabled={sending || pendingFinal}
             onForkSession={handleForkSession}
             forkDisabled={forkDisabled}
+            forkDisabledReason={forkDisabledReason}
             forkBusy={forkBusy}
             onHandoffSession={handlePrepareHandoff}
             handoffDisabled={handoffDisabled}
@@ -3492,21 +3497,25 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       {projectWorkspaceId && <div data-testid="project-coordinator-entry" className="relative px-4 pt-1 text-xs text-muted-foreground">
         {t('projectEntry.coordinator', { name: activeWorkspace?.name ?? '' })}
       </div>}
+      {(forkBusy || handoffBusy) && <div className="chat-continuity-progress" role="status" data-testid="chat-continuity-progress">
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        {t(forkBusy ? 'composer.continuity.forkPreparing' : 'composer.continuity.handoffPreparing')}
+      </div>}
       {handoffOperation && !handoffBusy && handoffOperation.phase !== 'sent' && <section data-testid="handoff-recovery" data-phase={handoffOperation.phase}
-        className="relative flex min-w-0 flex-wrap items-center gap-2 border-b border-border/40 px-4 py-1 text-xs">
+        className="chat-continuity-recovery">
         <span role="status">{t(`handoffRecovery.phase.${handoffOperation.phase}`)}</span>
-        {['creating', 'ready', 'failed'].includes(handoffOperation.phase) && <button type="button" data-testid="handoff-recovery-resume" className="underline"
+        {['creating', 'ready', 'failed'].includes(handoffOperation.phase) && <button type="button" data-testid="handoff-recovery-resume"
           onClick={() => { handoffIntentIdRef.current = handoffOperation.id; setHandoffDraft(handoffOperation.draftInput); setHandoffDialogOpen(true); }}>
           {t('handoffRecovery.resume')}
         </button>}
-        <button type="button" data-testid="handoff-recovery-check" className="underline" onClick={() => {
+        <button type="button" data-testid="handoff-recovery-check" onClick={() => {
           const visit = useChatStore.getState().viewRevision;
           if (activeWorkspace?.id) void hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id, sessionKey: currentSessionKey,
             operationId: handoffOperation.id, reconcile: true }).then((result) => {
               if (isCurrentControlScope() && useChatStore.getState().viewRevision === visit) setHandoffOperation(result.operation);
             });
         }}>{t('handoffRecovery.check')}</button>
-        {handoffOperation.sessionKey !== currentSessionKey && handoffOperation.sessionGeneration && <button type="button" className="underline"
+        {handoffOperation.sessionKey !== currentSessionKey && handoffOperation.sessionGeneration && <button type="button"
           onClick={() => { void openFamilySession(handoffOperation.sessionKey); }}>{t('handoffRecovery.openChild')}</button>}
       </section>}
 
@@ -3552,7 +3561,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       )}
 
       {/* Messages Area */}
-      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
+      <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden py-3">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
         {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef}
           onSelect={scrollToMessageIndex} firstVisibleIndex={messageViewport.firstVisibleIndex} />}
@@ -3563,7 +3572,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             the scroll column's padding (`codex-conversation-inset`) and the
             overlay layer takes none at all. */}
         <div
-          className="relative mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col gap-4 xl:items-stretch"
+          className="relative mx-auto flex h-full min-h-0 w-full flex-col gap-4 xl:items-stretch"
           data-testid="chat-message-layout"
         >
           <div
@@ -3578,7 +3587,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
               className={cn(
                 "mx-auto space-y-4",
                 // Preserve the centred input layout before the first message.
-                isEmpty ? "h-full w-full max-w-[820px]" : "max-w-[820px]",
+                isEmpty ? "h-full w-full max-w-[820px]" : "chat-conversation-measure",
               )}
             >
               {messageAreaLoading ? (
@@ -3669,6 +3678,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         const chipFiles = chipFilesByRun.get(card.triggerIndex) ?? [];
                         const diffSurfaces = diffsByRun.get(card.triggerIndex) ?? [];
                         const cardApprovals = approvalsByRunKey.get(runKey) ?? [];
+                        const hasToolGroups = (toolGroupsByRun.get(runKey)?.length ?? 0) > 0;
+                        const hasCurrentTool = toolGroupsByRun.get(runKey)?.some(group => group.current) ?? false;
                         /* A live run streams its thinking on the runtime run, not
                          * on a message — so the active card reads the stream and
                          * every settled card reads its own segment. */
@@ -3687,39 +3698,40 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                          * tools, no files — the common DeepSeek shape) otherwise
                          * had no card at all, and its thinking would have had
                          * nowhere to go once the message stopped rendering it. */
-                        const hasActivity = card.active
-                          || card.steps.length > 0
+                        const hasActivity = (card.active && !hasCurrentTool)
+                          || (!hasToolGroups && card.steps.length > 0)
                           || cardReasoning.length > 0
-                          || generatedFiles.length > 0
+                          || (!hasToolGroups && generatedFiles.length > 0)
                           || card.orchestrations.length > 0
-                          || card.surfaces.terminals.length > 0
+                          || (!hasToolGroups && card.surfaces.terminals.length > 0)
                           || card.surfaces.plan != null
                           || cardApprovals.length > 0
-                          || Boolean(card.traceId);
+                          || (!hasToolGroups && Boolean(card.traceId));
                         if (!hasActivity) return null;
 
                         return (
                           <div key={`run-${currentSessionKey}:${card.triggerIndex}`}>
                             <TurnSummaryCard
+                              showStatusIndicator={!hasCurrentTool}
                               waitingForInput={card.active && (composerInteractions.length > 0 || cardApprovals.length > 0)}
                               status={card.status}
                               startedAt={card.startedAt}
                               endedAt={card.endedAt}
                               expanded={expanded}
-                              activity={activeTool ? (
+                              activity={!hasToolGroups && activeTool ? (
                                 <ExecutionGraphCard agentLabel={card.agentLabel} steps={[activeTool]} active compact />
-                              ) : activeTerminal ? (
+                              ) : !hasToolGroups && activeTerminal ? (
                                 <CallChip name={activeTerminal.command} icon="terminal" status="running" showTimer={false} />
                               ) : undefined}
                               reasoning={cardReasoning}
                               reasoningStreaming={card.active && assistantStreamStatus?.state === 'thinking'}
                               summary={{
-                                tools: card.steps.filter((step) => step.kind === 'tool').length,
+                                tools: hasToolGroups ? 0 : card.steps.filter((step) => step.kind === 'tool').length,
                                 thoughts: cardReasoning.length,
                                 plan: card.active ? 0 : card.surfaces.plan?.todos.length ?? 0,
-                                files: new Set([...chipFiles.map((file) => file.filePath), ...diffSurfaces.map((diff) => diff.filePath)]).size,
+                                files: hasToolGroups ? 0 : new Set([...chipFiles.map((file) => file.filePath), ...diffSurfaces.map((diff) => diff.filePath)]).size,
                                 agents: card.orchestrations.length,
-                                terminals: card.surfaces.terminals.length,
+                                terminals: hasToolGroups ? 0 : card.surfaces.terminals.length,
                                 approvals: cardApprovals.length,
                               }}
                               onExpandedChange={(next) =>
@@ -3740,30 +3752,16 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                   testId="chat-run-plan"
                                 />
                               )}
-                              {chipFiles.length > 0 && (
+                              {!hasToolGroups && chipFiles.length > 0 && (
                                 <GeneratedFilesPanel
                                   files={chipFiles}
-                                  onOpen={(file) => {
-                                    const target = generatedFileToTarget(file);
-                                    if (isHtmlPreviewExt(file.ext)) {
-                                      openWorkspacePanel({ panel: 'files', filePath: target.filePath });
-                                      return;
-                                    }
-                                    // Prefer the captured edit diff (receipt
-                                    // carries old/new snippets + baseline) over
-                                    // the git panel: runtime-generated files
-                                    // live in the agent workspace, not the
-                                    // app workspace, so git state may not
-                                    // cover them.
-                                    useArtifactPanel.getState().setFocusedFile(target);
-                                    openWorkspacePanel({ panel: 'review', view: 'changes', filePath: target.filePath });
-                                  }}
+                                  onOpen={handleOpenGeneratedFile}
                                 />
                               )}
-                              {diffSurfaces.length > 0 && (
+                              {!hasToolGroups && diffSurfaces.length > 0 && (
                                 <RunMutationDiffs surfaces={diffSurfaces} />
                               )}
-                              <ExecutionGraphCard
+                              {!hasToolGroups && <ExecutionGraphCard
                                 key={`graph-${currentSessionKey}:${card.triggerIndex}`}
                                 agentLabel={card.agentLabel}
                                 steps={card.steps.filter((step) => !composerInteractions.some((interaction) => interaction.id === step.id))}
@@ -3785,7 +3783,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                     },
                                   }));
                                 }}
-                              />
+                              />}
                               {card.orchestrations.map((orchestration) => (
                                 <TeamOrchestrationCard
                                   key={`team-orchestration-${orchestration.id}`}
@@ -3793,12 +3791,25 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                   embedded
                                 />
                               ))}
-                              {card.codingRunView && (
+                              {!hasToolGroups && card.codingRunView && (
                                 <CodingRunEvidence codingRun={card.codingRunView} />
                               )}
                             </TurnSummaryCard>
                           </div>
                         );
+                      })}
+                      {row.toolGroups.map(baseGroup => {
+                        const group = toolGroupsWithArtifacts.get(baseGroup.id) ?? baseGroup;
+                        const key = `${currentSessionKey}:tool-group:${group.id}`;
+                        return <ToolActivityGroup key={key} group={group} expanded={runActivityExpandedOverrides[key] ?? false}
+                          onExpandedChange={next => setRunActivityExpandedOverrides(previous => ({ ...previous, [key]: next }))}
+                          expandedStepIds={new Set(Object.entries(runActivityStepDetailsExpanded[key] ?? runActivityStepDetailsExpanded[group.runKey] ?? {}).filter(([, value]) => value).map(([id]) => id))}
+                          onStepExpandedChange={(id, next) => setRunActivityStepDetailsExpanded(previous => ({ ...previous,
+                            [key]: { ...(previous[key] ?? previous[group.runKey] ?? {}), [id]: next } }))}>
+                          {group.files.length > 0 && <GeneratedFilesPanel files={group.files} onOpen={handleOpenGeneratedFile} />}
+                          {group.diffs.length > 0 && <RunMutationDiffs surfaces={group.diffs} />}
+                          {group.codingRunView && <CodingRunEvidence codingRun={group.codingRunView} />}
+                        </ToolActivityGroup>;
                       })}
                     </div>
                     );
@@ -3921,29 +3932,34 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </div>
       )}
       <ChatInput
+        leadingContent={activeWorkspace && !isEmpty ? (
+          <div className="mb-1 empty:hidden">
+            <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} summaryOnly active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
+          </div>
+        ) : undefined}
         contextContent={(
-          <>
-            {activeWorkspace && !isEmpty && (
-              <div className="mb-1 empty:hidden">
-                <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
-              </div>
-            )}
-            {(!isEmpty || projectWorkspaceId) && (
+          <SessionWorkspacePicker key={`${activeWorkspaceId}:${currentSessionKey}`} sessionKey={currentSessionKey}
+            setupVisible={showStartupSetup}
+            disabled={inputRunActive} onSelect={handleSwitchWorktreeWorkspace} onSelectProject={handleSwitchWorkspace}
+            onPickFolder={handlePickWorkspaceFolder} onBeforeChange={persistCurrentWorkspaceSessionState}
+            onBusyChange={setExecutionBusy} onProgressChange={setWorktreeProgress} refreshSignal={gitRevision} onChanged={handleGitChanged}>
+            {(!isEmpty || inputRunActive || projectWorkspaceId) && (
               <div data-testid="chat-task-tray">
-                <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
+                <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty || inputRunActive}
                   projectEntry={Boolean(projectWorkspaceId)} plan={userRunCards.findLast((card) => card.active)?.surfaces.plan ?? null}
                   runActive={inputRunActive} controlStatus={longTaskControlStatus} onOpenTask={handleOpenSessionTask} />
               </div>
             )}
-          </>
+          </SessionWorkspacePicker>
         )}
-        requestPending={pendingApprovals.length > 0 || composerInteractions.length > 0}
+        requestPending={pendingApprovals.length > 0 || composerInteractions.length > 0 || Boolean(worktreeProgress)}
         requestContent={(
-          <ComposerRequestDock key={currentSessionKey} approvals={pendingApprovals} interactions={composerInteractions}
+          pendingApprovals.length > 0 || composerInteractions.length > 0 ? <ComposerRequestDock key={currentSessionKey} approvals={pendingApprovals} interactions={composerInteractions}
             canSubmit={isGatewayRunning} onDecision={handleApprovalDecision} onSubmit={handleSubmitInteractionResponse} />
+            : worktreeProgress ? <WorktreeCreationProgress progress={worktreeProgress} hero={isEmpty} /> : null
         )}
         onSend={handleSendMessage}
-        disabled={!isGatewayRunning}
+        disabled={!isGatewayRunning || executionBusy}
         sending={inputRunActive}
         paused={composerPaused}
         onPauseSession={handlePauseComposerSession}
@@ -3960,6 +3976,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         onNewSession={handleCreateNewSession}
         onForkSession={handleForkSession}
         forkDisabled={forkDisabled}
+        forkDisabledReason={forkDisabledReason}
         forkBusy={forkBusy}
         onHandoffSession={handlePrepareHandoff}
         handoffDisabled={handoffDisabled}
@@ -3986,14 +4003,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         * together centre the group without the composer leaving its slot. */}
       {isEmpty && (
         <>
-          <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
-            <WelcomeScreen
-              onPickFolder={handlePickWorkspaceFolder}
-              onSelectProject={handleSwitchWorkspace}
-              onSelectWorktree={handleSwitchWorktreeWorkspace}
-              disabled={inputRunActive}
-            />
-          </div>
           <div className={cn('codex-welcome-chips-host relative', sendingAnimation && 'codex-welcome-chips--sending')}>
             <WelcomeChips
               onSend={handleSendMessage}
@@ -4016,12 +4025,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         />}
       </Suspense>
       <Dialog open={questionFork !== null} onOpenChange={(open) => { if (!open) setQuestionFork(null); }}>
-        <DialogContent data-testid="question-fork-dialog" className="max-w-xl bg-surface-modal">
+        <DialogContent data-testid="question-fork-dialog" className="chat-continuity-dialog max-w-xl">
           <DialogTitle>{t('questionFork.title')}</DialogTitle>
           <DialogDescription>{t('questionFork.description')}</DialogDescription>
           <Textarea data-testid="question-fork-draft" aria-label={t('questionFork.question')} value={questionFork?.draft ?? ''}
-            onChange={(event) => setQuestionFork((value) => value ? { ...value, draft: event.target.value } : null)} className="min-h-32 bg-surface-input" />
-          <div className="flex justify-end gap-2">
+            onChange={(event) => setQuestionFork((value) => value ? { ...value, draft: event.target.value } : null)} className="chat-continuity-editor min-h-32" />
+          <div className="chat-continuity-footer">
             <Button variant="ghost" onClick={() => setQuestionFork(null)}>{t('common:actions.cancel')}</Button>
             <Button data-testid="question-fork-create" disabled={forkBusy || !questionFork?.draft.trim()} onClick={() => {
               if (!questionFork || questionFork.sourceSessionKey !== currentSessionKey || questionFork.generation !== currentSession.sessionId) {
@@ -4032,56 +4041,22 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           </div>
         </DialogContent>
       </Dialog>
-      <Dialog open={handoffDialogOpen} onOpenChange={setHandoffDialogOpen}>
+      <Dialog open={handoffDialogOpen} onOpenChange={(open) => { if (!handoffCreating) setHandoffDialogOpen(open); }}>
         <DialogContent
-          className="max-w-3xl rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
+          className="chat-continuity-dialog chat-handoff-dialog max-w-2xl"
           data-testid="chat-handoff-dialog"
+          aria-busy={handoffCreating}
         >
           <DialogTitle className="font-serif text-xl font-normal tracking-tight text-foreground">
             {t('composer.handoff.dialogTitle')}
           </DialogTitle>
           <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            {continuityPreflight.handoff.reasons.includes('high_pressure') && (
+              <span data-testid="chat-handoff-recommendation-note">{t('composer.handoff.pressureHint')} </span>
+            )}
             {t('composer.handoff.dialogDescription')}
           </DialogDescription>
-          {continuityRecommendation.action === 'handoff' && !continuityRecommendation.disabled && (
-            <div
-              className="mt-3 rounded-md border border-black/5 bg-black/5 px-3 py-2 text-xs text-muted-foreground dark:border-white/10 dark:bg-white/10"
-              data-testid="chat-handoff-recommendation-note"
-            >
-              {t(`composer.continuity.dialogHint.${continuityRecommendation.reason}`, {
-                defaultValue: t('composer.continuity.dialogHint.default'),
-              })}
-            </div>
-          )}
-          <div className="mt-4 flex flex-wrap gap-2">
-            {(handoffResult?.sources ?? []).map((source) => (
-              <Tooltip key={source.id}>
-                <TooltipTrigger asChild>
-              <span
-                className={cn(
-                  'inline-flex items-center rounded-md border px-2 py-1 text-xs',
-                  source.available
-                    ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
-                    : 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400',
-                )}
-              >
-                {source.label}
-              </span>
-                </TooltipTrigger>
-                {(source.summary || source.warning) && (
-                  <TooltipContent side="top" className="max-w-xs text-xs">{source.summary || source.warning}</TooltipContent>
-                )}
-              </Tooltip>
-            ))}
-          </div>
-          {(handoffResult?.warnings?.length ?? 0) > 0 && (
-            <div className="mt-3 rounded-md border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-300">
-              {(handoffResult?.warnings ?? []).slice(0, 4).map((warning) => (
-                <div key={warning}>{warning}</div>
-              ))}
-            </div>
-          )}
-          <Label className="mt-4 block text-sm font-medium text-foreground" htmlFor="chat-handoff-draft">
+          <Label className="block text-sm font-medium text-foreground" htmlFor="chat-handoff-draft">
             {t('composer.handoff.draftLabel')}
           </Label>
           <Textarea
@@ -4090,9 +4065,26 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             value={handoffDraft}
             readOnly={handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating'}
             onChange={(event) => setHandoffDraft(event.target.value)}
-            className="mt-2 min-h-[340px] resize-y bg-surface-input font-mono text-xs"
+            className="chat-continuity-editor chat-handoff-editor"
           />
-          <div className="mt-5 flex justify-end gap-2">
+          {handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating' && (
+            <p className="chat-continuity-note">{t('composer.handoff.savedDraft')}</p>
+          )}
+          {((handoffResult?.sources?.length ?? 0) > 0 || (handoffResult?.warnings?.length ?? 0) > 0) && (
+            <details className="chat-continuity-details" data-testid="chat-handoff-details">
+              <summary>{t('composer.handoff.sources')}
+                {(handoffResult?.warnings?.length ?? 0) > 0 && <span className="ml-2">{t('composer.handoff.sourceWarnings', { count: handoffResult?.warnings?.length })}</span>}
+              </summary>
+              <ul className="chat-continuity-sources">
+                {(handoffResult?.sources ?? []).map((source) => <li key={source.id}>
+                  <span>{source.label}</span><span>{t(source.available ? 'composer.handoff.sourceReady' : 'composer.handoff.sourceMissing')}</span>
+                  {(source.summary || source.warning) && <p>{source.warning || source.summary}</p>}
+                </li>)}
+              </ul>
+              {(handoffResult?.warnings ?? []).map((warning) => <p className="chat-continuity-note" key={warning}>{warning}</p>)}
+            </details>
+          )}
+          <div className="chat-continuity-footer">
             <Button
               type="button"
               variant="ghost"
@@ -4108,7 +4100,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
               disabled={handoffCreating || !handoffDraft.trim()}
             >
               {handoffCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('composer.handoff.create')}
+              {t(handoffCreating ? 'composer.handoff.creating'
+                : handoffOperation?.id === handoffIntentIdRef.current && handoffOperation.phase !== 'creating'
+                  ? 'composer.handoff.resumeSend' : 'composer.handoff.create')}
             </Button>
           </div>
         </DialogContent>
@@ -4378,7 +4372,6 @@ type WelcomeScreenProps = {
   onSend: (text: string) => void | Promise<unknown>;
   onPickFolder?: () => void | Promise<unknown>;
   onSelectProject?: (workspaceId: string) => void | Promise<unknown>;
-  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   disabled?: boolean;
 };
 
@@ -4449,13 +4442,7 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
 }
 
 /** The empty conversation names its project without exposing Git configuration. */
-function WelcomeScreen({ disabled = false, onPickFolder, onSelectProject, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'>) {
-  const activeWorkspace = useWorkspacesStore(state=>state.activeWorkspace);
-  if (!activeWorkspace) return null;
-  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelect={onSelectProject} onSelectWorktree={onSelectWorktree}/></div></div>;
-}
 
-/** Optional starters share one disclosure; its reserved row keeps drafting stable. */
 function WelcomeChips({
   disabled = false,
   onSend,

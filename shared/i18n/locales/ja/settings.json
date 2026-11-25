@@ -137,6 +137,10 @@
       "description": "Basic は通常画面を簡潔に保ちます。Advanced は checkpoint 証拠、圧縮警告、ロール契約、診断をより多く表示します。",
       "basic": "Basic",
       "advanced": "Advanced"
+    },
+    "contextDisplay": {
+      "title": "コンテキスト使用量を表示",
+      "description": "入力欄の横にコンテキストタグを表示します。ホバーまたはフォーカスで構成を確認できます。"
     }
   },
   "aiProviders": {
@@ -631,7 +635,7 @@
     "installDetail": "~/.local/bin/openclaw が作成されます。グローバルに実行するには ~/.local/bin が PATH に含まれていることを確認してください。",
     "efficiencySampling": {
       "title": "ランタイム効率サンプリング",
-      "description": "プロセスの CPU とメモリの実測サンプルをローカルに記録し、高負荷な UI 状態の診断に使います。アップロードは行いません。無効にするとタイマーは完全に停止します。",
+      "description": "プロセスの CPU とメモリの実測サンプルをローカルに記録し、高負荷な UI 状態の診断に使います。アップロードは行いません。無効にすると診断記録は停止し、リソース保護とアイドルプロセスの回収は続行します。",
       "toggleAria": "ランタイム効率サンプリングを切り替え",
       "notSampled": "まだサンプリングされていません。計測済みの効率データはありません。",
       "disabledHint": "サンプリングは無効です。有効にするとローカル計測を開始します。",
@@ -1031,6 +1035,32 @@
       "all": "すべて",
       "removable": "削除可能",
       "protected": "保護対象"
+    },
+    "executionSettings": "実行設定",
+    "localDirectory": "ローカルフォルダー",
+    "uncommittedChanges": "未コミットの変更",
+    "runningHint": "実行中です。停止または完了後に切り替えられます。",
+    "loadingDirectory": "作業ディレクトリを読み込み中…",
+    "openCreated": "作業ツリーを開く",
+    "customizeWorktree": "名前 / 開始ブランチ",
+    "mainDirectory": "メインディレクトリ",
+    "branches": "ブランチ",
+    "notGit": "このフォルダーは Git リポジトリではありません。",
+    "creation": {
+      "title": "作業ツリーを作成中",
+      "saving": "会話を保存",
+      "creating": "作業ツリーを作成",
+      "opening": "会話を開く",
+      "details": "詳細",
+      "branch": "ブランチ",
+      "directory": "ディレクトリ",
+      "stay": "この会話に留まる",
+      "staying": "作成後もここに留まる",
+      "return": "会話に戻る",
+      "open": "作業ツリーを開く",
+      "retry": "作成を再試行",
+      "ready": "作業ツリーの準備完了",
+      "dismissReady": "通知を閉じる"
     }
   },
   "embedding": {

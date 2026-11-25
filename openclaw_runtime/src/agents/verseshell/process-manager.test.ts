@@ -257,6 +257,24 @@ afterEach(async () => {
   await Promise.allSettled(managers.splice(0).map((manager) => manager.shutdownAll()));
 });
 
+it('retires killed executors and acquires one fresh executor after each switch reset', async () => {
+  const h = harness();
+  managers.push(h.manager);
+  let client = await h.manager.getClient(baseConfig());
+  for (let cycle = 0; cycle < 3; cycle++) {
+    await expect(client.execute('file.view', {})).resolves.toMatchObject({ ok: true });
+    await h.manager.setKillSwitch(true);
+    await expect(h.manager.getClient(baseConfig())).rejects.toMatchObject({ code: 'E_ACI_KILL_SWITCH' });
+    await h.manager.setKillSwitch(false);
+    const clients = await Promise.all(Array.from({ length: 8 }, () => h.manager.getClient(baseConfig())));
+    expect(h.children).toHaveLength(cycle + 2);
+    expect(h.manager.list()).toHaveLength(1);
+    await expect(client.execute('file.view', {})).rejects.toMatchObject({ code: 'E_ACI_SHUTDOWN' });
+    client = clients[0];
+  }
+  await expect(client.execute('file.view', {})).resolves.toMatchObject({ ok: true });
+});
+
 describe("typed ACI framing", () => {
   it("decodes schema/op/data observations without the legacy value envelope", () => {
     const raw = JSON.stringify({
@@ -910,6 +928,7 @@ describe("VerseShellProcessManager", () => {
     expect(client.processKey).toBe(h.manager.list()[0]?.key);
     await h.manager.tripKillSwitch("operator-test");
     await expect(h.manager.getClient(config)).rejects.toMatchObject({ code: "E_ACI_KILL_SWITCH" });
-    expect(h.manager.list()[0]?.lastErrorCode).toBe("E_ACI_KILL_SWITCH");
+    expect(h.manager.list()).toEqual([]);
+    await expect(client.execute("file.view", {})).rejects.toMatchObject({ code: "E_ACI_SHUTDOWN" });
   });
 });

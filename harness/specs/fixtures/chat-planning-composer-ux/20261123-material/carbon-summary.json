@@ -1,0 +1,8 @@
+{
+  "rounds": 2,
+  "requests": 4,
+  "imageReads": 7,
+  "totalReportedTokens": 51571,
+  "decisionOwner": "Gemini 4 Carbon (High)",
+  "driven_by": "agent"
+}

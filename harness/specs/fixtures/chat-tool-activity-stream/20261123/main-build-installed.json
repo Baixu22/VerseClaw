@@ -1,0 +1,31 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "status": "passed",
+  "installedAt": "2026-11-24T01:06:53.2772955Z",
+  "candidateCommit": "93e06939a816e1cc1cd209c61901302960dc2271",
+  "buildSourceCommit": "287491d723ee1d914361a15fce6c35fa21644a54",
+  "sourceRoot": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
+  "mainRoot": "D:\\ClawX",
+  "previousBuildRoot": "D:\\tmp\\clawx-output-stream-20261124\\previous-main-build",
+  "verifiedFiles": 1412,
+  "preservedFiles": 1412,
+  "trees": [
+    {
+      "name": "dist",
+      "filesVerified": 1402
+    },
+    {
+      "name": "dist-electron",
+      "filesVerified": 10
+    }
+  ],
+  "fileManifest": "main-build-files.json",
+  "fileManifestSha256": "bd5fd46b1a75c7880635ade294abf97c55495b2af6d1e9b7741092c47883e31e",
+  "productMatchesBuildSource": true,
+  "rawReceipt": {
+    "path": "D:\\tmp\\clawx-output-stream-20261124\\main-build-installed.json",
+    "sha256": "eb15f5ec4078f10e46b29734c5ca3a622908081283a256d84ad5b8feddcc5e34"
+  },
+  "rawFileManifestSha256": "bd5fd46b1a75c7880635ade294abf97c55495b2af6d1e9b7741092c47883e31e"
+}

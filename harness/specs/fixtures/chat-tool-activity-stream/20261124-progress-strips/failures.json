@@ -1,0 +1,61 @@
+{
+  "originalsPreserved": true,
+  "receipts": [
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r2.command.json",
+      "sha256": "a7dfa7d47be4e60416ba2eab6bf26f3171dac9a7e1b4e22b3236b8a4f245614e",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r4.command.json",
+      "sha256": "770f5ffddfa5286c43626e56512862fc48588399f34e8ffa329ca4fa48cfac42",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r5.command.json",
+      "sha256": "c1b27c15102a7aaf437f879eeb88552ca672271d614214cc653f02bfc6bec2db",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\electron-r6.command.json",
+      "sha256": "47f7f7a8e588fd3191f3b96791b3cfbdaaa5da989caf3bde10a794b063cf161c",
+      "exitCode": 1,
+      "sourceUnchanged": true,
+      "candidate": "8c66f01aee5c9b53e87764df27c01474effd37f8"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-current-r2.command.json",
+      "sha256": "5a37c7582cfba07b66e90a369dc7e182b13b42b4f369489136d96a745d0e0cc3",
+      "exitCode": 1,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\harness-flow-r2.command.json",
+      "sha256": "dce6268011cbb75a6cd1db80bab11c7a852eda6e76fafc61cc4dfca9c73759b9",
+      "exitCode": 1,
+      "sourceUnchanged": null,
+      "candidate": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89"
+    },
+    {
+      "path": "D:\\tmp\\clawx-tool-progress-20261124\\typecheck-r1.command.json",
+      "sha256": "9a33e597aba7aa4a96e703ad6b1c896b758572b6959028fa862834d034028feb",
+      "exitCode": 1,
+      "sourceUnchanged": false,
+      "candidate": "e22b75ba8cbd3b8ebacbc637ff96461f7c01bbba"
+    }
+  ],
+  "resolved": [
+    "The first typecheck used a changed source candidate and reported an optional boolean; its receipt remains invalidated.",
+    "The initial Harness range also included foreign commit 6087e226a; authored UI coverage and the scoped validation are recorded.",
+    "Electron r2 stopped on a stale runtime bundle; qaRuntime rebuilt the fixture without disabling freshness checks.",
+    "Electron r4 found a hardcoded radius assertion and a missing reduced-motion progress rule; r5 passed the live case and exposed the completed background override, corrected in r6.",
+    "The narrow-window boundary observer needed to settle after native resizing; r7 waits for the original under-2px geometry threshold and passed."
+  ]
+}

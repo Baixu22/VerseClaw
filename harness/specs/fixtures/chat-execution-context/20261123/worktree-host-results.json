@@ -1,0 +1,99 @@
+[
+  {
+    "id": "7638ddd4-933b-412f-985a-69ea4dc1064e",
+    "ok": true,
+    "data": {
+      "success": true,
+      "stdout": "HEAD is now at cee7ec2 Initial fixture\n",
+      "stderr": "Preparing worktree (new branch 'codex/task-mwt8xak4-6b00')\n",
+      "exitCode": 0,
+      "status": {
+        "isRepository": true,
+        "workspaceRoot": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project",
+        "repoRoot": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project",
+        "branch": "main",
+        "detached": false,
+        "ahead": 0,
+        "behind": 0,
+        "clean": false,
+        "hasConflicts": false,
+        "changes": [
+          {
+            "path": ".verse-claw/",
+            "absolutePath": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project\\.verse-claw",
+            "status": "??",
+            "staged": false,
+            "unstaged": false,
+            "untracked": true,
+            "conflicted": false,
+            "bucket": "untracked",
+            "additions": null,
+            "deletions": null,
+            "binary": true
+          }
+        ],
+        "stagedCount": 0,
+        "unstagedCount": 0,
+        "untrackedCount": 1,
+        "conflictedCount": 0
+      },
+      "worktree": {
+        "path": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project-codex-task-mwt8xak4-6b00",
+        "branch": "codex/task-mwt8xak4-6b00"
+      }
+    }
+  },
+  {
+    "id": "f80b17a2-3462-40a5-88cc-8cb751beabbc",
+    "ok": true,
+    "data": {
+      "success": false,
+      "blocked": true,
+      "reason": "Read-only workspace mode blocks Git write operations."
+    }
+  },
+  {
+    "id": "d2ea1335-5294-4105-b065-a42c01689e6b",
+    "ok": true,
+    "data": {
+      "success": true,
+      "stdout": "HEAD is now at cee7ec2 Initial fixture\n",
+      "stderr": "Preparing worktree (new branch 'codex/task-mwt8xelt-e10e')\n",
+      "exitCode": 0,
+      "status": {
+        "isRepository": true,
+        "workspaceRoot": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project-codex-task-mwt8xak4-6b00",
+        "repoRoot": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project-codex-task-mwt8xak4-6b00",
+        "branch": "codex/task-mwt8xak4-6b00",
+        "detached": false,
+        "ahead": 0,
+        "behind": 0,
+        "clean": false,
+        "hasConflicts": false,
+        "changes": [
+          {
+            "path": ".verse-claw/",
+            "absolutePath": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project-codex-task-mwt8xak4-6b00\\.verse-claw",
+            "status": "??",
+            "staged": false,
+            "unstaged": false,
+            "untracked": true,
+            "conflicted": false,
+            "bucket": "untracked",
+            "additions": null,
+            "deletions": null,
+            "binary": true
+          }
+        ],
+        "stagedCount": 0,
+        "unstagedCount": 0,
+        "untrackedCount": 1,
+        "conflictedCount": 0
+      },
+      "worktree": {
+        "path": "D:\\ClawX\\.tmp\\execution-tray-EJEPAd\\project-codex-task-mwt8xak4-6b00-codex-task-mwt8xelt-e10e",
+        "branch": "codex/task-mwt8xelt-e10e"
+      }
+    }
+  }
+]

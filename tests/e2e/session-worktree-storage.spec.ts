@@ -13,7 +13,7 @@ async function invoke(page: Page, module: string, action: string, payload?: unkn
 }
 
 async function openWorktrees(page: Page) {
-  const trigger = page.getByTestId('session-worktree-trigger');
+  const trigger = page.getByTestId('composer-context-more');
   if (!await trigger.isVisible()) {
     const parent = page.getByTestId('welcome-project-trigger');
     await expect(parent).toBeVisible();

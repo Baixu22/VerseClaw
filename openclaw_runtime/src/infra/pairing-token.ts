@@ -17,3 +17,49 @@ export function verifyPairingToken(provided: string, expected: string): boolean 
   }
   return safeEqualSecret(provided, expected);
 }
+
+/** Bearer token issued to one paired device role. */
+export type DeviceAuthToken = {
+  token: string;
+  role: string;
+  scopes: string[];
+  issuer?: {
+    kind: "shared-gateway-auth";
+    generation: string;
+  };
+  createdAtMs: number;
+  rotatedAtMs?: number;
+  revokedAtMs?: number;
+  lastUsedAtMs?: number;
+};
+
+export function deviceTokenIssuerMatches(
+  entry: DeviceAuthToken,
+  issuer: DeviceAuthToken["issuer"] | undefined,
+): boolean {
+  if (!issuer) {
+    return !entry.issuer;
+  }
+  return entry.issuer?.kind === issuer.kind && entry.issuer.generation === issuer.generation;
+}
+
+export function buildDeviceAuthToken(params: {
+  role: string;
+  scopes: string[];
+  issuer?: DeviceAuthToken["issuer"];
+  existing?: DeviceAuthToken;
+  preserveExistingIssuer?: boolean;
+  now: number;
+  rotatedAtMs?: number;
+}): DeviceAuthToken {
+  return {
+    token: generatePairingToken(),
+    role: params.role,
+    scopes: params.scopes,
+    issuer: params.issuer ?? (params.preserveExistingIssuer ? params.existing?.issuer : undefined),
+    createdAtMs: params.existing?.createdAtMs ?? params.now,
+    rotatedAtMs: params.rotatedAtMs,
+    revokedAtMs: undefined,
+    lastUsedAtMs: params.existing?.lastUsedAtMs,
+  };
+}

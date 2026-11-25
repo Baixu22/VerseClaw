@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidate": "ae41d30c393dc0ef3c9013d87adac3d0f319ae2b",
+  "unitTests": 135,
+  "electronJourneys": 11,
+  "iconCount": 34,
+  "filesInstalled": 1412,
+  "parallelSourceFilesPreserved": 38,
+  "scopedHarness": "passed",
+  "baselineHarness": "stopped_at_existing_duplicate_assets",
+  "carbon": {
+    "cliStatus": "ERROR",
+    "finishedReason": "print_timeout",
+    "requirementsReturned": 7,
+    "designOutlinesApplied": 5,
+    "imagesActuallyRead": 5,
+    "modelRequests": 4,
+    "reportedTokens": 112854,
+    "structuredPatchesReturned": false,
+    "repeatedInvocation": false
+  },
+  "originals": "D:\\tmp\\clawx-output-hybrid-20261124"
+}

@@ -1,0 +1,592 @@
+{
+  "candidate": "88e727353d9e45f6273b92e433cb187ba1ca4070",
+  "tests": 117,
+  "passed": 117,
+  "cases": [
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle collapses activity when the final reply starts streaming and shows only the reply suffix",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle reads completed execution steps cached after the first page render",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle does not reopen an old handoff draft after changing away and back",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle does not overwrite the new conversation status when old compression finishes",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle starts completed tool groups folded and remembers manual expansion",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle uses the completed-run preference only as a default and allows it to be disabled",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle keeps short conversations as normal messages without a turn summary card",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle renders a team orchestration card for team_orchestrate task graph results",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle renders ordinary orchestration diagnostics without Task Loop repair wording",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle keeps only the current animated tool visible while process details are folded",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle renders a single compact working status before any stream content arrives",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle renders generated file cards with line stats for edit tools",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle shows a scroll-to-latest button when the chat is scrolled away from the bottom",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle stops showing trailing thinking and renders run error callout after terminal model error",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle keeps history final reply folded while matching streamed text is still active",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle stops trailing thinking when history already contains the final reply but sending is stuck",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle settles composer when generated image media arrives without transcript tool calls",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle stops trailing thinking when generated image media arrives but session wake is missed",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle shows the running tool without a second thinking indicator",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle keeps one working summary while waiting for final history after completed tool status",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle settles image generation runs after message tool delivers generated media",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle keeps image generation runs active after async task status narration",
+      "status": "passed"
+    },
+    {
+      "file": "chat-page-execution-graph.test.tsx",
+      "title": "Chat execution graph lifecycle keeps the run active when narration landed in history before tools finished",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Run-log replay provenance badge renders the translated badge instead of the raw i18n key",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Tool UI cards emitted as tool calls inside a run segment renders a card from a tool-only assistant turn",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Tool UI cards emitted as tool calls inside a run segment renders a card from a mixed text + tool_use turn whose text was folded into the graph",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Tool UI cards emitted as tool calls inside a run segment renders a question the run is blocked on, with no final reply yet",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Tool UI cards emitted as tool calls inside a run segment renders one fenced question while the same reply is both streaming and in history",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Tool UI cards emitted as tool calls inside a run segment still hides a plain tool call that has no card renderer",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Plan surface replays an update_plan tool call from history into the turn summary",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Plan surface does not also render the plan as a message card",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Plan surface omits the execution graph entirely when every row was promoted",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Permission approvals surfaces a pending host approval in the transcript",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Permission approvals renders exactly one approval card when a tool call also parses as one",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Permission approvals surfaces a pending approval even when no turn produced an activity card",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Permission approvals keeps an undecided approval visible after the next run starts",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Permission approvals forces the turn summary open while an approval is pending",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Thinking reasoning shows reasoning from a message thinking block",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Thinking reasoning keeps reasoning on a turn whose narration text was folded away",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Thinking reasoning hides reasoning entirely while the process fold is shut",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Thinking reasoning keeps thought counts out of the compact header while retaining reasoning details",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Thinking reasoning merges reasoning from every message in the run segment into one panel",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Thinking reasoning keeps progress text visible when a referenced attachment fails to materialize",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Thinking reasoning shows live reasoning from the runtime run while streaming",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Generated file ownership shows a diffable file as a diff only, never also as a chip",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Generated file ownership still chips a file the diff projection cannot render",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Turn summary contents badges labels contents while collapsed, then shows them when opened",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Turn summary contents badges keeps a pending approval visible while process details open and close",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "Turn disclosure survives the optimistic→server id swap keeps the turn open after the trigger message id changes",
+      "status": "passed"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "title": "live plan display ownership keeps the active plan in the task strip while process details open",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows pairs each tool result with its call while preserving unmatched results",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows previews the edit target and reveals complete arguments only on expansion",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows renders completed tool calls as done chips with their measured duration",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows derives measured duration from runtime tool events",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows renders nested branches through geometry without a branch badge",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows renders error status as a red call chip with its target intact",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows uses a text-first system row without card chrome",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows renders the session key as a truncated inline preview and omits completed status",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows expands details beneath a hairline when clicked",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows supports controlled detail expansion for card-level persistence",
+      "status": "passed"
+    },
+    {
+      "file": "execution-graph-card-badge.test.tsx",
+      "title": "ExecutionGraphCard flat activity rows interleaves command output at the command start position",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt expires without a resolved event and preserves the draft",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt does not revive a resolved request from a late initial snapshot",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt reconciles an expired-id failure against an empty owner snapshot",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt prioritizes runtime, then workspace permission, while retaining question selection and the draft",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt replaces only the owning session composer and restores the same draft input",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt does not leak a late rejection or busy state into another session",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt keeps the composer covered until every pending request for the session resolves",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt copies through the clipboard fallback and restores the copy button focus",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt copies the original command without deciding or closing the request",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt keeps all decision buttons disabled until the offered choice resolves",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt renders nothing while no runtime approval is pending",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt shows a pending request and sends back exactly the decision the runtime offered",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt offers only the decisions the runtime listed for that request",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt keeps the prompt open and surfaces the reason when the runtime rejects the decision",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt clears a request when the runtime reports it resolved elsewhere",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt seeds pending requests from the runtime list so a reload does not orphan one",
+      "status": "passed"
+    },
+    {
+      "file": "runtime-approval-prompt.test.tsx",
+      "title": "RuntimeApprovalPrompt translations every key the prompt renders exists in all shipped locales",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "runtime graph state keeps distinct runtime tool updates for the same tool call",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "runtime graph state does not drop full-text assistant deltas that do not extend the previous prefix",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps projects runtime tool events into active execution graph steps",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps keeps tool arguments and first-seen order as runtime output updates arrive",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps projects the external-write risk onto a governed exec approval step",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps builds running steps from streaming tool status without exposing chain-of-thought",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps keeps completed tool steps visible while a later tool is still streaming",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps keeps historical tool results and final assistant reply locatable in the execution graph",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps upgrades a completed historical tool step when streaming status reports a later state",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps keeps all steps when the execution graph exceeds the previous max length",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps keeps recent completed tool steps from assistant history",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps does not expose streaming chain-of-thought in the execution graph",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps skips internal assistant turns and hides NO_REPLY from the execution graph",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps keeps earlier reply segments in the graph when the last streaming segment is rendered separately",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps folds earlier reply segments into the graph but leaves the final answer for the chat bubble",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps strips folded process narration from the final reply text",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps builds a branch for spawned subagents",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "deriveTaskSteps parses internal subagent completion events from injected user messages",
+      "status": "passed"
+    },
+    {
+      "file": "task-visualization.test.ts",
+      "title": "run completion detection treats delivered image attachments as a final reply after image generation tools",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-group.test.tsx",
+      "title": "tool activity disclosure starts folded and exposes the original arguments and result on demand",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-group.test.tsx",
+      "title": "tool activity disclosure moves the live shimmer into the details and preserves manual expansion on completion",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-group.test.tsx",
+      "title": "tool activity disclosure restores the running progress strip and settles it using the call status",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-group.test.tsx",
+      "title": "tool activity disclosure keeps a failed group static while exposing its attention state",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-group.test.tsx",
+      "title": "tool activity disclosure keeps a background call running while the white highlight follows the newest group",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups places adjacent calls after their explanation and pairs a late result with its original call",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups keeps completed history when the live owner currently contains only the newest tool",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups gives a promoted command one group and one renderer",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups retains failed results and never animates an interrupted run",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups keeps disclosure identities within their owning run and excludes composer interactions",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups uses different operation semantics for reading, writing, editing, search, browsing and commands",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups keeps a large write target readable after argument reduction and partial output",
+      "status": "passed"
+    },
+    {
+      "file": "tool-activity-groups.test.ts",
+      "title": "conversation tool activity groups keeps late command output at its recorded start rather than a later explanation",
+      "status": "passed"
+    },
+    {
+      "file": "tool-ui-run-surfaces.test.ts",
+      "title": "Tool UI runtime surface projection merges command events by stable id and keeps the final 32 KiB",
+      "status": "passed"
+    },
+    {
+      "file": "tool-ui-run-surfaces.test.ts",
+      "title": "Tool UI runtime surface projection does not duplicate cumulative command output snapshots",
+      "status": "passed"
+    },
+    {
+      "file": "tool-ui-run-surfaces.test.ts",
+      "title": "Tool UI runtime surface projection projects only trustworthy generated-file diffs",
+      "status": "passed"
+    },
+    {
+      "file": "tool-ui-run-surfaces.test.ts",
+      "title": "Tool UI runtime surface projection maps task steps to an active tracker and a completed receipt",
+      "status": "passed"
+    },
+    {
+      "file": "tool-ui-run-surfaces.test.ts",
+      "title": "Tool UI runtime surface projection selects every pending approval for the workspace + session, whichever run raised it",
+      "status": "passed"
+    },
+    {
+      "file": "tool-ui-run-surfaces.test.ts",
+      "title": "Tool UI runtime surface projection keeps a pending approval visible after the run that raised it is gone",
+      "status": "passed"
+    },
+    {
+      "file": "tool-ui-run-surfaces.test.ts",
+      "title": "Tool UI runtime surface projection orders approvals from the active run first",
+      "status": "passed"
+    }
+  ]
+}

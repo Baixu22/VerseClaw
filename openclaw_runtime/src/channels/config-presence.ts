@@ -14,7 +14,7 @@ import {
 import { resolveStateDir } from "../config/paths.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { hasNonEmptyString } from "../infra/outbound/channel-target.js";
-import type { PluginDiscoveryResult } from "../plugins/discovery.js";
+import { discoverOpenClawPlugins, type PluginDiscoveryResult } from "../plugins/discovery.js";
 import { isRecord } from "../utils.js";
 import { listBundledChannelIds } from "./plugins/bundled-ids.js";
 
@@ -78,22 +78,30 @@ function hasPersistedChannelState(env: NodeJS.ProcessEnv): boolean {
   return fs.existsSync(resolveStateDir(env, os.homedir));
 }
 
-let persistedAuthStateChannelIds: readonly string[] | null = null;
+// Environment and stored-auth probes in one query must see the same plugin roots.
+function scopePresenceDiscovery(
+  options: ChannelPresenceOptions,
+  env: NodeJS.ProcessEnv,
+): ChannelPresenceOptions {
+  // Config and workspace scans can shadow bundled origins; keep the environment catalog.
+  const scoped = options.discovery?.candidates.some(
+    ({ origin }) => origin === "config" || origin === "workspace",
+  );
+  let discovery = scoped ? undefined : options.discovery;
+  return {
+    ...options,
+    get discovery() {
+      return (discovery ??= discoverOpenClawPlugins({ env }));
+    },
+  };
+}
 
 function listPersistedAuthStateChannelIds(options: ChannelPresenceOptions): readonly string[] {
   const override = options.persistedAuthStateProbe?.listChannelIds();
   if (override) {
     return override;
   }
-  if (options.discovery) {
-    return listBundledChannelIdsWithPersistedAuthState(options.discovery);
-  }
-  if (persistedAuthStateChannelIds) {
-    return persistedAuthStateChannelIds;
-  }
-  // Bundled plugin metadata is process-stable; cache the static persisted-auth id list.
-  persistedAuthStateChannelIds = listBundledChannelIdsWithPersistedAuthState();
-  return persistedAuthStateChannelIds;
+  return listBundledChannelIdsWithPersistedAuthState(options.discovery);
 }
 
 function hasPersistedAuthState(params: {
@@ -133,6 +141,7 @@ export function listPotentialConfiguredChannelPresenceSignals(
   env: NodeJS.ProcessEnv = process.env,
   options: ChannelPresenceOptions = {},
 ): ChannelPresenceSignal[] {
+  options = scopePresenceDiscovery(options, env);
   const signals: ChannelPresenceSignal[] = [];
   const seenSignals = new Set<string>();
   const addSignal = (channelId: string, source: ChannelPresenceSignalSource) => {
@@ -227,5 +236,18 @@ export function hasPotentialConfiguredChannels(
       }
     }
   }
-  return hasEnvConfiguredChannel(cfg ?? {}, env, options);
+  return hasEnvConfiguredChannel(cfg ?? {}, env, scopePresenceDiscovery(options, env));
+}
+
+/** Lists startup channel candidates from config/env, excluding explicit disables and stored auth. */
+export function listPotentialEnabledChannelIds(
+  config: OpenClawConfig,
+  env: NodeJS.ProcessEnv,
+  discovery?: PluginDiscoveryResult,
+): string[] {
+  const disabled = new Set(listExplicitlyDisabledChannelIdsForConfig(config));
+  const presenceOptions = { includePersistedAuthState: false, discovery };
+  return listPotentialConfiguredChannelIds(config, env, presenceOptions)
+    .map((id) => normalizeOptionalLowercaseString(id) ?? "")
+    .filter((id) => id && !disabled.has(id));
 }

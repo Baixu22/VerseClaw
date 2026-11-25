@@ -1,0 +1,20 @@
+{
+  "schema": "G3NativeAAndTypedFixtureSourceBinding/v1",
+  "nativeACandidate": "eaf7e65fe530d7dbaedabd13bddf5c50fdb1334e",
+  "nativeAStatus": "5_PASS_1_FULL_TYPES_FAIL",
+  "fixtureCodeCommit": "81322d130189215ef216c0622dd70bb6dfe8caba",
+  "fixtureReviewCommit": "90c81dcca102828ad8b9c9788a53b6cc52573c95",
+  "fixtureTree": "89066f8ac35d2fc9c92cb4938d71e0e039d5641f",
+  "fixtureSourceFingerprint": "8e07a34f44f8d2ef80fc8aac84761dc40d5d2bd1ceceb85db8f0aa6f5d0fcc20",
+  "helperFindings": 0,
+  "rawFindings": 0,
+  "focusedTestsPassed": 16,
+  "newCandidateRoot": "D:\\tmp\\g3-compaction-readiness-20261123-r22\\candidate-r27",
+  "productionDiffComparedToOriginalAEmpty": true,
+  "fullUncachedTypesOriginalThresholdMs": 45000,
+  "newFullTypesState": "PENDING_NEW_SERIAL_GRANT",
+  "gaVerdict": "NO_GO",
+  "actor": "codex/g3-fixture-r28",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

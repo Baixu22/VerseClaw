@@ -20,6 +20,14 @@ import { isSessionWriteLockAcquireError } from "./session-write-lock-error.js";
 const ABORT_TIMEOUT_RE = /request was aborted|request aborted/i;
 const MAX_FAILOVER_CAUSE_DEPTH = 25;
 
+/** Delivery belongs to the output owner; retrying a model cannot repair it. */
+export class OutputDeliveryError extends Error {
+  constructor(cause: unknown) {
+    super(cause instanceof Error ? cause.message : String(cause), { cause });
+    this.name = "OutputDeliveryError";
+  }
+}
+
 /** Structured error used to carry model fallback/failover metadata across layers. */
 export class FailoverError extends Error {
   readonly reason: FailoverReason;
@@ -296,7 +304,11 @@ function hasSessionWriteLockContention(err: unknown, seen: Set<object> = new Set
 function isEmbeddedAttemptSessionTakeover(err: unknown): boolean {
   // Match by name to avoid importing embedded-agent-runner here (would create a cycle).
   return Boolean(
-    err && typeof err === "object" && readErrorName(err) === "EmbeddedAttemptSessionTakeoverError",
+    err &&
+    typeof err === "object" &&
+    ["EmbeddedAttemptSessionTakeoverError", "MainSessionOwnershipError"].includes(
+      readErrorName(err) ?? "",
+    ),
   );
 }
 
@@ -327,6 +339,8 @@ function hasEmbeddedAttemptSessionTakeover(err: unknown, seen: Set<object> = new
  * See #83510.
  */
 export function isNonProviderRuntimeCoordinationError(err: unknown): boolean {
+  if (err instanceof OutputDeliveryError || readErrorName(err) === "OutputDeliveryError")
+    return true;
   if (!hasSessionWriteLockContention(err) && !hasEmbeddedAttemptSessionTakeover(err)) {
     return false;
   }

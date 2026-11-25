@@ -168,25 +168,7 @@ export function readAcpSessionMeta(params: {
   env?: NodeJS.ProcessEnv;
   databasePath?: string;
 }): SessionAcpMeta | undefined {
-  const sessionKey = params.sessionKey.trim();
-  if (!sessionKey) {
-    return undefined;
-  }
-  const storeEntry = readSessionEntryFromStore({
-    sessionKey,
-    cfg: params.cfg,
-    env: params.env,
-    clone: false,
-  });
-  const database = openOpenClawStateDatabase({
-    env: params.env,
-    path: params.databasePath,
-  });
-  const row = selectAcpSessionRow(database.db, storeEntry.storeSessionKey);
-  if (!row || !acpSessionRowMatchesEntry(row, storeEntry.entry)) {
-    return undefined;
-  }
-  return rowToAcpSessionMeta(row);
+  return readAcpSessionEntry({ ...params, clone: false })?.acp;
 }
 
 export function readAcpSessionMetaForEntry(params: {
@@ -405,6 +387,7 @@ export async function upsertAcpSessionMeta(params: {
   now?: () => number;
   skipMaintenance?: boolean;
   takeCacheOwnership?: boolean;
+  expectedSessionId?: string;
   mutate: (
     current: SessionAcpMeta | undefined,
     entry: SessionEntry | undefined,
@@ -421,14 +404,24 @@ export async function upsertAcpSessionMeta(params: {
     clone: false,
   });
   const { entry } = storeEntry;
+  if (params.expectedSessionId && entry?.sessionId !== params.expectedSessionId) return null;
   const storageSessionKey = storeEntry.storeSessionKey;
   let current: SessionAcpMeta | undefined;
   let nextMeta: SessionAcpMeta | null | undefined;
   let preparedEntry: SessionEntry | undefined;
+  let ownershipChanged = false;
   const updatedAt = params.now?.() ?? Date.now();
   runOpenClawStateWriteTransaction(
     (database) => {
       const currentRow = selectAcpSessionRow(database.db, storageSessionKey);
+      if (
+        params.expectedSessionId &&
+        currentRow?.session_id &&
+        currentRow.session_id !== params.expectedSessionId
+      ) {
+        ownershipChanged = true;
+        return;
+      }
       current =
         currentRow && acpSessionRowMatchesEntry(currentRow, entry)
           ? rowToAcpSessionMeta(currentRow)
@@ -461,6 +454,7 @@ export async function upsertAcpSessionMeta(params: {
     },
     { env: params.env, path: params.databasePath },
   );
+  if (ownershipChanged) return null;
   if (nextMeta === undefined) {
     return current ? mergeAcpForReturn(entry, current) : (entry ?? null);
   }
@@ -486,6 +480,11 @@ export async function upsertAcpSessionMeta(params: {
     storeEntry.storePath,
     (store) => {
       const storeSessionKey = resolveStoreSessionKey(store, storageSessionKey);
+      const currentEntry = store[storeSessionKey];
+      if (params.expectedSessionId && currentEntry?.sessionId !== params.expectedSessionId) {
+        ownershipChanged = true;
+        return currentEntry ?? entry!;
+      }
       const next = mergeSessionEntry(store[storeSessionKey], {
         sessionId: preparedEntry?.sessionId,
         updatedAt,
@@ -496,5 +495,6 @@ export async function upsertAcpSessionMeta(params: {
     },
     sessionStoreUpdateOptions({ ...params, sessionKey: storageSessionKey }),
   );
+  if (ownershipChanged) return null;
   return mergeAcpForReturn(persisted, nextMeta);
 }

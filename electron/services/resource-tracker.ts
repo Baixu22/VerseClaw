@@ -16,7 +16,6 @@ import {
   type ResourceTrackerRegisterPayload,
 } from '../../shared/types/resource-tracker';
 import { logger } from '../utils/logger';
-import { getBackgroundWorkGate } from '../../openclaw_runtime/src/resources/background-work-gate';
 import { getTimerAligner } from '../../shared/resources';
 
 const execAsync = promisify(exec);
@@ -32,6 +31,8 @@ const AUTO_CLEANUP_IDLE_MS = 30 * 60 * 1000;
 
 /** TCP connect timeout per heartbeat probe (ms). */
 const PROBE_TIMEOUT_MS = 3_000;
+const HEARTBEAT_PROBE_CONCURRENCY = 4;
+const MAX_HEARTBEAT_CLEANUPS = 8;
 
 type ResourceRecord = TrackedResource;
 type ListeningPort = { port: number; pid: number; address: string };
@@ -65,13 +66,14 @@ export class ResourceTracker {
   private heartbeatUnregister: (() => void) | null = null;
   private discoveryTimers = new Set<ReturnType<typeof setTimeout>>();
   private heartbeatInFlight = false;
+  private cleanupCursor = 0;
 
   start(): void {
     if (this.heartbeatUnregister) return;
     this.heartbeatUnregister = getTimerAligner().register({
       id: 'resource-tracker-heartbeat',
       intervalMs: HEARTBEAT_INTERVAL_MS,
-      priority: 'background',
+      priority: 'interactive',
       run: () => this.runHeartbeat(),
     });
     logger.info('[ResourceTracker] Started heartbeat interval');
@@ -223,14 +225,14 @@ export class ResourceTracker {
     if (this.heartbeatInFlight) return;
     this.heartbeatInFlight = true;
     try {
-      await getBackgroundWorkGate().runBackground('resource-tracker-heartbeat', async () => {
-        const entries = Array.from(this.resources.values());
-        if (entries.length === 0) return;
-
-        const checks = entries.map((resource) => this.probeResource(resource));
-        await Promise.allSettled(checks);
-        await this.autoCleanup();
-      });
+      // Reclamation must progress during shedding. Bound the probes instead of
+      // putting maintenance behind the gate for new background work.
+      const entries = Array.from(this.resources.values());
+      for (let offset = 0; offset < entries.length; offset += HEARTBEAT_PROBE_CONCURRENCY) {
+        await Promise.allSettled(entries.slice(offset, offset + HEARTBEAT_PROBE_CONCURRENCY)
+          .map(resource => this.probeResource(resource)));
+      }
+      await this.autoCleanup();
     } finally {
       this.heartbeatInFlight = false;
     }
@@ -281,35 +283,33 @@ export class ResourceTracker {
 
   private async autoCleanup(): Promise<void> {
     const now = Date.now();
-    const toRemove = new Set<string>();
-
-    for (const [id, resource] of this.resources) {
-      if (resource.status === 'unreachable') {
-        const lastHeartbeatAt = new Date(resource.lastHeartbeatAt ?? resource.startedAt).getTime();
-        if (now - lastHeartbeatAt > 5 * 60 * 1000) {
-          toRemove.add(id);
-        }
-      }
-
-      if (resource.status === 'idle' && resource.ownership === 'managed') {
-        const lastActivityAt = new Date(resource.sessionLastActiveAt ?? resource.startedAt).getTime();
-        if (now - lastActivityAt > AUTO_CLEANUP_IDLE_MS) {
-          toRemove.add(id);
-        }
-      }
-    }
-
-    for (const id of toRemove) {
+    const eligible = [...this.resources.values()].filter(resource => this.canAutoCleanup(resource, now));
+    if (eligible.length === 0) { this.cleanupCursor = 0; return; }
+    const start = this.cleanupCursor % eligible.length;
+    const count = Math.min(eligible.length, MAX_HEARTBEAT_CLEANUPS);
+    const candidates = Array.from({ length: count }, (_, offset) => eligible[(start + offset) % eligible.length].id);
+    this.cleanupCursor = (start + count) % eligible.length;
+    let cleaned = 0;
+    for (const id of candidates) {
       const resource = this.resources.get(id);
-      if (resource) {
+      if (resource && this.canAutoCleanup(resource, Date.now())) {
         logger.info(`[ResourceTracker] Auto-cleaning ${resource.status} resource: ${resource.label} (port=${resource.port})`);
-        await this.stopResource(id).catch(() => {});
+        const result = await this.stopResource(id).catch(() => ({ success: false }));
+        if (result.success) cleaned += 1;
       }
     }
 
-    if (toRemove.size > 0) {
-      logger.info(`[ResourceTracker] Auto-cleaned ${toRemove.size} resources`);
+    if (cleaned > 0) {
+      logger.info(`[ResourceTracker] Auto-cleaned ${cleaned} resources`);
     }
+  }
+
+  private canAutoCleanup(resource: ResourceRecord, now: number): boolean {
+    if (resource.ownership !== 'managed') return false;
+    if (resource.status === 'unreachable')
+      return now - new Date(resource.lastHeartbeatAt ?? resource.startedAt).getTime() > 5 * 60 * 1000;
+    return resource.status === 'idle'
+      && now - new Date(resource.sessionLastActiveAt ?? resource.startedAt).getTime() > AUTO_CLEANUP_IDLE_MS;
   }
 
   getSnapshot(): ResourceTrackerSnapshot {

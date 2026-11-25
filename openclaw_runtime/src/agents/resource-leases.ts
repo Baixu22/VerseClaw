@@ -23,6 +23,7 @@ import { createSubsystemLogger } from "../logging/subsystem.js";
 import { getResourceEnvelopeLedger, type ResourceKind } from "../resources/resource-envelope.js";
 import { ProcessTreeSampler } from "../process/process-tree-sampler.js";
 import { resourceEnvelopeSnapshotPath, writeResourceEnvelopeSnapshot } from "../resources/resource-envelope-snapshot-store.js";
+import { managedProcessCapacityLimit } from "./verseshell/managed-process-capacity.js";
 
 export type ResourceLeaseKind =
   | "workspaceExec"
@@ -295,6 +296,15 @@ export class ResourceLeaseManager {
   }
 
   private canGrant(request: PendingRequest): boolean {
+    if (request.kind === "workspaceExec") {
+      try {
+        const hostLimit = managedProcessCapacityLimit();
+        if (hostLimit !== undefined
+          && [...this.active.values()].filter(lease => lease.kind === "workspaceExec").length >= hostLimit) return false;
+      } catch {
+        // Native admission enforces the DB budget. An advisory read cannot fail owner cleanup.
+      }
+    }
     if (leaseMode(request.kind) === "path") {
       return !this.hasActivePathConflict(request);
     }

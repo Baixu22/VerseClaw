@@ -1,0 +1,287 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-counterfactual",
+  "baselineCommit": "526645345fac24c0ecb0f7e4170d920e57d37153",
+  "candidateCommit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+  "passed": true,
+  "loggerAdapter": "only diagnostic logging replaced; all queue/fabric/bounds source and project imports loaded from named Git blobs",
+  "checks": 4,
+  "results": [
+    {
+      "label": "baseline",
+      "commit": "526645345fac24c0ecb0f7e4170d920e57d37153",
+      "exitCode": 0,
+      "actualEntryBoundCalls": 0,
+      "runSourceSha256": "4835574340fb16474de7d14ffa85f5bace3d5071616660404c2e14f88c420e31",
+      "files": [
+        {
+          "path": "electron/services/resource-fabric.ts",
+          "sha256": "d201e02faacdcd826746e4efdb06b331f7ded70a6631ce448d81138f16368ef5"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/lanes.ts",
+          "sha256": "9d8ca37d9783ec8cd17a8d8a422004fb3189970386d44da882a4724c7a157514"
+        },
+        {
+          "path": "openclaw_runtime/src/process/command-queue.ts",
+          "sha256": "0b9bc306b89a38b4b2b4191e01b31e05fb0ee1e58528557ed49bf362438386a1"
+        },
+        {
+          "path": "openclaw_runtime/src/process/lanes.ts",
+          "sha256": "313d94695dd34ac859a4595a4b8af8c053b84de00dd999edd4f7cb0fd4f7354c"
+        },
+        {
+          "path": "shared/resources/index.ts",
+          "sha256": "6cc3231a2cd43bd43937031bbe0d15c250ff98366d9488d3b8bc9c8d4b939f76"
+        },
+        {
+          "path": "electron/utils/host-deadline-context.ts",
+          "sha256": "0bd0f5ddf87ccbe58e4b8f3a532470a33a238b4a15c476678cfe8d45afbb1ea7"
+        },
+        {
+          "path": "shared/resources/wait.ts",
+          "sha256": "9d569be0fb2878e1f5f6b86b0404b9011dddfa96a5788098aae45f2f4e958f84"
+        },
+        {
+          "path": "openclaw_runtime/src/resources/resource-envelope.ts",
+          "sha256": "8e31b61b42fb156a0019c03f87b542981a1f4562f2288f1b09393d2c03969dbb"
+        },
+        {
+          "path": "shared/types/resources.ts",
+          "sha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713"
+        },
+        {
+          "path": "openclaw_runtime/src/shared/global-singleton.ts",
+          "sha256": "7169168dcaf0689acc38b44bed3a232291699e87ee79cfd00c5a7048bfa797d8"
+        },
+        {
+          "path": "shared/resources/bounded-cache.ts",
+          "sha256": "c86fc2a7e65c9bf2b30e43101680b79b92456ef74be7c4e9413dca323f5c9149"
+        },
+        {
+          "path": "shared/resources/token-bucket.ts",
+          "sha256": "7ba02f07493173f5f218596794eec3a71b28b41906af4c33c5e8188c7a93ec7c"
+        },
+        {
+          "path": "shared/resources/singleflight.ts",
+          "sha256": "b64ecaa252e1208ad02f245f6724ac5d9cba327af9f7810bffd4bc6629e2abd8"
+        },
+        {
+          "path": "shared/resources/write-coalescer.ts",
+          "sha256": "0f93f8d52b4ccc04468df09c7b969c8ba251ef45e882f0dc0918c89890cea88c"
+        },
+        {
+          "path": "shared/resources/priority-queue.ts",
+          "sha256": "2b05c7c673ddad49951b4ee1dd4ebfdb99db0143c673332e67f19c12fc0c46a0"
+        },
+        {
+          "path": "shared/resources/adaptive-limit.ts",
+          "sha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf"
+        },
+        {
+          "path": "shared/resources/drf-share.ts",
+          "sha256": "36ac8d95320cc36a85c2ec6df5a4eef92749661aed5465af4a46b0fc3ddf9340"
+        },
+        {
+          "path": "shared/resources/watcher-hub.ts",
+          "sha256": "c257bc9be394abe44e631846c8e97af45eea3f4ee062653b1dc3935012eedc66"
+        },
+        {
+          "path": "shared/resources/timer-aligner.ts",
+          "sha256": "bb5bc08695da1c2d0f60e983d4e74e116ed842af96a17a3b77fb20a6461a153a"
+        }
+      ],
+      "report": {
+        "driven_by": "agent",
+        "actor": "codex-resource-counterfactual",
+        "source": "baseline",
+        "observations": {
+          "timeoutAndRecovery": {
+            "timeout": "CommandLaneTaskTimeoutError",
+            "peakActualOwners": 2,
+            "actualOwners": 1,
+            "successorStarted": true,
+            "resetReleased": 1,
+            "session": {
+              "lane": "probe-session",
+              "queuedCount": 0,
+              "activeCount": 0,
+              "maxConcurrent": 1,
+              "draining": false,
+              "generation": 1
+            },
+            "global": {
+              "lane": "probe-global",
+              "queuedCount": 0,
+              "activeCount": 0,
+              "maxConcurrent": 2,
+              "draining": false,
+              "generation": 0
+            }
+          },
+          "queuedWait": {
+            "cancelled": "pending",
+            "expired": "pending",
+            "ran": 0,
+            "queuedBeforeOwnerSettlement": 2
+          },
+          "entryBounds": {
+            "helperPresent": false,
+            "queuedInitially": 100,
+            "queuedAfterDeadline": 100,
+            "overloaded": 0,
+            "expired": 0
+          },
+          "pressureContraction": {
+            "reasons": [
+              "physical-memory"
+            ],
+            "retainedInitialOwners": 3,
+            "newGrants": 2,
+            "totalActive": 5,
+            "finalActive": 0
+          }
+        }
+      },
+      "bundleSha256": "2cb8bce1f8a1185261d971dcec9f8a6a8e608293592365f7353eb5ecfae928d5"
+    },
+    {
+      "label": "candidate",
+      "commit": "064e3a9bd0e4cd0e75426442fcdd2f860c945e0e",
+      "exitCode": 0,
+      "actualEntryBoundCalls": 2,
+      "runSourceSha256": "95acbd060ead64450b2ffa0837eea8cb6a0d26e951edb04f25a97b13f488e624",
+      "files": [
+        {
+          "path": "electron/services/resource-fabric.ts",
+          "sha256": "36761c2c5aaa1828cd2f7b4f1fa9ca7b2f94cdf4a0701fdfc81e2de63df8a0d7"
+        },
+        {
+          "path": "openclaw_runtime/src/process/command-queue.ts",
+          "sha256": "82c1c90e4e4c45d54639736d5e87578037ecc4da519af6d1068e1abc134a4d8c"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/embedded-agent-runner/lanes.ts",
+          "sha256": "1691e9e64dd609c091d9af87275e1e5cb01e3e54605637b6c3b30aa17086c558"
+        },
+        {
+          "path": "openclaw_runtime/src/process/lanes.ts",
+          "sha256": "313d94695dd34ac859a4595a4b8af8c053b84de00dd999edd4f7cb0fd4f7354c"
+        },
+        {
+          "path": "shared/resources/index.ts",
+          "sha256": "6cc3231a2cd43bd43937031bbe0d15c250ff98366d9488d3b8bc9c8d4b939f76"
+        },
+        {
+          "path": "electron/utils/host-deadline-context.ts",
+          "sha256": "0bd0f5ddf87ccbe58e4b8f3a532470a33a238b4a15c476678cfe8d45afbb1ea7"
+        },
+        {
+          "path": "shared/types/resources.ts",
+          "sha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713"
+        },
+        {
+          "path": "openclaw_runtime/src/resources/resource-envelope.ts",
+          "sha256": "8e31b61b42fb156a0019c03f87b542981a1f4562f2288f1b09393d2c03969dbb"
+        },
+        {
+          "path": "shared/resources/wait.ts",
+          "sha256": "9d569be0fb2878e1f5f6b86b0404b9011dddfa96a5788098aae45f2f4e958f84"
+        },
+        {
+          "path": "openclaw_runtime/src/shared/global-singleton.ts",
+          "sha256": "7169168dcaf0689acc38b44bed3a232291699e87ee79cfd00c5a7048bfa797d8"
+        },
+        {
+          "path": "shared/resources/bounded-cache.ts",
+          "sha256": "c86fc2a7e65c9bf2b30e43101680b79b92456ef74be7c4e9413dca323f5c9149"
+        },
+        {
+          "path": "shared/resources/priority-queue.ts",
+          "sha256": "2b05c7c673ddad49951b4ee1dd4ebfdb99db0143c673332e67f19c12fc0c46a0"
+        },
+        {
+          "path": "shared/resources/watcher-hub.ts",
+          "sha256": "c257bc9be394abe44e631846c8e97af45eea3f4ee062653b1dc3935012eedc66"
+        },
+        {
+          "path": "shared/resources/adaptive-limit.ts",
+          "sha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf"
+        },
+        {
+          "path": "shared/resources/token-bucket.ts",
+          "sha256": "7ba02f07493173f5f218596794eec3a71b28b41906af4c33c5e8188c7a93ec7c"
+        },
+        {
+          "path": "shared/resources/write-coalescer.ts",
+          "sha256": "0f93f8d52b4ccc04468df09c7b969c8ba251ef45e882f0dc0918c89890cea88c"
+        },
+        {
+          "path": "shared/resources/singleflight.ts",
+          "sha256": "b64ecaa252e1208ad02f245f6724ac5d9cba327af9f7810bffd4bc6629e2abd8"
+        },
+        {
+          "path": "shared/resources/drf-share.ts",
+          "sha256": "3d9a1637c6d00fe33b020927dfa6e695545e5f7e626c0377f2079d5d132d57ec"
+        },
+        {
+          "path": "shared/resources/timer-aligner.ts",
+          "sha256": "bb5bc08695da1c2d0f60e983d4e74e116ed842af96a17a3b77fb20a6461a153a"
+        }
+      ],
+      "report": {
+        "driven_by": "agent",
+        "actor": "codex-resource-counterfactual",
+        "source": "candidate",
+        "observations": {
+          "timeoutAndRecovery": {
+            "timeout": "CommandLaneTaskTimeoutError",
+            "peakActualOwners": 1,
+            "actualOwners": 1,
+            "successorStarted": false,
+            "resetReleased": 0,
+            "session": {
+              "lane": "probe-session",
+              "queuedCount": 1,
+              "activeCount": 1,
+              "maxConcurrent": 1,
+              "draining": false,
+              "generation": 0
+            },
+            "global": {
+              "lane": "probe-global",
+              "queuedCount": 0,
+              "activeCount": 1,
+              "maxConcurrent": 2,
+              "draining": false,
+              "generation": 0
+            }
+          },
+          "queuedWait": {
+            "cancelled": "CommandLaneQueueAbortedError",
+            "expired": "CommandLaneQueueTimeoutError",
+            "ran": 0,
+            "queuedBeforeOwnerSettlement": 0
+          },
+          "entryBounds": {
+            "helperPresent": true,
+            "queuedInitially": 64,
+            "queuedAfterDeadline": 0,
+            "overloaded": 36,
+            "expired": 64
+          },
+          "pressureContraction": {
+            "reasons": [
+              "physical-memory"
+            ],
+            "retainedInitialOwners": 3,
+            "newGrants": 0,
+            "totalActive": 3,
+            "finalActive": 0
+          }
+        }
+      },
+      "bundleSha256": "42f206bfa5173118aac9132b70dd8a94124f5c516c8154c5ede25b61d6589579"
+    }
+  ]
+}

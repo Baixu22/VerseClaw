@@ -1,0 +1,659 @@
+{
+  "i18n-r9": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "i18n-r9",
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "i18n:lint"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "13a900e3f1b445478b26e03b8f7f8e0367305f0e",
+      "tree": "2ac57934a5a6373768e6165397f6692a2126dbaf",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 120,
+    "admission": {
+      "freeBytes": 4070064128,
+      "minimumFreeBytes": 2147483648,
+      "heavy": [
+        {
+          "ProcessId": 4944,
+          "ParentProcessId": 17648,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529721620)/"
+        },
+        {
+          "ProcessId": 12616,
+          "ParentProcessId": 43652,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529721859)/"
+        },
+        {
+          "ProcessId": 3516,
+          "ParentProcessId": 31364,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529722213)/"
+        },
+        {
+          "ProcessId": 29828,
+          "ParentProcessId": 9312,
+          "Name": "electron.exe",
+          "CreationDate": "/Date(1795529751660)/"
+        }
+      ]
+    },
+    "startedAt": "2026-11-24T14:15:53.600390+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": true,
+    "driverPid": 11484,
+    "exitCode": 0,
+    "durationSeconds": 1.063,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\i18n-r9.stdout.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\i18n-r9.stderr.log",
+      "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+    }
+  },
+  "contract-r9": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "contract-r9",
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "contract:check"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "13a900e3f1b445478b26e03b8f7f8e0367305f0e",
+      "tree": "2ac57934a5a6373768e6165397f6692a2126dbaf",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 120,
+    "admission": {
+      "freeBytes": 3919712256,
+      "minimumFreeBytes": 2147483648,
+      "heavy": [
+        {
+          "ProcessId": 4944,
+          "ParentProcessId": 17648,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529721620)/"
+        },
+        {
+          "ProcessId": 12616,
+          "ParentProcessId": 43652,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529721859)/"
+        },
+        {
+          "ProcessId": 3516,
+          "ParentProcessId": 31364,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529722213)/"
+        },
+        {
+          "ProcessId": 29828,
+          "ParentProcessId": 9312,
+          "Name": "electron.exe",
+          "CreationDate": "/Date(1795529751660)/"
+        },
+        {
+          "ProcessId": 19932,
+          "ParentProcessId": 29828,
+          "Name": "electron.exe",
+          "CreationDate": "/Date(1795529755544)/"
+        },
+        {
+          "ProcessId": 25356,
+          "ParentProcessId": 29828,
+          "Name": "electron.exe",
+          "CreationDate": "/Date(1795529755670)/"
+        }
+      ]
+    },
+    "startedAt": "2026-11-24T14:15:56.261866+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": true,
+    "driverPid": 37556,
+    "exitCode": 0,
+    "durationSeconds": 2.891,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\contract-r9.stdout.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\contract-r9.stderr.log",
+      "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    }
+  },
+  "comms-replay-r9": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "comms-replay-r9",
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "comms:replay"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "13a900e3f1b445478b26e03b8f7f8e0367305f0e",
+      "tree": "2ac57934a5a6373768e6165397f6692a2126dbaf",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 180,
+    "admission": {
+      "freeBytes": 4164685824,
+      "minimumFreeBytes": 2147483648,
+      "heavy": [
+        {
+          "ProcessId": 4944,
+          "ParentProcessId": 17648,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529721620)/"
+        },
+        {
+          "ProcessId": 12616,
+          "ParentProcessId": 43652,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529721859)/"
+        },
+        {
+          "ProcessId": 3516,
+          "ParentProcessId": 31364,
+          "Name": "node.exe",
+          "CreationDate": "/Date(1795529722213)/"
+        }
+      ]
+    },
+    "startedAt": "2026-11-24T14:16:00.634975+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": true,
+    "driverPid": 13628,
+    "exitCode": 0,
+    "durationSeconds": 0.891,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\comms-replay-r9.stdout.log",
+      "sha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\comms-replay-r9.stderr.log",
+      "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+    }
+  },
+  "comms-compare-r9": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "comms-compare-r9",
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "comms:compare"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "13a900e3f1b445478b26e03b8f7f8e0367305f0e",
+      "tree": "2ac57934a5a6373768e6165397f6692a2126dbaf",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 120,
+    "admission": {
+      "freeBytes": 4645965824,
+      "minimumFreeBytes": 2147483648,
+      "heavy": []
+    },
+    "startedAt": "2026-11-24T14:16:02.922074+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": true,
+    "driverPid": 412,
+    "exitCode": 0,
+    "durationSeconds": 0.766,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\comms-compare-r9.stdout.log",
+      "sha256": "2e6708517b5d843f61f66c3a936be2c529b9e32fae2bf56a84f22e024b8380ba"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\comms-compare-r9.stderr.log",
+      "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+    }
+  },
+  "harness-validate-r12": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "harness-validate-r12",
+    "command": [
+      "pnpm.cmd",
+      "harness",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/chat-model-effort-picker-20261124.md"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "07d6cf9f9f8c1fbc5a6dde00bd434f1de79682a9",
+      "tree": "124c8b275671dca485196097cf9f40d9bbefcad9",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 180,
+    "admission": {
+      "freeBytes": 2226307072,
+      "minimumFreeBytes": 2147483648,
+      "heavy": []
+    },
+    "startedAt": "2026-11-24T14:49:27.105526+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": true,
+    "driverPid": 13436,
+    "exitCode": 0,
+    "durationSeconds": 2.297,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-validate-r12.stdout.log",
+      "sha256": "b05d0a6be9e0a125ab241140c8946a165c04c93c232d90da31357da25c2a66ed"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-validate-r12.stderr.log",
+      "sha256": "eef947ab06907ded41f9866f59c7ac6f7985246228f08ba2a1fc9b7b6900d511"
+    }
+  },
+  "harness-dry-run-r12": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "harness-dry-run-r12",
+    "command": [
+      "pnpm.cmd",
+      "harness",
+      "run",
+      "--spec",
+      "harness/specs/tasks/chat-model-effort-picker-20261124.md",
+      "--dry-run"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "07d6cf9f9f8c1fbc5a6dde00bd434f1de79682a9",
+      "tree": "124c8b275671dca485196097cf9f40d9bbefcad9",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 120,
+    "admission": {
+      "freeBytes": 2202800128,
+      "minimumFreeBytes": 2147483648,
+      "heavy": []
+    },
+    "startedAt": "2026-11-24T14:49:30.979713+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": true,
+    "driverPid": 35064,
+    "exitCode": 0,
+    "durationSeconds": 1.953,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-dry-run-r12.stdout.log",
+      "sha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\harness-dry-run-r12.stderr.log",
+      "sha256": "c2093d844d0d03ac695e43900875f9107dd15d19bf7135f6998febbb0a2f01f5"
+    }
+  },
+  "lint-r14": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "lint-r14",
+    "command": [
+      "pnpm.cmd",
+      "exec",
+      "eslint",
+      "src/pages/Chat/ChatInput.tsx",
+      "src/components/chat/ChatAgentEffortPopover.tsx",
+      "src/components/chat/EffortPreviewSlider.tsx",
+      "src/components/chat/ChatModelSettingsCard.tsx",
+      "src/components/chat/ChatModelPicker.tsx",
+      "tests/e2e/chat-agent-effort.spec.ts",
+      "tests/e2e/chat-model-settings-card.spec.ts",
+      "tests/e2e/chat-model-picker.spec.ts",
+      "tests/unit/chat-model-settings-card.test.tsx",
+      "tests/unit/chat-agent-effort-popover.test.tsx"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+      "tree": "ac4cafaafc1c98fa93178d610d408f21339f5885",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 180,
+    "admission": {
+      "processProbeFreeBytes": 5157781504,
+      "heavy": [],
+      "freeBytes": 5251833856,
+      "totalPhysicalBytes": 16295432192,
+      "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+      "minimumFreeBytes": 4294967296
+    },
+    "startedAt": "2026-11-24T15:59:26.118902+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": false,
+    "driverPid": 37792,
+    "exitCode": 0,
+    "durationSeconds": 5.578,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\lint-r14.stdout.log",
+      "sha256": "471e65bc00e62aa933d53a5a3aea8519c90c74349059147cf30bac25248a44dc"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\lint-r14.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "unit-r14": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "unit-r14",
+    "command": [
+      "pnpm.cmd",
+      "exec",
+      "vitest",
+      "run",
+      "tests/unit/chat-model-settings-card.test.tsx",
+      "tests/unit/chat-agent-effort-popover.test.tsx",
+      "tests/unit/chat-input.test.tsx",
+      "tests/unit/chat-model-selection.test.ts",
+      "tests/unit/model-options.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "--reporter=json",
+      "--outputFile=D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r14.json"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+      "tree": "ac4cafaafc1c98fa93178d610d408f21339f5885",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 300,
+    "admission": {
+      "processProbeFreeBytes": 5082808320,
+      "heavy": [],
+      "freeBytes": 5188198400,
+      "totalPhysicalBytes": 16295432192,
+      "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+      "minimumFreeBytes": 4294967296
+    },
+    "startedAt": "2026-11-24T15:59:32.786942+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": false,
+    "driverPid": 35928,
+    "exitCode": 0,
+    "durationSeconds": 39.39,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r14.stdout.log",
+      "sha256": "970bd7c1407e584da7d8c2a5754f1b8c661231f2d1fbe5d79d123e03b6c24678"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\unit-r14.stderr.log",
+      "sha256": "21781bfcceb07faa7feb7aaaf9fd41b036bc148157e7d86f3b870c6791816564"
+    }
+  },
+  "typecheck-r14": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "typecheck-r14",
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+      "tree": "ac4cafaafc1c98fa93178d610d408f21339f5885",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 600,
+    "admission": {
+      "processProbeFreeBytes": 4306681856,
+      "heavy": [],
+      "freeBytes": 4403126272,
+      "totalPhysicalBytes": 16295432192,
+      "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+      "minimumFreeBytes": 4294967296
+    },
+    "startedAt": "2026-11-24T16:19:12.757209+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": false,
+    "driverPid": 24588,
+    "exitCode": 0,
+    "durationSeconds": 117.282,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r14.stdout.log",
+      "sha256": "3b13638f8581f0df40526c2aa0e1dd783cad759104cca28bbcb422b358144b20"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\typecheck-r14.stderr.log",
+      "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+    }
+  },
+  "build-r14": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "build-r14",
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "build:vite"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+      "tree": "ac4cafaafc1c98fa93178d610d408f21339f5885",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 300,
+    "admission": {
+      "processProbeFreeBytes": 6638702592,
+      "heavy": [],
+      "freeBytes": 6719336448,
+      "totalPhysicalBytes": 16295432192,
+      "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+      "minimumFreeBytes": 4294967296
+    },
+    "startedAt": "2026-11-24T16:21:11.988300+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": false,
+    "driverPid": 26508,
+    "exitCode": 0,
+    "durationSeconds": 60.75,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r14.stdout.log",
+      "sha256": "8ee22739877b795c5f3d08290a3fbd84acbf5c10be49d13ebcedfdc230fcfa75"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\build-r14.stderr.log",
+      "sha256": "5ca91912f9d05ef651e56bd17856743221635df8ba063e031783cfaa3a739c6b"
+    }
+  },
+  "electron-r14": {
+    "actor": "codex-output-ui",
+    "driven_by": "agent",
+    "label": "electron-r14",
+    "command": [
+      "pnpm.cmd",
+      "exec",
+      "playwright",
+      "test",
+      "tests/e2e/chat-model-settings-card.spec.ts",
+      "tests/e2e/chat-agent-effort.spec.ts",
+      "tests/e2e/chat-model-picker.spec.ts",
+      "--workers=1",
+      "--retries=0",
+      "--reporter=json",
+      "--output=D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r14"
+    ],
+    "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+    "candidate": {
+      "commit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+      "tree": "ac4cafaafc1c98fa93178d610d408f21339f5885",
+      "dirty": false
+    },
+    "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+    "timeoutSeconds": 900,
+    "admission": {
+      "processProbeFreeBytes": 4821385216,
+      "heavy": [],
+      "freeBytes": 4932751360,
+      "totalPhysicalBytes": 16295432192,
+      "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+      "minimumFreeBytes": 4294967296
+    },
+    "startedAt": "2026-11-24T16:22:13.901312+00:00",
+    "status": "finished",
+    "resourceLimits": {
+      "NODE_OPTIONS": "--max-old-space-size=768",
+      "GOMEMLIMIT": "900MiB",
+      "GOMAXPROCS": "2",
+      "workers": 1
+    },
+    "electronRuntime": {
+      "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+      "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+    },
+    "independentUIAuthorized": false,
+    "driverPid": 35112,
+    "exitCode": 0,
+    "durationSeconds": 125.297,
+    "sourceUnchanged": true,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r14.stdout.log",
+      "sha256": "dc2e92829afe6192548c241d75afd62abda378616ca4add1e3ecebbe8c9c5a8f"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-model-effort-picker-20261124\\electron-r14.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

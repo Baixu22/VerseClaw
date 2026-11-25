@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-task-ux",
+  "sourceCommit": "22d328d854bcd07d203360abfd4c941241e9151b",
+  "candidateCommit": "69663b2543f171c8cf8c4ff220c877b33835322a",
+  "installedAt": "2026-11-23T12:33:25.749127+00:00",
+  "target": "D:\\ClawX",
+  "backup": "D:\\tmp\\carbon-worktree-ux-20261123-01a203cc\\previous-main-build",
+  "trees": [
+    {
+      "path": "dist",
+      "filesVerified": 1402,
+      "manifestSha256": "cde58af8eebff59959169a1244df23cf1fd741f9543170478203bd7dd2af8548"
+    },
+    {
+      "path": "dist-electron",
+      "filesVerified": 10,
+      "manifestSha256": "954a6511990f615c2dcb3f6116e1e7a93e9a58ec1abc5a24cf195f534388067d"
+    }
+  ],
+  "entries": [
+    {
+      "path": "dist/index.html",
+      "sha256": "6cf3bc5e45fd1df0e6cb1eeeeeed0bcb2f29636417a127a8455a905c27c97709"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "98a16bc204c7245f95b521188f3a9d45060f44e33a5c371c0c424b03cb76ee09"
+    },
+    {
+      "path": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ]
+}

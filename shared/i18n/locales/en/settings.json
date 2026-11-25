@@ -137,6 +137,10 @@
       "description": "Basic keeps routine screens quieter. Advanced shows more checkpoint evidence, compaction warnings, role contracts, and diagnostics.",
       "basic": "Basic",
       "advanced": "Advanced"
+    },
+    "contextDisplay": {
+      "title": "Show context usage",
+      "description": "Display a context tag beside the chat input, with composition details on hover or focus."
     }
   },
   "aiProviders": {
@@ -631,7 +635,7 @@
     "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally.",
     "efficiencySampling": {
       "title": "Runtime efficiency sampling",
-      "description": "Records real process CPU and memory samples locally to diagnose heavy UI states. Nothing is uploaded. Disabling it stops the timer entirely.",
+      "description": "Records real process CPU and memory samples locally to diagnose heavy UI states. Nothing is uploaded. Turning this off stops diagnostic recording; resource protection and idle cleanup continue.",
       "toggleAria": "Toggle runtime efficiency sampling",
       "notSampled": "Not sampled yet. No measured runtime efficiency data is available.",
       "disabledHint": "Sampling is off. Turn it on to start collecting local measurements.",
@@ -1031,6 +1035,32 @@
       "all": "All",
       "removable": "Removable",
       "protected": "Protected"
+    },
+    "executionSettings": "Execution settings",
+    "localDirectory": "Local folder",
+    "uncommittedChanges": "Uncommitted changes",
+    "runningHint": "This chat is running. Stop it or wait before switching.",
+    "loadingDirectory": "Loading working directories…",
+    "openCreated": "Open worktree",
+    "customizeWorktree": "Name / starting branch",
+    "mainDirectory": "Main checkout",
+    "branches": "Branch",
+    "notGit": "This folder is not a Git repository.",
+    "creation": {
+      "title": "Creating worktree",
+      "saving": "Save conversation",
+      "creating": "Create worktree",
+      "opening": "Open conversation",
+      "details": "More details",
+      "branch": "Branch",
+      "directory": "Directory",
+      "stay": "Stay in this conversation",
+      "staying": "Stay here after creation",
+      "return": "Return to conversation",
+      "open": "Open worktree",
+      "retry": "Retry creation",
+      "ready": "Worktree ready",
+      "dismissReady": "Dismiss worktree notice"
     }
   },
   "embedding": {

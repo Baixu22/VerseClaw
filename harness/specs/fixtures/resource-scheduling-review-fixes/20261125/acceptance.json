@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-resource-relay",
+  "task": "resource-scheduling-review-fixes-20261125",
+  "baselineCommit": "526645345fac24c0ecb0f7e4170d920e57d37153",
+  "codeCommit": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "sourceTree": "e9fd9347d71c770b31c54f123052fdc6f1f7a834",
+  "resourceTests": 214,
+  "harnessTests": 59,
+  "electronScenarios": 1,
+  "nativeFinalReservations": 0,
+  "reviews": 4,
+  "mainIntegration": "8a565c8ba49687c9ffd03b6d0e86dca45db87423",
+  "implementationCriteriaStatus": "verified",
+  "localCloseoutStatus": "complete",
+  "overallHarnessCiStatus": "failed-existing-agent-dev-audit",
+  "dependencies": "Existing installed third-party packages reused; VerseBrowser built from this checkout; Electron 40.8.4 reused from D:/tmp.",
+  "normalDefaults": {
+    "mainConcurrency": 64,
+    "unconfiguredManagedCapacity": "unrestricted",
+    "pressureManagedCapacity": 1
+  },
+  "taskForestNode": "TF-0949"
+}

@@ -6,6 +6,8 @@ export default defineConfig({
   test: {
     ...sharedVitestConfig.test,
     include: [
+      "src/process/command-queue.test.ts",
+      "src/agents/model-fallback.loop-termination.test.ts",
       "src/agents/resource-leases.test.ts",
       "src/agents/sessions/tools/bash-workspace-lease.test.ts",
       "src/agents/sessions/tools/bounded-waiting-lease.test.ts",
@@ -15,6 +17,7 @@ export default defineConfig({
       "src/agents/orchestration-token-budget.test.ts",
       "src/agents/provider-outbound-budget.test.ts",
       "src/agents/verseshell/managed-process-capacity.test.ts",
+      "src/agents/verseshell/managed-process-pressure.test.ts",
       "src/context-engine/factstore/symbol-lease.test.ts",
       "src/agents/symbol-lease-guard.test.ts",
     ],

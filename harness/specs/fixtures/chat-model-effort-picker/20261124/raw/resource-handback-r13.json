@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "sourceCommit": "97c6ef0ce38535d8d2d25bd3d2cadafbe36716f7",
+  "driverPid": 23104,
+  "status": "finished",
+  "exitCode": 1,
+  "durationSeconds": 121.563,
+  "sourceUnchanged": true,
+  "cleanup": {
+    "status": "passed",
+    "survivors": []
+  },
+  "newHeavyStartedAfterMessage": false,
+  "recordedAt": "2026-11-24T15:53:01.356072+00:00"
+}

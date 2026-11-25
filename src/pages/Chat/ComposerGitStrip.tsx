@@ -37,6 +37,7 @@ type ComposerGitStripProps = {
   onSwitchWorktreeWorkspace: (worktree: GitWorktree) => Promise<void>;
   onChanged?: () => void;
   refreshSignal?: number;
+  summaryOnly?: boolean;
 };
 
 type WorktreeMode = 'new' | 'existing';
@@ -53,7 +54,7 @@ function sanitizeTestId(value: string): string {
   return value.replace(/[^a-z0-9._/-]+/gi, '-');
 }
 
-export function ComposerGitStrip({ workspace, disabled = false, active = true, sessionKey, onOpenGitPanel, onSwitchWorktreeWorkspace, onChanged, refreshSignal = 0 }: ComposerGitStripProps) {
+export function ComposerGitStrip({ workspace, disabled = false, active = true, sessionKey, onOpenGitPanel, onSwitchWorktreeWorkspace, onChanged, refreshSignal = 0, summaryOnly = false }: ComposerGitStripProps) {
   const { t } = useTranslation('chat');
   const popover = usePopover<HTMLButtonElement>({ align: 'left', gap: 8 });
   const { open, setOpen } = popover;
@@ -189,6 +190,16 @@ export function ComposerGitStrip({ workspace, disabled = false, active = true, s
     : status.clean
       ? t('composer.git.clean')
       : t('composer.git.dirty', { count: changeCount });
+
+  if (summaryOnly) return (
+    <div className="composer-change-summary" data-testid="composer-git-strip">
+      <button type="button" onClick={onOpenGitPanel} data-testid="composer-git-review" title={t('composer.git.reviewChanges')}>
+        <GitCompareArrows className="size-3.5" aria-hidden="true" />
+        <span data-testid="composer-git-change-count">{t('composer.git.filesChanged', { count: changeCount })}</span>
+        {status.hasConflicts && <AlertTriangle className="size-3.5 text-amber-700 dark:text-amber-400" aria-label={stateLabel} />}
+      </button>
+    </div>
+  );
 
   const finishOperation = async (key: string, action: string, operation: () => Promise<GitOperationResult>) => {
     if (operationLoading) return;

@@ -137,6 +137,10 @@
       "description": "Basic 保持常用界面更简洁。Advanced 显示更多 checkpoint 证据、压缩警告、角色契约和诊断信息。",
       "basic": "Basic",
       "advanced": "Advanced"
+    },
+    "contextDisplay": {
+      "title": "显示上下文用量",
+      "description": "在聊天输入框旁显示上下文标签，悬停或聚焦可查看组成详情。"
     }
   },
   "aiProviders": {
@@ -631,7 +635,7 @@
     "installDetail": "这将创建 ~/.local/bin/openclaw。确保 ~/.local/bin 在您的 PATH 中。",
     "efficiencySampling": {
       "title": "运行时效率采样",
-      "description": "本地记录真实的进程 CPU 与内存样本，用于诊断高负载界面状态，不上传任何数据。关闭后定时器完全停止。",
+      "description": "本地记录真实的进程 CPU 与内存样本，用于诊断高负载界面状态，不上传任何数据。关闭后停止诊断记录，资源保护与空闲回收继续运行。",
       "toggleAria": "开关运行时效率采样",
       "notSampled": "尚未采样，没有可用的运行时效率实测数据。",
       "disabledHint": "采样已关闭。开启后才会开始采集本地测量数据。",
@@ -1031,6 +1035,32 @@
       "all": "全部",
       "removable": "可移除",
       "protected": "受保护"
+    },
+    "executionSettings": "执行设置",
+    "localDirectory": "本地目录",
+    "uncommittedChanges": "有未提交改动",
+    "runningHint": "会话运行中，停止或完成后可切换。",
+    "loadingDirectory": "正在读取工作目录…",
+    "openCreated": "打开工作树",
+    "customizeWorktree": "改名 / 起点",
+    "mainDirectory": "本地主目录",
+    "branches": "分支",
+    "notGit": "当前目录未初始化 Git。",
+    "creation": {
+      "title": "正在创建工作树",
+      "saving": "保存会话",
+      "creating": "创建工作树",
+      "opening": "打开会话",
+      "details": "更多详情",
+      "branch": "分支",
+      "directory": "目录",
+      "stay": "留在当前会话",
+      "staying": "创建后留在当前会话",
+      "return": "返回会话",
+      "open": "打开工作树",
+      "retry": "重试创建",
+      "ready": "工作树已就绪",
+      "dismissReady": "关闭工作树提示"
     }
   },
   "embedding": {

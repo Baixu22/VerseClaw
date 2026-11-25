@@ -1,0 +1,359 @@
+{
+  "schema": "RecoveryMainIntegrationSource/v1",
+  "driven_by": "agent",
+  "actor": "codex-g3-main-integration-20261116",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "7abba413c47be1e5a772bda7bb3aafc8e87b14c5",
+    "tree": "b56ce210f3d540dd142a83ee9d0fd7f931d2fe80",
+    "dirty": false
+  },
+  "baseMain": "c3521cfc4252fab0a6c19c75eb3231cbf0f8e9af",
+  "reviewedSourceTree": "b56ce210f3d540dd142a83ee9d0fd7f931d2fe80",
+  "files": [
+    {
+      "path": "openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts",
+      "sha256": "139f66401ed159f21dbd9fd6c6caabaa6a7800d61e65c5e3039a105fb23b74e6"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts",
+      "sha256": "845c54cb21a4cef333cc605f3c2a72e9535279e4b6dd7f7d52523a33c08fe685"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.core.ts",
+      "sha256": "99dc92091bf94e126002f0f5f9a450239d6770a57d5a055037d0a292aedc1472"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.identity-reconcile.ts",
+      "sha256": "24b60c9a42615eca277362b2198600bb601c1cb6acb6a6dd0fce47d38b023c15"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.recovery-admission.ts",
+      "sha256": "657b7ec4e829350d6d402b70fff0c3065608dd7ae7658ee6db88bfbc0620ee65"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.recovery.flow.test.ts",
+      "sha256": "28415c73da28eb9531ae87cca9f29cb256e9df7833184677f47399a409574e39"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.runtime-handle-ensure.ts",
+      "sha256": "d20fa5b72f0a666066a7c893121be9e5fc04cb25edb05a3ef78613f004da6cb4"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.runtime-resume-state.ts",
+      "sha256": "74ba4c8efb0de99226c06db510e5b677b739159555c220328bf5866e68a95aab"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.turn-runner.ts",
+      "sha256": "d1e7142cfe149d968608c85c0ba3fb6aa88768fd8728eceaa7226f1c5b75d738"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.turn-stream.ts",
+      "sha256": "0ff8f2e3265004b33de606e166851d66a28e35ae03f4fd3a4b1aaf92e4db1e20"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/control-plane/manager.types.ts",
+      "sha256": "4310e8a957591d5b9a8c6c7ff6ec0dda2324b4cbc55fff7f9b244d0e18b6f63f"
+    },
+    {
+      "path": "openclaw_runtime/src/acp/runtime/session-meta.ts",
+      "sha256": "b15099bb4b414e954906b605885794c57c5a8cc989a8b2d389a7fb48d69a52c4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-command.ts",
+      "sha256": "926ae1d9e148f867d7c19539bb7fc39b9b341cb79059d0f8bdf4c26066880ce6"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-hooks/compaction-summary-contract.test.ts",
+      "sha256": "578c6970a758937ab393d5696bcc1850f107ebdbfe63fb8f598592c9b593041c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/cli-runner.ts",
+      "sha256": "465216441491cb3e3f8c53873c33084169defdc228c9dac90be92b94efd97bfa"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/cli-runner/types.ts",
+      "sha256": "1e762f24681ef56cc9b2d77238a2631f43591b3ae7218160e6dbf72dbd19a650"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/attempt-execution.shared.ts",
+      "sha256": "23f30db9eb5f9ed0cba069855d415899764df2c705129a294925dc6a74aeec62"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/attempt-execution.ts",
+      "sha256": "027ee5767b4f69ca31e6b97e3df0c50693812abebbf75d5fa9ba992da25042df"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/delivery.ts",
+      "sha256": "10de91e8a7851faadcec0d61ab99cb12ef0508425b97accc698292c2ce5ed668"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/session-store.ts",
+      "sha256": "9043bfef1816cb8782d248bb8ae3f2effe6078838614c7e6e05f0c29ddd0e5af"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/command/types.ts",
+      "sha256": "e8343b51df3221b99c3a9eb70866ba588416088a28e9fd7f2dbbb127f04d7d6c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+      "sha256": "938553659473d7aa4771b7fc7776bde6f120a61911872a543f2f06548555c0f5"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.recovery-admission.test.ts",
+      "sha256": "12a7a1af5a428bc149034d3ff489426f901e9f617d8bcdbe9aaf47088b63d8da"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "e166aadc3b14e2adf337d90e48e103721ca020a5e4d915df650416049ab5d855"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts",
+      "sha256": "c317c08858d49f2df671918cca61fd53778c241e48b00ce7b8a2a9a3ec6e10df"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.lifecycle.ts",
+      "sha256": "34b3a2c89fa60515fa0b164633760344b316c89d7ea73876e64d19e8c6053492"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.messages.ts",
+      "sha256": "e64c244ae433997b033f36e46fa90c207362ca2d38f98894828d1a29330f26b7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.types.ts",
+      "sha256": "d06acd0cab65ac8def978946dd59939d569410cb7157d1980fca16ecc7e0e553"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-subscribe.ts",
+      "sha256": "7b001d6dba197931058e3c3acc458bd80aa01c414237c217aa69c4d86b0d6f9b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-subscribe.types.ts",
+      "sha256": "411fc55eda4092f1154cf8f0ba82d208f25ecf3f07521a23c4673e9b181a0907"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-phase/recovery.ts",
+      "sha256": "8628a46146a8b63d671728cf95a06727364979fa722635b183e866a817e29f74"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/failover-error.ts",
+      "sha256": "f8aafb175340b3484e586d3015d5879b0ead8d23c3a980ff8ad0b34e786abfd0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/goal-wake-dispatch.ts",
+      "sha256": "ea028e01b838c736f6f2ff427a73e7c4bb890f38823aac6a04ec2bdbc46cddd7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/goal-wake-recovery-admission.ts",
+      "sha256": "4a7ebda3ea802d5a5f6929079a1d02e7b93d3621fe2b9ac100047b63bd7d53e9"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/goal-wake-recovery.test.ts",
+      "sha256": "f70890c24479c35766a05a437673cc00d5d57c29774d697b7dd6d3f0607ec4a8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/goal-wake-recovery.ts",
+      "sha256": "8a562e84a2ff8de911ee226fb41f3a7089083e6dabc2e4c5995cfae154df0203"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/goal-wake-triggers.test.ts",
+      "sha256": "e1fdb98de4ce7eb24604bc01ac93cd59d8b2c376817859108a364b90a7d5eae7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/harness/lifecycle.ts",
+      "sha256": "2e96e5b0bf22380c5369876ad2d518fb9935e3fcc412a5146a04539f2ee35ab1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts",
+      "sha256": "3a2daf5c245a3ea3a271ea49c2f842a70e2164c5078b2ccd1669de765c23e08b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.ts",
+      "sha256": "4ac0714dd7317198d87a6676e5b61abd662068c9a2d65f43affc83d53fe20920"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts",
+      "sha256": "e37d93f22fc905f5f029dd8c284ca8e5ab27ed76a7ab1cec0f1ca22a61a1c2ef"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/recovery-authority/final-delivery-session.ts",
+      "sha256": "995a916c8907ed8c829da6db2c9c74d81bef009142f2580099cdb9d2efc39d95"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/recovery-authority/main-session-adapter.ts",
+      "sha256": "cff22788613b9be85dd05be3043e2044a3a121d191c0b0cce4ec0264d7b842e0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/recovery-authority/main-session-admission.test.ts",
+      "sha256": "f0c12657e849e2d3fb2dfc794e5385e4cc55f3a4535286b9ec878505a6c57ba1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/recovery-authority/main-session-admission.ts",
+      "sha256": "0301ee5bd8552f6ef428f3f9e7414ef5280bea3eac24fae2c1e4969867a3af1d"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/recovery-authority/owner-admission.ts",
+      "sha256": "e8bcbec345c67ecbe004e17a33463469b18bc14d5e16c0fc70955b51a775b96f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/recovery-authority/recovery-authority.test.ts",
+      "sha256": "043b1f60581259631c34e3a6b8fea0c043bacab04ae8ecc4eff9dee648c3196f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+      "sha256": "897a435ce931efe84aa2a40211ae926ed8eea163080ef497eaacba7a0f61b430"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/agent-runner-execution.ts",
+      "sha256": "f5ec0db0640413e7e473cebd8bd7f028b89e0b85e4b799301ef68532758b648c"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/followup-runner.recovery-identity.test.ts",
+      "sha256": "ffd5c38baec83fdd37a2ec7cb959ffbf22d00d866531513cdafd1d463edaa361"
+    },
+    {
+      "path": "openclaw_runtime/src/auto-reply/reply/followup-runner.ts",
+      "sha256": "1d7066e1033ed93127f45469964b88d36033c546d93036379c117428f0245106"
+    },
+    {
+      "path": "openclaw_runtime/src/channels/message/send.ts",
+      "sha256": "a4f10cf2ebb1d1d4f8d8005209c1d226d047446c7fddab6ca50008a1b2f6b545"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/types.ts",
+      "sha256": "dd948f66f5c2685c9b0cb681759787d73482b3b3d6ba57ff88f2697339858736"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/types.ts",
+      "sha256": "3975e49c6a7894fecce3fc4bf4579c21ef30d48663213a29d3c0b9bc384ea2dc"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/agent.recovery-admission.test.ts",
+      "sha256": "cf5ebfbb87c7ce0b0f3e7ad55456b9973fa02a78c547a72fb167f62a7a124582"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+      "sha256": "c0f0237f22bf80075b2c2bcd8f7001df1340ff46bd81ea6459d248b927f91940"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-lifecycle-state.ts",
+      "sha256": "f47478c9103ebb6b50e6943b2584fbf6009d854744b7a9502ad7697f2f8d8948"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/delivery-queue-sqlite.ts",
+      "sha256": "61e60d5728c3972233890183d72ad8a87ec532707683a3236f8f2bab5324a878"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/outbound/deliver.ts",
+      "sha256": "5d47ebdca726f2f1cab87ff7e1ee60bc122aab3864a03eb270ec80407d1b5115"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts",
+      "sha256": "cce54f4749da6ff265b77b2e82efe514f94641ccddd31bc3b6a8b2a874b3562c"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/outbound/delivery-queue-recovery.ts",
+      "sha256": "a4708d5d7edb6e590af44e281f5e24f5b09751c6ada65df113bef0a84827eab5"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/outbound/delivery-queue-storage.ts",
+      "sha256": "390e8ef80d8a94e8ffc197e9c47adb884d66037b126ab584fb72ae5c1e5a379a"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/outbound/delivery-queue.ts",
+      "sha256": "40ea00c9aa4c473b258d329ba35c90df4ead63f855c95ac09dac784182d3c895"
+    },
+    {
+      "path": "openclaw_runtime/src/infra/outbound/delivery-recovery.flow.test.ts",
+      "sha256": "d0e26cfce49069046958539d09a85221b315bf40e4b84a563634f37c6ccd4738"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/session-entry-slot-keys.ts",
+      "sha256": "8cd0f9ddaf6d9c65d136cc687ddf572ecfb43df6f18d1e48b0fba6f5d2c39699"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-agent-db.ts",
+      "sha256": "746abb0a08205062d85ae59f9052b8f28472e7ace46ff4bd7e7914609be93fc0"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts",
+      "sha256": "4cf07786e1807c6b950e3619eeb46f59d1933e2c070c815aa95e43b1b2544da0"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.generated.d.ts",
+      "sha256": "234e8235cdeb44335f575de57e90f2cca988189cb1728589d1ce39b8000676de"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.ts",
+      "sha256": "00ec84722b897dd553ac6bf469ec6b498a644dad20c7c1652edb98e1af10704b"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+      "sha256": "394500c7a24eea4c230811fa8efb8a6a6f7cd8a73ca907e2133476fa95661e28"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.sql",
+      "sha256": "e882dbd9b787e57dca70f5e707e705baeafae9aeb3c2d14547a925045d8d9975"
+    },
+    {
+      "path": "scripts/recovery-acp-process-proof-child.mts",
+      "sha256": "7aff91b6c6389cee2bbef1a7bf969b758ae49342a5165bff4c021a9687b520ad"
+    },
+    {
+      "path": "scripts/recovery-acp-process-proof.mjs",
+      "sha256": "aa0c947dd8cf8785d4970154ed2ee33850daac80f732173ff54c37b82dfeacf1"
+    },
+    {
+      "path": "scripts/recovery-delivery-process-proof-child.mts",
+      "sha256": "55a42d6d96dc7b5b8458c581a24680c9d03b0020bc7e8aa3a95e7d457f304cc2"
+    },
+    {
+      "path": "scripts/recovery-delivery-process-proof.mjs",
+      "sha256": "b5dfcd4d0afcd6215ff8dd537030b4c84e62dac6345b2b03d6994cd8f262b4ee"
+    },
+    {
+      "path": "scripts/recovery-goal-process-proof-child.mts",
+      "sha256": "d6b2f599a05fb8134b8928414511d3a98a6df06ebf872ad356d0ce2f4af78551"
+    },
+    {
+      "path": "scripts/recovery-goal-process-proof.mjs",
+      "sha256": "4a054e8bccf3987457687aad8f6fd42d0acd93f1b7469f9f886f7f8d3eb06ebb"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "e234127e3573499ab3b69f91998384a345c2c1bfc5ce3af3ce420ef2ef7dfcf8"
+    },
+    {
+      "path": "scripts/typecheck-agent-dev.mjs",
+      "sha256": "b73d14439778614037896fde866e5611d6b42f7b31ca140f96a94a2ad81a91c8"
+    },
+    {
+      "path": "shared/recovery-authority/contract.ts",
+      "sha256": "b54df8d61d8a6655856ed4b6a7cb587982d54a52761d0e968a58f80854a9dae9"
+    },
+    {
+      "path": "src/components/file-preview/MonacoViewer.tsx",
+      "sha256": "d6fc4e84a88086d0fdcb78957914984b955fe5279ea64671c8dc1c83c1cf0eb0"
+    },
+    {
+      "path": "src/components/layout/Sidebar.tsx",
+      "sha256": "55523e1ab48866c2ee9133fe450bc23b8983473d2e6d239602096ebd9545a0a5"
+    },
+    {
+      "path": "tests/e2e/fixtures/recovery-contract-probe.ts",
+      "sha256": "7d82c5d606251f8bd1751172d2e8a22b7fe4b508e89835d6dae7875286a3992f"
+    },
+    {
+      "path": "tests/e2e/recovery-contract-eval.spec.ts",
+      "sha256": "c0a8081c47c2f1678e0b74113a1213de88119ecf8e05b76f2f9b579bb8a05517"
+    },
+    {
+      "path": "tests/e2e/recovery-longsession-eval.spec.ts",
+      "sha256": "6047e599ea759306d7e0073ec200da89855a1a4742e77134a4326474275928d8"
+    },
+    {
+      "path": "tests/unit/recovery-observation.test.ts",
+      "sha256": "25a8d68596a15217720e0dc07d2a323df3b214c5efb62c315424190938516f2a"
+    }
+  ]
+}

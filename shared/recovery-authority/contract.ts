@@ -36,6 +36,7 @@ export type RecoveryOwner =
       readonly kind: "main-session";
       readonly ownerId: string;
       readonly sessionKey: string;
+      readonly runId?: string;
     }
   | {
       readonly kind: "subagent-run";
@@ -293,7 +294,7 @@ function isRecoveryOwner(value: unknown): value is RecoveryOwner {
   }
   switch (value.kind) {
     case "main-session":
-      return isNonEmptyString(value.sessionKey);
+      return isNonEmptyString(value.sessionKey) && (value.runId === undefined || isNonEmptyString(value.runId));
     case "subagent-run":
       return isNonEmptyString(value.sessionKey) && isNonEmptyString(value.runId);
     case "goal-wake":

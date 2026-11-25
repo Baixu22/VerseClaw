@@ -3,13 +3,7 @@ import type { Dirent } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { PluginDoctorStateMigration } from "openclaw/plugin-sdk/runtime-doctor";
-import {
-  hasMatrixSyncCacheStateInStore,
-  openMatrixSyncCacheStoreOptions,
-  readLegacyMatrixSyncCacheState,
-  writeMatrixSyncCacheStateToStore,
-  type MatrixSyncCacheRecord,
-} from "./src/matrix/client/file-sync-store.js";
+import type { MatrixSyncCacheRecord } from "./src/matrix/client/file-sync-store.js";
 import {
   MATRIX_IDB_SNAPSHOT_FILENAME,
   MATRIX_LEGACY_CRYPTO_MIGRATION_FILENAME,
@@ -28,7 +22,6 @@ import {
   type MatrixIdbSnapshotRecord,
   type MatrixLegacyCryptoMigrationState,
 } from "./src/matrix/crypto-state-store.js";
-import { readLegacyMatrixIdbSnapshotState } from "./src/matrix/sdk/idb-persistence.js";
 import type { MatrixStoredRecoveryKey } from "./src/matrix/sdk/types.js";
 
 export { normalizeCompatibilityConfig, legacyConfigRules } from "./src/doctor-contract.js";
@@ -127,6 +120,8 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
     async detectLegacyState(params) {
       const previews: string[] = [];
       for (const storageRootDir of await collectLegacySyncCacheRoots(params.stateDir)) {
+        const { readLegacyMatrixSyncCacheState } =
+          await import("./src/matrix/client/file-sync-store.js");
         const persisted = await readLegacyMatrixSyncCacheState(storageRootDir);
         if (!persisted) {
           continue;
@@ -139,6 +134,12 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
       const changes: string[] = [];
       const warnings: string[] = [];
       for (const storageRootDir of await collectLegacySyncCacheRoots(params.stateDir)) {
+        const {
+          hasMatrixSyncCacheStateInStore,
+          openMatrixSyncCacheStoreOptions,
+          readLegacyMatrixSyncCacheState,
+          writeMatrixSyncCacheStateToStore,
+        } = await import("./src/matrix/client/file-sync-store.js");
         const persisted = await readLegacyMatrixSyncCacheState(storageRootDir);
         if (!persisted) {
           continue;
@@ -229,6 +230,8 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
         params.stateDir,
         MATRIX_IDB_SNAPSHOT_FILENAME,
       )) {
+        const { readLegacyMatrixIdbSnapshotState } =
+          await import("./src/matrix/sdk/idb-persistence.js");
         const snapshot = await readLegacyMatrixIdbSnapshotState(storageRootDir);
         if (!snapshot) {
           continue;
@@ -244,6 +247,8 @@ export const stateMigrations: PluginDoctorStateMigration[] = [
         params.stateDir,
         MATRIX_IDB_SNAPSHOT_FILENAME,
       )) {
+        const { readLegacyMatrixIdbSnapshotState } =
+          await import("./src/matrix/sdk/idb-persistence.js");
         const snapshot = await readLegacyMatrixIdbSnapshotState(storageRootDir);
         if (!snapshot) {
           continue;

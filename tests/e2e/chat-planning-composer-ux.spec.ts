@@ -37,6 +37,7 @@ test('conversation planning, settings and decisions share a compact input surfac
   const pageErrors: string[] = [];
   const shots: Array<{ name: string; sha256: string; width: number; height: number }> = [];
   const steps: Record<string, boolean> = {};
+  const materials: Array<Record<string, unknown>> = [];
   const captureRoot = process.env.CLAWX_CHAT_UX_CAPTURE_DIR ?? info.outputPath('screenshots');
   await mkdir(captureRoot, { recursive: true });
   try {
@@ -86,6 +87,35 @@ test('conversation planning, settings and decisions share a compact input surfac
     await pinWindowContentSize(app, { width: 1280, height: 800 });
     await page.reload();
     const capture = async (name: string) => {
+      const dark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
+      const shell = page.getByTestId('chat-composer-shell');
+      const bubble = page.getByTestId('chat-user-message-bubble').first();
+      await expect(page.getByTestId('chat-page')).toHaveCSS('background-color', dark ? 'rgb(33, 33, 31)' : 'rgb(247, 247, 245)');
+      if (await shell.isVisible()) {
+        await expect(shell).toHaveCSS('background-color', dark ? 'rgb(56, 56, 54)' : 'rgb(255, 255, 255)');
+        await expect(shell).toHaveCSS('backdrop-filter', 'none');
+        await expect(shell).toHaveCSS('border-radius', '22px');
+        await expect(page.getByTestId('composer-execution-tray')).toHaveCSS('border-top-left-radius', '16px');
+        const border = await shell.evaluate(element => ({
+          width: parseFloat(getComputedStyle(element).borderTopWidth), ratio: devicePixelRatio,
+        }));
+        expect(border.width).toBeCloseTo(Math.max(1, Math.floor(border.ratio)) / border.ratio, 4);
+      }
+      await expect(bubble).toHaveCSS('background-color', dark ? 'rgb(54, 54, 52)' : 'rgb(237, 237, 234)');
+      await expect(bubble).toHaveCSS('border-radius', '12px');
+      await expect(bubble).toHaveCSS('padding', '9px 14px');
+      await expect(bubble).toHaveCSS('backdrop-filter', 'none');
+      await expect(page.getByTestId('chat-composer-beam')).toHaveCount(0);
+      materials.push({ name, dark, ...await page.evaluate(() => {
+        const values = (selector: string) => {
+          const element = document.querySelector(selector);
+          if (!element) return null;
+          const css = getComputedStyle(element);
+          return { background: css.backgroundColor, border: css.borderColor, radius: css.borderRadius, shadow: css.boxShadow, backdropFilter: css.backdropFilter };
+        };
+        return { shell: values('[data-testid="chat-composer-shell"]'), frame: values('.codex-composer-stack'),
+          task: values('[data-testid="session-task-panel"]'), message: values('[data-testid="chat-user-message-bubble"]') };
+      }) });
       const bytes = await page.screenshot({ path: join(captureRoot, `${name}.png`), animations: 'disabled' });
       const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
       shots.push({ name, sha256: createHash('sha256').update(bytes).digest('hex'), ...viewport });
@@ -103,6 +133,7 @@ test('conversation planning, settings and decisions share a compact input surfac
     const selectProfile = async (value: string) => { await revealOptions(); await page.getByTestId('chat-knowledge-profile').selectOption(value); };
 
     const input = page.getByTestId('chat-composer-input');
+    await expect(page.getByTestId('composer-context-row')).toHaveCount(0);
     await expect(page.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'unavailable');
     await input.fill('任务状态恢复时保留这段草稿');
     await capture('task-unavailable-light-1280');
@@ -152,7 +183,10 @@ test('conversation planning, settings and decisions share a compact input surfac
     await runtime(app, { type: 'run.started', runId, sessionKey, ts: at + 2, startedAt: at + 2 });
     await runtime(app, { type: 'tool.started', runId, sessionKey, ts: at + 3, toolCallId: 'ux-plan', name: 'update_plan', args: { plan } });
     await expect(page.getByTestId('session-task-dock')).toHaveAttribute('data-step-source', 'run-plan');
-    await expect(page.getByTestId('session-task-current')).toContainText(plan[1].step);
+    await expect(page.getByTestId('session-task-current')).toHaveCount(0);
+    await expect(page.getByTestId('session-task-count')).toHaveText('1/2');
+    await expect(page.getByTestId('session-task-status')).toHaveClass(/sr-only/);
+    await expect(page.getByTestId('chat-composer-beam')).toHaveCount(0);
     await expect(page.getByTestId('chat-run-plan')).toHaveCount(0);
     await capture('running-light-1280');
     await pinWindowContentSize(app, { width: 960, height: 800 });
@@ -161,13 +195,21 @@ test('conversation planning, settings and decisions share a compact input surfac
     await page.keyboard.press('Enter');
     await expect(page.getByTestId('session-task-steps')).toContainText(plan[1].step);
     await expect(page.getByTestId('session-task-id')).toHaveCount(0);
+    await input.click();
     await capture('running-expanded-dark-960');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(page.locator('.session-task-spinner')).toHaveCSS('animation-name', 'none');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
     const enclosure = await page.evaluate(() => {
-      const taskPanel = document.querySelector('[data-testid="session-task-panel"]')!.getBoundingClientRect();
+      const taskElement = document.querySelector('[data-testid="session-task-panel"]')!;
+      const taskPanel = taskElement.getBoundingClientRect();
       const input = document.querySelector('[data-testid="chat-composer-shell"]')!.getBoundingClientRect();
-      return { widthDifference: Math.abs(taskPanel.width - input.width), gap: input.top - taskPanel.bottom };
+      return { widthDifference: Math.abs(taskPanel.width - input.width), gap: input.top - taskPanel.bottom,
+        sharedTray: Boolean(taskElement.closest('.composer-execution-tray')) };
     });
-    expect(enclosure.widthDifference).toBeLessThan(1); expect(Math.abs(enclosure.gap)).toBeLessThan(1);
+    expect(enclosure.widthDifference).toBeGreaterThan(20); expect(enclosure.widthDifference).toBeLessThan(28);
+    expect(enclosure.sharedTray).toBe(true);
+    expect(enclosure.gap).toBeGreaterThanOrEqual(0); expect(enclosure.gap).toBeLessThan(2);
     const completedPlan = plan.map(item => ({ ...item, status: 'completed' }));
     await runtime(app, { type: 'tool.started', runId, sessionKey, ts: at + 4, toolCallId: 'ux-plan-final', name: 'update_plan', args: { plan: completedPlan } });
     await runtime(app, { type: 'tool.completed', runId, sessionKey, ts: at + 5, toolCallId: 'ux-plan-final', name: 'update_plan', result: { success: true } });
@@ -186,6 +228,8 @@ test('conversation planning, settings and decisions share a compact input surfac
     await expect(page.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'paused');
     await expect(page.getByTestId('session-task-blockers')).toBeVisible();
     await expect(input).toHaveValue('任务暂停时保留这段草稿');
+    await expect(page.getByTestId('session-task-status')).toHaveClass(/sr-only/);
+    await expect(page.getByTestId('session-task-blockers')).toHaveCSS('border-radius', '6px');
     await capture('task-paused-dark-960');
     await page.getByTestId('session-task-title').click();
     steps.hiddenPausedTaskReappearsWithDraft = true;
@@ -258,6 +302,6 @@ test('conversation planning, settings and decisions share a compact input surfac
     }
     steps.fourLocalesAndNarrowThemes = true;
     expect(pageErrors).toEqual([]);
-    await writeFile(info.outputPath('chat-ux-journey.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-chat-ux', dataSource: 'agent-fixed Task and typed Runtime events', steps, shots, enclosure, actionStyles, defaultAnchorCount: anchors, pageErrors }, null, 2));
+    await writeFile(info.outputPath('chat-ux-journey.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-chat-ux', dataSource: 'agent-fixed Task and typed Runtime events', steps, shots, materials, enclosure, actionStyles, defaultAnchorCount: anchors, pageErrors }, null, 2));
   } finally { await closeElectronApp(app); }
 });

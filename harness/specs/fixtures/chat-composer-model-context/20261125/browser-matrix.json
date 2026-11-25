@@ -1,0 +1,806 @@
+{
+  "driven_by": "agent",
+  "actor": "ego-browser",
+  "measurements": [
+    {
+      "name": "en-light-1280",
+      "language": "en",
+      "theme": "light",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 tokens",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "en-light-375",
+      "language": "en",
+      "theme": "light",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 tokens",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "en-dark-1280",
+      "language": "en",
+      "theme": "dark",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 tokens",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "en-dark-375",
+      "language": "en",
+      "theme": "dark",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 tokens",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "zh-light-1280",
+      "language": "zh",
+      "theme": "light",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 Token",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "zh-light-375",
+      "language": "zh",
+      "theme": "light",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 Token",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "zh-dark-1280",
+      "language": "zh",
+      "theme": "dark",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 Token",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "zh-dark-375",
+      "language": "zh",
+      "theme": "dark",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 Token",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ja-light-1280",
+      "language": "ja",
+      "theme": "light",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 トークン",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ja-light-375",
+      "language": "ja",
+      "theme": "light",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 トークン",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ja-dark-1280",
+      "language": "ja",
+      "theme": "dark",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 トークン",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ja-dark-375",
+      "language": "ja",
+      "theme": "dark",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 トークン",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ru-light-1280",
+      "language": "ru",
+      "theme": "light",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 токенов",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ru-light-375",
+      "language": "ru",
+      "theme": "light",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 токенов",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ru-dark-1280",
+      "language": "ru",
+      "theme": "dark",
+      "width": 1280,
+      "height": 800,
+      "model": {
+        "width": 302.66668701171875,
+        "height": 115,
+        "left": 886.0104370117188,
+        "right": 1188.6771240234375,
+        "top": 611.6666870117188,
+        "bottom": 726.6666870117188,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 1112.199462890625,
+        "tooltipRight": 1160.199462890625,
+        "viewport": [
+          1280,
+          800
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 921.1986694335938,
+        "right": 1209.1986694335938,
+        "top": 367.21649169921875,
+        "bottom": 727.2164916992188,
+        "overflow": false
+      },
+      "context": {
+        "left": 633,
+        "right": 1017,
+        "top": 168,
+        "bottom": 728,
+        "width": 384,
+        "line": "2px",
+        "usage": "4,100 / 32,768 токенов",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "ru-dark-375",
+      "language": "ru",
+      "theme": "dark",
+      "width": 375,
+      "height": 667,
+      "model": {
+        "width": 293,
+        "height": 115,
+        "left": 73.33333587646484,
+        "right": 366.33333587646484,
+        "top": 479,
+        "bottom": 594,
+        "gap": 9,
+        "overlap": true,
+        "clickThrough": true,
+        "tooltipLeft": 290.54315185546875,
+        "tooltipRight": 338.54315185546875,
+        "viewport": [
+          375,
+          667
+        ]
+      },
+      "search": {
+        "border": "0px",
+        "outline": "none",
+        "shadow": "none",
+        "focused": true,
+        "inert": true,
+        "hidden": "true",
+        "left": 78.6434097290039,
+        "right": 366.6434097290039,
+        "top": 234.54983520507812,
+        "bottom": 594.5498352050781,
+        "overflow": false
+      },
+      "context": {
+        "left": 8,
+        "right": 367.3333435058594,
+        "top": 36,
+        "bottom": 596,
+        "width": 359.3333435058594,
+        "line": "2px",
+        "usage": "4,100 / 32,768 токенов",
+        "sources": true,
+        "unfilled": true,
+        "headerVisible": true
+      },
+      "status": "passed"
+    }
+  ]
+}

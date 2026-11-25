@@ -1,0 +1,149 @@
+{
+  "commit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+  "tree": "ac4cafaafc1c98fa93178d610d408f21339f5885",
+  "diffBase": "49aa08031a2a1a1f88d16a7bf6bc9911b1ae9989",
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "f5a4e8b92f95f97bfb93b37df08084e7b480d2064ed723e36d8bb0c529bbfccf",
+      "bytes": 51224,
+      "blob": "e486d7deb5f79064acf291864c3ca3d019996af5"
+    },
+    {
+      "path": "README.md",
+      "sha256": "1319a12d6cdd5a6f44971311cfd554e613e68e94b9c7ceceac773f51b3cfb94e",
+      "bytes": 43777,
+      "blob": "5b606b843ade7a2aae57132a2ee7ab4564c38e1b"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "40b698ffc2cf342c5c43fede82e8c074e7daad4e6696ab6f254536fbd26570c1",
+      "bytes": 38686,
+      "blob": "23bfb1ff42cac39e14e3e7690f5762d16240f658"
+    },
+    {
+      "path": "docs/dev/chat-model-selection.md",
+      "sha256": "0175ef7aa3ab0b76bf1c4d23c52ad8bf978869f6047a023205c5c6b685ffdc48",
+      "bytes": 4288,
+      "blob": "77133ae4d4ca4893a3ba93dae35e46242902d897"
+    },
+    {
+      "path": "harness/specs/rules/ui-motion-material-system.md",
+      "sha256": "2060986bdf63f7944282b350bcb127c330f93528be23c8639dede90e3f8d0f54",
+      "bytes": 7026,
+      "blob": "89452769edc9fa5c6a58d3ad3ea071ae392ba542"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "49d14e86284432a5e3f836fa0b6ca78cd46fa34eb95e9796c4ec762e4169eacf",
+      "bytes": 10879,
+      "blob": "641b5478c42c1ec570a622d73869a8fe4130f5f9"
+    },
+    {
+      "path": "harness/specs/tasks/chat-model-effort-picker-20261124.md",
+      "sha256": "0bbc34438af99e97b9e8ef587af3835eae8fae6a80e71252fa24de6ed348fc92",
+      "bytes": 3947,
+      "blob": "0657462e0fa9cdec4c872371a296ec7ca6651dac"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "984bd5b001474199fc3793d924bc9c94be49aed33f656d1608eee96ec45e0616",
+      "bytes": 121254,
+      "blob": "a5aa24ca4f964ed45ca2e42873f848b9ee8d4d6f"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "84130ef3a7801e7617886907001f40aa918e4c2c206f7cf5d44cbcdcb9f352df",
+      "bytes": 144480,
+      "blob": "8acdf46513d96908fca10a6fb900dce311081bc6"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "916bb026ab6ba23f7f642f1ca8717d9c33063baf95a82b2c7f4a4f17b5054578",
+      "bytes": 170667,
+      "blob": "9fed3a6145132dc95fe9b4ff3aa6e0770ebcb42c"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "2859bee60eb93b5cef9dd1ce739e43c90db351d693d227d709990b691506aaa5",
+      "bytes": 118148,
+      "blob": "c77ec6882f2bf4a741247721a97dc5b42cd91b62"
+    },
+    {
+      "path": "src/components/chat/ChatAgentEffortPopover.tsx",
+      "sha256": "f924f9690dcfa20271df9fd508d36ebd7fbac872b816e8bc3fd0607d4e82c4d0",
+      "bytes": 13344,
+      "blob": "a6ca1636f947c3f6ca49ddc04c67a793fb1390a0"
+    },
+    {
+      "path": "src/components/chat/ChatModelPicker.tsx",
+      "sha256": "0f04f43349d8385bb5634f1ba44e2ac36e75d4c90119049a88cc80b3660c8b85",
+      "bytes": 29230,
+      "blob": "33f250276ea89aede26d858e722d112293295ba8"
+    },
+    {
+      "path": "src/components/chat/ChatModelSettingsCard.tsx",
+      "sha256": "cba44b9f9e3866245cd21195196d97c8fad8a0ad5009c23187db90fcbcf53d3e",
+      "bytes": 4670,
+      "blob": "c14d4601481053d1251dd1f9ff3cf256874d9995"
+    },
+    {
+      "path": "src/components/chat/EffortPreviewSlider.tsx",
+      "sha256": "08815251f934ddc5b75e26fbf9f7c97977b5d5eb29237fbcb79563bc887a1b15",
+      "bytes": 15895,
+      "blob": "96d801dcf6cb66959989059a38b3bf5c5587b196"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "ebace2ffa0f79eb45ee61d550d7035623af8666c801347653a7da5c8a75f8ea7",
+      "bytes": 218139,
+      "blob": "82ad6c29f13751c20f23b7cedd70413d1784dca1"
+    },
+    {
+      "path": "src/styles/chat-model-settings.css",
+      "sha256": "81997c5b54a93efbe6f292638baf880dcae57afdeed317fe3424e510f7d361b3",
+      "bytes": 3794,
+      "blob": "49f171adaef1324c280b67676fa5c1014ddc496b"
+    },
+    {
+      "path": "tests/e2e/chat-agent-effort.spec.ts",
+      "sha256": "d41de155b82512c0ad4a1609016fe2ea1a16464a604ad829a39c7b17b18f28cd",
+      "bytes": 27392,
+      "blob": "d7efd691a7907d927bc7276cb27b134a1b600dc8"
+    },
+    {
+      "path": "tests/e2e/chat-model-picker.spec.ts",
+      "sha256": "2525099bf167cb8d25a59cb2ffddd33ee9da37f4296e7c719d107e2acf399795",
+      "bytes": 9796,
+      "blob": "ef6b748a86425b0debcdcb06c98273a3320b5a9f"
+    },
+    {
+      "path": "tests/e2e/chat-model-settings-card.spec.ts",
+      "sha256": "4a23f60b95fd0e0afcec04f43a1903cb91f7260236438382289e2521513db36f",
+      "bytes": 10963,
+      "blob": "afc84872b8f97a2edbef984f29c593e34690a222"
+    },
+    {
+      "path": "tests/unit/chat-agent-effort-popover.test.tsx",
+      "sha256": "35368c20ae732c7ee8b31544792b1413d071f393004ed7cd4e7867be2c8de4e4",
+      "bytes": 12283,
+      "blob": "18bfc5a84eaea64f43d1986dee37e3e6c4336b54"
+    },
+    {
+      "path": "tests/unit/chat-input.test.tsx",
+      "sha256": "6c9629fcb973dd38f663baf1a42460f1e457508f2886c5332baff8825ed421f2",
+      "bytes": 146735,
+      "blob": "39cb33f85473d163883e72c52c8e26467d2836e8"
+    },
+    {
+      "path": "tests/unit/chat-model-settings-card.test.tsx",
+      "sha256": "d7adfa2f3fff0c4cccd36334618833f037cee0f4a0752ef1fffef4d1e0d7abeb",
+      "bytes": 7079,
+      "blob": "cf9cb4b1372bc7be994c8a9e6d007e42c183f7b6"
+    }
+  ],
+  "dependencyReuse": {
+    "nodeModules": "D:/ClawX/node_modules",
+    "electron": "D:/tmp/electron-40.8.4/dist/electron.exe"
+  }
+}

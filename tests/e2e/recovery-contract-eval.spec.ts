@@ -1,11 +1,13 @@
 /** Real Electron/Gateway crash windows with durable boundary probes and disk oracles. */
-import { execFileSync } from "node:child_process";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { freemem, tmpdir } from "node:os";
 import type { ElectronApplication } from "@playwright/test";
+import type { WorkspaceSnapshotResult } from "../../shared/host-api/contract";
+import type { TaskResolution, TaskView } from "../../shared/task-system/types";
 import { getStableWindow, test, expect } from "./fixtures/electron";
+import { captureRecoveryGatewayProcess, terminateRecoveryGatewayProcess } from "./fixtures/recovery-process";
 import {
   allocatePort,
   buildMockProviderConfig,
@@ -16,13 +18,16 @@ import { buildRecoveryContractManifest } from "../../shared/recovery-contract-ev
 import {
   MAIN_RECOVERY_KEY,
   closeRecoveryApp,
+  finishRecoveryTrialCleanup,
   effectLines,
   eventually,
   isRecoveryWarmupSettled,
+  isRecoveryDiskVerdictSettled,
   observeRecoveryVerdict,
   persistEvidence,
   persistFailedRecoveryObservation,
   readProbeFiles,
+  readRecoveryFaultBoundary,
   readRecoveryDisk,
   writeProbe,
 } from "./fixtures/recovery-contract-probe";
@@ -46,15 +51,6 @@ async function ready(app: ElectronApplication) {
     (value) => value.gatewayReady === true,
     "gateway ready",
   );
-}
-function kill(pid: number) {
-  if (!Number.isInteger(pid) || pid <= 0) throw new Error("no verified gateway PID");
-  if (process.platform === "win32")
-    execFileSync("taskkill.exe", ["/F", "/T", "/PID", String(pid)], {
-      windowsHide: true,
-      stdio: "ignore",
-    });
-  else process.kill(pid, "SIGKILL");
 }
 async function send(app: ElectronApplication, message: string, id: string) {
   return hostInvoke(app, "chat", "sendWithMedia", {
@@ -87,11 +83,12 @@ test.describe("recovery contract eval windows", () => {
       )
         throw new Error("invalid frozen trial identity");
       let setupWaitMs = 0;
-      if (BATCH_FILE)
-        while (freemem() < 1500 * 1024 * 1024 && setupWaitMs < 300_000) {
+      while (freemem() < 2500 * 1024 * 1024 && setupWaitMs < 300_000) {
           await new Promise((resolveWait) => setTimeout(resolveWait, 15_000));
           setupWaitMs += 15_000;
-        }
+      }
+      if (freemem() < 2500 * 1024 * 1024)
+        throw new Error("Frozen native admission requires 2500 MiB of available memory.");
       const trialDir = join(resolve(OUT), `evidence-${WINDOW}-${INDEX}`);
       await mkdir(trialDir, { recursive: true });
       const probeDir = await mkdtemp(join(tmpdir(), "recovery-probe-"));
@@ -146,332 +143,381 @@ test.describe("recovery contract eval windows", () => {
       let receipt: Record<string, unknown> | undefined;
       let started = Date.now();
       const evidence: Array<{ path: string; sha256: string; bytes: number }> = [];
-      try {
-        app = await launchElectronApp({
-          skipSetup: true,
-          env: {
-            OPENCLAW_GATEWAY_PORT: String(gatewayPort),
-            OPENCLAW_RECOVERY_EVAL_CONFIG: configPath,
-            OPENCLAW_EXECUTION_PHASE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
-            OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
-            OPENCLAW_RECOVERY_AUTHORITY_SHADOW: process.env.RECOVERY_SHADOW === "1" ? "1" : "0",
+      const recordFailure = (error: unknown, snapshotName: string) => {
+        evidence.push(persistFailedRecoveryObservation(trialDir, {
+          disk: () => readRecoveryDisk(stateDir),
+          hits: () => readProbeFiles(probeDir, "hit-"),
+          decisions: () => readProbeFiles(probeDir, "decision-"),
+          effects: () => effectLines(effectPath),
+          outcomeBeforeFailure: () => receipt ?? null,
+        }, error, snapshotName));
+        receipt = {
+          schema: "RecoveryContractIncompleteTrial/v1",
+          windowId: WINDOW, trialIndex: INDEX, arm: ARM,
+          injectionPoint: windowContract.annotation.injectionPoint,
+          sampleStatus: "failed-observation",
+          injectionMechanism: WINDOW === "store-write-failure" ? "transaction-write-failure" : "real-process-kill",
+          duplicateEffects: null, lostTasks: null, terminalCorrect: false,
+          unknownClassifiable: true, rerunOutsideAllowedRegion: null,
+          recoveryLatencyMs: Date.now() - started,
+          diskEvidenceComplete: false, setupWaitMs,
+          observed: {
+            crashes, requestedCrashes: WINDOW === "store-write-failure" ? 0 : WINDOW === "repeated-restart" ? 3 : 1,
+            completedCrashes: crashes.filter((crash) => crash.killSucceeded === true).length,
+            observationTimedOut: String(error).includes("timed out"),
+            observationError: String(error),
+            latencyBasis: "elapsed-to-failed-injection-observer",
           },
-        });
-        await getStableWindow(app);
-        await hostInvoke(app, "workspaces", "create", {
-          rootPath: workspace,
-          permissionMode: "fullAccess",
-          name: "recovery-eval",
-        });
-        await hostInvoke(app, "gateway", "start");
-        await ready(app);
-        await send(app, "RECOVERY-WARMUP", "warmup-" + id);
-        // chat.send lifecycle can end before final delivery is persisted/cleared.
-        // agent.wait prefers the chat pipeline's terminal acknowledgement.
-        const warmup = await eventually(
-          async () => ({
-            terminal: await hostInvoke<{ status: string }>(app!, "gateway", "rpc", {
-              method: "agent.wait",
-              params: { runId: "warmup-" + id, timeoutMs: 1_000 },
-              timeoutMs: 30_000,
+          evidenceRef: trialDir.replaceAll("\\", "/"), artifacts: evidence,
+          drivenBy: "agent", actor: "recovery-contract-matrix", realHumanEvidence: false,
+          generatedAt: new Date().toISOString(),
+        };
+        return persistEvidence(resolve(OUT), `trial-${WINDOW}-${INDEX}.json`, receipt);
+      };
+      try {
+        const trialErrors: unknown[] = [];
+        try {
+          app = await launchElectronApp({
+            skipSetup: true,
+            env: {
+              OPENCLAW_GATEWAY_PORT: String(gatewayPort),
+              OPENCLAW_RECOVERY_EVAL_CONFIG: configPath,
+              OPENCLAW_EXECUTION_PHASE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
+              OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
+              OPENCLAW_RECOVERY_AUTHORITY_MODE: ARM === "candidate" ? "authority" : "legacy",
+              OPENCLAW_RECOVERY_AUTHORITY_SHADOW: process.env.RECOVERY_SHADOW === "1" ? "1" : "0",
+            },
+          });
+          await getStableWindow(app);
+          const workspaceResult = await hostInvoke<WorkspaceSnapshotResult>(app, "workspaces", "create", {
+            rootPath: workspace,
+            permissionMode: "fullAccess",
+            name: "recovery-eval",
+            agentId: "main",
+            activeSessionKey: MAIN_RECOVERY_KEY,
+          });
+          const workspaceId = workspaceResult.activeWorkspace?.id;
+          expect(workspaceId, "recovery workspace owner must exist").toBeTruthy();
+          await hostInvoke(app, "gateway", "start");
+          await ready(app);
+          await hostInvoke(app, "gateway", "rpc", {
+            method: "sessions.patch", params: { key: MAIN_RECOVERY_KEY },
+          });
+          const created = await hostInvoke<{ success: boolean; result: TaskResolution }>(app, "taskLedger", "command", {
+            workspaceId,
+            command: {
+              action: "create", requestId: `recovery-task-${id}`,
+              contract: {
+                objective: `Observe the frozen ${WINDOW} recovery boundary`, target: workspace,
+                constraints: ["Apply the fixture effect at most once"],
+                acceptance: [{ id: "effect", description: "Frozen disk verdict", verification: { kind: "owner-receipt", owner: "recovery-eval" } }],
+              },
+            },
+          });
+          expect(created.success, JSON.stringify(created)).toBe(true);
+          await hostInvoke(app, "workspaces", "bindCoordinator", {
+            workspaceId, sessionKey: MAIN_RECOVERY_KEY, agentId: "main", expectedRevision: 0,
+            taskLedgerNodeIds: [created.result.task.contract.taskNodeId],
+            environment: { kind: "local", rootPath: workspace }, archiveRestorePolicy: "restore",
+          });
+          const claimed = await hostInvoke<{ success: boolean; result: TaskView }>(app, "taskLedger", "command", {
+            workspaceId,
+            command: { action: "claim", taskNodeId: created.result.task.contract.taskNodeId,
+              sessionKey: MAIN_RECOVERY_KEY, requestId: `recovery-claim-${id}` },
+          });
+          expect(claimed.success, JSON.stringify(claimed)).toBe(true);
+          expect(claimed.result.claim?.sessionKey).toBe(MAIN_RECOVERY_KEY);
+          evidence.push(persistEvidence(trialDir, "task-owner.json", { workspaceId, task: claimed.result }));
+          await send(app, "RECOVERY-WARMUP", "warmup-" + id);
+          // chat.send lifecycle can end before final delivery is persisted/cleared.
+          // agent.wait prefers the chat pipeline's terminal acknowledgement.
+          const warmup = await eventually(
+            async () => ({
+              terminal: await hostInvoke<{ status: string }>(app!, "gateway", "rpc", {
+                method: "agent.wait",
+                params: { runId: "warmup-" + id, timeoutMs: 1_000 },
+                timeoutMs: 30_000,
+              }),
+              disk: readRecoveryDisk(stateDir),
             }),
-            disk: readRecoveryDisk(stateDir),
-          }),
-          (value) => isRecoveryWarmupSettled(value.disk, value.terminal.status),
-          "warmup lifecycle and delivery settlement",
-        );
-        const before = warmup.disk;
-        evidence.push(persistEvidence(trialDir, "before.json", before));
-        const baseRequests = llm.log.length;
-        started = Date.now();
-        let outcome: Record<string, unknown> = {};
-        if (WINDOW === "store-write-failure") {
-          writeProbe(configPath, { id, point: "session-store-before-ack", action: "throw" });
-          let error = "";
-          try {
+            (value) => isRecoveryWarmupSettled(value.disk, value.terminal.status),
+            "warmup lifecycle and delivery settlement",
+          );
+          const before = warmup.disk;
+          evidence.push(persistEvidence(trialDir, "before.json", before));
+          const baseRequests = llm.log.length;
+          started = Date.now();
+          let outcome: Record<string, unknown> = {};
+          if (WINDOW === "store-write-failure") {
+            writeProbe(configPath, { id, point: "session-store-before-ack", action: "throw" });
+            let error = "";
+            try {
+              await hostInvoke(app, "gateway", "rpc", {
+                method: "sessions.patch",
+                params: { key: MAIN_RECOVERY_KEY, label: "must-not-commit-" + id },
+                timeoutMs: 15_000,
+              });
+            } catch (e) {
+              error = String(e);
+            }
+            const hit = await eventually(
+              () => readProbeFiles(probeDir, "hit-"),
+              (files) => files.some((h) => h.point === "session-store-before-ack"),
+              "actual failing store write",
+            );
+            writeProbe(configPath, { id: "observe-" + id, point: "observe", action: "pause" });
+            const failed = readRecoveryDisk(stateDir);
+            const unchanged = failed.main?.label === before.main?.label;
+            evidence.push(persistEvidence(trialDir, "failed-write.json", { error, hit, failed }));
+            // Retry the same logical write through the same public session owner.
             await hostInvoke(app, "gateway", "rpc", {
               method: "sessions.patch",
               params: { key: MAIN_RECOVERY_KEY, label: "must-not-commit-" + id },
               timeoutMs: 15_000,
             });
-          } catch (e) {
-            error = String(e);
-          }
-          const hit = await eventually(
-            () => readProbeFiles(probeDir, "hit-"),
-            (files) => files.some((h) => h.point === "session-store-before-ack"),
-            "actual failing store write",
-          );
-          writeProbe(configPath, { id: "observe-" + id, point: "observe", action: "pause" });
-          const failed = readRecoveryDisk(stateDir);
-          const unchanged = failed.main?.label === before.main?.label;
-          evidence.push(persistEvidence(trialDir, "failed-write.json", { error, hit, failed }));
-          // Retry the same logical write through the same public session owner.
-          await hostInvoke(app, "gateway", "rpc", {
-            method: "sessions.patch",
-            params: { key: MAIN_RECOVERY_KEY, label: "must-not-commit-" + id },
-            timeoutMs: 15_000,
-          });
-          const retried = readRecoveryDisk(stateDir);
-          evidence.push(persistEvidence(trialDir, "retry.json", retried));
-          outcome = {
-            duplicateEffects: 0,
-            lostTasks: 0,
-            terminalCorrect:
-              !!error && unchanged && retried.main?.label === "must-not-commit-" + id,
-            unknownClassifiable: false,
-            rerunOutsideAllowedRegion: !unchanged,
-            recoveryLatencyMs: Date.now() - started,
-            observed: {
-              error,
-              unchanged,
-              retryApplied: retried.main?.label === "must-not-commit-" + id,
-            },
-          };
-        } else {
-          const point =
-            WINDOW === "intent-after-persist-kill" || WINDOW === "repeated-restart"
-              ? "user-intent-durable"
-              : "tool-return-before-receipt";
-          const toolName =
-            WINDOW === "child-created-before-parent-advance-kill" ? "sessions_spawn" : "exec";
-          const count = WINDOW === "repeated-restart" ? 3 : 1;
-          writeProbe(configPath, {
-            id,
-            point,
-            action: "pause",
-            ...(point === "tool-return-before-receipt" ? { toolName } : {}),
-            ...(point === "user-intent-durable" ? { messageIncludes: id + " start" } : {}),
-          });
-          // The async send can finish only after the paused gateway is released;
-          // its transport error is recorded while the test controls the process.
-          const pendingSend = send(app, id + " start", id)
-            .then(() => "ack")
-            .catch((e) => String(e));
-          const seen = new Set<number>();
-          for (let crash = 0; crash < count; crash++) {
-            const crashPoint = crash === 0 ? point : "recovery-before-dispatch";
-            const hit = await eventually(
-              () =>
-                readProbeFiles(probeDir, "hit-").find(
-                  (h) => h.point === crashPoint && !seen.has(h.pid),
+            const retried = readRecoveryDisk(stateDir);
+            evidence.push(persistEvidence(trialDir, "retry.json", retried));
+            outcome = {
+              duplicateEffects: 0,
+              lostTasks: 0,
+              terminalCorrect:
+                !!error && unchanged && retried.main?.label === "must-not-commit-" + id,
+              unknownClassifiable: false,
+              rerunOutsideAllowedRegion: !unchanged,
+              recoveryLatencyMs: Date.now() - started,
+              observed: {
+                error,
+                unchanged,
+                retryApplied: retried.main?.label === "must-not-commit-" + id,
+              },
+            };
+          } else {
+            const point =
+              WINDOW === "intent-after-persist-kill" || WINDOW === "repeated-restart"
+                ? "user-intent-durable"
+                : "tool-return-before-receipt";
+            const toolName =
+              WINDOW === "child-created-before-parent-advance-kill" ? "sessions_spawn" : "exec";
+            const count = WINDOW === "repeated-restart" ? 3 : 1;
+            writeProbe(configPath, {
+              id,
+              point,
+              action: "pause",
+              ...(point === "tool-return-before-receipt" ? { toolName } : {}),
+              ...(point === "user-intent-durable" ? { messageIncludes: id + " start" } : {}),
+            });
+            // The async send can finish only after the paused gateway is released;
+            // its transport error is recorded while the test controls the process.
+            const pendingSend = send(app, id + " start", id)
+              .then(() => "ack")
+              .catch((e) => String(e));
+            const seen = new Set<number>();
+            for (let crash = 0; crash < count; crash++) {
+              const crashPoint = crash === 0 ? point : "recovery-before-dispatch";
+              const hit = await eventually(
+                () => readRecoveryFaultBoundary(
+                  probeDir, crashPoint, seen,
+                  WINDOW === "effect-before-receipt-kill" ? effectPath : undefined,
                 ),
-              Boolean,
-              "durable fault boundary",
-            );
-            if (!hit) throw new Error("missing boundary");
-            seen.add(hit.pid);
-            const disk = readRecoveryDisk(stateDir);
-            if (point === "user-intent-durable") {
-              expect(llm.log.length).toBe(baseRequests);
-              if (crash === 0)
+                Boolean,
+                "durable fault boundary",
+              );
+              if (!hit) throw new Error("missing boundary");
+              seen.add(hit.pid);
+              const disk = readRecoveryDisk(stateDir);
+              if (point === "user-intent-durable") {
+                expect(llm.log.length).toBe(baseRequests);
+                if (crash === 0)
+                  expect(
+                    disk.entries.filter(
+                      (e) =>
+                        e.message?.role === "user" &&
+                        JSON.stringify(e.message).includes(id + " start"),
+                    ),
+                  ).toHaveLength(1);
+              } else if (WINDOW === "effect-before-receipt-kill") {
+                expect(effectLines(effectPath)).toEqual([id]);
                 expect(
-                  disk.entries.filter(
+                  disk.entries.some(
                     (e) =>
-                      e.message?.role === "user" &&
-                      JSON.stringify(e.message).includes(id + " start"),
+                      e.message?.role === "toolResult" && e.message.toolCallId === "recovery-effect",
                   ),
+                ).toBe(false);
+              } else {
+                expect(
+                  Object.values(disk.sessions).filter((s) => s.spawnedBy === MAIN_RECOVERY_KEY),
                 ).toHaveLength(1);
-            } else if (WINDOW === "effect-before-receipt-kill") {
-              expect(effectLines(effectPath)).toEqual([id]);
-              expect(
-                disk.entries.some(
-                  (e) =>
-                    e.message?.role === "toolResult" && e.message.toolCallId === "recovery-effect",
-                ),
-              ).toBe(false);
-            } else {
-              expect(
-                Object.values(disk.sessions).filter((s) => s.spawnedBy === MAIN_RECOVERY_KEY),
-              ).toHaveLength(1);
-              expect(
-                disk.entries.some(
-                  (e) =>
-                    e.message?.role === "toolResult" && e.message.toolCallId === "recovery-spawn",
-                ),
-              ).toBe(false);
+                expect(
+                  disk.entries.some(
+                    (e) =>
+                      e.message?.role === "toolResult" && e.message.toolCallId === "recovery-spawn",
+                  ),
+                ).toBe(false);
+              }
+              const processIdentity = await captureRecoveryGatewayProcess(app, { pid: hit.pid, observedAt: hit.observedAt });
+              evidence.push(
+                persistEvidence(trialDir, `crash-${crash}.json`, {
+                  hit,
+                  processIdentity,
+                  disk,
+                  effects: effectLines(effectPath),
+                  requests: llm.log.length,
+                }),
+              );
+              if (crash === 0) started = Date.now();
+              crashes.push({
+                pid: hit.pid,
+                point: crashPoint,
+                sessionId: disk.main?.sessionId,
+                at: Date.now(),
+              });
+              const termination = await terminateRecoveryGatewayProcess(processIdentity);
+              evidence.push(persistEvidence(trialDir, `termination-${crash}.json`, {
+                termination, driven_by: "agent", actor: "recovery-contract-matrix",
+              }));
+              crashes[crashes.length - 1].termination = termination;
+              crashes[crashes.length - 1].killSucceeded = true;
+              // Change the next boot's probe only after termination. Releasing a
+              // live paused process first would let it cross the measured boundary.
+              if (point === "user-intent-durable") expect(llm.log.length).toBe(baseRequests);
+              if (crash === count - 1)
+                writeProbe(configPath, { id: "observe-" + id, point: "observe", action: "pause" });
+              else
+                writeProbe(configPath, {
+                  id: `${id}-restart-${crash + 1}`,
+                  point: "recovery-before-dispatch",
+                  action: "pause",
+                });
+              // The existing supervisor owns restart. Reuse the same session and intent.
             }
+            const observe = () => ({
+              disk: readRecoveryDisk(stateDir),
+              decisions: readProbeFiles(probeDir, "decision-"),
+              effects: effectLines(effectPath),
+            });
+            const observed = await observeRecoveryVerdict(
+              observe,
+              isRecoveryDiskVerdictSettled,
+            );
+            const final = observed.value;
+            const observationTimedOut = observed.timedOut,
+              observationError = observed.error;
+            const latency = Date.now() - started;
+            const realResult = final.disk.entries.some(
+              (e) =>
+                e.message?.role === "toolResult" &&
+                e.message.toolCallId === "recovery-effect" &&
+                !e.message.isError,
+            );
+            const childCount = Object.values(final.disk.sessions).filter(
+              (s) => s.spawnedBy === MAIN_RECOVERY_KEY,
+            ).length;
+            const reconciliation = final.disk.flows.some(
+              (flow) =>
+                flow.execution_phase === "effect_pending" &&
+                JSON.parse(String(flow.state_json)).recovery?.needsReconciliation === true,
+            );
+            const isChild = WINDOW === "child-created-before-parent-advance-kill";
+            const duplicateIntents = Math.max(
+              0,
+              final.disk.entries.filter(
+                (e) =>
+                  e.message?.role === "user" && JSON.stringify(e.message).includes(id + " start"),
+              ).length - 1,
+            );
+            const uncertain = WINDOW === "effect-before-receipt-kill" || isChild;
+            const terminalCorrect =
+              !observationTimedOut &&
+              (uncertain
+                ? (isChild ? childCount === 1 : final.effects.length === 1) &&
+                  reconciliation &&
+                  final.decisions.some((d) => d.action === "reconcile")
+                : final.effects.length === 1 && realResult);
             evidence.push(
-              persistEvidence(trialDir, `crash-${crash}.json`, {
-                hit,
-                disk,
-                effects: effectLines(effectPath),
-                requests: llm.log.length,
+              persistEvidence(trialDir, "after.json", {
+                ...final,
+                transport: await Promise.race([
+                  pendingSend,
+                  new Promise<string>((r) => setTimeout(() => r("pending"), 1000)),
+                ]),
               }),
             );
-            if (crash === 0) started = Date.now();
-            crashes.push({
-              pid: hit.pid,
-              point: crashPoint,
-              sessionId: disk.main?.sessionId,
-              at: Date.now(),
-            });
-            kill(hit.pid);
-            crashes[crashes.length - 1].killSucceeded = true;
-            // Change the next boot's probe only after termination. Releasing a
-            // live paused process first would let it cross the measured boundary.
-            if (point === "user-intent-durable") expect(llm.log.length).toBe(baseRequests);
-            if (crash === count - 1)
-              writeProbe(configPath, { id: "observe-" + id, point: "observe", action: "pause" });
-            else
-              writeProbe(configPath, {
-                id: `${id}-restart-${crash + 1}`,
-                point: "recovery-before-dispatch",
-                action: "pause",
-              });
-            // The existing supervisor owns restart. Reuse the same session and intent.
+            outcome = {
+              duplicateEffects: isChild
+                ? Math.max(0, childCount - 1)
+                : Math.max(0, final.effects.length - 1),
+              lostTasks: isChild ? (childCount === 0 ? 1 : 0) : final.effects.length === 0 ? 1 : 0,
+              terminalCorrect,
+              // Frozen metric counts outcomes that remain unclassifiable; an explicit
+              // no-replay reconciliation tombstone is a classified outcome.
+              unknownClassifiable: uncertain && !reconciliation,
+              rerunOutsideAllowedRegion:
+                duplicateIntents > 0 || (isChild ? childCount > 1 : final.effects.length > 1),
+              recoveryLatencyMs: latency,
+              observed: {
+                crashes,
+                childCount,
+                realResult,
+                reconciliation,
+                duplicateIntents,
+                effects: final.effects,
+                decisions: final.decisions,
+                observationTimedOut,
+                observationError,
+                observationBudgetMs: 150_000,
+                latencyBasis: observationTimedOut
+                  ? "elapsed-to-failed-observer-verdict"
+                  : "elapsed-to-observed-recovery-verdict",
+              },
+            };
           }
-          const observe = () => ({
-            disk: readRecoveryDisk(stateDir),
-            decisions: readProbeFiles(probeDir, "decision-"),
-            effects: effectLines(effectPath),
-          });
-          const observed = await observeRecoveryVerdict(
-            observe,
-            (v) =>
-              v.disk.main?.status !== "running" ||
-              (v.disk.main?.abortedLastRun === true &&
-                v.decisions.some((d) => d.action === "reconcile")),
-          );
-          const final = observed.value;
-          const observationTimedOut = observed.timedOut,
-            observationError = observed.error;
-          const latency = Date.now() - started;
-          const realResult = final.disk.entries.some(
-            (e) =>
-              e.message?.role === "toolResult" &&
-              e.message.toolCallId === "recovery-effect" &&
-              !e.message.isError,
-          );
-          const childCount = Object.values(final.disk.sessions).filter(
-            (s) => s.spawnedBy === MAIN_RECOVERY_KEY,
-          ).length;
-          const reconciliation = final.disk.flows.some(
-            (flow) =>
-              flow.execution_phase === "effect_pending" &&
-              JSON.parse(String(flow.state_json)).recovery?.needsReconciliation === true,
-          );
-          const isChild = WINDOW === "child-created-before-parent-advance-kill";
-          const duplicateIntents = Math.max(
-            0,
-            final.disk.entries.filter(
-              (e) =>
-                e.message?.role === "user" && JSON.stringify(e.message).includes(id + " start"),
-            ).length - 1,
-          );
-          const uncertain = WINDOW === "effect-before-receipt-kill" || isChild;
-          const terminalCorrect =
-            !observationTimedOut &&
-            (uncertain
-              ? (isChild ? childCount === 1 : final.effects.length === 1) &&
-                reconciliation &&
-                final.decisions.some((d) => d.action === "reconcile")
-              : final.effects.length === 1 && realResult);
-          evidence.push(
-            persistEvidence(trialDir, "after.json", {
-              ...final,
-              transport: await Promise.race([
-                pendingSend,
-                new Promise<string>((r) => setTimeout(() => r("pending"), 1000)),
-              ]),
-            }),
-          );
-          outcome = {
-            duplicateEffects: isChild
-              ? Math.max(0, childCount - 1)
-              : Math.max(0, final.effects.length - 1),
-            lostTasks: isChild ? (childCount === 0 ? 1 : 0) : final.effects.length === 0 ? 1 : 0,
-            terminalCorrect,
-            // Frozen metric counts outcomes that remain unclassifiable; an explicit
-            // no-replay reconciliation tombstone is a classified outcome.
-            unknownClassifiable: uncertain && !reconciliation,
-            rerunOutsideAllowedRegion:
-              duplicateIntents > 0 || (isChild ? childCount > 1 : final.effects.length > 1),
-            recoveryLatencyMs: latency,
-            observed: {
-              crashes,
-              childCount,
-              realResult,
-              reconciliation,
-              duplicateIntents,
-              effects: final.effects,
-              decisions: final.decisions,
-              observationTimedOut,
-              observationError,
-              observationBudgetMs: 150_000,
-              latencyBasis: observationTimedOut
-                ? "elapsed-to-failed-observer-verdict"
-                : "elapsed-to-observed-recovery-verdict",
-            },
+          receipt = {
+            schema: "RecoveryContractWindowTrialReceipt/v1",
+            windowId: WINDOW,
+            trialIndex: INDEX,
+            arm: ARM,
+            injectionPoint: windowContract.annotation.injectionPoint,
+            injectionMechanism:
+              WINDOW === "store-write-failure" ? "transaction-write-failure" : "real-process-kill",
+            observedBoundary:
+              WINDOW === "store-write-failure"
+                ? "session-store-before-ack"
+                : WINDOW === "intent-after-persist-kill" || WINDOW === "repeated-restart"
+                  ? "user-intent-durable"
+                  : "tool-return-before-receipt",
+            ...outcome,
+            setupWaitMs,
+            diskEvidenceComplete: evidence.length >= 3,
+            evidenceRef: trialDir.replaceAll("\\", "/"),
+            artifacts: evidence,
+            drivenBy: "agent",
+            actor: "recovery-contract-matrix",
+            realHumanEvidence: false,
+            generatedAt: new Date().toISOString(),
           };
+          expect(evidence.length).toBeGreaterThanOrEqual(3);
+        } catch (error) {
+          trialErrors.push(error);
+          try { recordFailure(error, "failed-observation-before-cleanup.json"); }
+          catch (recordingError) { trialErrors.push(recordingError); }
         }
-        receipt = {
-          schema: "RecoveryContractWindowTrialReceipt/v1",
-          windowId: WINDOW,
-          trialIndex: INDEX,
-          arm: ARM,
-          injectionPoint: windowContract.annotation.injectionPoint,
-          injectionMechanism:
-            WINDOW === "store-write-failure" ? "transaction-write-failure" : "real-process-kill",
-          observedBoundary:
-            WINDOW === "store-write-failure"
-              ? "session-store-before-ack"
-              : WINDOW === "intent-after-persist-kill" || WINDOW === "repeated-restart"
-                ? "user-intent-durable"
-                : "tool-return-before-receipt",
-          ...outcome,
-          setupWaitMs,
-          diskEvidenceComplete: evidence.length >= 3,
-          evidenceRef: trialDir.replaceAll("\\", "/"),
-          artifacts: evidence,
-          drivenBy: "agent",
-          actor: "recovery-contract-matrix",
-          realHumanEvidence: false,
-          generatedAt: new Date().toISOString(),
-        };
+        await finishRecoveryTrialCleanup(trialErrors, [
+          () => writeProbe(configPath, { id: "released", point: "observe", action: "pause" }),
+          async () => { if (app) await closeRecoveryApp(app); },
+          async () => {
+            llm.server.closeAllConnections();
+            await new Promise<void>((resolve) => llm.server.close(() => resolve()));
+          },
+        ]);
         const artifact = persistEvidence(resolve(OUT), `trial-${WINDOW}-${INDEX}.json`, receipt);
         await testInfo.attach("recovery-trial", {
           path: artifact.path,
           contentType: "application/json",
         });
-        expect(evidence.length).toBeGreaterThanOrEqual(3);
       } catch (error) {
-        if (crashes.length > 0 && !receipt) {
-          evidence.push(persistFailedRecoveryObservation(trialDir, () => ({
-            disk: readRecoveryDisk(stateDir),
-            decisions: readProbeFiles(probeDir, "decision-"),
-            effects: effectLines(effectPath),
-          }), error));
-          receipt = {
-            schema: "RecoveryContractIncompleteTrial/v1",
-            windowId: WINDOW, trialIndex: INDEX, arm: ARM,
-            injectionPoint: windowContract.annotation.injectionPoint,
-            sampleStatus: "failed-observation",
-            injectionMechanism: "real-process-kill",
-            duplicateEffects: null, lostTasks: null, terminalCorrect: false,
-            unknownClassifiable: true, rerunOutsideAllowedRegion: null,
-            recoveryLatencyMs: Date.now() - started,
-            diskEvidenceComplete: false, setupWaitMs,
-            observed: {
-              crashes, requestedCrashes: WINDOW === "repeated-restart" ? 3 : 1,
-              completedCrashes: crashes.filter((crash) => crash.killSucceeded === true).length,
-              observationTimedOut: String(error).includes("timed out"),
-              observationError: String(error),
-              latencyBasis: "elapsed-to-failed-injection-observer",
-            },
-            evidenceRef: trialDir.replaceAll("\\", "/"), artifacts: evidence,
-            drivenBy: "agent", actor: "recovery-contract-matrix", realHumanEvidence: false,
-            generatedAt: new Date().toISOString(),
-          };
-          const artifact = persistEvidence(resolve(OUT), `trial-${WINDOW}-${INDEX}.json`, receipt);
-          await testInfo.attach("recovery-trial", { path: artifact.path, contentType: "application/json" });
-        }
+        const artifact = recordFailure(error, "failed-observation-after-cleanup.json");
+        await testInfo.attach("recovery-trial", { path: artifact.path, contentType: "application/json" });
         throw error;
-      } finally {
-        writeProbe(configPath, { id: "released", point: "observe", action: "pause" });
-        if (app) await closeRecoveryApp(app);
-        llm.server.closeAllConnections();
-        await new Promise<void>((resolve) => llm.server.close(() => resolve()));
       }
     });
   }

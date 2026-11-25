@@ -1,0 +1,232 @@
+# AGENTS.md
+
+## Human-in-the-loop policy（仓库所有者长期声明，2026-09-27）
+
+**本节是仓库所有者的长期声明，优先级高于本文件其余部分，以及 `harness/specs/**` 与 task-forest 中任何"需要真人"的口径。**
+
+所有者**不执行人工操作，也不提供真人数据**。据此：
+
+1. **不要把任何节点、验收或证据链卡在"等真人"上。** 不得把"等待真人 verdict / 真人证据 / 真人数据"写成节点保持 `open`/`blocked` 的理由，也不要就此类事项向所有者提问。
+2. **需要"人"的步骤，一律用脚本或 agent 自动模拟。** 若某流程原本要求人点 UI、填表、提供凭据、判定场景或记录 verdict，就实现一个自动化、agent 驱动的等价路径：由脚本/agent 执行这些步骤并写出产物。
+3. **模拟必须如实标注。** 自动化产物一律记为 agent 驱动（`driven_by: agent`、`actor: <agent-name>`），**永远不得写成 real-human**。取消"必须真人"的*要求*，不等于允许*声称*真人证据 —— 这条区分是底线，违反它属于伪造证据。
+4. **需要第三方大模型或第三方项目时，向所有者索取一次凭据/端点即可**，随后针对它做自动化。这属于所有者可提供的资源，不是阻塞项。
+5. **只有真正的决策才升级给所有者**：重大架构/范围/产品决策、产品锁或冻结默认值的改动、发布或公开仓库与产物、凭据轮换或首次暴露、不可逆或破坏性操作、涉及金钱的决定。**其余一切 —— 节点开发、证据生成、验收运行、收口、文档 —— 都是 agent 的职责，不要再问所有者。** 大语言模型的产出能力已被所有者认定可平替其本人；他只在重大决策上介入。
+6. **对 task-forest 收口的直接影响**：产出自动化等价物并如实标注后即可收口；"还差真人 verdict"不再是保持节点 open 的合法理由。原 §Task Forest closure policy 中 `claiming real-human evidence` 仍属于必须停手的越权项（它约束的是*声称*，不是*要求*）。
+7. **新写 spec / 节点 / runbook 时**：不要新增任何以"真人操作或真人数据"为前置的验收条件。若确需人机交互入口，写成自动可执行的模拟步骤，并把模拟产物标为 agent 驱动。
+
+## Auto-review and subagent model default（临时）
+
+Codex 自动代码审查与所有子代理临时使用 provider 星驰（ccs-ai）的 gpt-6.1-sol，模型标识为 ccs-ai/gpt-6.1-sol。
+
+- 调用 spawn_agent 时显式传入 model: "ccs-ai/gpt-6.1-sol"。
+- 此设置适用于所有 agent role、任务类型和重试。
+## Cursor Cloud specific instructions
+
+### Overview
+
+Verse Claw is a cross-platform **Electron desktop app** (React 19 + Vite + TypeScript) providing a GUI for the OpenClaw AI agent runtime. It uses pnpm as its package manager (pinned version in `package.json`'s `packageManager` field).
+
+### Agent Harness routing
+
+`AGENTS.md` is the lightweight cross-tool entry point. Durable AI coding policy lives under `harness/specs/**`:
+
+- `rules/` holds hard rules that should be validated when practical.
+- `scenarios/` describes user-visible or cross-layer flows.
+- `tasks/` describes concrete work specs with required rules, tests, and acceptance criteria.
+- `guides/` holds thinking/workflow guidance that is not a hard rule.
+- `layers/` holds subsystem conventions selected by touched paths.
+
+For task-spec work, run `pnpm harness context --spec <task-spec>` before implementation to get the smallest relevant reading list. Do not introduce a parallel `.trellis/`-style source of truth; promote reusable lessons into `harness/specs/**`.
+
+### Quick reference
+
+Standard dev commands are in `package.json` scripts and `README.md`. Key ones:
+
+| Task | Command |
+|------|---------|
+| Install deps + download uv | `pnpm run init` |
+| Dev server (Vite + Electron) | `pnpm dev` |
+| Lint (ESLint, auto-fix) | `pnpm run lint` |
+| Type check | `pnpm run typecheck` |
+| Unit tests (Vitest) | `pnpm test` |
+| Comms replay metrics | `pnpm run comms:replay` |
+| Comms baseline refresh | `pnpm run comms:baseline` |
+| Comms regression compare | `pnpm run comms:compare` |
+| E2E tests (Playwright) | `pnpm run test:e2e` |
+| Build frontend only | `pnpm run build:vite` |
+
+### Agent Dev Ecosystem status
+
+Agent Dev Ecosystem is now an active local control plane, not a planning-only track. Treat the current baseline as:
+
+- **P0 complete**: shared scenario registry/composer, contract drift check, i18n lint, and combined validation entry points exist.
+- **P1 mostly landed**: `pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> <name>` scaffolds common artifacts, scenario recordings can be promoted after review, and channel conformance can write machine-readable reports.
+- **P2 early productization**: Settings > Developer exposes the host-api-backed Agent Dev Workbench; `pnpm agent-dev:workbench` writes static evidence; `pnpm agent-dev:deep-test` writes timing, bottleneck, and quality evidence.
+- **P3 not complete**: skill sandbox, effect logs, and full requestId trace/cost correlation are typed surfaces, but should still be treated as evidence/report scaffolding unless backed by real runtime effects.
+
+Key Agent Dev sources:
+
+- `shared/agent-dev/scenarios.ts` is the single scenario registry. Do not create parallel scenario id lists.
+- `shared/agent-dev/scenario-composer.ts` owns `?devScenario=a+b` composition and query override metadata.
+- `electron/services/agent-dev-api.ts`, `src/lib/host-api.ts`, and `shared/host-api/contract.ts` must stay aligned through `pnpm contract:check`.
+- `src/components/settings/AgentDevWorkbenchPanel.tsx` is the daily in-app diagnosis surface; `artifacts/agent-dev-workbench/evidence.json` is the offline audit surface.
+- `artifacts/agent-dev-deep-test/report.json` is the current performance-limit evidence for Agent Dev gates.
+- `artifacts/agent-dev-deep-test/report.json` includes `decision.status` (`daily-loop-ok` / `needs-full-gate` / `blocked`) and the selected `buildReuse` / `unitMode` / `typecheckMode` / `e2eMode`; `history.json` keeps the rolling timing trend.
+- `artifacts/agent-dev-deep-test/report.json` also includes `diagnostics` for typecheck phase timing, Vite build asset/warning summaries, and Playwright per-test durations.
+- `artifacts/agent-dev-audit/report.json` is the hard-veto-aware maturity scorecard generated by `pnpm agent-dev:audit`.
+- Audit `evidenceInventory` marks generated evidence stale when relevant Agent Dev source files are newer than the report, even if the report is within the normal age window. Source freshness compares git commit time for clean tracked files; dirty or untracked sources still compare working-tree mtime, so clean checkouts accept same-change-set evidence while daily loops hard-fail on unrefreshed evidence.
+
+When changing Agent Dev control-plane work, prefer this sequence:
+
+1. Run `pnpm harness context --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md`.
+2. Keep generated or new Agent Dev sources tracked as part of the same change set; a local-only green gate is not enough if core files remain untracked.
+3. Run `pnpm agent-dev:fast` for the no-Electron-rebuild PR loop.
+4. Run `pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md` after spec, rule, or control-plane changes.
+5. Run `pnpm agent-dev:deep-test` when validating performance limits, release readiness, or changes to E2E/build/typecheck behavior.
+
+Current performance limits to watch:
+
+- `e2e-build`, cold `typecheck`, and `playwright-agent-dev` are the usual dominant costs.
+- Use `pnpm agent-dev:deep-test:reuse` after a fresh `pnpm run build:vite` for the daily loop: it reuses the build, uses `pnpm run typecheck:cached`, and runs only the Workbench smoke E2E while reporting required full gates. Use `pnpm agent-dev:deep-test:reuse:full` or `pnpm run test:e2e:agent-dev-quality:run` only when full Agent Dev E2E evidence is needed without rebuilding. `pnpm agent-dev:deep-test` remains the fresh-build full diagnostic gate.
+- `pnpm agent-dev:unit` is the full Agent Dev unit path. It keeps node-environment logic tests split from the jsdom host-api facade test; `pnpm agent-dev:unit:fast` is now an alias for the same optimized focused coverage.
+- `pnpm run typecheck` is the uncached full typecheck gate and uses the same parallel node+web project coverage as `pnpm run typecheck:agent-dev`, with structured phase timing. `pnpm run typecheck:cached` is daily-loop evidence only; a cache hit must still leave `pnpm run typecheck` in `decision.requiredFullGates` before PR/release review.
+- `pnpm test:e2e:agent-dev-quality` is the full built E2E gate and its Agent Dev-only Playwright run uses two workers. `pnpm run test:e2e:agent-dev-quality:smoke` covers only the Settings > Developer Workbench record loop and must not replace the full E2E gate.
+- Keep `pnpm agent-dev:fast` focused on contract, i18n, Workbench evidence, and targeted Agent Dev unit fast paths. Do not casually add full build or broad Playwright work to the fast gate.
+- If `artifacts/agent-dev-deep-test/report.json` shows budget `limit` severity for a gate, optimize or split that gate before expanding Agent Dev coverage.
+- If `decision.status` is `needs-full-gate`, treat the run as daily-loop evidence and run `decision.requiredFullGates` before PR/release review.
+- Use strict `pnpm agent-dev:audit` after refreshing Workbench/deep-test evidence when you need a maturity score and explicit disqualifier list for the Agent Dev system; use `pnpm agent-dev:audit:report` only when you need to generate the report without failing the current workflow.
+
+### Non-obvious caveats
+
+- **pnpm version**: The exact pnpm version is pinned via `packageManager` in `package.json`. Use `corepack enable && corepack prepare` to activate the correct version before installing.
+- **Electron on headless Linux**: The dbus errors (`Failed to connect to the bus`) are expected and harmless in a headless/cloud environment. The app still runs fine with `$DISPLAY` set (e.g., `:1` via Xvfb/VNC).
+- **`pnpm run lint` race condition**: If `pnpm run uv:download` was recently run, ESLint may fail with `ENOENT: no such file or directory, scandir '/workspace/temp_uv_extract'` because the temp directory was created and removed during download. Simply re-run lint after the download script finishes.
+- **Build scripts warning**: `pnpm install` may warn about ignored build scripts for `@discordjs/opus` and `koffi`. These are optional messaging-channel dependencies and the warnings are safe to ignore.
+- **`pnpm run init`**: This is a convenience script that runs `pnpm install` followed by `pnpm run uv:download`. Either run `pnpm run init` or run the two steps separately.
+- **Gateway startup**: When running `pnpm dev`, the OpenClaw Gateway process starts automatically on port 18789. It takes ~10-30 seconds to become ready. Gateway readiness is not required for UI development—the app functions without it (shows "connecting" state).
+- **No database**: The app uses `electron-store` (JSON files) and OS keychain. No database setup is needed.
+- **AI Provider keys**: Actual AI chat requires at least one provider API key configured via Settings > AI Providers. The app is fully navigable and testable without keys.
+- **Token usage history implementation**: Dashboard token usage history is not parsed from console logs. It reads OpenClaw session transcript `.jsonl` files under the local OpenClaw config directory, scans both configured agents and any runtime agent directories found on disk, and treats normal, `.deleted.jsonl`, and `.jsonl.reset.*` transcripts as valid history sources. It extracts assistant/tool usage records with `message.usage` and aggregates fields such as input/output/cache/total tokens and cost from those structured records. Note: "Delete conversation" in the sidebar is a hard delete — the Main process unlinks `<id>.jsonl` plus any leftover `<id>.deleted.jsonl` and `<id>.jsonl.reset.*` siblings, *and* OpenClaw's trajectory artefacts (`<id>.trajectory.jsonl` flight recorder + `<id>.trajectory-path.json` pointer); when the pointer references a runtime file outside the agent's `sessions/` folder (the `OPENCLAW_TRAJECTORY_DIR` override), that off-disk file is unlinked too. Deleted conversations stop contributing to this chart — use a fresh session if you want history retained.
+- **Models page aggregation**: The 7-day/30-day filters are relative rolling windows, not calendar-month buckets. When grouped by time, the chart should keep all day buckets in the selected window; only model grouping is intentionally capped to the top entries.
+- **OpenClaw Doctor in UI**: In Settings > Advanced > Developer, the app exposes both `Run Doctor` (`openclaw doctor --json`) and `Run Doctor Fix` (`openclaw doctor --fix --yes --non-interactive`) through the host-api. Renderer code should call the host route, not spawn CLI processes directly.
+- **UI change validation**: Any user-visible UI change should include or update an Electron E2E spec in the same PR so the interaction is covered by Playwright.
+- **i18n & styling conventions**: New user-facing features must (1) route all text through `react-i18next` with full locale coverage (`en` / `zh` / `ja` / `ru` under `shared/i18n/locales/<lang>/<ns>.json`) — never hardcode display strings, and (2) use the design tokens and substitution rules documented in `src/styles/globals.css` (surfaces `bg-surface-modal` / `bg-surface-input`, selected state `bg-black/5 dark:bg-white/10`, status colours `text-X-700 dark:text-X-400`, page H1/H2 `font-serif font-normal tracking-tight`, etc.) — see the *Component conventions* block in `globals.css` for the full substitution table.
+- **Renderer/Main API boundary (important)**:
+  - Renderer must use `src/lib/host-api.ts` and `src/lib/host-api-client.ts` as the single entry for backend calls.
+  - Do not add new direct `window.electron.ipcRenderer.invoke(...)` calls in pages/components; expose them through host-api/api-client instead.
+  - Do not call Gateway HTTP endpoints directly from renderer (`fetch('http://127.0.0.1:18789/...')` etc.). Use Main-process proxy channels (`hostapi:fetch`, `gateway:httpProxy`) to avoid CORS/env drift.
+  - Renderer-to-Main transport uses typed `host:invoke` IPC. Main owns the Gateway WebSocket; renderer must not implement transport switching or revive the removed local HTTP fallback.
+- **Comms-change checklist**: If your change touches communication paths (gateway events, runtime send/receive, delivery, or fallback), run `pnpm run comms:replay` and `pnpm run comms:compare` before pushing.
+- **Doc sync rule**: After any functional or architecture change, review `README.md`, `README.zh-CN.md`, and `README.ja-JP.md` for required updates; if behavior/flows/interfaces changed, update docs in the same PR/commit.
+- **Spec-driven harness rule**: AI Coding tasks that touch backend communication must start from a task spec under `harness/specs/tasks/` and reference `gateway-backend-communication` when the change involves renderer/Main/host-api/api-client/Gateway/OpenClaw runtime paths. Run `pnpm harness validate --spec <task-spec>` before implementation review, and `pnpm harness run --spec <task-spec>` or `--dry-run` when checking the selected validation flow.
+- **Spec/rule growth rule**: When adding a new feature, user-visible OpenClaw scenario, or recurring AI Coding constraint, add or update the relevant harness scenario spec and rule spec in the same PR so future AI work can validate the behavior instead of relying on tribal knowledge.
+- **Harness CI/local parity**: Run `pnpm run harness:ci` to exercise the same baseline harness checks used by GitHub Actions. Real task specs should be validated without `--no-diff`; `--no-diff` is only for structural checks of checked-in examples.
+### Bash Shell MCP Server
+
+本仓库包含一个可选的 `bash-shell` MCP server 脚本（通过 Git Bash 执行），暴露 `bash_command` 工具。
+当前 `.mcp.json` 只注册了 `anysearch`，因此本文件不宣称 `bash-shell` 已在 Codex 中注册。
+需要使用 Git Bash 执行复杂 POSIX 命令版本时，可按当前仓库路径注册，例如：
+
+```powershell
+codex mcp add bash-shell -- node "$(Resolve-Path '.codex-tools/bash-mcp-server/scripts/bash-mcp-server.mjs')"
+```
+
+也可运行仓库内安装脚本：
+
+```powershell
+.codex-tools\bash-mcp-server\install-mcp.ps1
+```
+
+## Disk & temp policy（C: 盘资源紧张，临时文件一律走 D:）
+
+本机 `C:` 长期接近满盘（曾出现 0 字节可用），构建/测试在写临时文件时会直接失败。
+这类失败看起来像代码错误，实际是环境问题：`磁盘空间不足` / `ENOSPC` /
+`no space left on device`。**所有大体积临时产物都写到 `D:`。**
+
+在运行任何会产生大量临时输出的命令前 —— `pnpm install`、`pnpm test`、
+`pnpm run test:e2e`、`pnpm run build:*`、`pnpm --dir openclaw_runtime run build`、
+vitest、playwright、tsgo —— 先把进程临时目录指向 `D:`：
+
+- PowerShell（本仓在 Windows 上的默认 shell）：
+
+  ```powershell
+  $env:TEMP = 'D:\tmp'; $env:TMP = 'D:\tmp'
+  New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+  ```
+
+- Bash / Git Bash：
+
+  ```bash
+  export TMPDIR=/d/tmp && mkdir -p "$TMPDIR"
+  ```
+
+约定：
+
+- 长日志不要 `Tee-Object` 到 `%TEMP%`（在 `C:`）；写到 `D:\tmp\<name>.log`，或直接读命令输出。
+- 临时脚本、fixture、trace、截图放 `D:\tmp` 或仓库内已忽略的目录，不要新建未忽略的临时目录。
+- Playwright 的 `test-results/`、`playwright-report/` 已在 `.gitignore` 中；如要改写输出目录，同样指向 `D:`。
+- 遇到磁盘空间报错时先看 `Get-PSDrive C` 的剩余空间，切到 `D:` 后重跑；**这几乎总是环境失败，不是代码失败**，也不要因此放宽门禁或把该失败写进验收证据。
+- 该策略不授权为腾空间删除用户数据、其他 worktree 或未跟踪文件；只清理 agent 自己产生的大体积临时输出。
+
+规则文件：`harness/specs/rules/disk-temp-policy.md`。
+
+## Shell Strategy (Git Bash as POSIX shell)
+
+### PATH 配置
+- Git Bash: C:\Program Files\Git\bin
+- Node.js: C:\Program Files\nodejs
+已在 User PATH 中持久化。
+
+### 执行策略（重要）
+
+PowerShell 的 ash 命令默认解析到 WSL（C:\Windows\system32\bash.exe），
+而非 Git Bash。使用 Git Bash 必须指定完整路径。
+
+| 场景 | 命令模式 |
+|------|----------|
+| POSIX 引号命令 | ` & \"C:\Program Files\Git\bin\bash.exe\" --% -c 'node -e \"...\"' ` |
+| Electron 构建/E2E | 直接使用 pnpm run build:vite 或 powershell.exe -Command "..." |
+| 复杂多行脚本 | 写入临时文件再执行 |
+| 单元测试 (vitest) | WSL Node 或 Windows Node 均可 |
+
+### E2E 测试注意点
+
+E2E 测试需要 Electron（Win32 进程），必须从 Windows 环境执行：
+- 构建：pnpm run build:vite（同时构建前端 + Electron）
+- 测试：pnpm run test:e2e tests/e2e/<spec>.ts
+- 测试文件支持在 WSL 中编写（POSIX 引号），在 Windows 中执行
+
+## Sustained Development Continuity (COMPASS)
+
+Long-running maturity work must not rely on chat memory alone.
+
+- Playbook (required entry): `docs/dev/Sustained-Development-Playbook.md`
+- Session handoff (local, optional on a fresh checkout): `docs/dev/handoffs/LATEST.md`
+- Task forest (local progress source of truth): `.agent-workbench/task-forest/` and HTML export under `exports/task-forest.html`; restore private history only when continuing that history, never require it for build/test/CI.
+- Source retention and archive recovery: `docs/dev/repository-artifact-retention.md` and `harness/specs/rules/repository-artifact-retention.md`. Keep Task Forest and session history out of Git; promote durable decisions, fixtures, and curated final evidence into tracked source paths.
+- Skills: `task-forest`, `session-handoff-prompt`, `task-clarifier`, `user-profile-keeper` (installed under `%USERPROFILE%\.codex\skills\` from https://github.com/dongshuyan/compass-skills)
+
+Default policy: one ready TF node per session; no parallel mega-surfaces; do not treat Agent Dev green as joint-system GA.
+
+### Task Forest closure policy (project override)
+
+Roles are fixed: **the agent is the mainline developer; the repository owner is the publisher.** The publisher reviews the finished, evidence-backed result and decides whether it is released or shown — the publisher is not a source of task-level answers. Never write a node requirement, acceptance criterion, or handoff prompt that needs the publisher to answer a design, history, or contribution question; rebuild those facts from commits, diffs, task-forest history, and the deviation ledger, and cite the file or commit.
+
+**Auto-close**: when every acceptance criterion of a node is verified by reading artifacts on disk (never from a command's printed output alone), the evidence chain is complete, the proposal's `base_graph_hash` still matches, and the node's claims are self-consistent, save the proposal and apply it (`proposal-apply --yes`) without waiting for confirmation, then run `validate` and `export`, preserve the Task Forest state locally, and land durable specifications plus curated final evidence in the same change set. Task Forest history and session handoffs are not committed; see `repository-artifact-retention`. This deliberately overrides the `task-forest` skill's default "wait for user confirmation before apply" step for this repository; the override is recorded in the D8 decision node and the deviation ledger.
+
+Stop and ask only for authority the agent does not have: publishing/deploying or making the repo or artifacts public, rotating or newly exposing a credential, destructive or irreversible git operations, changing a frozen product lock or default value, claiming real-human evidence, or changing project scope. Routine closure, status transitions, documentation, evidence generation, proposal application, and pushing commits or tags to the existing private remote are not in that list — making the repo or artifacts public is. Auto-close is a gate on evidence, never on confidence: missing, stale, or contradictory evidence leaves the node open with the gap written down.
+
+> **2026-09-27 amendment — see §Human-in-the-loop policy at the top of this file.** `claiming real-human evidence` above still means *never fabricate a human*; but *requiring* human evidence is no longer a valid blocker. Where a node, spec, or runbook expects a human step or human data, build the automated agent-driven equivalent, label it as such, and close.
+
+Full rule: `harness/specs/rules/task-forest-autoclose-and-roles.md`.
+
+## 默认 embedding 服务（所有者指定，2026-11-10）
+
+后续远端 embedding 默认使用 SiliconFlow 的 `Qwen/Qwen3-VL-Embedding-8B`。
+
+- 用户级环境变量：`SILICONFLOW_API_KEY`、`SILICONFLOW_BASE_URL`、`SILICONFLOW_EMBEDDING_MODEL`。
+- `SILICONFLOW_BASE_URL=https://api.siliconflow.cn/v1`，请求路径为 `/embeddings`。
+- `SILICONFLOW_EMBEDDING_MODEL=Qwen/Qwen3-VL-Embedding-8B`。
+- 该模型与 `Qwen/Qwen3-Embedding-8B` 是不同模型；输入格式和 tokenizer 单独绑定。2026-11-10 实测文本数组返回 4096 维向量。
+- 凭据从本地环境变量读取；文档、日志、测试报告和提交中只记录变量名。
+- 更换模型时核对实际维度及 query/document 输入契约，再建立对应的 embedding space。

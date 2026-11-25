@@ -10,6 +10,23 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 Activating a project keeps its directory and permission policy aligned with the runtime while preserving the selected model.
 
+An idle task can continue after its lease expires in the same session generation and worktree. Recovery advances its ownership epoch to reject stale credentials; unresolved effects still require reconciliation.
+
+After a Gateway restart, recovered tasks wait for the desktop's authenticated connection before admitting effects.
+
+Restart recovery keeps each agent's `global` session and failure notice bound to that agent. In authority mode, a subagent's automatic continuation chain shares a two-attempt budget across delays and compaction; a new session generation starts a fresh budget.
+
+Agents reuse compatible Gateway plugin state during startup; configuration and workspace changes retain their own loading scope.
+
+Gateway configuration watchers load cron, MCP disposal and provider refresh execution when a reload needs them. Empty startup delivery queues leave sending and reply execution unloaded.
+Handshake snapshots read cached health and update availability without loading probes or updater execution. Health refreshes keep sensitive results separate from the public cache.
+Readiness challenge probes leave authentication and RPC execution unloaded until the connection sends its first request frame.
+
+Native language parsers load when code analysis first needs the corresponding language.
+
+Agent context and lifecycle execution modules load when a selected run starts; harness selection uses existing metadata.
+Trajectory reads prepare their session data when requested; closing a connection releases its subscription.
+
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
@@ -24,6 +41,8 @@ Managed process lifecycles retain their shared executor until their own terminal
 
 Terminal PTYs and governed processes share declared host capacity. Known server ports are reserved before launch, stale terminal generations reject control, and uncertain exits retain their reservations for recovery. See [terminal resource ownership](harness/specs/guides/terminal-resource-ownership.md).
 
+Resource pressure contracts new execution while running work keeps its slots. Agent queues have finite waiting limits and prompt cancellation. Disabling efficiency sampling stops diagnostic recording while resource protection and idle-process reclamation continue. See [resources and observability](docs/modules/resources-and-observability.md).
+
 Opening the resource popover refreshes the current session's coordinator status and worker receipts.
 
 Runtime-managed worktree ownership, creation stages and merge intent persist in SQLite across restarts. Replaced paths, incomplete setup and unknown merge outcomes retain their resources and reject stale execution credentials. See the [registration and recovery contract](harness/specs/guides/execution-domain-registry.md).
@@ -35,6 +54,8 @@ Chat can continue the same conversation and task in another configured checkout.
 Session navigation restores the visible message and draft. Background work updates its own status while hovered or focused family rows stay in place. Empty projects, permission failures and dependency waits show specific reasons and existing next actions; dispatch plans remain separate from current queue observations.
 
 Message Fork requires a recorded transcript boundary and shows why the action is unavailable. Suggestions to continue elsewhere use the existing editable Handoff preview; a new conversation is created only by its explicit action.
+
+During a long task, **Send options** offers queueing, guidance and stop-then-send with a description of each outcome. Branching opens a conversation for your next message; summary handoff previews editable content before **Create and send**. Context organization and handoff sources keep technical details collapsed. [Conversation controls](docs/dev/chat-continuity-controls.md).
 
 Handoff becomes available when the session identity finishes loading. Pending sidebar handoffs wait for that identity, and previews remain bound to the current session generation.
 If activation is interrupted, retrying keeps the original child session and checks its generation before sending.
@@ -65,9 +86,9 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 
 | Area | Current product shape | Deep dive |
 |---|---|---|
-| LLM and models | Account-based provider configuration, OAuth/API key/local auth, protocol adapters, model fallback, turn/session model overrides, streaming, tool loops, reasoning effort, usage and estimated cost | [LLM and models](docs/modules/llm-and-models.md) |
+| LLM and models | Account-based provider configuration, OAuth/API key/local auth, protocol adapters, model fallback, turn/session model overrides, streaming, tool loops, reasoning effort with a draggable text preview, usage and estimated cost | [LLM and models](docs/modules/llm-and-models.md) |
 | Conversations and sessions | JSONL append-only session trees, runs, abort/stop/archive/delete, checkpoints, compaction, handoff/fork, searchable sidebar, persisted folders and long-session coordinator binding | [Sessions](docs/modules/sessions.md) |
-| Context and memory | Context Orchestrator, 6,000-character managed-injection budget with separate post-orchestrator accounting, Workspace Context, context health, one reviewable Memory product over separate Role/Runtime stores | [Context and memory](docs/modules/context-and-memory.md) |
+| Context and memory | Context Orchestrator, 6,000-character managed-injection budget with separate post-orchestrator accounting, Workspace Context, context health, an unfilled circular chat TokenTag with compact recorded-source details and a Settings display switch, one reviewable Memory product over separate Role/Runtime stores | [Context and memory](docs/modules/context-and-memory.md) |
 | Workspaces and coding | Workspace preflight, four permission modes, file preview, PTY terminals, web previews, Git operations, review panel, write journal, stale-write guard and auto verification | [Workspace and coding](docs/modules/workspace-and-coding.md) |
 | Knowledge | Markdown/wiki-first library, Inbox → Draft → Steward → Proposal → explicit apply, Source Sets, OKF, Runtime Lessons/SEKB, provenance and governance | [Knowledge base](docs/modules/knowledge-base.md) |
 | Multi-agent and tasks | Agent/Persona/Role separation, nine built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop and ClawGraph | [Multi-agent and tasks](docs/modules/multi-agent-and-tasks.md) |
@@ -79,7 +100,7 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 
 The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
 
-Chat uses one text column without assistant avatars. Interactive questions appear once as the streamed reply is replaced by conversation history. Progress and final replies stay visible; execution details and passive tool cards start folded. The current tool retains its progress animation, while errors and approval requests remain directly accessible. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. Completed replies use a compact, response-aligned footer for copy, quote-to-composer and eligible forks, with timestamp and token usage beside the actions. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
+Chat text and the input share the available conversation width. Adjacent tool operations form a folded group after each progress explanation. Folded summaries show an unboxed semantic icon and the latest operation text, entering left to right once with a continuous white running shimmer. Only the current running folded summary animates its Lucide icon; expanded rows and settled operations keep static icons, including on hover. Reduced motion keeps icons and text static. Expanded tool and command rows keep their progress strips, background, timer and completion check. Icons reflect file types, Git, browser actions, tests, builds, packages, memory, databases and agents. Expanding a group shows its calls, arguments, results, command output and file changes in order. Completed groups stay static and retain manual disclosure state. Final replies, delivered resources and pending requests remain accessible. Long previews keep wrapping and copy the complete retained content. Completed replies keep response-aligned actions and usage information.
 
 Session status uses a single surface, with completed processes folded into history. Opening a process uses the same terminal view as the conversation, including output copying and scrolling that respects earlier lines being read. Matched tool calls and results share one disclosure; diagnostics stay at the end.
 
@@ -91,7 +112,7 @@ On touch screens the composer actions have a minimum 44 px target. Rejected plan
 
 Composer model, knowledge and permission menus share a compact surface and the add menu's blur transition. Menus stay within the window, close when another opens, and support Escape and reduced motion.
 
-Choose a model directly from the composer. New chats start with your last available choice; existing chats retain their own model. Switching applies to subsequent messages. Agent defaults are managed in Settings.
+The composer model button opens a compact reasoning card with the current model and a Preview Slider. Clicking the model unfolds a searchable, provider-grouped Rare UI picker and hides the reasoning controls. The slider's floating preview shows localized effort text. New chats start with your last available model; existing chats retain their own choice. Switching applies to subsequent messages. Agent defaults are managed in Settings.
 
 Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
 
@@ -168,7 +189,11 @@ Queued configuration reloads already included in a successful Gateway launch are
 
 Source launches initialize session services through the normal runtime startup path in both ordinary and test windows.
 
-Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
+Built Gateway startup tries native loading for resolved JavaScript doctor contracts before preparing SDK aliases. Windows plugin file URLs are converted to filesystem paths for native loading and cache invalidation. Mounted source overlays and external plugins keep their own contracts, and migration checks still run. Bundled channel lists and ID lookups share metadata within each root scope; channel aliases and per-request disablement use the same view. After `pnpm run build:runtime`, use `node scripts/measure-gateway-startup.mjs` for an isolated, loopback-only comparison with fresh caches; every accepted sample must exercise the loader and complete an authenticated RPC.
+
+Gateway reuses its current plugin metadata for runtime entry, static model catalog and model alias lookups, and plugin activation. Telegram and Matrix migration discovery loads legacy data readers only when matching files exist. Reach Readers initializes browser and transcription services when its first tool executes. Desktop builds overlap renderer compilation with the embedded browser's patch/compiler steps and Electron builds, wait for every output, and retain source and output provenance.
+
+Gateway reconnects reuse an authenticated device token for the same device, endpoint and shared credential. A device-token mismatch triggers one shared-credential bootstrap in the same connection attempt. Paired devices authenticate from their approved record independently of pending pairing requests. Managed processes retain Node bytecode in the temporary directory and flush it after startup for reuse across crashes. Explicit `NODE_COMPILE_CACHE` and `NODE_DISABLE_COMPILE_CACHE` settings take precedence.
 
 First session:
 
@@ -263,9 +288,11 @@ Common commands:
 | `pnpm dev` | Prepare resources/runtime and start Electron development |
 | `pnpm run build:vite` | Build renderer and Electron bundles |
 | `pnpm run build:runtime` | Build embedded runtime and smoke-test Gateway startup |
-| `pnpm run typecheck` | Full node/web/test typecheck |
+| `pnpm run typecheck` | Rebuild VerseBrowser declarations, then check all node/web/test types |
 | `pnpm run lint:check` | Lint without modifying files |
 | `pnpm test` | Root test groups and selected regressions |
+| `pnpm run test:recovery:light` | Focused harness loading and interrupted bytecode-cache checks with one worker |
+| `pnpm run test:recovery:tiny` | Workspace exports, native SDK boundaries and plugin loader configuration in one Node process with a 96 MiB heap limit |
 | `pnpm run test:e2e` | Build and run Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract and four-language coverage |
 | `pnpm run harness:ci` | Repository Harness baseline |
@@ -352,7 +379,9 @@ Changing the implicit main agent's model or name preserves its workspace inherit
 
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
-Conversation tasks are managed by the agent. The task strip shares the input enclosure and shows the durable objective, current run step and owner-reported status in one line. Click it to expand the live steps; archived plans remain in the turn summary. Finished run steps retain the task’s current acceptance state, and an accepted task folds to a receipt. Its menu copies the task ID, opens the Task Ledger or hides the strip. The knowledge control combines source, invocation mode and retrieval profile in one menu; non-local profiles remain visible on the control. Queued messages and failures appear inside the input, while checkpoint and intervention records open on demand. A failed initial task read offers an inline refresh and preserves the draft. The session task header stays quiet when its scope is empty. The session status panel shows context usage, connectors, reviewable changes and background work. Changed files reveal a review strip, with branch and worktree operations in its menu. The composer preserves model names and uses a single-line ellipsis only when they exceed the available width; the full identity remains in the tooltip and model list. Send, Stop and Resume share a circular button with a high-contrast icon.
+Conversation tasks are managed by the agent. The task strip shares the execution tray above the input. Its collapsed row shows the objective, a neutral step count and actions when attention is needed; current steps open on demand. Click it to expand the live steps; archived plans remain in the turn summary. Finished run steps retain the task’s current acceptance state, and an accepted task folds to a receipt. Its menu copies the task ID, opens the Task Ledger or hides the strip. The knowledge control combines source, invocation mode and retrieval profile in one menu; non-local profiles remain visible on the control. Queued messages and failures appear inside the input, while checkpoint and intervention records open on demand. A failed initial task read offers an inline refresh and preserves the draft. The session task header stays quiet when its scope is empty. The session status panel shows context usage, connectors, reviewable changes and background work. Changed files reveal a review strip, with branch and worktree operations in its menu. The composer preserves model names and uses a single-line ellipsis only when they exceed the available width; the full identity remains in the tooltip and model list. Send, Stop and Resume share a circular button with a high-contrast icon. The input uses a 22px radius and sent messages use 12px corners with opaque surfaces and fine borders.
+
+Before a new conversation starts, the input tray shows the project and a searchable branch selector. It closes when a run starts and stays hidden for conversations with history. A new empty conversation shows setup again; task progress remains visible when relevant. Directory and worktree actions are available in More. Open its settings and choose Create and open to make a worktree with an automatically named branch; custom names and starting branches are optional. Switching back restores the original conversation and draft. The task row shares the tray, and the input has a matte 22px outline. Creation replaces the input with real save, create and open stages; Stay in this conversation keeps the completed worktree available and restores the draft.
 
 Recovery implementation and evidence: the opt-in execution writer persists tool lifecycle phases on TaskFlow, claims work before effects, and resumes only owner-authorized work. Both lifecycle and execution writers must explicitly select `taskflow`; defaults remain `legacy`. Unknown effects require reconciliation. Recovery follow-up fixes pending-delivery run ownership and startup recovery ordering; see the [follow-up verification](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md). The [2026-11-05 evaluation](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md) retains 60 live answers and 30 primary fault windows. Candidate outcome classification improves, while frozen latency gates return FAIL/NO-GO.
 
@@ -373,3 +402,21 @@ Project configuration supports typed previews for an exclusive project Agent. It
 Mission experience remains a reviewable candidate, bound to the originating session with source references and a 24-hour expiry. Mission Control and the main chat can reuse approved experience only in its originating session. The 24-hour limit also applies to cold cards; revocation, replacement and expiry stop subsequent reuse. Delivery to a model also depends on the existing shared context budget. The panel follows lifecycle events from its current session. Running Missions can be paused or cancelled while their request is pending; the panel retains confirmed control state when an older run response arrives. Once pause, cancel or resume is accepted, Runtime settles the older tick and retains its execution evidence. Changing the default Agent or its session resets the Mission projection; delayed replies keep their original session scope. The role catalog loads when the panel opens; an empty catalog stays idle until reopened or manually refreshed.
 
 The task ledger opens a compact persistent-task list. Rows show the objective, state and next step; ownership, acceptance and actions expand on demand. Task reports show recorded timing in a short summary, with usage and complete records in details. The system overview uses the same list hierarchy for project goals, progress, evidence and configuration.
+
+Gated main-session recovery uses the same admission policy and preserves its existing three-attempt budget. Public-output boundaries are recorded by the Session owner before response data is dispatched; unknown output and pending replies stay available for reconciliation.
+
+Completed recoveries reject admission replay. Model fallback within an unfinished command keeps the same admission, and the command commits its final state after all attempts and persistence finish.
+
+Gated final delivery binds the pending Session reply to its existing durable send intent. The queue commits the recovery decision and consumed attempt before sending, preserves unknown outcomes for reconciliation, and settles confirmed sends without repeating them. Reply cleanup checks the producer, Session generation, text and intent; the five-attempt limit and existing backoff remain in force. Queue write failures stop sending. Reconciliation claims and releases the existing owner without consuming a send attempt.
+
+Gated ACP recovery persists the original request, runtime identity, output boundary and consumed attempts in the existing ACP row. Fresh handles and backend fallback use the same admission and retain the original two-attempt-per-backend ceiling across controller restarts. Core-proven unstarted turns may continue; unknown results remain available for reconciliation and completed requests settle without another turn.
+
+A process holds one turn claim through identity cleanup. If SQLite cannot clear that claim, its budget remains durable; a rebuilt controller in the same process can continue a confirmed unstarted request while uncertain results stay in reconciliation.
+
+Committed ensure/status identity writes are confirmed from the same ACP row and current Session generation when an acknowledgement is lost. Goal-wake uses the same authority to reconcile the original durable helper and task. It checks the helper nonce and Session epoch, persists terminal task truth before cleanup, and resumes pending waits after restart through the existing Mission CAS without starting another helper.
+
+Manual compression becomes available after the current session's runs and lifecycle operations have finished.
+
+Global-session forks and command hooks use the selected agent, or the configured default agent when none is selected.
+
+Initial and updated compaction summaries preserve active user-designated statements as complete verbatim lines. The [2026-11-16 recovery acceptance](harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-candidate-6115256e-20261116/REPORT.zh-CN.md) records 505 passing regression executions, 120/120 preserved facts and 15/15 correct candidate fault outcomes; two legacy runs match all 15 slots. GA remains NO_GO: recovery P50/P95 is 17.439/83.204 seconds, and the build timing and source LOC gates fail.

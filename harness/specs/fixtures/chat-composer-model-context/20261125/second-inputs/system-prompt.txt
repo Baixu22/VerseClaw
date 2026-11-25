@@ -1,0 +1,139 @@
+Inspect the current workspace and preserve recorded measurements.
+<available_skills>
+<skill><name>context-review</name><description>Inspect recorded context sources.</description></skill>
+</available_skills>
+Read a UTF-8 file from the active workspace.
+
+# Project Context
+
+## AGENTS.md
+# AGENTS.md
+
+## Human-in-the-loop policy（仓库所有者长期声明，2026-09-27）
+
+**本节是仓库所有者的长期声明，优先级高于本文件其余部分，以及 `harness/specs/**` 与 task-forest 中任何"需要真人"的口径。**
+
+所有者**不执行人工操作，也不提供真人数据**。据此：
+
+1. **不要把任何节点、验收或证据链卡在"等真人"上。** 不得把"等待真人 verdict / 真人证据 / 真人数据"写成节点保持 `open`/`blocked` 的理由，也不要就此类事项向所有者提问。
+2. **需要"人"的步骤，一律用脚本或 agent 自动模拟。** 若某流程原本要求人点 UI、填表、提供凭据、判定场景或记录 verdict，就实现一个自动化、agent 驱动的等价路径：由脚本/agent 执行这些步骤并写出产物。
+3. **模拟必须如实标注。** 自动化产物一律记为 agent 驱动（`driven_by: agent`、`actor: <agent-name>`），**永远不得写成 real-human**。取消"必须真人"的*要求*，不等于允许*声称*真人证据 —— 这条区分是底线，违反它属于伪造证据。
+4. **需要第三方大模型或第三方项目时，向所有者索取一次凭据/端点即可**，随后针对它做自动化。这属于所有者可提供的资源，不是阻塞项。
+5. **只有真正的决策才升级给所有者**：重大架构/范围/产品决策、产品锁或冻结默认值的改动、发布或公开仓库与产物、凭据轮换或首次暴露、不可逆或破坏性操作、涉及金钱的决定。**其余一切 —— 节点开发、证据生成、验收运行、收口、文档 —— 都是 agent 的职责，不要再问所有者。** 大语言模型的产出能力已被所有者认定可平替其本人；他只在重大决策上介入。
+6. **对 task-forest 收口的直接影响**：产出自动化等价物并如实标注后即可收口；"还差真人 verdict"不再是保持节点 open 的合法理由。原 §Task Forest closure policy 中 `claiming real-human evidence` 仍属于必须停手的越权项（它约束的是*声称*，不是*要求*）。
+7. **新写 spec / 节点 / runbook 时**：不要新增任何以"真人操作或真人数据"为前置的验收条件。若确需人机交互入口，写成自动可执行的模拟步骤，并把模拟产物标为 agent 驱动。
+
+## Auto-review and subagent model default（临时）
+
+Codex 自动代码审查与所有子代理临时使用 provider 星驰（ccs-ai）的 gpt-6.1-sol，模型标识为 ccs-ai/gpt-6.1-sol。
+
+- 调用 spawn_agent 时显式传入 model: "ccs-ai/gpt-6.1-sol"。
+- 此设置适用于所有 agent role、任务类型和重试。
+## Cursor Cloud specific instructions
+
+### Overview
+
+Verse Claw is a cross-platform **Electron desktop app** (React 19 + Vite + TypeScript) providing a GUI for the OpenClaw AI agent runtime. It uses pnpm as its package manager (pinned version in `package.json`'s `packageManager` field).
+
+### Agent Harness routing
+
+`AGENTS.md` is the lightweight cross-tool entry point. Durable AI coding policy lives under `harness/specs/**`:
+
+- `rules/` holds hard rules that should be validated when practical.
+- `scenarios/` describes user-visible or cross-layer flows.
+- `tasks/` describes concrete work specs with required rules, tests, and acceptance criteria.
+- `guides/` holds thinking/workflow guidance that is not a hard rule.
+- `layers/` holds subsystem conventions selected by touched paths.
+
+For task-spec work, run `pnpm harness context --spec <task-spec>` before implementation to get the smallest relevant reading list. Do not introduce a parallel `.trellis/`-style source of truth; promote reusable lessons into `harness/specs/**`.
+
+### Quick reference
+
+Standard dev commands are in `package.json` scripts and `README.md`. Key ones:
+
+| Task | Command |
+|------|---------|
+| Install deps + download uv | `pnpm run init` |
+| Dev server (Vite + Electron) | `pnpm dev` |
+| Lint (ESLint, auto-fix) | `pnpm run lint` |
+| Type check | `pnpm run typecheck` |
+| Unit tests (Vitest) | `pnpm test` |
+| Comms replay metrics | `pnpm run comms:replay` |
+| Comms baseline refresh | `pnpm run comms:baseline` |
+| Comms regression compare | `pnpm run comms:compare` |
+| E2E tests (Playwright) | `pnpm run test:e2e` |
+| Build frontend only | `pnpm run build:vite` |
+
+### Agent Dev Ecosystem status
+
+Agent Dev Ecosystem is now an active local control plane, not a planning-only track. Treat the current baseline as:
+
+- **P0 complete**: shared scenario registry/composer, contract drift check, i18n lint, and combined validation entry points exist.
+- **P1 mostly landed**: `pnpm agent-dev:make <page|e2e|host-route|skill|channel|plugin|scenario> <name>` scaffolds common artifacts, scenario recordings can be promoted after review, and channel conformance can write machine-readable reports.
+- **P2 early productization**: Settings > Developer exposes the host-api-backed Agent Dev Workbench; `pnpm agent-dev:workbench` writes static evidence; `pnpm agent-dev:deep-test` writes timing, bottleneck, and quality evidence.
+- **P3 not complete**: skill sandbox, effect logs, and full requestId trace/cost correlation are typed surfaces, but should still be treated as evidence/report scaffolding unless backed by real runtime effects.
+
+Key Agent Dev sources:
+
+- `shared/agent-dev/scenarios.ts` is the single scenario registry. Do not create parallel scenario id lists.
+- `shared/agent-dev/scenario-composer.ts` owns `?devScenari
+## TOOLS.md
+# 会话模型选择
+
+模型按钮先打开紧凑强度卡片：当前强度、重置为自动、当前模型与 Preview Slider。点击模型行后，Rare UI 模型列表从该行展开；强度标题、滑块及其 Tooltip 隐藏并保留布局。搜索和提供商分组使用实际配置数据，选择保存成功后更新当前会话并关闭菜单。
+
+滑块沿用所有者给定的 Aceternity Preview Slider 交互，头像浮层改为四语强度文字 Tooltip。鼠标悬停、拖动和键盘焦点显示预览，松手提交七种现有强度；模型列表关闭后恢复强度卡片。减少动态效果保留静态可读控制。
+
+卡片顶部显示强度，模型行与滑块紧凑排列；文字 Tooltip 浮在模型行上层，并让点击穿透到模型入口。搜索框聚焦时不显示输入描边或内阴影，保留光标与搜索栏分隔线。
+
+卡片宽度最多304px，外层圆角18px，模型列表圆角16px。常规按钮保持28px高度，标题与数值采用紧凑字号；模型行与滑块之间保留10px间距。强度预览浮层覆盖模型文字，模型选择层退出后恢复滑块操作。
+
+## 默认规则
+
+| 场景 | 行为 |
+| --- | --- |
+| 新建会话 | 沿用最近一次主动选择且仍可用的模型；没有可用偏好时使用 Agent 配置的默认模型。 |
+| 当前会话切换模型 | 保存成功后更新按钮，从下一条消息开始使用。历史消息保留。 |
+| 返回已有会话 | 恢复该会话已保存的模型，不受其他会话最近选择影响。 |
+| 首条消息 | 将输入区显示的模型保存到该会话，再发送消息，确保显示和实际请求一致。 |
+| 队列消息 | 入队时保存当时的模型选择；出队发送沿用该选择。 |
+| 保存失败 | 保留原模型，显示错误。首条发送的保存失败时，不发出模型请求。 |
+| 保存期间切换会话 | 结果只更新原会话，不关闭新会话的菜单，也不覆盖新会话的模型或偏好。 |
+| 最近使用的模型已移除 | 仅新会话回退到可用默认配置；已有会话的明确选择保留，供用户切换。 |
+
+设置页继续负责 Agent 默认模型。输入区的模型选择不修改 Agent 默认模型；强度滑块和重置按钮沿用现有 Agent 思考强度设置。
+
+## 实现
+
+`resolveChatModelRef` 统一输入区和上下文状态区的模型解析。
+`lastChatModelRef` 是本地设置中的最近选择，只有显式切换成功才更新。
+`hostApi.sessions.patchRuntimeModel` 保存会话选择；发送参数中的
+`persistModelSelection` 用于首次发送前落实继承值，`modelRefOverride` 将确定的模型带入实际请求。
+现有单次请求的模型覆盖接口继续支持调用方显式覆盖。
+
+加号轮廓通过阴影描绘，不占据布局空间，SVG 中心与圆形轮廓中心重合。
+相邻菜单共用模糊消散动效、背景和间距，关闭中的浮层立即禁止交互。
+
+会话控制卡片使用不透明的浅灰／石墨灰表面、细边缘和柔和阴影。输入框与弹卡不叠加背景模糊，避免聊天文字透入。模型菜单按提供方分组，每项显示品牌图标和完整模型名；长模型名自动换行，窄窗口保留已选模型名。品牌图标来自 `@lobehub/icons`，按模型家族识别 DeepSeek、Grok 等模型，包括经由路由提供方接入的模型。
+
+Git 输入区与会话环境卡根据 Host 返回的工作树列表区分主检出和关联工作树；分支名、游离 HEAD 与工作树身份分别呈现。模型入口先显示强度卡片，从模型行展开选择层时隐藏强度区域。
+
+## 调研依据
+
+使用 VerseSearch / AnySearch 检索并读取 Microsoft 官方文档：
+[AI language models in VS Code](https://code.visualstudio.com/docs/agent-customization/language-models)。
+其模型选择器直接提供模型；新对话偏好与已有对话模型分别处理。
+本项目在此基础上采用“新会话最近选择、旧会话恢复、下一条生效”的默认规则。
+缓存风险提示继续使用现有判断，仅在检测到实际风险时出现。
+
+## 验证
+
+- `tests/unit/chat-model-selection.test.ts`：继承、恢复、历史加载期间的选择和偏好失效回退。
+- `tests/unit/chat-input.test.tsx`：直接选择、失败保留和跨会话异步结果隔离。
+- `tests/unit/chat-target-routing.test.ts`：先保存后发送、失败回退及队列参数保留。
+- Electron：`chat-model-picker*.spec.ts` 验证真实输入交互和 Host 请求；`chat-composer-popovers.spec.ts` 验证加号居中、浅深色、窄窗口、滚动及开合帧。
+
+Recorded source changes must update the context report.
+
+
+## Silent Replies

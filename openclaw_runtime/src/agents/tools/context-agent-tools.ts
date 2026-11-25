@@ -93,12 +93,12 @@ import { buildReuseCandidateReport } from "../../context-engine/views/reuse-dete
 import { reviewDiff } from "../../context-engine/views/verify/review-diff-view.js";
 import { type AnyAgentTool, jsonResult, readStringParam, asToolParamsRecord } from "./common.js";
 import {
+  CONTEXT_VIEW_TOOL_NAMES,
+  resolveContextViewToolSurfaceState,
   CONTEXT_UNDERSTAND_TOOL_NAME,
   CONTEXT_IMPACT_TOOL_NAME,
   CONTEXT_REUSE_TOOL_NAME,
   CONTEXT_VERIFY_TOOL_NAME,
-  CONTEXT_VIEW_TOOL_NAMES,
-  resolveContextViewToolSurfaceState,
   type ContextViewToolSurfaceState,
 } from "./context-view-tool-surface.js";
 export {
@@ -1206,9 +1206,11 @@ function resolveBlockHandleMinter(
   if (!resolveContextFoldingEnabledForOptions(options)) return undefined;
   const requester = resolveContextFoldingRequester(options, sessionId);
   return (block) =>
-    handleForContextBlock(block, requester, {
-      now: options.contextFoldingNow,
-    });
+    handleForContextBlock(
+      block,
+      requester,
+      options.contextFoldingNow ? { now: options.contextFoldingNow } : {},
+    );
 }
 
 function resolveContextExpandDeps(

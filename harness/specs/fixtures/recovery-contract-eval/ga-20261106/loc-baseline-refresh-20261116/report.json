@@ -1,0 +1,85 @@
+{
+  "schema": "G3LocBaselineRefreshEvidence/v1",
+  "driven_by": "agent",
+  "actor": "codex-g3-loc-closeout",
+  "realHumanEvidence": false,
+  "base": "c4a6846049759f09ec7e9d4c7c93c888151205a9",
+  "generatedAt": "2026-11-16T12:45:50.617Z",
+  "status": "PASS",
+  "loc": {
+    "maxLines": 500,
+    "trackedOffenders": 1100,
+    "minLines": 501,
+    "maxLinesObserved": 6468,
+    "rule": "Reject offenders that are new to the baseline or larger than their recorded line count."
+  },
+  "files": [
+    {
+      "path": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "4b4a406142927ae97072fe9b3d7d0b98da87d8ad1c23ce93533933e623a494d4",
+      "bytes": 12871
+    },
+    {
+      "path": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/loc-baseline-refresh-20261116/README.md",
+      "sha256": "92809dbe695c1aadaa91701beab65b6b6f3417b3a850ae256184609bd22d9ecd",
+      "bytes": 319
+    },
+    {
+      "path": "harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/README.md",
+      "sha256": "ba53000c0df306e83aa7ce0b6aeac3bf29b2c9e2a7e7b4f51f420c156ff8bcc0",
+      "bytes": 2443
+    },
+    {
+      "path": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "695fbecb3021f38e6095b0159c848bc21922ae701a4954366b2253974161ab31",
+      "bytes": 13805
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "sha256": "6530ed6054832cd9de862fffdaf5242e41e820aaeac6a86a0eb23d9cbe8e77dd",
+      "bytes": 109060
+    },
+    {
+      "path": "openclaw_runtime/scripts/generate-ts-max-loc-baseline.mjs",
+      "sha256": "f3f2a1d7af5ce34d81eab3ae4aec82d31fdec81823a22b7e59cd312af922a5ef",
+      "bytes": 1696
+    },
+    {
+      "path": "openclaw_runtime/scripts/ts-max-loc-baseline.json",
+      "sha256": "f6ece1150e159a9a49b2bac1060c2131be4537ad7d7ad8d7162b4a844144b729",
+      "bytes": 57532
+    },
+    {
+      "path": "openclaw_runtime/src/agents/main-session-restart-recovery.schedule.test.ts",
+      "sha256": "90e9d949503c515522718725fb51b9fcb66d03683edde1ee537e3de6a99ad33f",
+      "bytes": 1604
+    },
+    {
+      "path": "openclaw_runtime/UPSTREAM.md",
+      "sha256": "a3ce73702980d766d2e8d3fb080361ebd6f4220b87d64c1f9b72c364f5bc4c9d",
+      "bytes": 2179
+    }
+  ],
+  "checks": {
+    "runtime-source-policy": 0,
+    "import-cycles": 0,
+    "deprecated-api-usage": 0,
+    "deprecated-zero-call": 0,
+    "deadcode-unused-files": 0,
+    "loc-baseline": 0,
+    "target-eslint": 0,
+    "runtime-source-policy-unit": 0,
+    "recovery-unit": 0,
+    "contract": 0,
+    "i18n": 0,
+    "comms-replay": 0,
+    "comms-compare": 0,
+    "repo-evidence": 0,
+    "docs-index": 0,
+    "spec-lifecycle": 0,
+    "harness-validate": 0,
+    "harness-run-dry": 0
+  },
+  "gaStatus": "NO_GO",
+  "frozenMeasurement": "NOT_RUN"
+}

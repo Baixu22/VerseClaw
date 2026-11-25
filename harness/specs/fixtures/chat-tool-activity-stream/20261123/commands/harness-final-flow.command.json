@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidateCommit": "93e06939a816e1cc1cd209c61901302960dc2271",
+  "cwd": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
+  "command": [
+    "pnpm.cmd",
+    "harness",
+    "run",
+    "--spec",
+    "harness/specs/tasks/chat-tool-activity-stream-20261123.md",
+    "--since",
+    "bb5afcfd7",
+    "--dry-run"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 1.937,
+  "stdoutSha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3",
+  "stderrSha256": "37c2cae9cdc96551908bca17c599d73c4e60f03348f0a6a7dc2a5a5117612d11"
+}

@@ -1,0 +1,427 @@
+{
+  "schema": "G3SdkAliasDevelopment/v1",
+  "decision": "NO_GO",
+  "codeCommit": "ae388c167d3a971835356c9bf4cb6150dfb5aed8",
+  "validationContext": {
+    "head": "3d546dd0bebb5392a5dcdc5e89e48fcdc2a0345e",
+    "dirty": true,
+    "changesSha256": "7a2e9e7e9a06fe2ceb19d92913d92e94a6addc79dc9ad438f37c0cc5d8173c5d"
+  },
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/plugins/sdk-alias.ts",
+      "sha256": "8f67dcc2934b189bc03a657d1839ad7ca9021f7713e8eb54ae41799f81f3b57d"
+    },
+    {
+      "file": "tests/unit/gateway-sdk-alias-dependencies.test.ts",
+      "sha256": "bff91bc96a3db7ee19a777c5d1d827f980f483612a7be9596dfd31f81660a765"
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "a40febed62917f10291edf08df18f1b35a690ecc4b436d8433e0889898829219"
+    },
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "a62130c3127789bad78b2436e47c5665645e73c4d591897c1063a07966e8b39a"
+    }
+  ],
+  "stages": [
+    {
+      "name": "sdk-review",
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:/tmp/g3-sdk-relay-20261119-01a1f36c/review-context.md",
+        "--json-output",
+        "D:/tmp/g3-sdk-relay-20261119-01a1f36c/review-result.json",
+        "--output",
+        "D:/tmp/g3-sdk-relay-20261119-01a1f36c/review.md"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 138078,
+      "memoryMiB": 2478,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-review.json",
+        "sha256": "e601a944a0f2cb0c06430c51cd2ec14c630e2580f4d15aed466e19ced9053833"
+      },
+      "log": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-review.log",
+        "sha256": "591a501d8e72a063c55b078243fab4d8a3ae1b6fbc084c9d7f824cbe5f89d1ed"
+      }
+    },
+    {
+      "name": "sdk-types",
+      "argv": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs",
+        "--no-cache"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 58571,
+      "memoryMiB": 3237,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-types.json",
+        "sha256": "532dfb91f18537ba599f0194c826ca3ad794e24e7789cfcc15a93ee0fc4722f5"
+      },
+      "log": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-types.log",
+        "sha256": "58fa42c7b1ebd9d91743b4a9551777eac0dfc0e33b8b9572ae0825e69d405b60"
+      }
+    },
+    {
+      "name": "sdk-runtime",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 137771,
+      "memoryMiB": 6747,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-runtime.json",
+        "sha256": "66b1221aa7ff719d94949bca8fb7d3975773e201fd9e5d261356f3c6b48237c9"
+      },
+      "log": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-runtime.log",
+        "sha256": "51da052a5516f18bab61b95db1240bc1b182df3b1e4f5463bbc1f19fc604fa03"
+      }
+    },
+    {
+      "name": "sdk-benchmark-stage",
+      "argv": [
+        "node",
+        "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\benchmark-sdk.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 9731,
+      "memoryMiB": 4204,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-benchmark-stage.json",
+        "sha256": "738857d9278fa7768126db7e6fa2fa468498e850469a28d4519c21f321330505"
+      },
+      "log": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-benchmark-stage.log",
+        "sha256": "4088aaa125f957b71b4f5354c0a69ec4d748473d578543536620949295317bd1"
+      }
+    },
+    {
+      "name": "sdk-source-gates",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run runtime:source:check"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 63940,
+      "memoryMiB": 4821,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-source-gates.json",
+        "sha256": "750372ade6b17dee6e52f21dea7efbdfa92f9365aefbdeded760f879cd32dc0e"
+      },
+      "log": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-source-gates.log",
+        "sha256": "32051f57de6ef613d11d05d0f40b86fe5e7b54cf722b7bdbacf55ddc36bc80e1"
+      }
+    },
+    {
+      "name": "sdk-desktop",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 113738,
+      "memoryMiB": 3436,
+      "minimumObservedMiB": null,
+      "receipt": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-desktop.json",
+        "sha256": "b208424bc9d8148e48539971b956ee0c2865377abcda91fdf52625cb332cd6d4"
+      },
+      "log": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-desktop.log",
+        "sha256": "6467cecc941380608be9970704711b2dcd8a00516034e1dbf5f156124829599a"
+      }
+    },
+    {
+      "name": "sdk-native",
+      "argv": [
+        "node",
+        "scripts/recovery-contract-matrix.mjs",
+        "--arm",
+        "candidate",
+        "--windows",
+        "repeated-restart",
+        "--repeats",
+        "3",
+        "--batch",
+        "--out",
+        "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native"
+      ],
+      "exitCode": 1,
+      "elapsedMs": 753508,
+      "memoryMiB": 2740,
+      "minimumObservedMiB": 1,
+      "receipt": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native.json",
+        "sha256": "ac009f627d1452c09563961e08cafa5a092fcd3d4182236f62720d70c50bc5c7"
+      },
+      "log": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native.log",
+        "sha256": "6497c842c02205c30070404841c7da2747a0d24625336d272d36b076bcb83bc4"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "file": "sdk-red.tests.json",
+      "total": 4,
+      "passed": 3,
+      "failed": 1,
+      "artifact": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-red.tests.json",
+        "sha256": "d04f932929b3c426344ac84089a6243243453d75e6a1c2aa257f821540bb4857"
+      }
+    },
+    {
+      "file": "sdk-green.tests.json",
+      "total": 4,
+      "passed": 0,
+      "failed": 4,
+      "artifact": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-green.tests.json",
+        "sha256": "5bdcac1cb59c18092cc553232492edc0425b3b51feb4a30de6131151a585d1b1"
+      }
+    },
+    {
+      "file": "sdk-green-r2.tests.json",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "artifact": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-green-r2.tests.json",
+        "sha256": "cced9c048496a13a7842ccb68be5189efc5e431d81bd802bf0edb254f6242902"
+      }
+    },
+    {
+      "file": "sdk-green-final.tests.json",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "artifact": {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-green-final.tests.json",
+        "sha256": "84ecda8d09f31fd74c8ed114149826961001708fe244e4fdaa6606f4bcb4ad7a"
+      }
+    }
+  ],
+  "benchmark": {
+    "artifact": {
+      "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-benchmark.json",
+      "sha256": "0cf5ace9d5d667d4904b03c68eeda8860719af039ad1fae38c3f7c8a6eee267d"
+    },
+    "mediansMs": {
+      "baseline": 174.60190000000011,
+      "candidate": 106.32619999999997
+    },
+    "probes": [
+      {
+        "arm": "baseline",
+        "sample": "probe",
+        "elapsedMs": 420.33619999999996,
+        "availableMiB": 4098,
+        "aliasCount": 634,
+        "aliasesSha256": "c339479bddae1b98bb4c78de84f7ed6dc8149695530741e3df5a72a300555864",
+        "existsCalls": 1666,
+        "readCalls": 327,
+        "repeatedPaths": [
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\openclaw.mjs",
+            "count": 3
+          },
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\allow-from-Ddq5GeWG.js",
+            "count": 4
+          },
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\access-groups-BLRdV-0W.js",
+            "count": 3
+          },
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\utils-DQbPQEia.js",
+            "count": 16
+          },
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\account-id-Df9e41E6.js",
+            "count": 11
+          },
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\chat-type-CxEvM45e.js",
+            "count": 3
+          },
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\account-lookup-DL1YTqjF.js",
+            "count": 4
+          },
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\dist\\account-action-gate-C_U0Com2.js",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "arm": "candidate",
+        "sample": "probe",
+        "elapsedMs": 122.87149999999997,
+        "availableMiB": 3883,
+        "aliasCount": 634,
+        "aliasesSha256": "c339479bddae1b98bb4c78de84f7ed6dc8149695530741e3df5a72a300555864",
+        "existsCalls": 624,
+        "readCalls": 327,
+        "repeatedPaths": [
+          {
+            "file": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime\\openclaw.mjs",
+            "count": 3
+          }
+        ]
+      }
+    ],
+    "pairCount": 9
+  },
+  "native": {
+    "requestedTrials": 3,
+    "completedReceipts": [
+      {
+        "index": 0,
+        "recoveryLatencyMs": 85422,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "receipt": {
+          "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\trial-repeated-restart-0.json",
+          "sha256": "eeac47fa378d3ccf02ce1a73b9db462f8b85784129b5273fd8d496d7e8b4a839"
+        }
+      },
+      {
+        "index": 2,
+        "recoveryLatencyMs": 64035,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "receipt": {
+          "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\trial-repeated-restart-2.json",
+          "sha256": "af4664138629496ca51b4f81858395373d148ef3471100d974fcb0e42eebe511"
+        }
+      }
+    ],
+    "failedTrial": {
+      "index": 1,
+      "reason": "2500 MiB memory admission unavailable after 300000 ms",
+      "injectionStarted": false
+    },
+    "attachments": [
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-0\\task-owner.json",
+        "sha256": "46a02889656b8f7f124fb807c9b375a62114518ea266ca35286bdd103d3a1437"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-0\\before.json",
+        "sha256": "f684e1c56a6dfc7b0edee3059ca830de60f16f49660969bef628669216ad4aa6"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-0\\crash-0.json",
+        "sha256": "37e911adbb0d4f8d899c75cd6ddcf1555fae18ad9fc35f7a18c050aa69efcedc"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-0\\crash-1.json",
+        "sha256": "93c2462a73510f85b8809cd007a6c93447757c75c7f2b03dceac1261a8bebbbb"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-0\\crash-2.json",
+        "sha256": "cd2a5d50c7dcbffc0f23497ed75419e0635b84f74710e00837252c980d7798ec"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-0\\after.json",
+        "sha256": "368aedfa0c4543642e6f7af61f6734276a2508a1a0f50fb818f6ee15aebb939e"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-2\\task-owner.json",
+        "sha256": "5c9fc9ba52734e305507e14aed8d5f7522e62e412e83bf59367e943886b83229"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-2\\before.json",
+        "sha256": "01bd3e45ca410d16864f56881eecc73c6c8481f94c0320031dd2780894278426"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-2\\crash-0.json",
+        "sha256": "92e5908d1ce9876dd94631def73dc83aec6050155adb3bedcb268bcac8867c87"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-2\\crash-1.json",
+        "sha256": "d6a8a040be96e7e790beb11c39486650931f5f7c1b2256c1bdf5ab7b42cbf525"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-2\\crash-2.json",
+        "sha256": "c2c518ec6855d499fb3ed1f16aafc45051382507eb35382b756a2ab7c189be97"
+      },
+      {
+        "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-native\\candidate\\evidence-repeated-restart-2\\after.json",
+        "sha256": "0313b3ed1af1c1b24e92ef1388f9b47294f28fb986c7eff94ba7ad1a71110688"
+      }
+    ],
+    "minimumObservedMiB": 1
+  },
+  "budgets": {
+    "typecheck": {
+      "observedMs": 56414,
+      "limitMs": 45000,
+      "passed": false
+    },
+    "desktop": {
+      "observedMs": 113738,
+      "limitMs": 58000,
+      "passed": false
+    },
+    "recovery": {
+      "p50LimitMs": 5000,
+      "p95LimitMs": 15000,
+      "fullFrozenEvaluation": "NOT_RUN"
+    }
+  },
+  "review": {
+    "engine": "codex",
+    "model": "gpt-6.1-sol",
+    "findings": 0,
+    "sourceUnchanged": true,
+    "artifact": {
+      "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\review-result.json",
+      "sha256": "0e1ad5fabc38edbf9c0c4865ab10bac7305f1e7c0163511d37b69d4c43878243"
+    }
+  },
+  "archive": {
+    "path": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\sdk-development-raw.json.gz",
+    "bytes": 542436,
+    "sha256": "c9bb042e47f2867348349ffe25aa9ff163e5efb13ef17889a36fc97ad95736d7"
+  },
+  "driven_by": "agent",
+  "actor": "codex/g3-sdk-relay",
+  "realHumanEvidence": false
+}

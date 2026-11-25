@@ -528,6 +528,7 @@ const SUMMARIZATION_PROMPT = `The messages above are the live conversation being
 
 Evidence-fidelity rules:
 - Preserve every still-valid user objective, explicit deliverable, completed task, and current goal state. Never claim work is unfinished when the transcript shows it completed.
+- When the user requires facts to be preserved verbatim, copy each still-valid statement exactly as one complete original line, including its labels, wording, and punctuation. Keep the label and value together; do not extract a new label, add a colon, repeat an identifier, or quote only a fragment.
 - Preserve exact file paths, function/method names, command lines, error messages, exit codes, test counts, identifiers, and verification evidence.
 - For failures, preserve the chain: what was tried -> exact failure -> evidenced root cause -> adjustment/fallback -> validation -> next action. Do not speculate beyond the transcript.
 - Do not state numeric repetition counts or attempt numbers unless you counted each occurrence in the transcript and the count is exact; when uncertain write "repeatedly".
@@ -539,7 +540,7 @@ Use this EXACT Markdown shape:
 
 ${INITIAL_COMPACTION_SUMMARY_SHAPE}
 
-Keep it concise but readable. Preserve exact file paths, function names, command names, error messages, blockers, and causal chains. Exclude superseded stale branches and do not repeat old summaries verbatim.`;
+Keep it concise but readable. Put each fact in one relevant section and use a short placeholder for sections with no events. Preserve exact file paths, function names, command names, error messages, blockers, and causal chains. Exclude superseded stale branches and do not repeat old summaries verbatim.`;
 
 const UPDATE_SUMMARIZATION_PROMPT = `The messages above are NEW conversation messages to incorporate into the existing summary provided in <previous-summary> tags.
 
@@ -547,19 +548,20 @@ Use the previous summary only as background. Produce a fresh readable handoff th
 
 Rules:
 - Preserve still-valid objectives, decisions, constraints, blockers, file paths, test results, and causal chains.
+- When the user requires facts to be preserved verbatim, copy each still-valid statement exactly as one complete original line, including its labels, wording, and punctuation. Keep the label and value together; do not extract a new label, add a colon, repeat an identifier, or quote only a fragment.
 - Remove or mark obsolete branches as superseded instead of presenting them as current.
 - Preserve every explicit user deliverable and completed work item, including verification evidence and final report content.
 - For failures, preserve the chain: attempt -> exact failure -> evidenced root cause -> adjustment -> validation -> next action.
 - Do not state numeric repetition counts or attempt numbers unless you counted each occurrence in the transcript and the count is exact; when uncertain write "repeatedly".
 - Report counts, permissions, cost/risk, and intent only when explicitly evidenced in the transcript; otherwise omit them.
-- Prefer narrative handoff text over label extraction.
+- Use concise prose for other context; keep user-designated verbatim statements unchanged.
 - Keep exact file paths, function names, command names, and error messages.
 
 Use this EXACT Markdown shape:
 
 ${UPDATE_COMPACTION_SUMMARY_SHAPE}
 
-Keep each section concise.`;
+Keep each section concise. Put each fact in one relevant section and use a short placeholder for sections with no events.`;
 
 function createSummarizationOptions(
   model: Model,

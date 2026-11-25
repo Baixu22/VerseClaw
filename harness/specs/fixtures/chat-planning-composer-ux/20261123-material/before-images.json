@@ -1,0 +1,23 @@
+{
+  "sourceCandidate": "8fcb221c49f2b4909609ed5c0c53df3c6096137a",
+  "currentHead": "d3e95fd54",
+  "productionSourceDiff": "empty",
+  "images": [
+    {
+      "path": "01-light-chat.png",
+      "sha256": "258b6a8203425283bfc1dc4f4e0bc7f83c14541117dd70481d99da10dd1a0c84"
+    },
+    {
+      "path": "02-dark-running.png",
+      "sha256": "1353363fa5b8cbfa1e9e266984d149c6e36478cbd4cf0f134f4a52501b851959"
+    },
+    {
+      "path": "03-dark-paused.png",
+      "sha256": "65c87fca1eacf0968c21bd9270402bfe99446578d2e7e906a3ea6e4b4220685a"
+    },
+    {
+      "path": "04-material-details.png",
+      "sha256": "4d482d69fbf8ed74020b58a9b2889db212e5a7c6de3c5386b35e63c5aeb851da"
+    }
+  ]
+}

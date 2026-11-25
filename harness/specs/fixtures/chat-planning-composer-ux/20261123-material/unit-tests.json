@@ -1,0 +1,1296 @@
+{
+  "tests": 184,
+  "passed": 184,
+  "failed": 0,
+  "cases": [
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence hydrates the composer from draftValue and reports draft edits",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence clears the parent draft after sending",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence keeps the new conversation draft when an old task-loop upgrade finishes",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence surfaces Task Loop upgrade for complex project work without auto-sending",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence sends the selected knowledge scope with the composer payload",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence changes knowledge invocation mode from the knowledge menu",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence shows suggest-mode knowledge candidates and attaches them only after user action",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence dismisses knowledge preflight for the same input and still sends if routing fails",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence searches and attaches specific knowledge references before sending",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput draft persistence does not render or send Work Mode",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens the slash menu, filters commands, and selects with Enter",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands filters slash commands by command prefix without matching descriptions",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands closes the slash menu with Escape",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands keeps unknown slash commands in the composer instead of sending",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens wiki search from slash command and attaches selected context",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands changes knowledge scope from slash commands without sending",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands runs steward audit slash command without sending a chat prompt",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands falls back to a review prompt when no code review hook is provided",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands creates a ledger node and best-effort links the current session",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens Mission Control guidance through the Agents route",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands opens the compaction dialog from /compact",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands runs the existing fork callback from /fork",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash commands shows the generation reason and refuses every disabled handoff control",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight confirms a local skill enable action before sending trusted metadata",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight cancels a capability action without sending or changing configuration",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight confirms MCP JSON registration and injects reload results",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput capability action preflight blocks high-risk MCP JSON before registration",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /new starts a fresh session through the onNewSession prop",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /resume switches to the session matching the keyword",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /resume without args shows a hint instead of switching",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /rename renames the current session",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /archive archives the current session",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /delete permanently deletes the current session after confirmation",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /clear resets the local message view through the store action",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /copy copies the last assistant response as markdown",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands /copy shows a hint when there is no assistant response",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands keeps long-task modes out of ordinary Chat and queues the running draft locally",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput slash session lifecycle commands sends revise-goal from the delivery menu of a /loop session",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status keeps passive message and token counts out of the composer footer",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status offers Stop beside Send while a draft is pending, and /loop delivery modes from one menu",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status binds Mod+Enter to guide and Mod+Shift+Enter to interrupt, leaving Shift+Enter a newline",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status queues the draft immediately when the running primary control is clicked",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status pauses the run with one click when there is no composer draft",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status renders a persisted pause as a resume action",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status omits the context status when no context data is available",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status opens the manual compaction dialog from /compact and confirms with extra instructions",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status closes a compaction dialog when switching conversations",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status cancels a delayed compaction confirmation after leaving and returning to a conversation",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status preserves the new conversation dialog when an old compaction completes",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status dismisses a pending cache-risk confirmation when its conversation is left",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status no longer renders compaction diagnostics in the composer status line",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status keeps compaction diagnostics hidden in basic mode while preserving send payload",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status refuses /compact while the session is sending",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput read-only context status keeps compact unavailable until its session generation is ready",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput direct model selection selects directly, remembers the preference and never writes agent defaults",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput direct model selection keeps the previous model and preference after a rejected save",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput direct model selection does not close another conversation menu when the previous save finishes",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting hides the @agent picker when only one agent is configured",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting uses native textarea rendering when no skill token is present",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting lets the user select an agent target and sends it with the message",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting disables the input while gateway is running but not yet ready",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting shows gateway readiness as a read-only composer status while starting",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting routes permission mode changes through the direct permission menu",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting falls back to read-only when a persisted workspace has an invalid permission mode",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting routes workspace folder and new session actions through the permission menu",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps @agent targeting separate from switching the workspace agent",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps skill access in the slash palette instead of a toolbar trigger",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting groups non-primary composer actions inside the add menu",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps Office actions visible and routes to setup when no enabled Office skill is available",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting inserts an office action as a skill token plus a prompt template",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting inserts the selected skill from a slash query and prefixes sends",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting keeps a leading selected skill token on the normal send path",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting removes the full inline skill token with one backspace",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting skips across the inline skill block with arrow keys",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting adds left spacing when inserting a skill after adjacent text",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting allows inserting the same skill multiple times as separate blocks",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting opens the artifact preview panel when the inline skill token is clicked",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "ChatInput agent targeting stages dropped folders via disk path instead of buffer upload",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation preserves a changed draft and ignores a late Auto-read result",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation cancels an optional Auto-read and completes the requested plain send once",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation does not reopen source inspection after a profile change",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation queues ordinary follow-ups when long-task interventions are unavailable",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation dispatches a running draft once while a before-send hook is pending",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation preserves an edited draft when an earlier before-send hook finishes",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation routes Auto-read before a running plain send",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation routes Auto-read before a running queue send",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation routes Auto-read before a running guide send",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "RAG-11 composer cancellation uses the long-task queue only when a checkpoint names the owned root",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "compact composer context keeps retrieval controls inside one menu and identifies an explicitly selected higher-cost profile",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "compact composer context keeps normal checkpoint records quiet and reachable from More",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-input.test.tsx",
+      "name": "compact composer context shows nonzero queue and warnings in the input and preserves the drain action",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe renders assistant text without an avatar or a reserved avatar column",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe keeps attachment-only assistant replies visible even when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe keeps image artifacts visible alongside reply text when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe shows an explicit loading state for image artifacts before preview hydration finishes",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe shows an unavailable state after image preview hydration gives up",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe keeps message-ref image artifacts visible alongside reply text when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe keeps html artifacts visible when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe hides generic tool-result markdown attachments when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe keeps attached SKILL.md visible when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe keeps pdf and spreadsheet artifacts visible when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe derives preview cards from assistant text paths when attachments are missing",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe derives skill directory cards from assistant text paths",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe keeps unicode Windows skill directory paths as cards",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe shows SKILL.md as a previewable file card instead of a folder",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe does not show cards for hallucinated missing paths",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage attachment dedupe continues hiding non-preview process attachments when process attachments are suppressed",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage range readiness keeps its boundary action disabled until the owner scope is ready",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage LaTeX rendering renders inline `$...$` math with KaTeX",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage LaTeX rendering renders display `$$...$$` math as a block",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage LaTeX rendering renders `\\(...\\)` inline math (OpenAI-style escaping)",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage LaTeX rendering renders `\\[...\\]` block math (OpenAI-style escaping)",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage LaTeX rendering does not rewrite `\\(` inside code fences",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage word wrapping does not apply break-all to the assistant prose wrapper",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage word wrapping does not apply break-all to user message text",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage word wrapping leaves inline code styling to the ported Codex recipe",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage word wrapping wraps fenced code block contents instead of overflowing horizontally",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage reply styling renders assistant replies as plain Markdown without a rounded bubble wrapper",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage reply styling keeps the complete user prompt inside its dedicated message card",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage image copy copies image bytes instead of the media URL text when an image attachment is present",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage image copy keeps response actions compact and quotes or forks through existing callbacks",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Tool UI rendering renders fenced Tool UI plan payloads on demand and removes the raw JSON block",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Tool UI rendering renders Tool UI option-list tool calls and emits a structured response",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Tool UI rendering parses relaxed Tool UI wrapper arrays from component-specific fences",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Tool UI rendering converts Markdown plan checklists into plan cards",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Tool UI rendering converts Markdown question and options blocks into question flow cards",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Tool UI rendering converts Markdown preferences tables into preferences panel cards",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Tool UI rendering keeps ordinary JSON code fences visible when they are not Tool UI payloads",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-message.test.tsx",
+      "name": "ChatMessage Fork action identity and availability keeps a missing boundary visible and disabled, and never bypasses busy message actions",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Run-log replay provenance badge renders the translated badge instead of the raw i18n key",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a tool-only assistant turn",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a card from a mixed text + tool_use turn whose text was folded into the graph",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders a question the run is blocked on, with no final reply yet",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment renders one fenced question while the same reply is both streaming and in history",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Tool UI cards emitted as tool calls inside a run segment still hides a plain tool call that has no card renderer",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface replays an update_plan tool call from history into the turn summary",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface does not also render the plan as a message card",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Plan surface omits the execution graph entirely when every row was promoted",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals surfaces a pending host approval in the transcript",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals renders exactly one approval card when a tool call also parses as one",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals surfaces a pending approval even when no turn produced an activity card",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals keeps an undecided approval visible after the next run starts",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Permission approvals forces the turn summary open while an approval is pending",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning shows reasoning from a message thinking block",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps reasoning on a turn whose narration text was folded away",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning hides reasoning entirely while the process fold is shut",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps thought counts out of the compact header while retaining reasoning details",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning merges reasoning from every message in the run segment into one panel",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning keeps progress text visible when a referenced attachment fails to materialize",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Thinking reasoning shows live reasoning from the runtime run while streaming",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Generated file ownership shows a diffable file as a diff only, never also as a chip",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Generated file ownership still chips a file the diff projection cannot render",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn summary contents badges labels contents while collapsed, then shows them when opened",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn summary contents badges keeps a pending approval visible while process details open and close",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "Turn disclosure survives the optimistic→server id swap keeps the turn open after the trigger message id changes",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-render-reachability.test.tsx",
+      "name": "live plan display ownership keeps the active plan in the task strip while process details open",
+      "status": "passed",
+      "run": "unit-render-r2",
+      "candidate": "6e0f8605b"
+    },
+    {
+      "file": "chat-user-message-display.test.ts",
+      "name": "user message display cleanup hides the inbound-image vision envelope for attachment-only uploads",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-user-message-display.test.ts",
+      "name": "user message display cleanup keeps the user caption while stripping auto-generated description",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "chat-user-message-display.test.ts",
+      "name": "user message display cleanup matches optimistic attachment-only bubbles against the gateway vision echo",
+      "status": "passed",
+      "run": "unit-r1",
+      "candidate": "e4985837f"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock shows an initial rejected read and keeps retry in place until the owner responds",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock shows an initial unsuccessful read and keeps retry in place until the owner responds",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock returns to an empty surface when a retry confirms there is no task",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps a late initial failure in its original session",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps a blank conversation free of task controls and performs no task lookup",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock docks beside the composer with a quiet objective and opens steps on demand",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock ignores an old session response and preserves the new task when calls finish out of order",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock refreshes after the matching task tool completes, without reopening a hidden task",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock keeps the last task marked stale when the owner is unavailable and recovers without changing ownership",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock reveals a new task without inheriting the previous task's hidden preference",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock shows the goal once and uses checkpoint facts as steps without inventing a percentage",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "quiet conversation task dock derives progress from known child tasks and retains the parent acceptance state",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles shortens UUIDs like a commit and keeps short owner IDs whole",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles copies the full task ID from its menu without showing IDs in the task strip",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles reports a copy failure instead of claiming success",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles opens the task and each child task in the ledger by their own IDs",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles offers no ID or ledger actions for a run plan that has no durable task",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "task handles supports arrow keys and Escape in the menu, returning focus to its trigger",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime retires an incomplete run plan when its run ends",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime keeps a finished plan active until its run settles, then leaves the transcript record",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "dock lifetime folds a finished durable task to a one-line receipt instead of removing its ID",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales reveals a hidden task when paused and opens its blockers without sending a task command",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales shows current run steps under the durable objective and restores durable steps after the run",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales folds an accepted task once and permits opening the receipt again",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    },
+    {
+      "file": "session-task-dock.test.tsx",
+      "name": "live run and durable task scales reveals a stale status and retry action even when its healthy display was hidden",
+      "status": "passed",
+      "run": "unit-style-r2",
+      "candidate": "78015774a"
+    }
+  ],
+  "policy": "Latest full result per test file; former presentation assertions are retained in the failed raw report."
+}

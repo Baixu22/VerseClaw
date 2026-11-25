@@ -1,0 +1,198 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\clawx-model-effort-picker-20261124\\run-roots\\verse-claw-e2e-run-8VKOFT",
+  "ledgerEntries": 30,
+  "checks": [
+    {
+      "pid": 7076,
+      "creationTime": 1795537336917,
+      "status": "exited"
+    },
+    {
+      "pid": 34388,
+      "creationTime": 1795537346502,
+      "status": "exited"
+    },
+    {
+      "pid": 25988,
+      "creationTime": 1795537346849,
+      "status": "exited"
+    },
+    {
+      "pid": 36168,
+      "creationTime": 1795537356406,
+      "status": "exited"
+    },
+    {
+      "pid": 20684,
+      "creationTime": 1795537360542,
+      "status": "exited"
+    },
+    {
+      "pid": 13888,
+      "creationTime": 1795537360671,
+      "status": "exited"
+    },
+    {
+      "pid": 41932,
+      "creationTime": 1795537365987,
+      "status": "exited"
+    },
+    {
+      "pid": 1076,
+      "creationTime": 1795537370000,
+      "status": "exited"
+    },
+    {
+      "pid": 31464,
+      "creationTime": 1795537370115,
+      "status": "exited"
+    },
+    {
+      "pid": 35700,
+      "creationTime": 1795537372970,
+      "status": "exited"
+    },
+    {
+      "pid": 34548,
+      "creationTime": 1795537376926,
+      "status": "exited"
+    },
+    {
+      "pid": 27316,
+      "creationTime": 1795537377045,
+      "status": "exited"
+    },
+    {
+      "pid": 29424,
+      "creationTime": 1795537380898,
+      "status": "exited"
+    },
+    {
+      "pid": 3364,
+      "creationTime": 1795537384584,
+      "status": "exited"
+    },
+    {
+      "pid": 3508,
+      "creationTime": 1795537384723,
+      "status": "exited"
+    },
+    {
+      "pid": 38692,
+      "creationTime": 1795537391081,
+      "status": "exited"
+    },
+    {
+      "pid": 47864,
+      "creationTime": 1795537395021,
+      "status": "exited"
+    },
+    {
+      "pid": 34684,
+      "creationTime": 1795537395141,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 7076,
+        "creationTime": 1795537336917,
+        "status": "exited"
+      },
+      {
+        "pid": 34388,
+        "creationTime": 1795537346502,
+        "status": "exited"
+      },
+      {
+        "pid": 25988,
+        "creationTime": 1795537346849,
+        "status": "exited"
+      },
+      {
+        "pid": 36168,
+        "creationTime": 1795537356406,
+        "status": "exited"
+      },
+      {
+        "pid": 20684,
+        "creationTime": 1795537360542,
+        "status": "exited"
+      },
+      {
+        "pid": 13888,
+        "creationTime": 1795537360671,
+        "status": "exited"
+      },
+      {
+        "pid": 41932,
+        "creationTime": 1795537365987,
+        "status": "exited"
+      },
+      {
+        "pid": 1076,
+        "creationTime": 1795537370000,
+        "status": "exited"
+      },
+      {
+        "pid": 31464,
+        "creationTime": 1795537370115,
+        "status": "exited"
+      },
+      {
+        "pid": 35700,
+        "creationTime": 1795537372970,
+        "status": "exited"
+      },
+      {
+        "pid": 34548,
+        "creationTime": 1795537376926,
+        "status": "exited"
+      },
+      {
+        "pid": 27316,
+        "creationTime": 1795537377045,
+        "status": "exited"
+      },
+      {
+        "pid": 29424,
+        "creationTime": 1795537380898,
+        "status": "exited"
+      },
+      {
+        "pid": 3364,
+        "creationTime": 1795537384584,
+        "status": "exited"
+      },
+      {
+        "pid": 3508,
+        "creationTime": 1795537384723,
+        "status": "exited"
+      },
+      {
+        "pid": 38692,
+        "creationTime": 1795537391081,
+        "status": "exited"
+      },
+      {
+        "pid": 47864,
+        "creationTime": 1795537395021,
+        "status": "exited"
+      },
+      {
+        "pid": 34684,
+        "creationTime": 1795537395141,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "detectedPendingLaunches": 0,
+  "pendingLaunches": 0,
+  "status": "passed"
+}

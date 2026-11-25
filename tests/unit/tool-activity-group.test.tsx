@@ -1,0 +1,120 @@
+import { useState } from 'react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import en from '../../shared/i18n/locales/en/chat.json';
+import { ToolActivityGroup } from '@/components/assistant-render/ToolActivityGroup';
+import type { ToolActivityGroupModel } from '@/pages/Chat/tool-activity-groups';
+
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ i18n: { language: 'en' }, t: (key: string, params?: Record<string, unknown>) => {
+  let value: unknown = en;
+  for (const part of key.split('.')) value = (value as Record<string, unknown>)?.[part];
+  return String(value ?? key).replace(/\{\{(\w+)\}\}/g, (_, name) => String(params?.[name] ?? ''));
+} }) }));
+
+function model(running = false): ToolActivityGroupModel {
+  const entry = { id: 'read', name: 'read_file', kind: 'read' as const, target: '/project/config.ts', running, order: 0 };
+  return { id: 'run:read', runKey: 'run', anchorIndex: 1, agentLabel: 'Main', status: running ? 'running' : 'completed',
+    steps: [{ id: 'read', kind: 'tool', label: 'read_file', status: running ? 'running' : 'completed', depth: 1,
+      inputDetail: '{"path":"/project/config.ts"}', detail: running ? '{"path":"/project/config.ts"}' : 'FULL_READ_RESULT',
+      startedAt: Date.now() - 1000, durationMs: running ? undefined : 1350 }],
+    terminals: [], files: [], diffs: [], entries: [entry], current: running ? entry : undefined, isCurrent: running };
+}
+function Harness({ group }: { group: ToolActivityGroupModel }) {
+  const [open, setOpen] = useState(false);
+  return <ToolActivityGroup group={group} expanded={open} onExpandedChange={setOpen} />;
+}
+describe('tool activity disclosure', () => {
+  it('starts folded and exposes the original arguments and result on demand', () => {
+    render(<Harness group={model()} />);
+    const toggle = screen.getByTestId('chat-tool-activity-toggle');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('FULL_READ_RESULT')).toBeNull();
+    fireEvent.click(toggle);
+    fireEvent.click(screen.getByTestId('chat-execution-step-toggle'));
+    expect(screen.getByText('FULL_READ_RESULT')).toBeVisible();
+    expect(screen.getByText(/"path":/)).toBeVisible();
+  });
+  it('moves the live shimmer into the details and preserves manual expansion on completion', () => {
+    const view = render(<Harness group={model(true)} />);
+    expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
+    expect(within(screen.getByTestId('chat-tool-activity-toggle')).queryByTestId('chat-call-chip')).toBeNull();
+    expect(within(screen.getByTestId('chat-tool-activity-toggle')).getByTestId('ai-element-shimmer')).toHaveTextContent('/project/config.ts');
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    expect(within(screen.getByTestId('chat-tool-activity-toggle')).queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(screen.getAllByTestId('ai-element-shimmer')).toHaveLength(1);
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    view.rerender(<Harness group={model()} />);
+    expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
+  });
+  it('keeps the summary plain and the expanded progress strip tied to the call status', async () => {
+    const view = render(<Harness group={model(true)} />);
+    const header = within(screen.getByTestId('chat-tool-activity-toggle'));
+    expect(header.queryByTestId('chat-call-chip')).toBeNull();
+    expect(header.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'read');
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    const details = within(screen.getByTestId('chat-tool-activity-details'));
+    expect(details.getByTestId('chat-call-chip')).toHaveAttribute('aria-busy', 'true');
+    await waitFor(() => expect(details.getByTestId('chat-call-chip-progress')).not.toHaveStyle({ transform: 'scaleX(0)' }));
+    view.rerender(<Harness group={model()} />);
+    expect(header.queryByTestId('chat-call-chip')).toBeNull();
+    expect(details.getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'done');
+    expect(details.getByTestId('chat-call-chip')).not.toHaveAttribute('aria-busy');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+  });
+  it('keeps a failed group static while exposing its attention state', () => {
+    render(<Harness group={{ ...model(true), status: 'error' }} />);
+    expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('Needs attention');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    const detailChip = within(screen.getByTestId('chat-tool-activity-details')).getByTestId('chat-call-chip');
+    expect(detailChip).toHaveAttribute('data-status', 'idle');
+    expect(detailChip).not.toHaveAttribute('aria-busy');
+    expect(detailChip.getAttribute('aria-label')).not.toContain(en.taskPanel.stepStatus.running);
+  });
+  it('keeps a background call running while the white highlight follows the newest group', () => {
+    render(<Harness group={{ ...model(true), isCurrent: false }} />);
+    expect(screen.queryByTestId('chat-call-chip')).toBeNull();
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    expect(within(screen.getByTestId('chat-tool-activity-details')).getByTestId('chat-call-chip')).toHaveAttribute('data-status', 'running');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+    expect(document.querySelector('.tool-activity-icon[data-animated="true"]')).toBeNull();
+  });
+  it.each(['completed', 'error', 'aborted'] as const)('keeps %s summaries static even when they retain the last call', (status) => {
+    render(<Harness group={{ ...model(true), status }} />);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'false');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+  });
+  it('keeps pending results static', () => {
+    render(<Harness group={{ ...model(), pendingResult: true }} />);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toHaveAttribute('data-animated', 'false');
+    expect(screen.queryByTestId('ai-element-shimmer')).toBeNull();
+  });
+  it('reuses the text entrance for chunks and restarts it for the latest new operation', () => {
+    const group = model(true);
+    const view = render(<Harness group={group} />);
+    const entrance = screen.getByTestId('chat-tool-activity-text-enter');
+    const icon = screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon');
+    view.rerender(<Harness group={{ ...group, current: { ...group.current!, target: '/project/new-config.ts' } }} />);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).toBe(entrance);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).toBe(icon);
+    expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('/project/new-config.ts');
+    const nextRead = { ...group.current!, id: 'read-next', target: '/project/next-config.ts' };
+    view.rerender(<Harness group={{ ...group, current: nextRead, entries: [...group.entries, nextRead] }} />);
+    expect(screen.getByTestId('chat-tool-activity-toggle').querySelector('.tool-activity-icon')).not.toBe(icon);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).not.toBe(entrance);
+    const next = { id: 'search-next', name: 'web_search', kind: 'search' as const, target: 'latest query', running: true, order: 1 };
+    view.rerender(<Harness group={{ ...group, current: next, entries: [...group.entries, next] }} />);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).not.toBe(entrance);
+    expect(screen.getByTestId('chat-tool-activity-text-enter')).toHaveAttribute('data-tool-id', 'search-next');
+    expect(screen.getByTestId('chat-tool-activity-label')).toHaveTextContent('latest query');
+  });
+});

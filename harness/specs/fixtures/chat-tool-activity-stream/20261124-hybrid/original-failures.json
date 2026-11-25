@@ -1,0 +1,129 @@
+{
+  "typecheck-r1": {
+    "command": {
+      "actor": "codex-output-ui",
+      "driven_by": "agent",
+      "label": "typecheck-r1",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "candidate": {
+        "commit": "4f93b3024dfd4398ac3bcd506a0a2464cbf150a5",
+        "tree": "33872ae405453232c7bff4dded8c17faef4a1b03",
+        "dirty": false
+      },
+      "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+      "timeoutSeconds": 600,
+      "admission": {
+        "freeBytes": 4735717376,
+        "minimumFreeBytes": 2147483648,
+        "heavy": []
+      },
+      "startedAt": "2026-11-24T07:34:25.374635+00:00",
+      "status": "finished",
+      "resourceLimits": {
+        "NODE_OPTIONS": "--max-old-space-size=768",
+        "GOMEMLIMIT": "900MiB",
+        "GOMAXPROCS": "2",
+        "workers": 1
+      },
+      "electronRuntime": {
+        "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+        "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+      },
+      "independentUIAuthorized": true,
+      "driverPid": 27988,
+      "exitCode": 1,
+      "durationSeconds": 104.235,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-hybrid-20261124\\typecheck-r1.stdout.log",
+        "sha256": "056c3def7ecb2f33973170eac9d44fee5b7332116e1184fe4e62b1e23d93e8b7"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-hybrid-20261124\\typecheck-r1.stderr.log",
+        "sha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a"
+      }
+    },
+    "report": {
+      "success": false,
+      "mode": "parallel",
+      "testTypes": {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 2,
+        "durationMs": 68286,
+        "observationMode": false,
+        "errorCount": 2,
+        "errorLog": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      },
+      "cache": {
+        "enabled": false,
+        "status": "disabled",
+        "key": null,
+        "inputCount": 0,
+        "report": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\artifacts\\typecheck-cache\\report.json"
+      },
+      "totalDurationMs": 102996,
+      "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+      "results": [
+        {
+          "commandLine": "node scripts/generate-ext-bridge.mjs",
+          "exitCode": 0,
+          "durationMs": 42
+        },
+        {
+          "commandLine": "pnpm run typecheck:node",
+          "exitCode": 0,
+          "durationMs": 34660
+        },
+        {
+          "commandLine": "pnpm run typecheck:web",
+          "exitCode": 0,
+          "durationMs": 11785
+        },
+        {
+          "commandLine": "pnpm run typecheck:test",
+          "exitCode": 2,
+          "durationMs": 68286,
+          "observationMode": false,
+          "errorCount": 2,
+          "errorLog": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+        }
+      ]
+    },
+    "resolvedBy": "cf2d1209319ecde28b49c16cbea2850604b30e05 and final typecheck-r4"
+  },
+  "carbon": {
+    "receipt": {
+      "driven_by": "agent",
+      "actor": "carbon-ui-design",
+      "model": "Gemini 4 Carbon (High)",
+      "startedAt": "2026-11-24T07:57:08.582Z",
+      "endedAt": "2026-11-24T08:12:10.870Z",
+      "exitCode": 3,
+      "stoppedForGuard": false,
+      "modelRequests": [
+        "gemini-4-carbon",
+        "gemini-4-carbon",
+        "gemini-4-carbon",
+        "gemini-4-carbon"
+      ],
+      "blockedModels": [],
+      "status": "ERROR",
+      "conversationId": "531fbf54-d788-4ff3-8edc-c14ef2359b67",
+      "usage": {
+        "input_tokens": 46526,
+        "output_tokens": 66328,
+        "thinking_tokens": 62487,
+        "cache_read_tokens": 27600,
+        "total_tokens": 112854
+      },
+      "durationSeconds": 875.0605771
+    },
+    "stderr": "[agy] print timeout after 15m0s with turn in progress; returning partial output\nerror: print timeout after 15m0s with the turn still in progress; the response is partial\nAGY_ERROR: {\"short_error\":\"print timeout after 15m0s with the turn still in progress; the response is partial\",\"status\":\"DEADLINE_EXCEEDED\",\"retryable\":false,\"reason\":\"print_timeout\"}\n",
+    "handling": "保留七项结论和五项设计纲要；Codex落实与复验，未再次调用Carbon"
+  }
+}

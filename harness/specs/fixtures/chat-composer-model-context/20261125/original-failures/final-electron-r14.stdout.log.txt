@@ -1,0 +1,74 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\playwright.config.ts",
+    "rootDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/clawx-composer-polish-20261125/final-electron-r14",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "ReferenceError: exports is not defined in ES module scope",
+      "stack": "ReferenceError: exports is not defined in ES module scope\n    at D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\openclaw_runtime\\src\\infra\\node-sqlite.ts:3:23\n    at Object.<anonymous> (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\openclaw_runtime\\src\\config\\sessions\\store-sqlite.ts:12:1)\n    at Object.<anonymous> (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\fixtures\\composer-context-report.ts:6:1)\n    at Object.<anonymous> (D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\tests\\e2e\\chat-composer-model-context.spec.ts:5:1)",
+      "location": {
+        "file": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\openclaw_runtime\\src\\infra\\node-sqlite.ts",
+        "column": 23,
+        "line": 3
+      },
+      "snippet": "\u001b[90m   at \u001b[39m..\\..\\openclaw_runtime\\src\\infra\\node-sqlite.ts:3\n\n  1 | // Loads node:sqlite with OpenClaw warning handling.\n  2 | import path from \"node:path\";\n> 3 | import { createRequire } from \"node:module\";\n    |                       ^\n  4 | import { formatErrorMessage } from \"./errors.js\";\n  5 | import { installProcessWarningFilter } from \"./warning-filter.js\";\n  6 |"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-25T02:23:06.247Z",
+    "duration": 2669.9840000000004,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

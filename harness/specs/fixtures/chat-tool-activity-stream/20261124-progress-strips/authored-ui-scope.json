@@ -1,0 +1,30 @@
+{
+  "candidate": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+  "commits": [
+    "e22b75ba8",
+    "d87422500",
+    "7d7637ebf",
+    "e607d5677",
+    "88e727353",
+    "39de1a710"
+  ],
+  "foreignCommit": "6087e226a",
+  "paths": [
+    "README.ja-JP.md",
+    "README.md",
+    "README.zh-CN.md",
+    "docs/dev/chat-tool-activity-stream.md",
+    "harness/specs/rules/ui-motion-material-system.md",
+    "harness/specs/scenarios/windows-ui-v2.md",
+    "harness/specs/tasks/chat-tool-activity-stream-20261123.md",
+    "src/components/assistant-render/ToolActivityGroup.tsx",
+    "src/components/tool-ui/RunTerminalSurfaces.tsx",
+    "src/components/tool-ui/shared/call-chip.tsx",
+    "src/pages/Chat/ExecutionGraphCard.tsx",
+    "src/styles/codex-conversation.css",
+    "tests/e2e/chat-tool-activity-stream.spec.ts",
+    "tests/unit/tool-activity-group.test.tsx"
+  ],
+  "uncovered": [],
+  "specSha256": "28da1443017ab94fb28b593983c2db046ee192e0a792368f62029d78127b83d9"
+}

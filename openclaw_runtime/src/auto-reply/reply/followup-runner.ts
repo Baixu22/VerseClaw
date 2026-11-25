@@ -909,6 +909,7 @@ export function createFollowupRunner(params: {
                     replyOperation,
                     sessionId: run.sessionId,
                     sessionKey: replySessionKey,
+                    sessionStorePath: storePath,
                     agentId: run.agentId,
                     trigger: opts?.isHeartbeat === true ? "heartbeat" : "user",
                     sessionFile: run.sessionFile,
@@ -984,6 +985,24 @@ export function createFollowupRunner(params: {
               const followupCurrentMessageId = resolveFollowupCurrentMessageId();
               const result = await runEmbeddedAgent({
                 allowGatewaySubagentBinding: true,
+                sessionStorePath: storePath,
+                onSessionIdentityChanged: (identity) => {
+                  const queueKey = run.sessionKey ?? sessionKey;
+                  if (queueKey)
+                    refreshQueuedFollowupSession({
+                      key: queueKey,
+                      previousSessionId: run.sessionId,
+                      nextSessionId: identity.sessionId,
+                      nextSessionFile: identity.sessionFile,
+                    });
+                  replyOperation?.updateSessionId(identity.sessionId);
+                  run = {
+                    ...run,
+                    sessionId: identity.sessionId,
+                    ...(identity.sessionFile ? { sessionFile: identity.sessionFile } : {}),
+                  };
+                  effectiveQueued = { ...effectiveQueued, run };
+                },
                 replyOperation,
                 sessionId: run.sessionId,
                 sessionKey: run.sessionKey,

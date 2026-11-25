@@ -1,8 +1,5 @@
 // Runtime Lifecycle Governance — goal-wake level-check dispatch.
-import {
-  executeSqliteQuerySync,
-  getNodeSqliteKysely,
-} from "../infra/kysely-sync.js";
+import { executeSqliteQuerySync, getNodeSqliteKysely } from "../infra/kysely-sync.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { openOpenClawStateDatabase } from "../state/openclaw-state-db.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
@@ -118,7 +115,11 @@ export async function runGoalWakeLevelCheckForTask(
     const flowId = row.flow_id;
     const wait = parseGoalWakeWaitJson(row.wait_json);
     if (!wait || !wait.missionId) {
-      outcomes.push({ flowId, outcome: "flow-missing", reason: "flow has no mission wait payload" });
+      outcomes.push({
+        flowId,
+        outcome: "flow-missing",
+        reason: "flow has no mission wait payload",
+      });
       continue;
     }
     // A dead or parked mission must never reach any dispatcher. This lives in
@@ -201,9 +202,11 @@ export async function runGoalWakeLevelCheckForTask(
       heldRevision = claim.revision;
     }
 
-    const wakeId = `goal-wake:${flowId}:${taskId}:${String(
-      task?.ended_at ?? task?.last_event_at ?? Date.now(),
-    )}`;
+    const wakePrefix = `goal-wake:${flowId}:${taskId}:`;
+    // Reuse the committed wake after a lost ACK, including a later helper exit.
+    const wakeId = mission.lastWakeId?.startsWith(wakePrefix)
+      ? mission.lastWakeId
+      : `${wakePrefix}${String(task?.ended_at ?? task?.last_event_at ?? Date.now())}`;
     const dispatchInput: GoalWakeDispatchInput = {
       missionId: wait.missionId,
       sessionKey: wait.sessionKey,
@@ -348,9 +351,7 @@ export function buildMissionContinuation(input: GoalWakeDispatchInput): MissionC
       kind: "timer",
       taskId: input.taskId,
       taskStatus,
-      ...(typeof input.dependency?.fireAt === "number"
-        ? { fireAt: input.dependency.fireAt }
-        : {}),
+      ...(typeof input.dependency?.fireAt === "number" ? { fireAt: input.dependency.fireAt } : {}),
       firedAt: Date.now(),
       ...(input.dependency?.cronJobId ? { cronJobId: input.dependency.cronJobId } : {}),
     };

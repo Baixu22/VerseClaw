@@ -365,8 +365,8 @@ test.describe('Verse Claw chat session handoff', () => {
     }
   });
 
-  test('previews, edits, creates and sends the reviewed handoff with a recoverable child draft', async ({ launchElectronApp }) => {
-    const app = await launchElectronApp({ skipSetup: true });
+  test('previews, edits, creates and sends the reviewed handoff with a recoverable child draft', async ({ launchElectronApp }, testInfo) => {
+    const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'dark' });
 
     try {
       await installIpcMocks(app, {
@@ -494,9 +494,29 @@ test.describe('Verse Claw chat session handoff', () => {
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff-recommended')).toBeVisible();
       await expect(page.getByTestId('chat-session-fork-recommended')).toHaveCount(0);
+      await page.screenshot({ path: testInfo.outputPath('continuity-menu-dark.png') });
       await page.getByTestId('chat-session-handoff').click();
       await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
       await expect(page.getByTestId('chat-handoff-recommendation-note')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('opacity', '1');
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('background-color', 'rgb(36, 36, 36)');
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('border-radius', '18px');
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveCSS('background-color', 'rgb(43, 43, 41)');
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveCSS('box-shadow', 'none');
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveCSS('resize', 'none');
+      await expect(page.getByTestId('chat-handoff-details')).not.toHaveAttribute('open');
+      await expect(page.getByTestId('chat-handoff-dialog').getByText('Runtime checkpoint', { exact: true })).not.toBeVisible();
+      await page.screenshot({ path: testInfo.outputPath('handoff-dark.png') });
+      await page.setViewportSize({ width: 480, height: 800 });
+      await expect(page.getByTestId('chat-handoff-create')).toBeInViewport();
+      const bounds = await page.getByTestId('chat-handoff-dialog').boundingBox();
+      expect(bounds && bounds.x >= 0 && bounds.x + bounds.width <= 480).toBe(true);
+      await page.screenshot({ path: testInfo.outputPath('handoff-narrow-dark.png') });
+      await page.evaluate(() => document.documentElement.classList.remove('dark'));
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('background-color', 'rgb(252, 252, 252)');
+      await page.screenshot({ path: testInfo.outputPath('handoff-narrow-light.png') });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.getByTestId('chat-handoff-details').locator('summary').click();
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Runtime checkpoint', { exact: true }))
         .toBeVisible();
       await expect(page.getByTestId('chat-handoff-dialog').getByText('Context recall', { exact: true }))
@@ -509,6 +529,25 @@ test.describe('Verse Claw chat session handoff', () => {
         .toHaveValue(/Handoff: continue this Verse Claw conversation/);
       await expect(page.getByTestId('chat-handoff-draft'))
         .toHaveValue(/Verified archive recall restored the last compacted observation/);
+      await page.getByTestId('chat-handoff-details').locator('summary').click();
+
+      await page.keyboard.press('Escape');
+      await page.setViewportSize({ width: 480, height: 800 });
+      for (const [language, name] of [['zh', '中文'], ['ja', '日本語'], ['ru', 'Русский'], ['en', 'English']] as const) {
+        await page.getByTestId('sidebar-nav-settings').click();
+        await page.getByTestId('settings-language-select').click();
+        await page.getByRole('option', { name, exact: true }).click();
+        await page.evaluate(() => { location.hash = '#/'; });
+        await expect(page.getByTestId('chat-composer-input')).toBeVisible();
+        await page.getByTestId('chat-toolbar-more').click();
+        await expect(page.getByTestId('chat-session-handoff')).toBeInViewport({ ratio: 1 });
+        await page.getByTestId('chat-session-handoff').click();
+        await expect(page.getByTestId('chat-handoff-draft')).toHaveValue(HANDOFF_DRAFT);
+        await expect(page.getByTestId('chat-handoff-create')).toBeInViewport({ ratio: 1 });
+        await expect(page.getByTestId('chat-handoff-dialog')).toHaveCSS('opacity', '1');
+        await page.screenshot({ path: testInfo.outputPath(`handoff-${language}-narrow.png`) });
+        if (language !== 'en') await page.keyboard.press('Escape');
+      }
 
       const editedDraft = `${HANDOFF_DRAFT}\n\nContinue by running the targeted tests.`;
       await page.getByTestId('chat-handoff-draft').fill(editedDraft);

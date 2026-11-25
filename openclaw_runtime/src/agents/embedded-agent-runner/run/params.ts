@@ -1,4 +1,5 @@
 import type { PreparedCompassContext } from "../../../context-engine/compass-context.js";
+import type { RecoveryAdmissionIdentity } from "../../../../../shared/recovery-authority/contract.js";
 import type { SessionStartInjectionRequest } from "../../../../../shared/types/session-start-injection.js";
 /**
  * Shared parameter types for embedded-agent run orchestration.
@@ -49,6 +50,14 @@ export type RunEmbeddedAgentParams = {
   providerFallbackIndex?: number;
   sessionId: string;
   sessionKey?: string;
+  /** Existing Session store bound by the host for a visible session-owned run. */
+  sessionStorePath?: string;
+  recoveryAdmission?: RecoveryAdmissionIdentity;
+  /** Reports an owned transcript successor before another attempt or model fallback. */
+  onSessionIdentityChanged?: (identity: {
+    sessionId: string;
+    sessionFile?: string;
+  }) => void | Promise<void>;
   /** Provider prompt-cache affinity key; distinct from transcript/session identity. */
   promptCacheKey?: string;
   /** Session-like key for sandbox and tool-policy resolution. Defaults to sessionKey. */
@@ -240,8 +249,8 @@ export type RunEmbeddedAgentParams = {
     sessionKey?: string;
   }) => void | Promise<void>;
   /**
-   * Emit lifecycle "finishing" when the model turn ends; the caller owns the
-   * final lifecycle "end" after durable post-turn maintenance completes.
+   * Emit lifecycle "finishing" when an attempt ends; the caller owns the
+   * final "end" or "error" after fallback and durable post-turn maintenance.
    */
   deferTerminalLifecycleEnd?: boolean;
   lane?: string;

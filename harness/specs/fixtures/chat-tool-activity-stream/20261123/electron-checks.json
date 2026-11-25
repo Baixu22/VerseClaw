@@ -1,0 +1,214 @@
+{
+  "driven_by": "agent",
+  "data": "mocked history and agent-generated runtime events; real Electron rendering",
+  "distinctJourneys": 12,
+  "supplementalExecutions": 2,
+  "runs": {
+    "electron-delivery": {
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stats": {
+        "startTime": "2026-11-23T23:45:44.842Z",
+        "duration": 109753.771,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "chat-composer-git-strip.spec.ts",
+          "title": "chat-composer-git-strip.spec.ts / Chat composer Git strip / identifies a linked worktree in the composer and session status (light)",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 10646,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-composer-git-strip.spec.ts",
+          "title": "chat-composer-git-strip.spec.ts / Chat composer Git strip / identifies a linked worktree in the composer and session status (dark)",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6179,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-composer-git-strip.spec.ts",
+          "title": "chat-composer-git-strip.spec.ts / Chat composer Git strip / renders runtime approval inline with the composer and Git strip",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6070,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-composer-git-strip.spec.ts",
+          "title": "chat-composer-git-strip.spec.ts / Chat composer Git strip / aligns the review summary and preserves the draft when opening repository changes",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6599,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-execution-context.spec.ts",
+          "title": "chat-execution-context.spec.ts / execution tray creates a real worktree in two clicks and restores the original draft",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 17793,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-tool-activity-stream.spec.ts",
+          "title": "chat-tool-activity-stream.spec.ts / keeps operation groups in conversation order with shared width, accessible details and four locales",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 19402,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-tool-activity-stream.spec.ts",
+          "title": "chat-tool-activity-stream.spec.ts / shows the current white shimmer once, preserves folding and settles runtime command output",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6839,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-tool-ui-execution-surfaces.spec.ts",
+          "title": "chat-tool-ui-execution-surfaces.spec.ts / Tool UI execution surfaces / renders official execution surfaces in light, dark, and narrow layouts",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 9915,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-turn-summary-collapse.spec.ts",
+          "title": "chat-turn-summary-collapse.spec.ts / Verse Claw chat turn summary collapse / keeps live activity compact, animated and readable without assistant avatars",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6149,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-turn-summary-collapse.spec.ts",
+          "title": "chat-turn-summary-collapse.spec.ts / Verse Claw chat turn summary collapse / keeps interleaved command output in the execution order with separate tool inputs and results",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6140,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-turn-summary-collapse.spec.ts",
+          "title": "chat-turn-summary-collapse.spec.ts / Verse Claw chat turn summary collapse / collapses completed long task process and expands details on demand",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6358,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-turn-summary-collapse.spec.ts",
+          "title": "chat-turn-summary-collapse.spec.ts / Verse Claw chat turn summary collapse / leaves short conversations unwrapped",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 5608,
+              "retry": 0
+            }
+          ]
+        }
+      ],
+      "cleanup": {
+        "status": "passed",
+        "survivors": [],
+        "remaining": [],
+        "pendingLaunches": 0
+      }
+    },
+    "electron-native-375": {
+      "candidate": "93e06939a816e1cc1cd209c61901302960dc2271",
+      "stats": {
+        "startTime": "2026-11-24T01:03:07.061Z",
+        "duration": 30306.308,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "chat-tool-activity-stream.spec.ts",
+          "title": "chat-tool-activity-stream.spec.ts / keeps operation groups in conversation order with shared width, accessible details and four locales",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 21996,
+              "retry": 0
+            }
+          ]
+        },
+        {
+          "file": "chat-tool-activity-stream.spec.ts",
+          "title": "chat-tool-activity-stream.spec.ts / shows the current white shimmer once, preserves folding and settles runtime command output",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "duration": 6552,
+              "retry": 0
+            }
+          ]
+        }
+      ],
+      "cleanup": {
+        "status": "passed",
+        "survivors": [],
+        "remaining": [],
+        "pendingLaunches": 0
+      }
+    }
+  }
+}

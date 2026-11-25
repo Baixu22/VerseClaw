@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidateCommit": "e607d5677ca929b7ebbc47e1a5d1ff258d77bd89",
+  "command": [
+    "node",
+    "scripts/check-repository-artifacts.mjs",
+    "--json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 4.625,
+  "stdoutSha256": "f664f619cd47b0e3b1ca5e6460a33ed4c287bcd714de0e1ee867bec4e3f70628",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,503 @@
+{
+  "driven_by": "agent",
+  "passed": 5,
+  "failed": 0,
+  "latestCases": [
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+      "status": "expected",
+      "run": "e2e-r3",
+      "candidate": "b33199f4e"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+      "status": "expected",
+      "run": "e2e-r3",
+      "candidate": "b33199f4e"
+    },
+    {
+      "file": "chat-composer-popovers.spec.ts",
+      "title": "touch composer targets fit at 375px and the closed add menu skips its actions",
+      "status": "expected",
+      "run": "e2e-r3",
+      "candidate": "b33199f4e"
+    },
+    {
+      "file": "chat-execution-context.spec.ts",
+      "title": "execution tray creates a real worktree in two clicks and restores the original draft",
+      "status": "expected",
+      "run": "e2e-delivery",
+      "candidate": "69663b2543f171c8cf8c4ff220c877b33835322a"
+    },
+    {
+      "file": "chat-planning-composer-ux.spec.ts",
+      "title": "conversation planning, settings and decisions share a compact input surface",
+      "status": "expected",
+      "run": "e2e-final",
+      "candidate": "b3933e15d"
+    }
+  ],
+  "runs": [
+    {
+      "label": "e2e-r3",
+      "candidate": "b33199f4e",
+      "stats": {
+        "startTime": "2026-11-23T12:12:37.916Z",
+        "duration": 97551.889,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-dPiFHP",
+        "ledgerEntries": 25,
+        "checks": [
+          {
+            "pid": 18840,
+            "creationTime": 1795435959308,
+            "status": "exited"
+          },
+          {
+            "pid": 480,
+            "creationTime": 1795435967957,
+            "status": "exited"
+          },
+          {
+            "pid": 29260,
+            "creationTime": 1795435968278,
+            "status": "exited"
+          },
+          {
+            "pid": 42632,
+            "creationTime": 1795435981172,
+            "status": "exited"
+          },
+          {
+            "pid": 40504,
+            "creationTime": 1795435985192,
+            "status": "exited"
+          },
+          {
+            "pid": 27080,
+            "creationTime": 1795435985308,
+            "status": "exited"
+          },
+          {
+            "pid": 22352,
+            "creationTime": 1795435997747,
+            "status": "exited"
+          },
+          {
+            "pid": 356,
+            "creationTime": 1795436002605,
+            "status": "exited"
+          },
+          {
+            "pid": 9900,
+            "creationTime": 1795436002749,
+            "status": "exited"
+          },
+          {
+            "pid": 33588,
+            "creationTime": 1795436006495,
+            "status": "exited"
+          },
+          {
+            "pid": 3408,
+            "creationTime": 1795436011303,
+            "status": "exited"
+          },
+          {
+            "pid": 33796,
+            "creationTime": 1795436011434,
+            "status": "exited"
+          },
+          {
+            "pid": 25800,
+            "creationTime": 1795436024654,
+            "status": "exited"
+          },
+          {
+            "pid": 11004,
+            "creationTime": 1795436029177,
+            "status": "exited"
+          },
+          {
+            "pid": 39400,
+            "creationTime": 1795436029320,
+            "status": "exited"
+          }
+        ],
+        "processObservations": [
+          [
+            {
+              "pid": 18840,
+              "creationTime": 1795435959308,
+              "status": "exited"
+            },
+            {
+              "pid": 480,
+              "creationTime": 1795435967957,
+              "status": "exited"
+            },
+            {
+              "pid": 29260,
+              "creationTime": 1795435968278,
+              "status": "exited"
+            },
+            {
+              "pid": 42632,
+              "creationTime": 1795435981172,
+              "status": "exited"
+            },
+            {
+              "pid": 40504,
+              "creationTime": 1795435985192,
+              "status": "exited"
+            },
+            {
+              "pid": 27080,
+              "creationTime": 1795435985308,
+              "status": "exited"
+            },
+            {
+              "pid": 22352,
+              "creationTime": 1795435997747,
+              "status": "exited"
+            },
+            {
+              "pid": 356,
+              "creationTime": 1795436002605,
+              "status": "exited"
+            },
+            {
+              "pid": 9900,
+              "creationTime": 1795436002749,
+              "status": "exited"
+            },
+            {
+              "pid": 33588,
+              "creationTime": 1795436006495,
+              "status": "exited"
+            },
+            {
+              "pid": 3408,
+              "creationTime": 1795436011303,
+              "status": "exited"
+            },
+            {
+              "pid": 33796,
+              "creationTime": 1795436011434,
+              "status": "exited"
+            },
+            {
+              "pid": 25800,
+              "creationTime": 1795436024654,
+              "status": "exited"
+            },
+            {
+              "pid": 11004,
+              "creationTime": 1795436029177,
+              "status": "exited"
+            },
+            {
+              "pid": 39400,
+              "creationTime": 1795436029320,
+              "status": "exited"
+            }
+          ]
+        ],
+        "owned": [],
+        "remaining": [],
+        "survivors": [],
+        "detectedPendingLaunches": 0,
+        "pendingLaunches": 0,
+        "status": "passed"
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "e2e-final",
+      "candidate": "b3933e15d",
+      "stats": {
+        "startTime": "2026-11-23T12:19:00.639Z",
+        "duration": 55754.744,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-y4WsCr",
+        "ledgerEntries": 10,
+        "checks": [
+          {
+            "pid": 26044,
+            "creationTime": 1795436342354,
+            "status": "exited"
+          },
+          {
+            "pid": 39416,
+            "creationTime": 1795436350406,
+            "status": "exited"
+          },
+          {
+            "pid": 40932,
+            "creationTime": 1795436350788,
+            "status": "exited"
+          },
+          {
+            "pid": 23824,
+            "creationTime": 1795436364614,
+            "status": "exited"
+          },
+          {
+            "pid": 27564,
+            "creationTime": 1795436370002,
+            "status": "exited"
+          },
+          {
+            "pid": 36328,
+            "creationTime": 1795436370178,
+            "status": "exited"
+          }
+        ],
+        "processObservations": [
+          [
+            {
+              "pid": 26044,
+              "creationTime": 1795436342354,
+              "status": "exited"
+            },
+            {
+              "pid": 39416,
+              "creationTime": 1795436350406,
+              "status": "exited"
+            },
+            {
+              "pid": 40932,
+              "creationTime": 1795436350788,
+              "status": "exited"
+            },
+            {
+              "pid": 23824,
+              "creationTime": 1795436364614,
+              "status": "exited"
+            },
+            {
+              "pid": 27564,
+              "creationTime": 1795436370002,
+              "status": "exited"
+            },
+            {
+              "pid": 36328,
+              "creationTime": 1795436370178,
+              "status": "exited"
+            }
+          ]
+        ],
+        "owned": [],
+        "remaining": [],
+        "survivors": [],
+        "detectedPendingLaunches": 0,
+        "pendingLaunches": 0,
+        "status": "passed"
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "e2e-refined",
+      "candidate": "22d328d85",
+      "stats": {
+        "startTime": "2026-11-23T12:29:42.028Z",
+        "duration": 25007.186999999998,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-rpMpFJ",
+        "ledgerEntries": 5,
+        "checks": [
+          {
+            "pid": 37696,
+            "creationTime": 1795436983784,
+            "status": "exited"
+          },
+          {
+            "pid": 7928,
+            "creationTime": 1795436991947,
+            "status": "exited"
+          },
+          {
+            "pid": 38380,
+            "creationTime": 1795436992361,
+            "status": "exited"
+          }
+        ],
+        "processObservations": [
+          [
+            {
+              "pid": 37696,
+              "creationTime": 1795436983784,
+              "status": "exited"
+            },
+            {
+              "pid": 7928,
+              "creationTime": 1795436991947,
+              "status": "exited"
+            },
+            {
+              "pid": 38380,
+              "creationTime": 1795436992361,
+              "status": "exited"
+            }
+          ]
+        ],
+        "owned": [],
+        "remaining": [],
+        "survivors": [],
+        "detectedPendingLaunches": 0,
+        "pendingLaunches": 0,
+        "status": "passed"
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "e2e-delivery",
+      "candidate": "69663b2543f171c8cf8c4ff220c877b33835322a",
+      "stats": {
+        "startTime": "2026-11-23T12:32:27.792Z",
+        "duration": 20290.512000000002,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanup": {
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-A4N28l",
+        "ledgerEntries": 5,
+        "checks": [
+          {
+            "pid": 15344,
+            "creationTime": 1795437149256,
+            "status": "exited"
+          },
+          {
+            "pid": 36324,
+            "creationTime": 1795437153127,
+            "status": "exited"
+          },
+          {
+            "pid": 26380,
+            "creationTime": 1795437153250,
+            "status": "exited"
+          }
+        ],
+        "processObservations": [
+          [
+            {
+              "pid": 15344,
+              "creationTime": 1795437149256,
+              "status": "exited"
+            },
+            {
+              "pid": 36324,
+              "creationTime": 1795437153127,
+              "status": "exited"
+            },
+            {
+              "pid": 26380,
+              "creationTime": 1795437153250,
+              "status": "exited"
+            }
+          ]
+        ],
+        "owned": [],
+        "remaining": [],
+        "survivors": [],
+        "detectedPendingLaunches": 0,
+        "pendingLaunches": 0,
+        "status": "passed"
+      },
+      "sourceGuard": {
+        "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+        "driven_by": "agent",
+        "actor": "playwright-runner",
+        "ok": true,
+        "sourceChanged": false,
+        "before": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "status": "",
+          "trackedFilesSha256": "2afedb914aff0ff88bc05b33a913da35e9b4521a1ee0bf61a89b9ca19284fcd2",
+          "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "policy": "Latest result per journey. Final visual refinement changes only button and failure-border CSS; the final real-Git journey verifies those colors in both themes."
+}

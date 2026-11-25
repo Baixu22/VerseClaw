@@ -1,0 +1,225 @@
+{
+  "context": {
+    "command": [
+      "pnpm.cmd",
+      "harness",
+      "context",
+      "--spec",
+      "harness/specs/tasks/chat-tool-activity-stream-20261123.md"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:23.834155+00:00",
+    "exitCode": 0,
+    "durationSeconds": 1.296,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.context.stdout.log",
+      "sha256": "3f63cc7908ed2612d7f9135c8630ee7b39df4e4b26b223ed8b929a0653b21f13"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.context.stderr.log",
+      "sha256": "fe1febba53073e61a131a42b9dc7d51f533021627efe1c28c8d7eb88b72f83f8"
+    }
+  },
+  "i18n": {
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "i18n:lint"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:25.127587+00:00",
+    "exitCode": 0,
+    "durationSeconds": 1.032,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.i18n.stdout.log",
+      "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.i18n.stderr.log",
+      "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+    }
+  },
+  "contract": {
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "contract:check"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:26.157657+00:00",
+    "exitCode": 0,
+    "durationSeconds": 2.031,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.contract.stdout.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.contract.stderr.log",
+      "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    }
+  },
+  "comms-replay": {
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "comms:replay"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:28.187218+00:00",
+    "exitCode": 0,
+    "durationSeconds": 0.812,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.comms-replay.stdout.log",
+      "sha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.comms-replay.stderr.log",
+      "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+    }
+  },
+  "comms-compare": {
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "comms:compare"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:29.009418+00:00",
+    "exitCode": 0,
+    "durationSeconds": 0.813,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.comms-compare.stdout.log",
+      "sha256": "13565d3c5775c46d88cad2e3c9167c8fadac5303382cfa8862fe862e982e6d88"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.comms-compare.stderr.log",
+      "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+    }
+  },
+  "eslint": {
+    "command": [
+      "pnpm.cmd",
+      "exec",
+      "eslint",
+      "src/components/assistant-render/ToolActivityGroup.tsx",
+      "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "src/pages/Chat/ExecutionGraphCard.tsx",
+      "src/pages/Chat/tool-activity-groups.ts",
+      "tests/unit/tool-activity-group.test.tsx",
+      "tests/unit/tool-activity-groups.test.ts",
+      "tests/e2e/chat-tool-activity-stream.spec.ts",
+      "--max-warnings=0"
+    ],
+    "timeoutSeconds": 120,
+    "startedAt": "2026-11-24T08:31:29.815367+00:00",
+    "exitCode": 0,
+    "durationSeconds": 4.734,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.eslint.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.eslint.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "bom": {
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "lint:bom"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:34.546651+00:00",
+    "exitCode": 0,
+    "durationSeconds": 7.422,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.bom.stdout.log",
+      "sha256": "37627ed22f0a51bb0490c6350b09ee86ca0d520fe29211dd7137f9754233a5fa"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.bom.stderr.log",
+      "sha256": "a41585522569c86cabb5e7d355f6df0ccaf0d80bb0bf8e1a8d194869c11f3337"
+    }
+  },
+  "artifact-completion": {
+    "command": [
+      "pnpm.cmd",
+      "run",
+      "lint:artifact-completion-class"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:41.969484+00:00",
+    "exitCode": 0,
+    "durationSeconds": 1.11,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.artifact-completion.stdout.log",
+      "sha256": "f10faab6b1b083e4e5c92af7c3f77bef064cc47b411b720b57c54d3a669277e5"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.artifact-completion.stderr.log",
+      "sha256": "34492ff330c00a915e15d9f8df47796b4cd0d1f3b1139758bb166a87cd64fd65"
+    }
+  },
+  "harness-validate": {
+    "command": [
+      "pnpm.cmd",
+      "harness",
+      "validate",
+      "--spec",
+      "harness/specs/tasks/chat-tool-activity-stream-20261123.md"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:43.073669+00:00",
+    "exitCode": 0,
+    "durationSeconds": 1.921,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.harness-validate.stdout.log",
+      "sha256": "f0de891b54254b49da6253db01bc84c61379af95c056299846bc625a4b6eb215"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.harness-validate.stderr.log",
+      "sha256": "70162581d76198a67f31a11bb63bc56d869fe2118f65f2e4f0fb1895859baab4"
+    }
+  },
+  "harness-flow": {
+    "command": [
+      "pnpm.cmd",
+      "harness",
+      "run",
+      "--spec",
+      "harness/specs/tasks/chat-tool-activity-stream-20261123.md",
+      "--dry-run"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:45.008144+00:00",
+    "exitCode": 0,
+    "durationSeconds": 1.86,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.harness-flow.stdout.log",
+      "sha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.harness-flow.stderr.log",
+      "sha256": "811ec5e9f3f0de1e3f85eb2be76ab2fcb83049b6bf72e7769863b5b31f5aad87"
+    }
+  },
+  "retention": {
+    "command": [
+      "pnpm.cmd",
+      "repo:artifacts:check"
+    ],
+    "timeoutSeconds": 60,
+    "startedAt": "2026-11-24T08:31:46.866427+00:00",
+    "exitCode": 0,
+    "durationSeconds": 4.437,
+    "stdout": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.retention.stdout.log",
+      "sha256": "bf9b869bc128f121f3672fd3289e42de9e276cfd7be7d7e20b4241cb61fa38ab"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\static-r4.retention.stderr.log",
+      "sha256": "f62d1dbbb5220d55c5deff1fc44b06476881b770066fcf3c9d0ecb2c407bb252"
+    }
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "schema": "G3AcceptanceGuardReport/v1",
+  "at": "2026-11-23T17:20:02.716230+00:00",
+  "status": "FOCUSED_GUARDS_VERIFIED",
+  "codeCommit": "809c5c7c7513e1e8c93d3ea6687f34e7dfe99201",
+  "sourceTree": "ebbd8847c70bff93c9da6b2d800738160760d3d4",
+  "reviewOnlyCommit": "c6507f247c9caba775e045b2711ac5eccdf0665f",
+  "sourceFingerprint": "5a2ad7941cd3be9c7f2e48a480acb94b0e2da6f9c905debb18f30cb0e7f53f79",
+  "sourceFiles": [
+    {
+      "path": "scripts/check-runtime-deep-refs.mjs",
+      "sha256": "1210627d32210232560fd3ac76b341835b6a825b80ddd95100eef0149332f8c4",
+      "gitBlobSha256": "1210627d32210232560fd3ac76b341835b6a825b80ddd95100eef0149332f8c4"
+    },
+    {
+      "path": "tests/unit/runtime-deep-refs.test.ts",
+      "sha256": "50274b4095dd7207da3e0160ead0145c22c751b847411ebffa8608d1e26771f8",
+      "gitBlobSha256": "50274b4095dd7207da3e0160ead0145c22c751b847411ebffa8608d1e26771f8"
+    },
+    {
+      "path": "artifacts/stepfun-basic-live-evidence-20261008/INTEGRITY.json",
+      "sha256": "c511b6255d5b79f6fbe73e87ef78f54f4992fd5c860a6915ecf06ba29fc15f34",
+      "gitBlobSha256": "c511b6255d5b79f6fbe73e87ef78f54f4992fd5c860a6915ecf06ba29fc15f34"
+    },
+    {
+      "path": "artifacts/windows-alpha-closeout-20261008/INTEGRITY.json",
+      "sha256": "6400b42b9641ec01860111ca27c92b69f686c9ee6d522b47d21a9e80ed9b68ad",
+      "gitBlobSha256": "6400b42b9641ec01860111ca27c92b69f686c9ee6d522b47d21a9e80ed9b68ad"
+    },
+    {
+      "path": "harness/specs/tasks/p1-runtime-deep-references-20261011.md",
+      "sha256": "a02de4d2f734896b8c03c78ac6e75df34159dda85e8530ebde5634157f812ad2",
+      "gitBlobSha256": "a02de4d2f734896b8c03c78ac6e75df34159dda85e8530ebde5634157f812ad2"
+    },
+    {
+      "path": "harness/specs/tasks/p1-issue-fixes-batch6-20261010.md",
+      "sha256": "9cd0e69d091a42040d7ea88532d7cb858c4b580024d3689bec2ae16d9f86b658",
+      "gitBlobSha256": "9cd0e69d091a42040d7ea88532d7cb858c4b580024d3689bec2ae16d9f86b658"
+    }
+  ],
+  "currentWorktree": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+  "worktreeRecovery": "r32/worktree-recovery.json",
+  "tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "checksPassed": 6,
+  "historicalDriftEntriesVerified": 10,
+  "historicalManifestBytesPreserved": true,
+  "independentReview": {
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "attempt": "deepseek-r32-r2",
+    "helperExitCode": 0,
+    "helperFindings": 0,
+    "rawFindings": 0,
+    "result": {
+      "findings": [],
+      "overall_confidence": 0.97,
+      "overall_correctness": "patch is correct",
+      "overall_explanation": "The URL branch is correct: MODULE_URL_RE extracts quoted new URL(..., import.meta.url) literals, normalizeSpecifier resolves dot-relative literals against the containing file, and the imported set suppresses the same literal in the bare-path scan. The added fixture covers an existing target, a removed target, another URL base, a bare string, and duplicate-row prevention. The integrity annotations cover all 10 supplied drift rows (3 in stepfun-basic-live-evidence-20261008 and 7 in windows-alpha-closeout-20261008) with exact paths and matching historical and current SHA-256 values. The historical SHA256SUMS files, source files, and verifier remain unchanged, so the annotations accurately represent the drift under the retained annotation mechanism."
+    },
+    "execution": {
+      "name": "autoreview-r32-deepseek-r2",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+        "-B",
+        "D:/tmp/g3-compaction-readiness-20261123-r22/run-review-r22.py",
+        "deepseek-r32-r2"
+      ],
+      "cwd": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350",
+      "executionPolicy": "standard configuration; observational resource metrics",
+      "cpuLimit": null,
+      "privateMemoryLimit": null,
+      "nodeHeapLimit": null,
+      "admissionThreshold": null,
+      "userAuthorization": "Continue development without earlier performance restrictions",
+      "actor": "codex/g3-development-r20",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "pid": 17784,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 104063,
+      "peakParentRssMiB": 18.81,
+      "peakJobPrivateCommitMiB": 157.84,
+      "minimumSystemFreeMiB": 391
+    }
+  },
+  "earlierReviewAttempts": [
+    {
+      "attempt": "deepseek-r31-r1",
+      "state": "INCOMPLETE_MODEL_VERDICT",
+      "acceptedAsPass": false
+    },
+    {
+      "attempt": "deepseek-r31-r2",
+      "state": "NO_CONCRETE_FINDING_OR_COMPLETED_VERDICT",
+      "acceptedAsPass": false
+    },
+    {
+      "attempt": "deepseek-r32-r1",
+      "state": "INCOMPLETE_MODEL_VERDICT",
+      "acceptedAsPass": false
+    }
+  ],
+  "gaVerdict": "NO_GO",
+  "nextAcceptance": "Same-candidate native typecheck and builds, frozen fault trials and live-provider workload, full required gates",
+  "protectedUserSha256": "d3637e172b1455b5e583c7ffc845de480df386ac17b104943f88837baaf7caab",
+  "actor": "codex/g3-relay-r32",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "deliveryChecksPassed": 2,
+  "deliveryChecks": [
+    {
+      "name": "guard-artifacts-r32-r1",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350",
+      "executionPolicy": "standard configuration; observational resource metrics",
+      "cpuLimit": null,
+      "privateMemoryLimit": null,
+      "nodeHeapLimit": null,
+      "admissionThreshold": null,
+      "userAuthorization": "Continue development without earlier performance restrictions",
+      "actor": "codex/g3-development-r20",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "pid": 8956,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 6594,
+      "peakParentRssMiB": 75.66,
+      "peakJobPrivateCommitMiB": 75.89,
+      "minimumSystemFreeMiB": 1798
+    },
+    {
+      "name": "guard-harness-r32-r1",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/p1-runtime-deep-references-20261011.md",
+        "--since",
+        "b9729e83ded5458a67787ed8eb65c1d2dda20446"
+      ],
+      "cwd": "C:/Users/27933/.codex/worktrees/g3-loc-and-latency-closeout/recovery-ga-20261113-01a1d350",
+      "executionPolicy": "standard configuration; observational resource metrics",
+      "cpuLimit": null,
+      "privateMemoryLimit": null,
+      "nodeHeapLimit": null,
+      "admissionThreshold": null,
+      "userAuthorization": "Continue development without earlier performance restrictions",
+      "actor": "codex/g3-development-r20",
+      "driven_by": "agent",
+      "realHumanEvidence": false,
+      "pid": 27980,
+      "state": "complete",
+      "exitCode": 0,
+      "elapsedMs": 594,
+      "peakParentRssMiB": 54.88,
+      "peakJobPrivateCommitMiB": 125.57,
+      "minimumSystemFreeMiB": 1798
+    }
+  ]
+}

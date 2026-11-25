@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-chat-ux",
+  "sourceCommit": "9d3ba34bb7ab842fd44cda11b17aa57875ebd745",
+  "candidateCommit": "90dde376e2d378991267af2d886d4a2f57264c23",
+  "target": "D:\\ClawX",
+  "backup": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\previous-main-build",
+  "installedAt": "2026-11-23T13:46:17.210375+00:00",
+  "trees": [
+    {
+      "path": "dist",
+      "filesVerified": 1402,
+      "manifestSha256": "9d6cacaa67aebd0adc8a2330b03fb6ade1d1d44277511d2e24b3849998eba3ca"
+    },
+    {
+      "path": "dist-electron",
+      "filesVerified": 10,
+      "manifestSha256": "954a6511990f615c2dcb3f6116e1e7a93e9a58ec1abc5a24cf195f534388067d"
+    }
+  ],
+  "entries": [
+    {
+      "path": "dist/index.html",
+      "sha256": "ac7e885c5a3c866613ec326e408318717783388d5c65164fe3b7e4d1739b311e"
+    },
+    {
+      "path": "dist-electron/main/index.js",
+      "sha256": "98a16bc204c7245f95b521188f3a9d45060f44e33a5c371c0c424b03cb76ee09"
+    },
+    {
+      "path": "dist-electron/preload/index.js",
+      "sha256": "4d3deffdc7d38f48458c95c4275d4225d6b4987340afdbf821ce4313996e71fc"
+    }
+  ]
+}

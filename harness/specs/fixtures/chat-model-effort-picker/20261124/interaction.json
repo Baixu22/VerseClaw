@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "modelCalls": [
+    {
+      "module": "sessions",
+      "action": "patchRuntimeModel",
+      "payload": {
+        "sessionKey": "agent:main:main",
+        "modelRef": "custom-beta5678/provider/model-beta"
+      }
+    }
+  ],
+  "cardGeometry": {
+    "width": 320,
+    "height": 156,
+    "modelBottom": 373.5,
+    "tooltipTop": 375.5,
+    "tooltipLeft": 1015.8504638671875,
+    "tooltipRight": 1063.8504638671875,
+    "viewport": 1280
+  },
+  "sliderMasked": true,
+  "avatarReplacedByText": true,
+  "draftPreserved": true,
+  "reset": "auto"
+}

@@ -1,0 +1,406 @@
+{
+  "schema": "G3ProbeLoadingReport/v1",
+  "driven_by": "agent",
+  "actor": "codex/g3-r45",
+  "sourceCommit": "cb7b9c98eea55f6ed0775fe56944fddcff019684",
+  "baselineCommit": "93199c6b02934462ffc8041e1c362cc1985e6227",
+  "gaStatus": "NO_GO",
+  "result": "CHALLENGE_PROBES_NO_LONGER_LOAD_RPC_EXECUTION",
+  "measurements": {
+    "probeBefore": {
+      "additionalLoads": 128,
+      "messageHandlerLoaded": true,
+      "challengeMs": 971.8315,
+      "authenticatedClients": 0
+    },
+    "probeAfter": {
+      "additionalLoads": 0,
+      "messageHandlerLoaded": false,
+      "challengeMs": 8.295799999999986,
+      "authenticatedClients": 0
+    },
+    "method": "Fresh Node process imports the real compiled WS adapter, then registerHooks records further module loads during a real loopback challenge-only connection. Single sample each.",
+    "preauthLimit": {
+      "maxPreauthBytes": 65536,
+      "oversizedBytes": 65537,
+      "closeCode": 1009,
+      "additionalLoads": 0,
+      "messageHandlerLoaded": false
+    },
+    "electronStartup": {
+      "driven_by": "agent",
+      "actor": "playwright-gateway-startup",
+      "pluginsEnabled": true,
+      "rpcMethod": "health",
+      "memory": {
+        "freeBytes": 3413336064,
+        "totalBytes": 16295432192
+      },
+      "startSucceeded": true,
+      "authenticatedRpc": true,
+      "authenticatedReconnect": true,
+      "stopped": true,
+      "readyMs": 13083,
+      "pid": 18160
+    }
+  },
+  "validation": {
+    "runtimeTests": {
+      "passed": 10,
+      "failed": 0,
+      "files": 3
+    },
+    "hostTests": {
+      "passed": 36,
+      "failed": 0,
+      "files": 4
+    },
+    "oldCodeRegressionFailures": 2,
+    "runtimeSourceAndTestTypesExitCode": 0,
+    "strictLint": {
+      "exitCode": 0,
+      "command": "targeted oxlint",
+      "driven_by": "agent",
+      "boundaryPreparation": "Existing artifacts retained; no plugin package boundary changed",
+      "actor": "codex/g3-r45"
+    },
+    "runtimeBuild": {
+      "actor": "codex/g3-r45",
+      "exitCode": 0,
+      "command": "node scripts/build-openclaw-runtime.mjs",
+      "driven_by": "agent",
+      "durationMs": 49911
+    },
+    "checks": [
+      {
+        "name": "source-policy",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm run runtime:source:check"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 43354,
+        "sha256": "a4d6977e5c20f51455afa2ccc15cc4aeac86c798064e8e86ba380d9a936ba05f"
+      },
+      {
+        "name": "comms-replay",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm run comms:replay"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 963,
+        "sha256": "2e8ae46a6cb8de081da432ebfd3ad78611883fb869a492bf5a699248ed1a8892"
+      },
+      {
+        "name": "comms-compare",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm run comms:compare"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 805,
+        "sha256": "e6df30c2db58b81e7413a6dfe6b3918031cb92ccd9ccae5de1306ea1d4f70455"
+      },
+      {
+        "name": "harness",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm harness validate --spec harness/specs/tasks/recovery-authority-gated.md --since 93199c6b02934462ffc8041e1c362cc1985e6227"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 2063,
+        "sha256": "2f743e9533c00f41a04f3831ff382ff5f2020f009a5830a5b5dbecedb58a1c1b"
+      },
+      {
+        "name": "harness-dry-run",
+        "args": [
+          "cmd.exe",
+          "/d",
+          "/c",
+          "pnpm harness run --spec harness/specs/tasks/recovery-authority-gated.md --since 93199c6b02934462ffc8041e1c362cc1985e6227 --dry-run"
+        ],
+        "cwd": "D:\\ClawX-work\\g3-recovery-relay-20261124-r32",
+        "exitCode": 0,
+        "durationMs": 2002,
+        "sha256": "6d1c143bb0a4cf49219b314fb6a2ee35bd4b809bcc2e94133cf742d36c85596b"
+      }
+    ],
+    "independentReview": {
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "format": "plain_text",
+      "sourceStable": true,
+      "exitCode": 0,
+      "verdict": "no_actionable_findings",
+      "responseSha256": "2d6ef936236313c1cebee1a38ca841fee55a2eb534d8f01718603a99ea19efc9"
+    },
+    "electron": {
+      "cases": 1,
+      "passed": 1,
+      "sourceMutationGuard": "passed",
+      "processCleanup": "passed",
+      "survivors": []
+    }
+  },
+  "reviewResolution": [
+    {
+      "finding": "Large preauth frames might be buffered before the handler imports",
+      "resolution": "Rejected after inspecting server-runtime-state.ts and installed ws Receiver. The server sets maxPayload=64KiB before upgrade. Real compiled probe rejected 65537 bytes with code 1009 and no handler loads."
+    },
+    {
+      "finding": "A first frame arriving just before deadline can time out while the handler loads",
+      "resolution": "Retain existing total authentication deadline. The owner clears the timer after authentication, not after frame receipt; moving it would extend preauth admission. Reviewer rechecked supplied owner/dependency sources and found no actionable defect."
+    }
+  ],
+  "incompleteMatrix": {
+    "status": "interrupted",
+    "receiptCount": 4,
+    "receipts": [
+      {
+        "windowId": "child-created-before-parent-advance-kill",
+        "terminalCorrect": false,
+        "lostTasks": null,
+        "duplicateEffects": null,
+        "recoveryLatencyMs": 61684,
+        "failure": "Error: Command failed: taskkill.exe /F /T /PID 3860"
+      },
+      {
+        "windowId": "effect-before-receipt-kill",
+        "terminalCorrect": false,
+        "lostTasks": null,
+        "duplicateEffects": null,
+        "recoveryLatencyMs": 61587,
+        "failure": "Error: Command failed: taskkill.exe /F /T /PID 4888"
+      },
+      {
+        "windowId": "intent-after-persist-kill",
+        "terminalCorrect": false,
+        "lostTasks": null,
+        "duplicateEffects": null,
+        "recoveryLatencyMs": 61641,
+        "failure": "Error: Command failed: taskkill.exe /F /T /PID 49468"
+      },
+      {
+        "windowId": "store-write-failure",
+        "terminalCorrect": true,
+        "lostTasks": 0,
+        "duplicateEffects": 0,
+        "recoveryLatencyMs": 145,
+        "failure": null
+      }
+    ],
+    "finalRunnerReportPresent": false,
+    "manualIdentityReadback": {
+      "runnerPresent": false,
+      "actor": "codex/g3-r45",
+      "survivors": [],
+      "driven_by": "agent",
+      "observations": [
+        {
+          "pid": 49552,
+          "recordedCreationTime": 1795605025845.018,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 48084,
+          "recordedCreationTime": 1795605035803.131,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 35360,
+          "recordedCreationTime": 1795605284468.922,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 37784,
+          "recordedCreationTime": 1795605291294.155,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 35360,
+          "recordedCreationTime": 1795605284468.922,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 37784,
+          "recordedCreationTime": 1795605291294.155,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 42896,
+          "recordedCreationTime": 1795605291648.914,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 4888,
+          "recordedCreationTime": 1795605294708.839,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 38932,
+          "recordedCreationTime": 1795605419562.757,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 36680,
+          "recordedCreationTime": 1795605461529.202,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 6100,
+          "recordedCreationTime": 1795605461984.129,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 18476,
+          "recordedCreationTime": 1795605710296.157,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 4616,
+          "recordedCreationTime": 1795605716700.223,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 42044,
+          "recordedCreationTime": 1795605806201.194,
+          "actualCreationTime": null,
+          "sameProcess": false
+        },
+        {
+          "pid": 2844,
+          "recordedCreationTime": 1795605814079.67,
+          "actualCreationTime": null,
+          "sameProcess": false
+        }
+      ]
+    },
+    "taskkillDiagnostics": [
+      {
+        "driven_by": "agent",
+        "actor": "codex/g3-r45",
+        "results": [
+          {
+            "tree": true,
+            "pid": 48732,
+            "error": "taskkill timed out after 10 seconds",
+            "durationMs": 10013,
+            "childExited": true
+          },
+          {
+            "tree": false,
+            "pid": 22732,
+            "error": "taskkill timed out after 10 seconds",
+            "durationMs": 10021,
+            "childExited": true
+          }
+        ]
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex/g3-r45",
+        "results": [
+          {
+            "tree": true,
+            "pid": 34012,
+            "error": "taskkill timed out after 10 seconds",
+            "durationMs": 10394,
+            "childExited": true
+          },
+          {
+            "tree": false,
+            "pid": 49652,
+            "error": "taskkill timed out after 10 seconds",
+            "durationMs": 10234,
+            "childExited": true
+          }
+        ]
+      }
+    ],
+    "interpretation": "Three fault injections failed in taskkill.exe; store-write case passed. Repeated-restart has no final receipt. The runner disappeared before aggregate report and teardown. Not a passed recovery matrix."
+  },
+  "retainedFailures": [
+    "Initial pnpm PowerShell launcher failed with OutOfMemoryException before the build; invoking the same Node build entry passed.",
+    "WorkBuddy upstream connection failed during the first review attempt; the same model eventually returned two findings, both checked against missing owner/dependency evidence and resolved in the final review.",
+    "Initial real Electron startup rerun and initial lint preparation were interrupted without final receipts. Fresh startup run passed; targeted strict lint reused existing plugin boundary declarations.",
+    "Both independent taskkill diagnostics timed out for owned disposable Node children with and without /T; native child handles cleaned up those children."
+  ],
+  "pending": [
+    "Fresh complete frozen recovery matrix remains to be executed when native fault injection is working. The latest prior three-restart sample remains 37.840 seconds against 15 seconds.",
+    "Both arms with three repeats per window, second legacy baseline, 30 live-provider pairs, and full release/package gates remain.",
+    "Previous Agent Dev build/typecheck/contract/i18n performance veto remains."
+  ],
+  "sourceFiles": [
+    {
+      "path": "README.ja-JP.md",
+      "gitSha256": "8319b201d231f9b8e56e98c292a1bba1659dc280e912596f4ac470566524b529",
+      "workingSha256": "8319b201d231f9b8e56e98c292a1bba1659dc280e912596f4ac470566524b529"
+    },
+    {
+      "path": "README.md",
+      "gitSha256": "227e55fe0efccde4299b66567a9dad0b11f28fcc14849793708bfb121d6b69b4",
+      "workingSha256": "227e55fe0efccde4299b66567a9dad0b11f28fcc14849793708bfb121d6b69b4"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitSha256": "4eef6b6ec8b87aee6df09e007f49e71180903a67db087d1ae0231b4ed168907e",
+      "workingSha256": "4eef6b6ec8b87aee6df09e007f49e71180903a67db087d1ae0231b4ed168907e"
+    },
+    {
+      "path": "harness/specs/rules/gateway-readiness-policy.md",
+      "gitSha256": "c37076ca7895dc7c4431920427a0d5b9f9ecde8f499b7bc727858916cd94c664",
+      "workingSha256": "c37076ca7895dc7c4431920427a0d5b9f9ecde8f499b7bc727858916cd94c664"
+    },
+    {
+      "path": "harness/specs/tasks/recovery-authority-gated.md",
+      "gitSha256": "da25acb526fa43d67b67502f22dfc1433c0297a655992ce530f91587ec046ba6",
+      "workingSha256": "da25acb526fa43d67b67502f22dfc1433c0297a655992ce530f91587ec046ba6"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server/ws-connection.lazy.test.ts",
+      "gitSha256": "19c801a25e3ffcf963f50ad9d2822084751558cee8bf58590ca3b97f409fbd7c",
+      "workingSha256": "19c801a25e3ffcf963f50ad9d2822084751558cee8bf58590ca3b97f409fbd7c"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server/ws-connection.ts",
+      "gitSha256": "9c36f3f2a5d49d0ab675196cf559256556ff1a985c1a119cc887b74a053e570c",
+      "workingSha256": "9c36f3f2a5d49d0ab675196cf559256556ff1a985c1a119cc887b74a053e570c"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server/ws-connection/message-handler-loader.ts",
+      "gitSha256": "d6b8fbf7f997f8c8d80356ecf467f97ae1de679c58ca8e87ace15a3ed2778a4f",
+      "workingSha256": "d6b8fbf7f997f8c8d80356ecf467f97ae1de679c58ca8e87ace15a3ed2778a4f"
+    }
+  ],
+  "archive": {
+    "path": "evidence.json.gz",
+    "sha256": "6e5ff0f06fef8ab73264562c5756ab4afeae72c682e8b224dac4270a8a6b3142",
+    "fileCount": 101
+  },
+  "environmentCredentialValueHits": 0
+}

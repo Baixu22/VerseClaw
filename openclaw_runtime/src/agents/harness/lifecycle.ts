@@ -8,6 +8,7 @@ import {
   assertContextEngineHostSupport,
   type ContextEngineHostSupport,
 } from "../../context-engine/host-compat.js";
+import { beginUnguardedMainSessionRun } from "../recovery-authority/main-session-admission.js";
 import { diagnosticErrorCategory } from "../../infra/diagnostic-error-metadata.js";
 import {
   emitTrustedDiagnosticEvent,
@@ -245,6 +246,7 @@ export async function runAgentHarnessLifecycleAttempt(
     }
     const runAndClassify = async () => {
       phase = "send";
+      if (harness.id !== "openclaw") await beginUnguardedMainSessionRun(params);
       const rawResult = await harness.runAttempt(params);
       phase = "resolve";
       // Classification happens inside the diagnostic phase so failures identify

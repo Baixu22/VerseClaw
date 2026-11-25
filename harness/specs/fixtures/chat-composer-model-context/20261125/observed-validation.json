@@ -1,0 +1,970 @@
+{
+  "driven_by": "agent",
+  "actor": "ego-browser",
+  "usedTokens": 32275,
+  "originalDateShown": true,
+  "measurements": [
+    {
+      "width": 1280,
+      "date": "2026年7月14日 23:22",
+      "originalDateShown": true,
+      "usage": "32,275 / 1,000,000 Token",
+      "rect": {
+        "x": 633,
+        "y": 168,
+        "width": 384,
+        "height": 560,
+        "top": 168,
+        "right": 1017,
+        "bottom": 728,
+        "left": 633
+      },
+      "viewport": [
+        1280,
+        800
+      ],
+      "errors": [],
+      "range": {
+        "sessionKey": "agent:main:main",
+        "sessionId": "db2c090d-c82f-4a3e-87d8-c66823cf1717",
+        "modelRef": "deepseek/deepseek-v4-flash",
+        "maxTokens": 1000000,
+        "usedTokens": 32275,
+        "usageSource": "runtime",
+        "measuredAt": 1784042543533,
+        "composition": {
+          "sessionId": "db2c090d-c82f-4a3e-87d8-c66823cf1717",
+          "generatedAt": 1784042541127,
+          "source": "run",
+          "modelRef": "deepseek/deepseek-v4-flash",
+          "systemPromptChars": 33482,
+          "instructionsChars": 15581,
+          "currentTurnChars": 25,
+          "runtimeContextChars": 0,
+          "workspaceFiles": {
+            "chars": 12897,
+            "totalEntries": 7,
+            "entries": [
+              {
+                "name": "AGENTS.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\AGENTS.md",
+                "chars": 8198,
+                "rawChars": 8198,
+                "status": "included"
+              },
+              {
+                "name": "SOUL.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\SOUL.md",
+                "chars": 1838,
+                "rawChars": 1838,
+                "status": "included"
+              },
+              {
+                "name": "TOOLS.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\TOOLS.md",
+                "chars": 955,
+                "rawChars": 955,
+                "status": "included"
+              },
+              {
+                "name": "IDENTITY.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\IDENTITY.md",
+                "chars": 719,
+                "rawChars": 719,
+                "status": "included"
+              },
+              {
+                "name": "USER.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\USER.md",
+                "chars": 554,
+                "rawChars": 554,
+                "status": "included"
+              },
+              {
+                "name": "HEARTBEAT.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\HEARTBEAT.md",
+                "chars": 247,
+                "rawChars": 247,
+                "status": "included"
+              },
+              {
+                "name": "BOOTSTRAP.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\BOOTSTRAP.md",
+                "chars": 0,
+                "rawChars": 1508,
+                "status": "truncated"
+              }
+            ]
+          },
+          "skills": {
+            "chars": 5004,
+            "totalEntries": 8,
+            "entries": [
+              {
+                "name": "academic-writing",
+                "chars": 747,
+                "status": "included"
+              },
+              {
+                "name": "agent-reach-login-handoff",
+                "chars": 426,
+                "status": "included"
+              },
+              {
+                "name": "browser-automation",
+                "chars": 410,
+                "status": "included"
+              },
+              {
+                "name": "chart-visualization",
+                "chars": 291,
+                "status": "included"
+              },
+              {
+                "name": "data-visualization",
+                "chars": 690,
+                "status": "included"
+              },
+              {
+                "name": "docx",
+                "chars": 1030,
+                "status": "included"
+              },
+              {
+                "name": "find-skills",
+                "chars": 522,
+                "status": "included"
+              },
+              {
+                "name": "officecli",
+                "chars": 407,
+                "status": "included"
+              }
+            ]
+          },
+          "tools": {
+            "chars": 53159,
+            "totalEntries": 66,
+            "entries": [
+              {
+                "name": "read",
+                "chars": 602,
+                "status": "included"
+              },
+              {
+                "name": "edit",
+                "chars": 1160,
+                "status": "included"
+              },
+              {
+                "name": "write",
+                "chars": 352,
+                "status": "included"
+              },
+              {
+                "name": "context_read",
+                "chars": 460,
+                "status": "included"
+              },
+              {
+                "name": "context_search",
+                "chars": 385,
+                "status": "included"
+              },
+              {
+                "name": "context_write",
+                "chars": 382,
+                "status": "included"
+              },
+              {
+                "name": "apply_patch",
+                "chars": 285,
+                "status": "included"
+              },
+              {
+                "name": "exec",
+                "chars": 2074,
+                "status": "included"
+              },
+              {
+                "name": "process",
+                "chars": 1530,
+                "status": "included"
+              },
+              {
+                "name": "nodes",
+                "chars": 1907,
+                "status": "included"
+              },
+              {
+                "name": "cron",
+                "chars": 11573,
+                "status": "included"
+              },
+              {
+                "name": "message",
+                "chars": 5781,
+                "status": "included"
+              },
+              {
+                "name": "tts",
+                "chars": 481,
+                "status": "included"
+              },
+              {
+                "name": "gateway",
+                "chars": 1215,
+                "status": "included"
+              },
+              {
+                "name": "agents_list",
+                "chars": 96,
+                "status": "included"
+              },
+              {
+                "name": "get_goal",
+                "chars": 104,
+                "status": "included"
+              },
+              {
+                "name": "create_goal",
+                "chars": 422,
+                "status": "included"
+              },
+              {
+                "name": "update_goal",
+                "chars": 419,
+                "status": "included"
+              },
+              {
+                "name": "skill_workshop",
+                "chars": 2444,
+                "status": "included"
+              },
+              {
+                "name": "sessions_list",
+                "chars": 570,
+                "status": "included"
+              },
+              {
+                "name": "sessions_history",
+                "chars": 279,
+                "status": "included"
+              },
+              {
+                "name": "sessions_send",
+                "chars": 499,
+                "status": "included"
+              },
+              {
+                "name": "task_loop",
+                "chars": 727,
+                "status": "included"
+              },
+              {
+                "name": "mission_loop",
+                "chars": 1157,
+                "status": "included"
+              },
+              {
+                "name": "team_orchestrate",
+                "chars": 1251,
+                "status": "included"
+              },
+              {
+                "name": "sessions_spawn",
+                "chars": 1947,
+                "status": "included"
+              },
+              {
+                "name": "sessions_yield",
+                "chars": 139,
+                "status": "included"
+              },
+              {
+                "name": "subagents",
+                "chars": 254,
+                "status": "included"
+              },
+              {
+                "name": "session_status",
+                "chars": 367,
+                "status": "included"
+              },
+              {
+                "name": "web_search",
+                "chars": 1056,
+                "status": "included"
+              },
+              {
+                "name": "web_fetch",
+                "chars": 410,
+                "status": "included"
+              },
+              {
+                "name": "agent_browser",
+                "chars": 3339,
+                "status": "included"
+              },
+              {
+                "name": "select_automation_playbook",
+                "chars": 715,
+                "status": "included"
+              },
+              {
+                "name": "browser",
+                "chars": 5107,
+                "status": "included"
+              },
+              {
+                "name": "canvas",
+                "chars": 830,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_decide",
+                "chars": 753,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_context_plan",
+                "chars": 948,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_explore",
+                "chars": 559,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_search",
+                "chars": 578,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_callers",
+                "chars": 498,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_callees",
+                "chars": 498,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_impact",
+                "chars": 494,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_status",
+                "chars": 159,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_sync",
+                "chars": 301,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_init",
+                "chars": 155,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_entrypoints",
+                "chars": 486,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_find_flow",
+                "chars": 540,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_minimal_context",
+                "chars": 561,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_git_stats",
+                "chars": 381,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_freshness",
+                "chars": 366,
+                "status": "included"
+              },
+              {
+                "name": "file_fetch",
+                "chars": 1248,
+                "status": "included"
+              },
+              {
+                "name": "dir_list",
+                "chars": 1301,
+                "status": "included"
+              },
+              {
+                "name": "dir_fetch",
+                "chars": 1365,
+                "status": "included"
+              },
+              {
+                "name": "file_write",
+                "chars": 1525,
+                "status": "included"
+              },
+              {
+                "name": "memory_search",
+                "chars": 855,
+                "status": "included"
+              },
+              {
+                "name": "memory_get",
+                "chars": 480,
+                "status": "included"
+              },
+              {
+                "name": "qqbot_remind",
+                "chars": 1667,
+                "status": "included"
+              },
+              {
+                "name": "web_read",
+                "chars": 222,
+                "status": "included"
+              },
+              {
+                "name": "rss_read",
+                "chars": 279,
+                "status": "included"
+              },
+              {
+                "name": "v2ex_read",
+                "chars": 635,
+                "status": "included"
+              },
+              {
+                "name": "xueqiu_read",
+                "chars": 530,
+                "status": "included"
+              },
+              {
+                "name": "bilibili_read",
+                "chars": 419,
+                "status": "included"
+              },
+              {
+                "name": "youtube_read",
+                "chars": 585,
+                "status": "included"
+              },
+              {
+                "name": "github_read",
+                "chars": 945,
+                "status": "included"
+              },
+              {
+                "name": "twitter_read",
+                "chars": 570,
+                "status": "included"
+              },
+              {
+                "name": "xiaohongshu_read",
+                "chars": 528,
+                "status": "included"
+              }
+            ]
+          }
+        },
+        "visibleMessageStartIndex": null,
+        "visibleMessageEndIndex": null,
+        "retainedMessageCount": 0,
+        "status": "bestEffort"
+      }
+    },
+    {
+      "width": 375,
+      "date": "2026年7月14日 23:22",
+      "originalDateShown": true,
+      "usage": "32,275 / 1,000,000 Token",
+      "rect": {
+        "x": 6.9791669845581055,
+        "y": 31.4375,
+        "width": 359.3333435058594,
+        "height": 560,
+        "top": 31.4375,
+        "right": 366.3125104904175,
+        "bottom": 591.4375,
+        "left": 6.9791669845581055
+      },
+      "viewport": [
+        375,
+        667
+      ],
+      "errors": [],
+      "range": {
+        "sessionKey": "agent:main:main",
+        "sessionId": "db2c090d-c82f-4a3e-87d8-c66823cf1717",
+        "modelRef": "deepseek/deepseek-v4-flash",
+        "maxTokens": 1000000,
+        "usedTokens": 32275,
+        "usageSource": "runtime",
+        "measuredAt": 1784042543533,
+        "composition": {
+          "sessionId": "db2c090d-c82f-4a3e-87d8-c66823cf1717",
+          "generatedAt": 1784042541127,
+          "source": "run",
+          "modelRef": "deepseek/deepseek-v4-flash",
+          "systemPromptChars": 33482,
+          "instructionsChars": 15581,
+          "currentTurnChars": 25,
+          "runtimeContextChars": 0,
+          "workspaceFiles": {
+            "chars": 12897,
+            "totalEntries": 7,
+            "entries": [
+              {
+                "name": "AGENTS.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\AGENTS.md",
+                "chars": 8198,
+                "rawChars": 8198,
+                "status": "included"
+              },
+              {
+                "name": "SOUL.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\SOUL.md",
+                "chars": 1838,
+                "rawChars": 1838,
+                "status": "included"
+              },
+              {
+                "name": "TOOLS.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\TOOLS.md",
+                "chars": 955,
+                "rawChars": 955,
+                "status": "included"
+              },
+              {
+                "name": "IDENTITY.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\IDENTITY.md",
+                "chars": 719,
+                "rawChars": 719,
+                "status": "included"
+              },
+              {
+                "name": "USER.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\USER.md",
+                "chars": 554,
+                "rawChars": 554,
+                "status": "included"
+              },
+              {
+                "name": "HEARTBEAT.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\HEARTBEAT.md",
+                "chars": 247,
+                "rawChars": 247,
+                "status": "included"
+              },
+              {
+                "name": "BOOTSTRAP.md",
+                "path": "C:\\Users\\27933\\AppData\\Roaming\\verse-claw\\openclaw-source-home\\.openclaw\\workspace\\BOOTSTRAP.md",
+                "chars": 0,
+                "rawChars": 1508,
+                "status": "truncated"
+              }
+            ]
+          },
+          "skills": {
+            "chars": 5004,
+            "totalEntries": 8,
+            "entries": [
+              {
+                "name": "academic-writing",
+                "chars": 747,
+                "status": "included"
+              },
+              {
+                "name": "agent-reach-login-handoff",
+                "chars": 426,
+                "status": "included"
+              },
+              {
+                "name": "browser-automation",
+                "chars": 410,
+                "status": "included"
+              },
+              {
+                "name": "chart-visualization",
+                "chars": 291,
+                "status": "included"
+              },
+              {
+                "name": "data-visualization",
+                "chars": 690,
+                "status": "included"
+              },
+              {
+                "name": "docx",
+                "chars": 1030,
+                "status": "included"
+              },
+              {
+                "name": "find-skills",
+                "chars": 522,
+                "status": "included"
+              },
+              {
+                "name": "officecli",
+                "chars": 407,
+                "status": "included"
+              }
+            ]
+          },
+          "tools": {
+            "chars": 53159,
+            "totalEntries": 66,
+            "entries": [
+              {
+                "name": "read",
+                "chars": 602,
+                "status": "included"
+              },
+              {
+                "name": "edit",
+                "chars": 1160,
+                "status": "included"
+              },
+              {
+                "name": "write",
+                "chars": 352,
+                "status": "included"
+              },
+              {
+                "name": "context_read",
+                "chars": 460,
+                "status": "included"
+              },
+              {
+                "name": "context_search",
+                "chars": 385,
+                "status": "included"
+              },
+              {
+                "name": "context_write",
+                "chars": 382,
+                "status": "included"
+              },
+              {
+                "name": "apply_patch",
+                "chars": 285,
+                "status": "included"
+              },
+              {
+                "name": "exec",
+                "chars": 2074,
+                "status": "included"
+              },
+              {
+                "name": "process",
+                "chars": 1530,
+                "status": "included"
+              },
+              {
+                "name": "nodes",
+                "chars": 1907,
+                "status": "included"
+              },
+              {
+                "name": "cron",
+                "chars": 11573,
+                "status": "included"
+              },
+              {
+                "name": "message",
+                "chars": 5781,
+                "status": "included"
+              },
+              {
+                "name": "tts",
+                "chars": 481,
+                "status": "included"
+              },
+              {
+                "name": "gateway",
+                "chars": 1215,
+                "status": "included"
+              },
+              {
+                "name": "agents_list",
+                "chars": 96,
+                "status": "included"
+              },
+              {
+                "name": "get_goal",
+                "chars": 104,
+                "status": "included"
+              },
+              {
+                "name": "create_goal",
+                "chars": 422,
+                "status": "included"
+              },
+              {
+                "name": "update_goal",
+                "chars": 419,
+                "status": "included"
+              },
+              {
+                "name": "skill_workshop",
+                "chars": 2444,
+                "status": "included"
+              },
+              {
+                "name": "sessions_list",
+                "chars": 570,
+                "status": "included"
+              },
+              {
+                "name": "sessions_history",
+                "chars": 279,
+                "status": "included"
+              },
+              {
+                "name": "sessions_send",
+                "chars": 499,
+                "status": "included"
+              },
+              {
+                "name": "task_loop",
+                "chars": 727,
+                "status": "included"
+              },
+              {
+                "name": "mission_loop",
+                "chars": 1157,
+                "status": "included"
+              },
+              {
+                "name": "team_orchestrate",
+                "chars": 1251,
+                "status": "included"
+              },
+              {
+                "name": "sessions_spawn",
+                "chars": 1947,
+                "status": "included"
+              },
+              {
+                "name": "sessions_yield",
+                "chars": 139,
+                "status": "included"
+              },
+              {
+                "name": "subagents",
+                "chars": 254,
+                "status": "included"
+              },
+              {
+                "name": "session_status",
+                "chars": 367,
+                "status": "included"
+              },
+              {
+                "name": "web_search",
+                "chars": 1056,
+                "status": "included"
+              },
+              {
+                "name": "web_fetch",
+                "chars": 410,
+                "status": "included"
+              },
+              {
+                "name": "agent_browser",
+                "chars": 3339,
+                "status": "included"
+              },
+              {
+                "name": "select_automation_playbook",
+                "chars": 715,
+                "status": "included"
+              },
+              {
+                "name": "browser",
+                "chars": 5107,
+                "status": "included"
+              },
+              {
+                "name": "canvas",
+                "chars": 830,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_decide",
+                "chars": 753,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_context_plan",
+                "chars": 948,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_explore",
+                "chars": 559,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_search",
+                "chars": 578,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_callers",
+                "chars": 498,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_callees",
+                "chars": 498,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_impact",
+                "chars": 494,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_status",
+                "chars": 159,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_sync",
+                "chars": 301,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_init",
+                "chars": 155,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_entrypoints",
+                "chars": 486,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_find_flow",
+                "chars": 540,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_minimal_context",
+                "chars": 561,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_git_stats",
+                "chars": 381,
+                "status": "included"
+              },
+              {
+                "name": "codegraph_freshness",
+                "chars": 366,
+                "status": "included"
+              },
+              {
+                "name": "file_fetch",
+                "chars": 1248,
+                "status": "included"
+              },
+              {
+                "name": "dir_list",
+                "chars": 1301,
+                "status": "included"
+              },
+              {
+                "name": "dir_fetch",
+                "chars": 1365,
+                "status": "included"
+              },
+              {
+                "name": "file_write",
+                "chars": 1525,
+                "status": "included"
+              },
+              {
+                "name": "memory_search",
+                "chars": 855,
+                "status": "included"
+              },
+              {
+                "name": "memory_get",
+                "chars": 480,
+                "status": "included"
+              },
+              {
+                "name": "qqbot_remind",
+                "chars": 1667,
+                "status": "included"
+              },
+              {
+                "name": "web_read",
+                "chars": 222,
+                "status": "included"
+              },
+              {
+                "name": "rss_read",
+                "chars": 279,
+                "status": "included"
+              },
+              {
+                "name": "v2ex_read",
+                "chars": 635,
+                "status": "included"
+              },
+              {
+                "name": "xueqiu_read",
+                "chars": 530,
+                "status": "included"
+              },
+              {
+                "name": "bilibili_read",
+                "chars": 419,
+                "status": "included"
+              },
+              {
+                "name": "youtube_read",
+                "chars": 585,
+                "status": "included"
+              },
+              {
+                "name": "github_read",
+                "chars": 945,
+                "status": "included"
+              },
+              {
+                "name": "twitter_read",
+                "chars": 570,
+                "status": "included"
+              },
+              {
+                "name": "xiaohongshu_read",
+                "chars": 528,
+                "status": "included"
+              }
+            ]
+          }
+        },
+        "visibleMessageStartIndex": null,
+        "visibleMessageEndIndex": null,
+        "retainedMessageCount": 0,
+        "status": "bestEffort"
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "path": "original-failures/final-r12-return.json",
+    "sha256": "ea64ace46d44be021073f2e1487f221b6b732143daf4c998ee1b4de818a84ff6"
+  },
+  {
+    "path": "original-failures/final-r14-return.json",
+    "sha256": "71d892ec42cf707a7ab946bbc26b0a0369608033904489323fb2316cdc219ab0"
+  },
+  {
+    "path": "original-failures/r15-browser-superseded.json",
+    "sha256": "e491ffba74d73fc69f0844d832aebb474555478291703de51dfa2150dc02470d"
+  },
+  {
+    "path": "original-failures/ego-r1-return.json",
+    "sha256": "f3b39ea95c3b36bc4520e1af439b2ca8d32383e50c86f370c233b712001446a1"
+  },
+  {
+    "path": "original-failures/duplicates-r13.command.json",
+    "sha256": "b7300bdfd1ea03b56a9f122f74f14b5e36feb526fe28ef5f426cc38135de591c"
+  }
+]

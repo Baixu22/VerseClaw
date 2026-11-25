@@ -245,16 +245,12 @@ function rememberPluginRegistrySnapshotMemo(
   return result;
 }
 
-function canReuseCurrentPluginMetadataSnapshot(params: LoadPluginRegistryParams): boolean {
+export function canReuseCurrentPluginMetadataSnapshot(params: LoadPluginRegistryParams): boolean {
   return (
-    params.preferPersisted !== false &&
+    canMemoizePluginRegistrySnapshot(params) &&
     params.stateDir === undefined &&
-    params.filePath === undefined &&
-    params.pluginIndexFilePath === undefined &&
-    params.installRecords === undefined &&
-    params.candidates === undefined &&
-    params.diagnostics === undefined &&
-    params.now === undefined
+    params.preferPersisted !== false &&
+    !hasEnvFlag(params.env ?? process.env, DISABLE_PERSISTED_PLUGIN_REGISTRY_ENV)
   );
 }
 
@@ -264,17 +260,14 @@ function loadCurrentPluginRegistrySnapshotResult(
   if (!canReuseCurrentPluginMetadataSnapshot(params)) {
     return undefined;
   }
-  const env = params.env ?? process.env;
   const current = getCurrentPluginMetadataSnapshot({
     config: params.config,
-    env,
+    env: params.env,
     ...(params.workspaceDir ? { workspaceDir: params.workspaceDir } : {}),
     ...(params.workspaceDir === undefined ? { allowWorkspaceScopedSnapshot: true } : {}),
   });
-  if (!current || current.registryDiagnostics.length > 0) {
-    return undefined;
-  }
-  return {
+  // The current owner validates regenerated metadata, including repaired persisted inputs.
+  return current && {
     snapshot: current.index,
     source: "provided",
     diagnostics: current.registryDiagnostics,

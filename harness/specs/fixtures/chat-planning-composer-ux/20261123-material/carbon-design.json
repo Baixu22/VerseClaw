@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "carbon-chat-ux",
+  "model": "Gemini 4 Carbon (High)",
+  "exitCode": 0,
+  "status": "SUCCESS",
+  "conversationId": "7eaa7c73-59be-4007-9eff-118e2c9dc572",
+  "usage": {
+    "input_tokens": 15302,
+    "output_tokens": 17333,
+    "thinking_tokens": 14046,
+    "cache_read_tokens": 10167,
+    "total_tokens": 32635
+  },
+  "carbonRequests": 2,
+  "blockedRequests": 0,
+  "imageReads": [
+    "D:/tmp/carbon-chat-material-20261123-01a203cc/carbon/01-light-chat.png",
+    "D:/tmp/carbon-chat-material-20261123-01a203cc/carbon/02-dark-running.png",
+    "D:/tmp/carbon-chat-material-20261123-01a203cc/carbon/03-dark-paused.png",
+    "D:/tmp/carbon-chat-material-20261123-01a203cc/carbon/04-material-details.png"
+  ]
+}

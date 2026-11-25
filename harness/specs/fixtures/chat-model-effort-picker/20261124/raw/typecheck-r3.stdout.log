@@ -1,0 +1,53 @@
+[ext-bridge] No external extensions configured — empty stubs up to date.
+src/pages/Chat/ChatInput.tsx(22,3): error TS6133: 'ChevronRight' is declared but its value is never read.
+src/pages/Chat/ChatInput.tsx(125,10): error TS6133: 'AnimatePresence' is declared but its value is never read.
+src/pages/Chat/ChatInput.tsx(125,27): error TS6133: 'motion' is declared but its value is never read.
+src/pages/Chat/ChatInput.tsx(1227,9): error TS6133: 'prefersReducedMotion' is declared but its value is never read.
+[ELIFECYCLE] Command failed with exit code 2.
+{
+  "success": false,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 70769,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": null,
+    "inputCount": 0,
+    "report": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 110624,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 47
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 39795
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 2,
+      "durationMs": 14081
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 70769,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}
+[ELIFECYCLE] Command failed with exit code 1.

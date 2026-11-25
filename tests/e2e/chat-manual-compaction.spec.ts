@@ -13,7 +13,7 @@ function stableStringify(value: unknown): string {
 }
 
 test.describe('Verse Claw chat manual compaction', () => {
-  test('opens confirmation dialog and calls the session compaction Host API', async ({ launchElectronApp }) => {
+  test('opens confirmation dialog and calls the session compaction Host API', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -67,6 +67,7 @@ test.describe('Verse Claw chat manual compaction', () => {
           },
           [stableStringify(['usage', 'contextRange', {
             sessionKey: MAIN_SESSION_KEY,
+            expectedSessionId: EXPECTED_SESSION_ID,
             modelRef: null,
             messageCount: 0,
             usedTokens: null,
@@ -178,6 +179,16 @@ test.describe('Verse Claw chat manual compaction', () => {
       await expect(compact).toContainText('64k / 128k tokens');
       await compact.click();
       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
+      await expect(page.getByTestId('chat-compaction-details')).not.toHaveAttribute('open');
+      await expect(page.getByTestId('chat-compaction-truncated')).toContainText('3');
+      await expect(page.getByTestId('chat-compaction-dialog').getByText('64k / 128k tokens', { exact: true })).toHaveCount(1);
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+      await expect(page.getByTestId('chat-compaction-dialog')).toHaveCSS('opacity', '1');
+      await expect(page.getByTestId('chat-compaction-dialog')).toHaveCSS('background-color', 'rgb(36, 36, 36)');
+      await page.screenshot({ path: testInfo.outputPath('compact-dark.png') });
+      await page.setViewportSize({ width: 480, height: 800 });
+      await expect(page.getByTestId('chat-compaction-confirm')).toBeInViewport();
+      await page.screenshot({ path: testInfo.outputPath('compact-narrow-dark.png') });
       await page.getByTestId('chat-compaction-instructions').fill('Keep the deployment decision.');
       await expect(page.getByTestId('chat-compaction-confirm')).toBeEnabled();
       await page.getByTestId('chat-compaction-confirm').click();

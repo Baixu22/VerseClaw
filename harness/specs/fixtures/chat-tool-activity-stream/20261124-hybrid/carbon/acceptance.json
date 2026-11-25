@@ -1,0 +1,16 @@
+{
+  "candidate": "cf2d1209319ecde28b49c16cbea2850604b30e05",
+  "driven_by": "agent",
+  "unitTests": 135,
+  "nativeJourneys": 2,
+  "requirements": [
+    "collapsed plain text, no chip",
+    "latest search then memory target shown",
+    "left-to-right one-pass keyframes recorded",
+    "continuous white shimmer",
+    "expanded chips and completion output retained",
+    "four locales, two themes, 375px and1280px",
+    "reduced motion and keyboard covered"
+  ],
+  "codeApiAndLocaleStringsRetained": true
+}

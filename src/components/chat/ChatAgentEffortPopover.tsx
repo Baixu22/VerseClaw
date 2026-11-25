@@ -1,20 +1,12 @@
-/**
- * Chat Agent Effort Popover
- *
- * Reasoning-effort control for the chat composer, visually aligned 1:1 with
- * the claude-range-slider reference: a theme-aware rounded track, compact
- * circular thumb, and a WebGL amber flame tail that ignites at max effort.
- * Slider movement stays local while dragging and persists only when the
- * interaction ends, preventing agent refreshes from interrupting the thumb.
- */
-import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type ChangeEvent } from 'react';
+/** Reasoning control with a spring-following text preview and release-time persistence. */
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Flame, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAgentsStore } from '@/stores/agents';
 import { cn } from '@/lib/utils';
-import { useWebglFire } from '@/hooks/use-webgl-fire';
+import { EffortPreviewSlider } from './EffortPreviewSlider';
 import type { AgentReasoningEffort } from '@/types/agent';
 
 const EFFORT_OPTIONS: ReadonlyArray<AgentReasoningEffort> = [
@@ -46,8 +38,6 @@ type SavedEffort = AgentReasoningEffort;
 
 const MAX_SLIDER_VALUE = EFFORT_OPTIONS.length - 1;
 const HIGH_INDEX = EFFORT_OPTIONS.indexOf('high');
-// Thumb geometry — must match the CSS below so dots/flame stay aligned to stops.
-const THUMB_W = 24;
 
 function toSliderIndex(effort: SavedEffort | undefined | null): number {
   if (!effort) return 0;
@@ -142,43 +132,23 @@ function ChatAgentEffortPopoverBody({
   const { t } = useTranslation('chat');
   const updateAgentReasoningEffort = useAgentsStore((s) => s.updateAgentReasoningEffort);
   const [draftValue, setDraftValue] = useState<number>(() => toSliderIndex(initialEffort));
-  const [isFlipping, setIsFlipping] = useState(false);
+  const [syncedEffort, setSyncedEffort] = useState(initialEffort);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const fireCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const initialRef = useRef<SavedEffort>(initialEffort ?? 'auto');
-  const flipTimerRef = useRef<number | null>(null);
-  const wasMaxRef = useRef<boolean>(toSliderIndex(initialEffort) >= MAX_SLIDER_VALUE);
-
   const rawId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const clipId = `effort-squircle-${rawId}`;
   const draftIndex = Math.round(draftValue);
   const statusEffort: DisplayEffort = EFFORT_OPTIONS[draftIndex] ?? 'auto';
-  const fillPercent = (draftValue / MAX_SLIDER_VALUE) * 100;
-  // Reference behavior: the flame only ignites at Ultracode (slider = 100%);
-  // the shader gates on smoothstep(0.95, 1.0, u_slider) so earlier activation
-  // renders nothing anyway.
-  const fireActive = draftValue >= MAX_SLIDER_VALUE - 0.01;
   const isHighZone = draftIndex >= HIGH_INDEX;
-  useWebglFire(fireCanvasRef, draftValue / MAX_SLIDER_VALUE, fireActive);
 
-  const updateFlipAnimation = useCallback((nextIndex: number) => {
-    const isMax = nextIndex >= MAX_SLIDER_VALUE;
-    if (isMax && !wasMaxRef.current) {
-      setIsFlipping(true);
-      if (flipTimerRef.current != null) window.clearTimeout(flipTimerRef.current);
-      flipTimerRef.current = window.setTimeout(() => {
-        flipTimerRef.current = null;
-        setIsFlipping(false);
-      }, 460);
-    } else if (!isMax && wasMaxRef.current) {
-      if (flipTimerRef.current != null) {
-        window.clearTimeout(flipTimerRef.current);
-        flipTimerRef.current = null;
-      }
-      setIsFlipping(false);
-    }
-    wasMaxRef.current = isMax;
-  }, []);
+  if (syncedEffort !== initialEffort) {
+    setSyncedEffort(initialEffort);
+    setDraftValue(toSliderIndex(initialEffort));
+  }
+
+  useEffect(() => {
+    initialRef.current = initialEffort ?? 'auto';
+  }, [initialEffort]);
 
   const commit = useCallback(
     (idx: number) => {
@@ -197,31 +167,20 @@ function ChatAgentEffortPopoverBody({
     (value: number) => {
       const nextIndex = Math.max(0, Math.min(MAX_SLIDER_VALUE, Math.round(value)));
       setDraftValue(nextIndex);
-      updateFlipAnimation(nextIndex);
       onEffortChange?.(fromSliderIndex(nextIndex));
       commit(nextIndex);
     },
-    [commit, onEffortChange, updateFlipAnimation],
+    [commit, onEffortChange],
   );
 
   const onSliderInput = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const nextValue = Math.max(0, Math.min(MAX_SLIDER_VALUE, Number(e.target.value)));
-      const nextIndex = Math.round(nextValue);
-      updateFlipAnimation(nextIndex);
+    (value: number) => {
+      const nextValue = Math.max(0, Math.min(MAX_SLIDER_VALUE, value));
       setDraftValue(nextValue);
-      onEffortChange?.(fromSliderIndex(nextIndex));
+      onEffortChange?.(fromSliderIndex(Math.round(nextValue)));
     },
-    [onEffortChange, updateFlipAnimation],
+    [onEffortChange],
   );
-
-  useEffect(() => {
-    return () => {
-      if (flipTimerRef.current != null) {
-        window.clearTimeout(flipTimerRef.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (inline) return;
@@ -231,14 +190,7 @@ function ChatAgentEffortPopoverBody({
       if (anchorRect) {
         const x = event.clientX;
         const y = event.clientY;
-        if (
-          x >= anchorRect.left
-          && x <= anchorRect.right
-          && y >= anchorRect.top
-          && y <= anchorRect.bottom
-        ) {
-          return;
-        }
+        if (x >= anchorRect.left && x <= anchorRect.right && y >= anchorRect.top && y <= anchorRect.bottom) return;
       }
       onClose();
     };
@@ -253,8 +205,6 @@ function ChatAgentEffortPopoverBody({
     };
   }, [anchorRect, inline, onClose]);
 
-  // Right-align the popover to the button so it sits directly above the trigger
-  // instead of extending past its right edge.
   const popoverWidth = Math.min(300, window.innerWidth - 24);
   const left = anchorRect
     ? Math.max(8, Math.min(anchorRect.right - popoverWidth, window.innerWidth - popoverWidth - 8))
@@ -263,20 +213,13 @@ function ChatAgentEffortPopoverBody({
     ? { left, bottom: window.innerHeight - anchorRect.top + 8 }
     : { left: 16, bottom: 96 };
 
-  const maskPercent = Math.min(fillPercent + 2, 100);
-
   return (
     <div
       ref={containerRef}
       data-testid="chat-agent-effort-popover"
-      className={cn(
-        !inline && 'fixed z-50 w-[min(300px,calc(100vw-24px))]',
-        inline && 'w-full',
-        'select-none',
-      )}
+      className={cn(!inline && 'fixed z-50 w-[min(300px,calc(100vw-24px))]', inline && 'w-full', 'select-none')}
       style={inline ? undefined : positionStyle}
     >
-      {/* Squircle clip paths (objectBoundingBox units — reference geometry). */}
       <svg className="pointer-events-none absolute h-0 w-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
           <clipPath id={clipId} clipPathUnits="objectBoundingBox">
@@ -284,153 +227,36 @@ function ChatAgentEffortPopoverBody({
           </clipPath>
         </defs>
       </svg>
-
       <div className="effort-card-shadow motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:zoom-in-95 motion-safe:duration-150">
         <div
-          className={cn(
-            'effort-card px-4 pb-3.5 pt-4',
-            inline ? 'effort-card--inline' : 'effort-card--dropdown',
-          )}
+          className={cn('effort-card px-4 pb-3.5 pt-4', inline ? 'effort-card--inline' : 'effort-card--dropdown')}
           style={inline ? undefined : { clipPath: `url(#${clipId})` }}
         >
-          {!inline && <div className="mb-3.5 flex items-center justify-between">
-            <div className="effort-header-left flex items-center gap-[7px] text-[15px] font-medium">
-              <Flame
-                className={cn(
-                  'h-4 w-4 opacity-50 transition-[color,filter] duration-300',
-                  isHighZone && 'text-orange-500 opacity-100 dark:text-orange-300',
-                  fireActive && 'text-orange-600 drop-shadow-[0_0_8px_rgba(251,106,34,0.45)] opacity-100 dark:text-orange-300 dark:drop-shadow-[0_0_8px_rgba(255,133,73,0.6)]',
-                )}
-                aria-hidden="true"
-              />
-              <span className="font-bold leading-[1.3] opacity-70">{t('composer.effortTitle')}</span>
-              <span
-                className={cn(
-                  'effort-status inline-block align-middle opacity-55',
-                  fireActive && 'effort-status-glowing',
-                  isFlipping && 'effort-status-flip',
-                )}
-              >
-                {t(EFFORT_LABEL_KEY[statusEffort])}
-              </span>
+          {!inline && (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-[7px] text-[15px] font-medium">
+                <Flame className={cn('h-4 w-4 opacity-50', isHighZone && 'text-orange-600 opacity-100 dark:text-orange-300')} aria-hidden="true" />
+                <span className="font-bold leading-[1.3] opacity-70">{t('composer.effortTitle')}</span>
+                <span className="opacity-55">{t(EFFORT_LABEL_KEY[statusEffort])}</span>
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button type="button" aria-label={t('composer.effortHelpTooltip')} className="flex items-center justify-center p-0 leading-none opacity-50 transition-opacity hover:opacity-100">
+                    <HelpCircle className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="left"><p className="max-w-[220px] text-xs">{t('composer.effortHelpTooltip')}</p></TooltipContent>
+              </Tooltip>
             </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  aria-label={t('composer.effortHelpTooltip')}
-                  className="flex items-center justify-center p-0 leading-none opacity-50 transition-opacity hover:opacity-100"
-                >
-                  <HelpCircle className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <p className="max-w-[220px] text-xs">{t('composer.effortHelpTooltip')}</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>}
-
-          <div className="mb-[7px] flex items-center justify-between text-[13px] font-extrabold tracking-[0.04em] opacity-50">
-            <span>{t('composer.effortFaster')}</span>
-            <span>{t('composer.effortSmarter')}</span>
-          </div>
-
-          <div
-            className={cn(
-              'effort-track relative h-[28px] overflow-hidden rounded-full',
-              fireActive && 'effort-track-active',
-              fireActive && 'effort-track-full',
-            )}
-            style={{ isolation: 'isolate' }}
-            data-testid="chat-agent-effort-track"
-          >
-            <div aria-hidden="true" className="effort-track-surface absolute inset-0 z-0" />
-            <div
-              aria-hidden="true"
-              className="effort-track-progress pointer-events-none absolute inset-y-0 left-0 z-[1]"
-              style={{
-                width: `calc(${fillPercent}% + ${THUMB_W / 2 - (fillPercent / 100) * THUMB_W}px)`,
-              }}
-            />
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[2]">
-              {EFFORT_OPTIONS.map((option, i) => {
-                const frac = i / MAX_SLIDER_VALUE;
-                return (
-                  <span
-                    key={option}
-                    className="effort-dot"
-                    style={{
-                      left: `calc(${frac * 100}% + ${THUMB_W / 2 - frac * THUMB_W}px)`,
-                    }}
-                  />
-                );
-              })}
-            </div>
-            <canvas
-              ref={fireCanvasRef}
-              aria-hidden="true"
-              data-testid="chat-agent-effort-fire"
-              className="effort-fire-canvas pointer-events-none absolute inset-0 h-full w-full opacity-0 mix-blend-screen transition-opacity duration-300 motion-reduce:hidden"
-              style={{
-                maskImage: `linear-gradient(to right, black 0%, black ${maskPercent}%, transparent ${maskPercent}%)`,
-                WebkitMaskImage: `linear-gradient(to right, black 0%, black ${maskPercent}%, transparent ${maskPercent}%)`,
-              }}
-            />
-            <input
-              type="range"
-              min={0}
-              max={MAX_SLIDER_VALUE}
-              step={0.05}
-              value={draftValue}
-              onChange={onSliderInput}
-              onPointerUp={(event) => finishInteraction(Number(event.currentTarget.value))}
-              onPointerCancel={(event) => finishInteraction(Number(event.currentTarget.value))}
-              onKeyDown={(event) => {
-                let nextIndex: number | null = null;
-                if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') nextIndex = draftIndex - 1;
-                if (event.key === 'ArrowRight' || event.key === 'ArrowUp') nextIndex = draftIndex + 1;
-                if (event.key === 'Home') nextIndex = 0;
-                if (event.key === 'End') nextIndex = MAX_SLIDER_VALUE;
-                if (nextIndex == null) return;
-                event.preventDefault();
-                const next = Math.max(0, Math.min(MAX_SLIDER_VALUE, nextIndex));
-                updateFlipAnimation(next);
-                setDraftValue(next);
-                onEffortChange?.(fromSliderIndex(next));
-              }}
-              onKeyUp={(event) => {
-                if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) {
-                  finishInteraction(Number(event.currentTarget.value));
-                }
-              }}
-              onBlur={(event) => finishInteraction(Number(event.currentTarget.value))}
-              disabled={disabled}
-              data-testid="chat-agent-effort-slider"
-              className={cn('effort-range', fireActive && 'effort-range-glowing')}
-              aria-label={t('composer.effortTitle')}
-              aria-valuetext={t(EFFORT_LABEL_KEY[statusEffort])}
-            />
-          </div>
-
-          <div
-            className="effort-ticks mt-2 grid grid-cols-7 gap-1 text-center text-[10px] leading-4 text-muted-foreground"
-            data-testid="chat-agent-effort-ticks"
-          >
-            {EFFORT_OPTIONS.map((opt, i) => (
-              <span
-                key={opt}
-                className={cn(
-                  'break-words transition-colors duration-200',
-                  draftIndex === i
-                    && (i >= MAX_SLIDER_VALUE
-                      ? 'effort-tick-active font-semibold text-orange-600 opacity-100 dark:text-orange-300'
-                      : 'effort-tick-active font-medium opacity-100'),
-                )}
-              >
-                {t(EFFORT_LABEL_KEY[opt])}
-              </span>
-            ))}
-          </div>
+          )}
+          <EffortPreviewSlider
+            value={draftValue}
+            labels={EFFORT_OPTIONS.map((effort) => t(EFFORT_LABEL_KEY[effort]))}
+            ariaLabel={t('composer.effortTitle')}
+            disabled={disabled}
+            onValueChange={onSliderInput}
+            onValueCommit={finishInteraction}
+          />
         </div>
       </div>
       <style>{EFFORT_CSS}</style>
@@ -441,35 +267,15 @@ function ChatAgentEffortPopoverBody({
 const EFFORT_CSS = `
   .effort-card-shadow { filter: none; }
   .effort-card {
-    --effort-track-background: color-mix(
-      in oklab,
-      var(--color-text-foreground) 6%,
-      var(--color-background-elevated-secondary-opaque)
-    );
-    --effort-track-progress: var(--color-background-effort-progress);
-    --effort-track-dot: color-mix(in oklab, var(--color-text-foreground) 38%, transparent);
-    --effort-thumb-background: var(--gray-0);
-    --effort-thumb-border: color-mix(in oklab, var(--codex-ink) 12%, transparent);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
     border-radius: 20px;
   }
-  .dark .effort-card {
-    --effort-thumb-background: var(--gray-100);
-    --effort-thumb-border: color-mix(in oklab, var(--gray-1000) 38%, transparent);
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-  /* Share the opaque neutral material with the adjacent composer menus. */
   .effort-card--dropdown {
-    --ccm-surface: var(--color-background-control-panel);
-    --ccm-ring: var(--color-border);
-    --ccm-shadow: var(--shadow-xl-spread);
-    background: var(--ccm-surface);
+    background: var(--color-background-control-panel);
     color: var(--color-text-foreground);
     border: none;
     border-radius: 15px;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    box-shadow: var(--ccm-shadow);
+    box-shadow: var(--shadow-xl-spread);
   }
   .effort-card--inline {
     background: transparent;
@@ -477,159 +283,6 @@ const EFFORT_CSS = `
     border: 0;
     border-radius: 0;
     box-shadow: none;
-  }
-  /* The combined menu already names the selected level above the slider. */
-  .effort-card--inline .effort-ticks { display: none; }
-  .effort-header-left {
-    perspective: 280px;
-    perspective-origin: center 120%;
-  }
-  .effort-status {
-    transition: color 0.3s, text-shadow 0.3s;
-    transform-origin: center bottom;
-    transform: rotateX(0deg) translateY(0);
-  }
-  .effort-status-glowing {
-    color: var(--orange-500);
-    text-shadow: 0 0 12px color-mix(in srgb, var(--orange-400) 45%, transparent);
-    font-weight: 600;
-  }
-  .dark .effort-status-glowing {
-    color: var(--orange-300);
-    text-shadow: 0 0 12px color-mix(in srgb, var(--orange-300) 55%, transparent);
-  }
-  @keyframes effortFlipUp {
-    0% { opacity: 0; transform: translateY(18px) rotateX(-80deg); filter: blur(4px); }
-    100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
-  }
-  .effort-status-flip {
-    animation: effortFlipUp 0.42s cubic-bezier(0.33, 1, 0.68, 1) forwards;
-  }
-  .effort-track {
-    --effort-thumb-size: 24px;
-    border: 1px solid var(--color-border-heavy);
-    border-radius: 9999px;
-    box-shadow: inset 0 0 0 0.5px var(--color-border-light);
-    transition: border-color 120ms ease, box-shadow 120ms ease;
-  }
-  .effort-track-surface {
-    border-radius: inherit;
-    background: var(--effort-track-background);
-  }
-  .effort-track-progress {
-    border-radius: inherit;
-    background: var(--effort-track-progress);
-    transition: width 70ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 160ms ease;
-  }
-  .effort-track:has(.effort-range:focus-visible) {
-    border-color: var(--color-border-focus);
-    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-border-focus) 22%, transparent);
-  }
-  .effort-dot {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--effort-track-dot);
-    top: 50%;
-    transform: translate(-50%, -50%);
-    transition: opacity 180ms ease, transform 180ms ease;
-  }
-  .effort-track-active .effort-dot { opacity: 0.22; }
-  .effort-track-full .effort-dot { opacity: 0; }
-  .effort-fire-canvas { z-index: 2; }
-  .effort-track-active .effort-fire-canvas {
-    opacity: 1;
-    z-index: 4;
-  }
-  .effort-range {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    cursor: ew-resize;
-    touch-action: pan-y;
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    outline: none;
-    z-index: 5;
-  }
-  .effort-range:disabled { cursor: not-allowed; opacity: 0.5; }
-  .effort-range::-webkit-slider-runnable-track {
-    height: 100%;
-    background: transparent;
-    border-radius: 9999px;
-  }
-  .effort-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: var(--effort-thumb-size);
-    height: var(--effort-thumb-size);
-    margin-top: 1px;
-    border-radius: 50%;
-    background: var(--effort-thumb-background);
-    border: 1px solid var(--effort-thumb-border);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16),
-      0 2px 5px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.72);
-    cursor: ew-resize;
-    transition: box-shadow 120ms ease, transform 90ms ease, background-color 160ms ease;
-  }
-  .effort-range::-webkit-slider-thumb:active {
-    cursor: ew-resize;
-    transform: scale(0.9);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18),
-      0 1px 3px rgba(0, 0, 0, 0.14),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  }
-  .effort-range-glowing::-webkit-slider-thumb {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16),
-      0 2px 5px rgba(0, 0, 0, 0.12),
-      0 0 16px rgba(251, 106, 34, 0.48),
-      0 0 30px rgba(255, 133, 73, 0.22),
-      inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  }
-  .effort-range-glowing::-webkit-slider-thumb:active {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18),
-      0 0 18px rgba(251, 106, 34, 0.55),
-      0 0 32px rgba(255, 133, 73, 0.26),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  }
-  .effort-range::-moz-range-track {
-    height: 22px;
-    background: transparent;
-    border: none;
-    border-radius: 9999px;
-  }
-  .effort-range::-moz-range-thumb {
-    width: var(--effort-thumb-size);
-    height: var(--effort-thumb-size);
-    border-radius: 50%;
-    background: var(--effort-thumb-background);
-    border: 1px solid var(--effort-thumb-border);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 2px 5px rgba(0, 0, 0, 0.12);
-    cursor: ew-resize;
-    transition: box-shadow 120ms ease, transform 90ms ease, background-color 160ms ease;
-  }
-  .effort-range::-moz-range-thumb:active {
-    cursor: ew-resize;
-    transform: scale(0.9);
-  }
-  .effort-range-glowing::-moz-range-thumb {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16),
-      0 2px 5px rgba(0, 0, 0, 0.12),
-      0 0 16px rgba(251, 106, 34, 0.48),
-      0 0 30px rgba(255, 133, 73, 0.22);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .effort-range::-webkit-slider-thumb,
-    .effort-range::-moz-range-thumb,
-    .effort-status {
-      transition: none;
-      animation: none;
-    }
   }
 `;
 

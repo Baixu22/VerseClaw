@@ -1,0 +1,61 @@
+{
+  "schema": "G3ReadinessFinalReview/v1",
+  "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "helperExitCode": 0,
+  "helperFindings": 0,
+  "rawFindings": 0,
+  "overallCorrectness": "patch is correct",
+  "overallExplanation": "This commit fixes a critical agent resolution bug in global session handling. The previous code used resolveAgentIdFromSessionKey which could incorrectly return 'main' for global keys, overriding the configured default agent. The fix uses resolveSessionStoreAgentId which correctly respects the configured default agent. Additionally, the commit adds comprehensive unit tests (gateway-compaction-readiness.test.ts), updates existing tests to cover the new behavior, moves isSessionBusyForManualCompaction to a dedicated module with admission registry checks, and adds evidence artifacts with proper checksums. All changes are well-tested and the logic is sound.",
+  "rawReviewSha256": "f9f715d2075b718e198b814e77cc33ba30bfdc0da8dd7e03713749e5950b5e37",
+  "sourceUnchanged": true,
+  "reviewOnlyCommit": "66a0e28a1de57c57b676ec4fa5fe7cecf46ba698",
+  "codeCommit": "eaf7e65fe530d7dbaedabd13bddf5c50fdb1334e",
+  "priorReviewFailures": "Corrected DeepSeek review was interrupted; a later DeepSeek attempt returned HTTP 502/TCP refusal and two authorized GPT attempts returned HTTP 503",
+  "attemptReceipts": [
+    {
+      "attempt": "deepseek-r1",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "receipt": "review-end-r22-deepseek-r1.json",
+      "sha256": "55a8cfba2e248b672572851fef5fb451613d9d55f68f3e3f2652bec113bbe2d2",
+      "helperExitType": "str"
+    },
+    {
+      "attempt": "deepseek-r2",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "receipt": "review-end-r22-deepseek-r2.json",
+      "sha256": "28c4a1cc64a95c5cf4cbd93c380fb824a8f40420f82adeb8e800d34540ff6025",
+      "helperExitType": "int"
+    },
+    {
+      "attempt": "deepseek-r4",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "receipt": "review-end-r22-deepseek-r4.json",
+      "sha256": "bcdcd3e8ab1b89ed43b63993146de1628f9bb6705f7485ad71762b99316eebf1",
+      "helperExitType": "str"
+    },
+    {
+      "attempt": "deepseek-r5",
+      "model": "ccs-workbuddy/deepseek-v4.1-flash",
+      "receipt": "review-end-r22-deepseek-r5.json",
+      "sha256": "358622c4d75bbfd414039e4d7de06dce825c5ef0042e8360afa0979cf41062e7",
+      "helperExitType": "int"
+    },
+    {
+      "attempt": "gpt-r1",
+      "model": "ccs-ai/gpt-6.1-sol",
+      "receipt": "review-end-r22-gpt-r1.json",
+      "sha256": "b47a5a5c866e7b0e3a2e8644297cb23108aa397c37443c8c231e6b2cf1a80f80",
+      "helperExitType": "str"
+    },
+    {
+      "attempt": "gpt-r2",
+      "model": "ccs-ai/gpt-6.1-sol",
+      "receipt": "review-end-r22-gpt-r2.json",
+      "sha256": "22ffb0d1474cb550f42bd2fe6cf4f239850a3ea25be7dfbd989271ab62a07666",
+      "helperExitType": "str"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "codex/g3-compaction-readiness-r22",
+  "realHumanEvidence": false
+}

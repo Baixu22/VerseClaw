@@ -1193,9 +1193,9 @@ export class VerseShellProcessManager {
       ));
     }
     await Promise.allSettled(
-      [...Array.from(this.processes.values(), (managed) => {
+      [...Array.from(this.processes, ([key, managed]) => {
         managed.tripKillSwitch(reason);
-        return managed.shutdown();
+        return this.shutdownManaged(key, managed);
       }), ...Array.from(this.startups.values(), (startup) => startup.promise)],
     );
   }

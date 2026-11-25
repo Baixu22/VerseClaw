@@ -9,6 +9,15 @@ import type { WorkspaceProfile } from '@shared/types/workspace';
 import { buildResumeCheckpoint, type LongTaskControlStatus } from '@shared/types/long-task-control';
 import { toast as sonnerToast } from 'sonner';
 
+vi.mock('@/components/chat/ChatModelSettingsCard', () => ({
+  ChatModelSettingsCard: ({ options, switchingModelRef, onSelectModel }: {
+    options: Array<{ modelRef: string; label: string }>;
+    switchingModelRef?: string;
+    onSelectModel: (reference: string) => void;
+  }) => <div data-testid="chat-model-options">{options.map(option => <button key={option.modelRef}
+    disabled={Boolean(switchingModelRef)} onClick={() => onSelectModel(option.modelRef)}>{option.label}</button>)}</div>,
+}));
+
 function render(ui: ReactElement) {
   return testingLibraryRender(ui, { wrapper: HashRouter });
 }
@@ -2007,6 +2016,7 @@ describe('ChatInput read-only context status', () => {
     // The modes live behind one trigger instead of a strip of icon buttons.
     expect(screen.queryByTestId('chat-intervention-controls')).not.toBeInTheDocument();
     expect(screen.queryByTestId('chat-intervention-guide')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-intervention-menu-trigger').textContent?.trim()).not.toBe('');
 
     fireEvent.click(screen.getByTestId('chat-composer-stop'));
     expect(onPauseSession).toHaveBeenCalledTimes(1);
@@ -2168,6 +2178,9 @@ describe('ChatInput read-only context status', () => {
     fireEvent.change(screen.getByTestId('chat-compaction-instructions'), {
       target: { value: 'Preserve the migration decision.' },
     });
+    expect(screen.getByTestId('chat-compaction-details')).not.toHaveAttribute('open');
+    expect(screen.getByTestId('chat-compaction-truncated')).toBeInTheDocument();
+    expect(screen.getAllByText('2.4k / 128k tokens')).toHaveLength(1);
     fireEvent.click(screen.getByTestId('chat-compaction-confirm'));
 
     await waitFor(() => {

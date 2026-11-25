@@ -1,0 +1,912 @@
+{
+  "root": "D:\\tmp\\clawx-output-stream-20261124",
+  "preserved": true,
+  "receipts": [
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\build-final.command.json",
+      "sha256": "6145bf1772f2e533f2f89a3a15e67cd9c6e7eb2da01114d6c6732814f8379078",
+      "label": "build-final",
+      "exitCode": 0,
+      "candidate": "1ead7cb43dd38f225ad588e62c378d08271db0b0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-final.stdout.log",
+        "sha256": "1e630330c108e7901dceb6d7f7d7d5b6da22b8b4f1d4f5bff56518ff789755c2"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-final.stderr.log",
+        "sha256": "12b65b225afe29acbd18d84fdd59576a893e0ef121efa85848433bde12790cb5"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\build-last-final.command.json",
+      "sha256": "f069d48f01e0619e3222f4eb6157306b46b4745a47e51d3a950b299b83ff4f56",
+      "label": "build-last-final",
+      "exitCode": 0,
+      "candidate": "287491d723ee1d914361a15fce6c35fa21644a54",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-last-final.stdout.log",
+        "sha256": "76e18154161946a95e3ca97dfc1e402605e24ded3c11be2076343042f7a6cde5"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-last-final.stderr.log",
+        "sha256": "12b65b225afe29acbd18d84fdd59576a893e0ef121efa85848433bde12790cb5"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r1.command.json",
+      "sha256": "ea2f772ea28ea20cbfaaf02ca9e58bf7776a8bda413283bdfe039654e2777df7",
+      "label": "build-prototype-r1",
+      "exitCode": 0,
+      "candidate": "f2f32e67f8970210c83a12bbe63433cf279cb333",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r1.stdout.log",
+        "sha256": "120780cb8e1adcb693365079308483c2a0e2af3949ef9edecfac087abf70ab6a"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r1.stderr.log",
+        "sha256": "cd2c36640b7bba17e1e56bd5ff15682b226d9cdd05e5d859e8ad7e9a89935e09"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r2.command.json",
+      "sha256": "ff019611d54b280f52131bc265682138cfa872af945595e2a29c8365bc08e1a0",
+      "label": "build-prototype-r2",
+      "exitCode": 0,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r2.stdout.log",
+        "sha256": "8c33ca61ea07d1fc5734f8543a6a459a491447167a34d6f2fe1816175c908b06"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r2.stderr.log",
+        "sha256": "cd2c36640b7bba17e1e56bd5ff15682b226d9cdd05e5d859e8ad7e9a89935e09"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r3.command.json",
+      "sha256": "ea30cb8c0c897af685152334c0133953e401fd528d3cfac18614ffef75b85fc8",
+      "label": "build-prototype-r3",
+      "exitCode": 0,
+      "candidate": "bb5afcfd7d577d92e72d74ef05047be077e15d51",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r3.stdout.log",
+        "sha256": "b500bd42bc92e09e5eef95ad92c2b110f51c2b111b4fd3cd085291d48b5e770d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-prototype-r3.stderr.log",
+        "sha256": "cd2c36640b7bba17e1e56bd5ff15682b226d9cdd05e5d859e8ad7e9a89935e09"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\build-receipt-final.command.json",
+      "sha256": "f16627715880e507ef7a5accc09d502b70c44b2c5c132bb5fd94c243bc3b0132",
+      "label": "build-receipt-final",
+      "exitCode": 0,
+      "candidate": "158033d09b8640194a9b42850d4d95fe7a7dc93b",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-receipt-final.stdout.log",
+        "sha256": "3da9d26c14fa3c98ab94e75fb58e7c9658a3fbf993a183da3e07606b08794eef"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\build-receipt-final.stderr.log",
+        "sha256": "12b65b225afe29acbd18d84fdd59576a893e0ef121efa85848433bde12790cb5"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-delivery.command.json",
+      "sha256": "fe1c2f0b4172cc1256817c23782667575142c545faf5fe1b21d72e911dc605e3",
+      "label": "comms-compare-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-delivery.stdout.log",
+        "sha256": "0ffa072896b6f5e6ec45755623830ef5949266b00706591b875d48033cca91b3"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-delivery.stderr.log",
+        "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-final.command.json",
+      "sha256": "60b3e5e36f21ed854c2a3abd07a1df0355659ead224f17703f83e462c2ba7a03",
+      "label": "comms-compare-final",
+      "exitCode": 0,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-final.stdout.log",
+        "sha256": "95805259a14cc0a7c9c2ae83fb0cd632a417aa7971d159ad6d87cda32606bf8b"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-final.stderr.log",
+        "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-verified.command.json",
+      "sha256": "153fc487a2f8f84e3f3b0cd966a607195fc91f4826d7071f7a6a6710a812db47",
+      "label": "comms-compare-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-verified.stdout.log",
+        "sha256": "5828a6adff5351130a405fcf67d4784224b372ca59dcfc7324c76fde5237495f"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-compare-verified.stderr.log",
+        "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-delivery.command.json",
+      "sha256": "2514f878be85c0d1dbc69ec32a331e1e59f6bf575ee7962e7a13b88f5a42506c",
+      "label": "comms-replay-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-delivery.stdout.log",
+        "sha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-delivery.stderr.log",
+        "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-final.command.json",
+      "sha256": "8b0a2e63a77345598a47a5d9b95985af219a988738034b9fcd445fe65d07b9f7",
+      "label": "comms-replay-final",
+      "exitCode": 0,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-final.stdout.log",
+        "sha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-final.stderr.log",
+        "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-verified.command.json",
+      "sha256": "a8895b95fafa05b3e1d4437d12883da02ac9804e6ba7c3704c09652f99327fe9",
+      "label": "comms-replay-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-verified.stdout.log",
+        "sha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\comms-replay-verified.stderr.log",
+        "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-delivery.command.json",
+      "sha256": "77b5fea5e627fe0922df8961617ebe701438f29980c7bfae7ab6612f401ee0f3",
+      "label": "contract-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-delivery.stdout.log",
+        "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-delivery.stderr.log",
+        "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-final.command.json",
+      "sha256": "c28348c92bf8e342f6d050825cada98e64dea3e356e637cda9f3d702452b10bd",
+      "label": "contract-final",
+      "exitCode": 0,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-final.stdout.log",
+        "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-final.stderr.log",
+        "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-verified.command.json",
+      "sha256": "d90d276dd5fce6ef605a6ae849680503c194937878e53b0031f9bce80017e331",
+      "label": "contract-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-verified.stdout.log",
+        "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\contract-verified.stderr.log",
+        "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-composer-r6.command.json",
+      "sha256": "a82ab77e96b3bd4e8bae7ebdc1e10863638731a187a555138a44b22eb6b069a7",
+      "label": "electron-composer-r6",
+      "exitCode": 0,
+      "candidate": "287491d723ee1d914361a15fce6c35fa21644a54",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-composer-r6.stdout.log",
+        "sha256": "83f180bf3352f61fe0971c40d43e3a99891df3ba34e9d55865e1a1641862807a"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-composer-r6.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-delivery.command.json",
+      "sha256": "88592ed52368e5402def4b558f38b1fefaf5be4d06144f4fe786687aac004bd5",
+      "label": "electron-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-delivery.stdout.log",
+        "sha256": "583c10628e8f5b99f39fe3162412674a88e2e90a619104ad02e35cac2d30c59d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-delivery.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r2.command.json",
+      "sha256": "09a1f642e042f1b33376c667a3eab9724c213dcd38fe868c6cfb3cdaebbab100",
+      "label": "electron-failed-r2",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r2.stdout.log",
+        "sha256": "6f02ea9086f02bc58cffebbd8edc80042ce0426693ec85dd69cc2aa8b6683699"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r3.command.json",
+      "sha256": "56e737011983a67e3a5dd05649548ca3b6ec1531baf2bf6adf96564eca969a30",
+      "label": "electron-failed-r3",
+      "exitCode": 1,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r3.stdout.log",
+        "sha256": "8a6f40e87ece1bd229d0aec9567b41b460992dcf811ec6dfa36b307fa6db1b0b"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r3.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r4.command.json",
+      "sha256": "64dad017c6e18f073e3b147c1cc18ebfc5b84c5076b68df032957a9a540c3d98",
+      "label": "electron-failed-r4",
+      "exitCode": 1,
+      "candidate": "158033d09b8640194a9b42850d4d95fe7a7dc93b",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r4.stdout.log",
+        "sha256": "8615cc0775b9d346cbbd70e84bf32264794a189ad2cba34a4cfda42097c7551e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-failed-r4.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-final-r1.command.json",
+      "sha256": "b53a05697d5ba59345c12e61e1e004f82812c936310f67975f3693fe406a259d",
+      "label": "electron-final-r1",
+      "exitCode": 1,
+      "candidate": "1ead7cb43dd38f225ad588e62c378d08271db0b0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-final-r1.stdout.log",
+        "sha256": "7cb0184ff07fd9e30c700ea7225a1d50e9abe590f2a027ffc8c9c654ae9f16fa"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-final-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-last-two-r5.command.json",
+      "sha256": "95c3966c6c90981165604e723116e9b58bd1c3ddc93bd2a6bba7349c02a83332",
+      "label": "electron-last-two-r5",
+      "exitCode": 1,
+      "candidate": "bd71f877e69b3ba755f40e31ffa30956dc001194",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-last-two-r5.stdout.log",
+        "sha256": "bb2d3e9abdff53dba541e11ec8d6e71f24312f054a9eff8039d9fa64792c943b"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-last-two-r5.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375.command.json",
+      "sha256": "0c3123cfc7e0a2b2041502a76e358346c4b0f26cdfd8dd054583523833f05497",
+      "label": "electron-native-375",
+      "exitCode": 0,
+      "candidate": "93e06939a816e1cc1cd209c61901302960dc2271",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375.stdout.log",
+        "sha256": "00cdebdaf282304729ca9b00980b50930cabbb22aca28521b2eb09a8968d168c"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-native-375.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r1.command.json",
+      "sha256": "d34056fd222ff61ba67fddb7923b1cea875adc833487e51785ee4076d7baba49",
+      "label": "electron-prototype-r1",
+      "exitCode": 1,
+      "candidate": "f2f32e67f8970210c83a12bbe63433cf279cb333",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r1.stdout.log",
+        "sha256": "14554c2d848c4d50381ade93d28475faa3a628b6a98b12bf8c464aed73d34a9e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r2.command.json",
+      "sha256": "e60f581ae817b477bc9499af92fe6f98f7c8497535f9cd3a71b3d6757c0eef62",
+      "label": "electron-prototype-r2",
+      "exitCode": 1,
+      "candidate": "f2f32e67f8970210c83a12bbe63433cf279cb333",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r2.stdout.log",
+        "sha256": "571b9208205a42a6326c972bb8e4039da9219eb6a883b5fc5e6b592295a1317d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r2.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r3.command.json",
+      "sha256": "b245636ba69bf8bde7c9fc955949959d9fa0ba963f783bab5cdd98e561328459",
+      "label": "electron-prototype-r3",
+      "exitCode": 1,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r3.stdout.log",
+        "sha256": "38623978bad6cd36de74a4572638372bc6d2de4c92aa63e335768602f2789dc1"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r3.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r4.command.json",
+      "sha256": "df5c7f92fa06292b7f2e36c8eb89998a6383855747be71d96d894d56e6738f3a",
+      "label": "electron-prototype-r4",
+      "exitCode": 1,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r4.stdout.log",
+        "sha256": "84ea285c5abf5b7e3a6ea797b72e2189b3aec3aa0ff675d89fea3a3a9df82848"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r4.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5.command.json",
+      "sha256": "5c70c64491dfbdeed7be343e918bce1eab5f4f2819e63731289082be2b612e9b",
+      "label": "electron-prototype-r5",
+      "exitCode": 0,
+      "candidate": "bb5afcfd7d577d92e72d74ef05047be077e15d51",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5.stdout.log",
+        "sha256": "290128f98435a513188aed59c82241c5cc56881417ff6f2299840919e8829f0b"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-delivery.command.json",
+      "sha256": "b41d13dc0063ce8187aaf001662962de65647c44714067a970b2662012e9492b",
+      "label": "harness-current-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-delivery.stdout.log",
+        "sha256": "f0de891b54254b49da6253db01bc84c61379af95c056299846bc625a4b6eb215"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-delivery.stderr.log",
+        "sha256": "b8a9ac5b56bdbfd9eff1f68cd6c1345de8bd92c51554d7307543e216f8991265"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-final.command.json",
+      "sha256": "f035712a3ecb9af7b0fa476e70c893c8aef36f875e4fff32d1a93d552407b894",
+      "label": "harness-current-final",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-final.stdout.log",
+        "sha256": "de0abbc1ccfae518e493de2c716c72ccd27015b758323a0b40419cd8cbd1fa89"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-final.stderr.log",
+        "sha256": "1a14c08d6e5ff445cfdc18c69d3eecbe4c998aacd8ba2153f2c76bb3edad6d71"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-verified.command.json",
+      "sha256": "7fb241bbd9b279c35dafb9145555d7d5486f4e7aca02bf546365c89293352de5",
+      "label": "harness-current-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-verified.stdout.log",
+        "sha256": "f0de891b54254b49da6253db01bc84c61379af95c056299846bc625a4b6eb215"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-current-verified.stderr.log",
+        "sha256": "b8a9ac5b56bdbfd9eff1f68cd6c1345de8bd92c51554d7307543e216f8991265"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-delivery.command.json",
+      "sha256": "a97e202fa85c905d649ae177ee30be80474cf7ade5f8f84904a69d2ac634ff8c",
+      "label": "harness-flow-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-delivery.stdout.log",
+        "sha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-delivery.stderr.log",
+        "sha256": "37c2cae9cdc96551908bca17c599d73c4e60f03348f0a6a7dc2a5a5117612d11"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-final.command.json",
+      "sha256": "9ce9c248bf2846a6d04f2057da49e2ee119f7ab73996bbe762b7112af68c2987",
+      "label": "harness-flow-final",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-final.stdout.log",
+        "sha256": "f5b486a481bdbdff20ad4f9b477466332ae38b721e36e7f71dc4109dc38d2c3a"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-final.stderr.log",
+        "sha256": "ea5ea535c06ab9db441124fc4e9b4f26678e3fdc8bce1dea92d9aadb49d727b4"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-verified.command.json",
+      "sha256": "0617b456ebe48697904dded1f0fb137ff7a3f286e08fb07524c82a843ce22675",
+      "label": "harness-flow-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-verified.stdout.log",
+        "sha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-flow-verified.stderr.log",
+        "sha256": "37c2cae9cdc96551908bca17c599d73c4e60f03348f0a6a7dc2a5a5117612d11"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-delivery.command.json",
+      "sha256": "2a8054c72dd771dd6b940cfa780fd436f9283073dd62367e96ebcdd283198323",
+      "label": "i18n-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-delivery.stdout.log",
+        "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-delivery.stderr.log",
+        "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-final.command.json",
+      "sha256": "05ad32aa4f8f801e5c6f8d4e1a0a50b152179717834fc3c79bee8f8b83f4150d",
+      "label": "i18n-final",
+      "exitCode": 0,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-final.stdout.log",
+        "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-final.stderr.log",
+        "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-verified.command.json",
+      "sha256": "7d69d6abc75901f142d4bed1b424a234ae8bb4ed253d679e4301ebc134af52aa",
+      "label": "i18n-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-verified.stdout.log",
+        "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\i18n-verified.stderr.log",
+        "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-delivery.command.json",
+      "sha256": "d5dde63eb128dccffa72134bce7ae973809efe1338ecd0c995d06827cf2ff012",
+      "label": "lint-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-delivery.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-delivery.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-final.command.json",
+      "sha256": "a2b99a382cef801d07f0755c192c474dcbe4ad64c7da670f00367399bb9dcbc5",
+      "label": "lint-final",
+      "exitCode": 0,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-final.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-final.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-verified.command.json",
+      "sha256": "1dda6ca8f202c822757e99cfe5ed5449ce6f93c68e6c58de242999d71ca10542",
+      "label": "lint-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-verified.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\lint-verified.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-delivery.command.json",
+      "sha256": "0f7cd6512623407ba3787ce16fb4f80aa12e60415ce7498b264029f1fe4105fa",
+      "label": "retention-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-delivery.stdout.log",
+        "sha256": "877e26356c302e22f251bee78c055371c2cd3323c204cea1552fb0fe25e3ae08"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-delivery.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-final.command.json",
+      "sha256": "5307687ad3d81dbc9303dd5af1dea6595ce26b2b77e312bcb51cef3f6938d331",
+      "label": "retention-final",
+      "exitCode": 1,
+      "candidate": "df7d936f78ce0786bbd58ad35d0033eae53240e0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-final.stdout.log",
+        "sha256": "e95fc444a11f5c2b73a81ab65ef1d5ee8e543509a8270ed784ef9eb0612711ce"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-final.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-verified.command.json",
+      "sha256": "a239a51415eda3ff1d3d225b5fd587277f95f03da5842451d3e23e65b51256f7",
+      "label": "retention-verified",
+      "exitCode": 0,
+      "candidate": "bb001542f37709d0ce849c24f05cbb6063696f48",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-verified.stdout.log",
+        "sha256": "877e26356c302e22f251bee78c055371c2cd3323c204cea1552fb0fe25e3ae08"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-verified.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-build-r1.command.json",
+      "sha256": "cd2204ac34b04224bff15dbe6c1729d312661dbd1209675ffc71330191dd8be9",
+      "label": "runtime-build-r1",
+      "exitCode": 134,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-build-r1.stdout.log",
+        "sha256": "89f5129eced093fee8b4e6c5fcff034a83e4b4cddd2ac6323961b7bb48397000"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-build-r1.stderr.log",
+        "sha256": "41c1535e20d307138d3a157a2d54f7c1590f43db32ecbaeec98da99dbd28389f"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-final.command.json",
+      "sha256": "eb436e6661ddb9b870a29f9ff99d7cc1d3769e12f8c59ad46fcd34501fa4dbb3",
+      "label": "runtime-qa-final",
+      "exitCode": 0,
+      "candidate": "1ead7cb43dd38f225ad588e62c378d08271db0b0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-final.stdout.log",
+        "sha256": "bea568cbbbaf2b89708b0dbb893d8777d644c1de27f57b374964d70bb06a7661"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-final.stderr.log",
+        "sha256": "0a147011b80902f9b9838c47c43a31db552e7a854d39d13aa65766af811fecbd"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-r1.command.json",
+      "sha256": "e8092c19236f6bb743f341670980c6f9debcadf60edb2340e606cc4ed76dbcd2",
+      "label": "runtime-qa-r1",
+      "exitCode": 0,
+      "candidate": "c5388a8bccebdb2742c37cf318745f03c73dd666",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-r1.stdout.log",
+        "sha256": "bea568cbbbaf2b89708b0dbb893d8777d644c1de27f57b374964d70bb06a7661"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-r1.stderr.log",
+        "sha256": "daf3d95252cdb897b50fd9a5f4370b90ce89854da9062c43d4c5270f02f079ea"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-r2.command.json",
+      "sha256": "4ee2594344bcf873f20ef1710a84d1c49c6aa11346b4e39a3fe0b7f771ae55df",
+      "label": "runtime-qa-r2",
+      "exitCode": 0,
+      "candidate": "bb5afcfd7d577d92e72d74ef05047be077e15d51",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-r2.stdout.log",
+        "sha256": "bea568cbbbaf2b89708b0dbb893d8777d644c1de27f57b374964d70bb06a7661"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-r2.stderr.log",
+        "sha256": "582f090ef57f4a0cd18a4dc06f965a3b3a26d21177f11e4f4de43f442819b4a0"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-receipt-final.command.json",
+      "sha256": "be17ac70d607aa25d3965ceec8479008cc19c07283e3b962b4ead6767978bbab",
+      "label": "runtime-qa-receipt-final",
+      "exitCode": 0,
+      "candidate": "158033d09b8640194a9b42850d4d95fe7a7dc93b",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-receipt-final.stdout.log",
+        "sha256": "bea568cbbbaf2b89708b0dbb893d8777d644c1de27f57b374964d70bb06a7661"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\runtime-qa-receipt-final.stderr.log",
+        "sha256": "0a54673f80a60cb5be80678e74263b7ae8e6f63244f64f42880fb92d44dc827d"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-delivery.command.json",
+      "sha256": "9e155be31d1b087ffd466b59a2a66213dca62194bbf72425f57bccd735724532",
+      "label": "typecheck-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-delivery.stdout.log",
+        "sha256": "327505cecbe2b0a3fa6a1eae641459fbd301446abbbb3729cef2ff468af64b05"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-delivery.stderr.log",
+        "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-final.command.json",
+      "sha256": "4d8d886439c60c1a6766aec566bd236d4808a0e3ae8978dbc671eb21a399ef46",
+      "label": "typecheck-final",
+      "exitCode": 0,
+      "candidate": "1ead7cb43dd38f225ad588e62c378d08271db0b0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-final.stdout.log",
+        "sha256": "1d6dac4aa5dbac30154757cb5b2562828e51e3a0850b081ffb8d5d1d83403c25"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-final.stderr.log",
+        "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-full-r1.command.json",
+      "sha256": "1f3ed0876407c1f1cb2aac599fa33c30fffeec20b27def395f29b1329ccc5d93",
+      "label": "typecheck-full-r1",
+      "exitCode": 0,
+      "candidate": "bb5afcfd7d577d92e72d74ef05047be077e15d51",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-full-r1.stdout.log",
+        "sha256": "d4e117ddf7958700ce7a8827958185418171fcbbca4c8508f17acb40439239c5"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-full-r1.stderr.log",
+        "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-test-native-375.command.json",
+      "sha256": "ca5322d1854851bfa4e038f072cfbbef56d5ed966a22c93032ea6376e37e7007",
+      "label": "typecheck-test-native-375",
+      "exitCode": 0,
+      "candidate": "93e06939a816e1cc1cd209c61901302960dc2271",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-test-native-375.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-test-native-375.stderr.log",
+        "sha256": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r1.command.json",
+      "sha256": "b86e9766cf38cee21ece9501cf2fc3d7e0a619608826198168b5e41719f5d6a2",
+      "label": "typecheck-web-r1",
+      "exitCode": 2,
+      "candidate": "87cbea6a810ecebe211094df998a73491665bbb1",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r1.stdout.log",
+        "sha256": "f1a10271a275693d1c358d25030e056029a8c9d263a2768fa6ba99715c5652e7"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r1.stderr.log",
+        "sha256": "4c6a5db0241dc9cb197b5cfb6af63ed04a35ec305fe459bfa8e886e2bcd904a4"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r2.command.json",
+      "sha256": "a9d50a590697fd61d664ac9a4ecc5fd8ff567024b9a576f671ac747c9075670f",
+      "label": "typecheck-web-r2",
+      "exitCode": 0,
+      "candidate": "f2f32e67f8970210c83a12bbe63433cf279cb333",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r2.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\typecheck-web-r2.stderr.log",
+        "sha256": "4c6a5db0241dc9cb197b5cfb6af63ed04a35ec305fe459bfa8e886e2bcd904a4"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-delivery.command.json",
+      "sha256": "357d133d7b029550ac2ff7c6f6268aeb98212dd9481cd1e8841ed17d91f4a0b8",
+      "label": "unit-delivery",
+      "exitCode": 0,
+      "candidate": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-delivery.stdout.log",
+        "sha256": "040362e98907dd0b9c4f36320fe0ff96c0df79130047644d405f6684417fc8f0"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-delivery.stderr.log",
+        "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-final.command.json",
+      "sha256": "edd1f0f003468991b5e9aace0fa55eb7e97d946f728b1fdcde7f017c20d81201",
+      "label": "unit-final",
+      "exitCode": 0,
+      "candidate": "1ead7cb43dd38f225ad588e62c378d08271db0b0",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-final.stdout.log",
+        "sha256": "0e2e1156d74b1797d3542e3f5b2ef2c23ddd86bffaba69b910d3127932cb6b37"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-final.stderr.log",
+        "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r2.command.json",
+      "sha256": "a66aee698a5fe45b7d914a084610155625af0f9194c71f84ec21e184a7d719d3",
+      "label": "unit-r2",
+      "exitCode": 1,
+      "candidate": "c6c12108a787fb49abd921f905dfb373480e7f61",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r2.stdout.log",
+        "sha256": "ce328650641e827ffcacd4a4bfea5b22279315c9a955b7567ec37772ff2faaea"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r2.stderr.log",
+        "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r3.command.json",
+      "sha256": "2c813dbb6dabdbcf07a775a2dced7d2ba28abb0aa63848aa86d30a04469a0b26",
+      "label": "unit-r3",
+      "exitCode": 1,
+      "candidate": "c6c12108a787fb49abd921f905dfb373480e7f61",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r3.stdout.log",
+        "sha256": "d8c557077e9f8516a9c4128de9243180152ff3c6e51679b65ea17d0bafa8e16e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r3.stderr.log",
+        "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r4.command.json",
+      "sha256": "7b79ac93cb160dc0e9672c2993e42f40c5cfe233ed129977e0972ce0c76fafc6",
+      "label": "unit-r4",
+      "exitCode": 0,
+      "candidate": "87cbea6a810ecebe211094df998a73491665bbb1",
+      "stdout": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r4.stdout.log",
+        "sha256": "92cb9f6c2a4c2f91dbfb962f761560c5fb114e580e1cbcdbfe472d8df44b969b"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-output-stream-20261124\\unit-r4.stderr.log",
+        "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+      }
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-final-flow.command.json",
+      "sha256": "b4e0f61632f6de91b9eac0f5ce51e5bbf7e1f0270dd7d38afc2ac3600f06c86b",
+      "label": "harness-final-flow",
+      "exitCode": 0,
+      "candidate": "93e06939a816e1cc1cd209c61901302960dc2271"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\harness-final-validate.command.json",
+      "sha256": "4cdb5ead79dc441315fca36af262691b02e99f17e308668669dedb8679389e66",
+      "label": "harness-final-validate",
+      "exitCode": 0,
+      "candidate": "93e06939a816e1cc1cd209c61901302960dc2271"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\retention-final-evidence.command.json",
+      "sha256": "1827cb21211caf8843a9d0ad083c25a6085f253a80487e9d404b8235f9e9e12f",
+      "label": "retention-final-evidence",
+      "exitCode": 0,
+      "candidate": "93e06939a816e1cc1cd209c61901302960dc2271"
+    }
+  ]
+}

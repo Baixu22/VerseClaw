@@ -1,0 +1,61 @@
+{
+  "actor": "codex-output-ui",
+  "driven_by": "agent",
+  "label": "unit-r4",
+  "command": [
+    "pnpm.cmd",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/tool-activity-groups.test.ts",
+    "tests/unit/tool-activity-group.test.tsx",
+    "tests/unit/execution-graph-card-badge.test.tsx",
+    "tests/unit/chat-page-execution-graph.test.tsx",
+    "tests/unit/chat-render-reachability.test.tsx",
+    "tests/unit/task-visualization.test.ts",
+    "tests/unit/tool-ui-run-surfaces.test.ts",
+    "tests/unit/runtime-approval-prompt.test.tsx",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile=D:/tmp/clawx-tool-progress-20261124/unit-r4.json"
+  ],
+  "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+  "candidate": {
+    "commit": "88e727353d9e45f6273b92e433cb187ba1ca4070",
+    "tree": "3300cc58f5bf94bc45df9ddd4f8c14465529298d",
+    "dirty": false
+  },
+  "authorization": "Owner-approved independent UI continuation; user instruction in chat 01a203cc-57b1-7c91-9c16-ad6a016cd2b2",
+  "timeoutSeconds": 300,
+  "admission": {
+    "freeBytes": 5639380992,
+    "minimumFreeBytes": 4294967296,
+    "heavy": []
+  },
+  "startedAt": "2026-11-24T05:43:12.289874+00:00",
+  "status": "finished",
+  "resourceLimits": {
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "GOMEMLIMIT": "900MiB",
+    "GOMAXPROCS": "2",
+    "workers": 1
+  },
+  "electronRuntime": {
+    "executable": "D:/tmp/electron-40.8.4/dist/electron.exe",
+    "moduleOverride": "D:/tmp/electron-40.8.4/dist"
+  },
+  "independentUIAuthorized": true,
+  "driverPid": 8660,
+  "exitCode": 0,
+  "durationSeconds": 31.39,
+  "sourceUnchanged": true,
+  "stdout": {
+    "path": "D:\\tmp\\clawx-tool-progress-20261124\\unit-r4.stdout.log",
+    "sha256": "4695cf7e23c08ed8878d843c73c41fa7991181902abff013e3ea72edcd6406c3"
+  },
+  "stderr": {
+    "path": "D:\\tmp\\clawx-tool-progress-20261124\\unit-r4.stderr.log",
+    "sha256": "83f201f6e77c113efbf9ac7a6ebb33150066610c9e0e6a7d0b14727f81ed41bd"
+  }
+}

@@ -27,6 +27,7 @@ touchedAreas:
   - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
   - src/components/tool-ui/plan-view.tsx
   - src/components/assistant-render/TurnSummaryCard.tsx
+  - src/styles/codex-tokens.css
   - src/styles/codex-composer-shell.css
   - src/styles/codex-composer-menu.css
   - src/styles/codex-composer-material.css
@@ -34,12 +35,15 @@ touchedAreas:
   - shared/i18n/locales/*/chat.json
   - shared/i18n/locales/*/taskLedger.json
   - tests/unit/chat-input.test.tsx
+  - tests/unit/chat-message.test.tsx
   - tests/unit/session-task-dock.test.tsx
   - tests/unit/session-task-state-guidance.test.tsx
   - tests/unit/chat-render-reachability.test.tsx
   - tests/unit/fp-p1-scripted-usage.test.ts
   - tests/unit/model-brand.test.ts
   - tests/e2e/fixtures/fp-p1-harness.ts
+  - tests/e2e/chat-layout-cdp.spec.ts
+  - tests/e2e/beam-composer-verify.spec.ts
   - tests/e2e/chat-planning-composer-ux.spec.ts
   - tests/e2e/chat-composer-popovers.spec.ts
   - tests/e2e/chat-long-task-control.spec.ts
@@ -52,11 +56,14 @@ touchedAreas:
   - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/fixtures/chat-planning-composer-ux/20261123/**
   - harness/specs/fixtures/chat-planning-composer-ux/20261123-followup/**
+  - harness/specs/fixtures/chat-planning-composer-ux/20261123-material/**
 expectedUserBehavior:
   - 底栏保留模型原名，仅在宽度不足时单行省略，完整名称和路由仍可从提示及列表查看。
   - 发送、停止和继续使用统一圆形按钮，深色主题采用浅色圆底和深色图标。
   - 知识模式、来源和检索方案从一个入口设置，额外调用档位有可见标签。
-  - 输入框与任务条共享内容宽度，目标、当前步骤和状态形成稳定的一行。
+  - 输入框与任务条共享单层外框，折叠行只显示目标、中性步骤计数与必要状态操作；当前步骤在展开区查看。
+  - 任务状态仅以低饱和微标提示，运行时不再渲染比例圆环或输入框流光；阻塞和读取失败提供独立操作按钮。
+  - 输入区采用16px圆角与实色材质，已发用户消息采用12px圆角、清晰细边与接触阴影。
   - 持久目标与本轮计划并存时，本轮步骤可查看且只保留一个实时规划入口。
   - 本轮步骤完成后，持久任务仍使用任务 owner 的验收状态。
   - 自动读取、队列和恢复继续沿现有服务运行；正常 checkpoint 与干预记录按需查看。
@@ -90,3 +97,5 @@ docs:
 ---
 
 当前主线已有任务体系资源。本次聚焦会话规划与输入区，沿用现有 Host、任务归属、发送和知识服务。布局与信息显隐由 renderer 负责，任务完成继续以 Task Ledger owner 为准。截图和交互由 agent 驱动。
+
+2026-11-23 Carbon 二次设计：本规格的新材质及进度显隐规则取代旧的25px输入圆角、流光边框、蓝色状态文字和折叠态当前步骤摘要。具体设计与前后截图位于 `fixtures/chat-planning-composer-ux/20261123-material/`。

@@ -253,6 +253,8 @@ export type EmbeddedAgentSubscribeContext = {
     data: AssistantStreamData,
     options?: { emitPartialReply?: boolean },
   ) => void;
+  emitReasoningEnd: () => void;
+  emitAssistantMessageStart: () => void;
   emitBlockReply: (payload: BlockReplyPayload) => void;
   flushDeferredAssistantEvents: () => void;
   flushDeferredBlockReplies: () => void;

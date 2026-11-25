@@ -9,6 +9,7 @@ import {
 import { resolveInstalledPluginIndexPolicyHash } from "./installed-plugin-index-policy.js";
 import {
   resolvePluginControlPlaneFingerprint,
+  resolvePluginDiscoveryFingerprint,
   type ResolvePluginControlPlaneContextParams,
 } from "./plugin-control-plane-context.js";
 import { registerPluginMetadataProcessMemoLifecycleClear } from "./plugin-metadata-lifecycle.js";
@@ -99,21 +100,29 @@ export function setCurrentPluginMetadataSnapshot(
     configFingerprint,
     compatiblePolicyHashes,
     compatibleConfigFingerprints,
+    snapshot
+      ? resolvePluginDiscoveryFingerprint({
+          config: options.config,
+          env: options.env,
+          workspaceDir: options.workspaceDir ?? snapshot.workspaceDir,
+        })
+      : undefined,
+    Boolean(defaultDiscoveryCompatible),
   );
   if (!snapshot) {
     return;
   }
-  if (options.config) {
-    const policyHash = resolveInstalledPluginIndexPolicyHash(options.config);
+  for (const config of [
+    ...(options.config ? [options.config] : []),
+    ...(options.compatibleConfigs ?? []),
+  ]) {
+    const policyHash = resolveInstalledPluginIndexPolicyHash(config);
     if (
       policyHash === snapshot.policyHash ||
       Boolean(compatiblePolicyHashes?.includes(policyHash))
     ) {
-      currentPluginMetadataConfigIdentityCache.add(options.config);
+      currentPluginMetadataConfigIdentityCache.add(config);
     }
-  }
-  for (const config of options.compatibleConfigs ?? []) {
-    currentPluginMetadataConfigIdentityCache.add(config);
   }
 }
 
@@ -132,30 +141,17 @@ export function restoreCurrentPluginMetadataSnapshotState(
 ): void {
   currentPluginMetadataConfigIdentityCache = new WeakSet();
   const snapshot = state.snapshot as PluginMetadataSnapshot | undefined;
-  const defaultDiscoveryConfigFingerprint = snapshot
-    ? resolvePluginMetadataControlPlaneFingerprint(
-        {},
-        {
-          index: snapshot.index,
-          policyHash: snapshot.policyHash,
-          workspaceDir: snapshot.workspaceDir,
-        },
-      )
-    : undefined;
-  const defaultDiscoveryCompatible =
-    snapshot &&
-    defaultDiscoveryConfigFingerprint &&
-    (state.configFingerprint === defaultDiscoveryConfigFingerprint ||
-      snapshot.configFingerprint === defaultDiscoveryConfigFingerprint ||
-      Boolean(state.compatibleConfigFingerprints?.includes(defaultDiscoveryConfigFingerprint)));
+  // Restore the captured registration; process.env may differ from its owner context.
   setCurrentManifestModelIdNormalizationRecords(
-    defaultDiscoveryCompatible ? snapshot.plugins : undefined,
+    state.defaultDiscoveryCompatible ? snapshot?.plugins : undefined,
   );
   setCurrentPluginMetadataSnapshotState(
     state.snapshot,
     state.configFingerprint,
     state.compatiblePolicyHashes,
     state.compatibleConfigFingerprints,
+    state.discoveryFingerprint,
+    state.defaultDiscoveryCompatible,
   );
 }
 
@@ -176,6 +172,7 @@ export function getCurrentPluginMetadataSnapshot(
     configFingerprint,
     compatiblePolicyHashes,
     compatibleConfigFingerprints,
+    discoveryFingerprint,
   } = getCurrentPluginMetadataSnapshotState();
   const snapshot = rawSnapshot as PluginMetadataSnapshot | undefined;
   if (!snapshot) {
@@ -208,6 +205,16 @@ export function getCurrentPluginMetadataSnapshot(
   if (
     requestedWorkspaceDir !== undefined &&
     (snapshot.workspaceDir ?? "") !== (requestedWorkspaceDir ?? "")
+  ) {
+    return undefined;
+  }
+  if (
+    discoveryFingerprint !==
+    resolvePluginDiscoveryFingerprint({
+      config: params.config,
+      env,
+      workspaceDir: requestedWorkspaceDir,
+    })
   ) {
     return undefined;
   }

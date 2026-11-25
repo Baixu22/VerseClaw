@@ -1,0 +1,16 @@
+{
+  "codeCommit": "7b5da98252c4fe947ee1875e1552a1b3e397e4a6",
+  "sourceInputs": 18,
+  "normalizedGitIdentityMatched": true,
+  "compiledInputs": 6778,
+  "compiledReadbackMatched": true,
+  "baselineCompiledInputs": 497,
+  "nativeArtifactHashesMatched": true,
+  "archiveEntries": 7468,
+  "archiveReadbackMatched": true,
+  "credentialValueHits": 0,
+  "firstFailuresPreserved": true,
+  "actor": "codex/g3-trajectory-readback",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

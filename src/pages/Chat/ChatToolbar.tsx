@@ -1,4 +1,4 @@
-import { Activity, Gauge, GitBranchPlus, Loader2, MoreHorizontal, PackageOpen, RefreshCw, Settings2 } from 'lucide-react';
+import { Activity, Gauge, MessagesSquare, Loader2, MoreHorizontal, PackageOpen, RefreshCw, Settings2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +32,7 @@ type ChatToolbarProps = {
   checkpointsDisabled?: boolean;
   onForkSession?: () => void | Promise<void>;
   forkDisabled?: boolean;
+  forkDisabledReason?: string;
   forkBusy?: boolean;
   onHandoffSession?: () => void | Promise<void>;
   handoffDisabled?: boolean;
@@ -77,6 +78,7 @@ export function ChatToolbar({
   checkpointsDisabled,
   onForkSession,
   forkDisabled,
+  forkDisabledReason,
   forkBusy,
   onHandoffSession,
   handoffDisabled,
@@ -112,7 +114,7 @@ export function ChatToolbar({
   const browserActive = WORKSPACE_BROWSER_ENABLED && panelOpen;
   const showPromptCacheChip = shouldShowPromptCacheChip(promptCacheStatus);
   const promptCacheReason = promptCacheStatus?.reason ?? promptCacheStatus?.lastRiskEvent?.reason;
-  const recommendedAction = continuityRecommendation?.disabled ? null : continuityRecommendation?.action;
+  const recommendHandoff = !continuityRecommendation?.disabled && continuityRecommendation?.reason === 'high_pressure';
 
   return (
     <div className="flex min-w-0 items-center gap-1">
@@ -230,18 +232,17 @@ export function ChatToolbar({
             disabled={checkpointsDisabled} onClick={() => { setMoreOpen(false); onCheckpoints(); }}>
             <ListChecks className="h-4 w-4" aria-hidden="true" />{t('filePreview.checkpoints.title')}
           </button>}
-          {onForkSession && <button type="button" role="menuitem" data-testid="chat-session-fork" className="codex-header-menu__item"
-            disabled={forkDisabled || forkBusy} onClick={() => { setMoreOpen(false); void onForkSession(); }}>
-            {forkBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <GitBranchPlus className="h-4 w-4" aria-hidden="true" />}
-            <span className="flex-1">{t('composer.fork.action')}</span>
-            {recommendedAction === 'fork' && <span data-testid="chat-session-fork-recommended" className="text-2xs text-muted-foreground">{t('composer.continuity.recommended')}</span>}
-          </button>}
-          {onHandoffSession && <button type="button" role="menuitem" data-testid="chat-session-handoff" className="codex-header-menu__item"
+          {onHandoffSession && <button type="button" role="menuitem" data-testid="chat-session-handoff" className="codex-header-menu__item chat-continuity-menu-item"
             disabled={handoffDisabled || handoffBusy} title={handoffDisabledReason}
             onClick={() => { setMoreOpen(false); void onHandoffSession(); }}>
             {handoffBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" aria-hidden="true" />}
-            <span className="flex-1">{t('composer.handoff.action')}</span>
-            {recommendedAction === 'handoff' && <span data-testid="chat-session-handoff-recommended" className="text-2xs text-muted-foreground">{t('composer.continuity.recommended')}</span>}
+            <span className="min-w-0 flex-1"><span>{t('composer.handoff.action')}</span><small>{handoffDisabledReason ?? t('composer.continuity.handoffDescription')}</small></span>
+            {recommendHandoff && <span data-testid="chat-session-handoff-recommended" className="text-2xs text-muted-foreground">{t('composer.continuity.recommended')}</span>}
+          </button>}
+          {onForkSession && <button type="button" role="menuitem" data-testid="chat-session-fork" className="codex-header-menu__item chat-continuity-menu-item" title={forkDisabledReason}
+            disabled={forkDisabled || forkBusy} onClick={() => { setMoreOpen(false); void onForkSession(); }}>
+            {forkBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessagesSquare className="h-4 w-4" aria-hidden="true" />}
+            <span className="min-w-0 flex-1"><span>{t('composer.fork.action')}</span><small>{forkDisabledReason ?? t('composer.continuity.forkDescription')}</small></span>
           </button>}
           {(onCheckpoints || onForkSession || onHandoffSession) && <hr className="codex-header-menu__sep" />}
           <button type="button" role="menuitem" data-testid="chat-toolbar-refresh" disabled={loading}

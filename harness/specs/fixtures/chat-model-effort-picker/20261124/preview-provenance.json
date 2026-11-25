@@ -1,0 +1,16 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "sourceRun": "electron-r14",
+  "sources": [
+    "settings-tooltip-dark-1280.png",
+    "models-dark-1280.png"
+  ],
+  "crop": [
+    750,
+    245,
+    1124,
+    492
+  ],
+  "transformation": "Original-pixel crops placed side by side"
+}

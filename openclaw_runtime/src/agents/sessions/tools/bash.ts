@@ -15,6 +15,7 @@ import type { AgentTool } from "../../runtime/index.js";
 import { getBashShellConfig, getShellEnv, killProcessTree } from "../../shell-utils.js";
 import { waitForChildProcess } from "../../utils/child-process.js";
 import { normalizeWorkspaceLeaseKey, withWorkspaceResourceLease } from "../../resource-leases.js";
+import { startManagedChildProcess } from "../../verseshell/managed-process-capacity.js";
 import type { ToolDefinition, ToolRenderResultOptions } from "../extensions/types.js";
 import type { BashOperations } from "./bash-operations.js";
 import { OutputAccumulator } from "./output-accumulator.js";
@@ -62,13 +63,13 @@ export function createLocalBashOperations(options?: { shellPath?: string }): Bas
           );
           return;
         }
-        const child = spawn(shell, [...args, command], {
+        const child = startManagedChildProcess(() => spawn(shell, [...args, command], {
           cwd,
           detached: process.platform !== "win32",
           env: env ?? getShellEnv(),
           stdio: ["ignore", "pipe", "pipe"],
           windowsHide: true,
-        });
+        }), `local-bash:${cwd}`);
         let timedOut = false;
         let timeoutHandle: NodeJS.Timeout | undefined;
         const timeoutMs = resolveBashTimeoutMs(timeout);

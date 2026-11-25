@@ -1,0 +1,11 @@
+{
+  "recordsMatched": 15,
+  "candidate": "eaf7e65fe530d7dbaedabd13bddf5c50fdb1334e",
+  "testsPassed": 2,
+  "testsFailed": 0,
+  "sourceRestored": true,
+  "credentialValueHits": 0,
+  "gaVerdict": "NO_GO",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

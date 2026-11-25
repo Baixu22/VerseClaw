@@ -486,9 +486,13 @@ export function writeLegacyCliExitCompatChunks(params = {}) {
   }
 }
 
-function shouldCopyStaticExtensionAssets(params) {
-  const env = params.env ?? process.env;
-  return env.OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS !== "0";
+export function copyRuntimeStaticExtensionAssets(params = {}) {
+  if ((params.env ?? process.env).OPENCLAW_RUNTIME_POSTBUILD_STATIC_ASSETS === "0") {
+    return;
+  }
+  const options = { rootDir: ROOT, ...params };
+  copyStaticExtensionAssets(options);
+  copyStaticExtensionAssetsToRuntimeOverlay(options);
 }
 
 /**
@@ -511,17 +515,7 @@ export function runRuntimePostBuild(params = {}) {
   runPhase("bundled plugin metadata", () => copyBundledPluginMetadata(params));
   runPhase("official channel catalog", () => writeOfficialChannelCatalog(params));
   runPhase("bundled plugin runtime overlay", () => stageBundledPluginRuntime(params));
-  runPhase("static extension assets", () => {
-    if (!shouldCopyStaticExtensionAssets(params)) {
-      return;
-    }
-    const staticAssetParams = {
-      rootDir: ROOT,
-      ...params,
-    };
-    copyStaticExtensionAssets(staticAssetParams);
-    copyStaticExtensionAssetsToRuntimeOverlay(staticAssetParams);
-  });
+  runPhase("static extension assets", () => copyRuntimeStaticExtensionAssets(params));
   runPhase("stable root runtime imports", () => rewriteRootRuntimeImportsToStableAliases(params));
   runPhase("stable root runtime aliases", () => writeStableRootRuntimeAliases(params));
   runPhase("legacy root runtime compat aliases", () => writeLegacyRootRuntimeCompatAliases(params));

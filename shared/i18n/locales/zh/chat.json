@@ -1293,7 +1293,8 @@
         "empty": "暂无提交",
         "aheadBehind": "领先 / 落后当前分支"
       }
-    }
+    },
+    "switchBusy": "会话运行中，停止或完成后可切换。"
   },
   "taskPanel": {
     "eyebrow": "运行视图",
@@ -1439,9 +1440,9 @@
       "knowledge": "搜索知识",
       "model": "模型",
       "more": "更多",
-      "compact": "压缩会话",
-      "fork": "分叉会话",
-      "handoff": "交接会话"
+      "compact": "整理上下文",
+      "fork": "分支继续",
+      "handoff": "摘要接力"
     },
     "office": {
       "excel": "Excel",
@@ -1656,18 +1657,18 @@
           "argumentHint": "[任务标题]"
         },
         "compact": {
-          "label": "压缩会话",
-          "description": "打开当前会话的压缩确认对话框。",
+          "label": "整理上下文",
+          "description": "在当前会话总结早期消息，腾出上下文空间。",
           "argumentHint": ""
         },
         "fork": {
-          "label": "Fork 会话",
-          "description": "通过现有 Fork 流程把当前聊天分支到新会话。",
+          "label": "分支继续",
+          "description": "复制当前上下文打开新会话，由你发送下一条。",
           "argumentHint": ""
         },
         "handoff": {
-          "label": "Handoff 会话",
-          "description": "在新会话中准备可编辑的接力草稿。",
+          "label": "摘要接力",
+          "description": "检查可编辑摘要，确认后新建并发送。",
           "argumentHint": ""
         },
         "new": {
@@ -1808,16 +1809,16 @@
       "compressTooltip": "压缩当前会话历史",
       "viewEvidence": "查看压缩证据",
       "viewEvidenceTooltip": "继续前查看压缩证据",
-      "dialogTitle": "压缩当前会话",
-      "dialogDescription": "确认后会总结当前会话中较早的聊天历史。长期任务状态仍由 Task Ledger 和 Context Pack 引用承载。",
+      "dialogTitle": "整理上下文",
+      "dialogDescription": "将较早的消息总结为摘要，保留近期对话。",
       "tokenUsage": "Token 使用量",
       "hiddenMessages": "已隐藏消息",
       "lastCompaction": "上次压缩",
       "neverCompacted": "从未压缩",
       "expectedEffect": "下一次模型请求会承载更少的 transcript 压力，同时保留目标、决策、开放任务、失败尝试、改动文件、约束和待复核项。",
-      "instructionsLabel": "额外压缩说明",
-      "instructionsPlaceholder": "可选：告诉总结器必须保留哪些内容。",
-      "confirm": "压缩当前会话",
+      "instructionsLabel": "需要特别保留什么？（可选）",
+      "instructionsPlaceholder": "例如：已确认的方案、约束和未完成事项",
+      "confirm": "开始整理",
       "cancel": "取消",
       "unknown": "未知",
       "unavailable": "当前不可压缩",
@@ -1851,7 +1852,7 @@
         "noUnverifiedClaims": "没有报告未验证声明。",
         "noReviewNeeded": "没有报告复核项。",
         "prepareRecovery": "准备恢复上下文",
-        "forkSession": "Fork/branch session",
+        "forkSession": "分支继续",
         "close": "关闭",
         "qualityScore": "评分 {{score}}%",
         "qualityCoverage": "证据 {{evidence}}% · 字段 {{fields}}% · 恢复 {{tokens}} tokens",
@@ -1866,7 +1867,8 @@
         "no_session": "没有活动会话",
         "no_transcript": "未找到 transcript",
         "gateway_unavailable": "Gateway 不可用"
-      }
+      },
+      "truncatedNotice": "当前上下文有 {{count}} 条消息被截断。整理会使用可读取的历史。"
     },
     "contextPressure": {
       "title": "会话上下文",
@@ -2021,15 +2023,22 @@
             "description": "无法准备延续草稿。"
           }
         }
-      }
+      },
+      "forkDescription": "复制当前上下文打开新会话，由你发送下一条。",
+      "handoffDescription": "检查可编辑摘要，确认后新建并发送。",
+      "compactDescription": "在当前会话总结早期消息，腾出上下文空间。",
+      "details": "更多详情",
+      "forkPreparing": "正在打开会话分支…",
+      "handoffPreparing": "正在准备接力摘要…"
     },
     "fork": {
-      "action": "Fork 到新对话",
-      "tooltip": "从当前 transcript 创建新的对话分支",
+      "action": "分支继续",
+      "tooltip": "复制当前上下文，在新会话中继续提问。",
       "disabledActiveRun": "当前运行结束后可用",
       "toastCreated": "已创建 Fork 对话",
       "toastFailed": "Fork 对话失败",
-      "boundaryNote": "复制截至此处之前的对话,以及提供方/模型/思考设置与工作区界面状态;任务台账、记忆与知识内容不会被复制。"
+      "boundaryNote": "复制截至此处之前的对话,以及提供方/模型/思考设置与工作区界面状态;任务台账、记忆与知识内容不会被复制。",
+      "disabledGateway": "连接恢复后可用"
     },
     "compactRange": {
       "toastCompacted": "已摘要选定的范围",
@@ -2037,18 +2046,26 @@
       "toastFailedDescription": "无法摘要该范围，未做任何更改。"
     },
     "handoff": {
-      "action": "接力到新对话",
-      "tooltip": "在新会话中准备继续工作的草稿",
+      "action": "摘要接力",
+      "tooltip": "整理进度，在新会话中继续任务。",
       "disabledActiveRun": "当前运行结束后可用",
-      "dialogTitle": "接力到新对话",
-      "dialogDescription": "先检查并编辑接力草稿。“创建并发送”会打开新会话，并将草稿作为首条消息提交。若发送结果未确认，系统会保留草稿供核实和恢复。",
-      "draftLabel": "接力草稿",
+      "dialogTitle": "摘要接力",
+      "dialogDescription": "检查下方摘要，“创建并发送”会打开新会话并首发此内容。",
+      "draftLabel": "接力内容",
       "create": "创建并发送",
       "cancel": "取消",
       "toastPrepareFailed": "接力准备失败",
       "toastCreateFailed": "创建接力会话失败",
       "toastCreated": "已创建接力会话",
-      "ledgerSummary": "从 {{source}} 创建的接力会话"
+      "ledgerSummary": "从 {{source}} 创建的接力会话",
+      "sources": "内容来源",
+      "sourceWarnings": "{{count}} 项提示",
+      "sourceReady": "已纳入",
+      "sourceMissing": "未提供",
+      "creating": "正在创建并发送…",
+      "resumeSend": "恢复并发送",
+      "savedDraft": "恢复时使用已保存的内容，保留同一次发送记录。",
+      "pressureHint": "上下文空间较紧。"
     },
     "runLogReplay": "来自运行日志(非会话原文)",
     "workspaceActions": "工作区操作",
@@ -2140,16 +2157,17 @@
     "workModeRecommendedPermission": "建议：{{mode}}",
     "intervention": {
       "menu": "发送方式",
-      "guide": "引导",
-      "guideTooltip": "不停止运行，在下一步加入当前运行",
+      "guide": "加入当前运行",
+      "guideTooltip": "把补充要求交给当前任务",
       "longTaskRequired": "中断和引导需要活动的长任务。",
       "reviseGoal": "修改目标",
-      "reviseGoalTooltip": "保存检查点，并以这条消息作为新目标重新开始",
+      "reviseGoalTooltip": "以这条消息作为新目标重新开始",
       "queueDefault": "运行中：Enter 默认排队",
-      "queue": "排队",
-      "queueTooltip": "当前运行结束后再发送",
-      "interrupt": "打断并发送",
-      "interruptTooltip": "保存检查点，停止当前运行并从这条消息重新开始"
+      "queue": "结束后发送",
+      "queueTooltip": "当前运行结束后处理",
+      "interrupt": "停止后发送",
+      "interruptTooltip": "保存进度，停止后处理新消息",
+      "sendDraft": "立即发送此草稿"
     },
     "rollbackPlan": {
       "title": "恢复辅助",
@@ -2328,7 +2346,11 @@
       "interventionFailed": "上次调整未成功",
       "suggestedKnowledge": "找到 {{count}} 条相关知识",
       "connecting": "正在连接，草稿已保留"
-    }
+    },
+    "modelPickerSearch": "搜索模型或提供商",
+    "modelPickerEmpty": "没有匹配的模型",
+    "effortResetAutomatic": "将思考强度重置为自动",
+    "effortResetFailed": "思考强度重置失败，请重试。"
   },
   "historyBuckets": {
     "today": "今天",
@@ -2943,17 +2965,17 @@
     "sourceChanged": "来源会话已变化，请重新打开预览。"
   },
   "handoffRecovery": {
-    "resume": "按已保存草稿恢复",
-    "check": "核实首发状态",
-    "openChild": "打开子会话",
+    "resume": "继续接力",
+    "check": "核对发送状态",
+    "openChild": "打开接力会话",
     "phase": {
-      "creating": "续接创建待核实",
-      "ready": "子会话已创建，首轮尚未发送",
-      "sending": "正在提交首轮消息",
-      "accepted": "首轮已接收，等待 transcript 确认",
-      "sent": "首轮消息已记录",
-      "failed": "首轮被拒绝，草稿已保留",
-      "unknown": "首发结果未知，请先核实再重试"
+      "creating": "正在核对新会话",
+      "ready": "会话已就绪，可以继续发送",
+      "sending": "正在发送接力内容",
+      "accepted": "已接收，正在确认记录",
+      "sent": "接力内容已记录",
+      "failed": "发送失败，内容已保留",
+      "unknown": "发送结果未确认，请先核对"
     }
   },
   "delegationStages": {
@@ -3064,5 +3086,72 @@
     "pending": "等待最终知识用量收据",
     "dropped": "{{count}} 个已选来源未保留",
     "selectionUnavailable": "已选来源对照不可用"
+  },
+  "toolActivity": {
+    "running": {
+      "read": "正在读取",
+      "write": "正在写入",
+      "edit": "正在编辑",
+      "search": "正在搜索",
+      "web": "正在访问网页",
+      "command": "正在运行",
+      "other": "正在调用工具"
+    },
+    "completed": {
+      "read": "读取了文件",
+      "write": "写入了文件",
+      "edit": "编辑了文件",
+      "search": "进行了搜索",
+      "web": "访问了网页",
+      "command": "运行了命令",
+      "other": "调用了工具"
+    },
+    "failed": "操作需处理：{{action}}",
+    "stopped": "操作已停止",
+    "pendingResult": "尚未收到工具结果"
+  },
+  "contextDisplay": {
+    "title": "上下文窗口",
+    "ariaLabel": "上下文已用 {{used}}，容量 {{max}} Token",
+    "unknown": "尚未测量",
+    "usedOfTotal": "{{used}} / {{max}} Token",
+    "remaining": "还可使用 {{value}} Token",
+    "usagePending": "运行时完成请求计量后显示用量。",
+    "currentSnapshot": "用量来自最近的运行时上下文。",
+    "lastRequest": "用量来自上一次请求的输入 Token 计量。",
+    "composition": "上下文组成",
+    "instructions": "系统指令",
+    "workspaceFiles": "项目文件",
+    "skills": "技能",
+    "tools": "工具定义",
+    "currentTurn": "当前请求",
+    "runtimeContext": "运行环境上下文",
+    "chars": "{{value}} 字符",
+    "originalChars": "原始内容 {{value}} 字符",
+    "moreEntries": "另有 {{count}} 项",
+    "characterMeasurement": "各项大小使用运行时记录的字符数，总用量使用模型 Token 计量。",
+    "runtimeReport": "最近运行报告",
+    "estimatedReport": "运行时估算报告",
+    "compositionPending": "运行时尚未提供此会话的上下文组成报告。",
+    "loadedMessages": "已加载对话消息：{{count}} 条",
+    "hiddenMessages": "整理后已隐藏消息：{{count}} 条",
+    "fileStatus": {
+      "truncated": "已按上下文预算截断",
+      "missing": "文件不可用"
+    },
+    "memory": "记忆注入回执",
+    "memoryLoading": "正在读取记忆来源…",
+    "memoryError": "记忆回执读取失败。",
+    "memoryNone": "此会话尚无记忆注入记录。",
+    "memoryScope": "这里列出会话的近期注入记录，单独于上方的组成统计。",
+    "memorySelected": "{{count}} 项引用",
+    "memoryOmitted": "{{count}} 项未纳入",
+    "retry": "重试",
+    "close": "关闭上下文详情",
+    "pinned": "详情已保持展开，按 Esc 或点击外部关闭。",
+    "pinHint": "点击上下文标签可保持详情展开。",
+    "sourceShare": "占已记录字符",
+    "sourceTotal": "已记录组成：{{value}} 字符",
+    "detailedBreakdown": "查看详细来源"
   }
 }

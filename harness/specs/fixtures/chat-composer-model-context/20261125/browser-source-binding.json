@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-ego",
+  "candidate": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+  "build": "85cb2ac55fa1aeb6565836e575401d41268827ec",
+  "bridge": "Browser mock Host API for navigation/models; context values from isolated production Main reader and runtime SQLite writer.",
+  "scripts": [
+    {
+      "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-server.mjs",
+      "sha256": "3b86700ad7da290b3f00fd47d67833ddd407538adb3c1ace48ae7c6ebf074846"
+    },
+    {
+      "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-bootstrap.js",
+      "sha256": "c2b450ce966e2398a1af008ed531f61b11490ec6b26119c28283c0f0b728c5f0"
+    },
+    {
+      "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-round-15.mjs",
+      "sha256": "0f8df7a17375d88c86c0bf23425183d3752f2c7227735085c4dc7b4a09e242dc"
+    },
+    {
+      "path": "D:\\tmp\\clawx-composer-polish-20261125\\ego-round-16.mjs",
+      "sha256": "32e6f267b6fa02df1a80a5428b35853c605e3c3a8f702ff73bf206bd9e91678d"
+    }
+  ],
+  "approvedValidationChange": "User requested ego-browser frontend verification on 2026-11-25.",
+  "visualReview": {
+    "status": "passed",
+    "reviewed": [
+      "screenshots/search-zh-light-1280.png",
+      "screenshots/model-zh-dark-375.png",
+      "screenshots/context-zh-light-375.png",
+      "screenshots/context-en-dark-1280.png"
+    ]
+  }
+}

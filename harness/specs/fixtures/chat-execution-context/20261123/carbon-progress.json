@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "carbon-chat-ux",
+  "model": "Gemini 4 Carbon (High)",
+  "exitCode": 0,
+  "status": "SUCCESS",
+  "conversationId": "8ee48831-bdae-4647-a6bc-4bff9a7dc5e5",
+  "usage": {
+    "input_tokens": 11779,
+    "output_tokens": 9840,
+    "thinking_tokens": 8805,
+    "cache_read_tokens": 8684,
+    "total_tokens": 21619
+  },
+  "carbonRequests": 2,
+  "blockedRequests": 0,
+  "imageReads": [
+    "D:/tmp/carbon-worktree-ux-20261123-01a203cc/carbon-progress/owner-progress.png"
+  ]
+}

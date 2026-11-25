@@ -1,0 +1,12 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-model-ui",
+  "sourceCommit": "db928f5110f657574c7abfc36bfc9e9ed2db30c9",
+  "sourceRoot": "D:\\tmp\\task-ui-integration-20261122-01a203cc\\verify-checkout",
+  "installedRoot": "D:\\ClawX",
+  "backup": "D:\\tmp\\clawx-model-effort-picker-20261124\\previous-main-build-r14",
+  "copiedFiles": 1413,
+  "verifiedFiles": 1413,
+  "retainedOldAssetFiles": 178,
+  "status": "passed"
+}

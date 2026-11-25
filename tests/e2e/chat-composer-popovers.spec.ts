@@ -209,22 +209,22 @@ for (const theme of ['light', 'dark'] as const) {
         await expect(projectMenu).toBeInViewport();
         await expect(projectMenu).toHaveCSS('backdrop-filter', 'none');
         await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-welcome-project-menu.png`) });
-        const worktreeTrigger = projectMenu.getByTestId('session-worktree-trigger');
+        await page.keyboard.press('Escape');
+        const worktreeTrigger = page.getByTestId('session-worktree-trigger');
         await expect(worktreeTrigger).toHaveAttribute('data-git-kind', 'worktree');
         await worktreeTrigger.click();
         const worktreeMenu = page.getByTestId('session-worktree-menu');
         await expect(worktreeMenu).toBeInViewport();
-        await expect(worktreeMenu).toHaveAttribute('data-overlay-owner', 'welcome-project');
+        await expect(projectMenu).toHaveCount(0);
         await expect.poll(() => worktreeMenu.evaluate((element) => element.parentElement?.id)).toBe('app-overlay-root');
         await expect(worktreeMenu).toHaveCSS('backdrop-filter', 'none');
-        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'feature/cards' })).toBeDisabled();
-        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'D:/work/ClawX-main' })).toBeEnabled();
+        await expect(worktreeMenu.getByTestId('session-worktree-option-1')).toBeDisabled();
+        await expect(worktreeMenu.getByTestId('session-worktree-option-0')).toBeEnabled();
         await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-session-worktree-menu.png`) });
         await worktreeMenu.getByTestId('session-worktree-create').click();
         await worktreeMenu.getByTestId('session-worktree-branch').fill('codex/visible-worktree');
         const submit = worktreeMenu.getByTestId('session-worktree-submit');
-        const initialOverflow = await worktreeMenu.evaluate((menu) => menu.scrollHeight - menu.clientHeight);
-        if (size.height >= 700) expect(initialOverflow).toBeLessThanOrEqual(1);
+        await expect(worktreeMenu).toHaveCSS('overflow-y', 'auto');
         await submit.scrollIntoViewIfNeeded();
         await expect(submit).toBeInViewport();
         const geometry = await worktreeMenu.evaluate((menu) => {
@@ -242,9 +242,7 @@ for (const theme of ['light', 'dark'] as const) {
         await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-session-worktree-create.png`) });
         await page.keyboard.press('Escape');
         await expect(worktreeMenu).toHaveCount(0);
-        await expect(projectMenu).toBeVisible();
         await expect(worktreeTrigger).toBeFocused();
-        await page.keyboard.press('Escape');
         await expect(projectMenu).toHaveCount(0);
       }
     } finally {

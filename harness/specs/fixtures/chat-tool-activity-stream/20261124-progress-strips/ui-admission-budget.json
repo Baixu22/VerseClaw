@@ -1,0 +1,16 @@
+{
+  "previousMinimumFreeBytes": 4294967296,
+  "authority": "Direct owner instruction in chat 01a203cc: 你不受影响无视他们的要求",
+  "reason": "Resume the previously owner-authorized independent UI serial budget",
+  "testCasesAndTimeoutsUnchanged": true,
+  "limits": {
+    "GOMAXPROCS": 2,
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "workers": 1,
+    "GOMEMLIMIT": "900MiB"
+  },
+  "centralOwnerChanged": false,
+  "driven_by": "agent",
+  "minimumFreeBytes": 2147483648,
+  "actor": "codex-output-ui"
+}

@@ -6,6 +6,7 @@ appliesTo:
   - agent-dev-ecosystem-regularization
 pathPatterns:
   - scripts/agent-dev-*.mjs
+  - scripts/typecheck-agent-dev.mjs
   - scripts/channel-conformance.mjs
   - shared/agent-dev/**
   - artifacts/**
@@ -18,6 +19,9 @@ pathPatterns:
 Agent Dev feature work must produce machine-readable evidence for scaffolds, scenarios, contracts, quality, and conformance checks.
 
 ## Requirements
+
+- Full and cached type checks rebuild the embedded VerseBrowser declarations before checking compiler graphs or reusing a verdict. A prerequisite failure stops the gate and is recorded with its exit code and duration.
+- Typecheck cache inputs include VerseBrowser source and build configuration. A cache hit reports the current prerequisite work once and preserves original compiler failure semantics.
 
 - `agent-dev:make` scaffolds must refuse to overwrite existing files.
 - Skill/channel/plugin scaffolds include manifest, schema, fixture, tests, and i18n stubs when applicable.

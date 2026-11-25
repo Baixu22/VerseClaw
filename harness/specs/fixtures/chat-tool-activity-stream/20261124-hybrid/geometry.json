@@ -1,0 +1,182 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "data": "mocked history; real Electron rendering",
+  "measurements": [
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "zh",
+      "theme": "light",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "zh",
+      "theme": "light",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "zh",
+      "theme": "dark",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "zh",
+      "theme": "dark",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ja",
+      "theme": "light",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ja",
+      "theme": "light",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ja",
+      "theme": "dark",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ja",
+      "theme": "dark",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ru",
+      "theme": "light",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ru",
+      "theme": "light",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ru",
+      "theme": "dark",
+      "width": 1280,
+      "viewportWidth": 1280,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    },
+    {
+      "lang": "ru",
+      "theme": "dark",
+      "width": 375,
+      "viewportWidth": 375,
+      "left": 0,
+      "right": 0,
+      "overflow": false
+    }
+  ],
+  "expandedShape": {
+    "radius": 11,
+    "background": "rgb(71, 71, 69)",
+    "nameFontSize": 12,
+    "nameLineHeight": 18
+  },
+  "expandedNarrow": [
+    {
+      "lang": "en",
+      "viewportWidth": 375,
+      "width": 254,
+      "nameWidth": 58.453125,
+      "targetWidth": 127.546875,
+      "overflow": false
+    },
+    {
+      "lang": "ru",
+      "viewportWidth": 375,
+      "width": 254,
+      "nameWidth": 95.75,
+      "targetWidth": 90.25,
+      "overflow": false
+    }
+  ],
+  "openPanel": {
+    "viewportWidth": 1280,
+    "left": 0,
+    "right": 0,
+    "overflow": false
+  },
+  "errors": []
+}

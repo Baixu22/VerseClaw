@@ -1,0 +1,112 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-composer-polish",
+  "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+  "planSha256": "14ca666265385dae61582a347d46754de408fe8c5620f15226f7dc43016151ca",
+  "driverSha256": "f9b750accb004a9748b6f49f16be82567165cd7e3db072871f14567007b89b04",
+  "actualDispatches": 2,
+  "durationSeconds": 45.937,
+  "steps": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-composer-polish",
+      "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=3072",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "label": "final-build-r14",
+      "admission": {
+        "processProbeFreeBytes": 2862997504,
+        "heavy": [],
+        "freeBytes": 2943823872,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+        "freeCommitBytes": 16191692800,
+        "totalCommitBytes": 50655170560
+      },
+      "timeoutSeconds": 300,
+      "startedAt": "2026-11-25T02:22:23.193767+00:00",
+      "driverSha256": "f9b750accb004a9748b6f49f16be82567165cd7e3db072871f14567007b89b04",
+      "status": "finished",
+      "resourceLimits": {
+        "nodeMiB": 3072,
+        "goMiB": 700,
+        "cpu": 1,
+        "workers": 1,
+        "retries": 0
+      },
+      "pid": 37288,
+      "exitCode": 0,
+      "durationSeconds": 40.828,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-build-r14.stdout.log",
+        "sha256": "f63d658b83c87271fb7364fd2fd211d95852004bc606fea089d61bf86e0a7416"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-build-r14.stderr.log",
+        "sha256": "bc1ddd35bbac23ba8743a10709991fd216d8257eda91dc24de344a01e15b62d0"
+      }
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-composer-polish",
+      "candidate": "b17b939acff92fecf79cdbbf41ad225a8b42fa7a",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/chat-composer-model-context.spec.ts",
+        "tests/e2e/chat-model-settings-card.spec.ts",
+        "tests/e2e/chat-context-display.spec.ts",
+        "tests/e2e/chat-agent-effort.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output=D:\\tmp\\clawx-composer-polish-20261125\\final-electron-r14"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "label": "final-electron-r14",
+      "admission": {
+        "processProbeFreeBytes": 4339372032,
+        "heavy": [],
+        "freeBytes": 4429672448,
+        "totalPhysicalBytes": 16295432192,
+        "memoryReadMethod": "GlobalMemoryStatusEx.ullAvailPhys",
+        "freeCommitBytes": 16096460800,
+        "totalCommitBytes": 50655170560
+      },
+      "timeoutSeconds": 360,
+      "startedAt": "2026-11-25T02:23:05.276260+00:00",
+      "driverSha256": "f9b750accb004a9748b6f49f16be82567165cd7e3db072871f14567007b89b04",
+      "status": "finished",
+      "resourceLimits": {
+        "nodeMiB": 768,
+        "goMiB": 700,
+        "cpu": 1,
+        "workers": 1,
+        "retries": 0
+      },
+      "pid": 35664,
+      "exitCode": 1,
+      "durationSeconds": 3.672,
+      "sourceUnchanged": true,
+      "stdout": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-electron-r14.stdout.log",
+        "sha256": "2d3eed1f1bbfd5a28397ef2ceaa10aef64e4a86a9ff0128010d08983a24506c0"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\clawx-composer-polish-20261125\\final-electron-r14.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "complete": true,
+  "passed": false,
+  "stopReason": "command-failed",
+  "sourceUnchanged": true
+}

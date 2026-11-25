@@ -842,14 +842,16 @@ export class TaskSystemStore {
     text(sessionKey, "SESSION", 300);
     text(generation, "GENERATION", 200);
     return this.transaction(() => {
-      if (expected) {
-        if (expected.taskNodeId !== taskNodeId) throw new Error("TASK_RESTART_RUN_AFTER_HANDOFF");
-        this.assertOwner(expected);
-      }
       return this.request(
         `claim:${requestId}`,
-        { taskNodeId, sessionKey, generation, worktree: this.domain.worktree },
+        { taskNodeId, sessionKey, generation, worktree: this.domain.worktree, ...(expected ? { expected } : {}) },
         () => {
+          // Replaying a committed admission preserves its original precondition.
+          // New admissions must match the captured owner, including after expiry.
+          if (expected) {
+            if (expected.taskNodeId !== taskNodeId) throw new Error("TASK_RESTART_RUN_AFTER_HANDOFF");
+            this.assertOwner(expected, true);
+          }
           const view = this.get(taskNodeId);
           if (!["ready", "doing"].includes(view.contract.state))
             throw new Error("TASK_NOT_CLAIMABLE");
@@ -857,10 +859,15 @@ export class TaskSystemStore {
             if (
               view.claim.sessionKey === sessionKey &&
               view.claim.generation === generation &&
-              view.claim.state === "active" &&
               view.claim.worktree === this.domain.worktree
-            )
-              return view;
+            ) {
+              if (view.claim.state === "active") return view;
+              // An idle owner may continue after expiry, fencing every old credential.
+              // Pending effects and clock rollback still require owner reconciliation.
+              if (view.claim.state === "recovery_required" && view.claim.expiresAt <= this.now()
+                && view.pendingOperations === 0)
+                return this.handoff(view.claim, sessionKey, generation, this.domain.worktree);
+            }
             throw new Error(`TASK_ALREADY_CLAIMED:${view.claim.sessionKey}`);
           }
           const binding = this.db
@@ -1737,6 +1744,11 @@ export class TaskSystemStore {
       this.event(credential.taskNodeId, 'operation_started', { operationId, tool: kind,
         credential: credentialIdentity(credential), revision: view.contract.revision, runId: run?.run_id });
     });
+  }
+  activeRun(credential: TaskCredential): string | undefined {
+    const row = this.db.prepare("SELECT run_id FROM task_active_runs WHERE task_id=? AND epoch=?")
+      .get(credential.taskNodeId, credential.epoch) as { run_id: string } | undefined;
+    return row?.run_id;
   }
   beginRun(credential: TaskCredential, runId: string): void {
     this.transaction(() => {

@@ -128,8 +128,7 @@ test.describe('Verse Claw chat workspace header', () => {
       const draft = 'G5 source draft survives the header worktree switch';
       await instrumentSessionChainHost(app);
       await page.getByTestId('chat-composer-input').fill(draft);
-      await page.getByTestId('chat-header-environment-project').getByRole('button').click();
-      await page.getByTestId('chat-header-workspace-menu').getByTestId('session-worktree-trigger').click();
+      await page.getByTestId('composer-context-more').click();
       const worktree = page.getByTestId('session-worktree-menu').getByRole('button', { name: /header-worktree/ });
       await expect(worktree).toBeEnabled(); await worktree.click();
       await expect.poll(async () => (await hostInvoke<{ activeWorkspace: WorkspaceProfile }>(app, 'workspaces', 'getActive')).activeWorkspace.rootPath.replace(/\\/g, '/').toLowerCase())
@@ -235,8 +234,7 @@ test.describe('Verse Claw chat workspace header', () => {
       await expect(page.getByTestId('sidebar-session-project-toggle-workspace-1')).toHaveAttribute('aria-expanded', 'true');
       await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toBeVisible();
 
-      await page.getByTestId('chat-header-environment-project').getByRole('button').click();
-      await page.getByTestId('chat-header-workspace-menu').getByTestId('session-worktree-trigger').click();
+      await page.getByTestId('composer-context-more').click();
       await expect(page.getByTestId('session-worktree-create')).toBeEnabled();
       await expect(page.getByTestId('session-worktree-menu').getByRole('button', { name: /feature/ })).toBeEnabled();
 

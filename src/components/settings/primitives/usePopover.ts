@@ -17,12 +17,14 @@ export function usePopover<T extends HTMLElement>({
   minWidth = 0,
   fixedWidth = 0,
   fitViewport = false,
+  preferredSide = 'bottom',
 }: {
   align?: 'left' | 'right';
   gap?: number;
   minWidth?: number;
   fixedWidth?: number;
   fitViewport?: boolean;
+  preferredSide?: PopoverPlacement;
 } = {}) {
   const triggerRef = useRef<T | null>(null);
   const layerRef = useRef<HTMLDivElement | null>(null);
@@ -56,7 +58,8 @@ export function usePopover<T extends HTMLElement>({
     let next: PopoverPlacement = 'bottom';
     let maxHeight: number | undefined;
     if (fitViewport) {
-      if (lh > availableBelow && (lh <= availableAbove || availableAbove > availableBelow)) {
+      if ((preferredSide === 'top' && (lh <= availableAbove || availableAbove > availableBelow))
+        || (lh > availableBelow && (lh <= availableAbove || availableAbove > availableBelow))) {
         next = 'top';
         if (lh > availableAbove) {
           const clamped = Math.floor(availableAbove);
@@ -98,11 +101,10 @@ export function usePopover<T extends HTMLElement>({
       zIndex: 1000,
       visibility: 'visible',
     });
-  }, [align, fitViewport, fixedWidth, gap, minWidth]);
+  }, [align, fitViewport, fixedWidth, gap, minWidth, preferredSide]);
 
   useLayoutEffect(() => {
     if (!open) return;
-    measure();
     const frame = window.requestAnimationFrame(measure);
     return () => window.cancelAnimationFrame(frame);
   }, [open, measure]);

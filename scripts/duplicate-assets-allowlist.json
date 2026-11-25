@@ -3,6 +3,14 @@
   "minBytes": 102400,
   "groups": [
     {
+      "sha256": "619015014c320f66864a9231d91864e74e7e3d816edc13c4d0aff2199936b46b",
+      "paths": [
+        "harness/specs/fixtures/chat-planning-composer-ux/20261123/images/before-task-workbench.png",
+        "harness/specs/fixtures/task-system-ui-consolidation/20261122/after/ledger-light-1280.png"
+      ],
+      "reason": "The 2026-11-22 verified task-workbench screenshot is the 2026-11-23 composer design baseline. Both immutable evidence manifests and DESIGN-GUIDANCE.md require their retained paths."
+    },
+    {
       "sha256": "019d6f39fd9675271c659b3972c5fb55a341451366b257896e89e3f0c840ff8c",
       "paths": [
         "resources/icons/icon-dark.icns",

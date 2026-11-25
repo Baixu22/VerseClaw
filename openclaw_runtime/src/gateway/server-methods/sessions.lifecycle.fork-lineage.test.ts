@@ -37,13 +37,16 @@ vi.mock("../session-utils.js", async (importOriginal) => ({
 }));
 vi.mock("./sessions.shared.js", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./sessions.shared.js")>()),
-  isSessionBusyForManualCompaction: sharedMocks.isSessionBusyForManualCompaction,
   buildDashboardSessionKey: sharedMocks.buildDashboardSessionKey,
   inheritSessionRuntimeSelection: sharedMocks.inheritSessionRuntimeSelection,
 }));
 vi.mock("../sessions-patch.js", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../sessions-patch.js")>()),
   applySessionsPatchToStore: patchMocks.applySessionsPatchToStore,
+}));
+vi.mock("./session-active-runs.js", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./session-active-runs.js")>()),
+  isSessionBusyForManualCompaction: sharedMocks.isSessionBusyForManualCompaction,
 }));
 vi.mock("../../config/sessions.js", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../config/sessions.js")>()),
@@ -144,6 +147,53 @@ describe("#180 sessions.fork lineage persistence", () => {
     expect(child).toMatchObject({ parentSessionKey: "agent:main:main", forkedFromParent: true });
     expect(child).not.toHaveProperty("forkedFromLeafId");
     expect(child).not.toHaveProperty("forkedFromTimestamp");
+  });
+
+  it("uses the configured global agent for admission and the child store", async () => {
+    const root = mkdtempSync(join(tmpdir(), "global-fork-owner-"));
+    const childKey = "agent:reviewer:dashboard-global";
+    try {
+      const cfg = {
+        session: { scope: "global" as const },
+        agents: { defaults: { workspace: root }, list: [{ id: "reviewer", default: true }, { id: "main" }] },
+      };
+      loadSessionEntryMock.mockReturnValue({
+        entry: { sessionId: "parent-sess", workspaceDir: root },
+        canonicalKey: "global", storePath: join(root, "sessions.json"),
+      });
+      sharedMocks.buildDashboardSessionKey.mockReturnValueOnce(childKey);
+      sessionUtilsMocks.resolveGatewaySessionStoreTarget.mockReturnValue({
+        storePath: join(root, "sessions.json"), canonicalKey: childKey, agentId: "reviewer",
+      });
+      const { calls, respond } = makeRespond();
+      await sessionsLifecycleHandlers["sessions.fork"]!({
+        params: { key: "global" }, respond,
+        context: { getRuntimeConfig: () => cfg, emit: () => undefined, getSessionEventSubscriberConnIds: () => new Set() },
+      } as never);
+      expect(calls).toMatchObject([{ ok: true }]);
+      expect(sharedMocks.isSessionBusyForManualCompaction).toHaveBeenCalledWith(expect.objectContaining({
+        canonicalKey: "global", agentId: "reviewer", sessionId: "parent-sess",
+      }));
+      expect(forkMocks.forkSessionFromParent).toHaveBeenCalledWith(expect.objectContaining({ agentId: "reviewer" }));
+      expect(sharedMocks.buildDashboardSessionKey).toHaveBeenCalledWith("reviewer");
+      expect(store[childKey]).toMatchObject({ parentSessionKey: "global", sessionId: "child-sess" });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects a busy global default agent before creating a child", async () => {
+    const cfg = { session: { scope: "global" as const }, agents: { list: [{ id: "reviewer", default: true }, { id: "main" }] } };
+    loadSessionEntryMock.mockReturnValue({ entry: { sessionId: "parent-sess" }, canonicalKey: "global", storePath: "/tmp/sessions.json" });
+    sharedMocks.isSessionBusyForManualCompaction.mockReturnValueOnce(true);
+    const { calls, respond } = makeRespond();
+    await sessionsLifecycleHandlers["sessions.fork"]!({
+      params: { key: "global" }, respond, context: { getRuntimeConfig: () => cfg },
+    } as never);
+    expect(calls).toMatchObject([{ ok: false }]);
+    expect(sharedMocks.isSessionBusyForManualCompaction).toHaveBeenCalledWith(expect.objectContaining({ agentId: "reviewer" }));
+    expect(forkMocks.forkSessionFromParent).not.toHaveBeenCalled();
+    expect(sharedMocks.buildDashboardSessionKey).not.toHaveBeenCalled();
   });
   it("persists an observer task reference before replying to a successful fork",async()=>{
     const root=mkdtempSync(join(tmpdir(),"task-fork-reference-"));const tasks=new TaskSystemStore(resolveTaskDomain(root));

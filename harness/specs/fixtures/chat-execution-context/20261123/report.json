@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "driven_by": "agent",
+  "actor": "codex-execution-ui",
+  "candidate": "69663b2543f171c8cf8c4ff220c877b33835322a",
+  "unitTests": 85,
+  "electronJourneys": 5,
+  "realGitCreation": true,
+  "mainBuildInstalled": true,
+  "carbonRefinementsVerified": 3,
+  "rawRoot": "D:\\tmp\\carbon-worktree-ux-20261123-01a203cc"
+}

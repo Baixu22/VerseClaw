@@ -2,6 +2,7 @@ import { openExternalSafe } from '../utils/safe-open-external';
 import { capToolResultText } from '@shared/agent-resource-limits';
 import { BoundedCache, Singleflight } from '../../shared/resources/index.js';
 import { execFile } from '../utils/counted-child-process';
+import { ManagedProcessCapacityError, startManagedChildProcess } from '../../openclaw_runtime/src/agents/verseshell/managed-process-capacity';
 import type { ExecFileException, ExecFileOptionsWithStringEncoding } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
@@ -172,7 +173,8 @@ function execBinary(command: 'git' | 'gh', args: string[], cwd: string): Promise
       timeout: GIT_EXEC_TIMEOUT_MS,
       killSignal: 'SIGKILL',
     };
-    const child = execFile(
+    let child: ReturnType<typeof execFile>;
+    try { child = startManagedChildProcess(() => execFile(
       command,
       args,
       options,
@@ -185,7 +187,13 @@ function execBinary(command: 'git' | 'gh', args: string[], cwd: string): Promise
         stdout: trimOutput(typeof stdout === 'string' ? stdout : String(stdout ?? '')),
         stderr: trimOutput(typeof stderr === 'string' ? stderr : String(stderr ?? '')),
       });
-    });
+    }), `${command}:${cwd}`); } catch (error) {
+      if (error instanceof ManagedProcessCapacityError) {
+        resolveResult({ exitCode: 1, stdout: '', stderr: error.message });
+        return;
+      }
+      throw error;
+    }
     // stdin: null — execFile has no stdio option, so destroy the inherited
     // pipe immediately: git can never read interactive input (matches the
     // Codex Stdio::null() wrapper; GIT_TERMINAL_PROMPT=0 is belt-and-suspenders).

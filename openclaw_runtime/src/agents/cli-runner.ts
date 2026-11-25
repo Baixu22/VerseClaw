@@ -34,6 +34,7 @@ import {
   runAgentHarnessLlmOutputHook,
 } from "./harness/lifecycle-hook-helpers.js";
 import type { AgentMessage } from "./runtime/index.js";
+import { beginUnguardedMainSessionRun } from "./recovery-authority/main-session-admission.js";
 import { SessionManager } from "./sessions/session-manager.js";
 
 const log = createSubsystemLogger("agents/cli-runner");
@@ -290,6 +291,7 @@ async function finalizeCliContextEngineTurn(params: {
 
 /** Prepares and runs one CLI-backed agent turn. */
 export async function runCliAgent(params: RunCliAgentParams): Promise<EmbeddedAgentRunResult> {
+  await beginUnguardedMainSessionRun(params);
   // Cron gate must fire before prepareCliRunContext — that call allocates
   // backend resources released only by runPreparedCliAgent's try…finally.
   params.onExecutionStarted?.();
@@ -874,6 +876,8 @@ export function buildRunClaudeCliAgentParams(params: RunClaudeCliAgentParams): R
     agentId: params.agentId,
     trigger: params.trigger,
     sessionFile: params.sessionFile,
+    sessionStorePath: params.sessionStorePath,
+    recoveryAdmission: params.recoveryAdmission,
     workspaceDir: params.workspaceDir,
     cwd: params.cwd,
     config: params.config,

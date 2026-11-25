@@ -16,11 +16,17 @@ export class DrfShare {
   private readonly usage = new Map<string, DrfUsage>();
 
   constructor(capacity: ResourceCapacity) {
+    this.capacity = { ...capacity };
+    this.setCapacity(capacity);
+  }
+
+  /** Shrinking capacity keeps existing liabilities; only new reservations wait. */
+  setCapacity(capacity: ResourceCapacity): void {
     if (!Number.isSafeInteger(capacity.processes) || capacity.processes <= 0
       || !Number.isSafeInteger(capacity.concurrency) || capacity.concurrency <= 0) {
       throw new RangeError('capacity must be a positive integer');
     }
-    this.capacity = { ...capacity };
+    Object.assign(this.capacity, capacity);
   }
 
   reserve(tenant: string, delta: Partial<DrfUsage> = {}): DrfUsage {
@@ -43,7 +49,8 @@ export class DrfShare {
       total.processes += used.processes;
       total.concurrency += used.concurrency;
     }
-    if (total.processes > this.capacity.processes || total.concurrency > this.capacity.concurrency) {
+    const increasing = (delta.processes ?? 0) > 0 || (delta.concurrency ?? 0) > 0;
+    if (increasing && (total.processes > this.capacity.processes || total.concurrency > this.capacity.concurrency)) {
       return undefined;
     }
     if (next.processes === 0 && next.concurrency === 0) this.usage.delete(tenant);

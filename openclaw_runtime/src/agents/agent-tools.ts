@@ -65,7 +65,8 @@ import {
 } from "./agent-tools.read.js";
 import { cleanToolSchemaForGemini, normalizeToolParameters } from "./agent-tools.schema.js";
 import type { AnyAgentTool } from "./agent-tools.types.js";
-import { createPersistentTaskTool } from "./tools/persistent-task-tool.js";
+import { createPersistentTaskTool } from './tools/persistent-task-tool.js';
+import { createExecutionTaskGuard } from './execution-task-guard.js';
 import { extractApplyPatchTargetPaths } from "./apply-patch-paths.js";
 import { createApplyPatchTool, parsePatchText } from "./apply-patch.js";
 import { createMemoryQueryTool } from "../runtime-core/memory-query-tool.js";
@@ -1518,9 +1519,7 @@ export function createOpenClawCodingTools(options?: {
   // A task_control review must not restore delegation tools removed by a deny-only policy.
   replaceWithEffectiveToolAllowlist(taskReviewToolAllowlist, subagentFiltered);
   options?.recordToolPrepStage?.("authorization-policy");
-  // Always normalize tool JSON Schemas before handing them to OpenClaw model runtime.
-  // Without this, some providers (notably OpenAI) will reject root-level union schemas.
-  // Provider-specific cleaning: Gemini needs constraint keywords stripped, but Anthropic expects them.
+  // Normalize schemas for the selected provider before exposing tools.
   const normalized = subagentFiltered.map((tool) =>
     normalizeToolParameters(tool, {
       modelProvider: options?.modelProvider,
@@ -1529,6 +1528,7 @@ export function createOpenClawCodingTools(options?: {
     }),
   );
   options?.recordToolPrepStage?.("schema-normalization");
+  const taskGuard = normalized.length ? createExecutionTaskGuard(workspaceRoot ?? codingRoot, options?.sessionKey, options?.sessionId, options?.runId) : null;
   const withHooks = normalized.map((tool) =>
     wrapToolWithBeforeToolCallHook(
       options?.stage4ToolGuard
@@ -1557,7 +1557,7 @@ export function createOpenClawCodingTools(options?: {
         onToolOutcome: options?.onToolOutcome,
         onToolLoopTermination: options?.onToolLoopTermination,
       },
-      { emitDiagnostics: options?.emitBeforeToolCallDiagnostics },
+      { emitDiagnostics: options?.emitBeforeToolCallDiagnostics, taskGuard },
     ),
   );
   options?.recordToolPrepStage?.("tool-hooks");

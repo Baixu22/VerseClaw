@@ -9,7 +9,7 @@
  * Files are staged to disk via IPC — only lightweight path references
  * are sent with the message (no base64 over WebSocket).
  */
-import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
+import { Fragment, useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Archive,
@@ -19,7 +19,6 @@ import {
   Briefcase,
   Check,
   ChevronDown,
-  ChevronRight,
   CircleSlash,
   Compass,
   Copy,
@@ -36,6 +35,7 @@ import {
   Loader2,
   ListEnd,
   MessageSquarePlus,
+  MessagesSquare,
   Paperclip,
   PencilLine,
   Plus,
@@ -89,8 +89,10 @@ import { toast } from 'sonner';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { collectDroppedFiles } from '@/lib/collect-dropped-files';
 import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
-import { ChatAgentEffortPanel, getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
+import { getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
+import { ChatModelSettingsCard } from '@/components/chat/ChatModelSettingsCard';
 import { ChatContextPressure } from '@/components/chat/ChatContextPressure';
+import { ChatContextIndicator } from '@/components/chat/ChatContextIndicator';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import {
   buildCapabilityActionMessage,
@@ -116,13 +118,10 @@ import { normalizeWorkspacePermissionMode } from '@shared/types/workspace';
 import type { ChatCapabilityActionPlan, ChatCapabilityActionResult, SessionCompactionStatus } from '@shared/host-api/contract';
 import type { LongTaskControlStatus, LongTaskInputMode } from '@shared/types/long-task-control';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
-import { useResolvedTheme } from '@/lib/theme';
-import { BorderBeam } from 'border-beam';
 import { PlusMenuMorph } from '@/components/ui/plus-menu-morph';
 import { ComposerPopover } from '@/components/chat/ComposerPopover';
 import { ModelBrandIcon } from '@/components/chat/ModelBrandIcon';
 import { describeModelRef } from '@/lib/model-brand';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { SmokyDissolve } from '@/components/ui/smoky-dissolve';
 import MaterialFileTypeIcon from '@lobehub/ui/es/MaterialFileTypeIcon/index';
 import LobeConfigProvider from '@lobehub/ui/es/ConfigProvider/index';
@@ -166,6 +165,7 @@ interface ChatInputProps {
   requestPending?: boolean;
   /** Repository context and live task progress share the composer width. */
   contextContent?: ReactNode;
+  leadingContent?: ReactNode;
   draftValue?: string;
   onDraftChange?: (value: string) => void;
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
@@ -175,6 +175,7 @@ interface ChatInputProps {
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
   forkDisabled?: boolean;
+  forkDisabledReason?: string;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
   handoffDisabledReason?: string;
@@ -264,7 +265,7 @@ const DELIVERY_MODE_OPTIONS: ReadonlyArray<{
 
 function formatDeliveryShortcut(shortcut: DeliveryShortcut, isMac: boolean): string {
   const mod = isMac ? '⌘' : 'Ctrl';
-  if (shortcut === 'enter') return '↵';
+  if (shortcut === 'enter') return 'Enter';
   return shortcut === 'mod-enter' ? `${mod} ↵` : `${mod} ⇧ ↵`;
 }
 
@@ -1011,6 +1012,7 @@ export function ChatInput({
   requestContent,
   requestPending,
   contextContent,
+  leadingContent,
   draftValue,
   onDraftChange,
   workspace,
@@ -1021,6 +1023,7 @@ export function ChatInput({
   onForkSession,
   onHandoffSession,
   forkDisabled = false,
+  forkDisabledReason,
   forkBusy = false,
   handoffDisabled = false,
   handoffDisabledReason,
@@ -1040,7 +1043,6 @@ export function ChatInput({
   onConfirmTaskLoopUpgrade,
   className,
 }: ChatInputProps) {
-  const resolvedTheme = useResolvedTheme();
   const { t } = useTranslation('chat');
   const [input, setInput] = useState(() => draftValue ?? '');
   const [runStarting, setRunStarting] = useState(false);
@@ -1051,7 +1053,6 @@ export function ChatInput({
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [deliveryMenuOpen, setDeliveryMenuOpen] = useState(false);
-  const [executionSettingsSection, setExecutionSettingsSection] = useState<'effort' | null>(null);
   const [executionEffortPreview, setExecutionEffortPreview] = useState<AgentReasoningEffort>('auto');
   const [knowledgePickerOpen, setKnowledgePickerOpen] = useState(false);
   const [knowledgeQuery, setKnowledgeQuery] = useState('');
@@ -1140,6 +1141,7 @@ export function ChatInput({
   const gatewayStatus = useGatewayStore((s) => s.status);
   const agents = useAgentsStore((s) => s.agents);
   const lastChatModelRef = useSettingsStore((s) => s.lastChatModelRef);
+  const chatContextDisplayEnabled = useSettingsStore((s) => s.chatContextDisplayEnabled);
   const rememberChatModel = useSettingsStore((s) => s.rememberChatModel);
   const defaultModelRef = useAgentsStore((s) => s.defaultModelRef);
   const providerAccounts = useProviderStore((s) => s.accounts);
@@ -1222,7 +1224,6 @@ export function ChatInput({
   );
   const [providerGateOpen, setProviderGateOpen] = useState(false);
   const navigate = useNavigate();
-  const prefersReducedMotion = useReducedMotion();
   const effectiveModelRef = resolveChatModelRef({
     session: currentSession,
     hasMessages: useChatStore((s) => s.messages.length > 0),
@@ -2032,10 +2033,6 @@ export function ChatInput({
       document.removeEventListener('mousedown', handlePointerDown);
     };
   }, [actionMenuOpen, closeComposerPopovers, deliveryMenuOpen, knowledgePickerOpen, modelPickerOpen, workspaceMenuOpen]);
-
-  useEffect(() => {
-    if (!modelPickerOpen) setExecutionSettingsSection(null);
-  }, [modelPickerOpen]);
 
   useEffect(() => {
     if (!actionMenuOpen && !workspaceMenuOpen && !modelPickerOpen && !knowledgePickerOpen && !deliveryMenuOpen) return;
@@ -3339,13 +3336,14 @@ export function ChatInput({
   );
 
   return (
-    <RuntimeApprovalPrompt sessionKey={currentSessionKey} agentId={currentAgentId} hero={hero} requestContent={requestContent} requestPending={requestPending}>
+    <RuntimeApprovalPrompt sessionKey={currentSessionKey} agentId={currentAgentId} hero={hero} requestContent={requestContent} requestPending={requestPending} leadingContent={leadingContent}>
     <div
       ref={composerHostRef}
       className={cn(
         'codex-composer-host',
         hero && 'codex-composer-host--hero',
-        'mx-auto w-full max-w-[768px] px-4 pb-5 pt-2',
+        'mx-auto w-full pb-5 pt-2',
+        hero ? 'max-w-[768px] px-4' : 'chat-conversation-measure',
         className,
       )}
       onDragOver={handleDragOver}
@@ -3354,39 +3352,16 @@ export function ChatInput({
     >
       <div className="codex-composer-stack w-full">
         {contextContent}
-        {/* Input Container */}
-        {/* Geometry stays here (asserted by chat-layout-cdp.spec.ts); surface,
-          * border and elevation come from .codex-composer-shell so the card and
-          * the menus that open out of it read from the same tokens.
-          *
-          * BorderBeam: animated sunset beam that runs along the INNER edge of
-          * the composer while a run is active (`sending`). It sits as an
-          * absolutely-positioned overlay inside the shell (not wrapping it), so
-          * the library's overflow:hidden clips the glow to the rounded inner
-          * wall — an inner ring, not an outer halo — and the slash/action
-          * menus, being siblings, are never clipped by it. */}
+        {/* The stack owns the shared task/input frame; menus remain unclipped. */}
         <div
           data-testid="chat-composer-shell"
           data-drag-over={dragOver ? 'true' : undefined}
           className={cn(
-            'relative rounded-[25px] px-3 pb-1.5 pt-2.5 min-h-[98px]',
+            'relative min-h-[98px] p-3',
             'transition-[border-color,box-shadow,background-color,transform] duration-180',
             'codex-composer-shell',
           )}
         >
-          <BorderBeam
-            size="sm"
-            colorVariant="sunset"
-            strength={0.3}
-            theme={resolvedTheme}
-            borderRadius={25}
-            active={sending}
-            className="codex-composer-beam"
-            data-testid="chat-composer-beam"
-            style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-          >
-            <span aria-hidden />
-          </BorderBeam>
           {showInlineComposerStatus && (
             <div className="relative mb-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-border/50 pb-2 text-xs text-muted-foreground" data-testid="chat-composer-feedback">
               {!isGatewayUsable && (
@@ -3740,7 +3715,6 @@ export function ChatInput({
                         icon: <Gauge className="h-3.5 w-3.5" />,
                         testId: 'chat-composer-action-model',
                         onSelect: () => {
-                          setExecutionSettingsSection(null);
                           setModelPickerOpen(true);
                         },
                       }]
@@ -3787,7 +3761,6 @@ export function ChatInput({
                         testId="chat-composer-action-model"
                         onClick={() => {
                           setActionMenuOpen(false);
-                          setExecutionSettingsSection(null);
                           setModelPickerOpen(true);
                         }}
                       />
@@ -3852,6 +3825,7 @@ export function ChatInput({
                           label={t('composer.actions.compact')}
                           testId="chat-composer-action-compact"
                           disabled={compactDisabled}
+                          description={compactDisabledReason ?? t('composer.continuity.compactDescription')}
                           onClick={() => {
                             setActionMenuOpen(false);
                             setCompactionDialogOpen(true);
@@ -3860,11 +3834,12 @@ export function ChatInput({
                       )}
                       {onForkSession && (
                         <ComposerActionButton
-                          icon={GitBranchPlus}
+                          icon={MessagesSquare}
                           label={t('composer.actions.fork')}
                           testId="chat-composer-action-fork"
                           disabled={forkDisabled || forkBusy}
-                          title={t('composer.fork.boundaryNote')}
+                          title={forkDisabledReason ?? t('composer.fork.boundaryNote')}
+                          description={forkDisabledReason ?? t('composer.continuity.forkDescription')}
                           onClick={() => {
                             setActionMenuOpen(false);
                             void onForkSession();
@@ -3878,7 +3853,7 @@ export function ChatInput({
                           testId="chat-composer-action-handoff"
                           disabled={handoffDisabled || handoffBusy}
                           title={handoffDisabledReason}
-                          description={handoffDisabledReason}
+                          description={handoffDisabledReason ?? t('composer.continuity.handoffDescription')}
                           onClick={() => {
                             setActionMenuOpen(false);
                             void onHandoffSession();
@@ -4272,6 +4247,16 @@ export function ChatInput({
             </div>
 
             <div className="codex-composer-control-group ml-auto flex min-w-0 shrink-0 items-center gap-1">
+            {chatContextDisplayEnabled !== false && (
+              <ChatContextIndicator
+                key={`${currentSessionKey}:${currentSession?.sessionId ?? ''}`}
+                sessionKey={currentSessionKey}
+                sessionId={currentSession?.sessionId}
+                contextRange={contextRange}
+                compactionStatus={compactionStatus}
+                onOpen={closeComposerPopovers}
+              />
+            )}
             {(showModelPicker || currentAgentId) && (
               <div ref={modelPickerRef} className="relative shrink-0">
                 <Tooltip>
@@ -4285,11 +4270,9 @@ export function ChatInput({
                   title={effectiveModelRef ?? effectiveModelLabel}
                   aria-expanded={modelPickerOpen}
                   disabled={inputDisabled || sending}
-                  onClick={(event) => {
-                    const effortShortcut = (event.target as Element).closest('[data-testid="chat-agent-effort-button"]');
+                  onClick={() => {
                     closeComposerPopovers();
-                    setModelPickerOpen(effortShortcut ? true : !modelPickerOpen);
-                    if (effortShortcut) setExecutionSettingsSection('effort');
+                    setModelPickerOpen(!modelPickerOpen);
                   }}
                 >
                   <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
@@ -4315,77 +4298,20 @@ export function ChatInput({
                   </TooltipContent>
                 </Tooltip>
                   <ComposerPopover open={modelPickerOpen} align="right"
-                    className="codex-composer-menu--model codex-execution-settings"
+                    className="codex-composer-menu--model codex-model-settings-popover"
                     data-testid="chat-model-picker-menu"
                     role="dialog" aria-label={`${t('composer.actions.model')} / ${t('composer.effortTitle')}`}
                   >
-                      <div className="codex-model-options" data-testid="chat-model-options">
-                        {pickerModelOptions.map((option) => {
-                          const isActive = option.modelRef === effectiveModelRef;
-                          const display = describeModelRef(option.modelRef);
-                          return (
-                            <button
-                              key={option.modelRef}
-                              type="button"
-                              onClick={() => void handleSelectModel(option.modelRef)}
-                              disabled={Boolean(switchingModelRef)}
-                              className={cn('codex-composer-menu__item codex-model-option', isActive && 'is-active')}
-                              data-testid={`chat-model-picker-option-${option.label}`}
-                              data-selected={isActive}
-                              aria-pressed={isActive}
-                              aria-label={option.label}
-                              title={option.modelRef}
-                            >
-                              <ModelBrandIcon modelRef={option.modelRef} size={18} className="codex-model-option__brand" />
-                              <span className="codex-model-option__text">
-                                <span className="codex-model-option__name">{display.name}</span>
-                                {display.source && <span className="codex-model-option__source">{display.source}</span>}
-                              </span>
-                              <span className="codex-composer-menu__check" data-hidden={isActive || switchingModelRef === option.modelRef ? undefined : 'true'}>
-                                {switchingModelRef === option.modelRef ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    <div className="codex-composer-menu__divider" />
-                    <button
-                      type="button"
-                      className="codex-execution-settings__row"
-                      aria-expanded={executionSettingsSection === 'effort'}
-                      onClick={() => setExecutionSettingsSection((section) => section === 'effort' ? null : 'effort')}
-                    >
-                      <span>{t('composer.effortTitle')}</span>
-                      <span className={cn(
-                        'codex-execution-settings__value',
-                        executionEffortPreview === 'max' && 'is-max',
-                      )}>
-                        {currentEffortLabel}
-                      </span>
-                      <ChevronRight className={cn('codex-execution-settings__chevron', executionSettingsSection === 'effort' && 'rotate-90')} />
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {executionSettingsSection === 'effort' && currentAgentId && (
-                        <motion.div
-                          key="effort"
-                          className="codex-execution-settings__disclosure"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={prefersReducedMotion
-                            ? { duration: 0 }
-                            : { height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.18 } }}
-                        >
-                          <div className="codex-execution-settings__section codex-execution-settings__section--effort">
-                            <ChatAgentEffortPanel
-                              agentId={currentAgent?.id ?? currentAgentId}
-                              disabled={inputDisabled || sending}
-                              onEffortChange={setExecutionEffortPreview}
-                            />
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <ChatModelSettingsCard
+                      agentId={currentAgent?.id ?? currentAgentId}
+                      effort={executionEffortPreview}
+                      options={pickerModelOptions}
+                      modelRef={effectiveModelRef}
+                      disabled={inputDisabled || sending}
+                      switchingModelRef={switchingModelRef}
+                      onSelectModel={handleSelectModel}
+                      onEffortChange={setExecutionEffortPreview}
+                    />
                   </ComposerPopover>
               </div>
             )}
@@ -4459,6 +4385,7 @@ export function ChatInput({
                     });
                   }}
                 >
+                  <span>{t('composer.intervention.menu')}</span>
                   <ChevronDown className="h-3.5 w-3.5" />
                 </button>
                 <ComposerPopover
@@ -4478,10 +4405,11 @@ export function ChatInput({
                     items[(index + step + items.length) % items.length]?.focus();
                   }}
                 >
-                  <div className="codex-composer-menu__label">{t('composer.intervention.menu')}</div>
+                  <div className="codex-composer-menu__label">{t('composer.intervention.sendDraft')}</div>
                   {DELIVERY_MODE_OPTIONS.map(({ mode, icon: Icon, labelKey, hintKey, shortcut }) => (
+                    <Fragment key={mode}>
+                    {mode === 'interrupt' && <div role="separator" className="composer-delivery-divider" />}
                     <button
-                      key={mode}
                       type="button"
                       role="menuitem"
                       data-testid={`chat-intervention-${mode}`}
@@ -4500,6 +4428,7 @@ export function ChatInput({
                         ? <kbd className="composer-kbd">{formatDeliveryShortcut(shortcut, isMacPlatform)}</kbd>
                         : <span aria-hidden="true" />}
                     </button>
+                    </Fragment>
                   ))}
                 </ComposerPopover>
               </>
@@ -4692,10 +4621,11 @@ export function ChatInput({
           </div>
         </DialogContent>
       </Dialog>
-      <Dialog open={compactionDialogOpen} onOpenChange={setCompactionDialogOpen}>
+      <Dialog open={compactionDialogOpen} onOpenChange={(open) => { if (!compactionBusy) setCompactionDialogOpen(open); }}>
         <DialogContent
-          className="max-w-lg rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10"
+          className="chat-continuity-dialog max-w-lg"
           data-testid="chat-compaction-dialog"
+          aria-busy={compactionBusy}
         >
           <DialogTitle className="font-serif text-xl font-normal tracking-tight text-foreground">
             {t('composer.compaction.dialogTitle')}
@@ -4703,9 +4633,7 @@ export function ChatInput({
           <DialogDescription className="mt-2 text-sm text-muted-foreground">
             {t('composer.compaction.dialogDescription')}
           </DialogDescription>
-          <ChatContextPressure liveUsage={liveUsage} contextRange={contextRange} />
-          <div className="mt-4 grid gap-2 text-sm">
-            <div className="flex items-center justify-between gap-4 rounded-md bg-surface-input px-3 py-2">
+          <div className="chat-continuity-metric">
               <span className="text-muted-foreground">{t('composer.compaction.tokenUsage')}</span>
               <span className="font-medium text-foreground">
                 {compactionUsedTokens != null
@@ -4717,22 +4645,11 @@ export function ChatInput({
                     : t('composer.tokenUsage', { tokens: formatCompactNumber(compactionUsedTokens) })
                   : t('composer.compaction.unknown')}
               </span>
-            </div>
-            <div className="flex items-center justify-between gap-4 rounded-md bg-surface-input px-3 py-2">
-              <span className="text-muted-foreground">{t('composer.compaction.hiddenMessages')}</span>
-              <span className="font-medium text-foreground">{compactionHiddenCount}</span>
-            </div>
-            <div className="flex items-center justify-between gap-4 rounded-md bg-surface-input px-3 py-2">
-              <span className="text-muted-foreground">{t('composer.compaction.lastCompaction')}</span>
-              <span className="font-medium text-foreground">
-                {compactionLastDate || t('composer.compaction.neverCompacted')}
-              </span>
-            </div>
           </div>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            {t('composer.compaction.expectedEffect')}
-          </p>
-          <label className="mt-4 block text-sm font-medium text-foreground" htmlFor="chat-compaction-instructions">
+          {compactionHiddenCount > 0 && <p className="chat-continuity-note" data-testid="chat-compaction-truncated">
+            {t('composer.compaction.truncatedNotice', { count: compactionHiddenCount })}
+          </p>}
+          <label className="block text-sm font-medium text-foreground" htmlFor="chat-compaction-instructions">
             {t('composer.compaction.instructionsLabel')}
           </label>
           <Textarea
@@ -4741,9 +4658,16 @@ export function ChatInput({
             value={compactionInstructions}
             onChange={(event) => setCompactionInstructions(event.target.value)}
             placeholder={t('composer.compaction.instructionsPlaceholder')}
-            className="mt-2 min-h-24 resize-none bg-surface-input"
+            className="chat-continuity-editor min-h-24 resize-none"
           />
-          <div className="mt-5 flex justify-end gap-2">
+          <details className="chat-continuity-details" data-testid="chat-compaction-details">
+            <summary>{t('composer.continuity.details')}</summary>
+            <p className="my-2 text-xs">{t('composer.compaction.lastCompaction')}: {compactionLastDate || t('composer.compaction.neverCompacted')}</p>
+            <ChatContextPressure liveUsage={liveUsage} contextRange={contextRange} hideUsage />
+            <p className="mt-2 text-xs">{t('composer.compaction.expectedEffect')}</p>
+          </details>
+          {compactDisabledReason && <p className="chat-continuity-note" role="status">{compactDisabledReason}</p>}
+          <div className="chat-continuity-footer">
             <Button
               type="button"
               variant="ghost"
@@ -4760,7 +4684,7 @@ export function ChatInput({
               disabled={compactDisabled || compactionBusy}
             >
               {compactionBusy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('composer.compaction.confirm')}
+              {t(compactionBusy ? 'composer.compaction.inProgress' : 'composer.compaction.confirm')}
             </Button>
           </div>
         </DialogContent>
@@ -4824,8 +4748,8 @@ function ComposerActionButton({
         <Icon className="h-4 w-4" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="inline truncate text-sm text-foreground">{label}</span>
-        {description && <span className="ml-2 inline truncate text-xs font-normal text-muted-foreground">{description}</span>}
+        <span className="block text-sm text-foreground">{label}</span>
+        {description && <span className="mt-0.5 block text-xs font-normal leading-relaxed text-muted-foreground">{description}</span>}
       </span>
     </button>
   );

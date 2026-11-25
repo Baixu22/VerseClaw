@@ -9,11 +9,9 @@ import { isRecord } from "@openclaw/normalization-core/record-coerce";
 import { normalizeOptionalLowercaseString } from "@openclaw/normalization-core/string-coerce";
 import { collectConfiguredAgentHarnessRuntimes } from "../agents/harness-runtimes.js";
 import { splitTrailingAuthProfile } from "../agents/model-ref-profile.js";
-import {
-  listExplicitlyDisabledChannelIdsForConfig,
-  listPotentialConfiguredChannelIds,
-} from "../channels/config-presence.js";
+import { listPotentialEnabledChannelIds } from "../channels/config-presence.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { PluginDiscoveryResult } from "./discovery.js";
 import {
   DEFAULT_MEMORY_DREAMING_PLUGIN_ID,
   resolveMemoryDreamingConfig,
@@ -100,13 +98,6 @@ function isConfigActivationValueEnabled(value: unknown): boolean {
     return false;
   }
   return true;
-}
-
-function listPotentialEnabledChannelIds(config: OpenClawConfig, env: NodeJS.ProcessEnv): string[] {
-  const disabled = new Set(listExplicitlyDisabledChannelIdsForConfig(config));
-  return listPotentialConfiguredChannelIds(config, env, { includePersistedAuthState: false })
-    .map((id) => normalizeOptionalLowercaseString(id) ?? "")
-    .filter((id) => id && !disabled.has(id));
 }
 
 function isGatewayStartupMemoryPlugin(plugin: InstalledPluginIndexRecord): boolean {
@@ -734,11 +725,13 @@ function collectConfiguredStartupChannelIds(params: {
   activationSourceConfig: OpenClawConfig;
   config: OpenClawConfig;
   env: NodeJS.ProcessEnv;
+  discovery?: PluginDiscoveryResult;
 }): string[] {
-  return sortUniquePluginIds([
-    ...listPotentialEnabledChannelIds(params.config, params.env),
-    ...listPotentialEnabledChannelIds(params.activationSourceConfig, params.env),
-  ]);
+  return sortUniquePluginIds(
+    [...new Set([params.config, params.activationSourceConfig])].flatMap((config) =>
+      listPotentialEnabledChannelIds(config, params.env, params.discovery),
+    ),
+  );
 }
 
 function collectValidationHeartbeatTargetChannelIds(config: OpenClawConfig): string[] {
@@ -780,11 +773,7 @@ function collectConfigValidationChannelIds(params: {
 }): string[] {
   return sortUniquePluginIds([
     ...collectValidationChannelConfigIds(params.config),
-    ...collectConfiguredStartupChannelIds({
-      config: params.config,
-      activationSourceConfig: params.config,
-      env: params.env,
-    }),
+    ...listPotentialEnabledChannelIds(params.config, params.env),
     ...collectValidationHeartbeatTargetChannelIds(params.config),
   ]);
 }
@@ -897,6 +886,7 @@ export function resolveGatewayStartupMetadataPluginIds(params: {
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   platform?: NodeJS.Platform;
+  configuredChannelIds?: readonly string[];
 }): string[] | undefined {
   const lookup = createInstalledPluginIndexScopeLookup(params.index);
   const activationSourceConfig = params.activationSourceConfig ?? params.config;
@@ -938,11 +928,9 @@ export function resolveGatewayStartupMetadataPluginIds(params: {
     index: params.index,
   });
 
-  const configuredChannelIds = collectConfiguredStartupChannelIds({
-    config: params.config,
-    activationSourceConfig,
-    env: params.env,
-  });
+  const configuredChannelIds =
+    params.configuredChannelIds ??
+    collectConfiguredStartupChannelIds({ ...params, activationSourceConfig });
   if (!lookup.hasDirectChannelOwners(configuredChannelIds)) {
     return undefined;
   }
@@ -1006,11 +994,13 @@ export function createGatewayStartupMetadataPluginIdScope(params: {
   activationSourceConfig?: OpenClawConfig;
   env: NodeJS.ProcessEnv;
   platform?: NodeJS.Platform;
+  discovery?: PluginDiscoveryResult;
 }): PluginMetadataSnapshotPluginIdScope {
   const configuredChannelIds = collectConfiguredStartupChannelIds({
     config: params.config,
     activationSourceConfig: params.activationSourceConfig ?? params.config,
     env: params.env,
+    discovery: params.discovery,
   });
   return {
     key: hashJson({
@@ -1022,13 +1012,9 @@ export function createGatewayStartupMetadataPluginIdScope(params: {
     }),
     resolve: ({ index }) =>
       resolveGatewayStartupMetadataPluginIds({
-        config: params.config,
-        ...(params.activationSourceConfig !== undefined
-          ? { activationSourceConfig: params.activationSourceConfig }
-          : {}),
-        env: params.env,
+        ...params,
         index,
-        ...(params.platform !== undefined ? { platform: params.platform } : {}),
+        configuredChannelIds,
       }),
   };
 }
@@ -1070,6 +1056,7 @@ export function resolveConfigValidationMetadataPluginIds(params: {
   env: NodeJS.ProcessEnv;
   index: InstalledPluginIndex;
   platform?: NodeJS.Platform;
+  configuredChannelIds?: readonly string[];
 }): string[] | undefined {
   const lookup = createInstalledPluginIndexScopeLookup(params.index);
   const pluginsConfig = normalizePluginsConfigForInstalledIndex(params.config.plugins, lookup);
@@ -1091,10 +1078,8 @@ export function resolveConfigValidationMetadataPluginIds(params: {
     index: params.index,
   });
 
-  const configuredChannelIds = collectConfigValidationChannelIds({
-    config: params.config,
-    env: params.env,
-  });
+  const configuredChannelIds =
+    params.configuredChannelIds ?? collectConfigValidationChannelIds(params);
   if (!lookup.hasChannelContributionOwners(configuredChannelIds)) {
     return undefined;
   }
@@ -1153,10 +1138,9 @@ export function createConfigValidationMetadataPluginIdScope(params: {
     }),
     resolve: ({ index }) =>
       resolveConfigValidationMetadataPluginIds({
-        config: params.config,
-        env: params.env,
+        ...params,
         index,
-        ...(params.platform !== undefined ? { platform: params.platform } : {}),
+        configuredChannelIds,
       }),
   };
 }
@@ -1840,11 +1824,14 @@ export function resolveGatewayStartupPluginPlanFromRegistry(params: {
   index: PluginRegistrySnapshot;
   manifestRegistry: PluginManifestRegistry;
   platform?: NodeJS.Platform;
+  discovery?: PluginDiscoveryResult;
 }): GatewayStartupPluginPlan {
   const channelPluginIds = resolveChannelPluginIdsFromRegistry({
     manifestRegistry: params.manifestRegistry,
   });
-  const configuredChannelIds = new Set(listPotentialEnabledChannelIds(params.config, params.env));
+  const configuredChannelIds = new Set(
+    listPotentialEnabledChannelIds(params.config, params.env, params.discovery),
+  );
   const pluginsConfig = normalizePluginsConfigWithRegistry(params.config.plugins, params.index, {
     manifestRegistry: params.manifestRegistry,
   });
@@ -2099,15 +2086,7 @@ export function loadGatewayStartupPluginPlan(params: {
   platform?: NodeJS.Platform;
 }): GatewayStartupPluginPlan {
   const snapshotConfig = params.activationSourceConfig ?? params.config;
-  const pluginIdScope = createGatewayStartupMetadataPluginIdScope({
-    config: params.config,
-    ...(params.activationSourceConfig !== undefined
-      ? { activationSourceConfig: params.activationSourceConfig }
-      : {}),
-    env: params.env,
-    ...(params.platform !== undefined ? { platform: params.platform } : {}),
-  });
-  const metadataSnapshot =
+  const compatibleSnapshot =
     params.metadataSnapshot &&
     isPluginMetadataSnapshotCompatible({
       snapshot: params.metadataSnapshot,
@@ -2116,12 +2095,23 @@ export function loadGatewayStartupPluginPlan(params: {
       allowScopedSnapshot: true,
       workspaceDir: params.workspaceDir,
       index: params.index,
-    }) &&
-    isMetadataSnapshotScopedForGatewayStartup({
-      metadataSnapshot: params.metadataSnapshot,
-      pluginIdScope,
     })
       ? params.metadataSnapshot
+      : undefined;
+  const pluginIdScope = createGatewayStartupMetadataPluginIdScope({
+    config: params.config,
+    activationSourceConfig: params.activationSourceConfig,
+    env: params.env,
+    platform: params.platform,
+    discovery: compatibleSnapshot?.discovery,
+  });
+  const metadataSnapshot =
+    compatibleSnapshot &&
+    isMetadataSnapshotScopedForGatewayStartup({
+      metadataSnapshot: compatibleSnapshot,
+      pluginIdScope,
+    })
+      ? compatibleSnapshot
       : resolvePluginMetadataSnapshot({
           config: snapshotConfig,
           workspaceDir: params.workspaceDir,
@@ -2132,13 +2122,12 @@ export function loadGatewayStartupPluginPlan(params: {
         });
   return resolveGatewayStartupPluginPlanFromRegistry({
     config: params.config,
-    ...(params.activationSourceConfig !== undefined
-      ? { activationSourceConfig: params.activationSourceConfig }
-      : {}),
+    activationSourceConfig: params.activationSourceConfig,
     env: params.env,
     index: metadataSnapshot.index,
     manifestRegistry: metadataSnapshot.manifestRegistry,
     platform: params.platform,
+    discovery: metadataSnapshot.discovery,
   });
 }
 

@@ -1,0 +1,127 @@
+{
+  "schema": "G3RuntimeForkValidation/v1",
+  "candidateCommit": "eaf7e65fe530d7dbaedabd13bddf5c50fdb1334e",
+  "candidateTree": "53e2659cd5b59f52018302e3998ec68efca25e59",
+  "testFile": "openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.fork-reject.test.ts",
+  "passed": 2,
+  "failed": 0,
+  "sourceScope": "Original frozen-candidate file proof; experimental mock profiles are retained and not adopted",
+  "profiles": [
+    {
+      "name": "focused-fork-reject-r25-r1",
+      "cwd": "D:\\tmp\\g3-compaction-readiness-20261123-r22\\candidate\\openclaw_runtime",
+      "passed": 2,
+      "failed": 0,
+      "elapsedMs": 49500,
+      "peakJobPrivateCommitMiB": 1990.74,
+      "receiptSha256": "9b031ddfb5d3968a51d524f7601a8965da209e2640d4a5a7840fa14af0ff13fc",
+      "reportSha256": "c7b5e26510203b82b83ced66bd72e5644488e8f5aedaf461d8eb5e4ff89bf132"
+    },
+    {
+      "name": "isolated-fork-reject-r25-r1",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime",
+      "passed": 2,
+      "failed": 0,
+      "elapsedMs": 24344,
+      "peakJobPrivateCommitMiB": 1615.73,
+      "receiptSha256": "aa4a359d786b8fd87035e26f295df7f6e7eb2da6307dbbb40043770dd8f28d8e",
+      "reportSha256": "e712e723860de712606254ce7a46e130c8a413fa9089f006ae4d42283c7dfd42"
+    },
+    {
+      "name": "narrow-fork-reject-r25-r1",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\openclaw_runtime",
+      "passed": 2,
+      "failed": 0,
+      "elapsedMs": 33734,
+      "peakJobPrivateCommitMiB": 1526.32,
+      "receiptSha256": "5d1934b09aa277b11305fc4c1a057c2d0c917ca62e39762dad4094ca688b7f11",
+      "reportSha256": "3fc1b8e3952633dc0882910038b945ef0050008f815417109c39ba3cb533f367"
+    }
+  ],
+  "records": [
+    {
+      "file": "runtime-fork-rejection-readback-r25.json",
+      "bytes": 2296,
+      "sha256": "ab53b058746b691d16432e66bb15a5afb5b0e51aa9a3886ca9090061f21f17e9"
+    },
+    {
+      "file": "fixture-isolation-experiment-r25.patch",
+      "bytes": 1527,
+      "sha256": "19c3578603dc42e5512e660ce3a1563e54e7324e02c39dc92dd2f56fbd01a24b"
+    },
+    {
+      "file": "fixture-isolation-experiment-r25-source.ts",
+      "bytes": 4506,
+      "sha256": "fe31840768e2698e447049d3a6164e975594104403eed4aa8cb93b54c7a3e755"
+    },
+    {
+      "file": "focused-fork-reject-r25-r1.json",
+      "bytes": 1082,
+      "sha256": "9b031ddfb5d3968a51d524f7601a8965da209e2640d4a5a7840fa14af0ff13fc"
+    },
+    {
+      "file": "focused-fork-reject-r25-r1-report.json",
+      "bytes": 1533,
+      "sha256": "c7b5e26510203b82b83ced66bd72e5644488e8f5aedaf461d8eb5e4ff89bf132"
+    },
+    {
+      "file": "focused-fork-reject-r25-r1.stdout.log",
+      "bytes": 106,
+      "sha256": "22e868ab2f81902480630061a1e83d2092932e90e8af40a3da7d5b756b762543"
+    },
+    {
+      "file": "focused-fork-reject-r25-r1.stderr.log",
+      "bytes": 403,
+      "sha256": "6c4807cd522bbc629368f1d20e16d79e53e177a4930156022b6563f11ce34f4b"
+    },
+    {
+      "file": "isolated-fork-reject-r25-r1.json",
+      "bytes": 1123,
+      "sha256": "aa4a359d786b8fd87035e26f295df7f6e7eb2da6307dbbb40043770dd8f28d8e"
+    },
+    {
+      "file": "isolated-fork-reject-r25-r1-report.json",
+      "bytes": 1571,
+      "sha256": "e712e723860de712606254ce7a46e130c8a413fa9089f006ae4d42283c7dfd42"
+    },
+    {
+      "file": "isolated-fork-reject-r25-r1.stdout.log",
+      "bytes": 107,
+      "sha256": "e50905812fb5ae68e97d2ae06fdbd48551286f7a7fc4e6da9f3e32af6fa9b7ac"
+    },
+    {
+      "file": "isolated-fork-reject-r25-r1.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "narrow-fork-reject-r25-r1.json",
+      "bytes": 1119,
+      "sha256": "5d1934b09aa277b11305fc4c1a057c2d0c917ca62e39762dad4094ca688b7f11"
+    },
+    {
+      "file": "narrow-fork-reject-r25-r1-report.json",
+      "bytes": 1570,
+      "sha256": "3fc1b8e3952633dc0882910038b945ef0050008f815417109c39ba3cb533f367"
+    },
+    {
+      "file": "narrow-fork-reject-r25-r1.stdout.log",
+      "bytes": 105,
+      "sha256": "1915ac61e1ecfb99291426508117afdc14cc8c9c9f39cd10331d2fbfad8aba26"
+    },
+    {
+      "file": "narrow-fork-reject-r25-r1.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "nextFiles": [
+    "sessions.lifecycle.fork-lineage.test.ts",
+    "sessions.compaction-range.handler.test.ts"
+  ],
+  "sourceRestored": true,
+  "gaVerdict": "NO_GO",
+  "driven_by": "agent",
+  "actor": "codex/g3-runtime-r25",
+  "realHumanEvidence": false
+}

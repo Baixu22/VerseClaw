@@ -1202,14 +1202,14 @@ export async function runBeforeToolCallHook(
 export function wrapToolWithBeforeToolCallHook(
   tool: AnyAgentTool,
   ctx?: HookContext,
-  options: { approvalMode?: "request" | "report"; emitDiagnostics?: boolean } = {},
+  options: { approvalMode?: "request" | "report"; emitDiagnostics?: boolean; taskGuard?: ReturnType<typeof createExecutionTaskGuard> } = {},
 ): AnyAgentTool {
   const execute = tool.execute;
   if (!execute) {
     return tool;
   }
   const toolName = tool.name || "tool";
-  const taskGuard = createExecutionTaskGuard(ctx?.workspaceDir ?? ctx?.cwd, ctx?.sessionKey, ctx?.sessionId,ctx?.runId);
+  const taskGuard = options.taskGuard !== undefined ? options.taskGuard : createExecutionTaskGuard(ctx?.workspaceDir ?? ctx?.cwd, ctx?.sessionKey, ctx?.sessionId,ctx?.runId);
   const diagnosticIdentity = resolveToolDiagnosticIdentity(tool);
   const hookOptions: BeforeToolCallWrapperOptions = {
     ...(options.approvalMode ? { approvalMode: options.approvalMode } : {}),

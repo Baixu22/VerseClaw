@@ -212,8 +212,8 @@ describe('Run-log replay provenance badge', () => {
 
 /** Expand the turn summary only when the current preference left it closed. */
 function expandTurnSummary() {
-  const toggle = screen.queryByTestId('chat-turn-summary-toggle');
-  if (toggle?.getAttribute('aria-expanded') === 'false') fireEvent.click(toggle);
+  const toggles = [...screen.queryAllByTestId('chat-tool-activity-toggle'), ...screen.queryAllByTestId('chat-turn-summary-toggle')];
+  for (const toggle of toggles) if (toggle.getAttribute('aria-expanded') === 'false') fireEvent.click(toggle);
 }
 
 const WEATHER_INPUT = { location: 'Tokyo', temperature: 21, condition: 'sunny' };
@@ -1092,13 +1092,13 @@ describe('Turn disclosure survives the optimistic→server id swap', () => {
     });
     await mountChat();
 
-    await waitFor(() => expect(screen.getByTestId('chat-turn-summary-toggle')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('chat-tool-activity-toggle')).toBeInTheDocument());
 
     // A finished turn folds by default; the user opens it.
-    const toggle = screen.getByTestId('chat-turn-summary-toggle');
+    const toggle = screen.getByTestId('chat-tool-activity-toggle');
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-tool-activity-details')).toBeInTheDocument();
 
     // The Gateway echo swaps the optimistic user message for the persisted one:
     // same position, same text/timestamp, different id.
@@ -1114,9 +1114,9 @@ describe('Turn disclosure survives the optimistic→server id swap', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('chat-turn-summary-toggle')).toHaveAttribute('aria-expanded', 'true'),
+      expect(screen.getByTestId('chat-tool-activity-toggle')).toHaveAttribute('aria-expanded', 'true'),
     );
-    expect(screen.getByTestId('chat-turn-summary-details')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-tool-activity-details')).toBeInTheDocument();
   });
 });
 
@@ -1130,7 +1130,9 @@ describe('live plan display ownership', () => {
           { type: 'tool.started', toolCallId: 'live-plan-tool', name: 'update_plan', args: { plan: [{ step: 'Read current sources', status: 'completed' }, { step: 'Write focused patch', status: 'in_progress' }] }, ts: 1_700_000_000_002 }] } },
     });
     await mountChat();
-    expect(await screen.findByTestId('session-task-current')).toHaveTextContent('Write focused patch');
+    expect(await screen.findByTestId('session-task-count')).toHaveTextContent('1/2');
+    expect(screen.queryByTestId('composer-context-row')).toBeNull();
+    expect(screen.queryByTestId('session-task-current')).toBeNull();
     fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
     fireEvent.click(screen.getByTestId('chat-turn-summary-toggle'));
     expect(screen.queryByTestId('chat-run-plan')).toBeNull();

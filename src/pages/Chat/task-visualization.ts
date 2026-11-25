@@ -28,6 +28,8 @@ export interface TaskStep {
   /** First event in this run; later output updates keep the same transcript slot. */
   eventOrder?: number;
   inputDetail?: string;
+  /** Operation target captured before long arguments are reduced for display. */
+  target?: string;
   /** Wall-clock start when the runtime supplied one. */
   startedAt?: number;
   /** Completed duration when the runtime or command event supplied one. */
@@ -458,6 +460,8 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
           kind: 'tool',
           detail: runtimeDetail(event.args),
           inputDetail: runtimeDetail(event.args),
+          target: ['file_path', 'filePath', 'path', 'command', 'cmd', 'pattern', 'query', 'url']
+            .map(key => input?.[key]).find((value): value is string => typeof value === 'string' && value.trim().length > 0),
           startedAt: event.ts,
           depth: 1,
           url,

@@ -404,7 +404,7 @@ function providerUsesRuntimeModelAugment(params: {
   if (!provider) {
     return false;
   }
-  if (bundledStaticCatalogProviderUsesRuntimeAugment({ provider })) {
+  if (bundledStaticCatalogProviderUsesRuntimeAugment({ ...params, provider })) {
     return true;
   }
   const config = params.cfg ?? {};

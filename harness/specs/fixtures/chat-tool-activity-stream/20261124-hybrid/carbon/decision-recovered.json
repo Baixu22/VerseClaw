@@ -1,0 +1,48 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "normalizedFrom": "stdout.json:response",
+  "sourceStatus": "ERROR",
+  "sourceFinishedReason": "print_timeout",
+  "conversationId": "531fbf54-d788-4ff3-8edc-c14ef2359b67",
+  "requirements": [
+    {
+      "id": "R1",
+      "verdict": "pass",
+      "evidence": "[prototype-wide.png](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/prototype-wide.png)（折叠运行与已完成历史）、[prototype-narrow.png](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/prototype-narrow.png) 及 [ToolActivityGroup.tsx](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/ToolActivityGroup.tsx#L59-L75)、[activity.css](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/activity.css#L14-L33) 均确认折叠态为透明无边框纯文本＋16px 图标，无胶囊底色、无进度条、无计时。"
+    },
+    {
+      "id": "R2",
+      "verdict": "pass",
+      "evidence": "[semantic-icons.ts](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/semantic-icons.ts#L234-L244) 以 `findLast(entry => entry.running)` 提取最新运行项并标记最新活跃组 `isCurrent`；[ToolActivityGroup.tsx](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/ToolActivityGroup.tsx#L37-L49) 优先渲染 `current` 的动作、目标与语义图标；[native-live.json](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/native-live.json#L13-L18) 记录查询目标切换到记忆目标及长命令实时更新通过。"
+    },
+    {
+      "id": "R3",
+      "verdict": "pass",
+      "evidence": "[ToolActivityGroup.tsx](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/ToolActivityGroup.tsx#L70-L72) 仅以 `key={current?.id}` 触发单次 `800ms` 左向右 `clip-path` 进场，流式日志追加不重播；运行期嵌套 `<Shimmer>` 保持连续白色扫光；[activity.css](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/activity.css#L332-L360) 在 `prefers-reduced-motion: reduce` 下关闭动画与遮罩并恢复 `currentColor` 静态可读，[native-live.json](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/native-live.json#L6-L12) 与 [acceptance.json](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/acceptance.json#L9-L13) 已覆盖。"
+    },
+    {
+      "id": "R4",
+      "verdict": "pass",
+      "evidence": "[ExecutionGraphCard.tsx](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/ExecutionGraphCard.tsx#L195-L210) 与 [RunTerminalSurfaces.tsx](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/RunTerminalSurfaces.tsx#L57-L84) 展开后统一使用灰色 `CallChip` 调用条、绿色完成勾、可展开 `Arguments`/`Result`、`<Terminal>` 命令输出及组/步骤手动折叠，见 [prototype-wide.png](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/prototype-wide.png) 与 [acceptance.json](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/acceptance.json#L11)（调用条下行字母裁切与右端留白在下方审美补丁修正）。"
+    },
+    {
+      "id": "R5",
+      "verdict": "pass",
+      "evidence": "[ToolActivityGroup.tsx](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/ToolActivityGroup.tsx#L9-L15)、[semantic-icons.ts](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/semantic-icons.ts#L73-L123) 与 [icon-catalog.png](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/icon-catalog.png) 完整映射 34 种 Lucide 图标，覆盖目录/代码/图片/PDF/配置/表格/演示、Git 分支/diff/commit/merge、测试/构建/包、浏览器点击/截图/滚动、网络/数据库/记忆/子代理/计划等。"
+    },
+    {
+      "id": "R6",
+      "verdict": "pass",
+      "evidence": "[native-geometry.json](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/native-geometry.json#L5-L156) 在 `en`/`zh`/`ja`/`ru` × 明暗 × `1280px`/`375px` 共 16 组及工作区面板开启态均实测 `left: 0, right: 0, overflow: false`，与 [prototype-narrow.png](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/prototype-narrow.png) 输入框同宽一致；原生 `<button>` 披露与键盘焦点在 [acceptance.json](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/acceptance.json#L12-L13) 已覆盖。"
+    },
+    {
+      "id": "R7",
+      "verdict": "pass",
+      "evidence": "[activity.css](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/activity.css#L162-L211) 与 [native-live.json](file:///D:/tmp/clawx-output-hybrid-20261124/carbon/native-live.json#L5) 确认文本与图标扫光峰值仅为 `rgb(255, 255, 255)` 纯白，无彩色渐变；完成勾（emerald）与错误态（`destructive`）沿用原有语义颜色。"
+    }
+  ],
+  "structuredOutputReturned": false,
+  "modelRequestedAgain": false,
+  "responseSha256": "2d733e2544c2f8a32adbf56024f82e32b4a25d8ac855ef170ac6d547dd494c6c"
+}

@@ -1,0 +1,464 @@
+{
+  "schema": "G3BridgeReadinessDevelopment/v1",
+  "decision": "NO_GO",
+  "taskNode": "TF-0818",
+  "codeCommit": "e3384611c2fbdcf45d598b8632c4e3e23a512ed2",
+  "inputs": [
+    {
+      "file": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+      "sha256": "81a7f48a24d9ad37401fa632d732a2fd8cfed2a2cbd2b7e76efef90612663b70",
+      "gitBlob": "76d997365622d51bffbfd2f45503ebb5ec20b2a5",
+      "gitBlobSha256": "81a7f48a24d9ad37401fa632d732a2fd8cfed2a2cbd2b7e76efef90612663b70",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\immutable-source\\openclaw_runtime\\src\\gateway\\server-methods\\session-task-scope.ts"
+    },
+    {
+      "file": "tests/unit/session-task-scope-bridge.test.ts",
+      "sha256": "51c5d1264a0547ced91d85640a7e3a50078f0c08d9224ff3169b0ce21e830c08",
+      "gitBlob": "30b3aa433affe1005ed31e951172ea22b4620aa8",
+      "gitBlobSha256": "51c5d1264a0547ced91d85640a7e3a50078f0c08d9224ff3169b0ce21e830c08",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\immutable-source\\tests\\unit\\session-task-scope-bridge.test.ts"
+    },
+    {
+      "file": "harness/specs/tasks/recovery-authority-gated.md",
+      "sha256": "53c26cc847aec4425de585d7b74b295b8dd187f8e11c64a0d7469cb79ba8f104",
+      "gitBlob": "fbde43f53eda3efec321d0448258baa54c993f2e",
+      "gitBlobSha256": "8e2deba0982d2cd51b0e48dc5208c7c3a4bf6b76c22afddb03124d5052666ca7",
+      "byteIdentical": false,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\immutable-source\\harness\\specs\\tasks\\recovery-authority-gated.md"
+    },
+    {
+      "file": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "4623308c5abd7902b2d1162188274aafa423bf666400391bb2c87e1cb2098895",
+      "gitBlob": "a949ee3b9a8ad6abe3365bf44c98b0c0eb1eea60",
+      "gitBlobSha256": "4623308c5abd7902b2d1162188274aafa423bf666400391bb2c87e1cb2098895",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\immutable-source\\docs\\dev\\recovery-contract\\GA-READINESS-20261106.md"
+    },
+    {
+      "file": "README.md",
+      "sha256": "6020e66b92f31de3cfff1694dba5782e5cb350f7dcaecc3f36cdd7e52e30eb9e",
+      "gitBlob": "6cbbea2f59548a13bc8ce7bfabd5ed501099a543",
+      "gitBlobSha256": "6020e66b92f31de3cfff1694dba5782e5cb350f7dcaecc3f36cdd7e52e30eb9e",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\immutable-source\\README.md"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "250737e8723e53f630b29c6ea8960c4dbaec8e290aa7e5198b127cc7daac68ce",
+      "gitBlob": "c18ff8c01b35d7f9a5b794965ba4b3efeb3c62e3",
+      "gitBlobSha256": "250737e8723e53f630b29c6ea8960c4dbaec8e290aa7e5198b127cc7daac68ce",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\immutable-source\\README.zh-CN.md"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "7f469d0536e710a70bba6c32bc62afd804ae8eec9c775baa9a4c0c9808308b1c",
+      "gitBlob": "3ca3fd06e3c08b3c90e76808c9ff144d12f1e6e8",
+      "gitBlobSha256": "7f469d0536e710a70bba6c32bc62afd804ae8eec9c775baa9a4c0c9808308b1c",
+      "byteIdentical": true,
+      "normalizedGitIdentityMatched": true,
+      "immutableSourcePath": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\immutable-source\\README.ja-JP.md"
+    }
+  ],
+  "tests": {
+    "passed": 38,
+    "failed": 0,
+    "files": [
+      "tests/unit/gateway-late-bytecode-cache.test.ts",
+      "tests/unit/gateway-workflow-recovery-loading.test.ts",
+      "tests/unit/session-task-scope-bridge.test.ts"
+    ]
+  },
+  "review": {
+    "model": "ccs-ai/gpt-6.1-sol",
+    "findings": [],
+    "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-review-r1-result.json"
+  },
+  "typecheck": {
+    "uncached": true,
+    "internalDurationMs": 36496,
+    "gateDurationMs": 41688,
+    "projects": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 127
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 14576
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 9062
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 21781,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\g3-loc-and-latency-closeout\\recovery-ga-20261113-01a1d350\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  },
+  "desktop": {
+    "durationMs": 56565,
+    "budgetMs": 58000,
+    "passedBudget": true
+  },
+  "stages": [
+    {
+      "name": "bridge-boundary-tests",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-scope-bridge.test.ts",
+        "tests/unit/gateway-late-bytecode-cache.test.ts",
+        "tests/unit/gateway-workflow-recovery-loading.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:/tmp/g3-bridge-readiness-20261120-01a1f36c/bridge-boundary-tests-result.json"
+      ],
+      "elapsedMs": 14970,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 6995,
+      "minimumMemoryMiB": 5936,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-boundary-tests.json"
+    },
+    {
+      "name": "bridge-eslint-r1",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "tests/unit/session-task-scope-bridge.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "elapsedMs": 9458,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 6061,
+      "minimumMemoryMiB": 2977,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-eslint-r1.json"
+    },
+    {
+      "name": "bridge-runtime-lint-r1",
+      "argv": [
+        "pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\run-runtime-lint.ps1"
+      ],
+      "elapsedMs": 10023,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 3923,
+      "minimumMemoryMiB": 1489,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-runtime-lint-r1.json"
+    },
+    {
+      "name": "bridge-harness-r1",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "1ef5b8fe2"
+      ],
+      "elapsedMs": 2699,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 3291,
+      "minimumMemoryMiB": 2624,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-harness-r1.json"
+    },
+    {
+      "name": "bridge-harness-flow-r1",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "1ef5b8fe2",
+        "--dry-run"
+      ],
+      "elapsedMs": 2399,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1375,
+      "minimumMemoryMiB": 875,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-harness-flow-r1.json"
+    },
+    {
+      "name": "bridge-comms-replay-r1",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "elapsedMs": 1215,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1482,
+      "minimumMemoryMiB": 1482,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-comms-replay-r1.json"
+    },
+    {
+      "name": "bridge-comms-compare-r1",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "elapsedMs": 1181,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 2963,
+      "minimumMemoryMiB": 2963,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-comms-compare-r1.json"
+    },
+    {
+      "name": "bridge-review-r1",
+      "argv": [
+        "python",
+        "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+        "--mode",
+        "local",
+        "--engine",
+        "codex",
+        "--model",
+        "ccs-ai/gpt-6.1-sol",
+        "--thinking",
+        "high",
+        "--no-web-search",
+        "--prompt-file",
+        "D:/tmp/g3-bridge-readiness-20261120-01a1f36c/review-notes-r1.md",
+        "--json-output",
+        "D:/tmp/g3-bridge-readiness-20261120-01a1f36c/bridge-review-r1-result.json",
+        "--output",
+        "D:/tmp/g3-bridge-readiness-20261120-01a1f36c/bridge-review-r1-result.txt"
+      ],
+      "elapsedMs": 263682,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 6061,
+      "minimumMemoryMiB": 385,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-review-r1.json"
+    },
+    {
+      "name": "bridge-types-r2",
+      "argv": [
+        "node",
+        "scripts/typecheck-agent-dev.mjs",
+        "--no-cache"
+      ],
+      "elapsedMs": 41688,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 5207,
+      "minimumMemoryMiB": 285,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-types-r2.json"
+    },
+    {
+      "name": "bridge-runtime-build-r2",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "elapsedMs": 51918,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 4957,
+      "minimumMemoryMiB": 2127,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-runtime-build-r2.json"
+    },
+    {
+      "name": "bridge-source-metadata-r3",
+      "argv": [
+        "node",
+        "scripts/check-runtime-source-policy.mjs"
+      ],
+      "elapsedMs": 1203,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1174,
+      "minimumMemoryMiB": 1174,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-source-metadata-r3.json"
+    },
+    {
+      "name": "bridge-source-deprecated-r3",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm --dir openclaw_runtime run check:deprecated-api-usage"
+      ],
+      "elapsedMs": 21058,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 641,
+      "minimumMemoryMiB": 580,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-source-deprecated-r3.json"
+    },
+    {
+      "name": "bridge-source-zero-call-r3",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm --dir openclaw_runtime run check:deprecated-zero-call"
+      ],
+      "elapsedMs": 6595,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1007,
+      "minimumMemoryMiB": 749,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-source-zero-call-r3.json"
+    },
+    {
+      "name": "bridge-source-loc-r3",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm --dir openclaw_runtime run check:loc:baseline"
+      ],
+      "elapsedMs": 4226,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 1432,
+      "minimumMemoryMiB": 1097,
+      "record": "D:\\tmp\\g3-bridge-readiness-20261120-01a1f36c\\bridge-source-loc-r3.json"
+    },
+    {
+      "name": "bridge-source-rest-r3",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm --dir openclaw_runtime run check:import-cycles && pnpm --dir openclaw_runtime run deadcode:unused-files"
+      ],
+      "elapsedMs": 22252,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 5269,
+      "minimumMemoryMiB": 5125,
+      "record": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\bridge-source-rest-r3.json"
+    },
+    {
+      "name": "bridge-desktop-r3",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "elapsedMs": 56565,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 6507,
+      "minimumMemoryMiB": 1488,
+      "record": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\bridge-desktop-r3.json"
+    },
+    {
+      "name": "bridge-native-r3",
+      "argv": [
+        "node",
+        "scripts/recovery-contract-matrix.mjs",
+        "--batch",
+        "--arm",
+        "candidate",
+        "--repeats",
+        "3",
+        "--windows",
+        "repeated-restart",
+        "--out",
+        "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\bridge-native-r3"
+      ],
+      "elapsedMs": 163632,
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "startMemoryMiB": 7727,
+      "minimumMemoryMiB": 3821,
+      "record": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\bridge-native-r3.json"
+    }
+  ],
+  "native": {
+    "measurementBasis": "development-built-source",
+    "diagnosticTrace": false,
+    "trials": [
+      {
+        "index": 0,
+        "recoveryLatencyMs": 32935,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "crashes": 3,
+        "receiptSha256": "1c783dccc88cc831177b84a6042841f18a495a9cdece82e6933c419e6eb214e4"
+      },
+      {
+        "index": 1,
+        "recoveryLatencyMs": 32207,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "crashes": 3,
+        "receiptSha256": "96a125a88dd0bee82e6a6736c91b6e7ca7dc4bef3d6a0aa0887d6ff78ae12614"
+      },
+      {
+        "index": 2,
+        "recoveryLatencyMs": 34844,
+        "terminalCorrect": true,
+        "duplicateEffects": 0,
+        "lostTasks": 0,
+        "crashes": 3,
+        "receiptSha256": "6aec3f37a548aa0d42b34434594e679466b69e3c6ad20144065bdc1e6715a710"
+      }
+    ],
+    "matchedAttachments": 18,
+    "runRecord": "D:\\tmp\\g3-ga-relay-20261120-01a1f836\\bridge-native-r3\\matrix-run.json"
+  },
+  "formalAcceptance": {
+    "status": "NOT_RUN",
+    "recoveryP50BudgetMs": 5000,
+    "recoveryP95BudgetMs": 15000,
+    "requiredWindows": 5,
+    "repeatsPerWindow": 3,
+    "requiredLiveProviderPairs": 30,
+    "legacyRepeatRequired": true,
+    "liveModel": "deepseek-ai/DeepSeek-V4.1-Flash"
+  },
+  "archive": {
+    "file": "raw-evidence.json.gz",
+    "sha256": "5da62c49ca353380f7894ba1079194eee68d09e0472a3d2b188acb47c3c32322",
+    "files": 147,
+    "bytes": 785545
+  },
+  "credentialScan": {
+    "valuesChecked": 6,
+    "hits": 0
+  },
+  "driven_by": "agent",
+  "actor": "codex/g3-ga-relay-01a1f836",
+  "realHumanEvidence": false
+}

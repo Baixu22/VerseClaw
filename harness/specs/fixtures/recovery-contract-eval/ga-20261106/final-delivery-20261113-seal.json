@@ -1,0 +1,33 @@
+{
+  "schema": "RecoveryDeliverySealReadback/v2",
+  "driven_by": "agent",
+  "actor": "codex-recovery-ga-relay-20261113-01a1d4d8",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "aacbe24397c6fd8d7b9d67f0147932de25ab8a72",
+    "tree": "3fb56ec1b61b0564ba33d575a6e083573745e18c",
+    "dirty": false
+  },
+  "target": "D:\\ClawX-work\\recovery-ga-20261113-01a1d350\\harness\\specs\\fixtures\\recovery-contract-eval\\ga-20261106\\final-delivery-20261113",
+  "sourceFilesMatched": 26,
+  "rawRoundtripMatched": true,
+  "credentialHits": 0,
+  "files": [
+    {
+      "path": "manifest.json",
+      "sha256": "060f7219ba95f163deb1b19da05023d2bbfddb5854445aab69d28de3ada770a2"
+    },
+    {
+      "path": "raw-evidence.json.gz",
+      "sha256": "77a654f244de21670d668f8f37a6a89323b2a82d57f41f1004c493d2a0beacc6"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5de74836027b81f550c7286f743f11c7e861c7dc14eeaf0b1f751b652769e6ba"
+    },
+    {
+      "path": "SHA256SUMS",
+      "sha256": "8b4e1424e6abb4c3926312b48e67864df76e466fdacf3acea60c88129958e8a5"
+    }
+  ]
+}

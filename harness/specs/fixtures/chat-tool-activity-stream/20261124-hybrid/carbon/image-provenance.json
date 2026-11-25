@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidate": "cf2d1209319ecde28b49c16cbea2850604b30e05",
+  "nativeStats": {
+    "startTime": "2026-11-24T07:46:54.141Z",
+    "duration": 36743.654,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "unitTests": 135,
+  "nodeAndWebTypes": "passed in typecheck-r1; test-project KeyframeEffect type repair passed in typecheck-test-r2",
+  "iconCount": 34,
+  "originals": [
+    {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r2\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\live-shimmer-dark-1280.png",
+      "sha256": "8b1a2a0fbdd878f4ed35dd2baf6227f11477985059943737c61916acc08be035"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r2\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-expanded-dark-1280.png",
+      "sha256": "296282ff8dc20c69e32a0e4554a90c9f88a741fe5e3c6dc6f404147429b63cf7"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r2\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-collapsed-dark-1280.png",
+      "sha256": "833c2c060f395b2ab5b97d1c01c74b53beb613ecc66524c574dbf895ce18e14c"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r2\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-light-375.png",
+      "sha256": "7427e8c167dfe20ff8af3c7bc485ce6c5e29266d8bf8bfcb9f1795fb365dc66c"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r2\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-dark-375.png",
+      "sha256": "e532b45d766fd17179d2b966b56fa56ab2307c6a9a519fde053e6c31bc4411c4"
+    }
+  ],
+  "transformations": {
+    "prototype-wide.png": "Original pixel crops stacked with labels; no recreated UI",
+    "prototype-narrow.png": "Actual 375px light and dark screenshots placed side by side"
+  },
+  "data": "Agent-generated history and runtime events; actual Electron rendering"
+}

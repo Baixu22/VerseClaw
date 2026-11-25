@@ -1,0 +1,37 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "sourceCandidate": "bb5afcfd7d577d92e72d74ef05047be077e15d51",
+  "inputImages": [
+    "reference-01.png",
+    "reference-02.png",
+    "prototype-dark.png",
+    "prototype-narrow.png"
+  ],
+  "originalElectronCaptures": [
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-collapsed-dark-1280.png",
+      "sha256": "f7c1343983605c6a5ad5ee8e5bc84f017427b945c6f3d1775d68698e2663ff21"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-expanded-dark-1280.png",
+      "sha256": "2aac590bcf35c2cefb0f87a2ca0b7740ee81533d5d908a1e5b3d6bdefca92f09"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\live-shimmer-dark-1280.png",
+      "sha256": "7d0dac638a7ffae3354506139b3da486e3cbf6b89fc024b2a6de64acfacd1f7d"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-light-375.png",
+      "sha256": "c3364caf3fe9107c2e31fd5dfa4c85a330f72000f1d2aa47888850c69256f432"
+    },
+    {
+      "path": "D:\\tmp\\clawx-output-stream-20261124\\electron-prototype-r5\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-dark-375.png",
+      "sha256": "3ac21b87add855ede42ec86caec8181df210a3a07f3eaf3b9023b8fcc2d0eb63"
+    }
+  ],
+  "transformations": {
+    "prototype-dark.png": "original-pixel crops of collapsed, expanded and active states; vertically stacked",
+    "prototype-narrow.png": "original 375px light and dark Electron captures side by side"
+  }
+}

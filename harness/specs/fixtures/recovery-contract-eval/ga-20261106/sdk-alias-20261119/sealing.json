@@ -1,0 +1,60 @@
+{
+  "stages": [
+    {
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "3d546dd0b"
+      ],
+      "exitCode": 0,
+      "log": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\seal-harness-0.log",
+      "sha256": "66256961710d20cfeeb1d346b155f00f3b86be6c9d6e2c535fef89e4cb6b997f"
+    },
+    {
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/gateway-startup-performance.md",
+        "--since",
+        "3d546dd0b"
+      ],
+      "exitCode": 0,
+      "log": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\seal-harness-1.log",
+      "sha256": "655f8f607b0c7cdf3859d817c27152c5cd4f4231d33f92202a930d2225db5f6e"
+    },
+    {
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/recovery-authority-gated.md",
+        "--since",
+        "3d546dd0b",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "log": "D:\\tmp\\g3-sdk-relay-20261119-01a1f36c\\seal-harness-2.log",
+      "sha256": "ed1a852c0010f75daa7c7b230d6cc967a3476c77e6c15facbdc2d2f44be6faf2"
+    }
+  ],
+  "driven_by": "agent",
+  "actor": "codex/g3-sdk-relay",
+  "realHumanEvidence": false,
+  "sealingInputs": [
+    {
+      "file": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "68dae139737469709d5cd56ba93d1857f40fcc72d6d27add66b642b2f8f4d185"
+    },
+    {
+      "file": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+      "sha256": "1bff639eb51adda6c4f4d19597ba10cf3eba62b40739fba6a80e4ca613edf034"
+    }
+  ]
+}

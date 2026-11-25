@@ -1,0 +1,44 @@
+{
+  "schema": "RecoveryBaselineAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-recovery-baseline-closeout",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "9e23819203590366c78c64402be455e28fde3440",
+    "tree": "36898e77a1696d6ac5b93be7cacd2c288948534b",
+    "dirty": false
+  },
+  "status": "PASS",
+  "nodes": [
+    "TF-0711",
+    "TF-0708"
+  ],
+  "primaryCompleteSamples": 15,
+  "repeatCompleteSamples": 15,
+  "liveProviderPairs": 30,
+  "matched": 15,
+  "primaryHash": "689c99ac956746a62f6173028bb93cdc4486f0efcfcbc31d4f04b6d9aec6ba6b",
+  "repeatHash": "689c99ac956746a62f6173028bb93cdc4486f0efcfcbc31d4f04b6d9aec6ba6b",
+  "projectionUnchanged": true,
+  "originalComparatorSha256": "71062d7d652a18dcaa3071921b1907554de3499fd37fb8c9cc5e4bf99371b81b",
+  "metrics": {
+    "duplicateEffects": 0,
+    "lostTasks": 0,
+    "terminalCorrectness": 0.6,
+    "unknownClassifiableRate": 0.4,
+    "mustPreserveFidelity": 0.9666666666666667,
+    "falseCompletionClaims": 0,
+    "nextActionAccuracy": 0.9666666666666667,
+    "recoveryLatencyP50": 27065,
+    "recoveryLatencyP95": 90855.8
+  },
+  "metricStatus": "FAIL",
+  "evaluatorExitCode": 1,
+  "sourceFiles": 51,
+  "filesArchived": 269,
+  "rawEvidenceSha256": "6cb28eb1e0c71c250655803ecb31271971dd5b8a29ccbd74abed31c011e71048",
+  "credentialHits": 0,
+  "originalFailuresPreserved": true,
+  "gaStatus": "NO_GO",
+  "recordedAt": "2026-11-15T17:10:41.253Z"
+}

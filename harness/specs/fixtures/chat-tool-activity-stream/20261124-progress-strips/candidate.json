@@ -1,0 +1,66 @@
+{
+  "commit": "22b8e1633b9faad2f66b43fb6876d84c9193c5ee",
+  "tree": "b10d178448fce822bdf65473e755baf5e099b584",
+  "dirty": false,
+  "logicValidationCommit": "88e727353d9e45f6273b92e433cb187ba1ca4070",
+  "testTypecheckCommit": "39de1a71099308fc7e160a9d52716a5b81d17b79",
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "gitBlob": "0e49c454a40cd0b7d6da8a111077d09fb108bc26"
+    },
+    {
+      "path": "README.md",
+      "gitBlob": "4651a35ab01312c92d90747ad3c8665651d9af1a"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "gitBlob": "fd202bed34f28063d7e8299a9cb02504a914e288"
+    },
+    {
+      "path": "docs/dev/chat-tool-activity-stream.md",
+      "gitBlob": "3aaa925f349b3d68753a528122b9125ed2c7515b"
+    },
+    {
+      "path": "harness/specs/rules/ui-motion-material-system.md",
+      "gitBlob": "9e0960fcce4a2b288752306c33ed96fc61e1531e"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "gitBlob": "ff50ce275b0293b71f01da083a0e666ef559fbba"
+    },
+    {
+      "path": "harness/specs/tasks/chat-tool-activity-stream-20261123.md",
+      "gitBlob": "bfd99d1f54ff0b731eb8daeacc37fce2998f17d4"
+    },
+    {
+      "path": "src/components/assistant-render/ToolActivityGroup.tsx",
+      "gitBlob": "937993ed1b4ed90227f9d0b43bb0aa2ab1da875d"
+    },
+    {
+      "path": "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "gitBlob": "dde8aa73acadf934505882f432b982fa6593be60"
+    },
+    {
+      "path": "src/components/tool-ui/shared/call-chip.tsx",
+      "gitBlob": "5e57acd92b29527a3ad99899f955c90b14af8006"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "gitBlob": "1942bc28b11377bf4dedc87e86b4cdb843b9cb57"
+    },
+    {
+      "path": "src/styles/codex-conversation.css",
+      "gitBlob": "8972825b9bb329b48a35a2ab3dbbee78e46140a6"
+    },
+    {
+      "path": "tests/e2e/chat-tool-activity-stream.spec.ts",
+      "gitBlob": "7bec90cfe8114b0f2b36379ea58f6e93b8b6c7e4"
+    },
+    {
+      "path": "tests/unit/tool-activity-group.test.tsx",
+      "gitBlob": "968c5853ac2ac9981c9cb50974b9860f8f2a4bd3"
+    }
+  ],
+  "runtimeSourceMatchesQaBuild": true
+}

@@ -13,12 +13,16 @@ function stableStringify(value: unknown): string {
 }
 
 test.describe('Verse Claw chat long-task recovery controls', () => {
-  test('shows recovery status and drains queued follow-up through Host API', async ({ launchElectronApp }) => {
+  test('shows recovery status and drains queued follow-up through Host API', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpcByMethod: {
+          'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'long-task-generation', displayName: 'main' }] },
+          'chat.history': { messages: [] },
+        },
         hostApi: {
           [stableStringify(['gateway', 'status', null])]: {
             state: 'running',
@@ -200,6 +204,7 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
           _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
         })._invokeHandlers?.get('host:invoke');
         const queueDrainCalls: unknown[] = [];
+        let drained = false;
         const chatSendCalls: unknown[] = [];
         const taskLedgerAppendCalls: unknown[] = [];
         const terminalInterruptCalls: unknown[] = [];
@@ -219,6 +224,7 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
         }) => {
           if (request?.module === 'sessions' && request.action === 'queueDrain') {
             queueDrainCalls.push(request.payload);
+            drained = true;
             return makeResponse(request.id, {
               success: true,
               available: true,
@@ -297,7 +303,11 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
               proposal: { id: 'proposal-e2e', draftId: request.payload?.draftId },
             });
           }
-          return originalHostInvoke?.(event, request) ?? makeResponse(request?.id, {});
+          const response = await originalHostInvoke?.(event, request) as { data?: Record<string, unknown> } | undefined;
+          if (drained && request?.module === 'sessions' && request.action === 'longTaskControlStatus' && response?.data) {
+            response.data.queueCount = 0;
+          }
+          return response ?? makeResponse(request?.id, {});
         });
         (globalThis as typeof globalThis & { __longTaskQueueDrainCalls?: unknown[] }).__longTaskQueueDrainCalls = queueDrainCalls;
         (globalThis as typeof globalThis & { __longTaskChatSendCalls?: unknown[] }).__longTaskChatSendCalls = chatSendCalls;
@@ -307,7 +317,9 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       }, MAIN_SESSION_KEY);
 
       const page = await getStableWindow(app);
+      await page.reload();
       await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', 'long-task-generation');
 
       await expect(page.getByTestId('chat-long-task-queue-count')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-actions').click();
@@ -333,6 +345,8 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
         sessionKey: MAIN_SESSION_KEY,
         agentId: 'main',
       });
+      await expect(page.getByTestId('chat-long-task-queue-count')).toHaveCount(0);
+      await expect(page.locator('[data-sonner-toast][data-type="success"]')).toHaveCount(0);
 
       // Terminal interrupt, Git review, and the recovery memory draft are no
       // longer reachable from the Chat message flow. Terminal and Git recovery
@@ -366,11 +380,24 @@ test.describe('Verse Claw chat long-task recovery controls', () => {
       await expect(page.getByTestId('chat-intervention-interrupt')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-queue')).toBeVisible();
       await expect(page.getByTestId('chat-intervention-revise-goal')).toBeVisible();
+      await expect(page.getByTestId('chat-intervention-menu-trigger')).not.toHaveText('');
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+      await expect(page.getByTestId('chat-intervention-controls')).toHaveCSS('opacity', '1');
+      await expect(page.getByTestId('chat-intervention-controls')).toHaveCSS('filter', 'none');
+      await expect(page.getByTestId('chat-intervention-controls')).toHaveCSS('background-color', 'rgb(36, 36, 36)');
+      await expect(page.getByTestId('chat-intervention-controls')).toHaveCSS('border-radius', '18px');
+      await page.screenshot({ path: testInfo.outputPath('delivery-dark.png') });
+      await page.setViewportSize({ width: 480, height: 800 });
+      await expect(page.getByTestId('chat-intervention-controls')).toBeInViewport({ ratio: 1 });
+      await expect(page.getByTestId('chat-intervention-guide')).toBeInViewport({ ratio: 1 });
+      await expect(page.getByTestId('chat-intervention-interrupt')).toBeInViewport();
+      await page.screenshot({ path: testInfo.outputPath('delivery-narrow-dark.png') });
+      await page.setViewportSize({ width: 1280, height: 900 });
       await page.keyboard.press('Escape');
       await expect(page.getByTestId('chat-intervention-controls')).toHaveCount(0);
       /* The button's label lives on `aria-label` (the visible hint is a
          Tooltip, not a `title` attribute). */
-      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Queue');
+      await expect(page.getByTestId('chat-composer-send')).toHaveAttribute('aria-label', 'Send after this run');
       await page.getByTestId('chat-composer-send').click();
       await expect.poll(async () => (
         (await app.evaluate(() => (

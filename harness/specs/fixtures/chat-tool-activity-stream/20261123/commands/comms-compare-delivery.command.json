@@ -1,0 +1,14 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "candidateCommit": "a45a02b84a57fb4dc6a0e3634ac2140e14536f40",
+  "command": [
+    "pnpm.cmd",
+    "run",
+    "comms:compare"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 0.703,
+  "stdoutSha256": "0ffa072896b6f5e6ec45755623830ef5949266b00706591b875d48033cca91b3",
+  "stderrSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+}

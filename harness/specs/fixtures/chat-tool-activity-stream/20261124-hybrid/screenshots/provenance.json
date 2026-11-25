@@ -1,0 +1,59 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-output-ui",
+  "sources": {
+    "history-collapsed-dark-1280.png": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-collapsed-dark-1280.png",
+      "bytes": 55109,
+      "sha256": "30a8949199c33e54e7b3736cb5e2050efeb3143509baa653c20d5f2c24fdb6a6"
+    },
+    "history-expanded-dark-1280.png": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-expanded-dark-1280.png",
+      "bytes": 52419,
+      "sha256": "d37d16ffe65ff465bb84cf9ef0e1db0792bd8162c0f6e0d32a034242d69d3280"
+    },
+    "history-zh-light-375.png": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-light-375.png",
+      "bytes": 32507,
+      "sha256": "0319ecfd60979cf711713fd1223ca5c7d27bbf00792a63a3ef224c821be9b4a4"
+    },
+    "history-zh-dark-375.png": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-zh-dark-375.png",
+      "bytes": 32572,
+      "sha256": "492a81781555da003b21968b866e9b6724ae93f6f5b4f67d37fc36f4adbc87a7"
+    },
+    "history-expanded-ru-dark-375.png": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4\\chat-tool-activity-stream--bc169-le-details-and-four-locales\\history-expanded-ru-dark-375.png",
+      "bytes": 40087,
+      "sha256": "9d52a41f4a56f148304d9d98124a32bc7c3352a17f55e6ec29eb6cb8b293d36c"
+    },
+    "live-shimmer-dark-1280.png": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\live-shimmer-dark-1280.png",
+      "bytes": 48781,
+      "sha256": "37e5361d86029998588c7bb586892b719f272d408b4055b8ac621c61b7a23299"
+    },
+    "completed-command-dark-1280.png": {
+      "path": "D:\\tmp\\clawx-output-hybrid-20261124\\electron-r4\\chat-tool-activity-stream--45f83-tles-runtime-command-output\\completed-command-dark-1280.png",
+      "bytes": 64509,
+      "sha256": "c85d5cc43c01c9ebd3975b965b3cf039042a80dce6dbc15b268201a18f5a758d"
+    }
+  },
+  "transformations": {
+    "narrow-comparison.png": "actual 375px light/dark PNGs placed side by side",
+    "overview.png": "original pixel crops stacked with labels; no recreated UI"
+  },
+  "overviewCrops": {
+    "live-shimmer-dark-1280.png": [
+      296,
+      155,
+      1240,
+      365
+    ],
+    "history-expanded-dark-1280.png": [
+      80,
+      270,
+      1240,
+      604
+    ]
+  }
+}

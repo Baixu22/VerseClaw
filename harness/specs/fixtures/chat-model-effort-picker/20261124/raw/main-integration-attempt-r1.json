@@ -1,0 +1,7 @@
+{
+  "status": "deferred-new-commit",
+  "expected": "c76f588f3e1e56441522a0ce0560ec9515d4098f",
+  "observed": "49aa08031a2a1a1f88d16a7bf6bc9911b1ae9989",
+  "sourceWritesPerformed": false,
+  "recordedAt": "2026-11-24T14:41:32.805682+00:00"
+}

@@ -90,6 +90,11 @@ async function installComposerGitMocks(
 ) {
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+    gatewayRpcByMethod: {
+      'sessions.list': { sessions: [{ key: SESSION_KEY, sessionId: 'git-strip-fixture', displayName: 'main' }] },
+      'chat.history': { messages },
+      '*': {},
+    },
     gatewayRpc: {
       [stableStringify(['sessions.list', {}])]: {
         success: true,
@@ -186,6 +191,7 @@ async function installComposerGitMocks(
       id?: string; module: string; action: string; payload?: {
         name?: string; id?: string; rootPath?: string; agentId?: string;
         activeSessionKey?: string; activate?: boolean; method?: string;
+        sessionKey?: string;
         params?: { key?: string; sessionKey?: string };
       };
     }) => Promise<unknown>> })._invokeHandlers;
@@ -201,12 +207,15 @@ async function installComposerGitMocks(
       const payload = request.payload ?? {};
       const record = () => (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: unknown[] })
         .__verseClawE2eHostCalls?.push({ module: request.module, action: request.action, payload });
+      if (request.module === 'sessions' && request.action === 'history' && payload.sessionKey === seed.source.activeSessionKey) {
+        record();
+        return { id: request.id, ok: true, data: { success: true, messages: seed.messages } };
+      }
       if (request.module === 'gateway' && request.action === 'rpc' && payload.method === 'chat.history') {
         const key = payload.params?.key ?? payload.params?.sessionKey;
         if (key === seed.source.activeSessionKey || key === created?.activeSessionKey) {
           record();
-          return { id: request.id, ok: true, data: { success: true,
-            result: { messages: key === seed.source.activeSessionKey ? seed.messages : [] } } };
+          return { id: request.id, ok: true, data: { messages: key === seed.source.activeSessionKey ? seed.messages : [] } };
         }
       }
       if (request.module === 'workspaces' && request.action === 'create') {
@@ -259,14 +268,10 @@ test.describe('Chat composer Git strip', () => {
         await page.reload({ waitUntil: 'domcontentloaded' });
         await page.setViewportSize({ width: 1280, height: 820 });
         await expect(page.getByTestId('composer-git-strip')).toContainText('3 files changed');
-        await page.getByTestId('composer-git-trigger').click();
-        const menu = page.getByTestId('composer-git-menu');
-        await expect(menu.locator('.codex-git-kind')).toHaveText('Worktree');
-        await expect(menu).toContainText('Linked worktree');
-        await expect(menu).toHaveCSS('backdrop-filter', 'none');
-        await expect(menu).toHaveCSS('opacity', '1');
-        await page.screenshot({ path: testInfo.outputPath(`${theme}-worktree-menu.png`) });
-        await page.keyboard.press('Escape');
+        await page.getByTestId('composer-git-review').click();
+        await expect(page.getByTestId('artifact-panel-aside')).toBeVisible();
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-worktree-review.png`) });
+        await page.getByTestId('artifact-panel-close').click();
         const toggle = page.getByTestId('chat-session-activity-toggle');
         if (!await page.getByTestId('session-activity-panel').isVisible()) await toggle.click();
         await expect(page.getByTestId('session-activity-head-branch')).toHaveAttribute('data-git-kind', 'worktree');
@@ -323,8 +328,8 @@ test.describe('Chat composer Git strip', () => {
         agentId: 'main',
         sessionKey: SESSION_KEY,
         allowedDecisions: ['allow-once', 'allow-always', 'deny'],
-        createdAtMs: 1,
-        expiresAtMs: 2,
+        createdAtMs: Date.now(),
+        expiresAtMs: Date.now() + 60000,
       });
 
       const prompt = page.getByTestId('runtime-approval-prompt');
@@ -353,7 +358,7 @@ test.describe('Chat composer Git strip', () => {
     }
   });
 
-  test('shows repository context and routes branch/worktree actions through host APIs', async ({ launchElectronApp }, testInfo) => {
+  test('aligns the review summary and preserves the draft when opening repository changes', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -370,7 +375,6 @@ test.describe('Chat composer Git strip', () => {
       const strip = page.getByTestId('composer-git-strip');
       await expect(strip).toBeVisible({ timeout: 30_000 });
       await expect(strip).toContainText('3 files changed');
-      await expect(page.getByTestId('composer-git-trigger')).toContainText('feature/current');
 
       const composerShell = page.getByTestId('chat-composer-shell');
       await expect(composerShell).toBeVisible();
@@ -408,116 +412,12 @@ test.describe('Chat composer Git strip', () => {
       await page.setViewportSize({ width: 1280, height: 820 });
       await page.screenshot({ path: testInfo.outputPath('composer-git-layout.png') });
 
-      await page.getByTestId('composer-git-trigger').click();
-      const menu = page.getByTestId('composer-git-menu');
-      await expect(menu).toBeVisible();
-      await expect(menu).toContainText('feature/current');
-      await expect(menu).toContainText('ahead 2 / behind 1');
-      await expect(menu).toContainText('demo');
-      const reopenMenu = async () => {
-        await expect(menu).toHaveCount(0);
-        await page.getByTestId('composer-git-trigger').click();
-        await expect(menu).toBeVisible();
-      };
-      const menuBounds = await page.getByTestId('composer-git-menu').boundingBox();
-      expect(menuBounds).toBeTruthy();
-      expect(menuBounds!.y).toBeGreaterThanOrEqual(0);
-      expect(menuBounds!.y + menuBounds!.height).toBeLessThanOrEqual(820);
-      await page.screenshot({ path: testInfo.outputPath('git-menu.png') });
-      await expect(menu).toContainText('Branches');
-      await expect(menu).toContainText('Worktrees');
-      await expect(menu).toContainText('demo-feature-existing · feature/existing · 456789a');
-      await expect(menu).toContainText('Locked');
-      await expect(menu).toContainText('Prunable');
-      await expect(page.getByTestId('composer-git-switch-worktree-/workspace/demo-pruned')).toBeDisabled();
-
-      await page.getByTestId('composer-git-branch-search').fill('main');
-      await page.getByTestId('composer-git-checkout-main').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> })
-          .__verseClawE2eHostCalls ?? []
-      ))).toContainEqual(expect.objectContaining({
-        module: 'git',
-        action: 'checkoutBranch',
-        payload: { name: 'main' },
-      }));
-      await reopenMenu();
-      await expect(menu.locator('.codex-git-menu__head p').first()).toHaveText('main');
-
-      await page.getByTestId('composer-git-new-branch').fill('feature/new-branch');
-      await page.getByTestId('composer-git-create-branch').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> })
-          .__verseClawE2eHostCalls ?? []
-      ))).toContainEqual(expect.objectContaining({
-        module: 'git',
-        action: 'createBranch',
-        payload: { name: 'feature/new-branch', checkout: true },
-      }));
-      await reopenMenu();
-      await expect(menu.locator('.codex-git-menu__head p').first()).toHaveText('feature/new-branch');
-
-      await page.getByTestId('composer-git-worktree-branch').fill('feature/current');
-      await expect(page.getByTestId('composer-git-worktree-blocked')).toContainText('Branch already exists');
-      await expect(page.getByTestId('composer-git-add-worktree')).toBeDisabled();
-
-      await page.getByTestId('composer-git-worktree-branch').fill('feature/new-worktree');
-      await expect(page.getByTestId('composer-git-worktree-target')).toContainText('/workspace/demo-feature-new-worktree');
-      await page.getByTestId('composer-git-add-worktree').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> })
-          .__verseClawE2eHostCalls ?? []
-      ))).toContainEqual(expect.objectContaining({
-        module: 'git',
-        action: 'worktreeAdd',
-        payload: { branch: 'feature/new-worktree', checkoutNewBranch: true },
-      }));
-
-      await reopenMenu();
-      await page.getByRole('button', { name: 'Open Git Panel' }).click();
-      await expect(page.getByTestId('artifact-panel')).toBeVisible({ timeout: 30_000 });
-      await expect(page.getByTestId('workspace-git-panel')).toBeVisible({ timeout: 30_000 });
-
-      await page.getByTestId('composer-git-trigger').click();
-      await page.getByTestId('composer-git-switch-worktree-/workspace/demo-feature-existing').click();
-      await expect.poll(async () => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> })
-          .__verseClawE2eHostCalls ?? []
-      ))).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          module: 'workspaces',
-          action: 'saveState',
-          payload: expect.objectContaining({
-            id: WORKSPACE_ID,
-            sessionKey: SESSION_KEY,
-          }),
-        }),
-        expect.objectContaining({
-          module: 'workspaces',
-          action: 'create',
-          payload: expect.objectContaining({
-            agentId: 'main',
-            name: 'feature/existing',
-            rootPath: '/workspace/demo-feature-existing',
-            activeSessionKey: expect.stringMatching(/^agent:main:session-/),
-          }),
-        }),
-        expect.objectContaining({
-          module: 'workspaces',
-          action: 'switch',
-          payload: { id: 'workspace-demo-feature-existing' },
-        }),
-      ]));
-
-      const calls = await app.evaluate(() => (
-        (globalThis as typeof globalThis & { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> })
-          .__verseClawE2eHostCalls ?? []
-      ));
-      expect(calls.filter((call) => call.module === 'shell')).toHaveLength(0);
-      await page.keyboard.press('Escape');
-      await expect(menu).toHaveCount(0);
+      const draft = await page.getByTestId('chat-composer-input').inputValue();
       await page.getByTestId('composer-git-review').click();
-      await expect(page.getByTestId('workspace-review-panel')).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByTestId('artifact-panel-aside')).toBeVisible();
+      await page.getByTestId('artifact-panel-close').click();
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
+
     } finally {
       await closeElectronApp(app);
     }

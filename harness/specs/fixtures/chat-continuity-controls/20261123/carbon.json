@@ -1,0 +1,33 @@
+{
+  "receipt": {
+    "driven_by": "agent",
+    "actor": "carbon-chat-ux",
+    "model": "Gemini 4 Carbon (High)",
+    "exitCode": 0,
+    "status": "SUCCESS",
+    "conversationId": "40b34b65-af70-4815-82ff-db0547c6ce77",
+    "usage": {
+      "input_tokens": 14713,
+      "output_tokens": 16705,
+      "thinking_tokens": 15073,
+      "cache_read_tokens": 9486,
+      "total_tokens": 31418
+    },
+    "carbonRequests": 2,
+    "blockedRequests": 0
+  },
+  "imagesRead": [
+    "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\carbon\\01-session-menu.png",
+    "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\carbon\\02-handoff.png",
+    "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\carbon\\03-context.png",
+    "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\carbon\\04-delivery.png"
+  ],
+  "decisionApplied": [
+    "Immediate draft actions, neutral secondary stop and visible shortcuts",
+    "Summary handoff first, high-pressure recommendation only, conversation icon for fork",
+    "Opaque 18px surfaces, 16px sans titles, neutral focused inputs, 200px/88px editors",
+    "Quiet successful queue drain with visible failure feedback"
+  ],
+  "verification": "Final Electron style assertions and screenshots; no second Carbon call",
+  "attentionState": "Existing error attention indicator remains tied to actual warnings; it is not converted to neutral success."
+}

@@ -59,6 +59,7 @@ import {
   validateRuntimeOptionPatch,
 } from "./runtime-options.js";
 import { SessionActorQueue } from "./session-actor-queue.js";
+import type { ManagerTurnRecoveryState } from "./manager.types.js";
 
 /** Coordinates ACP session metadata, runtime handles, per-session queues, and turn execution. */
 export class AcpSessionManager {
@@ -365,6 +366,7 @@ export class AcpSessionManager {
     cfg: OpenClawConfig;
     sessionKey: string;
     meta: SessionAcpMeta;
+    expectedRecovery?: ManagerTurnRecoveryState;
   }): Promise<{ runtime: AcpRuntime; handle: AcpRuntimeHandle; meta: SessionAcpMeta }> {
     return await ensureManagerRuntimeHandle({
       ...params,
@@ -500,6 +502,7 @@ export class AcpSessionManager {
     meta: SessionAcpMeta;
     runtimeStatus?: AcpRuntimeStatus;
     failOnStatusError: boolean;
+    expectedRecovery?: ManagerTurnRecoveryState;
   }): Promise<{
     handle: AcpRuntimeHandle;
     meta: SessionAcpMeta;
@@ -509,7 +512,7 @@ export class AcpSessionManager {
       ...params,
       setCachedHandle: (sessionKey, handle) => {
         const cached = this.runtimeHandles.get(sessionKey);
-        if (cached) {
+        if (cached && (!params.expectedRecovery || cached.handle === params.handle)) {
           cached.handle = handle;
         }
       },
@@ -525,6 +528,7 @@ export class AcpSessionManager {
       entry: SessionEntry | undefined,
     ) => SessionAcpMeta | null | undefined;
     failOnError?: boolean;
+    expectedSessionId?: string;
     skipMaintenance?: boolean;
     takeCacheOwnership?: boolean;
   }): Promise<SessionEntry | null> {
@@ -533,6 +537,7 @@ export class AcpSessionManager {
         cfg: params.cfg,
         sessionKey: params.sessionKey,
         mutate: params.mutate,
+        ...(params.expectedSessionId ? { expectedSessionId: params.expectedSessionId } : {}),
         ...(params.skipMaintenance === true ? { skipMaintenance: true } : {}),
         ...(params.takeCacheOwnership === true ? { takeCacheOwnership: true } : {}),
       });

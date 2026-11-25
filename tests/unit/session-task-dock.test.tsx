@@ -106,13 +106,13 @@ describe("quiet conversation task dock", () => {
     expect(screen.queryByTestId("session-task-dock")).toBeNull();
     expect(mocks.read).not.toHaveBeenCalled();
   });
-  it("docks beside the composer, collapsed to the current step, and hides from its menu without cancelling", async () => {
+  it("docks beside the composer with a quiet objective and opens steps on demand", async () => {
     const props = { workspaceId: "w", sessionKey: "a", hasConversation: true };
     const { unmount } = render(<SessionTaskDock {...props} />);
     const plan = await screen.findByTestId("session-task-plan");
     expect(screen.getByTestId("session-task-dock")).toHaveAttribute("data-placement", "composer");
     expect(plan.querySelector("button")).toHaveAttribute("aria-expanded", "false");
-    expect(screen.getByTestId("session-task-current")).toHaveTextContent("Verify the result");
+    expect(screen.queryByTestId("session-task-current")).toBeNull();
     fireEvent.click(plan.querySelector("button")!);
     expect(screen.getByTestId("session-task-details")).toHaveTextContent("Verify the result");
     expect(screen.queryByTestId("session-task-current")).toBeNull();
@@ -222,7 +222,7 @@ describe("quiet conversation task dock", () => {
     render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation/>);
     expect(await screen.findByRole('progressbar')).toHaveAttribute('aria-valuenow','50');
     expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.states.doing);
-    expect(screen.getByTestId('session-task-status')).toHaveTextContent('1/2');
+    expect(screen.getByTestId('session-task-count')).toHaveTextContent('1/2');
   });
 });
 
@@ -373,7 +373,9 @@ describe('live run and durable task scales', () => {
     ] };
     const { rerender } = render(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={plan} runActive />);
     await waitFor(() => expect(screen.getByTestId('session-task-title')).toHaveTextContent(root.task.contract.objective));
-    expect(screen.getByTestId('session-task-current')).toHaveTextContent('Verify the live patch');
+    expect(screen.queryByTestId('session-task-current')).toBeNull();
+    expect(screen.getByTestId('session-task-count')).toHaveTextContent('1/2');
+    expect(screen.getByTestId('session-task-status')).toHaveClass('sr-only');
     fireEvent.click(screen.getByTestId('session-task-title').closest('button')!);
     expect(screen.getByTestId('session-task-step-label')).toHaveTextContent(taskLedgerEn.conversation.runSteps);
     expect(screen.getByTestId('session-task-steps')).toHaveTextContent('Verify the live patch');
@@ -382,6 +384,8 @@ describe('live run and durable task scales', () => {
     expect(screen.getByTestId('session-task-dock')).toHaveAttribute('data-state', 'doing');
     expect(screen.getByTestId('session-task-status')).toHaveTextContent(taskLedgerEn.conversation.states.doing);
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
+    expect(screen.getByTestId('session-task-title').closest('button')!.querySelector('[data-tone="done"]')).toBeNull();
+    expect(screen.getByTestId('session-task-detail-count')).toHaveTextContent('2/2');
     rerender(<SessionTaskDock workspaceId="w" sessionKey="a" hasConversation plan={finishedPlan} runActive={false} />);
     expect(screen.getByTestId('session-task-steps')).toHaveTextContent(child.contract.objective);
     expect(screen.queryByText('Verify the live patch')).toBeNull();

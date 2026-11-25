@@ -1,0 +1,308 @@
+{
+  "schema": "G3RelayValidation/v1",
+  "generatedAt": "2026-11-16T18:37:36.134180+00:00",
+  "driven_by": "agent",
+  "actor": "g3-relay",
+  "realHumanEvidence": false,
+  "sourceCandidate": "da1125874d0850833d2c358d28d9c867a4ec95b6",
+  "sourceBase": "8ef6932adf0ad6d8aefd24d36f7c5d397d2c69f5",
+  "gaStatus": "NO_GO",
+  "frozenManifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+  "changes": [
+    "Windows native plugin file URL loading and cache invalidation",
+    "Typed workspace/task owners in recovery fixtures",
+    "Acceptance exit status follows candidate evaluation",
+    "Control UI Lit decorator resolution",
+    "New fencing epoch for an expired idle task with unchanged session generation/worktree"
+  ],
+  "focusedTests": {
+    "recoveryAndNativeLoading": 45,
+    "taskSystem": 90,
+    "taskScopeAndEffect": 58,
+    "total": 193
+  },
+  "checks": {
+    "nodeWebTestTypes": "PASS",
+    "targetLint": "PASS",
+    "commsReplayCompare": "PASS",
+    "runtimeSourcePolicy": "PASS",
+    "harnessChangedPaths": "PASS"
+  },
+  "finalCandidateStages": [
+    {
+      "name": "runtime-build",
+      "exitCode": 0,
+      "elapsedMs": 148316,
+      "candidate": "da1125874d0850833d2c358d28d9c867a4ec95b6",
+      "driven_by": "agent",
+      "actor": "g3-relay"
+    },
+    {
+      "name": "desktop-build",
+      "exitCode": 0,
+      "elapsedMs": 63724,
+      "candidate": "da1125874d0850833d2c358d28d9c867a4ec95b6",
+      "driven_by": "agent",
+      "actor": "g3-relay"
+    },
+    {
+      "name": "repeated-restart",
+      "exitCode": 0,
+      "elapsedMs": 125245,
+      "candidate": "da1125874d0850833d2c358d28d9c867a4ec95b6",
+      "driven_by": "agent",
+      "actor": "g3-relay"
+    }
+  ],
+  "leaseExpiryProcessProof": {
+    "schema": "TaskExpiryProcessProof/v1",
+    "driven_by": "agent",
+    "actor": "g3-task-expiry-process-proof",
+    "realHumanEvidence": false,
+    "sourceCandidate": "da1125874d0850833d2c358d28d9c867a4ec95b6",
+    "status": "PASS",
+    "expirySetup": "The seed process clock is 121 seconds behind wall time; subsequent processes use real wall time.",
+    "stages": [
+      {
+        "phase": "seed",
+        "kind": "idle",
+        "pid": 12192,
+        "epoch": 1,
+        "expiresAt": 1794854152626
+      },
+      {
+        "phase": "resume",
+        "kind": "idle",
+        "pid": 2592,
+        "oldEpoch": 1,
+        "newEpoch": 2,
+        "effects": 1
+      },
+      {
+        "phase": "stale",
+        "kind": "idle",
+        "pid": 39772,
+        "staleRejected": true,
+        "idempotentEpoch": 2,
+        "effects": 1
+      },
+      {
+        "phase": "seed",
+        "kind": "unknown",
+        "pid": 39056,
+        "epoch": 1,
+        "expiresAt": 1794854154163
+      },
+      {
+        "phase": "reject",
+        "kind": "unknown",
+        "pid": 39524,
+        "unknownEffectRetained": true,
+        "epoch": 1
+      }
+    ]
+  },
+  "priorFullRuntimeBuild": {
+    "candidate": "d2e823f7bd93375458b27319c6eceb5fb024cebc",
+    "status": "PASS",
+    "sourceSdkDeclarations": "source-content cache reuse",
+    "mode": "17 serial configurations"
+  },
+  "windows": [
+    {
+      "candidate": "d2e823f7b",
+      "windowId": "child-created-before-parent-advance-kill",
+      "trialIndex": 0,
+      "lostTasks": 0,
+      "duplicateEffects": 0,
+      "terminalCorrect": true,
+      "recoveryLatencyMs": 22221,
+      "diskEvidenceComplete": true
+    },
+    {
+      "candidate": "d2e823f7b",
+      "windowId": "effect-before-receipt-kill",
+      "trialIndex": 0,
+      "lostTasks": 0,
+      "duplicateEffects": 0,
+      "terminalCorrect": true,
+      "recoveryLatencyMs": 24461,
+      "diskEvidenceComplete": true
+    },
+    {
+      "candidate": "d2e823f7b",
+      "windowId": "intent-after-persist-kill",
+      "trialIndex": 0,
+      "lostTasks": 0,
+      "duplicateEffects": 0,
+      "terminalCorrect": true,
+      "recoveryLatencyMs": 38667,
+      "diskEvidenceComplete": true
+    },
+    {
+      "candidate": "d2e823f7b",
+      "windowId": "repeated-restart",
+      "trialIndex": 0,
+      "lostTasks": 1,
+      "duplicateEffects": 0,
+      "terminalCorrect": false,
+      "recoveryLatencyMs": 122272,
+      "diskEvidenceComplete": true
+    },
+    {
+      "candidate": "d2e823f7b",
+      "windowId": "store-write-failure",
+      "trialIndex": 0,
+      "lostTasks": 0,
+      "duplicateEffects": 0,
+      "terminalCorrect": true,
+      "recoveryLatencyMs": 334,
+      "diskEvidenceComplete": true
+    },
+    {
+      "candidate": "da1125874",
+      "windowId": "repeated-restart",
+      "trialIndex": 0,
+      "lostTasks": 0,
+      "duplicateEffects": 0,
+      "terminalCorrect": true,
+      "recoveryLatencyMs": 76466,
+      "diskEvidenceComplete": true
+    }
+  ],
+  "performance": {
+    "latestRepeatedRestartMs": 76466,
+    "desktopBuildMs": 63724,
+    "desktopBuildLimitMs": 58000,
+    "frozenP50LimitMs": 5000,
+    "frozenP95LimitMs": 15000,
+    "completeFrozenAggregate": "NOT_RUN"
+  },
+  "remaining": [
+    "Reduce recovery latency and desktop build time to frozen limits",
+    "Run 30 live-provider pairs and 15 fault windows per arm on one clean candidate, plus second legacy consistency round",
+    "Complete current-candidate full release gates and fresh independent review"
+  ],
+  "rawArchive": {
+    "path": "raw-evidence.json.gz",
+    "sha256": "b7338d171a9c3610fe258c18aef04ff830961994d1b94ca04e3d235d98ec72ff",
+    "files": 115
+  },
+  "sourceManifest": {
+    "schema": "G3CandidateSources/v1",
+    "candidate": "da1125874d0850833d2c358d28d9c867a4ec95b6",
+    "sourceBase": "8ef6932adf0ad6d8aefd24d36f7c5d397d2c69f5",
+    "driven_by": "agent",
+    "actor": "g3-relay",
+    "realHumanEvidence": false,
+    "sources": [
+      {
+        "path": "README.ja-JP.md",
+        "sha256": "82d1e9bd861e5b636e70a48525fee744a2f22d0274c12a82dc07711ce60cd1aa",
+        "gitBlob": "e37b42d22736a1be46f3ec861740bc021c105ce4"
+      },
+      {
+        "path": "README.md",
+        "sha256": "b5c80ec37e9ee783d231ac7f8d10d1a3d960aae37d4c0326ef53753758c2a09b",
+        "gitBlob": "07f8ea7f38fb9d2ad6e22e2185fecd21ed3bb869"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "sha256": "a411574d7ba97aceebe7456e8bf2637f9e2ad53397ca3c2a69ddaf183bbbc080",
+        "gitBlob": "dd3013f2bdcf79fbea3b98ff362edd4da102a771"
+      },
+      {
+        "path": "docs/dev/recovery-contract/GA-READINESS-20261106.md",
+        "sha256": "01cd254bc5119447ed1ffc82e30dd2e644245c79ce0d8a069516ff252057180c",
+        "gitBlob": "f47f42ab8ed445b0b6231e0ac0172c55b46d70e7"
+      },
+      {
+        "path": "harness/specs/rules/durable-task-system-boundary.md",
+        "sha256": "d08481d117d8acb1d2e23cf8c3967fa5492b6c633967c55dd1309385d010f7e5",
+        "gitBlob": "8442be2ac6c1d3e5b75b49051eb8317232df7959"
+      },
+      {
+        "path": "harness/specs/scenarios/gateway-backend-communication.md",
+        "sha256": "1d170510ff11a35e4cbb737e9d5558c9122185d6363bb36d6cb4d1d5889ea07a",
+        "gitBlob": "6a1724b821a858e15e0dd12ac63bd8d7969ad0c4"
+      },
+      {
+        "path": "harness/specs/tasks/gateway-startup-performance.md",
+        "sha256": "e6450ac0bba0828c242b027a5750496232ee79b80949987f9393d2836bdc3f60",
+        "gitBlob": "fcb6b4534f3f6e26a9e68ad7329f5b55968f7936"
+      },
+      {
+        "path": "harness/specs/tasks/recovery-authority-gated.md",
+        "sha256": "07fcb186de4e3e979e5f6a5e6b0a742f8a19539ad7b8678319437123a90016ff",
+        "gitBlob": "cf572a231586ccb88c8a272397b52f40ccaeec1a"
+      },
+      {
+        "path": "openclaw_runtime/src/plugins/native-module-require.ts",
+        "sha256": "bd9229bf406078b4d3f224ed09c202e31e8e828ce7c5134876963ce8855a1092",
+        "gitBlob": "aabbcebf168f67eb7ebf0dba45de8b2de6f76b50"
+      },
+      {
+        "path": "openclaw_runtime/ui/vite.config.ts",
+        "sha256": "dae3b1518876c35833635ef393808bd87f8334a511f045ffac35ac595995383d",
+        "gitBlob": "12d05d77304b8a283e86a6323692280051d5b93b"
+      },
+      {
+        "path": "scripts/recovery-acceptance-checks.d.mts",
+        "sha256": "352755947d5341f1a5d6f90f3eea317999a09af2c90f97b27dfbd05e582d668c",
+        "gitBlob": "f103e861f8a77c9abd3019d1304ba3c5dce97653"
+      },
+      {
+        "path": "scripts/recovery-acceptance-checks.mjs",
+        "sha256": "4d4fe1d637e2d9b8e506724a8a83a240dec92194592d7e6acd72eee8f5545027",
+        "gitBlob": "681aa65af0267d455162b17ceeefc7fdd2ba72f5"
+      },
+      {
+        "path": "scripts/recovery-contract-acceptance.mjs",
+        "sha256": "92a3e7a3a889ee8c96d777b33e13050cfd655d925fc6890c22885a6c19f6e1cb",
+        "gitBlob": "40dffa3158e4a59e4d20f558b4a0b90a6fd9e50d"
+      },
+      {
+        "path": "scripts/recovery-contract-matrix.mjs",
+        "sha256": "9f551e8ab59e3ee09dd5cb2040678a9de2f506d6c55e420e25b71778372086c1",
+        "gitBlob": "ae7bfdc60882eb5c0c54851a58f73c5b41be562f"
+      },
+      {
+        "path": "shared/task-system/store.ts",
+        "sha256": "572de1460b0b3a564d2735aba2fd5142e56bd54e78d0f4abd78aeb307610453b",
+        "gitBlob": "7d3a7330c423e19c9d563e982048a6ae7c15b8e6"
+      },
+      {
+        "path": "tests/e2e/recovery-contract-eval.spec.ts",
+        "sha256": "907ac85987ad293032a96b8412d31fd288f8b74adc7c481e9899477ccf4832b6",
+        "gitBlob": "efbf8691945e512589fe6daf3adb2c7e240c9936"
+      },
+      {
+        "path": "tests/e2e/recovery-longsession-eval.spec.ts",
+        "sha256": "d45f9701a4063dd2c0b8d90d73b652410019982f995a917a6ca36eeac2114157",
+        "gitBlob": "8afe5046a926b16d3279e95501a067cae7132620"
+      },
+      {
+        "path": "tests/unit/durable-task-system.test.ts",
+        "sha256": "27dfd4a2d5ba51ab7f1a9ae0c6edf0aa58a2cafd7b848aaa7ab11d48e9086ad9",
+        "gitBlob": "3cf8df96148444f0b1cd8f8b78e1dfe0fe070b0c"
+      },
+      {
+        "path": "tests/unit/gateway-native-module-loading.test.ts",
+        "sha256": "2593aa45063315eb84d4bc20b5e9dc0a8ac0c330d8ec0e22c695b0da4a1ddeab",
+        "gitBlob": "48db2aa314da2801f41e64236d0b10dd896a0c8e"
+      },
+      {
+        "path": "tests/unit/recovery-acceptance-checks.test.ts",
+        "sha256": "2b71ff68a8d2a2a4578ce351df97a800f745f876630250036f73eb6ebe0a4148",
+        "gitBlob": "b12eb00266cdf9429270f3a5d5b6ffc7b7a7a4e3"
+      }
+    ]
+  },
+  "credentialScan": {
+    "secretVariables": [
+      "SILICONFLOW_API_KEY"
+    ],
+    "hits": 0,
+    "configured": true
+  }
+}

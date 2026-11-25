@@ -1,0 +1,209 @@
+{
+  "commands": [
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/chat-toolbar.test.tsx",
+        "tests/unit/chat-context-pressure.test.tsx",
+        "tests/unit/chat-session-continuity.test.ts",
+        "tests/unit/session-handoff-recovery.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json",
+        "--outputFile=D:/tmp/carbon-continuity-ux-20261123-01a203cc/unit-final-r1.json"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:28:53.000033+00:00",
+      "durationSeconds": 29.86,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\unit-final-r1.stdout.log",
+        "sha256": "e08a1a3752a81a40d550e5bfa60c776c5da08cf87513e4d03181231a46912da5"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\unit-final-r1.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "node",
+        "--max-old-space-size=3072",
+        "./node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:29:57.492088+00:00",
+      "durationSeconds": 41.216,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\build-final-r1.stdout.log",
+        "sha256": "871c607909fb591681d73bb18eefebebb5fbb8677ce6ae5c161815bce947f8d7"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\build-final-r1.stderr.log",
+        "sha256": "f1851c13ee68d53de7f7f0f1d3588e928f3573dbbf9f9b8cd636a62e81f83801"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:38:00.503138+00:00",
+      "durationSeconds": 221.657,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\typecheck-final-r1.stdout.log",
+        "sha256": "8bacc15eac583921547b976874686abb39f38dfd7993f05122c1e6483d3e4a0d"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\typecheck-final-r1.stderr.log",
+        "sha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "i18n:lint"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:41:42.297260+00:00",
+      "durationSeconds": 1.0,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\i18n-final-r1.stdout.log",
+        "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\i18n-final-r1.stderr.log",
+        "sha256": "ef31fbe4e961a6a6328602abb94adb479263ebf5b3299bcf2716538da040b8d8"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "contract:check"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:41:43.367972+00:00",
+      "durationSeconds": 1.776,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\contract-final-r1.stdout.log",
+        "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\contract-final-r1.stderr.log",
+        "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:41:45.210340+00:00",
+      "durationSeconds": 0.772,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\comms-replay-final-r1.stdout.log",
+        "sha256": "c591581bb2c7b99e5cee30ba5b5b7959d413c26b51f64c15484eb9f61d27b30f"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\comms-replay-final-r1.stderr.log",
+        "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:41:46.046704+00:00",
+      "durationSeconds": 0.723,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\comms-compare-final-r1.stdout.log",
+        "sha256": "47f6e96bfac0104b62e1168bdd9203868b66ccea55fc473a76b2adee9f46103e"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\comms-compare-final-r1.stderr.log",
+        "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/chat-continuity-controls-20261123.md"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:45:33.085063+00:00",
+      "durationSeconds": 1.694,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\harness-final-r2.stdout.log",
+        "sha256": "fc663a9ebf01e00563e5456347a56d582ca766f588025cbc69f6290319f17deb"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\harness-final-r2.stderr.log",
+        "sha256": "3911672d63fc84e2b51653829f8448cbd04ae43515c836a9b96d8eee339063b7"
+      }
+    },
+    {
+      "actor": "codex-chat-ux",
+      "driven_by": "agent",
+      "command": [
+        "pnpm.cmd",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/chat-continuity-controls-20261123.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/tmp/task-ui-integration-20261122-01a203cc/verify-checkout",
+      "startedAt": "2026-11-23T13:41:48.533055+00:00",
+      "durationSeconds": 1.603,
+      "exitCode": 0,
+      "stdout": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\harness-flow-final-r1.stdout.log",
+        "sha256": "c256ecb7d3381d56031780ed4c6a78ac368ca15cae30d9d7aeac0aa4a35a89e3"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\carbon-continuity-ux-20261123-01a203cc\\harness-flow-final-r1.stderr.log",
+        "sha256": "c26f497f26e18970ce80b1937b5166e32fbd248e0eb2184980c6e09493501af9"
+      }
+    }
+  ]
+}

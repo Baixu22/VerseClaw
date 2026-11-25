@@ -506,7 +506,7 @@ describe('ChatMessage reply styling', () => {
     expect(prose?.parentElement?.classList.contains('rounded-2xl')).toBe(false);
   });
 
-  it('keeps user messages in the blue rounded bubble', () => {
+  it('keeps the complete user prompt inside its dedicated message card', () => {
     const message: RawMessage = {
       role: 'user',
       content: 'Keep the prompt bubble.',
@@ -515,7 +515,7 @@ describe('ChatMessage reply styling', () => {
     const { container } = renderMessage(<ChatMessage message={message} />);
     const bubble = container.querySelector('[data-testid="chat-user-message-bubble"]');
     expect(bubble).not.toBeNull();
-    expect(bubble?.classList.contains('rounded-2xl')).toBe(true);
+    expect(bubble?.classList.contains('chat-user-message-card')).toBe(true);
     expect(bubble).toHaveTextContent('Keep the prompt bubble.');
   });
 });

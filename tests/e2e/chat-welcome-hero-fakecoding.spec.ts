@@ -220,10 +220,11 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       expect(Math.abs(placement.centreDelta)).toBeLessThanOrEqual(1);
 
       await expect(page.getByTestId('welcome-branch-trigger')).toHaveCount(0);
-      const worktreeTrigger = menu.getByTestId('session-worktree-trigger');
-      await expect(worktreeTrigger).toHaveAttribute('data-git-kind', 'local');
+      await expect(page.getByTestId('session-worktree-trigger')).toHaveCount(0);
+      await page.keyboard.press('Escape');
+      const worktreeTrigger = page.getByTestId('composer-context-more');
       await worktreeTrigger.press('Enter');
-      const worktreeMenu = menu.getByTestId('session-worktree-menu');
+      const worktreeMenu = page.getByTestId('session-worktree-menu');
       await expect(worktreeMenu).toBeVisible();
       await expect(worktreeMenu.getByRole('button').filter({ hasText: 'feature/ui-polish' })).toBeEnabled();
       await expect(worktreeMenu.getByRole('button').filter({ hasText: 'main' })).toBeDisabled();
