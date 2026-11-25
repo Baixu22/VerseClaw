@@ -26,6 +26,7 @@ export type RetrievalReceiptV1 = {
   policyDigest: string;
   profile: RetrievalProfile;
   status: RetrievalResultV2<unknown>['status'];
+  effectiveProfile?: RetrievalResultV2<unknown>['effectiveProfile'];
   elapsedMs: number;
   sources: SourceRefV2[];
   generations: RetrievalResultV2<unknown>['plan']['generations'];
@@ -36,7 +37,8 @@ export type RetrievalReceiptV1 = {
     totalModelTokens?: number | null; modelCostUsd?: number | null };
   dcs: { runId: string; receiptDigest: string; retainedSourceDigests: string[] } | null;
   modelRuns: Array<{ runId: string; modelRefs: string[]; actualTokens: number | null;
-    actualCostUsd: number | null; retainedDigest: string }>;
+    actualCostUsd: number | null; retainedDigest: string; purpose?: 'answer' | 'planning' | 'support';
+    elapsedMs?: number; support?: { answerability: 'answerable' | 'insufficient' | 'conflicting'; supported: number; unsupported: number; uncertain: number } }>;
   feedback: { attach: number; dismiss: number };
 };
 

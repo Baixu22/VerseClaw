@@ -83,6 +83,21 @@ describe('retrieval diagnostics owner and atomic transition behavior', () => {
     await expect(service.feedback(identity, { ...input, action: 'dismiss' })).rejects.toThrow('Conflicting');
     expect(await service.policy(identity, 'local')).toEqual(before);
   });
+  it('records per-query spend, real stages and unsupported answers without retaining raw text', async () => {
+    const { service, result } = fixture();
+    result.effectiveProfile = 'lexical';
+    result.stages = [{ stage: 'fusion', elapsedMs: 2, status: 'complete', candidateCount: 3 }];
+    result.remoteSpend = { calls: 1, reservedTokens: 100, reservedCostUsd: 0.001, actualTokens: 7, actualCostUsd: 0.00007 };
+    await service.record(identity, result, Date.now());
+    await service.correlate(identity, { requestId: result.plan.requestId, runId: 'support-run', purpose: 'support', elapsedMs: 123,
+      retainedEvidence: { schema: 'RetainedEvidenceManifest/v1', turnId: 'support-run', units: [] },
+      support: { answerability: 'insufficient', supported: 0, unsupported: 1, uncertain: 0 } });
+    const row = (await service.snapshot(identity)).receipts[0];
+    expect(row).toMatchObject({ effectiveProfile: 'lexical', stages: result.stages,
+      usage: { inputTokens: 7, costUsd: 0.00007 }, dcs: { retainedSourceDigests: [] },
+      modelRuns: [{ purpose: 'support', elapsedMs: 123, support: { unsupported: 1 } }] });
+    expect(JSON.stringify(row)).not.toMatch(/private prompt|private source bytes/);
+  });
   it('removes revoked sources and their feedback and rejects stale session generations', async () => {
     const { service, result } = fixture(), receiptId = await service.record(identity, result, Date.now());
     await service.feedback(identity, { operationId: 'feedback-1', receiptId, action: 'dismiss' });

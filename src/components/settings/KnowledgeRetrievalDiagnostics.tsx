@@ -64,6 +64,23 @@ export function KnowledgeRetrievalDiagnostics() {
             tokens: receipt.usage.totalModelTokens ?? t('retrievalDiagnostics.unknown'),
             cost: receipt.usage.modelCostUsd ?? t('retrievalDiagnostics.unknown'),
           })}</p>}
+          <details className="my-2" data-testid="retrieval-stage-details">
+            <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">{t('retrievalDiagnostics.stageDetails')}</summary>
+            <p>{t('retrievalDiagnostics.effectiveProfile', { profile: t(`retrievalDiagnostics.profiles.${receipt.effectiveProfile ?? 'unknown'}`) })}</p>
+            <ul className="space-y-1 py-2">
+              {receipt.stages.map((stage, index) => <li key={`${stage.stage}-${index}`}>
+                {t('retrievalDiagnostics.stageSummary', { stage: t(`retrievalDiagnostics.stages.${stage.stage}`, { defaultValue: stage.stage }),
+                  status: t(`retrievalDiagnostics.statuses.${stage.status}`, { defaultValue: t('retrievalDiagnostics.unknown') }), count: stage.candidateCount, milliseconds: Math.round(stage.elapsedMs) })}
+              </li>)}
+              {receipt.modelRuns.map(run => <li key={run.runId}>
+                {t('retrievalDiagnostics.modelStage', { stage: t(`retrievalDiagnostics.stages.${run.purpose ?? 'answer'}`),
+                  milliseconds: run.elapsedMs === undefined ? t('retrievalDiagnostics.unknown') : Math.round(run.elapsedMs) })}
+                {run.support && <span> · {t('retrievalDiagnostics.supportSummary', run.support)}</span>}
+              </li>)}
+            </ul>
+            {receipt.dcs && <p>{t('retrievalDiagnostics.retained', { count: receipt.dcs.retainedSourceDigests.length })}</p>}
+            {receipt.fallbackCodes.length > 0 && <p className="break-all text-xs text-muted-foreground">{receipt.fallbackCodes.join(' · ')}</p>}
+          </details>
           <div className="flex gap-2">
             {(['attach', 'dismiss'] as const).map(action => <Button key={action} variant="ghost" size="sm" disabled={busy}
               onClick={() => void run(() => hostApi.knowledge.retrievalFeedback({ operationId: crypto.randomUUID(), receiptId: receipt.receiptId, action }))}>

@@ -299,6 +299,7 @@ export async function runRetrievalPlan<T>(options: {
     filters: [],
     fallbackReasons: [],
     snapshotStatus: "current",
+    stages: [],
   };
   if (!plan.lanes.length) return result;
   const deadline = new AbortController();
@@ -400,9 +401,12 @@ export async function runRetrievalPlan<T>(options: {
         a.queryFamily.localeCompare(b.queryFamily) ||
         plan.lanes.indexOf(a.lane) - plan.lanes.indexOf(b.lane),
     );
+    const fusionStart = performance.now();
     const fused = fuseRetrievalLanes(batches, result.filters, plan.rrfK ?? 60);
     result.filters = fused.filters;
     const pool = fused.hits.slice(0, plan.budget.candidateK);
+    result.stages!.push({ stage: "fusion", elapsedMs: performance.now() - fusionStart, status: "complete", candidateCount: pool.length });
+    const ownerStart = performance.now();
     let ranked: typeof pool | undefined;
     const verified: typeof pool = [];
     for (const hit of pool) {
@@ -424,7 +428,11 @@ export async function runRetrievalPlan<T>(options: {
         });
       }
     }
-    if (plan.budget.rerankK && !plan.explicitRefs.length && verified.length) {
+    result.stages!.push({ stage: "owner-verification", elapsedMs: performance.now() - ownerStart,
+      status: verified.length === pool.length ? "complete" : "partial", candidateCount: verified.length });
+    const rerankStart = performance.now();
+    const needsRerank = Boolean(plan.budget.rerankK && !plan.explicitRefs.length && verified.length);
+    if (needsRerank) {
       if (!options.rerank) result.fallbackReasons.push("rerank-unavailable");
       else {
         const candidates = verified.slice(0, plan.budget.rerankK);
@@ -467,6 +475,9 @@ export async function runRetrievalPlan<T>(options: {
         }
       }
     }
+    result.stages!.push({ stage: "rerank", elapsedMs: performance.now() - rerankStart,
+      status: !needsRerank ? "skipped" : ranked ? "complete" : "unavailable", candidateCount: ranked?.length ?? verified.length });
+    const selectionStart = performance.now();
     const denied = new Set(result.filters.map(parentKey)),
       counts = new Map<string, number>();
     for (const hit of ranked ?? verified) {
@@ -491,6 +502,8 @@ export async function runRetrievalPlan<T>(options: {
         a.subjectId.localeCompare(b.subjectId) ||
         a.reason.localeCompare(b.reason),
     );
+    result.stages!.push({ stage: "selection", elapsedMs: performance.now() - selectionStart,
+      status: "complete", candidateCount: result.results.length });
     result.fallbackReasons = [
       ...result.fallbackReasons,
       ...result.lanes

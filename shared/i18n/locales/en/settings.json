@@ -1154,6 +1154,42 @@
       "held": "Policy held: evaluation requirements were not met",
       "rolled-back": "Previous policy restored"
     },
-    "modelUsage": "Measured model usage: {{tokens}} tokens · {{cost}} USD"
+    "modelUsage": "Measured model usage: {{tokens}} tokens · {{cost}} USD",
+    "stageDetails": "Stages and evidence",
+    "effectiveProfile": "Effective profile: {{profile}}",
+    "stageSummary": "{{stage}} · {{status}} · {{count}} candidates · {{milliseconds}} ms",
+    "modelStage": "{{stage}} · {{milliseconds}} ms",
+    "supportSummary": "Supported {{supported}} · unsupported {{unsupported}} · uncertain {{uncertain}}",
+    "retained": "DCS retained {{count}} source digests",
+    "stages": {
+      "exact": "Exact match",
+      "lexical": "Keyword retrieval",
+      "dense": "Vector retrieval",
+      "fusion": "Fusion",
+      "owner-verification": "Source verification",
+      "rerank": "Reranking",
+      "selection": "Final selection",
+      "answer": "Answer",
+      "planning": "Planning",
+      "support": "Answer support"
+    },
+    "statuses": {
+      "complete": "Complete",
+      "partial": "Partial",
+      "unavailable": "Unavailable",
+      "skipped": "Skipped",
+      "available": "Available",
+      "cancelled": "Cancelled"
+    },
+    "profiles": {
+      "local": "Local",
+      "quality": "Quality",
+      "research": "Research",
+      "hybrid": "Hybrid",
+      "lexical": "Keyword",
+      "exact": "Exact match",
+      "none": "None",
+      "unknown": "Unknown"
+    }
   }
 }

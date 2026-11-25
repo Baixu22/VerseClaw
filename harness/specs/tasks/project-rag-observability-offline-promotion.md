@@ -7,8 +7,26 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-17
 intent: 持续发现质量与成本回退，同时防止反馈形成未审核的自学习。
-diffBase: 5d45cf79f769a1a3d8f994f965e5d63d24d5c40c
+diffBase: c5c475a76494df6c798a97bb99a73163df527726
 touchedAreas:
+  - "electron/services/knowledge-evidence-qa.ts"
+  - "electron/services/knowledge-research.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval/observability-service.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/plan.ts"
+  - "scripts/knowledge-rag-policy.ts"
+  - "scripts/lib/project-rag-promotion.mjs"
+  - "shared/i18n/locales/en/settings.json"
+  - "shared/i18n/locales/ja/settings.json"
+  - "shared/i18n/locales/ru/settings.json"
+  - "shared/i18n/locales/zh/settings.json"
+  - "shared/knowledge/observability.ts"
+  - "shared/knowledge/retrieval.ts"
+  - "scripts/knowledge-rag-adaptation-readback.ts"
+  - "scripts/lib/project-rag-adaptation-readback.mjs"
+  - "scripts/lib/project-rag-adaptation-readback.d.mts"
+  - "tests/unit/project-rag-adaptation-readback.test.ts"
+  - "harness/specs/fixtures/project-rag/rag17-development-20261126/**"
   - "shared/knowledge/**"
   - "shared/host-api/contract.ts"
   - "shared/host-api/host-action-timeouts.ts"
@@ -86,6 +104,7 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "pnpm exec vitest run tests/unit/project-rag-adaptation-readback.test.ts tests/unit/project-rag-plan-owner.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec vitest run tests/unit/knowledge-api.test.ts tests/unit/project-rag-receipts-promotion.test.ts tests/unit/gateway-permissions-api.test.ts tests/unit/project-rag-observability-store.test.ts tests/unit/project-rag-offline-package.test.ts tests/unit/host-action-timeouts.test.ts --maxWorkers=1 --cache=false"
   - "pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs extensions/memory-wiki/retrieval-policy-evaluation.test.ts"
   - "pnpm exec playwright test tests/e2e/project-rag-settings-operations.spec.ts --workers=1 --retries=0"

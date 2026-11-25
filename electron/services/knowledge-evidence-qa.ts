@@ -163,10 +163,11 @@ export function applyKnowledgeSupportReview(claims: AnswerClaimV1[], review: Kno
 export async function runKnowledgeModel(
   gateway: GatewayManager, prompt: string, label: string, timeoutMs = 60_000,
   knowledge?: { sessionKey: string; workspaceId?: string; workspaceDir?: string; references: ChatKnowledgeReference[];
-    retrievalRequestId?: string; ownerSessionId?: string },
+    retrievalRequestId?: string; ownerSessionId?: string; purpose?: 'answer' | 'planning' | 'support'; supportClaims?: AnswerClaimV1[] },
   options?: { signal: AbortSignal; budget: ModelRequestBudget; validateSpend?: (spend: KnowledgeModelSpend | undefined) => void },
 ): Promise<{ text: string; runId: string; retainedEvidence?: RetainedEvidenceManifestV1; providerSpend?: KnowledgeModelSpend }> {
   const requestId = randomUUID();
+  const startedAt = performance.now();
   const deadline = Date.now() + timeoutMs;
   const remaining = () => Math.max(1, deadline - Date.now());
   // Keep QA off the user's transcript, send lane and abort surface while using its agent/workspace.
@@ -226,11 +227,17 @@ export async function runKnowledgeModel(
     }
     if (!text.trim() || text.length > 100_000) throw Error('Knowledge model returned no bounded answer');
     if (retainedEvidence && knowledge?.retrievalRequestId && knowledge.ownerSessionId) {
+      const review = knowledge.supportClaims ? validateKnowledgeSupportOutput(text, knowledge.supportClaims) : undefined;
+      const support = review ? { answerability: review.answerability,
+        supported: review.claims.filter(row => row.status === 'supported').length,
+        unsupported: review.claims.filter(row => row.status === 'unsupported').length,
+        uncertain: review.claims.filter(row => row.status === 'uncertain').length } : undefined;
       // This correlation uses the actual Gateway response, never renderer usage or citation claims.
       void gateway.rpc('wiki.observability.correlate', {
         readIdentity: { agentSessionKey: knowledge.sessionKey, sessionId: knowledge.ownerSessionId,
           workspaceId: knowledge.workspaceId, workspaceDir: knowledge.workspaceDir },
-        input: { requestId: knowledge.retrievalRequestId, runId, retainedEvidence, providerSpend: wait.providerSpend },
+        input: { requestId: knowledge.retrievalRequestId, runId, retainedEvidence, providerSpend: wait.providerSpend,
+          purpose: knowledge.purpose ?? 'answer', elapsedMs: performance.now() - startedAt, ...(support ? { support } : {}) },
       }, 1000).catch(() => undefined);
     }
     return { text, runId, ...(retainedEvidence ? { retainedEvidence } : {}),

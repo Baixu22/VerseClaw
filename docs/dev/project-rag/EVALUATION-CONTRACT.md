@@ -79,3 +79,12 @@ Wiki metadata 中没有出现位置坐标的 claim，只有其文本的全部出
 `knowledge-rag-adaptation.ts capture <plan.json> <new-directory>` 通过 Wiki owner 的策略与版本读取现有来源，生成只读快照；`freeze <plan.json> <new-file>` 绑定独立复核和原文支持范围。origin 必须为 `existing-owner` 或 `agent-built-adaptation`。来源撤回、变更、路径逃逸和读取预算缺口不能进入完整冻结数据。问题集按来源族划分，重复内容、相同来源和高相似文本须同族；gold 留在 evaluator 目录。所有者已指定本轮可使用当前项目文档构建隔离适配语料，运行记录保留该来源标识。
 
 `owner-support-coverage/v2` 的首次适配实验原件保留。v3 在 Top-5 一对一分配中允许不同来源范围为多个事实分别承接名次，同时拒绝同一 pin/range 的重复奖励；跨版本比较需用相同原始捕获重新评分并保留重算身份。
+
+
+## 实际知识库资格读回
+
+`knowledge-rag-adaptation-readback.ts <manifest.json> <sha256:digest> <candidate> <policy-digest> <new-output.json>` 重开 `KnowledgeAdaptationQualification/v1` 封存包。包引用执行前冻结的 RunPlan、owner snapshot、独立复核数据集和每题 page/full 原始捕获。两臂必须绑定同一模型、生成设置、embedding space、chunker、语料和各自策略；逐题从 owner 字节重算各阶段的覆盖，最终 retained 集必须匹配实际 DCS 收据。回答和盲审按输入、输出和数据集 digest 绑定。
+
+读回按 split/语言/有答案、无答案、冲突切片，定位 indexed、parsed、candidates、reranked、retained、answer-support、answer 或 abstention 缺口；未记录的阶段不推断。held-out 按来源族配对，沿用最少20族、正95%区间、5pp/Research10pp和10%/Research25%费用条件。未知用量和不完整运行保持不足；原9文档适配实验继续是描述性结果。
+
+策略包增加 `adaptation` 原件引用；实际知识库资格和原240query/540槽同时通过才可晋级。现有诊断回执记录真实融合、owner复验、重排和最终筛选时间，DCS保留摘要以及规划/支持模型调用的时长和支持计数。默认只存引用、摘要、用量及状态。

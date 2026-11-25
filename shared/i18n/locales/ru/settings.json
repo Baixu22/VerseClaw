@@ -1154,6 +1154,42 @@
       "held": "Политика отложена: условия оценки не выполнены",
       "rolled-back": "Предыдущая политика восстановлена"
     },
-    "modelUsage": "Измеренный расход модели: {{tokens}} токенов · {{cost}} USD"
+    "modelUsage": "Измеренный расход модели: {{tokens}} токенов · {{cost}} USD",
+    "stageDetails": "Этапы и источники",
+    "effectiveProfile": "Фактический поиск: {{profile}}",
+    "stageSummary": "{{stage}} · {{status}} · кандидатов: {{count}} · {{milliseconds}} мс",
+    "modelStage": "{{stage}} · {{milliseconds}} мс",
+    "supportSummary": "Подтверждено: {{supported}} · не подтверждено: {{unsupported}} · неизвестно: {{uncertain}}",
+    "retained": "DCS сохранил дайджестов источников: {{count}}",
+    "stages": {
+      "exact": "Точное совпадение",
+      "lexical": "Поиск по словам",
+      "dense": "Векторный поиск",
+      "fusion": "Объединение",
+      "owner-verification": "Проверка источников",
+      "rerank": "Переранжирование",
+      "selection": "Итоговый отбор",
+      "answer": "Ответ",
+      "planning": "Планирование",
+      "support": "Проверка ответа"
+    },
+    "statuses": {
+      "complete": "Завершено",
+      "partial": "Частично",
+      "unavailable": "Недоступно",
+      "skipped": "Пропущено",
+      "available": "Доступно",
+      "cancelled": "Отменено"
+    },
+    "profiles": {
+      "local": "Локальный",
+      "quality": "Качество",
+      "research": "Исследование",
+      "hybrid": "Гибридный",
+      "lexical": "Ключевые слова",
+      "exact": "Точное совпадение",
+      "none": "Нет",
+      "unknown": "Неизвестно"
+    }
   }
 }

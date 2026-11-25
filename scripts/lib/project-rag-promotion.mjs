@@ -12,6 +12,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { loadFrozenRagCorpus, evaluateRagTaskPromotion, gradeRagTaskArtifact, sha256 } from './project-rag-corpus.mjs';
 import { gradeRagQuery, RAG_QUERY_EVALUATOR_VERSION } from './project-rag-query-grade.mjs';
 import { normalizeRetrievalPolicy, retrievalPolicyDigest } from '../../openclaw_runtime/src/knowledge/retrieval/policy.ts';
+import { verifyKnowledgeAdaptationPackage } from './project-rag-adaptation-readback.mjs';
 
 const digest = value => 'sha256:' + createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const finite = value => typeof value === 'number' && Number.isFinite(value);
@@ -174,6 +175,8 @@ export function verifyOfflineRagPolicyPackage(directory, expectedManifestDigest,
     assert.equal(trial.costUsd, measuredCost, 'Measured task cost drift');
     assert.equal(trial.safetyViolations, Number(attempt.safetyViolation));
   }
+  const adaptation = verifyKnowledgeAdaptationPackage(root, manifest.adaptation, report.candidateCommit, evaluation.candidateDigest);
+  assert.equal(adaptation.status, 'qualified', 'Actual-KB adaptation qualification incomplete: ' + adaptation.reasons.join(', '));
   return { candidate, expectedPolicyDigest: evaluation.baselineDigest, evaluation,
     evidenceRoot: root, evidenceManifestDigest: expectedManifestDigest };
 }

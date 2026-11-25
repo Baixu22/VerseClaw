@@ -171,6 +171,7 @@ export async function retrieveMemoryWiki(input: {
     generations: initialGenerations,
     policy: selectedPolicy,
   });
+  const spendBefore = await spend?.snapshot();
   const rerankProviderRef =
     !remoteRerankDenied && initialRerankStatus?.mode === "remote"
       ? initialRerankStatus.providerRef
@@ -384,6 +385,14 @@ export async function retrieveMemoryWiki(input: {
       .filter((hit) => hit.rankSignals.lanes.some((lane) => lane.lane === "exact"))
       .map((hit) => hit.sourceRef.subjectId),
   );
+  const cumulativeSpend = await spend?.snapshot();
+  if (cumulativeSpend && spendBefore) result.remoteSpend = {
+    calls: cumulativeSpend.calls - spendBefore.calls,
+    reservedTokens: cumulativeSpend.reservedTokens - spendBefore.reservedTokens,
+    reservedCostUsd: cumulativeSpend.reservedCostUsd === null || spendBefore.reservedCostUsd === null ? null : cumulativeSpend.reservedCostUsd - spendBefore.reservedCostUsd,
+    actualTokens: cumulativeSpend.actualTokens === null || spendBefore.actualTokens === null ? null : cumulativeSpend.actualTokens - spendBefore.actualTokens,
+    actualCostUsd: cumulativeSpend.actualCostUsd === null || spendBefore.actualCostUsd === null ? null : cumulativeSpend.actualCostUsd - spendBefore.actualCostUsd,
+  };
   if (input.observability) {
     try {
       const remaining = plan.budget.deadlineAtMs - Date.now();
@@ -402,7 +411,7 @@ export async function retrieveMemoryWiki(input: {
   }
   return {
     ...result,
-    ...(spend ? { remoteSpend: await spend.snapshot() } : {}),
+    ...(cumulativeSpend ? { remoteSpend: cumulativeSpend } : {}),
     results: result.results.map((hit) => {
       const { ownerConfirmed, ...data } = hit.data;
       const eligible =

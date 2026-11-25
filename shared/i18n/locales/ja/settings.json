@@ -1154,6 +1154,42 @@
       "held": "ポリシーを保留：評価条件未達",
       "rolled-back": "前のポリシーを復元"
     },
-    "modelUsage": "実測モデル使用量：{{tokens}} tokens · {{cost}} USD"
+    "modelUsage": "実測モデル使用量：{{tokens}} tokens · {{cost}} USD",
+    "stageDetails": "段階と証拠",
+    "effectiveProfile": "有効な検索経路：{{profile}}",
+    "stageSummary": "{{stage}} · {{status}} · {{count}} 候補 · {{milliseconds}} ms",
+    "modelStage": "{{stage}} · {{milliseconds}} ms",
+    "supportSummary": "裏付けあり {{supported}} · なし {{unsupported}} · 不明 {{uncertain}}",
+    "retained": "DCS が {{count}} 件の出典ダイジェストを保持",
+    "stages": {
+      "exact": "完全一致",
+      "lexical": "キーワード検索",
+      "dense": "ベクトル検索",
+      "fusion": "融合",
+      "owner-verification": "出典確認",
+      "rerank": "再ランキング",
+      "selection": "最終選択",
+      "answer": "回答",
+      "planning": "計画",
+      "support": "回答の裏付け"
+    },
+    "statuses": {
+      "complete": "完了",
+      "partial": "部分完了",
+      "unavailable": "利用不可",
+      "skipped": "スキップ",
+      "available": "利用可能",
+      "cancelled": "取消"
+    },
+    "profiles": {
+      "local": "ローカル",
+      "quality": "品質",
+      "research": "リサーチ",
+      "hybrid": "ハイブリッド",
+      "lexical": "キーワード",
+      "exact": "完全一致",
+      "none": "なし",
+      "unknown": "不明"
+    }
   }
 }

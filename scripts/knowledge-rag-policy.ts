@@ -20,7 +20,7 @@ async function main() {
   if (!captureManifest) throw new Error('Provide the sealed raw query/task capture manifest as the fourth argument');
   const captures = JSON.parse(await readFile(resolve(captureManifest), 'utf8'));
   const manifest = { schema: 'OfflineRagPolicyPackage/v1', driven_by: 'agent', candidate,
-    report: captures.report, queryCaptures: captures.queryCaptures, taskExecutions: captures.taskExecutions };
+    report: captures.report, queryCaptures: captures.queryCaptures, taskExecutions: captures.taskExecutions, adaptation: captures.adaptation };
   const bytes = JSON.stringify(manifest, null, 2) + '\n';
   const frozenDirectory = resolve(dirname(outputFile), 'frozen-corpus');
   const existing = await stat(frozenDirectory).catch(error => { if (error.code !== 'ENOENT') throw error; return null; });

@@ -168,15 +168,16 @@ export function createMemoryWikiObservabilityService(options: {
           retrievalPolicyDigest(defaultRetrievalPolicy(result.plan.profile)),
         profile: result.plan.profile,
         status: result.status,
+        effectiveProfile: result.effectiveProfile,
         elapsedMs: Math.max(0, Date.now() - startedAt),
         sources: sources.filter((source) => source !== undefined),
         generations: structuredClone(result.plan.generations),
-        stages: result.lanes.map((lane) => ({
+        stages: [...result.lanes.map((lane) => ({
           stage: lane.lane,
           elapsedMs: lane.elapsedMs,
           status: lane.status,
           candidateCount: lane.candidateCount,
-        })),
+        })), ...(result.stages ?? [])],
         // Provider error strings can contain prompts or URLs. Store only stable codes or a digest.
         fallbackCodes: result.fallbackReasons.map((reason) =>
           /^[a-z][a-z0-9_-]{0,95}$/.test(reason) ? reason : sha(reason),
@@ -185,9 +186,9 @@ export function createMemoryWikiObservabilityService(options: {
           ? { providerRef: result.rerank.providerRef, model: result.rerank.model }
           : null,
         usage: {
-          inputTokens: result.rerank?.inputTokens ?? null,
+          inputTokens: result.remoteSpend ? result.remoteSpend.actualTokens : result.rerank?.inputTokens ?? null,
           outputTokens: null,
-          costUsd: null,
+          costUsd: result.remoteSpend ? result.remoteSpend.actualCostUsd : null,
         },
         dcs: null,
         modelRuns: [],
@@ -208,6 +209,9 @@ export function createMemoryWikiObservabilityService(options: {
       input: {
         requestId: string;
         runId: string;
+        purpose?: "answer" | "planning" | "support";
+        elapsedMs?: number;
+        support?: NonNullable<RetrievalReceiptV1["modelRuns"][number]["support"]>;
         retainedEvidence: {
           schema: string;
           turnId: string;
@@ -223,6 +227,11 @@ export function createMemoryWikiObservabilityService(options: {
       operationId(input.requestId);
       operationId(input.runId);
       const { ownerKey, context } = scope(identity);
+      if ((input.purpose !== undefined && !["answer", "planning", "support"].includes(input.purpose))
+        || (input.elapsedMs !== undefined && (!Number.isFinite(input.elapsedMs) || input.elapsedMs < 0))
+        || (input.support && (input.purpose !== "support" || !["answerable", "insufficient", "conflicting"].includes(input.support.answerability)
+          || [input.support.supported, input.support.unsupported, input.support.uncertain].some(value => !Number.isSafeInteger(value) || value < 0))))
+        throw new Error("Invalid model stage receipt");
       if (
         input.retainedEvidence?.schema !== "RetainedEvidenceManifest/v1" ||
         !Array.isArray(input.retainedEvidence.units) ||
@@ -262,13 +271,13 @@ export function createMemoryWikiObservabilityService(options: {
         const retained = sources.filter(
           (source) => source && receipt.sources.some((expected) => sha(expected) === sha(source)),
         );
-        if (!retained.length) continue;
         assertCurrent(identity, ownerKey);
         await receipts.update(entry.key, (row) => {
           if (!row) return undefined;
           const prior = row.receipt.modelRuns.find((run) => run.runId === input.runId);
           if (prior) {
-            if (prior.retainedDigest !== retainedDigest)
+            if (prior.retainedDigest !== retainedDigest || prior.purpose !== input.purpose
+              || JSON.stringify(prior.support) !== JSON.stringify(input.support))
               throw new Error("Conflicting retained evidence run");
             return row;
           }
@@ -280,6 +289,10 @@ export function createMemoryWikiObservabilityService(options: {
             retainedDigest,
             actualTokens: input.providerSpend?.actualTokens ?? null,
             actualCostUsd: input.providerSpend?.actualCostUsd ?? null,
+            ...(input.purpose ? { purpose: input.purpose } : {}),
+            ...(input.elapsedMs !== undefined ? { elapsedMs: input.elapsedMs } : {}),
+            ...(input.support ? { support: { answerability: input.support.answerability,
+              supported: input.support.supported, unsupported: input.support.unsupported, uncertain: input.support.uncertain } } : {}),
           };
           const modelRuns = [...row.receipt.modelRuns, run];
           const measuredTokens = modelRuns.every((value) => value.actualTokens !== null)

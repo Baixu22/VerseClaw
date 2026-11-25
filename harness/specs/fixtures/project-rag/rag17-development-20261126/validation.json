@@ -1,0 +1,227 @@
+{
+  "schema": "G2DevelopmentValidation/v1",
+  "node": "TF-0894",
+  "actor": "codex-g2-development-first",
+  "driven_by": "agent",
+  "status": "development-verified",
+  "acceptance": "deferred-by-owner-20261126",
+  "candidateBase": "c5c475a76494df6c798a97bb99a73163df527726",
+  "tests": 62,
+  "followup": 8,
+  "validation": {
+    "actor": "codex-g2-development-first",
+    "driven_by": "agent",
+    "status": "passed",
+    "steps": [
+      {
+        "name": "unit",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/project-rag-adaptation-readback.test.ts",
+          "tests/unit/project-rag-observability-store.test.ts",
+          "tests/unit/project-rag-receipts-promotion.test.ts",
+          "tests/unit/project-rag-offline-package.test.ts",
+          "tests/unit/knowledge-evidence-qa.test.ts",
+          "tests/unit/project-rag-plan-owner.test.ts",
+          "--maxWorkers=1",
+          "--cache=false",
+          "--reporter=json",
+          "--outputFile=D:\\tmp\\g2-development-first-20261126-01a21178\\diagnostics-final\\unit.json"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 36.344,
+        "logSha256": "42d4e9880af7d3fb4ed268158f61842b6dcf2ad1ae6360d64b1f6e17e8ba4ee0"
+      },
+      {
+        "name": "types",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "tsgo",
+          "-p",
+          "D:\\tmp\\g2-development-first-20261126-01a21178\\tsconfig.diagnostics.json",
+          "--pretty",
+          "false"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 6.531,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "lint",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "eslint",
+          "electron/services/knowledge-evidence-qa.ts",
+          "electron/services/knowledge-research.ts",
+          "src/components/settings/KnowledgeRetrievalDiagnostics.tsx",
+          "scripts/knowledge-rag-adaptation-readback.ts",
+          "tests/unit/project-rag-adaptation-readback.test.ts",
+          "tests/unit/project-rag-observability-store.test.ts",
+          "tests/e2e/project-rag-settings-operations.spec.ts"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 3.641,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "harness",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/project-rag-observability-offline-promotion.md"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 1.812,
+        "logSha256": "27b17e312a9d108ff81152ed87f7e70dfbcf3b19ee26ffcc3c33afcab87654bf"
+      },
+      {
+        "name": "dry-run",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/tasks/project-rag-observability-offline-promotion.md",
+          "--dry-run"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 1.594,
+        "logSha256": "e63f310e8f759f16defd308a3c3c09385fa0dab2c844721dae897fda9fe4b7df"
+      },
+      {
+        "name": "comms-replay",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "run",
+          "comms:replay"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.516,
+        "logSha256": "c2a4a9584c7d8086fa59bec6c17a11f192a1d118649faf925efa0aae48852809"
+      },
+      {
+        "name": "comms-compare",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "run",
+          "comms:compare"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.437,
+        "logSha256": "fd2dbf30dbb08da1c749a0705f376a35cd1a1e2e76fe144e6c068a045d06f520"
+      }
+    ],
+    "startedAt": "2026-11-25T17:06:49.428345+00:00",
+    "activeStep": null,
+    "completedAt": "2026-11-25T17:07:40.308126+00:00"
+  },
+  "sourceInputs": [
+    {
+      "path": "docs/dev/project-rag/EVALUATION-CONTRACT.md",
+      "sha256": "407b3b9e100e74d3e5585a80b7c7693e70bca5986fb261bbe25e0ae8e9a59981"
+    },
+    {
+      "path": "electron/services/knowledge-evidence-qa.ts",
+      "sha256": "3d7ac89ef423e52cca7732fd466eb319a2064ecc6f1d8910480da307c710b8c5"
+    },
+    {
+      "path": "electron/services/knowledge-research.ts",
+      "sha256": "e28a18c29fcd5a7b322464135f937beb57de265dc40301505e97285842fcc761"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-observability-offline-promotion.md",
+      "sha256": "45712755e21effefa6c0c41658f6993f80c760c2089a85db8bb8b017d6d47744"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval/observability-service.ts",
+      "sha256": "b24c85fbbbd2a62f4fab73d285c5bfb1e03751baa276f2ea966de41609b98463"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts",
+      "sha256": "4a3479269d9dafeeba62bd2ef77f26927bb2352d9285129a01117e0afd922fcf"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/plan.ts",
+      "sha256": "3e453ce377868d10c42781583010269e09b6ea351970688b75ea50c0f11e24ed"
+    },
+    {
+      "path": "scripts/knowledge-rag-adaptation-readback.ts",
+      "sha256": "0cafd944b9166fb9b1b07474c9b9bfffc875de069e6279098962c40d92e533c2"
+    },
+    {
+      "path": "scripts/knowledge-rag-policy.ts",
+      "sha256": "d1db1a5acc6151c73a53687d53973f5c1751fafe253f08d441306a6513c4e92c"
+    },
+    {
+      "path": "scripts/lib/project-rag-adaptation-readback.d.mts",
+      "sha256": "459ca461adf17692b987bd1cdab82af2ce13ae1d922a0335c08e8821cd3ae41c"
+    },
+    {
+      "path": "scripts/lib/project-rag-adaptation-readback.mjs",
+      "sha256": "297f2739ee6b5d45c71fb6031a9954b55f20420742d99c4513f45a4f09580499"
+    },
+    {
+      "path": "scripts/lib/project-rag-promotion.mjs",
+      "sha256": "e801bcc808e9e86faf27bcc9528f42cc08a4209ce5d8d44ff06f14ddf61f4431"
+    },
+    {
+      "path": "shared/i18n/locales/en/settings.json",
+      "sha256": "cdf52afe99284528a212f518ec6fd823705a6deae7780f41e284ba7e0781e609"
+    },
+    {
+      "path": "shared/i18n/locales/ja/settings.json",
+      "sha256": "a6dc3c78b9cad5e25106fd53d0f7a709077a5f6349d68aa6b2787cb01733726c"
+    },
+    {
+      "path": "shared/i18n/locales/ru/settings.json",
+      "sha256": "6bd3c33d694782cc3d8f00529a04671f36b81f73aadeb0fbb90fd1cd82c71b9c"
+    },
+    {
+      "path": "shared/i18n/locales/zh/settings.json",
+      "sha256": "9e18f44a803a9274229033caa166835a976d9911ddfccc78c569e882623b81c9"
+    },
+    {
+      "path": "shared/knowledge/observability.ts",
+      "sha256": "c5291e5e3fdd333573dc02390946ff1c2c8f78ec013dbea5509f74b29ffd978c"
+    },
+    {
+      "path": "shared/knowledge/retrieval.ts",
+      "sha256": "45323eb9aeb93d9fdde560ea8ff38c1d3261cd2be23c39d49372c7a203564837"
+    },
+    {
+      "path": "src/components/settings/KnowledgeRetrievalDiagnostics.tsx",
+      "sha256": "5052875a34069f7a0eab2c350e4ae7d8337008898c25199596222e380472970e"
+    },
+    {
+      "path": "tests/e2e/project-rag-settings-operations.spec.ts",
+      "sha256": "fa9dc797364fd8f355f43a45edde9b8f44ee9b3c5dad00149c5ec7346ae90b3a"
+    },
+    {
+      "path": "tests/unit/project-rag-adaptation-readback.test.ts",
+      "sha256": "b2270bba567983e8b63e2c6080378384139c61e9fae90953e0e40c0457a462c9"
+    },
+    {
+      "path": "tests/unit/project-rag-observability-store.test.ts",
+      "sha256": "9612c886dca219eb1a26e6b5f876c44ea79e004a18f10d7169aa1b6a8db76142"
+    }
+  ],
+  "deferred": [
+    "Electron updated diagnostics journey",
+    "actual-KB paired model experiments",
+    "full policy promotion qualification"
+  ]
+}

@@ -170,7 +170,7 @@ export function createKnowledgeResearchApi(options: {
             const outputTokens = Math.min(1024, Math.floor(callTokens / 3));
             const output = await runKnowledgeModel(gatewayManager, prompt, 'Knowledge Research planner', Math.max(1, plan.budget.deadlineAtMs - Date.now()),
               { sessionKey: scope.identity.agentSessionKey, workspaceId: scope.identity.workspaceId, workspaceDir: scope.identity.workspaceDir, references,
-                retrievalRequestId: plan.requestId, ownerSessionId: scope.identity.sessionId },
+                retrievalRequestId: plan.requestId, ownerSessionId: scope.identity.sessionId, purpose: 'planning' },
               { signal, budget: { maxInputTokens: callTokens - outputTokens, maxOutputTokens: outputTokens, maxCostUsd: callCostUsd, maxCalls: 1 },
                 validateSpend: spend => { if (spend) validateResearchPlanningUsage(spend, callTokens, callCostUsd); } });
             await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, scope), signal);
@@ -206,7 +206,7 @@ export function createKnowledgeResearchApi(options: {
               buildKnowledgeSupportPrompt(plan.query, claims, supportedSources, proposed.map(row => row.question)),
               'Knowledge Research support', Math.max(1, plan.budget.deadlineAtMs - Date.now()),
               { sessionKey: scope.identity.agentSessionKey, workspaceId: scope.identity.workspaceId, workspaceDir: scope.identity.workspaceDir,
-                references, retrievalRequestId: plan.requestId, ownerSessionId: scope.identity.sessionId },
+                references, retrievalRequestId: plan.requestId, ownerSessionId: scope.identity.sessionId, purpose: 'support', supportClaims: claims },
               { signal, budget: { maxInputTokens: callTokens - outputTokens, maxOutputTokens: outputTokens, maxCostUsd: callCostUsd, maxCalls: 1 },
                 validateSpend: value => { if (value) validateResearchPlanningUsage(value, callTokens, callCostUsd); } });
             await waitForRetrievalOperation(assertKnowledgeReadScopeCurrent(gatewayManager, scope), signal);

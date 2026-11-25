@@ -162,6 +162,9 @@ test("Project RAG operations manage canonical config, pause, recovery, revocatio
     await expect(page.getByTestId("retrieval-samples")).toHaveText("1");
     const observed = (await diagnostics()).observability!;
     expect(observed.receipts).toHaveLength(1);
+    expect(observed.receipts[0].stages.map(stage => stage.stage)).toEqual(expect.arrayContaining(['fusion', 'owner-verification', 'rerank', 'selection']));
+    await page.getByTestId('retrieval-stage-details').locator('summary').click();
+    await expect(page.getByTestId('retrieval-stage-details')).toContainText('Fusion');
     expect(observed.receipts[0].usage.costUsd).toBeNull();
     expect(JSON.stringify(observed)).not.toContain("RAG12_UI_UPDATED_WHILE_STOPPED");
     const feedbackId = "rag17-feedback-once";

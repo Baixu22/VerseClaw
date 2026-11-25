@@ -1154,6 +1154,42 @@
       "held": "策略暂缓：评测要求尚未满足",
       "rolled-back": "已恢复上一策略"
     },
-    "modelUsage": "实测模型用量：{{tokens}} tokens · {{cost}} 美元"
+    "modelUsage": "实测模型用量：{{tokens}} tokens · {{cost}} 美元",
+    "stageDetails": "阶段与证据",
+    "effectiveProfile": "实际检索路径：{{profile}}",
+    "stageSummary": "{{stage}} · {{status}} · {{count}} 个候选 · {{milliseconds}} ms",
+    "modelStage": "{{stage}} · {{milliseconds}} ms",
+    "supportSummary": "有支持 {{supported}} · 无支持 {{unsupported}} · 不确定 {{uncertain}}",
+    "retained": "DCS 保留 {{count}} 个来源摘要",
+    "stages": {
+      "exact": "精确匹配",
+      "lexical": "关键词检索",
+      "dense": "向量检索",
+      "fusion": "融合",
+      "owner-verification": "来源复验",
+      "rerank": "重排",
+      "selection": "最终筛选",
+      "answer": "回答",
+      "planning": "规划",
+      "support": "回答支持"
+    },
+    "statuses": {
+      "complete": "完成",
+      "partial": "部分完成",
+      "unavailable": "不可用",
+      "skipped": "已跳过",
+      "available": "可用",
+      "cancelled": "已取消"
+    },
+    "profiles": {
+      "local": "本地",
+      "quality": "质量",
+      "research": "研究",
+      "hybrid": "混合",
+      "lexical": "关键词",
+      "exact": "精确匹配",
+      "none": "无",
+      "unknown": "未知"
+    }
   }
 }
