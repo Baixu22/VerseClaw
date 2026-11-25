@@ -1,7 +1,8 @@
 // @vitest-environment node
 import { RAG_QUERY_EVALUATOR_VERSION } from '../../scripts/lib/project-rag-query-grade.mjs';
 import { describe, expect, it } from 'vitest';
-import { RAG_SOAK_MINIMUM_MS, readProjectRagAcceptance, validateRagSoak, validateRagSoakProbe } from '../../scripts/lib/project-rag-acceptance.mjs';
+import { RAG_SOAK_MINIMUM_MS, readProjectRagAcceptance, validateRagSoak, validateRagSoakProbe, validateRagCapacity, RAG_CAPACITY_MODELS } from '../../scripts/lib/project-rag-acceptance.mjs';
+import { createEmbeddingSpace } from '../../openclaw_runtime/src/knowledge/retrieval/embedding-space';
 import { runRagCommand } from '../../scripts/lib/project-rag-process.mjs';
 import { existsSync, mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -34,6 +35,19 @@ function sourceFixture(root: string) {
 }
 
 describe('RAG acceptance preserves actual duration and failed evidence', () => {
+  it.each([768, 4096] as const)('requires the actual %i-dimensional model rather than synthetic capacity', dimensions => {
+    const space = createEmbeddingSpace({ providerRef: dimensions === 768 ? 'local' : 'siliconflow', model: RAG_CAPACITY_MODELS[dimensions],
+      modelRevision: 'frozen-r1', dimensions, maxInputTokens: 1000, tokenizerId: 'pinned-tokenizer', tokenizerDigest: sha256('tokenizer'),
+      inputFormat: { id: 'frozen-format', query: '{text}', document: '{text}' }, normalization: 'l2' });
+    const capacity = { schema: 'ProjectRagVectorCapacity/v1', mode: 'portable', rows: 20000, dimensions, status: 'pass',
+      dirtyDevelopmentProbe: false, capability: { available: true }, restart: { status: 'pass' }, fixture: null,
+      query: { recallAt20: 0.99, warmP95Ms: 100, timingsMs: Array(31).fill(100) },
+      input: { provenance: 'real-model-output', verifiedProviderResponses: true, space, manifestDigest: sha256('manifest'), corpusDigest: sha256('corpus') } };
+    expect(validateRagCapacity(capacity, 'portable', dimensions)).toEqual([]);
+    expect(validateRagCapacity({ ...capacity, fixture: { kind: 'synthetic' }, input: null }, 'portable', dimensions)).toContain('real-model-capacity-missing');
+    expect(validateRagCapacity(capacity, 'portable', dimensions === 768 ? 4096 : 768)).toContain('real-model-capacity-missing');
+    expect(validateRagCapacity({ ...capacity, rows: 19999 }, 'portable', dimensions)).toContain('capacity-incomplete');
+  });
   it('supports an explicit Windows scope while preserving the full-platform contract', () => {
     const directory = mkdtempSync(join(tmpdir(), 'rag-windows-scope-')), candidate = 'a'.repeat(40);
     try {
@@ -50,6 +64,9 @@ describe('RAG acceptance preserves actual duration and failed evidence', () => {
       expect(windows.reasons).toContain('full-executor-verifier-pending');
       expect(windows.reasons).toContain('soak-not-completed'); expect(windows.reasons).toContain('portable:capacity-incomplete');
       expect(windows.status).toBe('NO_GO');
+      expect(windows.reasons).toContain('RAG-A1:capability-proof-incomplete');
+      expect(windows.reasons).toContain('portable-4096:capacity-matrix-incomplete');
+      expect(windows.reasons.some(reason => reason.startsWith('actual-knowledge-adaptation:'))).toBe(true);
       for (const qualificationScope of [undefined, 'all-platforms']) {
         const full = readProjectRagAcceptance(directory, { ...manifest, qualificationScope });
         expect(full.qualificationScope).toBe('all-platforms'); expect(full.requiredPlatforms).toHaveLength(5);

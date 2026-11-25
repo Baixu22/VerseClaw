@@ -1,4 +1,6 @@
 export const RAG_SOAK_MINIMUM_MS: number;
+export const RAG_CAPACITY_MODELS: Readonly<Record<number, string>>;
+export function validateRagCapacity(report: unknown, mode: 'portable' | 'ann', dimensions: 768 | 4096): string[];
 export function readBoundEvidence(root: string, input: { path: string; sha256: string }): unknown;
 export function validateRagSoak(report: unknown): string[];
 export function validateRagSoakProbe(probe: unknown): string[];

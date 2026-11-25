@@ -6,6 +6,7 @@ import { dirname, resolve, relative, isAbsolute, sep } from 'node:path';
 import { StringDecoder } from 'node:string_decoder';
 import { createEmbeddingSpace, validateEmbeddingVector, type EmbeddingSpaceV1 } from '../../openclaw_runtime/src/knowledge/retrieval/embedding-space';
 import type { SourceRefV2 } from '../../shared/knowledge/owner-read-contract';
+import { isSourceRefV2 } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 
 type Pin = { path: string; digest: string };
 export type CapacityVector = { id: string; source: SourceRefV2; chunkDigest: string; vector: number[];
@@ -31,8 +32,11 @@ export async function loadCapacityInput(file: string, candidate: string) {
     assert(!isAbsolute(sub) && sub !== '..' && !sub.startsWith('..' + sep), 'Capacity input escaped root'); return resolved;
   };
   const cache = new Map<string, Buffer>();
+  const evidencePins = new Map<string, Pin>();
   const read = async (pin: Pin) => {
     assert(pin && /^sha256:[a-f0-9]{64}$/.test(pin.digest), 'Capacity input pin missing');
+    assert(!evidencePins.has(pin.path) || evidencePins.get(pin.path)!.digest === pin.digest, 'Capacity input pin changed during capture');
+    evidencePins.set(pin.path, { path: pin.path, digest: pin.digest });
     const key = pin.path + ':' + pin.digest;
     if (cache.has(key)) return cache.get(key)!;
     const filename = await inside(pin.path); assert((await stat(filename)).size <= 4 * 1024 * 1024, 'Capacity source/receipt exceeds read budget');
@@ -43,7 +47,7 @@ export async function loadCapacityInput(file: string, candidate: string) {
   const validate = async (row: CapacityVector, kind: 'query' | 'document') => {
     assert(row && typeof row.id === 'string' && row.id.length > 0 && row.id.length <= 256, 'Invalid capacity vector id');
     const source = row.source, locator = source?.locator;
-    assert(input.namespaceId && source?.namespaceId === input.namespaceId && source?.schema === 'SourceRef/v2' && locator?.coordinateSpace === 'raw-source-utf8-v1'
+    assert(input.namespaceId && isSourceRefV2(source) && source.namespaceId === input.namespaceId && locator?.coordinateSpace === 'raw-source-utf8-v1'
       && Number.isSafeInteger(locator.startByte) && locator.startByte >= 0 && Number.isSafeInteger(locator.endByteExclusive)
       && locator.endByteExclusive > locator.startByte, 'Capacity vector lacks an owner range');
     const raw = await read(row.sourceFile);
@@ -84,5 +88,5 @@ export async function loadCapacityInput(file: string, candidate: string) {
     assert.equal(count, input.count, 'Capacity vector count mismatch');
     assert.equal('sha256:' + hashStream.digest('hex'), input.vectors.digest, 'Capacity vector file changed');
   };
-  return { input, space, queries, rows, digest: hash(bytes) };
+  return { input, space, queries, rows, evidencePins, digest: hash(bytes) };
 }

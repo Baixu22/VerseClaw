@@ -7,8 +7,15 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-19
 intent: 证明长期目标已经交付，并结束临时并行实现。
-diffBase: 5d45cf79f769a1a3d8f994f965e5d63d24d5c40c
+diffBase: c6d47704411a5b4ee86dd5ec82bb8070987486fd
 touchedAreas:
+  - "docs/dev/project-rag/EVALUATION-CONTRACT.md"
+  - "scripts/knowledge-rag-vector-capacity.ts"
+  - "scripts/lib/project-rag-acceptance.d.mts"
+  - "scripts/lib/project-rag-acceptance.mjs"
+  - "scripts/lib/project-rag-adaptation-readback.mjs"
+  - "scripts/lib/project-rag-capacity-input.ts"
+  - "tests/unit/project-rag-adaptation-readback.test.ts"
   - "scripts/lib/project-rag-acceptance.*"
   - "scripts/lib/project-rag-query-grade.*"
   - "scripts/lib/project-rag-process.*"
@@ -94,6 +101,7 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "pnpm exec vitest run tests/unit/project-rag-adaptation-readback.test.ts tests/unit/project-rag-capacity-input.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec vitest run tests/unit/knowledge-retrieval.test.ts tests/unit/knowledge-evidence-qa.test.ts tests/unit/harness-specs.test.ts tests/unit/project-rag-acceptance-readback.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec playwright test tests/e2e/project-rag-chat-modes.spec.ts tests/e2e/project-rag-research.spec.ts --workers=1 --retries=0"
   - "pnpm exec playwright test --config playwright.rag-packaged.config.ts --workers=1 --retries=0"

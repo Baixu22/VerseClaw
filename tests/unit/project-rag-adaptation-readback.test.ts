@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, it } from 'vitest';
@@ -26,7 +26,12 @@ function fixture() {
   const dataset = { schema: 'KnowledgeAdaptationEvaluation/v1', evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION, snapshotDigest: snapshot.snapshotDigest,
     driven_by: 'agent', origin: snapshot.origin, actor: 'author', queries, families: sources.map(source => ({ id: source.id, sourceIds: [source.id] })),
     gold: sources.map((source, i) => ({ queryId: 'q' + i, answerability: 'answerable', facts: [{ sourceRef: source.snapshot.source }] })),
-    review: { actor: 'independent-reviewer', driven_by: 'agent', snapshotDigest: snapshot.snapshotDigest, acceptedQuestionIds: queries.map(q => q.id) } };
+    review: { actor: 'independent-reviewer', driven_by: 'agent', snapshotDigest: snapshot.snapshotDigest,
+      datasetDigest: '', acceptedQuestionIds: queries.map(q => q.id) } };
+  const authored = { actor: dataset.actor, driven_by: 'agent', snapshotDigest: snapshot.snapshotDigest, families: dataset.families,
+    questions: queries.map((query, i) => ({ ...query, answerability: 'answerable', support: [{ sourceId: sources[i].id,
+      startByte: 0, endByteExclusive: sources[i].snapshot.source.locator.endByteExclusive, quote: `Port ${i} is 8080.` }] })), review: dataset.review };
+  dataset.review.datasetDigest = sha256(jsonBytes({ families: authored.families, questions: authored.questions }));
   const datasetPin = save('dataset.json', dataset);
   const binding = { modelDigest: pin, generationSettingsDigest: pin, embeddingSpaceDigest: pin, chunkerDigest: pin, corpusDigest: snapshot.snapshotDigest };
   const plan = { schema: 'KnowledgeAdaptationRunPlan/v1', driven_by: 'agent', candidate, evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION,
@@ -46,10 +51,10 @@ function fixture() {
       answer: save(q.id + arm + '-answer.json', answer), judgment: save(q.id + arm + '-judge.json', grade) };
   }));
   const manifest = { schema: 'KnowledgeAdaptationQualification/v1', driven_by: 'agent', plan: planPin, snapshot: save('snapshot.json', snapshot),
-    dataset: datasetPin, captures: [] as Array<{path: string; digest: string}> };
+    dataset: datasetPin, authoring: save('authoring.json', authored), captures: [] as Array<{path: string; digest: string}> };
   const verify = () => { manifest.captures = captures.map((row, i) => save('capture-' + i + '.json', row));
     return verifyKnowledgeAdaptationPackage(root, save('qualification.json', manifest), candidate, pin); };
-  return { verify, captures, root, manifest };
+  return { verify, captures, root, manifest, save };
 }
 
 it('regrades owner evidence and leaves a small project corpus insufficient for policy promotion', () => {
@@ -75,4 +80,10 @@ it('rejects substituted retained pins and changed original source bytes', () => 
   expect(() => f.verify()).toThrow('differs from DCS');
   writeFileSync(join(f.root, 'source-0.md'), 'changed');
   expect(() => f.verify()).toThrow('Archived source changed');
+});
+it('does not accept changed gold merely because its outer manifest hash was updated', () => {
+  const f = fixture(), dataset = JSON.parse(readFileSync(join(f.root, 'dataset.json'), 'utf8'));
+  dataset.gold[0].facts[0].sourceRef.locator.endByteExclusive = 1;
+  f.manifest.dataset = f.save('dataset.json', dataset);
+  expect(() => f.verify()).toThrow('Reviewed support source mismatch');
 });

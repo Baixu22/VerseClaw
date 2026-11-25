@@ -23,6 +23,7 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
     'Adaptation candidate mismatch');
   assert.equal(plan.evaluatorVersion, RAG_QUERY_EVALUATOR_VERSION, 'Adaptation evaluator mismatch');
   assert.equal(plan.policyDigest, expectedPolicyDigest, 'Adaptation policy mismatch');
+  assert(['local', 'quality', 'research'].includes(plan.profile) && /^sha256:[a-f0-9]{64}$/.test(plan.baselinePolicyDigest), 'Invalid adaptation baseline/profile');
   assert(Number.isSafeInteger(plan.frozenAt) && plan.frozenAt > 0, 'Missing pre-execution adaptation freeze');
   for (const key of ['modelDigest', 'generationSettingsDigest', 'embeddingSpaceDigest', 'chunkerDigest', 'corpusDigest'])
     assert(/^sha256:[a-f0-9]{64}$/.test(plan[key]), `Missing adaptation ${key}`);
@@ -38,6 +39,11 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
     && dataset.review?.driven_by === 'agent' && dataset.review.snapshotDigest === snapshotDigest, 'Missing independent frozen question review');
   const ids = dataset.queries.map(query => query.id);
   assert(new Set(ids).size === ids.length && isDeepStrictEqual([...ids].sort(), [...dataset.review.acceptedQuestionIds].sort()), 'Question inventory mismatch');
+  const authored = read(manifest.authoring).value;
+  assert.equal(sha256(jsonBytes({ families: authored.families, questions: authored.questions })), dataset.review.datasetDigest, 'Reviewed question bytes changed');
+  assert(isDeepStrictEqual(authored.families, dataset.families) && isDeepStrictEqual(authored.review, dataset.review)
+    && authored.actor === dataset.actor && authored.snapshotDigest === snapshotDigest, 'Question review provenance mismatch');
+  assert(isDeepStrictEqual(authored.questions.map(({ support, answerability, ...query }) => query), dataset.queries), 'Question body changed after review');
   const families = new Map(dataset.families.map(family => [family.id, family]));
   const sourceFamilies = new Map();
   for (const family of dataset.families) for (const id of family.sourceIds) {
@@ -64,6 +70,24 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
     normalizedFamilies.set(key, family);
   }
   for (const source of bundle.corpus.sources) assert.equal(sha256(readFileSync(safeCorpusFile(sourceRoot, source.path))), source.ref.sourceDigest, 'Archived source changed');
+  for (const question of authored.questions) {
+    const gold = dataset.gold.find(row => row.queryId === question.id);
+    assert(gold && gold.answerability === question.answerability && gold.facts.length === question.support.length, 'Reviewed gold changed');
+    for (const support of question.support) {
+      const source = snapshot.sources.find(source => source.id === support.sourceId);
+      const fact = gold.facts.find(fact => fact.sourceRef.subjectId === source?.snapshot.source.subjectId
+        && fact.sourceRef.locator.startByte === support.startByte && fact.sourceRef.locator.endByteExclusive === support.endByteExclusive);
+      assert(source && fact && sourceFamilies.get(source.id) === question.familyId, 'Reviewed support source mismatch');
+      const ownerRange = source.snapshot.source.locator;
+      assert(ownerRange && Number.isSafeInteger(support.startByte) && Number.isSafeInteger(support.endByteExclusive)
+        && support.startByte >= ownerRange.startByte && support.endByteExclusive <= ownerRange.endByteExclusive
+        && support.endByteExclusive > support.startByte, 'Reviewed support is outside the owner range');
+      const expected = { ...source.snapshot.source, locator: fact.sourceRef.locator };
+      assert(isDeepStrictEqual(expected, fact.sourceRef), 'Reviewed support owner changed');
+      const raw = readFileSync(safeCorpusFile(sourceRoot, source.path));
+      assert.equal(raw.subarray(support.startByte, support.endByteExclusive).toString('utf8'), support.quote, 'Reviewed support bytes changed');
+    }
+  }
   assert(Array.isArray(manifest.captures) && manifest.captures.length === ids.length * 2, 'Incomplete paired adaptation captures');
   const rows = [], keys = new Set();
   const reasons = new Set();
@@ -117,7 +141,9 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
     reasons.add('adaptation-quality-gain-unproven');
   const baselineCost = mean(rows.filter(row => row.arm === 'page').map(row => row.costUsd ?? 0));
   const fullCost = mean(rows.filter(row => row.arm === 'full').map(row => row.costUsd ?? 0));
-  if (baselineCost <= 0 || fullCost > baselineCost * (plan.profile === 'research' ? 1.25 : 1.1)) reasons.add('adaptation-cost-gain-unproven');
+  const allowedCost = baselineCost === 0 ? plan.profile === 'research' ? 0.25 : plan.profile === 'quality' ? 0.05 : 0.02
+    : baselineCost * (plan.profile === 'research' ? 1.25 : 1.1);
+  if (fullCost > allowedCost) reasons.add('adaptation-cost-gain-unproven');
   const slices = [...new Set(rows.map(row => row.split + ':' + row.locale + ':' + row.answerability))].map(slice => {
     const selected = rows.filter(row => row.split + ':' + row.locale + ':' + row.answerability === slice);
     return { slice, arms: ['page', 'full'].map(arm => { const values = selected.filter(row => row.arm === arm);

@@ -83,8 +83,15 @@ Wiki metadata 中没有出现位置坐标的 claim，只有其文本的全部出
 
 ## 实际知识库资格读回
 
-`knowledge-rag-adaptation-readback.ts <manifest.json> <sha256:digest> <candidate> <policy-digest> <new-output.json>` 重开 `KnowledgeAdaptationQualification/v1` 封存包。包引用执行前冻结的 RunPlan、owner snapshot、独立复核数据集和每题 page/full 原始捕获。两臂必须绑定同一模型、生成设置、embedding space、chunker、语料和各自策略；逐题从 owner 字节重算各阶段的覆盖，最终 retained 集必须匹配实际 DCS 收据。回答和盲审按输入、输出和数据集 digest 绑定。
+`knowledge-rag-adaptation-readback.ts <manifest.json> <sha256:digest> <candidate> <policy-digest> <new-output.json>` 重开 `KnowledgeAdaptationQualification/v1` 封存包。包引用执行前冻结的 RunPlan、owner snapshot、authoring原件、独立复核数据集和每题 page/full 原始捕获。两臂必须绑定同一模型、生成设置、embedding space、chunker、语料和各自策略；逐题从 owner 字节重算各阶段的覆盖，最终 retained 集必须匹配实际 DCS 收据。回答和盲审按输入、输出和数据集 digest 绑定。
 
 读回按 split/语言/有答案、无答案、冲突切片，定位 indexed、parsed、candidates、reranked、retained、answer-support、answer 或 abstention 缺口；未记录的阶段不推断。held-out 按来源族配对，沿用最少20族、正95%区间、5pp/Research10pp和10%/Research25%费用条件。未知用量和不完整运行保持不足；原9文档适配实验继续是描述性结果。
 
 策略包增加 `adaptation` 原件引用；实际知识库资格和原240query/540槽同时通过才可晋级。现有诊断回执记录真实融合、owner复验、重排和最终筛选时间，DCS保留摘要以及规划/支持模型调用的时长和支持计数。默认只存引用、摘要、用量及状态。
+
+
+## 最终资格清单
+
+最终 manifest 的 nodes 包含 RAG-01～18 与 RAG-A1 共19项能力证据。capacity 必须包含 portable/ann × 768/4096 四格，每格记录 mode、dimensions、报告 path/sha256 与 input manifest 的 path/sha256。报告须来自 google/embeddinggemma-300m 或 Qwen/Qwen3-VL-Embedding-8B 对应维度、完整space和实际provider输出，synthetic仅保留工程探针身份。读回以64KiB缓冲核对向量流和所有原来源/响应pin，不把大向量文件一次装入内存。
+
+adaptation、adaptationProfile 绑定同候选已通过策略包的实际知识库资格，失败时返回具体来源、样本、支持或费用缺口。原240query/540槽/72小时、Windows-only范围和完整Executor/Verifier门保持。开发回归不填补这些尚未执行的原件。

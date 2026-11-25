@@ -149,6 +149,7 @@ async function main() {
       peakRss = Math.max(peakRss, process.memoryUsage().rss);
     }
     if (batch.length) await flush();
+    if (captured) report.sourceInputs = [...captured.evidencePins.values()];
     assert(store.publish(generation, count));
     report.writeMs = Math.round(performance.now() - buildStart);
     await save();
@@ -255,6 +256,9 @@ async function main() {
     };
     report.diskBytes = await size(output);
     report.peakRssBytes = peakRss;
+    assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8", windowsHide: true }).trim(), candidate, "Capacity candidate changed during execution");
+    assert.equal(Boolean(execFileSync("git", ["status", "--porcelain"], { encoding: "utf8", windowsHide: true }).trim()), report.dirtyDevelopmentProbe,
+      "Capacity worktree changed during execution");
     report.status = "pass";
   } catch (error) {
     report.status = "fail";
