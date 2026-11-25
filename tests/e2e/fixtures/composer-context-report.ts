@@ -1,18 +1,29 @@
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { basename, isAbsolute, join, relative, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 import { Type } from '@sinclair/typebox';
 import { buildSystemPromptReport } from '../../../openclaw_runtime/src/agents/system-prompt-report';
-import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore, resolveSqliteSessionStoreDatabasePath } from '../../../openclaw_runtime/src/config/sessions/store-sqlite';
+import type { replaceSqliteSessionStore } from '../../../openclaw_runtime/src/config/sessions/store-sqlite';
 
 export function persistRuntimeContextEntries(stateDir: string, entries: Parameters<typeof replaceSqliteSessionStore>[1]) {
-  const storePath = join(stateDir, 'agents', 'main', 'sessions', 'sessions.json');
-  const databasePath = resolveSqliteSessionStoreDatabasePath(storePath);
-  const withinFixture = relative(stateDir, databasePath);
-  if (withinFixture.startsWith('..') || isAbsolute(withinFixture)) throw new Error('Session database escaped the agent fixture');
-  try { replaceSqliteSessionStore(storePath, entries); }
-  finally { closeSqliteSessionStoreDatabase(storePath); }
-  return { storePath, databasePath };
+  // Playwright's CommonJS loader cannot load the runtime's import.meta SQLite module.
+  const script = `
+    import { readFileSync } from 'node:fs';
+    import { isAbsolute, join, relative } from 'node:path';
+    import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore, resolveSqliteSessionStoreDatabasePath } from './openclaw_runtime/src/config/sessions/store-sqlite.ts';
+    const { stateDir, entries } = JSON.parse(readFileSync(0, 'utf8'));
+    const storePath = join(stateDir, 'agents', 'main', 'sessions', 'sessions.json');
+    const databasePath = resolveSqliteSessionStoreDatabasePath(storePath);
+    const withinFixture = relative(stateDir, databasePath);
+    if (withinFixture.startsWith('..') || isAbsolute(withinFixture)) throw new Error('Session database escaped the agent fixture');
+    try { replaceSqliteSessionStore(storePath, entries); }
+    finally { closeSqliteSessionStoreDatabase(storePath); }
+    console.log(JSON.stringify({ storePath, databasePath }));
+  `;
+  return JSON.parse(execFileSync(process.execPath, ['--import', 'tsx', '--input-type=module', '--eval', script], {
+    cwd: resolve('.'), input: JSON.stringify({ stateDir, entries }), encoding: 'utf8',
+  })) as { storePath: string; databasePath: string };
 }
 
 /** Agent-owned files use the production report builder; no context DTO is replayed. */
