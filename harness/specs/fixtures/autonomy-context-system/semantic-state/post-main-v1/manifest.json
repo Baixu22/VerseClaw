@@ -1,0 +1,21 @@
+{
+  "schema": "C02PostMainEvidence/v1",
+  "actor": "codex/context-system-01a213b7",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "97cb2884527b1bc80f74612c7e5ce73e70974ff5",
+    "tree": "5f66685fc64475eab2f68316a5ed0bbd66713f4a",
+    "dirty": false
+  },
+  "hashScheme": "sha256-utf8-lf",
+  "files": [
+    {
+      "path": "commands.json",
+      "sha256": "058018d597c65e2125c6ceb63b616598c38fa53370a499155ac67c0dcff1263f"
+    },
+    {
+      "path": "independent-verdict.json",
+      "sha256": "b3cbb9337cbf5197e31240b3efd8cd5966e394066b946bdb95daba5edde11114"
+    }
+  ]
+}

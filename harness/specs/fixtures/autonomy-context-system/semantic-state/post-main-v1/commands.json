@@ -1,0 +1,80 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/context-system-01a213b7",
+  "candidate": {
+    "commit": "97cb2884527b1bc80f74612c7e5ce73e70974ff5",
+    "tree": "5f66685fc64475eab2f68316a5ed0bbd66713f4a",
+    "dirty": false
+  },
+  "startedAt": 1795690073.038525,
+  "commands": [
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/autonomy-context-semantic-state.test.ts",
+        "tests/unit/long-session-continuity-context.test.ts",
+        "tests/unit/compression-artifact.test.ts",
+        "tests/unit/task-ledger-working-context-single-source.test.ts",
+        "tests/unit/memory-tf0500-retirement.test.ts",
+        "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-vitest.json"
+      ],
+      "exitCode": 0,
+      "seconds": 36.43244791030884,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.0.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.0.stderr.log"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-context-c02-integration.md",
+        "--since",
+        "0b57375f072b9bc854bd1e423247e9669b432494"
+      ],
+      "exitCode": 0,
+      "seconds": 1.0710797309875488,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.1.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.1.stderr.log"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 6.6452796459198,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.2.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.2.stderr.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "0b57375f072b9bc854bd1e423247e9669b432494",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "seconds": 0.1265406608581543,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.3.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-post-main-r1-command.json.3.stderr.log"
+    }
+  ],
+  "exitCode": 0,
+  "candidateAfter": {
+    "commit": "97cb2884527b1bc80f74612c7e5ce73e70974ff5",
+    "tree": "5f66685fc64475eab2f68316a5ed0bbd66713f4a",
+    "dirty": false
+  },
+  "sourceUnchanged": true,
+  "endedAt": 1795690117.603612
+}
