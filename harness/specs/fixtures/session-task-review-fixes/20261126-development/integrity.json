@@ -1,0 +1,124 @@
+{
+  "algorithm": "sha256",
+  "excludes": [
+    "integrity.json"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "path": "bootstrap/plan.json",
+      "sha256": "311a0934d3dc3e6fe1e446ea958b42f86086a4359810364d81f46ab685d414e5"
+    },
+    {
+      "path": "bootstrap/report.json",
+      "sha256": "b9e9482ab78df22220b5d0df79dbab9c55de89e9832f95470c00326a1cf31e3c"
+    },
+    {
+      "path": "bootstrap/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "bootstrap/stdout.txt",
+      "sha256": "e9f8d6d749a4abc974bc4bc1f1af76c4f21dc794b8c919d89dee04dbfbc52e30"
+    },
+    {
+      "path": "bootstrap/unit-results.json",
+      "sha256": "cd7d309852e0a11a21b0e3b5c6936d25695aebcdf04c3bf49078849c7ad72e1e"
+    },
+    {
+      "path": "comms/compare-report.json",
+      "sha256": "6150899a7d6006a5dd1788ee4373ef8af11aa37cd9c1a98be2ee2c1edc475359"
+    },
+    {
+      "path": "comms/current-metrics.json",
+      "sha256": "26b64a4f43c04bfc4c64e70ce4fc0e08b7771d87597288b7c460820167561c89"
+    },
+    {
+      "path": "credential-scan.json",
+      "sha256": "6dc82d67b08e4755130aace1a22699b745a95c671c56862353f44da0dbbf7c8e"
+    },
+    {
+      "path": "light/comms-compare.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "light/comms-compare.stdout.txt",
+      "sha256": "1778736ff64ef22d630de8ced5443ce1a1080ba13d99cf06a8ecdf332d0bb047"
+    },
+    {
+      "path": "light/comms-replay.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "light/comms-replay.stdout.txt",
+      "sha256": "9b8b69fe6612ff44ea3d8a068e837197a0e513de3cadc2921d2ed7fd052e4c82"
+    },
+    {
+      "path": "light/contract.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "light/contract.stdout.txt",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "light/harness-dry-run.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "light/harness-dry-run.stdout.txt",
+      "sha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d"
+    },
+    {
+      "path": "light/harness-validate.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "light/harness-validate.stdout.txt",
+      "sha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010"
+    },
+    {
+      "path": "light/plan.json",
+      "sha256": "ee2fb0ad0e9cf00a19e5f0ffe2ef9e7aab2b383bb72d490e803ff9d731c800f2"
+    },
+    {
+      "path": "light/report.json",
+      "sha256": "56c67e8553978fa3dc8b53c57ac2f9f100b08861e101fdf4814d7ed3e7a140a3"
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "7fdef198bebc3a3259a76b9465a9244c380a3a7de5d0d475e6bca4d3b056c8a6"
+    },
+    {
+      "path": "report.json",
+      "sha256": "dfb6ab2fe44c646fbf08c6c907b5f987c0e493f4c6efaf4df82c66361a48995f"
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "b73caa669a7fbdb5987df5a8b179d37713da1ed1a85ae5ceb0bdcac08dffd2e7"
+    },
+    {
+      "path": "restore-root-cause.json",
+      "sha256": "6678926b8ae4c34f8ded07da86e8ad29ca5faade0290cc29e5ea5fe0655aa3e3"
+    },
+    {
+      "path": "review-development-final.md",
+      "sha256": "828e064cbb50abcfb87804d46e40e3d38f2c3dc172fee91712ba57f800f14736"
+    },
+    {
+      "path": "review-final-code-r5.md",
+      "sha256": "4f311202315ae10476d065d2187fc6f92ec364526a92ada6736446f6ec89267c"
+    },
+    {
+      "path": "review-final-code-r6.md",
+      "sha256": "02c347c38052ac38a3e5cb7ac09418f8093b59361bcca15e862d4edbc7f2288b"
+    },
+    {
+      "path": "review-final-code-r7.md",
+      "sha256": "33fdd0e141828a485a043ababbd58ec6886cb83b764a6c152aa4bb99b6b30359"
+    }
+  ]
+}

@@ -1,0 +1,322 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ tests/unit/session-task-scope-completion.test.ts (46 tests) 43973ms
+     ✓ reads task admission by identity without a full Ledger snapshot  1552ms
+     ✓ keeps admission scoped with 1000 persisted task contracts  3208ms
+     ✓ keeps admission scoped with 10000 persisted task contracts  16073ms
+     ✓ restores the Workspace and Task owner generations before admitting the next run  411ms
+     ✓ rechecks a restrictive project permission before the next effect  335ms
+     ✓ serializes permission downgrade behind an already admitted effect boundary  303ms
+     ✓ global pause rejects the next managed effect even when its project binding remains active  316ms
+     ✓ binds an in-process worker through its persisted worktree owner  694ms
+     ✓ uses the canonical parent reference after transfer even before its navigation link was persisted  770ms
+     ✓ admits an owned child while the fenced parent run remains active  470ms
+     ✓ rejects missing and incomplete contracts without creating a Legacy business task  354ms
+     ✓ starts a complete canonical contract through task_control without requiring a session bridge  571ms
+     ✓ associates a live isolated scheduled run with its canonical contract without replacing the project coordinator  345ms
+     ✓ uses a decomposed scheduled child contract under the recorded parent TaskRef  464ms
+     ✓ rejects a missing scheduled coordinator before claiming another task  329ms
+     ✓ rejects a stale scheduled coordinator before claiming another task  330ms
+     ✓ rejects a paused scheduled coordinator before claiming another task  322ms
+     ✓ consumes a canonical business contract after a failed turn left a diagnostic deviation link  522ms
+     ✓ selects an existing completed task and preserves its status and historical links  807ms
+     ✓ uses the captured worker parent TaskRef with a real child contract despite a later parent selection  587ms
+     ✓ pauses new dispatch while retaining the already admitted writer and workgroup ownership  657ms
+     ✓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary  636ms
+     ✓ captures checkout execution revision while allowing the admitted run through coordinator pause  1268ms
+     ✓ rejects effects on a completed canonical task, including after owner reconstruction  756ms
+     ✓ rejects a Legacy done node without creating a canonical replacement or changing it to doing  673ms
+     ✓ keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token  577ms
+     ✓ does not release a live canonical claim because a new API instance or response settled  792ms
+     ✓ rejects an old claim after canonical epoch rotation even when the Workspace cache still has it  719ms
+     ✓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface  755ms
+     ✓ rejects unknown session before writing a task  1082ms
+     ✓ rejects wrong root before writing a task  384ms
+     ✓ rejects stale generation before writing a task  377ms
+     ✓ rejects forged claim before writing a task  359ms
+     ✓ rejects foreign workspace identity and a changed session generation without manufacturing a replacement  1656ms
+     ✓ leaves a selected task unclaimed when the final run check fails  467ms
+     ✓ rejects a contract revision changed after resolution without claiming the revised task  540ms
+     ✓ blocks task selection and rebinding on session resources even without a Workspace writer  789ms
+     ✓ requires explicit canonical selection for multiple links and rejects an external reference as a task  955ms
+     ✓ does not silently switch a running canonical task through coordinator rebinding  484ms
+     ✓ cancels an effect after Main admission without releasing or upgrading its canonical claim  429ms
+ ✓ tests/unit/session-task-review-fixes.test.ts (36 tests) 6372ms
+     ✓ stops an active model with no tool operation before releasing its claim  589ms
+     ✓ retains cancellation when stop is unconfirmed: {"ok":true,"sessionId":"different-generation"}  308ms
+     ✓ does not stop a newer unrelated task when a completed planner is cancelled  570ms
+     ✓ continues model calls and an actual file write after resume  314ms
+ ✓ tests/unit/session-task-state-guidance.test.tsx (13 tests) 4691ms
+     ✓ shows unfinished titles and states, focuses the prerequisite, then calls the original claim action  831ms
+     ✓ reads one unfiltered page per click and keeps only the exact dependency before focusing it  603ms
+     ✓ keeps an absent dependency blocked after exhausting pages and allows a new read  483ms
+     ✓ keeps a failed dependency read unresolved and retries the same owner cursor  587ms
+     ✓ discards an in-flight dependency read when the workspace changes  494ms
+     ✓ ignores the old workspace command completion (success: true)  527ms
+     ✓ ignores the old workspace command completion (success: false)  521ms
+     ✓ shows a current owner refusal after refreshing its list  314ms
+ ✓ tests/unit/durable-task-delegation.test.ts (7 tests) 4262ms
+     ✓ does not transfer queued work until dispatch and rejects changed parent ownership  1185ms
+     ✓ transfers before dispatch, preserves read-only parent context and returns from terminal owner evidence  872ms
+     ✓ retains ownership after lost dispatch acknowledgement and rejects a second writer  604ms
+     ✓ restores the delegation from disk and keeps unknown effects as a return barrier  415ms
+     ✓ rejects reservation-backed review after the parent task is cancelled  372ms
+     ✓ gives a verifier a read reference without transferring writer or blocking the parent  377ms
+     ✓ does not return writing authority to a reset parent generation  436ms
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps a scoped send refusal when history has no newer terminal error
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > binds a knowledge ACK to the exact new turn when the preceding turn has identical text
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps the optimistic user message when completion refresh wins the transcript write race
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not restore a pending optimistic message after deleting the session
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not emit a false no-response error when history poll shows tool progress
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > surfaces an idle-timeout hint when a role-only stream placeholder stalls the run
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not treat prior-turn assistant history as progress for a new send
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+ ✓ tests/unit/chat-store-history-retry.test.ts (37 tests) 3316ms
+     ✓ keeps a scoped send refusal when history has no newer terminal error  1420ms
+     ✓ does not burn the first-load retry path when the first attempt becomes stale  933ms
+ ✓ tests/unit/task-ledger-snapshot-cache.test.ts (6 tests) 2273ms
+     ✓ returns real event and owner records after EPERM and releases the cache lock for retry  1018ms
+     ✓ serializes overlapping writes to the same snapshot using the existing file lock  390ms
+ ✓ tests/unit/durable-task-runtime.test.ts (19 tests) 1056ms
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > archive retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-25T14:10:21.771Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=ed7469c5-e6f7-4436-ba87-e908ac7e7053 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > archive retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-25T14:10:21.862Z] [INFO] [session-delete-gate] Cleared operationId=ed7469c5-e6f7-4436-ba87-e908ac7e7053
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > restore retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-25T14:10:21.881Z] [INFO] [session-delete-gate] Persisted kind=restore operationId=30ac8b82-ec02-4a81-ae06-a4587f438fb5 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > restore retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-25T14:10:22.013Z] [INFO] [session-delete-gate] Cleared operationId=30ac8b82-ec02-4a81-ae06-a4587f438fb5
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-25T14:10:22.051Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=2374f324-ef9c-4d12-ab15-920370cf9b3e sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-25T14:10:22.070Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-25T14:10:22.071Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-RSuLVA\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-25T14:10:22.072Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-RSuLVA\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-25T14:10:22.072Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-25T14:10:22.073Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-RSuLVA\agents\main\sessions\generation-source.jsonl
+[2026-11-25T14:10:22.073Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-25T14:10:22.074Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-25T14:10:22.164Z] [INFO] [session-delete-gate] Cleared operationId=2374f324-ef9c-4d12-ab15-920370cf9b3e
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > reads back an already applied coordinator state after its gate progress write failed
+[2026-11-25T14:10:22.181Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=61b86449-3f78-4cb3-8957-0e54f3198f23 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > reads back an already applied coordinator state after its gate progress write failed
+[2026-11-25T14:10:22.259Z] [INFO] [session-delete-gate] Cleared operationId=61b86449-3f78-4cb3-8957-0e54f3198f23
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-25T14:10:22.282Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=8df7fe15-a476-475a-a0a5-f80d67d2ccc1 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-25T14:10:22.303Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-25T14:10:22.303Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-asCGIy\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-25T14:10:22.304Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-asCGIy\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-25T14:10:22.305Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-25T14:10:22.305Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-asCGIy\agents\main\sessions\generation-source.jsonl
+[2026-11-25T14:10:22.305Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-25T14:10:22.306Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-25T14:10:22.354Z] [INFO] [session-delete-gate] Cleared operationId=8df7fe15-a476-475a-a0a5-f80d67d2ccc1
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-25T14:10:22.416Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=60c6716c-24c0-4bbd-b625-9b242b8ae50f sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-25T14:10:22.435Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-25T14:10:22.436Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-XWrKaK\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-25T14:10:22.436Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-XWrKaK\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-25T14:10:22.436Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-25T14:10:22.436Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-XWrKaK\agents\main\sessions\generation-source.jsonl
+[2026-11-25T14:10:22.436Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-25T14:10:22.437Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-25T14:10:22.568Z] [INFO] [session-delete-gate] Cleared operationId=60c6716c-24c0-4bbd-b625-9b242b8ae50f
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-25T14:10:22.667Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=c77a95b9-97c8-45c1-ad8c-2c28e269df14 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-25T14:10:22.702Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-25T14:10:22.702Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-AmlpZA\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-25T14:10:22.703Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-AmlpZA\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-25T14:10:22.703Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-25T14:10:22.703Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-AmlpZA\agents\main\sessions\generation-source.jsonl
+[2026-11-25T14:10:22.703Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-25T14:10:22.704Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-25T14:10:22.804Z] [INFO] [session-delete-gate] Cleared operationId=c77a95b9-97c8-45c1-ad8c-2c28e269df14
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-25T14:10:22.820Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=ccb24e05-0b33-41d2-8417-2b4b8d90eca3 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-25T14:10:22.841Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-25T14:10:22.841Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-lnAAYC\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-25T14:10:22.841Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-lnAAYC\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-25T14:10:22.841Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-25T14:10:22.842Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-lnAAYC\agents\main\sessions\generation-source.jsonl
+[2026-11-25T14:10:22.842Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-25T14:10:22.843Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-25T14:10:22.914Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=6cdb67e9-5baf-492b-b47e-1b4575e9928a sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-25T14:10:22.933Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-25T14:10:22.933Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-Xw4qZs\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-25T14:10:22.934Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-Xw4qZs\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-25T14:10:22.934Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-25T14:10:22.935Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-Xw4qZs\agents\main\sessions\generation-source.jsonl
+[2026-11-25T14:10:22.935Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-25T14:10:22.935Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > accepts a session with no coordinator binding as a normal no-op
+[2026-11-25T14:10:22.990Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=62067310-3392-455a-ba33-7bdeaaf667c9 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > accepts a session with no coordinator binding as a normal no-op
+[2026-11-25T14:10:23.041Z] [INFO] [session-delete-gate] Cleared operationId=62067310-3392-455a-ba33-7bdeaaf667c9
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-25T14:10:23.057Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=f6180476-fdb9-41be-9792-512091485840 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-25T14:10:23.080Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-25T14:10:23.080Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-u2QxIh\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-25T14:10:23.080Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-u2QxIh\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-25T14:10:23.081Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-25T14:10:23.081Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-u2QxIh\agents\main\sessions\generation-source.jsonl
+[2026-11-25T14:10:23.081Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-25T14:10:23.082Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-25T14:10:23.119Z] [INFO] [session-delete-gate] Cleared operationId=f6180476-fdb9-41be-9792-512091485840
+
+ ✓ tests/unit/session-lifecycle-tail.test.ts (11 tests) 1406ms
+ ✓ tests/unit/durable-task-tool.test.ts (3 tests) 906ms
+     ✓ creates, claims, executes a real check, and accepts its owner-produced receipt  773ms
+ ✓ tests/unit/task-model-usage.test.ts (11 tests) 521ms
+ ✓ tests/unit/long-session-coordinator-binding.test.ts (18 tests) 410ms
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > queues a message sent while a run is active instead of dropping it
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > delivers a displayed question response immediately without long-task inputMode
+[sendMessage] RPC result: success=true, runId=answer-1
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > does not report a model outage while the current runtime is waiting for permission
+[sendMessage] RPC result: success=true, runId=waiting-1
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > drains queued messages and sends them after the run ends
+[sendMessage] RPC result: success=undefined, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > does not queue long-task interventions (inputMode passes through)
+[sendMessage] RPC result: success=undefined, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > keeps a send to B in B during history loading (target cached: true)
+[sendMessage] RPC result: success=true, runId=run-b
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > keeps a send to B in B during history loading (target cached: false)
+[sendMessage] RPC result: success=true, runId=run-b
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > keeps a late resource denial out of the selected session
+[sendMessage] RPC result: success=false, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > does not write a delayed send into a reused session in another workspace
+[sendMessage] RPC result: success=true, runId=old-workspace-run
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > discards a successful reply after the target generation changed
+[sendMessage] RPC result: success=true, runId=old-run
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > settles the original cached send when its workspace was changed before failure
+[sendMessage] RPC result: success=false, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > cleans an old cached send after generation refresh without reviving its message
+[sendMessage] RPC result: success=true, runId=old-cached-run
+
+ ✓ tests/unit/chat-pending-message-queue.test.ts (12 tests) 380ms
+
+ Test Files  12 passed (12)
+      Tests  219 passed (219)
+   Start at  22:08:10
+   Duration  137.66s (transform 18.41s, setup 2.89s, import 52.91s, tests 69.57s, environment 9.09s)
+
+JSON report written to D:/tmp/session-task-fixes-20261125-01a21019/final-r10.json

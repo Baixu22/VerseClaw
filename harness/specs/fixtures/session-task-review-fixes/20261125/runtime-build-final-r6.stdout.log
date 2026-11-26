@@ -1,0 +1,14 @@
+[canvas] build: node scripts/bundle-a2ui.mjs
+A2UI bundle up to date; skipping.
+[diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated
+[diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full
+CLI bootstrap import guard passed.
+[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
+[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
+Building openclaw_runtime with esbuild...
+  Source: D:\ClawX-work\session-task-review-fixes-20261125-01a21019\openclaw_runtime\src
+  Output: D:\ClawX-work\session-task-review-fixes-20261125-01a21019\openclaw_runtime\dist
+  Found 1209 npm packages (will keep external)
+  Done in 0.1s
+[canvas] copy: node scripts/copy-a2ui.mjs
+[runtime-build-smoke] gateway ready on port 64986

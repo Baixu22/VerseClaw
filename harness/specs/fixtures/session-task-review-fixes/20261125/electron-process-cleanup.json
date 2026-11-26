@@ -1,0 +1,198 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\run-root\\verse-claw-e2e-run-fgpS9T",
+  "ledgerEntries": 30,
+  "checks": [
+    {
+      "pid": 35688,
+      "creationTime": 1795615900816,
+      "status": "exited"
+    },
+    {
+      "pid": 17460,
+      "creationTime": 1795615911779,
+      "status": "exited"
+    },
+    {
+      "pid": 17732,
+      "creationTime": 1795615912258,
+      "status": "exited"
+    },
+    {
+      "pid": 28452,
+      "creationTime": 1795615947292,
+      "status": "exited"
+    },
+    {
+      "pid": 24580,
+      "creationTime": 1795615951819,
+      "status": "exited"
+    },
+    {
+      "pid": 36396,
+      "creationTime": 1795615951930,
+      "status": "exited"
+    },
+    {
+      "pid": 48388,
+      "creationTime": 1795615976196,
+      "status": "exited"
+    },
+    {
+      "pid": 44064,
+      "creationTime": 1795615980509,
+      "status": "exited"
+    },
+    {
+      "pid": 20552,
+      "creationTime": 1795615980720,
+      "status": "exited"
+    },
+    {
+      "pid": 47940,
+      "creationTime": 1795616004710,
+      "status": "exited"
+    },
+    {
+      "pid": 5852,
+      "creationTime": 1795616009048,
+      "status": "exited"
+    },
+    {
+      "pid": 18456,
+      "creationTime": 1795616009168,
+      "status": "exited"
+    },
+    {
+      "pid": 34972,
+      "creationTime": 1795616034934,
+      "status": "exited"
+    },
+    {
+      "pid": 39552,
+      "creationTime": 1795616039486,
+      "status": "exited"
+    },
+    {
+      "pid": 28044,
+      "creationTime": 1795616039645,
+      "status": "exited"
+    },
+    {
+      "pid": 19944,
+      "creationTime": 1795616070841,
+      "status": "exited"
+    },
+    {
+      "pid": 40936,
+      "creationTime": 1795616077485,
+      "status": "exited"
+    },
+    {
+      "pid": 32244,
+      "creationTime": 1795616077629,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 35688,
+        "creationTime": 1795615900816,
+        "status": "exited"
+      },
+      {
+        "pid": 17460,
+        "creationTime": 1795615911779,
+        "status": "exited"
+      },
+      {
+        "pid": 17732,
+        "creationTime": 1795615912258,
+        "status": "exited"
+      },
+      {
+        "pid": 28452,
+        "creationTime": 1795615947292,
+        "status": "exited"
+      },
+      {
+        "pid": 24580,
+        "creationTime": 1795615951819,
+        "status": "exited"
+      },
+      {
+        "pid": 36396,
+        "creationTime": 1795615951930,
+        "status": "exited"
+      },
+      {
+        "pid": 48388,
+        "creationTime": 1795615976196,
+        "status": "exited"
+      },
+      {
+        "pid": 44064,
+        "creationTime": 1795615980509,
+        "status": "exited"
+      },
+      {
+        "pid": 20552,
+        "creationTime": 1795615980720,
+        "status": "exited"
+      },
+      {
+        "pid": 47940,
+        "creationTime": 1795616004710,
+        "status": "exited"
+      },
+      {
+        "pid": 5852,
+        "creationTime": 1795616009048,
+        "status": "exited"
+      },
+      {
+        "pid": 18456,
+        "creationTime": 1795616009168,
+        "status": "exited"
+      },
+      {
+        "pid": 34972,
+        "creationTime": 1795616034934,
+        "status": "exited"
+      },
+      {
+        "pid": 39552,
+        "creationTime": 1795616039486,
+        "status": "exited"
+      },
+      {
+        "pid": 28044,
+        "creationTime": 1795616039645,
+        "status": "exited"
+      },
+      {
+        "pid": 19944,
+        "creationTime": 1795616070841,
+        "status": "exited"
+      },
+      {
+        "pid": 40936,
+        "creationTime": 1795616077485,
+        "status": "exited"
+      },
+      {
+        "pid": 32244,
+        "creationTime": 1795616077629,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "detectedPendingLaunches": 0,
+  "pendingLaunches": 0,
+  "status": "passed"
+}

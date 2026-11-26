@@ -1,0 +1,11 @@
+基于你提供的明确代码行为，本次只读增量复核没有发现新的可行动缺陷，本版草稿修复可以视为通过。
+
+saveWorkspaceState 的失败语义已闭合：catch 内 set(error) 之后明确 throw，队列 tail 的 catch 只用于让后续排队继续，不吞当前保存的失败，因此 await 成功返回即代表 Renderer 本地 profiles 与 sessionStates 已完成同步更新，释放缓存时回退读取的持久值是准确值，不存在保存失败却删除缓存导致持久侧回退错误的情况。
+
+releasePersistedComposerDraft 以对象同一性为唯一删除条件，普通编辑、手动清空与接力清理共用同一 helper。保存等待期间的任何新编辑都会替换 Map 中的 record，同一性判断失败即跳过删除，未保存的新编辑继续留在 Map，用户数据保留。handleComposerDraftChange 捕获本次 record 与输入原 scope，250ms 触发或页面卸载时 flush 同一闭包，release 在 saveWorkspaceState.then 中调用，失败时保留 record 且仅在原 scope 与版本上显示错误，跨 scope 的串行保存与卸载时的数据保留行为一致。
+
+空哨兵遮蔽问题已由实际路径关闭：清空并成功保存后即删除该 scope，可见输入回退读取已更新的持久值。新增的两条 E2E 覆盖的是真实行为而非推断：手动清空后由真实 Main 保存为空，再由 Main 写入另一个非空 draft，经实际编译的 Workspace store.fetchWorkspaces 刷新 profile 后验证非空值显示；第六条清空接力后同样真实 reload profile，验证 owner 新草稿显示。这两条直接验证了删除缓存后的回退读取路径，覆盖了此前唯一实质项。
+
+composerDraftRevision 已删除，draftEditedSessionsRef 仅继续用于明确空值的持久化声明，与可见输入的派生逻辑没有冲突。前次确认的其它边界也均已由代码本身关闭，无需再扩展生命周期假设或引入本任务之外的改动。
+
+唯一未闭合的是证据状态：r16 冻结代码上的 219 项、类型、构建已通过，6 条真实 Electron 目前处于已启动但未全部通过的状态。代码层面的增量复核结论为无新增可行动缺陷，最终合并结论应以这 6 条在冻结字节上全部通过为准。

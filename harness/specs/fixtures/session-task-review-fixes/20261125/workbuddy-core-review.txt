@@ -1,0 +1,13 @@
+最终复核结论：最后一条缓存问题已闭合，没有发现可行动缺陷。
+
+`discardSendLocalState` 当前在 `src/stores/chat.ts:4588-4599` 同时要求本次 send 标记仍归属、缓存 `lastUserMessageAt` 与本次时间一致、且缓存历史确实包含本次唯一的 `userMsg.id`，再清理运行状态和该条消息。新代次缓存若不包含本次消息，不会被清空。`tests/unit/chat-pending-message-queue.test.ts:241`、`:277` 覆盖成功回复后代次已刷新、切回旧会话不再显示旧消息和 `sending` 的路径；`:257` 覆盖 workspace 变化后的失败结清。
+
+此前确认的边界保持成立：
+
+- Git 全局 `-c`/`-C` 只在子命令前拒绝，`git log -c`、`git diff -C`、`git show -c` 只读正例在 `tests/unit/session-task-review-fixes.test.ts:237`，粘连全局参数负例在 `:252`。
+- `restoreSessionScope` 分别验证和迁移 writer/reference，writer 继续经过 owner、pending operation、active run 和 review 检查；未 `returned` 的父/子 delegation 返回 `TASK_DELEGATION_RECOVERY_REQUIRED`。
+- released claim fallback 只用于只读父任务来源，不参与子任务 writer 资格；`readManagedSessionEffect` 仍要求当前有效 child binding/claim。`tests/unit/session-task-scope-completion.test.ts:266`、`:411` 的父计划来源用途与实现一致，未发现写入放行路径。
+- `loadHistory` 无新终态错误时保留 `runError`，`run.started` 清除旧错误，`run.ended` 记录该运行错误。
+- `ManagedTasks` 当前 owner 拒绝后仍显示错误；`targetGenerationCurrent` 对已知不同代次拒绝，Main/Runtime 继续校验实际目标代次。
+
+结论：当前修复集在这六项边界上未发现需要提交前修复的代码问题。

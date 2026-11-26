@@ -24,8 +24,8 @@ describe("git command read-only classification", () => {
   });
   it("treats plain read-only subcommands as read-only", () => {
     expect(isReadOnlyExec("git status")).toBe(true);
-    expect(isReadOnlyExec("git diff")).toBe(true);
-    expect(isReadOnlyExec("git log --oneline")).toBe(true);
+    expect(isReadOnlyExec("git diff --no-textconv --no-ext-diff")).toBe(true);
+    expect(isReadOnlyExec("git log --no-textconv --no-ext-diff --oneline")).toBe(true);
     expect(isReadOnlyExec("git rev-parse HEAD")).toBe(true);
     expect(isReadOnlyExec("git remote -v")).toBe(true);
   });
@@ -34,8 +34,8 @@ describe("git command read-only classification", () => {
     // Previously these read tokens[1] === '--no-pager' and fell through to
     // mutating, so a read-only command was needlessly gated.
     expect(isReadOnlyExec("git --no-pager status")).toBe(true);
-    expect(isReadOnlyExec("git --no-optional-locks diff")).toBe(true);
-    expect(isReadOnlyExec("git --no-pager log --oneline")).toBe(true);
+    expect(isReadOnlyExec("git --no-optional-locks diff --no-textconv --no-ext-diff")).toBe(true);
+    expect(isReadOnlyExec("git --no-pager log --no-textconv --no-ext-diff --oneline")).toBe(true);
   });
 
   it("rejects config-injection global flags whatever the subcommand", () => {

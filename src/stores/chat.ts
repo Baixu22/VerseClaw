@@ -217,6 +217,7 @@ type SessionRunState = Pick<
   | 'streamingMessage'
   | 'streamingTools'
   | 'pendingToolImages'
+  | 'runError'
 >;
 
 const DEFAULT_SESSION_RUN_STATE: SessionRunState = {
@@ -228,6 +229,7 @@ const DEFAULT_SESSION_RUN_STATE: SessionRunState = {
   streamingMessage: null,
   streamingTools: [],
   pendingToolImages: [],
+  runError: null,
 };
 
 type SessionRunIdentity = Pick<SessionRunState, 'sending' | 'activeRunId' | 'pendingFinal' | 'lastUserMessageAt'>;
@@ -574,6 +576,7 @@ function captureSessionRunState(sessionKey: string, state: SessionRunState): voi
     streamingMessage: state.streamingMessage,
     streamingTools: [...state.streamingTools],
     pendingToolImages: state.pendingToolImages.map((file) => ({ ...file })),
+    runError: state.runError,
   });
 }
 
@@ -589,6 +592,7 @@ function getCachedSessionRunState(sessionKey: string): SessionRunState {
     streamingMessage: cached.streamingMessage,
     streamingTools: [...cached.streamingTools],
     pendingToolImages: cached.pendingToolImages.map((file) => ({ ...file })),
+    runError: cached.runError,
   };
 }
 
@@ -606,6 +610,7 @@ function cloneSessionRunState(state: SessionRunState): SessionRunState {
     streamingMessage: state.streamingMessage,
     streamingTools: [...state.streamingTools],
     pendingToolImages: state.pendingToolImages.map((file) => ({ ...file })),
+    runError: state.runError,
   };
 }
 
@@ -629,13 +634,14 @@ function updateCachedSessionRunStateFromRuntimeEvent(event: ChatRuntimeEvent): v
     if (next.activeRunId == null || matchesCachedRun) {
       next.activeRunId = event.runId;
       next.sending = true;
+      next.runError = null;
     }
     _sessionRunStateCache.set(sessionKey, next);
     return;
   }
 
   if (event.type === 'run.ended' && (matchesCachedRun || isCurrentUntrackedSend)) {
-    _sessionRunStateCache.set(sessionKey, DEFAULT_SESSION_RUN_STATE);
+    _sessionRunStateCache.set(sessionKey, { ...DEFAULT_SESSION_RUN_STATE, runError: event.status === 'error' ? event.error ?? null : null });
   }
 }
 
@@ -2081,6 +2087,7 @@ function buildSessionSwitchPatch(
     | 'pendingToolImages'
     | 'startupPhase'
     | 'startupError'
+    | 'runError'
   >,
   nextSessionKey: string,
   options?: { deferSessionEntry?: boolean },
@@ -2141,7 +2148,7 @@ function buildSessionSwitchPatch(
     startupError: null,
     ...cachedRunState,
     error: null,
-    runError: null,
+    runError: cachedRunState.runError,
   };
 }
 
@@ -3555,7 +3562,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     if (existingLoad) {
       const ownsForegroundWait = () => get().currentSessionKey === currentSessionKey
         && (_historyLoadInFlight.get(currentSessionKey) ?? existingLoad) === existingLoad;
-      if (shouldShowForegroundLoading) set({ loading: true, error: null, runError: null });
+      if (shouldShowForegroundLoading) set({ loading: true, error: null });
       const safetyTimer = shouldShowForegroundLoading ? setTimeout(() => {
         if (ownsForegroundWait()) set({ loading: false });
       }, getHistoryLoadingSafetyTimeout(isInitialForegroundLoad)) : null;
@@ -3579,7 +3586,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     const shouldShowBackgroundRefreshing = get().messages.length > 0;
-    if (shouldShowForegroundLoading) set({ loading: true, error: null, runError: null });
+    if (shouldShowForegroundLoading) set({ loading: true, error: null });
     if (shouldShowBackgroundRefreshing) set({ historyRefreshing: true });
 
     // Safety guard: if history loading takes too long, force loading to false
@@ -3770,7 +3777,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         thinkingLevel,
         loading: false,
         error: null,
-        runError: historyErrorIsTransient ? null : latestTerminalAssistantErrorMessage,
+        runError: historyErrorIsTransient ? null : latestTerminalAssistantErrorMessage ?? state.runError,
         ...(state.startupPhase !== 'ready' || state.startupError
           ? { startupPhase: 'ready' as const, startupError: null }
           : {}),
@@ -4403,16 +4410,28 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       return;
     }
 
+    let targetViewRevision = get().viewRevision;
     if (targetSessionKey !== get().currentSessionKey) {
       set((s) => buildSessionSwitchPatch(s, targetSessionKey));
+      targetViewRevision = get().viewRevision;
       await get().loadHistory(true);
     }
 
     const currentSessionKey = targetSessionKey;
+    const targetGenerationCurrent = () => {
+      const knownGeneration = get().sessions.find(session => session.key === currentSessionKey)?.sessionId;
+      return !expectedSessionGeneration || !knownGeneration || knownGeneration === expectedSessionGeneration;
+    };
+    const targetWorkspaceCurrent = () => useWorkspacesStore.getState().activeWorkspaceId === originWorkspaceId;
+    const sendCacheCurrent = () => targetWorkspaceCurrent() && targetGenerationCurrent();
+    const targetVisible = () => get().currentSessionKey === currentSessionKey && targetWorkspaceCurrent() && targetGenerationCurrent();
+    const initialViewCurrent = () => targetVisible() && get().viewRevision === targetViewRevision;
+    if (!targetGenerationCurrent()) return;
+    const targetHistory = initialViewCurrent() ? get().messages : getCachedSessionHistory(currentSessionKey)?.messages ?? [];
     const previousModelRef = get().sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride;
     const saveModelSelection = Boolean(opts?.persistModelSelection && modelRefOverride && modelRefOverride !== previousModelRef);
     const sendGeneration = ++_sendGenerationCounter;
-    _activeSendGenerationBySession.set(currentSessionKey, sendGeneration);
+    if (sendCacheCurrent()) _activeSendGenerationBySession.set(currentSessionKey, sendGeneration);
 
     // Add user message optimistically (with local file metadata for UI display)
     const nowMs = Date.now();
@@ -4434,10 +4453,11 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         ? { _knowledgeRefs: knowledgeReferences.map((reference) => ({ ...reference })), _knowledgeRequestedCount: knowledgeReferences.length }
         : {}),
     };
-    rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
+    if (sendCacheCurrent()) rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
     _deferredSessionEntries.delete(currentSessionKey);
-    set((s) => ({
-      messages: applyHistoryMemoryCap([...s.messages, userMsg]),
+    const sendingState: SessionRunState = { ...DEFAULT_SESSION_RUN_STATE, sending: true, lastUserMessageAt: nowMs };
+    if (initialViewCurrent()) set((s) => ({
+      messages: applyHistoryMemoryCap([...targetHistory, userMsg]),
       sessions: ensureSessionEntry(s.sessions, currentSessionKey).map((session) => (
         saveModelSelection && session.key === currentSessionKey
           ? { ...session, modelRefOverride: modelRefOverride! }
@@ -4452,12 +4472,17 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       pendingFinal: false,
       lastUserMessageAt: nowMs,
     }));
-    armTurnTimeoutTimer(get, set);
+    else if (sendCacheCurrent()) {
+      captureSessionRunState(currentSessionKey, sendingState);
+      cacheSessionHistory(currentSessionKey, applyHistoryMemoryCap([...targetHistory, userMsg]),
+        getCachedSessionHistory(currentSessionKey)?.thinkingLevel ?? null);
+    }
+    if (initialViewCurrent()) armTurnTimeoutTimer(get, set);
 
     // Update session label with first user message text as soon as it's sent
-    const { sessionLabels, messages } = get();
-    const isFirstMessage = !messages.slice(0, -1).some((m) => m.role === 'user');
-    if (!currentSessionKey.endsWith(':main') && isFirstMessage && !sessionLabels[currentSessionKey] && trimmed) {
+    const { sessionLabels } = get();
+    const isFirstMessage = !targetHistory.some((m) => m.role === 'user');
+    if (sendCacheCurrent() && !currentSessionKey.endsWith(':main') && isFirstMessage && !sessionLabels[currentSessionKey] && trimmed) {
       const labelText = toSessionLabel(trimmed);
       if (labelText) {
         set((s) => ({ sessionLabels: { ...s.sessionLabels, [currentSessionKey]: labelText } }));
@@ -4465,18 +4490,21 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     // Mark this session as most recently active
-    set((s) => ({ sessionLastActivity: { ...s.sessionLastActivity, [currentSessionKey]: nowMs } }));
+    if (sendCacheCurrent()) set((s) => ({ sessionLastActivity: { ...s.sessionLastActivity, [currentSessionKey]: nowMs } }));
 
     // Runtime progress now comes from Main-owned streamed events. We still
     // keep the no-response safety timeout, but history polling is no longer
     // the primary active-run path.
-    _lastChatEventAt = Date.now();
-    clearHistoryPoll();
-    clearErrorRecoveryTimer();
-    clearCheckStuckTimer();
+    if (initialViewCurrent()) {
+      _lastChatEventAt = Date.now();
+      clearHistoryPoll();
+      clearErrorRecoveryTimer();
+      clearCheckStuckTimer();
+    }
     const stuckGeneration = _checkStuckGeneration;
 
     const checkStuck = () => {
+      if (!targetVisible() || _activeSendGenerationBySession.get(currentSessionKey) !== sendGeneration) return;
       if (stuckGeneration !== _checkStuckGeneration) return;
       const state = get();
       if (!state.sending) return;
@@ -4550,18 +4578,34 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         streamingText: '',
       });
     };
-    _checkStuckTimer = setTimeout(checkStuck, 30_000);
+    if (initialViewCurrent()) _checkStuckTimer = setTimeout(checkStuck, 30_000);
 
     const clearSendGenerationIfCurrent = () => {
       if (_activeSendGenerationBySession.get(currentSessionKey) === sendGeneration) {
         _activeSendGenerationBySession.delete(currentSessionKey);
       }
     };
+    const discardSendLocalState = () => {
+      const ownsSend = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
+      const cached = getCachedSessionRunState(currentSessionKey);
+      const history = getCachedSessionHistory(currentSessionKey);
+      const ownsCachedMessage = history?.messages.some(message => message.id === userMsg.id) === true;
+      if (ownsSend && cached.lastUserMessageAt === nowMs && ownsCachedMessage) {
+        captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+        if (history) cacheSessionHistory(currentSessionKey, history.messages.filter(message => message.id !== userMsg.id), history.thinkingLevel);
+      }
+      forgetPendingOptimisticUserMessage(currentSessionKey, userMsg.id);
+      clearSendGenerationIfCurrent();
+    };
 
     const applySendFailure = (errorMsg: string) => {
+      if (!sendCacheCurrent()) {
+        discardSendLocalState();
+        return;
+      }
       const latest = get();
       const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
-      const canApplyToCurrentSession = latest.currentSessionKey === currentSessionKey
+      const canApplyToCurrentSession = targetVisible()
         && latest.lastUserMessageAt === nowMs;
 
       if (sendStillCurrent && canApplyToCurrentSession) {
@@ -4571,11 +4615,11 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         return;
       }
 
-      if (sendStillCurrent && latest.currentSessionKey !== currentSessionKey) {
+      if (sendStillCurrent && !targetVisible() && sendCacheCurrent()) {
         const cached = _sessionRunStateCache.get(currentSessionKey);
         if (cached?.lastUserMessageAt === nowMs) {
           clearSendGenerationIfCurrent();
-          _sessionRunStateCache.set(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+          captureSessionRunState(currentSessionKey, { ...DEFAULT_SESSION_RUN_STATE, runError: errorMsg });
           return;
         }
       }
@@ -4674,20 +4718,28 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       if (!result.success) {
         const denial = result.denial;
         if (denial) {
-          clearTurnTimeoutTimer();
+          const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
+          if (!sendStillCurrent || !sendCacheCurrent()) { discardSendLocalState(); return; }
+          const error = i18n.t(`chat:resourceLimits.${denial.code}`, { used: denial.used, limit: denial.limit });
+          if (sendStillCurrent && targetVisible() && get().lastUserMessageAt === nowMs) clearTurnTimeoutTimer();
           clearSendGenerationIfCurrent();
           forgetPendingOptimisticUserMessage(currentSessionKey, userMsg.id);
-          set((state) => ({
+          if (sendStillCurrent && targetVisible() && get().lastUserMessageAt === nowMs) set((state) => ({
             messages: state.messages.filter((message) => message.id !== userMsg.id),
             sending: false,
             activeRunId: null,
             pendingFinal: false,
             lastUserMessageAt: null,
-            error: i18n.t(`chat:resourceLimits.${denial.code}`, {
-              used: denial.used,
-              limit: denial.limit,
-            }),
+            error,
           }));
+          else if (sendStillCurrent && sendCacheCurrent()) {
+            const cached = getCachedSessionRunState(currentSessionKey);
+            if (cached.lastUserMessageAt === nowMs) captureSessionRunState(currentSessionKey, { ...DEFAULT_SESSION_RUN_STATE, runError: error });
+          }
+          if (sendCacheCurrent()) {
+            const cached = getCachedSessionHistory(currentSessionKey);
+            if (cached) cacheSessionHistory(currentSessionKey, cached.messages.filter(message => message.id !== userMsg.id), cached.thinkingLevel);
+          }
           return;
         }
         const errorMsg = result.error || 'Failed to send message';
@@ -4697,9 +4749,14 @@ export const useChatStore = create<ChatState>((set, get, api) => {
           applySendFailure(errorMsg);
         }
       } else if (result.result?.runId) {
+        const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
+        if (!sendStillCurrent || !sendCacheCurrent()) {
+          discardSendLocalState();
+          return;
+        }
         const returnedRunId = result.result.runId;
         const mockAssistantText = readMockAssistantText(result.result);
-        if (result.knowledgeDenials?.length) {
+        if (result.knowledgeDenials?.length && targetVisible()) {
           const firstDenial = result.knowledgeDenials[0]!;
           toast.warning(
             result.knowledgeDenials.length === 1
@@ -4722,11 +4779,10 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         const cachedHistory = getCachedSessionHistory(currentSessionKey);
         if (cachedHistory) cacheSessionHistory(currentSessionKey,
           preserveKnowledgeUsage([boundUser], cachedHistory.messages), cachedHistory.thinkingLevel);
-        if (latest.currentSessionKey === currentSessionKey) {
+        if (targetVisible()) {
           set(state => ({ messages: preserveKnowledgeUsage([boundUser], state.messages) }));
         }
-        const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
-        const canAttachToCurrentSession = latest.currentSessionKey === currentSessionKey
+        const canAttachToCurrentSession = targetVisible()
           && latest.sending
           && latest.lastUserMessageAt === nowMs
           && (latest.activeRunId == null || latest.activeRunId === returnedRunId);
@@ -4753,7 +4809,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
             return;
           }
           set({ activeRunId: returnedRunId });
-        } else if (sendStillCurrent && latest.currentSessionKey !== currentSessionKey) {
+        } else if (sendStillCurrent && !targetVisible() && sendCacheCurrent()) {
           const cached = _sessionRunStateCache.get(currentSessionKey);
           if (cached?.sending
             && cached.lastUserMessageAt === nowMs

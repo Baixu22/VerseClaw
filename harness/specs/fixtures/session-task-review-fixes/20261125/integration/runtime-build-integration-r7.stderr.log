@@ -1,0 +1,56 @@
+[build-all] tsdown
+[tsdown-build] serial configuration 1/17
+[tsdown-build] serial configuration 2/17
+[tsdown-build] serial configuration 3/17
+[tsdown-build] serial configuration 4/17
+[tsdown-build] serial configuration 5/17
+[tsdown-build] serial configuration 6/17
+[tsdown-build] serial configuration 7/17
+[tsdown-build] serial configuration 8/17
+[tsdown-build] serial configuration 9/17
+[tsdown-build] serial configuration 10/17
+[tsdown-build] serial configuration 11/17
+[tsdown-build] serial configuration 12/17
+[tsdown-build] serial configuration 13/17
+[tsdown-build] serial configuration 14/17
+[tsdown-build] serial configuration 15/17
+[tsdown-build] serial configuration 16/17
+[tsdown-build] serial configuration 17/17
+[build-all] tsdown done in 16.7s
+[build-all] check-cli-bootstrap-imports
+[build-all] check-cli-bootstrap-imports done in 467ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 2ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\session-task-review-fixes-20261125-01a21019\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 466ms
+runtime-postbuild: official channel catalog completed in 19ms
+runtime-postbuild: bundled plugin runtime overlay completed in 606ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 465ms
+runtime-postbuild: stable root runtime aliases completed in 67ms
+runtime-postbuild: legacy root runtime compat aliases completed in 121ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 1.96s
+[build-all] build-stamp
+[build-all] build-stamp done in 87ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 95ms
+[build-all] write-cli-startup-metadata
+[build-all] write-cli-startup-metadata done in 95ms
+[build-all] write-cli-compat
+[build-all] write-cli-compat done in 88ms
+[build-all] phase timings: total 19.4s; slowest tsdown 16.7s; runtime-postbuild 1.96s; check-cli-bootstrap-imports 467ms; write-cli-startup-metadata 95ms; runtime-postbuild-stamp 95ms; write-cli-compat 88ms; build-stamp 87ms
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  409.1kb
+
+Done in 52ms
+runtime-postbuild: plugin SDK root alias completed in 0ms
+[bundled-plugin-metadata] skipping missing skill path D:\ClawX-work\session-task-review-fixes-20261125-01a21019\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 436ms
+runtime-postbuild: official channel catalog completed in 20ms
+runtime-postbuild: bundled plugin runtime overlay completed in 762ms
+runtime-postbuild: static extension assets completed in 354ms
+runtime-postbuild: stable root runtime imports completed in 421ms
+runtime-postbuild: stable root runtime aliases completed in 41ms
+runtime-postbuild: legacy root runtime compat aliases completed in 160ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms

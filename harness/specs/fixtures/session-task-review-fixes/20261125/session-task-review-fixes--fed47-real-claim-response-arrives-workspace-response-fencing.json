@@ -1,0 +1,138 @@
+{
+  "driven_by": "agent",
+  "actor": "session-task-fixes-electron",
+  "first": {
+    "workspaceId": "review-alpha",
+    "rootPath": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--fed47-real-claim-response-arrives\\workspace-a",
+    "sessionKey": "agent:main:session-1795616039881-reviewalpha",
+    "generation": "ecf21f87-c0f0-47a2-8987-e527dea1d6c7"
+  },
+  "second": {
+    "workspaceId": "review-beta",
+    "rootPath": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--fed47-real-claim-response-arrives\\workspace-b",
+    "sessionKey": "agent:main:session-1795616052283-reviewbeta",
+    "generation": "77035ea1-de5a-4247-a925-6702bcd98eea"
+  },
+  "calls": [
+    {
+      "module": "taskLedger",
+      "action": "snapshot",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "window",
+      "action": "isVisible"
+    },
+    {
+      "module": "window",
+      "action": "isVisible"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "sessionActivity",
+      "action": "snapshot",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc"
+    },
+    {
+      "module": "resourceTracker",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc"
+    },
+    {
+      "module": "observability",
+      "action": "trajectoryHistory"
+    },
+    {
+      "module": "observability",
+      "action": "trajectoryHistory"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "remoteTasks",
+      "action": "list"
+    },
+    {
+      "module": "agentBrowser",
+      "action": "tasks"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "taskLedger",
+      "action": "queryTasks",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "taskLedger",
+      "action": "command",
+      "workspaceId": "review-alpha"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot",
+      "workspaceId": "review-beta"
+    },
+    {
+      "module": "taskLedger",
+      "action": "queryTasks",
+      "workspaceId": "review-beta"
+    }
+  ],
+  "status": "passed"
+}

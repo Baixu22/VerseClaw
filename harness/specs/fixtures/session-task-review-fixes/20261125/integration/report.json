@@ -1,0 +1,432 @@
+{
+  "schema": "session-task-main-integration/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "d09e7c0e8fe06a9ac3c1c30dbac714806efd47d1",
+    "tree": "eeb659d619290a8e20132014686b2970d01f83d8",
+    "mainBase": "bfc323f4c941d5556327906ded1606a8cee68fc1"
+  },
+  "unit": {
+    "passed": 219,
+    "failed": 0
+  },
+  "electron": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+  },
+  "commands": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:45:00.439Z",
+      "ended": "2026-11-25T14:45:24.211Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:45:24.779Z",
+      "ended": "2026-11-25T14:45:32.835Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:45:33.368Z",
+      "ended": "2026-11-25T14:46:19.636Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/sessions-api.ts",
+        "electron/services/task-ledger-service.ts",
+        "electron/services/task-system-service.ts",
+        "electron/services/workspaces-api.ts",
+        "shared/task-system/runtime.ts",
+        "shared/task-system/store.ts",
+        "shared/task-system/tool-policy.ts",
+        "src/pages/Chat/index.tsx",
+        "src/pages/TaskLedger/ManagedTasks.tsx",
+        "src/stores/chat.ts",
+        "tests/e2e/session-task-review-fixes.spec.ts",
+        "tests/unit/chat-pending-message-queue.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/unit/session-lifecycle-tail.test.ts",
+        "tests/unit/session-task-review-fixes.test.ts",
+        "tests/unit/session-task-scope-completion.test.ts",
+        "tests/unit/session-task-state-guidance.test.tsx",
+        "--max-warnings",
+        "2"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:46:20.434Z",
+      "ended": "2026-11-25T14:46:29.848Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "D:\\tmp\\session-task-fixes-20261125-01a21019\\vitest.integration.r17.config.ts"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:46:30.549Z",
+      "ended": "2026-11-25T14:47:48.126Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:47:48.606Z",
+      "ended": "2026-11-25T14:48:29.973Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:48:30.520Z",
+      "ended": "2026-11-25T14:49:28.860Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:49:29.575Z",
+      "ended": "2026-11-25T14:49:31.947Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:49:32.585Z",
+      "ended": "2026-11-25T14:49:32.927Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:49:33.508Z",
+      "ended": "2026-11-25T14:49:33.669Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:49:34.406Z",
+      "ended": "2026-11-25T14:49:35.301Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md",
+        "--dry-run"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:49:35.834Z",
+      "ended": "2026-11-25T14:49:36.649Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-final-validation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/session-task-review-fixes.spec.ts",
+        "--config",
+        "D:\\tmp\\session-task-fixes-20261125-01a21019\\playwright.integration.r15.config.ts"
+      ],
+      "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+      "started": "2026-11-25T14:49:37.250Z",
+      "ended": "2026-11-25T14:53:12.873Z",
+      "exitCode": 0,
+      "signal": null,
+      "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    }
+  ],
+  "sourceManifestSha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab",
+  "files": [
+    {
+      "path": "sources.json",
+      "sha256": "967bdfd57ca257756129f867f671953667dd1f2a49c74709ec37e4818fe7dcab"
+    },
+    {
+      "path": "unit-results.json",
+      "sha256": "4be1358f29784875b8ca5bc28c7a8fd6fcd7d05e8fbca1bc0a4eead342e89935"
+    },
+    {
+      "path": "electron-results.json",
+      "sha256": "80b08ce8489dff21d7f05b5eb077e6c5b5cbc62c1c95791c032b2c7c2cc11e8e"
+    },
+    {
+      "path": "electron-process-cleanup.json",
+      "sha256": "65c4c46ae7e6414aa869ccea8243b8030ac310edf575a7b8d12c80b2756fc364"
+    },
+    {
+      "path": "source-mutation-guard.json",
+      "sha256": "8f5c7a26db3b4536d067f9c27efe0f59e046dc530ce4d7dfb61d2b2387902a67"
+    },
+    {
+      "path": "comms-compare-integration-r17.receipt.json",
+      "sha256": "cb4773cd6b7442840c451ea48da49c58fd506e1e1947359a955c3e1b89c9995a"
+    },
+    {
+      "path": "comms-compare-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "comms-compare-integration-r17.stdout.log",
+      "sha256": "6aa282fefc659d614597110e3ce78c403af40806f1aaa60326100f7a8eb406f6"
+    },
+    {
+      "path": "comms-replay-integration-r17.receipt.json",
+      "sha256": "a0663aa6cbbcd9a6bf5bff7272b0ee3e3917cbd7c2cf318fbfde7d2e45855bfb"
+    },
+    {
+      "path": "comms-replay-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "comms-replay-integration-r17.stdout.log",
+      "sha256": "f0a38ed7ae713358dce874f915b1e3189b1fa806b130784da9efa793bb24949d"
+    },
+    {
+      "path": "contract-integration-r17.receipt.json",
+      "sha256": "dffbde52b302fe5212ce89cff7556abf7e258f711594c1f7acce9de06a7fa810"
+    },
+    {
+      "path": "contract-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "contract-integration-r17.stdout.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "desktop-build-integration-r17.receipt.json",
+      "sha256": "9122a3a7a5f7a3764eb1fa0a50d3d6c0dbb619bd2d328a83d792659231b63508"
+    },
+    {
+      "path": "desktop-build-integration-r17.stderr.log",
+      "sha256": "4ee631b952aa4e8c5f52c36b5a4300d4149530e752b67e280f6e54eddd8d149f"
+    },
+    {
+      "path": "desktop-build-integration-r17.stdout.log",
+      "sha256": "21ab132ab575acf3165f2c28ca0357874bf120a6c3b591d9538d3f921154c398"
+    },
+    {
+      "path": "e2e-r15.receipt.json",
+      "sha256": "ceb88798ca5d65c06c83aab4e1d739ace2a496535b69d93e927756ba8ae2dca5"
+    },
+    {
+      "path": "e2e-r15.stderr.log",
+      "sha256": "da158f3d18f1ee13cf11027bed1c834b6268092833e67038662b757c028112e7"
+    },
+    {
+      "path": "e2e-r15.stdout.log",
+      "sha256": "2d4dde5fe2aa376dccbf0a6a8207525ce9de5d97a7f82ba19469617b5695b8a4"
+    },
+    {
+      "path": "harness-dry-run-integration-r17.receipt.json",
+      "sha256": "be44b61783622b28f80ac0e65807eccf0040b8ebdf753cccb23b6c8bda1c62d0"
+    },
+    {
+      "path": "harness-dry-run-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-dry-run-integration-r17.stdout.log",
+      "sha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d"
+    },
+    {
+      "path": "harness-validate-integration-r17.receipt.json",
+      "sha256": "0f1cad77b95649d990746c83b99c111672ee6d11b6bc0468e12b41ef8b8ef7ae"
+    },
+    {
+      "path": "harness-validate-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-validate-integration-r17.stdout.log",
+      "sha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010"
+    },
+    {
+      "path": "lint-integration-r17.receipt.json",
+      "sha256": "e393e594f857ee9c94149c170d8c9d88e8d989d9b33a897a9d8646e3c09478d9"
+    },
+    {
+      "path": "lint-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "lint-integration-r17.stdout.log",
+      "sha256": "1e852c0874665f39761f2c1d9f16c2d84805cb7aa174d3384432ae88cdde0faf"
+    },
+    {
+      "path": "runtime-build-integration-r7.receipt.json",
+      "sha256": "521ef0bf92ddef735324500b6161f19ed25a6fdb0c0dc2c72177043de47738bb"
+    },
+    {
+      "path": "runtime-build-integration-r7.stderr.log",
+      "sha256": "a31d3ff821ff29d1fbe3284c96ccfb9b90f02c407aebfd2cd8f4146ee0a05c03"
+    },
+    {
+      "path": "runtime-build-integration-r7.stdout.log",
+      "sha256": "69c07b5015b1733f32984f21ee2c1528e0d91501fee9df3af941c7e0bbfa17aa"
+    },
+    {
+      "path": "type-node-integration-r17.receipt.json",
+      "sha256": "170725f6c95fc0f1853018fbf3a05ebf73c37d4141b18740804b3c786b4907bb"
+    },
+    {
+      "path": "type-node-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-node-integration-r17.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-test-integration-r17.receipt.json",
+      "sha256": "065ccb49b1ef05dc4cfaf7460c3d9b237abf5547985aa8ca2e8df6c2f0fa8981"
+    },
+    {
+      "path": "type-test-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-test-integration-r17.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-web-integration-r17.receipt.json",
+      "sha256": "408582ac94f6282bbff2d5be4e911616ef8abf122398865994708ad3dc598123"
+    },
+    {
+      "path": "type-web-integration-r17.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-web-integration-r17.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "unit-integration-r17.receipt.json",
+      "sha256": "25f1afe5eccf1345205bdf1594b2a38b91e852433eb2ea8947c80706355c83d7"
+    },
+    {
+      "path": "unit-integration-r17.stderr.log",
+      "sha256": "d652cba6277c6c542641acbcb31a0de4aea8df5b3341c16ae17386a099620e2d"
+    },
+    {
+      "path": "unit-integration-r17.stdout.log",
+      "sha256": "b91acd9ed55affd2359a2346b38a7bccdfa0fa26f4947f2e01b19cbf56afa79a"
+    }
+  ]
+}
