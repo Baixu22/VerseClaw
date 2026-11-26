@@ -1,0 +1,652 @@
+{
+  "schema": "session-task-review-fixes/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-11-25",
+  "timezone": "Asia/Shanghai",
+  "candidate": {
+    "commit": "86d3f05288d395402e4f9d8aceb6a6551935a01a",
+    "tree": "0f0ebb391fc1056f0119841d6793804e955886e2",
+    "base": "c68893a89350b8053bb5ab8a8618b42c1a46b8bc",
+    "sourceFiles": 29
+  },
+  "validation": {
+    "unit": {
+      "passed": 219,
+      "failed": 0
+    },
+    "electron": {
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "provider": "local-scripted",
+      "scenarioEvidence": [
+        "session-task-review-fixes--02289-n-unedited-remounted-target-handoff-draft-scope.json",
+        "session-task-review-fixes--75d29-oring-its-sent-target-draft-handoff-draft-scope.json",
+        "session-task-review-fixes--82ee7--new-same-text-target-draft-handoff-draft-scope.json",
+        "session-task-review-fixes--e703e-is-waiting-for-real-history-history-send-fencing.json",
+        "session-task-review-fixes--ed9a0-d-resumes-through-the-agent-runtime-session-task-fixes.json",
+        "session-task-review-fixes--fed47-real-claim-response-arrives-workspace-response-fencing.json"
+      ],
+      "sourceGuard": true,
+      "cleanup": "passed"
+    },
+    "commands": [
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.node.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:05:43.007Z",
+        "ended": "2026-11-25T14:06:11.014Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.web.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:06:13.644Z",
+        "ended": "2026-11-25T14:06:23.321Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.test.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:06:24.697Z",
+        "ended": "2026-11-25T14:07:22.787Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/eslint/bin/eslint.js",
+          "electron/services/sessions-api.ts",
+          "electron/services/task-ledger-service.ts",
+          "electron/services/task-system-service.ts",
+          "electron/services/workspaces-api.ts",
+          "shared/task-system/runtime.ts",
+          "shared/task-system/store.ts",
+          "shared/task-system/tool-policy.ts",
+          "src/pages/Chat/index.tsx",
+          "src/pages/TaskLedger/ManagedTasks.tsx",
+          "src/stores/chat.ts",
+          "tests/e2e/session-task-review-fixes.spec.ts",
+          "tests/unit/chat-pending-message-queue.test.ts",
+          "tests/unit/chat-store-history-retry.test.ts",
+          "tests/unit/session-lifecycle-tail.test.ts",
+          "tests/unit/session-task-review-fixes.test.ts",
+          "tests/unit/session-task-scope-completion.test.ts",
+          "tests/unit/session-task-state-guidance.test.tsx",
+          "--max-warnings",
+          "2"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:07:23.519Z",
+        "ended": "2026-11-25T14:07:59.799Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "D:\\tmp\\session-task-fixes-20261125-01a21019\\vitest.final.r10.config.ts"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:08:00.037Z",
+        "ended": "2026-11-25T14:10:28.582Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=6144",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:10:28.823Z",
+        "ended": "2026-11-25T14:11:33.104Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/contract-check.mjs"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:11:33.394Z",
+        "ended": "2026-11-25T14:11:35.006Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/comms/replay.mjs"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:11:35.169Z",
+        "ended": "2026-11-25T14:11:35.456Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/comms/compare.mjs"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:11:35.612Z",
+        "ended": "2026-11-25T14:11:35.775Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/session-task-review-fixes-20261125.md"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:11:35.913Z",
+        "ended": "2026-11-25T14:11:36.785Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/session-task-review-fixes-20261125.md",
+          "--dry-run"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:11:36.947Z",
+        "ended": "2026-11-25T14:11:37.591Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      },
+      {
+        "driven_by": "agent",
+        "actor": "codex-final-validation",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/session-task-review-fixes.spec.ts",
+          "--config",
+          "D:\\tmp\\session-task-fixes-20261125-01a21019\\playwright.review.r14.config.ts"
+        ],
+        "cwd": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+        "started": "2026-11-25T14:11:37.729Z",
+        "ended": "2026-11-25T14:15:05.211Z",
+        "exitCode": 0,
+        "signal": null,
+        "sourceManifestSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+      }
+    ],
+    "runtimeReuse": {
+      "receipt": "runtime-build-final-r6.receipt.json",
+      "unchangedInputs": [
+        {
+          "path": "openclaw_runtime/src/agents/agent-tools.ts",
+          "sha256": "7ac563a0d4a78a15d1479a562fcfa98f11749b5478256963b8014ab83dff7554",
+          "gitBlob": "ff46095d0ce4f79b58ae2f6826d424fa30d2c78d"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tool-mutation.ts",
+          "sha256": "0422fa594319a49baf34943c93f9298b144a1303f0d436a90af66474b95389f0",
+          "gitBlob": "f32520324489a84d0ff110d47713bf51a14a6015"
+        },
+        {
+          "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+          "sha256": "c8e80b0831baae3254e1306f056980c5a93f16ac20d5ec132e6b071d632203cd",
+          "gitBlob": "cf27ee3b7c5070a4ca38dd5630e01753870e9032"
+        },
+        {
+          "path": "shared/task-system/runtime.ts",
+          "sha256": "967dd45cd36cc4801bd728e0e7d56221d901dd3ed87659b133e706029579638c",
+          "gitBlob": "e4ef3a05976b3fe5a3a2eb384681a614a688b49f"
+        },
+        {
+          "path": "shared/task-system/store.ts",
+          "sha256": "ab3753db6cd122c519fa90977f2b506b51ac6d6ce35330236be6fd5f7b8cb092",
+          "gitBlob": "f2b4ff8f179be19600b67a8b984d68be86a0b831"
+        },
+        {
+          "path": "shared/task-system/tool-policy.ts",
+          "sha256": "5b23d041fca806dc4a114fb3add0db12eea1c87b4da674c68653465f06060ee3",
+          "gitBlob": "a6b2d1cfc3d0130af6296aea4fc76ae9e8579447"
+        }
+      ]
+    },
+    "scale": [
+      {
+        "size": 1000,
+        "admissionMedianMs": 35.738499999999476,
+        "snapshotMedianMs": 142.10199999999986,
+        "fullSnapshotCallsDuringAdmission": 0
+      },
+      {
+        "size": 10000,
+        "admissionMedianMs": 28.984799999999268,
+        "snapshotMedianMs": 2263.1450999999997,
+        "fullSnapshotCallsDuringAdmission": 0
+      }
+    ]
+  },
+  "review": {
+    "provider": "ccs-workbuddy",
+    "model": "deepseek-v4.1-flash",
+    "core": "workbuddy-core-review.txt",
+    "finalUi": "workbuddy-ui-review.txt"
+  },
+  "originalFailures": {
+    "initialReview": "D:/tmp/clawx-session-task-review-20261125",
+    "repairRuns": "D:/tmp/session-task-fixes-20261125-01a21019"
+  },
+  "evidenceFiles": [
+    {
+      "path": "sources.json",
+      "sha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\source-manifest-final-r16.json",
+      "sourceSha256": "c8bda7630b71a09ba917130566e288b3e63b0bcda513c992c8c3d98ed43017b7"
+    },
+    {
+      "path": "unit-results.json",
+      "sha256": "65aab11078e7a405c44860680380bd6c7c05c29fc2ff0f083a04a51e2c072eb8",
+      "source": "D:/tmp/session-task-fixes-20261125-01a21019/final-r10.json",
+      "sourceSha256": "65aab11078e7a405c44860680380bd6c7c05c29fc2ff0f083a04a51e2c072eb8"
+    },
+    {
+      "path": "electron-results.json",
+      "sha256": "72795a7b9c3321cd48d9aaa107fc345d25938a01aafef57d69685ad18721f0e1",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\report.json",
+      "sourceSha256": "72795a7b9c3321cd48d9aaa107fc345d25938a01aafef57d69685ad18721f0e1"
+    },
+    {
+      "path": "electron-process-cleanup.json",
+      "sha256": "524e720a93d9b4edf8d635ba5f3401520c3a2e8d080696c96b3f36f2a567925b",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\electron-process-cleanup.json",
+      "sourceSha256": "524e720a93d9b4edf8d635ba5f3401520c3a2e8d080696c96b3f36f2a567925b"
+    },
+    {
+      "path": "source-mutation-guard.json",
+      "sha256": "3d511cd66490b9f6ac5d2a58b48e07aac5b9742022e195d4cc2dacdcf7ca087d",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\source-mutation-guard.json",
+      "sourceSha256": "3d511cd66490b9f6ac5d2a58b48e07aac5b9742022e195d4cc2dacdcf7ca087d"
+    },
+    {
+      "path": "scale-1000.json",
+      "sha256": "6775ee3f002cc58eaf774aceaf376adc734fa7c19c4e770717f484e2bb18b428",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\scale-1000.json",
+      "sourceSha256": "6775ee3f002cc58eaf774aceaf376adc734fa7c19c4e770717f484e2bb18b428"
+    },
+    {
+      "path": "scale-10000.json",
+      "sha256": "47ed05fc95f9767804db06d00d833f8baf065f53cd4b4051f021add7d9cd2950",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\scale-10000.json",
+      "sourceSha256": "47ed05fc95f9767804db06d00d833f8baf065f53cd4b4051f021add7d9cd2950"
+    },
+    {
+      "path": "comms-metrics.json",
+      "sha256": "7d0e78b7e08adb4e4537e571ff568a7fe31cb9204ab326d03c65c20dbd60625a",
+      "source": "D:\\ClawX-work\\session-task-review-fixes-20261125-01a21019\\artifacts\\comms\\current-metrics.json",
+      "sourceSha256": "7d0e78b7e08adb4e4537e571ff568a7fe31cb9204ab326d03c65c20dbd60625a"
+    },
+    {
+      "path": "comms-compare.md",
+      "sha256": "380cd783ef96a2692e5e973548f18bd4e3e6472e77e031c2c2e8b3719c8b8711",
+      "source": "D:\\ClawX-work\\session-task-review-fixes-20261125-01a21019\\artifacts\\comms\\compare-report.md",
+      "sourceSha256": "380cd783ef96a2692e5e973548f18bd4e3e6472e77e031c2c2e8b3719c8b8711"
+    },
+    {
+      "path": "workbuddy-core-review.txt",
+      "sha256": "78b0250664b0c25b17db0ec641d1e19b38656aa7f725820b1066c5459227811e",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\workbuddy-review-final.txt",
+      "sourceSha256": "78b0250664b0c25b17db0ec641d1e19b38656aa7f725820b1066c5459227811e"
+    },
+    {
+      "path": "workbuddy-ui-review.txt",
+      "sha256": "586f828a77c72fa05b7112542483edc223cdb885f281f933f98dfa770e59d8ab",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\workbuddy-review-final-current.txt",
+      "sourceSha256": "586f828a77c72fa05b7112542483edc223cdb885f281f933f98dfa770e59d8ab"
+    },
+    {
+      "path": "comms-compare-final-r16.receipt.json",
+      "sha256": "3b7ca5f3ac645d70b4a7ea1c79791b6a86c72836f1afa1525744a009866b7045",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\comms-compare-final-r16.receipt.json",
+      "sourceSha256": "3b7ca5f3ac645d70b4a7ea1c79791b6a86c72836f1afa1525744a009866b7045"
+    },
+    {
+      "path": "comms-compare-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\comms-compare-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "comms-compare-final-r16.stdout.log",
+      "sha256": "a958c7c56f7dca34b0314f912fac13dfea2d560c458163caec92071b14d19be0",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\comms-compare-final-r16.stdout.log",
+      "sourceSha256": "a958c7c56f7dca34b0314f912fac13dfea2d560c458163caec92071b14d19be0"
+    },
+    {
+      "path": "comms-replay-final-r16.receipt.json",
+      "sha256": "3810f38026f3de056acc6deb3792482012fe6d46d00077485f30f7acdaff6d2b",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\comms-replay-final-r16.receipt.json",
+      "sourceSha256": "3810f38026f3de056acc6deb3792482012fe6d46d00077485f30f7acdaff6d2b"
+    },
+    {
+      "path": "comms-replay-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\comms-replay-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "comms-replay-final-r16.stdout.log",
+      "sha256": "f0a38ed7ae713358dce874f915b1e3189b1fa806b130784da9efa793bb24949d",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\comms-replay-final-r16.stdout.log",
+      "sourceSha256": "f0a38ed7ae713358dce874f915b1e3189b1fa806b130784da9efa793bb24949d"
+    },
+    {
+      "path": "contract-final-r16.receipt.json",
+      "sha256": "8e6f63221a9f5a5a5e85d223d49f7eb1a20abd746b7b3d7a6e8b586d276b2e4b",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\contract-final-r16.receipt.json",
+      "sourceSha256": "8e6f63221a9f5a5a5e85d223d49f7eb1a20abd746b7b3d7a6e8b586d276b2e4b"
+    },
+    {
+      "path": "contract-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\contract-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "contract-final-r16.stdout.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\contract-final-r16.stdout.log",
+      "sourceSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "desktop-build-final-r16.receipt.json",
+      "sha256": "9d72b4cf76854e68b8c172fe76357afc75a6d076d1ea2add559285e623aea4d1",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\desktop-build-final-r16.receipt.json",
+      "sourceSha256": "9d72b4cf76854e68b8c172fe76357afc75a6d076d1ea2add559285e623aea4d1"
+    },
+    {
+      "path": "desktop-build-final-r16.stderr.log",
+      "sha256": "4ee631b952aa4e8c5f52c36b5a4300d4149530e752b67e280f6e54eddd8d149f",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\desktop-build-final-r16.stderr.log",
+      "sourceSha256": "4ee631b952aa4e8c5f52c36b5a4300d4149530e752b67e280f6e54eddd8d149f"
+    },
+    {
+      "path": "desktop-build-final-r16.stdout.log",
+      "sha256": "f0654123ddbf8cfaee18a43a1a7a574cd82c01e6fe39b0833b68ef1e4f4a097c",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\desktop-build-final-r16.stdout.log",
+      "sourceSha256": "f0654123ddbf8cfaee18a43a1a7a574cd82c01e6fe39b0833b68ef1e4f4a097c"
+    },
+    {
+      "path": "e2e-r14.receipt.json",
+      "sha256": "6bedb30ed4f0340d95786275f6105cf5981889fe981217994b675c663e812065",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14.receipt.json",
+      "sourceSha256": "6bedb30ed4f0340d95786275f6105cf5981889fe981217994b675c663e812065"
+    },
+    {
+      "path": "e2e-r14.stderr.log",
+      "sha256": "fb92e5bb0fadcc3a9bc0c8fb16a6c811e99a0d0e49c861e5045d8bfae7652c2c",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14.stderr.log",
+      "sourceSha256": "fb92e5bb0fadcc3a9bc0c8fb16a6c811e99a0d0e49c861e5045d8bfae7652c2c"
+    },
+    {
+      "path": "e2e-r14.stdout.log",
+      "sha256": "236cfc95f91781605817650f2874d792210249a414568b0d6ea31ac210a2e913",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14.stdout.log",
+      "sourceSha256": "236cfc95f91781605817650f2874d792210249a414568b0d6ea31ac210a2e913"
+    },
+    {
+      "path": "harness-dry-run-final-r16.receipt.json",
+      "sha256": "6136924fb3144c5e328a58e3b8a96c4e43c4274c842654a0ac146d5a4c384adc",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\harness-dry-run-final-r16.receipt.json",
+      "sourceSha256": "6136924fb3144c5e328a58e3b8a96c4e43c4274c842654a0ac146d5a4c384adc"
+    },
+    {
+      "path": "harness-dry-run-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\harness-dry-run-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-dry-run-final-r16.stdout.log",
+      "sha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\harness-dry-run-final-r16.stdout.log",
+      "sourceSha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d"
+    },
+    {
+      "path": "harness-validate-final-r16.receipt.json",
+      "sha256": "fa08e85960c93dc4c2e4578c3d1ebf58e528eabe612c3d11d36417f987da0e38",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\harness-validate-final-r16.receipt.json",
+      "sourceSha256": "fa08e85960c93dc4c2e4578c3d1ebf58e528eabe612c3d11d36417f987da0e38"
+    },
+    {
+      "path": "harness-validate-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\harness-validate-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "harness-validate-final-r16.stdout.log",
+      "sha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\harness-validate-final-r16.stdout.log",
+      "sourceSha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010"
+    },
+    {
+      "path": "lint-final-r16.receipt.json",
+      "sha256": "20b0df4a17f5de7523d8ade60149779f8178b0210847bf4709de27d9b723e0c4",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\lint-final-r16.receipt.json",
+      "sourceSha256": "20b0df4a17f5de7523d8ade60149779f8178b0210847bf4709de27d9b723e0c4"
+    },
+    {
+      "path": "lint-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\lint-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "lint-final-r16.stdout.log",
+      "sha256": "1e852c0874665f39761f2c1d9f16c2d84805cb7aa174d3384432ae88cdde0faf",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\lint-final-r16.stdout.log",
+      "sourceSha256": "1e852c0874665f39761f2c1d9f16c2d84805cb7aa174d3384432ae88cdde0faf"
+    },
+    {
+      "path": "type-node-final-r16.receipt.json",
+      "sha256": "7a1e650558c3d08f9cea1d7469e2d947f2c6787da51874d5f8a7c86feecfe628",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-node-final-r16.receipt.json",
+      "sourceSha256": "7a1e650558c3d08f9cea1d7469e2d947f2c6787da51874d5f8a7c86feecfe628"
+    },
+    {
+      "path": "type-node-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-node-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-node-final-r16.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-node-final-r16.stdout.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-test-final-r16.receipt.json",
+      "sha256": "ef50bc1b0049f0ad3d359de9606679b458b3f1f5818fa5e5d7df0696b6f6d198",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-test-final-r16.receipt.json",
+      "sourceSha256": "ef50bc1b0049f0ad3d359de9606679b458b3f1f5818fa5e5d7df0696b6f6d198"
+    },
+    {
+      "path": "type-test-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-test-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-test-final-r16.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-test-final-r16.stdout.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-web-final-r16.receipt.json",
+      "sha256": "86d19439161ab498a879f0026ced716d98d2b39a3d3b5051515de4a7030e2daa",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-web-final-r16.receipt.json",
+      "sourceSha256": "86d19439161ab498a879f0026ced716d98d2b39a3d3b5051515de4a7030e2daa"
+    },
+    {
+      "path": "type-web-final-r16.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-web-final-r16.stderr.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "type-web-final-r16.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\type-web-final-r16.stdout.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "unit-final-r16.receipt.json",
+      "sha256": "2d6ac05fadf17fac554d4cc30cc6025c2019554a1028a670a8eec1832da5650a",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\unit-final-r16.receipt.json",
+      "sourceSha256": "2d6ac05fadf17fac554d4cc30cc6025c2019554a1028a670a8eec1832da5650a"
+    },
+    {
+      "path": "unit-final-r16.stderr.log",
+      "sha256": "5f0830493b717ba448d1ea80a1ab0018ced64401f25e5ec75cb07715d7c580bb",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\unit-final-r16.stderr.log",
+      "sourceSha256": "5f0830493b717ba448d1ea80a1ab0018ced64401f25e5ec75cb07715d7c580bb"
+    },
+    {
+      "path": "unit-final-r16.stdout.log",
+      "sha256": "bb29dcd5329e4360715e3ad010bb2bbedb6218eb0aee88ad787bf1b2dba58488",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\unit-final-r16.stdout.log",
+      "sourceSha256": "bb29dcd5329e4360715e3ad010bb2bbedb6218eb0aee88ad787bf1b2dba58488"
+    },
+    {
+      "path": "runtime-build-final-r6.receipt.json",
+      "sha256": "64f105a3f924d0d5529a98c51d3f49fb5fd1bd7a185b5ac65c44fd96f2a469a9",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\runtime-build-final-r6.receipt.json",
+      "sourceSha256": "64f105a3f924d0d5529a98c51d3f49fb5fd1bd7a185b5ac65c44fd96f2a469a9"
+    },
+    {
+      "path": "runtime-build-final-r6.stdout.log",
+      "sha256": "5e87eccf22b37dfec1ee064c78f3c690c708666b9f1c541622f6d80ddf8c5264",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\runtime-build-final-r6.stdout.log",
+      "sourceSha256": "5e87eccf22b37dfec1ee064c78f3c690c708666b9f1c541622f6d80ddf8c5264"
+    },
+    {
+      "path": "runtime-build-final-r6.stderr.log",
+      "sha256": "180f4b70a67646baf9aba2e1d2b303ebb31afc5aed0576aa465c3b46fb9bd9fc",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\runtime-build-final-r6.stderr.log",
+      "sourceSha256": "180f4b70a67646baf9aba2e1d2b303ebb31afc5aed0576aa465c3b46fb9bd9fc"
+    },
+    {
+      "path": "session-task-review-fixes--02289-n-unedited-remounted-target-handoff-draft-scope.json",
+      "sha256": "00b9515e6cda8698321ce91f3fad8ac04b89092511157bc4d4471745db8ad5ed",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--02289-n-unedited-remounted-target\\handoff-draft-scope.json",
+      "sourceSha256": "00b9515e6cda8698321ce91f3fad8ac04b89092511157bc4d4471745db8ad5ed"
+    },
+    {
+      "path": "session-task-review-fixes--75d29-oring-its-sent-target-draft-handoff-draft-scope.json",
+      "sha256": "dba7ec36887e71762a66d453d5ed74d2be7a1f25c816d5f8e14060ceafb47499",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--75d29-oring-its-sent-target-draft\\handoff-draft-scope.json",
+      "sourceSha256": "dba7ec36887e71762a66d453d5ed74d2be7a1f25c816d5f8e14060ceafb47499"
+    },
+    {
+      "path": "session-task-review-fixes--82ee7--new-same-text-target-draft-handoff-draft-scope.json",
+      "sha256": "cdf070be9cebaafb460e504e48750f77bcc12a85a877c2f2f5a569218a61ef77",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--82ee7--new-same-text-target-draft\\handoff-draft-scope.json",
+      "sourceSha256": "cdf070be9cebaafb460e504e48750f77bcc12a85a877c2f2f5a569218a61ef77"
+    },
+    {
+      "path": "session-task-review-fixes--e703e-is-waiting-for-real-history-history-send-fencing.json",
+      "sha256": "4458aedb483f71bc01529d261965d8bf22c21975dcae0d148ae75809af540aae",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--e703e-is-waiting-for-real-history\\history-send-fencing.json",
+      "sourceSha256": "4458aedb483f71bc01529d261965d8bf22c21975dcae0d148ae75809af540aae"
+    },
+    {
+      "path": "session-task-review-fixes--ed9a0-d-resumes-through-the-agent-runtime-session-task-fixes.json",
+      "sha256": "e38ea7e5f6969a4639fea232e0d89eca7936eb12d87d3948fb7c7a58b21dccc1",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--ed9a0-d-resumes-through-the-agent\\runtime-session-task-fixes.json",
+      "sourceSha256": "e38ea7e5f6969a4639fea232e0d89eca7936eb12d87d3948fb7c7a58b21dccc1"
+    },
+    {
+      "path": "session-task-review-fixes--fed47-real-claim-response-arrives-workspace-response-fencing.json",
+      "sha256": "7c4006ad11657015c515fa47c4d4fd0e82a8c5dfb0b4937dc5615c8fc8275ad7",
+      "source": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--fed47-real-claim-response-arrives\\workspace-response-fencing.json",
+      "sourceSha256": "7c4006ad11657015c515fa47c4d4fd0e82a8c5dfb0b4937dc5615c8fc8275ad7"
+    }
+  ]
+}

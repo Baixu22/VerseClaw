@@ -57,6 +57,7 @@ export function createPersistentTaskTool(input: {
   workspace: string;
   sessionKey?: string;
   generation?: string;
+  runId?: string;
   inheritedToolAllowlist?: string[];
   inheritedToolDenylist?: string[];
 }): AnyAgentTool {
@@ -153,7 +154,7 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
-      if (['start', 'claim', 'startNextPlanTask', 'review', 'repair'].includes(String(p.action))) assertSystemExecutionAllowed();
+      if (['start', 'claim', 'startNextPlanTask', 'resume', 'review', 'repair'].includes(String(p.action))) assertSystemExecutionAllowed();
       const planning = p.action === "planStatus" || p.action === "savePlan" || p.action === "startNextPlanTask";
       const scope = planning ? (() => {
         const ownerPath = process.env.CLAWX_WORKSPACE_OWNER_PATH;
@@ -302,7 +303,7 @@ export function createPersistentTaskTool(input: {
           } else if (p.action === "checkpoint")
             result = store.checkpoint(c, p.checkpoint as TaskCheckpoint);
           else if (p.action === "resume") {
-            result = store.handoff(c, input.sessionKey, input.generation);
+            result = store.resume(c, input.runId);
             pinned = (result as { claim: TaskCredential }).claim;
           } else if (p.action === "pause" || p.action === "release" || p.action === "cancel") {
             result = store.control(c, p.action);

@@ -1889,7 +1889,9 @@ export function createSessionsApi(ctx: {
             : binding.archiveRestorePolicy === 'restore' ? binding.state === 'paused' && binding.invalidationReason === 'archived-restore-requested'
               : binding.state === 'invalid' && binding.invalidationReason === 'archived-retention-none';
         if (!settled) {
-          await observeCoordinatorLifecycle({ type: gate.operationKind, workspaceId: gate.workspaceId, sessionKey: gate.sessionKey }, true);
+          await observeCoordinatorLifecycle({ type: gate.operationKind, workspaceId: gate.workspaceId, sessionKey: gate.sessionKey,
+            ...(gate.operationKind === 'restore' ? { previousSessionGeneration: receipt.previousSessionId,
+              sessionGeneration: receipt.sessionId } : {}) }, true);
           if (gate.operationKind === 'restore' && binding.archiveRestorePolicy === 'restore') {
             const restored = await getPersistedCoordinatorBinding(gate.workspaceId!, gate.sessionKey);
             if (restored?.state !== 'active' || restored.sessionGeneration !== receipt.sessionId || restored.invalidationReason) {

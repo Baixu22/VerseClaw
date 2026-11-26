@@ -453,6 +453,8 @@ describe('A2 shared session discovery and detail', () => {
     await expect(createSessionStatusTool(opts).execute('edit', { readOnly: true, model: 'unsafe/model' })).rejects.toThrow();
     expect(requiresSessionTaskScope('session_status', { readOnly: true, model: 'unsafe/model' })).toBe(false);
     expect(isMutatingToolCall('session_status', { readOnly: true, model: 'unsafe/model' })).toBe(false);
+    expect(requiresSessionTaskScope('sessions_watch', {})).toBe(false);
+    expect(isMutatingToolCall('sessions_watch', {})).toBe(false);
     expect(requiresSessionTaskScope('session_status', { model: 'existing/model' })).toBe(true);
     expect(isMutatingToolCall('session_status', { model: 'existing/model' })).toBe(true);
     await expect(createSessionsListTool(opts).execute('spoof', { collaboration: true, requester: scope(B, 'workspace-b', 'generation-b') })).rejects.toThrow();

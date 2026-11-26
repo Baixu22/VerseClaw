@@ -1,0 +1,140 @@
+{
+  "schema": "SessionRestoreBootstrapCause/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "candidate": "239224c0b2cb307ad12a5ebce2bb770100fbb6a4",
+  "productionCandidate": "cdd25eeb8b5105410e0b88d80f513662896563b9",
+  "archive": {
+    "success": true,
+    "operationId": "4d8b2f91-a9e3-4266-b2c8-7065254a2d8c",
+    "sessionId": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+    "expectedSessionId": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+    "resourceReclamation": {
+      "schema": "LongSessionResourceReclamation/v1",
+      "action": "session-archive",
+      "scope": {
+        "workspaceId": "review-runtime",
+        "sessionKey": "agent:main:session-1795683212113-reviewruntime",
+        "expectedSessionId": "e242fc7b-7839-4065-8ce7-f7248e03f552"
+      },
+      "generatedAt": "2026-11-26T08:53:55.233Z",
+      "owners": [
+        {
+          "kind": "terminal",
+          "owner": "TerminalSessionManager",
+          "outcome": "not-owned",
+          "authority": "managed",
+          "generation": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not close terminals; keep_on_leave preserved"
+        },
+        {
+          "kind": "browser",
+          "owner": "HostAgentBrowserService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not close browser sessions"
+        },
+        {
+          "kind": "background-port",
+          "owner": "ResourceTracker",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action does not stop managed ports"
+        },
+        {
+          "kind": "worktree",
+          "owner": "WorktreeService",
+          "outcome": "not-owned",
+          "authority": "observed",
+          "generation": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "action preserves worktrees"
+        },
+        {
+          "kind": "admission-permit",
+          "owner": "SessionAdmissionRegistry",
+          "outcome": "not-owned",
+          "authority": "managed",
+          "generation": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+          "attempted": 0,
+          "reclaimed": 0,
+          "kept": 0,
+          "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+        }
+      ],
+      "activeResidue": 0,
+      "keptOnLeave": 0,
+      "recoveryRequired": false,
+      "recoveryId": null,
+      "retryable": false
+    }
+  },
+  "restore": {
+    "success": false,
+    "operationId": "78d99996-4a67-4c72-a9c7-64715387800e",
+    "sessionId": "20020d0f-f4cb-48dd-a723-3899a8f238a0",
+    "expectedSessionId": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+    "previousSessionId": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+    "error": "Coordinator restore has not confirmed the restored generation",
+    "retryable": true,
+    "recoveryRequired": true
+  },
+  "workspaceId": "review-runtime",
+  "boundEnvironment": {
+    "kind": "local",
+    "canonicalRoot": "D:\\tmp\\session-task-relay-20261126-01a213b9\\diag1\\electron-results\\session-task-review-fixes--ed9a0-d-resumes-through-the-agent\\sdk-workspace",
+    "backend": "local-workspace",
+    "branch": null,
+    "detachedHead": false,
+    "setupProfile": null
+  },
+  "coordinatorStatus": "invalid",
+  "coordinatorReason": "environment-generation-changed",
+  "runtimeReceipt": {
+    "key": "agent:main:session-1795683212113-reviewruntime",
+    "operationId": "78d99996-4a67-4c72-a9c7-64715387800e",
+    "journalState": "runtime_committed",
+    "sessionId": "20020d0f-f4cb-48dd-a723-3899a8f238a0",
+    "previousSessionId": "e242fc7b-7839-4065-8ce7-f7248e03f552"
+  },
+  "taskBinding": {
+    "session_key": "agent:main:session-1795683212113-reviewruntime",
+    "task_id": "d6257fd7-7a8e-4b77-b65a-798c660b2e35",
+    "generation": "e242fc7b-7839-4065-8ce7-f7248e03f552",
+    "epoch": 1
+  },
+  "taskRestoreEventCount": 0,
+  "gitCreated": true,
+  "cause": "First-run Runtime bootstrap initialized Git after the local coordinator environment was bound. Strict environment validation rejected restore before migrating the Task generation.",
+  "sourceEvidence": [
+    {
+      "path": "D:\\tmp\\session-task-relay-20261126-01a213b9\\diag1\\electron-run-root\\verse-claw-e2e-run-7hoEFu\\verse-claw-e2e-user-data-KDCRjl\\workspaces.json",
+      "sha256": "2a8a8ec4593af64ee27e81bec54fde24aeafeefc4cc29eefe25972f8f6101d70"
+    },
+    {
+      "path": "D:\\tmp\\session-task-relay-20261126-01a213b9\\diag1\\electron-run-root\\verse-claw-e2e-run-7hoEFu\\verse-claw-e2e-home-P5DbNk\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+      "sha256": "b04eda1edd31794a0acb044809b73fa9f5d9f0875931b2e3440f0b8eed44485f"
+    },
+    {
+      "path": "D:\\tmp\\session-task-relay-20261126-01a213b9\\diag1\\electron-results\\session-task-review-fixes--ed9a0-d-resumes-through-the-agent\\runtime-session-task-fixes.json",
+      "sha256": "27ecea9c589d0540a07a48fcf19be6f0457845c3037669e93edcd16affc55fc3"
+    },
+    {
+      "path": "D:\\tmp\\session-task-relay-20261126-01a213b9\\diag1\\electron-results\\session-task-review-fixes--ed9a0-d-resumes-through-the-agent\\sdk-workspace\\.verse-claw\\task-ledger.sqlite3",
+      "sha256": "3caa811c34dbb68646a7ca1fd0b6a7cc4f317b0569922fbc45a5ac90fbeeede7"
+    }
+  ]
+}

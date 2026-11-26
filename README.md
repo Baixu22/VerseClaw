@@ -368,6 +368,10 @@ Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the Cl
 
 ### Persistent task execution
 
+Cancellation waits for the assigned run and pending effects to finish. Restored sessions retain their task binding after identity validation. Read-only forks can inspect conversation history, and delayed replies keep their original session and workspace.
+
+A local workspace with an established task keeps its original environment during first-run setup, so automatic Git initialization cannot invalidate later session restoration.
+
 Worker details show task acceptance from the task owner for the displayed session. Once the task owner accepts the verified evidence, refresh to read the accepted result. Recorded verifier checks and task-owner acceptance are shown separately; worker links in the ledger open their transcript panel.
 
 Task Ledger → Persistent tasks saves objectives, constraints and acceptance checks independently of chat history. Sessions claim tasks in a repository shared by its local Git worktrees. Task execution checks ownership before managed tool calls and restores the current goal before model requests. Configure either an exact file-content check or a command check with declared input files; commands use the existing tool permissions. See [task-system architecture](docs/dev/durable-task-system/PLAN.md).

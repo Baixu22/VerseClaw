@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "ok": true,
+  "sourceChanged": false,
+  "before": {
+    "status": " M docs/modules/multi-agent-and-tasks.md\n M harness/specs/tasks/session-task-review-fixes-20261125.md\n M src/pages/Chat/index.tsx\n M tests/e2e/session-task-review-fixes.spec.ts\n",
+    "trackedFilesSha256": "af441f01b9e2061a82c5e52cba1261c467d0877ec7f147313ffaba0a77d80e35",
+    "diffSha256": "9045c874af536c6dc7b60b03c1ba1de2e516ce3e5678251c0e4ce8fa8f31f72f"
+  },
+  "after": {
+    "status": " M docs/modules/multi-agent-and-tasks.md\n M harness/specs/tasks/session-task-review-fixes-20261125.md\n M src/pages/Chat/index.tsx\n M tests/e2e/session-task-review-fixes.spec.ts\n",
+    "trackedFilesSha256": "af441f01b9e2061a82c5e52cba1261c467d0877ec7f147313ffaba0a77d80e35",
+    "diffSha256": "9045c874af536c6dc7b60b03c1ba1de2e516ce3e5678251c0e4ce8fa8f31f72f"
+  }
+}
