@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import { filterSettingsSections } from '@/lib/settings-search';
@@ -30,6 +30,7 @@ const sections = [
 export function SettingsSidebar() {
   const { t } = useTranslation(['settings', 'common']);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { requestCloseSettings } = useUiOverlay();
   const [query, setQuery] = useState('');
   const currentSection = resolveSettingsSection(pathname);
@@ -40,12 +41,12 @@ export function SettingsSidebar() {
   })), query), [query, t]);
 
   return (
-    <aside data-testid="settings-sidebar" className="codex-settings-sidebar flex min-h-0 w-[clamp(220px,24vw,275px)] shrink-0 flex-col bg-surface-sidebar p-2">
+    <aside data-testid="settings-sidebar" data-settings-appearance="" className="codex-settings-sidebar flex min-h-0 w-[clamp(220px,24vw,275px)] shrink-0 flex-col bg-surface-sidebar p-2">
       <button type="button" data-testid="settings-back-button" onClick={() => requestCloseSettings()} className="codex-settings-back">
         <SettingsNavIcon name="back" />
         <span>{t('settings:navigation.back')}</span>
       </button>
-      <label className="mb-4 flex h-7 shrink-0 items-center gap-2 rounded-[12.5px] border-[0.667px] border-border/70 bg-foreground/[0.03] px-2 text-muted-foreground">
+      <label className="settings-search-label mb-4 flex h-7 shrink-0 items-center gap-2 rounded-[12.5px] border-[0.667px] border-border/70 bg-foreground/[0.03] px-2 text-muted-foreground focus-within:ring-2 focus-within:ring-ring">
         <SettingsNavIcon name="search" />
         <input
           data-testid="settings-sidebar-search"
@@ -56,6 +57,16 @@ export function SettingsSidebar() {
           className="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm font-[445] leading-[18px] text-foreground outline-none placeholder:text-muted-foreground/80"
         />
       </label>
+      <select
+        className="settings-mobile-select hidden h-10 min-w-0 rounded-lg border border-border bg-surface-input px-2 text-sm text-foreground"
+        data-testid="settings-mobile-section"
+        aria-label={t('settings:title')}
+        value={filtered.some((section) => section.id === currentSection) ? currentSection : ''}
+        onChange={(event) => navigate(`/settings/${event.target.value}`)}
+      >
+        <option value="" disabled>{t('settings:navigation.chooseSection')}</option>
+        {filtered.map((section) => <option key={section.id} value={section.id}>{section.title}</option>)}
+      </select>
       <nav className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-2">
         {(['configuration', 'experience', 'operations'] as const).map((group) => {
           const items = filtered.filter((section) => section.group === group);

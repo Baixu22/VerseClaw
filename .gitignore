@@ -2482,6 +2482,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/prompt-contribution-authority.md
 !/docs/dev/provider-error-retry-boundaries.md
 !/docs/dev/rareui-interactions.md
+!/docs/dev/settings-theme-acceptance.md
 !/docs/dev/rc03-seal-coverage.md
 !/docs/dev/recovery-contract/AUTHORITY-MAP.zh-CN.md
 !/docs/dev/recovery-contract/EVAL-CONTRACT.zh-CN.md

@@ -228,24 +228,12 @@
 .rare-theme-selector__heading { display: flex; flex-direction: column; gap: 2cqw; }
 .rare-theme-selector__heading .rare-theme-selector__bar--strong { width: 11cqw; }
 .rare-theme-selector__heading .rare-theme-selector__bar:not(.rare-theme-selector__bar--strong) { width: 19cqw; }
-.rare-theme-selector__tiles { display: flex; gap: 2.5cqw; margin-top: 5cqw; }
-.rare-theme-selector__tile {
-  width: 19cqw;
-  height: 12cqw;
-  flex-shrink: 0;
-  border-radius: 2.4cqw;
-  background-color: color-mix(in oklab, var(--ts-panel) 92%, var(--ts-strong));
-  box-shadow: 0 0 0 1px var(--ts-line);
-}
-.rare-theme-selector__sheet {
-  width: 70cqw;
-  height: 20cqw;
-  flex-shrink: 0;
-  margin-top: 2.5cqw;
-  border-radius: 2.4cqw;
-  background-color: color-mix(in oklab, var(--ts-panel) 92%, var(--ts-strong));
-  box-shadow: 0 0 0 1px var(--ts-line);
-}
+.rare-theme-selector__rows { display: grid; margin: 4cqw 4cqw 0 0; overflow: hidden; border: 1px solid var(--ts-line); border-radius: 3cqw; }
+.rare-theme-selector__row { display: flex; min-height: 8cqw; align-items: center; justify-content: space-between; padding: 0 3cqw; }
+.rare-theme-selector__row + .rare-theme-selector__row { border-top: 1px solid var(--ts-line); }
+.rare-theme-selector__row .rare-theme-selector__bar { width: 13cqw; }
+.rare-theme-selector__control { width: 7cqw; height: 3.5cqw; border-radius: 999px; background: var(--ts-strong); }
+
 /* Split ("follow system"): the same preview, cut on a diagonal. */
 .rare-theme-selector__split { position: absolute; inset: 0; display: block; }
 .rare-theme-selector__split .rare-theme-selector__pane { top: 0; bottom: 0; width: 100%; container-type: inline-size; }

@@ -21,10 +21,11 @@ interface Props {
   ariaLabel: string;
   disabled?: boolean;
   onValueChange: (value: number) => void;
-  onValueCommit: (value: number) => void;
+  testIdPrefix?: string;
+  onValueCommit?: (value: number) => void;
 }
 
-export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false, onValueChange, onValueCommit }: Props) {
+export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false, onValueChange, onValueCommit, testIdPrefix = 'chat-agent-effort' }: Props) {
   const reducedMotion = useReducedMotion();
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const gooId = `effort-preview-goo-${id}`;
@@ -111,12 +112,12 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
     draggingRef.current = false;
     setDragging(false);
     animate(overflow, 0, reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 22 });
-    if (!disabled) onValueCommit(Number(inputRef.current?.value ?? value));
+    if (!disabled) onValueCommit?.(Number(inputRef.current?.value ?? value));
   };
 
   return (
-    <div className={cn('effort-preview relative w-full select-none pb-6 pt-6', disabled && 'opacity-50')} data-testid="chat-agent-effort-preview">
-      <div ref={trackRef} className="relative h-8 w-full" data-testid="chat-agent-effort-track">
+    <div className={cn('effort-preview relative w-full select-none pb-6 pt-6', disabled && 'opacity-50')} data-testid={`${testIdPrefix}-preview`}>
+      <div ref={trackRef} className="relative h-8 w-full" data-testid={`${testIdPrefix}-track`}>
         <svg aria-hidden="true" className="pointer-events-none absolute h-0 w-0">
           <defs>
             <filter id={gooId}>
@@ -147,7 +148,7 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
                 >
                   <motion.div
                     id={tooltipId} role="tooltip" aria-label={label}
-                    data-testid="chat-agent-effort-tooltip"
+                    data-testid={`${testIdPrefix}-tooltip`}
                     className="effort-preview-tooltip absolute bottom-0 flex h-8 min-w-12 items-center justify-center overflow-hidden rounded-lg px-3 text-xs font-medium text-foreground"
                     style={{ x: tooltipX }}
                     variants={reducedMotion ? {
@@ -171,13 +172,13 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
               )}
             </AnimatePresence>
           </motion.div>
-          <motion.div ref={shiverRef} data-testid="chat-agent-effort-track-shiver" className="absolute bottom-0 h-8" style={{ left: 24, right: 24, scaleX, scaleY, originX }} aria-hidden="true">
+          <motion.div ref={shiverRef} data-testid={`${testIdPrefix}-track-shiver`} className="absolute bottom-0 h-8" style={{ left: 24, right: 24, scaleX, scaleY, originX }} aria-hidden="true">
             <div className="effort-track-surface absolute inset-0 rounded-md" />
             <motion.div className="absolute inset-y-0 left-0 overflow-hidden rounded-l-md" style={{ width: left }}>
               <div className="effort-preview-progress absolute inset-0" />
               <motion.div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-sky-400 dark:to-sky-500" style={{ opacity: edgeGlow }} />
             </motion.div>
-            <div className="absolute inset-x-2 inset-y-0 grid grid-cols-9 items-center" data-testid="chat-agent-effort-ticks">
+            <div className="absolute inset-x-2 inset-y-0 grid grid-cols-9 items-center" data-testid={`${testIdPrefix}-ticks`}>
               {Array.from({ length: 9 }, (_, tick) => (
                 <motion.span key={tick} className="effort-preview-tick mx-auto h-3 w-px rounded-full" initial={{ opacity: 0 }} animate={{ opacity: 0.22 }} transition={reducedMotion ? { duration: 0 } : { delay: tick * 0.04, duration: 0.22, ease: EASE }} />
               ))}
@@ -185,10 +186,10 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
           </motion.div>
         </div>
 
-        <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ x: overflow }} data-testid="chat-agent-effort-thumb-offset">
+        <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ x: overflow }} data-testid={`${testIdPrefix}-thumb-offset`}>
           <motion.div
             className={cn('effort-preview-thumb absolute top-1/2 z-10 h-5 w-3 rounded-sm shadow-md', focused && 'effort-preview-thumb--focused')}
-            data-testid="chat-agent-effort-thumb"
+            data-testid={`${testIdPrefix}-thumb`}
             style={{ left, x: '-50%', y: '-50%' }}
             initial={false} animate={{ scale: showPreview && !reducedMotion ? 1.08 : 1 }}
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
@@ -197,7 +198,7 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
 
         <input
           ref={inputRef} type="range" min={0} max={max} step={0.05} value={value} disabled={disabled}
-          data-testid="chat-agent-effort-slider"
+          data-testid={`${testIdPrefix}-slider`}
           className="effort-preview-input absolute inset-0 z-20 m-0 h-full w-full touch-none cursor-grab opacity-0 active:cursor-grabbing disabled:cursor-not-allowed"
           aria-label={ariaLabel} aria-valuetext={label} aria-describedby={showPreview ? tooltipId : undefined}
           onChange={(event) => { if (!disabled) onValueChange(Number(event.currentTarget.value)); }}
@@ -216,7 +217,7 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
           onLostPointerCapture={() => { if (draggingRef.current) endPointer(); }}
           onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)}
           onFocus={(event) => setFocused(event.currentTarget.matches(':focus-visible'))}
-          onBlur={(event) => { setFocused(false); if (!disabled && !draggingRef.current) onValueCommit(Number(event.currentTarget.value)); }}
+          onBlur={(event) => { setFocused(false); if (!disabled && !draggingRef.current) onValueCommit?.(Number(event.currentTarget.value)); }}
           onKeyDown={(event) => {
             const next = event.key === 'ArrowLeft' || event.key === 'ArrowDown' ? index - 1
               : event.key === 'ArrowRight' || event.key === 'ArrowUp' ? index + 1
@@ -227,11 +228,11 @@ export function EffortPreviewSlider({ value, labels, ariaLabel, disabled = false
             onValueChange(Math.max(0, Math.min(max, next)));
           }}
           onKeyUp={(event) => {
-            if (!disabled && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) onValueCommit(Number(event.currentTarget.value));
+            if (!disabled && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) onValueCommit?.(Number(event.currentTarget.value));
           }}
         />
       </div>
-      <div aria-hidden="true" className="effort-preview-label pointer-events-none absolute inset-x-0 bottom-0 flex justify-center text-xs font-medium text-muted-foreground" data-testid="chat-agent-effort-label">
+      <div aria-hidden="true" className="effort-preview-label pointer-events-none absolute inset-x-0 bottom-0 flex justify-center text-xs font-medium text-muted-foreground" data-testid={`${testIdPrefix}-label`}>
         <AnimatedEffortLabel label={label} index={index} reducedMotion={Boolean(reducedMotion)} />
       </div>
       <style>{PREVIEW_CSS}</style>

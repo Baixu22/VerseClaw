@@ -8,6 +8,8 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 # Verse Claw
 
+In **Settings → General**, choose a light, dark, or system theme, pick a preset or custom accent, and adjust conversation text from 12 to 22 px in a system, serif, or monospace typeface. The reading preview updates as you edit. Choices are saved on this device. Settings text size adjusts navigation, labels, and controls independently of conversation text. The accent also tints Settings pages, menus, and dialogs.
+
 Activating a project keeps its directory and permission policy aligned with the runtime while preserving the selected model.
 
 An idle task can continue after its lease expires in the same session generation and worktree. Recovery advances its ownership epoch to reject stale credentials; unresolved effects still require reconciliation.

@@ -95,16 +95,16 @@
 .sp-section-title {
   margin: 0;
   color: var(--sp-text);
-  font-size: 14px;
+  font-size: calc(14px * var(--settings-text-scale, 1));
   font-weight: 500;
-  line-height: 21px;
+  line-height: calc(21px * var(--settings-text-scale, 1));
 }
 .sp-section-desc {
   margin: 4px 0 0;
   color: var(--sp-text-secondary);
-  font-size: 12px;
+  font-size: calc(12px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 16px;
+  line-height: calc(16px * var(--settings-text-scale, 1));
 }
 .sp-section-action {
   display: inline-flex;
@@ -120,7 +120,7 @@
   border-radius: var(--radius-lg);
   background: var(--sp-banner-bg);
   color: var(--sp-banner-text);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
   line-height: 1.4;
 }
@@ -171,15 +171,15 @@
 }
 .sp-row-label b {
   color: var(--sp-text);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 500;
   line-height: 1.43;
 }
 .sp-row-label small {
   color: var(--sp-text-secondary);
-  font-size: 12px;
+  font-size: calc(12px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 16px;
+  line-height: calc(16px * var(--settings-text-scale, 1));
 }
 .sp-row-control {
   display: flex;
@@ -219,9 +219,9 @@
    so they sit on the same baseline as a real control. */
 .sp-row-value {
   color: var(--sp-text-secondary);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
   white-space: nowrap;
 }
 /* Monospace detail inside a row description (bundle paths, ports, pids). */
@@ -230,7 +230,7 @@
   margin-top: 6px;
   color: var(--sp-text-placeholder);
   font-family: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas, monospace;
-  font-size: 11px;
+  font-size: calc(11px * var(--settings-text-scale, 1));
   line-height: 15px;
   overflow-wrap: anywhere;
 }
@@ -240,8 +240,8 @@
   align-items: center;
   justify-content: flex-end;
   gap: 16px;
-  font-size: 13px;
-  line-height: 18px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
+  line-height: calc(18px * var(--settings-text-scale, 1));
 }
 /* Several ClawX rows carry more than one control (a state pill plus two
    actions). The reference only ever had a single control per row. */
@@ -285,7 +285,7 @@
   padding: 0 7px;
   background: transparent;
   color: var(--sp-text-placeholder);
-  font-size: 11px;
+  font-size: calc(11px * var(--settings-text-scale, 1));
   font-weight: 445;
   line-height: 17px;
 }
@@ -312,9 +312,9 @@
   border: var(--sp-hairline-w) solid transparent;
   border-radius: var(--radius-full);
   padding: 0 10px;
-  font-size: 12px;
+  font-size: calc(12px * var(--settings-text-scale, 1));
   font-weight: 500;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
   white-space: nowrap;
 }
 .sp-state-dot {
@@ -351,8 +351,8 @@
   background: var(--sp-fill-3);
   color: var(--sp-text-secondary);
   font-family: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas, monospace;
-  font-size: 11px;
-  line-height: 16px;
+  font-size: calc(11px * var(--settings-text-scale, 1));
+  line-height: calc(16px * var(--settings-text-scale, 1));
   white-space: pre-wrap;
 }
 
@@ -370,50 +370,9 @@
 }
 .sp-inline-link:hover { text-decoration: underline; text-underline-offset: 2px; }
 
-/* --------------------------------------------------------------- switch
-   settings.css:450-494. button 32x20 (transparent) > track 32x20 r9999 >
-   thumb 16 white. ON #339cff / OFF 10%; thumb travel 2px -> 14px;
-   disabled opacity .6 (默认权限 is disabled+checked in Codex). */
-.sp-switch {
-  display: inline-flex;
-  width: 32px;
-  height: 20px;
-  flex: none;
-  align-items: center;
-  border: 0;
-  padding: 0;
-  background: none;
-  cursor: pointer;
-}
-.sp-switch:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.sp-switch-track {
-  position: relative;
-  display: inline-flex;
-  width: 32px;
-  height: 20px;
-  align-items: center;
-  border-radius: var(--radius-full);
-  background: var(--sp-fill-10);
-  transition: background-color 0.2s ease-out;
-}
-.sp-switch.on .sp-switch-track { background: var(--sp-switch-on); }
-.sp-switch-thumb {
-  position: absolute;
-  top: 2px;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  border: var(--sp-hairline-w) solid var(--sp-switch-thumb);
-  border-radius: var(--radius-full);
-  background: var(--sp-switch-thumb);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
-  transform: translateX(2px);
-  transition: transform 0.2s ease-out;
-}
-.sp-switch.on .sp-switch-thumb { transform: translateX(14px); }
+/* Shared Radix switch, with the Settings track color at the original palette. */
+.sp-settings-switch[role='switch'][data-state='checked'] { background: var(--sp-switch-on); border-color: var(--sp-switch-on); }
+.sp-settings-switch [data-slot='switch-thumb'][data-state='checked'] { background: var(--sp-switch-thumb); }
 
 /* --------------------------------------------------------------- select
    settings.css:496-535. trigger: h28, pad 0 12, gap 4, r12.5, fog bg +
@@ -432,9 +391,9 @@
   padding: 0 12px;
   background: var(--sp-hover-bg);
   color: var(--sp-text);
-  font-size: 14px;
+  font-size: calc(14px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
   white-space: nowrap;
   cursor: pointer;
   transition: background 0.12s;
@@ -501,7 +460,7 @@
   padding: 5px 8px;
   background: transparent;
   color: var(--sp-menu-text);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
   line-height: 1.43;
   text-align: left;
@@ -553,9 +512,9 @@
   padding: 0 8px;
   background: var(--sp-fill-5);
   color: var(--sp-text);
-  font-size: 14px;
+  font-size: calc(14px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
   white-space: nowrap;
   cursor: pointer;
   transition: background 0.12s;
@@ -577,7 +536,7 @@
      foreground pair, which also keeps contrast in the light theme. */
   background: var(--sp-text);
   color: var(--sp-card-bg);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
@@ -637,7 +596,7 @@
   padding: 0 8px;
   background: transparent;
   color: var(--sp-menu-text);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
   line-height: 1.2;
   text-align: left;
@@ -675,7 +634,7 @@
 .codex-header-menu__label {
   padding: 6px 8px 4px;
   color: var(--sp-text-secondary);
-  font-size: 12px;
+  font-size: calc(12px * var(--settings-text-scale, 1));
   font-weight: 445;
   line-height: 1.2;
 }
@@ -695,7 +654,7 @@
   padding: 5px 8px;
   background: transparent;
   color: var(--sp-menu-text);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
   line-height: 1.3;
   text-align: left;
@@ -735,9 +694,9 @@
   padding: 2px 8px;
   background: transparent;
   color: var(--sp-text-placeholder);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
   white-space: nowrap;
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
@@ -770,9 +729,9 @@
   padding: 0 10px;
   background: var(--sp-fill-3);
   color: var(--sp-text);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
   outline: 0;
 }
 .sp-input::placeholder { color: var(--sp-text-placeholder); }
@@ -789,7 +748,7 @@
   padding: 12px 14px;
   background: var(--sp-fill-3);
   color: var(--sp-text);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
   line-height: 1.45;
   outline: 0;
@@ -818,21 +777,19 @@
   padding: 0 7px;
   background: var(--sp-fill-5);
   color: var(--sp-text);
-  font-size: 12px;
+  font-size: calc(12px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
   white-space: nowrap;
 }
 .sp-kbd-empty {
   color: var(--sp-text-placeholder);
-  font-size: 13px;
+  font-size: calc(13px * var(--settings-text-scale, 1));
   font-weight: 445;
-  line-height: 18px;
+  line-height: calc(18px * var(--settings-text-scale, 1));
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sp-switch-track,
-  .sp-switch-thumb,
   .sp-select-btn,
   .sp-btn-secondary { transition: none; }
 }

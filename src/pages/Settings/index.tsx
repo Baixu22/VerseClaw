@@ -53,7 +53,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { useGatewayStore } from '@/stores/gateway';
 import { SettingsSectionLoading } from './sections/SettingsSectionLoading';
 import { WorkspaceContextPanel } from '@/components/settings/WorkspaceContextPanel';
-import { ThemeSelector } from '@/components/rareui/ThemeSelector';
+import { AppearanceControls } from '@/components/settings/AppearanceControls';
 import { toUserMessage } from '@/lib/error-message';
 import {
   clearUiTelemetry,
@@ -150,8 +150,6 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
   const location = useLocation();
   const currentSection = resolveSettingsSection(location.pathname);
   const {
-    theme,
-    setTheme,
     language,
     setLanguage,
     launchAtStartup,
@@ -187,8 +185,6 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
     chatContextDisplayEnabled,
     setChatContextDisplayEnabled,
   } = useSettingsStore(useShallow((state) => ({
-    theme: state.theme,
-    setTheme: state.setTheme,
     language: state.language,
     setLanguage: state.setLanguage,
     launchAtStartup: state.launchAtStartup,
@@ -1447,27 +1443,9 @@ export function Settings({ embedded = false }: { embedded?: boolean } = {}) {
             </div>
           )}
 
-          {/* Appearance. Rows use the ported settings vocabulary
-              (SettingsSection > SettingsRow > control) so the geometry comes
-              from the reference recipe rather than per-call-site utilities. */}
+          {currentSection === 'general' && <AppearanceControls />}
           {currentSection === 'general' && (
-            <SettingsSection title={t('appearance.title')}>
-              <SettingsStackRow
-                title={t('appearance.theme')}
-                description={t('appearance.themeDescription')}
-                testId="settings-theme-mode"
-              >
-                <ThemeSelector
-                  aria-label={t('appearance.theme')}
-                  value={theme}
-                  onChange={(next) => setTheme(next as typeof theme)}
-                  options={[
-                    { value: 'light', label: t('appearance.light'), preview: 'light' },
-                    { value: 'dark', label: t('appearance.dark'), preview: 'dark' },
-                    { value: 'system', label: t('appearance.system'), preview: 'split' },
-                  ]}
-                />
-              </SettingsStackRow>
+            <SettingsSection title={t('appearance.preferencesHeading')}>
               <SettingsRow
                 title={t('appearance.language')}
                 control={(
