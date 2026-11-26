@@ -644,6 +644,9 @@
     "actor": "c02-frozen-verifier",
     "providerModel": "ccs-ai/gpt-6.1-sol",
     "report": "independent-verdict.json",
-    "sha256": "00ca137cb55479569d7bf2ca9b4cfdd9a568a49ae11e67db1163bf8db86f58e8"
+    "sha256": "c181a8cc0607aa5a711bd9fcf3507b92336a76db3f9a5281c12b170ed5785d80",
+    "hashScheme": "sha256-utf8-lf",
+    "originalReport": "D:/tmp/autonomy-context-system-20261126/c02-frozen-verifier.json",
+    "originalSha256": "00ca137cb55479569d7bf2ca9b4cfdd9a568a49ae11e67db1163bf8db86f58e8"
   }
 }
