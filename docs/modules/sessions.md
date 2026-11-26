@@ -64,6 +64,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 在会话协作面板展开“共享材料”，可按任务、文件、主题或证据查询当前工作区内可见会话的材料。列表提供有界摘要和分页，选中后按原材料版本读取完整摘要、适用条件、产物哈希与证据引用。受限材料仅由原发布会话代次读取。模型可通过 `sessions_list({ materials: { search, taskNodeId, file, evidenceRef } })` 使用同一入口，详情传入结果中的 `source` 作为 `target`，并附原 `ref`。
 
+发布替代版本时使用新的材料 ID，并在 `supersedes` 指明原版本。冲突记录以 `conflictsWith` 保存各方引用；已核实材料的替代同样需要可核实证据。当前任务 writer 可通过 `revokeMaterial` 携带原引用和原因撤销。材料面板跟踪所选版本的状态变化，任务修订、证据或产物变化、期限和来源缺失分别回读。源会话删除后，关联同一任务的授权读者可按原引用查看留存证据回执。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

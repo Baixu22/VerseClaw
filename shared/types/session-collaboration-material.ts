@@ -15,6 +15,8 @@ export type SessionCollaborationMaterialInput = {
   applicability?: string[];
   expiresAt?: number;
   artifactRefs?: Array<{ path: string; sha256: string }>;
+  supersedes?: SessionCollaborationMaterialRef;
+  conflictsWith?: SessionCollaborationMaterialRef[];
 };
 
 export type SessionCollaborationMaterial = SessionCollaborationMaterialInput & {
@@ -46,7 +48,7 @@ export function parseSessionCollaborationMaterial(value: unknown): SessionCollab
     if (!Array.isArray(input) || input.length > 16) throw invalid();
     return input as unknown[];
   };
-  const input = record(value, ['id', 'kind', 'summary', 'evidenceRefs', 'sensitivity', 'applicability', 'expiresAt', 'artifactRefs']);
+  const input = record(value, ['id', 'kind', 'summary', 'evidenceRefs', 'sensitivity', 'applicability', 'expiresAt', 'artifactRefs', 'supersedes', 'conflictsWith']);
   const kind = input.kind as SessionCollaborationMaterialInput['kind'];
   const { sensitivity, expiresAt } = input;
   if (!SESSION_COLLABORATION_MATERIAL_KINDS.includes(kind) ||
@@ -61,21 +63,34 @@ export function parseSessionCollaborationMaterial(value: unknown): SessionCollab
     return { path: text(artifact.path, 1024), sha256 };
   });
   if (kind === 'artifact' && !artifactRefs.length) throw invalid();
+  const supersedes = input.supersedes === undefined ? undefined : parseMaterialReference(input.supersedes);
+  const conflictsWith = input.conflictsWith === undefined ? undefined : list(input.conflictsWith).map(parseMaterialReference);
+  if (conflictsWith && (kind !== 'conflict' || conflictsWith.length < 2 || conflictsWith.length > 8 ||
+      new Set(conflictsWith.map(ref => ref.id)).size !== conflictsWith.length || supersedes)) throw invalid();
   return {
     id: text(input.id, 160).trim(), kind, summary: text(input.summary, 2048), sensitivity, evidenceRefs,
     ...(applicability.length ? { applicability } : {}),
     ...(artifactRefs.length ? { artifactRefs } : {}),
     ...(expiresAt !== undefined ? { expiresAt } : {}),
+    ...(supersedes ? { supersedes } : {}),
+    ...(conflictsWith ? { conflictsWith } : {}),
   };
 }
 
 export type SessionCollaborationMaterialRef = Pick<SessionCollaborationMaterial,
   'id' | 'version' | 'authorityId' | 'taskNodeId' | 'taskRevision' | 'taskDigest' | 'contentDigest'>;
+export const MATERIAL_STATES = ['claim', 'evidence-backed', 'expired', 'stale', 'superseded', 'revoked', 'conflict', 'unknown'] as const;
+export type SessionCollaborationMaterialState = (typeof MATERIAL_STATES)[number];
+export type SessionCollaborationMaterialStatus = {
+  state: SessionCollaborationMaterialState;
+  related?: SessionCollaborationMaterialRef[];
+  retainedEvidence?: Array<{ receiptId: string; sha256: string }>;
+};
 export type SessionCollaborationMaterialSummary = {
   ref: SessionCollaborationMaterialRef;
   source: AutonomySessionScope;
   kind: SessionCollaborationMaterial['kind'];
-  state: SessionCollaborationMaterial['state'] | 'expired';
+  state: SessionCollaborationMaterialState;
   sensitivity: SessionCollaborationMaterial['sensitivity'];
   summary: string;
   truncated: boolean;
@@ -98,7 +113,7 @@ export type SessionCollaborationMaterialPage = {
   state: 'ready' | 'empty' | 'unavailable' | 'stale' | 'unknown';
   reason?: SessionActivityReadReason;
   items: SessionCollaborationMaterialSummary[];
-  detail: { material: SessionCollaborationMaterial; state: SessionCollaborationMaterialSummary['state'] } | null;
+  detail: (SessionCollaborationMaterialStatus & { material: SessionCollaborationMaterial }) | null;
   scanned: number;
   nextCursor: string | null;
 };
@@ -125,8 +140,24 @@ export function canReadMaterial(viewer: AutonomySessionScope, source: AutonomySe
     (sensitivity === 'internal' || (sensitivity === 'restricted' && viewer.sessionKey === source.sessionKey && viewer.sessionGeneration === source.sessionGeneration));
 }
 
-export function materialState(material: SessionCollaborationMaterial, now: number): SessionCollaborationMaterialSummary['state'] {
-  return material.expiresAt !== undefined && material.expiresAt <= now ? 'expired' : material.state;
+export function parseMaterialReference(value: unknown): SessionCollaborationMaterialRef {
+  const invalid = () => new TypeError('Invalid collaboration material reference');
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw invalid();
+  const r = value as Record<string, unknown>;
+  const string = (candidate: unknown, max: number) => {
+    if (typeof candidate !== 'string' || !candidate.trim() || candidate.length > max) throw invalid();
+    return candidate.trim();
+  };
+  const integer = (candidate: unknown) => {
+    if (typeof candidate !== 'number' || !Number.isSafeInteger(candidate) || candidate < 1) throw invalid();
+    return candidate;
+  };
+  if (Object.keys(r).some(key => !['id', 'version', 'authorityId', 'taskNodeId', 'taskRevision', 'taskDigest', 'contentDigest'].includes(key)) ||
+      typeof r.taskDigest !== 'string' || !/^[a-f0-9]{64}$/.test(r.taskDigest) ||
+      typeof r.contentDigest !== 'string' || !/^[a-f0-9]{64}$/.test(r.contentDigest)) throw invalid();
+  return { id: string(r.id, 160), authorityId: string(r.authorityId, 300), version: integer(r.version),
+    taskNodeId: string(r.taskNodeId, 300) as TaskId, taskRevision: integer(r.taskRevision),
+    taskDigest: r.taskDigest, contentDigest: r.contentDigest };
 }
 
 export function parseSessionCollaborationMaterialQuery(value: unknown): SessionCollaborationMaterialQuery {
@@ -148,15 +179,8 @@ export function parseSessionCollaborationMaterialQuery(value: unknown): SessionC
   let ref: SessionCollaborationMaterialRef | undefined;
   if (input.ref !== undefined) {
     if (!target || input.cursor !== undefined || input.search !== undefined || input.file !== undefined ||
-        input.taskNodeId !== undefined || input.evidenceRef !== undefined ||
-        !input.ref || typeof input.ref !== 'object' || Array.isArray(input.ref)) throw invalid();
-    const r = input.ref as Record<string, unknown>;
-    if (Object.keys(r).some(key => !['id', 'version', 'authorityId', 'taskNodeId', 'taskRevision', 'taskDigest', 'contentDigest'].includes(key)) ||
-        typeof r.taskDigest !== 'string' || !/^[a-f0-9]{64}$/.test(r.taskDigest) ||
-        typeof r.contentDigest !== 'string' || !/^[a-f0-9]{64}$/.test(r.contentDigest)) throw invalid();
-    ref = { id: bounded(r.id, 160), version: integer(r.version, Number.MAX_SAFE_INTEGER), authorityId: bounded(r.authorityId, 300),
-      taskNodeId: bounded(r.taskNodeId, 300) as TaskId, taskRevision: integer(r.taskRevision, Number.MAX_SAFE_INTEGER),
-      taskDigest: r.taskDigest, contentDigest: r.contentDigest };
+        input.taskNodeId !== undefined || input.evidenceRef !== undefined) throw invalid();
+    ref = parseMaterialReference(input.ref);
   }
   return { requester, ...(target ? { target } : {}), limit, ...(ref ? { ref } : {}),
     ...(input.search === undefined ? {} : { search: bounded(input.search, 300) }),
@@ -188,25 +212,26 @@ export function validateMaterialPage(query: SessionCollaborationMaterialQuery, v
     const seen = new Set<string>();
     for (const item of page.items) {
       const source = normalizeAutonomySessionScope(item.source, query.target ?? item.source);
-      const ref = parseSessionCollaborationMaterialQuery({ requester: query.requester, target: source, ref: item.ref }).ref!;
+      const ref = parseMaterialReference(item.ref);
       const key = JSON.stringify([ref.authorityId, ref.id, ref.version]);
       if (query.ref || seen.has(key) || !canReadMaterial(query.requester, source, item.sensitivity) ||
           typeof item.summary !== 'string' || [...item.summary].length > MATERIAL_SUMMARY_LIMIT ||
           typeof item.truncated !== 'boolean' || !Number.isSafeInteger(item.createdAt) ||
           !SESSION_COLLABORATION_MATERIAL_KINDS.includes(item.kind) ||
-          !['claim', 'evidence-backed', 'expired'].includes(item.state)) return invalid();
+          !MATERIAL_STATES.includes(item.state)) return invalid();
       seen.add(key);
     }
     if (page.detail !== null) {
       const { material, state } = page.detail;
       const source = normalizeAutonomySessionScope(materialSource(material), query.target ?? null);
       if (!query.ref || !equalMaterialRef(query.ref, materialReference(material)) ||
-          !canReadMaterial(query.requester, source, material.sensitivity) || page.nextCursor !== null ||
-          !['claim', 'evidence-backed', 'expired'].includes(state)) return invalid();
-      parseSessionCollaborationMaterial({
-        id: material.id, kind: material.kind, summary: material.summary, evidenceRefs: material.evidenceRefs,
-        sensitivity: material.sensitivity, applicability: material.applicability, artifactRefs: material.artifactRefs, expiresAt: material.expiresAt,
-      });
+          !canReadMaterial(query.requester, source, material.sensitivity) || page.nextCursor !== null || !MATERIAL_STATES.includes(state)) return invalid();
+      const { id, kind, summary, evidenceRefs, sensitivity, applicability, artifactRefs, expiresAt, supersedes, conflictsWith } = material;
+      parseSessionCollaborationMaterial({ id, kind, summary, evidenceRefs, sensitivity, applicability, artifactRefs, expiresAt, supersedes, conflictsWith });
+      if (page.detail.related && (!Array.isArray(page.detail.related) || page.detail.related.length > 8)) return invalid();
+      page.detail.related?.forEach(parseMaterialReference);
+      if (page.detail.retainedEvidence && (!Array.isArray(page.detail.retainedEvidence) || page.detail.retainedEvidence.length > 16 ||
+          page.detail.retainedEvidence.some(item => typeof item.receiptId !== 'string' || !/^[a-f0-9]{64}$/.test(item.sha256)))) return invalid();
     }
   } catch { return invalid(); }
   return page;

@@ -9,6 +9,7 @@ import { resolveSqliteSessionStoreDatabasePath } from '../../config/sessions/sto
 import { onAgentEvent } from '../../infra/agent-events.js';
 import { readScopedAgentRunOutcome, waitForAgentJob } from './agent-job.js';
 import { readSessionCollaborationQuery } from './session-collaboration-query.js';
+import { readSessionCollaborationMaterials } from './session-collaboration-material.js';
 import { sessionActivityOwnerScope } from './session-activity-read-model.js';
 import type { GatewayRequestContext } from './types.js';
 
@@ -21,6 +22,10 @@ async function observation(request: SessionCollaborationWatch, context: GatewayR
   const result: SessionCollaborationObservation = { page, receipts: [] };
   if (page.state !== 'ready') return result;
   const row = page.items[0], target = request.query.target!;
+  if (request.materialRef) {
+    const materials = await readSessionCollaborationMaterials({ requester: request.query.requester, target, ref: request.materialRef }, context);
+    return { page, materialState: materials.detail?.state };
+  }
   const loaded = loadSessionEntry(target.sessionKey, { readOnly: true, skipCache: true });
   normalizeAutonomySessionScope(target, sessionActivityOwnerScope(loaded.canonicalKey, loaded.entry));
   if (request.run) {
@@ -62,7 +67,7 @@ async function subscriptionPaths(request: SessionCollaborationWatch) {
   for (const scope of [request.query.requester, request.query.target!]) {
     const loaded = loadSessionEntry(scope.sessionKey, { readOnly: true, skipCache: true });
     paths.add(resolveSqliteSessionStoreDatabasePath(loaded.storePath));
-    if (scope === request.query.target && ['task-receipt', 'blocking-changed'].includes(request.condition)) {
+    if (scope === request.query.target && ['task-receipt', 'blocking-changed', 'material-changed'].includes(request.condition)) {
       const root = loaded.entry?.workspaceDir ?? loaded.entry?.spawnedWorkspaceDir;
       if (root) {
         try { const { createExecutionTaskAccess } = await import('../../agents/execution-task-authority.js'); paths.add(createExecutionTaskAccess(root, undefined, true).domain.database); }

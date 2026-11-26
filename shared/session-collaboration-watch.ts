@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { emptySessionCollaborationPage, validateSessionCollaborationPage, type SessionCollaborationPage } from './types/session-collaboration.js';
 import { parseSessionCollaborationWatch, type SessionCollaborationWatch, type SessionCollaborationWatchEvent, type SessionCollaborationWatchResult } from './types/session-collaboration-watch.js';
+import type { SessionCollaborationMaterialState } from './types/session-collaboration-material.js';
 
 export type SessionCollaborationObservation = {
   page: SessionCollaborationPage;
@@ -8,6 +9,7 @@ export type SessionCollaborationObservation = {
   receipts?: SessionCollaborationWatchEvent[];
   receiptFloor?: number;
   receiptTruncated?: boolean;
+  materialState?: SessionCollaborationMaterialState;
 };
 const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const stableFacts = (value: unknown): unknown => {
@@ -24,8 +26,8 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
   signal?: AbortSignal;
 }): Promise<SessionCollaborationWatchResult> {
   const request = parseSessionCollaborationWatch(input);
-  const basis = hash({ query: request.query, condition: request.condition, run: request.run });
-  let previous: string | null = null, sequence = 0;
+  const basis = hash({ query: request.query, condition: request.condition, run: request.run, materialRef: request.materialRef });
+  let previous: string | null = request.observedMaterialState ? hash(request.observedMaterialState) : null, sequence = 0;
   const failure = (state: 'stale' | 'unavailable' | 'unknown', reason: 'scope-mismatch' | 'owner-unavailable' | 'protocol-unverified') => ({
     schemaVersion: 'SessionCollaborationWatch/v1' as const, id: request.id, state, cursor: null,
     page: emptySessionCollaborationPage(request.query, state, reason), event: null,
@@ -63,7 +65,8 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
       if (!row) return result('unknown');
       if (request.condition === 'task-receipt' && row.sources.tasks.state !== 'ready') return result('unknown');
       if (request.condition === 'task-receipt' && observation.receiptTruncated && sequence > 0 && sequence < (observation.receiptFloor ?? 0)) return result('unknown');
-      const fingerprint = hash(stableFacts(request.condition === 'blocking-changed'
+      if (request.materialRef && !observation.materialState) return result('unknown');
+      const fingerprint = request.materialRef ? hash(observation.materialState) : hash(stableFacts(request.condition === 'blocking-changed'
         ? { session: row.sources.session, tasks: row.sources.tasks }
         : { row, terminal: observation.terminal?.id ?? null }));
       const receipts = (observation.receipts ?? []).filter(event => (event.sequence ?? 0) > sequence);
@@ -72,6 +75,11 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
       let event: SessionCollaborationWatchEvent | null = null;
       if (request.condition === 'run-terminal' && (!request.cursor || previous !== fingerprint)) event = observation.terminal ?? null;
       if (request.condition === 'task-receipt') event = receipts.at(-1) ?? null;
+      if (request.materialRef && observation.materialState && previous && previous !== fingerprint) {
+        event = { id: `material:${hash([request.materialRef, observation.materialState])}`, owner: 'TaskSystem',
+          kind: 'material-changed', materialRef: request.materialRef, materialState: observation.materialState,
+          taskNodeId: request.materialRef.taskNodeId, revision: request.materialRef.taskRevision };
+      }
       if (request.condition === 'idle' && row.status === 'idle' && (!request.cursor || previous !== fingerprint)) event = { id: `idle:${fingerprint}`, owner: 'sessions', kind: 'idle' };
       if (previous && previous !== fingerprint && ['changed', 'blocking-changed'].includes(request.condition)) {
         event = { id: `${request.condition}:${fingerprint}`, owner: request.condition === 'changed' ? 'sessions' : 'TaskSystem', kind: request.condition };

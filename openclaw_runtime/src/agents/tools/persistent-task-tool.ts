@@ -54,6 +54,11 @@ const taskContractSchema = Type.Object({
   dependencies: Type.Optional(Type.Array(Type.String())),
 });
 
+const materialReferenceSchema = Type.Object({
+  id: Type.String(), authorityId: Type.String(), taskNodeId: Type.String(), version: Type.Integer(),
+  taskRevision: Type.Integer(), taskDigest: Type.String(), contentDigest: Type.String(),
+}, { additionalProperties: false });
+
 /** Session identity comes from the runtime, never from model-authored arguments. */
 export function createPersistentTaskTool(input: {
   workspace: string;
@@ -84,7 +89,7 @@ export function createPersistentTaskTool(input: {
       "When explicitly asked to execute the next project plan task, read planStatus, then use startNextPlanTask with the parent taskNodeId, expectedRevision and a stable requestId. This claims one dependency-ready task; worker admission is separate. " +
       "On an internal project worker failure notice, read planStatus. If the failed child is paused and its writer released, continue the next independent ready child using startNextPlanTask and a new stable requestId derived from the completed run. Leave the failed child and its dependents unaccepted; new work must still pass resource admission. " +
       "Manage execution tasks quietly in conversation. For explicit project planning requests in a project coordinator session, read planStatus and relevant project facts first, then use savePlan with goal contract, a bounded list of children with concrete verification, local dependsOn keys, and nextAction. Record uncertain facts as assumptions and unresolved major scope choices as decisions; scope those tasks to work that is safe under those uncertainties. Change an existing plan explicitly with taskNodeId, expectedRevision, and revisionReason; keep the requestId stable across retries and use a new ID for a new goal. Planning does not start execution. Before implementation, read current and use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive goals and verifiable checks from the user request and repository; do not ask for task forms, internal IDs, or manual claims. Ordinary discussion creates no task. Report progress and genuine blockers plainly, checkpoint progress, and submit candidate-bound evidence for acceptance. Use stable request IDs across retries; suggestions do not grant identity. Use history to trace candidate checks and retention receipts; readRetainedArtifact returns verified bytes in bounded base64 pages after source cleanup. Task ownership does not grant tool permissions. Never replace the goal with a status question. " +
-      "Use publishMaterial with a stable material.id to share findings from the current task. Cite original task evidence receipts and include conditions for reuse.",
+      "Use publishMaterial with a stable material.id to share findings from the current task. Cite original evidence and conditions for reuse. Use exact material references in supersedes or conflictsWith, or revokeMaterial with materialRef and a reason.",
     parameters: Type.Object({
       action: Type.Union(
         [
@@ -106,6 +111,7 @@ export function createPersistentTaskTool(input: {
           "claim",
           "checkpoint",
           "publishMaterial",
+          "revokeMaterial",
           "pause",
           "resume",
           "release",
@@ -161,7 +167,10 @@ export function createPersistentTaskTool(input: {
           path: Type.String({ maxLength: 1024 }),
           sha256: Type.String({ pattern: "^[a-f0-9]{64}$" }),
         }, { additionalProperties: false }), { maxItems: 16 })),
+        supersedes: Type.Optional(materialReferenceSchema),
+        conflictsWith: Type.Optional(Type.Array(materialReferenceSchema, { minItems: 2, maxItems: 8 })),
       }, { additionalProperties: false })),
+      materialRef: Type.Optional(materialReferenceSchema),
       candidate: Type.Optional(Type.String()),
       reason: Type.Optional(Type.String({ maxLength: 2000 })),
       criterionId: Type.Optional(Type.String()),
@@ -171,8 +180,11 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw, signal) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
-      if (['start', 'claim', 'startNextPlanTask', 'review', 'repair', 'publishMaterial'].includes(String(p.action))) assertSystemExecutionAllowed();
+      const materialAction = p.action === 'publishMaterial' || p.action === 'revokeMaterial';
+      if (materialAction || ['start', 'claim', 'startNextPlanTask', 'review', 'repair'].includes(String(p.action))) assertSystemExecutionAllowed();
       if (p.action === 'publishMaterial' && Object.keys(p).some(key => key !== 'action' && key !== 'material'))
+        throw new Error('MATERIAL_INPUT_INVALID');
+      if (p.action === 'revokeMaterial' && Object.keys(p).some(key => !['action', 'materialRef', 'reason'].includes(key)))
         throw new Error('MATERIAL_INPUT_INVALID');
       const planning = p.action === "planStatus" || p.action === "savePlan" || p.action === "startNextPlanTask";
       const scope = planning ? (() => {
@@ -188,7 +200,7 @@ export function createPersistentTaskTool(input: {
       }
       access.assertCurrent();
       const domain = access.domain;
-      if (p.action === "publishMaterial" && !existsSync(domain.database)) throw new Error("TASK_CLAIM_REQUIRED");
+      if (materialAction && !existsSync(domain.database)) throw new Error("TASK_CLAIM_REQUIRED");
       if (!existsSync(domain.database) && ['history', 'readRetainedArtifact'].includes(String(p.action))) throw new Error('TASK_STORE_UNAVAILABLE');
       if (!existsSync(domain.database) && (p.action === "list" || p.action === "current" || p.action === "planStatus"))
         return {
@@ -322,13 +334,14 @@ export function createPersistentTaskTool(input: {
             );
           } else if (p.action === "checkpoint")
             result = store.checkpoint(c, p.checkpoint as TaskCheckpoint);
-          else if (p.action === "publishMaterial") {
-            if (!input.runId) throw new Error("MATERIAL_SOURCE_RUN_MISSING");
+          else if (materialAction) {
+            const runId = input.runId;
+            if (!runId) throw new Error("MATERIAL_SOURCE_RUN_MISSING");
             const [{ loadSessionEntry }, { sessionActivityOwnerScope }] = await Promise.all([
               import("../../gateway/session-utils.js"),
               import("../../gateway/server-methods/session-activity-read-model.js"),
             ]);
-            result = store.publishSharedMaterial(c, p.material, input.runId, () => {
+            const readSource = () => {
               signal?.throwIfAborted();
               const loaded = loadSessionEntry(c.sessionKey, { readOnly: true, skipCache: true });
               const source = sessionActivityOwnerScope(loaded.canonicalKey, loaded.entry);
@@ -337,7 +350,10 @@ export function createPersistentTaskTool(input: {
                 throw new Error("MATERIAL_SOURCE_SCOPE_MISMATCH");
               if (loaded.entry?.executionMigration?.state === "prepared") throw new Error("TASK_EXECUTION_MIGRATION_PENDING");
               return source;
-            });
+            };
+            result = p.action === "publishMaterial"
+              ? store.publishSharedMaterial(c, p.material, runId, readSource)
+              : store.revokeSharedMaterial(c, p.materialRef, p.reason, runId, readSource);
           } else if (p.action === "resume") {
             result = store.handoff(c, input.sessionKey, input.generation);
             pinned = (result as { claim: TaskCredential }).claim;

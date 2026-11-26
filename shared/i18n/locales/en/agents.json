@@ -9,10 +9,18 @@
             "moreToRead": "Continue to the next page to search the remaining sources.",
             "version": "Version {{version}} · Task revision {{revision}}",
             "evidence": "Evidence",
+            "changed": "Material status changed to {{state}}.",
+            "related": "Related version",
+            "retained": "Retained evidence",
             "states": {
                 "claim": "Claim",
                 "evidence-backed": "Evidence-backed",
-                "expired": "Expired"
+                "expired": "Expired",
+                "stale": "Stale",
+                "superseded": "Superseded",
+                "revoked": "Revoked",
+                "conflict": "Conflict",
+                "unknown": "Source unknown"
             }
         },
         "messages": {

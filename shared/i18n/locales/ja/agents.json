@@ -9,10 +9,18 @@
             "moreToRead": "次のページで残りの情報源を検索できます。",
             "version": "バージョン {{version}} · タスク改訂 {{revision}}",
             "evidence": "証拠",
+            "changed": "資料の状態が「{{state}}」に変わりました。",
+            "related": "関連バージョン",
+            "retained": "保存済み証拠",
             "states": {
                 "claim": "主張",
                 "evidence-backed": "証拠確認済み",
-                "expired": "期限切れ"
+                "expired": "期限切れ",
+                "stale": "古い情報",
+                "superseded": "置き換え済み",
+                "revoked": "取り消し済み",
+                "conflict": "矛盾あり",
+                "unknown": "情報源不明"
             }
         },
         "messages": {

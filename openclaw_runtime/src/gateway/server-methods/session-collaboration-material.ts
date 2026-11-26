@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import type { TaskSystemStore } from '../../../../shared/task-system/store.js';
 import { normalizeAutonomySessionScope, type AutonomySessionScope } from '../../../../shared/types/identity-scope.js';
 import {
-  emptyMaterialPage, MATERIAL_SCAN_LIMIT, MATERIAL_SUMMARY_LIMIT, materialReference, materialState,
+  emptyMaterialPage, MATERIAL_SCAN_LIMIT, MATERIAL_SUMMARY_LIMIT, materialReference,
   parseSessionCollaborationMaterialQuery, type SessionCollaborationMaterial, type SessionCollaborationMaterialQuery,
 } from '../../../../shared/types/session-collaboration-material.js';
 import { loadSessionEntry } from '../session-utils.js';
@@ -76,6 +76,14 @@ export async function readSessionCollaborationMaterials(value: unknown, context:
   catch { return emptyMaterialPage(query, 'stale', 'scope-mismatch'); }
   const sourcePage = await readSessionCollaborationQuery({ requester, target, workspace, fields: [],
     limit: target ? 1 : SOURCE_PAGE_LIMIT, cursor: position?.sources ?? undefined }, context);
+  if (target && ref && sourcePage.reason === 'not-visible' &&
+      !loadSessionEntry(target.sessionKey, { readOnly: true, skipCache: true }).entry) {
+    try {
+      const detail = await readOwner(requester, store => store.readHistoricalSharedMaterial(requester, target, ref));
+      if (detail && !loadSessionEntry(target.sessionKey, { readOnly: true, skipCache: true }).entry)
+        return { ...emptyMaterialPage(query, 'ready'), detail, scanned: 1 };
+    } catch { return emptyMaterialPage(query, 'unavailable', 'owner-unavailable'); }
+  }
   if (sourcePage.state !== 'ready') return emptyMaterialPage(query, sourcePage.state, sourcePage.reason);
   const sources = sourcePage.items.map(row => row.detail?.scope);
   const requestBasis = signature({ ...query, cursor: undefined });
@@ -87,10 +95,13 @@ export async function readSessionCollaborationMaterials(value: unknown, context:
   const page = emptyMaterialPage(query, 'empty');
   if (ref && target) {
     try {
-      const material = await readOwner(target, store => store.readSharedMaterial(requester, target, ref));
+      const detail = await readOwner(target, store => {
+        const material = store.readSharedMaterial(requester, target, ref);
+        return material ? { material, ...store.sharedMaterialStatus(material, requester, now) } : null;
+      });
       currentSession(requester);
-      if (material) {
-        page.detail = { material, state: materialState(material, now) };
+      if (detail) {
+        page.detail = detail;
         page.state = 'ready';
         page.scanned = 1;
       }
@@ -108,14 +119,22 @@ export async function readSessionCollaborationMaterials(value: unknown, context:
     const source = sources[index];
     if (!source) { partial = true; continue; }
     try {
-      const events = await readOwner(source, store => store.sharedMaterialEvents(requester, source, before, MATERIAL_SCAN_LIMIT - page.scanned + 1));
-      for (const { seq, material } of events ?? []) {
+      const events = await readOwner(source, store => {
+        let remaining = (query.limit ?? 12) - page.items.length;
+        return store.sharedMaterialEvents(requester, source, before, MATERIAL_SCAN_LIMIT - page.scanned + 1)
+          .map(event => {
+            if (remaining <= 0 || !matchesMaterial(event.material, query)) return { ...event, status: null };
+            remaining--;
+            return { ...event, status: store.sharedMaterialStatus(event.material, requester, now) };
+          });
+      });
+      for (const { seq, material, status } of events ?? []) {
         if (page.scanned >= MATERIAL_SCAN_LIMIT || page.items.length >= (query.limit ?? 12)) break scan;
         page.scanned++;
         before = seq;
-        if (!matchesMaterial(material, query)) continue;
+        if (!status) continue;
         const chars = [...material.summary];
-        page.items.push({ ref: materialReference(material), source, kind: material.kind, state: materialState(material, now),
+        page.items.push({ ref: materialReference(material), source, kind: material.kind, state: status.state,
           summary: chars.slice(0, MATERIAL_SUMMARY_LIMIT).join(''), truncated: chars.length > MATERIAL_SUMMARY_LIMIT,
           sensitivity: material.sensitivity, createdAt: material.createdAt });
       }

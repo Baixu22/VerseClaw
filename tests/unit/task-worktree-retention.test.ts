@@ -13,6 +13,8 @@ import * as registry from '../../openclaw_runtime/src/agents/worktree-registry';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { registerExecutionDomain, resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { createPersistentTaskTool } from '../../openclaw_runtime/src/agents/tools/persistent-task-tool';
+import type { AutonomySessionScope } from '../../shared/types/identity-scope';
+import { materialReference } from '../../shared/types/session-collaboration-material';
 
 let fixture: string, repository: string, stateFile: string;
 const stores: TaskSystemStore[] = [];
@@ -55,6 +57,26 @@ afterEach(() => {
 });
 
 describe('Task evidence retention and original checkout cleanup', () => {
+  it('keeps source evidence available to the bound task reader after material source cleanup', () => {
+    const service = createWorktreeService(repository, { backend: 'git' }), row = service.create('material-history');
+    const source = storeAt(row.root);
+    const scope = { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'agent:main:source',
+      sessionGeneration: 'source-generation' } as AutonomySessionScope;
+    const viewer = { ...scope, sessionKey: 'agent:main:reader' as AutonomySessionScope['sessionKey'], sessionGeneration: 'reader-generation' };
+    const { task } = source.create(contract, 'create-material-task');
+    const claim = source.claim(task.contract.taskNodeId, scope.sessionKey, scope.sessionGeneration, 'claim-source').claim!;
+    const proof = source.verifyFile(claim, 'file', 'artifact.txt', sha256, 'candidate');
+    const material = source.publishSharedMaterial(claim, { id: 'published-artifact', kind: 'artifact', summary: 'Original artifact',
+      evidenceRefs: [proof.receiptId], sensitivity: 'internal', artifactRefs: [{ path: 'artifact.txt', sha256 }] }, 'publish-run', () => scope);
+    source.handoff(claim, viewer.sessionKey, viewer.sessionGeneration, repository);
+    service.cleanup(row.id);
+    const reader = storeAt(repository);
+    const detail = reader.readHistoricalSharedMaterial(viewer, scope, materialReference(material));
+    expect(detail).toMatchObject({ material, state: 'unknown', retainedEvidence: [{ sha256 }] });
+    expect(reader.readRetainedArtifact(claim.taskNodeId, detail!.retainedEvidence[0].receiptId)).toEqual(bytes);
+    expect(reader.readHistoricalSharedMaterial({ ...viewer, sessionGeneration: 'other' }, scope, materialReference(material))).toBeNull();
+  });
+
   it('retains exact old bytes through newer HEAD, deletion, owner reopen and repeated cleanup', () => {
     const service = createWorktreeService(repository, { backend: 'git' }), row = service.create('history');
     const { taskId } = accepted(row.root);

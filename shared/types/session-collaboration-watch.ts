@@ -1,7 +1,9 @@
 import { normalizeAutonomySessionScope, normalizeRunScope, type ScopedRunId } from './identity-scope.js';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage, type SessionCollaborationQuery } from './session-collaboration.js';
+import { equalMaterialRef, MATERIAL_STATES, parseMaterialReference, type SessionCollaborationMaterialRef,
+  type SessionCollaborationMaterialState } from './session-collaboration-material.js';
 
-export const SESSION_COLLABORATION_CONDITIONS = ['changed', 'run-terminal', 'task-receipt', 'blocking-changed', 'idle'] as const;
+export const SESSION_COLLABORATION_CONDITIONS = ['changed', 'run-terminal', 'task-receipt', 'blocking-changed', 'idle', 'material-changed'] as const;
 export type SessionCollaborationCondition = typeof SESSION_COLLABORATION_CONDITIONS[number];
 export type SessionCollaborationWatch = {
   id: string;
@@ -9,17 +11,21 @@ export type SessionCollaborationWatch = {
   condition: SessionCollaborationCondition;
   cursor?: string;
   run?: ScopedRunId;
+  materialRef?: SessionCollaborationMaterialRef;
+  observedMaterialState?: SessionCollaborationMaterialState;
   timeoutMs?: number;
 };
 export type SessionCollaborationWatchEvent = {
   id: string;
   owner: 'runtime' | 'TaskSystem' | 'sessions';
-  kind: 'run-terminal' | 'task-receipt' | 'blocking-changed' | 'changed' | 'idle';
+  kind: SessionCollaborationCondition;
   sequence?: number;
   status?: string;
   taskNodeId?: string;
   revision?: number;
   receiptId?: string;
+  materialRef?: SessionCollaborationMaterialRef;
+  materialState?: SessionCollaborationMaterialState;
 };
 export type SessionCollaborationWatchResult = {
   schemaVersion: 'SessionCollaborationWatch/v1';
@@ -33,7 +39,7 @@ export type SessionCollaborationWatchResult = {
 export function parseSessionCollaborationWatch(value: unknown): SessionCollaborationWatch {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError('Scoped collaboration watch required');
   const input = value as Record<string, unknown>;
-  if (Object.keys(input).some(key => !['id', 'query', 'condition', 'cursor', 'run', 'timeoutMs'].includes(key))) throw new TypeError('Unexpected watch field');
+  if (Object.keys(input).some(key => !['id', 'query', 'condition', 'cursor', 'run', 'timeoutMs', 'materialRef', 'observedMaterialState'].includes(key))) throw new TypeError('Unexpected watch field');
   if (typeof input.id !== 'string' || !/^[A-Za-z0-9._:-]{1,160}$/.test(input.id)) throw new TypeError('Bounded watch ID required');
   const query = parseSessionCollaborationQuery(input.query);
   if (!query.target || query.limit !== 1 || query.cursor !== undefined) throw new TypeError('Watch requires one explicit target');
@@ -46,9 +52,16 @@ export function parseSessionCollaborationWatch(value: unknown): SessionCollabora
     normalizeAutonomySessionScope({ ...run.scope, sessionGeneration: query.target.sessionGeneration }, query.target);
   }
   if (input.condition === 'run-terminal' && !run) throw new TypeError('Run-terminal requires the original ScopedRun');
+  let material: Pick<SessionCollaborationWatch, 'materialRef' | 'observedMaterialState'> = {};
+  if (input.condition === 'material-changed') {
+    const materialRef = parseMaterialReference(input.materialRef);
+    const observed = input.observedMaterialState as SessionCollaborationMaterialState | undefined;
+    if (run || (observed !== undefined && !MATERIAL_STATES.includes(observed))) throw new TypeError('Invalid observed material state');
+    material = { materialRef, ...(observed === undefined ? {} : { observedMaterialState: observed }) };
+  } else if (input.materialRef !== undefined || input.observedMaterialState !== undefined) throw new TypeError('Material watch condition required');
   const fields = new Set(query.fields);
   for (const field of ['run', 'actions', 'tasks'] as const) if (!fields.has(field)) throw new TypeError('Watch requires run, actions and tasks');
-  return { id: input.id, query, condition: input.condition as SessionCollaborationCondition,
+  return { id: input.id, query, condition: input.condition as SessionCollaborationCondition, ...material,
     ...(run ? { run } : {}), ...(input.cursor === undefined ? {} : { cursor: input.cursor as string }),
     timeoutMs: input.timeoutMs === undefined ? 15_000 : input.timeoutMs as number };
 }
@@ -68,6 +81,12 @@ export function validateSessionCollaborationWatch(request: SessionCollaborationW
       || !['satisfied', 'changed'].includes(result.state)
       || (event.sequence !== undefined && (!Number.isSafeInteger(event.sequence) || event.sequence < 0))) return null;
     if (event.kind !== request.condition && request.condition !== 'changed') return null;
+    if (event.kind === 'material-changed') {
+      if (event.owner !== 'TaskSystem' || !request.materialRef || !event.materialRef || !event.materialState ||
+          !MATERIAL_STATES.includes(event.materialState)) return null;
+      try { if (!equalMaterialRef(request.materialRef, parseMaterialReference(event.materialRef))) return null; }
+      catch { return null; }
+    }
   } else if (['satisfied', 'changed'].includes(result.state)) return null;
   return { ...result, page };
 }

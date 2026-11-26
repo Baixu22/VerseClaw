@@ -9,10 +9,18 @@
             "moreToRead": "继续下一页以搜索其余来源。",
             "version": "材料版本 {{version}} · 任务修订 {{revision}}",
             "evidence": "证据",
+            "changed": "材料状态已更新为{{state}}。",
+            "related": "相关版本",
+            "retained": "已留存证据",
             "states": {
                 "claim": "主张",
                 "evidence-backed": "证据已核实",
-                "expired": "已过期"
+                "expired": "已过期",
+                "stale": "已失效",
+                "superseded": "已替代",
+                "revoked": "已撤销",
+                "conflict": "有冲突",
+                "unknown": "来源未知"
             }
         },
         "messages": {

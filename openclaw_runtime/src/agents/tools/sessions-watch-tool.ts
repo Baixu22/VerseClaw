@@ -9,17 +9,20 @@ import { jsonResult, type AnyAgentTool } from './common.js';
 export function createSessionsWatchTool(opts?: SessionCollaborationToolContext): AnyAgentTool {
   return {
     name: 'sessions_watch', label: 'Session Watch', risk: 'readonly',
-    description: 'Wait for an original scoped run terminal outcome, TaskSystem receipt, idle session or owner change. Reuse the returned cursor to avoid duplicate notifications. Does not send messages or call the target model.',
+    description: 'Wait for a scoped run terminal outcome, TaskSystem receipt, idle session or owner change. For material-changed, provide the exact materialRef and optionally observedMaterialState. Reuse the returned cursor to avoid duplicate notifications.',
     parameters: Type.Object({ scope: Type.Unknown(), condition: Type.String({ enum: [...SESSION_COLLABORATION_CONDITIONS] }),
-      run: Type.Optional(Type.Unknown()), cursor: Type.Optional(Type.String()), timeoutMs: Type.Optional(Type.Integer({ minimum: 0, maximum: 25_000 })) }),
+      run: Type.Optional(Type.Unknown()), materialRef: Type.Optional(Type.Unknown()), observedMaterialState: Type.Optional(Type.String()),
+      cursor: Type.Optional(Type.String()), timeoutMs: Type.Optional(Type.Integer({ minimum: 0, maximum: 25_000 })) }),
     execute: async (_id, args, signal) => {
       const params = args as Record<string, unknown>;
-      if (!params || Object.keys(params).some(key => !['scope', 'condition', 'run', 'cursor', 'timeoutMs'].includes(key))) throw new TypeError('Unexpected watch tool parameter');
+      if (!params || Object.keys(params).some(key => !['scope', 'condition', 'run', 'cursor', 'timeoutMs', 'materialRef', 'observedMaterialState'].includes(key))) throw new TypeError('Unexpected watch tool parameter');
       // Parse target and condition before reading the runtime-owned requester.
       const shape = parseSessionCollaborationWatch({ id: randomUUID(), condition: params.condition,
         query: parseSessionCollaborationQuery({ requester: params.scope, target: params.scope, limit: 1 }),
         ...(params.run === undefined ? {} : { run: params.run }), ...(params.cursor === undefined ? {} : { cursor: params.cursor }),
-        ...(params.timeoutMs === undefined ? {} : { timeoutMs: params.timeoutMs }) });
+        ...(params.timeoutMs === undefined ? {} : { timeoutMs: params.timeoutMs }),
+        ...(params.materialRef === undefined ? {} : { materialRef: params.materialRef }),
+        ...(params.observedMaterialState === undefined ? {} : { observedMaterialState: params.observedMaterialState }) });
       const page = await querySessionCollaborationTool(opts, { readOnly: true, scope: params.scope }, true);
       const request = parseSessionCollaborationWatch({ ...shape, query: { ...shape.query, requester: page.requester } });
       if (page.state !== 'ready') return jsonResult({ schemaVersion: 'SessionCollaborationWatch/v1', id: request.id,
