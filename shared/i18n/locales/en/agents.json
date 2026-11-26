@@ -13,6 +13,7 @@
             "purpose": "Purpose",
             "body": "Message",
             "send": "Send",
+            "retryOriginal": "Retry original message",
             "check": "Read original receipt",
             "purposes": {
                 "finding": "Finding",

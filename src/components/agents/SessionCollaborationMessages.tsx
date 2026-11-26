@@ -33,6 +33,9 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
   const draftKey = source ? JSON.stringify([source.scope, target]) : null;
   const draft = useSessionCollaborationUi(value => draftKey ? value.messageDrafts[draftKey] : undefined);
   const update = useSessionCollaborationUi(value => value.updateMessageDraft);
+  const editable = draft?.phase === 'draft';
+  const retry = draft?.phase === 'retry';
+  const canSend = Boolean(draft?.text.trim()) && (editable || retry);
   const rows = page?.key === listKey ? page.value : null, selected = receipt?.key === readKey ? receipt.value : null;
   const linkedTask = selected?.message.task;
   const taskLink = linkedTask && tasks.some(task => task.authorityId === linkedTask.authorityId
@@ -79,19 +82,22 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
     }
   };
   const send = async () => {
-    if (!source || !draftKey || !draft?.text.trim() || draft.phase !== 'draft') return;
+    if (!source || !draftKey || !draft || !canSend) return;
     update(draftKey, { phase: 'sending' });
     try {
       const result = await hostApi.sessions.sendCollaborationMessage({ id: draft.id, target, purpose: draft.purpose, message: draft.text,
         expectedSource: source.scope, ...(draft.replyTo ? { replyTo: draft.replyTo } : {}) });
+      const accepted = result.success && ['accepted', 'queued', 'delivered', 'replied'].includes(result.phase);
+      const terminal = result.receipt?.phase === 'rejected' || result.receipt?.phase === 'expired';
+      const unresolved = !accepted && (result.phase === 'unknown' || (retry && !terminal));
       if (useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id === draft.id) {
-        if (result.success && ['accepted', 'queued', 'delivered', 'replied'].includes(result.phase)) update(draftKey, { id: crypto.randomUUID(), text: '', phase: 'draft', replyTo: undefined });
-        else update(draftKey, { phase: result.phase === 'unknown' ? 'unknown' : 'draft' });
+        if (accepted) update(draftKey, { id: crypto.randomUUID(), text: '', phase: 'draft', replyTo: undefined });
+        else update(draftKey, { phase: unresolved ? 'unknown' : 'draft' });
       }
       if (active.current !== readKey) return;
       if (result.receipt) setReceipt({ key: readKey, value: result.receipt });
       await refresh();
-      if (active.current === readKey) setState(result.phase);
+      if (active.current === readKey) setState(unresolved ? 'unknown' : result.phase);
     } catch { if (useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id === draft.id) update(draftKey, { phase: 'unknown' }); if (active.current === readKey) setState('unknown'); }
   };
   const check = async () => {
@@ -100,7 +106,7 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
     if (!messages || useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id !== draft.id) return;
     const current = messages.receipt;
     if (!current) {
-      if (messages.state === 'empty') update(draftKey, { phase: 'draft' });
+      if (messages.state === 'empty') update(draftKey, { phase: 'retry' });
       return;
     }
     if (['accepted', 'queued', 'delivered', 'replied'].includes(current.phase)) update(draftKey, { id: crypto.randomUUID(), text: '', phase: 'draft', replyTo: undefined });
@@ -138,18 +144,20 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
         {selected.reply && <div className="space-y-1 rounded-md bg-black/5 p-3 dark:bg-white/10"><h4 className="text-sm font-medium">{t('collaboration.messages.reply')}</h4>
           <p className="whitespace-pre-wrap break-words text-sm">{selected.reply.text}</p><p className="break-all text-xs text-muted-foreground">{selected.reply.sha256}</p></div>}
         {!selected.reply && <p className="text-xs text-muted-foreground">{t('collaboration.messages.replyUnknown')}</p>}
-        {source && <Button type="button" variant="outline" disabled={draft?.phase !== 'draft'} onClick={() => {
-          if (draftKey && draft?.replyTo !== selected.message.id) update(draftKey, { replyTo: selected.message.id, id: crypto.randomUUID() });
+        {source && <Button type="button" variant="outline" disabled={!editable} onClick={() => {
+          if (draftKey && editable && draft?.replyTo !== selected.message.id) update(draftKey, { replyTo: selected.message.id, id: crypto.randomUUID() });
         }}>{t('collaboration.messages.reply')}</Button>}
       </article>}
       <div className="space-y-2 border-t border-border pt-3">
         <p className="text-xs text-muted-foreground">{source ? t('collaboration.messages.sender', { name: source.name }) : t('collaboration.messages.sourceMissing')}</p>
-        <label className="block space-y-1 text-xs">{t('collaboration.messages.purpose')}<select className="block min-h-9 w-full rounded-md border border-border bg-surface-input px-2" value={draft?.purpose ?? 'request'} disabled={!draftKey || draft?.phase !== 'draft'}
-          onChange={event => { if (draftKey) update(draftKey, { purpose: event.target.value as typeof SESSION_COLLABORATION_PURPOSES[number], id: crypto.randomUUID() }); }}>
+        <label className="block space-y-1 text-xs">{t('collaboration.messages.purpose')}<select className="block min-h-9 w-full rounded-md border border-border bg-surface-input px-2" value={draft?.purpose ?? 'request'} disabled={!draftKey || !editable}
+          onChange={event => { if (draftKey && editable) update(draftKey, { purpose: event.target.value as typeof SESSION_COLLABORATION_PURPOSES[number], id: crypto.randomUUID() }); }}>
           {SESSION_COLLABORATION_PURPOSES.map(purpose => <option key={purpose} value={purpose}>{t(`collaboration.messages.purposes.${purpose}`)}</option>)}</select></label>
-        <label className="block space-y-1 text-xs">{t('collaboration.messages.body')}<Textarea value={draft?.text ?? ''} maxLength={16384} disabled={!draftKey || draft?.phase !== 'draft'} data-testid="collaboration-message-draft"
-          onChange={event => { if (draftKey) update(draftKey, { text: event.target.value, id: crypto.randomUUID() }); }} /></label>
-        <div className="flex flex-wrap gap-2"><Button type="button" onClick={() => void send()} disabled={!draft?.text.trim() || draft.phase !== 'draft'} data-testid="collaboration-message-send">{t('collaboration.messages.send')}</Button>
+        <label className="block space-y-1 text-xs">{t('collaboration.messages.body')}<Textarea value={draft?.text ?? ''} maxLength={16384} disabled={!draftKey || !editable} data-testid="collaboration-message-draft"
+          onChange={event => { if (draftKey && editable) update(draftKey, { text: event.target.value, id: crypto.randomUUID() }); }} /></label>
+        <div className="flex flex-wrap gap-2"><Button type="button" onClick={() => void send()} disabled={!canSend} data-testid="collaboration-message-send">
+          {t(retry ? 'collaboration.messages.retryOriginal' : 'collaboration.messages.send')}
+        </Button>
           {draft?.phase === 'unknown' && <Button type="button" variant="outline" onClick={() => void check()}>{t('collaboration.messages.check')}</Button>}</div>
       </div>
     </div>}

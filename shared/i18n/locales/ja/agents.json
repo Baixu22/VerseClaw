@@ -13,6 +13,7 @@
             "purpose": "用途",
             "body": "メッセージ",
             "send": "送信",
+            "retryOriginal": "元のメッセージを再送",
             "check": "元の受領記録を読む",
             "purposes": {
                 "finding": "発見",

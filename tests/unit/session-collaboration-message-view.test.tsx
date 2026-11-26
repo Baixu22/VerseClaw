@@ -50,7 +50,7 @@ describe('message view draft ownership', () => {
     expect(mocks.send).toHaveBeenCalledOnce();
   });
 
-  it('re-enables the original draft after the owner confirms that its receipt is absent', async () => {
+  it('retries the original intent without unlocking edits when its receipt is absent', async () => {
     render(<SessionCollaborationMessages requester={source} target={target} />);
     expand();
     const body = await screen.findByTestId('collaboration-message-draft') as HTMLTextAreaElement;
@@ -61,13 +61,20 @@ describe('message view draft ownership', () => {
     const check = await screen.findByRole('button', { name: 'collaboration.messages.check' });
     const first = mocks.send.mock.calls[0][0];
     fireEvent.click(check);
-    await waitFor(() => expect(body.disabled).toBe(false));
-    expect(body.value).toBe(first.message);
+    const retry = await screen.findByRole('button', { name: 'collaboration.messages.retryOriginal' });
+    expect(body.disabled).toBe(true);
+    expect((screen.getByRole('combobox', { name: 'collaboration.messages.purpose' }) as HTMLSelectElement).disabled).toBe(true);
+    fireEvent.change(body, { target: { value: 'A replacement intent' } });
+    expect(Object.values(useSessionCollaborationUi.getState().messageDrafts)[0]).toMatchObject({ id: first.id, text: first.message, phase: 'retry' });
     expect(mocks.list).toHaveBeenCalledWith({ requester: source, target, id: first.id });
     expect(mocks.send).toHaveBeenCalledOnce();
-    fireEvent.click(send);
+    mocks.send.mockResolvedValueOnce({ success: false, phase: 'rejected', receipt: null });
+    fireEvent.click(retry);
     await waitFor(() => expect(mocks.send).toHaveBeenCalledTimes(2));
     expect(mocks.send.mock.calls[1][0]).toEqual(first);
+    await screen.findByRole('button', { name: 'collaboration.messages.check' });
+    expect(body.disabled).toBe(true);
+    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('collaboration.messages.states.unknown'));
   });
 
   it('keeps the new page when a previous-page refresh finishes late', async () => {
