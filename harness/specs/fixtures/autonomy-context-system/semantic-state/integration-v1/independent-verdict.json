@@ -1,0 +1,90 @@
+{
+  "schema": "C02IntegrationFinalVerifier/v1",
+  "actor": "c02-integration-verifier-final",
+  "driven_by": "agent",
+  "providerModel": "ccs-ai/gpt-6.1-sol",
+  "reviewedAt": "2026-11-26T06:20:00Z",
+  "verdict": "accepted",
+  "candidate": {
+    "checkout": "D:/ClawX-work/context-c02-integration-20261126",
+    "commit": "49d5922b7103b7a15953d304eec4d09242322275",
+    "tree": "3bff8a58ca508717eb98717c0f315ee5c6aa6a38",
+    "dirty": false,
+    "parent": "be24bcd9aeb96d239c88708bb92e41bc3186cd29"
+  },
+  "frozenSourceCandidate": {
+    "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+    "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+    "dirty": false
+  },
+  "mergeIdentity": {
+    "mergeCommit": "be24bcd9aeb96d239c88708bb92e41bc3186cd29",
+    "parents": [
+      "917a71cba7b2dfc8aedbdb3b75b7b693e3900f1e",
+      "704f565238581d293263ff7e5c39fa7739686ac8"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "source-identity",
+      "status": "accepted",
+      "evidence": "12 source/blob checks match frozen candidate 205be98dc; candidate commit/tree are recorded and clean."
+    },
+    {
+      "id": "integration-validation",
+      "status": "accepted",
+      "evidence": "Integration r2 has 8 commands with exitCode 0: VerseBrowser build, 106/106 Vitest, tsgo typecheck, contract check, harness validate, comms replay, comms compare, and harness dry-run."
+    },
+    {
+      "id": "desktop-runtime",
+      "status": "accepted",
+      "evidence": "Integration build r1 has 6 commands with exitCode 0, including Vite and OpenClaw runtime builds; Electron r1 is 1/1 passed with retries=0 and no errors."
+    },
+    {
+      "id": "historical-evidence",
+      "status": "accepted",
+      "evidence": "C01/C02 evidence remains candidate-bound; semantic-state v1 validation and independent verdict remain bound to 205be98dc."
+    },
+    {
+      "id": "mainline-and-forest",
+      "status": "accepted",
+      "evidence": "Merge commit be24bcd9 is verified; TF-0956 is done, process exit is 0, and 1645/1645 history frames were read back/exported."
+    }
+  ],
+  "harnessCiStatus": "failed-existing-baseline",
+  "harnessCi": {
+    "commandReceipt": "D:/tmp/autonomy-context-system-20261126/c02-integration-harness-ci-r2-command.json",
+    "exitCode": 1,
+    "precedingHarnessTests": "5 files, 59 tests passed; lifecycle, duplicates, policy docs and catalogs passed.",
+    "failureClass": "agent-dev-audit",
+    "baselineComparison": "c02-harness-baseline-comparison.json",
+    "disqualifierIdentityMatch": true,
+    "disqualifierCount": 8,
+    "tailChecks": "evidence refs and test coverage checks both exit 0"
+  },
+  "remoteCiStatus": "not-started-account-billing",
+  "remoteCiEvidence": "D:/tmp/autonomy-context-system-20261126/c02-remote-ci-status.json",
+  "taskForest": {
+    "node": "TF-0956",
+    "nodeStatus": "done",
+    "historyFrames": 1645,
+    "processExitCode": 0,
+    "resourceSupervisorStatus": "failed",
+    "resourceSupervisorReason": "supervisor observation failed and elapsed upper bound exceeded 1800s; independent Win32 handle observation exitCode=0",
+    "evidence": [
+      "c02-forest-outcome.json",
+      "c02-forest-readback.json",
+      "c02-forest-process-exit.json"
+    ]
+  },
+  "resourceReceipts": {
+    "integrationChecks": "completed/0/sourceUnchanged/treeExited/budgetExceeded=false",
+    "integrationBuild": "completed/0/sourceUnchanged/treeExited/budgetExceeded=false",
+    "integrationElectron": "completed/0/sourceUnchanged/treeExited/budgetExceeded=false"
+  },
+  "sourceBoundary": {
+    "typescriptRootDir": "D:/ClawX-work/context-c02-integration-20261126",
+    "includePaths": "candidate checkout",
+    "nodeModules": "junction used only for dependencies; candidate source paths and build entry remain checkout-bound"
+  }
+}
