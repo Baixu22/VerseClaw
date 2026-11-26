@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { Locator } from '@playwright/test';
-import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
+import { completeSetup, expect, installIpcMocks, pinWindowContentSize, test } from './fixtures/electron';
 
 function stable(value: unknown): string {
   if (!value || typeof value !== 'object') return JSON.stringify(value);
@@ -262,7 +262,7 @@ test('approved solid follows drag, real host requests, retries and shared conver
   await expect(lastAvatar).toHaveAttribute('data-ready', 'true');
   const reducedSvg = lastAvatar.locator('.knowledge-bot__engine svg');
   const reducedFrame = await reducedSvg.innerHTML();
-  await electronApp.evaluate(({ BrowserWindow }) => { BrowserWindow.getAllWindows()[0].setContentSize(960, 760); });
+  await pinWindowContentSize(electronApp, { width: 960, height: 760 });
   await page.screenshot({ path: resolve(evidence, 'narrow-reduced.png') });
   expect(await reducedSvg.innerHTML()).toBe(reducedFrame);
   await page.evaluate(() => document.documentElement.classList.add('dark'));
