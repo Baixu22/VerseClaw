@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
@@ -16,6 +17,9 @@ import {
 import { createRequire } from 'node:module';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { sha256File } from '../rsi-tf0604-baseline.mjs';
+import { stdioPublicProjection } from './rsi-stdio-tasks.mjs';
+import { NATIVE_CHECKER_VERSION, verifyNativeCheckerEvidence } from './rsi-native-checker.mjs';
+import { ISOLATED_PYTHON_VERSION, verifyIsolatedPythonEvidence } from './rsi-isolated-python.mjs';
 
 export const HISTORICAL_CORPUS_PATH = 'harness/specs/fixtures/agent-first-task-corpus/task-corpus.v1.json';
 export const CODING_BINDINGS_PATH = 'harness/specs/fixtures/rsi-coding-cohort/task-bindings.v1.json';
@@ -148,6 +152,15 @@ export function resolveHistoricalTask(root, taskId, { codingCohort = false } = {
     oracleRevision: ref,
     oracleTestDigests,
   };
+  if (result.oracle?.kind === 'stdio') {
+    const target = (result.input?.targetScope ?? result.targetScope)[0], cpp = target.endsWith('.cpp');
+    const identityPath = 'public/' + result.id + '.json';
+    const identity = result.oracle.testPaths.includes(identityPath) ? JSON.parse(gitBlob(root, ref, identityPath).toString('utf8')) : {};
+    result.publicInput = stdioPublicProjection({ prompt: result.input.prompt, target, runtime: cpp ? 'cpp' : 'python3',
+      cppToolchain: identity.cppToolchain, compilerVersion: identity.compilerVersion,
+      pythonVersion: identity.pythonVersion,
+      declaration: identity.declaration ?? 'Write a complete program that reads standard input and writes the required answer to standard output.\n' });
+  }
   return result;
 }
 
@@ -237,6 +250,7 @@ function restoreOracles(workspace, root, task) {
 
 export async function prepareGradeWorkspace({ root, task, workspace, revision, edits } = {}) {
   if (!root || !task || !workspace || !revision) throw new Error('root, task, workspace and revision are required');
+  if (task.oracle?.kind === 'stdio') return prepareStdioGradeWorkspace({ root, task, workspace, revision, edits });
   assertTempPath(workspace, 'grade workspace');
   if (existsSync(workspace)) throw new Error(`grade workspace already exists: ${workspace}`);
   if (!gitObjectExists(root, revision)) throw new Error(`git object missing: ${revision}`);
@@ -257,10 +271,44 @@ export async function prepareGradeWorkspace({ root, task, workspace, revision, e
   return { workspace: resolve(workspace), revision, edits: applied, oracleFiles };
 }
 
+/** Extract only this stdio task's public identity, optional subject and frozen oracle. */
+export async function prepareStdioGradeWorkspace({ root, task, workspace, revision, edits } = {}) {
+  if (!root || !task || !workspace || !revision) throw new Error('root, task, workspace and revision are required');
+  assertTempPath(workspace, 'grade workspace');
+  if (task.oracle?.kind !== 'stdio') throw new Error('stdio task required');
+  if (existsSync(workspace)) throw new Error(`grade workspace already exists: ${workspace}`);
+  mkdirSync(workspace, { recursive: true });
+  for (const path of task.oracle.testPaths) {
+    const relativePath = safeRelativePath(path), bytes = gitBlob(root, task.oracleRevision, relativePath);
+    if (digest(bytes) !== task.oracleTestDigests[relativePath]) throw new Error(`frozen oracle digest mismatch: ${relativePath}`);
+    const target = assertNoSymlinkChain(workspace, relativePath);
+    mkdirSync(dirname(target), { recursive: true }); writeFileSync(target, bytes);
+  }
+  const targetPath = task.input.targetScope[0];
+  if (revision === task.ref) {
+    const bytes = gitBlob(root, task.ref, targetPath);
+    const target = assertNoSymlinkChain(workspace, targetPath);
+    mkdirSync(dirname(target), { recursive: true }); writeFileSync(target, bytes);
+  }
+  const applied = applyEdits(workspace, task, edits);
+  return { workspace: resolve(workspace), revision, edits: applied,
+    oracleFiles: task.oracle.testPaths.map(safeRelativePath) };
+}
+
 function commandLines(task) {
+  if ((task.publicInput ?? task.input)?.taskKind === 'stdio-program' || task.oracle?.kind === 'stdio') return ['internal:stdio-oracle'];
   const values = task.oracle?.commandLines ?? (task.oracle?.commandLine ? [task.oracle.commandLine] : []);
   if (!values.length || values.some((value) => typeof value !== 'string' || !value.trim())) throw new Error('registered oracle commands missing');
   return values;
+}
+
+function resolveRegisteredStdioCommand(task, root, workspace) {
+  const input = task.publicInput ?? task.input;
+  if (input?.taskKind !== 'stdio-program' || !['python3', 'cpp'].includes(input.runtime)) throw new Error('invalid stdio oracle contract');
+  const script = join(root, 'scripts/lib/rsi-stdio-oracle.mjs');
+  if (!existsSync(script)) throw new Error('stdio grader missing');
+  return { kind: 'command', cwd: workspace, argv: [process.execPath, script, '--case-id', task.id, '--workspace', workspace],
+    usesRootDeps: false };
 }
 
 function splitCommand(command) {
@@ -391,6 +439,7 @@ function runProcess(argv, { cwd, timeoutMs, stdoutPath, stderrPath }) {
   const stdoutFd = openSync(stdoutPath, 'wx');
   const stderrFd = openSync(stderrPath, 'wx');
   try {
+    const started = performance.now();
     const result = spawnSync(argv[0], argv.slice(1), {
       cwd,
       env: sanitizedEnvironment(join(dirname(stdoutPath), 'home')),
@@ -401,7 +450,8 @@ function runProcess(argv, { cwd, timeoutMs, stdoutPath, stderrPath }) {
     });
     writeFileSync(stdoutFd, result.stdout ?? '');
     writeFileSync(stderrFd, result.stderr ?? '');
-    return { exitCode: result.status, signal: result.signal, timedOut: result.error?.code === 'ETIMEDOUT', error: result.error ?? null };
+    return { exitCode: result.status, signal: result.signal, timedOut: result.error?.code === 'ETIMEDOUT',
+      error: result.error ?? null, errorCode: result.error?.code ?? null, elapsedMs: Math.round(performance.now() - started) };
   } finally {
     closeSync(stdoutFd);
     closeSync(stderrFd);
@@ -411,6 +461,39 @@ function runProcess(argv, { cwd, timeoutMs, stdoutPath, stderrPath }) {
 function parseReport(path) {
   if (!existsSync(path)) return null;
   try { return readJson(path); } catch { return null; }
+}
+
+function parseStdioReport(path, task, workspace) {
+  const report = parseReport(path);
+  const valid = ['RsiStdioOracleReport/v1', 'RsiStdioOracleReport/v2', 'RsiStdioOracleReport/v3'].includes(report?.schemaVersion) && report.caseId === task.id
+    && Array.isArray(report.results) && report.results.every(row => typeof row?.passed === 'boolean')
+    && typeof report.passed === 'boolean'
+    && ['total', 'passed', 'failed', 'timedOut'].every(field => Number.isInteger(report.counts?.[field]) && report.counts[field] >= 0);
+  if (!valid) return null;
+  const native = task.oracle.comparisonProtocol === NATIVE_CHECKER_VERSION;
+  const isolatedPython = task.oracle.comparisonProtocol === ISOLATED_PYTHON_VERSION;
+  if (report.schemaVersion !== (native ? 'RsiStdioOracleReport/v2' : isolatedPython ? 'RsiStdioOracleReport/v3' : 'RsiStdioOracleReport/v1')) return null;
+  if (isolatedPython) {
+    if (report.outputComparison !== ISOLATED_PYTHON_VERSION || report.privatePythonDigest !== task.oracle.privatePythonDigest) return null;
+    if (report.failureClass === 'infrastructure' && report.passed !== false) return null;
+    if (report.failureClass !== 'infrastructure') {
+      try {
+        const oracle = readJson(join(workspace, 'oracles', task.id + '.json'));
+        verifyIsolatedPythonEvidence(report, { id: task.id, vectors: oracle.tests, privatePython: oracle.privatePython }, workspace);
+      } catch { return null; }
+    }
+  }
+  if (native) {
+    if (report.outputComparison !== NATIVE_CHECKER_VERSION || report.nativeCheckerDigest !== task.oracle.nativeCheckerDigest) return null;
+    if (!report.sourceMissing && report.failureClass !== 'infrastructure') {
+      if (report.workerReportVersion !== 'RsiNativeCheckerWorker/v2') return null;
+      try {
+        const privateOracle = readJson(join(workspace, 'oracles', task.id + '.json'));
+        verifyNativeCheckerEvidence(report, { id: task.id, vectors: privateOracle.tests, nativeChecker: privateOracle.nativeChecker }, workspace);
+      } catch { return null; }
+    }
+  }
+  return report;
 }
 
 function oracleState(root, workspace, task) {
@@ -425,7 +508,17 @@ function oracleState(root, workspace, task) {
       workspace: fileDigest(assertNoSymlinkChain(workspace, path)),
     };
   }
-  return { task: rawDigest(task.oracle), files, combined: rawDigest({ oracle: task.oracle, files }) };
+  const state = { task: rawDigest(task.oracle), files };
+  return { ...state, combined: rawDigest(state) };
+}
+
+function stdioOracleState(workspace, task) {
+  const privateFileDigest = [NATIVE_CHECKER_VERSION, ISOLATED_PYTHON_VERSION].includes(task.oracle.comparisonProtocol)
+    ? path => digest(readFileSync(path)) : fileDigest;
+  const files = Object.fromEntries(task.oracle.testPaths.map(path => [path,
+    { expected: task.oracleTestDigests[path], root: task.oracleTestDigests[path], workspace: privateFileDigest(assertNoSymlinkChain(workspace, path)) }]));
+  const state = { task: rawDigest(task.oracle), files };
+  return { ...state, combined: rawDigest(state) };
 }
 
 export function missingModuleDiagnostics(report, workspace, task) {
@@ -480,11 +573,13 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
   if (existsSync(join(outDir, 'run-report.json'))) throw new Error(`grader output already exists: ${outDir}`);
 
   const commands = commandLines(task);
-  const descriptors = commands.map((command) => ({ command, ...resolveRegisteredCommand(command, { root, workspace }) }));
+  const descriptors = commands.map((command) => ({ command, ...(command === 'internal:stdio-oracle'
+    ? resolveRegisteredStdioCommand(task, supportRoot ?? root, workspace) : resolveRegisteredCommand(command, { root, workspace })) }));
   if (descriptors.some((descriptor) => descriptor.kind === 'vitest')) {
     for (const descriptor of descriptors) descriptor.usesRuntimeDeps = true;
   }
-  const before = oracleState(root, workspace, task);
+  const before = task.oracle?.kind === 'stdio' ? stdioOracleState(workspace, task) : oracleState(root, workspace, task);
+  if (task.oracle?.kind === 'stdio') for (const row of Object.values(before.files)) assert.equal(row.workspace, row.expected, 'stdio-oracle-digest');
   if (Object.values(before.files).some((entry) => entry.root !== entry.expected || entry.workspace !== entry.expected)) throw new Error('frozen-oracle-input-drift');
   const executions = [];
   const diagnostics = [];
@@ -496,10 +591,12 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
       const stdoutPath = join(outDir, `${stem}-stdout.log`);
       const stderrPath = join(outDir, `${stem}-stderr.log`);
       const reportPath = join(outDir, `${stem}-vitest-report.json`);
+      const stdioReportPath = join(workspace, 'stdio-report.json');
       const argv = descriptor.kind === 'vitest' ? [...descriptor.argv, '--reporter=json', `--outputFile=${reportPath}`] : descriptor.argv;
       const result = runProcess(argv, { cwd: descriptor.cwd, timeoutMs, stdoutPath, stderrPath });
-      const report = descriptor.kind === 'vitest' ? parseReport(reportPath) : { kind: 'command', exitCode: result.exitCode,
-        stdoutDigest: fileDigest(stdoutPath), stderrDigest: fileDigest(stderrPath) };
+      const report = descriptor.kind === 'vitest' ? parseReport(reportPath) : descriptor.command === 'internal:stdio-oracle'
+        ? parseStdioReport(stdioReportPath, task, workspace) : { kind: 'command', exitCode: result.exitCode,
+          stdoutDigest: fileDigest(stdoutPath), stderrDigest: fileDigest(stderrPath) };
       executions.push({
         command: descriptor.command,
         actualArgv: argv,
@@ -509,28 +606,40 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
         timedOut: result.timedOut,
         signal: result.signal,
         error: result.error ? result.error.message : null,
+        errorCode: result.errorCode,
+        elapsedMs: result.elapsedMs,
         report,
-        reportPath: descriptor.kind === 'vitest' ? reportPath : null,
+        reportPath: descriptor.kind === 'vitest' ? reportPath : descriptor.command === 'internal:stdio-oracle' ? stdioReportPath : null,
         stdoutPath,
         stderrPath,
       });
       diagnostics.push(...missingModuleDiagnostics(report, workspace, task));
       if (descriptor.kind === 'vitest' && !report) diagnostics.push({ kind: 'vitest-report-missing', command: descriptor.command });
+      if (descriptor.command === 'internal:stdio-oracle' && !report) diagnostics.push({ kind: 'stdio-report-missing-or-invalid',
+        command: descriptor.command, message: stdioReportPath });
     }
   } finally {
     for (const target of ownedLinks.reverse()) removeOwnedDirectoryLink(target);
   }
 
   let after;
-  try { after = oracleState(root, workspace, task); }
+  try { after = task.oracle?.kind === 'stdio' ? stdioOracleState(workspace, task) : oracleState(root, workspace, task); }
   catch (error) {
     diagnostics.push({ kind: 'oracle-hash-after-error', message: error.message });
     after = { task: null, files: {}, combined: null };
   }
   const oracleUnchanged = before.combined === after.combined;
   if (!oracleUnchanged) diagnostics.push({ kind: 'oracle-drift' });
-  const counts = aggregates(executions);
+  const counts = aggregates(executions.filter(execution => execution.command !== 'internal:stdio-oracle'));
+  for (const execution of executions) if (execution.command === 'internal:stdio-oracle' && execution.report) {
+    counts.numTotalTests += execution.report.counts?.total ?? 0;
+    counts.numPassedTests += execution.report.counts?.passed ?? 0;
+    counts.numFailedTests += execution.report.counts?.failed ?? 0;
+  }
   const validTests = (execution) => {
+    if (execution.command === 'internal:stdio-oracle') return ['RsiStdioOracleReport/v1', 'RsiStdioOracleReport/v2', 'RsiStdioOracleReport/v3'].includes(execution.report?.schemaVersion)
+      && execution.report.passed === true && execution.report.results?.length > 0
+      && execution.report.results.every(row => row.passed === true);
     if (execution.kind !== 'vitest') return true;
     const report = execution.report;
     const assertions = report?.testResults?.flatMap((suite) => suite.assertionResults ?? []) ?? [];
@@ -544,10 +653,14 @@ export async function runLiveTaskOracles({ root, task, workspace, outDir, timeou
     && executions.every((execution) => execution.exitCode === 0 && !execution.timedOut && execution.error === null)
     && executions.every(validTests);
   const missingFailure = classifyMissingModuleFailure(diagnostics);
-  const executionInfrastructure = diagnostics.some((entry) => entry.kind === 'vitest-report-missing' || entry.kind === 'oracle-hash-after-error')
+  const executionInfrastructure = diagnostics.some((entry) => ['vitest-report-missing', 'stdio-report-missing-or-invalid', 'oracle-hash-after-error'].includes(entry.kind))
     || executions.some((execution) => execution.timedOut || execution.error !== null);
   const failureClass = passed ? null
     : !oracleUnchanged ? 'oracle-input-drift'
+      : executions.some(execution => execution.command === 'internal:stdio-oracle' && execution.report?.sourceMissing) ? 'target-module-absent'
+      : executions.some(execution => execution.command === 'internal:stdio-oracle' && (execution.report?.failureClass === 'infrastructure'
+        || !['RsiStdioOracleReport/v2', 'RsiStdioOracleReport/v3'].includes(execution.report?.schemaVersion) && (execution.report?.executionEnvironment === 'wsl-unavailable'
+        || execution.report?.compileError || execution.report?.results?.some(row => row.timedOut)))) ? 'infrastructure'
       : missingFailure.failureClass === 'infrastructure' || executionInfrastructure ? 'infrastructure'
         : missingFailure.failureClass === 'target-module-absent' ? 'target-module-absent'
           : 'assertion';

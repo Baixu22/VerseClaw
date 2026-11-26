@@ -1,0 +1,15 @@
+import type { BenefitTask } from './rsi-benefit-eval.mjs';
+export type IndependentCodingCase = { id: string; name: string; split: 'validation' | 'heldOut'; prompt: string;
+  declaration: string; reference: string; vectors: Array<{ args: unknown[]; expected?: unknown; throws?: boolean }>;
+  safetyRequired?: boolean; anchor?: 'positive' | 'negative' | null; provenance?: Record<string, unknown> };
+export type IndependentCodingPack = { schemaVersion: 'RsiIndependentCodingCases/v1' | 'RsiIndependentCodingCases/v2'; driven_by: 'agent'; actor: string;
+  publicErrorConvention?: string; cases: IndependentCodingCase[] };
+export type ConstructedRegistry = { repository: string; tasks: Array<BenefitTask & { studySplit: 'validation' | 'heldOut' }>;
+  registryCommit: string; packDigest: string; collectorVersion: string };
+export function codingFileHash(path: string): string;
+export function codingGit(root: string, args: string[]): string;
+export function codingTempPath(directory: string): string;
+export function readCodingJson(path: string): any;
+export function writeCodingJson(path: string, value: unknown): void;
+export function createConstructedTasks(root: string, directory: string, pack: IndependentCodingPack, collectorVersion?: string): ConstructedRegistry;
+export function verifyConstructedTasks(registry: ConstructedRegistry, pack: IndependentCodingPack, expectedCollectorVersion?: string): true;

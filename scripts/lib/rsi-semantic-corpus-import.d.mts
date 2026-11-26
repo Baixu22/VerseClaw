@@ -1,0 +1,70 @@
+export type SemanticImportSplit = 'validation' | 'heldOut';
+export type SemanticImportLanguage = 'javascript' | 'python' | 'cpp' | 'java';
+export type SemanticImportTest = { kind: 'function' | 'stdio'; visibility: 'public' | 'private'; input: unknown; output: unknown;
+  fnName?: string; testId?: string; provenanceField?: string; comparison?: 'json' };
+export type SemanticImportRecord = { upstreamId: string | number; sourceIdentity?: string; split: SemanticImportSplit; prompt: string;
+  reference: { language: SemanticImportLanguage; runtime?: string; source: string }; tests: SemanticImportTest[]; acceptanceCriteria?: string[];
+  errorConvention?: string; taskKind?: string; publicContract?: any; upstreamRecord?: unknown;
+  sourceIdentityEvidence?: 'upstream-url' | 'source-name' | 'pinned-row' };
+export type SemanticImportSource = { sourceId: string; repository: string; datasetVersion: string; revision: string; fileSha256: string; inputFormat?: string;
+  stdioAdapter?: 'newline-lines';
+  license: { spdx: string; sha256: string }; language: SemanticImportLanguage;
+  runner: { kind: 'function-vectors' | 'stdio-program'; adapter: string } };
+export type SemanticImportFamily = { familyId: string; upstreamIds: Array<string | number>; basis: string };
+export type SemanticImportedTask = { id: string; split: SemanticImportSplit; familyId: string; publicInput: Record<string, unknown>;
+  oracle: { reference: { language: SemanticImportLanguage; source: string; sha256: string }; tests: Array<Record<string, unknown>>; sha256: string };
+  safetyRequired?: boolean; anchor?: 'positive' | 'negative' | null; provenance: Record<string, unknown> };
+export type SemanticImportResult = { schemaVersion: 'RsiPublicSemanticCorpus/v1'; datasetVersion: 'RsiPublicSemanticCases/v1';
+  driven_by: 'agent'; actor: string; realHumanEvidence: false; source: SemanticImportSource; inferenceUnit: 'reviewed-upstream-family';
+  counts: { records: number; families: number; tasks: number; bySplit: Record<SemanticImportSplit, number> };
+  requirements: { requiredFamiliesPerSplit: number; requiredFamiliesTotal: number; completeFamilyReviewRequired: true;
+    sourceHashRevisionTestsAndReferenceRequired: true; acceptedRecordDigests: number | null }; formalPopulationReady: boolean; familyPopulationReady: boolean; gaps: string[];
+  acceptedRecordDigests: string[]; recordDigests: string[]; sourceIdentity?: Record<string, unknown>; adapter?: Record<string, unknown>; tasks: SemanticImportedTask[]; rejectedInputs?: Array<{ line: number; code: string; message?: string; upstreamId?: string }> };
+
+export const SEMANTIC_IMPORT_REQUIRED_FAMILIES_PER_SPLIT: 3132;
+export const SEMANTIC_IMPORT_SPLITS: readonly SemanticImportSplit[];
+export function freezeSemanticStdioCasesV2(result: SemanticImportResult, admission: CodeContestsAdmission): Record<string, any>;
+export function semanticCorpusDigest(value: unknown): string;
+export function referenceShape(reference: SemanticImportRecord['reference'], appsFunctionName?: string): string;
+export function freezeSemanticIndependentCasesV2(result: SemanticImportResult, options?: { publicErrorConvention?: string }): {
+  schemaVersion: 'RsiIndependentCodingCases/v2'; datasetVersion: 'RsiSemanticIndependentCases/v2'; driven_by: 'agent';
+  actor: string; realHumanEvidence: false; cases: Array<Record<string, unknown>> };
+export function importSemanticCorpus(options: { source: SemanticImportSource; records: SemanticImportRecord[];
+  families?: SemanticImportFamily[]; actor?: string; requiredFamiliesPerSplit?: number;
+  acceptedRecordDigests?: Set<string> | null; enforceDistinctImplementation?: boolean; representativeOnly?: boolean }): SemanticImportResult;
+export function canonicalizeCodeContestsRow(row: Record<string, any>, options?: { split?: SemanticImportSplit; relativeId?: string | null;
+  shard?: string | null; rowIndex?: number | null }): SemanticImportRecord;
+export function tacoSourceIdentity(row: Record<string, any>, options: { revision: string; shard: string; rowIndex: number }): {
+  sourceIdentity: string; sourceIdentityEvidence: 'upstream-url' | 'source-name' | 'pinned-row' };
+export function canonicalizeTacoRow(row: Record<string, any>, options: { revision: string; shard: string; rowIndex: number;
+  split?: SemanticImportSplit; functionAdapter?: 'reject' | 'json-stdio'; stdioAdapter?: 'strings' | 'newline-lines' }): SemanticImportRecord;
+export function buildCodeContestsFamilyReview(options: { index: Array<Record<string, any>>; prompts?: Record<string, string> | null }): { schemaVersion: 'RsiSemanticFamilyReview/v1'; driven_by: 'agent'; actor: string; realHumanEvidence: false; method: string; completeWithinImport: true; counts: { records: number; families: number; variantFamilies: number }; families: Array<{ familyId: string; upstreamIds: string[]; basis: string; review: Record<string, unknown> }> };
+
+export type CodeContestsSplitFreeze = {
+  schemaVersion: 'RsiCodeContestsSplitFreeze/v1'; driven_by: 'agent'; realHumanEvidence: false; method: string; seed: string;
+  runtime: string | null; requiredFamiliesPerSplit: number; requiredFamiliesTotal: number;
+  sourceIdentity: { familyReviewDigest: string; indexDigest: string };
+  counts: { eligibleFamilies: number; selectedFamilies: number; excludedFamilies: number };
+  splits: Record<'validation' | 'heldOut', Array<{ familyId: string; upstreamIds: string[]; representative: string; runtime: string; rank: string; split: 'validation' | 'heldOut' }>>;
+  exclusions: { familyIdsDigest: string } };
+export type CodeContestsAdmission = {
+  schemaVersion: 'RsiCodeContestsAdmission/v1'; driven_by: 'agent'; realHumanEvidence: false; method: string; seed: string;
+  runtime: string | null; requiredFamiliesPerSplit: number; requiredFamiliesTotal: number;
+  sourceIdentity: { familyReviewDigest: string; indexDigest: string; auditDigest: string };
+  counts: { eligibleFamilies: number; auditedFamilies: number; admittedFamilies: number; rejectedFamilies: number;
+    selectedFamilies: number; excludedAdmittedFamilies: number; excludedDuplicateFamilies?: number; excludedInsufficientTestFamilies?: number };
+  splits: Record<'validation' | 'heldOut', Array<{ familyId: string; upstreamIds: string[]; representative: string; runtime: string; rank: string; split: 'validation' | 'heldOut' }>>;
+  exclusions: { rejectedDigest: string; remainingDigest: string } };
+export function selectCodeContestsAdmittedSplits(options: { familyReview: Record<string, any>; index: Array<Record<string, any>>;
+  audit: Array<{ familyId: string; status: 'passed' | 'mismatch' }>; requiredFamiliesPerSplit: number; seed: string;
+  runtime?: string | string[] | null; prompts?: Map<string, string> | null }): CodeContestsAdmission;
+export function freezeCodeContestsFamilySplits(options: { familyReview: Record<string, any>; index: Array<Record<string, any>>;
+  requiredFamiliesPerSplit: number; seed: string; runtime?: string | null }): CodeContestsSplitFreeze;
+export function buildCodeContestsCanonicalCorpus(options: { shards: Array<{ name: string; sha256: string; bytes?: number | null;
+  rows: Array<Record<string, any>> }>; split?: SemanticImportSplit }): { schemaVersion: 'RsiSemanticCanonicalCorpus/v1';
+  driven_by: 'agent'; actor: string; realHumanEvidence: false; split: SemanticImportSplit;
+  shards: Array<{ name: string; sha256: string; bytes: number | null; rows: number; accepted: number; rejected: number }>;
+  records: SemanticImportRecord[]; rejected: Array<{ shard: string; rowIndex: number; code: string }>;
+  counts: { rows: number; accepted: number; rejected: number } };
+export function parseAppsJsonl(text: string, options?: { split?: SemanticImportSplit; functionAdapter?: 'reject' | 'json-stdio'; stdioAdapter?: 'strings' | 'newline-lines' }): { records: SemanticImportRecord[]; rejected: Array<Record<string, unknown>> };
+export function parseCodeContestsJson(text: string, options?: { split?: SemanticImportSplit }): { records: SemanticImportRecord[]; rejected: Array<Record<string, unknown>> };
