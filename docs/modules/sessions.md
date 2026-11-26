@@ -60,6 +60,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 `sessions.collaborationContext` 读取当前目标 scope 的原 TaskSystem 合同、checkpoint、证据和有界上下文。observer 保留只读引用身份，读取不取得 claim；旧 Ledger WorkingContext 在缺少已验证关联时显示 association-not-verified，不隐式桥接或迁移。
 
+`task_control.publishMaterial` 将当前任务的事实、主张、决策候选、产物、冲突和交接记录发布到原 TaskSystem。发布携带稳定 `material.id`、摘要、证据引用、敏感性及可选适用条件和到期时间。来源绑定当前运行与会话代次。摘要字节或产物哈希经当前任务证据确认后可标为 `evidence-backed`，缺少对应证据的事实保留为 `claim`。相同意图重试返回首次发布回执。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

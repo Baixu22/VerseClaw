@@ -30,6 +30,8 @@ import { taskSimilarity } from "./recognition.js";
 import { nextReadyPlanChild, TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
 import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReference, type TaskArtifactRetentionReceipt } from './artifact-retention.js';
 import type { TaskModelCall, TaskModelUsage, TaskTraceEvent, TaskTraceSnapshot } from './trace.js';
+import { parseSessionCollaborationMaterial, type SessionCollaborationMaterial } from '../types/session-collaboration-material.js';
+import { normalizeAutonomySessionScope, normalizeRunScope, type AutonomySessionScope } from '../types/identity-scope.js';
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
@@ -49,6 +51,8 @@ function withinPath(root: string, pathname: string): boolean {
   return offset === '' || (offset !== '..' && !offset.startsWith(`..${sep}`) && !isAbsolute(offset));
 }
 type Row = { json: string };
+// Material text belongs to the scoped collaboration reader. Generic task feeds can span workspaces.
+const UNSCOPED_TASK_EVENT_FILTER = "kind NOT GLOB 'shared_material_*'";
 const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const text = (value: unknown, name: string, max = 2_000): string => {
   if (typeof value !== "string" || !value.trim() || value.length > max)
@@ -601,7 +605,7 @@ export class TaskSystemStore {
     this.assertReadCurrent();
     return this.db
       .prepare(
-        `SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? ORDER BY seq ${direction === 'desc' ? 'DESC' : 'ASC'} LIMIT ?`,
+        `SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? AND ${UNSCOPED_TASK_EVENT_FILTER} ORDER BY seq ${direction === 'desc' ? 'DESC' : 'ASC'} LIMIT ?`,
       )
       .all(taskNodeId, Math.max(0, afterSequence), Math.min(500, Math.max(1, limit))) as Array<{
       seq: number;
@@ -609,6 +613,67 @@ export class TaskSystemStore {
       at: number;
       json: string;
     }>;
+  }
+  publishSharedMaterial(
+    credential: TaskCredential,
+    input: unknown,
+    runId: string,
+    readSource: () => AutonomySessionScope,
+  ): SessionCollaborationMaterial {
+    const intent = parseSessionCollaborationMaterial(input);
+    return this.transaction(() => {
+      const source = readSource();
+      if (source.sessionKey !== credential.sessionKey || source.sessionGeneration !== credential.generation)
+        throw new Error('MATERIAL_SOURCE_SCOPE_MISMATCH');
+      const sourceRun = normalizeRunScope({ runId, scope: source });
+      const { contract } = this.assertOwner(credential);
+      if (contract.state === 'cancelling') throw new Error('TASK_EXECUTION_NOT_RUNNING');
+      const active = this.db.prepare('SELECT run_id FROM task_active_runs WHERE task_id=? AND epoch=?')
+        .get(credential.taskNodeId, credential.epoch) as { run_id: string } | undefined;
+      if (active && active.run_id !== sourceRun.runId) throw new Error('MATERIAL_SOURCE_RUN_STALE');
+      const task = { taskNodeId: contract.taskNodeId, taskRevision: contract.revision, taskDigest: contract.digest };
+      return this.request(`material:${intent.id}`, { task, source, epoch: credential.epoch, intent }, () => {
+        const createdAt = this.now();
+        if (intent.expiresAt !== undefined && intent.expiresAt <= createdAt) throw new Error('MATERIAL_EXPIRED');
+        const checkedFiles = new Map<string, { path: string; sha256: string }>();
+        const checkFile = (path: string) => {
+          const checked = checkedFiles.get(path) ?? this.hashWorkspaceFile(path);
+          checkedFiles.set(path, checked);
+          checkedFiles.set(checked.path, checked);
+          return checked;
+        };
+        const proofFiles = new Map<string, string>();
+        const repairAttempt = this.repairAttempt(task.taskNodeId);
+        for (const ref of intent.evidenceRefs) {
+          const receipt = this.read<TaskEvidence>('SELECT json FROM task_evidence WHERE task_id=? AND id=?', task.taskNodeId, ref);
+          if (!receipt || receipt.revision !== task.taskRevision || receipt.epoch !== credential.epoch ||
+              (receipt.repairAttempt ?? 0) !== repairAttempt) throw new Error('MATERIAL_EVIDENCE_UNVERIFIED');
+          for (const file of [receipt, ...(receipt.inputArtifacts ?? [])]) {
+            const checked = checkFile(file.path);
+            if (checked.sha256 !== file.sha256) throw new Error('TASK_EVIDENCE_STALE');
+            proofFiles.set(checked.path, checked.sha256);
+          }
+        }
+        const artifacts = intent.artifactRefs?.map(ref => {
+          const current = checkFile(ref.path);
+          if (current.sha256 !== ref.sha256) throw new Error('MATERIAL_ARTIFACT_HASH_MISMATCH');
+          return current;
+        });
+        const artifactRefs = artifacts?.map(file => ({ path: relative(this.domain.worktree, file.path).replace(/\\/g, '/'), sha256: file.sha256 }));
+        // A verified file only confirms statements whose bytes are bound to its receipt.
+        const summaryHash = createHash('sha256').update(intent.summary).digest('hex');
+        const backed = intent.kind === 'artifact' ? Boolean(artifacts?.length && artifacts.every(file => proofFiles.get(file.path) === file.sha256))
+          : (intent.kind === 'fact' || intent.kind === 'decision') && Array.from(proofFiles.values()).includes(summaryHash);
+        const content = { ...intent, artifactRefs, kind: intent.kind === 'fact' && !backed ? 'claim' as const : intent.kind };
+        const material: SessionCollaborationMaterial = {
+          ...content, ...task, version: 1, authorityId: this.domain.id, sourceGeneration: source.sessionGeneration,
+          sourceRun, contentDigest: digest(content), state: backed ? 'evidence-backed' : 'claim', createdAt,
+        };
+        normalizeAutonomySessionScope(readSource(), source);
+        this.event(task.taskNodeId, 'shared_material_published', material);
+        return material;
+      });
+    });
   }
   traceSnapshot(taskNodeId: string): TaskTraceSnapshot {
     return this.transaction(() => {
@@ -627,7 +692,7 @@ export class TaskSystemStore {
         seen.add(id);
         const child = this.get(id); descendants.push(child); pending.push(...(child.childTaskNodeIds ?? []));
       }
-      const readEvents = (id: string): TaskTraceEvent[] => (this.db.prepare('SELECT seq,kind,at,json FROM task_events WHERE task_id=? ORDER BY seq')
+      const readEvents = (id: string): TaskTraceEvent[] => (this.db.prepare(`SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND ${UNSCOPED_TASK_EVENT_FILTER} ORDER BY seq`)
         .all(id) as Array<{ seq: number; kind: string; at: number; json: string }>).map(({ json, ...row }) => ({ ...row, payload: JSON.parse(json) }));
       const events = readEvents(taskNodeId);
       const familyEvents = [events, ...descendants.map(child => readEvents(child.contract.taskNodeId))].flat();
@@ -659,7 +724,7 @@ export class TaskSystemStore {
           | undefined
       )?.sequence ?? 0;
     const rows = this.db
-      .prepare("SELECT seq,task_id,kind,at,json FROM task_events WHERE seq>? ORDER BY seq LIMIT ?")
+      .prepare(`SELECT seq,task_id,kind,at,json FROM task_events WHERE seq>? AND ${UNSCOPED_TASK_EVENT_FILTER} ORDER BY seq LIMIT ?`)
       .all(sequence, Math.max(1, Math.min(500, limit))) as Array<{
       seq: number;
       task_id: string;
