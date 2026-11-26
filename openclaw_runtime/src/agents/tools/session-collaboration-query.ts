@@ -11,24 +11,25 @@ export type SessionCollaborationToolContext = {
   agentSessionKey?: string;
   runSessionKey?: string;
   agentSessionId?: string;
+  runId?: string;
   config?: OpenClawConfig;
   callGateway?: typeof callGateway;
 };
 
-function readToolOwner(opts: SessionCollaborationToolContext | undefined) {
+export function readSessionCollaborationToolOwner(opts: SessionCollaborationToolContext | undefined) {
   const key = opts?.runSessionKey ?? opts?.agentSessionKey;
   const generation = opts?.agentSessionId;
   if (!key || !generation) throw new TypeError('Current run session identity required');
   const loaded = loadSessionEntry(key, { readOnly: true, skipCache: true });
   const owner = sessionActivityOwnerScope(loaded.canonicalKey, loaded.entry);
   if (!owner || loaded.canonicalKey !== key || loaded.legacyKey) throw new TypeError('Current session owner unavailable');
-  return { owner, generation };
+  return { owner, generation, root: loaded.entry?.workspaceDir ?? loaded.entry?.spawnedWorkspaceDir };
 }
 
 export async function querySessionCollaborationMaterialsTool(opts: SessionCollaborationToolContext | undefined, value: unknown) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.hasOwn(value, 'requester'))
     throw new TypeError('Material search expects filters and the current run identity');
-  const { owner, generation } = readToolOwner(opts);
+  const { owner, generation } = readSessionCollaborationToolOwner(opts);
   const query = parseSessionCollaborationMaterialQuery({ ...value, requester: { ...owner, sessionGeneration: generation } });
   if (owner.sessionGeneration !== generation) return emptyMaterialPage(query, 'stale', 'generation-changed');
   try {
@@ -47,7 +48,7 @@ export async function querySessionCollaborationTool(opts: SessionCollaborationTo
   if (detail && params.model !== undefined) throw new TypeError('readOnly status cannot change a model');
   const fields = detail ? ['readOnly', 'scope', 'sessionKey', 'fields'] : ['collaboration', 'workspace', 'search', 'limit', 'cursor', 'fields'];
   if (Object.keys(params).some(field => !fields.includes(field))) throw new TypeError('Unexpected collaboration tool parameter');
-  const { owner, generation } = readToolOwner(opts);
+  const { owner, generation } = readSessionCollaborationToolOwner(opts);
   const query: SessionCollaborationQuery = { requester: { ...owner, sessionGeneration: generation },
     ...(params.workspace === undefined ? {} : { workspace: params.workspace as SessionCollaborationQuery['workspace'] }),
     ...(params.search === undefined ? {} : { search: params.search as string }),

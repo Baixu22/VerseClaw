@@ -54,6 +54,7 @@ type ModelCallDiagnosticContext = {
   onStarted?: (info: { callId: string }) => void;
   onUsageStarted?: (info: { callId: string }) => void;
   onUsage?: (info: { callId: string; startedAt: number; endedAt: number; snapshot: DiagnosticModelCallUsageSnapshot }) => void;
+  wrapCall?: (stream: StreamFn, callId: string) => StreamFn;
   onFinished?: (info: {
     callId: string;
     outcome: "completed" | "error";
@@ -722,7 +723,7 @@ export function wrapStreamFnWithDiagnosticModelCallEvents(
     const propagatedOptions = withDiagnosticTraceparentHeader(options, trace, state);
 
     try {
-      const result = streamFn(model, streamContext, propagatedOptions);
+      const result = (ctx.wrapCall?.(streamFn, callId) ?? streamFn)(model, streamContext, propagatedOptions);
       if (isPromiseLike(result)) {
         return result.then(
           (resolved) => observeModelCallResult(resolved, eventBase, startedAt, state),

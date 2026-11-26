@@ -2420,6 +2420,27 @@ export function createSessionsApi(ctx: {
         return { success: true, materials };
       } catch { return { success: true, materials: emptyMaterialPage(query, 'unavailable', 'owner-unavailable') }; }
     },
+    presentCollaborationMaterial: async ({ id, ...payload }) => {
+      const query = parseSessionCollaborationMaterialQuery(payload);
+      if (!/^[A-Za-z0-9._:-]{1,160}$/.test(id) || !query.target || !query.ref) throw new TypeError('Exact material presentation required');
+      const { requester, target, ref } = query;
+      try {
+        const source = await readCollaborationSender();
+        if (!source || !ctx.gatewayManager) return { success: true, recorded: false };
+        normalizeAutonomySessionScope(requester, source.scope);
+        const result = await ctx.gatewayManager.rpc<{ materials: unknown }>('session.activitySnapshot', { materials: query }, 15_000);
+        if (!validateMaterialPage(query, result.materials).detail) return { success: true, recorded: false };
+        const binding = await getPersistedCoordinatorBinding(requester.workspaceId, requester.sessionKey);
+        const { recordExecutionMaterialObservations } = await import('../../openclaw_runtime/src/agents/execution-task-authority');
+        const profile = await getActiveWorkspaceProfile();
+        if (profile?.id !== requester.workspaceId || profile.activeSessionKey !== requester.sessionKey ||
+            (binding?.sessionGeneration && binding.sessionGeneration !== requester.sessionGeneration))
+          return { success: true, recorded: false };
+        const count = recordExecutionMaterialObservations(binding?.environment.canonicalRoot ?? profile.rootPath,
+          [{ id, phase: 'presented', reader: requester, source: target, ref, run: null }]);
+        return { success: true, recorded: count > 0 };
+      } catch { return { success: true, recorded: false }; }
+    },
     collaborationMessages: async (payload) => {
       const query = parseSessionCollaborationMessageQuery(payload);
       const unavailable = (state: 'unavailable' | 'unknown', reason: string): SessionCollaborationMessagePage => ({ schemaVersion: 'SessionCollaborationMessages/v1',

@@ -423,6 +423,8 @@ import {
 import { buildAttemptSystemPrompt } from "./attempt-system-prompt.js";
 import { restoreTaskModelContext, finishPersistentTaskRun, createTaskModelUsageRecorder } from "../../../../../shared/task-system/runtime.js";
 import { createExecutionTaskGuard, wrapReviewerReadConfirmation } from "../../execution-task-guard.js";
+import { withSessionMaterialPromptUse } from "../../session-collaboration-material-prompt.js";
+import type { StreamFn } from "../../runtime/index.js";
 import { flushEmbeddedAttemptTrajectoryRecorder } from "./attempt-trajectory-flush-cleanup.js";
 import {
   assembleAttemptContextEngine,
@@ -3437,6 +3439,11 @@ export async function runEmbeddedAttempt(
             params.config?.diagnostics?.otel?.enabled === true &&
             isDiagnosticFlagEnabled("trace.cost-sampling", params.config),
           nextCallId: () => `${params.runId}:model:${(diagnosticModelCallSeq += 1)}`,
+          ...(!isRawModelRun && params.sessionKey && params.sessionId ? {
+            wrapCall: (stream: StreamFn, callId: string) => withSessionMaterialPromptUse(stream, {
+              runId: params.runId, runSessionKey: params.sessionKey, agentSessionId: params.sessionId, config: params.config,
+            }, taskUsageCallKey(callId)),
+          } : {}),
           onUsageStarted: ({ callId }) => {
             try { taskModelUsage.start(taskUsageCallKey(callId), params.provider, params.modelId, params.inputProvenance?.collaboration ? 'coordination' : undefined); }
             catch (error) { log.warn(`task model usage start unavailable: ${String(error)}`); }

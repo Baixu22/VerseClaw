@@ -34,6 +34,7 @@ import {
 } from "../tool-description-presets.js";
 import type { AnyAgentTool } from "./common.js";
 import { querySessionCollaborationMaterialsTool, querySessionCollaborationTool } from './session-collaboration-query.js';
+import { materialToolResult } from '../session-collaboration-material-prompt.js';
 import { SESSION_COLLABORATION_FIELDS } from '../../../../shared/types/session-collaboration.js';
 import {
   jsonResult,
@@ -106,6 +107,7 @@ export function createSessionsListTool(opts?: {
   agentSessionKey?: string;
   runSessionKey?: string;
   agentSessionId?: string;
+  runId?: string;
   sandboxed?: boolean;
   config?: OpenClawConfig;
   callGateway?: GatewayCaller;
@@ -116,11 +118,11 @@ export function createSessionsListTool(opts?: {
     displaySummary: SESSIONS_LIST_TOOL_DISPLAY_SUMMARY,
     description: describeSessionsListTool(),
     parameters: SessionsListToolSchema,
-    execute: async (_toolCallId, args) => {
+    execute: async (toolCallId, args) => {
       const params = args as Record<string, unknown>;
       if (params.materials !== undefined) {
         if (Object.keys(params).some(key => key !== 'materials')) throw new TypeError('Use one material query');
-        return jsonResult(await querySessionCollaborationMaterialsTool(opts, params.materials));
+        return jsonResult(await materialToolResult(await querySessionCollaborationMaterialsTool(opts, params.materials), toolCallId, opts));
       }
       if (params.collaboration === true) return jsonResult(await querySessionCollaborationTool(opts, params));
       const cfg = opts?.config ?? getRuntimeConfig();

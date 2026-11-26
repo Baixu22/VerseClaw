@@ -66,6 +66,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 发布替代版本时使用新的材料 ID，并在 `supersedes` 指明原版本。冲突记录以 `conflictsWith` 保存各方引用；已核实材料的替代同样需要可核实证据。当前任务 writer 可通过 `revokeMaterial` 携带原引用和原因撤销。材料面板跟踪所选版本的状态变化，任务修订、证据或产物变化、期限和来源缺失分别回读。源会话删除后，关联同一任务的授权读者可按原引用查看留存证据回执。
 
+模型工具的持久回复保存材料引用。模型在当次运行中选中原版本后，运行时在准备模型请求时核对可见性和材料状态，并在现有工具回复预算内带入内容。Task Trace 分别保留检索候选、实际打开的界面详情、模型引用、请求所带材料和已收到的响应摘要哈希。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

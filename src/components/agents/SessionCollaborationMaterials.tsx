@@ -26,6 +26,9 @@ export function SessionCollaborationMaterials({ requester, target }: { requester
   useEffect(() => () => { sequence.current++; }, []);
   useEffect(() => {
     if (!open || !selected || !detail) return;
+    void hostApi.sessions.presentCollaborationMaterial({
+      id: crypto.randomUUID(), requester, target: selected.source, ref: selected.ref,
+    }).catch(() => {});
     return subscribeSessionCollaboration({
       id: crypto.randomUUID(), condition: 'material-changed', materialRef: selected.ref, observedMaterialState: detail.state,
       query: { requester, target: selected.source, limit: 1 },

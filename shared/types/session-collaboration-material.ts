@@ -86,6 +86,9 @@ export type SessionCollaborationMaterialStatus = {
   related?: SessionCollaborationMaterialRef[];
   retainedEvidence?: Array<{ receiptId: string; sha256: string }>;
 };
+export function isReusableMaterial(state: SessionCollaborationMaterialState): boolean {
+  return state === 'claim' || state === 'evidence-backed';
+}
 export type SessionCollaborationMaterialSummary = {
   ref: SessionCollaborationMaterialRef;
   source: AutonomySessionScope;
@@ -106,6 +109,12 @@ export type SessionCollaborationMaterialQuery = {
   ref?: SessionCollaborationMaterialRef;
   cursor?: string;
   limit?: number;
+};
+export type SessionCollaborationMaterialPresentation = {
+  id: string;
+  requester: AutonomySessionScope;
+  target: AutonomySessionScope;
+  ref: SessionCollaborationMaterialRef;
 };
 export type SessionCollaborationMaterialPage = {
   schemaVersion: 'SessionCollaborationMaterials/v1';

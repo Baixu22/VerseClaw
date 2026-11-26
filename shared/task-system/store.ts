@@ -29,7 +29,7 @@ import type {
 import { taskSimilarity } from "./recognition.js";
 import { nextReadyPlanChild, TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
 import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReference, type TaskArtifactRetentionReceipt } from './artifact-retention.js';
-import type { TaskModelCall, TaskModelUsage, TaskTraceEvent, TaskTraceSnapshot } from './trace.js';
+import type { TaskMaterialObservation, TaskModelCall, TaskModelUsage, TaskTraceEvent, TaskTraceSnapshot } from './trace.js';
 import { MATERIAL_SCAN_LIMIT, materialReference, materialSource, parseSessionCollaborationMaterial,
   canReadMaterial, equalMaterialRef, parseMaterialReference, type SessionCollaborationMaterial,
   type SessionCollaborationMaterialRef, type SessionCollaborationMaterialStatus } from '../types/session-collaboration-material.js';
@@ -791,6 +791,31 @@ export class TaskSystemStore {
       material.evidenceRefs.some(ref => receipt.source.sourceKey.startsWith(`evidence:${ref}:`)))
       .slice(0, 16).map(receipt => ({ receiptId: receipt.receiptId, sha256: receipt.source.sha256 }));
     return { material, state: 'unknown' as const, retainedEvidence };
+  }
+  recordMaterialObservations(observations: readonly TaskMaterialObservation[]) {
+    if (!observations.length) return 0;
+    return this.transaction(() => {
+      let count = 0;
+      for (const observation of observations) {
+        const { reader, source, run, phase, ref } = observation;
+        text(observation.id, 'MATERIAL_OBSERVATION_ID', 300);
+        if (!canReadMaterial(reader, source, 'internal')) throw new Error('MATERIAL_OBSERVATION_SCOPE_MISMATCH');
+        if (run) normalizeAutonomySessionScope({ ...run.scope, sessionGeneration: reader.sessionGeneration }, reader);
+        if ((phase === 'presented') !== (run === null) ||
+            (['prompt-used', 'outcome'].includes(phase) && !observation.modelCallId) ||
+            (phase === 'outcome' && !/^[a-f0-9]{64}$/.test(observation.responseDigest ?? ''))) throw new Error('MATERIAL_OBSERVATION_IDENTITY_MISSING');
+        const task = this.binding(reader.sessionKey, reader.sessionGeneration);
+        if (!task) continue;
+        const reference = parseMaterialReference(ref);
+        const key = digest([observation.id, phase, reference, reader, run, observation.modelCallId]);
+        this.request(`material-observation:${key}`, observation, () => {
+          this.event(task.contract.taskNodeId, 'material_observation', observation);
+          return true;
+        });
+        count++;
+      }
+      return count;
+    });
   }
   traceSnapshot(taskNodeId: string): TaskTraceSnapshot {
     return this.transaction(() => {
