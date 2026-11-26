@@ -94,12 +94,16 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 | タスク追跡レポート | 永続タスクのカードを展開すると、ソース、実行、操作結果、候補の検証、保存済み証拠を確認できます。調整役と実行役のモデル呼び出しは元の記録で重複排除され、カタログ価格は推定値、取得できない費用は不明として表示されます。 | [タスク追跡レポート](docs/modules/multi-agent-and-tasks.md) |
 | プロジェクトとセッション | プロジェクト名から担当セッションを開き、異なる agent の明示的に関連付けられた担当者も表示します。既存グループ内で派生セッションとタスクを確認できます。タスク履歴から関連セッションとチェックポイントの成果物を開けます。分岐の質問は下書きになり、引き継ぎは作成後に送信され、再起動後も照合・復旧できます。 | [セッションとタスク（中国語）](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane、VerseShell governed execution、VerseBrowser driver、退役 VToken | [Verse tools（中国語）](docs/modules/verse-tools.md) |
-| Resources / observability | ResourceFabric の操作別レイテンシ基準とメモリ/event-loop 圧力制御、バックグラウンド降載、プロセス追跡、token/cost 上限と回復 | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
+| Resources / observability | ResourceFabric の操作別レイテンシ基準とメモリ/event-loop 圧力制御、バックグラウンド降載、プロセス追跡、token/cost 上限と回復。Observability ではモデル呼び出し、ツール、エラーを時系列で確認できます。 | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
 | Integrations | 15 channel types、Scheduled、Skills/MCP、Inbox、Remote Task、Code Review、VerseConf、media、Billing、Agent Dev | [Integrations（中国語）](docs/modules/integrations-and-surfaces.md) |
 
 詳細 module document は現在 Simplified Chinese で保守されています。source path、API 名、evidence link は言語非依存です。4 つの root README が多言語入口です。
 
 会話本文と入力欄は利用可能な列幅を共有します。進捗説明の後に続くツール操作をグループ化し、初期状態で折りたたみます。折りたたみ時は背景のない操作アイコンと最新の処理を表示し、文字が左から右へ一度現れ、実行中は白い shimmer が続きます。現在実行中の折りたたみ要約だけが Lucide アイコンのアニメーションを再生します。展開時と終了後は静止し、ホバーでは再生しません。動きを減らす設定では文字とアイコンを静止表示します。展開したツールとコマンドは背景、進捗フィル、経過時間と完了マークを備えた呼び出しバーで表示します。アイコンはファイル形式、Git、ブラウザー操作、テスト、ビルド、パッケージ、記憶、データベース、エージェントに対応します。展開すると呼び出し、引数、結果、コマンド出力、ファイル変更を順に確認できます。完了後は静止表示となり、手動の開閉状態を保持します。進捗、最終回答、成果物、応答待ちの要求は引き続き利用できます。長いプレビューは折り返し、コピーには保持された全文を含めます。完了した返信の操作、時刻、トークン使用量も本文に揃えます。
+
+左側のターンプレビューから会話をブックマークし、ブックマークボタンで保存したターンへ移動できます。ツール詳細は滑らかに展開し、要約は本文より小さい文字で表示します。ワークスペース操作と設定ナビゲーションは共通のツールチップを使用します。
+
+実行中の要約には、思考中、ツール結果の処理中、返信の作成中といった状態が表示されます。並列呼び出しの一つが失敗すると、失敗した対象と進行中の操作を個別に確認できます。
 
 タッチ操作では入力欄の主要ボタンに 44 px 以上のタップ領域を確保します。失敗した計画更新は実行詳細に残り、現在の計画を置き換えません。
 
@@ -270,6 +274,9 @@ Main layers：
 - 監視フォルダーは追加・変更・削除を版付きの審査候補へ同期し、停止中の変更も再走査します。
 - チャットの Research は、実際に残った引用が各質問への回答を裏付けるかを確認します。Wiki 検索では、費用を事前に確保できる場合に設定済みのリモート埋め込みや再ランキングを使用し、根拠が足りない質問を表示します。
 - Librarian は許可済みの証拠と制限された会話履歴を設定済み Gateway モデルへ渡し、原文引用と版を検証します。部分読み取り、矛盾、モデル失敗を明示し、Studio はレビュー用の抜粋草稿を保存します。
+- ナレッジベースの質問と回答はメインチャットと同じ書式で表示されます。最新の回答の下にいるオレンジ色のアシスタントは、待機中にクリックするとなでられます。会話を最小化しても、画面の隅のしぐさで検索の進み具合がわかります。
+- チャット入力欄の「ナレッジの会話履歴」から以前の会話を再開できます。回答の下の本のアイコンでその内容について質問でき、ナレッジの回答の下にある送信ボタンで質問、回答、出典を表示中の送信先に渡せます。
+- メッセージの先頭に `@knowledge` を入力すると、アシスタントの現在の作業を表示します。続けて質問を書くと、その場で検索できます。キャラクターと操作履歴に、検索、出典の読み取り、回答作成、引用の確認が表示されます。
 - 中国語検索、長文の制限付き続読、provider 別 embedding キャッシュ、版に紐付く Steward 所見を実装しています。任意の公開 GitHub ディレクトリ接続は更新と撤回を Inbox へ送ります。他の SaaS 接続は未実装です。
 - Log、trace、screenshot、Task Forest、handoff は明示的に curated されない限り local working data。
 

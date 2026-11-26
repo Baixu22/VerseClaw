@@ -75,7 +75,7 @@ export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
     enable: 'Choose the default answer strategy in Knowledge operations; Knowledge Librarian keeps the current explicit selection.',
     rollback: 'Restore strict in Knowledge operations.',
     riskNote: 'Open answers identify model knowledge separately from owner evidence.',
-    executor: { status: 'wired', sites: ['src/pages/Chat/KnowledgeChat.tsx:62'] },
+    executor: { status: 'wired', sites: ['src/pages/Chat/KnowledgeChat.tsx:100', 'src/pages/Knowledge/knowledge-bot-run.ts:61'] },
   },
   {
     id: 'project-rag-index-storage-budget', wave: 'RAG-12', kind: 'config',

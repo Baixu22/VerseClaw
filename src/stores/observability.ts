@@ -38,6 +38,7 @@ export type ObservabilityState = {
   subscribeRealtime: () => () => void;
 };
 
+let latestDiagnosticsRequest = 0;
 export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
   snapshot: null,
   query: { page: 1, pageSize: 100, sortBy: 'updatedAt', sortDir: 'desc' },
@@ -105,14 +106,15 @@ export const useObservabilityStore = create<ObservabilityState>((set, get) => ({
   },
 
   loadNodeDiagnostics: async (traceId, nodeId) => {
-    set({ diagnosticsLoading: true });
+    const request = ++latestDiagnosticsRequest;
+    set({ diagnosticsLoading: true, selectedNodeDiagnostics: null });
     try {
       const diagnostics = await hostApi.observability.traceNodeDiagnostics(traceId, nodeId);
-      if (get().selectedTraceId === traceId) {
+      if (request === latestDiagnosticsRequest && get().selectedTraceId === traceId) {
         set({ selectedNodeDiagnostics: diagnostics, diagnosticsLoading: false });
       }
     } catch (error) {
-      if (get().selectedTraceId === traceId) {
+      if (request === latestDiagnosticsRequest && get().selectedTraceId === traceId) {
         const details = describeUserError(error);
         set({ error: details.message, errorId: details.errorId, diagnosticsLoading: false });
       }

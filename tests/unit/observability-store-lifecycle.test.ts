@@ -1,13 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  dashboard: vi.fn(), history: vi.fn(),
+  dashboard: vi.fn(), history: vi.fn(), diagnostics: vi.fn(),
   runtime: null as ((event: unknown) => void) | null,
   trajectory: [] as Array<(event: unknown) => void>,
 }));
 vi.mock('@/lib/host-api', () => ({ hostApi: { observability: {
   dashboardSnapshot: () => mocks.dashboard(), queryTraces: async () => ({}),
   trajectoryHistory: (input: unknown) => mocks.history(input),
+  traceNodeDiagnostics: (traceId: string, nodeId: string) => mocks.diagnostics(traceId, nodeId),
 } } }));
 vi.mock('@/lib/host-events', () => ({ hostEvents: {
   onObservabilityRuntimeEvent: (handler: (event: unknown) => void) => { mocks.runtime = handler; return () => { mocks.runtime = null; }; },
@@ -18,6 +19,18 @@ vi.mock('@/lib/host-events', () => ({ hostEvents: {
 
 describe('observability lifecycle source', () => {
   afterEach(() => { vi.resetModules(); vi.clearAllMocks(); mocks.trajectory = []; });
+  it('keeps diagnostics on the last selected step when responses arrive out of order', async () => {
+    const { useObservabilityStore: store } = await import('@/stores/observability');
+    let finishFirst!: (value: unknown) => void;
+    mocks.diagnostics.mockReturnValueOnce(new Promise(resolve => { finishFirst = resolve; }))
+      .mockResolvedValueOnce({ traceId: 'a', nodeId: 'tool' });
+    store.setState({ selectedTraceId: 'a' });
+    const first = store.getState().loadNodeDiagnostics('a', 'model');
+    await store.getState().loadNodeDiagnostics('a', 'tool');
+    finishFirst({ traceId: 'a', nodeId: 'model' });
+    await first;
+    expect(store.getState().selectedNodeDiagnostics?.nodeId).toBe('tool');
+  });
   it('refreshes on assembler lifecycle transitions and ignores notifications with no new v2 state', async () => {
     const first = { traceSchema: 'openclaw-trajectory', schemaVersion: 2, traceId: 'trace', source: 'runtime',
       type: 'run/start', role: 'run', phase: 'start', runId: 'run', seq: 1,

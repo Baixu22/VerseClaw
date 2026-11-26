@@ -1,0 +1,58 @@
+.observability-page { container: observability / inline-size; }
+
+.observability-workbench {
+  display: grid;
+  grid-template-columns: minmax(12rem, 17rem) minmax(0, 1fr);
+}
+
+.observability-choose-run { display: none; }
+.observability-detail-bar { container: trace-detail-bar / inline-size; }
+.observability-all-tabs-icon { display: none; }
+
+@container trace-detail-bar (max-width: 360px) {
+  .observability-all-tabs-label { display: none; }
+  .observability-all-tabs-icon { display: block; }
+}
+
+.observability-view-tabs,
+.observability-detail-tabs {
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+
+.observability-detail-tabs .observability-detail-tab {
+  position: relative;
+  background: transparent;
+  box-shadow: none;
+}
+
+.observability-detail-tab[data-state='active']::after {
+  content: '';
+  position: absolute;
+  inset: auto 0.5rem 0;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.observability-detail-tab:focus-visible {
+  outline: 2px solid var(--color-ring, currentColor);
+  outline-offset: -3px;
+}
+
+@container observability (max-width: 720px) {
+  .observability-workbench { grid-template-columns: minmax(0, 1fr); }
+  .observability-workbench[data-list-visible='true'] .observability-main,
+  .observability-workbench[data-list-visible='false'] .observability-list { display: none; }
+  .observability-choose-run { display: inline-flex; }
+  .observability-list { border-right: 0; }
+}
+
+@container observability (max-width: 480px) {
+  .observability-view-tabs { display: flex; width: 100%; }
+  .observability-view-tabs [role='tab'] { flex: 1 0 auto; padding-inline: 0.5rem; }
+}
+
+@container observability (max-width: 360px) {
+  .observability-view-tabs svg { display: none; }
+}

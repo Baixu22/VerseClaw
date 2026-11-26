@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "adcb6a7fc36a8711773d88b75bcaf74e97112bfc",
+  "changeCommit": "e73732011c8d7c045d733b80b39552451c9f40b1",
+  "checks": {
+    "unitTests": {
+      "passed": 237,
+      "files": 11
+    },
+    "electronScenarios": {
+      "passed": 6,
+      "fixtures": "agent-generated history and runtime events"
+    },
+    "webTypecheck": "passed",
+    "i18n": "passed",
+    "targetedLint": {
+      "errors": 0,
+      "baselineWarnings": 6
+    },
+    "frontendProductionBuild": "passed",
+    "commsReplay": "passed",
+    "commsCompare": "passed",
+    "harness": "passed"
+  },
+  "browser": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "prose": {
+      "size": "17px",
+      "weight": "400",
+      "line": "27.2px",
+      "spacing": "normal",
+      "color": "rgb(249, 249, 247)"
+    },
+    "tool": {
+      "size": "14px",
+      "weight": "400",
+      "line": "22.4px",
+      "spacing": "normal",
+      "color": "rgb(152, 152, 149)"
+    },
+    "bookmarked": true,
+    "flameCount": 0,
+    "overflow": 0,
+    "detailsOpen": false
+  },
+  "browserScreenshot": "ego-browser Page.captureScreenshot timed out. Electron screenshots were captured.",
+  "dependencies": "Reused the installed D:/ClawX node_modules and existing Electron 40.8.4 desktop bundle.",
+  "sourceHashes": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "97184471ccf7f76c21a1f8f676e2d01b7b607336d39dc80e116cd05c16a2b552"
+    },
+    {
+      "path": "README.md",
+      "sha256": "106a9fdc0deb3f8056a35012e2c0f52eddb9f3827bb1f3b6662fe9ed1b7e8bfa"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "6a6b439303d4b99168719bc7825d110b5c445b05206ccbcadec95d6d47344252"
+    },
+    {
+      "path": "docs/dev/chat-tool-activity-stream.md",
+      "sha256": "4f206f24cf7a5efbd18854c084f6f8ebad22ac923e414174a5d67c713528c33e"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "8177ec4b1f041e80116219fe9527acd6122f8c2c8e5df94010bab70e0fab9a02"
+    },
+    {
+      "path": "harness/specs/tasks/chat-tool-activity-stream-20261123.md",
+      "sha256": "65add1091f97339be8b27cd7c760beeb04e4328431ae22106aa71cd76ee15d50"
+    },
+    {
+      "path": "harness/specs/tasks/conversation-browser-feedback-20261126.md",
+      "sha256": "bb44b01f5fc24fdc5ed4aa0a56408ba16d11d6006ca803fe23497ab26a38d32d"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "58aa538779843063df1f1ef29fd459bc9dcc7b8c3e5d8635b8e44aa18121cea7"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "e7c5f19e6af03072f9ac1dbc6d6dcc81d3ffc9645153ea28454f6f47f5d3400c"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "0e9e691809b36ee041ad078dad15b902a0f626240e2e98a42b0d09ba2c16b28e"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "39650e160b18d94ec9821977be1519ea90581574d3528637c8b74a6de239c330"
+    },
+    {
+      "path": "src/components/assistant-render/AssistantMarkdown.tsx",
+      "sha256": "9d557708e917a07bace7d06d53046c9fee8592fcfe63d989a0c40d20a01d1362"
+    },
+    {
+      "path": "src/components/assistant-render/MarkdownSyntaxHighlight.tsx",
+      "sha256": "f4c73e80daf3a8c3748ce2b353351ab7f050e97f22c46f1fff52801093d1354a"
+    },
+    {
+      "path": "src/components/assistant-render/ToolActivityGroup.tsx",
+      "sha256": "d34650cf0cedfce11d842a80b774aed83bac76c2cb954c94a588fb5e83e44c2b"
+    },
+    {
+      "path": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "e28df4c333a2e790b14074bb8232da22c57206d53ed88e020663395a6e70591f"
+    },
+    {
+      "path": "src/components/assistant-render/model.ts",
+      "sha256": "9379d5acc0c82d7d14050bd4a82d15d2c88787eb70eca53d0adce6b9d80360db"
+    },
+    {
+      "path": "src/components/file-preview/ArtifactPanel.tsx",
+      "sha256": "ebadb869c943077c3953e018188f95caf444fc908c210c18084d96076cd7a4a0"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceBrowserBody.tsx",
+      "sha256": "f1e35104678a0204a3c64900bfef2f030943bf8187f9554db4b61c5fe370282b"
+    },
+    {
+      "path": "src/components/settings/primitives/usePopover.ts",
+      "sha256": "514a549d25c7b8819c237ac71e7a1f80845d1dc9776300dd96c5414305ce5507"
+    },
+    {
+      "path": "src/components/ui/tooltip.tsx",
+      "sha256": "804c8df60279741f0d64877d7a8cd0908cc2cbb376d78288606abfd1f0db03c6"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "4984c351e396e8f63750abf7959e14900f9f299b5a64c8968c6a1c2e290c8a6b"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "5d50a8c929afb4b1e827fd928bfb0bdd4c1b95407794e6a9eac28af69b4a7ff0"
+    },
+    {
+      "path": "src/pages/Chat/ComposerGitStrip.tsx",
+      "sha256": "2e85ec49e6199c75d71815af8260e879d457db271f41185bb3c1dcdbf8f9c762"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "52da72e4adadcba2051bb9742d389371c111e1fa99cd3fd6a578e34faf587274"
+    },
+    {
+      "path": "src/pages/Chat/MessageNavRail.tsx",
+      "sha256": "e014c9e3fa67c1a0788874863566f9c34e9d7217617ceedea136197d0fc55617"
+    },
+    {
+      "path": "src/pages/Chat/execution-projection.ts",
+      "sha256": "86fb85fc6f73fe9b71c222ad5f057fa93171db7c129b1d6a9b4668a118129552"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "f07b1e95f516813d261480fa9fcddd2462749f5a423eb581c43823e79ce4f775"
+    },
+    {
+      "path": "src/pages/Chat/task-visualization.ts",
+      "sha256": "50c5979a6396d1697e1e06073802902b906e984b1ad14f46cd4b9a92148072d5"
+    },
+    {
+      "path": "src/pages/Chat/tool-activity-groups.ts",
+      "sha256": "1f5cd7640627c67174c5fe9b7ee0e316bf5ac66a71d7b7d0360f39096f24b708"
+    },
+    {
+      "path": "src/pages/Settings/SettingsSidebar.tsx",
+      "sha256": "90978f50788e6e68043034db202ddcc988fe11f06d3463ebdfcb5c5e479da4ee"
+    },
+    {
+      "path": "src/styles/codex-composer-material.css",
+      "sha256": "4802d940e9810ef089471a15f01d24a9a870543749abe03d3987a8a0d7c7217b"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "sha256": "e40993612850c6a454d233c5476e7b91c4d78661dcb1ab569b1325d85708118f"
+    },
+    {
+      "path": "src/styles/codex-conversation.css",
+      "sha256": "803161db1f1ab7d7876a4d2ed88f48712300431309baee93baa0326522d6a6f0"
+    },
+    {
+      "path": "src/styles/codex-tokens.css",
+      "sha256": "be7fd3452adad729daef1d629bfa8f58f7cda7b3808bd3bfa56009817bad4c0f"
+    },
+    {
+      "path": "src/styles/codex-workspace-panel.css",
+      "sha256": "6797426d4eb823ad1f2c811d46c44a04fe38ea65fb26ff4a3849975638495d14"
+    },
+    {
+      "path": "src/styles/rareui-interactions.css",
+      "sha256": "f123247bb968874351e7a26d2463a6466f569a8810f7c5e7558d18e038782031"
+    },
+    {
+      "path": "tests/e2e/chat-agent-effort.spec.ts",
+      "sha256": "4459fb124485e2b5effaa89a505847dbf0f18e60f6fcddb6f265a2342caa15f9"
+    },
+    {
+      "path": "tests/e2e/chat-assistant-markdown-plain.spec.ts",
+      "sha256": "47e917db0423f15e5dcc5150e2a784db5bfca2d514c2669dd7105732423c1511"
+    },
+    {
+      "path": "tests/e2e/chat-composer-popovers.spec.ts",
+      "sha256": "4465d2e6be4779ed94df5c356d0c24e011ab30de15d831b62a4c3b4fa404f951"
+    },
+    {
+      "path": "tests/e2e/chat-tool-activity-stream.spec.ts",
+      "sha256": "8070f44bbf1270fa48b3391a309500f7579a9bad38d372b8592ddf60f1a029c6"
+    },
+    {
+      "path": "tests/e2e/chat-work-mode.spec.ts",
+      "sha256": "b0bd07bc25e792d502d3a56bf5deac1b23681779cdfd21e1100de5ea358faece"
+    },
+    {
+      "path": "tests/e2e/conversation-browser-feedback.spec.ts",
+      "sha256": "1df6b7ff6d61ed71ab872f60ef2d2127511cc0fd070e06a0474184a99dff1fdc"
+    },
+    {
+      "path": "tests/e2e/effort-intensity-smoke.spec.ts",
+      "sha256": "640bf8464aed1e9fc9e1fa06ebe54f2c122da1ce51b3f02aeed316a9a9688d4a"
+    },
+    {
+      "path": "tests/e2e/rareui-interactions.spec.ts",
+      "sha256": "5a10cea0260a0fcab5e3f5af23e3c0f324a102d6012f0609c47b263807c529e0"
+    },
+    {
+      "path": "tests/e2e/visual-tune.spec.ts",
+      "sha256": "215312c670d69529d250376ce5b764dfb81b1c6f7843106b844740d90fd723f8"
+    },
+    {
+      "path": "tests/unit/artifact-panel.test.tsx",
+      "sha256": "119ad1bea8464d49c5ea87893c768de9518f0bef58ff0554dff30dd792a035ba"
+    },
+    {
+      "path": "tests/unit/assistant-render-model.test.ts",
+      "sha256": "d60d0f6bd0ffa796b1ebfac2e571758f99f4fb0bcc51a0db2148d5dd223d4206"
+    },
+    {
+      "path": "tests/unit/chat-message-nav-rail.test.tsx",
+      "sha256": "29facbecec2f03c2c2d43c81c1c9900320e578908dc469799b8434017c7ceb66"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "sha256": "6a7d14c06cbae872756e587e7652026f3ee18c3edaee70876ecea4f5048522ce"
+    },
+    {
+      "path": "tests/unit/execution-projection.test.ts",
+      "sha256": "dd944b76b92b6434f423f81a654cc1defe881387362504d137d041517612419d"
+    },
+    {
+      "path": "tests/unit/tool-activity-group.test.tsx",
+      "sha256": "b9901ccc848ad879ffabe3bc0cfa8bcf8aa576bc95774b924f27dbdb8f40b066"
+    },
+    {
+      "path": "tests/unit/workspace-browser-body.test.tsx",
+      "sha256": "4242cc5ff9a1bb8f529fd652f021470387317a3e38a81ca286ea55807cea3382"
+    }
+  ]
+}

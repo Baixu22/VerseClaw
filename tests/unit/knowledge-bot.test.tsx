@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { KnowledgeBot } from '@/components/knowledge-bot/KnowledgeBot';
+import { KnowledgeBot, KnowledgeBotCompanion } from '@/components/knowledge-bot/KnowledgeBot';
 import { KnowledgeBotLauncher } from '@/components/knowledge-bot/KnowledgeBotLauncher';
 import { useKnowledgeBotActivity } from '@/components/knowledge-bot/use-knowledge-bot-activity';
 import { KnowledgeBotWindow } from '@/components/knowledge-bot/KnowledgeBotWindow';
@@ -35,6 +35,27 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe('Knowledge character', () => {
+  it('holds a heart after the latest pet, then settles back to a still pose under reduced motion', async () => {
+    vi.useFakeTimers();
+    window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() });
+    render(<KnowledgeBotCompanion size={32} state="idle" rest />);
+    const pet = screen.getByTestId('knowledge-bot-pet');
+    const bot = screen.getByTestId('knowledge-bot');
+    fireEvent.pointerEnter(pet);
+    expect(bot).toHaveAttribute('data-state', 'curious');
+    fireEvent.click(pet);
+    fireEvent.pointerLeave(pet);
+    act(() => vi.advanceTimersByTime(900));
+    fireEvent.click(pet);
+    act(() => vi.advanceTimersByTime(700));
+    expect(bot).toHaveAttribute('data-state', 'celebrate');
+    expect(bot).toHaveAttribute('data-motion', 'reduced');
+    expect(pet.querySelector('.knowledge-bot-companion__heart')).toBeInTheDocument();
+    await act(async () => { vi.advanceTimersByTime(700); });
+    expect(bot).toHaveAttribute('data-state', 'idle');
+    expect(pet.querySelector('.knowledge-bot-companion__heart')).toBeNull();
+  });
+
   it('updates the existing engine, settles historical poses and disposes all instances', async () => {
     const { rerender, unmount } = render(<KnowledgeBot state="searching" />);
     await act(async () => { await Promise.resolve(); });

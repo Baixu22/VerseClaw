@@ -491,6 +491,24 @@ describe('ChatMessage word wrapping', () => {
 });
 
 describe('ChatMessage reply styling', () => {
+  it('keeps earlier paragraphs mounted as the writing position advances into a nested list', () => {
+    const reply = (content: string, isStreaming: boolean) => (
+      <TooltipProvider><ChatMessage message={{ role: 'assistant', content }} isStreaming={isStreaming} /></TooltipProvider>
+    );
+    const first = 'First paragraph.';
+    const { container, rerender } = render(reply(first, true));
+    const paragraph = container.querySelector('.prose p');
+    expect(paragraph).toHaveAttribute('data-writing-end');
+    const next = first + '\n\n- Outer item\n  - **Nested item**';
+    rerender(reply(next, true));
+    expect(container.querySelector('.prose p')).toBe(paragraph);
+    expect(paragraph).not.toHaveAttribute('data-writing-end');
+    expect(container.querySelectorAll('[data-writing-end]')).toHaveLength(1);
+    expect(container.querySelector('li li')).toHaveAttribute('data-writing-end');
+    rerender(reply(next, false));
+    expect(container.querySelector('[data-writing-end]')).toBeNull();
+  });
+
   it('renders assistant replies as plain Markdown without a rounded bubble wrapper', () => {
     const message: RawMessage = {
       role: 'assistant',

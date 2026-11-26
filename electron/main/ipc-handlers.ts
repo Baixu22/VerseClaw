@@ -128,7 +128,9 @@ function registerTypedHostHandlers(
   webPreviewManager = createWebPreviewManager({ mainWindow, terminalManager });
   const agentBrowserApi = createAgentBrowserApi();
   registerAgentBrowserGatewayBridge(gatewayManager, undefined, agentBrowserApi);
-  const knowledgeApi = createKnowledgeApi({ gatewayManager });
+  const knowledgeApi = createKnowledgeApi({ gatewayManager, onAnswerProgress: event => {
+    if (!mainWindow.isDestroyed()) mainWindow.webContents.send(HOST_EVENT_CHANNELS.chat.knowledgeAnswerProgress, event);
+  } });
   const remoteForgeApi = createRemoteForgeApi();
   const gitApi = createGitApi();
   const taskLedgerApi = createTaskLedgerApi(gatewayManager);

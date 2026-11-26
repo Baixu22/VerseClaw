@@ -3,16 +3,18 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import type { KnowledgeChatContext } from '@/pages/Chat/KnowledgeChat';
 import type { KnowledgeLibrarianCitation } from '@/pages/Knowledge/knowledge-view-utils';
+import type { KnowledgeBotState } from './KnowledgeBot';
 
 const KnowledgeChat = lazy(() => import('@/pages/Chat/KnowledgeChat').then((module) => ({ default: module.KnowledgeChat })));
 
 /** Keep the thread mounted on close so a pending request can finish/checkpoint. */
-export function KnowledgeBotWindow({ open, context, onClose, onAfterClose, onOpenCitation }: {
+export function KnowledgeBotWindow({ open, context, onClose, onAfterClose, onOpenCitation, onActivityChange }: {
   open: boolean;
   context: KnowledgeChatContext;
   onClose: () => void;
   onAfterClose: () => void;
   onOpenCitation: (citation: KnowledgeLibrarianCitation) => void;
+  onActivityChange?: (state: KnowledgeBotState) => void;
 }) {
   const { t } = useTranslation('knowledge');
   const panel = useRef<HTMLElement>(null);
@@ -60,7 +62,7 @@ export function KnowledgeBotWindow({ open, context, onClose, onAfterClose, onOpe
     <section ref={panel} className="knowledge-bot-window" role="dialog" aria-modal="false" aria-hidden={!open}
       aria-label={t('librarian.chatTitle')} tabIndex={-1} data-testid="knowledge-bot-window" data-phase="closed">
       <Suspense fallback={<p className="p-4 text-sm text-muted-foreground">{t('librarian.searching')}</p>}>
-        <KnowledgeChat embedded context={context} onClose={onClose} onOpenCitation={onOpenCitation} />
+        <KnowledgeChat embedded context={context} onClose={onClose} onOpenCitation={onOpenCitation} onActivityChange={onActivityChange} />
       </Suspense>
     </section>, document.body,
   );

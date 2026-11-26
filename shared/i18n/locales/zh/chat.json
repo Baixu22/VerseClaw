@@ -2639,7 +2639,9 @@
     },
     "activity": {
       "thinking": "正在思考",
-      "processingToolResults": "正在处理工具结果"
+      "processingToolResults": "正在处理工具结果",
+      "usingTools": "正在调用工具",
+      "writing": "正在撰写回复"
     },
     "quote": {
       "action": "??"
@@ -2778,6 +2780,10 @@
     "omittedToggle": "因预算裁剪（{{count}}）"
   },
   "messageNav": {
+    "addBookmark": "标注此轮对话",
+    "removeBookmark": "取消标注",
+    "nextBookmark": "下一个标注",
+    "preview": "第 {{ordinal}} 轮对话预览",
     "label": "提问导航",
     "jumpTo": "跳到第 {{ordinal}} 条提问"
   },
@@ -3088,6 +3094,7 @@
     "selectionUnavailable": "已选来源对照不可用"
   },
   "toolActivity": {
+    "failedTarget": "失败：{{target}}",
     "running": {
       "read": "正在读取",
       "write": "正在写入",

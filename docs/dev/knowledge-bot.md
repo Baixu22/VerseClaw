@@ -1,5 +1,27 @@
 # Knowledge assistant character
 
+Start a Chat message with `@知识库助手` or `@knowledge` and add a question to
+ask the knowledge assistant inline. A mention on its own shows its current
+operation. The composer’s agent menu also inserts this mention. The activity
+card reports search, admitted-source reading, answer preparation and citation
+checks as Main performs them. The character follows these states and the
+completed answer includes its sources. **Open conversation** opens the same
+record. Pending work continues across page changes, and completed answers
+remain after reload. If the renderer connection ends during a request, the
+restored card reports that interruption and offers another query.
+
+In Chat, open the composer's Knowledge menu and choose **Knowledge conversations**
+to resume a workspace record, or use the book icon beneath a reply to ask the
+assistant about that text. Edit the question before submitting. Beneath a
+Knowledge answer, **Send to** names the receiving chat. Once acknowledged, the
+same control opens its transcript. Only the selected question, answer and cited
+source names and lookups travel with that send.
+
+Knowledge history is stored on this device by workspace and source-set membership.
+The transcript retains older turns while each retrieval request uses up to eight
+prior messages. Returning from another page restores the conversation, including
+answers that finished after leaving it. A cleared record stays cleared.
+
 The Knowledge corner character opens a compact nonmodal floating conversation
 with the current document, unsaved text and selected source set. The existing
 KnowledgeChat component is embedded; the standalone `?knowledge=ask` route is
@@ -69,8 +91,14 @@ complete response. No tokens are synthetically streamed. A short completion
 gesture settles to idle; errors remain until retry/dismissal or a new action.
 Historical replies do not run independent looping animations.
 
-`AssistantMarkdown` is extracted unchanged from the main `ChatMessage` renderer:
-both surfaces use the same Markdown, math, tables, code headers and copy action.
+The main chat and Knowledge share `UserMessageBubble` and `AssistantMarkdown`,
+including math, tables, code headers and code copy.
+The avatar and message copy control sit below each reply so the full column is
+available to the text. In the empty conversation or beneath the latest idle
+reply, hover to catch Ginger's attention, or click, tap or press Enter or Space
+on Ginger for a happy turn and a heart. Reduced motion shows a still pose and
+heart. The corner character continues to show request activity and outcomes
+while the conversation is minimized.
 The bounded knowledge composer uses the existing `codex-composer-shell` material
 and geometry rather than loading the main composer's unrelated model, attachment,
 workspace and runtime controls. Citations, retrieval diagnostics, checkpoint v1,

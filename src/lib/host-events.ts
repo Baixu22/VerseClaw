@@ -133,6 +133,7 @@ export const hostEvents = {
   onChatRuntimeEvent: (handler: HostEventHandler<'chat', 'runtimeEvent'>) => (
     onChatEvent('runtimeEvent', handler)
   ),
+  onKnowledgeAnswerProgress: (handler: HostEventHandler<'chat', 'knowledgeAnswerProgress'>) => onChatEvent('knowledgeAnswerProgress', handler),
   onChatQueueStatus: (handler: HostEventHandler<'chat', 'queueStatus'>) => (
     onChatEvent('queueStatus', handler)
   ),

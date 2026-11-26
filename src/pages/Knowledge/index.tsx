@@ -4,6 +4,7 @@ import { useWorkspacesStore } from '@/stores/workspaces';
 import './knowledge.css';
 import type { KnowledgeChatContext } from '@/pages/Chat/KnowledgeChat';
 import { KnowledgeBotLauncher } from '@/components/knowledge-bot/KnowledgeBotLauncher';
+import type { KnowledgeBotState } from '@/components/knowledge-bot/KnowledgeBot';
 import { KnowledgeBotWindow } from '@/components/knowledge-bot/KnowledgeBotWindow';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { AlertTriangle, ArrowRight, BookOpen, Check, Columns3, Database, Edit3, Ellipsis, Eye, FilePlus2, FileSearch, FileText, FolderPlus, History, Inbox, Layers, Lightbulb, Link2, ListTodo, Loader2, Plus, Puzzle, RefreshCw, RotateCcw, Ruler, Save, Search, ShieldCheck, Sparkles, Tags, Upload, Wrench, X } from 'lucide-react';
@@ -385,6 +386,7 @@ export function Knowledge() {
   const [reviewQueueQuery, setReviewQueueQuery] = useState('');
   const [utilityPanel, setUtilityPanel] = useState<KnowledgeUtilityPanel>(null);
   const [assistantOpen, setAssistantOpen] = useState(false);
+  const [assistantActivity, setAssistantActivity] = useState<KnowledgeBotState>('idle');
   const [assistantPresent, setAssistantPresent] = useState(false);
   const [assistantContext, setAssistantContext] = useState<KnowledgeChatContext | null>(null);
   const closeAssistant = useCallback(() => {
@@ -3085,7 +3087,7 @@ export function Knowledge() {
         </Card>
       </main>
 
-      <KnowledgeBotLauncher hidden={assistantPresent}
+      <KnowledgeBotLauncher hidden={assistantPresent} activity={assistantActivity}
         onOpen={() => {
           const knowledgeContext: KnowledgeChatContext = { editorTitle, editorBody, editorSource, editorTags, editorType, editorMode, query, sourceRefs: currentSourceRefs, sourceSetId: currentSourceSetId, sourceSetTitle, searchResult, selectedRow, selectedPage };
           setAssistantContext(knowledgeContext);
@@ -3093,7 +3095,7 @@ export function Knowledge() {
           setAssistantOpen(true);
         }}
       />
-      {assistantContext && <KnowledgeBotWindow open={assistantOpen} context={assistantContext}
+      {assistantContext && <KnowledgeBotWindow open={assistantOpen} context={assistantContext} onActivityChange={setAssistantActivity}
         onClose={closeAssistant}
         onAfterClose={afterAssistantClose}
         onOpenCitation={(citation) => { void openResult({ title: citation.title, pagePath: citation.lookup, sourceRef: citation.sourceRef }); }} />}

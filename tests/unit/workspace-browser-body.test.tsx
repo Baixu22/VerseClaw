@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render as renderView, screen, waitFor } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { WorkspaceBrowserBody } from '@/components/file-preview/WorkspaceBrowserBody';
+function render(ui: ReactElement) {
+  return renderView(ui, { wrapper: TooltipProvider });
+}
 import type { WorkspaceTreeNode } from '@/lib/workspace-tree';
 
 vi.mock('react-i18next', () => ({

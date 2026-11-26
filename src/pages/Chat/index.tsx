@@ -87,6 +87,7 @@ import {
   buildReplyTextOverrides,
   buildStreamingRenderMessage,
   assignApprovalsToRunCards,
+  assistantOutputPhase,
   deriveExecutionStreamState,
   deriveNextUserMessageIndexes,
   deriveRunSegmentMessageIndices,
@@ -100,6 +101,8 @@ import {
 } from './execution-projection';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { knowledgeHistory } from '../Knowledge/knowledge-conversations';
+import { KnowledgeBotActivity, useKnowledgeBotMention } from './KnowledgeBotActivity';
 import { cn } from '@/lib/utils';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
 import {
@@ -122,7 +125,7 @@ import { CodingRunEvidence } from '@/components/assistant-render/CodingRunEviden
 import { TurnSummaryCard } from '@/components/assistant-render/TurnSummaryCard';
 import { ToolActivityGroup } from '@/components/assistant-render/ToolActivityGroup';
 import { attachToolActivityArtifacts, buildToolActivityGroups, type ToolActivityGroupModel } from './tool-activity-groups';
-import { extractAssistantReasoning, type AssistantReasoning } from '@/components/assistant-render/model';
+import { extractAssistantReasoning, mergeTurnReasoning, type AssistantReasoning } from '@/components/assistant-render/model';
 import { ComposerRequestDock } from './ComposerRequestDock';
 import { collectComposerInteractions } from './composer-interactions';
 import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
@@ -775,6 +778,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
   const sessionActivityGeneration = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+  const knowledgeBot = useKnowledgeBotMention(activeWorkspaceId ?? null, currentSessionKey, sessionActivityGeneration);
   const sessionActivitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspaceId, currentSessionKey, sessionActivityGeneration));
   const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const sessionActivityPanelEnabled = useSettingsStore((state) => state.sessionActivityPanelEnabled);
@@ -1738,6 +1742,18 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     handleAppendComposerDraft(`> ${clipped.replace(/\n/g, '\n> ')}\n\n`);
   }, [handleAppendComposerDraft]);
 
+  const askKnowledgeAboutReply = useCallback((text: string) => {
+    const workspaceId = activeWorkspaceId ?? null;
+    const linked = knowledgeHistory(workspaceId).find(row => row.mainSessionKey === currentSessionKey);
+    const query = new URLSearchParams(location.search);
+    query.set('knowledge', 'ask');
+    navigate({ pathname: '/', search: query.toString() }, { state: { knowledgeContext: {
+      ...linked?.context, workspaceId, homeSessionKey: currentSessionKey,
+      homeGeneration: sessions.find(row => row.key === currentSessionKey)?.sessionId,
+      initialQuestion: t('conversation.question', { ns: 'knowledge', text }),
+    } } });
+  }, [activeWorkspaceId, currentSessionKey, location.search, navigate, sessions, t]);
+
   const knowledgeAdvisorySource = useMemo<KnowledgeAdvisorySource | null>(() => {
     if (runError?.trim()) {
       const text = runError.trim();
@@ -2555,7 +2571,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     streamTools,
     hasStreamText,
     shouldRenderStreaming,
-    hasAnyStreamContent,
   } = streamState;
   useEffect(() => {
     if (!sending) {
@@ -2571,7 +2586,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     ? (streamingTimestampStore.get(currentSessionKey) ?? streamTimestamp)
     : 0;
 
-  const isEmpty = startupPhase === 'ready' && !messageAreaLoading && messages.length === 0 && !sending;
+  const isEmpty = startupPhase === 'ready' && !messageAreaLoading && messages.length === 0 && !sending && !knowledgeBot.context;
   const showScrollToLatest = !isEmpty && !isAtBottom;
   const subagentCompletionInfos = useMemo(
     () => messages.map((message) => parseSubagentCompletionInfo(message)),
@@ -2668,7 +2683,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const showStartupSetup = isEmpty && !inputRunActive && !composerPaused
     && !currentSession.hasActiveRun && !(currentSession.messageCount ?? 0)
     && !Object.values(runtimeRuns).some(run => run.sessionKey === currentSessionKey && run.startedAt != null);
-  const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
     if ((!inputRunActive && !useChatStore.getState().sending) || pauseComposerPendingRef.current) return;
     pauseComposerPendingRef.current = true;
@@ -3130,7 +3144,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       const end = users[ordinal + 1]?.index ?? messages.length;
       const reply = rows.findLast((candidate) => candidate.index > row.index && candidate.index < end && !candidate.hidden && candidate.message.role === 'assistant' && !candidate.suppressAssistantText);
       const preview = (text: string, limit: number) => text.replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
-      return { index: row.index, ordinal: ordinal + 1, title: preview(extractText(row.message), 110) || t('messageNav.jumpTo', { ordinal: ordinal + 1 }), response: reply ? preview(projectMessageRender(reply.message, { isUser: false, suppressAssistantText: reply.suppressAssistantText, suppressToolCards: reply.suppressToolCards, suppressReasoning: reply.suppressReasoning, textOverride: reply.textOverride }).displayText, 180) : undefined, completedAt: reply?.message.timestamp };
+      return { id: getTranscriptEntryId(row.message), index: row.index, ordinal: ordinal + 1, title: preview(extractText(row.message), 110) || t('messageNav.jumpTo', { ordinal: ordinal + 1 }), response: reply ? preview(projectMessageRender(reply.message, { isUser: false, suppressAssistantText: reply.suppressAssistantText, suppressToolCards: reply.suppressToolCards, suppressReasoning: reply.suppressReasoning, textOverride: reply.textOverride }).displayText, 180) : undefined, completedAt: reply?.message.timestamp };
     });
   }, [visibleMessageRows, messages.length, t]);
   const completedActivity = useMemo(() => buildCompletionActivity(
@@ -3248,11 +3262,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       active: true,
       startedAt: activeRuntimeRunStartedAt,
       tokenCount: liveUsage?.totalTokens ?? null,
-      state: (pendingFinal || streamingTools.length > 0 || hasRunningRuntimeToolStatus
-        ? 'syncing'
-        : streamingReplyText != null || hasAnyStreamContent
-          ? 'streaming'
-          : 'thinking') as 'thinking' | 'streaming' | 'syncing',
+      state: assistantOutputPhase(activeRuntimeRun, streamState, visibleStreamingText, pendingFinal),
     }
     : null;
   /**
@@ -3409,7 +3419,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           drift over the artifact panel. */}
       <div
         data-testid="chat-conversation-column"
-        className="relative flex min-w-0 flex-1 flex-col"
+        className={cn('relative flex min-w-0 flex-1 flex-col', !isEmpty && 'chat-transcript-open')}
         style={terminalBottomOpen ? { paddingBottom: terminalBottomHeight } : undefined}
       >
       {/* Toolbar */}
@@ -3563,7 +3573,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden py-3">
         <SelectionQuoteToolbar containerRef={messageAreaRef} onQuote={handleQuoteSelection} />
-        {canShowChatSideRail && <MessageNavRail items={messageNavItems} scrollRef={scrollElementRef}
+        {canShowChatSideRail && <MessageNavRail
+          key={`${messageWorkspaceRoot ?? ''}:${currentSessionKey}:${currentSession.sessionId ?? ''}`}
+          scopeKey={`${messageWorkspaceRoot ?? ''}:${currentSessionKey}:${currentSession.sessionId ?? ''}`}
+          items={messageNavItems} scrollRef={scrollElementRef}
           onSelect={scrollToMessageIndex} firstVisibleIndex={messageViewport.firstVisibleIndex} />}
         {/* One measure, always. The layout used to widen to `max-w-7xl` and turn
             into a row when the recovery rail appeared, so the transcript was
@@ -3632,6 +3645,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                       key={row.key}
                       ref={messageViewport.measure}
                       data-viewport-key={row.key}
+                      data-output-kind={row.message.role === 'assistant' && foldedNarrationIndices.has(row.index) ? 'progress' : undefined}
                       className="space-y-3"
                       style={{ position: 'absolute', top: messageViewport.offsets[messageViewport.start + position], width: '100%' }}
                       id={`chat-message-${row.index}`}
@@ -3663,6 +3677,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         onSubmitInteractionResponse={handleSubmitInteractionResponse}
                         onDraftInteractionResponse={handleAppendComposerDraft}
                         onQuoteResponse={handleQuoteSelection}
+                        onAskKnowledge={askKnowledgeAboutReply}
                         canForkFromMessage={row.canForkFromMessage && !forkDisabled}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
@@ -3684,7 +3699,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                          * on a message — so the active card reads the stream and
                          * every settled card reads its own segment. */
                         const cardReasoning = card.active
-                          ? (runCardReasoning.byRunKey.get(runKey) ?? streamingReasoning)
+                          ? mergeTurnReasoning(runCardReasoning.byRunKey.get(runKey) ?? EMPTY_REASONING_ITEMS, streamingReasoning)
                           : (runCardReasoning.byRunKey.get(runKey) ?? EMPTY_REASONING_ITEMS);
                         const expanded = isTurnSummaryExpanded(card);
                         const activeTool = card.active
@@ -3713,6 +3728,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                           <div key={`run-${currentSessionKey}:${card.triggerIndex}`}>
                             <TurnSummaryCard
                               showStatusIndicator={!hasCurrentTool}
+                              phase={card.active && !hasCurrentTool ? assistantStreamStatus?.state : undefined}
                               waitingForInput={card.active && (composerInteractions.length > 0 || cardApprovals.length > 0)}
                               status={card.status}
                               startedAt={card.startedAt}
@@ -3871,6 +3887,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                   )}
 
                   {/* Typing indicator when sending but no stream content yet */}
+                  {knowledgeBot.context && <KnowledgeBotActivity key={`${activeWorkspaceId}:${currentSessionKey}:${sessionActivityGeneration}`}
+                    context={knowledgeBot.context} workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey}
+                    generation={sessionActivityGeneration} onAsk={knowledgeBot.invoke} />}
                 </>
               )}
             </div>
@@ -3959,6 +3978,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             : worktreeProgress ? <WorktreeCreationProgress progress={worktreeProgress} hero={isEmpty} /> : null
         )}
         onSend={handleSendMessage}
+        onKnowledgeMention={knowledgeBot.invoke}
         disabled={!isGatewayRunning || executionBusy}
         sending={inputRunActive}
         paused={composerPaused}

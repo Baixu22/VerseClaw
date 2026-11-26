@@ -1,8 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import type { RawMessage } from '@/stores/chat';
-import { extractAssistantReasoning } from '@/components/assistant-render/model';
+import { extractAssistantReasoning, mergeTurnReasoning } from '@/components/assistant-render/model';
 
 describe('assistant render model', () => {
+  it('retains earlier reasoning when a live segment extends or follows the recorded tail', () => {
+    const saved = [{ id: 'a', summary: 'Read the files.' }, { id: 'b', summary: 'Compare' }];
+    const next = { id: 'next', summary: 'Check the result.' };
+    expect(mergeTurnReasoning(saved, [{ id: 'live', summary: 'Compare versions.' }, next]))
+      .toEqual([saved[0], { id: 'b', summary: 'Compare versions.' }, next]);
+    expect(mergeTurnReasoning(saved, [next])).toEqual([...saved, next]);
+    expect(mergeTurnReasoning(saved, [saved[0]])).toEqual(saved);
+  });
   it('extracts reasoning from message metadata', () => {
     const message = {
       role: 'assistant',

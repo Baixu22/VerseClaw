@@ -21,6 +21,7 @@ import {
 import { Search } from '@/components/icons/codex-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { TooltipHint } from '@/components/ui/tooltip';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { basenameFromPath, compactCommit, defaultWorktreeTargetPath, isLinkedWorktreePath, pathEquals } from '@/lib/git-ui';
@@ -193,11 +194,13 @@ export function ComposerGitStrip({ workspace, disabled = false, active = true, s
 
   if (summaryOnly) return (
     <div className="composer-change-summary" data-testid="composer-git-strip">
-      <button type="button" onClick={onOpenGitPanel} data-testid="composer-git-review" title={t('composer.git.reviewChanges')}>
+      <TooltipHint label={t('composer.git.reviewChanges')}>
+      <button type="button" onClick={onOpenGitPanel} data-testid="composer-git-review">
         <GitCompareArrows className="size-3.5" aria-hidden="true" />
         <span data-testid="composer-git-change-count">{t('composer.git.filesChanged', { count: changeCount })}</span>
         {status.hasConflicts && <AlertTriangle className="size-3.5 text-amber-700 dark:text-amber-400" aria-label={stateLabel} />}
       </button>
+      </TooltipHint>
     </div>
   );
 

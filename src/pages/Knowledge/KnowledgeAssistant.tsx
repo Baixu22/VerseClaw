@@ -1,5 +1,6 @@
 import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdown';
-import { KnowledgeBot, type KnowledgeBotState } from '@/components/knowledge-bot/KnowledgeBot';
+import { UserMessageBubble } from '@/components/assistant-render/UserMessageBubble';
+import { KnowledgeBot, KnowledgeBotCompanion, type KnowledgeBotState } from '@/components/knowledge-bot/KnowledgeBot';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Copy, FilePlus2, FileText, Loader2, RotateCcw, ArrowUp, ShieldCheck, Wrench } from 'lucide-react';
@@ -10,16 +11,14 @@ import { cn } from '@/lib/utils';
 import type { KnowledgeLibrarianGroundedAnswer } from '@/lib/knowledge-librarian';
 import type { KnowledgeLibrarianCitation, KnowledgeLibrarianMessage } from './knowledge-view-utils';
 
-export function KnowledgeAssistantMarkdown({ content }: { content: string }) {
-  return <AssistantMarkdown text={content} isStreaming={false} />;
-}
-
 export function KnowledgeAssistantMessage({
   message,
   botState = 'idle',
-  animateAvatar = false,
+  active = false,
   compact = false,
   copied,
+  onRelay,
+  relayLabel,
   busy,
   copyLabel,
   copiedLabel,
@@ -36,9 +35,11 @@ export function KnowledgeAssistantMessage({
 }: {
   message: KnowledgeLibrarianMessage;
   botState?: KnowledgeBotState;
-  animateAvatar?: boolean;
+  active?: boolean;
   compact?: boolean;
   copied: boolean;
+  onRelay?: () => void;
+  relayLabel: string;
   busy: boolean;
   copyLabel: string;
   copiedLabel: string;
@@ -93,41 +94,14 @@ export function KnowledgeAssistantMessage({
   return (
     <article
       className={cn(
-        'group flex gap-2.5', compact && 'knowledge-bot-message',
+        'group flex min-w-0', compact && 'knowledge-bot-message',
         isUser ? 'justify-end' : 'justify-start',
       )}
       data-testid={`knowledge-librarian-message-${message.role}`}
     >
-      {!isUser ? (
-        <div className={compact ? 'mt-1 h-7 w-7 shrink-0' : 'mt-0.5 h-9 w-9 shrink-0'}>
-          <KnowledgeBot size={compact ? 28 : 36} state={botState} animated={animateAvatar} />
-        </div>
-      ) : null}
-      <div className={cn('min-w-0', isUser ? 'flex max-w-[88%] flex-col items-end' : 'flex-1')}>
-        <div className={cn('mb-1 flex items-center gap-2 text-tiny text-muted-foreground', compact && 'knowledge-bot-message__meta')}>
-          <span className={compact ? 'sr-only' : undefined}>{label}</span>
-          <span className={compact ? 'sr-only' : undefined}>{new Date(message.createdAt).toLocaleTimeString()}</span>
-          <button
-            type="button"
-            className="inline-flex h-5 w-5 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-black/5 group-hover:opacity-100 focus:opacity-100 dark:hover:bg-white/10"
-            onClick={() => onCopy(message.content)}
-            aria-label={copied ? copiedLabel : copyLabel}
-            title={copied ? copiedLabel : copyLabel}
-            data-testid="knowledge-librarian-copy"
-          >
-            {copied ? <Check className="h-3 w-3 text-green-700 dark:text-green-400" /> : <Copy className="h-3 w-3" />}
-          </button>
-        </div>
-        <div
-          className={cn(
-            'px-1 py-1 text-sm leading-6',
-            isUser
-              ? 'rounded-[18px] bg-surface-input px-3.5 py-2.5 text-foreground'
-              : 'text-foreground',
-          )}
-        >
+      <div className={cn('min-w-0', isUser ? 'flex max-w-[77%] flex-col items-end' : 'w-full')}>
           {isUser ? (
-            <div className="whitespace-pre-wrap break-words">{message.content}</div>
+            <UserMessageBubble text={message.content} />
           ) : groundedAnswer ? (
             <div className={compact ? 'space-y-2.5' : 'space-y-3'} data-testid="knowledge-librarian-grounded-answer">
               {/* Restraint: the grounding badge only earns space when grounding is
@@ -138,7 +112,7 @@ export function KnowledgeAssistantMessage({
                 </Badge>
               ) : null}
               <div className="min-w-0" data-testid="knowledge-librarian-answer-section">
-                <KnowledgeAssistantMarkdown content={localTemplate ? localBody! : groundedAnswer.answer} />
+                <AssistantMarkdown text={localTemplate ? localBody! : groundedAnswer.answer} isStreaming={false} />
               </div>
               {groundedAnswer.claims?.length ? <div className="flex flex-wrap gap-2 text-tiny text-muted-foreground" data-testid="knowledge-claim-status">
                 {groundedAnswer.claims.map((claim, index) => <span key={index}>
@@ -202,11 +176,8 @@ export function KnowledgeAssistantMessage({
               {!compact && candidateActions}
             </div>
           ) : (
-            <div className="min-w-0">
-              <KnowledgeAssistantMarkdown content={message.content} />
-            </div>
+            <AssistantMarkdown text={message.content} isStreaming={false} />
           )}
-        </div>
         {message.citations && message.citations.length > 0 && !groundedAnswer ? (
           <div className="mt-1.5 grid gap-0.5" data-testid="knowledge-librarian-citations" aria-label={citationsLabel}>
             {message.citations.map((citation, index) => (
@@ -224,6 +195,27 @@ export function KnowledgeAssistantMessage({
             ))}
           </div>
         ) : null}
+        <footer className="mt-1 flex items-center gap-1.5 text-tiny text-muted-foreground">
+          {!isUser && (active && (botState === 'idle' || botState === 'listening')
+            ? <KnowledgeBotCompanion size={compact ? 32 : 36} state={botState} rest />
+            : <KnowledgeBot size={compact ? 32 : 36} state={botState} animated={active} />)}
+          <span className={compact ? 'sr-only' : undefined}>{label}</span>
+          <time dateTime={message.createdAt} className={compact ? 'sr-only' : undefined}>{new Date(message.createdAt).toLocaleTimeString()}</time>
+          <button
+            type="button"
+            className="inline-flex h-6 w-6 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-black/5 group-hover:opacity-100 focus-visible:opacity-100 dark:hover:bg-white/10"
+            onClick={() => onCopy(message.content)}
+            aria-label={copied ? copiedLabel : copyLabel}
+            title={copied ? copiedLabel : copyLabel}
+            data-testid="knowledge-librarian-copy"
+          >
+            {copied ? <Check className="h-3.5 w-3.5 text-green-700 dark:text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
+          </button>
+          {onRelay && <button type="button" disabled={busy} title={relayLabel} onClick={onRelay} data-testid="knowledge-relay-home"
+            className="max-w-full truncate rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-black/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 dark:hover:bg-white/10">
+            {relayLabel}
+          </button>}
+        </footer>
       </div>
     </article>
   );

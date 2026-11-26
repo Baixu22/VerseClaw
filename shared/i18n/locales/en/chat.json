@@ -2639,7 +2639,9 @@
     },
     "activity": {
       "thinking": "Thinking",
-      "processingToolResults": "Processing tool results"
+      "processingToolResults": "Processing tool results",
+      "usingTools": "Using tools",
+      "writing": "Writing response"
     },
     "quote": {
       "action": "Quote"
@@ -2778,6 +2780,10 @@
     "omittedToggle": "Trimmed by budget ({{count}})"
   },
   "messageNav": {
+    "addBookmark": "Bookmark this turn",
+    "removeBookmark": "Remove bookmark",
+    "nextBookmark": "Next bookmarked turn",
+    "preview": "Preview prompt {{ordinal}}",
     "label": "Prompt navigation",
     "jumpTo": "Jump to prompt {{ordinal}}"
   },
@@ -3088,6 +3094,7 @@
     "selectionUnavailable": "Selection comparison unavailable"
   },
   "toolActivity": {
+    "failedTarget": "Failed: {{target}}",
     "running": {
       "read": "Reading",
       "write": "Writing",

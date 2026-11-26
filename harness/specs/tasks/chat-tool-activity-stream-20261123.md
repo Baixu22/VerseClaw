@@ -21,6 +21,9 @@ requiredProfiles:
   - e2e
 touchedAreas:
   - src/pages/Chat/index.tsx
+  - src/pages/Chat/ChatMessage.tsx
+  - src/pages/Chat/execution-projection.ts
+  - src/components/assistant-render/model.ts
   - src/pages/Chat/ChatInput.tsx
   - src/pages/Chat/ExecutionGraphCard.tsx
   - src/pages/Chat/tool-activity-groups.ts
@@ -36,6 +39,8 @@ touchedAreas:
   - shared/i18n/locales/*/chat.json
   - tests/unit/tool-activity-groups.test.ts
   - tests/unit/tool-activity-group.test.tsx
+  - tests/unit/execution-projection.test.ts
+  - tests/unit/assistant-render-model.test.ts
   - tests/unit/task-visualization.test.ts
   - tests/unit/tool-ui-run-surfaces.test.ts
   - tests/unit/runtime-approval-prompt.test.tsx
@@ -57,6 +62,8 @@ touchedAreas:
   - scripts/repository-artifacts.json
   - .gitignore
 expectedUserBehavior:
+  - 模型的思考、工具回执处理和回复写入按最新输出事件切换。并行工具单独记录失败目标，其余调用继续显示进度，回合按自身终态收尾。
+  - 工具详情单独呈现参数和结果。历史与实时事件同时记录同一回执时只呈现一次，工具回显输入时两个字段均保留。
   - 正文、工具组与输入框共享可用会话宽度，宽屏和窄窗保持相同左右边界；打开工作区面板后按剩余会话宽度响应。
   - 可读的助手说明保留在会话中，每段相邻工具操作在对应说明后形成独立折叠组；新的说明开始下一组。
   - 组默认折叠。运行期间显示最新正在执行的动作与目标；完成后显示实际执行过的操作类别，静态保留。

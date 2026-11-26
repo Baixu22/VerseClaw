@@ -25,7 +25,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { subagentIdentity } from '@shared/subagent-identity';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipHint } from '@/components/ui/tooltip';
 import { supportsRichDocumentPreview, type GeneratedFile } from '@/lib/generated-files';
 import { hostApi } from '@/lib/host-api';
 import type { AgentSummary } from '@/types/agent';
@@ -211,6 +211,7 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
                   onClose={() => handleCloseTab(entry.id)}
                 />
               ))}
+              <TooltipHint label={t('artifactPanel.actions.newTab', 'Open a panel tab')}>
               <button
                 ref={newTabButtonRef}
                 type="button"
@@ -223,28 +224,30 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
               >
                 <Plus className="h-4 w-4 pointer-events-none" />
               </button>
+              </TooltipHint>
             </div>
           </div>
         )}
         <div className={cn('rs-panel-controls', isMac && 'no-drag relative z-10')} role="toolbar" aria-label={t('artifactPanel.panelControls.label', 'Panel controls')}>
           {activeTab?.kind === 'terminal' && (
+            <TooltipHint label={t(terminalPlacement === 'bottom' ? 'artifactPanel.actions.moveTerminalSide' : 'artifactPanel.actions.moveTerminalBottom')}>
             <button
               type="button"
               className="rs-panel-control-btn"
               onClick={handleTerminalPlacementChange}
               aria-label={t(terminalPlacement === 'bottom' ? 'artifactPanel.actions.moveTerminalSide' : 'artifactPanel.actions.moveTerminalBottom')}
-              title={t(terminalPlacement === 'bottom' ? 'artifactPanel.actions.moveTerminalSide' : 'artifactPanel.actions.moveTerminalBottom')}
               data-testid="artifact-panel-terminal-placement"
             >
               {terminalPlacement === 'bottom' ? <PanelRight className="h-4 w-4" /> : <PanelBottom className="h-4 w-4" />}
             </button>
+            </TooltipHint>
           )}
+          <TooltipHint label={t(expanded ? 'artifactPanel.actions.collapse' : 'artifactPanel.actions.expand')}>
           <button
             type="button"
             className={cn('rs-panel-control-btn', expanded && 'active')}
             onClick={() => handleExpandedChange(!expanded)}
             aria-label={t(expanded ? 'artifactPanel.actions.collapse' : 'artifactPanel.actions.expand')}
-            title={t(expanded ? 'artifactPanel.actions.collapse' : 'artifactPanel.actions.expand')}
             aria-pressed={expanded}
             data-testid="artifact-panel-expand"
           >
@@ -252,11 +255,12 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
               ? <PanelRight className="h-4 w-4 pointer-events-none" />
               : <PanelRightOpen className="h-4 w-4 pointer-events-none" />}
           </button>
+          </TooltipHint>
+          <TooltipHint label={t('artifactPanel.actions.close')}>
           <button
             type="button"
             className="rs-panel-control-btn"
             aria-label={t('artifactPanel.actions.close')}
-            title={t('artifactPanel.actions.close')}
             data-testid="artifact-panel-close"
             onClick={() => {
               hidePanel();
@@ -267,6 +271,7 @@ export function ArtifactPanel({ agent, runStartedAt, refreshSignal, sessionState
           >
             <X className="h-4 w-4 pointer-events-none" />
           </button>
+          </TooltipHint>
         </div>
       </div>
 
@@ -501,11 +506,11 @@ function PanelTabChip({
 
   return (
     <div className={cn('rs-tab-chip', active && 'active')}>
+      <TooltipHint label={tab.title && tab.title !== label ? `${label} · ${tab.title}` : label} side="bottom">
       <button
         type="button"
         role="tab"
         aria-selected={active}
-        title={tab.title && tab.title !== label ? `${label} · ${tab.title}` : label}
         data-testid={`artifact-panel-tab-${testKey}`}
         className="rs-tab-chip-btn"
         onPointerDown={(event) => {
@@ -529,6 +534,8 @@ function PanelTabChip({
         </span>
         <span className="rs-tab-label">{label}</span>
       </button>
+      </TooltipHint>
+      <TooltipHint label={t('artifactPanel.actions.closeTab', 'Close {{label}} tab', { label })} side="bottom">
       <button
         type="button"
         className="rs-tab-close"
@@ -541,6 +548,7 @@ function PanelTabChip({
       >
         <X className="h-3.5 w-3.5 pointer-events-none" />
       </button>
+      </TooltipHint>
     </div>
   );
 }

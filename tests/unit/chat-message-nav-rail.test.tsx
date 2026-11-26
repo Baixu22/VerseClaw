@@ -40,6 +40,7 @@ vi.mock('react-i18next', () => ({
 
 function makeItems(count: number): MessageNavRailItem[] {
   return Array.from({ length: count }, (_, i) => ({
+    id: `turn-${i}`,
     // Prompts sit at even transcript indices when every turn has one reply, so
     // non-contiguous indices are the normal case, not an edge case.
     index: i * 2,
@@ -52,7 +53,7 @@ function makeItems(count: number): MessageNavRailItem[] {
  * Mount the rail alongside the transcript anchors it navigates. `scrollWidth`
  * stands in for the reading pane's measured width.
  */
-function mountRail(items: MessageNavRailItem[], scrollerWidth = 0) {
+function mountRail(items: MessageNavRailItem[], scrollerWidth = 0, scopeKey = 'preview') {
   const scroller = document.createElement('div');
   scroller.setAttribute('data-testid', 'scroller');
   Object.defineProperty(scroller, 'clientWidth', { value: scrollerWidth, configurable: true });
@@ -71,7 +72,7 @@ function mountRail(items: MessageNavRailItem[], scrollerWidth = 0) {
 
   const view = render(
     <TooltipProvider>
-      <MessageNavRail items={items} scrollRef={ref} />
+      <MessageNavRail items={items} scrollRef={ref} scopeKey={scopeKey} />
     </TooltipProvider>,
   );
   return { ...view, scroller, scrollTo };
@@ -124,6 +125,40 @@ describe('MessageNavRail visibility', () => {
 describe('MessageNavRail navigation', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
+    localStorage.removeItem('verse-turn-bookmarks-v1:preview');
+  });
+
+  it('persists bookmarks by message identity and jumps after history indices shift', async () => {
+    const items = makeItems(4);
+    const first = mountRail(items, 1200);
+    fireEvent.focus(screen.getByTestId('chat-message-nav-rail-item-2'));
+    fireEvent.click(await screen.findByRole('button', { name: 'messageNav.addBookmark' }));
+    expect(screen.getByTestId('chat-message-nav-rail-item-2')).toHaveAttribute('data-bookmarked', 'true');
+    first.unmount();
+    const shifted = items.map(item => ({ ...item, index: item.index + 10 }));
+    const second = mountRail(shifted, 1200);
+    expect(screen.getByTestId('chat-message-nav-rail-item-12')).toHaveAttribute('data-bookmarked', 'true');
+    fireEvent.click(screen.getByTestId('chat-message-nav-next-bookmark'));
+    expect(second.scrollTo).toHaveBeenCalled();
+    expect(screen.getByTestId('chat-message-nav-rail-item-12')).toHaveAttribute('aria-current', 'location');
+    second.unmount();
+    mountRail(items, 1200, 'another-session');
+    expect(screen.queryByTestId('chat-message-nav-next-bookmark')).toBeNull();
+  });
+
+  it('reaches the bookmark by keyboard and removes its shortcut when unmarked', async () => {
+    mountRail(makeItems(4), 1200);
+    const tick = screen.getByTestId('chat-message-nav-rail-item-2');
+    fireEvent.focus(tick);
+    const add = await screen.findByRole('button', { name: 'messageNav.addBookmark' });
+    fireEvent.keyDown(tick, { key: 'ArrowRight' });
+    expect(add).toHaveFocus();
+    fireEvent.click(add);
+    fireEvent.click(screen.getByRole('button', { name: 'messageNav.removeBookmark' }));
+    expect(screen.queryByTestId('chat-message-nav-next-bookmark')).toBeNull();
+    fireEvent.keyDown(add, { key: 'Escape' });
+    expect(tick).toHaveFocus();
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   });
 
   it('scrolls to the transcript anchor for the clicked prompt', () => {
@@ -148,8 +183,6 @@ describe('MessageNavRail navigation', () => {
 
     fireEvent.focus(screen.getByTestId(`chat-message-nav-rail-item-${items[1].index}`));
 
-    // Radix portals the content and mirrors it into a visually-hidden
-    // `role="tooltip"` node, so the preview legitimately appears twice.
     expect(await screen.findAllByText('Prompt number 2')).not.toHaveLength(0);
     expect(await screen.findAllByText('Visible assistant response')).not.toHaveLength(0);
     expect(screen.queryByText('Prompt number 1')).not.toBeInTheDocument();

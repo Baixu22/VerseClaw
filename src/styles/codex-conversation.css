@@ -1,53 +1,37 @@
-/*
- * codex-conversation.css — conversation-area recipe ported from the FakeCoding
- * reference app.
- *
- * PROVENANCE. Two sources, both real Codex artefacts, used for different halves:
- *
- *   1. C:\Users\27933\Desktop\FakeCoding-main\codex-conversation-render\css-all\
- *        mermaid-diagram-shell-Bvc_FFGx.css
- *      The `_markdownContent_l45ev_131` / `_heading_l45ev_235` / `_listItem_l45ev_357`
- *      family, byte-exact out of the Codex Desktop ASAR (26.715.9079.0). This is
- *      where every odd number below comes from: .6875rem paragraph gap,
- *      1.3125rem list indent, 20px/10px heading margins, the 4px blockquote bar,
- *      .92em inline code. Do not round them.
- *
- *   2. C:\Users\27933\Desktop\FakeCoding-main\web\src\styles.css
- *      (`.codex-thread-results .markdown-body` block). FakeCoding's own port of
- *      the same rules into a normal React app. Consulted wherever the ASAR value
- *      is expressed against runtime-injected VSCode variables we do not have —
- *      chiefly the type ramp. The ASAR drives font-size off
- *      `--codex-chat-font-size` (16px in the standalone demo, 14px in the app
- *      chrome); FakeCoding resolves it to 14px/22px weight 445, and that is the
- *      thing on screen the user is comparing against, so it is what we match.
- *
- * SCOPE. `.codex-markdown` is applied alongside `.prose` on the assistant
- * markdown root (see AssistantMarkdown in pages/Chat/ChatMessage.tsx). `.prose`
- * is kept because eight e2e specs locate assistant replies through it. The
- * rules here are two-class descendant selectors (`.codex-markdown p`), so they
- * outrank both the hand-written `.prose x` rules in globals.css and any
- * single-class Tailwind utility, regardless of import order.
- *
- * THEME. The reference is a dark-only Electron surface reading
- * `--color-token-*` variables injected at runtime. Those do not exist here, so
- * each is mapped onto the nearest existing ClawX token and the mapping is noted
- * inline. Colour is therefore *not* byte-ported — metrics are. That is
- * deliberate: ClawX ships a cream light theme the reference has no analogue for.
- */
+:root {
+  --transcript-family: -apple-system, "Segoe UI Variable Text", "Segoe UI", "PingFang SC", "Noto Sans SC", "Microsoft YaHei UI", sans-serif;
+}
+:root:lang(ja) {
+  --transcript-family: -apple-system, "Segoe UI Variable Text", "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+}
 
+.chat-transcript-open { background-color: var(--color-transcript-paper); }
+
+/* Composite the transparent scroll surface over the column's opaque paper.
+ * Chromium then uses grayscale glyph edges throughout the transcript on Windows. */
+.chat-transcript-open .codex-conversation-inset { backface-visibility: hidden; }
+
+/* Assistant replies share the transcript's alignment. Prose has a reading
+ * measure, while tables, code and embedded resources can use the full column. */
 .codex-markdown {
-  /* markdown-body: 14px/22px weight 445 (styles.css:8110-8123). 445 is a
-   * variable-font weight; on static faces it rounds to 400, which is the
-   * pre-existing rendering, so this is safe to state unconditionally. */
-  --codex-markdown-font-size: 14px;
-  --codex-markdown-line-height: 22px;
-
-  font-size: var(--codex-markdown-font-size);
-  font-weight: 445;
-  line-height: var(--codex-markdown-line-height);
-  /* _markdownContent_l45ev_131 — long unbroken tokens (paths, hashes) must wrap
-   * rather than force a horizontal scrollbar on the whole thread. */
+  --reply-ink: var(--color-chat-foreground);
+  --reply-body: var(--color-transcript-prose);
+  --reply-muted: color-mix(in srgb, var(--color-chat-secondary) 80%, var(--reply-ink));
+  --reply-link: color-mix(in srgb, var(--color-chat-running) 82%, var(--reply-ink));
+  --reply-code: color-mix(in srgb, var(--purple-400) 67%, var(--reply-ink));
+  --reply-line: hsl(var(--conversation-border-heavy) / 0.65);
+  color: var(--reply-body);
+  font-family: var(--reading-family, var(--transcript-family));
+  font-size: var(--reading-size, 17px);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
   overflow-wrap: anywhere;
+}
+
+.dark .codex-markdown {
+  --reply-ink: var(--gray-0);
+  --reply-code: color-mix(in srgb, var(--purple-300) 70%, var(--reply-ink));
 }
 
 /* Transcript and composer use the available conversation column. */
@@ -92,7 +76,7 @@
   color: var(--color-chat-secondary);
   font-size: 13px;
   line-height: 20px;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
 }
 
 .tool-activity-group[data-expanded='true'] {
@@ -137,6 +121,23 @@
   outline-offset: 2px;
 }
 
+.tool-activity-toggle {
+  min-height: 30px;
+  gap: 0.56em;
+  color: var(--color-transcript-activity);
+  font-family: var(--reading-family, var(--transcript-family));
+  font-size: calc(var(--reading-size, 17px) * 14 / 17);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+.tool-activity-toggle .tool-activity-icon,
+.tool-activity-toggle .tool-activity-icon svg {
+  width: 1em;
+  height: 1em;
+}
+
 .tool-activity-group[data-status='error'] .tool-activity-toggle {
   color: hsl(var(--destructive));
 }
@@ -158,6 +159,16 @@
 
 .tool-activity-target {
   opacity: 0.88;
+}
+
+.tool-activity-failure {
+  min-inline-size: 0;
+  max-inline-size: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: hsl(var(--destructive));
+  font-size: 12px;
 }
 
 .tool-activity-strip-toggle,
@@ -536,223 +547,156 @@
   }
 }
 
-.codex-markdown > :first-child {
-  margin-top: 0;
+.codex-markdown > :is(p, ul, ol, blockquote) {
+  max-inline-size: 76ch;
 }
 
-.codex-markdown > :last-child {
-  margin-bottom: 0;
-}
-
-/* _paragraph_l45ev_175 { margin: 0 0 .6875rem } — 11px, notably tighter than
- * the 10px symmetric `my-2.5` it replaces, and asymmetric: no top margin. */
 .codex-markdown p {
-  margin: 0 0 0.6875rem;
-  font: inherit;
-  line-height: inherit;
+  margin: 0 0 0.8em;
 }
 
-/* _heading_l45ev_235 — one shared margin/weight/leading, size ramp below.
- * The reference has no serif display face in the transcript; headings are the
- * same family as body at 600. */
-.codex-markdown h1,
-.codex-markdown h2,
-.codex-markdown h3,
-.codex-markdown h4,
-.codex-markdown h5,
-.codex-markdown h6 {
-  margin: 20px 0 10px;
-  color: hsl(var(--foreground));
-  font-family: inherit;
-  font-weight: 600;
-  letter-spacing: normal;
-  line-height: 1.25;
+.codex-markdown :is(h1, h2, h3, h4, h5, h6) {
+  margin: 1.45em 0 0.5em;
+  color: var(--reply-ink);
+  font-weight: 650;
+  line-height: 1.35;
+  text-wrap: balance;
 }
 
-.codex-markdown > :first-child:is(h1, h2, h3, h4, h5, h6) {
-  margin-top: 0;
-}
+.codex-markdown h1 { font-size: 1.65em; }
+.codex-markdown h2 { font-size: 1.4em; }
+.codex-markdown h3 { font-size: 1.17em; }
+.codex-markdown :is(h4, h5, h6) { font-size: 1em; }
 
-.codex-markdown h1 { font-size: 24px; }
-.codex-markdown h2 { font-size: 20px; }
-
-/* _heading3/_heading4 share a size and gain an explicit 22px leading. */
-.codex-markdown h3,
-.codex-markdown h4 {
-  font-size: 17px;
-  line-height: 22px;
-}
-
-.codex-markdown h5,
-.codex-markdown h6 {
-  font-size: 15px;
-  line-height: 20px;
-}
-
-/* _list_l45ev_287 — 1.3125rem (21px) indent, markers outside the text column. */
-.codex-markdown ul,
-.codex-markdown ol {
-  margin: 0 0 0.6875rem;
-  padding-inline-start: 1.3125rem;
+.codex-markdown :is(ul, ol) {
+  margin: 0 0 0.85em;
+  padding-inline-start: 1.5em;
   list-style-position: outside;
 }
-
 .codex-markdown ul { list-style-type: disc; }
 .codex-markdown ul ul { list-style-type: circle; }
 .codex-markdown ul ul ul { list-style-type: square; }
 .codex-markdown ol { list-style-type: decimal; }
-
-/* _listItem_l45ev_357 — the .125rem inset keeps the marker from crowding the
- * first glyph at 14px; item spacing is a top margin on siblings only, so a
- * single-item list has no trailing gap. */
-.codex-markdown li {
-  padding-inline-start: 0.125rem;
-  line-height: var(--codex-markdown-line-height);
-}
-
-.codex-markdown li + li { margin-top: 0.5rem; }
+.codex-markdown li { padding-inline-start: 0.2em; }
+.codex-markdown li::marker { color: var(--reply-muted); font-weight: 600; }
+.codex-markdown li + li { margin-top: 0.3em; }
 .codex-markdown li > p { margin: 0; }
-.codex-markdown li > p + p { margin-top: 0.6875rem; }
+.codex-markdown li > p + p { margin-top: 0.6em; }
+.codex-markdown li > :is(ul, ol) { margin-block: 0.3em 0; }
 
-.codex-markdown li > ul,
-.codex-markdown li > ol {
-  margin-top: 0.5rem;
-  margin-bottom: 0;
+.codex-markdown .contains-task-list { padding-inline-start: 0; list-style: none; }
+.codex-markdown .task-list-item { padding-inline-start: 1.5em; }
+.codex-markdown .task-list-item input[type='checkbox'] {
+  inline-size: 0.95em;
+  block-size: 0.95em;
+  margin-inline: -1.5em 0.3em;
+  accent-color: var(--reply-link);
 }
 
-/* GFM task lists: remark emits `.contains-task-list` / `.task-list-item`. */
-.codex-markdown .contains-task-list {
-  padding-inline-start: 0;
-  list-style: none;
-}
-
-.codex-markdown .task-list-item {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 7px;
-  padding-inline-start: 0;
-  list-style: none;
-}
-
-/* _blockquote_l45ev_465 — no background and no border shorthand; the rule is a
- * 4px rounded bar drawn as ::after, inset 8px top and bottom so it stops short
- * of the text block's full height. Body text keeps the primary colour. */
 .codex-markdown blockquote {
-  position: relative;
-  margin: 0 0 8px;
-  padding: 8px 0 8px 24px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: hsl(var(--foreground));
-  font-style: normal;
-  line-height: 24px;
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border-inline-start: 3px solid color-mix(in srgb, var(--reply-link) 56%, transparent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: color-mix(in srgb, var(--reply-link) 5%, transparent);
+  color: var(--reply-muted);
 }
 
-.codex-markdown blockquote::after {
-  content: "";
-  position: absolute;
-  inset-inline-start: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 4px;
-  border-radius: var(--radius-2xs);
-  background: hsl(var(--conversation-border-heavy));
-}
-
-.codex-markdown blockquote > :first-child { margin-top: 0; }
 .codex-markdown blockquote > :last-child { margin-bottom: 0; }
-.codex-markdown blockquote > p { margin: 0; font-weight: 400; }
 
-/* _horizontalRule_l45ev_547 — 28px of air either side, far more than `my-6`. */
 .codex-markdown hr {
-  clear: both;
-  height: 0;
-  margin: 28px 0;
+  margin: 1.65em 0;
   border: 0;
-  border-top: 1px solid hsl(var(--conversation-border-heavy));
+  border-top: 1px solid var(--reply-line);
 }
 
-.codex-markdown hr + * { margin-top: 0; }
-
-/* Links are underlined dotted in the reference rather than coloured — the
- * transcript stays monochrome and the accent is reserved for controls. */
 .codex-markdown a {
-  color: inherit;
-  text-decoration: underline dotted 0.5px;
+  color: var(--reply-link);
+  text-decoration: underline;
   text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
-  text-underline-offset: 3px;
+  text-underline-offset: 0.18em;
 }
-
 .codex-markdown a:hover { text-decoration-color: currentColor; }
+.codex-markdown strong { color: var(--reply-ink); font-weight: 650; }
 
-.codex-markdown strong { font-weight: 600; }
-
-/* _inlineMarkdown_l45ev_793 — no border, a flat 10.7% ink wash, and
- * box-decoration-break so a wrapped span keeps its radius on both fragments. */
 .codex-markdown :not(pre) > code {
-  -webkit-box-decoration-break: clone;
+  letter-spacing: normal;
   box-decoration-break: clone;
-  display: inline;
-  padding: 1px 6px;
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, hsl(var(--foreground)) 10.7%, transparent);
-  color: inherit;
-  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-  font-size: 0.92em;
-  line-height: inherit;
+  -webkit-box-decoration-break: clone;
+  padding: 0.08em 0.32em;
+  border-radius: 0.32em;
+  background: color-mix(in srgb, var(--reply-code) 9%, transparent);
+  color: var(--reply-code);
+  font-family: var(--font-mono, ui-monospace, Consolas, monospace);
+  font-size: 0.91em;
   overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
-/* _codeBlock_l45ev_749 { margin-block: 14px }. The block itself (header + pre)
- * is composed in ChatMessage.tsx; only the outer rhythm lives here. */
-.codex-markdown pre {
-  margin: 0;
+.markdown-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  margin-top: 1em;
+  padding-inline: 12px 6px;
+  border: 1px solid var(--reply-line);
+  border-radius: 10px 10px 0 0;
+  background: color-mix(in srgb, var(--reply-ink) 5%, var(--color-chat-task));
+  color: var(--reply-muted);
+  font-size: 12px;
+}
+
+.codex-markdown .markdown-code-body {
+  letter-spacing: normal;
+  font-weight: 400;
+  margin: 0 0 1em;
+  padding: 12px 14px;
+  border: 1px solid var(--reply-line);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  background: var(--color-chat-task);
+  color: var(--reply-body);
   font-size: 13px;
-  line-height: 19.5px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
-/* _table_l45ev_571 — separate borders, hairline row rules only, no outer frame
- * and no cell background. Trailing 24px gutter on every cell but the last. */
+.markdown-syntax-token { color: color-mix(in srgb, var(--syntax-light) 88%, var(--reply-ink)); }
+.dark .markdown-syntax-token { color: color-mix(in srgb, var(--syntax-dark) 88%, var(--reply-ink)); }
+
+.markdown-table-scroll {
+  width: fit-content;
+  min-inline-size: min(100%, 40ch);
+  max-width: 100%;
+  margin-block: 1em;
+  overflow-x: auto;
+  border: 1px solid var(--reply-line);
+  border-radius: 8px;
+}
 .codex-markdown table {
   width: max-content;
   min-width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  table-layout: auto;
-  margin: 0;
-  color: inherit;
-  font-size: 14px;
-  text-align: left;
+  border-collapse: collapse;
+  font-size: 0.94em;
 }
-
-.codex-markdown th,
-.codex-markdown td {
+.codex-markdown :is(th, td) {
   max-width: 480px;
-  padding: 10px 24px 10px 0;
-  border: 0;
-  border-bottom: 1px solid hsl(var(--conversation-border-light));
+  padding: 0.55em 0.85em;
+  text-align: start;
   vertical-align: top;
-  white-space: normal;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
-
+.codex-markdown [align='center'] { text-align: center; }
+.codex-markdown [align='right'] { text-align: right; }
 .codex-markdown th {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  border-bottom-color: hsl(var(--conversation-border-heavy));
-  background: transparent;
-  color: hsl(var(--foreground));
+  background: var(--color-chat-task);
+  color: var(--reply-ink);
   font-weight: 600;
-  letter-spacing: normal;
-  line-height: 16px;
-  text-transform: none;
 }
+.codex-markdown td { border-top: 1px solid var(--reply-line); }
 
-.codex-markdown th:last-child,
-.codex-markdown td:last-child { padding-right: 0; }
+.codex-markdown > :first-child { margin-top: 0; }
+.codex-markdown > :last-child { margin-bottom: 0; }
 
 /* Keep embedded diffs on the same neutral surface as command output. Vertical
  * padding lives outside the scroll region so previews end on a complete row. */
@@ -767,29 +711,32 @@
   --diffs-gap-block: 0px;
 }
 
-/* Streaming fade-in (_fade-in_l45ev_1). The reference staggers per-block with a
- * --fade-delay; we have no per-block delay plumbing, so this is the un-staggered
- * form — same curve, same duration. */
-@keyframes codex-markdown-fade-in {
-  to { opacity: 1; }
+/* Only a live reply paints the caret. The completed transcript stays still. */
+.codex-markdown[data-status='running'] :where([data-writing-end])::after,
+.codex-markdown[data-status='running']:not(:has([data-writing-end]))::after {
+  content: '';
+  display: inline-block;
+  width: 0.16em;
+  height: 0.94em;
+  margin-inline-start: 0.18em;
+  vertical-align: -0.1em;
+  border-radius: 2px;
+  background: var(--reply-link);
+  animation: reply-caret 1.1s ease-in-out infinite alternate;
 }
 
-.codex-markdown-streaming li,
-.codex-markdown-streaming tr,
-.codex-markdown-streaming hr,
-.codex-markdown-streaming blockquote {
-  opacity: 0;
-  animation: codex-markdown-fade-in 0.15s cubic-bezier(0.37, 0.55, 0.86, 0.88) forwards;
+@keyframes reply-caret { to { opacity: 0.42; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .codex-markdown[data-status='running'] > :is(p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol, .markdown-table-scroll) {
+    animation: reply-block-enter 180ms ease-out;
+  }
 }
+@keyframes reply-block-enter { from { opacity: 0.6; transform: translateY(2px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .codex-markdown-streaming li,
-  .codex-markdown-streaming tr,
-  .codex-markdown-streaming hr,
-  .codex-markdown-streaming blockquote {
-    opacity: 1;
-    animation: none;
-  }
+  .codex-markdown[data-status='running']::after,
+  .codex-markdown[data-status='running'] [data-writing-end]::after { animation: none; }
 }
 
 /*

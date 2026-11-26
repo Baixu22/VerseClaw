@@ -194,7 +194,7 @@ for (const theme of ['light', 'dark'] as const) {
       await page.mouse.click(8, 8);
       await expect(page.getByTestId('chat-knowledge-scope-menu')).toHaveCount(0);
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.getByTestId('chat-agent-effort-button').click();
+      await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-agent-effort-slider')).toBeVisible();
       await expect(page.getByTestId('chat-agent-effort-slider')).toBeInViewport();
       await expect(page.getByTestId('chat-model-picker-menu')).toHaveCSS('transform', 'none');

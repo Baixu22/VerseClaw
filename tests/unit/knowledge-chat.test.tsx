@@ -8,14 +8,14 @@ const knowledge = vi.hoisted(() => ({
   answerFromSourceSet: vi.fn(), createDraft: vi.fn(), createInboxItem: vi.fn(), stewardReview: vi.fn(),
   applyDraft: vi.fn(), applyReviewedChange: vi.fn(),
 }));
-vi.mock('@/lib/host-api', () => ({ hostApi: { knowledge } }));
+const relay = vi.hoisted(() => ({ sendToChat: vi.fn(), decideApproval: vi.fn() }));
+vi.mock('@/lib/host-api', () => ({ hostApi: { knowledge, sessions: { sendToChat: relay.sendToChat }, permissions: { decideApproval: relay.decideApproval } } }));
 vi.mock('react-i18next', async (importOriginal) => ({
   ...await importOriginal<typeof import('react-i18next')>(),
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-const storageKey = 'clawx.knowledge.librarian.checkpoint.v1';
 function Destination() {
   const location = useLocation();
   return <output data-testid="destination">{JSON.stringify({ search: location.search, state: location.state })}</output>;
@@ -27,6 +27,29 @@ function renderChat(context: KnowledgeChatContext = {}) {
 }
 
 describe('Chat knowledge mode', () => {
+  it('keeps long histories and persists an acknowledged delivery after approval', async () => {
+    const key = 'clawx.knowledge.librarian.checkpoint.v1.[null,null,[]]';
+    const messages = Array.from({ length: 32 }, (_, i) => ({
+      id: 'saved-' + i, role: i % 2 ? 'assistant' : 'user', content: 'Turn ' + i, createdAt: '2026-11-26T00:00:00Z',
+    }));
+    localStorage.setItem(key, JSON.stringify({ version: 1, messages }));
+    relay.sendToChat.mockResolvedValueOnce({ success: false, approvalRequired: true, approval: { id: 'approval-1' } })
+      .mockResolvedValueOnce({ runId: 'confirmed' });
+    relay.decideApproval.mockResolvedValue({ success: true });
+    renderChat({ homeSessionKey: 'agent:main:main', homeGeneration: 'gen-a' });
+    expect(screen.getByText('Turn 0')).toBeVisible();
+    const button = screen.getAllByTestId('knowledge-relay-home').at(-1)!;
+    fireEvent.click(button);
+    await waitFor(() => expect(button).toHaveTextContent('conversation.approve'));
+    expect(relay.decideApproval).not.toHaveBeenCalled();
+    fireEvent.click(button);
+    await waitFor(() => expect(button).toHaveTextContent('conversation.openHome'));
+    const [params] = relay.sendToChat.mock.calls[0];
+    expect(params).toMatchObject({ key: 'agent:main:main', expectedSessionId: 'gen-a' });
+    expect(params.message).toContain('Turn 30\n\nTurn 31');
+    expect(relay.sendToChat).toHaveBeenLastCalledWith(params, 'approval-1');
+    expect(JSON.parse(localStorage.getItem(key)!).messages[31].mainChatDeliveries[0].runId).toBe('confirmed');
+  });
   it('sends the selected open mode and preserves the exact citation pointer on navigation', async () => {
     const original = { schema: 'SourceRef/v2', domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'fixture', subjectId: 'port.md', revision: '2', sourceDigest: 'sha256:raw', policyEpoch: 'epoch', locator: { coordinateSpace: 'raw-source-utf8-v1', startByte: 0, endByteExclusive: 100, startLine: 1, endLine: 8 } };
     const quote = { ...original, locator: { ...original.locator, startByte: 50, endByteExclusive: 60, startLine: 4, endLine: 4 } };
@@ -54,7 +77,7 @@ describe('Chat knowledge mode', () => {
   });
 
   it('restores the v1 checkpoint and opens its citation in Library', async () => {
-    localStorage.setItem(storageKey, JSON.stringify({
+    localStorage.setItem('clawx.knowledge.librarian.checkpoint.v1.[null,null,[]]', JSON.stringify({
       version: 1, updatedAt: '2026-09-14T00:00:00Z', editorTitle: 'Original note', editorSource: '',
       messages: [{ id: 'old-answer', role: 'assistant', content: 'Saved answer', createdAt: '2026-09-14T00:00:00Z',
         citations: [{ lookup: 'wiki/decision.md', title: 'Decision', excerpt: 'Reviewed evidence.' }] }],
@@ -83,7 +106,7 @@ describe('Chat knowledge mode', () => {
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
     expect(await screen.findByTestId('knowledge-librarian-answer-section')).toHaveTextContent('A source-backed answer.');
     expect(screen.queryByText('80%')).not.toBeInTheDocument();
-    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith({ question: 'What was decided?', sourceRefs: refs, sourceSetId: 'source-set-1', synthesis: true, history: [], answerMode: 'strict' });
+    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith({ requestId: expect.any(String), question: 'What was decided?', sourceRefs: refs, sourceSetId: 'source-set-1', synthesis: true, history: [], answerMode: 'strict' });
     expect(knowledge.search).not.toHaveBeenCalled();
     expect(knowledge.createDraft).not.toHaveBeenCalled();
     fireEvent.click(screen.getByTestId('knowledge-librarian-save-draft'));
@@ -94,7 +117,33 @@ describe('Chat knowledge mode', () => {
     expect(knowledge.createDraft).toHaveBeenCalledWith(expect.objectContaining({ sourceIds: ['wiki/decision.md'] }));
     expect(knowledge.applyDraft).not.toHaveBeenCalled();
     expect(knowledge.applyReviewedChange).not.toHaveBeenCalled();
-    await waitFor(() => expect(localStorage.getItem(storageKey)).toContain('What was decided?'));
+    cleanup();
+    renderChat({ sourceRefs: refs, sourceSetId: 'source-set-1' });
+    expect(await screen.findByTestId('chat-user-message-bubble')).toHaveTextContent('What was decided?');
+    expect(screen.getByTestId('knowledge-librarian-answer-section')).toHaveTextContent('A source-backed answer.');
+  });
+
+  it('isolates source sets and records a late reply in its original thread', async () => {
+    const legacy = 'clawx.knowledge.librarian.checkpoint.v1';
+    localStorage.setItem(legacy, JSON.stringify({ version: 1, messages: [{ id: 'old', role: 'assistant', content: 'Unscoped history', createdAt: '2026-11-26' }] }));
+    const a = { sourceSetId: 'a', sourceSetTitle: 'Release', sourceRefs: [{ id: 'a', kind: 'wiki' as const }] };
+    const b = { sourceSetId: 'b', sourceSetTitle: 'Support', sourceRefs: [{ id: 'b', kind: 'wiki' as const }] };
+    const view = (context: KnowledgeChatContext) => <MemoryRouter><KnowledgeChat context={context} /></MemoryRouter>;
+    const rendered = render(view(a));
+    let finish!: (result: unknown) => void;
+    knowledge.answerFromSourceSet.mockReturnValueOnce(new Promise(resolve => { finish = resolve; }));
+    fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Only for Release' } });
+    fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
+    expect(knowledge.answerFromSourceSet).toHaveBeenCalledWith(expect.objectContaining({ history: [] }));
+    rendered.rerender(view(b));
+    await act(async () => finish({ success: true, answer: 'Late answer for Release', sources: [], unknowns: [], suggestedNextActions: [], groundingStatus: 'partial', retrievalDiagnostics: { resultCount: 0 } }));
+    expect(screen.queryByText('Only for Release')).toBeNull();
+    expect(screen.queryByText('Late answer for Release')).toBeNull();
+    expect(screen.queryByText('Unscoped history')).toBeNull();
+    rendered.rerender(view(a));
+    expect(screen.getByTestId('knowledge-librarian-message-user')).toHaveTextContent('Only for Release');
+    expect(screen.getByTestId('knowledge-librarian-answer-section')).toHaveTextContent('Late answer for Release');
+    expect(localStorage.getItem(legacy)).toContain('Unscoped history');
   });
 
   it('follows the Host evidence request, failure, retry and bounded follow-up context', async () => {
@@ -106,7 +155,7 @@ describe('Chat knowledge mode', () => {
     expect(page).toHaveAttribute('data-bot-state', 'listening');
     fireEvent.change(screen.getByTestId('knowledge-librarian-question'), { target: { value: 'Find the decision' } });
     fireEvent.click(screen.getByTestId('knowledge-librarian-ask'));
-    expect(page).toHaveAttribute('data-bot-state', 'searching');
+    expect(page).toHaveAttribute('data-bot-state', 'waiting');
     await act(async () => resolveSearch({ success: true, answer: 'Keep sources.', sources: [{ id: 'decision.md', lookup: 'decision.md', title: 'Decision', excerpt: 'Keep sources.' }], groundingStatus: 'partial', unknowns: [], suggestedNextActions: [], retrievalDiagnostics: { query: 'Find the decision', corpus: 'wiki', resultCount: 1 } }));
     expect(page).toHaveAttribute('data-bot-state', 'finished');
     expect(screen.getByTestId('knowledge-librarian-answer-section').querySelector('.codex-markdown')).not.toBeNull();

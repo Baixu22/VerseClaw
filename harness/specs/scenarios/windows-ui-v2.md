@@ -26,6 +26,8 @@ four locales and narrow light/dark layouts with `tests/e2e/chat-context-display.
 
 ## Purpose
 
+Conversation turn previews allow marking a transcript entry and jumping to the next marked turn. Marks use the workspace, session generation and transcript entry identity. Tool disclosures animate their own height, retain manual expansion and obey reduced motion. Workspace file headings show name and path separately, while file-panel actions and settings navigation share the application tooltip.
+
 Give the Electron application a coherent FakeCoding-aligned grayscale shell, compact control system, and route-driven settings surface while preserving all existing product workflows.
 
 ## Flow
@@ -41,6 +43,8 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
    Replacement previews show both versions with explicit +/- markers on neutral surfaces. Command previews start at the latest output and preserve a reader's earlier scroll position while new output arrives; retention notices stay outside the scrolling region. Web-search tool results appear as a collapsible search pill with a left-to-right progress fill and landed sources as openable cards; the circular ring from the Rare UI reference is deliberately not used.
 8. Runtime command approvals replace the owning session's composer in place, with readable, copyable commands and reachable decisions at narrow widths and 150% zoom. The repository status strip and the approval/composer column share the same centered width. No modal or page overlay is opened; the transcript and other conversations remain usable. The input stays mounted but hidden and inert until approvals resolve, restoring its draft and attachments. Only decisions offered by the runtime can be submitted.
 9. Sidebar settings remain bottom-anchored with the session list visible or collapsed. Running and waiting status keeps its existing animation; completed and failed status uses a shared static semantic icon in session rows, activity entries and the activity bell. With no live run, the bell shows the latest unread event's icon and returns to the bell glyph when read.
+
+Open Observability from the sidebar footer or follow a trace link. Read the time-ordered steps, open a tool failure, and switch runs on a narrow window. An explicit node link opens its diagnostics. Ordinary run selection leaves the steps visible.
 
 ## Validation
 
@@ -105,9 +109,21 @@ workspace preserves its mounted tabs, selected content and expansion state.
 The Knowledge corner uses the approved procedural Ginger character. Drag stays
 near its corner dock and out-of-range release snaps back; click or keyboard
 activation opens a compact nonmodal floating conversation with source context
-intact. Actual request boundaries drive its states, and answers
-share the main Chat Markdown renderer. Reduced motion settles one pose.
+intact. Questions share the main Chat bubble and replies use the full Markdown
+column. Hovering over or petting the idle companion elicits a reaction beneath
+the latest reply or in the empty conversation. The minimized launcher follows
+the pending request and its outcome. Reduced motion settles one pose.
 See `tasks/knowledge-bot-avatar.md` and `rules/knowledge-bot-runtime-state.md`.
+
+The Chat knowledge menu opens workspace conversation records. A completed Chat
+reply can become an editable Knowledge question. A Knowledge answer can send
+its question, answer and source references back to the linked Chat. Its delivery
+control opens that chat after acknowledgement. See `tasks/knowledge-conversation-relay.md`.
+
+A leading `@知识库助手` or `@knowledge` opens the assistant's activity in the
+current Chat. Add a question to start a Knowledge request. The inline character,
+activity log, source references and answer follow that same request when the
+user opens the full Knowledge conversation and returns.
 
 - `pnpm harness validate --spec harness/specs/tasks/windows-ui-v2-apple-motion.md`
 - Pending questions, plan proposals and workspace approvals replace the composer with one shared decision surface while history scrolls. Runtime approvals have priority. Acceptance follows priority interruption and restoration, selection, submission, retry and request-specific acknowledgement, and checks draft preservation, light/dark and narrow layouts.

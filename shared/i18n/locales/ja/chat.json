@@ -2639,7 +2639,9 @@
     },
     "activity": {
       "thinking": "思考中",
-      "processingToolResults": "ツール結果を処理中"
+      "processingToolResults": "ツール結果を処理中",
+      "usingTools": "ツールを実行中",
+      "writing": "返信を作成中"
     },
     "quote": {
       "action": "??"
@@ -2778,6 +2780,10 @@
     "omittedToggle": "予算により削減（{{count}}）"
   },
   "messageNav": {
+    "addBookmark": "このターンをブックマーク",
+    "removeBookmark": "ブックマークを解除",
+    "nextBookmark": "次のブックマーク",
+    "preview": "質問 {{ordinal}} のプレビュー",
     "label": "質問ナビゲーション",
     "jumpTo": "{{ordinal}} 番目の質問へ移動"
   },
@@ -3088,6 +3094,7 @@
     "selectionUnavailable": "選択資料の比較は利用不可"
   },
   "toolActivity": {
+    "failedTarget": "失敗：{{target}}",
     "running": {
       "read": "読み取り中",
       "write": "書き込み中",

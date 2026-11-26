@@ -1376,7 +1376,11 @@ describe('Knowledge page', () => {
     await waitFor(() => expect(hostApiMock.stewardReview).toHaveBeenCalledWith({ draftId: 'draft-1' }));
     expect(hostApiMock.applyDraft).not.toHaveBeenCalled();
     expect(hostApiMock.applyReviewedChange).not.toHaveBeenCalled();
-    expect(window.localStorage.getItem('clawx.knowledge.librarian.checkpoint.v1')).toContain('Why use native wiki?');
+    cleanup();
+    renderKnowledge();
+    fireEvent.click(await screen.findByTestId('knowledge-librarian-open'));
+    expect(await screen.findByTestId('chat-user-message-bubble')).toHaveTextContent('Why use native wiki?');
+    expect(screen.getByTestId('knowledge-librarian-answer-section')).toHaveTextContent('Use native wiki.');
   });
 
   it('shows a recoverable librarian retrieval error with retry', async () => {
