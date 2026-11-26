@@ -488,6 +488,8 @@ flowchart LR
 
 检查入口：A5 与 D4 的规模、延迟、读取次数和消费结果回读。新文件测试在对应实现叶建立；继承必要的类型、contract/comms 和 Harness 检查。精选证据落 harness/specs/fixtures/session-collaboration-center/D5/，记录输入、原事件、命令/退出/计数、源/候选/产物哈希、来源状态与 actor；原始跑次走 D:/tmp。
 
+复核入口为 `harness/specs/fixtures/session-collaboration-center/D5/review-evidence.mjs`。输入 A5 与 D4 的原始记录，复算同候选规模、配对覆盖和只读状态。具体查询与真实消费者的缺口、原 owner 和重建依据由 TF-0647 的第 5 节逐项核对后进入裁定。
+
 失败与回退：索引复核材料保留；默认继续现有有界查询，不启动未规划的索引实施。
 
 ### E1 从任务依赖和资源事实提供协作提示
