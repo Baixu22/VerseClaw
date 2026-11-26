@@ -1,0 +1,237 @@
+{
+  "schema": "AutonomyContextSemanticStateEvidence/v1",
+  "driven_by": "agent",
+  "hashScheme": "sha256-utf8-lf",
+  "actor": "codex/context-system-01a213b7",
+  "sourceFiles": [
+    {
+      "path": "shared/long-session-continuity.ts",
+      "sha256": "86a48b7fdbfb45b60cb2921b0f2bcd535910e37e9691fc859d4b81e582ee7bc6"
+    },
+    {
+      "path": "shared/types/context-item.ts",
+      "sha256": "a86ab5254772515bc703e70e86f4bc69fa25fdbdd1ebcde663c39b133d0498a1"
+    },
+    {
+      "path": "shared/task-ledger-working-context.ts",
+      "sha256": "41456b3a1b5f71babb9f6b83422ff430391875cb8c318d08fcc643344ee58c48"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "efd7fb250db8c2da1da48292078049cd76631e4298ab75155ac4fcc61d835c95"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "bf0de7b6d8599f2759e03ef9f31e948c5beb5f2c2037fc965e4919561c2fa12b"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "2cdb3b45cfbca3301d8692e091eb9ecf98bb5bc87d2c8d0ff44daeffd081625c"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+      "sha256": "1117587583e23aed12c20bacbfd786384ec7a7ab9bb25d627398e0bb86040ac0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts",
+      "sha256": "d8f0fc9f2dbc689d6a176bb21599b975126aac341bca6129765df407788506fd"
+    },
+    {
+      "path": "tests/unit/autonomy-context-semantic-state.test.ts",
+      "sha256": "e66d10b41de878b4d0084299c44fbafa19cb2fdc9187a5a632d32f9a99185e70"
+    },
+    {
+      "path": "tests/unit/compression-artifact.test.ts",
+      "sha256": "7ab75ca8bf0108d3225e5862c16ce6a4f7dbe9e2b403ea322bf2d32a6bfbfa6c"
+    },
+    {
+      "path": "tests/unit/long-session-continuity-context.test.ts",
+      "sha256": "0977b6ca269d704ac5ddea07514863a5e151b3c135f311253fb10c8e88276f84"
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-context-c02-predecessor.json",
+      "sha256": "dfe9087b6e55b7438a5b3667c5761eed6720e65e94521e1e656afa76a1e673c8"
+    }
+  ],
+  "observations": [
+    {
+      "sourceStatus": "verified",
+      "hasEvidence": true,
+      "expected": "verified",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "verified",
+        "verification": "verified",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [
+          {
+            "type": "tool",
+            "ref": "r1"
+          }
+        ],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "sourceStatus": "verified",
+      "hasEvidence": false,
+      "expected": "unknown",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "verified",
+        "verification": "unknown",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "sourceStatus": "unverified",
+      "hasEvidence": true,
+      "expected": "unverified",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "unverified",
+        "verification": "unverified",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [
+          {
+            "type": "tool",
+            "ref": "r1"
+          }
+        ],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "sourceStatus": "confirmed",
+      "hasEvidence": true,
+      "expected": "unknown",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "confirmed",
+        "verification": "unknown",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [
+          {
+            "type": "tool",
+            "ref": "r1"
+          }
+        ],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "sourceStatus": "agent_approved",
+      "hasEvidence": true,
+      "expected": "unknown",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "agent_approved",
+        "verification": "unknown",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [
+          {
+            "type": "tool",
+            "ref": "r1"
+          }
+        ],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "sourceStatus": "future-owner-state",
+      "hasEvidence": true,
+      "expected": "unknown",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "future-owner-state",
+        "verification": "unknown",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [
+          {
+            "type": "tool",
+            "ref": "r1"
+          }
+        ],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "sourceStatus": "stale",
+      "hasEvidence": true,
+      "expected": "unknown",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "stale",
+        "verification": "unknown",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [
+          {
+            "type": "tool",
+            "ref": "r1"
+          }
+        ],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "sourceStatus": "superseded",
+      "hasEvidence": true,
+      "expected": "unknown",
+      "observed": {
+        "owner": "compression-artifact",
+        "sourceStatus": "superseded",
+        "verification": "unknown",
+        "polarity": "negative",
+        "scope": "turn:1",
+        "evidenceRefs": [
+          {
+            "type": "tool",
+            "ref": "r1"
+          }
+        ],
+        "supersedes": [],
+        "conflicts": []
+      }
+    },
+    {
+      "owner": "working-context",
+      "observed": {
+        "owner": "task-ledger-working-context",
+        "sourceStatus": "confirmed",
+        "verification": "unknown",
+        "polarity": "unknown",
+        "scope": "task:task-1",
+        "evidenceRefs": [
+          {
+            "type": "session",
+            "ref": "user-revision-2"
+          }
+        ],
+        "supersedes": [
+          "p1"
+        ],
+        "conflicts": [
+          "conflict"
+        ],
+        "sourceRef": "accepted-e2",
+        "sourceVersion": "2"
+      }
+    }
+  ]
+}

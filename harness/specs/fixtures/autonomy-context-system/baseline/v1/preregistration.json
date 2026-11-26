@@ -1,0 +1,24 @@
+{
+  "schema": "AutonomyContextPreregistration/v1",
+  "actor": "codex/autonomy-context-tf0955",
+  "driven_by": "agent",
+  "frozenAt": "2026-11-25T16:21:00.582496+00:00",
+  "sourceBaseline": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+  "offlineRunsStarted": 0,
+  "liveProviderCalls": 0,
+  "inputs": [
+    {
+      "path": "tests/unit/fixtures/autonomy-context-baseline.v2.json",
+      "sha256": "9be207664df3eda5c913ec69ed90956e486e807f44ab8da0b90f756e3ac2795f"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/frozen-evaluation-policy.json",
+      "sha256": "6218f1b8201168d8d8161061829ff679f4c26fb5fc846128661c3045dd914c16"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/scenario-matrix.json",
+      "sha256": "83060f96a3c8d7043056874b15acac4ec19c1b2e60df21e2308850b5bda83adb"
+    }
+  ],
+  "rule": "This receipt precedes execution; keep oracle and policy immutable. Test-driver corrections use new candidate/run identities and retain initial failures."
+}

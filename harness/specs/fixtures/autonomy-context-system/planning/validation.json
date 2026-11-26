@@ -1,0 +1,243 @@
+{
+  "schema": "AutonomyContextPlanningValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/context-system-design-01a21325",
+  "scope": "design-and-contract-validation",
+  "runtimeAcceptance": false,
+  "sourceHead": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+  "nodes": 20,
+  "phases": 4,
+  "implementationLeaves": 14,
+  "completedDesignLeaves": [
+    "P0"
+  ],
+  "readyImplementationLeaves": [
+    "C01"
+  ],
+  "structuralChecks": {
+    "onlyNewGraphObjects": true,
+    "dependenciesAcyclic": true,
+    "oneParentPerNode": true,
+    "firstLeafDependenciesDone": true,
+    "allLeafContractsMatchProposal": true,
+    "existingSourcePathsResolved": true,
+    "utf8AndWhitespace": true
+  },
+  "planningCommands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "harness/specs/guides/autonomy-context-system-design.md",
+        "harness/specs/tasks/autonomy-context-system-plan.md",
+        "harness/specs/tasks/autonomy-context-baseline.md",
+        "harness/specs/rules/autonomy-context-system-contract.md",
+        "harness/specs/scenarios/autonomy-context-system.md"
+      ],
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-context-system-plan.md",
+        "--since",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "logSha256": "a393b57ea88d3e066003f91eb458e154b6dcf61b0714b63e8ccdf85144db39b5"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-context-baseline.md",
+        "--since",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "logSha256": "a014b2e84b4aee502926246c02f020d61f886d21ab7ecbee13e1d12fbaed8e89"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-context-system-plan.md",
+        "--since",
+        "HEAD",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "logSha256": "01d39d1c9c117e3b53b132eecd29f0e1e171446a59b0a052a5e9b8383b06d462"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-context-baseline.md",
+        "--since",
+        "HEAD",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "logSha256": "e4d057227805f636d0dfb8465a24da91fc2e861dea9db329528778a64ed21398"
+    }
+  ],
+  "documents": [
+    {
+      "path": "harness/specs/guides/autonomy-context-system-design.md",
+      "sha256": "143714fc168514e6c78776cc6708161269f726d02cae76100ea674bf917cdee8"
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-context-system-plan.md",
+      "sha256": "e870f010f14d146c6fb10b3d96e1d10541637b8095ec1d0f796d96882c4bd2f3"
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-context-baseline.md",
+      "sha256": "b8837ef9da80e8bd9c7c38a031d53064b8e9aacc91b5d7d6cb2bf3dd15c72a17"
+    },
+    {
+      "path": "harness/specs/rules/autonomy-context-system-contract.md",
+      "sha256": "ca81c185334d7d3326478f1f961851e43557ae331389ab224da62c291c86f416"
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-context-system.md",
+      "sha256": "5861d72acd2599e85a712fe99479f8bfb6451087fe6fff028a562967b1200635"
+    }
+  ],
+  "sourceAnchors": [
+    {
+      "path": "shared/task-system/runtime.ts",
+      "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+    },
+    {
+      "path": "shared/task-system/project-coordinator.ts",
+      "sha256": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839"
+    },
+    {
+      "path": "shared/long-session-continuity.ts",
+      "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+    },
+    {
+      "path": "shared/task-ledger-working-context.ts",
+      "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+    },
+    {
+      "path": "shared/types/task-ledger.ts",
+      "sha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413"
+    },
+    {
+      "path": "shared/types/context-item.ts",
+      "sha256": "7e7d156475097786c95ec96239bbdeecd20ee149169285d3f8cc9704466c9b41"
+    },
+    {
+      "path": "shared/types/context-folding.ts",
+      "sha256": "f27a4cc997cb64d1ed1ed9240d0d7af11058561ddad4850fa56ef9e0ce815458"
+    },
+    {
+      "path": "shared/types/session-effective-policy.ts",
+      "sha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f"
+    },
+    {
+      "path": "shared/knowledge/experience.ts",
+      "sha256": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+      "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "sha256": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "sha256": "319324caa75910eb40522512b7e3f06950d66141e9665123cd5e3b161f900a33"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+      "sha256": "6f3ff109bb3232cb0b72569cc9fb97a7492727629bdf30c01a2d54bdd2fb6ad8"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/tools/context-write-tool.ts",
+      "sha256": "35140c6df47630ac049197bfafa6b559de0803c7330d320c715bb53bb45735e9"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/working-memory-regather.ts",
+      "sha256": "88a9cd0bf8e1ddc0585ffdcfb97fee9abafb1181fcdfd5d73d76bdf86e897e1e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "sha256": "25586e17886a3d345e5cb5329ccc0112d4d009434c68380001e1963a046e0201"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "ac354af731e64561f37bd920fde131dd0b64bf3a4949618dfa00cffb66673ecd"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "sha256": "c64cdba0657062b48ec3eb6ef09850eaae2e262d034b7810485487599e1ad14a"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "sha256": "6f0e7539b322e757587bb0fbdb679877620d4336c148e92136fc4be1bccae952"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+      "sha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+      "sha256": "2a26de5e497849ddfa6b90d9e81055f550bcd956dcaabf727b3e7e451dc2bf14"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts",
+      "sha256": "9a86631a35437500f253d9be1d374171e8742cc600868fbe1d46ca742edde8d4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+      "sha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+      "sha256": "d99af54a0881938fc9174ace10a5f8c3a781f4e06b994f4b5d8c7fc0d69630d5"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+      "sha256": "8a6dc4d5db48b6e36e46a30120cb3e03dfb095d98ab3911542b55bee47c45611"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "484bbb33ee219f374dcd37e73d3c6c5d6aef811fef5d3ac160f2b308f542b772"
+    },
+    {
+      "path": "electron/services/resource-envelope.ts",
+      "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6"
+    },
+    {
+      "path": "shared/permission-effect-contract.ts",
+      "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087"
+    }
+  ],
+  "taskForestApplication": "Recorded separately in private proposal and application receipts after actual apply/export; this file is planning evidence.",
+  "baselineLimit": "TF-0686 historical paired projection is structural; new live-model benefit has not been measured."
+}
