@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import { projectTaskTraceCosts, type TaskModelCall, type TaskModelUsage, type TaskTraceEvent } from '../../shared/task-system/trace';
+import { projectTaskTraceCosts, projectTaskTracePhases, type TaskModelCall, type TaskModelUsage, type TaskTraceEvent } from '../../shared/task-system/trace';
 import { normalizeRunScope } from '../../shared/types/identity-scope';
 import { summarizeCollaborationUsage } from '../../shared/types/session-collaboration-usage';
 import { readCollaborationTranscriptUsage } from '../../openclaw_runtime/src/infra/session-cost-usage';
@@ -66,4 +66,20 @@ it('reads native assistant records in the exact transcript generation after the 
       knownTokens: { cacheRead: 4, cacheWrite: 2 }, totalUsd: null, unknownPriceCalls: 2 });
     await expect(readCollaborationTranscriptUsage({ ...input, sessionGeneration: 'old-generation' })).rejects.toThrow('TRANSCRIPT_STALE');
   } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+it('reports completed task phase boundaries and keeps unfinished recovery unknown', () => {
+  const events: TaskTraceEvent[] = [
+    { seq: 1, kind: 'created', at: 1, payload: { updatedAt: 1 } },
+    { seq: 2, kind: 'claimed', at: 4, payload: {} },
+    { seq: 3, kind: 'submitted', at: 10, payload: {} },
+    { seq: 4, kind: 'accepted', at: 15, payload: {} },
+    { seq: 5, kind: 'recovery_required', at: 18, payload: {} },
+    { seq: 6, kind: 'context_rehydrated', at: 20, payload: {} },
+    { seq: 7, kind: 'recovery_required', at: 25, payload: {} },
+  ];
+  const phases = projectTaskTracePhases(events);
+  expect(phases.queue.durationMs).toBe(3);
+  expect(phases.verification.durationMs).toBe(5);
+  expect(phases.recovery).toEqual({ durationMs: null, intervals: [{ start: 18, end: 20, from: 'recovery_required', to: 'context_rehydrated' }] });
 });

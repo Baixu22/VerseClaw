@@ -53,10 +53,12 @@ export type SessionCollaborationUsageCall = CollaborationUsageObservation & {
   startedAt: number;
 };
 type TaskTotals = { totals: CollaborationUsageTotals; coordination: CollaborationUsageTotals };
+export const COLLABORATION_TASK_PHASES = ['queue', 'execution', 'verification', 'recovery'] as const;
+export type CollaborationTaskPhaseDurations = Record<(typeof COLLABORATION_TASK_PHASES)[number], number | null>;
 export type SessionCollaborationUsage = SessionCollaborationUsageQuery & {
   schemaVersion: 'SessionCollaborationUsage/v1';
   session: SessionActivityReadSource<CollaborationUsageTotals | null>;
-  task: SessionActivityReadSource<(TaskTotals & { taskNodeId: TaskId; revision: number; digest: string }) | null>;
+  task: SessionActivityReadSource<(TaskTotals & { taskNodeId: TaskId; revision: number; digest: string; phaseDurations?: CollaborationTaskPhaseDurations }) | null>;
   run: SessionActivityReadSource<(TaskTotals & { run: ScopedRunId }) | null>;
   calls: SessionCollaborationUsageCall[];
 };
@@ -100,6 +102,8 @@ export function validateCollaborationUsage(query: SessionCollaborationUsageQuery
       const task = result.task.value!;
       if (typeof task.taskNodeId !== 'string' || !task.taskNodeId || !count(task.revision) ||
           !/^[a-f0-9]{64}$/.test(task.digest) || !totals(task.totals) || !totals(task.coordination)) return invalid();
+      if (task.phaseDurations && COLLABORATION_TASK_PHASES.some(phase =>
+        task.phaseDurations![phase] !== null && !count(task.phaseDurations![phase]))) return invalid();
     } else if (result.calls.length) return invalid();
     if (result.run.state === 'ready') {
       const run = result.run.value!;

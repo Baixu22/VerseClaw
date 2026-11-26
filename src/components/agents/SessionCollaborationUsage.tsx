@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { hostApi } from '@/lib/host-api';
 import type { CollaborationUsageTotals, SessionCollaborationUsage as Usage, SessionCollaborationUsageQuery } from '@shared/types/session-collaboration-usage';
+import { COLLABORATION_TASK_PHASES } from '@shared/types/session-collaboration-usage';
 
 export function SessionCollaborationUsage({ requester, target }: SessionCollaborationUsageQuery) {
   const { t, i18n } = useTranslation('agents');
@@ -26,7 +28,9 @@ export function SessionCollaborationUsage({ requester, target }: SessionCollabor
     } finally { if (id === sequence.current) setLoading(false); }
   };
   const number = new Intl.NumberFormat(i18n.language);
+  const duration = new Intl.NumberFormat(i18n.language, { style: 'unit', unit: 'second', maximumFractionDigits: 2 });
   const money = new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', maximumFractionDigits: 8 });
+  const task = result?.task.value;
   const totalsView = (totals: CollaborationUsageTotals) => <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 text-xs">
     <dt>{t('collaboration.usage.calls')}</dt><dd>{number.format(totals.calls)}</dd>
     <dt>{t(totals.totalTokens === null && totals.knownTokens ? 'collaboration.usage.knownTokens' : 'collaboration.usage.tokens')}</dt>
@@ -75,6 +79,24 @@ export function SessionCollaborationUsage({ requester, target }: SessionCollabor
           </section>;
         })}
       </div>}
+      {task?.phaseDurations && <details className="min-w-0 space-y-2 rounded-md border border-border p-2" data-testid="collaboration-task-phases">
+        <summary className="cursor-pointer rounded-sm text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          {t('collaboration.usage.timingTitle')}
+        </summary>
+        <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 text-xs">
+          {COLLABORATION_TASK_PHASES.map(phase => {
+            const value = task.phaseDurations?.[phase];
+            return <div key={phase} className="contents">
+              <dt>{t(`collaboration.usage.phaseNames.${phase}`)}</dt>
+              <dd>{value == null ? t('collaboration.sources.unknown') : duration.format(value / 1000)}</dd>
+            </div>;
+          })}
+        </dl>
+        <Link className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          to={`/task-ledger?${new URLSearchParams({ workspaceId: target.workspaceId, nodeId: task.taskNodeId })}`}>
+          {t('collaboration.openTask')}
+        </Link>
+      </details>}
       {result && result.calls.length > 0 && <details className="min-w-0 rounded-md border border-border p-2">
         <summary className="cursor-pointer rounded-sm text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           {t('collaboration.usage.observations')}

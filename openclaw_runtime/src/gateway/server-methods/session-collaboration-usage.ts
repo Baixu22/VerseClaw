@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { normalizeAutonomySessionScope } from '../../../../shared/types/identity-scope.js';
 import type { AutonomySessionScope, ScopedRunId } from '../../../../shared/types/identity-scope.js';
-import { projectTaskTraceCosts, type TaskTraceCostRecord } from '../../../../shared/task-system/trace.js';
+import { projectTaskTraceCosts, projectTaskTracePhases, type TaskTraceCostRecord } from '../../../../shared/task-system/trace.js';
 import {
   COLLABORATION_USAGE_CALL_LIMIT, emptyCollaborationUsage, parseSessionCollaborationUsageQuery, summarizeCollaborationUsage,
   type CollaborationUsageObservation, type SessionCollaborationUsage, type SessionCollaborationUsageCall,
@@ -77,8 +77,11 @@ async function readTaskUsage(result: SessionCollaborationUsage, root: string | u
     }
     access.assertCurrent();
     const costs = projectTaskTraceCosts(trace);
+    const phases = projectTaskTracePhases(trace.events);
     result.task = ready('TaskSystem', { ...summarizeTrace(costs.records, costs.orphanObservations),
-      taskNodeId: reference.taskNodeId, revision: reference.revision, digest: reference.digest });
+      taskNodeId: reference.taskNodeId, revision: reference.revision, digest: reference.digest,
+      phaseDurations: { queue: phases.queue.durationMs, execution: phases.execution.durationMs,
+        verification: phases.verification.durationMs, recovery: phases.recovery.durationMs } });
     const calls = verifiedCalls(costs.records, target, activeRun);
     result.calls = calls.slice(0, COLLABORATION_USAGE_CALL_LIMIT).map(callView);
     const run = activeRun ?? (idle ? calls[0]?.run : null);

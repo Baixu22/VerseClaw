@@ -334,21 +334,30 @@ export function providerSpendSnapshot(
   const db = options.readOnly ? new DatabaseSync(options.path ?? resolveOpenClawStateSqlitePath(options.env), { readOnly: true })
     : openOpenClawStateDatabase(options).db;
   try {
+    if (options.readOnly) db.exec('BEGIN');
     const sql = getNodeSqliteKysely<DB>(db);
-    return scopeKeys(scope).map((key) =>
-      snapshot(
-        key.scope,
-        key.key,
-        executeSqliteQuerySync(
-          db,
-          sql.selectFrom("provider_spend_calls")
-            .innerJoin("provider_spend_allocations", "provider_spend_allocations.call_id", "provider_spend_calls.call_id")
-            .selectAll("provider_spend_calls")
-            .where("scope_key", "=", key.key),
-        ).rows,
-      ),
-    );
-  } finally { if (options.readOnly) db.close(); }
+    const result = scopeKeys(scope).flatMap(key => {
+      const rows = executeSqliteQuerySync(db, sql.selectFrom("provider_spend_calls")
+        .innerJoin("provider_spend_allocations", "provider_spend_allocations.call_id", "provider_spend_calls.call_id")
+        .selectAll("provider_spend_calls").where("scope_key", "=", key.key)).rows;
+      if (options.readOnly && key.scope === 'session' && rows.some(row => {
+        if (row.state === 'cancelled') return false;
+        try {
+          const owner = JSON.parse(row.scope_json) as ProviderSpendScope;
+          return owner.workspaceId !== scope.workspaceId || owner.projectId !== scope.projectId ||
+            owner.sessionKey !== scope.sessionKey || owner.sessionGeneration !== scope.sessionGeneration;
+        } catch { return true; }
+      })) return [];
+      return [snapshot(key.scope, key.key, rows)];
+    });
+    if (options.readOnly) db.exec('COMMIT');
+    return result;
+  } finally {
+    if (options.readOnly) {
+      if (db.isTransaction) db.exec('ROLLBACK');
+      db.close();
+    }
+  }
 }
 
 export type ProviderSpendRunContext = {

@@ -333,6 +333,42 @@ export function projectTaskTraceCosts(
   };
 }
 
+/** Task Ledger and collaboration use the same phase boundaries from TaskSystem. */
+export function projectTaskTracePhases(events: TaskTraceEvent[], runs = readRuns(events)): TaskTraceReport['phases'] {
+  const phases: TaskTraceReport['phases'] = {
+    queue: { durationMs: null, intervals: [] }, execution: { durationMs: null, intervals: [] },
+    verification: { durationMs: null, intervals: [] }, recovery: { durationMs: null, intervals: [] },
+  };
+  const revisions = events.filter(event => event.kind === 'created' || event.kind === 'revised');
+  const candidates = events.filter(event => event.kind === 'submitted');
+  const queued = new Set<number>();
+  for (const claim of events.filter(event => event.kind === 'claimed')) {
+    const ready = revisions.findLast(event => event.seq < claim.seq);
+    if (ready && !queued.has(ready.seq)) {
+      const contract = ready.payload as TaskContract;
+      phases.queue.intervals.push({ start: contract.updatedAt, end: claim.at, from: 'task-ready', to: 'claimed' });
+      queued.add(ready.seq);
+    }
+  }
+  for (const run of runs) if (run.endedAt !== null) {
+    phases.execution.intervals.push({ start: run.startedAt, end: run.endedAt, from: 'run_started', to: 'run_finished' });
+  }
+  for (const start of candidates) {
+    const end = events.find(event => event.seq > start.seq && ['accepted', 'repair_started'].includes(event.kind));
+    if (end) phases.verification.intervals.push({ start: start.at, end: end.at, from: 'submitted', to: end.kind });
+  }
+  const recovery = events.filter(event => ['recovery_required', 'interrupted_run_replaced'].includes(event.kind));
+  for (const start of recovery) {
+    const end = events.find(event => event.seq > start.seq && ['handoff', 'context_rehydrated'].includes(event.kind));
+    if (end) phases.recovery.intervals.push({ start: start.at, end: end.at, from: start.kind, to: end.kind });
+  }
+  for (const phase of Object.values(phases)) phase.durationMs = unionDuration(phase.intervals);
+  if (runs.some(run => run.endedAt === null)) phases.execution.durationMs = null;
+  if (phases.verification.intervals.length !== candidates.length) phases.verification.durationMs = null;
+  if (phases.recovery.intervals.length !== recovery.length) phases.recovery.durationMs = null;
+  return phases;
+}
+
 /** Query existing owner records and diagnose missing or changed references. */
 export function readTaskTrace(
   store: TaskSystemStore,
@@ -590,69 +626,8 @@ export function readTaskTrace(
     }
   const costs = projectTaskTraceCosts(snapshot, diagnose);
   if (!costs.records.length) diagnose('cost_unknown', task.contract.taskNodeId);
-  const phases: TaskTraceReport["phases"] = {
-    queue: { durationMs: null, intervals: [] },
-    execution: { durationMs: null, intervals: [] },
-    verification: { durationMs: null, intervals: [] },
-    recovery: { durationMs: null, intervals: [] },
-  };
-  const queuedRevisions = new Set<number>();
-  for (const claim of claims.filter(
-    (claim) => events.find((event) => event.seq === claim.sequence)?.kind === "claimed",
-  )) {
-    const ready = revisions.findLast((r) => r.sequence < claim.sequence);
-    if (ready && !queuedRevisions.has(ready.sequence)) {
-      phases.queue.intervals.push({
-        start: ready.contract.updatedAt,
-        end: events.find((e) => e.seq === claim.sequence)!.at,
-        from: "task-ready",
-        to: "claimed",
-      });
-      queuedRevisions.add(ready.sequence);
-    }
-  }
-  for (const run of runs)
-    if (run.endedAt !== null)
-      phases.execution.intervals.push({
-        start: run.startedAt,
-        end: run.endedAt,
-        from: "run_started",
-        to: "run_finished",
-      });
-  for (const candidate of candidates) {
-    const start = events.find((e) => e.seq === candidate.sequence)!;
-    const end = events.find(
-      (e) => e.seq > start.seq && ["accepted", "repair_started"].includes(e.kind),
-    );
-    if (end)
-      phases.verification.intervals.push({
-        start: start.at,
-        end: end.at,
-        from: "submitted",
-        to: end.kind,
-      });
-  }
-  for (const event of events.filter((e) =>
-    ["recovery_required", "interrupted_run_replaced"].includes(e.kind),
-  )) {
-    const end = events.find(
-      (e) => e.seq > event.seq && ["handoff", "context_rehydrated"].includes(e.kind),
-    );
-    if (end)
-      phases.recovery.intervals.push({
-        start: event.at,
-        end: end.at,
-        from: event.kind,
-        to: end.kind,
-      });
-  }
+  const phases = projectTaskTracePhases(events, runs);
   for (const phase of Object.keys(phases) as Array<keyof typeof phases>) {
-    phases[phase].durationMs = unionDuration(phases[phase].intervals);
-    if (
-      (phase === "execution" && runs.some((run) => run.endedAt === null)) ||
-      (phase === "verification" && phases.verification.intervals.length !== candidates.length)
-    )
-      phases[phase].durationMs = null;
     if (phases[phase].durationMs === null) diagnose("phase_unknown", phase);
   }
   for (const run of runs) {

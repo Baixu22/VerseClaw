@@ -1,5 +1,28 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "Бюджет отключён",
+            "scopes": {
+                "host": "Хост",
+                "project": "Проект",
+                "session": "Сессия"
+            },
+            "spentTokens": "Потраченные токены",
+            "heldTokens": "Зарезервированные токены",
+            "spentCost": "Известные расходы (USD)",
+            "heldCost": "Известный резерв (USD)",
+            "activeCalls": "Активные вызовы",
+            "unknownUsage": "Вызовы с неизвестным расходом",
+            "unknownCost": "Вызовы с неизвестной стоимостью",
+            "admission": "Допуск",
+            "admissionStates": {
+                "fenced": "Новые разрешения закрыты",
+                "waiting": "Ожидание",
+                "active": "Есть активные разрешения",
+                "idle": "Активных или ожидающих разрешений нет"
+            },
+            "rejectedWhileFenced": "Отклонено при закрытии"
+        },
         "resourceDetails": {
             "shared": "Общий ресурс",
             "reservations": "Зарезервированные порты",
@@ -22,6 +45,13 @@
             }
         },
         "usage": {
+            "timingTitle": "Этапы задачи",
+            "phaseNames": {
+                "queue": "Очередь",
+                "execution": "Выполнение",
+                "verification": "Проверка",
+                "recovery": "Восстановление"
+            },
             "title": "Использование моделей",
             "session": "История текущей сессии",
             "task": "Поддерево задачи",

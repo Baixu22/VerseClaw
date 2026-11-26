@@ -98,6 +98,16 @@ describe('provider owner layered spend reservation', () => {
     expect(() => reserve('project-two', { config, scope: scope('project-b', 'session-a') })).toThrow(/tokens \(session\)/);
   });
 
+  it('keeps foreign workspace allocations out of the scoped collaboration session budget', () => {
+    const config = { host: { maxTokens: 1000 } };
+    reserve('local-scope', { config });
+    reserve('foreign-scope', { config, scope: scope('project-b', 'session-a') });
+    const options = { readOnly: true };
+    const result = providerSpendSnapshot(scope(), options);
+    expect(result.map(row => [row.scope, row.heldTokens])).toEqual([['host', 120], ['project', 60]]);
+    expect(providerSpendSnapshot(scope()).find(row => row.scope === 'session')?.heldTokens).toBe(120);
+  });
+
   it('rebuilds the runtime provider projection after caches and DB handles are cleared', async () => {
     const sessionStorePath = path.join(root, 'sessions.json');
     await updateSessionStore(sessionStorePath, store => { store['session-a'] = { sessionId: 'generation-one', updatedAt: Date.now(), workspaceId: 'project-a' }; }, { skipMaintenance: true });

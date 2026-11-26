@@ -202,12 +202,14 @@ export type SessionOwnerInventory = {
   cpuPercent: number | null;
   activePermits: number | null;
   waiters: number | null;
+  admission?: { fenced: boolean; rejectedWhileFenced: number | null };
   helperRefs: number | null;
   worktreeIds: string[] | null;
   sessionIds: string[] | null;
   reservedPorts?: number[];
   detail?: string;
   /** Read directly from provider owner records; never used as an admission authority. */
+  budgetEnabled?: boolean;
   spend?: Array<{
     scope: 'host' | 'project' | 'session'; spentTokens: number; spentCostMicros: number;
     heldTokens: number; heldCostMicros: number; activeCalls: number; unknownTokenCalls: number; unknownCostCalls: number;

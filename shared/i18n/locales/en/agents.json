@@ -1,5 +1,28 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "Budget disabled",
+            "scopes": {
+                "host": "Host",
+                "project": "Project",
+                "session": "Session"
+            },
+            "spentTokens": "Spent tokens",
+            "heldTokens": "Held tokens",
+            "spentCost": "Known spent (USD)",
+            "heldCost": "Known held (USD)",
+            "activeCalls": "Active calls",
+            "unknownUsage": "Calls with unknown usage",
+            "unknownCost": "Calls with unknown cost",
+            "admission": "Admission",
+            "admissionStates": {
+                "fenced": "Closed to new permits",
+                "waiting": "Waiting",
+                "active": "Active permits",
+                "idle": "No active or waiting permits"
+            },
+            "rejectedWhileFenced": "Rejected while closed"
+        },
         "resourceDetails": {
             "shared": "Shared",
             "reservations": "Reserved ports",
@@ -22,6 +45,13 @@
             }
         },
         "usage": {
+            "timingTitle": "Task phases",
+            "phaseNames": {
+                "queue": "Queue",
+                "execution": "Execution",
+                "verification": "Verification",
+                "recovery": "Recovery"
+            },
             "title": "Model usage",
             "session": "Session transcript",
             "task": "Task subtree",

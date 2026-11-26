@@ -39,6 +39,10 @@ export function SessionCollaborationResources({ requester, target }: SessionColl
     } finally { if (id === sequence.current) setLoading(false); }
   };
   const number = new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 1 });
+  const money = new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', maximumFractionDigits: 6 });
+  const unknown = t('collaboration.sources.unknown');
+  const observed = (value: number, incomplete: number, format: (value: number) => string) =>
+    incomplete && value === 0 ? unknown : format(value);
   const status = loading ? t('collaboration.loading') : failed ? t('collaboration.sources.unavailable')
     : result && result.state !== 'ready' ? t(`collaboration.sources.${result.state}`) : '';
   return <details className="min-w-0 rounded-md border border-border p-3" data-testid="collaboration-resources"
@@ -63,19 +67,46 @@ export function SessionCollaborationResources({ requester, target }: SessionColl
             </div>
             <p className="break-words text-muted-foreground">{owner.owner} · <time dateTime={new Date(sampledAt).toISOString()}>{new Date(sampledAt).toLocaleString(i18n.language)}</time></p>
             {state === 'ready' && <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1">
-              {owner.count !== null && <><dt>{t('collaboration.resourceDetails.count')}</dt><dd>{number.format(owner.count)}</dd></>}
+              {owner.kind !== 'provider' && owner.count !== null && <><dt>{t('collaboration.resourceDetails.count')}</dt><dd>{number.format(owner.count)}</dd></>}
               {owner.kind === 'process' && <>
                 <dt>{t('collaboration.resourceDetails.rss')}</dt><dd>{owner.rssKb === null ? t('collaboration.sources.unknown') : `${number.format(owner.rssKb / 1024)} MiB`}</dd>
                 <dt>{t('collaboration.resourceDetails.cpu')}</dt><dd>{owner.cpuPercent === null ? t('collaboration.sources.unknown') : `${number.format(owner.cpuPercent)}%`}</dd>
               </>}
-              {owner.activePermits !== null && <><dt>{t('collaboration.resourceDetails.activePermits')}</dt><dd>{number.format(owner.activePermits)}</dd></>}
+              {owner.kind !== 'provider' && owner.activePermits !== null && <><dt>{t('collaboration.resourceDetails.activePermits')}</dt><dd>{number.format(owner.activePermits)}</dd></>}
               {owner.waiters !== null && <><dt>{t('collaboration.resourceDetails.waiters')}</dt><dd>{number.format(owner.waiters)}</dd></>}
+              {owner.admission && <>
+                <dt>{t('collaboration.budget.admission')}</dt>
+                <dd data-testid="collaboration-admission-state">{t(`collaboration.budget.admissionStates.${owner.admission.fenced ? 'fenced'
+                  : (owner.waiters ?? 0) > 0 ? 'waiting' : (owner.activePermits ?? 0) > 0 ? 'active' : 'idle'}`)}</dd>
+                <dt>{t('collaboration.budget.rejectedWhileFenced')}</dt>
+                <dd>{owner.admission.rejectedWhileFenced === null ? unknown : number.format(owner.admission.rejectedWhileFenced)}</dd>
+              </>}
             </dl>}
             {state === 'ready' && !!(owner.processTreePids?.length || owner.pids?.length) && <p className="break-all">
               {t('collaboration.resourceDetails.pids')} · {(owner.processTreePids ?? owner.pids)?.join(', ')}
             </p>}
             {state === 'ready' && owner.reservedPorts?.length ? <p className="break-all">{owner.reservedPorts.join(', ')}</p> : null}
             {state === 'ready' && owner.worktreeIds?.length ? <p className="break-all">{owner.worktreeIds.join(', ')}</p> : null}
+            {state === 'ready' && owner.kind === 'provider' && (owner.budgetEnabled === false
+              ? <p className="text-muted-foreground">{t('collaboration.budget.disabled')}</p>
+              : <div className="grid gap-2 lg:grid-cols-3">
+                {(['host', 'project', 'session'] as const).map(scope => {
+                  const spend = owner.spend?.find(item => item.scope === scope);
+                  return <section key={scope} className="min-w-0 space-y-1 rounded-md border border-border p-2"
+                    data-testid={`collaboration-budget-${scope}`}>
+                    <h5 className="text-xs font-medium">{t(`collaboration.budget.scopes.${scope}`)}</h5>
+                    {spend ? <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1">
+                      <dt>{t('collaboration.budget.spentTokens')}</dt><dd>{observed(spend.spentTokens, spend.unknownTokenCalls, number.format)}</dd>
+                      <dt>{t('collaboration.budget.heldTokens')}</dt><dd>{number.format(spend.heldTokens)}</dd>
+                      <dt>{t('collaboration.budget.spentCost')}</dt><dd>{observed(spend.spentCostMicros, spend.unknownCostCalls, value => money.format(value / 1e6))}</dd>
+                      <dt>{t('collaboration.budget.heldCost')}</dt><dd>{observed(spend.heldCostMicros, spend.unknownCostCalls, value => money.format(value / 1e6))}</dd>
+                      <dt>{t('collaboration.budget.activeCalls')}</dt><dd>{number.format(spend.activeCalls)}</dd>
+                      <dt>{t('collaboration.budget.unknownUsage')}</dt><dd>{number.format(spend.unknownTokenCalls)}</dd>
+                      <dt>{t('collaboration.budget.unknownCost')}</dt><dd>{number.format(spend.unknownCostCalls)}</dd>
+                    </dl> : <p className="text-muted-foreground">{unknown}</p>}
+                  </section>;
+                })}
+              </div>)}
           </li>;
         })}
       </ul>}

@@ -41,12 +41,22 @@ export function validateCollaborationResources(query: SessionCollaborationResour
     if (!inventory || inventory.schema !== 'LongSessionResourceInventory/v1' || !resourceOwnerScopeMatches(inventory.scope, query.target) ||
         !Number.isFinite(Date.parse(inventory.capturedAt)) || !Array.isArray(inventory.owners)) return invalid();
     const seen = new Set<string>();
+    const count = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
     for (const owner of inventory.owners) {
       const key = JSON.stringify([owner.kind, owner.owner, owner.observationScope]);
       if (!owner.owner || seen.has(key) || !['known', 'unknown'].includes(owner.state) ||
           (owner.observationScope === 'shared' ? owner.generation !== null : owner.generation !== query.target.sessionGeneration) ||
           (owner.sampledAt !== undefined && (!Number.isFinite(owner.sampledAt) || owner.sampledAt < 0))) return invalid();
       seen.add(key);
+      if (owner.admission && (typeof owner.admission.fenced !== 'boolean' ||
+          (owner.admission.rejectedWhileFenced !== null && !count(owner.admission.rejectedWhileFenced)))) return invalid();
+      if (owner.budgetEnabled !== undefined && typeof owner.budgetEnabled !== 'boolean') return invalid();
+      if (owner.spend) {
+        if (!Array.isArray(owner.spend) || owner.spend.length > 3 || new Set(owner.spend.map(row => row.scope)).size !== owner.spend.length ||
+            owner.spend.some(row => !['host', 'project', 'session'].includes(row.scope) || ![
+              row.spentTokens, row.spentCostMicros, row.heldTokens, row.heldCostMicros, row.activeCalls, row.unknownTokenCalls, row.unknownCostCalls,
+            ].every(count))) return invalid();
+      }
     }
   } catch { return invalid(); }
   return resource;

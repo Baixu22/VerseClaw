@@ -1,5 +1,28 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "予算は無効です",
+            "scopes": {
+                "host": "ホスト",
+                "project": "プロジェクト",
+                "session": "セッション"
+            },
+            "spentTokens": "消費トークン",
+            "heldTokens": "予約トークン",
+            "spentCost": "確認済み消費額（USD）",
+            "heldCost": "確認済み予約額（USD）",
+            "activeCalls": "実行中の呼び出し",
+            "unknownUsage": "使用量不明の呼び出し",
+            "unknownCost": "費用不明の呼び出し",
+            "admission": "実行許可",
+            "admissionStates": {
+                "fenced": "新規許可を停止中",
+                "waiting": "待機中",
+                "active": "有効な許可あり",
+                "idle": "有効または待機中の許可なし"
+            },
+            "rejectedWhileFenced": "停止中の拒否数"
+        },
         "resourceDetails": {
             "shared": "共有",
             "reservations": "予約済みポート",
@@ -22,6 +45,13 @@
             }
         },
         "usage": {
+            "timingTitle": "タスクの段階",
+            "phaseNames": {
+                "queue": "待機",
+                "execution": "実行",
+                "verification": "検証",
+                "recovery": "復旧"
+            },
             "title": "モデル使用量",
             "session": "現在のセッション履歴",
             "task": "タスクツリー",

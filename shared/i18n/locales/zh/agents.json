@@ -1,5 +1,28 @@
 {
     "collaboration": {
+        "budget": {
+            "disabled": "预算未启用",
+            "scopes": {
+                "host": "宿主",
+                "project": "项目",
+                "session": "会话"
+            },
+            "spentTokens": "已花费 Token",
+            "heldTokens": "预留 Token",
+            "spentCost": "已知花费（USD）",
+            "heldCost": "已知预留（USD）",
+            "activeCalls": "活动调用",
+            "unknownUsage": "用量未知的调用",
+            "unknownCost": "费用未知的调用",
+            "admission": "准入",
+            "admissionStates": {
+                "fenced": "已关闭准入",
+                "waiting": "等待中",
+                "active": "有活动许可",
+                "idle": "无活动或等待许可"
+            },
+            "rejectedWhileFenced": "关闭期间拒绝"
+        },
         "resourceDetails": {
             "shared": "共享",
             "reservations": "预留端口",
@@ -22,6 +45,13 @@
             }
         },
         "usage": {
+            "timingTitle": "任务阶段",
+            "phaseNames": {
+                "queue": "排队",
+                "execution": "执行",
+                "verification": "验证",
+                "recovery": "恢复"
+            },
             "title": "模型消耗",
             "session": "当前代次会话累计",
             "task": "任务子树",

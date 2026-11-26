@@ -188,6 +188,8 @@ export async function readRuntimeSessionResourceInventory(
       cpuPercent: null,
       activePermits: admission?.active ?? 0,
       waiters: admission?.waiters ?? 0,
+      ...(input.scopedRead ? { admission: { fenced: admission?.fenced ?? false,
+        rejectedWhileFenced: admission?.totalRejectedWhileFenced ?? null }, sampledAt: Date.now() } : {}),
       helperRefs: null,
       worktreeIds: null,
       sessionIds: null,
@@ -237,15 +239,20 @@ export async function readRuntimeSessionResourceInventory(
       if (providerPolicy.project && !workspaceId) throw new Error('Provider inventory project scope unavailable');
       const spend = providerSpendSnapshot({ ...(workspaceId ? { workspaceId, projectId: resolveProjectIdForWorkspace(workspaceId) } : {}),
         sessionKey: identity.canonicalSessionKey as SessionKey, sessionGeneration: identity.expectedSessionId }, { readOnly: input.scopedRead });
-      const session = spend.find(row => row.scope === 'session')!;
+      const session = spend.find(row => row.scope === 'session');
       owners.push({ ...unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation,
         detail: 'Provider-owner spend journal; amounts are token counts and integer microdollars, not invoices' }),
-        authority: 'managed', state: 'known', count: session.activeCalls, activePermits: session.activeCalls,
+        authority: 'managed', state: 'known', count: session?.activeCalls ?? null, activePermits: session?.activeCalls ?? null,
+        ...(input.scopedRead ? { budgetEnabled: true, sampledAt: Date.now() } : {}),
         spend: spend.map(({ scopeKey: _key, ...value }) => value) });
     } catch {
-      owners.push(unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation,
-        detail: 'Provider owner read unavailable; spending and remaining budget must not be inferred as zero' }));
+      owners.push({ ...unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation,
+        detail: 'Provider owner read unavailable; spending and remaining budget must not be inferred as zero' }),
+        ...(input.scopedRead ? { budgetEnabled: true, sampledAt: Date.now() } : {}) });
     }
+  } else if (input.scopedRead) {
+    owners.push({ ...unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation, detail: 'Provider budget is disabled' }),
+      state: 'known', budgetEnabled: false, sampledAt: Date.now() });
   }
 
   return {
