@@ -71,19 +71,22 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
         : { row, terminal: observation.terminal?.id ?? null }));
       const nextReceipt = (observation.receipts ?? []).filter(event => (event.sequence ?? 0) > sequence)
         .sort((a, b) => a.sequence! - b.sequence!)[0];
-      cursor = Buffer.from(JSON.stringify([basis, fingerprint, nextReceipt?.sequence ?? sequence])).toString('base64url');
+      let cursorSequence = nextReceipt?.sequence ?? sequence;
       let event: SessionCollaborationWatchEvent | null = null;
       if (request.condition === 'run-terminal' && (!request.cursor || previous !== fingerprint)) event = observation.terminal ?? null;
       if (request.condition === 'task-receipt') event = nextReceipt ?? null;
       if (request.materialRef && observation.materialState && previous && previous !== fingerprint) {
-        event = { id: `material:${hash([request.materialRef, observation.materialState])}`, owner: 'TaskSystem',
+        if (sequence >= Number.MAX_SAFE_INTEGER) return failure('stale', 'scope-mismatch');
+        cursorSequence = sequence + 1;
+        event = { id: `material:${hash([request.materialRef, observation.materialState, cursorSequence])}`, owner: 'TaskSystem',
           kind: 'material-changed', materialRef: request.materialRef, materialState: observation.materialState,
-          taskNodeId: request.materialRef.taskNodeId, revision: request.materialRef.taskRevision };
+          taskNodeId: request.materialRef.taskNodeId, revision: request.materialRef.taskRevision, sequence: cursorSequence };
       }
       if (request.condition === 'idle' && row.status === 'idle' && (!request.cursor || previous !== fingerprint)) event = { id: `idle:${fingerprint}`, owner: 'sessions', kind: 'idle' };
       if (previous && previous !== fingerprint && ['changed', 'blocking-changed'].includes(request.condition)) {
         event = { id: `${request.condition}:${fingerprint}`, owner: request.condition === 'changed' ? 'sessions' : 'TaskSystem', kind: request.condition };
       }
+      cursor = Buffer.from(JSON.stringify([basis, fingerprint, cursorSequence])).toString('base64url');
       if (event) return result(request.condition === 'changed' ? 'changed' : 'satisfied', event);
       previous ??= fingerprint;
       if (expired || request.timeoutMs === 0) return result('timeout');

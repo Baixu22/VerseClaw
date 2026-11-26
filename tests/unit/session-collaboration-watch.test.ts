@@ -101,6 +101,24 @@ describe('scoped collaboration waits', () => {
     const resumed = await waitForSessionCollaboration({ ...input, cursor: result.cursor! }, deps);
     expect(resumed).toMatchObject({ state: 'timeout', event: null });
   });
+  it('distinguishes repeated material state transitions and replays the same cursor idempotently', async () => {
+    const input = parseSessionCollaborationWatch({ ...request(), condition: 'material-changed', observedMaterialState: 'claim',
+      materialRef: { authorityId: 'owner', id: 'material', version: 1, taskNodeId: 'task-watch', taskRevision: 1,
+        taskDigest: 'a'.repeat(64), contentDigest: 'b'.repeat(64) } });
+    let materialState: SessionCollaborationObservation['materialState'] = 'stale';
+    const deps = { read: async () => ({ ...observation(), materialState }), subscribe: () => () => {} };
+    const first = await waitForSessionCollaboration(input, deps);
+    materialState = 'claim';
+    const restored = await waitForSessionCollaboration({ ...input, cursor: first.cursor! }, deps);
+    materialState = 'stale';
+    const changed = await waitForSessionCollaboration({ ...input, cursor: restored.cursor! }, deps);
+    expect([first.event?.sequence, restored.event?.sequence, changed.event?.sequence]).toEqual([1, 2, 3]);
+    expect(changed.event?.id).not.toBe(first.event?.id);
+    const replay = await waitForSessionCollaboration({ ...input, cursor: restored.cursor! }, deps);
+    expect(replay.event?.id).toBe(changed.event?.id);
+    const resumed = await waitForSessionCollaboration({ ...input, cursor: changed.cursor! }, deps);
+    expect(resumed).toMatchObject({ state: 'timeout', event: null });
+  });
   it('reads terminal identity from the existing runtime owner and rejects the old generation', () => {
     const runId = 'scoped-watch-terminal';
     emitAgentEvent({ runId, stream: 'lifecycle', sessionKey: scope.sessionKey, sessionId: scope.sessionGeneration, data: { phase: 'end', endedAt: 10 } });
