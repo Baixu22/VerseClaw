@@ -271,9 +271,8 @@ describe('all tool boundaries use the same read-only policy', () => {
     store.inheritReference(sessionKey, generation, 'agent:main:reader', 'reader-generation');
     const guard = createTaskRuntimeGuard(state.root, 'agent:main:reader', 'reader-generation', 'read-run');
     const execute = vi.fn(async () => 'unexpected helper execution');
-    vi.stubEnv('CLAWX_TASK_SCOPE_BRIDGE', '1');
-    await expect(executeManagedTaskTool({ sessionKey: 'agent:main:reader', sessionId: 'reader-generation', runId: 'read-run', workspaceDir: state.root },
-      guard, 'hostname-helper', 'exec', { command }, undefined, execute)).rejects.toThrow('TASK_CLAIM_REQUIRED');
+    expect(requiresSessionTaskScope('exec', { command })).toBe(true);
+    await expect(executeTaskGuarded(guard, 'hostname-helper', 'exec', execute, { command })).rejects.toThrow('TASK_CLAIM_REQUIRED');
     expect(execute).not.toHaveBeenCalled();
     expect(store.get(task.contract.taskNodeId).claim).toEqual(task.claim);
   });
