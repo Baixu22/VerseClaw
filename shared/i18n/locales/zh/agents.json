@@ -6,6 +6,8 @@
             "to": "收件会话",
             "reply": "回复",
             "replyUnknown": "尚未读取回复来源。",
+            "replyReference": "回复引用",
+            "allTasks": "全部任务",
             "sender": "从 {{name}} 发送",
             "sourceMissing": "当前发件身份不可用。",
             "purpose": "用途",

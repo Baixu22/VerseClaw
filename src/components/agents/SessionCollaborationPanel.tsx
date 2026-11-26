@@ -168,7 +168,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
             <dt>{t('collaboration.resources')}</dt><dd>{sourceText(snapshot?.resources ? 'ready' : 'not_read')}</dd>
             <dt>{t('collaboration.results')}</dt><dd>{sourceText('not_read')}</dd>
           </dl>
-          {requester && row.detail && <SessionCollaborationMessages requester={requester} target={row.detail.scope} />}
+          {requester && row.detail && <SessionCollaborationMessages requester={requester} target={row.detail.scope} tasks={row.sources.tasks.value ?? undefined} />}
           {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>
             <div className="flex flex-wrap gap-2 pt-3">{(Object.keys(SESSION_COLLABORATION_CONTROLS) as SessionCollaborationControl[]).filter(action => action !== 'message').map(action => <Button type="button" key={action} variant="outline"
               disabled={SESSION_COLLABORATION_CONTROLS[action].requiresRun && !row.sources.run.value}

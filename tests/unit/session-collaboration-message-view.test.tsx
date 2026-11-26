@@ -2,6 +2,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { parseSessionCollaborationQuery } from '../../shared/types/session-collaboration';
+import { normalizeTaskReference } from '../../shared/types/identity-scope';
 const mocks = vi.hoisted(() => ({ list: vi.fn(), sender: vi.fn(), send: vi.fn() }));
 vi.mock('../../src/lib/host-api', () => ({ hostApi: { sessions: { collaborationMessages: mocks.list, collaborationSender: mocks.sender, sendCollaborationMessage: mocks.send } } }));
 vi.mock('../../src/lib/host-events', () => ({ hostEvents: { onGatewayStatus: () => () => {} } }));
@@ -66,6 +67,20 @@ describe('message view draft ownership', () => {
     await act(async () => releasePrevious(page('Late first page', 'next')));
     expect(screen.queryByText('Late first page')).toBeNull();
     expect(screen.getByText('Second page')).toBeTruthy();
+  });
+
+  it('starts a bounded task query without reusing an unfiltered cursor', async () => {
+    const reference = normalizeTaskReference({ kind: 'ledger', taskNodeId: 'task-message-owner' });
+    if (reference.kind !== 'ledger') throw new Error('Expected fixture task reference');
+    const tasks = [{ authorityId: 'owner-b', taskNodeId: reference.taskNodeId, revision: 1, digest: 'digest' }];
+    mocks.list.mockResolvedValueOnce({ success: true, messages: { state: 'ready', items: [], receipt: null, nextCursor: 'unfiltered-next' } });
+    render(<SessionCollaborationMessages requester={source} target={target} tasks={tasks} />);
+    expand();
+    fireEvent.click(await screen.findByRole('button', { name: 'collaboration.more' }));
+    await waitFor(() => expect(mocks.list).toHaveBeenCalledWith({ requester: source, target, cursor: 'unfiltered-next' }));
+    const filter = screen.getByRole('combobox', { name: 'collaboration.fields.tasks' });
+    fireEvent.change(filter, { target: { value: reference.taskNodeId } });
+    await waitFor(() => expect(mocks.list).toHaveBeenLastCalledWith({ requester: source, target, taskNodeId: reference.taskNodeId }));
   });
 
   it('keeps same-key drafts separate across workspace and physical generation', () => {

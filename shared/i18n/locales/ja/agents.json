@@ -6,6 +6,8 @@
             "to": "送信先",
             "reply": "返信",
             "replyUnknown": "返信の情報源は未読です。",
+            "replyReference": "返信参照",
+            "allTasks": "すべてのタスク",
             "sender": "{{name}} から送信",
             "sourceMissing": "現在の送信元を確認できません。",
             "purpose": "用途",

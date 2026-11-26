@@ -6,6 +6,8 @@
             "to": "To",
             "reply": "Reply",
             "replyUnknown": "The reply source has not been read.",
+            "replyReference": "Reply reference",
+            "allTasks": "All tasks",
             "sender": "Sending from {{name}}",
             "sourceMissing": "The current sender identity is unavailable.",
             "purpose": "Purpose",

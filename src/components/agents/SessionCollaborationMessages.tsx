@@ -1,45 +1,63 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { hostApi } from '@/lib/host-api';
 import { useSessionCollaborationUi } from '@/stores/session-collaboration';
 import { SESSION_COLLABORATION_PURPOSES, type SessionCollaborationMessagePage, type SessionCollaborationMessageReceipt } from '@shared/types/session-collaboration-message';
 import type { AutonomySessionScope } from '@shared/types/identity-scope';
+import type { SessionActivityTaskReference } from '@shared/types/session-activity';
 
-export function SessionCollaborationMessages({ requester, target }: { requester: AutonomySessionScope; target: AutonomySessionScope }) {
+type MessageTaskReference = Pick<SessionActivityTaskReference, 'authorityId' | 'taskNodeId' | 'revision' | 'digest'>;
+
+export function SessionCollaborationMessages({ requester, target, tasks = [] }: {
+  requester: AutonomySessionScope;
+  target: AutonomySessionScope;
+  tasks?: readonly MessageTaskReference[];
+}) {
   const { t } = useTranslation('agents');
   const [open, setOpen] = useState(false);
-  const [position, setPosition] = useState<{ key: string; cursor: string } | null>(null);
+  const [position, setPosition] = useState<{ key: string; taskNodeId?: string; cursor?: string } | null>(null);
   const [page, setPage] = useState<{ key: string; value: SessionCollaborationMessagePage } | null>(null);
   const [receipt, setReceipt] = useState<{ key: string; value: SessionCollaborationMessageReceipt } | null>(null);
   const [sourceRead, setSourceRead] = useState<{ key: string; value: { scope: AutonomySessionScope; name: string } | null } | null>(null), [state, setState] = useState('not_read');
   const readKey = JSON.stringify([requester, target]), active = useRef(readKey); active.current = readKey;
   const listRequest = useRef(0), receiptRequest = useRef(0);
-  const cursor = position?.key === readKey ? position.cursor : undefined;
-  const currentCursor = useRef(cursor); currentCursor.current = cursor;
+  const view = position?.key === readKey ? position : null;
+  const taskNodeId = tasks.some(task => task.taskNodeId === view?.taskNodeId) ? view?.taskNodeId : undefined;
+  const cursor = taskNodeId === view?.taskNodeId ? view?.cursor : undefined;
+  const listKey = JSON.stringify([readKey, taskNodeId, cursor]);
+  const activeList = useRef(listKey); activeList.current = listKey;
   const source = sourceRead?.key === readKey ? sourceRead.value : null;
   const draftKey = source ? JSON.stringify([source.scope, target]) : null;
   const draft = useSessionCollaborationUi(value => draftKey ? value.messageDrafts[draftKey] : undefined);
   const update = useSessionCollaborationUi(value => value.updateMessageDraft);
-  const rows = page?.key === readKey ? page.value : null, selected = receipt?.key === readKey ? receipt.value : null;
+  const rows = page?.key === listKey ? page.value : null, selected = receipt?.key === readKey ? receipt.value : null;
+  const linkedTask = selected?.message.task;
+  const taskLink = linkedTask && tasks.some(task => task.authorityId === linkedTask.authorityId
+    && task.taskNodeId === linkedTask.taskNodeId && task.revision === linkedTask.revision && task.digest === linkedTask.digest)
+    ? `/task-ledger?${new URLSearchParams({ workspaceId: target.workspaceId, nodeId: linkedTask.taskNodeId })}`
+    : null;
   const refresh = useCallback(async () => {
-    if (!open || active.current !== readKey || currentCursor.current !== cursor) return;
+    if (!open || activeList.current !== listKey) return;
     const request = ++listRequest.current;
     try {
-      const value = await hostApi.sessions.collaborationMessages({ requester, target, ...(cursor ? { cursor } : {}) });
-      if (active.current === readKey && currentCursor.current === cursor && listRequest.current === request) {
-        setPage({ key: readKey, value: value.messages });
+      const value = await hostApi.sessions.collaborationMessages({ requester, target,
+        ...(taskNodeId ? { taskNodeId } : {}), ...(cursor ? { cursor } : {}) });
+      if (activeList.current === listKey && listRequest.current === request) {
+        setPage({ key: listKey, value: value.messages });
         setState(value.messages.state);
       }
     } catch {
-      if (active.current === readKey && currentCursor.current === cursor && listRequest.current === request) setState('unavailable');
+      if (activeList.current === listKey && listRequest.current === request) setState('unavailable');
     }
-  }, [open, requester, target, cursor, readKey]);
-  useEffect(() => { if (!open) return; let alive = true; void refresh();
+  }, [open, requester, target, taskNodeId, cursor, listKey]);
+  useEffect(() => { void refresh(); return () => { listRequest.current++; }; }, [refresh]);
+  useEffect(() => { if (!open) return; let alive = true;
     void hostApi.sessions.collaborationSender().then(value => { if (alive && active.current === readKey) setSourceRead({ key: readKey, value: value.source }); }).catch(() => { if (alive) setSourceRead({ key: readKey, value: null }); });
-    return () => { alive = false; listRequest.current++; };
-  }, [open, readKey, refresh]);
+    return () => { alive = false; };
+  }, [open, readKey]);
   useEffect(() => () => { receiptRequest.current++; }, [open, readKey]);
   useEffect(() => { if (open && draftKey && !draft) update(draftKey, {}); }, [open, draftKey, draft, update]);
   const readReceipt = async (id: string) => {
@@ -86,16 +104,28 @@ export function SessionCollaborationMessages({ requester, target }: { requester:
     {open && <div className="space-y-3 pt-3">
       <div className="flex items-center justify-between gap-2"><p role="status" aria-atomic="true" className="text-xs text-muted-foreground">{t(`collaboration.messages.states.${state}`)}</p>
         <Button type="button" variant="outline" onClick={() => void refresh()}>{t('collaboration.refresh')}</Button></div>
+      {tasks.length > 0 && <label className="block space-y-1 text-xs">{t('collaboration.fields.tasks')}
+        <select className="block min-h-9 w-full rounded-md border border-border bg-surface-input px-2" value={taskNodeId ?? ''} data-testid="collaboration-message-task-filter"
+          onChange={event => setPosition({ key: readKey, taskNodeId: event.target.value || undefined })}>
+          <option value="">{t('collaboration.messages.allTasks')}</option>
+          {[...new Set(tasks.map(task => task.taskNodeId))].map(id => <option key={id} value={id}>{id}</option>)}
+        </select>
+      </label>}
       <div className="max-h-60 divide-y divide-border overflow-y-auto">
         {rows?.items.map(item => <button type="button" key={item.header.id} className="block w-full space-y-1 rounded-sm py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void readReceipt(item.header.id)}>
           <span className="block text-xs text-muted-foreground">{t(`collaboration.messages.purposes.${item.header.purpose}`)} · {t(`collaboration.messages.states.${item.phase}`)}</span>
           <span className="block break-words text-sm">{item.header.preview}</span>
         </button>)}
       </div>
-      {rows?.nextCursor && <Button type="button" variant="outline" onClick={() => setPosition({ key: readKey, cursor: rows.nextCursor! })}>{t('collaboration.more')}</Button>}
+      {rows?.nextCursor && <Button type="button" variant="outline" onClick={() => setPosition({ key: readKey, taskNodeId, cursor: rows.nextCursor! })}>{t('collaboration.more')}</Button>}
       {selected && <article className="space-y-2 border-t border-border pt-3" data-testid="collaboration-message-receipt">
         <p className="break-all text-xs text-muted-foreground">{t('collaboration.messages.from')}: {selected.message.source.sessionKey} · {selected.message.source.sessionGeneration}</p>
         <p className="break-all text-xs text-muted-foreground">{t('collaboration.messages.to')}: {selected.message.target.sessionKey} · {selected.message.target.sessionGeneration}</p>
+        <p className="text-xs text-muted-foreground">{t('collaboration.messages.purpose')}: {t(`collaboration.messages.purposes.${selected.message.purpose}`)}</p>
+        {linkedTask && <p className="break-all text-xs text-muted-foreground">{t('collaboration.fields.tasks')}: {taskLink
+          ? <Link to={taskLink} className="underline underline-offset-2">{linkedTask.taskNodeId}</Link>
+          : linkedTask.taskNodeId}</p>}
+        {selected.replyRef && <p className="break-all text-xs text-muted-foreground">{t('collaboration.messages.replyReference')}: {selected.replyRef}</p>}
         <p className="whitespace-pre-wrap break-words text-sm">{selected.message.message}</p>
         <p className="text-xs text-muted-foreground">{t(`collaboration.messages.states.${selected.phase}`)}</p>
         {selected.reply && <div className="space-y-1 rounded-md bg-black/5 p-3 dark:bg-white/10"><h4 className="text-sm font-medium">{t('collaboration.messages.reply')}</h4>
