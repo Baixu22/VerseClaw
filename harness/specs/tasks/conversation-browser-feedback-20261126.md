@@ -22,6 +22,7 @@ touchedAreas:
   - tests/unit/chat-message.test.tsx
   - tests/unit/execution-projection.test.ts
   - harness/specs/tasks/chat-tool-activity-stream-20261123.md
+  - harness/specs/fixtures/conversation-browser-feedback/20261126/**
   - src/pages/Chat/MessageNavRail.tsx
   - src/pages/Chat/index.tsx
   - src/pages/Chat/ChatInput.tsx
@@ -87,6 +88,7 @@ requiredTests:
 acceptance:
   - Agent-driven ego-browser checks cover expanded and collapsed groups, bookmark persistence and jumping, file headings, model controls, menu surfaces and settings tooltips.
   - Electron verifies keyboard navigation, tooltip visibility, reduced motion and narrow layouts.
+  - Curated agent-driven results and source hashes are retained under harness/specs/fixtures/conversation-browser-feedback/20261126/RESULT.json.
 docs:
   required: true
   paths:
