@@ -8,7 +8,7 @@ import { parseSessionCollaborationWatch, validateSessionCollaborationWatch, type
 
 export type SessionCollaborationView = { search: string; selected: AutonomySessionScope | null };
 export const EMPTY_COLLABORATION_VIEW: SessionCollaborationView = { search: '', selected: null };
-export type CollaborationMessageDraft = { id: string; text: string; purpose: SessionCollaborationPurpose; phase: 'draft' | 'sending' | 'unknown'; replyTo?: string };
+export type CollaborationMessageDraft = { id: string; text: string; purpose: SessionCollaborationPurpose; phase: 'draft' | 'sending' | 'unknown' | 'retry'; replyTo?: string };
 export const useSessionCollaborationUi = create<{
   views: Record<string, SessionCollaborationView>;
   messageDrafts: Record<string, CollaborationMessageDraft>;

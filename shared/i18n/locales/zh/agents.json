@@ -36,6 +36,7 @@
             "purpose": "用途",
             "body": "消息正文",
             "send": "发送",
+            "retryOriginal": "重试原消息",
             "check": "回读原回执",
             "purposes": {
                 "finding": "发现",
