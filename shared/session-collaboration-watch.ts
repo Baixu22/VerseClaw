@@ -65,15 +65,23 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
       if (!row) return result('unknown');
       if (request.condition === 'task-receipt' && row.sources.tasks.state !== 'ready') return result('unknown');
       if (request.condition === 'task-receipt' && observation.receiptTruncated && sequence > 0 && sequence < (observation.receiptFloor ?? 0)) return result('unknown');
-      if (request.materialRef && !observation.materialState) return result('unknown');
-      const fingerprint = request.materialRef ? hash(observation.materialState) : hash(stableFacts(request.condition === 'blocking-changed'
-        ? { session: row.sources.session, tasks: row.sources.tasks }
-        : { row, terminal: observation.terminal?.id ?? null }));
+      const terminal = observation.terminal ?? null;
+      let fingerprint: string;
+      if (request.materialRef) {
+        if (!observation.materialState) return result('unknown');
+        fingerprint = hash(observation.materialState);
+      } else if (request.condition === 'run-terminal') {
+        fingerprint = terminal ? hash(terminal.id) : previous ?? hash(null);
+      } else {
+        fingerprint = hash(stableFacts(request.condition === 'blocking-changed'
+          ? { session: row.sources.session, tasks: row.sources.tasks }
+          : { row, terminal: terminal?.id ?? null }));
+      }
       const nextReceipt = (observation.receipts ?? []).filter(event => (event.sequence ?? 0) > sequence)
         .sort((a, b) => a.sequence! - b.sequence!)[0];
       let cursorSequence = nextReceipt?.sequence ?? sequence;
       let event: SessionCollaborationWatchEvent | null = null;
-      if (request.condition === 'run-terminal' && (!request.cursor || previous !== fingerprint)) event = observation.terminal ?? null;
+      if (request.condition === 'run-terminal' && previous !== fingerprint) event = terminal;
       if (request.condition === 'task-receipt') event = nextReceipt ?? null;
       if (request.materialRef && observation.materialState && previous && previous !== fingerprint) {
         if (sequence >= Number.MAX_SAFE_INTEGER) return failure('stale', 'scope-mismatch');

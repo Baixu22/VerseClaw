@@ -1,15 +1,36 @@
 import { execFileSync } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { closeElectronApp, expect, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider } from './fixtures/session-task-chain';
 import { collaborationFixtureStorePath, createCollaborationChild, createCollaborationProject, enableCollaborationFixtureVisibility } from './fixtures/session-collaboration';
-import { loadExistingSqliteSessionStoreReadOnly, replaceSqliteSessionStore } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
+import type { SessionEntry } from '../../openclaw_runtime/src/config/sessions/types';
 import { parseSessionCollaborationQuery, type SessionCollaborationPage } from '../../shared/types/session-collaboration';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
+
+type SessionEntries = Record<string, SessionEntry>;
+
+function readScaleSessionStore(storePath: string, entries?: SessionEntries): SessionEntries {
+  // Run the native SQLite owner in Node's ESM loader, outside Playwright's CommonJS transform.
+  const script = `
+    import { readFileSync } from 'node:fs';
+    import { closeSqliteSessionStoreDatabase, loadExistingSqliteSessionStoreReadOnly, replaceSqliteSessionStore }
+      from './openclaw_runtime/src/config/sessions/store-sqlite.ts';
+    const { storePath, entries } = JSON.parse(readFileSync(0, 'utf8'));
+    try {
+      if (entries) replaceSqliteSessionStore(storePath, entries);
+      console.log(JSON.stringify(loadExistingSqliteSessionStoreReadOnly(storePath)));
+    } finally { closeSqliteSessionStoreDatabase(storePath); }
+  `;
+  return JSON.parse(execFileSync(process.execPath, ['--import', 'tsx', '--input-type=module', '--eval', script], {
+    env: { ...process.env, TSX_TSCONFIG_PATH: resolve('openclaw_runtime/tsconfig.json') },
+    input: JSON.stringify({ storePath, entries }), encoding: 'utf8', windowsHide: true, timeout: 30_000,
+  }));
+}
 
 const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const percentile = (samples: number[], ratio: number) => samples.length ? [...samples].sort((a, b) => a - b)[Math.ceil(samples.length * ratio) - 1] : null;
@@ -19,7 +40,7 @@ test('records original owner reads and bounded synthetic scale without measured-
   const app = await launchElectronApp({ skipSetup: true });
   const records: unknown[] = [];
   let failure: string | null = null;
-  let storePath: string | undefined, original: ReturnType<typeof loadExistingSqliteSessionStoreReadOnly> | undefined;
+  let storePath: string | undefined, original: SessionEntries | undefined;
   try {
     await configureSessionChainProvider(app, provider.port);
     const alpha = await createCollaborationProject(app, info.outputPath('alpha'), 'Alpha scale');
@@ -30,7 +51,7 @@ test('records original owner reads and bounded synthetic scale without measured-
       try { return store.sessionSnapshot(project.sessionKey, project.generation); } finally { store.close(); }
     });
     await enableCollaborationFixtureVisibility(app);
-    storePath = await collaborationFixtureStorePath(app); original = loadExistingSqliteSessionStoreReadOnly(storePath);
+    storePath = await collaborationFixtureStorePath(app); original = readScaleSessionStore(storePath);
     expect(original[alpha.sessionKey].workspaceId).toBe(alpha.workspaceId); expect(original[beta.sessionKey].workspaceId).toBe(beta.workspaceId);
     const childRead = await hostInvoke<{ page: SessionCollaborationPage }>(app, 'sessionActivity', 'query', parseSessionCollaborationQuery({ requester: alpha.scope, target: child.scope, limit: 1 }));
     expect(childRead.page.items[0].sources.tasks.value?.[0].referenceOnly).toBe(true);
@@ -41,8 +62,7 @@ test('records original owner reads and bounded synthetic scale without measured-
         sessionId: randomUUID(), workspaceId: alpha.workspaceId, workspaceDir: alpha.rootPath,
         updatedAt: 1, label: `Synthetic session ${index}`, parentSessionKey: alpha.sessionKey,
       };
-      replaceSqliteSessionStore(storePath, entries);
-      const before = loadExistingSqliteSessionStoreReadOnly(storePath), modelCalls = provider.log.length;
+      const before = readScaleSessionStore(storePath, entries), modelCalls = provider.log.length;
       expect(Object.keys(before)).toHaveLength(count);
       const tasksBefore = taskState();
       const samples: number[] = [], scans: number[] = [], detailSamples: number[] = [], detailScans: number[] = [], mainRss: number[] = [];
@@ -70,7 +90,7 @@ test('records original owner reads and bounded synthetic scale without measured-
         expect(detail.page.state).toBe('ready');
         expect(detail.page.items[0]?.detail?.scope).toEqual(beta.scope);
       }
-      const after = loadExistingSqliteSessionStoreReadOnly(storePath);
+      const after = readScaleSessionStore(storePath);
       record.list = { p50Ms: percentile(samples, .5), p95Ms: percentile(samples, .95) }; record.detail = { p50Ms: percentile(detailSamples, .5), p95Ms: percentile(detailSamples, .95) };
       record.rss.peakSampledBytes = mainRss.length ? Math.max(...mainRss) : null;
       record.afterSha256 = digest(after); record.taskAfterSha256 = digest(taskState()); record.modelCallsAfter = provider.log.length;
@@ -79,7 +99,7 @@ test('records original owner reads and bounded synthetic scale without measured-
     }
   } catch (error) { failure = String(error); throw error;
   } finally {
-    if (storePath && original) replaceSqliteSessionStore(storePath, original);
+    if (storePath && original) readScaleSessionStore(storePath, original);
     await writeFile(info.outputPath('scale-raw-samples.json'), JSON.stringify({ driven_by: 'agent', actor: 'session-collaboration-scale',
       decision: 'measurement-only; thresholds require a completed run and source readback', failure, records }, null, 2));
     await closeElectronApp(app); await provider.close();

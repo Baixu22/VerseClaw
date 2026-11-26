@@ -85,30 +85,36 @@ export async function watchSessionCollaboration(input: unknown, context: Gateway
   if (active.has(request.id) || active.size >= 128) throw new Error('COLLABORATION_WATCH_CAPACITY_OR_DUPLICATE');
   const controller = new AbortController();
   active.set(request.id, { owner, request, controller });
+  let prepare: (() => Promise<SessionCollaborationObservation>) | undefined;
   try {
-    const initial = await readSessionCollaborationQuery(request.query, context);
-    if (controller.signal.aborted || initial.state !== 'ready') return await waitForSessionCollaboration(request, {
-      signal: controller.signal, read: async () => ({ page: initial }), subscribe: () => () => {},
-    });
-    const paths = await subscriptionPaths(request);
     return await waitForSessionCollaboration(request, {
       signal: controller.signal,
-      read: () => observation(request, context),
+      read: () => prepare ? prepare() : observation(request, context),
       subscribe: wake => {
+        if (request.timeoutMs === 0) return () => {};
         const target = request.query.target!, files: FSWatcher[] = [];
-        const unsubscribe = onAgentEvent(event => {
-          if (event.stream === 'lifecycle' && event.sessionKey === target.sessionKey && event.sessionId === target.sessionGeneration) wake();
-        });
-        for (const path of paths) {
-          try {
-            const file = basename(path);
-            const watcher = watch(dirname(path), (_event, name) => { if (name && [file, `${file}-wal`, `${file}-shm`].includes(String(name))) wake(); });
-            watcher.on('error', wake); files.push(watcher);
-          } catch { /* Missing files are source facts, not successful notifications. */ }
-        }
         const job = new AbortController();
-        if (request.run) void waitForAgentJob({ runId: request.run.runId, timeoutMs: request.timeoutMs!, signal: job.signal }).then(value => { if (value && !job.signal.aborted) wake(); });
-        return () => { unsubscribe(); job.abort(); for (const file of files) file.close(); };
+        let unsubscribe: (() => void) | undefined;
+        prepare = async () => {
+          prepare = undefined;
+          const page = await readSessionCollaborationQuery(request.query, context);
+          if (job.signal.aborted || page.state !== 'ready') return { page };
+          const paths = await subscriptionPaths(request);
+          if (job.signal.aborted) return { page };
+          unsubscribe = onAgentEvent(event => {
+            if (event.stream === 'lifecycle' && event.sessionKey === target.sessionKey && event.sessionId === target.sessionGeneration) wake();
+          });
+          for (const path of paths) {
+            try {
+              const file = basename(path);
+              const watcher = watch(dirname(path), (_event, name) => { if (name && [file, `${file}-wal`, `${file}-shm`].includes(String(name))) wake(); });
+              watcher.on('error', wake); files.push(watcher);
+            } catch { /* Missing files are source facts, not successful notifications. */ }
+          }
+          if (request.run) void waitForAgentJob({ runId: request.run.runId, timeoutMs: request.timeoutMs!, signal: job.signal }).then(value => { if (value && !job.signal.aborted) wake(); });
+          return observation(request, context);
+        };
+        return () => { job.abort(); unsubscribe?.(); for (const file of files) file.close(); };
       },
     });
   } finally { active.delete(request.id); }
