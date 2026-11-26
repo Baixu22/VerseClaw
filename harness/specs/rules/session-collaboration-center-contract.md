@@ -39,6 +39,7 @@ appliesTo:
 ## 成果、资源和恢复
 
 - 共享材料包含原 task/revision、source session/run、证据引用、内容/产物哈希、敏感性、时间与有效条件。fact/claim/accepted decision 分开，原文和完整历史按需读取。
+- 共享材料发布由当前运行和原 TaskSystem writer 绑定。按当前任务修订与领取代次核对证据回执和文件哈希，只有对应字节得到验证的结论或产物可标为 evidence-backed。通用任务事件流跳过具备会话权限范围的材料正文。
 - 旧 WorkingContext 只经过确认的任务关联桥接；优先消费当前 TaskSystem 的合同/checkpoint/evidence。source 变化、撤销、过期、冲突与缺失可回读。
 - 检索候选、展示、引用和实际消费分开计量；经验接受与记忆写回继续由原 owner 负责。
 - session/task-subtree/model-call/host/project 的统计范围分开。调用/attempt、进程/owner 去重；held 与 spent、已知小计与未知值分别呈现。缺 usage/价格或未测量的共享进程不填 0。

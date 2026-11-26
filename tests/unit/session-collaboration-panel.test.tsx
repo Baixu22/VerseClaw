@@ -105,6 +105,7 @@ describe('shared collaboration panel', () => {
     const detail = within(screen.getByTestId('collaboration-detail'));
     await detail.findByText('collaboration.page.unavailable:0');
     expect(detail.queryByText('Goal workspace-b')).toBeNull();
+    expect(screen.queryByTestId('collaboration-materials')).toBeNull();
     expect(mocks.read).not.toHaveBeenCalled();
   });
 

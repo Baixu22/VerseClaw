@@ -1354,7 +1354,7 @@ export function createOpenClawCodingTools(options?: {
             workspace: workspaceRoot,
             sessionKey: options.sessionKey,
             generation: options.sessionId,
-            runId: options.runId,
+            runId: options.runSessionKey && options.runSessionKey !== options.sessionKey ? undefined : options.runId,
             inheritedToolAllowlist: taskReviewToolAllowlist,
             inheritedToolDenylist,
           }),

@@ -1,7 +1,8 @@
 import { createHash } from "node:crypto";
 import { closeSync, existsSync, fstatSync, openSync, readSync, statSync } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
-import type { ScopedRunId } from "../types/identity-scope.js";
+import type { AutonomySessionScope, ScopedRunId } from "../types/identity-scope.js";
+import type { SessionCollaborationMaterialRef } from "../types/session-collaboration-material.js";
 import type { CheckoutWriterBasis } from "../checkout-ownership.js";
 import { canonicalPath, type TaskAuthorityBasis } from "./identity.js";
 import type { TaskSystemStore } from "./store.js";
@@ -32,6 +33,16 @@ export type TaskRunProvenance = {
   };
 };
 export type TaskTraceEvent = { seq: number; kind: string; at: number; payload: unknown };
+export type TaskMaterialObservation = {
+  phase: 'candidate' | 'presented' | 'referenced' | 'prompt-used' | 'outcome';
+  id: string;
+  ref: SessionCollaborationMaterialRef;
+  source: AutonomySessionScope;
+  reader: AutonomySessionScope;
+  run: ScopedRunId | null;
+  modelCallId?: string;
+  responseDigest?: string;
+};
 export type TaskTraceQuery = {
   taskNodeId: string;
   revision?: number;
@@ -159,6 +170,7 @@ export type TaskTraceReport = {
     }
   >;
   cleanup: TaskTraceEvent[];
+  materialObservations?: TaskMaterialObservation[];
   diagnostics: TaskTraceDiagnostic[];
   events: TaskTraceEvent[];
 };
@@ -630,6 +642,8 @@ export function readTaskTrace(
     if (!run.provenance?.run)
       diagnose("source_identity_unknown", credentialKey(run.credential, run.runId));
   }
+  const materialObservations = events.filter(event => event.kind === 'material_observation')
+    .map(event => event.payload as TaskMaterialObservation);
   return {
     schemaVersion: 1,
     task,
@@ -690,5 +704,6 @@ export function readTaskTrace(
     ),
     diagnostics,
     events,
+    ...(materialObservations.length ? { materialObservations } : {}),
   };
 }

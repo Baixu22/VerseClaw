@@ -8,8 +8,18 @@ import { filesystemInstance } from "./worktree-registry.js";
 import { withExecutionTaskBarrier } from './execution-task-barrier.js';
 import { canonicalPath } from '../../../shared/task-system/identity.js';
 import { checkoutWriterSnapshot } from './worktree-writer.js';
+import type { TaskMaterialObservation } from '../../../shared/task-system/trace.js';
 
 export type ExecutionTaskAuthorityBasis = TaskAuthorityBasis;
+
+export function recordExecutionMaterialObservations(workspaceRoot: string, observations: readonly TaskMaterialObservation[]): number {
+  if (!observations.length) return 0;
+  const access = createExecutionTaskAccess(workspaceRoot);
+  if (!existsSync(access.domain.database)) return 0;
+  const store = new TaskSystemStore(access.domain, undefined, access);
+  try { return store.recordMaterialObservations(observations); }
+  finally { store.close(); }
+}
 
 function resolveAuthority(workspaceRoot: string, readOnly = false) {
   const resolution = resolveExecutionDomain(workspaceRoot, undefined, readOnly);

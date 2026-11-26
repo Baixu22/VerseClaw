@@ -58,6 +58,16 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 同源目标代次、任务和完全相同内容的 finding/status 突发由原消息 owner 合并，回执携带 coalescedTo 原意图引用；request/handoff/result 保持独立。实际协作模型调用在原 Task Trace 标记 coordination，原价格、用量、预算和队列决定继续由各自 owner 提供。
 
+`sessions.collaborationContext` 读取当前目标 scope 的原 TaskSystem 合同、checkpoint、证据和有界上下文。observer 保留只读引用身份，读取不取得 claim；旧 Ledger WorkingContext 在缺少已验证关联时显示 association-not-verified，不隐式桥接或迁移。
+
+`task_control.publishMaterial` 将当前任务的事实、主张、决策候选、产物、冲突和交接记录发布到原 TaskSystem。发布携带稳定 `material.id`、摘要、证据引用、敏感性及可选适用条件和到期时间。来源绑定当前运行与会话代次。摘要字节或产物哈希经当前任务证据确认后可标为 `evidence-backed`，缺少对应证据的事实保留为 `claim`。相同意图重试返回首次发布回执。
+
+在会话协作面板展开“共享材料”，可按任务、文件、主题或证据查询当前工作区内可见会话的材料。列表提供有界摘要和分页，选中后按原材料版本读取完整摘要、适用条件、产物哈希与证据引用。受限材料仅由原发布会话代次读取。模型可通过 `sessions_list({ materials: { search, taskNodeId, file, evidenceRef } })` 使用同一入口，详情传入结果中的 `source` 作为 `target`，并附原 `ref`。
+
+发布替代版本时使用新的材料 ID，并在 `supersedes` 指明原版本。冲突记录以 `conflictsWith` 保存各方引用；已核实材料的替代同样需要可核实证据。当前任务 writer 可通过 `revokeMaterial` 携带原引用和原因撤销。材料面板跟踪所选版本的状态变化，任务修订、证据或产物变化、期限和来源缺失分别回读。源会话删除后，关联同一任务的授权读者可按原引用查看留存证据回执。
+
+模型工具的持久回复保存材料引用。模型在当次运行中选中原版本后，运行时在准备模型请求时核对可见性和材料状态，并在现有工具回复预算内带入内容。Task Trace 分别保留检索候选、实际打开的界面详情、模型引用、请求所带材料和已收到的响应摘要哈希。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

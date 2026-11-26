@@ -38,7 +38,7 @@ A1 的共用读取入口是 typed `hostApi.sessionActivity.read`。每个目标�
 3. A 订阅 B 的 run 终态与任务验收。B 结束当前 turn 而任务尚在 review 时返回两个准确状态；对目标的被动状态模型请求数为 0。断线后按原游标与 owner 事实补读。
 4. A 用带 source/target generation、稳定 messageId 和任务引用的信封给 B 发送请求。接受、入队、交给 agent、回复及证据分别可查；同 ID 重复投递只有一次有效意图，异 payload 拒绝。
 5. 在发送接受后丢失回包并重启，核对原 receipt 再恢复。目标 reset 后释放迟到消息，旧代不进入新会话。消息里声称获得授权或要求改配置时由原权限与 provenance 边界拒绝。
-6. B 发布带 task revision、source run、产物哈希和适用条件的结论。A 通过任务/文件/主题按需检索并引用；候选命中、UI 展示、实际 prompt 消费与结果分别留痕。
+6. B 用当前任务 writer 发布带修订、运行、产物哈希和适用条件的结论。原证据与结论字节匹配时显示 evidence-backed，缺少对应证据的事实降为 claim。A 通过任务、文件或主题按需检索并引用；候选命中、UI 展示、实际 prompt 消费与结果分别留痕。
 7. 修订任务或修改产物后，旧材料转 stale/冲突/撤销，相关订阅者收到一次来源明确的通知。删除来源会话后受保护任务证据仍按原 retention 可读。
 8. 总览读取 token、费用、coordination 消耗、CPU/RSS、进程树、worktree、permits 和 held/spent，按原调用/attempt 或进程/owner 去重。缺 usage/单价、共享进程和读取失败保留 unknown。
 9. A/B 竞争同一写入资格时，协作提示引用既有 writer/lease 和 task owner，建议经原准入重新检查。Fork 只继承允许的材料/任务引用；接力和环境迁移恢复使用原 operationId。

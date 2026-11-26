@@ -1,5 +1,28 @@
 {
     "collaboration": {
+        "materials": {
+            "title": "Shared materials",
+            "filter": "Task, file, topic, or evidence",
+            "search": "Search",
+            "empty": "No matching materials. Try a different task, file, or topic.",
+            "unavailable": "The material source is unavailable.",
+            "moreToRead": "Continue to the next page to search the remaining sources.",
+            "version": "Version {{version}} · Task revision {{revision}}",
+            "evidence": "Evidence",
+            "changed": "Material status changed to {{state}}.",
+            "related": "Related version",
+            "retained": "Retained evidence",
+            "states": {
+                "claim": "Claim",
+                "evidence-backed": "Evidence-backed",
+                "expired": "Expired",
+                "stale": "Stale",
+                "superseded": "Superseded",
+                "revoked": "Revoked",
+                "conflict": "Conflict",
+                "unknown": "Source unknown"
+            }
+        },
         "messages": {
             "title": "Messages and replies",
             "from": "From",
