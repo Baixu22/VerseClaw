@@ -57,6 +57,7 @@ import { createSessionStatusTool } from '../../openclaw_runtime/src/agents/tools
 import { resolveStorePath } from '../../openclaw_runtime/src/config/sessions/paths';
 import { closeSqliteSessionStoreDatabase, loadExistingSqliteSessionStoreReadOnly, replaceSqliteSessionStore } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
 import * as metadata from '../../openclaw_runtime/src/config/sessions/combined-store-gateway';
+import * as archive from '../../openclaw_runtime/src/gateway/session-archive-index';
 import { closeOpenClawStateDatabase, openOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { registerAgentRunContext, clearAgentRunContext } from '../../openclaw_runtime/src/infra/agent-events';
 import { subagentRuns } from '../../openclaw_runtime/src/agents/subagent-registry-memory';
@@ -159,13 +160,31 @@ it('uses the same Main-owned Gateway for watch and cancellation', async () => {
   await expect(api.watch(request)).resolves.toMatchObject({ watch: { state: 'stale', page: { reason: 'scope-mismatch', items: [] } } });
 });
 
-it('can cancel a Gateway wait during its initial owner read', async () => {
+it('releases cancelled and expired Gateway waits while their initial owner reads are pending', async () => {
+  vi.useFakeTimers();
+  const resume: (() => void)[] = [];
+  const pause: typeof archive.filterArchivedSessionStore = (_config, store) =>
+    new Promise(resolve => { resume.push(() => resolve(store)); });
+  vi.spyOn(archive, 'filterArchivedSessionStore').mockImplementationOnce(pause).mockImplementationOnce(pause);
   const request = parseSessionCollaborationWatch({ id: 'cancel-initial-read', query: query({ target: scope(), limit: 1 }), condition: 'changed' });
+  const expiring = { ...request, id: 'expire-initial-read', timeoutMs: 5 };
   const context = { chatAbortControllers: runs, getRuntimeConfig: () => mocks.cfg } as never;
-  const pending = watchSessionCollaboration(request, context, 'fixture-window');
-  expect(cancelSessionCollaborationWatch({ id: request.id, query: request.query }, context, 'fixture-window')).toEqual({ cancelled: true });
-  await expect(pending).resolves.toMatchObject({ state: 'cancelled', event: null });
-  expect(cancelSessionCollaborationWatch({ id: request.id, query: request.query }, context, 'fixture-window')).toEqual({ cancelled: false });
+  const cancel = (id: string) => cancelSessionCollaborationWatch({ id, query: request.query }, context, 'fixture-window');
+  try {
+    const pending = watchSessionCollaboration(request, context, 'fixture-window');
+    const timed = watchSessionCollaboration(expiring, context, 'fixture-window');
+    expect(resume).toHaveLength(2);
+    expect(cancel(request.id)).toEqual({ cancelled: true });
+    await expect(pending).resolves.toMatchObject({ state: 'cancelled', event: null });
+    await vi.advanceTimersByTimeAsync(5);
+    await expect(timed).resolves.toMatchObject({ state: 'timeout', event: null });
+    expect(cancel(request.id)).toEqual({ cancelled: false });
+    expect(cancel(expiring.id)).toEqual({ cancelled: false });
+  } finally {
+    for (const release of resume) release();
+    await vi.advanceTimersByTimeAsync(0);
+    vi.useRealTimers();
+  }
 });
 
 describe('A2 shared session discovery and detail', () => {

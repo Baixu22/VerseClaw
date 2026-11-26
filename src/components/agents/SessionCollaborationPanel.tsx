@@ -47,6 +47,10 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     const value = await readSessionCollaborationPage(query, hostApi.sessionActivity.query);
     if (token !== revision.current || current.current.viewKey !== viewKey) return;
     setLoading(false); setReadState(value.state);
+    if (value.state === 'stale' && query.cursor) {
+      setCursor(currentCursor => currentCursor === query.cursor ? undefined : currentCursor);
+      return;
+    }
     setObserved(previous => value.state === 'ready' || value.state === 'empty'
       ? { key: queryKey, page: value, stale: false }
       : previous?.key === queryKey ? { ...previous, stale: true } : { key: queryKey, page: value, stale: true });
