@@ -1,0 +1,369 @@
+{
+  "actor": "codex-knowledge-bot-baseline",
+  "driven_by": "agent",
+  "samePerCaseGrades": true,
+  "regradeExact": true,
+  "tamperRejected": [
+    {
+      "file": "frozen/oracle.json",
+      "exitCode": 1
+    },
+    {
+      "file": "raw/set-en.json",
+      "exitCode": 1
+    }
+  ],
+  "candidate": {
+    "commit": "b434808daffa45deb989435efd2c72da65b2c6fb",
+    "tree": "b18417dcf6601dfa5f212ac09b6a1f03488eb8a3",
+    "dirty": false,
+    "workingDiff": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": {}
+  },
+  "inputs": {
+    "tests/fixtures/knowledge-bot-baseline/corpus.json": "sha256:9242e7d17ea062d12a74b49a0f28936b7b28c3fa9f01fa71d1102cf4811b4eef",
+    "tests/fixtures/knowledge-bot-baseline/oracle.json": "sha256:aadec32ccffb87370412d6c67f9875286f4cdc974be3a8a219ae4ea22f5d2b35",
+    "tests/fixtures/knowledge-bot-baseline/README.md": "sha256:4a4c910daba1cee5a38e773bd19dc9d4b6f81fc060ac27a1cc7e7152c91a85b7",
+    "tests/fixtures/knowledge-bot-baseline/gateway.ts": "sha256:e7a914465218dab3a3eab7169c10489228d712784d2f6c53cc74fbe06b7ac2db",
+    "tests/unit/knowledge-bot-baseline.test.tsx": "sha256:9c91d16b36aedc124f231aa8d84cdab65bc26d4cedf4739dce4ab0a5979b9722",
+    "scripts/knowledge-bot-baseline.mjs": "sha256:40ddd7cbbc0a49b4f9b10e7df9be4c9c37e0546e0c32c15ae5b2a6c01fb1bfcb"
+  },
+  "runs": [
+    {
+      "name": "clean-01",
+      "runId": "64d43fc9-fe60-4fa6-8f93-5cb0ceb369e1",
+      "reportDigest": "5a37a53ba1ff6a336e437bd45904a8acd43faa4a9432b7e7dd401bb329b0a2dc",
+      "records": {
+        "selection-zh": "sha256:611f3ef01ff19112f5dafdfb2c36a46aa6e5719bb643fdd99bde323426f119b5",
+        "page-en": "sha256:0657ccd0de1ad5d761bccf8ec9013fa44e4079183a543b96f8862d281124b368",
+        "set-en": "sha256:1c78a39e8d26dbbd79aa029a0ac35192cb68ecd9e65db2826a44dabf5c9cbc65",
+        "project-zh": "sha256:b6c2bea28efc51e569cad9b364b8809aa30769d4274ac460da795ac456661792",
+        "missing-en": "sha256:f8adf911e84d9d7be6dbe3f7c2644ce989cb8cdcb12185c5d631908c4f844692",
+        "partial-zh": "sha256:5df8bae38552764c4cf907684457b342d00f0e3f11841c0ec214a0521dd03f17",
+        "revoked-zh": "sha256:dff9aad0f4ac79efcbf48d8f1927c32d3c86fa38fcc704fef8fb59da9c28e6ff",
+        "conflict-en": "sha256:aee4029911f311cdd1f914fe845bd07121a6b1b9ec326cf60aa572a00e587fa5",
+        "duplicate-en": "sha256:d60b4bd217d889db25c2c16bbee16d2aaf9a5700c3da584bb32651b2677b2f31",
+        "review-zh": "sha256:241e6380f7dff6a44ef6df62c0c720762602f2d4865d7442bdf10f3cbc315c20"
+      }
+    },
+    {
+      "name": "clean-02",
+      "runId": "cc494647-40a9-4a57-a4d0-85ba49bbc2c4",
+      "reportDigest": "21be26fe92fa2fbb19b5e73412da518de239dadb0d3ffa8e491e87d4e4d5b47c",
+      "records": {
+        "selection-zh": "sha256:ef882f34f10716937a59fb10c3726dda49f6c3e5d3dbf300491a41ae42a26f0a",
+        "page-en": "sha256:2d0a9417e98be47f5d41c2b9344985927b674053b4831a56aba737dee923cc5c",
+        "set-en": "sha256:12b4011fd245858c98ba21aa0067d4070660f8285e1dcd25be7db00d58c6dbae",
+        "project-zh": "sha256:5fcae5070411ac89cc2bf1ebba15f7820b4820a39a4eeca85d566fa438c7b6d9",
+        "missing-en": "sha256:f8871c225ee1f24a790bcb0289bd4f3eddba906d2415cdb1ce1f70f3505cb807",
+        "partial-zh": "sha256:87e765acedcd23fc96f3e4e5ab23d284400a487cabde32a04b4652deb9131eb1",
+        "revoked-zh": "sha256:f2441cce79608388db584c6431154380ec2dd7ba88e3e2e583a1632be9adeda5",
+        "conflict-en": "sha256:7b8268bd60c527375edf1dabb8e8f4e9cf2fdbe447e5f8f4adcc0875fb2e462a",
+        "duplicate-en": "sha256:becf3be8d9b6ece57ddb7aa5caa69323bfc5f3b20ecc58d7d485d5188d282edb",
+        "review-zh": "sha256:5a3b66631b5aaaf83cfcf0768a72641dd067c23d07f2d902c6da65eeb5d7caaa"
+      }
+    }
+  ],
+  "metrics": {
+    "fieldAccuracy": {
+      "numerator": 8,
+      "denominator": 11,
+      "fraction": 0.7272727272727273
+    },
+    "fieldCoverage": {
+      "numerator": 11,
+      "denominator": 11,
+      "fraction": 1
+    },
+    "claimTraceability": {
+      "numerator": 12,
+      "denominator": 12,
+      "fraction": 1
+    },
+    "taskCompletion": {
+      "numerator": 5,
+      "denominator": 10,
+      "fraction": 0.5
+    },
+    "externalProviderCalls": 0,
+    "productionCost": null
+  },
+  "cases": [
+    {
+      "caseId": "selection-zh",
+      "scopeOK": false,
+      "sourceIds": [
+        "zh/chat.md"
+      ],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [
+        {
+          "name": "建议触发",
+          "expected": "尚未保存的 701 毫秒",
+          "returned": [
+            "输入停顿 650 毫秒"
+          ],
+          "covered": true,
+          "correct": false
+        }
+      ],
+      "claims": 1,
+      "resolved": 1,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": false
+    },
+    {
+      "caseId": "page-en",
+      "scopeOK": false,
+      "sourceIds": [
+        "support/current.md"
+      ],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [
+        {
+          "name": "Retry count",
+          "expected": "0",
+          "returned": [
+            "3"
+          ],
+          "covered": true,
+          "correct": false
+        }
+      ],
+      "claims": 1,
+      "resolved": 1,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": false
+    },
+    {
+      "caseId": "set-en",
+      "scopeOK": true,
+      "sourceIds": [
+        "ops/current.md"
+      ],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [
+        {
+          "name": "Retry count",
+          "expected": "0",
+          "returned": [
+            "0"
+          ],
+          "covered": true,
+          "correct": true
+        },
+        {
+          "name": "Unsigned release",
+          "expected": "forbidden",
+          "returned": [
+            "forbidden"
+          ],
+          "covered": true,
+          "correct": true
+        },
+        {
+          "name": "Timeout",
+          "expected": "5000 ms",
+          "returned": [
+            "5 s"
+          ],
+          "covered": true,
+          "correct": false
+        }
+      ],
+      "claims": 3,
+      "resolved": 3,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": false
+    },
+    {
+      "caseId": "project-zh",
+      "scopeOK": true,
+      "sourceIds": [
+        "zh/chat.md"
+      ],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [
+        {
+          "name": "建议等待上限",
+          "expected": "12 秒",
+          "returned": [
+            "12 秒"
+          ],
+          "covered": true,
+          "correct": true
+        },
+        {
+          "name": "自动读取等待上限",
+          "expected": "5 秒",
+          "returned": [
+            "5 秒"
+          ],
+          "covered": true,
+          "correct": true
+        }
+      ],
+      "claims": 2,
+      "resolved": 2,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": true
+    },
+    {
+      "caseId": "missing-en",
+      "scopeOK": true,
+      "sourceIds": [
+        "ops/current.md"
+      ],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [],
+      "claims": 0,
+      "resolved": 0,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": true
+    },
+    {
+      "caseId": "partial-zh",
+      "scopeOK": true,
+      "sourceIds": [
+        "long/guide.md"
+      ],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [],
+      "claims": 0,
+      "resolved": 0,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": true
+    },
+    {
+      "caseId": "revoked-zh",
+      "scopeOK": true,
+      "sourceIds": [],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [],
+      "claims": 0,
+      "resolved": 0,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": true
+    },
+    {
+      "caseId": "conflict-en",
+      "scopeOK": true,
+      "sourceIds": [
+        "release/web.md",
+        "release/desktop.md"
+      ],
+      "stateOK": true,
+      "effectsOK": true,
+      "targetOK": true,
+      "cells": [],
+      "claims": 0,
+      "resolved": 0,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "steps": 2,
+      "passed": true
+    },
+    {
+      "caseId": "duplicate-en",
+      "scopeOK": true,
+      "sourceIds": [
+        "ops/current.md"
+      ],
+      "stateOK": true,
+      "effectsOK": false,
+      "targetOK": true,
+      "cells": [
+        {
+          "name": "Owner",
+          "expected": "Release team",
+          "returned": [
+            "Release team"
+          ],
+          "covered": true,
+          "correct": true
+        }
+      ],
+      "claims": 1,
+      "resolved": 1,
+      "draftCount": 2,
+      "reviewCount": 0,
+      "steps": 3,
+      "passed": false
+    },
+    {
+      "caseId": "review-zh",
+      "scopeOK": true,
+      "sourceIds": [
+        "release/stored.md",
+        "inbox/incoming.md",
+        "faq/release.md"
+      ],
+      "stateOK": true,
+      "effectsOK": false,
+      "targetOK": false,
+      "cells": [
+        {
+          "name": "签名方式",
+          "expected": "现行 A",
+          "returned": [
+            "现行 A"
+          ],
+          "covered": true,
+          "correct": true
+        },
+        {
+          "name": "拟议签名方式",
+          "expected": "候选 B",
+          "returned": [
+            "候选 B"
+          ],
+          "covered": true,
+          "correct": true
+        },
+        {
+          "name": "受影响的 FAQ",
+          "expected": "发布凭据 FAQ",
+          "returned": [
+            "发布凭据 FAQ"
+          ],
+          "covered": true,
+          "correct": true
+        }
+      ],
+      "claims": 4,
+      "resolved": 4,
+      "draftCount": 1,
+      "reviewCount": 1,
+      "steps": 3,
+      "passed": false
+    }
+  ]
+}

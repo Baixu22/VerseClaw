@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "cases": {
+    "selection-zh": {
+      "fieldSource": "selection",
+      "allowed": [
+        "selection"
+      ],
+      "fields": [
+        [
+          "建议触发",
+          "尚未保存的 701 毫秒"
+        ]
+      ]
+    },
+    "page-en": {
+      "allowed": [
+        "ops/current.md"
+      ],
+      "fields": [
+        [
+          "Retry count",
+          "0"
+        ]
+      ]
+    },
+    "set-en": {
+      "allowed": [
+        "ops/current.md"
+      ],
+      "fields": [
+        [
+          "Retry count",
+          "0"
+        ],
+        [
+          "Unsigned release",
+          "forbidden"
+        ],
+        [
+          "Timeout",
+          "5000 ms"
+        ]
+      ]
+    },
+    "project-zh": {
+      "allowed": [
+        "zh/chat.md"
+      ],
+      "fields": [
+        [
+          "建议等待上限",
+          "12 秒"
+        ],
+        [
+          "自动读取等待上限",
+          "5 秒"
+        ]
+      ]
+    },
+    "missing-en": {
+      "allowed": [
+        "ops/current.md"
+      ],
+      "state": "missing",
+      "fields": []
+    },
+    "partial-zh": {
+      "allowed": [
+        "long/guide.md"
+      ],
+      "state": "partial",
+      "fields": []
+    },
+    "revoked-zh": {
+      "allowed": [],
+      "state": "revoked",
+      "forbidden": "RETIRED_FIXTURE_ONLY",
+      "fields": []
+    },
+    "conflict-en": {
+      "allowed": [
+        "release/web.md",
+        "release/desktop.md"
+      ],
+      "state": "conflict",
+      "fields": []
+    },
+    "duplicate-en": {
+      "allowed": [
+        "ops/current.md"
+      ],
+      "fields": [
+        [
+          "Owner",
+          "Release team"
+        ]
+      ],
+      "drafts": 1,
+      "reviews": 0
+    },
+    "review-zh": {
+      "allowed": [
+        "release/stored.md",
+        "inbox/incoming.md",
+        "faq/release.md"
+      ],
+      "fields": [
+        [
+          "签名方式",
+          "现行 A"
+        ],
+        [
+          "拟议签名方式",
+          "候选 B"
+        ],
+        [
+          "受影响的 FAQ",
+          "发布凭据 FAQ"
+        ]
+      ],
+      "fieldOrigins": {
+        "签名方式": [
+          "release/stored.md"
+        ],
+        "拟议签名方式": [
+          "inbox/incoming.md"
+        ],
+        "受影响的 FAQ": [
+          "release/stored.md",
+          "inbox/incoming.md"
+        ]
+      },
+      "drafts": 1,
+      "reviews": 1,
+      "reviewTarget": "faq/release.md"
+    }
+  }
+}
