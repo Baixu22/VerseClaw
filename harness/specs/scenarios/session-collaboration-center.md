@@ -27,6 +27,10 @@ A3 使用原运行终态缓存与 TaskSystem 事件等待条件，按 scope/游�
 
 A4 的系统总览和项目会话面板共用 SessionCollaborationPanel。查询来源、分页、选中详情和监听均按原 scope 读取；自动更新保留搜索、选中和焦点，卸载取消原等待。四语及宽窄、主题与 reduced-motion 旅程覆盖原会话、worker 和任务入口。
 
+B1 的消息意图不接受调用者输入的来源或权限字段。按原运行/Main owner 绑定来源，Gateway 拒绝异内容同 ID、未签发的运行来源、不可见目标、旧代、任务修订不符和过期输入。typed provenance 保持 inter_session，原 actor/run 与创建时间由首次原回执保留。
+
+B2 覆盖持久接受和派发窗口中断、数据库/Gateway 重开、同 ID 重试与异内容拒绝。原意图和回执查询保持只读；派发无回执保持 unknown，重复请求不会启动第二个目标 turn。
+
 A1 的共用读取入口是 typed `hostApi.sessionActivity.read`。每个目标传入原 workspace/project/sessionKey/sessionGeneration，并可固定 Workspace binding revision 与执行域引用。`readModel.sources` 明确区分已读事实、真实为空、未读取、不可用、过期和未知；读取前后从原 owner 核对会话、任务、配置、检出与资源资格。正反例包含同 key 跨工作区、旧 generation、旧 binding/执行域 revision、缺失 owner，以及 Runtime 读取和 Main 等待期间的 reset。
 
 1. Agent 建立两个独立会话 A/B 和 A 的子会话 C，使用既有任务/session owner 绑定各自目标、代次、运行和检出。系统/项目入口读取同一总览；B 的任务与 C 的 parent 不从界面文字推断。

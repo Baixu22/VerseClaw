@@ -30,6 +30,7 @@ appliesTo:
 - Renderer 使用 typed host-api / host:invoke；Main 持有 Gateway WebSocket。新增协作模块不直连 Gateway，也不恢复本地 HTTP fallback。
 - 优先扩展现有 sessions_list、session_status 的只读模式、sessions_history 和 sessions_send；新增有条件等待仅拥有订阅及结果引用。
 - 消息用途、消息投递状态与执行动作分开。消息来源由当前运行上下文绑定；外来消息保持 inter_session/工具级信任，不能代替用户授权或扩大接收者能力。
+- 新消息意图拒绝调用者提交的 source/actor/权限；原运行或 Main 活动 Workspace/Session owner 产生来源。稳定摘要覆盖源目标代次、正文和引用，首次 run/actor/时间由原回执保留，重试不改签来源。
 - 当前 sessions.steer 为中断后发送，同一运行追加输入消费已有 guide/输入路径。stop、truncate、compact、fork、接力和环境迁移分别使用原 owner 合同。
 - 源/目标 generation 和稳定 ID 在实际副作用边界重新核对。相同 ID 异内容拒绝；未知发送先查原回执；旧代不能影响新代。
 - 持久接受、排队、交给 agent、回复与任务验收分别确认。消息不能自己完成任务、迁移 writer 或绕过发送者/接收者的拒绝规则。

@@ -50,6 +50,14 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 系统总览和项目会话面板提供同一个会话协作视图，可搜索其他会话的目标、查看已观测动作并选中来源详情。列表分页读取，详情和历史按需打开；更新保留搜索、选择和键盘焦点。会话、worker 历史和任务入口使用既有导航，来源未读取或不可用时显示相应状态。
 
+协作消息使用 finding、status、request、handoff、result 用途和稳定意图 ID，携带源目标会话代次及原任务/证据引用。工具的来源绑定当前运行，Main 发送入口读取活动 Workspace/Session owner，并核对用户预览的源 scope。消息仍是 inter_session 数据；同 ID 异内容、过期意图、旧代和失效任务引用被原发送入口拒绝。
+
+消息意图在原 shared state SQLite 中保留首次来源和派发回执。相同意图重试返回原记录；缺失派发回执时保持 unknown。`sessions.collaborationMessages` 按当前读取者和目标 scope 分页读取有界摘要，指定原 ID 后读取完整意图与回执；读取不创建数据库或修改投递状态。
+
+选中会话后可展开消息区，查看用途、发件/收件代次、投递阶段、原正文和回复。发送前预览 Main 当前来源；草稿按源目标完整身份保留，明确接受后清空。unknown 保留原 ID 与内容，使用“回读原回执”核对结果。原会话控制目录继续打开对应 owner 的引导、分支、接力和迁移入口。
+
+同源目标代次、任务和完全相同内容的 finding/status 突发由原消息 owner 合并，回执携带 coalescedTo 原意图引用；request/handoff/result 保持独立。实际协作模型调用在原 Task Trace 标记 coordination，原价格、用量、预算和队列决定继续由各自 owner 提供。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

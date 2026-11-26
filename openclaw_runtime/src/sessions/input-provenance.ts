@@ -8,6 +8,7 @@ import {
   type ContentProvenance,
 } from "../../../shared/security/content-provenance.js";
 import type { AgentMessage } from "../agents/runtime/index.js";
+import { SESSION_COLLABORATION_PURPOSES, type SessionCollaborationPurpose } from '../../../shared/types/session-collaboration-message.js';
 
 // Input provenance marks whether a user-role message actually came from an
 // external user, another session, or an internal system/tool handoff.
@@ -25,6 +26,7 @@ export type InputProvenance = {
   sourceSessionKey?: string;
   sourceChannel?: string;
   sourceTool?: string;
+  collaboration?: { id: string; purpose: SessionCollaborationPurpose; sourceGeneration: string; targetGeneration: string; payloadDigest: string; replyTo?: string };
 };
 
 export const INTER_SESSION_PROMPT_PREFIX_BASE = "[Inter-session message]";
@@ -51,12 +53,25 @@ export function normalizeInputProvenance(value: unknown): InputProvenance | unde
   if (!isInputProvenanceKind(record.kind)) {
     return undefined;
   }
+  let collaboration: InputProvenance['collaboration'];
+  if (record.collaboration !== undefined) {
+    const value = record.collaboration as Record<string, unknown>;
+    if (record.kind !== 'inter_session' || !value || typeof value !== 'object' || Array.isArray(value)
+      || Object.keys(value).some(key => !['id', 'purpose', 'sourceGeneration', 'targetGeneration', 'payloadDigest', 'replyTo'].includes(key))
+      || typeof value.id !== 'string' || !value.id || value.id.length > 160 || !SESSION_COLLABORATION_PURPOSES.includes(value.purpose as SessionCollaborationPurpose)
+      || typeof value.sourceGeneration !== 'string' || value.sourceGeneration !== record.originSessionId
+      || typeof value.targetGeneration !== 'string' || !value.targetGeneration || !/^[a-f0-9]{64}$/.test(String(value.payloadDigest))) return undefined;
+    collaboration = { id: value.id, purpose: value.purpose as SessionCollaborationPurpose, sourceGeneration: value.sourceGeneration,
+      targetGeneration: value.targetGeneration, payloadDigest: value.payloadDigest as string,
+      ...(typeof value.replyTo === 'string' ? { replyTo: value.replyTo } : {}) };
+  }
   return {
     kind: record.kind,
     originSessionId: normalizeOptionalString(record.originSessionId),
     sourceSessionKey: normalizeOptionalString(record.sourceSessionKey),
     sourceChannel: normalizeOptionalString(record.sourceChannel),
     sourceTool: normalizeOptionalString(record.sourceTool),
+    ...(collaboration ? { collaboration } : {}),
   };
 }
 

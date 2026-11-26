@@ -1,6 +1,7 @@
 // Gateway Protocol schema module defines protocol validation shapes.
 import { Type } from "typebox";
 import { GATEWAY_CLIENT_IDS, GATEWAY_CLIENT_MODES } from "../client-info.js";
+import { SESSION_COLLABORATION_PURPOSES } from '../../../../../shared/types/session-collaboration-message.js';
 import {
   EXEC_SECRET_REF_ID_JSON_SCHEMA_PATTERN,
   FILE_SECRET_REF_ID_ABSOLUTE_JSON_SCHEMA_PATTERN,
@@ -41,6 +42,10 @@ export const InputProvenanceSchema = Type.Object(
     sourceSessionKey: Type.Optional(Type.String()),
     sourceChannel: Type.Optional(Type.String()),
     sourceTool: Type.Optional(Type.String()),
+    collaboration: Type.Optional(Type.Object({ id: Type.String({ minLength: 1, maxLength: 160 }),
+      purpose: Type.String({ enum: [...SESSION_COLLABORATION_PURPOSES] }),
+      sourceGeneration: Type.String({ minLength: 1 }), targetGeneration: Type.String({ minLength: 1 }),
+      payloadDigest: Type.String({ pattern: '^[a-f0-9]{64}$' }), replyTo: Type.Optional(Type.String({ maxLength: 160 })) }, { additionalProperties: false })),
   },
   { additionalProperties: false },
 );

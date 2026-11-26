@@ -77,6 +77,8 @@ import type {
 import type { SessionActivitySnapshot, SessionActivityReadQuery } from '../types/session-activity';
 import type { SessionCollaborationQuery, SessionCollaborationPage } from '../types/session-collaboration';
 import type { SessionCollaborationWatch, SessionCollaborationWatchResult } from '../types/session-collaboration-watch';
+import type { SessionCollaborationMessageInput, SessionCollaborationMessageReceipt, SessionCollaborationMessageQuery, SessionCollaborationMessagePage } from '../types/session-collaboration-message';
+import type { AutonomySessionScope } from '../types/identity-scope';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -6302,6 +6304,9 @@ export type HostApiContract = {
     testImageGeneration: (payload: ImageGenerationTestPayload) => ImageGenerationTestResult;
   };
   sessions: {
+    collaborationSender: () => HostSuccess & { source: { scope: AutonomySessionScope; name: string } | null; reason?: string };
+    collaborationMessages: (payload: SessionCollaborationMessageQuery) => HostSuccess & { messages: SessionCollaborationMessagePage };
+    sendCollaborationMessage: (payload: SessionCollaborationMessageInput & { expectedSource: AutonomySessionScope }) => HostSuccess & { receipt: SessionCollaborationMessageReceipt | null; phase: SessionCollaborationMessageReceipt['phase']; error?: string };
     delegate: (payload: SessionDelegationPayload) => SessionDelegationResult;
     dispatchPlanTask: (payload: ProjectPlanDispatchPayload) => SessionDelegationResult;
     dispatchSystemProject: (payload: SystemProjectDispatchPayload) => SessionDelegationResult;

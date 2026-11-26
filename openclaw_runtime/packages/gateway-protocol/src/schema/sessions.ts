@@ -327,6 +327,7 @@ export const SessionsForkParamsSchema = Type.Object(
 export const SessionsSendParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    collaboration: Type.Optional(Type.Unknown()),
     expectedSessionId: Type.Optional(NonEmptyString),
     requesterSessionKey: Type.Optional(NonEmptyString),
     expectedRequesterSessionId: Type.Optional(NonEmptyString),

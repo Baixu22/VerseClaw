@@ -130,6 +130,14 @@ function taskStatus(status: string) {
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
   "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.messages !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One message query required');
+        const { readSessionCollaborationMessages } = await import('./session-collaboration-message.js');
+        respond(true, { messages: await readSessionCollaborationMessages(params.messages, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration message query' }); }
+      return;
+    }
     if (params.watch !== undefined || params.cancelWatch !== undefined) {
       try {
         if (Object.keys(params).length !== 1) throw new TypeError('One watch operation required');

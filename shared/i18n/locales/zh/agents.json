@@ -1,5 +1,50 @@
 {
     "collaboration": {
+        "messages": {
+            "title": "消息与回复",
+            "from": "发件会话",
+            "to": "收件会话",
+            "reply": "回复",
+            "replyUnknown": "尚未读取回复来源。",
+            "sender": "从 {{name}} 发送",
+            "sourceMissing": "当前发件身份不可用。",
+            "purpose": "用途",
+            "body": "消息正文",
+            "send": "发送",
+            "check": "回读原回执",
+            "purposes": {
+                "finding": "发现",
+                "status": "状态",
+                "request": "请求",
+                "handoff": "交接",
+                "result": "结果"
+            },
+            "states": {
+                "not_read": "尚未读取消息。",
+                "ready": "消息来源已读取。",
+                "empty": "此范围没有消息。",
+                "unavailable": "消息来源不可用。",
+                "stale": "会话身份已改变。",
+                "unknown": "投递结果未知，请先回读原回执。",
+                "accepted": "意图已接受",
+                "queued": "已排队",
+                "delivered": "已交给 agent",
+                "replied": "已回复",
+                "rejected": "已拒绝",
+                "expired": "已过期"
+            }
+        },
+        "controls": {
+            "title": "原会话控制",
+            "guide": "打开运行引导",
+            "interruptSend": "打开中断后发送",
+            "stop": "停止会话",
+            "compact": "整理上下文",
+            "truncate": "打开转录边界",
+            "fork": "打开分支",
+            "handoff": "打开接力",
+            "migrate": "打开执行环境迁移"
+        },
         "title": "会话协作",
         "description": "查找正在进行的工作，并按需读取原始来源。",
         "refresh": "刷新",
