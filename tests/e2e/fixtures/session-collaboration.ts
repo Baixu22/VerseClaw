@@ -29,8 +29,8 @@ export async function createCollaborationProject(app: ElectronApplication, root:
     taskNodeId = task.contract.taskNodeId;
     store.claim(taskNodeId, project.sessionKey, project.generation, `${name}-claim`);
   } finally { store.close(); }
-  await establishCollaborationScope(app, project);
-  return { ...project, taskNodeId, scope: parseSessionCollaborationQuery({ requester: {
+  const setupRunId = await establishCollaborationScope(app, project);
+  return { ...project, taskNodeId, setupRunId, scope: parseSessionCollaborationQuery({ requester: {
     workspaceId: project.workspaceId, projectId: project.workspaceId, sessionKey: project.sessionKey, sessionGeneration: project.generation,
   } }).requester };
 }
@@ -47,7 +47,12 @@ export async function establishCollaborationScope(app: ElectronApplication, proj
     key: project.sessionKey, expectedSessionId: project.generation, workspaceId: project.workspaceId, workspaceDir: project.rootPath,
     message: 'Fixture setup: acknowledge the existing session without tools.', idempotencyKey: `collaboration-setup:${project.sessionKey}:${project.generation}`,
   } });
-  if (result.runId) await hostInvoke(app, 'gateway', 'rpc', { method: 'agent.wait', params: { runId: result.runId, timeoutMs: 60_000 }, timeoutMs: 65_000 });
+  if (!result.runId) throw new Error('Original fixture run ID missing');
+  const terminal = await hostInvoke<{ status: string }>(app, 'gateway', 'rpc', {
+    method: 'agent.wait', params: { runId: result.runId, timeoutMs: 60_000 }, timeoutMs: 65_000,
+  });
+  if (terminal.status !== 'ok') throw new Error(`Fixture setup run ended with ${terminal.status}`);
+  return result.runId;
 }
 
 export async function collaborationFixtureStorePath(app: ElectronApplication) {
