@@ -2,6 +2,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
+import { isHiddenUsageSource, readObservedModelTokens } from "../../../shared/types/usage.js";
+import { summarizeCollaborationUsage, type CollaborationUsageObservation } from "../../../shared/types/session-collaboration-usage.js";
 import { asFiniteNumber } from "@openclaw/normalization-core/number-coercion";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import type { NormalizedUsage, UsageLike } from "../agents/usage.js";
@@ -1090,6 +1092,7 @@ async function* readJsonlRecords(
   filePath: string,
   startOffset = 0,
   endOffset?: number,
+  onMalformed?: () => void,
 ): AsyncGenerator<Record<string, unknown>> {
   if (endOffset !== undefined && endOffset <= startOffset) {
     return;
@@ -1111,18 +1114,71 @@ async function* readJsonlRecords(
       }
       try {
         const parsed = JSON.parse(trimmed) as unknown;
-        if (!parsed || typeof parsed !== "object") {
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          onMalformed?.();
           continue;
         }
         yield parsed as Record<string, unknown>;
       } catch {
-        // Ignore malformed lines
+        onMalformed?.();
       }
     }
   } finally {
     rl.close();
     fileStream.destroy();
   }
+}
+
+/** Accounts for native assistant usage owned by one physical transcript generation. */
+export async function readCollaborationTranscriptUsage(input: {
+  filePath: string; sessionKey: string; sessionGeneration: string; forkedFromLeafId?: string;
+}) {
+  const before = await fs.promises.stat(input.filePath);
+  if (!before.isFile()) throw new Error('COLLABORATION_TRANSCRIPT_UNAVAILABLE');
+  const records = new Map<string, CollaborationUsageObservation>();
+  let headerRead = false, inheritedHistory = false, atForkBoundary = false, unresolved = 0;
+  for await (const row of readJsonlRecords(input.filePath, 0, before.size, () => { unresolved++; })) {
+    if (!headerRead) {
+      if (row.type !== 'session' || row.id !== input.sessionGeneration || unresolved)
+        throw new Error('COLLABORATION_TRANSCRIPT_STALE');
+      headerRead = true;
+      inheritedHistory = typeof row.parentSession === 'string' && Boolean(row.parentSession);
+      continue;
+    }
+    if (inheritedHistory && input.forkedFromLeafId && !atForkBoundary) {
+      atForkBoundary = row.id === input.forkedFromLeafId;
+      continue;
+    }
+    const message = row.message as Record<string, unknown> | undefined;
+    if (row.type !== 'message' || message?.role !== 'assistant') continue;
+    const provider = typeof message.provider === 'string' ? message.provider : undefined;
+    const model = typeof message.model === 'string' ? message.model : undefined;
+    if (isHiddenUsageSource(provider) || isHiddenUsageSource(model)) continue;
+    const call = row.modelCall as Record<string, unknown> | undefined;
+    if (typeof call?.sessionKey === 'string' && call.sessionKey !== input.sessionKey) continue;
+    if (inheritedHistory && !input.forkedFromLeafId && call?.sessionKey !== input.sessionKey) { unresolved++; continue; }
+    const callId = typeof call?.runId === 'string' && call.runId && [call.attemptIndex, call.modelCallIndex, call.wireAttemptIndex ?? 0]
+      .every(index => typeof index === 'number' && Number.isSafeInteger(index) && index >= 0)
+      ? JSON.stringify([call.runId, call.attemptIndex, call.modelCallIndex, call.wireAttemptIndex ?? 0]) : null;
+    const key = callId ?? (typeof row.id === 'string' && row.id ? `entry:${row.id}` : null);
+    if (!key) { unresolved++; continue; }
+    const usage = message.usage as Record<string, unknown> | undefined;
+    const reported = provider && model && ['stop', 'toolUse', 'length', 'error', 'aborted'].includes(String(message.stopReason)) && usage && typeof usage === 'object'
+      ? readObservedModelTokens({ ...usage, total: usage.totalTokens ?? usage.total }) : null;
+    const tokens = reported && (reported.total > 0 || !['error', 'aborted'].includes(String(message.stopReason))) ? reported : null;
+    const price = (usage?.cost as Record<string, unknown> | undefined)?.total;
+    const costUsd = tokens && typeof price === 'number' && Number.isFinite(price) && price > 0 ? price : null;
+    const observation = { state: tokens ? 'known' as const : 'unknown' as const, tokens, costUsd, priceVersion: null };
+    const prior = records.get(key);
+    if (!prior) records.set(key, observation);
+    else if (JSON.stringify(prior) !== JSON.stringify(observation))
+      records.set(key, { state: 'conflict', tokens: null, costUsd: null, priceVersion: null });
+  }
+  if (!headerRead) throw new Error('COLLABORATION_TRANSCRIPT_UNAVAILABLE');
+  const after = await fs.promises.stat(input.filePath);
+  if (after.dev !== before.dev || after.ino !== before.ino || after.size < before.size ||
+      (after.size === before.size && after.mtimeMs !== before.mtimeMs)) throw new Error('COLLABORATION_TRANSCRIPT_STALE');
+  return summarizeCollaborationUsage([...records.values()], 0, unresolved + Number(inheritedHistory && Boolean(input.forkedFromLeafId) && !atForkBoundary));
 }
 
 async function scanTranscriptFile(params: {

@@ -8,13 +8,14 @@ import type { TaskModelCall, TaskModelUsage } from './trace.js';
 export function createTaskModelUsageRecorder(guard: ReturnType<typeof createTaskRuntimeGuard>) {
   const calls = new Map<string, TaskModelCall>();
   return {
-    start(callId: string, provider: string, model: string, category?: TaskModelCall['category']): void {
+    start(callId: string, provider: string, model: string, category?: TaskModelCall['category'], attemptIndex?: number): void {
       if (!guard?.runId || !guard.generation || !existsSync(guard.domain.database)) return;
       const store = new TaskSystemStore(guard.domain, undefined, guard.access);
       try {
         const credential = guard.credential ?? store.modelCallScope(guard.sessionKey, guard.generation, guard.runId)?.credential;
         if (!credential || credential.sessionKey !== guard.sessionKey || credential.generation !== guard.generation) return;
-        calls.set(callId, store.beginModelCall(credential, { callId, runId: guard.runId, provider, model, ...(category ? { category } : {}) }));
+        calls.set(callId, store.beginModelCall(credential, { callId, runId: guard.runId, provider, model,
+          ...(category ? { category } : {}), ...(attemptIndex === undefined ? {} : { attemptIndex }) }));
       } finally { store.close(); }
     },
     finish(callId: string, usage: TaskModelUsage): void {

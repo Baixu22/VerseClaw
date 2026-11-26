@@ -81,6 +81,7 @@ import type { SessionCollaborationMessageInput, SessionCollaborationMessageRecei
 import type { AutonomySessionScope } from '../types/identity-scope';
 import type { SessionCollaborationTaskContext } from '../types/session-collaboration-context';
 import type { SessionCollaborationMaterialPage, SessionCollaborationMaterialPresentation, SessionCollaborationMaterialQuery } from '../types/session-collaboration-material';
+import type { SessionCollaborationUsage, SessionCollaborationUsageQuery } from '../types/session-collaboration-usage';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -5974,6 +5975,7 @@ export type HostApiContract = {
     snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
     read: (payload: SessionActivityReadQuery) => SessionActivitySnapshotResult;
     query: (payload: SessionCollaborationQuery) => SessionCollaborationQueryResult;
+    modelUsage: (payload: SessionCollaborationUsageQuery) => HostSuccess & { usage: SessionCollaborationUsage };
     watch: (payload: SessionCollaborationWatch) => HostSuccess & { watch: SessionCollaborationWatchResult };
     cancelWatch: (payload: { id: string; query: SessionCollaborationQuery }) => HostSuccess & { cancelled: boolean };
   };

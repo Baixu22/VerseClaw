@@ -15,6 +15,7 @@ import type { AutonomyProjectScope, AutonomySessionScope } from '@shared/types/i
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { SessionCollaborationMessages } from './SessionCollaborationMessages';
 import { SessionCollaborationMaterials } from './SessionCollaborationMaterials';
+import { SessionCollaborationUsage } from './SessionCollaborationUsage';
 import { invokeSessionCollaborationControl } from '@/lib/session-collaboration-control';
 import { SESSION_COLLABORATION_CONTROLS, type SessionCollaborationControl } from '@shared/types/session-collaboration-control';
 
@@ -136,9 +137,10 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
           </div>
           <p className="break-words text-sm">{row.sources.goal.state === 'ready' ? row.sources.goal.value?.text : sourceText(row.sources.goal.state)}</p>
           <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-2 text-xs">
-            <dt>{t('collaboration.resources')}</dt><dd>{snapshot ? sourceText(snapshot.readModel?.sources.resources.state ?? 'unknown') : sourceText('not_read')}</dd>
+            <dt>{t('collaboration.resources')}</dt><dd>{sourceText(snapshot?.resources ? 'ready' : 'not_read')}</dd>
           </dl>
           {requester && row.detail && <SessionCollaborationMessages requester={requester} target={row.detail.scope} />}
+          {requester && row.detail && <SessionCollaborationUsage key={`${viewKey}:${selectedKey}`} requester={requester} target={row.detail.scope} />}
           {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>
             <div className="flex flex-wrap gap-2 pt-3">{(Object.keys(SESSION_COLLABORATION_CONTROLS) as SessionCollaborationControl[]).filter(action => action !== 'message').map(action => <Button type="button" key={action} variant="outline"
               disabled={SESSION_COLLABORATION_CONTROLS[action].requiresRun && !row.sources.run.value}

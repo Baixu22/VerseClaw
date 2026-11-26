@@ -14,6 +14,8 @@ Git initialization and worktree creation or switching are available inside the p
 
 Session tools support bounded discovery and read-only details for other sessions, including task goals, run references, observed actions and source availability. Task writers can publish versioned findings and artifact references with evidence. Shared materials are searchable in the current workspace, with exact version changes and model use recorded by their owners. See [Sessions](docs/modules/sessions.md).
 
+The collaboration detail shows model usage for the current session generation, task subtree, and original run in separate views. [Session usage](docs/modules/sessions.md).
+
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
 
 Chat groups ordinary streamed text updates by animation frame. Approvals, cancellation, errors and completion publish immediately; completed message content stays stable while the active reply grows.

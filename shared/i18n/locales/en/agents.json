@@ -1,5 +1,27 @@
 {
     "collaboration": {
+        "usage": {
+            "title": "Model usage",
+            "session": "Session transcript",
+            "task": "Task subtree",
+            "run": "Current or last recorded run",
+            "calls": "Observed calls",
+            "tokens": "Tokens",
+            "knownTokens": "Known tokens",
+            "cacheRead": "Cache reads",
+            "cacheWrite": "Cache writes",
+            "cost": "Estimated cost (USD)",
+            "subtotal": "Known cost subtotal (USD)",
+            "missingUsage": "Calls with missing usage",
+            "missingPrice": "Calls with missing price",
+            "conflict": "Conflicting observations",
+            "coordination": "Coordination",
+            "observations": "Recent calls for this session",
+            "attempt": "Attempt {{attempt}}",
+            "callTokens": "{{tokens}} tokens",
+            "priceVersion": "Price version",
+            "priceVersions": "Price versions"
+        },
         "materials": {
             "title": "Shared materials",
             "filter": "Task, file, topic, or evidence",

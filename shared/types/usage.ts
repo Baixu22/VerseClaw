@@ -19,6 +19,23 @@ export type UsageTokenParts = {
   cacheWriteTokens: number;
 };
 
+/** Disjoint token buckets captured by a native model call. */
+export type ObservedModelTokens = {
+  input: number;
+  output: number;
+  cacheRead: number;
+  cacheWrite: number;
+  total: number;
+};
+
+export function readObservedModelTokens(value: unknown): ObservedModelTokens | null {
+  if (!value || typeof value !== 'object') return null;
+  const { input, output, cacheRead, cacheWrite, total } = value as ObservedModelTokens;
+  if (![input, output, cacheRead, cacheWrite, total].every(count => Number.isSafeInteger(count) && count >= 0) ||
+      total < input + output + cacheRead + cacheWrite) return null;
+  return { input, output, cacheRead, cacheWrite, total };
+}
+
 /**
  * Prompt tokens sent to the model. OpenAI-style usage reports prompt totals
  * that already include cached tokens, so the parser stores the cache *miss*

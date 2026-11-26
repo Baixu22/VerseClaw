@@ -1,5 +1,27 @@
 {
     "collaboration": {
+        "usage": {
+            "title": "模型消耗",
+            "session": "当前代次会话累计",
+            "task": "任务子树",
+            "run": "当前或最近有记录的运行",
+            "calls": "已观测调用",
+            "tokens": "Token",
+            "knownTokens": "已知 Token",
+            "cacheRead": "缓存读取 Token",
+            "cacheWrite": "缓存写入 Token",
+            "cost": "估算费用（USD）",
+            "subtotal": "已知费用小计（USD）",
+            "missingUsage": "缺用量的调用",
+            "missingPrice": "缺价格的调用",
+            "conflict": "观测冲突",
+            "coordination": "协调消耗",
+            "observations": "本会话最近调用",
+            "attempt": "第 {{attempt}} 次尝试",
+            "callTokens": "{{tokens}} Token",
+            "priceVersion": "价格版本",
+            "priceVersions": "价格版本"
+        },
         "materials": {
             "title": "共享材料",
             "filter": "任务、文件、主题或证据",

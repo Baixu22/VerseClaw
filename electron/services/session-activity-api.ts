@@ -19,6 +19,7 @@ import { createTaskLedgerApi } from './task-ledger-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import { collectLongSessionResourceInventory } from './long-session-resource-reclamation';
 import { buildSessionHostReadiness } from '../gateway/session-host-readiness';
+import { emptyCollaborationUsage, parseSessionCollaborationUsageQuery, validateCollaborationUsage } from '@shared/types/session-collaboration-usage';
 
 type RuntimeActivityResponse = {
   snapshot?: Partial<SessionActivitySnapshot> & {
@@ -165,6 +166,22 @@ export function createSessionActivityApi({
           return { success: true, page: emptySessionCollaborationPage(query, 'stale', 'scope-mismatch') };
         return { success: true, page: validateSessionCollaborationPage(query, response?.page) };
       } catch { return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-unavailable') }; }
+    },
+    modelUsage: async (input) => {
+      const query = parseSessionCollaborationUsageQuery(input);
+      const failed = (state: 'unavailable' | 'stale', reason: 'owner-unavailable' | 'scope-mismatch') =>
+        ({ success: true, usage: emptyCollaborationUsage(query, state, reason) });
+      try {
+        const { requester } = query;
+        const active = await getActiveWorkspaceProfile();
+        if (!active || active.id !== requester.workspaceId || active.activeSessionKey !== requester.sessionKey)
+          return failed('unavailable', 'scope-mismatch');
+        const response = await gatewayManager.rpc<{ usage?: unknown }>('session.activitySnapshot', { modelUsage: query });
+        const after = await getActiveWorkspaceProfile();
+        if (!after || after.id !== active.id || after.activeSessionKey !== active.activeSessionKey || after.rootPath !== active.rootPath)
+          return failed('stale', 'scope-mismatch');
+        return { success: true, usage: validateCollaborationUsage(query, response?.usage) };
+      } catch { return failed('unavailable', 'owner-unavailable'); }
     },
     read: async (input) => {
       const query = parseSessionActivityReadQuery(input);

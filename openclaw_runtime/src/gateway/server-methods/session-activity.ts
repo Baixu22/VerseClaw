@@ -130,6 +130,14 @@ function taskStatus(status: string) {
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
   "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.modelUsage !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One model usage query required');
+        const { readSessionCollaborationUsage } = await import('./session-collaboration-usage.js');
+        respond(true, { usage: await readSessionCollaborationUsage(params.modelUsage, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration usage query' }); }
+      return;
+    }
     if (params.materials !== undefined) {
       try {
         if (Object.keys(params).length !== 1) throw new TypeError('One material query required');
