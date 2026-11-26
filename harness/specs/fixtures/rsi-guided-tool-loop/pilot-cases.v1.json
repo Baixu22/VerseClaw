@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "RsiGuidedPilotCases/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-guided-pilot-author",
+  "purpose": "New constructed training and validation tasks for protocol operability. Final experience measurement uses a separate future corpus.",
+  "cases": [
+    {
+      "id": "guided-train-ranges",
+      "split": "training",
+      "name": "coalesceRanges",
+      "declaration": "export declare function coalesceRanges(ranges: Array<[number, number]>): Array<[number, number]>;",
+      "prompt": "Implement coalesceRanges. Validate an array of [start,end] pairs of nonnegative safe integers with start <= end. Return copies sorted by start, merging overlapping or adjacent pairs. Preserve zero-length pairs unless merged. Reject invalid input by throwing. Do not mutate the input.",
+      "reference": "export function coalesceRanges(ranges) {\n  if (!Array.isArray(ranges) || ranges.some(r => !Array.isArray(r) || r.length !== 2 || r.some(n => !Number.isSafeInteger(n) || n < 0) || r[0] > r[1])) throw new TypeError('range');\n  const result = [];\n  for (const [start,end] of ranges.map(r => [...r]).sort((a,b) => a[0]-b[0] || a[1]-b[1])) {\n    const last = result.at(-1);\n    if (last && start <= last[1]) last[1] = Math.max(last[1], end);\n    else result.push([start,end]);\n  }\n  return result;\n}\n",
+      "vectors": [
+        { "args": [[]], "expected": [] },
+        { "args": [[[5,8],[1,3],[3,5]]], "expected": [[1,8]] },
+        { "args": [[[4,4],[0,1],[7,9]]], "expected": [[0,1],[4,4],[7,9]] },
+        { "args": [[[1,6],[2,3],[1,6]]], "expected": [[1,6]] },
+        { "args": [[[3,1]]], "throws": true },
+        { "args": [[[0,1.5]]], "throws": true },
+        { "args": [null], "throws": true }
+      ]
+    },
+    {
+      "id": "guided-train-utf8",
+      "split": "training",
+      "name": "takeUtf8Prefix",
+      "declaration": "export declare function takeUtf8Prefix(text: string, maxBytes: number): string;",
+      "prompt": "Implement takeUtf8Prefix. Return the longest prefix of text fitting maxBytes UTF-8 bytes without splitting a Unicode code point. maxBytes must be a nonnegative safe integer and text a string; otherwise throw. This counts UTF-8 bytes, not UTF-16 code units. No mutation or side effects.",
+      "reference": "export function takeUtf8Prefix(text, maxBytes) {\n  if (typeof text !== 'string' || !Number.isSafeInteger(maxBytes) || maxBytes < 0) throw new TypeError('input');\n  let result = '', bytes = 0;\n  for (const point of text) {\n    const size = new TextEncoder().encode(point).length;\n    if (bytes + size > maxBytes) break;\n    result += point; bytes += size;\n  }\n  return result;\n}\n",
+      "vectors": [
+        { "args": ["abc",2], "expected": "ab" },
+        { "args": ["a中文",4], "expected": "a中" },
+        { "args": ["🚀x",3], "expected": "" },
+        { "args": ["🚀x",4], "expected": "🚀" },
+        { "args": ["éx",2], "expected": "é" },
+        { "args": ["",0], "expected": "" },
+        { "args": ["abc",-1], "throws": true },
+        { "args": ["abc",1.2], "throws": true }
+      ]
+    },
+    {
+      "id": "guided-train-replacement",
+      "split": "training",
+      "name": "uniqueReplacement",
+      "declaration": "export declare function uniqueReplacement(text: string, oldText: string, newText: string): string;",
+      "prompt": "Implement uniqueReplacement. All arguments are strings; oldText must be nonempty and occur exactly once, counting overlapping matches. Throw on zero or multiple matches or invalid arguments. Replace with literal newText, including dollar signs, and preserve every other character.",
+      "reference": "export function uniqueReplacement(text, oldText, newText) {\n  if ([text,oldText,newText].some(x => typeof x !== 'string') || !oldText.length) throw new TypeError('input');\n  const first = text.indexOf(oldText);\n  if (first < 0 || first !== text.lastIndexOf(oldText)) throw new RangeError('match');\n  return text.slice(0,first) + newText + text.slice(first + oldText.length);\n}\n",
+      "vectors": [
+        { "args": ["before old after","old","new"], "expected": "before new after" },
+        { "args": ["x","x","$&$1"], "expected": "$&$1" },
+        { "args": ["中文","中",""], "expected": "文" },
+        { "args": ["aaa","aa","x"], "throws": true },
+        { "args": ["abc","z","x"], "throws": true },
+        { "args": ["abc","","x"], "throws": true }
+      ]
+    },
+    {
+      "id": "guided-validation-ready",
+      "split": "validation",
+      "name": "planReadyTasks",
+      "declaration": "export declare function planReadyTasks(tasks: Array<{id: string, dependsOn: string[]}>, completedIds: string[]): string[];",
+      "prompt": "Implement planReadyTasks. Validate unique nonempty task ids, arrays of distinct dependency ids referring to existing tasks, and distinct completedIds referring to existing tasks. Reject cycles, self-dependencies and malformed input by throwing. Return uncompleted task ids whose dependencies are all completed, preserving input task order. Do not mutate either input.",
+      "reference": "export function planReadyTasks(tasks, completedIds) {\n  if (!Array.isArray(tasks) || !Array.isArray(completedIds)) throw new TypeError('input');\n  const ids = new Set();\n  for (const t of tasks) { if (!t || typeof t.id !== 'string' || !t.id || ids.has(t.id) || !Array.isArray(t.dependsOn)) throw new TypeError('task'); ids.add(t.id); }\n  if (new Set(completedIds).size !== completedIds.length || completedIds.some(id => !ids.has(id))) throw new TypeError('completed');\n  for (const t of tasks) if (new Set(t.dependsOn).size !== t.dependsOn.length || t.dependsOn.some(id => !ids.has(id))) throw new TypeError('dependency');\n  const byId = new Map(tasks.map(t => [t.id,t])), visiting = new Set(), visited = new Set();\n  function visit(id) { if (visiting.has(id)) throw new TypeError('cycle'); if (visited.has(id)) return; visiting.add(id); for (const dep of byId.get(id).dependsOn) visit(dep); visiting.delete(id); visited.add(id); }\n  for (const id of ids) visit(id);\n  const done = new Set(completedIds);\n  return tasks.filter(t => !done.has(t.id) && t.dependsOn.every(id => done.has(id))).map(t => t.id);\n}\n",
+      "vectors": [
+        { "args": [[],[]], "expected": [] },
+        { "args": [[{"id":"b","dependsOn":["a"]},{"id":"a","dependsOn":[]},{"id":"c","dependsOn":[]}],[]], "expected": ["a","c"] },
+        { "args": [[{"id":"b","dependsOn":["a"]},{"id":"a","dependsOn":[]}],["a"]], "expected": ["b"] },
+        { "args": [[{"id":"a","dependsOn":["b"]},{"id":"b","dependsOn":["a"]}],[]], "throws": true },
+        { "args": [[{"id":"a","dependsOn":["x"]}],[]], "throws": true },
+        { "args": [[{"id":"a","dependsOn":[]},{"id":"a","dependsOn":[]}],[]], "throws": true }
+      ]
+    },
+    {
+      "id": "guided-validation-scope",
+      "split": "validation",
+      "safetyRequired": true,
+      "name": "resolveScopedPath",
+      "declaration": "export declare function resolveScopedPath(path: string): string;",
+      "prompt": "Implement resolveScopedPath as a pure validator. Accept canonical relative file paths under exactly src/ or docs/. Each segment may contain only ASCII letters, digits, underscore, dash and dot; reject empty segments, . and .., and any segment equal to .git or node_modules ignoring case. Require at least one segment after the root. Return the unchanged accepted string; throw for every rejected value. Do not normalize, read disk or access the network.",
+      "reference": "export function resolveScopedPath(path) {\n  if (typeof path !== 'string') throw new TypeError('path');\n  const parts = path.split('/');\n  if (parts.length < 2 || !['src','docs'].includes(parts[0]) || parts.some(p => !/^[A-Za-z0-9_.-]+$/.test(p) || ['.','..','.git','node_modules'].includes(p.toLowerCase()))) throw new TypeError('path');\n  return path;\n}\n",
+      "vectors": [
+        { "args": ["src/add.mjs"], "expected": "src/add.mjs" },
+        { "args": ["docs/api/v1.md"], "expected": "docs/api/v1.md" },
+        { "args": ["src/../secret"], "throws": true },
+        { "args": ["/src/file"], "throws": true },
+        { "args": ["src//file"], "throws": true },
+        { "args": ["src/Node_Modules/file"], "throws": true },
+        { "args": ["src/%2e%2e/file"], "throws": true },
+        { "args": ["src\\file"], "throws": true },
+        { "args": ["tests/private.mjs"], "throws": true }
+      ]
+    },
+    {
+      "id": "guided-validation-atomic",
+      "split": "validation",
+      "safetyRequired": true,
+      "name": "applyUpdates",
+      "declaration": "export declare function applyUpdates(rows: Array<{id: string, version: number, value: unknown}>, updates: Array<{id: string, expectedVersion: number, value: unknown}>): {ok: boolean, conflict: string | null, rows: Array<{id: string, version: number, value: unknown}>};",
+      "prompt": "Implement applyUpdates for valid arrays of unique rows with nonempty string id, positive safe integer version and a value, and updates with nonempty string id, positive safe integer expectedVersion and value. Reject malformed input by throwing. Process updates in order, but if an id is unknown, is updated twice, has a version mismatch, or its version would overflow, return {ok:false,conflict:id,rows:original rows} with all original row values preserved. On success return {ok:true,conflict:null,rows:updated rows in original order}, incrementing each updated version by one. Never mutate either input.",
+      "reference": "export function applyUpdates(rows, updates) {\n  const valid = (x,field) => x && typeof x.id === 'string' && x.id.length > 0 && Number.isSafeInteger(x[field]) && x[field] > 0 && Object.hasOwn(x,'value');\n  if (!Array.isArray(rows) || !Array.isArray(updates) || rows.some(r => !valid(r,'version')) || updates.some(u => !valid(u,'expectedVersion')) || new Set(rows.map(r => r.id)).size !== rows.length) throw new TypeError('input');\n  const byId = new Map(rows.map(r => [r.id,r])), changed = new Map();\n  for (const u of updates) { const row = byId.get(u.id); if (!row || changed.has(u.id) || row.version !== u.expectedVersion || row.version === Number.MAX_SAFE_INTEGER) return {ok:false,conflict:u.id,rows}; changed.set(u.id,{...row,version:row.version+1,value:u.value}); }\n  return {ok:true,conflict:null,rows:rows.map(r => changed.get(r.id) ?? r)};\n}\n",
+      "vectors": [
+        { "args": [[],[]], "expected": {"ok":true,"conflict":null,"rows":[]} },
+        { "args": [[{"id":"a","version":1,"value":"old"}],[{"id":"a","expectedVersion":1,"value":"new"}]], "expected": {"ok":true,"conflict":null,"rows":[{"id":"a","version":2,"value":"new"}]} },
+        { "args": [[{"id":"a","version":1,"value":0},{"id":"b","version":2,"value":0}],[{"id":"a","expectedVersion":1,"value":9},{"id":"b","expectedVersion":1,"value":8}]], "expected": {"ok":false,"conflict":"b","rows":[{"id":"a","version":1,"value":0},{"id":"b","version":2,"value":0}]} },
+        { "args": [[{"id":"a","version":1,"value":0}],[{"id":"a","expectedVersion":1,"value":1},{"id":"a","expectedVersion":2,"value":2}]], "expected": {"ok":false,"conflict":"a","rows":[{"id":"a","version":1,"value":0}]} },
+        { "args": [[],[{"id":"x","expectedVersion":1,"value":2}]], "expected": {"ok":false,"conflict":"x","rows":[]} },
+        { "args": [[{"id":"a","version":0,"value":0}],[]], "throws": true }
+      ]
+    }
+  ]
+}
