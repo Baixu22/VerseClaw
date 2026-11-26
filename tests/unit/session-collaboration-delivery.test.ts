@@ -1,11 +1,12 @@
 // @vitest-environment node
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { mkdtempSync } from 'node:fs';
-import { join } from 'node:path';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mkdirSync, mkdtempSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createHash } from 'node:crypto';
 import { requireNodeSqlite } from '../../openclaw_runtime/src/infra/node-sqlite';
-import { SessionCollaborationMessageStore } from '../../openclaw_runtime/src/sessions/session-collaboration-message-store';
+import { readMessageIntents, SessionCollaborationMessageStore } from '../../openclaw_runtime/src/sessions/session-collaboration-message-store';
+import { resolveOpenClawStateSqlitePath } from '../../openclaw_runtime/src/state/openclaw-state-db.paths';
 import { createSessionCollaborationMessage } from '../../shared/session-collaboration-message';
 import { parseSessionCollaborationQuery } from '../../shared/types/session-collaboration';
 import { normalizeRunScope } from '../../shared/types/identity-scope';
@@ -19,10 +20,34 @@ afterEach(() => db.close());
 describe('original message intent owner', () => {
   it('keeps the first source capture through replay and refuses different content', () => {
     const first = store.accept(message());
-    const retry = { ...message(), createdAt: 99 };
-    expect(store.accept(retry).envelope_json).toBe(first.envelope_json);
+    db.close();
+    db = new (requireNodeSqlite().DatabaseSync)(path);
+    store = new SessionCollaborationMessageStore(db);
     const other = createSessionCollaborationMessage({ id: 'stable-message', target: b, purpose: 'finding', message: 'Changed content' }, { scope: a, run: null, actor: 'operator' }, 1);
     expect(() => store.accept(other)).toThrow('ID_CONFLICT');
+    const retry = { ...message(), createdAt: 99 };
+    expect(store.accept(retry).envelope_json).toBe(first.envelope_json);
+  });
+  it('leaves the first read empty without creating the message table', () => {
+    const root = dirname(path);
+    const stateFile = join(root, 'state', 'openclaw.sqlite');
+    vi.stubEnv('OPENCLAW_STATE_DIR', root);
+    try {
+      expect(resolveOpenClawStateSqlitePath()).toBe(stateFile);
+      mkdirSync(dirname(stateFile), { recursive: true });
+      const stateDb = new (requireNodeSqlite().DatabaseSync)(stateFile);
+      try {
+        stateDb.exec('CREATE TABLE existing_owner (id INTEGER)');
+        const read = vi.fn();
+        expect(readMessageIntents(read)).toBeUndefined();
+        expect(read).not.toHaveBeenCalled();
+        expect(stateDb.prepare("SELECT name FROM sqlite_schema WHERE type = 'table'").all()).toEqual([{ name: 'existing_owner' }]);
+      } finally {
+        stateDb.close();
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
   it('allows an accepted intent once and preserves unknown dispatch across an actual database reopen', () => {
     const row = store.accept(message()); expect(store.claim(row.id, row.payload_digest)).toBe(true);

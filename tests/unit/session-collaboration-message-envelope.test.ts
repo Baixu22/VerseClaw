@@ -7,13 +7,17 @@ import { normalizeRunScope } from '../../shared/types/identity-scope';
 import { normalizeInputProvenance, toContentProvenance } from '../../openclaw_runtime/src/sessions/input-provenance';
 import { GATEWAY_CLIENT_CAPS } from '../../openclaw_runtime/packages/gateway-protocol/src/client-info';
 
-const mocks = vi.hoisted(() => ({ entries: {} as Record<string, Record<string, unknown>>, requester: vi.fn(), effects: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  entries: {} as Record<string, Record<string, unknown>>, requester: vi.fn(), effects: vi.fn(),
+  running: vi.fn(), terminal: vi.fn(),
+}));
 vi.mock('../../openclaw_runtime/src/gateway/session-utils.js', () => ({ loadSessionEntry: (key: string) => ({ canonicalKey: key, entry: mocks.entries[key] }) }));
 vi.mock('../../openclaw_runtime/src/agents/tools/session-collaboration-query.js', () => ({ querySessionCollaborationTool: mocks.requester }));
 vi.mock('../../openclaw_runtime/src/agents/session-task-scope.js', () => ({ readSessionTaskEffectRequests: mocks.effects }));
-vi.mock('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js', () => ({ isEmbeddedAgentExecutionActive: () => false }));
+vi.mock('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js', () => ({ isEmbeddedAgentExecutionActive: mocks.running }));
+vi.mock('../../openclaw_runtime/src/gateway/server-methods/agent-job.js', () => ({ readScopedAgentRunOutcome: mocks.terminal }));
 vi.mock('../../openclaw_runtime/src/gateway/server-methods/session-collaboration-query.js', () => ({ readSessionCollaborationQuery: async () => ({ items: [] }) }));
-import { prepareSessionCollaborationMessage } from '../../openclaw_runtime/src/gateway/server-methods/session-collaboration-message';
+import { prepareSessionCollaborationMessage, projectSessionMessageReceipt } from '../../openclaw_runtime/src/gateway/server-methods/session-collaboration-message';
 import { readIssuedCollaborationMessage, sendSessionCollaboration } from '../../openclaw_runtime/src/agents/tools/session-collaboration-send';
 
 const a = parseSessionCollaborationQuery({ requester: { workspaceId: 'a', projectId: 'a', sessionKey: 'agent:main:a', sessionGeneration: 'generation-a' } }).requester;
@@ -26,6 +30,7 @@ const bridge = { connect: { caps: [GATEWAY_CLIENT_CAPS.SESSION_TASK_SCOPE_BRIDGE
 beforeEach(() => {
   vi.clearAllMocks(); mocks.entries = { [a.sessionKey]: { workspaceId: a.workspaceId, sessionId: a.sessionGeneration }, [b.sessionKey]: { workspaceId: b.workspaceId, sessionId: b.sessionGeneration } };
   mocks.requester.mockResolvedValue({ state: 'ready', requester: a }); mocks.effects.mockReturnValue([{ toolName: 'sessions_send', run }]);
+  mocks.running.mockReturnValue(false); mocks.terminal.mockReturnValue(null);
 });
 describe('collaboration message identity', () => {
   it('keeps the stable intent separate from runtime attempts and verifies all payload bytes', () => {
@@ -51,17 +56,33 @@ describe('collaboration message identity', () => {
     await sendSessionCollaboration({ runId: run.runId, agentSessionKey: a.sessionKey, agentSessionId: a.sessionGeneration, callGateway: transport as never }, intent);
     expect(readIssuedCollaborationMessage(intent.id)).toBeNull(); expect(mocks.entries).toEqual(before);
   });
-  it('rejects an unissued source, wrong generation, same ID with different bytes and expired intents', async () => {
+  it('rejects invalid sources and generations, leaving the durable owner to bind message IDs', async () => {
     const message = createSessionCollaborationMessage(intent, { scope: a, run, actor: 'agent' }, 1);
     await expect(prepareSessionCollaborationMessage(message, context() as never, null)).rejects.toThrow('NOT_ISSUED');
     const operator = createSessionCollaborationMessage(intent, { scope: a, run: null, actor: 'operator' }, 1), ctx = context();
     await prepareSessionCollaborationMessage(operator, ctx as never, bridge as never);
     const changed = createSessionCollaborationMessage({ ...intent, message: 'Other content' }, { scope: a, run: null, actor: 'operator' }, 1);
-    await expect(prepareSessionCollaborationMessage(changed, ctx as never, bridge as never)).rejects.toThrow('ID_CONFLICT');
+    await expect(prepareSessionCollaborationMessage(changed, ctx as never, bridge as never)).resolves.toMatchObject({ message: changed });
+    expect(ctx.dedupe.size).toBe(0);
     const expired = createSessionCollaborationMessage({ ...intent, id: 'expired', expiresAt: 1 }, { scope: a, run: null, actor: 'operator' }, 0);
     await expect(prepareSessionCollaborationMessage(expired, ctx as never, bridge as never, 2)).rejects.toThrow('EXPIRED');
     mocks.entries[b.sessionKey].sessionId = 'new-generation';
     await expect(prepareSessionCollaborationMessage(operator, context() as never, bridge as never)).rejects.toThrow();
+  });
+  it('reports delivery only after the original target runs or completes successfully', () => {
+    const message = createSessionCollaborationMessage(intent, { scope: a, run, actor: 'agent' }, 1);
+    const targetRun = normalizeRunScope({ runId: 'target-run', scope: { workspaceId: b.workspaceId, projectId: b.projectId, sessionKey: b.sessionKey } });
+    const accepted = { schemaVersion: 'SessionCollaborationReceipt/v1' as const, message, phase: 'accepted' as const,
+      run: targetRun, replyRef: null, updatedAt: 1 };
+    expect(projectSessionMessageReceipt(accepted)).toBe(accepted);
+    mocks.terminal.mockReturnValue({ status: 'error' });
+    expect(projectSessionMessageReceipt(accepted)).toBe(accepted);
+    mocks.running.mockReturnValue(true);
+    expect(projectSessionMessageReceipt(accepted).phase).toBe('delivered');
+    expect(mocks.running).toHaveBeenCalledWith({ runId: targetRun.runId, sessionKey: b.sessionKey, sessionId: b.sessionGeneration });
+    mocks.running.mockReturnValue(false);
+    mocks.terminal.mockReturnValue({ status: 'ok' });
+    expect(projectSessionMessageReceipt(accepted).phase).toBe('delivered');
   });
   it('keeps the sidecar untrusted and refuses a receipt for another target scope', () => {
     const message = createSessionCollaborationMessage(intent, { scope: a, run: null, actor: 'operator' }, 1);

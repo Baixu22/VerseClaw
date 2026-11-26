@@ -50,6 +50,26 @@ describe('message view draft ownership', () => {
     expect(mocks.send).toHaveBeenCalledOnce();
   });
 
+  it('re-enables the original draft after the owner confirms that its receipt is absent', async () => {
+    render(<SessionCollaborationMessages requester={source} target={target} />);
+    expand();
+    const body = await screen.findByTestId('collaboration-message-draft') as HTMLTextAreaElement;
+    await waitFor(() => expect(body.disabled).toBe(false));
+    fireEvent.change(body, { target: { value: 'Retry the same original intent' } });
+    const send = screen.getByTestId('collaboration-message-send');
+    fireEvent.click(send);
+    const check = await screen.findByRole('button', { name: 'collaboration.messages.check' });
+    const first = mocks.send.mock.calls[0][0];
+    fireEvent.click(check);
+    await waitFor(() => expect(body.disabled).toBe(false));
+    expect(body.value).toBe(first.message);
+    expect(mocks.list).toHaveBeenCalledWith({ requester: source, target, id: first.id });
+    expect(mocks.send).toHaveBeenCalledOnce();
+    fireEvent.click(send);
+    await waitFor(() => expect(mocks.send).toHaveBeenCalledTimes(2));
+    expect(mocks.send.mock.calls[1][0]).toEqual(first);
+  });
+
   it('keeps the new page when a previous-page refresh finishes late', async () => {
     const page = (id: string, nextCursor: string | null) => ({ success: true, messages: {
       state: 'ready', items: [{ header: { id, purpose: 'finding', preview: id }, phase: 'accepted' }], receipt: null, nextCursor,

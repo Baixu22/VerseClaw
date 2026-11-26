@@ -17,9 +17,11 @@ test('durable message replay survives a Gateway restart without a second target 
     await createCollaborationProject(app, info.outputPath('beta'), 'Delivery Beta'); await enableCollaborationFixtureVisibility(app);
     const sender = await hostInvoke<{ source: { scope: AutonomySessionScope } }>(app, 'sessions', 'collaborationSender');
     const input = { id: randomUUID(), target: alpha.scope, purpose: 'request', message: 'Reply with the existing source context.', expectedSource: sender.source.scope };
+    const modelCallsBeforeSend = provider.log.length;
     const first = await hostInvoke<{ success: boolean; receipt: SessionCollaborationMessageReceipt }>(app, 'sessions', 'sendCollaborationMessage', input);
     expect(first.success).toBe(true);
     if (first.receipt.run) await hostInvoke(app, 'gateway', 'rpc', { method: 'agent.wait', params: { runId: first.receipt.run.runId, timeoutMs: 60_000 }, timeoutMs: 65_000 });
+    await expect.poll(() => provider.log.length).toBe(modelCallsBeforeSend + 1);
     const modelCalls = provider.log.length;
     await hostInvoke(app, 'gateway', 'stop'); await startGateway(app);
     const replay = await hostInvoke<typeof first>(app, 'sessions', 'sendCollaborationMessage', input);
@@ -29,7 +31,8 @@ test('durable message replay survives a Gateway restart without a second target 
     expect(changed.success).toBe(false); expect(changed.phase).toBe('rejected');
     const read = await hostInvoke<{ messages: SessionCollaborationMessagePage }>(app, 'sessions', 'collaborationMessages', { requester: sender.source.scope, target: alpha.scope, id: input.id });
     expect(read.messages.receipt?.message.payloadDigest).toBe(first.receipt.message.payloadDigest);
+    expect(read.messages.receipt).toMatchObject({ phase: 'replied', reply: { text: 'Recorded reply from the receiver.' } });
     await writeFile(info.outputPath('delivery-replay.json'), JSON.stringify({ driven_by: 'agent', actor: 'session-collaboration-delivery', first, replay, changed, read,
-      modelCallsBeforeReplay: modelCalls, modelCallsAfterReplay: provider.log.length }, null, 2));
+      modelCallsBeforeSend, modelCallsBeforeReplay: modelCalls, modelCallsAfterReplay: provider.log.length }, null, 2));
   } finally { await closeElectronApp(app); await provider.close(); }
 });
