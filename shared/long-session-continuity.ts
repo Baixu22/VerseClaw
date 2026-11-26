@@ -1,4 +1,7 @@
 import type { MemorySurfaceEntry, MemorySurfaceSnapshot } from './types/memory.js';
+import type { CompressionSemanticAtom } from './host-api/contract.js';
+import { normalizeContextSemanticState, type ContextSemanticState } from './types/context-item.js';
+import { workingContextSemanticState } from './task-ledger-working-context.js';
 import type {
   TaskLedgerSnapshot,
   TaskLedgerWorkingContextField,
@@ -33,7 +36,9 @@ export type ContinuityContextItem = {
   source: ContinuityItemSource;
   text: string;
   owner: 'task-ledger' | 'compression-artifact' | 'memory' | 'knowledge';
-  scope: { kind: 'workspace' | 'project' | 'session' | 'task' | 'agent' | 'role' | 'user' | 'global' | 'unknown'; key?: string | null };
+  scope: { kind: 'workspace' | 'project' | 'session' | 'task' | 'agent' | 'role' | 'user' | 'global' | 'turn' | 'unknown'; key?: string | null };
+  semantic?: ContextSemanticState;
+  polarity?: ContextSemanticState['polarity'];
   freshness: ContinuityFreshness;
   acceptedAt?: string | null;
   expiresAt?: string | null;
@@ -50,6 +55,7 @@ export type ContinuitySourceState = {
 
 export type ContinuityExclusion = {
   ref: string;
+  critical?: boolean;
   reason:
     | 'candidate-not-accepted'
     | 'pending-not-accepted'
@@ -59,7 +65,8 @@ export type ContinuityExclusion = {
     | 'owner-gate-closed'
     | 'unverified-claim'
     | 'budget'
-    | 'unknown-scope';
+    | 'unknown-scope'
+    | 'unresolved-semantic-origin';
 };
 
 export type LongSessionContinuityContextPack = {
@@ -85,16 +92,23 @@ export type LongSessionContinuityContextPack = {
   evidenceRefs: string[];
 };
 
+type ContinuityCompressionFact = string | { text: string; evidenceRefs: string[]; semanticAtomId?: string };
+
 export type ContinuityCompressionInput = {
+  /** Supplied by the session owner read, never inferred from an atom's text. */
+  ownerSessionKey?: string;
+  canonicalArtifact?: boolean;
   checkpointId?: string;
   objective?: string;
-  constraints?: string[];
-  decisions?: string[];
-  blocked?: string[];
-  inProgress?: string[];
+  constraints?: ContinuityCompressionFact[];
+  decisions?: ContinuityCompressionFact[];
+  blocked?: ContinuityCompressionFact[];
+  inProgress?: ContinuityCompressionFact[];
   nextAction?: string;
   evidenceRefs?: string[];
   unverifiedClaims?: string[];
+  semanticAtoms?: CompressionSemanticAtom[];
+  semanticOrigins?: Partial<Record<'objective' | 'nextAction', string>>;
 };
 
 export type ContinuityKnowledgeReferenceInput = {
@@ -238,7 +252,9 @@ function relevantTaskIds(input: BuildLongSessionContinuityInput): Set<string> {
 }
 
 function addItem(items: ContinuityContextItem[], seen: Set<string>, item: Omit<ContinuityContextItem, 'chars'>) {
-  const identity = `${item.kind}:${item.text}`;
+  // Equal text can express opposite decisions or different temporary scopes.
+  const identity = item.semantic ? `${item.id}:${JSON.stringify(item.semantic)}`
+    : `${item.kind}:${item.text}:${JSON.stringify(item.evidenceRefs)}`;
   if (!item.text || seen.has(identity)) return;
   seen.add(identity);
   items.push({ ...item, chars: item.text.length });
@@ -282,6 +298,7 @@ function collectWorkingContext(
           expiresAt,
           trust: 'owner-accepted',
           evidenceRefs: refsFromValue(current.evidenceRefs),
+          semantic: workingContextSemanticState(current, projection.history, projection.conflicts),
         });
       }
     }
@@ -403,19 +420,107 @@ function collectCompression(
     }
     return;
   }
-  const addLines = (kind: ContinuityItemKind, source: ContinuityItemSource, lines: readonly string[] | undefined) => {
+  const atoms = compression.semanticAtoms ?? [];
+  const atomKinds: Partial<Record<CompressionSemanticAtom['type'], ContinuityItemKind>> = {
+    goal: 'objective', latest_user_ask: 'objective', constraint: 'constraint', safety_boundary: 'constraint',
+    decision: 'decision', failed_attempt: 'open-dependency', entity: 'evidence', next_action: 'next-action', outcome: 'evidence',
+  };
+  const taskIds = relevantTaskIds(input);
+  const isMirror = (types: CompressionSemanticAtom['type'][], text: string, refs?: string[], origin?: string, scalar = false) => atoms.some(atom => {
+    if (!types.includes(atom.type) || atom.text !== text) return false;
+    if (origin) return atom.id === origin;
+    // Canonical v1 scalar fields are generated from the first active atom of
+    // their type. Arbitrary old string-array entries have no such lineage.
+    if (refs === undefined) return scalar && compression.canonicalArtifact === true
+      && atoms.find(value => types.includes(value.type) && value.status !== 'stale' && value.status !== 'superseded')?.id === atom.id;
+    // CompressionArtifact's legacy fact adapter retains the first four refs.
+    // Match that exact format as well as the complete set, never an arbitrary subset.
+    const referenceSets = [atom.evidenceRefs, atom.evidenceRefs.slice(0, 4)];
+    // Older v1 checkpoints predate explicit mirror ids. Archive binding appended
+    // a recoverable ref only to their atoms; keep that defined adapter readable.
+    const beforeArchive = atom.evidenceRefs.filter(ref => ref.type !== 'archive');
+    if (atom.evidenceRefs.length === beforeArchive.length + 1
+      && beforeArchive.every(ref => ref.type !== 'file' && ref.type !== 'cvk')) {
+      referenceSets.push(beforeArchive, beforeArchive.slice(0, 4));
+    }
+    return referenceSets.some(expected => refs.length === expected.length
+      && expected.every((ref, index) => refs[index] === `${ref.type}:${ref.ref}`));
+  });
+  const unresolvedOrigin = (origin: string | undefined, types: CompressionSemanticAtom['type'][], text: string, ref: string, critical: boolean) => {
+    if (!origin || atoms.some(atom => atom.id === origin && types.includes(atom.type) && atom.text === text)) return false;
+    exclusions.push({ ref, reason: 'unresolved-semantic-origin', ...(critical ? { critical } : {}) });
+    return true;
+  };
+  const oldNextAction = compression.canonicalArtifact && !compression.semanticOrigins?.nextAction
+    ? atoms.find(atom => atom.type === 'next_action' && atom.status !== 'stale' && atom.status !== 'superseded') : undefined;
+  for (const atom of atoms) {
+    const kind = atomKinds[atom.type];
+    if (!kind) continue;
+    if (atom.status === 'stale' || atom.status === 'superseded') {
+      exclusions.push({ ref: `compression-atom:${atom.id}`, reason: 'revoked-or-superseded' });
+      continue;
+    }
+    const [scopeKind, ...scopeKeyParts] = atom.scope.split(':');
+    const key = scopeKeyParts.join(':') || (scopeKind === 'session' && compression.ownerSessionKey === input.sessionKey
+      ? input.sessionKey : '');
+    const scope: ContinuityContextItem['scope'] = {
+      kind: ['workspace', 'project', 'session', 'task', 'agent', 'role', 'user', 'global', 'turn'].includes(scopeKind)
+        ? scopeKind as ContinuityContextItem['scope']['kind'] : 'unknown',
+      ...(key ? { key } : {}),
+    };
+    // The owner read establishes session identity; other supported scopes need
+    // explicit keys. Turn/project/user identities are unavailable at this boundary.
+    if (!key || !['session', 'workspace', 'task', 'agent', 'role'].includes(scope.kind)) {
+      exclusions.push({ ref: `compression-atom:${atom.id}`, reason: 'unknown-scope' });
+      continue;
+    }
+    if ((scope.kind === 'session' && key !== input.sessionKey)
+      || (scope.kind === 'workspace' && key !== input.workspaceId)
+      || (scope.kind === 'task' && !taskIds.has(key))
+      || (scope.kind === 'agent' && key !== input.agentId)
+      || (scope.kind === 'role' && key !== input.roleName)) {
+      exclusions.push({ ref: `compression-atom:${atom.id}`, reason: 'out-of-scope' });
+      continue;
+    }
+    const semantic = normalizeContextSemanticState({ owner: 'compression-artifact',
+      sourceStatus: atom.sourceStatus ?? atom.status, polarity: atom.polarity, scope: atom.scope,
+      evidenceRefs: atom.evidenceRefs, supersedes: atom.supersedes, conflicts: atom.conflicts,
+      ...(atom.source ? { sourceRef: atom.source.ref } : {}),
+      ...(atom.updatedAt !== undefined ? { sourceVersion: String(atom.updatedAt) } : {}),
+    });
+    addItem(items, seen, { ...base, id: `compression-atom:${atom.id}`, kind, source: 'compression-artifact',
+      text: atom.text, scope, semantic, polarity: semantic.polarity,
+      evidenceRefs: atom.evidenceRefs.map(ref => `${ref.type}:${ref.ref}`) });
+  }
+  const addLines = (kind: ContinuityItemKind, source: ContinuityItemSource, lines: readonly ContinuityCompressionFact[] | undefined,
+    mirrorTypes: CompressionSemanticAtom['type'][] = []) => {
     for (const [index, line] of (lines ?? []).entries()) {
+      const text = typeof line === 'string' ? line : line.text;
+      const refs = typeof line === 'string' ? undefined : line.evidenceRefs;
+      // Pre-C02 canonical fallback used the current message's evidence for an
+      // older next-action atom. That record's applicability remains ambiguous.
+      if (kind === 'open-dependency' && mirrorTypes.includes('next_action') && oldNextAction
+        && lines?.length === 1 && typeof line !== 'string' && !line.semanticAtomId
+        && text === compression.nextAction && text === oldNextAction.text) {
+        exclusions.push({ ref: `compression:${kind}:${index}`, reason: 'unresolved-semantic-origin' });
+        continue;
+      }
+      if (typeof line !== 'string' && unresolvedOrigin(line.semanticAtomId, mirrorTypes, text,
+        `compression:${kind}:${index}`, kind === 'constraint')) continue;
+      if (isMirror(mirrorTypes, text, refs, typeof line === 'string' ? undefined : line.semanticAtomId)) continue;
       addItem(items, seen, {
         ...base,
         id: `compression:${kind}:${index}`,
         kind,
         source,
-        text: line,
-        evidenceRefs: compression.evidenceRefs ?? [],
+        text,
+        evidenceRefs: typeof line === 'string' ? compression.evidenceRefs ?? [] : line.evidenceRefs,
       });
     }
   };
-  if (compression.objective) {
+  if (compression.objective
+    && !unresolvedOrigin(compression.semanticOrigins?.objective, ['goal', 'latest_user_ask'], compression.objective, 'compression:objective', true)
+    && !isMirror(['goal', 'latest_user_ask'], compression.objective, undefined, compression.semanticOrigins?.objective, true)) {
     addItem(items, seen, {
       ...base,
       id: 'compression:objective',
@@ -425,11 +530,13 @@ function collectCompression(
       evidenceRefs: compression.evidenceRefs ?? [],
     });
   }
-  addLines('constraint', 'compression-artifact', compression.constraints);
-  addLines('decision', 'compression-artifact', compression.decisions);
+  addLines('constraint', 'compression-artifact', compression.constraints, ['constraint', 'safety_boundary']);
+  addLines('decision', 'compression-artifact', compression.decisions, ['decision']);
   addLines('open-dependency', 'compression-artifact', compression.blocked);
-  addLines('open-dependency', 'compression-artifact', compression.inProgress);
-  if (compression.nextAction) {
+  addLines('open-dependency', 'compression-artifact', compression.inProgress, ['next_action']);
+  if (compression.nextAction
+    && !unresolvedOrigin(compression.semanticOrigins?.nextAction, ['next_action'], compression.nextAction, 'compression:next-action', false)
+    && !isMirror(['next_action'], compression.nextAction, undefined, compression.semanticOrigins?.nextAction, true)) {
     addItem(items, seen, {
       ...base,
       id: 'compression:next-action',
@@ -539,7 +646,8 @@ function applyBudget(
   let usedChars = 0;
   let dropped = 0;
   for (const item of sorted) {
-    const lineChars = item.text.length + item.kind.length + item.source.length + item.freshness.length + 24;
+    const lineChars = item.semantic ? renderContinuityItem(item).length + 1
+      : item.text.length + item.kind.length + item.source.length + item.freshness.length + 24;
     if (usedChars + lineChars > maxChars) {
       dropped += 1;
       exclusions.push({ ref: item.id, reason: 'budget' });
@@ -606,7 +714,7 @@ export function buildLongSessionContinuityContext(
   const unavailable = sourceStates.filter((state) => state.status === 'unavailable' || state.status === 'unknown').length;
   const status: ContinuityPackStatus = budgeted.items.length === 0
     ? 'unknown'
-    : unavailable > 0
+    : unavailable > 0 || exclusions.some(exclusion => exclusion.reason === 'unresolved-semantic-origin')
       ? 'partial'
       : 'known';
   const evidenceRefs = [...new Set(budgeted.items.flatMap((item) => item.evidenceRefs))];
@@ -626,7 +734,7 @@ export function buildLongSessionContinuityContext(
       truncated: budgeted.dropped > 0,
       droppedItems: budgeted.dropped,
       criticalOmissions: items.filter(item => (item.kind === 'objective' || item.kind === 'constraint')
-        && !budgeted.items.some(kept => kept.id === item.id)).length,
+        && !budgeted.items.some(kept => kept.id === item.id)).length + exclusions.filter(exclusion => exclusion.critical).length,
     },
     items: budgeted.items,
     sourceStates,
@@ -642,11 +750,17 @@ export function buildLongSessionContinuityContext(
   };
 }
 
+function renderContinuityItem(item: ContinuityContextItem): string {
+  const semantic = item.semantic;
+  const labels = semantic ? `; sourceStatus=${semantic.sourceStatus}; verification=${semantic.verification}; polarity=${semantic.polarity}; sourceScope=${JSON.stringify(semantic.scope)}; refs=${JSON.stringify(semantic.evidenceRefs)}${semantic.supersedes.length ? `; supersedes=${JSON.stringify(semantic.supersedes)}` : ''}${semantic.conflicts.length ? `; conflicts=${JSON.stringify(semantic.conflicts)}` : ''}` : '';
+  return `- [${item.kind}] ${item.text} (source=${item.source}; scope=${item.scope.kind}${item.scope.key ? `:${item.scope.key}` : ''}; freshness=${item.freshness}; trust=${item.trust}${labels})`;
+}
+
 export function renderLongSessionContinuityContext(pack: LongSessionContinuityContextPack): string {
   const lines = [
     'Continuity context (owner-derived, bounded metadata; verify work with tools):',
     `schema=${pack.schemaVersion}; status=${pack.status}; complete=false; bindingRevision=${pack.bindingRevision}; chars=${pack.budget.usedChars}/${pack.budget.maxChars}; truncated=${pack.budget.truncated}`,
-    ...pack.items.map((item) => `- [${item.kind}] ${item.text} (source=${item.source}; scope=${item.scope.kind}${item.scope.key ? `:${item.scope.key}` : ''}; freshness=${item.freshness}; trust=${item.trust})`),
+    ...pack.items.map(renderContinuityItem),
   ];
   if (pack.items.length === 0) {
     lines.push('- No accepted continuity items were available. Do not infer task completion or missing facts.');

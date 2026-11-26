@@ -1,0 +1,253 @@
+{
+  "schema": "AutonomyContextValidation/v1",
+  "actor": "codex/autonomy-context-tf0955",
+  "driven_by": "agent",
+  "sourceCandidate": "5e8c2e2861bb87d33149a2a284430fe204bb1f63",
+  "tests": {
+    "files": 7,
+    "tests": 112,
+    "passed": 112,
+    "failed": 0,
+    "report": "D:\\tmp\\autonomy-context-tf0955-20261125\\regression-r4\\vitest.json",
+    "sha256": "502c4de3f76c8f2edce561b57abed0ca778fce38b98587498241f22b5f31c576"
+  },
+  "commands": [
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/autonomy-context-baseline.test.ts",
+        "tests/unit/autonomy-context-paired.test.ts",
+        "tests/unit/long-session-paired-evaluation.test.ts",
+        "tests/unit/long-session-continuity-context.test.ts",
+        "tests/unit/durable-task-system.test.ts",
+        "tests/unit/compression-artifact.test.ts",
+        "tests/unit/context-observation-masking.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\autonomy-context-tf0955-20261125\\regression-r4\\vitest.json"
+      ],
+      "exitCode": 0,
+      "seconds": 35.436,
+      "stdout": "D:\\tmp\\autonomy-context-tf0955-20261125\\regression-r4\\0.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-tf0955-20261125\\regression-r4\\0.stderr.log",
+      "stdoutSha256": "b187ecd280d0472419f0afd62a2738362184477740c5c72e8970deed78e9231b",
+      "stderrSha256": "a8f926211915e5937409e70da9e7e18b96782b9cd7e0fa4c83ac84ea81af9407"
+    },
+    {
+      "actor": "codex/autonomy-context-tf0955",
+      "driven_by": "agent",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "-p",
+        "D:\\tmp\\autonomy-context-tf0955-20261125\\tsconfig.c01-r3.json",
+        "--pretty",
+        "false"
+      ],
+      "exitCode": 0,
+      "seconds": 31.48264789581299,
+      "sourceCommit": "5e8c2e2861bb87d33149a2a284430fe204bb1f63"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-context-baseline.md",
+        "--since",
+        "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f"
+      ],
+      "exitCode": 0,
+      "seconds": 0.957,
+      "stdout": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\0.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\0.stderr.log",
+      "stdoutSha256": "d2155e39d88a5a11a08eeac1abaf1432e6c349c2324fb75acaeb9b8c80b408f4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-context-baseline.md",
+        "--since",
+        "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "seconds": 0.746,
+      "stdout": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\1.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\1.stderr.log",
+      "stdoutSha256": "2def3b666eb2af4c5b62096210a14057a79457bf88dd33005aaa57c3fa048f3e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f"
+      ],
+      "exitCode": 0,
+      "seconds": 0.118,
+      "stdout": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\2.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\2.stderr.log",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "shared/long-session-paired-evaluation.ts",
+        "tests/unit/autonomy-context-baseline.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "exitCode": 0,
+      "seconds": 3.669,
+      "stdout": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\3.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-tf0955-20261125\\static-r3\\3.stderr.log",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "resourceReceipts": [
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\autonomy-context-regression-20261125-r4\\receipt.json",
+      "sha256": "bdafd9e613313b6815858c2f8c662d8b3ea4e47ee2ad33950b71776fc3ae01d1",
+      "jobId": "autonomy-context-regression-20261125-r4",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 756.445,
+        "commitMiB": 828.398,
+        "processCount": 7,
+        "cpuPercent": 195.06,
+        "cpuSecondsObserved": 23.25,
+        "readBytesObserved": 123676209,
+        "writeBytesObserved": 105572375
+      }
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\autonomy-context-types-20261125-r3\\receipt.json",
+      "sha256": "191fc44c38c0d31a4f1a7e38566337d28ba46922fece6f383134e76f5cc81389",
+      "jobId": "autonomy-context-types-20261125-r3",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 3105.422,
+        "commitMiB": 3115.387,
+        "processCount": 4,
+        "cpuPercent": 202.45,
+        "cpuSecondsObserved": 59.422,
+        "readBytesObserved": 58231180,
+        "writeBytesObserved": 0
+      }
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\autonomy-context-static-20261125-r3\\receipt.json",
+      "sha256": "49d7c5bd43bfa861bb49d16098d9cac0cea9f738cbbbfe3bbde8cf71e4bedecd",
+      "jobId": "autonomy-context-static-20261125-r3",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 270.746,
+        "commitMiB": 297.242,
+        "processCount": 5,
+        "cpuPercent": 109.38,
+        "cpuSecondsObserved": 2.922,
+        "readBytesObserved": 28456993,
+        "writeBytesObserved": 3782
+      }
+    }
+  ],
+  "firstFailures": [
+    {
+      "path": "D:\\tmp\\autonomy-context-tf0955-20261125\\baseline-r2\\commands.json",
+      "sha256": "88003d5bd7e9c3203530daef25c016d66ebac67490fa01047500751301073b80",
+      "sourceCandidate": "2a8618f1dc6b1af459453a99f27a3b229433a901",
+      "exitCodes": [
+        1
+      ],
+      "reason": "Two isolation probes supplied incomplete SystemControlState; fixed through normalizeSystemControl defaults without changing oracle/policy. Partial 56-row output retained.",
+      "report": "D:\\tmp\\autonomy-context-tf0955-20261125\\baseline-r2\\vitest.json",
+      "reportSha256": "5d3952669c33b3953ffa96d116b47a34c5361ff401025f73ea8c41d6b5267082"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-tf0955-20261125\\types-r1\\command.json",
+      "sha256": "231015c4451bf29d6c56eacfd9efd94e0d26a4c632f4ad073269019c3271be38",
+      "exitCode": 2,
+      "log": "D:\\tmp\\autonomy-context-tf0955-20261125\\types-r1\\stdout.log",
+      "logSha256": "2bb3eabd684d6635c48acd89f02f382315e400395eb734318c60682f1e88784a",
+      "reason": "Six test harness type errors (async callbacks and checksum brand) corrected. The remaining tar diagnostics came from a missing existing ambient declaration in the scoped config."
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-tf0955-20261125\\types-r2\\command.json",
+      "sha256": "6235ce9d6a3892c070709b9623e5f8637101f308dcd7ab5ef753bafafbb46a7a",
+      "exitCode": 2,
+      "log": "D:\\tmp\\autonomy-context-tf0955-20261125\\types-r2\\stdout.log",
+      "logSha256": "c3db1dde7f18d0846cb9813f81ddcbb21aa150f3718ecdcf71b70bd8df3adfa7",
+      "reason": "electron/types/tar.d.ts redirects to shared/types/tar.d.ts. The final scoped config includes the real existing declaration; no production type changed."
+    }
+  ],
+  "bootstrapDeviation": {
+    "command": "pnpm harness context --spec harness/specs/tasks/autonomy-context-baseline.md",
+    "result": "pnpm 11 auto-installed dependencies before context; runtime postinstall failed on ignored node-llama-cpp builds. Observer track was registered after discovery; it is not a prior execution grant.",
+    "log": "D:\\tmp\\autonomy-context-tf0955-20261125\\harness-context.txt",
+    "sha256": "ebb0f171083943217a24c01161b31397d54effffe090a7d91e5132ef9c812bd5",
+    "repair": "Restored only the auto-generated build-policy placeholder and set pnpm_config_verify_deps_before_run=false; the requested context command then exited 0."
+  },
+  "typecheckConfiguration": {
+    "path": "D:\\tmp\\autonomy-context-tf0955-20261125\\tsconfig.c01-r3.json",
+    "sha256": "78f2edb5f4c1f0beb515f6a6d46a9017b2f80f493456e5da599d727be1729098",
+    "config": {
+      "extends": "D:/ClawX-work/autonomy-context-tf0955-20261125/tsconfig.test.json",
+      "compilerOptions": {
+        "rootDir": "D:/ClawX-work/autonomy-context-tf0955-20261125",
+        "composite": false,
+        "incremental": false,
+        "noUnusedLocals": true,
+        "noEmit": true,
+        "noUnusedParameters": true,
+        "typeRoots": [
+          "D:/ClawX-work/autonomy-context-tf0955-20261125/node_modules/@types",
+          "D:/ClawX-work/autonomy-context-tf0955-20261125/node_modules"
+        ]
+      },
+      "include": [
+        "D:/ClawX-work/autonomy-context-tf0955-20261125/shared/long-session-paired-evaluation.ts",
+        "D:/ClawX-work/autonomy-context-tf0955-20261125/tests/unit/autonomy-context-baseline.test.ts",
+        "D:/ClawX-work/autonomy-context-tf0955-20261125/src/vite-env.d.ts",
+        "D:/ClawX-work/autonomy-context-tf0955-20261125/src/types/electron.d.ts",
+        "D:/ClawX-work/autonomy-context-tf0955-20261125/electron/types/tar.d.ts",
+        "D:/ClawX-work/autonomy-context-tf0955-20261125/shared/types/tar.d.ts"
+      ],
+      "exclude": [
+        "D:/ClawX-work/autonomy-context-tf0955-20261125/node_modules"
+      ]
+    },
+    "heapPolicy": {
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "1400MiB",
+      "GOGC": 50
+    },
+    "scope": "Actual imported dependency graph of the changed evaluation module and baseline test, strict and noEmit, existing ambient declarations."
+  },
+  "threadIdentity": {
+    "actualThreadId": "01a2136f-5ac2-7d43-89f3-61d9816af0cb",
+    "initialQueueThreadLabel": "autonomy-context-tf0955-20261125",
+    "reason": "Initial jobs used the task label before CODEX_THREAD_ID was inspected; later queue jobs use the actual thread ID. Original receipts retained."
+  }
+}

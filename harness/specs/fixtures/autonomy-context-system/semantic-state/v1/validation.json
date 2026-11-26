@@ -1,0 +1,652 @@
+{
+  "schema": "AutonomyContextC02Validation/v1",
+  "actor": "codex/context-system-01a213b7",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+    "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+    "dirty": false
+  },
+  "isolatedCheckout": "D:/ClawX-acceptance/context-system-c02-205be98d",
+  "dependencies": {
+    "reuse": "node_modules junctions to development root/runtime/versebrowser; no fresh install",
+    "workspacePackage": "built from candidate via scripts/build-versebrowser.mjs",
+    "electron": "40.8.4 cached D:/tmp/electron-40.8.4/dist"
+  },
+  "tests": {
+    "files": 6,
+    "tests": 106,
+    "passed": 106,
+    "report": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-vitest.json",
+    "sha256": "ad90a1363493819a20132092aeefa25bc21618c406f8521ebfda1e21f88eeca3"
+  },
+  "electron": {
+    "spec": "tests/e2e/long-session-continuity-context.spec.ts",
+    "passed": 1,
+    "retries": 0,
+    "sourceChanged": false
+  },
+  "commands": [
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json",
+      "sha256": "85eb55fc3189dbe725faa5e9893e6d6822e3967d7e6839ff489e7aa1fe4af901",
+      "driven_by": "agent",
+      "actor": "codex/context-system-01a213b7",
+      "candidate": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "startedAt": 1795638810.2422955,
+      "commands": [
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/build-versebrowser.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 4.323127031326294,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.0.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.0.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "tests/unit/autonomy-context-semantic-state.test.ts",
+            "tests/unit/long-session-continuity-context.test.ts",
+            "tests/unit/compression-artifact.test.ts",
+            "tests/unit/task-ledger-working-context-single-source.test.ts",
+            "tests/unit/memory-tf0500-retirement.test.ts",
+            "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+            "--maxWorkers=1",
+            "--no-file-parallelism",
+            "--reporter=default",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-vitest.json"
+          ],
+          "exitCode": 0,
+          "seconds": 13.615430116653442,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.1.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.1.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "node_modules/@typescript/native-preview/bin/tsgo.js",
+            "-p",
+            "D:\\tmp\\autonomy-context-system-20261126\\tsconfig.c02-isolated.json",
+            "--pretty",
+            "false"
+          ],
+          "exitCode": 0,
+          "seconds": 27.780627727508545,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.2.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.2.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/contract-check.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 1.2104895114898682,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.3.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.3.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "harness/src/cli.mjs",
+            "validate",
+            "--spec",
+            "harness/specs/tasks/autonomy-context-c02.md",
+            "--since",
+            "af93c1e311f997f3e52b56f0a1d9ddb63fbfc0b0"
+          ],
+          "exitCode": 0,
+          "seconds": 0.5633010864257812,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.4.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.4.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/comms/replay.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 0.15783047676086426,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.5.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.5.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/comms/compare.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 0.10375285148620605,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.6.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json.6.stderr.log"
+        }
+      ],
+      "exitCode": 0,
+      "candidateAfter": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "sourceUnchanged": true,
+      "endedAt": 1795638858.2064354
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json",
+      "sha256": "2878385c3a36c9dcd8efc36f7afc65dcf02855a462fdffb5d6a847d44c3d2ea9",
+      "driven_by": "agent",
+      "actor": "codex/context-system-01a213b7",
+      "candidate": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "startedAt": 1795638952.344312,
+      "commands": [
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/versebrowser-build-provenance.mjs",
+            "--capture"
+          ],
+          "exitCode": 0,
+          "seconds": 0.17748641967773438,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.0.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.0.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/generate-ext-bridge.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 0.040309906005859375,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.1.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.1.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/sync-lobe-icons.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 1.2815635204315186,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.2.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.2.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "--max-old-space-size=6144",
+            "node_modules/vite/bin/vite.js",
+            "build"
+          ],
+          "exitCode": 0,
+          "seconds": 42.53932476043701,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.3.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.3.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/versebrowser-build-provenance.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 0.3396186828613281,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.4.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json.4.stderr.log"
+        }
+      ],
+      "exitCode": 0,
+      "candidateAfter": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "sourceUnchanged": true,
+      "endedAt": 1795638996.9372935
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-runtime-build-command.json",
+      "sha256": "271588a0cc589ada6fb9d55bb92dd92e5b6585c2a640c191cb99eee5df401d81",
+      "driven_by": "agent",
+      "actor": "codex/context-system-01a213b7",
+      "candidate": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "startedAt": 1795639291.875485,
+      "commands": [
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/build-openclaw-runtime.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 21.90238928794861,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-runtime-build-command.json.0.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-runtime-build-command.json.0.stderr.log"
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "harness/src/cli.mjs",
+            "run",
+            "--spec",
+            "harness/specs/tasks/autonomy-context-c02.md",
+            "--since",
+            "af93c1e311f997f3e52b56f0a1d9ddb63fbfc0b0",
+            "--dry-run"
+          ],
+          "exitCode": 0,
+          "seconds": 0.5868625640869141,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-runtime-build-command.json.1.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-runtime-build-command.json.1.stderr.log"
+        }
+      ],
+      "exitCode": 0,
+      "candidateAfter": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "sourceUnchanged": true,
+      "endedAt": 1795639314.5762753
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-electron-r2-command.json",
+      "sha256": "59824802c611623b7ff668101f0adac57835147519f4a85cbc672709e8a7fbec",
+      "driven_by": "agent",
+      "actor": "codex/context-system-01a213b7",
+      "candidate": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "startedAt": 1795639458.2006855,
+      "commands": [
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "node_modules/@playwright/test/cli.js",
+            "test",
+            "tests/e2e/long-session-continuity-context.spec.ts",
+            "--workers=1",
+            "--retries=0",
+            "--reporter=line,json",
+            "--output=D:\\tmp\\autonomy-context-system-20261126\\electron-results-r2"
+          ],
+          "exitCode": 0,
+          "seconds": 21.820759773254395,
+          "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-electron-r2-command.json.0.stdout.log",
+          "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-electron-r2-command.json.0.stderr.log"
+        }
+      ],
+      "exitCode": 0,
+      "candidateAfter": {
+        "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+        "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+        "dirty": false
+      },
+      "sourceUnchanged": true,
+      "endedAt": 1795639480.2288973
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-review-r17-command.json",
+      "sha256": "81982cbfadbe35a48f4b86f9e078e2b9566c096081a14793a3bcd4b916fbe3be",
+      "driven_by": "agent",
+      "actor": "codex/context-system-01a213b7",
+      "startedAt": 1795637640.2198637,
+      "commands": [
+        {
+          "argv": [
+            "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+            "-X",
+            "utf8",
+            "-B",
+            "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+            "--mode",
+            "local",
+            "--engine",
+            "codex",
+            "--model",
+            "ccs-ai/gpt-6.1-sol",
+            "--thinking",
+            "high",
+            "--no-web-search",
+            "--prompt-file",
+            "D:\\tmp\\autonomy-context-system-20261126\\c02-review-r17-notes.md",
+            "--json-output",
+            "D:\\tmp\\autonomy-context-system-20261126\\c02-autoreview-r17.json",
+            "--output",
+            "D:\\tmp\\autonomy-context-system-20261126\\c02-autoreview-r17.txt"
+          ],
+          "exitCode": 0,
+          "seconds": 808.0770072937012
+        }
+      ],
+      "exitCode": 0
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-checks-r17-command.json",
+      "sha256": "597e12b8b4b50f99b59ad28859986978561bdd9bcaa45e80a74f0c4bbebf6a87",
+      "driven_by": "agent",
+      "actor": "codex/context-system-01a213b7",
+      "startedAt": 1795637565.9773684,
+      "commands": [
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "tests/unit/autonomy-context-semantic-state.test.ts",
+            "tests/unit/long-session-continuity-context.test.ts",
+            "tests/unit/compression-artifact.test.ts",
+            "tests/unit/task-ledger-working-context-single-source.test.ts",
+            "--maxWorkers=1",
+            "--no-file-parallelism",
+            "--reporter=default",
+            "--reporter=json",
+            "--outputFile=D:\\tmp\\autonomy-context-system-20261126\\c02-checks-r17-vitest.json"
+          ],
+          "exitCode": 0,
+          "seconds": 8.700851678848267
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "node_modules/@typescript/native-preview/bin/tsgo.js",
+            "-p",
+            "D:\\tmp\\autonomy-context-system-20261126\\tsconfig.c02-final.json",
+            "--pretty",
+            "false"
+          ],
+          "exitCode": 0,
+          "seconds": 28.078648328781128
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "node_modules/eslint/bin/eslint.js",
+            "electron/services/chat-api.ts",
+            "electron/services/sessions-api.ts",
+            "shared/host-api/contract.ts",
+            "shared/long-session-continuity.ts",
+            "shared/task-ledger-working-context.ts",
+            "shared/types/context-item.ts",
+            "tests/unit/compression-artifact.test.ts",
+            "tests/unit/long-session-continuity-context.test.ts",
+            "tests/unit/autonomy-context-semantic-state.test.ts",
+            "--max-warnings",
+            "0"
+          ],
+          "exitCode": 0,
+          "seconds": 2.7909231185913086
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/contract-check.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 1.0224876403808594
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "harness/src/cli.mjs",
+            "validate",
+            "--spec",
+            "harness/specs/tasks/autonomy-context-c02.md",
+            "--since",
+            "af93c1e311f997f3e52b56f0a1d9ddb63fbfc0b0"
+          ],
+          "exitCode": 0,
+          "seconds": 0.6023211479187012
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "harness/src/cli.mjs",
+            "run",
+            "--spec",
+            "harness/specs/tasks/autonomy-context-c02.md",
+            "--since",
+            "af93c1e311f997f3e52b56f0a1d9ddb63fbfc0b0",
+            "--dry-run"
+          ],
+          "exitCode": 0,
+          "seconds": 0.5919146537780762
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/comms/replay.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 0.16094398498535156
+        },
+        {
+          "argv": [
+            "C:/Program Files/nodejs/node.exe",
+            "scripts/comms/compare.mjs"
+          ],
+          "exitCode": 0,
+          "seconds": 0.1265428066253662
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exitCode": 0,
+          "seconds": 0.09205889701843262
+        }
+      ],
+      "exitCode": 0
+    }
+  ],
+  "resourceReceipts": [
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-clean-validation-20261126-r2\\receipt.json",
+      "sha256": "d78fa7adb3b01f57878e0f96922a98e767bed9c90f89c4507be12cee1e525742",
+      "jobId": "context-c02-clean-validation-20261126-r2",
+      "actor": "codex/context-system-01a213b7",
+      "driven_by": "agent",
+      "commandDigest": "0529f4bc59855ad5dec5d59893508894f7c284a4a3d38005a7edd139eb826b73",
+      "startedAt": 1795638809.9679327,
+      "endedAt": 1795638858.6762319,
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 3153.215,
+        "commitMiB": 3154.004,
+        "processCount": 5,
+        "cpuPercent": 249.29,
+        "cpuSecondsObserved": 54.469,
+        "readBytesObserved": 103082626,
+        "writeBytesObserved": 82102310
+      },
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-clean-build-20261126-r2\\receipt.json",
+      "sha256": "60a694e781497d77d7ae6706b939186fab41a8b452793cd7f829559d0c8e0c02",
+      "jobId": "context-c02-clean-build-20261126-r2",
+      "actor": "codex/context-system-01a213b7",
+      "driven_by": "agent",
+      "commandDigest": "6b771080006e5c6e08d02b5ca40345e0bd96c5810647b7eb38299e4fff4a3362",
+      "startedAt": 1795638952.072538,
+      "endedAt": 1795638997.442226,
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 3429.992,
+        "commitMiB": 3537.625,
+        "processCount": 6,
+        "cpuPercent": 891.18,
+        "cpuSecondsObserved": 75.0,
+        "readBytesObserved": 271634590,
+        "writeBytesObserved": 218863026
+      },
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-runtime-build-20261126-r2\\receipt.json",
+      "sha256": "5df7ddee69afb500758586926d32d1a7954126727f8b514df66c4beb6e3e0383",
+      "jobId": "context-c02-runtime-build-20261126-r2",
+      "actor": "codex/context-system-01a213b7",
+      "driven_by": "agent",
+      "commandDigest": "797f17bdbea5ab7cd692cc6bd8062cc8c921d8e4652e9e9cd02fe2bcc524b6ef",
+      "startedAt": 1795639291.6048288,
+      "endedAt": 1795639315.023652,
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 2486.043,
+        "commitMiB": 3476.945,
+        "processCount": 11,
+        "cpuPercent": 611.93,
+        "cpuSecondsObserved": 22.297,
+        "readBytesObserved": 132278331,
+        "writeBytesObserved": 57010054
+      },
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-electron-20261126-r2\\receipt.json",
+      "sha256": "0dd5191daa1dcc803c2ac6890e5014824dce3b84f3d25e4f90048fd211d59fa8",
+      "jobId": "context-c02-electron-20261126-r2",
+      "actor": "codex/context-system-01a213b7",
+      "driven_by": "agent",
+      "commandDigest": "b9f4f79494b2a482216472a7a9f1684724f502258896db63e02ce16aa84919d5",
+      "startedAt": 1795639457.9267576,
+      "endedAt": 1795639480.5023875,
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 1820.305,
+        "commitMiB": 1568.203,
+        "processCount": 16,
+        "cpuPercent": 311.45,
+        "cpuSecondsObserved": 41.453,
+        "readBytesObserved": 266738279,
+        "writeBytesObserved": 157474329
+      },
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-autoreview-20261126-r17\\receipt.json",
+      "sha256": "f253ba81eb889c7185a8d8de971eb7f48b142531cb869e830841bb03f79268ef",
+      "jobId": "context-c02-autoreview-20261126-r17",
+      "actor": "codex/context-system-01a213b7",
+      "driven_by": "agent",
+      "commandDigest": "603e375da719be997820acfed84908b49e143aa1823ba1b67332278c06569b95",
+      "startedAt": 1795637640.1599643,
+      "endedAt": 1795638448.7049167,
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "peaks": {
+        "rssMiB": 724.449,
+        "commitMiB": 552.719,
+        "processCount": 24,
+        "cpuPercent": 303.5,
+        "cpuSecondsObserved": 38.797,
+        "readBytesObserved": 80727355,
+        "writeBytesObserved": 1633674
+      },
+      "budgetExceeded": false
+    }
+  ],
+  "rawRecords": [
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2\\semantic-state-mapping.json",
+      "sha256": "08450f61ceb7f8914641f498899e9d9dc777d34b1bfad13848f8c382580a99f9",
+      "retained": "semantic-state-mapping.json"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2\\state-preservation-cases.json",
+      "sha256": "c334f720152049d5fd2021373ad5efa2ea3f8e54db90e14724e415939aa02c49",
+      "retained": "state-preservation-cases.json"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2\\legacy-read-parity.json",
+      "sha256": "43648361df2730e696d5169faf56b0bf5dcab951e6a62aee1c4f463508996cb4",
+      "retained": "legacy-read-parity.json"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-autoreview-r17.json",
+      "sha256": "c88a21f5f6e93b0170f073bcf5a9c884da96c9a0b17191588cdaabda8518ffd5",
+      "retained": "autoreview.json"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-clean-source-readback.json",
+      "sha256": "d4ccfe96c4a22d3ea281c0866e4c1c2763583861fa2c41d4364a3fcc03b2c2dd",
+      "retained": "source-readback.json"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-electron-r2.json",
+      "sha256": "c10de644bead0a13ec8984b665be8251f3799fb3a84d45a3892281b305665cf7",
+      "retained": "electron-results.json"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\electron-results-r2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\continuity-observation.json",
+      "sha256": "79248346399dfd9aeeeb749e55c7ab65f52db90b4e2db4a774a0f3bb26e3d5e9",
+      "retained": "electron-observation.json"
+    }
+  ],
+  "firstFailures": [
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-command.json",
+      "reason": "104/106; workspace VerseBrowser package dist absent in tracked-only checkout; restored by candidate build"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-electron-command.json",
+      "reason": "Gateway source tsx utilityProcess exited before scenario; current runtime build and smoke passed before fresh r2"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-autoreview-r1.json",
+      "reason": "source findings retained; queue supervisor exit receipt missing, not used as final evidence"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-review-r4-command.json",
+      "reason": "review output absolute paths rejected by schema"
+    }
+  ],
+  "historyIndex": {
+    "rawRoot": "D:\\tmp\\autonomy-context-system-20261126",
+    "reviewAttempts": "r1/r2/r4/r5/r6/r7/r9/r13/r14/r15/r16 findings/failures kept; r17 clean",
+    "checks": "all prior r1..r17 files retained"
+  },
+  "downstreamObservation": {
+    "node": "C11 / TF-0967",
+    "path": "openclaw_runtime/src/agents/embedded-agent-runner/compact.queued.ts",
+    "question": "Check engine-owned queued compaction archive responsibility at native capability integration; pre-existing route, C02 state changes do not bind another owner."
+  },
+  "independentVerdict": "accepted",
+  "independentVerifier": {
+    "actor": "c02-frozen-verifier",
+    "providerModel": "ccs-ai/gpt-6.1-sol",
+    "report": "independent-verdict.json",
+    "sha256": "c181a8cc0607aa5a711bd9fcf3507b92336a76db3f9a5281c12b170ed5785d80",
+    "hashScheme": "sha256-utf8-lf",
+    "originalReport": "D:/tmp/autonomy-context-system-20261126/c02-frozen-verifier.json",
+    "originalSha256": "00ca137cb55479569d7bf2ca9b4cfdd9a568a49ae11e67db1163bf8db86f58e8"
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "schema": "AutonomyContextEvaluationPolicy/v1",
+  "actor": "codex/autonomy-context-tf0955",
+  "driven_by": "agent",
+  "frozenAt": "2026-11-25T16:12:35.782059+00:00",
+  "sourceCommit": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+  "arms": [
+    {
+      "id": "current",
+      "status": "implemented-offline",
+      "definition": "Current production compression, Main continuity adapter, TaskSystem rehydration and owner validation; no policy repair."
+    },
+    {
+      "id": "simple-masking",
+      "status": "implemented-offline",
+      "definition": "Existing verified observation masking before the same current owner pipeline; minChars=1000, preserveNewestObservationCount=0. Archive and recall are charged actions."
+    },
+    {
+      "id": "working-projection",
+      "status": "planned",
+      "definition": "Only bounded working-view editing; no runtime code or result in C01."
+    },
+    {
+      "id": "conditioned",
+      "status": "planned",
+      "definition": "Full conditional strategy; no runtime code or result in C01."
+    }
+  ],
+  "offline": {
+    "model": "scripted-continuation/v1",
+    "provider": "none",
+    "temperature": null,
+    "modelBehavior": "scripted-probe",
+    "productTaskResult": "not-measured",
+    "defaultSplits": [
+      "train",
+      "development"
+    ],
+    "finalHoldoutExecution": "denied in C01",
+    "liveQualityClaimAllowed": false
+  },
+  "splits": {
+    "train": [
+      "c01-revision-01",
+      "c01-negative-01",
+      "c01-exact-01",
+      "c01-unknown-effect-01",
+      "c01-temporary-01",
+      "c01-experience-01",
+      "c01-concurrent-01",
+      "c01-delegation-01",
+      "c01-same-name-01",
+      "c01-generation-01",
+      "c01-readback-01",
+      "c01-native-01",
+      "c01-cost-01",
+      "c01-restart-01",
+      "c01-isolation-01"
+    ],
+    "development": [
+      "c01-revision-02",
+      "c01-negative-02",
+      "c01-exact-02",
+      "c01-unknown-effect-02",
+      "c01-temporary-02",
+      "c01-experience-02",
+      "c01-concurrent-02",
+      "c01-delegation-02",
+      "c01-same-name-02",
+      "c01-generation-02",
+      "c01-readback-02",
+      "c01-native-02",
+      "c01-cost-02",
+      "c01-restart-02",
+      "c01-isolation-02"
+    ],
+    "final-holdout": [
+      "c01-revision-03",
+      "c01-negative-03",
+      "c01-exact-03",
+      "c01-unknown-effect-03",
+      "c01-temporary-03",
+      "c01-experience-03",
+      "c01-concurrent-03",
+      "c01-delegation-03",
+      "c01-same-name-03",
+      "c01-generation-03",
+      "c01-readback-03",
+      "c01-native-03",
+      "c01-cost-03",
+      "c01-restart-03",
+      "c01-isolation-03"
+    ]
+  },
+  "grader": {
+    "version": "owner-and-artifact-equality/v1",
+    "input": "Trace observations from actual owner calls and filesystem readback; expected assertions are inaccessible to the continuation executor. Missing observation => unknown. Exact JSON equality; no keyword scoring.",
+    "negativeControls": [
+      "changed owner revision",
+      "negative polarity flipped",
+      "temporary scope widened",
+      "stale source adopted",
+      "unknown effect replayed",
+      "cross-task write",
+      "cost null coerced to zero",
+      "wrong exact ID",
+      "wrong action with correct summary"
+    ],
+    "passingControlRequirement": "Every corrupted observable is rejected; no control contributes a live sample."
+  },
+  "liveProtocol": {
+    "status": "planned-awaiting-new-matching-authorization",
+    "provider": null,
+    "model": null,
+    "parameters": null,
+    "matching": "Same original task/environment checkpoint, source/candidate, tools, effective backend, model parameters, raw inputs and remaining action/time budgets; randomize arm order in task blocks and isolate caches/stores. Bind missing live identities before any call; no fallback or substitution.",
+    "splitUnit": "Original task/trajectory and its revisions form one cluster. Assign sha256(datasetVersion + originalTaskId) modulo 10: 0..5 train, 6..7 development, 8..9 final. No paraphrase or retry crosses split. Freeze corpus hashes and eligibility before dispatch.",
+    "holdout": "No prompt/experience/threshold tuning from final holdout; first terminal attempt retained. Retry costs attach to original cluster, never a new sample.",
+    "quality": {
+      "metric": "independent completed-task binary grade after continuation",
+      "nonInferiorityMargin": 0.02,
+      "rationale": "At most two additional failed tasks per 100; safety/authority violations remain zero-tolerance, not averaged. Margin is a proposed evaluation tolerance, not a product default.",
+      "familywiseAlpha": 0.05,
+      "oneSidedAlpha": 0.008333333333333333,
+      "comparisons": 6,
+      "method": "Paired task-level differences in [-1,1]; normal lower confidence bound with sample variance and Bonferroni over three arms and two decision routes. Report raw discordances and task-cluster bootstrap sensitivity; disagreement => insufficient.",
+      "planningVarianceUpperBound": 1,
+      "targetPower": 0.8,
+      "zCritical": 2.3939797998185104,
+      "minimumIndependentPairsPerStratum": 26173,
+      "sampleSizeFormula": "ceil(((NormalQuantile(1-0.05/6)+NormalQuantile(0.8))*sqrt(1)/0.02)^2)",
+      "strata": [
+        "provider/model",
+        "effective backend",
+        "task pressure"
+      ],
+      "insufficient": "Underpowered strata, missing final grades, unsettled calls, duplicated task clusters, or unknown costs => EVIDENCE_INSUFFICIENT; no GO."
+    },
+    "cost": {
+      "qualityImprovementRoute": "Quality lower confidence bound > 0 and upper full-cost ratio <= 1.10",
+      "costReductionRoute": "Quality lower confidence bound > -0.02 and upper full-cost ratio <= 0.90",
+      "p95WallRatioLimit": 1.1,
+      "rationale": "10% minimum cost reduction exceeds small accounting/cache noise; at most 10% extra cost/latency for a demonstrated quality gain. No measured data was used to set these thresholds.",
+      "method": "Task-cluster paired bootstrap, seed=950955, 10000 resamples, one-sided Bonferroni bounds; include all failed attempts. Baseline cost zero or incomplete => unknown ratio.",
+      "buckets": [
+        "execution",
+        "organization",
+        "readback",
+        "failure",
+        "retry"
+      ],
+      "fields": [
+        "inputTokens",
+        "outputTokens",
+        "cacheReadTokens",
+        "cacheWriteTokens",
+        "costUsd",
+        "wallMs"
+      ],
+      "unknown": "null propagates through totals; record known subtotal separately; price/model version missing prevents monetary decision; no character-to-token substitution; cache tokens recorded once in their provider category."
+    },
+    "hardVeto": [
+      "new unauthorized read/write",
+      "false task completion",
+      "unknown effect replay",
+      "critical constraint/polarity/scope change",
+      "source evidence corruption",
+      "failed rollback"
+    ],
+    "maintenanceLimits": {
+      "actionsShareMax": 0.25,
+      "sameGapReadbacksMax": 2,
+      "readbackBytesMax": 32768,
+      "reason": "Leave at least six of eight continuation actions for task work and bound repeated failed recall. Both offline arms share the same limits."
+    }
+  },
+  "attribution": [
+    "retrieval",
+    "citation",
+    "adoption",
+    "operationSuccess",
+    "independentTaskGrade"
+  ],
+  "freezeRule": "Thresholds and oracle do not change after outputs. Changed input gets a new version; retain first failures. New live plan must bind actual corpus/provider/model/candidate/budgets and obtain matching authorization."
+}

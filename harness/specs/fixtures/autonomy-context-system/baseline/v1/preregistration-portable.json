@@ -1,0 +1,23 @@
+{
+  "schema": "AutonomyContextPortablePreregistration/v1",
+  "actor": "codex/autonomy-context-tf0955",
+  "driven_by": "agent",
+  "frozenAt": "2026-11-25T16:22:00.226034+00:00",
+  "offlineRunsStarted": 0,
+  "hashScheme": "sha256-utf8-lf",
+  "reason": "Git stores LF; canonical text hashes make the same frozen input verifiable after checkout. Original working-byte receipt is retained in preregistration.json. No oracle or policy rule changed.",
+  "inputs": [
+    {
+      "path": "tests/unit/fixtures/autonomy-context-baseline.v2.json",
+      "sha256": "22f3a74c895690c161247567743532077e8a5b1e01f6656983cf3e6c303521e0"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/frozen-evaluation-policy.json",
+      "sha256": "9b492f7b7716f72edb525fff8ca9a79315f80743c62e80d70f03e7cf8504946b"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/scenario-matrix.json",
+      "sha256": "2796130417e969b6786450c581828afb5f3d31ef4b485f14ae4dda386aa082e5"
+    }
+  ]
+}

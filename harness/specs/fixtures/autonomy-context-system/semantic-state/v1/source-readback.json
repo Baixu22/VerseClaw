@@ -1,0 +1,80 @@
+{
+  "candidate": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+  "hashScheme": "sha256-utf8-lf",
+  "driven_by": "agent",
+  "actor": "codex/context-system-01a213b7",
+  "checks": [
+    {
+      "path": "shared/long-session-continuity.ts",
+      "expected": "86a48b7fdbfb45b60cb2921b0f2bcd535910e37e9691fc859d4b81e582ee7bc6",
+      "committed": "86a48b7fdbfb45b60cb2921b0f2bcd535910e37e9691fc859d4b81e582ee7bc6",
+      "match": true
+    },
+    {
+      "path": "shared/types/context-item.ts",
+      "expected": "a86ab5254772515bc703e70e86f4bc69fa25fdbdd1ebcde663c39b133d0498a1",
+      "committed": "a86ab5254772515bc703e70e86f4bc69fa25fdbdd1ebcde663c39b133d0498a1",
+      "match": true
+    },
+    {
+      "path": "shared/task-ledger-working-context.ts",
+      "expected": "41456b3a1b5f71babb9f6b83422ff430391875cb8c318d08fcc643344ee58c48",
+      "committed": "41456b3a1b5f71babb9f6b83422ff430391875cb8c318d08fcc643344ee58c48",
+      "match": true
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "expected": "efd7fb250db8c2da1da48292078049cd76631e4298ab75155ac4fcc61d835c95",
+      "committed": "efd7fb250db8c2da1da48292078049cd76631e4298ab75155ac4fcc61d835c95",
+      "match": true
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "expected": "bf0de7b6d8599f2759e03ef9f31e948c5beb5f2c2037fc965e4919561c2fa12b",
+      "committed": "bf0de7b6d8599f2759e03ef9f31e948c5beb5f2c2037fc965e4919561c2fa12b",
+      "match": true
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "expected": "2cdb3b45cfbca3301d8692e091eb9ecf98bb5bc87d2c8d0ff44daeffd081625c",
+      "committed": "2cdb3b45cfbca3301d8692e091eb9ecf98bb5bc87d2c8d0ff44daeffd081625c",
+      "match": true
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+      "expected": "1117587583e23aed12c20bacbfd786384ec7a7ab9bb25d627398e0bb86040ac0",
+      "committed": "1117587583e23aed12c20bacbfd786384ec7a7ab9bb25d627398e0bb86040ac0",
+      "match": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts",
+      "expected": "d8f0fc9f2dbc689d6a176bb21599b975126aac341bca6129765df407788506fd",
+      "committed": "d8f0fc9f2dbc689d6a176bb21599b975126aac341bca6129765df407788506fd",
+      "match": true
+    },
+    {
+      "path": "tests/unit/autonomy-context-semantic-state.test.ts",
+      "expected": "e66d10b41de878b4d0084299c44fbafa19cb2fdc9187a5a632d32f9a99185e70",
+      "committed": "e66d10b41de878b4d0084299c44fbafa19cb2fdc9187a5a632d32f9a99185e70",
+      "match": true
+    },
+    {
+      "path": "tests/unit/compression-artifact.test.ts",
+      "expected": "7ab75ca8bf0108d3225e5862c16ce6a4f7dbe9e2b403ea322bf2d32a6bfbfa6c",
+      "committed": "7ab75ca8bf0108d3225e5862c16ce6a4f7dbe9e2b403ea322bf2d32a6bfbfa6c",
+      "match": true
+    },
+    {
+      "path": "tests/unit/long-session-continuity-context.test.ts",
+      "expected": "0977b6ca269d704ac5ddea07514863a5e151b3c135f311253fb10c8e88276f84",
+      "committed": "0977b6ca269d704ac5ddea07514863a5e151b3c135f311253fb10c8e88276f84",
+      "match": true
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-context-c02-predecessor.json",
+      "expected": "dfe9087b6e55b7438a5b3667c5761eed6720e65e94521e1e656afa76a1e673c8",
+      "committed": "dfe9087b6e55b7438a5b3667c5761eed6720e65e94521e1e656afa76a1e673c8",
+      "match": true
+    }
+  ]
+}

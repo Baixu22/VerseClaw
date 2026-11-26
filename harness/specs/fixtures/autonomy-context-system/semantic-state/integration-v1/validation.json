@@ -1,0 +1,728 @@
+{
+  "schema": "C02IntegrationValidation/v1",
+  "actor": "codex/context-system-01a213b7",
+  "driven_by": "agent",
+  "candidate": {
+    "commit": "49d5922b7103b7a15953d304eec4d09242322275",
+    "tree": "3bff8a58ca508717eb98717c0f315ee5c6aa6a38",
+    "dirty": false
+  },
+  "base": "917a71cba7b2dfc8aedbdb3b75b7b693e3900f1e",
+  "sourceAcceptanceCandidate": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+  "tests": {
+    "total": 106,
+    "passed": 106
+  },
+  "electron": {
+    "startTime": "2026-11-26T04:56:00.852Z",
+    "duration": 34555.685000000005,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "harnessCiStatus": "failed-existing-baseline",
+  "harnessBaselineComparison": {
+    "schema": "C02HarnessBaselineComparison/v1",
+    "actor": "codex/context-system-01a213b7",
+    "driven_by": "agent",
+    "candidate": {
+      "commit": "49d5922b7103b7a15953d304eec4d09242322275",
+      "tree": "3bff8a58ca508717eb98717c0f315ee5c6aa6a38",
+      "dirty": false
+    },
+    "baseline": {
+      "commit": "917a71cba7b2dfc8aedbdb3b75b7b693e3900f1e",
+      "tree": "bbfc8994e3649f0cb77a19b6cc4965c1b9b06384",
+      "dirty": false
+    },
+    "status": "same-existing-agent-dev-audit-failure",
+    "disqualifierIdentityMatch": true,
+    "candidateDisqualifiers": [
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:workbench",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-workbench/evidence.json is 61.86h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/report.json is 182.27h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test-history",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/history.json is 182.27h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:quality",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-quality/report.json is 182.27h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "latest-decision-blocked",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "Latest deep-test decision is blocked: typecheck, playwright-agent-dev, contract exceeded hard performance limits.",
+        "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:typecheck",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "typecheck exceeded hard limit: 68533ms > 45000ms.",
+        "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:playwright-agent-dev",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "playwright-agent-dev exceeded hard limit: 46635ms > 40000ms.",
+        "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:contract",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "contract exceeded hard limit: 3388ms > 3000ms.",
+        "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+      }
+    ],
+    "baselineDisqualifiers": [
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:workbench",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-workbench/evidence.json is 62.28h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/report.json is 182.69h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:deep-test-history",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-deep-test/history.json is 182.69h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "evidence-completeness",
+        "id": "evidence-stale:quality",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "artifacts/agent-dev-quality/report.json is 182.69h old, beyond the 24h freshness window.",
+        "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "latest-decision-blocked",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "Latest deep-test decision is blocked: typecheck, playwright-agent-dev, contract exceeded hard performance limits.",
+        "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:typecheck",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "typecheck exceeded hard limit: 68533ms > 45000ms.",
+        "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:playwright-agent-dev",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "playwright-agent-dev exceeded hard limit: 46635ms > 40000ms.",
+        "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding."
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-limit:contract",
+        "severity": "fail",
+        "priority": "P0",
+        "message": "contract exceeded hard limit: 3388ms > 3000ms.",
+        "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+      }
+    ],
+    "sourceBlobs": [
+      {
+        "path": "scripts/agent-dev-audit.mjs",
+        "candidateBlob": "81f55b63b0c367d9ca4fe32502fc712d86a9f813",
+        "baselineBlob": "81f55b63b0c367d9ca4fe32502fc712d86a9f813"
+      },
+      {
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "candidateBlob": "d5d99a6e82aa489f3b585705806410597f1856f4",
+        "baselineBlob": "d5d99a6e82aa489f3b585705806410597f1856f4"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "candidateBlob": "3e517de1a1410947ea966246060c67f91cbb9bb2",
+        "baselineBlob": "3e517de1a1410947ea966246060c67f91cbb9bb2"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/history.json",
+        "candidateBlob": "68bcdfe539fe7d182130a6a765c3a6124546c2d2",
+        "baselineBlob": "68bcdfe539fe7d182130a6a765c3a6124546c2d2"
+      },
+      {
+        "path": "artifacts/agent-dev-quality/report.json",
+        "candidateBlob": "277f142e0c9666ebaef1d3e4b45d92eaa99e387a",
+        "baselineBlob": "277f142e0c9666ebaef1d3e4b45d92eaa99e387a"
+      }
+    ],
+    "precedingHarnessTests": {
+      "files": 5,
+      "passed": 59
+    },
+    "remainingCommands": [
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/check-evidence-refs.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 0.12802529335021973,
+        "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-harness-tail-r1-command.json.0.stdout.log",
+        "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-harness-tail-r1-command.json.0.stderr.log"
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/check-test-coverage-baseline.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 1.172926664352417,
+        "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-harness-tail-r1-command.json.1.stdout.log",
+        "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-harness-tail-r1-command.json.1.stderr.log"
+      }
+    ],
+    "evidence": [
+      {
+        "path": "D:\\ClawX-work\\context-c02-integration-20261126\\artifacts\\agent-dev-audit\\report.json",
+        "sha256": "c591544a2876c63810ec8158a7647cca3616b74dee4c2be7025504ebcebb5691"
+      },
+      {
+        "path": "D:\\ClawX-acceptance\\context-c02-main-917a71cb\\artifacts\\agent-dev-audit\\report.json",
+        "sha256": "5e70ed6c98032e81c18082791cc5db122565dad12cd253bf91653a1b436076f2"
+      },
+      {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-harness-ci-r2-command.json",
+        "sha256": "44d1406982746a9b957c624df7c228d9d2c599b5a6eccb1fd79f556ea1884a14"
+      },
+      {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-base-audit-r1-command.json",
+        "sha256": "7f13770b35d32fd00324ef2ced3ef370d0d3ae7e5e7918729d7cbecb98f4a0ca"
+      },
+      {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-harness-tail-r1-command.json",
+        "sha256": "f82d25d18872b810647e463fd840fcf8147ac9495c225496ef19d12744c852c4"
+      }
+    ]
+  },
+  "commands": {
+    "checks": [
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/build-versebrowser.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 11.187283992767334
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/autonomy-context-semantic-state.test.ts",
+          "tests/unit/long-session-continuity-context.test.ts",
+          "tests/unit/compression-artifact.test.ts",
+          "tests/unit/task-ledger-working-context-single-source.test.ts",
+          "tests/unit/memory-tf0500-retirement.test.ts",
+          "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile=D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-vitest.json"
+        ],
+        "exitCode": 0,
+        "seconds": 30.905630826950073
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "-p",
+          "D:\\tmp\\autonomy-context-system-20261126\\tsconfig.c02-integration.json",
+          "--pretty",
+          "false"
+        ],
+        "exitCode": 0,
+        "seconds": 52.844754695892334
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/contract-check.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 2.739067792892456
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/autonomy-context-c02-integration.md",
+          "--since",
+          "917a71cba7b2dfc8aedbdb3b75b7b693e3900f1e"
+        ],
+        "exitCode": 0,
+        "seconds": 1.5464749336242676
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/comms/replay.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 0.38080835342407227
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/comms/compare.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 0.19865894317626953
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/autonomy-context-c02-integration.md",
+          "--dry-run"
+        ],
+        "exitCode": 0,
+        "seconds": 1.3029704093933105
+      }
+    ],
+    "build": [
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/versebrowser-build-provenance.mjs",
+          "--capture"
+        ],
+        "exitCode": 0,
+        "seconds": 0.2331233024597168
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/generate-ext-bridge.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 0.04200458526611328
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/sync-lobe-icons.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 1.39682936668396
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "--max-old-space-size=6144",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "exitCode": 0,
+        "seconds": 42.52503490447998
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/versebrowser-build-provenance.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 0.35535407066345215
+      },
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "scripts/build-openclaw-runtime.mjs"
+        ],
+        "exitCode": 0,
+        "seconds": 22.940712928771973
+      }
+    ],
+    "electron": [
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/long-session-continuity-context.spec.ts",
+          "--workers=1",
+          "--retries=0",
+          "--reporter=line,json",
+          "--output=D:\\tmp\\autonomy-context-system-20261126\\integration-electron-results-r1"
+        ],
+        "exitCode": 0,
+        "seconds": 35.72052597999573
+      }
+    ],
+    "harness": [
+      {
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.cjs",
+          "run",
+          "harness:ci"
+        ],
+        "exitCode": 1,
+        "seconds": 24.726540565490723
+      }
+    ]
+  },
+  "resourceReceipts": {
+    "checks": {
+      "jobId": "context-c02-integration-checks-20261126-r2",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 3050.426,
+        "commitMiB": 3150.176,
+        "processCount": 7,
+        "cpuPercent": 204.14,
+        "cpuSecondsObserved": 70.172,
+        "readBytesObserved": 106694219,
+        "writeBytesObserved": 82188115
+      }
+    },
+    "build": {
+      "jobId": "context-c02-integration-build-20261126-r1",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 3682.602,
+        "commitMiB": 3815.996,
+        "processCount": 11,
+        "cpuPercent": 599.34,
+        "cpuSecondsObserved": 65.016,
+        "readBytesObserved": 263442440,
+        "writeBytesObserved": 190584862
+      }
+    },
+    "electron": {
+      "jobId": "context-c02-integration-electron-20261126-r1",
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 1700.711,
+        "commitMiB": 1461.141,
+        "processCount": 16,
+        "cpuPercent": 399.42,
+        "cpuSecondsObserved": 55.844,
+        "readBytesObserved": 265977662,
+        "writeBytesObserved": 149740024
+      }
+    },
+    "harness": {
+      "jobId": "context-c02-integration-harness-ci-20261126-r2",
+      "status": "failed",
+      "exitCode": 1,
+      "treeExited": true,
+      "sourceUnchanged": true,
+      "budgetExceeded": false,
+      "peaks": {
+        "rssMiB": 1281.656,
+        "commitMiB": 1391.855,
+        "processCount": 17,
+        "cpuPercent": 460.7,
+        "cpuSecondsObserved": 8.781,
+        "readBytesObserved": 783273293,
+        "writeBytesObserved": 853666
+      }
+    }
+  },
+  "independentVerdict": "accepted",
+  "rawEvidence": [
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json",
+      "sha256": "a009f48382a2094fdbe53b450159ba9537acf1214cbce30cb4558b7c09ab9cdd"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-integration-checks-20261126-r2\\receipt.json",
+      "sha256": "ff23e5f4b89e277b7420ea40924ad1fd99697cef9afeb220d216f64123ce376c"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.0.stdout.log",
+      "sha256": "30a2b45f17467afd7819594d0b7f550aaac92e1ea3e6f0bd2d883b1d8068ec21"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.1.stdout.log",
+      "sha256": "3602ad0cb71bece0512727fc67a1b0f464a9fa1dda9c584cb48dd3a10fa29f10"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.1.stderr.log",
+      "sha256": "c894b6460d803ca0f2ed15b2949ad06dbc9864612df862b72461442252833021"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.2.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.2.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.3.stdout.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.4.stdout.log",
+      "sha256": "d1fa7ce712ccf55399a56c7f7ada5cb99f488225a4192698e81d8ec2668fc3fc"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.4.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.5.stdout.log",
+      "sha256": "d6dad704227edb9d7df39006dae8cd0921a96d7d46410468ea81a878686d36ba"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.5.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.6.stdout.log",
+      "sha256": "fbe72b5cabf777581b2683aa14db7ecd71ab1490821f32e9eee5627599916914"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.6.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.7.stdout.log",
+      "sha256": "6f0f9a45c814467f76d65207e6739ce0bf7ce6ff95e1870a09ee5aeccb3cc5a6"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-r2-command.json.7.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json",
+      "sha256": "71811aeddabb4d47adc35d7d11c68d3fd05c80c13fbb910769a19a6ab09aabc3"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-integration-build-20261126-r1\\receipt.json",
+      "sha256": "4a4f13803b27a555eb7cf7f16609cf738322b53285091ab65090c32261717227"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.0.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.1.stdout.log",
+      "sha256": "f01521bac4f42f37a0daeca717c0f0e68c6aef0b468265b3b5f3fef2b7176f0d"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.1.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.2.stdout.log",
+      "sha256": "366ef963f63fa9793cfc7bd1677e99118e11c83307c373d3fbb75f735f58b5bf"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.2.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.3.stdout.log",
+      "sha256": "a5e38c2a076b190bf959f5ea166b154bc550e4415682835fcdfda181e58aa5b5"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.3.stderr.log",
+      "sha256": "25c99dadc083df60ac25da4be32624db322c68fcbcd9c0b0575a82b31dc3b1f1"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.4.stdout.log",
+      "sha256": "fcd06f297e643749985740429728cffbf6baff78b119c5da2eb0d9b426bdea8e"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.4.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.5.stdout.log",
+      "sha256": "5c9fed555255c7ac7e40648b7808adfb8e76c6c8db51ceadd68ba019d6be4896"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-build-command.json.5.stderr.log",
+      "sha256": "b51916ee5ecfb8cbb98596d9c007c1a143617c8ec5f9c7385fc4a1988eb5b7a8"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-electron-r1-command.json",
+      "sha256": "b3eea841fe7fe99741945ddfdc2a5f85b29b4e4ddc8cf8a21fcf4264f5189d83"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-integration-electron-20261126-r1\\receipt.json",
+      "sha256": "12f27eec3a258444e194094fec9f753bfe1b0f0c2c6ea3e105a9f30d97d3b2c4"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-electron-r1-command.json.0.stdout.log",
+      "sha256": "fca2cd088d9444c651f0f0c38d38138d3fc16bd1955f549ffb1348d9a51f2869"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-electron-r1-command.json.0.stderr.log",
+      "sha256": "06c838783ac26cb48391d7e981505458245567ce283a9597ed9aaa46540d24b6"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-harness-ci-r2-command.json",
+      "sha256": "44d1406982746a9b957c624df7c228d9d2c599b5a6eccb1fd79f556ea1884a14"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-integration-harness-ci-20261126-r2\\receipt.json",
+      "sha256": "2b9cd2fc5dd61cc8f708a1b85c2612dd20aa82cd77c2c2ecf6144cbf950f9075"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-harness-ci-r2-command.json.0.stdout.log",
+      "sha256": "953a1e4b0d4b5d64fc848727549238187e6fec532b648dc18d92264daf2c3b61"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-harness-ci-r2-command.json.0.stderr.log",
+      "sha256": "7926864688263608ce182cb4a4512bdf6153ab8b9faddf8b08e4a478e241b119"
+    }
+  ],
+  "priorFailures": [
+    {
+      "kind": "command-launcher-syntax",
+      "execution": "harness-ci-r1",
+      "command": {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-harness-ci-command.json",
+        "sha256": "fdae2220a74c87d9c4b284958c00087aab200a4b88885e312b1b61e3557560b7"
+      },
+      "stderr": {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-integration-harness-ci-command.json.0.stderr.log",
+        "sha256": "7830609d54ab060eb4d9b243eda3a59e38b0940058ed397f4cd26d89631cd86d"
+      },
+      "checkStarted": false
+    }
+  ],
+  "remoteCi": {
+    "actor": "codex/context-system-01a213b7",
+    "driven_by": "agent",
+    "candidate": "49d5922b7103b7a15953d304eec4d09242322275",
+    "pullRequest": 282,
+    "draft": true,
+    "repository": "Baixu22/VerseClaw",
+    "private": true,
+    "runIds": [
+      45735480364,
+      45735480405,
+      45735480497
+    ],
+    "checkedAnnotation": "repos/Baixu22/VerseClaw/check-runs/139627559387/annotations",
+    "jobSteps": [],
+    "status": "not-started-account-billing",
+    "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+    "localIntegrationValidation": "queued"
+  },
+  "forest": {
+    "schema": "ContextForestOutcome/v1",
+    "actor": "codex/context-system-01a213b7",
+    "driven_by": "agent",
+    "node": "TF-0956",
+    "nodeStatus": "done",
+    "businessOutcome": "closure-and-full-history-export-complete",
+    "observedProcessExitCode": 0,
+    "creationFileTime100ns": "134401290786488653",
+    "elapsedSecondsUpperBound": 1848.8253107070923,
+    "resourceMaxSeconds": 1800,
+    "resourceStatus": "failed",
+    "resourceReceiptExitCode": null,
+    "budgetExceeded": true,
+    "resourceFailure": "supervisor-observation-failed-and-budget-exceeded",
+    "historyFrames": 1645,
+    "legacyUnreadableSources": 9,
+    "evidence": [
+      {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-forest-commands.json",
+        "sha256": "621c0b6b5834d8cd2e42d534797c4b7d6049ffab110e360d95c56f74709be079"
+      },
+      {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-forest-readback.json",
+        "sha256": "e3fa11174e5edffe6965ef602a9b2d01d6419c406b8df143bb803df343968aa8"
+      },
+      {
+        "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-forest-process-exit.json",
+        "sha256": "3a32823da684a991baf59db80c6283c59e837711ab8782cce4bdcc554184607e"
+      },
+      {
+        "path": "D:\\tmp\\session-task-relay-20261126-01a213b9\\resource-reconciliation-1795657487\\context-c02-forest-close-20261126-r1.json",
+        "sha256": "230049abcc16abcd0f563e1e52e315c223282d34bc645c9f0ec38bda20d115bf"
+      }
+    ]
+  },
+  "pullRequest": 282,
+  "mergeStatus": "pending"
+}
