@@ -1,0 +1,2 @@
+Harness report: D:\ClawX-work\g2-rag16-relay-20261119\artifacts\harness\latest.md
+Harness result: pass

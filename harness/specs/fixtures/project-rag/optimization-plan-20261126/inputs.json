@@ -1,0 +1,54 @@
+{
+  "schema": "ProjectRagOptimizationPlanning/v1",
+  "driven_by": "agent",
+  "actor": "codex-rag-optimization-plan",
+  "auditDate": "2026-11-26",
+  "sourceMain": "917a71cba7b2dfc8aedbdb3b75b7b693e3900f1e",
+  "sourceG2": "a4c8c91df2cd39b4a1699494a65463ad42af5e96",
+  "plan": "docs/dev/project-rag/OPTIMIZATION-20261126.md",
+  "packages": [
+    {
+      "key": "O1",
+      "title": "将 G2 检索修复接入当前主线",
+      "spec": "harness/specs/tasks/project-rag-mainline-integration.md"
+    },
+    {
+      "key": "O2",
+      "title": "读回当前工作区真正生效的知识检索能力",
+      "spec": "harness/specs/tasks/project-rag-effective-capabilities.md"
+    },
+    {
+      "key": "O3",
+      "title": "按实际文档结构优化短片段和完整支持事实",
+      "spec": "harness/specs/tasks/project-rag-evidence-unit-adaptation.md"
+    },
+    {
+      "key": "O4",
+      "title": "校准融合重排和 DCS 最终证据选择",
+      "spec": "harness/specs/tasks/project-rag-paired-policy-optimization.md"
+    },
+    {
+      "key": "O5",
+      "title": "让记忆和经验沿现有 owner 提供准确的检索能力",
+      "spec": "harness/specs/tasks/project-rag-memory-capability-alignment.md"
+    },
+    {
+      "key": "O6",
+      "title": "证明按需多轮检索的收益并移交完整验收",
+      "spec": "harness/specs/tasks/project-rag-research-benefit-qualification.md"
+    }
+  ],
+  "priorRegression": {
+    "passed": 57,
+    "total": 57,
+    "sourceInputsMatched": 19,
+    "scope": "existing focused G2 regression; source inputs rechecked during audit"
+  },
+  "probe": {
+    "file": "revocation-probe.json",
+    "sha256": "45706a6caf0c9b98961dec2919d365b655bfa26f490996344ff5bc68c48f50eb",
+    "scope": "scripted module probe",
+    "networkCalls": 0
+  },
+  "qualification": "implementation and full acceptance remain on their own nodes"
+}

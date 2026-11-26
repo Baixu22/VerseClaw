@@ -1,0 +1,40 @@
+{
+  "schema": "ProjectRagOptimizationPlanChecks/v1",
+  "actor": "codex-rag-optimization-plan",
+  "driven_by": "agent",
+  "checkedAt": "2026-11-26T03:11:43.400327+00:00",
+  "checks": [
+    {
+      "name": "harness-context.log",
+      "sha256": "4b5244f920970cd3b95b2c18e1b25f47d10f6a5ed4385c84b82890add4fd23da",
+      "exitCode": 0
+    },
+    {
+      "name": "harness-validate-final.log",
+      "sha256": "c8c1c48daabf6ddf4dc776ad356d99c405a0e31ff73461d26159307405541f5c",
+      "exitCode": 0
+    },
+    {
+      "name": "harness-dry-run-final.log",
+      "sha256": "f509ca13f664897e2baeaad8ea54963197418521c68646c4f9fce2a86885de76",
+      "exitCode": 0
+    },
+    {
+      "name": "retention-check.json",
+      "sha256": "309b516a6698fb2774ca02f5a9e25de770ffa11b4b813439f28a3f455c31f285",
+      "exitCode": 0
+    },
+    {
+      "name": "export-runtime-validation.log",
+      "sha256": "39061360360e2acf9a627315e19012a5c3db4460df2e9c6f34ffa4e4bfa85ea5",
+      "exitCode": 0
+    }
+  ],
+  "sourceBase": "a4c8c91df2cd39b4a1699494a65463ad42af5e96",
+  "implementationChanged": false,
+  "notes": [
+    "First proposal prevalidation rejected intermediate root ordering; sibling ordering moved after all child edges and second prevalidation passed.",
+    "Added missing retention inventory entry for already tracked VECTOR-CAPACITY-INPUT.md; original artifact bytes preserved.",
+    "Full Task Forest init/apply/validate/export/readback executes under separate recorded resource job."
+  ]
+}
