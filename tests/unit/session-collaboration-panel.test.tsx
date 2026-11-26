@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { parseSessionCollaborationQuery, emptySessionCollaborationPage, type SessionCollaborationQuery } from '../../shared/types/session-collaboration';
@@ -7,14 +7,18 @@ import { createSessionActivityReadSnapshot } from '../../shared/types/session-ac
 import { normalizeTaskReference } from '../../shared/types/identity-scope';
 
 const mocks = vi.hoisted(() => ({ query: vi.fn(), read: vi.fn(), watch: vi.fn(), cancel: vi.fn(), activate: vi.fn(),
-  notification: undefined as ((value: { method: string }) => void) | undefined }));
+  notification: undefined as ((value: { method: string }) => void) | undefined,
+  gatewayStatus: undefined as ((value: { state: string }) => void) | undefined }));
 vi.mock('../../src/lib/host-api', () => ({ hostApi: { sessionActivity: { query: mocks.query, read: mocks.read, watch: mocks.watch, cancelWatch: mocks.cancel } } }));
-vi.mock('../../src/lib/host-events', () => ({ hostEvents: { onGatewayNotification: (listener: typeof mocks.notification) => { mocks.notification = listener; return () => {}; }, onGatewayStatus: () => () => {} } }));
+vi.mock('../../src/lib/host-events', () => ({ hostEvents: {
+  onGatewayNotification: (listener: typeof mocks.notification) => { mocks.notification = listener; return () => {}; },
+  onGatewayStatus: (listener: typeof mocks.gatewayStatus) => { mocks.gatewayStatus = listener; return () => {}; },
+} }));
 vi.mock('../../src/lib/workspace-session', () => ({ activateWorkspaceScopedSession: mocks.activate }));
 vi.mock('../../src/stores/artifact-panel', () => ({ openWorkspacePanel: vi.fn() }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, params?: { count?: number }) => `${key}${params?.count === undefined ? '' : `:${params.count}`}`, i18n: { language: 'en' } }) }));
 import { SessionCollaborationPanel } from '../../src/components/agents/SessionCollaborationPanel';
-import { useSessionCollaborationUi } from '../../src/stores/session-collaboration';
+import { subscribeSessionCollaboration, useSessionCollaborationUi } from '../../src/stores/session-collaboration';
 
 const a = { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'agent:main:a', sessionGeneration: 'generation-a' };
 const b = { workspaceId: 'workspace-b', projectId: 'workspace-b', sessionKey: 'agent:main:b', sessionGeneration: 'generation-b' };
@@ -73,5 +77,30 @@ describe('shared collaboration panel', () => {
     mounted.rerender(<MemoryRouter><SessionCollaborationPanel requester={next} /></MemoryRouter>);
     await act(async () => release({ success: true, page: page(input) }));
     expect(screen.queryByText('Goal workspace-a')).toBeNull();
+  });
+  it('fences selected detail when the target is no longer visible', async () => {
+    mocks.query.mockImplementation(async request => ({ success: true, page: request.target
+      ? emptySessionCollaborationPage(request, 'unavailable', 'not-visible') : page(request) }));
+    render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
+    const detail = within(screen.getByTestId('collaboration-detail'));
+    await detail.findByText('collaboration.page.unavailable:0');
+    expect(detail.queryByText('Goal workspace-b')).toBeNull();
+    expect(mocks.read).not.toHaveBeenCalled();
+  });
+
+  it('replays the selected watch when Gateway reconnects before the pending wait fails', async () => {
+    let fail!: (error: Error) => void;
+    mocks.watch.mockImplementationOnce(() => new Promise((_, reject) => { fail = reject; }));
+    const query = parseSessionCollaborationQuery({ requester: input.requester, target: input.requester, limit: 1 });
+    const unsubscribe = subscribeSessionCollaboration({ id: 'reconnect', query, condition: 'changed' }, vi.fn());
+    try {
+      mocks.gatewayStatus?.({ state: 'running' });
+      fail(new Error('Connection closed'));
+      await waitFor(() => expect(mocks.watch).toHaveBeenCalledTimes(2));
+      expect(mocks.watch.mock.calls[1][0]).toMatchObject({ query, condition: 'changed' });
+    } finally {
+      unsubscribe();
+    }
   });
 });

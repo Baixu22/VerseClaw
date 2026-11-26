@@ -66,12 +66,12 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
       const fingerprint = hash(stableFacts(request.condition === 'blocking-changed'
         ? { session: row.sources.session, tasks: row.sources.tasks }
         : { row, terminal: observation.terminal?.id ?? null }));
-      const receipts = (observation.receipts ?? []).filter(event => (event.sequence ?? 0) > sequence);
-      const lastSequence = Math.max(sequence, ...(observation.receipts ?? []).map(event => event.sequence ?? 0));
-      cursor = Buffer.from(JSON.stringify([basis, fingerprint, lastSequence])).toString('base64url');
+      const nextReceipt = (observation.receipts ?? []).filter(event => (event.sequence ?? 0) > sequence)
+        .sort((a, b) => a.sequence! - b.sequence!)[0];
+      cursor = Buffer.from(JSON.stringify([basis, fingerprint, nextReceipt?.sequence ?? sequence])).toString('base64url');
       let event: SessionCollaborationWatchEvent | null = null;
       if (request.condition === 'run-terminal' && (!request.cursor || previous !== fingerprint)) event = observation.terminal ?? null;
-      if (request.condition === 'task-receipt') event = receipts.at(-1) ?? null;
+      if (request.condition === 'task-receipt') event = nextReceipt ?? null;
       if (request.condition === 'idle' && row.status === 'idle' && (!request.cursor || previous !== fingerprint)) event = { id: `idle:${fingerprint}`, owner: 'sessions', kind: 'idle' };
       if (previous && previous !== fingerprint && ['changed', 'blocking-changed'].includes(request.condition)) {
         event = { id: `${request.condition}:${fingerprint}`, owner: request.condition === 'changed' ? 'sessions' : 'TaskSystem', kind: request.condition };

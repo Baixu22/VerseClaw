@@ -9,6 +9,7 @@ import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { parseSessionActivityReadQuery, type SessionActivityReadReason } from '../../shared/types/session-activity';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationQuery, type SessionCollaborationPage } from '../../shared/types/session-collaboration';
+import { parseSessionCollaborationWatch, type SessionCollaborationWatchResult } from '../../shared/types/session-collaboration-watch';
 import type { OpenClawConfig } from '../../openclaw_runtime/src/config/types.openclaw';
 import type { GatewayManager } from '../../electron/gateway/manager';
 import type { TerminalSessionManager } from '../../electron/services/terminal-session-manager';
@@ -48,6 +49,7 @@ vi.mock('../../openclaw_runtime/src/gateway/session-patch-hooks.js', () => ({ tr
 vi.mock('../../openclaw_runtime/src/gateway/call.js', () => ({ callGateway: mocks.taskAdmission }));
 
 import { sessionActivityHandlers } from '../../openclaw_runtime/src/gateway/server-methods/session-activity';
+import { cancelSessionCollaborationWatch, watchSessionCollaboration } from '../../openclaw_runtime/src/gateway/server-methods/session-collaboration-watch';
 import { createSessionActivityApi } from '../../electron/services/session-activity-api';
 import { readSessionCollaborationPage } from '../../src/lib/session-read-model';
 import { createSessionsListTool } from '../../openclaw_runtime/src/agents/tools/sessions-list-tool';
@@ -84,7 +86,7 @@ async function runtime(input: SessionCollaborationQuery) {
   return result;
 }
 function main() {
-  const rpc = vi.fn(async (_method: string, payload: { query: SessionCollaborationQuery }) => runtime(payload.query));
+  const rpc = vi.fn(async (_method: string, payload: { query: SessionCollaborationQuery }): Promise<unknown> => runtime(payload.query));
   return { rpc, api: createSessionActivityApi({ gatewayManager: { rpc } as unknown as GatewayManager, terminalManager: { list: vi.fn() } as unknown as TerminalSessionManager }) };
 }
 function ownerState() {
@@ -135,6 +137,35 @@ afterEach(() => {
 afterAll(() => {
   const directory = process.env.SESSION_COLLABORATION_EVIDENCE_DIR;
   if (directory) { mkdirSync(directory, { recursive: true }); writeFileSync(join(directory, 'a2-query-readbacks.json'), JSON.stringify({ driven_by: 'agent', actor: 'codex-tf0920', receipts }, null, 2)); }
+});
+
+it('uses the same Main-owned Gateway for watch and cancellation', async () => {
+  const request = parseSessionCollaborationWatch({ id: 'main-wait', query: query({ target: scope(), limit: 1 }), condition: 'changed', timeoutMs: 0 });
+  const result: SessionCollaborationWatchResult = {
+    schemaVersion: 'SessionCollaborationWatch/v1', id: request.id, state: 'timeout', cursor: null,
+    page: (await runtime(request.query)).page, event: null,
+  };
+  const { rpc, api } = main();
+  const cancel = { id: request.id, query: request.query };
+  rpc.mockResolvedValueOnce({ watch: result }).mockResolvedValueOnce({ cancelled: true });
+  await expect(api.watch(request)).resolves.toEqual({ success: true, watch: result });
+  await expect(api.cancelWatch(cancel)).resolves.toEqual({ success: true, cancelled: true });
+  expect(rpc).toHaveBeenNthCalledWith(1, 'session.activitySnapshot', { watch: request }, 5_000);
+  expect(rpc).toHaveBeenNthCalledWith(2, 'session.activitySnapshot', { cancelWatch: cancel }, 5_000);
+  rpc.mockImplementationOnce(async () => {
+    mocks.workspace.mockResolvedValueOnce(workspaceB);
+    return { watch: result };
+  });
+  await expect(api.watch(request)).resolves.toMatchObject({ watch: { state: 'stale', page: { reason: 'scope-mismatch', items: [] } } });
+});
+
+it('can cancel a Gateway wait during its initial owner read', async () => {
+  const request = parseSessionCollaborationWatch({ id: 'cancel-initial-read', query: query({ target: scope(), limit: 1 }), condition: 'changed' });
+  const context = { chatAbortControllers: runs, getRuntimeConfig: () => mocks.cfg } as never;
+  const pending = watchSessionCollaboration(request, context, 'fixture-window');
+  expect(cancelSessionCollaborationWatch({ id: request.id, query: request.query }, context, 'fixture-window')).toEqual({ cancelled: true });
+  await expect(pending).resolves.toMatchObject({ state: 'cancelled', event: null });
+  expect(cancelSessionCollaborationWatch({ id: request.id, query: request.query }, context, 'fixture-window')).toEqual({ cancelled: false });
 });
 
 describe('A2 shared session discovery and detail', () => {

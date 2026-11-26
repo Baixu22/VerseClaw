@@ -577,7 +577,7 @@ flowchart LR
 - 在一个干净候选上完成 A–E 全部合同和必要的旧能力回归，Task Forest 节点与磁盘证据一致。
 - 两独立会话与子代理完成发现→订阅→消息→成果复用→资源回读→中断恢复整链；错误关联、重复效果和越界接受为 0。
 - 四语、Light/Dark、宽窄与键盘 E2E、类型、契约、通信回放/比较、构建与相应 Harness 通过。
-- 独立脚本或 agent 回读输入、事件、价格/用量、候选/产物哈希和负例；模型审查/子代理使用 ccs-workbuddy/deepseek-v4.1-flash。
+- 独立脚本或 agent 回读输入、事件、价格/用量、候选/产物哈希和负例。阶段审查使用星驰 ccs-ai/gpt-6.1-sol。
 - 源码文档和实际行为同步，形成具名能力/性能/恢复验收结论；Task Forest 提案、validate、完整历史 export 与最终回读完成。
 
 检查入口：完整类型/contract/comms/Harness 门禁；本计划全部新增与受影响 unit/Electron 旅程；真实本地 Gateway + agent 驱动 provider 旅程。新文件测试在对应实现叶建立；继承必要的类型、contract/comms 和 Harness 检查。精选证据落 harness/specs/fixtures/session-collaboration-center/E5/，记录输入、原事件、命令/退出/计数、源/候选/产物哈希、来源状态与 actor；原始跑次走 D:/tmp。
@@ -602,7 +602,7 @@ A5 记录规模与查询基线，再固定后续的延迟/开销目标；D4 使�
 
 A5 的可执行规模入口为 tests/e2e/session-collaboration-scale.spec.ts，保留 2/20/100/500 的原始列表与详情样本、扫描次数、进程 RSS 样本及 owner/model 读前读后计数。真实 owner 会话与 agent 合成 metadata 分开标记；验收延期期间不生成基线或阈值结论。
 
-源码检查、结构/Mock、真实本地 Gateway 和 live 模型证据分开记录。模拟一律 driven_by: agent；独立审查/子代理按用户指定使用 ccs-workbuddy/deepseek-v4.1-flash，保存请求路由及实际返回身份。用户不提供真人操作或真人数据。
+源码检查、结构/Mock、真实本地 Gateway 和 live 模型证据分开记录。模拟一律 driven_by: agent。每个阶段优先按用户指定的星驰 ccs-ai/gpt-6.1-sol 审查，保存请求路由及实际返回身份，核对阶段证据后合入主线。用户不提供真人操作或真人数据。
 
 节点完成需满足自身全部 acceptance，并读取磁盘证据；应用提案前核对 base_graph_hash，应用后 validate 与完整历史 export，最后通过 CLI 和派生产物回读。任务图/交接保留本地，正式合同与精选最终证据纳入源码。
 

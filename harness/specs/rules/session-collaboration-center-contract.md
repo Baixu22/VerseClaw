@@ -48,6 +48,6 @@ appliesTo:
 - 系统/项目/工作区消费一个协作模块，复用原 worker 阅读页和会话入口。默认摘要、选中详情、原始来源逐层展开。
 - 新文案覆盖 en/zh/ja/ru，复用 design token；状态用文字/图标，键盘焦点可见，异步更新保留选择、筛选、草稿和滚动。状态通知有明确上下文并控制数量。
 - 每个 UI 叶含对应 Electron E2E；通信叶运行 contract、comms replay/compare 和窄 Harness。完成依据是原 owner 事实与磁盘回执。
-- 所有自动场景 driven_by: agent，记录真实 actor、模型路由、输入/源码/候选/产物哈希及第一轮失败。独立模型审查和子代理按用户指定使用 ccs-workbuddy/deepseek-v4.1-flash。
+- 所有自动场景 driven_by: agent，记录真实 actor、模型路由、输入/源码/候选/产物哈希及第一轮失败。阶段审查按用户指定使用星驰 ccs-ai/gpt-6.1-sol。
 - 需要索引时先通过 D5 的消费者/规模/延迟复核，另立可重建 derived-index 写集；本合同不改变 TF-0647 历史、产品锁、冻结默认或多机 SessionStore 边界。
 

@@ -48,14 +48,20 @@ describe('scoped collaboration waits', () => {
     current.page.items[0].sources.tasks = { owner: 'TaskSystem', state: 'ready', readAt: 1, value: [
       { authorityId: 'owner-domain', taskNodeId: task.taskNodeId, revision: 1, digest: 'owner-digest', state: 'review', referenceOnly: true, claim: null },
     ] };
-    current.receipts = [{ id: 'owner-domain:task-watch:42', owner: 'TaskSystem', kind: 'task-receipt', sequence: 42,
-      taskNodeId: 'task-watch', revision: 1, status: 'owner_verified', receiptId: 'receipt-42' }];
+    current.receipts = [
+      { id: 'owner-domain:task-watch:44', owner: 'TaskSystem', kind: 'task-receipt', sequence: 44,
+        taskNodeId: 'task-watch', revision: 1, status: 'accepted', receiptId: 'receipt-44' },
+      { id: 'owner-domain:task-watch:42', owner: 'TaskSystem', kind: 'task-receipt', sequence: 42,
+        taskNodeId: 'task-watch', revision: 1, status: 'owner_verified', receiptId: 'receipt-42' },
+    ];
     const input = request('task-receipt');
     const first = await waitForSessionCollaboration(input, { read: async () => current, subscribe: () => () => {} });
     expect(first.state).toBe('satisfied'); expect(first.event?.receiptId).toBe('receipt-42');
     expect(first.page.items[0].sources.tasks.value?.[0].state).toBe('review');
     const next = await waitForSessionCollaboration({ ...input, cursor: first.cursor! }, { read: async () => current, subscribe: () => () => {} });
-    expect(next.state).toBe('timeout'); expect(next.event).toBeNull();
+    expect(next.state).toBe('satisfied'); expect(next.event?.receiptId).toBe('receipt-44');
+    const repeat = await waitForSessionCollaboration({ ...input, cursor: next.cursor! }, { read: async () => current, subscribe: () => () => {} });
+    expect(repeat.state).toBe('timeout'); expect(repeat.event).toBeNull();
     current.receiptTruncated = true; current.receiptFloor = 100;
     const gap = await waitForSessionCollaboration({ ...input, cursor: first.cursor! }, { read: async () => current, subscribe: () => () => {} });
     expect(gap.state).toBe('unknown'); expect(gap.event).toBeNull();

@@ -62,7 +62,7 @@ async function subscriptionPaths(request: SessionCollaborationWatch) {
   for (const scope of [request.query.requester, request.query.target!]) {
     const loaded = loadSessionEntry(scope.sessionKey, { readOnly: true, skipCache: true });
     paths.add(resolveSqliteSessionStoreDatabasePath(loaded.storePath));
-    if (scope === request.query.target && ['task-receipt', 'blocking-changed'].includes(request.condition)) {
+    if (scope === request.query.target && ['changed', 'task-receipt', 'blocking-changed'].includes(request.condition)) {
       const root = loaded.entry?.workspaceDir ?? loaded.entry?.spawnedWorkspaceDir;
       if (root) {
         try { const { createExecutionTaskAccess } = await import('../../agents/execution-task-authority.js'); paths.add(createExecutionTaskAccess(root, undefined, true).domain.database); }
@@ -75,14 +75,16 @@ async function subscriptionPaths(request: SessionCollaborationWatch) {
 
 export async function watchSessionCollaboration(input: unknown, context: GatewayRequestContext, owner: string): Promise<SessionCollaborationWatchResult> {
   const request = parseSessionCollaborationWatch(input);
-  const initial = await readSessionCollaborationQuery(request.query, context);
-  if (initial.state !== 'ready') return waitForSessionCollaboration(request, { read: async () => ({ page: initial }), subscribe: () => () => {} });
   let active = waits.get(context);
   if (!active) { active = new Map(); waits.set(context, active); }
   if (active.has(request.id) || active.size >= 128) throw new Error('COLLABORATION_WATCH_CAPACITY_OR_DUPLICATE');
   const controller = new AbortController();
   active.set(request.id, { owner, request, controller });
   try {
+    const initial = await readSessionCollaborationQuery(request.query, context);
+    if (controller.signal.aborted || initial.state !== 'ready') return await waitForSessionCollaboration(request, {
+      signal: controller.signal, read: async () => ({ page: initial }), subscribe: () => () => {},
+    });
     const paths = await subscriptionPaths(request);
     return await waitForSessionCollaboration(request, {
       signal: controller.signal,

@@ -43,10 +43,11 @@ test('records original owner reads and bounded synthetic scale without measured-
       };
       replaceSqliteSessionStore(storePath, entries);
       const before = loadExistingSqliteSessionStoreReadOnly(storePath), modelCalls = provider.log.length;
+      expect(Object.keys(before)).toHaveLength(count);
       const tasksBefore = taskState();
-      const samples: number[] = [], scans: number[] = [], detailSamples: number[] = [], mainRss: number[] = [];
+      const samples: number[] = [], scans: number[] = [], detailSamples: number[] = [], detailScans: number[] = [], mainRss: number[] = [];
       const record = { count, source: count === 2 ? 'original Workspace/Session owners' : 'agent-driven synthetic SessionStore metadata',
-        sourceCandidate: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), state: 'collecting', samples, scans, detailSamples, mainRss,
+        sourceCandidate: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), state: 'collecting', samples, scans, detailSamples, detailScans, mainRss,
         list: { p50Ms: null as number | null, p95Ms: null as number | null }, detail: { p50Ms: null as number | null, p95Ms: null as number | null },
         rss: { scope: 'electron-main', peakSampledBytes: null as number | null, sampling: 'Main process.memoryUsage after each listed query' },
         beforeSha256: digest(before), afterSha256: null as string | null, taskBeforeSha256: digest(tasksBefore), taskAfterSha256: null as string | null,
@@ -58,10 +59,16 @@ test('records original owner reads and bounded synthetic scale without measured-
         const result = await hostInvoke<{ page: SessionCollaborationPage }>(app, 'sessionActivity', 'query', query);
         samples.push(performance.now() - start); scans.push(result.page.scanned);
         mainRss.push(await app.evaluate(() => process.memoryUsage().rss));
+        expect(result.page.state).toBe('ready');
+        expect(result.page.items.some(item => item.sessionKey === alpha.sessionKey)).toBe(true);
         expect(result.page.scanned).toBeLessThanOrEqual(100); expect(result.page.items.length).toBeLessThanOrEqual(50);
         const detailStart = performance.now();
-        await hostInvoke(app, 'sessionActivity', 'query', parseSessionCollaborationQuery({ requester: alpha.scope, target: beta.scope, limit: 1 }));
+        const detail = await hostInvoke<{ page: SessionCollaborationPage }>(app, 'sessionActivity', 'query',
+          parseSessionCollaborationQuery({ requester: alpha.scope, target: beta.scope, limit: 1 }));
         detailSamples.push(performance.now() - detailStart);
+        detailScans.push(detail.page.scanned);
+        expect(detail.page.state).toBe('ready');
+        expect(detail.page.items[0]?.detail?.scope).toEqual(beta.scope);
       }
       const after = loadExistingSqliteSessionStoreReadOnly(storePath);
       record.list = { p50Ms: percentile(samples, .5), p95Ms: percentile(samples, .95) }; record.detail = { p50Ms: percentile(detailSamples, .5), p95Ms: percentile(detailSamples, .95) };

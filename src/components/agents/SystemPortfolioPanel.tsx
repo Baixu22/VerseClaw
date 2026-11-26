@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
@@ -57,9 +57,12 @@ export function SystemPortfolioPanel() {
   };
   const projects = Object.values(entries).filter(entry => entry.profile.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
   const collaborationOwner = Object.values(entries).find(entry => entry.snapshot?.coordinator.sessionKey && entry.snapshot.coordinator.generation)?.snapshot;
-  const collaborationScope: AutonomySessionScope | undefined = collaborationOwner?.coordinator.sessionKey && collaborationOwner.coordinator.generation
-    ? { workspaceId: collaborationOwner.workspaceId, projectId: resolveProjectIdForWorkspace(collaborationOwner.workspaceId),
-      sessionKey: collaborationOwner.coordinator.sessionKey, sessionGeneration: collaborationOwner.coordinator.generation } : undefined;
+  const workspaceId = collaborationOwner?.workspaceId;
+  const sessionKey = collaborationOwner?.coordinator.sessionKey;
+  const generation = collaborationOwner?.coordinator.generation;
+  const collaborationScope = useMemo<AutonomySessionScope | undefined>(() => workspaceId && sessionKey && generation
+    ? { workspaceId, projectId: resolveProjectIdForWorkspace(workspaceId), sessionKey, sessionGeneration: generation } : undefined,
+  [workspaceId, sessionKey, generation]);
   return <section className="h-full overflow-y-auto p-4 sm:p-5" data-testid="system-portfolio" data-scope="system">
     <div className="mx-auto max-w-7xl space-y-3">
       <header className="flex flex-wrap items-start justify-between gap-3">

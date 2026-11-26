@@ -18,6 +18,7 @@ export const useSessionCollaborationUi = create<{
 export function subscribeSessionCollaboration(input: SessionCollaborationWatch, onUpdate: (result: SessionCollaborationWatchResult) => void) {
   const original = parseSessionCollaborationWatch(input);
   let active = true, pending: SessionCollaborationWatch | null = null, cursor = original.cursor;
+  let reconnectPending = false;
   const events = new Set<string>();
   const failed = (request: SessionCollaborationWatch, state: 'unknown' | 'unavailable') => onUpdate({
     schemaVersion: 'SessionCollaborationWatch/v1', id: request.id, state, cursor: null, event: null,
@@ -40,10 +41,19 @@ export function subscribeSessionCollaboration(input: SessionCollaborationWatch, 
       }
       continueWaiting = request.timeoutMs! > 0 && (result.state === 'timeout' || (original.condition === 'changed' && result.state === 'changed'));
     } catch { if (active && pending === request) failed(request, 'unavailable'); }
-    finally { if (pending === request) pending = null; }
-    if (active && continueWaiting) void run();
+    finally {
+      if (pending === request) pending = null;
+      if (active && (continueWaiting || reconnectPending)) {
+        reconnectPending = false;
+        void run();
+      }
+    }
   };
-  const reconnect = hostEvents.onGatewayStatus(status => { if (status.state === 'running') void run(); });
+  const reconnect = hostEvents.onGatewayStatus(status => {
+    if (status.state !== 'running') return;
+    if (pending) reconnectPending = true;
+    else void run();
+  });
   void run();
   return () => {
     active = false; reconnect();

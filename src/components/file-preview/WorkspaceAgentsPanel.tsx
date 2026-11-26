@@ -101,9 +101,14 @@ export function WorkspaceAgentsPanel() {
   const snapshot = useSessionActivityStore((s) => selectSessionActivitySnapshot(s, workspace?.id, sessionKey));
   const subagents = snapshot?.subagents;
   const parentGeneration = snapshot?.session.sessionId;
-  const collaborationScope = workspace?.id && parentGeneration ? parseSessionActivityReadQuery({ scope: {
-    workspaceId: workspace.id, projectId: workspace.id, sessionKey, sessionGeneration: parentGeneration,
-  } }).scope : undefined;
+  const collaborationWorkspaceId = workspace?.id;
+  const collaborationScope = useMemo(() => collaborationWorkspaceId && parentGeneration ? parseSessionActivityReadQuery({ scope: {
+    workspaceId: collaborationWorkspaceId, projectId: collaborationWorkspaceId, sessionKey, sessionGeneration: parentGeneration,
+  } }).scope : undefined, [collaborationWorkspaceId, sessionKey, parentGeneration]);
+  const collaborationWorkspace = useMemo(() => collaborationScope ? {
+    workspaceId: collaborationScope.workspaceId, projectId: collaborationScope.projectId,
+  } : undefined, [collaborationScope]);
+  const [collaborationOpen, setCollaborationOpen] = useState(false);
   const scopeKey = JSON.stringify([workspace?.id, sessionKey, parentGeneration]);
   const viewScope = useMemo(() => ({ key: scopeKey }), [scopeKey]);
   const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
@@ -257,10 +262,11 @@ export function WorkspaceAgentsPanel() {
 
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-agents-panel">
-      <details className="mb-3 shrink-0 rounded-md border border-border p-2">
+      <details className="mb-3 shrink-0 rounded-md border border-border p-2" onToggle={event => setCollaborationOpen(event.currentTarget.open)}>
         <summary className="cursor-pointer text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('agents:collaboration.title')}</summary>
-        <div className="max-h-[28rem] overflow-y-auto pt-2"><SessionCollaborationPanel requester={collaborationScope}
-          workspace={collaborationScope ? { workspaceId: collaborationScope.workspaceId, projectId: collaborationScope.projectId } : undefined} /></div>
+        {collaborationOpen && <div className="max-h-[28rem] overflow-y-auto pt-2">
+          <SessionCollaborationPanel requester={collaborationScope} workspace={collaborationWorkspace} />
+        </div>}
       </details>
       <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={sessionKey} generation={parentGeneration}
         receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selected?.key)}

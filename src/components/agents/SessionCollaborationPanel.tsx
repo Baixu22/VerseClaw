@@ -26,22 +26,24 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
   const [observed, setObserved] = useState<{ key: string; page: SessionCollaborationPage; stale: boolean } | null>(null);
   const [selectedRow, setSelectedRow] = useState<{ key: string; row: SessionCollaborationRow } | null>(null);
   const [detail, setDetail] = useState<{ key: string; snapshot: SessionActivitySnapshot } | null>(null);
+  const [detailState, setDetailState] = useState<{ key: string; state: SessionCollaborationPage['state'] } | null>(null);
   const [loading, setLoading] = useState(false), [readState, setReadState] = useState('not_read');
   const revision = useRef(0);
   const query = useMemo(() => requester ? parseSessionCollaborationQuery({ requester, ...(workspace ? { workspace } : {}),
     ...(view.search ? { search: view.search } : {}), ...(cursor ? { cursor } : {}) }) : null, [requester, workspace, view.search, cursor]);
   const queryKey = JSON.stringify(query);
   const selectedKey = view.selected ? collaborationScopeKey(view.selected) : null;
+  const detailKey = `${viewKey}:${selectedKey}`;
   const current = useRef({ viewKey, selectedKey }); current.current = { viewKey, selectedKey };
   const page = observed?.key === queryKey ? observed.page : null;
-  const row = selectedRow?.key === `${viewKey}:${selectedKey}` ? selectedRow.row : null;
-  const snapshot = detail?.key === `${viewKey}:${selectedKey}` ? detail.snapshot : null;
+  const row = selectedRow?.key === detailKey ? selectedRow.row : null;
+  const snapshot = detail?.key === detailKey ? detail.snapshot : null;
 
   const refresh = useCallback(async () => {
     if (!query) return;
     const token = ++revision.current;
     setLoading(true);
-    const value = await readSessionCollaborationPage(query);
+    const value = await readSessionCollaborationPage(query, hostApi.sessionActivity.query);
     if (token !== revision.current || current.current.viewKey !== viewKey) return;
     setLoading(false); setReadState(value.state);
     setObserved(previous => value.state === 'ready' || value.state === 'empty'
@@ -60,28 +62,51 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
 
   useEffect(() => {
     if (!requester || !view.selected) return;
-    const scope = view.selected, key = `${viewKey}:${collaborationScopeKey(scope)}`;
+    const scope = view.selected;
     let active = true;
+    let detailRevision = 0;
     const target = parseSessionCollaborationQuery({ requester, target: scope, limit: 1 });
-    void readSessionCollaborationPage(target).then(value => { if (active && current.current.viewKey === viewKey && value.items[0]) setSelectedRow({ key, row: value.items[0] }); });
-    void hostApi.sessionActivity.read({ scope }).then(value => { if (active && current.current.viewKey === viewKey && value.success && value.snapshot) setDetail({ key, snapshot: value.snapshot }); }).catch(() => {});
+    const isCurrent = () => active && current.current.viewKey === viewKey && current.current.selectedKey === selectedKey;
+    const observe = (value: SessionCollaborationPage) => {
+      if (!isCurrent()) return false;
+      setDetailState({ key: detailKey, state: value.state });
+      const observedRow = value.items[0];
+      if (value.state === 'ready' && observedRow) {
+        setSelectedRow({ key: detailKey, row: observedRow });
+        return true;
+      }
+      if (value.state === 'empty' || value.state === 'stale' || value.reason === 'not-visible'
+        || value.reason === 'scope-mismatch' || value.reason === 'owner-missing') {
+        detailRevision++;
+        setSelectedRow(null);
+        setDetail(null);
+      }
+      return false;
+    };
+    void readSessionCollaborationPage(target, hostApi.sessionActivity.query).then(async value => {
+      if (!observe(value)) return;
+      const revision = detailRevision;
+      const result = await hostApi.sessionActivity.read({ scope });
+      if (isCurrent() && revision === detailRevision && result.success && result.snapshot)
+        setDetail({ key: detailKey, snapshot: result.snapshot });
+    }).catch(() => {});
     const unsubscribe = subscribeSessionCollaboration({ id: crypto.randomUUID(), query: target, condition: 'changed' }, value => {
-      if (!active || current.current.viewKey !== viewKey || current.current.selectedKey !== collaborationScopeKey(scope)) return;
-      if (value.page.items[0]) setSelectedRow({ key, row: value.page.items[0] });
-      if (['unavailable', 'unknown', 'stale'].includes(value.state)) setReadState(value.state);
+      observe(value.page);
     });
     return () => { active = false; unsubscribe(); };
-  }, [requester, view.selected, viewKey, selectedKey]);
+  }, [requester, view.selected, viewKey, selectedKey, detailKey]);
 
   const openSession = async (worker = false) => {
     if (!requester || !row?.detail) return;
-    const fresh = await readSessionCollaborationPage(parseSessionCollaborationQuery({ requester, target: row.detail.scope, limit: 1 }));
+    const isCurrent = () => current.current.viewKey === viewKey && current.current.selectedKey === selectedKey;
+    const fresh = await readSessionCollaborationPage(parseSessionCollaborationQuery({ requester, target: row.detail.scope, limit: 1 }), hostApi.sessionActivity.query);
+    if (!isCurrent()) return;
     if (fresh.state !== 'ready') { setReadState(fresh.state); return; }
     const origin = fresh.items[0].sources.origin.state === 'ready' ? fresh.items[0].sources.origin.value : null;
     const key = worker ? origin?.spawnedBy ?? origin?.parentSessionKey : row.sessionKey;
     if (!key) return;
     try {
-      if (!await activateWorkspaceScopedSession(row.detail.scope.workspaceId, key)) return;
+      if (!await activateWorkspaceScopedSession(row.detail.scope.workspaceId, key, isCurrent) || !isCurrent()) return;
       navigate('/chat');
       if (worker) openWorkspacePanel({ panel: 'subagent', sessionKey: row.sessionKey });
     } catch { setReadState('unavailable'); }
@@ -108,7 +133,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
           const scope = item.detail?.scope, active = scope && selectedKey === collaborationScopeKey(scope);
           return <button key={scope ? collaborationScopeKey(scope) : item.sessionKey} type="button" className={`block w-full space-y-1 p-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring ${active ? 'bg-black/5 dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}
             disabled={!scope} aria-pressed={Boolean(active)} data-session-key={item.sessionKey} data-testid={`collaboration-row-${encodeURIComponent(item.sessionKey)}`}
-            onClick={() => { if (scope) { updateView(viewKey, { selected: scope }); setSelectedRow({ key: `${viewKey}:${collaborationScopeKey(scope)}`, row: item }); } }}>
+            onClick={() => { if (scope) { updateView(viewKey, { selected: scope }); setSelectedRow({ key: `${viewKey}:${collaborationScopeKey(scope)}`, row: item }); setDetailState(null); } }}>
             <span className="flex flex-wrap items-center justify-between gap-2"><span className="break-words text-sm font-medium">{item.label}</span><span className="text-xs text-muted-foreground">{t(`collaboration.status.${item.status}`)}</span></span>
             <span className="block break-words text-sm">{item.sources.goal.state === 'ready' ? item.sources.goal.value?.text : sourceText(item.sources.goal.state)}</span>
             <span className="block break-words text-xs text-muted-foreground">{item.sources.actions.state === 'ready' ? item.sources.actions.value.map(action => action.label).join(' · ') : sourceText(item.sources.actions.state)}</span>
@@ -119,7 +144,9 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
       {page?.unknownMatches ? <p className="text-xs text-muted-foreground">{t('collaboration.unknownMatches', { count: page.unknownMatches })}</p> : null}
       {page?.nextCursor && <Button type="button" variant="outline" onClick={() => setCursor(page.nextCursor!)} disabled={loading} data-testid="collaboration-more">{t('collaboration.more')}</Button>}
       {view.selected && <div className="space-y-3 border-t border-border pt-3" data-testid="collaboration-detail">
-        <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="break-words text-sm font-medium">{row?.label ?? t('collaboration.loading')}</h3>
+        <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="break-words text-sm font-medium">
+          {row?.label ?? (detailState?.key === detailKey ? t(`collaboration.page.${detailState.state}`, { count: 0 }) : t('collaboration.loading'))}
+        </h3>
           <Button type="button" variant="ghost" onClick={() => updateView(viewKey, { selected: null })}>{t('collaboration.close')}</Button></div>
         {row && <>
           <div className="flex flex-wrap gap-2">
