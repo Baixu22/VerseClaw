@@ -45,14 +45,16 @@ import type {
   ObservabilityTraceStatus,
 } from '@shared/types/observability';
 import { cn } from '@/lib/utils';
-import { roleTone, toneClasses } from '@/lib/role-visuals';
+import { TraceSteps } from './TraceSteps';
+import { formatTraceTime } from './trace-time';
+import './observability.css';
 import { AgentTraceGraph } from './AgentTraceGraph';
-import { TraceNodeDrawer } from './TraceNodeDrawer';
+import { TraceDetailTabs, TraceNodeDrawer } from './TraceNodeDrawer';
 import { TraceWaterfall } from './TraceWaterfall';
 import type { ObservabilityTraceIndexEntry, ObservabilityTraceIssue } from '@shared/types/observability';
 
 type TraceRow = ObservabilityTraceIndexEntry | NonNullable<ReturnType<typeof useObservabilityStore.getState>['snapshot']>['traces'][number];
-type ViewMode = 'graph' | 'tree' | 'swimlane';
+type ViewMode = 'steps' | 'graph' | 'tree' | 'swimlane';
 type SavedViewKey = 'all' | 'recentErrors' | 'artifactRuns' | 'approvalRuns' | 'retryWarnings' | 'custom';
 
 type TraceFilterState = {
@@ -104,15 +106,6 @@ function formatDuration(ms: number): string {
   return `${(ms / 1000).toFixed(1)}s`;
 }
 
-function formatTime(ts?: number): string {
-  if (!ts) return '-';
-  return new Intl.DateTimeFormat(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  }).format(new Date(ts));
-}
-
 function statusIcon(status: ObservabilityTraceStatus) {
   switch (status) {
     case 'completed':
@@ -150,35 +143,10 @@ function metricIcon(id: string) {
   return <Activity className="h-3.5 w-3.5" />;
 }
 
-function roleBadge(role?: string) {
-  if (!role) return null;
-  const tone = toneClasses(roleTone(role));
-  return (
-    <Badge variant="secondary" className={cn('rounded-full border text-2xs', tone.tint)}>
-      {role}
-    </Badge>
-  );
-}
-
 function issueToneClass(issue: ObservabilityTraceIssue): string {
   if (issue.severity === 'critical' || issue.severity === 'error') return 'border-red-500/30 bg-red-500/5 text-red-700 dark:text-red-400';
   if (issue.severity === 'warning') return 'border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400';
   return 'border-blue-500/30 bg-blue-500/5 text-blue-700 dark:text-blue-400';
-}
-
-function sourceStatusClass(status?: string): string {
-  switch (status) {
-    case 'live':
-      return 'border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400';
-    case 'stale':
-      return 'border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400';
-    case 'partial':
-      return 'border-blue-500/30 bg-blue-500/5 text-blue-700 dark:text-blue-400';
-    case 'rehydrated':
-      return 'border-violet-500/30 bg-violet-500/5 text-violet-700 dark:text-violet-400';
-    default:
-      return 'border-black/10 text-muted-foreground dark:border-white/10';
-  }
 }
 
 function sourceHealthClass(status: ObservabilitySourceHealthEntry['status']): string {
@@ -204,17 +172,14 @@ function SourceHealthPanel({ sourceHealth }: { sourceHealth?: ObservabilityDashb
 
   return (
     <section
-      className="flex h-full min-h-[520px] flex-col justify-center border border-dashed border-black/10 bg-black/[0.015] p-6 dark:border-white/10 dark:bg-white/[0.02]"
+      className="flex min-h-56 flex-col justify-center px-5 py-8"
       data-testid="observability-source-health"
     >
       <div className="mx-auto w-full max-w-xl">
-        <div className="flex items-start gap-3">
-          <Activity className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
-          <div>
-            <h3 className="text-sm font-medium">{t('sourceHealth.title')}</h3>
-            <p className="mt-1 text-xs text-muted-foreground">{t('sourceHealth.subtitle')}</p>
-          </div>
-        </div>
+        <Activity className="mb-3 size-5 text-muted-foreground" aria-hidden="true" />
+        <h2 className="font-serif text-lg font-normal tracking-tight">{t('noTraces')}</h2>
+        <details className="mt-4 text-xs text-muted-foreground">
+          <summary className="w-fit cursor-pointer rounded py-1">{t('sourceHealth.title')}</summary>
         <div className="mt-5 divide-y divide-black/10 border-y border-black/10 dark:divide-white/10 dark:border-white/10">
           {sources.map(({ id, health }) => (
             <div key={id} className="py-3" data-testid={`observability-source-health-${id}`}>
@@ -234,14 +199,10 @@ function SourceHealthPanel({ sourceHealth }: { sourceHealth?: ObservabilityDashb
             </div>
           ))}
         </div>
+        </details>
       </div>
     </section>
   );
-}
-
-function nodeDetailValue(value?: string | number | null): string {
-  if (value == null || value === '') return '-';
-  return String(value);
 }
 
 export function ObservabilityDashboard() {
@@ -257,14 +218,17 @@ export function ObservabilityDashboard() {
     selectTrace,
     selectedTraceId,
     selectedTrace,
-    selectedGraph,
-    selectedNodeDiagnostics,
+    selectedGraph: loadedGraph,
+    selectedNodeDiagnostics: loadedDiagnostics,
     traceLoading,
     diagnosticsLoading,
     loadNodeDiagnostics,
     subscribeRealtime,
   } = useObservabilityStore();
   const [searchParams, setSearchParams] = useSearchParams();
+  const linkedTraceId = searchParams.get('traceId');
+  const selectedGraph = loadedGraph?.trace.id === selectedTraceId && (!linkedTraceId || linkedTraceId === selectedTraceId) ? loadedGraph : null;
+  const [showRunList, setShowRunList] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [timeFilter, setTimeFilter] = useState<string>('all');
   const [toolFilter, setToolFilter] = useState<string>('all');
@@ -280,21 +244,13 @@ export function ObservabilityDashboard() {
         ? Date.now() - 24 * 60 * 60 * 1000
         : 0,
   );
-  const [viewMode, setViewMode] = useState<ViewMode>('graph');
+  const [viewMode, setViewMode] = useState<ViewMode>('steps');
   const [metricsExpanded, setMetricsExpanded] = useState(false);
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
   const [savedView, setSavedView] = useState<SavedViewKey>('all');
   const [customSavedView, setCustomSavedView] = useState<TraceFilterState | null>(() => loadJson<TraceFilterState | null>(TRACE_SAVED_VIEW_KEY, null));
   const [compareTraceId, setCompareTraceId] = useState<string>('none');
   const [annotations, setAnnotations] = useState<Record<string, TraceAnnotation>>(() => loadJson<Record<string, TraceAnnotation>>(TRACE_ANNOTATIONS_KEY, {}));
-  // The selected node is derived from three sources (in priority order):
-  //   1. URL search param `nodeId` (deep-link / share-link entry point)
-  //   2. A node the user explicitly picked in this session (userNodeId)
-  //   3. Auto-selected first critical/error node from the graph (unless cleared)
-  // Deriving during render avoids the cascading setState-in-effect pattern
-  // (see https://react.dev/learn/you-might-not-need-an-effect).
-  const [userNodeId, setUserNodeId] = useState<string | null>(null);
-  const [isCleared, setIsCleared] = useState(false);
   const { t } = useTranslation('observability');
 
   useEffect(() => {
@@ -351,31 +307,14 @@ export function ObservabilityDashboard() {
     }
   }, [searchParams, selectTrace, selectedTraceId]);
 
-  // Derive the effective selected node id from URL, user pick, and graph
-  // fallback (see comment on the state declarations above).
-  const autoNodeId = useMemo(() => {
-    if (!selectedGraph || isCleared) return null;
-    return selectedGraph.graph.summary?.issues?.find((issue) => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))?.nodeId
-      ?? selectedGraph.graph.summary?.errorNodeIds[0]
-      ?? selectedGraph.graph.nodes[0]?.id
-      ?? null;
-  }, [selectedGraph, isCleared]);
-
-  const requestedNodeId = useMemo(() => {
-    const requested = searchParams.get('nodeId');
-    if (requested && selectedGraph?.graph.nodes.some((node) => node.id === requested)) {
-      return requested;
-    }
-    return null;
-  }, [searchParams, selectedGraph]);
-
-  const selectedNodeId = useMemo(() => {
-    if (requestedNodeId) return requestedNodeId;
-    if (userNodeId && selectedGraph?.graph.nodes.some((node) => node.id === userNodeId)) {
-      return userNodeId;
-    }
-    return autoNodeId;
-  }, [requestedNodeId, userNodeId, autoNodeId, selectedGraph]);
+  const requestedNodeId = searchParams.get('nodeId') ?? (searchParams.get('focus') === 'error'
+    ? selectedGraph?.graph.summary?.issues?.find(issue => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))?.nodeId
+      ?? selectedGraph?.graph.summary?.errorNodeIds[0]
+      ?? selectedGraph?.graph.nodes.find(node => node.status === 'error' || node.status === 'aborted')?.id
+    : null);
+  const selectedNode = selectedGraph?.graph.nodes.find(node => node.id === requestedNodeId) ?? null;
+  const selectedNodeId = selectedNode?.id ?? null;
+  const selectedNodeDiagnostics = loadedDiagnostics?.traceId === selectedTraceId && loadedDiagnostics?.nodeId === selectedNodeId ? loadedDiagnostics : null;
 
   useEffect(() => {
     if (!selectedTraceId || !selectedNodeId) return;
@@ -405,10 +344,11 @@ export function ObservabilityDashboard() {
     });
   }, [query, queryResult?.items, snapshot?.traces, statusFilter, timeCutoff, toolFilter]);
 
-  const selectedNode = useMemo<ObservabilityGraphNode | null>(() => {
-    if (!selectedGraph || !selectedNodeId) return null;
-    return selectedGraph.graph.nodes.find((node) => node.id === selectedNodeId) ?? null;
-  }, [selectedGraph, selectedNodeId]);
+  useEffect(() => {
+    if (!linkedTraceId && filteredTraces[0]) {
+      setSearchParams({ traceId: filteredTraces[0].id }, { replace: true });
+    }
+  }, [filteredTraces, linkedTraceId, setSearchParams]);
 
   const allTraceRows = useMemo(() => queryResult?.items ?? snapshot?.traces ?? [], [queryResult?.items, snapshot?.traces]);
   const selectedTraceRow = useMemo(() => allTraceRows.find((trace) => trace.id === selectedTraceId) ?? null, [allTraceRows, selectedTraceId]);
@@ -481,22 +421,16 @@ export function ObservabilityDashboard() {
     }));
   };
 
-  const openTrace = (trace: TraceRow, nodeId?: string) => {
-    setIsCleared(false);
-    setUserNodeId(nodeId ?? null);
-    setSearchParams(nodeId ? { traceId: trace.id, nodeId } : { traceId: trace.id });
-    void selectTrace(trace.id);
+  const openTrace = (trace: TraceRow, errorPath = false) => {
+    setShowRunList(false);
+    setSearchParams(errorPath ? { traceId: trace.id, focus: 'error' } : { traceId: trace.id });
   };
 
   const selectGraphNode = (nodeId: string) => {
-    setIsCleared(false);
-    setUserNodeId(nodeId);
     if (selectedTraceId) setSearchParams({ traceId: selectedTraceId, nodeId });
   };
 
   const clearNodeSelection = () => {
-    setIsCleared(true);
-    setUserNodeId(null);
     if (selectedTraceId) setSearchParams({ traceId: selectedTraceId });
   };
 
@@ -524,16 +458,19 @@ export function ObservabilityDashboard() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 bg-background" data-testid="observability-page">
+    <div className="observability-page flex h-full min-h-0 flex-col gap-3 bg-background" data-testid="observability-page">
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border pb-3">
-        <div>
-          <h1 className="font-serif text-xl font-normal tracking-tight">{t('title')}</h1>
-          <p className="mt-0.5 max-w-2xl text-xs text-muted-foreground">{t('subtitle')}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => fetchDashboard()} disabled={loading} className="h-9 rounded-md px-4">
-            <RefreshCw className={cn('mr-2 h-4 w-4', loading && 'animate-spin')} />
-            {t('refresh')}
+        <h1 className="font-serif text-xl font-normal tracking-tight">{t('title')}</h1>
+        <div className="flex shrink-0 items-center gap-1">
+          {Boolean(snapshot?.cards.length || snapshot?.alerts.length) && <Button variant="ghost" size="sm" aria-expanded={metricsExpanded}
+            onClick={() => setMetricsExpanded(!metricsExpanded)} data-testid="observability-metrics-toggle">
+            <BarChart3 className="size-4" aria-hidden="true" />{t('steps.metrics')}
+            {Boolean(snapshot?.alerts.length) && <span className="inline-flex items-center gap-0.5 text-amber-700 dark:text-amber-400" title={t('alerts')}>
+              <AlertTriangle className="size-3" aria-hidden="true" /><span className="sr-only">{t('alerts')}</span>{snapshot?.alerts.length}
+            </span>}
+          </Button>}
+          <Button variant="outline" aria-label={t('refresh')} title={t('refresh')} onClick={() => fetchDashboard()} disabled={loading} className="size-9 rounded-md p-0">
+            <RefreshCw className={cn('h-4 w-4', loading && 'motion-safe:animate-spin')} />
           </Button>
           {(snapshot?.traces.length ?? 0) > 0 && (
             <Button variant="ghost" onClick={handleClear} className="h-9 rounded-md px-3 text-muted-foreground hover:text-destructive" title={t('clear')}>
@@ -543,7 +480,7 @@ export function ObservabilityDashboard() {
         </div>
       </div>
 
-      {snapshot && (
+      {metricsExpanded && snapshot && snapshot.cards.length > 0 && (
         <div className="shrink-0 overflow-hidden rounded-lg border border-border bg-surface-modal">
         <div className="flex shrink-0 overflow-x-auto divide-x divide-border" data-testid="observability-primary-metrics">
           {primaryMetrics.map((card) => (
@@ -565,13 +502,8 @@ export function ObservabilityDashboard() {
               )}
             </div>
           ))}
-          {secondaryMetrics.length > 0 && (
-            <Button type="button" variant="ghost" size="icon" className="m-1 h-8 w-8 shrink-0" onClick={() => setMetricsExpanded((value) => !value)} data-testid="observability-metrics-toggle" title={t('graph.expand')}>
-              <ChevronDown className={cn('h-4 w-4 transition-transform motion-reduce:transition-none', metricsExpanded && 'rotate-180')} />
-            </Button>
-          )}
         </div>
-        {metricsExpanded && secondaryMetrics.length > 0 && (
+        {secondaryMetrics.length > 0 && (
           <div className="flex overflow-x-auto border-t border-border bg-black/[0.015] divide-x divide-border dark:bg-white/[0.02]" data-testid="observability-secondary-metrics">
             {secondaryMetrics.map((card) => (
               <div key={card.id} className="flex min-w-[130px] flex-1 items-center gap-2 px-3 py-2 text-xs">
@@ -585,7 +517,7 @@ export function ObservabilityDashboard() {
         </div>
       )}
 
-      {snapshot?.alerts.length ? (
+      {metricsExpanded && snapshot?.alerts.length ? (
         <div className="flex items-center gap-3 rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2">
           <div className="flex shrink-0 items-center gap-2 text-xs font-medium text-amber-700 dark:text-amber-400">
             <AlertTriangle className="h-4 w-4" />
@@ -600,80 +532,85 @@ export function ObservabilityDashboard() {
         </div>
       ) : null}
 
-      <div className="grid min-h-[620px] flex-1 grid-cols-1 overflow-hidden rounded-lg border border-border lg:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="flex min-h-0 flex-col border-b border-border bg-surface-modal xl:border-b-0 xl:border-r" data-testid="observability-trace-list">
+      <div className="observability-workbench min-h-0 flex-1 overflow-hidden rounded-lg border border-border"
+        data-list-visible={showRunList || (!selectedTraceId && !linkedTraceId && !hasNoTraceData)}>
+        <aside className="observability-list flex min-h-0 min-w-0 flex-col overflow-y-auto border-r border-border bg-surface-modal" data-testid="observability-trace-list">
           <div className="border-b border-black/10 dark:border-white/10 p-3">
             <div className="flex items-center gap-2 text-sm font-medium">
               <GitBranch className="h-4 w-4 text-muted-foreground" />
               {t('traces')}
+              {(selectedTraceId || hasNoTraceData) && <button type="button" className="observability-choose-run ml-auto rounded px-2 py-1 text-xs" onClick={() => setShowRunList(false)}>{t('steps.back')}</button>}
             </div>
-            <div className="mt-3 flex items-center gap-2 rounded-md border bg-surface-input px-2">
-              <Search className="h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={t('filters.search')}
-                className="h-8 border-0 bg-transparent px-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
-            </div>
-            <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-              <Select value={savedView} onValueChange={(value) => applySavedView(value as SavedViewKey)}>
-                <SelectTrigger size="sm" data-testid="observability-saved-view">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('savedViews.all')}</SelectItem>
-                  <SelectItem value="recentErrors">{t('savedViews.recentErrors')}</SelectItem>
-                  <SelectItem value="artifactRuns">{t('savedViews.artifactRuns')}</SelectItem>
-                  <SelectItem value="approvalRuns">{t('savedViews.approvalRuns')}</SelectItem>
-                  <SelectItem value="retryWarnings">{t('savedViews.retryWarnings')}</SelectItem>
-                  <SelectItem value="custom" disabled={!customSavedView}>{t('savedViews.custom')}</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button type="button" variant="outline" className="h-8 rounded-md px-2" onClick={saveCurrentView} title={t('savedViews.saveCurrent')}>
-                <Save className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('filters.allStatus')}</SelectItem>
-                  <SelectItem value="running">{t('status.running')}</SelectItem>
-                  <SelectItem value="completed">{t('status.completed')}</SelectItem>
-                  <SelectItem value="error">{t('status.error')}</SelectItem>
-                  <SelectItem value="aborted">{t('status.aborted')}</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={timeFilter} onValueChange={setTimeFilter}>
-                <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('filters.allTime')}</SelectItem>
-                  <SelectItem value="hour">{t('filters.lastHour')}</SelectItem>
-                  <SelectItem value="day">{t('filters.lastDay')}</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button type="button" variant={toolFilter !== 'all' ? 'secondary' : 'outline'} className="h-8 justify-between px-2 text-xs" onClick={() => setAdvancedFiltersOpen((value) => !value)} data-testid="observability-advanced-filter-toggle">
-                <span className="flex items-center gap-1.5"><Gauge className="h-3.5 w-3.5" />{t('graph.expand')}</span>
-                {toolFilter !== 'all' && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
-              </Button>
-            </div>
-            {advancedFiltersOpen && (
-              <div className="mt-2 rounded-md border border-border bg-background p-2" data-testid="observability-advanced-filters">
-              <Select value={toolFilter} onValueChange={setToolFilter}>
-                <SelectTrigger size="sm"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('filters.allRuns')}</SelectItem>
-                  <SelectItem value="with-tools">{t('filters.withTools')}</SelectItem>
-                  <SelectItem value="errors">{t('filters.withErrors')}</SelectItem>
-                  <SelectItem value="artifacts">{t('filters.withArtifacts')}</SelectItem>
-                  <SelectItem value="approvals">{t('filters.withApprovals')}</SelectItem>
-                  <SelectItem value="retries">{t('filters.withRetries')}</SelectItem>
-                  <SelectItem value="warnings">{t('filters.withWarnings')}</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="mt-2 flex items-center gap-2">
+              <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md border bg-surface-input px-2">
+                <Search className="h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  aria-label={t('filters.search')} placeholder={t('filters.search')}
+                  className="h-8 border-0 bg-transparent px-0 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
               </div>
-            )}
+              <Button type="button" variant="ghost" size="sm" className="shrink-0 px-2" aria-expanded={advancedFiltersOpen}
+                onClick={() => setAdvancedFiltersOpen(!advancedFiltersOpen)} data-testid="observability-advanced-filter-toggle">
+                <Gauge className="size-3.5" aria-hidden="true" />{t('steps.filters')}
+                {(statusFilter !== 'all' || timeFilter !== 'all' || toolFilter !== 'all') && <span aria-label={t('steps.filtered')} className="size-1.5 rounded-full bg-foreground" />}
+              </Button>
+            </div>
+            {advancedFiltersOpen && <div data-testid="observability-advanced-filters">
+              <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                <Select value={savedView} onValueChange={(value) => applySavedView(value as SavedViewKey)}>
+                  <SelectTrigger aria-label={t('views.label')} size="sm" data-testid="observability-saved-view">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('savedViews.all')}</SelectItem>
+                    <SelectItem value="recentErrors">{t('savedViews.recentErrors')}</SelectItem>
+                    <SelectItem value="artifactRuns">{t('savedViews.artifactRuns')}</SelectItem>
+                    <SelectItem value="approvalRuns">{t('savedViews.approvalRuns')}</SelectItem>
+                    <SelectItem value="retryWarnings">{t('savedViews.retryWarnings')}</SelectItem>
+                    <SelectItem value="custom" disabled={!customSavedView}>{t('savedViews.custom')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button type="button" variant="outline" className="h-8 rounded-md px-2" onClick={saveCurrentView} title={t('savedViews.saveCurrent')}>
+                  <Save className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger aria-label={t('filters.allStatus')} size="sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('filters.allStatus')}</SelectItem>
+                    <SelectItem value="running">{t('status.running')}</SelectItem>
+                    <SelectItem value="completed">{t('status.completed')}</SelectItem>
+                    <SelectItem value="error">{t('status.error')}</SelectItem>
+                    <SelectItem value="aborted">{t('status.aborted')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={timeFilter} onValueChange={setTimeFilter}>
+                  <SelectTrigger aria-label={t('filters.allTime')} size="sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('filters.allTime')}</SelectItem>
+                    <SelectItem value="hour">{t('filters.lastHour')}</SelectItem>
+                    <SelectItem value="day">{t('filters.lastDay')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="mt-2">
+                <Select value={toolFilter} onValueChange={setToolFilter}>
+                  <SelectTrigger aria-label={t('filters.allRuns')} size="sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('filters.allRuns')}</SelectItem>
+                    <SelectItem value="with-tools">{t('filters.withTools')}</SelectItem>
+                    <SelectItem value="errors">{t('filters.withErrors')}</SelectItem>
+                    <SelectItem value="artifacts">{t('filters.withArtifacts')}</SelectItem>
+                    <SelectItem value="approvals">{t('filters.withApprovals')}</SelectItem>
+                    <SelectItem value="retries">{t('filters.withRetries')}</SelectItem>
+                    <SelectItem value="warnings">{t('filters.withWarnings')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>}
           </div>
 
           <div className="min-h-0 flex-1 overflow-auto p-2">
@@ -681,89 +618,29 @@ export function ObservabilityDashboard() {
               <p className="p-4 text-center text-xs text-muted-foreground">{t('noTraces')}</p>
             ) : (
               filteredTraces.map((trace) => (
-                <div
-                  key={trace.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => openTrace(trace)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') openTrace(trace);
-                  }}
-                  className={cn(
-                    'mb-2 cursor-pointer rounded-md border p-3 text-left transition hover:bg-black/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 dark:hover:bg-white/[0.04]',
-                    selectedTraceId === trace.id ? 'border-primary/40 bg-black/[0.03] dark:bg-white/[0.05]' : 'border-black/10 dark:border-white/10',
-                  )}
-                  data-testid="observability-trace-row"
-                >
-                  <div className="w-full text-left">
-                    <div className="flex items-start gap-2">
+                <div key={trace.id} className="border-b border-border/60 last:border-0">
+                  <button type="button" onClick={() => openTrace(trace)} aria-pressed={selectedTraceId === trace.id}
+                    className={cn('block w-full min-w-0 rounded-md px-3 py-2.5 text-left hover:bg-black/5 dark:hover:bg-white/10',
+                      selectedTraceId === trace.id && 'bg-black/5 dark:bg-white/10')} data-testid="observability-trace-row">
+                    <span className="flex items-center gap-2">
                       {statusIcon(trace.status)}
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-xs font-medium">{trace.name}</div>
-                        <div className="mt-1 flex flex-wrap items-center gap-1 text-2xs text-muted-foreground">
-                          <span>{formatTime(trace.startedAt)}</span>
-                          <span>{formatDuration(trace.durationMs)}</span>
-                          <span>{trace.spanCount} {t('spanUnit')}</span>
-                          <span>{trace.tokenCount} {t('details.tokens')}</span>
-                          {trace.costUsd > 0 && <span>${trace.costUsd.toFixed(4)}</span>}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-2 flex flex-wrap items-center gap-1">
-                    <Badge variant="outline" className="rounded-full text-2xs">{t(`status.${trace.status}`)}</Badge>
-                    {roleBadge(trace.leadRole)}
-                    {(trace.toolCallCount ?? 0) > 0 && <Badge variant="secondary" className="rounded-full text-2xs">{trace.toolCallCount} {t('filters.toolsShort')}</Badge>}
-                    {(trace.artifactCount ?? 0) > 0 && <Badge variant="outline" className="rounded-full text-2xs">{trace.artifactCount} {t('filters.artifactsShort')}</Badge>}
-                    {(trace.approvalCount ?? 0) > 0 && <Badge variant="outline" className="rounded-full text-2xs">{trace.approvalCount} {t('filters.approvalsShort')}</Badge>}
-                    {(trace.retryCount ?? 0) > 0 && <Badge variant="outline" className="rounded-full border-amber-500/30 text-2xs text-amber-700 dark:text-amber-400">{trace.retryCount} {t('filters.retriesShort')}</Badge>}
-                    {(trace.warningCount ?? 0) > 0 && <Badge variant="outline" className="rounded-full border-amber-500/30 text-2xs text-amber-700 dark:text-amber-400">{trace.warningCount} {t('filters.warningsShort')}</Badge>}
-                    {annotations[trace.id] && (
-                      <Badge variant="outline" className="rounded-full border-blue-500/30 text-2xs text-blue-700 dark:text-blue-400">
-                        <MessageSquareText className="mr-1 h-3 w-3" />
-                        {t(`annotations.status.${annotations[trace.id].status}`)}
-                      </Badge>
-                    )}
-                    {trace.sourceStatus && (
-                      <Badge variant="outline" className={cn('rounded-full text-2xs', sourceStatusClass(trace.sourceStatus))}>
-                        {t(`sourceStatus.${trace.sourceStatus}`)}
-                      </Badge>
-                    )}
-                  </div>
-                  {(trace.issues?.length ?? 0) > 0 && (
-                    <div className="mt-2 flex flex-wrap items-center gap-1">
-                      {trace.issues?.slice(0, 2).map((issue) => (
-                        <Badge key={issue.id} variant="outline" className={cn('rounded-full text-2xs', issueToneClass(issue))}>
-                          {t(`issues.categories.${issue.category}`)}
-                        </Badge>
-                      ))}
-                      {(trace.issueCount ?? trace.issues?.length ?? 0) > 2 && (
-                        <Badge variant="outline" className="rounded-full text-2xs">+{(trace.issueCount ?? trace.issues?.length ?? 0) - 2}</Badge>
-                      )}
-                    </div>
-                  )}
-                  {trace.errorCount > 0 || trace.status === 'error' || trace.status === 'aborted' ? (
-                    <button
-                      type="button"
-                      className="mt-2 flex items-center gap-1 text-2xs font-medium text-red-700 hover:underline dark:text-red-400"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        openTrace(trace, trace.issues?.find((issue) => issue.nodeId && (issue.severity === 'critical' || issue.severity === 'error'))?.nodeId);
-                      }}
-                    >
-                      <XCircle className="h-3 w-3" />
-                      {trace.firstError ?? t('filters.openErrorPath')}
-                    </button>
-                  ) : trace.slowestNodeLabel ? (
-                    <div className="mt-2 truncate text-2xs text-muted-foreground">
-                      {t('filters.slowest')}: {trace.slowestNodeLabel}
-                    </div>
-                  ) : null}
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium" title={trace.name}>{trace.name}</span>
+                    </span>
+                    <span className="mt-1 flex flex-wrap items-center gap-x-2 pl-[22px] text-xs text-muted-foreground">
+                      <span>{t(`status.${trace.status}`)}</span>
+                      {trace.startedAt != null && <span>{formatTraceTime(trace.startedAt)}</span>}
+                      {(trace.toolCallCount ?? 0) > 0 && <span>{trace.toolCallCount} {t('filters.toolsShort')}</span>}
+                      {annotations[trace.id] && <span>{t(`annotations.status.${annotations[trace.id].status}`)}</span>}
+                    </span>
+                  </button>
+                  {(trace.errorCount > 0 || trace.status === 'error' || trace.status === 'aborted') &&
+                    <button type="button" className="mb-2 ml-3 block max-w-[90%] truncate rounded px-1 text-left text-xs text-red-700 hover:underline dark:text-red-400"
+                      onClick={() => openTrace(trace, true)}>{trace.firstError || t('filters.openErrorPath')}</button>}
                 </div>
               ))
             )}
           </div>
-          {selectedGraph && selectedGraph.graph.nodes.length > 3 && (
+          {viewMode !== 'steps' && selectedGraph && selectedGraph.graph.nodes.length > 3 && (
             <QuickLocatePanel
               graph={selectedGraph.graph}
               selectedNodeId={selectedNodeId}
@@ -772,69 +649,66 @@ export function ObservabilityDashboard() {
           )}
         </aside>
 
-        <main className="flex min-h-0 flex-col gap-2">
+        <main className="observability-main min-h-0 min-w-0 overflow-auto">
+          {Boolean(allTraceRows.length || query || statusFilter !== 'all' || timeFilter !== 'all' || toolFilter !== 'all') && <button type="button" className="observability-choose-run m-2 rounded-md border border-border px-3 py-1.5 text-xs" onClick={() => setShowRunList(true)}>{t('steps.chooseRun')}</button>}
           <ProgressiveLoadingSurface
             surfaceId="observability"
             loading={traceLoading && !selectedGraph}
             label={t('graph.loading', { defaultValue: 'Loading trace graph' })}
             skeleton={<ObservabilityGraphLoadingSkeleton />}
-            className="flex min-h-[520px] flex-1 flex-col"
+            className="min-w-0"
           >
           {!traceLoading || selectedGraph ? (selectedGraph ? (
             <>
               <TraceSummaryHeader
                 graphResult={selectedGraph}
                 traceRow={selectedTraceRow}
-                selectedNode={selectedNode}
                 onSelectNode={selectGraphNode}
               />
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-black/10 bg-background px-3 py-2 dark:border-white/10">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <Target className="h-3.5 w-3.5" />
-                  {t('views.label')}
+              <Tabs value={viewMode} onValueChange={value => setViewMode(value as ViewMode)} className="min-w-0">
+                <div className="border-b border-border px-3 pb-2 pt-1 sm:px-5">
+                  <TabsList aria-label={t('views.label')} className="observability-view-tabs h-auto max-w-full justify-start gap-0.5 overflow-x-auto p-1" data-testid="observability-view-modes">
+                    {([
+                      ['steps', Activity],
+                      ['graph', GitBranch],
+                      ['tree', ListTree],
+                      ['swimlane', SplitSquareHorizontal],
+                    ] as const).map(([mode, Icon]) => (
+                      <TabsTrigger key={mode} value={mode} className="h-8 shrink-0 gap-1.5 px-3 hover:text-foreground"
+                        onFocus={event => {
+                          const tab = event.currentTarget;
+                          requestAnimationFrame(() => {
+                            const strip = tab.closest<HTMLElement>('[role="tablist"]');
+                            if (!strip) return;
+                            const item = tab.getBoundingClientRect();
+                            const bounds = strip.getBoundingClientRect();
+                            if (item.left < bounds.left) strip.scrollLeft += item.left - bounds.left;
+                            else if (item.right > bounds.right) strip.scrollLeft += item.right - bounds.right;
+                          });
+                        }}
+                        data-testid={`observability-view-${mode}`}>
+                        <Icon className="size-3.5 shrink-0" aria-hidden="true" />
+                        {t(`views.${mode}`)}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
                 </div>
-                <div className="flex overflow-hidden rounded-md border border-black/10 bg-surface-input/50 dark:border-white/10" data-testid="observability-view-modes">
-                  {([
-                    ['graph', GitBranch],
-                    ['tree', ListTree],
-                    ['swimlane', SplitSquareHorizontal],
-                  ] as const).map(([mode, Icon]) => (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => setViewMode(mode)}
-                      className={cn(
-                        'flex h-8 items-center gap-1.5 px-3 text-xs transition hover:bg-black/5 dark:hover:bg-white/10',
-                        viewMode === mode && 'bg-black/5 font-medium text-foreground dark:bg-white/10',
-                      )}
-                      data-testid={`observability-view-${mode}`}
-                    >
-                      <Icon className="h-3.5 w-3.5" />
-                      {t(`views.${mode}`)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {viewMode === 'graph' ? (
-                <AgentTraceGraph
-                  graph={selectedGraph.graph}
-                  selectedNodeId={selectedNodeId}
-                  onSelectNode={selectGraphNode}
-                />
-              ) : viewMode === 'tree' ? (
-                <RunTreeView
-                  graph={selectedGraph.graph}
-                  selectedNodeId={selectedNodeId}
-                  onSelectNode={selectGraphNode}
-                />
-              ) : (
-                <SwimlaneView
-                  graph={selectedGraph.graph}
-                  selectedNodeId={selectedNodeId}
-                  onSelectNode={selectGraphNode}
-                />
-              )}
+                <TabsContent value="steps" className="m-0">
+                  <TraceSteps key={selectedGraph.trace.id} result={selectedGraph} onSelectNode={selectGraphNode} />
+                </TabsContent>
+                <TabsContent value="graph" className="m-0">
+                  <AgentTraceGraph graph={selectedGraph.graph} selectedNodeId={selectedNodeId} onSelectNode={selectGraphNode} />
+                </TabsContent>
+                <TabsContent value="tree" className="m-0">
+                  <RunTreeView graph={selectedGraph.graph} selectedNodeId={selectedNodeId} onSelectNode={selectGraphNode} />
+                </TabsContent>
+                <TabsContent value="swimlane" className="m-0">
+                  <SwimlaneView graph={selectedGraph.graph} selectedNodeId={selectedNodeId} onSelectNode={selectGraphNode} />
+                </TabsContent>
+              </Tabs>
             </>
+          ) : linkedTraceId && !traceLoading && linkedTraceId === selectedTraceId ? (
+            <p className="p-5 text-sm text-muted-foreground">{t('traceUnavailable')}</p>
           ) : hasNoTraceData ? (
             <SourceHealthPanel sourceHealth={snapshot?.sourceHealth} />
           ) : (
@@ -855,62 +729,35 @@ export function ObservabilityDashboard() {
         subtitle={selectedNode?.subtitle ?? (selectedNode ? t(`nodeKinds.${selectedNode.kind}`) : undefined)}
         statusIcon={selectedNode ? statusIcon(selectedNode.status) : undefined}
       >
-        <Tabs defaultValue="summary" className="flex h-full min-h-[520px] flex-col">
-          <div className="border-b border-black/10 dark:border-white/10 p-3">
-            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-              <TabsTrigger value="summary" className="h-6 px-2 text-xs">{t('tabs.summary')}</TabsTrigger>
-              <TabsTrigger value="issues" className="h-6 px-2 text-xs">{t('tabs.issues')}</TabsTrigger>
-              <TabsTrigger value="events" className="h-6 px-2 text-xs">{t('tabs.events')}</TabsTrigger>
-              <TabsTrigger value="io" className="h-6 px-2 text-xs">{t('tabs.io')}</TabsTrigger>
-              <TabsTrigger value="artifacts" className="h-6 px-2 text-xs">{t('tabs.artifacts')}</TabsTrigger>
-              <TabsTrigger value="compare" className="h-6 px-2 text-xs">{t('tabs.compare')}</TabsTrigger>
-              <TabsTrigger value="annotation" className="h-6 px-2 text-xs">{t('tabs.annotation')}</TabsTrigger>
-              <TabsTrigger value="attributes" className="h-6 px-2 text-xs">{t('tabs.attributes')}</TabsTrigger>
-              <TabsTrigger value="timeline" className="h-6 px-2 text-xs">{t('tabs.timeline')}</TabsTrigger>
-              <TabsTrigger value="score" className="h-6 px-2 text-xs">{t('tabs.score')}</TabsTrigger>
-            </TabsList>
-          </div>
+        <TraceDetailTabs>
 
             <TabsContent value="summary" className="m-0 min-h-0 flex-1 overflow-auto p-4">
               {!selectedTrace || !selectedNode ? (
                 <p className="text-xs text-muted-foreground">{t('details.empty')}</p>
               ) : (
                 <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      {statusIcon(selectedNode.status)}
-                      <h3 className="truncate text-base font-medium">{selectedNode.label}</h3>
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{selectedNode.subtitle ?? t(`nodeKinds.${selectedNode.kind}`)}</p>
-                    {diagnosticsLoading && <p className="mt-1 text-2xs text-muted-foreground">{t('details.loadingDiagnostics')}</p>}
-                  </div>
-                  <EvidenceFirstPanel
-                    issues={selectedGraph?.graph.summary?.issues ?? []}
-                    selectedNodeId={selectedNode.id}
-                    onSelectNode={selectGraphNode}
-                  />
+                  {diagnosticsLoading && <p className="text-xs text-muted-foreground">{t('details.loadingDiagnostics')}</p>}
+                  {(selectedNodeDiagnostics?.error || selectedNode.error) && <ErrorPreview value={selectedNodeDiagnostics?.error || selectedNode.error} />}
+                  <Preview label={t('details.summary')} value={selectedNodeDiagnostics?.summary ?? selectedNode.summary} />
+                  <EvidenceFirstPanel issues={selectedGraph?.graph.summary?.issues ?? []} selectedNodeId={selectedNode.id} />
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <Info label={t('details.status')} value={t(`status.${selectedNode.status}`)} />
                     <Info label={t('details.phase')} value={selectedNode.phase ? t(`phases.${selectedNode.phase}`) : '-'} />
-                    <Info label={t('details.duration')} value={formatDuration(selectedNode.durationMs ?? 0)} />
-                    <Info label={t('details.role')} value={nodeDetailValue(selectedNode.roleName)} />
-                    <Info label={t('details.model')} value={nodeDetailValue(selectedNode.modelRef)} />
-                    <Info label={t('details.tokens')} value={String(selectedNode.tokenUsage?.totalTokens ?? selectedTrace.tokenUsage.totalTokens ?? 0)} />
-                    <Info label={t('details.cost')} value={`$${(selectedNode.tokenUsage?.costUsd ?? selectedTrace.tokenUsage.costUsd ?? 0).toFixed(5)}`} />
-                    <Info label={t('details.sequence')} value={String(selectedNode.sequence ?? '-')} />
+                    {selectedNode.durationMs != null && <Info label={t('details.duration')} value={formatDuration(selectedNode.durationMs)} />}
+                    {selectedNode.modelRef && <Info label={t('details.model')} value={selectedNode.modelRef} />}
+                    {selectedNode.roleName && <Info label={t('details.role')} value={selectedNode.roleName} />}
                   </div>
-                  <DiagnosticSections diagnostics={selectedNodeDiagnostics} />
-                  <Preview label={t('details.summary')} value={selectedNodeDiagnostics?.summary ?? selectedNode.summary ?? selectedNode.diagnosticPreview} />
-                  <Preview label={t('details.input')} value={selectedNodeDiagnostics?.inputPreview ?? selectedNode?.inputPreview} />
-                  <Preview label={t('details.output')} value={selectedNodeDiagnostics?.outputPreview ?? selectedNode?.outputPreview} />
-                  {selectedNode.error && <ErrorPreview value={selectedNodeDiagnostics?.error ?? selectedNode.error} />}
-                  <div className="rounded-md bg-surface-input p-3 text-2xs text-muted-foreground">
-                    <div>{t('details.traceId')}: <span className="font-mono">{selectedTrace.id}</span></div>
-                    <div>{t('details.session')}: <span className="font-mono">{selectedTrace.sessionKey ?? '-'}</span></div>
-                    <div>{t('details.run')}: <span className="font-mono">{selectedTrace.runId ?? '-'}</span></div>
-                    <div>{t('details.source')}: <span className="font-mono">{selectedGraph?.graph.summary?.sourceStatus ? t(`sourceStatus.${selectedGraph.graph.summary.sourceStatus}`) : '-'}</span></div>
-                    <div>{t('details.redacted')}: <span className="font-mono">{selectedNodeDiagnostics?.redacted ? t('details.redactedYes') : '-'}</span></div>
-                  </div>
+                  <details className="text-xs text-muted-foreground">
+                    <summary className="cursor-pointer rounded py-1">{t('steps.technical')}</summary>
+                    <div className="mt-2 space-y-3">
+                      {selectedNode.tokenUsage && <div className="grid grid-cols-2 gap-2">
+                        <Info label={t('details.tokens')} value={String(selectedNode.tokenUsage.totalTokens)} />
+                        <Info label={t('details.cost')} value={`$${selectedNode.tokenUsage.costUsd.toFixed(5)}`} />
+                      </div>}
+                      <DiagnosticSections diagnostics={selectedNodeDiagnostics} />
+                      {selectedNode.sequence != null && <Info label={t('details.sequence')} value={String(selectedNode.sequence)} />}
+                    </div>
+                  </details>
                 </div>
               )}
             </TabsContent>
@@ -983,7 +830,7 @@ export function ObservabilityDashboard() {
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="truncate font-medium">{item.label}</span>
-                          <span className="font-mono text-2xs text-muted-foreground">{formatTime(item.timestamp)}</span>
+                          <span className="font-mono text-2xs text-muted-foreground">{formatTraceTime(item.timestamp)}</span>
                         </div>
                         <div className="mt-1 flex items-center gap-2 text-2xs text-muted-foreground">
                           <span className="truncate">{item.type}</span>
@@ -1027,76 +874,51 @@ export function ObservabilityDashboard() {
                 <p className="text-xs text-muted-foreground">{t('score.empty')}</p>
               )}
             </TabsContent>
-          </Tabs>
+        </TraceDetailTabs>
       </TraceNodeDrawer>
     </div>
   );
 }
 
-function TraceSummaryHeader({
-  graphResult,
-  traceRow,
-  selectedNode,
-  onSelectNode,
-}: {
+function TraceSummaryHeader({ graphResult, traceRow, onSelectNode }: {
   graphResult: ObservabilityTraceGraphResult;
   traceRow: TraceRow | null;
-  selectedNode: ObservabilityGraphNode | null;
   onSelectNode: (nodeId: string) => void;
 }) {
   const { t } = useTranslation('observability');
   const { trace, graph } = graphResult;
-  const primaryIssue = graph.summary?.issues?.find((issue) => issue.severity === 'critical' || issue.severity === 'error')
-    ?? graph.summary?.issues?.[0];
-  const artifactCount = traceRow?.artifactCount ?? graph.summary?.artifactNodeIds.length ?? 0;
-  const tokenCount = traceRow?.tokenCount ?? trace.tokenUsage.totalTokens;
-  const costUsd = traceRow?.costUsd ?? trace.tokenUsage.costUsd;
-
+  const issue = graph.summary?.issues?.find(item => item.severity === 'critical' || item.severity === 'error')
+    ?? graph.summary?.issues?.find(item => item.severity === 'warning');
+  const issueNodeId = issue?.nodeId;
+  const duration = trace.durationMs ?? traceRow?.durationMs;
+  const source = graph.summary?.sourceStatus;
   return (
-    <div className="rounded-md border border-black/10 bg-background p-3 dark:border-white/10" data-testid="observability-summary-header">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            {statusIcon(trace.status)}
-            <h3 className="truncate text-sm font-medium">{trace.name}</h3>
-            {graph.summary?.sourceStatus && (
-              <Badge variant="outline" className={cn('rounded-full text-2xs', sourceStatusClass(graph.summary.sourceStatus))}>
-                {t(`sourceStatus.${graph.summary.sourceStatus}`)}
-              </Badge>
-            )}
-          </div>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-2xs text-muted-foreground">
-            <span className="font-mono">{trace.id}</span>
-            {trace.sessionKey && <span>{trace.sessionKey}</span>}
-            {selectedNode && <span>{t('summaryHeader.selected')}: {selectedNode.label}</span>}
-          </div>
-          {primaryIssue ? (
-            <button
-              type="button"
-              className={cn('mt-3 rounded-md border px-3 py-2 text-left text-xs transition hover:bg-black/[0.02] dark:hover:bg-white/[0.04]', issueToneClass(primaryIssue))}
-              onClick={() => primaryIssue.nodeId && onSelectNode(primaryIssue.nodeId)}
-              disabled={!primaryIssue.nodeId}
-            >
-              <div className="flex items-center gap-2 font-medium">
-                <Target className="h-3.5 w-3.5" />
-                {t('summaryHeader.rootCause')}: {t(`issues.categories.${primaryIssue.category}`)}
-              </div>
-              {primaryIssue.detail && <div className="mt-1 line-clamp-2 text-2xs opacity-85">{primaryIssue.detail}</div>}
-            </button>
-          ) : (
-            <div className="mt-3 rounded-md border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-400">
-              {t('summaryHeader.noIssue')}
-            </div>
-          )}
-        </div>
-        <div className="grid min-w-[220px] grid-cols-2 gap-2 text-xs">
-          <Info label={t('details.duration')} value={formatDuration(trace.durationMs ?? traceRow?.durationMs ?? 0)} />
-          <Info label={t('details.tokens')} value={String(tokenCount)} />
-          <Info label={t('details.cost')} value={`$${costUsd.toFixed(5)}`} />
-          <Info label={t('diagnostics.items.artifacts')} value={String(artifactCount)} />
-        </div>
+    <header className="space-y-2 px-4 py-3 sm:px-5" data-testid="observability-summary-header">
+      <h2 className="break-words font-serif text-lg font-normal tracking-tight">{trace.name}</h2>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1">{statusIcon(trace.status)}{t(`status.${trace.status}`)}</span>
+        {duration != null && <span>{t('details.duration')} {formatDuration(duration)}</span>}
+        {source && <span className={cn(source === 'stale' && 'text-amber-700 dark:text-amber-400')}>{t(`sourceStatus.${source}`)}</span>}
       </div>
-    </div>
+      {(issue || trace.error) && <div className={cn('flex min-w-0 items-center gap-2 border-l-2 pl-2 text-xs', issue?.severity === 'warning' ? 'border-amber-500' : 'border-red-500')}>
+        <span className="min-w-0 break-words">{issue && <strong>{t(`issues.categories.${issue.category}`)} · </strong>}
+          {issue?.detail || trace.error || issue?.title}</span>
+        {issueNodeId && <button type="button" className="shrink-0 rounded px-1 py-1 underline underline-offset-2"
+          onClick={() => onSelectNode(issueNodeId)}>{t('issues.openNode')}</button>}
+      </div>}
+      <details className="text-xs text-muted-foreground">
+        <summary className="w-fit cursor-pointer rounded py-1">{t('steps.runDetails')}</summary>
+        <dl className="mt-1 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 rounded-md bg-surface-input p-3">
+          <dt>{t('details.traceId')}</dt><dd className="break-all font-mono">{trace.id}</dd>
+          {trace.sessionKey && <><dt>{t('details.session')}</dt><dd className="break-all">{trace.sessionKey}</dd></>}
+          {trace.runId && <><dt>{t('details.run')}</dt><dd className="break-all">{trace.runId}</dd></>}
+          <dt>{t('details.tokens')}</dt><dd>{traceRow?.tokenCount ?? trace.tokenUsage.totalTokens}</dd>
+          <dt>{t('details.cost')}</dt><dd>${(traceRow?.costUsd ?? trace.tokenUsage.costUsd).toFixed(5)}</dd>
+          <dt>{t('tabs.artifacts')}</dt><dd>{traceRow?.artifactCount ?? graph.summary?.artifactNodeIds.length ?? 0}</dd>
+          {traceRow?.leadRole && <><dt>{t('details.role')}</dt><dd>{traceRow.leadRole}</dd></>}
+        </dl>
+      </details>
+    </header>
   );
 }
 
@@ -1184,8 +1006,8 @@ function SwimlaneView({
   onSelectNode: (nodeId: string) => void;
 }) {
   const { t } = useTranslation('observability');
-  const phaseOrder = ['input', 'routing', 'context', 'model', 'tool', 'artifact', 'approval', 'subagent', 'verifier', 'output', 'warning', 'error', 'orchestration', 'memory', 'event'];
   const lanes = useMemo(() => {
+    const phaseOrder = ['input', 'routing', 'context', 'model', 'tool', 'artifact', 'approval', 'subagent', 'verifier', 'output', 'warning', 'error', 'orchestration', 'memory', 'event'];
     const groups = new Map<string, ObservabilityGraphNode[]>();
     for (const node of graph.nodes) {
       const phase = node.phase ?? node.kind;
@@ -1242,24 +1064,13 @@ function SwimlaneView({
   );
 }
 
-function EvidenceFirstPanel({
-  issues,
-  selectedNodeId,
-  onSelectNode,
-}: {
+function EvidenceFirstPanel({ issues, selectedNodeId }: {
   issues: ObservabilityTraceIssue[];
   selectedNodeId: string;
-  onSelectNode: (nodeId: string) => void;
 }) {
   const { t } = useTranslation('observability');
-  const issue = issues.find((entry) => entry.nodeId === selectedNodeId) ?? issues[0];
-  if (!issue) {
-    return (
-      <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-700 dark:text-emerald-400" data-testid="observability-evidence-panel">
-        {t('evidence.noIssue')}
-      </div>
-    );
-  }
+  const issue = issues.find((entry) => entry.nodeId === selectedNodeId);
+  if (!issue) return null;
   return (
     <div className={cn('rounded-md border p-3 text-xs', issueToneClass(issue))} data-testid="observability-evidence-panel">
       <div className="flex items-start justify-between gap-2">
@@ -1275,11 +1086,6 @@ function EvidenceFirstPanel({
             })}
           </div>
         </div>
-        {issue.nodeId && issue.nodeId !== selectedNodeId && (
-          <Button type="button" variant="outline" className="h-7 rounded-md px-2 text-[10px]" onClick={() => issue.nodeId && onSelectNode(issue.nodeId)}>
-            {t('issues.openNode')}
-          </Button>
-        )}
       </div>
       {issue.detail && (
         <div className="mt-3">
@@ -1428,7 +1234,7 @@ function TraceAnnotationPanel({
         <Textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={t('annotations.notePlaceholder')} className="min-h-24 resize-none text-xs" />
       </div>
       {annotation?.updatedAt && (
-        <p className="text-2xs text-muted-foreground">{t('annotations.updatedAt', { time: formatTime(annotation.updatedAt) })}</p>
+        <p className="text-2xs text-muted-foreground">{t('annotations.updatedAt', { time: formatTraceTime(annotation.updatedAt) })}</p>
       )}
       <Button type="button" className="h-8 rounded-md px-3 text-xs" onClick={() => onSave(traceId, { status, tags, note })}>
         <Save className="mr-1.5 h-3.5 w-3.5" />
@@ -1449,7 +1255,7 @@ function QuickLocatePanel({
 }) {
   const { t } = useTranslation('observability');
   const [query, setQuery] = useState('');
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const filteredNodes = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -1678,7 +1484,7 @@ function DiagnosticEvents({
         >
           <div className="flex items-center justify-between gap-2">
             <span className="truncate font-medium">{event.label}</span>
-            <span className="font-mono text-2xs text-muted-foreground">{formatTime(event.timestamp)}</span>
+            <span className="font-mono text-2xs text-muted-foreground">{formatTraceTime(event.timestamp)}</span>
           </div>
           <div className="mt-1 flex items-center gap-2 text-2xs text-muted-foreground">
             <span className="truncate">{event.type}</span>

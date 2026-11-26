@@ -94,7 +94,7 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 | タスク追跡レポート | 永続タスクのカードを展開すると、ソース、実行、操作結果、候補の検証、保存済み証拠を確認できます。調整役と実行役のモデル呼び出しは元の記録で重複排除され、カタログ価格は推定値、取得できない費用は不明として表示されます。 | [タスク追跡レポート](docs/modules/multi-agent-and-tasks.md) |
 | プロジェクトとセッション | プロジェクト名から担当セッションを開き、異なる agent の明示的に関連付けられた担当者も表示します。既存グループ内で派生セッションとタスクを確認できます。タスク履歴から関連セッションとチェックポイントの成果物を開けます。分岐の質問は下書きになり、引き継ぎは作成後に送信され、再起動後も照合・復旧できます。 | [セッションとタスク（中国語）](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane、VerseShell governed execution、VerseBrowser driver、退役 VToken | [Verse tools（中国語）](docs/modules/verse-tools.md) |
-| Resources / observability | ResourceFabric の操作別レイテンシ基準とメモリ/event-loop 圧力制御、バックグラウンド降載、プロセス追跡、token/cost 上限と回復 | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
+| Resources / observability | ResourceFabric の操作別レイテンシ基準とメモリ/event-loop 圧力制御、バックグラウンド降載、プロセス追跡、token/cost 上限と回復。Observability ではモデル呼び出し、ツール、エラーを時系列で確認できます。 | [Resources と observability（中国語）](docs/modules/resources-and-observability.md) |
 | Integrations | 15 channel types、Scheduled、Skills/MCP、Inbox、Remote Task、Code Review、VerseConf、media、Billing、Agent Dev | [Integrations（中国語）](docs/modules/integrations-and-surfaces.md) |
 
 詳細 module document は現在 Simplified Chinese で保守されています。source path、API 名、evidence link は言語非依存です。4 つの root README が多言語入口です。

@@ -277,14 +277,13 @@ test.describe('Observability quick-locate navigator', () => {
     await expect(page.getByTestId('observability-page')).toBeVisible();
 
     // Open the multi-turn trace (6 graph nodes → panel should appear).
-    await page.getByTestId('observability-trace-row').filter({ hasText: 'Multi-turn agent run' }).click();
+    await page.getByTestId('observability-view-graph').click();
     await expect(page.getByTestId('observability-trace-graph')).toBeVisible();
-    // Close the auto-selected node before typing into controls behind the drawer.
-    await page.keyboard.press('Escape');
     await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
 
     // Quick-locate panel renders all 6 turns.
     const panel = page.getByTestId('observability-quick-locate');
+    await panel.getByTestId('observability-quick-locate-toggle').click();
     await expect(panel).toBeVisible();
     await expect(panel).toContainText('Quick locate');
     await expect(panel.getByText('6')).toBeVisible();
@@ -299,8 +298,6 @@ test.describe('Observability quick-locate navigator', () => {
     await expect(panel.getByTestId('observability-quick-locate-list')).toContainText('No matching turns.');
     await page.getByPlaceholder('Filter turns...').fill('');
 
-    // Auto-selected node opens the drawer; close it so overlay never blocks clicks.
-    await page.keyboard.press('Escape');
     await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
 
     // Click "Write code" turn → drawer opens with that turn's content.
@@ -347,12 +344,10 @@ test.describe('Observability quick-locate navigator', () => {
     await expect(page.getByTestId('observability-page')).toBeVisible();
 
     // Multi-turn trace shows the panel.
-    await page.getByTestId('observability-trace-row').filter({ hasText: 'Multi-turn agent run' }).click();
+    await page.getByTestId('observability-view-graph').click();
     await expect(page.getByTestId('observability-trace-graph')).toBeVisible();
     await expect(page.getByTestId('observability-quick-locate')).toBeVisible();
 
-    // Close the auto-opened drawer so its overlay does not intercept the next click.
-    await page.keyboard.press('Escape');
     await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
 
     // Switch to the short trace (3 nodes) → panel disappears.

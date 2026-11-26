@@ -42,6 +42,8 @@ Give the Electron application a coherent FakeCoding-aligned grayscale shell, com
 8. Runtime command approvals replace the owning session's composer in place, with readable, copyable commands and reachable decisions at narrow widths and 150% zoom. The repository status strip and the approval/composer column share the same centered width. No modal or page overlay is opened; the transcript and other conversations remain usable. The input stays mounted but hidden and inert until approvals resolve, restoring its draft and attachments. Only decisions offered by the runtime can be submitted.
 9. Sidebar settings remain bottom-anchored with the session list visible or collapsed. Running and waiting status keeps its existing animation; completed and failed status uses a shared static semantic icon in session rows, activity entries and the activity bell. With no live run, the bell shows the latest unread event's icon and returns to the bell glyph when read.
 
+Open Observability from the sidebar footer or follow a trace link. Read the time-ordered steps, open a tool failure, and switch runs on a narrow window. An explicit node link opens its diagnostics. Ordinary run selection leaves the steps visible.
+
 ## Validation
 
 The reasoning section of the model menu uses the supplied Aceternity Preview

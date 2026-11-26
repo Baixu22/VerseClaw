@@ -265,16 +265,10 @@ test.describe('Observability trace graph drawer', () => {
       window.location.hash = '/observability';
     });
     await expect(page.getByTestId('observability-page')).toBeVisible();
-    await page.getByTestId('observability-trace-row').first().click();
+    await expect(page.getByTestId('observability-steps')).toBeVisible();
+    await page.getByTestId('observability-view-graph').click();
     await expect(page.getByTestId('observability-trace-graph')).toBeVisible();
-    // Drawer may auto-open from persisted selectedNodeId in store; close it if present
-    try {
-      await expect(page.getByTestId('observability-detail-panel')).toBeVisible({ timeout: 2000 });
-      await page.keyboard.press('Escape');
-      await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
-    } catch {
-      // Drawer was not open — nothing to close
-    }
+    await expect(page.getByTestId('observability-detail-panel')).toBeHidden();
   });
 
   test('drawer is hidden until a node is clicked', async ({ page }) => {
@@ -321,15 +315,34 @@ test.describe('Observability trace graph drawer', () => {
     await expect(page.getByTestId('observability-detail-panel')).toContainText('implementer');
   });
 
-  test('drawer preserves tab navigation', async ({ page }) => {
+  test('drawer switches tabs by keyboard and keeps the selected shortcut in a single row', async ({ page }, info) => {
     await page.getByTestId('trace-graph-node-tool').click();
     await expect(page.getByTestId('observability-detail-panel')).toBeVisible();
 
     await page.getByRole('tab', { name: 'Events' }).click();
     await expect(page.getByTestId('observability-diagnostics-events')).toContainText('shell_command');
 
-    await page.getByRole('tab', { name: 'Attributes' }).click();
+    const tabs = page.getByTestId('observability-detail-tabs');
+    const picker = page.getByTestId('observability-all-detail-tabs');
+    await expect(tabs.getByRole('tab')).toHaveCount(4);
+    await picker.click();
+    await expect(page.getByRole('option')).toHaveCount(10);
+    await page.keyboard.press('Escape');
+    await expect(picker).toBeFocused();
+    await picker.click();
+    await page.getByRole('option', { name: 'Attributes', exact: true }).click();
+    const attributes = tabs.getByRole('tab', { name: 'Attributes' });
+    await expect(attributes).toBeFocused();
+    await expect(attributes).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Attributes' })).toBeVisible();
     await expect(page.getByTestId('observability-diagnostics-attributes')).toContainText('exitCode');
-    await expect(page.getByTestId('observability-detail-panel').getByRole('tab')).toHaveCount(10);
+    await attributes.press('Home');
+    await expect(tabs.getByRole('tab', { name: 'Summary' })).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(attributes).toBeFocused();
+    await expect(tabs.getByRole('tab')).toHaveCount(4);
+    const tops = await tabs.getByRole('tab').evaluateAll(items => items.map(item => item.getBoundingClientRect().top));
+    expect(new Set(tops).size).toBe(1);
+    await page.getByTestId('observability-detail-panel').screenshot({ path: info.outputPath('detail-tabs.png'), animations: 'disabled' });
   });
 });
