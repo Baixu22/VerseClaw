@@ -9,7 +9,7 @@
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 
-export type PopoverPlacement = 'bottom' | 'top';
+export type PopoverPlacement = 'bottom' | 'top' | 'right';
 
 export function usePopover<T extends HTMLElement>({
   align = 'right',
@@ -50,6 +50,17 @@ export function usePopover<T extends HTMLElement>({
     const vh = window.innerHeight;
     const vw = document.documentElement.clientWidth;
     const margin = 8;
+    if (preferredSide === 'right') {
+      const width = Math.min(lw, vw - margin * 2);
+      setPlacement('right');
+      setStyle({
+        position: 'fixed',
+        top: Math.round(Math.max(margin, Math.min(r.top + r.height / 2 - lh / 2, vh - lh - margin))),
+        left: Math.round(Math.max(margin, Math.min(r.right + gap, vw - width - margin))),
+        width, maxHeight: vh - margin * 2, zIndex: 1000, visibility: 'visible',
+      });
+      return;
+    }
     const availableBelow = Math.max(0, vh - r.bottom - gap - margin);
     const availableAbove = Math.max(0, r.top - gap - margin);
 
@@ -105,8 +116,8 @@ export function usePopover<T extends HTMLElement>({
 
   useLayoutEffect(() => {
     if (!open) return;
-    const frame = window.requestAnimationFrame(measure);
-    return () => window.cancelAnimationFrame(frame);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Place a newly mounted portal before it becomes visible.
+    measure();
   }, [open, measure]);
 
   useEffect(() => {

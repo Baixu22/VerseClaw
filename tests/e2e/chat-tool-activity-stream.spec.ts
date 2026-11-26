@@ -176,6 +176,76 @@ test('keeps operation groups in conversation order with shared width, accessible
   } finally { await closeElectronApp(app); }
 });
 
+test('gives model progress and final prose the same reading style while tool rows use secondary ink', async ({ launchElectronApp }) => {
+  const app = await launchElectronApp({ skipSetup: true, theme: 'dark' });
+  try {
+    await seed(app, HISTORY);
+    const page = await getStableWindow(app);
+    await page.reload();
+    const progress = page.locator('[data-output-kind="progress"] .codex-markdown p').first();
+    const answer = page.locator('.codex-markdown p').filter({ hasText: '最终答复' });
+    const activity = page.getByTestId('chat-tool-activity-toggle').first();
+    await expect(progress).toBeVisible();
+    await expect(answer).toBeVisible();
+    for (const el of [progress, answer]) {
+      await expect(el).toHaveCSS('font-size', '17px');
+      await expect(el).toHaveCSS('font-weight', '400');
+      await expect(el).toHaveCSS('line-height', '27.2px');
+      expect(await el.evaluate(node => parseFloat(getComputedStyle(node).letterSpacing) || 0)).toBe(0);
+    }
+    await expect(activity).toHaveCSS('font-size', '14px');
+    await expect(activity).toHaveCSS('line-height', '22.4px');
+    await expect(page.getByTestId('chat-conversation-column')).toHaveCSS('background-color', 'rgb(45, 45, 43)');
+    await expect(page.getByTestId('chat-scroll-container')).toHaveCSS('backface-visibility', 'hidden');
+    await expect(progress).toHaveCSS('color', 'rgb(249, 249, 247)');
+    await expect(answer).toHaveCSS('color', 'rgb(249, 249, 247)');
+    await expect(activity).toHaveCSS('color', 'rgb(152, 152, 149)');
+  } finally { await closeElectronApp(app); }
+});
+
+test('keeps a parallel tool failure separate from the model response', async ({ launchElectronApp }) => {
+  test.setTimeout(180000);
+  const app = await launchElectronApp({ skipSetup: true });
+  const history = [{ id: 'check', role: 'user', content: 'Check both configurations.', timestamp: Date.now() - 1000 }];
+  try {
+    await seed(app, history);
+    const page = await getStableWindow(app);
+    await page.reload();
+    await expect(page.getByText(history[0].content, { exact: true })).toBeVisible();
+    const at = Date.now();
+    await event(app, { type: 'run.started', startedAt: at });
+    await event(app, { type: 'thinking.delta', text: 'Compare the two configurations.' });
+    const summary = page.getByTestId('chat-turn-summary-card');
+    await expect(summary).toHaveAttribute('data-phase', 'thinking');
+    for (const id of ['first', 'second']) {
+      await event(app, { type: 'tool.started', toolCallId: id, name: 'read_file', args: { path: id + '.yml' } });
+    }
+    await event(app, { type: 'tool.completed', toolCallId: 'first', name: 'read_file', isError: true, result: 'Missing file' });
+    const group = page.getByTestId('chat-tool-activity-group');
+    await expect(group).toHaveAttribute('data-status', 'running');
+    await expect(group.getByTestId('chat-tool-activity-label')).toContainText('second.yml');
+    await expect(group.locator('.tool-activity-failure')).toContainText('first.yml');
+    await expect(summary).toHaveAttribute('data-status', 'running');
+    await event(app, { type: 'tool.completed', toolCallId: 'second', name: 'read_file', result: 'mode: local' });
+    await expect(group.getByTestId('chat-tool-activity-label')).toContainText('first.yml');
+    await expect(summary).toHaveAttribute('data-phase', 'syncing');
+    await event(app, { type: 'assistant.delta', text: 'The backup is readable.' });
+    await expect(summary).toHaveAttribute('data-phase', 'streaming');
+    await expect(page.locator('.codex-markdown').filter({ hasText: 'The backup is readable.' })).toBeVisible();
+    const final = { id: 'final', role: 'assistant', stopReason: 'stop', timestamp: Date.now(),
+      content: [{ type: 'thinking', thinking: 'Compare the two configurations.' }, { type: 'text', text: 'The backup is readable.' }] };
+    await seed(app, [...history, final]);
+    await event(app, { type: 'run.ended', status: 'completed', endedAt: Date.now() });
+    await app.evaluate(({ BrowserWindow }, message) => {
+      for (const win of BrowserWindow.getAllWindows()) win.webContents.send('gateway:chat-message', {
+        sessionKey: 'agent:main:main', runId: 'activity-live', state: 'final', message,
+      });
+    }, final);
+    await expect(summary).toHaveAttribute('data-status', 'completed');
+    await expect(group).toHaveAttribute('data-status', 'error');
+  } finally { await closeElectronApp(app); }
+});
+
 test('shows the current white shimmer once, preserves folding and settles runtime command output', async ({ launchElectronApp }, info) => {
   test.setTimeout(180000);
   const at = Date.now();
@@ -244,7 +314,8 @@ test('shows the current white shimmer once, preserves folding and settles runtim
     expect(await iconMotion(current)).toEqual([]);
     await page.screenshot({ path: info.outputPath('live-expanded-reduced-motion.png') });
     await current.getByTestId('chat-tool-activity-toggle').click();
-    await expect(current.locator('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
+    await expect(current.getByTestId('chat-tool-activity-details')).toHaveCount(0);
+    await expect(current.getByTestId('chat-tool-activity-toggle').locator('.tool-activity-icon')).toHaveAttribute('data-animated', 'true');
     expect(await iconMotion(current)).toEqual([]);
     await expect(current.getByTestId('ai-element-shimmer')).toHaveCSS('animation-name', 'none');
     await page.screenshot({ path: info.outputPath('live-collapsed-reduced-motion.png') });

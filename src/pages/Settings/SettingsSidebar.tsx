@@ -5,6 +5,7 @@ import { useUiOverlay } from '@/components/layout/ui-overlay-context';
 import { filterSettingsSections } from '@/lib/settings-search';
 import { resolveSettingsSection } from './route-config';
 import { SettingsNavIcon, type SettingsIconName } from './codex-settings-icons';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const sections = [
   { id: 'general', to: '/settings/general', icon: 'general', group: 'experience' },
@@ -67,8 +68,9 @@ export function SettingsSidebar() {
               {items.map((section) => {
                 const active = currentSection === section.id;
                 return (
+                  <Tooltip key={section.id}>
+                  <TooltipTrigger asChild>
                   <Link
-                    key={section.id}
                     to={section.to}
                     data-testid={`settings-nav-${section.id}`}
                     aria-current={active ? 'page' : undefined}
@@ -77,6 +79,11 @@ export function SettingsSidebar() {
                     <span className="flex w-4 shrink-0 items-center justify-center"><SettingsNavIcon name={section.icon} /></span>
                     <span className="truncate">{section.title}</span>
                   </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" collisionPadding={12} className="max-w-64">
+                    <div><p className="font-medium">{section.title}</p><p className="mt-1 leading-5 text-muted-foreground">{section.description}</p></div>
+                  </TooltipContent>
+                  </Tooltip>
                 );
               })}
             </section>

@@ -28,7 +28,6 @@ import {
   Eye,
   FilePlus,
   FileText,
-  Flame,
   FolderGit2,
   FolderPlus,
   Gauge,
@@ -91,7 +90,6 @@ import { toast } from 'sonner';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { collectDroppedFiles } from '@/lib/collect-dropped-files';
 import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
-import { getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
 import { ChatModelSettingsCard } from '@/components/chat/ChatModelSettingsCard';
 import { ChatContextPressure } from '@/components/chat/ChatContextPressure';
 import { ChatContextIndicator } from '@/components/chat/ChatContextIndicator';
@@ -1246,7 +1244,6 @@ export function ChatInput({
   const effectiveModelDisplay = effectiveModelRef
     ? describeModelRef(effectiveModelRef)
     : { name: effectiveModelLabel, source: null };
-  const currentEffortLabel = t(getAgentEffortLabelKey(executionEffortPreview));
   const mentionableAgents = useMemo(
     () => (agents ?? []).filter((agent) => agent.id !== currentAgentId),
     [agents, currentAgentId],
@@ -4315,17 +4312,6 @@ export function ChatInput({
                 >
                   <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
                   <span className="codex-model-picker-label" data-testid="chat-model-picker-label">{effectiveModelDisplay.name}</span>
-                  <span
-                    data-testid="chat-agent-effort-button"
-                    className={cn(
-                      'codex-execution-settings__effort-shortcut',
-                      executionEffortPreview === 'max' && 'is-max',
-                    )}
-                    title={currentEffortLabel}
-                    aria-hidden="true"
-                  >
-                    <Flame className="h-3.5 w-3.5 shrink-0" />
-                  </span>
                   <ChevronDown className={cn('codex-composer-chevron codex-model-picker-chevron', modelPickerOpen && 'is-open')} />
                 </button>
                     </span>

@@ -155,11 +155,10 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
-      // The flame shortcut opens the reasoning section of the same menu that
-      // contains model selection.
-      const effortButton = page.getByTestId('chat-agent-effort-button');
+      // Model selection and reasoning intensity share one entry point.
+      const effortButton = page.getByTestId('chat-model-picker-button');
       await expect(effortButton).toBeVisible();
-      await expect(page.getByTestId('chat-model-picker-button')).toBeVisible();
+      await expect(page.getByTestId('chat-agent-effort-button')).toHaveCount(0);
 
       // Open the shared menu directly to its reasoning section.
       await effortButton.click();
@@ -364,7 +363,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
       // Open the inline reasoning section.
-      await page.getByTestId('chat-agent-effort-button').click();
+      await page.getByTestId('chat-model-picker-button').click();
       const popover = page.getByTestId('chat-agent-effort-popover');
       await expect(popover).toBeVisible();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
@@ -557,7 +556,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
-      await page.getByTestId('chat-agent-effort-button').click();
+      await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-agent-effort-popover')).toBeVisible();
 
       // If the agent snapshot is still settling, the popover falls back to auto.

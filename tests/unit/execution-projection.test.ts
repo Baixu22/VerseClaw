@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { ChatRuntimeRunState, RawMessage, ToolStatus } from '@/stores/chat';
 import {
+  assistantOutputPhase,
   createRunKey,
   deriveExecutionStreamState,
   deriveNextUserMessageIndexes,
@@ -58,6 +59,26 @@ function project({
 }
 
 describe('execution projection', () => {
+  it('retains a settled tool receipt through an answer-only refresh of its own turn', () => {
+    const user: RawMessage = { id: 'owner', role: 'user', content: 'Read my config', timestamp: 1800000000000 };
+    const reply: RawMessage = { id: 'answer', role: 'assistant', content: 'Using the backup.', stopReason: 'stop' };
+    const cache: Record<string, GraphStepCacheEntry> = { 'msg-owner': { steps: [
+      { kind: 'tool', id: 'read', label: 'read_file', depth: 1, status: 'error', inputDetail: '{"path":"config"}', outputDetail: 'ENOENT' },
+    ], triggerIndex: 0, replyIndex: null, segmentEnd: 0, agentLabel: 'Main', sessionLabel: 'Main' } };
+    const projected = project({ messages: [user, reply], graphStepCache: cache });
+    expect(projected.cards[0]).toMatchObject({ status: 'completed', steps: expect.arrayContaining([expect.objectContaining({ id: 'read', status: 'error', outputDetail: 'ENOENT' })]) });
+    const other = project({ messages: [{ ...user, id: 'other' }, reply], graphStepCache: cache });
+    expect(other.cards.flatMap(card => card.steps).some(step => step.id === 'read')).toBe(false);
+  });
+  it('recognizes resumed gateway text after the last runtime tool receipt', () => {
+    const at = 1_800_000_000_000;
+    const run: ChatRuntimeRunState = { runId: 'r', sessionKey: SESSION_KEY, status: 'running', assistantText: '', thinkingText: '',
+      events: [{ type: 'tool.completed', runId: 'r', name: 'read_file', toolCallId: 'a', ts: at }] };
+    const stream = deriveExecutionStreamState({ sending: true, streamingTools: [],
+      streamingMessage: { role: 'assistant', content: 'Resuming.', timestamp: (at + 1000) / 1000 } });
+    expect(assistantOutputPhase(run, stream, 'Resuming.', true)).toBe('streaming');
+    expect(assistantOutputPhase(run, { ...stream, streamTimestamp: (at - 1000) / 1000 }, 'Earlier text', true)).toBe('syncing');
+  });
   it('promotes active runtime assistant text into the latest streaming reply', () => {
     const messages: RawMessage[] = [
       { role: 'user', content: 'Stream through runtime events' },

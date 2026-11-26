@@ -121,10 +121,10 @@ test.describe('Verse Claw effort & intensity smoke', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
       // Effort button should be visible
-      await expect(page.getByTestId('chat-agent-effort-button')).toBeVisible();
+      await expect(page.getByTestId('chat-model-picker-button')).toBeVisible();
 
       // Click to open popover
-      await page.getByTestId('chat-agent-effort-button').click();
+      await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-agent-effort-popover')).toBeVisible();
 
       // Slider should be present with correct range

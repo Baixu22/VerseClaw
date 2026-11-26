@@ -266,7 +266,7 @@ test.describe('visual tuning screenshots', () => {
         win?.moveTop();
         win?.focus();
       });
-      await page.getByTestId('chat-agent-effort-button').click();
+      await page.getByTestId('chat-model-picker-button').click();
       const popover = page.getByTestId('chat-agent-effort-popover');
       await expect(popover).toBeVisible();
       await page.waitForTimeout(300);

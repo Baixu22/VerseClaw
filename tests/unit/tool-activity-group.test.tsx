@@ -24,14 +24,34 @@ function Harness({ group }: { group: ToolActivityGroupModel }) {
   return <ToolActivityGroup group={group} expanded={open} onExpandedChange={setOpen} />;
 }
 describe('tool activity disclosure', () => {
-  it('starts folded and exposes the original arguments and result on demand', () => {
+  it('shows a single result when runtime and history both deliver the same receipt', () => {
+    const group = model();
+    const text = '  KEEP INDENTATION\n';
+    group.steps[0] = { ...group.steps[0], detail: text, outputDetail: text };
+    group.steps.push({ id: 'tool-result-read', kind: 'system', label: 'Tool Result', detail: text, status: 'completed', depth: 1 });
+    render(<Harness group={group} />);
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    fireEvent.click(screen.getByTestId('chat-execution-step-toggle'));
+    expect(screen.getByTestId('chat-execution-step-detail').querySelectorAll('pre')).toHaveLength(2);
+    expect(screen.getByTestId('chat-execution-step-detail').querySelector('[data-tool-payload="result"]')?.textContent).toBe(text);
+  });
+
+  it('keeps a result equal to the input in its own result field', () => {
+    const group = model();
+    group.steps[0] = { ...group.steps[0], inputDetail: 'ping', detail: 'ping', outputDetail: 'ping' };
+    render(<Harness group={group} />);
+    fireEvent.click(screen.getByTestId('chat-tool-activity-toggle'));
+    fireEvent.click(screen.getByTestId('chat-execution-step-toggle'));
+    expect([...screen.getByTestId('chat-execution-step-detail').querySelectorAll('pre')].map(el => el.textContent)).toEqual(['ping', 'ping']);
+  });
+  it('starts folded and exposes the original arguments and result on demand', async () => {
     render(<Harness group={model()} />);
     const toggle = screen.getByTestId('chat-tool-activity-toggle');
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByText('FULL_READ_RESULT')).toBeNull();
     fireEvent.click(toggle);
     fireEvent.click(screen.getByTestId('chat-execution-step-toggle'));
-    expect(screen.getByText('FULL_READ_RESULT')).toBeVisible();
+    await waitFor(() => expect(screen.getByText('FULL_READ_RESULT')).toBeVisible());
     expect(screen.getByText(/"path":/)).toBeVisible();
   });
   it('moves the live shimmer into the details and preserves manual expansion on completion', () => {

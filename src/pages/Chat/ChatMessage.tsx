@@ -1,4 +1,5 @@
 import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdown';
+import { assistantPhaseLabels, type AssistantOutputPhase } from './execution-projection';
 import { UserMessageBubble } from '@/components/assistant-render/UserMessageBubble';
 import { BookOpen } from 'lucide-react';
 import { UsedKnowledge } from './UsedKnowledge';
@@ -119,7 +120,7 @@ interface ChatMessageProps {
     startedAt?: number | null;
     now?: number;
     tokenCount?: number | null;
-    state?: 'thinking' | 'streaming' | 'syncing';
+    state?: AssistantOutputPhase;
   } | null;
   /**
    * Live token usage for the current streaming run. Passed to the
@@ -713,11 +714,9 @@ function AssistantStreamStatusBar({
   const now = useTickingNow(status.active);
   const elapsed = formatElapsedSeconds(status.startedAt, now);
   const tokenCount = status.tokenCount ?? 0;
-  const dotState = status.state === 'syncing'
-    ? 'syncing'
-    : status.state === 'streaming'
-      ? 'streaming'
-      : 'thinking';
+  const phase = status.state ?? 'working';
+  const label = t(assistantPhaseLabels[phase]);
+  const dotState = phase === 'tools' ? 'working' : phase;
 
   return (
     <div
@@ -730,15 +729,18 @@ function AssistantStreamStatusBar({
           data-testid="assistant-stream-status-dot"
           data-state="thinking"
         >
-          {t('assistantRender.activity.thinking')}
+          {label}
         </Shimmer>
       ) : (
-        <OrbStatus
-          state={dotState}
-          label={t('assistantRender.activity.thinking')}
-          className="size-4 shrink-0 text-primary"
-          data-testid="assistant-stream-status-dot"
-        />
+        <>
+          <OrbStatus
+            state={dotState}
+            label={label}
+            className="size-4 shrink-0 text-primary"
+            data-testid="assistant-stream-status-dot"
+          />
+          <span>{label}</span>
+        </>
       )}
       <span className="tabular-nums" data-testid="assistant-stream-status-elapsed">
         {elapsed}

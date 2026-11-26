@@ -62,6 +62,23 @@ function getMeta(message: RawMessage): RecordLike {
  * every reasoning channel was closed at once and the panel could only be
  * reached by hand-injected metadata in tests.
  */
+/** The runtime may replay the tail already saved to the assistant transcript. */
+export function mergeTurnReasoning(history: AssistantReasoning[], live: AssistantReasoning[]): AssistantReasoning[] {
+  if (!history.length || !live.length) return history.length ? history : live;
+  const start = history.findLastIndex(item => item.summary === live[0].summary);
+  const offset = start >= 0 ? start : history.length - 1;
+  let i = offset;
+  const merged = history.slice(0, offset);
+  for (const item of live) {
+    const saved = history[i++];
+    if (!saved) { merged.push(item); continue; }
+    if (item.summary.startsWith(saved.summary)) merged.push({ ...saved, summary: item.summary });
+    else if (saved.summary.startsWith(item.summary)) merged.push(saved);
+    else return [...history, ...live];
+  }
+  return [...merged, ...history.slice(i)];
+}
+
 export function extractAssistantReasoning(message: RawMessage): AssistantReasoning[] {
   const meta = getMeta(message);
   const record = message as unknown as RecordLike;

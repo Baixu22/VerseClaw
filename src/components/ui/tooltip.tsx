@@ -31,4 +31,15 @@ const TooltipContent = React.forwardRef<
 })
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+function TooltipHint({ label, side = "top", children }: {
+    label: React.ReactNode
+    side?: "top" | "right" | "bottom" | "left"
+    children: React.ReactElement
+}) {
+    return <Tooltip>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent side={side} collisionPadding={10}>{label}</TooltipContent>
+    </Tooltip>
+}
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, TooltipHint }

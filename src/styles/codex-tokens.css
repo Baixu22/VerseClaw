@@ -400,6 +400,9 @@
  * These roles apply to the composer and task dock without changing page chrome. */
 :root {
   --color-chat-canvas: #f7f7f5;
+  --color-transcript-paper: var(--color-chat-canvas);
+  --color-transcript-prose: #343432;
+  --color-transcript-activity: #666663;
   --color-chat-tray: #ecece8;
   --color-chat-tray-hover: #e2e2dd;
   --color-chat-tray-border: rgb(0 0 0 / 0.06);
@@ -457,6 +460,9 @@
   --color-chat-failure-border: #4a4a47;
   --color-chat-failure: #e56464;
   --color-chat-foreground: #ecece9;
+  --color-transcript-paper: #2d2d2b;
+  --color-transcript-prose: #f9f9f7;
+  --color-transcript-activity: #989895;
   --color-chat-secondary: #9a9a95;
   --color-chat-placeholder: #8a8a85;
   --shadow-chat-menu: 0 10px 28px rgb(0 0 0 / 0.32);

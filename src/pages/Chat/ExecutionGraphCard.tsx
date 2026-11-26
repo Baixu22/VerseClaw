@@ -29,6 +29,11 @@ interface ExecutionGraphCardProps {
 
 const TOOL_ROW_EXTRA_INDENT_PX = 0;
 
+function formatToolPayload(value?: string): string | undefined {
+  if (!value || !/^\s*(?:\[|\{)/.test(value)) return value;
+  try { return JSON.stringify(JSON.parse(value), null, 2); } catch { return value; }
+}
+
 function StepDetailRow({
   step,
   result,
@@ -56,7 +61,7 @@ function StepDetailRow({
   const detailId = useId();
   const [localExpanded, setLocalExpanded] = useState(false);
   const expanded = controlledExpanded ?? localExpanded;
-  const hasDetail = Boolean(step.detail || inputDetail || result?.detail);
+  const hasDetail = Boolean(step.detail || step.outputDetail || inputDetail || result?.detail);
   const isNarration = step.kind === 'message';
   const isTool = step.kind === 'tool';
   const isSystem = step.kind === 'system';
@@ -84,19 +89,9 @@ function StepDetailRow({
     }
   }
 
-  let formattedInput = inputDetail;
-  if (formattedInput && isTool) {
-    try { formattedInput = JSON.stringify(JSON.parse(formattedInput), null, 2); } catch { /* Preserve plain arguments. */ }
-  }
-
-  let formattedDetail = step.detail;
-  if (formattedDetail && (isTool || isSystem)) {
-    try {
-      formattedDetail = JSON.stringify(JSON.parse(formattedDetail) as unknown, null, 2);
-    } catch {
-      // Keep non-JSON tool and system details unchanged.
-    }
-  }
+  const args = isTool ? inputDetail ?? (result && step.outputDetail == null ? step.detail : undefined) : undefined;
+  const output = result?.detail ?? step.outputDetail ?? (args !== undefined && args !== step.detail ? step.detail : undefined);
+  const otherDetail = args === undefined && output === undefined ? step.detail : undefined;
 
   const toggleExpanded = () => {
     if (!hasDetail) return;
@@ -116,11 +111,6 @@ function StepDetailRow({
       ? 'running' as const
       : 'done' as const;
 
-  let resultDetail = result?.detail;
-  if (resultDetail) {
-    try { resultDetail = JSON.stringify(JSON.parse(resultDetail), null, 2); } catch { /* Preserve plain output. */ }
-  }
-  const distinctToolResult = isTool && inputDetail !== undefined && step.detail !== undefined && inputDetail !== step.detail;
   const detail = hasDetail && expanded ? (
     <div
       id={detailId}
@@ -130,29 +120,17 @@ function StepDetailRow({
       className="mt-1 max-h-72 overflow-auto rounded-r-md border-l border-border/70 bg-surface-input px-3 py-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       data-testid="chat-execution-step-detail"
     >
-      {isTool && formattedInput && (
+      {args !== undefined && (
         <>
           <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.arguments')}</p>
-          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedInput}</pre>
+          <pre data-tool-payload="arguments" className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formatToolPayload(args)}</pre>
         </>
       )}
-      {formattedDetail && (distinctToolResult || !inputDetail || !isTool) && (
-        distinctToolResult && formattedInput ? (
-          <div className="mt-3 border-t border-border/60 pt-2">
-            <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.result')}</p>
-            <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedDetail}</pre>
-          </div>
-        ) : (
-          <>
-            {(distinctToolResult || resultDetail) && <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.result')}</p>}
-          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedDetail}</pre>
-          </>
-        )
-      )}
-      {resultDetail && (
-        <div className={cn(formattedDetail && 'mt-3 border-t border-border/60 pt-2')}>
-          <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.result')}</p>
-          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{resultDetail}</pre>
+      {otherDetail && <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 [overflow-wrap:anywhere]">{isTool || isSystem ? formatToolPayload(otherDetail) : otherDetail}</pre>}
+      {output !== undefined && (
+        <div className={cn(args !== undefined && 'mt-3 border-t border-border/60 pt-2')}>
+          <p className={cn('mb-1 text-xs', showError ? 'text-destructive' : 'text-muted-foreground')}>{t('executionGraph.result')}</p>
+          <pre data-tool-payload="result" className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formatToolPayload(output)}</pre>
         </div>
       )}
     </div>

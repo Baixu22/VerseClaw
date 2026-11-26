@@ -26,6 +26,8 @@ four locales and narrow light/dark layouts with `tests/e2e/chat-context-display.
 
 ## Purpose
 
+Conversation turn previews allow marking a transcript entry and jumping to the next marked turn. Marks use the workspace, session generation and transcript entry identity. Tool disclosures animate their own height, retain manual expansion and obey reduced motion. Workspace file headings show name and path separately, while file-panel actions and settings navigation share the application tooltip.
+
 Give the Electron application a coherent FakeCoding-aligned grayscale shell, compact control system, and route-driven settings surface while preserving all existing product workflows.
 
 ## Flow
