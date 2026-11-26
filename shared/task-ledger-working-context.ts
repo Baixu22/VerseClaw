@@ -4,6 +4,7 @@
 // implementation so proposal/accept/reject validation, projection, and merge
 // semantics cannot drift.
 import { TASK_LEDGER_WORKING_CONTEXT_FIELDS } from './types/task-ledger.js';
+import { normalizeContextSemanticState, type ContextSemanticState } from './types/context-item.js';
 import type {
   TaskLedgerActor,
   TaskLedgerEvent,
@@ -24,6 +25,22 @@ import type {
 } from './types/task-ledger.js';
 
 export const STAGE3_WORKING_CONTEXT_RULE_ID = 'stage3-task-ledger-working-context:v1';
+
+export function workingContextSemanticState(
+  current: TaskLedgerWorkingContextAcceptedRecord,
+  history: readonly TaskLedgerWorkingContextAcceptedRecord[] = [],
+  conflicts: readonly TaskLedgerWorkingContextProposalRecord[] = [],
+): ContextSemanticState {
+  return normalizeContextSemanticState({
+    owner: 'task-ledger-working-context', sourceStatus: current.trust,
+    polarity: 'unknown', scope: `task:${current.taskId}`, evidenceRefs: current.evidenceRefs,
+    sourceRef: current.acceptedEventId, sourceVersion: String(current.version),
+    supersedes: history.filter(entry => entry.taskId === current.taskId && entry.field === current.field
+      && entry.version < current.version).slice(-20).map(entry => entry.proposalId),
+    conflicts: conflicts.filter(entry => entry.taskId === current.taskId && entry.field === current.field)
+      .slice(0, 20).map(entry => entry.proposalId),
+  });
+}
 export const STAGE3_WORKING_CONTEXT_POLICY_DIGEST =
   'sha256:f100f8862c9979e6bc662376c98b80587cec4a026d2cbdbb239dbe3a9c009f19';
 

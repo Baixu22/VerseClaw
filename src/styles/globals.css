@@ -25,6 +25,7 @@
 @import './codex-setup-motion.css';
 @import './codex-responsive.css';
 @import './rareui-interactions.css';
+@import './appearance.css';
 
 @tailwind base;
 @tailwind components;

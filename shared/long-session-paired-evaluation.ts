@@ -21,6 +21,71 @@ import type {
   CompressionSemanticAtom,
 } from './host-api/contract';
 
+/** C01 grades continued owner operations and disk artifacts, separately from text fidelity. */
+export type ContinuationObservation = Record<string, string | number | boolean | null>;
+export type ContinuationGrade = {
+  status: 'pass' | 'fail' | 'unknown';
+  matched: string[];
+  failed: string[];
+  unknown: string[];
+};
+
+export function gradeAutonomyContinuation(
+  expected: ContinuationObservation,
+  observed: ContinuationObservation,
+): ContinuationGrade {
+  if (!Object.keys(expected).length) throw new Error('CONTINUATION_ORACLE_EMPTY');
+  const matched: string[] = [], failed: string[] = [], unknown: string[] = [];
+  for (const [field, value] of Object.entries(expected)) {
+    if (!Object.hasOwn(observed, field) || observed[field] === undefined
+      || (typeof observed[field] === 'number' && !Number.isFinite(observed[field]))) unknown.push(field);
+    else if (observed[field] === null && value !== null) unknown.push(field);
+    else if (observed[field] === value) matched.push(field);
+    else failed.push(field);
+  }
+  return { status: failed.length ? 'fail' : unknown.length ? 'unknown' : 'pass', matched, failed, unknown };
+}
+
+export const CONTINUATION_COST_FIELDS = [
+  'inputTokens', 'outputTokens', 'cacheReadTokens', 'cacheWriteTokens', 'costUsd', 'wallMs',
+] as const;
+export const CONTINUATION_COST_PHASES = ['execution', 'organization', 'readback', 'failure', 'retry'] as const;
+export type ContinuationCostValues = Record<typeof CONTINUATION_COST_FIELDS[number], number | null>;
+export type ContinuationCostEvent = {
+  id: string;
+  phase: typeof CONTINUATION_COST_PHASES[number];
+  basis: 'provider-receipt' | 'fixture' | 'unmeasured';
+  terminal: 'done' | 'error' | 'unknown';
+  values: ContinuationCostValues;
+};
+
+/** Events are disjoint charges; a retry must not be counted again as an execution charge. */
+export function sumAutonomyContinuationCosts(events: readonly ContinuationCostEvent[]) {
+  const ids = new Set<string>();
+  for (const event of events) {
+    if (!event.id || ids.has(event.id)) throw new Error('CONTINUATION_COST_DUPLICATE');
+    ids.add(event.id);
+    if (!CONTINUATION_COST_PHASES.includes(event.phase)) throw new Error('CONTINUATION_COST_PHASE');
+    for (const field of CONTINUATION_COST_FIELDS) {
+      const value = event.values[field];
+      if (value !== null && (typeof value !== 'number' || !Number.isFinite(value) || value < 0))
+        throw new Error(`CONTINUATION_COST_INVALID:${field}`);
+    }
+  }
+  const total = {} as ContinuationCostValues;
+  const knownSubtotal = {} as Record<typeof CONTINUATION_COST_FIELDS[number], number>;
+  const unknownCells = {} as Record<typeof CONTINUATION_COST_FIELDS[number], number>;
+  for (const field of CONTINUATION_COST_FIELDS) {
+    const measured = events.filter(event => event.terminal !== 'unknown' && event.values[field] !== null);
+    knownSubtotal[field] = measured.reduce((sum, event) => sum + event.values[field]!, 0);
+    unknownCells[field] = events.length - measured.length;
+    total[field] = events.length > 0 && unknownCells[field] === 0 ? knownSubtotal[field] : null;
+  }
+  return { total, knownSubtotal, unknownCells,
+    providerMeasured: events.length > 0 && events.every(event => event.basis === 'provider-receipt'
+      && event.terminal !== 'unknown' && CONTINUATION_COST_FIELDS.every(field => event.values[field] !== null)) };
+}
+
 export const PAIRED_EVALUATION_SCHEMA = 'LongSessionPairedEvaluation/v1' as const;
 export const PAIRED_WORKLOAD_SCHEMA = 'LongSessionPairedWorkloadManifest/v1' as const;
 export const PAIRED_WORKLOAD_SEED = 'long-session-d2-v1' as const;

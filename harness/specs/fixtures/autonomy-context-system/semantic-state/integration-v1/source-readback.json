@@ -1,0 +1,352 @@
+{
+  "schema": "C02IntegrationVerifier/v1",
+  "actor": "c02-integration-verifier",
+  "driven_by": "agent",
+  "providerModel": "ccs-ai/gpt-6.1-sol",
+  "reviewedAt": "2026-11-26T01:10:48.466925Z",
+  "verdict": "pending-integration-receipts",
+  "candidate": {
+    "checkout": "D:/ClawX-work/context-c02-integration-20261126",
+    "tree": "3bff8a58ca508717eb98717c0f315ee5c6aa6a38",
+    "commit": "49d5922b7103b7a15953d304eec4d09242322275",
+    "dirty": false
+  },
+  "frozenSourceCandidate": {
+    "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+    "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+    "dirty": false
+  },
+  "manifestHashScheme": "sha256-utf8-lf",
+  "manifestChecks": [
+    {
+      "path": "autoreview.json",
+      "expected": "7ed55ebb08edca6feeaf5076a91ec3905d7184dab69de2efca7daab40655946d",
+      "actual": "7ed55ebb08edca6feeaf5076a91ec3905d7184dab69de2efca7daab40655946d",
+      "match": true
+    },
+    {
+      "path": "credential-scan.json",
+      "expected": "d2f9363f720cd5dd73e05623ad09550c152b68049106b7fdd02710d5a53958eb",
+      "actual": "d2f9363f720cd5dd73e05623ad09550c152b68049106b7fdd02710d5a53958eb",
+      "match": true
+    },
+    {
+      "path": "electron-observation.json",
+      "expected": "79248346399dfd9aeeeb749e55c7ab65f52db90b4e2db4a774a0f3bb26e3d5e9",
+      "actual": "79248346399dfd9aeeeb749e55c7ab65f52db90b4e2db4a774a0f3bb26e3d5e9",
+      "match": true
+    },
+    {
+      "path": "electron-results.json",
+      "expected": "c10de644bead0a13ec8984b665be8251f3799fb3a84d45a3892281b305665cf7",
+      "actual": "c10de644bead0a13ec8984b665be8251f3799fb3a84d45a3892281b305665cf7",
+      "match": true
+    },
+    {
+      "path": "independent-verdict.json",
+      "expected": "c181a8cc0607aa5a711bd9fcf3507b92336a76db3f9a5281c12b170ed5785d80",
+      "actual": "c181a8cc0607aa5a711bd9fcf3507b92336a76db3f9a5281c12b170ed5785d80",
+      "match": true
+    },
+    {
+      "path": "independent-verdict.md",
+      "expected": "afdf069965f03f310ac9a434d682eb0934ca7dc09eb88929a8e16306177f97b9",
+      "actual": "afdf069965f03f310ac9a434d682eb0934ca7dc09eb88929a8e16306177f97b9",
+      "match": true
+    },
+    {
+      "path": "legacy-read-parity.json",
+      "expected": "43648361df2730e696d5169faf56b0bf5dcab951e6a62aee1c4f463508996cb4",
+      "actual": "43648361df2730e696d5169faf56b0bf5dcab951e6a62aee1c4f463508996cb4",
+      "match": true
+    },
+    {
+      "path": "REPORT.md",
+      "expected": "93199bc9c671d9c1ad7e7166ddc46e1807c1436b4b2ff552fe772bdd4d541566",
+      "actual": "93199bc9c671d9c1ad7e7166ddc46e1807c1436b4b2ff552fe772bdd4d541566",
+      "match": true
+    },
+    {
+      "path": "semantic-state-mapping.json",
+      "expected": "08450f61ceb7f8914641f498899e9d9dc777d34b1bfad13848f8c382580a99f9",
+      "actual": "08450f61ceb7f8914641f498899e9d9dc777d34b1bfad13848f8c382580a99f9",
+      "match": true
+    },
+    {
+      "path": "source-readback.json",
+      "expected": "f2316eb3a700e63fd1ed89cdf11f4d126c520ae7e918a637b0f8ed12c083ea3b",
+      "actual": "f2316eb3a700e63fd1ed89cdf11f4d126c520ae7e918a637b0f8ed12c083ea3b",
+      "match": true
+    },
+    {
+      "path": "state-preservation-cases.json",
+      "expected": "c334f720152049d5fd2021373ad5efa2ea3f8e54db90e14724e415939aa02c49",
+      "actual": "c334f720152049d5fd2021373ad5efa2ea3f8e54db90e14724e415939aa02c49",
+      "match": true
+    },
+    {
+      "path": "validation.json",
+      "expected": "0f5c846cfd67e6cd90c46f6a5f954ad8a9dc8285125245955237e879383b8445",
+      "actual": "0f5c846cfd67e6cd90c46f6a5f954ad8a9dc8285125245955237e879383b8445",
+      "match": true
+    }
+  ],
+  "sourceChecks": [
+    {
+      "path": "shared/long-session-continuity.ts",
+      "expected": "86a48b7fdbfb45b60cb2921b0f2bcd535910e37e9691fc859d4b81e582ee7bc6",
+      "actual": "86a48b7fdbfb45b60cb2921b0f2bcd535910e37e9691fc859d4b81e582ee7bc6",
+      "match": true,
+      "blob": "ca7c06a655827d28317a2115394f73ada007f1d7",
+      "frozenBlob": "ca7c06a655827d28317a2115394f73ada007f1d7",
+      "blobMatch": true
+    },
+    {
+      "path": "shared/types/context-item.ts",
+      "expected": "a86ab5254772515bc703e70e86f4bc69fa25fdbdd1ebcde663c39b133d0498a1",
+      "actual": "a86ab5254772515bc703e70e86f4bc69fa25fdbdd1ebcde663c39b133d0498a1",
+      "match": true,
+      "blob": "8fd9835b6fef0c79fc85b3af7f366ae690312983",
+      "frozenBlob": "8fd9835b6fef0c79fc85b3af7f366ae690312983",
+      "blobMatch": true
+    },
+    {
+      "path": "shared/task-ledger-working-context.ts",
+      "expected": "41456b3a1b5f71babb9f6b83422ff430391875cb8c318d08fcc643344ee58c48",
+      "actual": "41456b3a1b5f71babb9f6b83422ff430391875cb8c318d08fcc643344ee58c48",
+      "match": true,
+      "blob": "db9ac81556dc6e1caaa0f7576fede52d46f737ed",
+      "frozenBlob": "db9ac81556dc6e1caaa0f7576fede52d46f737ed",
+      "blobMatch": true
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "expected": "efd7fb250db8c2da1da48292078049cd76631e4298ab75155ac4fcc61d835c95",
+      "actual": "efd7fb250db8c2da1da48292078049cd76631e4298ab75155ac4fcc61d835c95",
+      "match": true,
+      "blob": "a350c8a93456a54a5c7a0ee33ed3cf7b5a66ca85",
+      "frozenBlob": "a350c8a93456a54a5c7a0ee33ed3cf7b5a66ca85",
+      "blobMatch": true
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "expected": "bf0de7b6d8599f2759e03ef9f31e948c5beb5f2c2037fc965e4919561c2fa12b",
+      "actual": "bf0de7b6d8599f2759e03ef9f31e948c5beb5f2c2037fc965e4919561c2fa12b",
+      "match": true,
+      "blob": "a4e837f1c1054eb77744694451d412b9f52e005f",
+      "frozenBlob": "a4e837f1c1054eb77744694451d412b9f52e005f",
+      "blobMatch": true
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "expected": "2cdb3b45cfbca3301d8692e091eb9ecf98bb5bc87d2c8d0ff44daeffd081625c",
+      "actual": "2cdb3b45cfbca3301d8692e091eb9ecf98bb5bc87d2c8d0ff44daeffd081625c",
+      "match": true,
+      "blob": "9b94d3c133dadf8fc7c4bc04f6094195385fb926",
+      "frozenBlob": "9b94d3c133dadf8fc7c4bc04f6094195385fb926",
+      "blobMatch": true
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+      "expected": "1117587583e23aed12c20bacbfd786384ec7a7ab9bb25d627398e0bb86040ac0",
+      "actual": "1117587583e23aed12c20bacbfd786384ec7a7ab9bb25d627398e0bb86040ac0",
+      "match": true,
+      "blob": "182df624b382d47a71f57c128880884c4e37a7b8",
+      "frozenBlob": "182df624b382d47a71f57c128880884c4e37a7b8",
+      "blobMatch": true
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts",
+      "expected": "d8f0fc9f2dbc689d6a176bb21599b975126aac341bca6129765df407788506fd",
+      "actual": "d8f0fc9f2dbc689d6a176bb21599b975126aac341bca6129765df407788506fd",
+      "match": true,
+      "blob": "66c824860d0d5bd120ce7062dafcac44dd9cd3c1",
+      "frozenBlob": "66c824860d0d5bd120ce7062dafcac44dd9cd3c1",
+      "blobMatch": true
+    },
+    {
+      "path": "tests/unit/autonomy-context-semantic-state.test.ts",
+      "expected": "e66d10b41de878b4d0084299c44fbafa19cb2fdc9187a5a632d32f9a99185e70",
+      "actual": "e66d10b41de878b4d0084299c44fbafa19cb2fdc9187a5a632d32f9a99185e70",
+      "match": true,
+      "blob": "02a6cf36b6c6deb1f9b0ac9191ac31f3a793abf4",
+      "frozenBlob": "02a6cf36b6c6deb1f9b0ac9191ac31f3a793abf4",
+      "blobMatch": true
+    },
+    {
+      "path": "tests/unit/compression-artifact.test.ts",
+      "expected": "7ab75ca8bf0108d3225e5862c16ce6a4f7dbe9e2b403ea322bf2d32a6bfbfa6c",
+      "actual": "7ab75ca8bf0108d3225e5862c16ce6a4f7dbe9e2b403ea322bf2d32a6bfbfa6c",
+      "match": true,
+      "blob": "2b645636ef0a78af18c2913f5cd9bc666ab47400",
+      "frozenBlob": "2b645636ef0a78af18c2913f5cd9bc666ab47400",
+      "blobMatch": true
+    },
+    {
+      "path": "tests/unit/long-session-continuity-context.test.ts",
+      "expected": "0977b6ca269d704ac5ddea07514863a5e151b3c135f311253fb10c8e88276f84",
+      "actual": "0977b6ca269d704ac5ddea07514863a5e151b3c135f311253fb10c8e88276f84",
+      "match": true,
+      "blob": "0170f981a7c6dcb7e300ca3c458a26a6546daa44",
+      "frozenBlob": "0170f981a7c6dcb7e300ca3c458a26a6546daa44",
+      "blobMatch": true
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-context-c02-predecessor.json",
+      "expected": "dfe9087b6e55b7438a5b3667c5761eed6720e65e94521e1e656afa76a1e673c8",
+      "actual": "dfe9087b6e55b7438a5b3667c5761eed6720e65e94521e1e656afa76a1e673c8",
+      "match": true,
+      "blob": "64f3ca39b140299b6ac069a10b0fd24b37d61b5f",
+      "frozenBlob": "64f3ca39b140299b6ac069a10b0fd24b37d61b5f",
+      "blobMatch": true
+    }
+  ],
+  "additionalBlobChecks": [
+    {
+      "path": "tests/e2e/long-session-continuity-context.spec.ts",
+      "blob": "94a911fd6d9769c8562aa798d0871e02e58394a2",
+      "frozenBlob": "94a911fd6d9769c8562aa798d0871e02e58394a2",
+      "match": true
+    },
+    {
+      "path": "shared/long-session-paired-evaluation.ts",
+      "blob": "60b169f18a1fe222a2980a0deaaa72576bb6553e",
+      "frozenBlob": "60b169f18a1fe222a2980a0deaaa72576bb6553e",
+      "match": true
+    },
+    {
+      "path": "scripts/verify-autonomy-context-baseline.mjs",
+      "blob": "8aed549fd9ac664c15405c8f7c440148da40e87a",
+      "frozenBlob": "8aed549fd9ac664c15405c8f7c440148da40e87a",
+      "match": true
+    },
+    {
+      "path": "tests/unit/autonomy-context-baseline.test.ts",
+      "blob": "31c2d9775e97b49f7e15e9f335efc2f9b1d9b480",
+      "frozenBlob": "31c2d9775e97b49f7e15e9f335efc2f9b1d9b480",
+      "match": true
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-context-baseline.v2.json",
+      "blob": "6b220cc2daf0d1dc8ba7067354684e1856f1bbf5",
+      "frozenBlob": "6b220cc2daf0d1dc8ba7067354684e1856f1bbf5",
+      "match": true
+    },
+    {
+      "path": "tests/unit/task-ledger-working-context-single-source.test.ts",
+      "blob": "18775613325b16b9da71bcc2ed010da4d630f937",
+      "frozenBlob": "18775613325b16b9da71bcc2ed010da4d630f937",
+      "match": true
+    }
+  ],
+  "readmeReview": "三语言均保留C02语义状态说明；相对205be98dc仅合入主线浏览器关闭撤销批准与late opening防覆盖说明。",
+  "remainingAcceptanceGaps": [
+    "新集成候选定向回归/类型/通信/harness命令回执",
+    "新集成候选桌面与Runtime构建回执",
+    "新集成候选真实Electron旅程回执",
+    "harness:ci结果及失败时主线基线对照",
+    "实际私有主线合并提交身份"
+  ],
+  "mergeIdentity": {
+    "mergeCommit": "be24bcd9aeb96d239c88708bb92e41bc3186cd29",
+    "parents": [
+      "917a71cba7b2dfc8aedbdb3b75b7b693e3900f1e",
+      "704f565238581d293263ff7e5c39fa7739686ac8"
+    ]
+  },
+  "rawCommandDigestChecks": [
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-final-r2-command.json",
+      "expected": "85eb55fc3189dbe725faa5e9893e6d6822e3967d7e6839ff489e7aa1fe4af901",
+      "actual": "85eb55fc3189dbe725faa5e9893e6d6822e3967d7e6839ff489e7aa1fe4af901",
+      "match": true
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-build-command.json",
+      "expected": "2878385c3a36c9dcd8efc36f7afc65dcf02855a462fdffb5d6a847d44c3d2ea9",
+      "actual": "2878385c3a36c9dcd8efc36f7afc65dcf02855a462fdffb5d6a847d44c3d2ea9",
+      "match": true
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-runtime-build-command.json",
+      "expected": "271588a0cc589ada6fb9d55bb92dd92e5b6585c2a640c191cb99eee5df401d81",
+      "actual": "271588a0cc589ada6fb9d55bb92dd92e5b6585c2a640c191cb99eee5df401d81",
+      "match": true
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-electron-r2-command.json",
+      "expected": "59824802c611623b7ff668101f0adac57835147519f4a85cbc672709e8a7fbec",
+      "actual": "59824802c611623b7ff668101f0adac57835147519f4a85cbc672709e8a7fbec",
+      "match": true
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-review-r17-command.json",
+      "expected": "81982cbfadbe35a48f4b86f9e078e2b9566c096081a14793a3bcd4b916fbe3be",
+      "actual": "81982cbfadbe35a48f4b86f9e078e2b9566c096081a14793a3bcd4b916fbe3be",
+      "match": true
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-checks-r17-command.json",
+      "expected": "597e12b8b4b50f99b59ad28859986978561bdd9bcaa45e80a74f0c4bbebf6a87",
+      "actual": "597e12b8b4b50f99b59ad28859986978561bdd9bcaa45e80a74f0c4bbebf6a87",
+      "match": true
+    }
+  ],
+  "rawResourceDigestChecks": [
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-clean-validation-20261126-r2\\receipt.json",
+      "sha256": "d78fa7adb3b01f57878e0f96922a98e767bed9c90f89c4507be12cee1e525742",
+      "match": true,
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-clean-build-20261126-r2\\receipt.json",
+      "sha256": "60a694e781497d77d7ae6706b939186fab41a8b452793cd7f829559d0c8e0c02",
+      "match": true,
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-runtime-build-20261126-r2\\receipt.json",
+      "sha256": "5df7ddee69afb500758586926d32d1a7954126727f8b514df66c4beb6e3e0383",
+      "match": true,
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-electron-20261126-r2\\receipt.json",
+      "sha256": "0dd5191daa1dcc803c2ac6890e5014824dce3b84f3d25e4f90048fd211d59fa8",
+      "match": true,
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "budgetExceeded": false
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-autoreview-20261126-r17\\receipt.json",
+      "sha256": "f253ba81eb889c7185a8d8de971eb7f48b142531cb869e830841bb03f79268ef",
+      "match": true,
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "budgetExceeded": false
+    }
+  ],
+  "baselineRetention": {
+    "gitDiffFrom704f56523": "empty",
+    "directory": "harness/specs/fixtures/autonomy-context-system/baseline/v1",
+    "originalSourceCandidate": "5e8c2e2861bb87d33149a2a284430fe204bb1f63"
+  }
+}

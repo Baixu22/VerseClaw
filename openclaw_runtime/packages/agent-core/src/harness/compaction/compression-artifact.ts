@@ -24,6 +24,8 @@ export type CompressionSemanticAtom = {
   scope: string;
   polarity: SemanticAtomPolarity;
   status: SemanticAtomStatus;
+  /** Original unrecognized owner state survives normalization without gaining verification. */
+  sourceStatus?: string;
   text: string;
   evidenceRefs: CompressionEvidenceRef[];
   supersedes?: string[];
@@ -44,6 +46,7 @@ export type CompressionEvidenceRef = {
 export type CompressionFact = {
   text: string;
   evidenceRefs: CompressionEvidenceRef[];
+  semanticAtomId?: string;
 };
 
 export type CompressionArtifactQuality = {
@@ -116,6 +119,7 @@ export type CompressionArtifact = {
   rehydratedFileContext?: CompressionRehydratedFileContext[];
   telemetry?: Partial<CompressionTelemetry>;
   semanticAtoms?: CompressionSemanticAtom[];
+  semanticOrigins?: Partial<Record<"objective" | "currentState" | "nextAction", string>>;
   quality: CompressionArtifactQuality;
 };
 
@@ -329,6 +333,9 @@ function normalizeSemanticAtom(value: unknown, index: number): SemanticAtomNorma
       : "ledger";
     source = { kind: sourceKind, ref: normalizeText(sourceValue.ref, 240) || "ledger" };
   }
+  const originalStatus = normalizeText(record.sourceStatus ?? record.status, 80);
+  const sourceStatus = originalStatus && !SEMANTIC_ATOM_STATUSES.has(originalStatus as SemanticAtomStatus)
+    ? originalStatus : undefined;
   return {
     atom: {
       id,
@@ -336,9 +343,10 @@ function normalizeSemanticAtom(value: unknown, index: number): SemanticAtomNorma
       canonicalIdentity: normalizeText(record.canonicalIdentity, 200) || id,
       severity,
       confidence,
-      scope: normalizeText(record.scope, 120) || "session",
+      scope: normalizeText(record.scope, 517) || "unknown",
       polarity,
       status: normalizedStatus,
+      ...(sourceStatus ? { sourceStatus } : {}),
       text,
       evidenceRefs,
       ...(normalizeStringSet(record.supersedes) ? { supersedes: normalizeStringSet(record.supersedes) } : {}),
@@ -350,7 +358,7 @@ function normalizeSemanticAtom(value: unknown, index: number): SemanticAtomNorma
   };
 }
 
-function normalizeSemanticAtoms(value: unknown): { atoms: CompressionSemanticAtom[]; warnings: string[] } {
+export function normalizeSemanticAtoms(value: unknown): { atoms: CompressionSemanticAtom[]; warnings: string[] } {
   if (!Array.isArray(value)) return { atoms: [], warnings: [] };
   const atoms: CompressionSemanticAtom[] = [];
   const warnings: string[] = [];
@@ -359,6 +367,7 @@ function normalizeSemanticAtoms(value: unknown): { atoms: CompressionSemanticAto
     if (result.warning) warnings.push(result.warning);
     if (result.atom) atoms.push(result.atom);
   }
+  if (value.length > MAX_SEMANTIC_ATOMS) warnings.push("semantic_atom_limit_exceeded");
   return { atoms, warnings };
 }
 
@@ -370,11 +379,21 @@ function isActiveAtom(atom: CompressionSemanticAtom): boolean {
   return atom.status !== "stale" && atom.status !== "superseded";
 }
 
+export function orderCompressionSemanticAtoms(atoms: readonly CompressionSemanticAtom[]): CompressionSemanticAtom[] {
+  const priority = (atom: CompressionSemanticAtom) => {
+    if (!isActiveAtom(atom) || atom.scope === "turn" || atom.scope.startsWith("turn:") || atom.scope === "unknown") return 4;
+    if (atom.type === "goal" || atom.type === "latest_user_ask" || atom.type === "next_action") return 0;
+    if (atom.type === "constraint" || atom.type === "safety_boundary") return 1;
+    return atom.type === "outcome" || atom.severity === "critical" ? 2 : 3;
+  };
+  return [...atoms].sort((left, right) => priority(left) - priority(right));
+}
+
 function atomsToFacts(atoms: CompressionSemanticAtom[], types: SemanticAtomType[], maxItems: number): CompressionFact[] {
   return atoms
     .filter((atom) => isActiveAtom(atom) && types.includes(atom.type))
     .slice(0, maxItems)
-    .map((atom) => ({ text: atom.text, evidenceRefs: atom.evidenceRefs }));
+    .map((atom) => ({ text: atom.text, evidenceRefs: atom.evidenceRefs, semanticAtomId: atom.id }));
 }
 
 function atomTextByType(atoms: CompressionSemanticAtom[], types: SemanticAtomType[]): string | undefined {
@@ -430,10 +449,10 @@ function messageEvidence(message: AgentMessage, index: number): CompressionEvide
   };
 }
 
-function fact(text: string, evidenceRefs: CompressionEvidenceRef[]): CompressionFact | undefined {
+function fact(text: string, evidenceRefs: CompressionEvidenceRef[], semanticAtomId?: string): CompressionFact | undefined {
   const normalized = normalizeText(text, 500);
   if (!normalized) return undefined;
-  return { text: normalized, evidenceRefs };
+  return { text: normalized, evidenceRefs, ...(semanticAtomId ? { semanticAtomId } : {}) };
 }
 
 function pushUniqueFact(target: CompressionFact[], item: CompressionFact | undefined): void {
@@ -518,6 +537,7 @@ function trimFacts(items: CompressionFact[], maxItems: number): CompressionFact[
   return items.slice(0, maxItems).map((item) => ({
     text: normalizeText(item.text, 360),
     evidenceRefs: item.evidenceRefs.slice(0, 4),
+    ...(item.semanticAtomId ? { semanticAtomId: item.semanticAtomId } : {}),
   }));
 }
 
@@ -797,6 +817,8 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
     : trimFacts(failedAttempts, 6);
   let objective = extractObjective(messages, summary);
   let nextAction = extractNextAction(summary, messages);
+  const objectiveAtom = atoms.find((atom) => isActiveAtom(atom) && (atom.type === "goal" || atom.type === "latest_user_ask"));
+  const nextAtom = atoms.find((atom) => isActiveAtom(atom) && atom.type === "next_action");
   if (atoms.length > 0) {
     const ledgerObjective = atomTextByType(atoms, ["goal", "latest_user_ask"]);
     const ledgerNextAction = atomTextByType(atoms, ["next_action"]);
@@ -804,10 +826,17 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
     if (ledgerNextAction) nextAction = ledgerNextAction;
   }
   if (inProgress.length === 0) {
-    pushUniqueFact(inProgress, fact(nextAction, evidence));
+    pushUniqueFact(inProgress, fact(nextAction, nextAtom?.evidenceRefs ?? evidence, nextAtom?.id));
   }
   const outcome = atomTextByType(atoms, ["outcome"]);
   const currentState = outcome ?? normalizeText(done[0]?.text || inProgress[0]?.text || summary || objective, 700);
+  const stateAtomId = atoms.find((atom) => isActiveAtom(atom) && atom.type === "outcome")?.id
+    ?? (done.length === 0 ? inProgress[0]?.semanticAtomId : undefined);
+  const semanticOrigins = {
+    ...(objectiveAtom ? { objective: objectiveAtom.id } : {}),
+    ...(nextAtom ? { nextAction: nextAtom.id } : {}),
+    ...(stateAtomId ? { currentState: stateAtomId } : {}),
+  };
   const reviewNeeded = atoms.length > 0
     ? trimFacts(atomsToFacts(
         atoms.filter((atom) => atom.status === "unverified" && atom.severity === "critical"),
@@ -843,6 +872,7 @@ export function buildDeterministicCompressionArtifact(input: CompressionArtifact
         .slice(0, 4),
     ].slice(0, 8),
     ...(atomLedger.atoms ? { semanticAtoms: atomLedger.atoms } : {}),
+    ...(Object.keys(semanticOrigins).length ? { semanticOrigins } : {}),
     ...(normalizeTelemetry(input.telemetry) ? { telemetry: normalizeTelemetry(input.telemetry) } : {}),
     ...(optionalArray(normalizeRehydratedFileContext(input.rehydratedFileContext)) ? {
       rehydratedFileContext: optionalArray(normalizeRehydratedFileContext(input.rehydratedFileContext)),
@@ -906,43 +936,93 @@ function formatSemanticAtomCounts(atoms: CompressionSemanticAtom[] | undefined):
   ].join(" ");
 }
 
-function formatSemanticAtomLedger(atoms: CompressionSemanticAtom[] | undefined, maxItems = 10): string {
+export function formatSemanticAtomLedger(atoms: CompressionSemanticAtom[] | undefined, maxItems = 10): string {
   if (!atoms?.length) return "- none";
   return atoms.slice(0, maxItems).map((atom) => {
     const relations = [
       ...(atom.supersedes?.length ? [`supersedes:${atom.supersedes.join(",")}`] : []),
       ...(atom.conflicts?.length ? [`conflicts:${atom.conflicts.join(",")}`] : []),
     ].join(" ");
-    return `- [${atom.type}:${atom.status}:${atom.severity}] ${atom.text}${relations ? ` (${relations})` : ""}`;
+    const applicability = atom.scope === "turn" || atom.scope.startsWith("turn:")
+      ? "; applicability=unconfirmed-turn" : "";
+    return `- [${atom.type}:${atom.status}:${atom.severity}; polarity=${atom.polarity}; scope=${atom.scope}${applicability}${atom.sourceStatus ? `; sourceStatus=${atom.sourceStatus}` : ""}; id=${atom.id}; identity=${atom.canonicalIdentity}] ${atom.text}${relations ? ` (${relations})` : ""} refs=${atom.evidenceRefs.map(ref => `${ref.type}:${ref.ref}`).join(",")}`;
   }).join("\n");
 }
 
+function matchingFactAtoms(artifact: CompressionArtifact, item: CompressionFact, types: SemanticAtomType[]): CompressionSemanticAtom[] {
+  return (artifact.semanticAtoms ?? []).filter((atom) => {
+    if (!types.includes(atom.type) || atom.text !== item.text) return false;
+    if (item.semanticAtomId) return item.semanticAtomId === atom.id;
+    // Pre-C02 generated next-action fallback facts used baseEvidence(messages),
+    // not atom evidence. Keep the scoped rendering for this canonical old shape.
+    if (atom.type === "next_action" && !artifact.semanticOrigins?.nextAction
+      && artifact.inProgress.length === 1 && artifact.inProgress[0] === item && artifact.nextAction === item.text
+      && artifact.semanticAtoms?.find((value) => value.type === "next_action" && isActiveAtom(value))?.id === atom.id) return true;
+    // trimFacts stores the first four references in legacy fields; the ledger
+    // keeps all eight. Match the adapter's exact output, not arbitrary subsets.
+    const referenceSets = [atom.evidenceRefs, atom.evidenceRefs.slice(0, 4)];
+    const beforeArchive = atom.evidenceRefs.filter((ref) => ref.type !== "archive");
+    // Existing v1 checkpoints were bound to an archive after legacy fields were
+    // written. New records use semanticAtomId, which survives evidence growth.
+    if (atom.evidenceRefs.length === beforeArchive.length + 1
+      && beforeArchive.every((ref) => ref.type !== "file" && ref.type !== "cvk")) {
+      referenceSets.push(beforeArchive, beforeArchive.slice(0, 4));
+    }
+    return referenceSets.some((expected) => expected.length === item.evidenceRefs.length
+      && expected.every((ref, index) => ref.type === item.evidenceRefs[index].type && ref.ref === item.evidenceRefs[index].ref));
+  });
+}
+
+function matchingScalarAtoms(artifact: CompressionArtifact, text: string, types: SemanticAtomType[], origin?: string): CompressionSemanticAtom[] {
+  return (artifact.semanticAtoms ?? []).filter((atom) => atom.text === text && types.includes(atom.type)
+    && (origin ? atom.id === origin : isActiveAtom(atom)));
+}
+
 export function renderCompressionArtifactSummary(artifact: CompressionArtifact): string {
+  // Legacy sections remain readable, but atom-derived text must carry the same
+  // polarity and scope there as in the canonical ledger.
+  const renderText = (text: string, types: SemanticAtomType[], origin?: string) => {
+    const atoms = matchingScalarAtoms(artifact, text, types, origin);
+    return atoms.length ? formatSemanticAtomLedger(atoms, atoms.length).replace(/^- /gm, "")
+      : origin ? `[unresolved semantic source=${origin}; recall original artifact]` : text;
+  };
+  const renderFacts = (facts: CompressionFact[], types: SemanticAtomType[] = []) => facts.length
+    ? facts.map((item) => {
+        const atoms = matchingFactAtoms(artifact, item, types);
+        return atoms.length ? formatSemanticAtomLedger(atoms, atoms.length)
+          : item.semanticAtomId ? `- [unresolved semantic source=${item.semanticAtomId}; recall original artifact]` : `- ${item.text}`;
+      }).join("\n") : "- none";
+  const supportingFacts = [...artifact.filesTouched, ...artifact.testsRun].slice(0, 12);
+  const failedFacts = artifact.failedAttempts.slice(0, 12 - supportingFacts.length);
+  const criticalContext = [
+    ...(supportingFacts.length ? [formatFactList(supportingFacts)] : []),
+    ...(failedFacts.length ? [renderFacts(failedFacts, ["failed_attempt"])] : []),
+  ].join("\n") || "- none";
   const legacySections = [
     "## Goal",
-    artifact.objective || "Continue the current task.",
+    renderText(artifact.objective || "Continue the current task.", ["goal", "latest_user_ask"], artifact.semanticOrigins?.objective),
     "",
     "## Constraints & Preferences",
-    formatFactList(artifact.constraints),
+    renderFacts(artifact.constraints, ["constraint", "safety_boundary"]),
     "",
     "## Progress",
     "### Done",
-    formatFactList(artifact.done),
+    renderFacts(artifact.done),
     "",
     "### In Progress",
-    formatFactList(artifact.inProgress),
+    renderFacts(artifact.inProgress, ["next_action"]),
     "",
     "### Blocked",
-    formatFactList(artifact.blocked),
+    renderFacts(artifact.blocked),
     "",
     "## Key Decisions",
-    formatFactList(artifact.decisions),
+    renderFacts(artifact.decisions, ["decision"]),
     "",
     "## Next Steps",
-    `1. ${artifact.nextAction}`,
+    `1. ${renderText(artifact.nextAction, ["next_action"], artifact.semanticOrigins?.nextAction)}`,
     "",
     "## Critical Context",
-    formatFactList([...artifact.filesTouched, ...artifact.testsRun, ...artifact.failedAttempts].slice(0, 12)),
+    criticalContext,
   ];
   if (!artifact.semanticAtoms?.length) {
     return legacySections.join("\n");
@@ -959,20 +1039,46 @@ export function renderRecoveryContextProjection(
   artifact: CompressionArtifact,
   budgetTokens = DEFAULT_PROJECTION_TOKENS,
 ): string {
+  const atoms = artifact.semanticAtoms ?? [];
+  const legacyFacts = (items: CompressionFact[], types: SemanticAtomType[]) => items.filter((item) => !item.semanticAtomId && !matchingFactAtoms(artifact, item, types).length);
+  const hasObjectiveAtom = Boolean(artifact.semanticOrigins?.objective) || matchingScalarAtoms(artifact, artifact.objective, ["goal", "latest_user_ask"]).length > 0;
+  const hasStateAtom = Boolean(artifact.semanticOrigins?.currentState) || matchingScalarAtoms(artifact, artifact.currentState, ["outcome"]).length > 0
+    || (!artifact.done.length && artifact.inProgress[0]?.text === artifact.currentState
+      && matchingFactAtoms(artifact, artifact.inProgress[0], ["next_action"]).length > 0);
+  const hasNextAtom = Boolean(artifact.semanticOrigins?.nextAction) || matchingScalarAtoms(artifact, artifact.nextAction, ["next_action"]).length > 0;
+  const activeForRecovery = (atom: CompressionSemanticAtom) => isActiveAtom(atom)
+    && atom.scope !== "turn" && !atom.scope.startsWith("turn:") && atom.scope !== "unknown";
+  const scalarTypes = { objective: ["goal", "latest_user_ask"], currentState: ["outcome", "next_action"], nextAction: ["next_action"] } satisfies Record<string, SemanticAtomType[]>;
+  const unresolved = [...Object.entries(artifact.semanticOrigins ?? {}).flatMap(([field, id]) =>
+    matchingScalarAtoms(artifact, artifact[field as keyof typeof scalarTypes], scalarTypes[field as keyof typeof scalarTypes], id).length ? [] : [id]),
+  ...[...artifact.constraints, ...artifact.decisions, ...artifact.inProgress, ...artifact.failedAttempts, ...artifact.reviewNeeded]
+    .flatMap((item) => item.semanticAtomId && !atoms.some((atom) => atom.id === item.semanticAtomId && atom.text === item.text) ? [item.semanticAtomId] : [])];
+  const coreTypes = new Set<SemanticAtomType>(["goal", "latest_user_ask", "next_action"]);
+  const constraintTypes = new Set<SemanticAtomType>(["constraint", "safety_boundary"]);
+  const stateAtoms = new Set(matchingScalarAtoms(artifact, artifact.currentState,
+    artifact.semanticOrigins?.currentState ? ["outcome", "next_action"] : ["outcome"], artifact.semanticOrigins?.currentState).map((atom) => atom.id));
+  const atomLines = (select: (atom: CompressionSemanticAtom) => boolean) => atoms.filter(select)
+    .map((atom) => formatSemanticAtomLedger([atom]));
   const sections = [
     "Recovery Context Projection",
     `quality: ${artifact.quality.level} score=${artifact.quality.score}`,
-    `objective: ${artifact.objective}`,
-    `currentState: ${artifact.currentState}`,
-    artifact.constraints.length ? `constraints:\n${formatFactList(artifact.constraints.slice(0, 5))}` : "",
-    artifact.inProgress.length ? `active:\n${formatFactList(artifact.inProgress.slice(0, 3))}` : "",
+    !hasObjectiveAtom ? `objective: ${artifact.objective}` : "",
+    !atoms.length && !hasStateAtom ? `currentState: ${artifact.currentState}` : "",
+    ...(atoms.length && !hasNextAtom ? [`nextAction: ${artifact.nextAction}`] : []),
+    ...atomLines((atom) => activeForRecovery(atom) && coreTypes.has(atom.type)),
+    legacyFacts(artifact.constraints, ["constraint", "safety_boundary"]).length ? `constraints:\n${formatFactList(legacyFacts(artifact.constraints, ["constraint", "safety_boundary"]).slice(0, 5))}` : "",
+    ...atomLines((atom) => activeForRecovery(atom) && constraintTypes.has(atom.type)),
+    atoms.length && !hasStateAtom ? `currentState: ${artifact.currentState}` : "",
+    ...atomLines((atom) => activeForRecovery(atom) && stateAtoms.has(atom.id) && !coreTypes.has(atom.type)),
+    legacyFacts(artifact.inProgress, ["next_action"]).length ? `active:\n${formatFactList(legacyFacts(artifact.inProgress, ["next_action"]).slice(0, 3))}` : "",
     artifact.blocked.length ? `blocked:\n${formatFactList(artifact.blocked.slice(0, 3))}` : "",
-    artifact.decisions.length ? `decisions:\n${formatFactList(artifact.decisions.slice(0, 5))}` : "",
+    legacyFacts(artifact.decisions, ["decision"]).length ? `decisions:\n${formatFactList(legacyFacts(artifact.decisions, ["decision"]).slice(0, 5))}` : "",
     artifact.filesTouched.length ? `files:\n${formatFactList(artifact.filesTouched.slice(0, 8))}` : "",
     artifact.testsRun.length ? `tests:\n${formatFactList(artifact.testsRun.slice(0, 5))}` : "",
-    artifact.failedAttempts.length ? `failedAttempts:\n${formatFactList(artifact.failedAttempts.slice(0, 4))}` : "",
-    `nextAction: ${artifact.nextAction}`,
-    artifact.reviewNeeded.length ? `reviewNeeded:\n${formatFactList(artifact.reviewNeeded.slice(0, 4))}` : "",
+    legacyFacts(artifact.failedAttempts, ["failed_attempt"]).length ? `failedAttempts:\n${formatFactList(legacyFacts(artifact.failedAttempts, ["failed_attempt"]).slice(0, 4))}` : "",
+    !atoms.length && !hasNextAtom ? `nextAction: ${artifact.nextAction}` : "",
+    legacyFacts(artifact.reviewNeeded, [...SEMANTIC_ATOM_TYPES]).length ? `reviewNeeded:\n${formatFactList(legacyFacts(artifact.reviewNeeded, [...SEMANTIC_ATOM_TYPES]).slice(0, 4))}` : "",
+    ...atomLines((atom) => activeForRecovery(atom) && !coreTypes.has(atom.type) && !constraintTypes.has(atom.type) && !stateAtoms.has(atom.id)),
     artifact.evidenceRefs.length
       ? `evidenceRefs:\n${artifact.evidenceRefs.slice(0, 12).map((ref) => `- ${ref.type}:${ref.ref}${ref.label ? ` (${ref.label})` : ""}`).join("\n")}`
       : "",
@@ -995,9 +1101,6 @@ export function renderRecoveryContextProjection(
       ? `unverifiedClaims:\n${artifact.unverifiedClaims.slice(0, 4).map((item) => `- ${item}`).join("\n")}`
       : "",
     formatSemanticAtomCounts(artifact.semanticAtoms) ?? "",
-    artifact.semanticAtoms?.length
-      ? `semanticAtomLedger:\n${formatSemanticAtomLedger(artifact.semanticAtoms)}`
-      : "",
     artifact.telemetry
       ? `compression: ${artifact.telemetry.tier ?? "unknown"} / ${artifact.telemetry.strategy ?? "unknown"}`
       : "",
@@ -1010,10 +1113,29 @@ export function renderRecoveryContextProjection(
           return `${range}${hash}`;
         }).join("\n")
       : "",
+    unresolved.length ? `[unresolved semantic sources=${[...new Set(unresolved)].join(",")}; recall original artifact]` : "",
+    ...atomLines((atom) => !activeForRecovery(atom)),
   ].filter(Boolean);
   let text = sections.join("\n\n");
   const maxChars = Math.max(800, Math.floor(budgetTokens * 4));
   if (text.length > maxChars) {
+    if (atoms.length) {
+      const kept: string[] = [];
+      let used = 0;
+      // Never cut a semantic record between its text and its status/evidence.
+      // Retain the artifact for recall when complete sections do not fit.
+      const records = sections.flatMap((section) => {
+        const [heading, ...facts] = section.split("\n");
+        return heading.endsWith(":") && facts.length && facts.every((line) => line.startsWith("- "))
+          ? facts.map((line) => `${heading}\n${line}`) : [section];
+      });
+      for (const section of records) {
+        if (used + section.length + 2 > maxChars - 100) continue;
+        kept.push(section);
+        used += section.length + 2;
+      }
+      return `${kept.join("\n\n")}\n[projection sections omitted by budget; recall the original artifact before acting]`;
+    }
     text = `${text.slice(0, Math.max(0, maxChars - 80)).trim()}\n[projection truncated to budget]`;
   }
   return text;
@@ -1048,11 +1170,16 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
           const entry = item as Partial<CompressionFact>;
           const text = normalizeText(entry.text, 360);
           if (!text) return [];
-          return [{ text, evidenceRefs: normalizeEvidence(entry.evidenceRefs) }];
+          const semanticAtomId = normalizeText(entry.semanticAtomId, 120);
+          return [{ text, evidenceRefs: normalizeEvidence(entry.evidenceRefs), ...(semanticAtomId ? { semanticAtomId } : {}) }];
         }).slice(0, maxItems)
       : []
   );
   const normalizedAtoms = normalizeSemanticAtoms(record.semanticAtoms);
+  const semanticOrigins = Object.fromEntries(["objective", "currentState", "nextAction"].flatMap((field) => {
+    const id = normalizeText(record.semanticOrigins?.[field as keyof NonNullable<CompressionArtifact["semanticOrigins"]>], 120);
+    return id ? [[field, id]] : [];
+  }));
   const artifactWithoutQuality: Omit<CompressionArtifact, "quality"> = {
     schemaVersion: 1,
     objective: normalizeText(record.objective, 700) || "Continue the current task from compressed context.",
@@ -1092,6 +1219,7 @@ export function normalizeCompressionArtifact(value: unknown): CompressionArtifac
       rehydratedFileContext: optionalArray(normalizeRehydratedFileContext(record.rehydratedFileContext)),
     } : {}),
     ...(optionalArray(normalizedAtoms.atoms) ? { semanticAtoms: optionalArray(normalizedAtoms.atoms) } : {}),
+    ...(Object.keys(semanticOrigins).length ? { semanticOrigins } : {}),
   };
   return {
     ...artifactWithoutQuality,

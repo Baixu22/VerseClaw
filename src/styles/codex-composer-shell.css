@@ -287,8 +287,8 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  color: var(--color-background-surface);
-  background: var(--color-text-foreground);
+  color: var(--appearance-on-ink, var(--color-background-surface));
+  background: var(--appearance-ink, var(--color-text-foreground));
   box-shadow: none;
   cursor: pointer;
   transition: background-color 140ms ease, opacity 140ms ease;
@@ -296,7 +296,7 @@
 
 .codex-composer-shell .composer-send-button:hover:not(:disabled),
 .codex-composer-shell .composer-run-stop:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--color-text-foreground) 88%, var(--color-background-surface));
+  background: color-mix(in oklab, var(--appearance-ink, var(--color-text-foreground)) 88%, var(--color-background-surface));
 }
 .codex-composer-shell .composer-run-stop {
   background: var(--color-chat-tray-hover);

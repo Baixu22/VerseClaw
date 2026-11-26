@@ -8,6 +8,8 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 # Verse Claw
 
+In **Settings → General**, choose a light, dark, or system theme, pick a preset or custom accent, and adjust conversation text from 12 to 22 px in a system, serif, or monospace typeface. The reading preview updates as you edit. Choices are saved on this device. Settings text size adjusts navigation, labels, and controls independently of conversation text. The accent also tints Settings pages, menus, and dialogs.
+
 Activating a project keeps its directory and permission policy aligned with the runtime while preserving the selected model.
 
 An idle task can continue after its lease expires in the same session generation and worktree. Recovery advances its ownership epoch to reject stale credentials; unresolved effects still require reconciliation.
@@ -402,6 +404,8 @@ Tasks with an independent review criterion submit a candidate for a read-only re
 System overview in the sidebar reads each registered project independently, including its plan, next action, coordinator and verification references. Open a project by name to enter its coordinator. Failed refreshes retain the previous observation with its timestamp; unattributed resource usage and cost remain unknown.
 
 Project continuity reads accepted context for the bound tasks and rechecks coordinator identity before sending. Handoffs retain task goals, constraints, pending decisions, progress and artifact references. Missing or changed artifact bytes remain explicit; oversized critical context stops the send with a diagnostic.
+
+Compression and handoff projections preserve each structured record's verification state, negative conclusions, temporary scope and evidence references. Accepted Working Context records keep their owner status; revised constraints retain the links to the records they replace. Turn-scoped records remain historical references when the current turn cannot be confirmed.
 
 System overview can dispatch the next ready task for an explicitly bound project without switching the active workspace. Each request uses that project’s permissions and budget. Global pause blocks new dispatches and managed effects while admitted effects settle; resuming a project cannot override the global pause.
 

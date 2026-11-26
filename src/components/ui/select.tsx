@@ -107,6 +107,7 @@ const SelectContent = React.forwardRef<
   return (
   <SelectPrimitive.Portal container={container ?? undefined}>
     <SelectPrimitive.Content
+      data-slot="select-content"
       ref={ref}
       className={cn(
         'relative z-dropdown max-h-96 min-w-[8rem] overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:animate-none',
@@ -151,6 +152,7 @@ const SelectItem = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
+    data-slot="select-option"
     ref={ref}
     className={cn(
       'relative flex min-h-8 w-full cursor-default select-none items-center rounded-md py-1 pl-8 pr-2 text-[13px] outline-none transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 motion-reduce:transition-none',

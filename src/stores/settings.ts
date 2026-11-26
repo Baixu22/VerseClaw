@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { changeLanguageWithResources } from '@/i18n';
 import { hostApi } from '@/lib/host-api';
+import { DEFAULT_APPEARANCE, normalizeAppearance, type AppearancePreferences } from '@/lib/appearance';
 import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import { resolveSupportedLanguage } from '@shared/language';
 import type { WorkProviderConfig, WorkProviderId } from '@shared/types/work-provider';
@@ -22,6 +23,7 @@ export type SessionActivityRetentionMinutes = 0 | 5 | 15;
 interface SettingsState {
   // General
   theme: Theme;
+  appearance: AppearancePreferences;
   language: string;
   startMinimized: boolean;
   launchAtStartup: boolean;
@@ -77,6 +79,7 @@ interface SettingsState {
   // Actions
   init: () => Promise<void>;
   setTheme: (theme: Theme) => void;
+  setAppearance: (patch: Partial<AppearancePreferences>) => void;
   setLanguage: (language: string) => void;
   setStartMinimized: (value: boolean) => void;
   setLaunchAtStartup: (value: boolean) => void;
@@ -115,6 +118,7 @@ interface SettingsState {
 
 const defaultSettings = {
   theme: 'system' as Theme,
+  appearance: DEFAULT_APPEARANCE,
   language: resolveSupportedLanguage(typeof navigator !== 'undefined' ? navigator.language : undefined),
   startMinimized: false,
   launchAtStartup: false,
@@ -167,6 +171,7 @@ export const useSettingsStore = create<SettingsState>()(
           set((state) => ({
             ...state,
             ...hostSettings,
+            appearance: state.appearance,
             // The renderer owns the rail toggle and responsive collapse. A late
             // settings read must not reopen the rail over a narrow conversation.
             sidebarCollapsed: state.sidebarCollapsed,
@@ -188,6 +193,9 @@ export const useSettingsStore = create<SettingsState>()(
         set({ theme });
         void hostApi.settings.set('theme', theme).catch(() => { });
       },
+      setAppearance: (patch) => set((state) => ({
+        appearance: normalizeAppearance({ ...state.appearance, ...patch }),
+      })),
       setLanguage: (language) => {
         const resolvedLanguage = resolveSupportedLanguage(language);
         void changeLanguageWithResources(resolvedLanguage);
@@ -301,6 +309,10 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'verse-claw-settings',
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<SettingsState> | null;
+        return { ...current, ...saved, appearance: normalizeAppearance(saved?.appearance) };
+      },
     }
   )
 );

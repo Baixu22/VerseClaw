@@ -1,0 +1,268 @@
+{
+  "sourceCandidate": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+  "sourceDirty": "",
+  "schema": "clawx.long-session.d1-continuity-preview/v1",
+  "driven_by": "agent",
+  "actor": "codex-long-session-r2",
+  "negatives": [
+    "accepted fact for another task is excluded from current task context",
+    "ordinary session missing coordinator binding -> no pack",
+    "deleted coordinator session -> binding invalidated -> no pack"
+  ],
+  "foreignAcceptedTask": {
+    "foreignId": "922d5e4b-3c0e-45fc-b24e-33346e61e6d7",
+    "isolated": {
+      "success": true,
+      "validation": "current",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:44:37.160Z",
+        "sessionKey": "agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd",
+        "workspaceId": "default",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "2b49f677-51af-49d3-a1bc-1803f9f400bb",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 1031,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "id": "working-context:Constraints:1",
+            "kind": "constraint",
+            "source": "task-ledger-working-context",
+            "text": "Stay inside workspace scope.; Never inject unapproved candidates.",
+            "owner": "task-ledger",
+            "scope": {
+              "kind": "task",
+              "key": "2b49f677-51af-49d3-a1bc-1803f9f400bb"
+            },
+            "freshness": "fresh",
+            "acceptedAt": "2026-11-25T20:44:33.415Z",
+            "expiresAt": "2026-11-26T20:44:33.414Z",
+            "trust": "owner-accepted",
+            "evidenceRefs": [
+              "session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd"
+            ],
+            "semantic": {
+              "owner": "task-ledger-working-context",
+              "sourceStatus": "confirmed",
+              "verification": "unknown",
+              "polarity": "unknown",
+              "scope": "task:2b49f677-51af-49d3-a1bc-1803f9f400bb",
+              "evidenceRefs": [
+                {
+                  "type": "session",
+                  "ref": "agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "6757f41a-14bc-4559-8e0b-37d49bb660cf",
+              "sourceVersion": "1"
+            },
+            "chars": 65
+          },
+          {
+            "owner": "task-ledger",
+            "scope": {
+              "kind": "workspace",
+              "key": "default"
+            },
+            "freshness": "fresh",
+            "trust": "owner-fact",
+            "evidenceRefs": [],
+            "id": "task-node:2b49f677-51af-49d3-a1bc-1803f9f400bb:next",
+            "kind": "next-action",
+            "source": "task-ledger-node",
+            "text": "Verify accepted continuity owners.",
+            "chars": 34
+          },
+          {
+            "id": "working-context:NextAction:1",
+            "kind": "next-action",
+            "source": "task-ledger-working-context",
+            "text": "Run the real continuity preview.",
+            "owner": "task-ledger",
+            "scope": {
+              "kind": "task",
+              "key": "2b49f677-51af-49d3-a1bc-1803f9f400bb"
+            },
+            "freshness": "fresh",
+            "acceptedAt": "2026-11-25T20:44:33.415Z",
+            "expiresAt": "2026-11-26T20:44:33.414Z",
+            "trust": "owner-accepted",
+            "evidenceRefs": [
+              "session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd"
+            ],
+            "semantic": {
+              "owner": "task-ledger-working-context",
+              "sourceStatus": "confirmed",
+              "verification": "unknown",
+              "polarity": "unknown",
+              "scope": "task:2b49f677-51af-49d3-a1bc-1803f9f400bb",
+              "evidenceRefs": [
+                {
+                  "type": "session",
+                  "ref": "agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "76dad36a-3a49-4fd2-b70a-4111073f9ac7",
+              "sourceVersion": "1"
+            },
+            "chars": 32
+          },
+          {
+            "id": "accepted-memory:role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a",
+            "kind": "memory-ref",
+            "source": "accepted-memory-ref",
+            "owner": "memory",
+            "text": "role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a (user; workspace)",
+            "scope": {
+              "kind": "workspace",
+              "key": "D:\\tmp\\autonomy-context-system-20261126\\electron-results-r2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwwldor8"
+            },
+            "freshness": "fresh",
+            "acceptedAt": "2026-11-25T20:44:36.399Z",
+            "trust": "owner-accepted",
+            "evidenceRefs": [
+              "memory:role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a"
+            ],
+            "chars": 75
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=9; nodes=2"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "unavailable",
+            "detail": "no compression artifact for this session"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=1; modelVisible=1"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger-working-context:d1-pending-risk-mwwldor8",
+            "reason": "pending-not-accepted"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd",
+          "taskLedgerRef": "task-ledger:default",
+          "taskLedgerEventCount": 9,
+          "compressionAvailable": false
+        },
+        "evidenceRefs": [
+          "session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd",
+          "memory:role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a"
+        ]
+      },
+      "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=1031/1800; truncated=false\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=task:2b49f677-51af-49d3-a1bc-1803f9f400bb; freshness=fresh; trust=owner-accepted; sourceStatus=confirmed; verification=unknown; polarity=unknown; sourceScope=\"task:2b49f677-51af-49d3-a1bc-1803f9f400bb\"; refs=[{\"type\":\"session\",\"ref\":\"agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\"}])\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=task:2b49f677-51af-49d3-a1bc-1803f9f400bb; freshness=fresh; trust=owner-accepted; sourceStatus=confirmed; verification=unknown; polarity=unknown; sourceScope=\"task:2b49f677-51af-49d3-a1bc-1803f9f400bb\"; refs=[{\"type\":\"session\",\"ref\":\"agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\"}])\n- [memory-ref] role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\tmp\\autonomy-context-system-20261126\\electron-results-r2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwwldor8; freshness=fresh; trust=owner-accepted)\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd; taskLedger=task-ledger:default; taskLedgerEvents=9; compression=unavailable. Recall old evidence on demand through the owning session/task APIs."
+    }
+  },
+  "primary": "D:\\tmp\\autonomy-context-system-20261126\\electron-results-r2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\continuity-preview.json",
+  "status": "passed",
+  "packStatus": "partial",
+  "items": [
+    {
+      "kind": "constraint",
+      "source": "task-ledger-working-context",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "task",
+        "key": "2b49f677-51af-49d3-a1bc-1803f9f400bb"
+      }
+    },
+    {
+      "kind": "next-action",
+      "source": "task-ledger-node",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      }
+    },
+    {
+      "kind": "next-action",
+      "source": "task-ledger-working-context",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "task",
+        "key": "2b49f677-51af-49d3-a1bc-1803f9f400bb"
+      }
+    },
+    {
+      "kind": "memory-ref",
+      "source": "accepted-memory-ref",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "D:\\tmp\\autonomy-context-system-20261126\\electron-results-r2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwwldor8"
+      }
+    },
+    {
+      "kind": "knowledge-ref",
+      "source": "knowledge-ref",
+      "freshness": "fresh",
+      "scope": {
+        "kind": "workspace",
+        "key": "default"
+      }
+    }
+  ],
+  "sourceStates": [
+    {
+      "source": "task-ledger",
+      "status": "available",
+      "detail": "events=6; nodes=1"
+    },
+    {
+      "source": "working-context",
+      "status": "available"
+    },
+    {
+      "source": "compression-artifact",
+      "status": "unavailable",
+      "detail": "no compression artifact for this session"
+    },
+    {
+      "source": "memory",
+      "status": "available",
+      "detail": "accepted=1; modelVisible=1"
+    },
+    {
+      "source": "knowledge",
+      "status": "available",
+      "detail": "refs=1"
+    }
+  ],
+  "exclusions": [
+    {
+      "ref": "task-ledger-working-context:d1-pending-risk-mwwldor8",
+      "reason": "pending-not-accepted"
+    }
+  ]
+}

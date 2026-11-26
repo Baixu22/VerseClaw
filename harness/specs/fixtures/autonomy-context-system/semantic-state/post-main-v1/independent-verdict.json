@@ -1,0 +1,82 @@
+{
+  "schema": "C02PostMainVerifier/v1",
+  "actor": "c02-post-main-verifier",
+  "driven_by": "agent",
+  "providerModel": "ccs-ai/gpt-6.1-sol",
+  "reviewedAt": "2026-11-26T19:05:00+08:00",
+  "verdict": "accepted",
+  "sourceEquivalent": true,
+  "candidate": {
+    "checkout": "D:/ClawX-work/context-c02-integration-20261126",
+    "commit": "97cb2884527b1bc80f74612c7e5ce73e70974ff5",
+    "tree": "5f66685fc64475eab2f68316a5ed0bbd66713f4a",
+    "dirty": false,
+    "parents": [
+      "b93f6f3b4b1246d6c1db8ea04ad103f8d8c3c30d",
+      "0b57375f072b9bc854bd1e423247e9669b432494"
+    ],
+    "latestMain": "0b57375f072b9bc854bd1e423247e9669b432494"
+  },
+  "previousIntegrationCandidate": {
+    "commit": "49d5922b7103b7a15953d304eec4d09242322275",
+    "tree": "3bff8a58ca508717eb98717c0f315ee5c6aa6a38",
+    "dirty": false
+  },
+  "sourceEquivalence": {
+    "frozenC02Candidate": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+    "readback": "D:/tmp/autonomy-context-system-20261126/c02-clean-source-readback.json",
+    "pathsChecked": 20,
+    "blobChecks": 12,
+    "blobMismatches": 0,
+    "c02SourceDiff": "unchanged",
+    "buildInputsDiff": "unchanged",
+    "rationale": "最新 main 仅带入 RSI 离线变更及相关仓库元数据；C02 源码与构建输入保持等价，因此旧 build/Electron 证据仍绑定 49d5922b，最新合成 sanity 成立。"
+  },
+  "postMainSanity": {
+    "commandReport": "D:/tmp/autonomy-context-system-20261126/c02-post-main-r1-command.json",
+    "resourceReceipt": "D:/ClawX-acceptance/resource-queue/runs/context-c02-post-main-20261126-r1/receipt.json",
+    "commands": [
+      {
+        "name": "C02 focused Vitest regression",
+        "exitCode": 0,
+        "result": "16 suites, 106/106 tests passed"
+      },
+      {
+        "name": "Harness validate --since 0b57375f072b9bc854bd1e423247e9669b432494",
+        "exitCode": 0
+      },
+      {
+        "name": "check-repository-artifacts",
+        "exitCode": 0
+      },
+      {
+        "name": "git diff --check 0b57375f072b9bc854bd1e423247e9669b432494 HEAD",
+        "exitCode": 0
+      }
+    ],
+    "sourceUnchanged": true,
+    "treeCleanBeforeAfter": true,
+    "resource": {
+      "status": "completed",
+      "exitCode": 0,
+      "treeExited": true,
+      "budgetExceeded": false
+    }
+  },
+  "priorEvidenceBinding": {
+    "buildCandidate": "49d5922b7103b7a15953d304eec4d09242322275",
+    "electronCandidate": "49d5922b7103b7a15953d304eec4d09242322275",
+    "statement": "本次报告只确认最新 main 合成后的源码等价与 sanity；未改签旧 build/Electron 候选。"
+  },
+  "harnessCiStatus": "failed-existing-baseline",
+  "harnessCi": {
+    "baselineComparison": "D:/tmp/autonomy-context-system-20261126/c02-harness-baseline-comparison.json",
+    "disqualifierIdentityMatch": true,
+    "disqualifierCount": 8,
+    "precedingHarnessTests": "5 files, 59 tests passed",
+    "tailChecks": "evidence refs and test coverage checks both exit 0",
+    "summary": "完整 Harness CI 既有 agent-dev-audit 失败基线已复现，保持 failed-existing-baseline，不计为全绿。"
+  },
+  "remoteCiStatus": "not-started-account-billing",
+  "remoteCiCountsAsGreen": false
+}

@@ -1,0 +1,89 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright",
+  "Light": {
+    "neutral": {
+      "canvas": "rgb(255, 255, 255)",
+      "sidebar": "rgb(245, 246, 247)",
+      "card": "rgb(255, 255, 255)",
+      "selected": "oklab(0.22559 -0.00131416 -0.00642684 / 0.052)",
+      "track": "rgb(51, 156, 255)",
+      "thumb": "rgb(255, 255, 255)",
+      "themeRing": "rgba(0, 0, 0, 0.35)",
+      "sample": "rgb(51, 156, 255)"
+    },
+    "jade": {
+      "canvas": "color(srgb 0.968986 0.982958 0.980706)",
+      "sidebar": "color(srgb 0.890527 0.926167 0.926988)",
+      "card": "color(srgb 0.937972 0.965916 0.961412)",
+      "selected": "color(srgb 0.875944 0.931833 0.922824)",
+      "track": "oklch(0.48 0.0924077 175.428)",
+      "thumb": "rgb(255, 255, 255)",
+      "themeRing": "oklch(0.48 0.0924077 175.428)",
+      "sample": "oklch(0.48 0.0924077 175.428)"
+    },
+    "rose": {
+      "canvas": "color(srgb 0.987913 0.976058 0.980601)",
+      "sidebar": "color(srgb 0.93469 0.910067 0.926742)",
+      "card": "color(srgb 0.975826 0.952116 0.961202)",
+      "selected": "color(srgb 0.951651 0.904233 0.922404)",
+      "track": "oklch(0.48 0.139007 0.159729)",
+      "thumb": "rgb(255, 255, 255)",
+      "themeRing": "oklch(0.48 0.139007 0.159729)",
+      "sample": "oklch(0.48 0.139007 0.159729)"
+    },
+    "contrast": 5.669470760637744
+  },
+  "neutralDanger": "rgb(177, 37, 37)",
+  "Dark": {
+    "neutral": {
+      "canvas": "rgb(45, 45, 43)",
+      "sidebar": "rgb(39, 41, 41)",
+      "card": "rgb(61, 61, 59)",
+      "selected": "oklab(0.999994 0.0000455678 0.0000200868 / 0.052)",
+      "track": "rgb(51, 156, 255)",
+      "thumb": "rgb(255, 255, 255)",
+      "themeRing": "rgba(255, 255, 255, 0.4)",
+      "sample": "rgb(51, 156, 255)"
+    },
+    "jade": {
+      "canvas": "color(srgb 0.186147 0.196598 0.18629)",
+      "sidebar": "color(srgb 0.17716 0.20884 0.202543)",
+      "card": "color(srgb 0.254797 0.275699 0.262928)",
+      "selected": "color(srgb 0.215171 0.256975 0.239278)",
+      "track": "oklch(0.82 0.0924077 175.428)",
+      "thumb": "rgb(13, 13, 13)",
+      "themeRing": "oklch(0.82 0.0924077 175.428)",
+      "sample": "oklch(0.82 0.0924077 175.428)"
+    },
+    "rose": {
+      "canvas": "color(srgb 0.202789 0.189552 0.186166)",
+      "sidebar": "color(srgb 0.215992 0.1924 0.202253)",
+      "card": "color(srgb 0.288082 0.261608 0.26268)",
+      "selected": "color(srgb 0.28174 0.228792 0.238781)",
+      "track": "oklch(0.82 0.139007 0.159729)",
+      "thumb": "rgb(13, 13, 13)",
+      "themeRing": "oklch(0.82 0.139007 0.159729)",
+      "sample": "oklch(0.82 0.139007 0.159729)"
+    },
+    "contrast": 5.726631462983521
+  },
+  "menuBackground": "color(srgb 0.254797 0.275699 0.262928)",
+  "dialogBackground": "color(srgb 0.254797 0.275699 0.262928)",
+  "disabledOpacity": 0.4,
+  "customDanger": "rgb(177, 37, 37)",
+  "routes": [
+    "general",
+    "models",
+    "agents",
+    "channels",
+    "skills",
+    "browser",
+    "system",
+    "developer",
+    "billing",
+    "archived",
+    "recovery",
+    "storage"
+  ]
+}

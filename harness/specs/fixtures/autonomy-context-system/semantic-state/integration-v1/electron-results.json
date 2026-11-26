@@ -1,0 +1,322 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\context-c02-integration-20261126\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/context-c02-integration-20261126/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\context-c02-integration-20261126\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/autonomy-context-system-20261126/integration-electron-results-r1",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/context-c02-integration-20261126/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "long-session-continuity-context.spec.ts",
+      "file": "long-session-continuity-context.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32273,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"sourceCandidate\":\"49d5922b7103b7a15953d304eec4d09242322275\",\"sourceDirty\":\"\",\"schema\":\"clawx.long-session.d1-continuity-preview/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-r2\",\"negatives\":[\"accepted fact for another task is excluded from current task context\",\"ordinary session missing coordinator binding -> no pack\",\"deleted coordinator session -> binding invalidated -> no pack\"],\"foreignAcceptedTask\":{\"foreignId\":\"6b5a71aa-4539-4262-be86-c7f4235a6b61\",\"isolated\":{\"success\":true,\"validation\":\"current\",\"pack\":{\"schemaVersion\":\"ContinuityContextPack/v1\",\"generatedAt\":\"2026-11-26T04:56:32.081Z\",\"sessionKey\":\"agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\",\"workspaceId\":\"default\",\"bindingRevision\":1,\"activeTaskNodeId\":\"0da4a671-ea94-4164-8b3e-ff423b0ea7e2\",\"status\":\"partial\",\"complete\":false,\"budget\":{\"maxChars\":1800,\"usedChars\":1031,\"truncated\":false,\"droppedItems\":0,\"criticalOmissions\":0},\"items\":[{\"id\":\"working-context:Constraints:1\",\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"text\":\"Stay inside workspace scope.; Never inject unapproved candidates.\",\"owner\":\"task-ledger\",\"scope\":{\"kind\":\"task\",\"key\":\"0da4a671-ea94-4164-8b3e-ff423b0ea7e2\"},\"freshness\":\"fresh\",\"acceptedAt\":\"2026-11-26T04:56:27.299Z\",\"expiresAt\":\"2026-11-27T04:56:27.298Z\",\"trust\":\"owner-accepted\",\"evidenceRefs\":[\"session:agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\"],\"semantic\":{\"owner\":\"task-ledger-working-context\",\"sourceStatus\":\"confirmed\",\"verification\":\"unknown\",\"polarity\":\"unknown\",\"scope\":\"task:0da4a671-ea94-4164-8b3e-ff423b0ea7e2\",\"evidenceRefs\":[{\"type\":\"session\",\"ref\":\"agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\"}],\"supersedes\":[],\"conflicts\":[],\"sourceRef\":\"da6018a9-bf8f-400f-ae83-4a84a3faa9eb\",\"sourceVersion\":\"1\"},\"chars\":65},{\"owner\":\"task-ledger\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"},\"freshness\":\"fresh\",\"trust\":\"owner-fact\",\"evidenceRefs\":[],\"id\":\"task-node:0da4a671-ea94-4164-8b3e-ff423b0ea7e2:next\",\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"text\":\"Verify accepted continuity owners.\",\"chars\":34},{\"id\":\"working-context:NextAction:1\",\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"text\":\"Run the real continuity preview.\",\"owner\":\"task-ledger\",\"scope\":{\"kind\":\"task\",\"key\":\"0da4a671-ea94-4164-8b3e-ff423b0ea7e2\"},\"freshness\":\"fresh\",\"acceptedAt\":\"2026-11-26T04:56:27.299Z\",\"expiresAt\":\"2026-11-27T04:56:27.299Z\",\"trust\":\"owner-accepted\",\"evidenceRefs\":[\"session:agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\"],\"semantic\":{\"owner\":\"task-ledger-working-context\",\"sourceStatus\":\"confirmed\",\"verification\":\"unknown\",\"polarity\":\"unknown\",\"scope\":\"task:0da4a671-ea94-4164-8b3e-ff423b0ea7e2\",\"evidenceRefs\":[{\"type\":\"session\",\"ref\":\"agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\"}],\"supersedes\":[],\"conflicts\":[],\"sourceRef\":\"1484205d-8ac9-4134-b36d-5eb3ada7e5c1\",\"sourceVersion\":\"1\"},\"chars\":32},{\"id\":\"accepted-memory:role-memory-card:mem_1f2e7e42-106b-4ee1-924d-1e4b1d2c6b98\",\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"owner\":\"memory\",\"text\":\"role-memory-card:mem_1f2e7e42-106b-4ee1-924d-1e4b1d2c6b98 (user; workspace)\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-results-r1\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mwx2y9ps\"},\"freshness\":\"fresh\",\"acceptedAt\":\"2026-11-26T04:56:31.199Z\",\"trust\":\"owner-accepted\",\"evidenceRefs\":[\"memory:role-memory-card:mem_1f2e7e42-106b-4ee1-924d-1e4b1d2c6b98\"],\"chars\":75}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=9; nodes=2\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"empty\",\"detail\":\"no selected knowledge refs\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mwx2y9ps\",\"reason\":\"pending-not-accepted\"}],\"originalHistory\":{\"transcriptRef\":\"session:agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\",\"taskLedgerRef\":\"task-ledger:default\",\"taskLedgerEventCount\":9,\"compressionAvailable\":false},\"evidenceRefs\":[\"session:agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\",\"memory:role-memory-card:mem_1f2e7e42-106b-4ee1-924d-1e4b1d2c6b98\"]},\"rendered\":\"Continuity context (owner-derived, bounded metadata; verify work with tools):\\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=1031/1800; truncated=false\\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=task:0da4a671-ea94-4164-8b3e-ff423b0ea7e2; freshness=fresh; trust=owner-accepted; sourceStatus=confirmed; verification=unknown; polarity=unknown; sourceScope=\\\"task:0da4a671-ea94-4164-8b3e-ff423b0ea7e2\\\"; refs=[{\\\"type\\\":\\\"session\\\",\\\"ref\\\":\\\"agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\\\"}])\\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=task:0da4a671-ea94-4164-8b3e-ff423b0ea7e2; freshness=fresh; trust=owner-accepted; sourceStatus=confirmed; verification=unknown; polarity=unknown; sourceScope=\\\"task:0da4a671-ea94-4164-8b3e-ff423b0ea7e2\\\"; refs=[{\\\"type\\\":\\\"session\\\",\\\"ref\\\":\\\"agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\\\"}])\\n- [memory-ref] role-memory-card:mem_1f2e7e42-106b-4ee1-924d-1e4b1d2c6b98 (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-results-r1\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mwx2y9ps; freshness=fresh; trust=owner-accepted)\\nUnavailable/unknown sources: compression-artifact:unavailable\\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b; taskLedger=task-ledger:default; taskLedgerEvents=9; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\"}},\"primary\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-results-r1\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-preview.json\",\"status\":\"passed\",\"packStatus\":\"partial\",\"items\":[{\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"task\",\"key\":\"0da4a671-ea94-4164-8b3e-ff423b0ea7e2\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"task\",\"key\":\"0da4a671-ea94-4164-8b3e-ff423b0ea7e2\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-results-r1\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mwx2y9ps\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mwx2y9ps\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-results-r1\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-observation.json\"}\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:12.899Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n[2026-11-26T04:56:12.899Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-26T04:56:12.899Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=26312, ppid=50076\n[2026-11-26T04:56:12.899Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:12.981Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:12.981Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-26T04:56:12.981Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-26T04:56:12.981Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.028Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.028Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [26312:1126/125613.111:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[26312:1126/125613.111:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.461Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.462Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:13.463Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:13.463Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:13.463Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-26T04:56:13.463Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.476Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.477Z] [INFO] Gateway start requested (port=61691)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.481Z] [DEBUG] Device identity loaded (deviceId=45ba7ed50ce472d204ff78c79e80ae0fc350a9d97adaef444e595147de92933a)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.482Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.685Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:26312) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.800Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.829Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:13.885Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.891Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":8,\"channelStartupPolicyMs\":2,\"uvEnvMs\":10,\"mcpEnvMs\":30,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":83,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.892Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=61691, entry=\"D:\\ClawX-work\\context-c02-integration-20261126\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 61691 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\context-c02-integration-20261126\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.934Z] [INFO] Gateway process started (pid=21072)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:13.935Z] [DEBUG] Gateway manager now owns process pid=21072\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:14.103Z] [WARN] [Gateway stderr] (node:21072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:14.104Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:14.385Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-run-r1\\\\verse-claw-e2e-run-b6mCfL\\\\verse-claw-e2e-home-Bsk7x9\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:14.385Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-run-r1\\\\verse-claw-e2e-run-b6mCfL\\\\verse-claw-e2e-home-Bsk7x9\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:14.391Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\integration-electron-run-r1\\\\verse-claw-e2e-run-b6mCfL\\\\verse-claw-e2e-home-Bsk7x9\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:16.282Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:18.357Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:18.405Z] [DEBUG] [Gateway stderr] (node:21072) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:18.406Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:18.405Z] [DEBUG] [Gateway stderr] (node:21072) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:19.727Z] [DEBUG] Gateway ready after 24 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:19.729Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:61691/ws)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:20.813Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:20.814Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:20.814Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:20.816Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=4f3898c0-02ea-4f21-a36e-2de440848b71 peer=127.0.0.1:61770->127.0.0.1:61691 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:61691 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:21.718Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:25.240Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:61691/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:25.242Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:25.252Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:25.252Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-26T04:56:25.252Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:25.276Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:25.276Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:25.277Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:25.278Z] [INFO] [metric] gateway.startup {\"configSyncMs\":251,\"spawnToReadyMs\":5793,\"readyToConnectMs\":5550,\"totalMs\":11594}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:26.835Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\autonomy-context-system-20261126\\integration-electron-results-r1\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwx2y9ps\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:30.925Z] [WARN] [Gateway stderr] \u001b[34m[reload]\u001b[39m \u001b[33mno SIGUSR1 listener found; restart skipped\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.107Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=b26df433-c9ca-4c74-9837-aba94fcb88af sessionKey=agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.202Z] [INFO] [session:delete] key=agent:main:dashboard:ff8ae3de-09b4-4bed-bb0c-cd79923a951b agentId=main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.202Z] [INFO] [session:delete] sessionsJson=D:\\tmp\\autonomy-context-system-20261126\\integration-electron-run-r1\\verse-claw-e2e-run-b6mCfL\\verse-claw-e2e-home-Bsk7x9\\.openclaw\\agents\\main\\sessions\\sessions.json\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:32.202Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\\tmp\\autonomy-context-system-20261126\\integration-electron-run-r1\\verse-claw-e2e-run-b6mCfL\\verse-claw-e2e-home-Bsk7x9\\.openclaw\\agents\\main\\sessions\\sessions.json'\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.258Z] [INFO] [session-delete-gate] Cleared operationId=b26df433-c9ca-4c74-9837-aba94fcb88af\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.437Z] [INFO] Gateway stop requested\n[2026-11-26T04:56:32.437Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.438Z] [INFO] Sending kill to Gateway process (pid=21072)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:61694/c74ae892-c7d6-4728-93b9-011041d32140\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-26T04:56:32.445Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.446Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.719Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.719Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.754Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.754Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.754Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.754Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-26T04:56:32.754Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-26T04:56:01.999Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "65da97443d18bad3cbc4-ddcf5c9e94569314a2d2",
+          "file": "long-session-continuity-context.spec.ts",
+          "line": 87,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-26T04:56:00.852Z",
+    "duration": 34555.685000000005,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

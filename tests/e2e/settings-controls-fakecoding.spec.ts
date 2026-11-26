@@ -79,7 +79,7 @@ test.describe('FakeCoding settings content alignment', () => {
         const startup = page.getByTestId('settings-launch-at-startup');
         const switchGeometry = await startup.evaluate((element) => {
           const rect = element.getBoundingClientRect();
-          const thumb = element.querySelector<HTMLElement>('.sp-switch-thumb');
+          const thumb = element.querySelector<HTMLElement>('[data-slot="switch-thumb"]');
           return {
             width: rect.width,
             height: rect.height,
@@ -107,7 +107,7 @@ test.describe('FakeCoding settings content alignment', () => {
         await expect(select).toHaveCSS('height', `${REFERENCE.selectHeight}px`);
         await select.click();
 
-        const menu = page.locator('.sp-select-menu');
+        const menu = page.getByRole('listbox', { name: 'Language' });
         await expect(menu).toBeVisible();
         const menuGeometry = await menu.evaluate((element) => {
           const rect = element.getBoundingClientRect();
@@ -115,7 +115,7 @@ test.describe('FakeCoding settings content alignment', () => {
           return {
             width: rect.width,
             radius: Number.parseFloat(style.borderTopLeftRadius),
-            position: style.position,
+            position: getComputedStyle(element.closest('[data-radix-popper-content-wrapper]')!).position,
             withinViewport: rect.left >= 0
               && rect.top >= 0
               && rect.right <= window.innerWidth

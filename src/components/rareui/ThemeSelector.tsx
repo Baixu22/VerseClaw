@@ -84,12 +84,14 @@ function Preview() {
           <span className="rare-theme-selector__bar rare-theme-selector__bar--strong" />
           <span className="rare-theme-selector__bar" />
         </span>
-        <span className="rare-theme-selector__tiles">
-          {[0, 1, 2].map((tile) => (
-            <span key={tile} className="rare-theme-selector__tile" />
+        <span className="rare-theme-selector__rows">
+          {[0, 1, 2].map((row) => (
+            <span key={row} className="rare-theme-selector__row">
+              <span className="rare-theme-selector__bar" />
+              <span className="rare-theme-selector__control" />
+            </span>
           ))}
         </span>
-        <span className="rare-theme-selector__sheet" />
       </span>
     </span>
   );
