@@ -1,0 +1,197 @@
+{
+  "schema": "ProjectRagMainlineDevelopment/v1",
+  "actor": "codex-rag-optimization",
+  "driven_by": "agent",
+  "candidate": "a7a40deadaf8e1e96ca171927d902263d958aaf4",
+  "tree": "5259bc67b445441c91ff942a92ffd12bb56cf2fc",
+  "base": "4085cd46b9a604e0617e91feff33f6ee8c24d7f0",
+  "featureCommit": "f6ac6c4cc00e1967fbaa994d793b917237a8d67d",
+  "g2Source": "a4c8c91df2cd39b4a1699494a65463ad42af5e96",
+  "completedAt": "2026-11-26T22:26:12.467795+08:00",
+  "cleanSource": true,
+  "checks": {
+    "unit": 0,
+    "contract": 0,
+    "replay": 0,
+    "compare": 0,
+    "harness": 0,
+    "dryRun": 0,
+    "types": 0
+  },
+  "tests": {
+    "suites": 30,
+    "passed": 548,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "file": "host-action-timeouts.test.ts",
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "knowledge-evidence-qa.test.ts",
+      "passed": 16,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-acceptance-readback.test.ts",
+      "passed": 17,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-adaptation-readback.test.ts",
+      "passed": 9,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-answer-contract.test.ts",
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-capacity-input.test.ts",
+      "passed": 6,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-citation-locator.test.ts",
+      "passed": 9,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-code-oracle.test.ts",
+      "passed": 8,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-config-parity.test.ts",
+      "passed": 16,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-corpus-integrity.test.ts",
+      "passed": 33,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-embedding-lifecycle.test.ts",
+      "passed": 39,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-graph-task-context.test.ts",
+      "passed": 35,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-index-recovery.test.ts",
+      "passed": 2,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-knowledge-adaptation.test.ts",
+      "passed": 17,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-memory-domains.test.ts",
+      "passed": 50,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-observability-store.test.ts",
+      "passed": 8,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-offline-package.test.ts",
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-owner-read.test.ts",
+      "passed": 39,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-package-manifest.test.ts",
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-plan-fusion.test.ts",
+      "passed": 26,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-plan-owner.test.ts",
+      "passed": 17,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-query-grade.test.ts",
+      "passed": 15,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-receipts-promotion.test.ts",
+      "passed": 12,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-rerank-provider.test.ts",
+      "passed": 17,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-research-controller.test.ts",
+      "passed": 93,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-retrieval-spend.test.ts",
+      "passed": 10,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-sekb-attribution.test.ts",
+      "passed": 16,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-vector-backends.test.ts",
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-vector-generation.test.ts",
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "project-rag-vector-service.test.ts",
+      "passed": 9,
+      "status": "passed"
+    }
+  ],
+  "artifactHashes": {
+    "unit.json": "36b9b42b168bb9ec970421e96a48665028d0a3cd3df5ea818616740207c9c299",
+    "contract.log": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10",
+    "harness.log": "ab25e772331671c988e75c49566da57f6b947490ba1dbaf58d569e95f2f9b05d",
+    "harness-dry.log": "e81817d3b326bb654ed7f9977972e98b14209da5c08d1014af7562e1de7b3c3d",
+    "replay.log": "0bbe35e4a0040767f0a6910645108ca7ff6fae4c6e2817be12c3d8f824fbe415",
+    "compare.log": "0a14c74fc847ee1a97a9027c5ec9e4fe5d74dd34da7e377245db14cd97e36c8f",
+    "types.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "terminal.json": "3b44d2d1567c6d4b7a11bf3dd2afe3231a5366aac929383e37cdf441df22d0c9"
+  },
+  "review": {
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "reviewedTree": "2713f0ae1548f0108fad46fcf360d157d48e3d8f",
+    "reported": 2,
+    "checkedScenarios": 2,
+    "outcome": "Both concerns covered by executable regression tests in project-rag-research-controller.test.ts"
+  },
+  "windowsElectron": "pending"
+}
