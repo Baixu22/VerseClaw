@@ -9,11 +9,15 @@ import { AgentInteractionRenderer, parseToolUiContent } from '@/components/tool-
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ChatMessage } from '@/pages/Chat/ChatMessage';
 import type { AttachedFileMeta, RawMessage } from '@/stores/chat';
+import chatEnglish from '@shared/i18n/locales/en/chat.json';
+import { MessageReferenceProvider } from '@/components/assistant-render/MessageReferences';
+import { maskChatSecrets } from '@/lib/chat-display-text';
 
-const { readBinaryFile, statFile, thumbnails, openExternal, showItemInFolder, openPath, openWorkspacePanel } = vi.hoisted(() => ({
+const { readBinaryFile, statFile, thumbnails, linkPreview, openExternal, showItemInFolder, openPath, openWorkspacePanel } = vi.hoisted(() => ({
   readBinaryFile: vi.fn(),
   statFile: vi.fn(),
   thumbnails: vi.fn(),
+  linkPreview: vi.fn(),
   openExternal: vi.fn(async () => undefined),
   showItemInFolder: vi.fn(async () => undefined),
   openPath: vi.fn(async () => ''),
@@ -27,7 +31,7 @@ vi.mock('@/lib/file-preview-client', () => ({
 
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
-    media: { thumbnails: (...args: unknown[]) => thumbnails(...args) },
+    media: { thumbnails: (...args: unknown[]) => thumbnails(...args), linkPreview },
     shell: { openExternal, showItemInFolder, openPath },
     dialog: { message: vi.fn(async () => ({ response: 1 })) },
   },
@@ -40,6 +44,59 @@ vi.mock('@/stores/artifact-panel', () => ({
 function renderInApp(ui: ReactNode) {
   return render(<TooltipProvider>{ui}</TooltipProvider>);
 }
+
+describe('conversation text', () => {
+  it('resolves exact session IDs and keys, preserving ambiguous IDs, fenced code and existing links', () => {
+    const open = vi.fn();
+    const sessions = [
+      { key: 'agent:main:design', sessionId: 'generation-1', label: 'Design' },
+      { key: 'agent:main:a', sessionId: 'duplicate' }, { key: 'agent:main:b', sessionId: 'duplicate' },
+    ];
+    const text = '继续generation-1，或 `agent:main:design`。 duplicate generation-12\n\n[one](https://example.com/generation-1)\n\n```text\ngeneration-1\n```';
+    const { container } = renderInApp(<MessageReferenceProvider sessions={sessions} labels={{}} open={open}>
+      <ChatMessage message={{ role: 'user', content: text }} />
+    </MessageReferenceProvider>);
+    const buttons = screen.getAllByRole('button', { name: /Design/ });
+    expect(buttons).toHaveLength(2);
+    fireEvent.click(buttons[0]);
+    expect(open).toHaveBeenCalledWith('agent:main:design');
+    expect(container.querySelector('pre')).toHaveTextContent('generation-1');
+    expect(container.querySelector('pre button')).toBeNull();
+    expect(container).toHaveTextContent('duplicate generation-12');
+  });
+
+  it('masks tokens in rich content and copies while preserving the editable original', async () => {
+    const value = 'ghp_' + '0123456789abcdef'.repeat(2);
+    const raw = `[Docs](https://example.com?key=${value})\n\n\`\`\`sh\nAPI_KEY="${value}"\n\`\`\``;
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+    const resend = vi.fn();
+    const { container } = renderInApp(<ChatMessage message={{ role: 'user', content: raw }} onResendUserMessage={resend} canResendUserMessage />);
+    expect(container.innerHTML).not.toContain(value);
+    expect(container.querySelector('pre')).toHaveTextContent('API_KEY="••••••"');
+    fireEvent.click(screen.getByTestId('chat-user-message-copy'));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(maskChatSecrets(raw)));
+    fireEvent.click(screen.getByTestId('chat-user-message-edit'));
+    expect(screen.getByRole('textbox')).toHaveValue(raw);
+    fireEvent.click(screen.getByTestId('chat-user-message-edit-send'));
+    expect(resend).toHaveBeenCalledWith(raw);
+  });
+
+  it('recognizes common credential formats and preserves surrounding Markdown and unrelated IDs', () => {
+    const text = 'SILICONFLOW_API_KEY="synthetic credential"\nAuthorization: Bearer opaque.token\n`github_pat_synthetic123`\n?token=opaque&branch=main';
+    expect(maskChatSecrets(text)).toBe('SILICONFLOW_API_KEY="••••••"\nAuthorization: Bearer ••••••\n`••••••`\n?token=••••••&branch=main');
+    expect(maskChatSecrets('agent:main:hello\nproject#123\nkeynote=value')).toBe('agent:main:hello\nproject#123\nkeynote=value');
+  });
+
+  it('keeps signed remote images actionable without putting the credential in the DOM', () => {
+    const url = 'https://media.example/pixel.png?token=only-for-this-test';
+    const { container } = renderInApp(<AssistantMarkdown text={`![Remote image](${url})`} isStreaming={false} />);
+    expect(screen.getByTestId('chat-resource-image')).toHaveAttribute('data-status', 'remote');
+    expect(container.innerHTML).not.toContain('only-for-this-test');
+    fireEvent.click(screen.getByTestId('chat-resource-open-external'));
+    expect(openExternal).toHaveBeenCalledWith(url);
+  });
+});
 
 const createObjectURL = vi.fn();
 const revokeObjectURL = vi.fn();
@@ -65,6 +122,7 @@ beforeEach(() => {
   readBinaryFile.mockReset();
   statFile.mockReset();
   thumbnails.mockReset();
+  linkPreview.mockReset().mockResolvedValue(null);
   openExternal.mockClear();
   showItemInFolder.mockClear();
   openWorkspacePanel.mockClear();
@@ -188,7 +246,7 @@ describe('ConversationMediaCard', () => {
 
     await waitFor(() => expect(screen.getByTestId('chat-resource-audio')).toHaveAttribute('data-status', 'tooLarge'));
     expect(readBinaryFile).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByLabelText('resources.media.revealInFolder'));
+    fireEvent.click(screen.getByLabelText(chatEnglish.resources.media.revealInFolder));
     expect(showItemInFolder).toHaveBeenCalledWith('/w/out/speech.wav');
   });
 
@@ -220,7 +278,7 @@ describe('ConversationMediaCard', () => {
     const card = screen.getByTestId('chat-resource-audio');
     expect(card).toHaveAttribute('data-status', 'unsupported');
     expect(screen.queryByTestId('chat-resource-player')).toBeNull();
-    expect(screen.getByLabelText('resources.media.openWithSystem')).toBeInTheDocument();
+    expect(screen.getByLabelText(chatEnglish.resources.media.openWithSystem)).toBeInTheDocument();
   });
 
   it('labels other playback failures separately', async () => {
@@ -291,7 +349,7 @@ describe('ConversationMediaCard', () => {
   it('marks voice notes', async () => {
     renderInApp(<ConversationMediaCard file={audioFile({ isVoiceNote: true })} />);
     await screen.findByTestId('chat-resource-player');
-    expect(screen.getByTestId('chat-resource-audio')).toHaveTextContent('resources.media.voiceNote');
+    expect(screen.getByTestId('chat-resource-audio')).toHaveTextContent(chatEnglish.resources.media.voiceNote);
   });
 });
 
@@ -418,6 +476,35 @@ describe('image gallery', () => {
 });
 
 describe('website links', () => {
+  it('waits for dwell, cancels a brief focus, and ignores a result for the previous link', async () => {
+    vi.useFakeTimers();
+    try {
+      let settle!: (data: { thumbnail: string }) => void;
+      linkPreview.mockReturnValueOnce(new Promise(resolve => { settle = resolve; }));
+      linkPreview.mockResolvedValue({ thumbnail: 'data:image/png;base64,AAAA' });
+      const { rerender } = renderInApp(<WebsiteLinkCard url="https://example.org/a" />);
+      const currentLink = () => screen.getByTestId('chat-resource-open-external');
+      fireEvent.focus(currentLink());
+      await act(async () => vi.advanceTimersByTimeAsync(499));
+      expect(linkPreview).not.toHaveBeenCalled();
+      fireEvent.blur(currentLink());
+      await act(async () => vi.advanceTimersByTimeAsync(500));
+      expect(linkPreview).not.toHaveBeenCalled();
+      fireEvent.focus(currentLink());
+      await act(async () => vi.advanceTimersByTimeAsync(500));
+      expect(linkPreview).toHaveBeenCalledWith('https://example.org/a');
+
+      rerender(<TooltipProvider><WebsiteLinkCard url="https://example.org/b" /></TooltipProvider>);
+      fireEvent.focus(currentLink());
+      await act(async () => vi.advanceTimersByTimeAsync(500));
+      await act(async () => settle({ thumbnail: 'data:image/png;base64,BBBB' }));
+      expect(screen.getByTestId('chat-link-preview-image')).toHaveAttribute('src', 'data:image/png;base64,AAAA');
+      expect(currentLink()).toHaveTextContent('https://example.org/b');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('shows title, host and URL, and opens externally', () => {
     renderInApp(<WebsiteLinkCard url="https://www.example.com/docs?page=2" title="The docs" />);
     const card = screen.getByTestId('chat-resource-website-link');
@@ -457,26 +544,35 @@ describe('website links', () => {
     expect(screen.getByText('Click')).toBeInTheDocument();
   });
 
-  it('becomes a card when a paragraph is only a link', () => {
+  it('keeps the label of a link that occupies a whole paragraph', () => {
     renderInApp(<AssistantMarkdown text="[Read the guide](https://example.com/guide)" isStreaming={false} />);
-    expect(screen.getByTestId('chat-resource-website-link')).toHaveTextContent('Read the guide');
+    expect(screen.getByRole('link', { name: 'Read the guide' })).toHaveClass('chat-website-link');
   });
 
-  it('becomes a card for a bare URL, titled by its host', () => {
+  it('keeps the full address of a bare URL', () => {
     renderInApp(<AssistantMarkdown text="https://example.com/guide" isStreaming={false} />);
-    expect(screen.getByTestId('chat-resource-website-link')).toHaveTextContent('example.com');
+    expect(screen.getByRole('link', { name: 'https://example.com/guide' })).toHaveClass('chat-website-link');
   });
 
   it('stays an inline link inside a sentence', () => {
     renderInApp(<AssistantMarkdown text="See [the guide](https://example.com/guide) first." isStreaming={false} />);
-    expect(screen.queryByTestId('chat-resource-website-link')).toBeNull();
-    expect(screen.getByRole('link', { name: 'the guide' })).toHaveAttribute('href', 'https://example.com/guide');
+    const link = screen.getByRole('link', { name: 'the guide' });
+    expect(link).toHaveAttribute('href', 'https://example.com/guide');
+    expect(link.parentElement).toHaveTextContent('See the guide first.');
   });
 
-  it('keeps GitHub links on their existing card', () => {
-    renderInApp(<AssistantMarkdown text="https://github.com/acme/repo" isStreaming={false} />);
+  it('renders GitHub repositories as local pills inside prose', () => {
+    renderInApp(<AssistantMarkdown text="See https://github.com/acme/repo first." isStreaming={false} />);
     expect(screen.queryByTestId('chat-resource-website-link')).toBeNull();
-    expect(screen.getByRole('button', { name: /acme\/repo/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'acme/repo' })).toHaveClass('chat-github-reference');
+    expect(linkPreview).not.toHaveBeenCalled();
+  });
+
+  it('keeps a bare repository pill after sending and leaves workspace paths literal', () => {
+    renderInApp(<AssistantMarkdown text={'facebook/react\n\nsrc/App.tsx'} isStreaming={false} />);
+    expect(screen.getByRole('button', { name: 'facebook/react' })).toHaveClass('chat-github-reference');
+    expect(screen.getByText('src/App.tsx')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'src/App.tsx' })).toBeNull();
   });
 
   it('does not flip layout while streaming', () => {
@@ -560,7 +656,7 @@ describe('unknown resources', () => {
       onOpenFilePath={onOpenFilePath}
       resources={[{ kind: 'unknown', key: 'k', type: 'report', path: '/w/report.bin' }]}
     />);
-    fireEvent.click(screen.getByLabelText('resources.media.openInPanel'));
+    fireEvent.click(screen.getByLabelText(chatEnglish.resources.media.openInPanel));
     expect(onOpenFilePath).toHaveBeenCalledWith('/w/report.bin');
     expect(openPath).not.toHaveBeenCalled();
   });
@@ -709,6 +805,6 @@ describe('ChatMessage resource visibility', () => {
     const message: RawMessage = { role: 'assistant', content: [{ type: 'canvas', title: 'Board' } as never] };
     renderInApp(<ChatMessage message={message} />);
     expect(screen.getByTestId('chat-resource-unknown')).toHaveTextContent('Board');
-    expect(screen.getByTestId('chat-assistant-avatar')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-assistant-avatar')).toBeNull();
   });
 });

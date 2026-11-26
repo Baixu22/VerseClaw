@@ -1503,6 +1503,7 @@ export const hostApi = {
     registerHtmlPreview: (html: string) => invokeHost('files', 'registerHtmlPreview', { html }),
   },
   media: {
+    linkPreview: (url: string, mode?: 'favicon') => invokeHost('media', 'linkPreview', mode ? { url, mode } : { url }),
     thumbnails: (input: { paths: MediaThumbnailEntry[] }) => invokeHost('media', 'thumbnails', input),
     saveImage: (input: SaveImagePayload) => invokeHost('media', 'saveImage', input),
     imageGenerationSettings: () => invokeHost('media', 'imageGenerationSettings'),
