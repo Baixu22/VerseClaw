@@ -1,14 +1,12 @@
-export function UserMessageBubble({
-  text,
-}: {
-  text: string;
-}) {
+import { AssistantMarkdown } from './AssistantMarkdown';
+
+export function UserMessageBubble({ text, allowSidePreview = false }: { text: string; allowSidePreview?: boolean }) {
   return (
     <div
-      className="chat-user-message-card relative min-w-0 overflow-hidden text-left transition-colors duration-150"
+      className="chat-user-message-card relative min-w-0 max-w-full overflow-hidden text-left transition-colors duration-150"
       data-testid="chat-user-message-bubble"
     >
-      <p className="whitespace-pre-wrap break-words text-[14px] font-[445] leading-[22px]">{text}</p>
+      <AssistantMarkdown text={text} isStreaming={false} allowSidePreview={allowSidePreview} />
     </div>
   );
 }

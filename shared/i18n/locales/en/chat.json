@@ -369,6 +369,9 @@
     }
   },
   "markdown": {
+    "showFull": "Show full message",
+    "showLess": "Show less",
+    "openSession": "Open conversation {{name}}",
     "codeBlock": "Code",
     "copyCode": "Copy code",
     "copiedCode": "Copied"
@@ -1416,6 +1419,38 @@
     "manage": "Chat options"
   },
   "composer": {
+    "draftReferences": "References",
+    "draftReferencesCount": "References, {{count}} items",
+    "draftMore": "Show {{count}} more",
+    "draftCopyValue": "Copy {{value}}",
+    "draftKinds": {
+      "session": "Conversation",
+      "path": "Workspace file",
+      "npm": "npm package",
+      "pypi": "Python package",
+      "crate": "Rust crate",
+      "docker": "Docker image",
+      "figma": "Design",
+      "linear": "Issue",
+      "jira": "Jira issue",
+      "arxiv": "arXiv paper",
+      "video": "Video",
+      "docs": "Documentation",
+      "email": "Email",
+      "ip": "Endpoint",
+      "cve": "CVE advisory",
+      "website": "Website",
+      "color": "Color",
+      "size": "Dimensions"
+    },
+    "editSource": "Edit source",
+    "showReference": "Show reference",
+    "editLink": "Edit link",
+    "previewFormat": "Preview {{format}}",
+    "previewFullDraft": "Preview full draft",
+    "secretMaskedCount": "{{count}} secrets masked",
+    "secretMaskedCount_one": "{{count}} secret masked",
+    "secretMaskedHint": "Secrets are masked while typing and copying; the model still receives the original value on send.",
     "attachFiles": "Attach files",
     "placeholder": "Message...  / for commands and skills",
     "pickSkill": "Choose skill",
@@ -2728,6 +2763,8 @@
   },
   "githubCard": {
     "type": {
+      "file": "Source file",
+      "release": "Release",
       "repo": "Repository",
       "issue": "Issue",
       "pr": "Pull Request",
@@ -2923,6 +2960,7 @@
       "view": "View image: {{name}}"
     },
     "link": {
+      "previewImage": "Website preview",
       "open": "Open in browser",
       "copy": "Copy link",
       "copied": "Link copied",
