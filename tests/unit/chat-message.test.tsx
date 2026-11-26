@@ -446,10 +446,10 @@ describe('ChatMessage word wrapping', () => {
       content: 'A user-typed sentence that should also wrap by words, not characters.',
     };
     const { container } = renderMessage(<ChatMessage message={message} />);
-    const paragraph = container.querySelector('p.whitespace-pre-wrap');
-    expect(paragraph).not.toBeNull();
-    expect(paragraph?.classList.contains('break-all')).toBe(false);
-    expect(paragraph?.classList.contains('break-words')).toBe(true);
+    const paragraph = container.querySelector('[data-testid="chat-user-message-bubble"] p');
+    expect(paragraph).toHaveTextContent('A user-typed sentence');
+    expect(paragraph?.closest('.break-all')).toBeNull();
+    expect(paragraph?.closest('.break-words')).not.toBeNull();
   });
 
   // Inline code no longer carries break utilities as classes. The Codex recipe

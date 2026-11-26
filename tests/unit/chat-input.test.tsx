@@ -891,6 +891,157 @@ describe('ChatInput draft persistence', () => {
     expect(screen.getByTestId('chat-composer-input')).toHaveValue('');
   });
 
+  it('sends the original API key from the composer', async () => {
+    const raw = 'API_KEY=synthetic-only-0123456789';
+    const onSend = vi.fn();
+    renderChatInput(onSend);
+    fireEvent.change(screen.getByTestId('chat-composer-input'), { target: { value: raw } });
+    fireEvent.click(screen.getByLabelText('Send'));
+    await waitFor(() => expect(onSend).toHaveBeenCalledWith(raw, expect.any(Object)));
+  });
+
+  it('masks a key while drafting, including partial copies, and sends the edited original', async () => {
+    const onSend = vi.fn();
+    renderChatInput(onSend);
+    const editor = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    const raw = '介绍 API_KEY=synthetic-only-value';
+    fireEvent.change(editor, { target: { value: raw } });
+    expect(screen.getByTestId('composer-draft-overlay')).toHaveTextContent('介绍 API_KEY=••••');
+    expect(screen.getByTestId('composer-draft-overlay')).not.toHaveTextContent('synthetic');
+    editor.setSelectionRange(raw.indexOf('only'), raw.indexOf('only') + 4);
+    const clipboardData = { setData: vi.fn() };
+    fireEvent.copy(editor, { clipboardData });
+    expect(clipboardData.setData).toHaveBeenCalledWith('text/plain', '••••••');
+    fireEvent.cut(editor, { clipboardData });
+    expect(editor.value).toBe(raw.replace('only', ''));
+    fireEvent.compositionStart(editor);
+    fireEvent.keyDown(editor, { key: 'Enter', isComposing: true });
+    expect(onSend).not.toHaveBeenCalled();
+    fireEvent.compositionEnd(editor);
+    fireEvent.click(screen.getByLabelText('Send'));
+    await waitFor(() => expect(onSend).toHaveBeenCalledWith(raw.replace('only', ''), expect.any(Object)));
+  });
+
+  it('switches the editor to a formatted draft and keeps the full source editable', async () => {
+    const send = vi.fn();
+    renderChatInput(send);
+    const editor = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(editor, { target: { value: 'plain text' } });
+    expect(screen.queryByTestId('composer-draft-preview')).toBeNull();
+    fireEvent.change(editor, { target: { value: '## 采购清单\n\n- [x] **样品**' } });
+    const preview = await screen.findByTestId('composer-draft-preview');
+    const mode = within(preview).getByTestId('composer-rich-mode-toggle');
+    expect(within(preview).queryByTestId('composer-rendered-draft')).toBeNull();
+    fireEvent.click(mode);
+    expect(editor).not.toBeVisible();
+    expect(within(preview).getByRole('heading', { name: '采购清单' })).toBeVisible();
+    expect(within(preview).getByRole('checkbox')).toBeChecked();
+    fireEvent.doubleClick(within(preview).getByTestId('composer-rendered-draft'));
+    expect(editor).toBeVisible();
+    const log = Array.from({ length: 35 }, (_, index) => `line ${index}`).join('\n');
+    fireEvent.change(editor, { target: { value: log } });
+    expect(within(preview).queryByTestId('composer-rendered-draft')).toBeNull();
+    fireEvent.click(mode);
+    expect(within(preview).getByTestId('composer-rendered-draft').querySelector('pre')?.textContent).toBe(log);
+    fireEvent.click(mode);
+    await waitFor(() => expect(editor).toHaveFocus());
+    expect(editor).toHaveValue(log);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('opens a matching draft from another session as editable text', () => {
+    const originalSession = chatState.currentSessionKey;
+    const onSend = vi.fn();
+    const url = 'https://github.com/facebook/react';
+    chatState.currentSessionKey = 'agent:main:link-draft-a';
+    try {
+      const view = renderChatInput(onSend, { draftValue: url });
+      fireEvent.click(screen.getByTestId('composer-show-link-card'));
+      expect(screen.getByTestId('composer-standalone-link')).toBeVisible();
+      chatState.currentSessionKey = 'agent:main:link-draft-b';
+      view.rerender(<TooltipProvider><ChatInput onSend={onSend} draftValue={url} /></TooltipProvider>);
+      expect(screen.queryByTestId('composer-standalone-link')).toBeNull();
+      const editor = screen.getByTestId('chat-composer-input');
+      expect(editor).toBeVisible();
+      expect(editor).toHaveValue(url);
+    } finally {
+      chatState.currentSessionKey = originalSession;
+    }
+  });
+
+  it('formats pasted JSON and diff while preserving the original draft, including large integers', async () => {
+    const send = vi.fn();
+    renderChatInput(send);
+    const editor = screen.getByTestId('chat-composer-input');
+    const json = '{"status":"ready","apiKey":"fixture-only"}';
+    fireEvent.change(editor, { target: { value: json } });
+    const preview = await screen.findByTestId('composer-draft-preview');
+    const mode = within(preview).getByTestId('composer-rich-mode-toggle');
+    fireEvent.click(mode);
+    await waitFor(() => expect(preview.querySelector('pre')?.textContent).toContain('\n  "status": "ready"'));
+    expect(preview).not.toHaveTextContent('fixture-only');
+    expect(editor).toHaveValue(json);
+    fireEvent.click(mode);
+    const precise = '{"id":9007199254740993,"item":1,"item":2}';
+    fireEvent.change(editor, { target: { value: precise } });
+    fireEvent.click(mode);
+    await waitFor(() => expect(preview.querySelector('pre')?.textContent).toContain(precise));
+    fireEvent.click(mode);
+    const diff = '--- a/readme.md\n+++ b/readme.md\n@@ -1 +1 @@\n-old\n+new';
+    fireEvent.change(editor, { target: { value: diff } });
+    fireEvent.click(mode);
+    await waitFor(() => expect(within(preview).getByTestId('assistant-code-header')).toHaveTextContent('diff'));
+    expect(preview.querySelector('pre')?.textContent).toContain('-old\n+new');
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('updates one reference card as the user edits, opens local files, and copies colors without sending', async () => {
+    const send = vi.fn();
+    const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
+    Object.assign(navigator, { clipboard });
+    renderChatInput(send, { workspace: workspace() });
+    const editor = screen.getByTestId('chat-composer-input');
+    const prompt = 'Review repo:acme/app and src/App.tsx:12, use #345ABC at 1280x720.';
+    fireEvent.change(editor, { target: { value: prompt } });
+    const card = await screen.findByTestId('composer-draft-preview');
+    const toggle = card.querySelector('.composer-draft-preview-toggle')!;
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(within(card).queryAllByRole('listitem')).toHaveLength(0);
+    fireEvent.click(toggle);
+    expect(within(card).getAllByRole('listitem')).toHaveLength(4);
+    fireEvent.click(card.querySelector('button[data-kind="path"]')!);
+    expect(artifactPanelMocks.openWorkspacePanel).toHaveBeenCalledWith({ panel: 'files', filePath: 'C:/project/src/App.tsx' });
+    fireEvent.click(card.querySelector('button[data-kind="color"]')!);
+    expect(clipboard.writeText).toHaveBeenCalledWith('#345ABC');
+    fireEvent.click(toggle);
+    fireEvent.change(editor, { target: { value: 'Review repo:acme/next and src/Other.ts' } });
+    await waitFor(() => expect(toggle).toHaveTextContent('acme/next'));
+    expect(toggle).toHaveTextContent('Other.ts');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(toggle);
+    expect(within(card).getAllByRole('listitem')).toHaveLength(2);
+    expect(editor).toHaveValue('Review repo:acme/next and src/Other.ts');
+    expect(send).not.toHaveBeenCalled();
+    fireEvent.change(editor, { target: { value: 'plain words' } });
+    await waitFor(() => expect(screen.queryByTestId('composer-draft-preview')).toBeNull());
+  });
+
+  it('highlights inline tokens inside the composer overlay and switches between rich view and source editing', async () => {
+    const send = vi.fn();
+    renderChatInput(send, { workspace: workspace() });
+    const editor = screen.getByTestId('chat-composer-input');
+    const richPrompt = '## 检查清单\n\n参考 facebook/react 与 https://react.dev/learn，修复 CVE-2025-12345';
+    fireEvent.change(editor, { target: { value: richPrompt } });
+    const overlay = await screen.findByTestId('composer-draft-overlay');
+    expect(overlay.querySelectorAll('[data-testid="composer-inline-token"]').length).toBeGreaterThanOrEqual(3);
+    const modeToggle = await screen.findByTestId('composer-rich-mode-toggle');
+    fireEvent.click(modeToggle);
+    expect(screen.getByTestId('composer-draft-preview')).toHaveAttribute('data-rich-mode', 'rich');
+    fireEvent.click(modeToggle);
+    expect(screen.getByTestId('composer-draft-preview')).toHaveAttribute('data-rich-mode', 'source');
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it('keeps the new conversation draft when an old task-loop upgrade finishes', async () => {
     const originalSession = chatState.currentSessionKey;
     let finish!: () => void;

@@ -68,6 +68,9 @@ importers:
       chalk:
         specifier: 5.6.2
         version: 5.6.2
+      cheerio:
+        specifier: ^1.2.0
+        version: 1.2.0
       electron-store:
         specifier: ^11.0.2
         version: 11.0.2
@@ -255,9 +258,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.24
         version: 10.4.27(postcss@8.5.8)
-      cheerio:
-        specifier: ^1.2.0
-        version: 1.2.0
       chokidar:
         specifier: ^5.0.0
         version: 5.0.0

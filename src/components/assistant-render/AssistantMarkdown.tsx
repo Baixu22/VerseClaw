@@ -1,7 +1,7 @@
-import { Children, createContext, isValidElement, memo, useContext, type ReactNode } from 'react';
+import { Children, createContext, isValidElement, memo, useContext, useId, useMemo, useState, type ReactNode } from 'react';
 import { TextMessagePartProvider } from '@assistant-ui/react';
 import { MarkdownTextPrimitive, type MarkdownTextPrimitiveProps, type CodeHeaderProps } from '@assistant-ui/react-markdown';
-import { Copy, Check } from 'lucide-react';
+import { ChevronDown, Copy, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -11,10 +11,17 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useCopyToClipboard } from '@/components/tool-ui/shared/use-copy-to-clipboard';
 import { cn } from '@/lib/utils';
 import type { Element, Root, RootContent } from 'hast';
+import type { Root as MarkdownRoot, RootContent as MarkdownNode } from 'mdast';
 import { MarkdownSyntaxHighlight } from './MarkdownSyntaxHighlight';
-import { GitHubCard, isGitHubUrl } from './GitHubCard';
+import { GitHubCard } from './GitHubCard';
+import { WebsiteLink } from './WebsiteLink';
 import { ConversationImage } from './resources/ConversationImage';
 import { WebsiteLinkCard } from './resources/ResourceCards';
+import { SessionReference, useMessageReferences } from './MessageReferences';
+import { maskChatSecrets } from '@/lib/chat-display-text';
+import { sanitizeResourceUrl } from '@/pages/Chat/conversation-resources';
+import { hostApi } from '@/lib/host-api';
+import { parseGitHubUrl } from '@/lib/github-link';
 
 function normalizeLatexDelimiters(input: string): string {
   if (!input || (input.indexOf('\\(') === -1 && input.indexOf('\\[') === -1)) {
@@ -72,34 +79,46 @@ function plainTextOf(node: ReactNode): string {
   return '';
 }
 
-/**
- * A paragraph that is nothing but one website link is a resource, not prose. A
- * link inside a sentence stays inline, and GitHub keeps its own card.
- */
+// Standalone links can also be opened in the workspace browser.
 function standaloneWebsiteLink(children: ReactNode): { href: string; title?: string } | null {
   const nodes = Children.toArray(children).filter((node) => !(typeof node === 'string' && !node.trim()));
   const only = nodes[0];
   if (nodes.length !== 1 || !isValidElement(only)) return null;
   const { href, children: linkChildren } = only.props as { href?: unknown; children?: ReactNode };
-  if (typeof href !== 'string' || !/^https?:\/\//i.test(href) || isGitHubUrl(href)) return null;
+  if (typeof href !== 'string' || !/^https?:\/\//i.test(href)) return null;
   const text = plainTextOf(linkChildren).trim();
   return { href, title: text && text !== href ? text : undefined };
 }
 
-// null keeps a partial URL inline until the paragraph is complete.
+// Streaming links stay in source form until the paragraph is complete.
 const SidePreviewContext = createContext<boolean | null>(null);
 
 const markdownComponents: MarkdownTextPrimitiveProps['components'] = {
   p: function MarkdownParagraph({ children, node: _node, ...props }) {
     const allowSidePreview = useContext(SidePreviewContext);
-    const link = allowSidePreview === null ? null : standaloneWebsiteLink(children);
-    return link
-      ? <WebsiteLinkCard url={link.href} title={link.title} allowSidePreview={!!allowSidePreview} />
-      : <p {...props}>{children}</p>;
+    const link = allowSidePreview ? standaloneWebsiteLink(children) : null;
+    return <p {...props}>
+      {link && parseGitHubUrl(link.href)?.type !== 'repo'
+        ? <WebsiteLinkCard url={link.href} title={link.title} allowSidePreview inline />
+        : children}
+    </p>;
   },
-  a({ href, children, node: _node, ...props }) {
-    if (href && isGitHubUrl(href)) return <GitHubCard url={href} />;
+  a: function MarkdownLink({ href, children, node: _node, ...props }) {
+    const allowReferences = useContext(SidePreviewContext) !== null;
+    if (!href) return <span>{children}</span>;
+    if (allowReferences && /^https?:\/\//i.test(href)) {
+      if (parseGitHubUrl(href)?.type === 'repo') return <GitHubCard url={href} />;
+      return <WebsiteLink url={href}>{children}</WebsiteLink>;
+    }
+    if (maskChatSecrets(href) !== href) {
+      const { openUrl } = sanitizeResourceUrl(href);
+      return openUrl ? <button type="button" className="underline" onClick={() => void hostApi.shell.openExternal(openUrl)}>{children}</button> : <span>{children}</span>;
+    }
     return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+  },
+  button({ node, children }) {
+    const id = node?.properties.dataSessionRef;
+    return typeof id === 'string' ? <SessionReference id={id} /> : <>{children}</>;
   },
   pre({ children, className, node: _node, ...props }) {
     return <pre {...props} className={cn('markdown-code-body whitespace-pre-wrap break-words', className)}>{children}</pre>;
@@ -136,34 +155,83 @@ function markWritingEnd() {
     if (target) target.properties['data-writing-end'] = true;
   };
 }
-const remarkPlugins = [remarkGfm, remarkMath];
+// Resource components keep the original URL for explicit opens. No raw URL is
+// needed in the DOM when it contains a credential.
+function maskMarkdownContent() {
+  return (tree: MarkdownRoot) => {
+    function visit(node: MarkdownRoot | MarkdownNode) {
+      if ('value' in node) node.value = maskChatSecrets(node.value);
+      if ('title' in node && node.title) node.title = maskChatSecrets(node.title);
+      if ('alt' in node && node.alt) node.alt = maskChatSecrets(node.alt);
+      if ('label' in node && node.label) node.label = maskChatSecrets(node.label);
+      if ('identifier' in node) node.identifier = maskChatSecrets(node.identifier);
+      if (node.type === 'code' && node.lang) node.lang = maskChatSecrets(node.lang);
+      if ('children' in node) node.children.forEach(visit);
+    }
+    visit(tree);
+  };
+}
+const remarkPlugins = [remarkGfm, remarkMath, maskMarkdownContent];
 const rehypePlugins: NonNullable<MarkdownTextPrimitiveProps['rehypePlugins']> = [
   [rehypeKatex, { strict: false, throwOnError: false, output: 'html' }],
 ];
-const streamingPlugins = [...rehypePlugins, markWritingEnd];
+// Bound both tall logs and unbroken pastes before the Markdown parser runs.
+function collapsedPreview(text: string) {
+  const firstLines = text.split('\n', 25);
+  if (text.length <= 2400 && firstLines.length < 25) return null;
+  const head = firstLines.slice(0, 10).join('\n').slice(0, 800);
+  const boundary = head.lastIndexOf('\n\n');
+  // A whole paragraph can carry links and formatting. A cut URL or code fence stays inert.
+  if (boundary > 0 && !/^(?: {0,3})(?:`{3,}|~{3,})/m.test(head)) {
+    return { markdown: true, text: head.slice(0, boundary) };
+  }
+  return { markdown: false, text: head.trimEnd() + '…' };
+}
 
 export const AssistantMarkdown = memo(function AssistantMarkdown({
   text,
   isStreaming,
   allowSidePreview = false,
+  foldLongText = true,
 }: {
   text: string;
   isStreaming: boolean;
   allowSidePreview?: boolean;
+  foldLongText?: boolean;
 }) {
+  const { t } = useTranslation('chat');
+  const id = useId();
+  const [expanded, setExpanded] = useState(false);
+  const preview = useMemo(() => isStreaming || !foldLongText ? null : collapsedPreview(text), [text, isStreaming, foldLongText]);
+  const references = useMessageReferences();
+  const plugins = useMemo(() => isStreaming ? [...rehypePlugins, markWritingEnd] : [...rehypePlugins, references], [references, isStreaming]);
+  const excerpt = expanded ? null : preview;
   return (
     <SidePreviewContext.Provider value={isStreaming ? null : allowSidePreview}>
-      <TextMessagePartProvider text={text} isRunning={isStreaming}>
-        <MarkdownTextPrimitive
-          className="prose w-full max-w-none break-words codex-markdown"
-          smooth={false}
-          defer={isStreaming}
-          preprocess={normalizeLatexDelimiters}
-          remarkPlugins={remarkPlugins}
-          rehypePlugins={isStreaming ? streamingPlugins : rehypePlugins}
-          components={isStreaming ? markdownComponents : completeComponents}
-        />
-      </TextMessagePartProvider>
+      <div id={id} className="w-full min-w-0 max-w-full">
+        {excerpt && !excerpt.markdown ? (
+          <p className="chat-long-message-preview reading-text">{maskChatSecrets(excerpt.text)}</p>
+        ) : (
+          <TextMessagePartProvider text={excerpt?.text ?? text} isRunning={isStreaming}>
+            <MarkdownTextPrimitive
+              className="prose w-full max-w-none break-words codex-markdown"
+              smooth={false}
+              defer={isStreaming}
+              preprocess={normalizeLatexDelimiters}
+              remarkPlugins={remarkPlugins}
+              rehypePlugins={plugins}
+              components={isStreaming ? markdownComponents : completeComponents}
+            />
+          </TextMessagePartProvider>
+        )}
+      </div>
+      {preview !== null && (
+        <button type="button" className="chat-message-disclosure" aria-controls={id} aria-expanded={expanded}
+          onClick={() => setExpanded(value => !value)}>
+          {t(expanded ? 'markdown.showLess' : 'markdown.showFull')}
+          <ChevronDown aria-hidden="true" size={14} className={expanded ? 'rotate-180' : undefined} />
+        </button>
+      )}
     </SidePreviewContext.Provider>
   );
 });

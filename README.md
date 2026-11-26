@@ -126,7 +126,15 @@ Pending runtime approvals replace the owning conversation's input area with the 
 
 Questions, choices, plan proposals and permission requests use one decision surface in the composer's position. Runtime approvals take priority, followed by workspace permissions and other requests. The draft stays mounted while the decision surface is active and returns when requests are resolved; interrupted question selections are retained. These surfaces share the composer's material, rounded outline and action row. Running plan progress leaves the composer when its run ends, and its history remains in the process disclosure. The activity panel reuses the sidebar's session rows, including pinning, rename and context menus.
 
-Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer; remote images and media are never loaded automatically and offer an open action instead. Charts draw their declared type with a data table available, standalone links become link cards, and any other structured resource gets a labelled fallback card.
+Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer. Remote image and media attachments offer an open action. Charts draw their declared type with a data table available, and other structured resources get a labelled fallback card.
+
+User messages and replies render Markdown tables, task lists and fenced code. GitHub repository links display the GitHub icon and `owner/repo` in a compact pill. In a sentence, `owner/repo#42` and `owner/repo@abcdef1` link to the issue and commit. Select a recognized session ID or session key to open its conversation. Long messages open with a short preview. Message copies include the full Markdown with recognized API keys masked. Sending or explicitly editing your message uses the original text.
+
+The editor marks recognized references and Markdown syntax as you type. Select Preview to view formatted Markdown, LaTeX, JSON, Git diffs or a long draft in the editing area. Edit source restores the original draft. Recognized keys are masked in the editor and in copied or cut selections. Sending uses the original value.
+
+The References row shows a count and a short summary as you type. Expand it to open a repository, session or workspace file, or to copy a color or dimensions. For example, try `repo:facebook/react`, `src/App.tsx:42`, `npm:zod`, `#0EA5E9` and `1280×720`.
+
+Paste a repository or URL on its own to show its reference in the composer. Websites display their link text with a site icon. Hover or focus the link for half a second to see its 16:9 preview when available. Select **Edit link** to return to the original text. A typed link offers **Show reference**. References inside a sentence are available from the References list. Pasting a recognized conversation ID or key on its own displays a one-line title that opens the conversation. Use the pencil button to edit the original identifier.
 
 ## Current maturity boundaries
 

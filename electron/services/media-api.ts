@@ -97,6 +97,7 @@ function normalizeThumbnailEntries(payload: unknown): ThumbnailEntry[] {
 
 export function createMediaApi(): CompleteHostServiceRegistry['media'] {
   return {
+    linkPreview: async (payload) => (await import('./link-preview')).readLinkPreview(payload),
     thumbnails: async (payload) => {
       const entries = normalizeThumbnailEntries(payload);
       const fsP = await import('node:fs/promises');

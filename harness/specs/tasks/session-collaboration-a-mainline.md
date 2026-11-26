@@ -4,7 +4,7 @@ id: session-collaboration-a-mainline
 title: 会话协作 A 阶段主线集成验收
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: c932dfb554ae318cb50c20a9d4f8d9b78d56fca5
+diffBase: 9e0f1afdc5db61e234b0965363249ca8d35f04d5
 intent: 验证会话发现、按需详情、条件等待和两个界面入口在同一主线候选上的行为，冻结规模基线。
 touchedAreas:
   - README.md
@@ -36,6 +36,7 @@ touchedAreas:
   - src/lib/session-read-model.ts
   - src/stores/session-collaboration.ts
   - tests/e2e/fixtures/session-collaboration.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
   - tests/e2e/session-collaboration-*.spec.ts
   - tests/unit/host-api-facade.test.ts
   - tests/unit/session-collaboration-*.test.ts*

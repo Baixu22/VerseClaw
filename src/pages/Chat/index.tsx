@@ -11,6 +11,8 @@ import { createChatContentCache } from '@/stores/chat/content-cache';
 import { useMessageViewport } from '@/hooks/use-message-viewport';
 import { classifyDerivation, type SessionDerivation } from '@shared/types/session-derivation';
 import { SessionFamilyNavigation } from '@/components/chat/SessionFamilyNavigation';
+import { MessageReferenceProvider } from '@/components/assistant-render/MessageReferences';
+import { maskChatSecrets } from '@/lib/chat-display-text';
 import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
 import { useSessionReadingPosition } from './use-session-reading-position';
 import { getTranscriptEntryId } from '@/lib/session-read-model';
@@ -3172,7 +3174,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     return users.map((row, ordinal) => {
       const end = users[ordinal + 1]?.index ?? messages.length;
       const reply = rows.findLast((candidate) => candidate.index > row.index && candidate.index < end && !candidate.hidden && candidate.message.role === 'assistant' && !candidate.suppressAssistantText);
-      const preview = (text: string, limit: number) => text.replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
+      const preview = (text: string, limit: number) => maskChatSecrets(text).replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
       return { id: getTranscriptEntryId(row.message), index: row.index, ordinal: ordinal + 1, title: preview(extractText(row.message), 110) || t('messageNav.jumpTo', { ordinal: ordinal + 1 }), response: reply ? preview(projectMessageRender(reply.message, { isUser: false, suppressAssistantText: reply.suppressAssistantText, suppressToolCards: reply.suppressToolCards, suppressReasoning: reply.suppressReasoning, textOverride: reply.textOverride }).displayText, 180) : undefined, completedAt: reply?.message.timestamp };
     });
   }, [visibleMessageRows, messages.length, t]);
@@ -3432,6 +3434,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
 
   return (
     <TooltipProvider>
+    <MessageReferenceProvider sessions={sessions} labels={sessionLabels} open={openFamilySession}>
     <div
       ref={splitContainerRef}
       data-testid="chat-page"
@@ -4317,6 +4320,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       </Dialog>
 
     </div>
+    </MessageReferenceProvider>
     </TooltipProvider>
   );
 }

@@ -2933,6 +2933,13 @@ export type MediaThumbnailEntry = {
   mimeType?: string;
 };
 export type MediaThumbnailsPayload = { paths: MediaThumbnailEntry[] };
+export type LinkPreviewPayload = { url: string; mode?: 'favicon' };
+export type LinkPreviewResult = {
+  title?: string;
+  description?: string;
+  thumbnail?: string;
+  favicon?: string;
+} | null;
 export type MediaThumbnailResult = Record<string, {
   preview: string | null;
   fileSize: number;
@@ -6296,6 +6303,7 @@ export type HostApiContract = {
     registerHtmlPreview: (payload: HtmlPreviewDocumentPayload) => HtmlPreviewDocumentResult;
   };
   media: {
+    linkPreview: (payload: LinkPreviewPayload) => LinkPreviewResult;
     thumbnails: (payload: MediaThumbnailsPayload) => MediaThumbnailResult;
     saveImage: (payload: SaveImagePayload) => JsonRecord;
     imageGenerationSettings: () => ImageGenerationSettingsResult;
