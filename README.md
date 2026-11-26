@@ -270,6 +270,9 @@ No separate database server is required.
 - Knowledge imports keep same-named sources separate, reviewed creates reject collisions, and interrupted governance commits resume from recorded Wiki effects. Removed preinstalled skills stay removed across restarts.
 - Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
 - Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
+- Knowledge uses the main chat’s question bubbles and reply formatting. Click the orange assistant beneath its latest idle reply to pet it. Minimize the conversation to follow its progress from the corner.
+- Open **Knowledge conversations** from the chat composer to resume a saved thread. The book icon beneath a chat reply takes it to the knowledge assistant. **Send to** returns a selected question, answer and citations to the named chat.
+- Start a message with `@knowledge` or `@知识库助手` to show the knowledge assistant’s current activity. Add a question to query inline. The character and operation log follow retrieval, source reads, answer generation and citation checks, then show the answer and sources.
 - Chinese lexical retrieval, bounded long-document continuation, a provider-scoped embedding cache and version-bound Steward findings share the same admission boundary. An opt-in public GitHub directory connector sends updates and withdrawals to Inbox; other SaaS connectors are not implemented.
 - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
 

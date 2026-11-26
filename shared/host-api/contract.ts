@@ -4708,6 +4708,7 @@ export type KnowledgeSourceSetAnswerSource = {
   readRange?: { fromLine: number; toLine: number; totalLines?: number; truncated: boolean };
 };
 export type KnowledgeAnswerFromSourceSetPayload = {
+  requestId?: string;
   answerMode?: KnowledgeAnswerMode;
   question: string;
   sourceRefs: KnowledgeSourceRef[];

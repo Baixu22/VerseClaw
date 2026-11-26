@@ -105,9 +105,21 @@ workspace preserves its mounted tabs, selected content and expansion state.
 The Knowledge corner uses the approved procedural Ginger character. Drag stays
 near its corner dock and out-of-range release snaps back; click or keyboard
 activation opens a compact nonmodal floating conversation with source context
-intact. Actual request boundaries drive its states, and answers
-share the main Chat Markdown renderer. Reduced motion settles one pose.
+intact. Questions share the main Chat bubble and replies use the full Markdown
+column. Hovering over or petting the idle companion elicits a reaction beneath
+the latest reply or in the empty conversation. The minimized launcher follows
+the pending request and its outcome. Reduced motion settles one pose.
 See `tasks/knowledge-bot-avatar.md` and `rules/knowledge-bot-runtime-state.md`.
+
+The Chat knowledge menu opens workspace conversation records. A completed Chat
+reply can become an editable Knowledge question. A Knowledge answer can send
+its question, answer and source references back to the linked Chat. Its delivery
+control opens that chat after acknowledgement. See `tasks/knowledge-conversation-relay.md`.
+
+A leading `@知识库助手` or `@knowledge` opens the assistant's activity in the
+current Chat. Add a question to start a Knowledge request. The inline character,
+activity log, source references and answer follow that same request when the
+user opens the full Knowledge conversation and returns.
 
 - `pnpm harness validate --spec harness/specs/tasks/windows-ui-v2-apple-motion.md`
 - Pending questions, plan proposals and workspace approvals replace the composer with one shared decision surface while history scrolls. Runtime approvals have priority. Acceptance follows priority interruption and restoration, selection, submission, retry and request-specific acknowledgement, and checks draft preservation, light/dark and narrow layouts.

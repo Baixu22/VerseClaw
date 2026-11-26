@@ -1,4 +1,38 @@
 {
+  "mention": {
+    "name": "ナレッジアシスタント",
+    "token": "@knowledge",
+    "open": "会話を開く",
+    "steps": "操作履歴",
+    "busy": "この会話の質問を処理しています。",
+    "textOnly": "テキストの質問を送るか、会話を開いて資料を選択してください。",
+    "phases": {
+      "idle": "質問をお待ちしています",
+      "waiting": "リクエスト送信済み",
+      "searching": "ナレッジベースを検索中",
+      "reading": "許可された出典を確認中",
+      "thinking": "回答を作成中",
+      "verifying": "引用内容を検証中",
+      "finished": "回答できました",
+      "confused": "追加の情報源が必要です",
+      "failed": "リクエスト失敗",
+      "interrupted": "リクエストへの接続が終了しました。再試行できます。"
+    }
+  },
+  "conversation": {
+    "approve": "「{{name}}」への送信を許可",
+    "history": "ナレッジの会話履歴",
+    "openAssistant": "ナレッジアシスタントを開く",
+    "askReply": "この回答についてナレッジアシスタントに聞く",
+    "question": "チャットのこの回答について：\n\n{{text}}\n\n",
+    "sendHome": "「{{name}}」に送る",
+    "openHome": "「{{name}}」を開く",
+    "sent": "「{{name}}」に送信しました",
+    "fromKnowledge": "ナレッジアシスタントの質問と回答",
+    "unconfirmed": "送信を確認できませんでした。同じメッセージで再試行できます。",
+    "targetChanged": "送信先の会話はこのワークスペースにありません。",
+    "unsaved": "ローカルストレージに保存できません。現在、この会話はメモリにのみ保存されています。"
+  },
   "research": {
     "cancel": "調査をキャンセル",
     "progress": "ラウンド {{round}}/{{maxRounds}} · 検索 {{queries}}/{{maxQueries}}",
@@ -283,6 +317,8 @@
     "chatTitle": "ナレッジベースに質問",
     "backToChat": "チャットに戻る",
     "bot": {
+      "pet": "アシスタントをなでる",
+      "petted": "アシスタントがうれしそうに応えました",
       "dragHint": "クリックで質問 · ドラッグで移動",
       "states": {
         "idle": "質問をお待ちしています",
@@ -796,5 +832,9 @@
       "promoted": "下書きに移行済み",
       "dismissed": "除外済み"
     }
+  },
+  "libraryFlow": {
+    "workspaceChanged": "現在のワークスペースからソースセットを開き直してください。",
+    "archive": "以前の会話（閲覧のみ）"
   }
 }

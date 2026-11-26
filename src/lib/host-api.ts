@@ -1522,6 +1522,9 @@ export const hostApi = {
       invokeHost('sessions', 'history', input)
     ),
     sendWorker: (input: SessionSendWorkerPayload) => invokeHost('sessions', 'sendWorker', input),
+    sendToChat: (input: { key: string; expectedSessionId?: string; workspaceId?: string; message: string; idempotencyKey: string }, approvalId?: string) =>
+      invokeHost('gateway', 'rpc', { method: 'sessions.send', params: input, expectedWorkspaceId: input.workspaceId, approvalId }) as
+        Promise<{ runId?: string; queued?: boolean; success?: boolean; error?: string; approvalRequired?: boolean; approval?: { id: string } }>,
     patchThinking: (input: SessionPatchThinkingPayload) => invokeHost('sessions', 'patchThinking', input),
     patchRuntimeModel: (input: SessionPatchRuntimeModelPayload) => invokeHost('sessions', 'patchRuntimeModel', input),
     compactionStatus: (input: SessionCompactionPayload): Promise<SessionCompactionStatusResult> => (

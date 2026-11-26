@@ -26,9 +26,33 @@
 .knowledge-bot-window [data-testid='knowledge-librarian-composer'] textarea { font-size: 13px; }
 .knowledge-bot-composer textarea { min-height: 36px; }
 .knowledge-bot-composer > div { margin-top: 0; }
-.knowledge-bot-message { position: relative; }
-.knowledge-bot-message__meta { position: absolute; right: 0; bottom: -14px; margin: 0; }
-.knowledge-bot-message__meta button { width: 22px; height: 22px; }
+.knowledge-bot-companion {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.knowledge-bot-companion:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+.knowledge-bot-companion__heart {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 13px;
+  height: 13px;
+  color: var(--color-icon-accent);
+  fill: currentColor;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .knowledge-bot-companion__heart { animation: knowledge-bot-heart 360ms ease-out both; }
+  @keyframes knowledge-bot-heart {
+    from { opacity: 0; transform: translateY(5px) scale(.65); }
+    to { opacity: 1; transform: translateY(-2px); }
+  }
+}
 .knowledge-bot-source { max-width: 100%; border-radius: 7px; background: var(--color-background-elevated-secondary); font-size: 11px; padding: 4px 6px; }
 .knowledge-bot-message [data-testid='knowledge-librarian-retrieval-inspector'] > summary { font-size: 11px; color: var(--color-text-foreground-tertiary); }
 .knowledge-bot-message [data-testid='knowledge-librarian-candidate-actions'] { flex-direction: column; align-items: flex-start; padding-top: 6px; }

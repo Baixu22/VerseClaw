@@ -92,6 +92,14 @@ export type KnowledgeLibrarianMessage = {
   createdAt: string;
   citations?: KnowledgeLibrarianCitation[];
   groundedAnswer?: KnowledgeLibrarianGroundedAnswer;
+  operation?: {
+    requestId: string;
+    phase: 'waiting' | 'searching' | 'reading' | 'thinking' | 'verifying' | 'finished' | 'confused' | 'failed';
+    steps: Array<'searching' | 'reading' | 'thinking' | 'verifying'>;
+    error?: string;
+    answerId?: string;
+  };
+  mainChatDeliveries?: Array<{ sessionKey: string; generation?: string; runId?: string; idempotencyKey: string }>;
 };
 
 export type KnowledgeLibrarianCheckpoint = {
@@ -100,6 +108,9 @@ export type KnowledgeLibrarianCheckpoint = {
   vaultPath?: string;
   editorTitle: string;
   editorSource: string;
+  sourceSetTitle?: string;
+  sourceRefs?: import('@/lib/host-api').KnowledgeSourceSet['sourceRefs'];
+  mainSessionKey?: string;
   messages: KnowledgeLibrarianMessage[];
 };
 
@@ -132,13 +143,16 @@ export function parseLibrarianCheckpoint(raw: string | null): KnowledgeLibrarian
       vaultPath: typeof parsed.vaultPath === 'string' ? parsed.vaultPath : undefined,
       editorTitle: typeof parsed.editorTitle === 'string' ? parsed.editorTitle : '',
       editorSource: typeof parsed.editorSource === 'string' ? parsed.editorSource : '',
+      sourceSetTitle: typeof parsed.sourceSetTitle === 'string' ? parsed.sourceSetTitle : undefined,
+      sourceRefs: Array.isArray(parsed.sourceRefs) ? parsed.sourceRefs : undefined,
+      mainSessionKey: typeof parsed.mainSessionKey === 'string' ? parsed.mainSessionKey : undefined,
       messages: parsed.messages.filter((message): message is KnowledgeLibrarianMessage => (
         !!message
         && typeof message.id === 'string'
         && (message.role === 'user' || message.role === 'assistant' || message.role === 'system')
         && typeof message.content === 'string'
         && typeof message.createdAt === 'string'
-      )).slice(-30),
+      )),
     };
   } catch {
     return null;

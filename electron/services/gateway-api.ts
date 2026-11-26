@@ -495,6 +495,16 @@ export function createGatewayApi(
       if (expectedWorkspaceId && workspace?.id !== expectedWorkspaceId) {
         return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed' };
       }
+      if (method === 'sessions.send' && expectedWorkspaceId && workspace && isRecord(body.params) && !body.params.requesterSessionKey) {
+        const key = body.params.key;
+        if (typeof key !== 'string' || (workspace.activeSessionKey !== key && !Object.hasOwn(workspace.sessionStates ?? {}, key)
+          && !Object.hasOwn(workspace.coordinatorBindings ?? {}, key) && !Object.values(workspace.agentBindings ?? {}).some(binding => binding.sessionKey === key))) {
+          return { success: false, rejectedBeforeDispatch: true, error: 'Destination session does not belong to this workspace' };
+        }
+        const root = resolveWorkspaceSessionRoot(workspace, key, key.split(':')[1] || 'main', body.params.expectedSessionId);
+        if (!root) return { success: false, rejectedBeforeDispatch: true, error: 'Destination session binding changed' };
+        body = { ...body, params: { ...body.params, workspaceId: workspace.id, workspaceDir: root } };
+      }
       const runScopedRpc = async () => {
         if (expectedWorkspaceId && (await getExecutionWorkspaceProfile())?.id !== expectedWorkspaceId) {
           return { success: false, rejectedBeforeDispatch: true, error: 'Gateway workspace scope changed before dispatch' };

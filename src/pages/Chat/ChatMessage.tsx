@@ -1,4 +1,6 @@
 import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdown';
+import { UserMessageBubble } from '@/components/assistant-render/UserMessageBubble';
+import { BookOpen } from 'lucide-react';
 import { UsedKnowledge } from './UsedKnowledge';
 /**
  * Chat Message Component
@@ -94,6 +96,7 @@ interface ChatMessageProps {
   onSubmitInteractionResponse?: (text: string) => void;
   onDraftInteractionResponse?: (text: string) => void;
   onQuoteResponse?: (text: string) => void;
+  onAskKnowledge?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
   onResendUserMessage?: (text: string) => void;
   canResendUserMessage?: boolean;
@@ -236,6 +239,7 @@ export const ChatMessage = memo(function ChatMessage({
   onSubmitInteractionResponse,
   onDraftInteractionResponse,
   onQuoteResponse,
+  onAskKnowledge,
   canForkFromMessage = false,
   canSubmitInteractionResponse = true,
   onResendUserMessage,
@@ -669,6 +673,7 @@ export const ChatMessage = memo(function ChatMessage({
             imageCopyTarget={imageCopyTarget}
             usage={showStreamStatus ? null : { message, liveUsage, isStreaming }}
             onQuoteResponse={!isStreaming ? onQuoteResponse : undefined}
+            onAskKnowledge={!isStreaming ? onAskKnowledge : undefined}
             onFork={
               canForkFromMessage && transcriptEntryId && onForkFromMessage && canResendUserMessage && !isStreaming
                 ? () => onForkFromMessage(transcriptEntryId)
@@ -906,12 +911,14 @@ function AssistantHoverBar({
   imageCopyTarget,
   usage,
   onQuoteResponse,
+  onAskKnowledge,
   onFork,
 }: {
   text: string;
   timestamp?: number;
   imageCopyTarget?: ImageCopyTarget | null;
   onQuoteResponse?: (text: string) => void;
+  onAskKnowledge?: (text: string) => void;
   onFork?: () => void;
   usage?: {
     message: RawMessage;
@@ -984,6 +991,14 @@ function AssistantHoverBar({
             <TooltipContent side="top">{t('messageActions.quoteResponse')}</TooltipContent>
           </Tooltip>
         )}
+        {onAskKnowledge && text.trim() && <Tooltip>
+          <TooltipTrigger asChild>
+            <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground/75"
+              data-testid="chat-ask-knowledge-about-reply" onClick={() => onAskKnowledge(text)}
+              aria-label={t('conversation.askReply', { ns: 'knowledge' })}><BookOpen className="h-3.5 w-3.5" /></Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('conversation.askReply', { ns: 'knowledge' })}</TooltipContent>
+        </Tooltip>}
         {onFork && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -1268,22 +1283,6 @@ function UserMessageEditor({
         </Tooltip>
       </div>
     </form>
-  );
-}
-
-/** Sent text uses an opaque card with the conversation's own material tokens. */
-function UserMessageBubble({
-  text,
-}: {
-  text: string;
-}) {
-  return (
-    <div
-      className="chat-user-message-card relative min-w-0 overflow-hidden text-left transition-colors duration-150"
-      data-testid="chat-user-message-bubble"
-    >
-      <p className="whitespace-pre-wrap break-words text-[14px] font-[445] leading-[22px]">{text}</p>
-    </div>
   );
 }
 

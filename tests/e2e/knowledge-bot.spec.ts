@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import type { Locator } from '@playwright/test';
 import { completeSetup, expect, installIpcMocks, test } from './fixtures/electron';
 
 function stable(value: unknown): string {
@@ -12,6 +13,18 @@ const evidence = process.env.CLAWX_KNOWLEDGE_BOT_EVIDENCE_DIR ?? resolve('docs/d
 const question = 'Explain the decision';
 const markdown = '# Decision\n\nUse **cited sources**.\n\n| Scope | Result |\n| --- | --- |\n| Knowledge | Reviewed |\n\n```ts\nconst grounded = true;\n```';
 
+async function transcriptStyles(container: Locator) {
+  return container.evaluate(root => {
+    const style = (selector: string) => getComputedStyle(root.querySelector(selector)!);
+    const bubble = style('.chat-user-message-card');
+    const prompt = style('.chat-user-message-card p');
+    const heading = root.querySelector('.codex-markdown h1')!;
+    const reply = getComputedStyle(heading.closest('.codex-markdown')!.querySelector('p')!);
+    return [bubble.backgroundColor, bubble.borderColor, bubble.borderRadius, bubble.padding,
+      prompt.font, prompt.color, reply.font, reply.color, getComputedStyle(heading).font];
+  });
+}
+
 test('approved solid follows drag, real host requests, retries and shared conversation rendering', async ({ electronApp, page }) => {
   test.setTimeout(150_000);
   await mkdir(evidence, { recursive: true });
@@ -19,10 +32,21 @@ test('approved solid follows drag, real host requests, retries and shared conver
   const bootConsole: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => { if (message.type() === 'error') bootConsole.push(message.text()); });
+  const history = [
+    { id: 'question', role: 'user', content: question, timestamp: Date.now() - 2000 },
+    { id: 'markdown-evidence', role: 'assistant', content: markdown, timestamp: Date.now() - 1000 },
+  ];
   await installIpcMocks(electronApp, {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
-    gatewayRpc: { [stable(['sessions.list', {}])]: { success: true, result: { sessions: [] } } },
+    gatewayRpc: {
+      [stable(['sessions.list', {}])]: { success: true, result: { sessions: [{ key: 'agent:main:main', displayName: 'Main' }] } },
+      [stable(['chat.history', null])]: { success: true, result: { messages: history, hasMore: false } },
+    },
     hostApi: {
+      [stable(['sessions', 'history', null])]: { messages: history, hasMore: false },
+      [key('answerFromSourceSet')]: { success: true, answer: markdown, unknowns: [],
+        sources: [{ id: 'decision', lookup: 'notes/decision.md', title: 'Decision', excerpt: 'Use cited sources.' }],
+        groundingStatus: 'grounded', suggestedNextActions: [], retrievalDiagnostics: { resultCount: 1 } },
       [key('status')]: { success: true, status: { vaultExists: true, vaultPath: 'D:/knowledge-bot-e2e/wiki', vaultMode: 'isolated', renderMode: 'native', pageCounts: { source: 1 }, sourceCounts: { native: 1 }, warnings: [], obsidianCli: { available: false } } },
       [key('listInboxItems', { status: 'pending', limit: 100 })]: { success: true, items: [] },
       [key('listDrafts', { status: 'all', limit: 100 })]: { success: true, drafts: [] },
@@ -37,6 +61,10 @@ test('approved solid follows drag, real host requests, retries and shared conver
   await page.reload();
   await expect.poll(() => errors).toEqual([]);
   await completeSetup(page);
+  const main = page.getByTestId('chat-scroll-container');
+  await expect(main.getByTestId('chat-user-message-bubble')).toHaveText(question);
+  await expect(main.locator('.codex-markdown table')).toBeVisible();
+  const mainStyles = await transcriptStyles(main);
   await page.getByTestId('sidebar-nav-knowledge').click();
   const launcher = page.getByTestId('knowledge-librarian-open');
   await expect(launcher).toBeVisible();
@@ -66,12 +94,22 @@ test('approved solid follows drag, real host requests, retries and shared conver
   await page.mouse.up();
   const withinRange = (await launcher.boundingBox())!;
   expect(withinRange.x).toBeCloseTo(snapped.x - 44, 0);
-  await page.evaluate((content) => localStorage.setItem('clawx.knowledge.librarian.checkpoint.v1', JSON.stringify({ version: 1, updatedAt: '2026-10-22T00:00:00Z', messages: [{ id: 'markdown-evidence', role: 'assistant', content, createdAt: '2026-10-22T00:00:00Z', citations: [] }] })), markdown);
   await launcher.focus();
   await page.keyboard.press('Enter');
   const chat = page.getByTestId('knowledge-chat-page');
   await expect(chat).toBeVisible();
   const floating = page.getByTestId('knowledge-bot-window');
+  const input = chat.getByTestId('knowledge-librarian-question');
+  const greeter = chat.getByRole('button', { name: 'Pet the assistant' });
+  await greeter.click();
+  await expect(greeter.getByTestId('knowledge-bot')).toHaveAttribute('data-state', 'celebrate');
+  await input.fill(question);
+  await input.press('Enter');
+  await expect(chat.locator('.codex-markdown table')).toBeVisible();
+  await page.reload();
+  await page.getByTestId('sidebar-nav-knowledge').click();
+  await launcher.click();
+  await expect(chat.locator('.codex-markdown table')).toBeVisible();
   await expect(floating).toBeVisible();
   await expect(floating).toHaveAttribute('data-phase', 'open');
   await expect(page.getByTestId('knowledge-page')).toBeVisible();
@@ -106,6 +144,17 @@ test('approved solid follows drag, real host requests, retries and shared conver
   await expect(floating).toBeVisible();
   await expect(page.getByTestId('knowledge-librarian-suggestions')).toHaveCount(0);
   await expect(chat.locator('.codex-markdown table')).toBeVisible();
+  expect(await transcriptStyles(chat)).toEqual(mainStyles);
+  const restoredReply = chat.getByTestId('knowledge-librarian-message-assistant');
+  const replyWidth = await restoredReply.evaluate(row => row.querySelector('.codex-markdown')!.getBoundingClientRect().width / row.getBoundingClientRect().width);
+  expect(replyWidth).toBeGreaterThan(.98);
+  const pet = restoredReply.getByRole('button', { name: 'Pet the assistant' });
+  await pet.hover();
+  await expect(pet.getByTestId('knowledge-bot')).toHaveAttribute('data-state', 'curious');
+  await pet.press('Space');
+  await expect(pet.getByTestId('knowledge-bot')).toHaveAttribute('data-state', 'celebrate');
+  await expect(pet.getByRole('status')).toContainText('happy wiggle');
+  await floating.screenshot({ path: resolve(evidence, 'pet-reaction.png') });
   await chat.getByTestId('assistant-code-header').scrollIntoViewIfNeeded();
   await page.screenshot({ path: resolve(evidence, 'markdown-light.png') });
   const initialUrl = page.url();
@@ -115,7 +164,7 @@ test('approved solid follows drag, real host requests, retries and shared conver
   // host-api -> IPC -> reply, and no animation state is injected by this test.
   await electronApp.evaluate(() => {
     const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-    type Request = { id?: string; module: string; action: string; payload?: { query?: string } };
+    type Request = { id?: string; module: string; action: string; payload?: { query?: string; requestId?: string } };
     const previous = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: Request) => Promise<unknown>> })._invokeHandlers.get('host:invoke')!;
     const runtime = globalThis as unknown as { __knowledgeBotRequests: Request[]; __knowledgeBotSearchCount: number; __knowledgeBotReleases: Record<string, () => void> };
     runtime.__knowledgeBotRequests = []; runtime.__knowledgeBotSearchCount = 0; runtime.__knowledgeBotReleases = {};
@@ -126,6 +175,8 @@ test('approved solid follows drag, real host requests, retries and shared conver
       const respond = (data: unknown) => ({ id: request.id, ok: true, data });
       const hold = (phase: string) => new Promise<void>((resolve) => { runtime.__knowledgeBotReleases[phase] = resolve; });
       if (request.action === 'answerFromSourceSet') {
+        const { BrowserWindow } = process.mainModule!.require('electron') as typeof import('electron');
+        BrowserWindow.getAllWindows()[0].webContents.send('chat:knowledge-answer-progress', { requestId: request.payload?.requestId, phase: 'searching' });
         runtime.__knowledgeBotSearchCount++;
         await hold('search');
         if (runtime.__knowledgeBotSearchCount === 2) return respond({ success: false, error: 'Knowledge search unavailable' });
@@ -146,11 +197,12 @@ test('approved solid follows drag, real host requests, retries and shared conver
       releases[name]?.(); delete releases[name];
     }, phase);
   };
-  const input = page.getByTestId('knowledge-librarian-question');
   await input.fill(question);
   await expect(chat).toHaveAttribute('data-bot-state', 'listening');
   await page.getByTestId('knowledge-librarian-ask').click();
   await expect(chat).toHaveAttribute('data-bot-state', 'searching');
+  await expect(chat.getByTestId('knowledge-bot-pet')).toHaveCount(0);
+  await expect(restoredReply.getByTestId('knowledge-bot')).toHaveAttribute('data-motion', 'reduced');
   const animatedAvatar = chat.getByTestId('knowledge-librarian-loading').locator('.knowledge-bot__engine svg');
   const animatedFrame = await animatedAvatar.innerHTML();
   await expect.poll(() => animatedAvatar.innerHTML()).not.toBe(animatedFrame);
@@ -158,16 +210,18 @@ test('approved solid follows drag, real host requests, retries and shared conver
   await page.screenshot({ path: resolve(evidence, 'searching-light.png') });
   await release('search');
   await expect(chat).toHaveAttribute('data-bot-state', 'finished');
-  await expect(page.getByTestId('knowledge-librarian-answer-section').locator('.codex-markdown')).toBeVisible();
-  await expect(page.getByTestId('knowledge-librarian-source')).toHaveCount(1);
-  await expect(page.getByTestId('knowledge-librarian-answer-section')).not.toContainText('I searched the vault');
-  await expect(page.getByTestId('knowledge-librarian-retrieval-inspector')).toContainText('Explain the decision');
-  await expect(floating.getByTestId('knowledge-librarian-candidate-actions')).toBeHidden();
+  const latestReply = chat.getByTestId('knowledge-librarian-message-assistant').last();
+  await expect(latestReply.getByTestId('knowledge-librarian-answer-section').locator('.codex-markdown')).toBeVisible();
+  await expect(latestReply.getByTestId('knowledge-librarian-source')).toHaveCount(1);
+  await expect(latestReply.getByTestId('knowledge-librarian-answer-section')).not.toContainText('I searched the vault');
+  const inspector = latestReply.getByTestId('knowledge-librarian-retrieval-inspector');
+  await expect(inspector).toContainText(question);
+  await expect(latestReply.getByTestId('knowledge-librarian-candidate-actions')).toBeHidden();
   await expect(floating.getByTestId('knowledge-librarian-composer')).not.toContainText('Checkpoint saved');
-  await floating.getByTestId('knowledge-librarian-retrieval-inspector').locator('summary').click();
-  await expect(floating.getByTestId('knowledge-librarian-save-draft')).toBeVisible();
-  await floating.getByTestId('knowledge-librarian-retrieval-inspector').locator('summary').click();
-  await chat.getByTestId('knowledge-librarian-message-assistant').last().scrollIntoViewIfNeeded();
+  await inspector.locator('summary').click();
+  await expect(latestReply.getByTestId('knowledge-librarian-save-draft')).toBeVisible();
+  await inspector.locator('summary').click();
+  await latestReply.scrollIntoViewIfNeeded();
   await page.screenshot({ path: resolve(evidence, 'answer-light.png') });
   await input.fill('Retain my unfinished question');
   await page.getByTestId('knowledge-bot-close').click();
@@ -185,13 +239,13 @@ test('approved solid follows drag, real host requests, retries and shared conver
   await input.fill('Try again');
   await page.getByTestId('knowledge-librarian-ask').click();
   await expect(chat).toHaveAttribute('data-bot-state', 'searching');
-  // Closing while a request is pending preserves the actual request, and the
-  // reopened view still reflects the same pending state until the host replies.
+  // The launcher follows the same pending request through its outcome.
   await floating.getByTestId('knowledge-bot-close').click();
   await expect(floating).toBeHidden();
-  await launcher.click();
-  await expect(chat).toHaveAttribute('data-bot-state', 'searching');
+  await expect(launcher.getByTestId('knowledge-bot')).toHaveAttribute('data-state', 'searching');
   await release('search');
+  await expect(launcher.getByTestId('knowledge-bot')).toHaveAttribute('data-state', 'failed');
+  await launcher.click();
   await expect(chat).toHaveAttribute('data-bot-state', 'failed');
   await expect(page.getByTestId('knowledge-librarian-error')).toContainText('Knowledge search unavailable');
   await page.screenshot({ path: resolve(evidence, 'failed.png') });
@@ -237,7 +291,8 @@ test('approved solid follows drag, real host requests, retries and shared conver
       compactMetadata: true, promptsInMenu: true, candidateActionsInDetails: true, minimizeControl: true, focusRestored: true, animation: { openMs: 180, closeMs: 140, reducedMs: 80 } },
     drag: { before, constrained, after, snapped, withinRange, storedPosition, restored, radius: 112, openedOnDrag: false, keyboardOpened: true },
     observedStates: ['idle', 'listening', 'searching', 'finished', 'failed', 'searching', 'confused'],
-    sharedMarkdown: { table: true, codeHeader: true, composerShell: true }, reducedMotionStable: true,
+    sharedMarkdown: { table: true, codeHeader: true, composerShell: true, mainAndKnowledgeStyles: mainStyles, replyWidthRatio: replyWidth },
+    petFeedback: { hover: 'curious', keyboard: 'celebrate', minimizedRequest: ['searching', 'failed'] }, reducedMotionStable: true,
     searchBodyPathPresent: Boolean(searchPath), animatedFrameChanges: true, errors, requests,
   }, null, 2) + '\n');
 });

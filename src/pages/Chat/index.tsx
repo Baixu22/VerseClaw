@@ -100,6 +100,8 @@ import {
 } from './execution-projection';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { knowledgeHistory } from '../Knowledge/knowledge-conversations';
+import { KnowledgeBotActivity, useKnowledgeBotMention } from './KnowledgeBotActivity';
 import { cn } from '@/lib/utils';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
 import {
@@ -775,6 +777,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const [knowledgeErrorAdvisoryBusy, setKnowledgeErrorAdvisoryBusy] = useState(false);
   const [dismissedKnowledgeAdvisoryKeys, setDismissedKnowledgeAdvisoryKeys] = useState<Set<string>>(() => new Set());
   const sessionActivityGeneration = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
+  const knowledgeBot = useKnowledgeBotMention(activeWorkspaceId ?? null, currentSessionKey, sessionActivityGeneration);
   const sessionActivitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspaceId, currentSessionKey, sessionActivityGeneration));
   const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const sessionActivityPanelEnabled = useSettingsStore((state) => state.sessionActivityPanelEnabled);
@@ -1738,6 +1741,18 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     handleAppendComposerDraft(`> ${clipped.replace(/\n/g, '\n> ')}\n\n`);
   }, [handleAppendComposerDraft]);
 
+  const askKnowledgeAboutReply = useCallback((text: string) => {
+    const workspaceId = activeWorkspaceId ?? null;
+    const linked = knowledgeHistory(workspaceId).find(row => row.mainSessionKey === currentSessionKey);
+    const query = new URLSearchParams(location.search);
+    query.set('knowledge', 'ask');
+    navigate({ pathname: '/', search: query.toString() }, { state: { knowledgeContext: {
+      ...linked?.context, workspaceId, homeSessionKey: currentSessionKey,
+      homeGeneration: sessions.find(row => row.key === currentSessionKey)?.sessionId,
+      initialQuestion: t('conversation.question', { ns: 'knowledge', text }),
+    } } });
+  }, [activeWorkspaceId, currentSessionKey, location.search, navigate, sessions, t]);
+
   const knowledgeAdvisorySource = useMemo<KnowledgeAdvisorySource | null>(() => {
     if (runError?.trim()) {
       const text = runError.trim();
@@ -2571,7 +2586,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     ? (streamingTimestampStore.get(currentSessionKey) ?? streamTimestamp)
     : 0;
 
-  const isEmpty = startupPhase === 'ready' && !messageAreaLoading && messages.length === 0 && !sending;
+  const isEmpty = startupPhase === 'ready' && !messageAreaLoading && messages.length === 0 && !sending && !knowledgeBot.context;
   const showScrollToLatest = !isEmpty && !isAtBottom;
   const subagentCompletionInfos = useMemo(
     () => messages.map((message) => parseSubagentCompletionInfo(message)),
@@ -3663,6 +3678,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         onSubmitInteractionResponse={handleSubmitInteractionResponse}
                         onDraftInteractionResponse={handleAppendComposerDraft}
                         onQuoteResponse={handleQuoteSelection}
+                        onAskKnowledge={askKnowledgeAboutReply}
                         canForkFromMessage={row.canForkFromMessage && !forkDisabled}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
@@ -3871,6 +3887,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                   )}
 
                   {/* Typing indicator when sending but no stream content yet */}
+                  {knowledgeBot.context && <KnowledgeBotActivity key={`${activeWorkspaceId}:${currentSessionKey}:${sessionActivityGeneration}`}
+                    context={knowledgeBot.context} workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey}
+                    generation={sessionActivityGeneration} onAsk={knowledgeBot.invoke} />}
                 </>
               )}
             </div>
@@ -3959,6 +3978,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             : worktreeProgress ? <WorktreeCreationProgress progress={worktreeProgress} hero={isEmpty} /> : null
         )}
         onSend={handleSendMessage}
+        onKnowledgeMention={knowledgeBot.invoke}
         disabled={!isGatewayRunning || executionBusy}
         sending={inputRunActive}
         paused={composerPaused}
