@@ -6,6 +6,8 @@
   "title": "設定",
   "subtitle": "Verse Claw の体験をカスタマイズ",
   "navigation": {
+    "chooseSection": "設定モジュールを選択",
+    "noResults": "一致する設定がありません。機能名や関連語を試してください。",
     "back": "アプリに戻る",
     "groups": {
       "configuration": "AI 設定",
@@ -14,7 +16,7 @@
     },
     "general": {
       "title": "一般",
-      "description": "外観、言語、起動、アプリ情報。"
+      "description": "外観、会話のフォント、テーマカラー、言語、自動起動、アプリ情報。"
     },
     "models": {
       "title": "モデルとプロバイダー",
@@ -121,6 +123,38 @@
     "actionFailed": "復旧操作に失敗しました"
   },
   "appearance": {
+    "colorsHeading": "テーマと配色",
+    "readingHeading": "文字と読みやすさ",
+    "preferencesHeading": "アプリの設定",
+    "settingsText": "設定画面の文字サイズ",
+    "settingsSizes": {
+      "standard": "標準",
+      "large": "大",
+      "larger": "特大"
+    },
+    "sampleQuestion": "この設定では会話はどのように表示されますか？",
+    "accent": "アクセントカラー",
+    "accentDescription": "送信ボタン、スイッチ、キーボードフォーカスの色を選べます。",
+    "accents": {
+      "original": "標準",
+      "ocean": "オーシャン",
+      "jade": "翡翠",
+      "iris": "アイリス",
+      "rose": "ローズ",
+      "amber": "琥珀"
+    },
+    "customColor": "カスタムカラー",
+    "readingSize": "会話の文字サイズ",
+    "readingSizeValue": "{{size}} px",
+    "readingFont": "会話の書体",
+    "fonts": {
+      "system": "システム",
+      "serif": "明朝体",
+      "mono": "等幅"
+    },
+    "preview": "表示プレビュー",
+    "sample": "朝の光が机に差し込み、一行ごとに考えが形になっていく。",
+    "restore": "外観を初期設定に戻す",
     "title": "外観と言語",
     "description": "外観とスタイルをカスタマイズ",
     "theme": "テーマ",

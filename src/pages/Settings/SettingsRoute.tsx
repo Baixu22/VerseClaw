@@ -215,7 +215,7 @@ export function SettingsRoute() {
   }
 
   return (
-    <SettingsPageChrome title={meta.title} description={meta.description}>
+    <SettingsPageChrome title={meta.title} description={currentSection === 'general' ? undefined : meta.description}>
       <SettingsImplementation embedded />
     </SettingsPageChrome>
   );

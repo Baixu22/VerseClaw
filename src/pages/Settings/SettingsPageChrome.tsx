@@ -14,7 +14,7 @@ export function SettingsPageChrome({
 }) {
   const { t } = useTranslation('settings');
   return (
-    <div data-testid="settings-page" data-presentation="page" className="codex-settings-page">
+    <div data-testid="settings-page" data-presentation="page" data-settings-appearance="" className="codex-settings-page">
       <div className="codex-settings-page__surface">
         <div className="codex-settings-page__header">
           <span className="codex-settings-page__header-label">{t('title')}</span>

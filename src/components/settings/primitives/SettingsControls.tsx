@@ -16,14 +16,11 @@
 import { useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { SettingsChevronDownIcon, SettingsCheckIcon, SettingsMoreIcon } from './SettingsGlyphs';
 import { useDismissOnOutside, usePopover } from './usePopover';
 
-/**
- * Toggle switch, official anatomy: transparent 32x20 button > colored track >
- * 16px thumb (travel 2px->14px). ON #339cff, OFF 10% fill,
- * disabled opacity .6.
- */
 export function SettingsSwitch({
   checked,
   onChange,
@@ -40,22 +37,15 @@ export function SettingsSwitch({
   testId?: string;
 }) {
   return (
-    <button
-      type="button"
-      role="switch"
+    <Switch
       id={id}
       data-testid={testId}
-      aria-checked={checked}
       aria-label={ariaLabel}
+      checked={checked}
+      onCheckedChange={onChange}
       disabled={disabled}
-      data-state={checked ? 'checked' : 'unchecked'}
-      className={checked ? 'sp-switch on' : 'sp-switch'}
-      onClick={() => onChange?.(!checked)}
-    >
-      <span className="sp-switch-track">
-        <span className="sp-switch-thumb" />
-      </span>
-    </button>
+      className="sp-settings-switch"
+    />
   );
 }
 
@@ -65,12 +55,6 @@ export type SettingsSelectOption = {
   icon?: ReactNode;
 };
 
-/**
- * Select trigger + dropdown. Trigger: h28 / pad 0 12 / fog bg + hairline /
- * 14px, chevron 14px; shows the selected option's icon when present.
- * Menu (official): fixed 220px, below-right of trigger, translucent shell
- * + blur(8px), radius 15, pad 4; items 13px, pad 5x8, 18px leading icons.
- */
 export function SettingsSelect({
   value,
   options,
@@ -90,64 +74,25 @@ export function SettingsSelect({
   testId?: string;
   placeholder?: string;
 }) {
-  const overlayContainer = useOverlayPortalContainer();
-  const popover = usePopover<HTMLButtonElement>({ align: 'right', gap: 2, fixedWidth: 220 });
-  const { triggerRef, layerRef, open, setOpen, placement, style } = popover;
-
-  useDismissOnOutside({
-    open,
-    onDismiss: () => setOpen(false),
-    refs: [triggerRef, layerRef],
-  });
-
-  const selected = options.find((o) => o.value === value);
-  const triggerIcon = leading ?? selected?.icon;
-
+  const selected = options.find((option) => option.value === value);
+  const icon = leading ?? selected?.icon;
+  // Radix reserves the empty string for clearing. Settings may offer it as a real option.
+  const encode = (option: string) => 'v:' + option;
   return (
-    <div className="sp-select-wrap">
-      <button
-        ref={triggerRef}
-        type="button"
-        data-testid={testId}
-        className={open ? 'sp-select-btn open' : 'sp-select-btn'}
-        aria-label={ariaLabel}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        disabled={disabled}
-        onClick={() => setOpen((v) => !v)}
-      >
-        {triggerIcon ? <span className="sp-select-leading">{triggerIcon}</span> : null}
-        <span className="sp-select-value">{selected?.label ?? placeholder ?? value}</span>
-        <SettingsChevronDownIcon />
-      </button>
-      {open
-        && createPortal(
-          <div
-            ref={layerRef}
-            className={placement === 'top' ? 'sp-select-menu flip-top' : 'sp-select-menu'}
-            role="listbox"
-            aria-label={ariaLabel}
-            style={style}
-          >
-            {options.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                role="option"
-                aria-selected={opt.value === value}
-                onClick={() => {
-                  onChange(opt.value);
-                  setOpen(false);
-                }}
-              >
-                {opt.icon ? <span className="sp-opt-icon">{opt.icon}</span> : null}
-                <span className="sp-opt-label">{opt.label}</span>
-              </button>
-            ))}
-          </div>,
-          overlayContainer ?? document.body,
-        )}
-    </div>
+    <Select value={encode(value)} onValueChange={(next) => onChange(next.slice(2))} disabled={disabled}>
+      <SelectTrigger size="sm" aria-label={ariaLabel} data-testid={testId} className="sp-select-btn h-7 w-auto gap-1">
+        {icon && <span className="sp-select-leading">{icon}</span>}
+        <SelectValue><span className="sp-select-value">{selected?.label ?? (value || placeholder)}</span></SelectValue>
+      </SelectTrigger>
+      <SelectContent aria-label={ariaLabel} align="end" className="w-[220px] max-w-[calc(100vw-16px)] rounded-[15px]">
+        {options.map((option) => (
+          <SelectItem key={option.value} value={encode(option.value)} textValue={option.label}>
+            {option.icon && <span className="sp-select-leading">{option.icon}</span>}
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -265,6 +210,7 @@ export function SettingsRowMenu({
   testId?: string;
 }) {
   const popover = usePopover<HTMLSpanElement>({ align: 'right', gap: 4, minWidth: 148 });
+  const overlayContainer = useOverlayPortalContainer();
   const { triggerRef, layerRef, open, setOpen, placement, style } = popover;
 
   useDismissOnOutside({
@@ -306,7 +252,7 @@ export function SettingsRowMenu({
               </button>
             ))}
           </div>,
-          document.body,
+          overlayContainer ?? document.body,
         )}
     </div>
   );
@@ -408,6 +354,7 @@ export function SettingsMultiSelect({
   testId?: string;
 }) {
   const popover = usePopover<HTMLButtonElement>({ align: 'right', gap: 2, fixedWidth: 220 });
+  const overlayContainer = useOverlayPortalContainer();
   const { triggerRef, layerRef, open, setOpen, placement, style } = popover;
 
   useDismissOnOutside({
@@ -472,7 +419,7 @@ export function SettingsMultiSelect({
               );
             })}
           </div>,
-          document.body,
+          overlayContainer ?? document.body,
         )}
     </div>
   );
