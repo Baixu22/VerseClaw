@@ -369,6 +369,9 @@
     }
   },
   "markdown": {
+    "showFull": "展开全文",
+    "showLess": "收起全文",
+    "openSession": "打开会话「{{name}}」",
     "codeBlock": "代码",
     "copyCode": "复制代码",
     "copiedCode": "已复制"
@@ -1416,6 +1419,38 @@
     "manage": "会话选项"
   },
   "composer": {
+    "draftReferences": "引用",
+    "draftReferencesCount": "{{count}} 项引用",
+    "draftMore": "再显示 {{count}} 项",
+    "draftCopyValue": "复制 {{value}}",
+    "draftKinds": {
+      "session": "会话",
+      "path": "工作区文件",
+      "npm": "npm 包",
+      "pypi": "Python 包",
+      "crate": "Rust Crate",
+      "docker": "Docker 镜像",
+      "figma": "设计稿",
+      "linear": "工单",
+      "jira": "Jira 工单",
+      "arxiv": "arXiv 论文",
+      "video": "视频链接",
+      "docs": "技术文档",
+      "email": "邮箱",
+      "ip": "网络端点",
+      "cve": "安全漏洞",
+      "website": "网页",
+      "color": "色值",
+      "size": "尺寸"
+    },
+    "editSource": "编辑源码",
+    "showReference": "显示引用",
+    "editLink": "编辑链接",
+    "previewFormat": "预览 {{format}}",
+    "previewFullDraft": "预览全文",
+    "secretMaskedCount": "已遮罩 {{count}} 处密钥",
+    "secretMaskedCount_one": "已遮罩 {{count}} 处密钥",
+    "secretMaskedHint": "输入与复制时已自动遮罩密钥，发送时模型仍会收到原值",
     "attachFiles": "添加文件",
     "placeholder": "输入消息...  / 打开命令与技能",
     "pickSkill": "选择技能",
@@ -2728,6 +2763,8 @@
   },
   "githubCard": {
     "type": {
+      "file": "源码文件",
+      "release": "发行版本",
       "repo": "仓库",
       "issue": "议题",
       "pr": "拉取请求",
@@ -2923,6 +2960,7 @@
       "view": "查看图片：{{name}}"
     },
     "link": {
+      "previewImage": "网页预览图",
       "open": "在浏览器中打开",
       "copy": "复制链接",
       "copied": "链接已复制",

@@ -2,6 +2,7 @@ import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdo
 import { assistantPhaseLabels, type AssistantOutputPhase } from './execution-projection';
 import { UserMessageBubble } from '@/components/assistant-render/UserMessageBubble';
 import { BookOpen } from 'lucide-react';
+import { maskChatSecrets } from '@/lib/chat-display-text';
 import { UsedKnowledge } from './UsedKnowledge';
 /**
  * Chat Message Component
@@ -271,6 +272,7 @@ export const ChatMessage = memo(function ChatMessage({
     [isUser, isStreaming, message, suppressAssistantText, suppressReasoning, suppressToolCards, suppressComposerInteractions, textOverride],
   );
   const text = projection.displayText;
+  const actionText = useMemo(() => maskChatSecrets(text), [text]);
   const reasoning = suppressReasoning ? EMPTY_REASONING : reasoningOverride ?? projection.reasoning;
   const hasText = projection.hasText;
   const resolvableContentImages = projection.contentImages;
@@ -557,7 +559,7 @@ export const ChatMessage = memo(function ChatMessage({
                 sendLabel={t('messageActions.sendEdit')}
               />
             ) : (
-              <UserMessageBubble text={text} />
+              <UserMessageBubble text={text} allowSidePreview />
             )
           ) : (
             <AssistantMarkdown text={text} isStreaming={isStreaming} allowSidePreview />
@@ -644,7 +646,7 @@ export const ChatMessage = memo(function ChatMessage({
         {/* Hover row for user messages */}
         {showUserHoverBar && !isEditingUserMessage && (
           <UserMessageActions
-            text={text}
+            text={actionText}
             timestamp={message.timestamp}
             canEdit={Boolean(onResendUserMessage) && canResendUserMessage}
             onEdit={handleStartUserMessageEdit}
@@ -669,7 +671,7 @@ export const ChatMessage = memo(function ChatMessage({
         {/* Hover row for assistant messages */}
         {showAssistantHoverBar && (
           <AssistantHoverBar
-            text={text}
+            text={actionText}
             timestamp={message.timestamp}
             imageCopyTarget={imageCopyTarget}
             usage={showStreamStatus ? null : { message, liveUsage, isStreaming }}

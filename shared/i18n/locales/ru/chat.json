@@ -369,6 +369,9 @@
     }
   },
   "markdown": {
+    "showFull": "Показать целиком",
+    "showLess": "Свернуть",
+    "openSession": "Открыть чат «{{name}}»",
     "codeBlock": "Код",
     "copyCode": "Скопировать код",
     "copiedCode": "Скопировано"
@@ -1416,6 +1419,38 @@
     "manage": "Параметры чата"
   },
   "composer": {
+    "draftReferences": "Ссылки",
+    "draftReferencesCount": "Ссылки · {{count}}",
+    "draftMore": "Показать ещё {{count}}",
+    "draftCopyValue": "Скопировать {{value}}",
+    "draftKinds": {
+      "session": "Чат",
+      "path": "Файл проекта",
+      "npm": "Пакет npm",
+      "pypi": "Пакет Python",
+      "crate": "Пакет Rust",
+      "docker": "Образ Docker",
+      "figma": "Макет",
+      "linear": "Задача",
+      "jira": "Задача Jira",
+      "arxiv": "Статья arXiv",
+      "video": "Видео",
+      "docs": "Документация",
+      "email": "Почта",
+      "ip": "Эндпоинт",
+      "cve": "Уязвимость CVE",
+      "website": "Веб-страница",
+      "color": "Цвет",
+      "size": "Размеры"
+    },
+    "editSource": "Исходник",
+    "showReference": "Показать ссылку",
+    "editLink": "Изменить ссылку",
+    "previewFormat": "Просмотр {{format}}",
+    "previewFullDraft": "Просмотр черновика",
+    "secretMaskedCount": "Скрыто ключей · {{count}}",
+    "secretMaskedCount_one": "Скрыто ключей · {{count}}",
+    "secretMaskedHint": "Секреты скрыты при вводе и копировании; при отправке модель получает исходное значение.",
     "attachFiles": "Прикрепить файлы",
     "placeholder": "Сообщение...  / для команд и Skills",
     "pickSkill": "Выбрать Skill",
@@ -2728,6 +2763,8 @@
   },
   "githubCard": {
     "type": {
+      "file": "Исходный файл",
+      "release": "Релиз",
       "repo": "Репозиторий",
       "issue": "Задача",
       "pr": "PR",
@@ -2923,6 +2960,7 @@
       "view": "Просмотр изображения: {{name}}"
     },
     "link": {
+      "previewImage": "Предпросмотр страницы",
       "open": "Открыть в браузере",
       "copy": "Копировать ссылку",
       "copied": "Ссылка скопирована",

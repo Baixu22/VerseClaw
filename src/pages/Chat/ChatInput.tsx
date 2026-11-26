@@ -60,6 +60,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { chatSecretRanges, maskChatSecrets, maskChatSelection } from '@/lib/chat-display-text';
+import { ComposerDraftPreview } from '@/components/chat/ComposerDraftPreview';
+import { useDraftSessions } from '@/components/assistant-render/MessageReferences';
+import { segmentPromptSpans, type PromptSpan } from '@/lib/composer-references';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
 import { readKnowledgeResearch } from '@/lib/knowledge-research';
@@ -910,66 +914,95 @@ function findSkillTokenRanges(value: string): SkillTokenRange[] {
 const SKILL_TOKEN_BUTTON_CLASS =
   'rounded-md bg-skill-bg/14 text-skill-fg [-webkit-box-decoration-break:clone] [box-decoration-break:clone] [text-shadow:0_0_10px_rgba(47,107,255,0.38)] dark:bg-skill-bg/18 dark:text-skill-fg-dark dark:[text-shadow:0_0_12px_rgba(37,99,235,0.42)]';
 
-function renderHighlightedComposerText(
-  value: string,
-  tokenRanges: SkillTokenRange[],
-  options: { onPreviewSkill: (skillName: string) => void; previewTooltip: string },
+function renderComposerInlineOverlay(
+  spans: PromptSpan[],
+  rawValue: string,
+  options: {
+    onPreviewSkill: (skillName: string) => void;
+    previewTooltip: string;
+  },
 ) {
-  if (tokenRanges.length === 0) {
-    return <>{value}{value.endsWith('\n') ? '\n' : '\u200b'}</>;
+  if (spans.length === 0) {
+    return <>{rawValue}{rawValue.endsWith('\n') ? '\n' : '\u200b'}</>;
   }
 
   const chunks: React.ReactNode[] = [];
-  let cursor = 0;
-
-  for (const tokenRange of tokenRanges) {
-    const token = value.slice(tokenRange.start, tokenRange.end);
-    const tokenLabel = token.trimEnd();
-    const tokenTrailingSpace = token.slice(tokenLabel.length);
-    const skillName = tokenLabel.startsWith('/') ? tokenLabel.slice(1) : tokenLabel;
-
-    if (tokenRange.start > cursor) {
-      chunks.push(value.slice(cursor, tokenRange.start));
+  for (const span of spans) {
+    if (span.kind === 'text') {
+      chunks.push(span.text);
+      continue;
     }
+    if (span.kind === 'secret') {
+      chunks.push(
+        <span
+          key={`secret-${span.start}`}
+          className="composer-inline-secret"
+          data-testid="composer-inline-secret"
+        >
+          {span.masked}
+        </span>,
+      );
+      continue;
+    }
+    if (span.kind === 'skill') {
+      chunks.push(
+        <Tooltip key={`skill-token-${span.start}`}>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              data-testid="chat-composer-skill-token"
+              data-skill-name={span.skillName}
+              className={cn(
+                'inline h-auto border-0 p-0 font-inherit leading-inherit',
+                'pointer-events-auto cursor-pointer underline-offset-2 hover:underline',
+                'text-left align-baseline shadow-none transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0',
+                SKILL_TOKEN_BUTTON_CLASS,
+              )}
+              onMouseDown={(event) => {
+                // Keep focus in the textarea while still receiving the click.
+                event.preventDefault();
+              }}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                options.onPreviewSkill(span.skillName);
+              }}
+            >
+              {span.text}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">{options.previewTooltip}</TooltipContent>
+        </Tooltip>,
+        span.trailingSpace,
+      );
+      continue;
+    }
+    if (span.kind !== 'reference') {
+      chunks.push(
+        <span key={`${span.kind}-${span.start}`} className={`composer-inline-${span.kind}`}>
+          {span.text}
+        </span>,
+      );
+      continue;
+    }
+    // Reference styles leave glyph metrics unchanged for the textarea overlay.
+    const ref = span.reference;
+    const isColor = ref.kind === 'color';
     chunks.push(
-      <Tooltip key={`skill-token-${tokenRange.start}`}>
-        <TooltipTrigger asChild>
-      <button
-        type="button"
-        data-testid="chat-composer-skill-token"
-        data-skill-name={skillName}
-        className={cn(
-          'inline h-auto border-0 p-0 font-inherit leading-inherit',
-          'pointer-events-auto cursor-pointer underline-offset-2 hover:underline',
-          'text-left align-baseline shadow-none transition-colors',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0',
-          SKILL_TOKEN_BUTTON_CLASS,
-        )}
-        onMouseDown={(event) => {
-          // Keep focus in the textarea while still receiving the click.
-          event.preventDefault();
-        }}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          options.onPreviewSkill(skillName);
-        }}
+      <span
+        key={`ref-${span.start}`}
+        className="composer-inline-token"
+        data-kind={ref.kind}
+        data-testid="composer-inline-token"
+        style={isColor ? ({ '--inline-swatch': ref.target } as React.CSSProperties) : undefined}
       >
-        {tokenLabel}
-      </button>
-        </TooltipTrigger>
-        <TooltipContent side="top">{options.previewTooltip}</TooltipContent>
-      </Tooltip>,
-      tokenTrailingSpace,
+        {span.text}
+      </span>,
     );
-    cursor = tokenRange.end;
   }
 
-  if (cursor < value.length) {
-    chunks.push(value.slice(cursor));
-  }
-  chunks.push(value.endsWith('\n') ? '\n' : '\u200b');
-
+  chunks.push(rawValue.endsWith('\n') ? '\n' : '\u200b');
   return <>{chunks}</>;
 }
 
@@ -1115,6 +1148,7 @@ export function ChatInput({
     finally { selectingTaskRef.current = false; setTaskSelectionBusy(false); }
   }, [t]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const draftOverlayRef = useRef<HTMLDivElement>(null);
   const runStartTimerRef = useRef<number | null>(null);
   const runStartingRef = useRef(false);
   const previousSendingRef = useRef(sending);
@@ -1206,6 +1240,7 @@ export function ChatInput({
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
   );
+  const draftWorkspaceRoot = workspace?.rootPath || currentAgent?.workspace;
   useEffect(() => {
     setExecutionEffortPreview(currentAgent?.reasoningEffort ?? 'auto');
   }, [currentAgent?.id, currentAgent?.reasoningEffort]);
@@ -1292,7 +1327,32 @@ export function ChatInput({
   const historyLoading = useChatStore((state) => state.loading);
   const connectionPending = gatewayStatus.state === 'starting' || (gatewayStatus.state === 'running' && !isGatewayUsable);
   const inputDisabled = disabled || !isGatewayUsable;
-  const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
+  const [renderedDraft, setRenderedDraft] = useState<{
+    text: string;
+    sessionKey: string;
+    mode: 'rich' | 'link';
+  } | null>(null);
+  const draftView = renderedDraft?.text === input && renderedDraft.sessionKey === currentSessionKey
+    ? renderedDraft.mode
+    : 'source';
+  useEffect(() => {
+    setRenderedDraft(null);
+  }, [currentSessionKey]);
+
+  const draftSessions = useDraftSessions();
+  const secretRanges = useMemo(() => chatSecretRanges(input), [input]);
+  const displayInput = useMemo(() => maskChatSelection(input, secretRanges, 0, input.length, true), [input, secretRanges]);
+  const skillTokenRanges = useMemo(() => findSkillTokenRanges(displayInput), [displayInput]);
+  const promptSpans = useMemo(
+    () => (input ? segmentPromptSpans(input, draftSessions.index, skillTokenRanges) : []),
+    [input, draftSessions.index, skillTokenRanges],
+  );
+  const singleReference = promptSpans.find(span => span.kind === 'reference');
+  const hasInlineDecorations = useMemo(
+    () => promptSpans.some((span) => span.kind !== 'text'),
+    [promptSpans],
+  );
+  const hasDraftOverlay = skillTokenRanges.length > 0 || secretRanges.length > 0 || hasInlineDecorations;
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
 
   /**
@@ -1414,10 +1474,16 @@ export function ChatInput({
     };
   }, [hero]);
 
+  const focusDraftEditor = useCallback(() => {
+    requestAnimationFrame(() => textareaRef.current?.focus({ preventScroll: true }));
+  }, []);
+
   const updateInput = useCallback((value: string) => {
+    if (!value && draftView === 'link') focusDraftEditor();
+    setRenderedDraft(null);
     setInput(value);
     onDraftChange?.(value);
-  }, [onDraftChange]);
+  }, [draftView, focusDraftEditor, onDraftChange]);
 
   const recordPromptCacheDecision = useCallback((
     assessment: PromptCacheRiskAssessment,
@@ -1934,6 +2000,7 @@ export function ChatInput({
   useEffect(() => {
     if (draftValue === lastDraftValueRef.current) return;
     lastDraftValueRef.current = draftValue;
+    setRenderedDraft(current => current?.text === draftValue ? current : null);
     setInput(draftValue ?? '');
   }, [draftValue]);
 
@@ -1991,13 +2058,15 @@ export function ChatInput({
     };
   }, [currentSessionKey]);
 
-  // Auto-resize textarea
+  const resizeDraft = useCallback(() => {
+    const editor = textareaRef.current;
+    if (!editor?.offsetWidth) return;
+    editor.style.height = 'auto';
+    editor.style.height = `${Math.min(editor.scrollHeight, 240)}px`;
+  }, []);
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 240)}px`;
-    }
-  }, [input]);
+    resizeDraft();
+  }, [input, draftView, resizeDraft]);
 
   // Focus textarea on mount (avoids Windows focus loss after session delete + native dialog)
   useEffect(() => {
@@ -2055,8 +2124,9 @@ export function ChatInput({
     setSkillsError(null);
   }, [currentAgentId]);
 
-  const handleInputChange = useCallback((value: string) => {
+  const handleInputChange = useCallback((value: string, pasted = false) => {
     updateInput(value);
+    if (pasted) setRenderedDraft({ text: value, sessionKey: currentSessionKey, mode: 'link' });
     setSlashMenuDismissed(false);
     if (parseSlashInput(value).active) {
       setActionMenuOpen(false);
@@ -2064,7 +2134,50 @@ export function ChatInput({
       setWorkspaceMenuOpen(false);
       setKnowledgePickerOpen(false);
     }
-  }, [updateInput]);
+  }, [currentSessionKey, updateInput]);
+
+  // Copy from the full draft's ranges so even selecting the middle of a key is masked.
+  const copyDraftSelection = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const editor = event.currentTarget;
+    const { selectionStart, selectionEnd } = editor;
+    if (selectionStart === selectionEnd) return;
+    if (!secretRanges.some(range => range.start < selectionEnd && range.end > selectionStart)) return;
+    event.preventDefault();
+    event.clipboardData.setData('text/plain', maskChatSelection(input, secretRanges, selectionStart, selectionEnd));
+    if (event.type === 'cut') {
+      editor.setRangeText('', selectionStart, selectionEnd, 'start');
+      handleInputChange(editor.value);
+    }
+  };
+  const syncDraftOverlay = useCallback(() => {
+    const editor = textareaRef.current;
+    const overlay = draftOverlayRef.current;
+    if (editor && overlay) {
+      overlay.style.width = `${editor.clientWidth}px`;
+      overlay.scrollTop = editor.scrollTop;
+      overlay.scrollLeft = editor.scrollLeft;
+    }
+  }, []);
+  useLayoutEffect(() => {
+    const editor = textareaRef.current;
+    if (!editor) return;
+    let width = editor.offsetWidth;
+    let frame = 0;
+    syncDraftOverlay();
+    const observer = new ResizeObserver(() => {
+      if (editor.offsetWidth !== width) {
+        width = editor.offsetWidth;
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(resizeDraft);
+      }
+      syncDraftOverlay();
+    });
+    observer.observe(editor);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [hasDraftOverlay, resizeDraft, syncDraftOverlay]);
 
   const moveCaretTo = useCallback((position: number) => {
     textareaRef.current?.focus();
@@ -2482,7 +2595,6 @@ export function ChatInput({
 
       if (sendIdentity !== sendIdentityRef.current) return false;
 
-      console.log(`[handleSend] text="${textToSend.substring(0, 50)}", attachments=${safeAttachments?.length ?? 0}, sending=${!!safeAttachments}`);
       if (safeAttachments) {
         console.log('[handleSend] Attachment details:', safeAttachments.map(a => ({
           id: a.id, fileName: a.fileName, mimeType: a.mimeType, fileSize: a.fileSize,
@@ -2927,7 +3039,7 @@ export function ChatInput({
                 .join('\n')
             : '';
       try {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(maskChatSecrets(text));
         toast.success(t('composer.slashCommands.toasts.copyDone'));
       } catch (error) {
         toast.error(t('composer.slashCommands.toasts.copyFailed', { error: String(error) }));
@@ -3647,13 +3759,34 @@ export function ChatInput({
             </div>
           )}
 
-          <div className="relative min-h-[48px]">
-            {skillTokenRanges.length > 0 && (
+          <ComposerDraftPreview
+            text={slashInput.active ? '' : input}
+            singleReference={singleReference?.kind === 'reference' && singleReference.text === input.trim()
+              ? singleReference.reference
+              : undefined}
+            sessionKey={currentSessionKey}
+            secretCount={secretRanges.length}
+            viewMode={draftView}
+            onViewModeChange={mode => {
+              setRenderedDraft(mode === 'source' ? null : { text: input, sessionKey: currentSessionKey, mode });
+              if (mode === 'source') focusDraftEditor();
+            }}
+            onLinkEnter={handleKeyDown}
+            onOpenFile={draftWorkspaceRoot ? (path) => {
+              openWorkspacePanel({ panel: 'files', filePath: draftWorkspaceRoot.replace(/[\\/]+$/, '') + '/' + path });
+            } : undefined}
+          >
+            {hasDraftOverlay && (
               <div
+                ref={draftOverlayRef}
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 z-20 overflow-hidden whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground"
+                data-testid="composer-draft-overlay"
+                className={cn(
+                  'pointer-events-none absolute inset-0 z-20 overflow-hidden whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground',
+                  secretRanges.length > 0 && 'composer-sensitive-text',
+                )}
               >
-                {renderHighlightedComposerText(input, skillTokenRanges, {
+                {renderComposerInlineOverlay(promptSpans, displayInput, {
                   onPreviewSkill: (name) => {
                     void handleSkillTokenPreview(name);
                   },
@@ -3664,7 +3797,7 @@ export function ChatInput({
             <Textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => handleInputChange(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value, (e.nativeEvent as InputEvent).inputType === 'insertFromPaste')}
               onKeyDown={handleKeyDown}
               onSelect={normalizeSelectionAroundSkill}
               onClick={normalizeSelectionAroundSkill}
@@ -3675,16 +3808,22 @@ export function ChatInput({
                 isComposingRef.current = false;
               }}
               onPaste={handlePaste}
+              onCopy={copyDraftSelection}
+              onCut={copyDraftSelection}
+              onScroll={syncDraftOverlay}
+              onDragStart={event => { if (secretRanges.length) event.preventDefault(); }}
+              spellCheck={secretRanges.length ? false : undefined}
               placeholder={inputDisabled ? t('composer.gatewayDisconnectedPlaceholder') : t('composer.placeholder')}
               disabled={inputDisabled}
               data-testid="chat-composer-input"
               className={cn(
                 'relative min-h-[48px] max-h-[240px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none bg-transparent p-0 text-sm leading-relaxed placeholder:text-muted-foreground/60',
-                skillTokenRanges.length > 0 ? 'z-0 text-transparent caret-foreground selection:bg-primary/20' : 'z-10',
+                hasDraftOverlay ? 'z-0 text-transparent caret-foreground selection:bg-primary/20' : 'z-10',
+                secretRanges.length > 0 && 'composer-sensitive-text composer-sensitive-input',
               )}
               rows={1}
             />
-          </div>
+          </ComposerDraftPreview>
 
           {/* Action Row — icons on their own line */}
           <div className="codex-composer-actions-row mt-1.5 flex min-w-0 items-center gap-1">

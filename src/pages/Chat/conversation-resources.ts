@@ -23,6 +23,8 @@
  * carrier cannot express.
  */
 import { evaluateExternalNavigationUrl } from '@shared/security/url-policy';
+import { SENSITIVE_URL_QUERY_KEY } from '@shared/security/link-preview';
+import { maskChatSecrets } from '@/lib/chat-display-text';
 import { extnameOf, getMimeTypeForExt } from '@/lib/generated-files';
 import type { AttachedFileMeta, RawMessage } from '@/stores/chat/types';
 
@@ -104,7 +106,6 @@ const MAX_SCANNED_STRING_CHARS = 256 * 1024;
 
 /** Blocks that are process or text, never a resource of their own. */
 const NON_RESOURCE_BLOCK_RE = /^(?:text|input_text|output_text|refusal)$|tool|function|thinking|reasoning|citation|compaction|signature/i;
-const SENSITIVE_QUERY_KEY_RE = /token|key|secret|sig|password|passwd|pwd|auth|credential|session|code|access/i;
 
 const MAX_TITLE_CHARS = 120;
 const MAX_DESCRIPTION_CHARS = 280;
@@ -282,10 +283,10 @@ export function sanitizeResourceUrl(raw: string): { displayUrl?: string; openUrl
   parsed.username = '';
   parsed.password = '';
   for (const key of Array.from(parsed.searchParams.keys())) {
-    if (SENSITIVE_QUERY_KEY_RE.test(key)) parsed.searchParams.set(key, '***');
+    if (SENSITIVE_URL_QUERY_KEY.test(key)) parsed.searchParams.set(key, '***');
   }
   return {
-    displayUrl: parsed.toString(),
+    displayUrl: maskChatSecrets(parsed.toString()),
     ...(policy.ok ? { openUrl: policy.href } : {}),
   };
 }

@@ -369,6 +369,9 @@
     }
   },
   "markdown": {
+    "showFull": "全文を表示",
+    "showLess": "折りたたむ",
+    "openSession": "会話「{{name}}」を開く",
     "codeBlock": "コード",
     "copyCode": "コードをコピー",
     "copiedCode": "コピー済み"
@@ -1416,6 +1419,38 @@
     "manage": "チャット設定"
   },
   "composer": {
+    "draftReferences": "参照",
+    "draftReferencesCount": "参照 {{count}} 件",
+    "draftMore": "残り {{count}} 件を表示",
+    "draftCopyValue": "{{value}} をコピー",
+    "draftKinds": {
+      "session": "会話",
+      "path": "ワークスペースのファイル",
+      "npm": "npm パッケージ",
+      "pypi": "Python パッケージ",
+      "crate": "Rust Crate",
+      "docker": "Docker イメージ",
+      "figma": "デザイン",
+      "linear": "課題",
+      "jira": "Jira 課題",
+      "arxiv": "arXiv 論文",
+      "video": "動画",
+      "docs": "ドキュメント",
+      "email": "メール",
+      "ip": "エンドポイント",
+      "cve": "脆弱性 (CVE)",
+      "website": "ウェブページ",
+      "color": "色",
+      "size": "サイズ"
+    },
+    "editSource": "ソース編集",
+    "showReference": "参照を表示",
+    "editLink": "リンクを編集",
+    "previewFormat": "{{format}} をプレビュー",
+    "previewFullDraft": "全文をプレビュー",
+    "secretMaskedCount": "{{count}} 件のキーを非表示",
+    "secretMaskedCount_one": "{{count}} 件のキーを非表示",
+    "secretMaskedHint": "入力およびコピー時は自動的にマスクされ、送信時にのみ元の値がモデルへ渡されます。",
     "attachFiles": "ファイルを添付",
     "placeholder": "メッセージ...  / でコマンドと Skill",
     "pickSkill": "Skill を選択",
@@ -2728,6 +2763,8 @@
   },
   "githubCard": {
     "type": {
+      "file": "ソースファイル",
+      "release": "リリース",
       "repo": "リポジトリ",
       "issue": "Issue",
       "pr": "PR",
@@ -2923,6 +2960,7 @@
       "view": "画像を表示: {{name}}"
     },
     "link": {
+      "previewImage": "ウェブページのプレビュー",
       "open": "ブラウザーで開く",
       "copy": "リンクをコピー",
       "copied": "リンクをコピーしました",
