@@ -63,14 +63,17 @@ export async function waitForSessionCollaboration(input: SessionCollaborationWat
       if (!row) return result('unknown');
       if (request.condition === 'task-receipt' && row.sources.tasks.state !== 'ready') return result('unknown');
       if (request.condition === 'task-receipt' && observation.receiptTruncated && sequence > 0 && sequence < (observation.receiptFloor ?? 0)) return result('unknown');
-      const fingerprint = hash(stableFacts(request.condition === 'blocking-changed'
-        ? { session: row.sources.session, tasks: row.sources.tasks }
-        : { row, terminal: observation.terminal?.id ?? null }));
+      const terminal = observation.terminal ?? null;
+      const fingerprint = request.condition === 'run-terminal'
+        ? (terminal ? hash(terminal.id) : previous ?? hash(null))
+        : hash(stableFacts(request.condition === 'blocking-changed'
+          ? { session: row.sources.session, tasks: row.sources.tasks }
+          : { row, terminal: terminal?.id ?? null }));
       const nextReceipt = (observation.receipts ?? []).filter(event => (event.sequence ?? 0) > sequence)
         .sort((a, b) => a.sequence! - b.sequence!)[0];
       cursor = Buffer.from(JSON.stringify([basis, fingerprint, nextReceipt?.sequence ?? sequence])).toString('base64url');
       let event: SessionCollaborationWatchEvent | null = null;
-      if (request.condition === 'run-terminal' && (!request.cursor || previous !== fingerprint)) event = observation.terminal ?? null;
+      if (request.condition === 'run-terminal' && previous !== fingerprint) event = terminal;
       if (request.condition === 'task-receipt') event = nextReceipt ?? null;
       if (request.condition === 'idle' && row.status === 'idle' && (!request.cursor || previous !== fingerprint)) event = { id: `idle:${fingerprint}`, owner: 'sessions', kind: 'idle' };
       if (previous && previous !== fingerprint && ['changed', 'blocking-changed'].includes(request.condition)) {

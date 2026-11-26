@@ -41,6 +41,27 @@ describe('scoped collaboration waits', () => {
     const wrong = await waitForSessionCollaboration({ ...request('idle'), cursor: first.cursor! }, { read: async () => current, subscribe: () => () => {} });
     expect(wrong.state).toBe('stale'); expect(wrong.page.reason).toBe('scope-mismatch');
   });
+  it('acknowledges a terminal event across row changes and a temporarily absent owner outcome', async () => {
+    const { workspaceId, projectId, sessionKey } = scope;
+    const input = parseSessionCollaborationWatch({ ...request(), condition: 'run-terminal',
+      run: { runId: 'run-terminal', scope: { workspaceId, projectId, sessionKey } } });
+    const current = observation();
+    const terminal = { id: 'runtime:run-terminal:10', owner: 'runtime', kind: 'run-terminal', status: 'ok' } as const;
+    current.terminal = terminal;
+    const deps = { read: async () => current, subscribe: () => () => {} };
+    const first = await waitForSessionCollaboration(input, deps);
+    expect(first).toMatchObject({ state: 'satisfied', event: terminal });
+
+    current.page.items[0].label = 'Renamed session';
+    const repeated = await waitForSessionCollaboration({ ...input, cursor: first.cursor! }, deps);
+    expect(repeated).toMatchObject({ state: 'timeout', event: null, cursor: first.cursor });
+    current.terminal = null;
+    const missing = await waitForSessionCollaboration({ ...input, cursor: repeated.cursor! }, deps);
+    expect(missing).toMatchObject({ state: 'timeout', event: null, cursor: first.cursor });
+    current.terminal = terminal;
+    await expect(waitForSessionCollaboration({ ...input, cursor: missing.cursor! }, deps))
+      .resolves.toMatchObject({ state: 'timeout', event: null, cursor: first.cursor });
+  });
   it('returns a real owner receipt once without turning session idleness into acceptance', async () => {
     const current = observation();
     const task = normalizeTaskReference({ kind: 'ledger', taskNodeId: 'task-watch' });

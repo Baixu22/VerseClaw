@@ -87,6 +87,26 @@ describe('shared collaboration panel', () => {
     expect(document.activeElement).toBe(filter); expect(filter.value).toBe('workspace-b'); expect(mocks.activate).not.toHaveBeenCalled();
     mounted.unmount(); await waitFor(() => expect(mocks.cancel).toHaveBeenCalledWith(expect.objectContaining({ query: expect.objectContaining({ target: expect.objectContaining({ sessionGeneration: b.sessionGeneration }) }) })));
   });
+  it('recovers an expired page cursor while keeping the filter and selected session', async () => {
+    mocks.query.mockImplementation(async (request: SessionCollaborationQuery) => {
+      const result = request.cursor ? emptySessionCollaborationPage(request, 'stale', 'scope-mismatch') : page(request);
+      if (request.search && !request.target && !request.cursor) result.nextCursor = 'expired-page';
+      return { success: true, page: result };
+    });
+    render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    const filter = screen.getByTestId('collaboration-search') as HTMLInputElement;
+    fireEvent.change(filter, { target: { value: 'workspace-b' } });
+    const rowId = `collaboration-row-${encodeURIComponent(b.sessionKey)}`;
+    fireEvent.click(await screen.findByTestId(rowId));
+    fireEvent.click(await screen.findByTestId('collaboration-more'));
+    await waitFor(() => {
+      const searches = mocks.query.mock.calls.map(([payload]) => payload)
+        .filter(payload => !payload.target && payload.search === 'workspace-b');
+      expect(searches.map(payload => payload.cursor)).toEqual([undefined, 'expired-page', undefined]);
+    });
+    expect(screen.getByTestId(rowId).getAttribute('aria-pressed')).toBe('true');
+    expect(filter.value).toBe('workspace-b');
+  });
   it('does not display a late previous-workspace reply under a new requester', async () => {
     let release!: (value: unknown) => void;
     mocks.query.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
