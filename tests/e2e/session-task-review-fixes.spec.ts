@@ -148,8 +148,12 @@ test('cancels an active model, restores its task identity, reads a fork and resu
     const claimed = await hostInvoke<{ success: boolean; result: TaskView }>(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
       command: { action: 'claim', taskNodeId: task.contract.taskNodeId, sessionKey: projectSession, requestId: 'restore-claim' } });
     expect(claimed.success).toBe(true);
-    await hostInvoke(app, 'sessions', 'archive', { id: projectSession, originalWorkspaceId: project.workspaceId });
-    await hostInvoke(app, 'sessions', 'restore', { id: projectSession });
+    const archived = await hostInvoke<{ success: boolean; error?: string }>(app, 'sessions', 'archive', { id: projectSession, originalWorkspaceId: project.workspaceId });
+    evidence.archiveReceipt = archived;
+    expect(archived.success, archived.error).toBe(true);
+    const restoreReceipt = await hostInvoke<{ success: boolean; error?: string }>(app, 'sessions', 'restore', { id: projectSession });
+    evidence.restoreReceipt = restoreReceipt;
+    expect(restoreReceipt.success, restoreReceipt.error).toBe(true);
     const described = await hostInvoke<{ session: { sessionId: string } }>(app, 'gateway', 'rpc', { method: 'sessions.describe', params: { key: projectSession } });
     expect(described.session.sessionId).not.toBe(project.generation);
     const restored = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', { workspaceId: project.workspaceId,
