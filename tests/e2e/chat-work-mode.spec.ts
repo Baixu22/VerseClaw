@@ -228,7 +228,7 @@ test.describe('Verse Claw chat without Work Mode', () => {
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-work-mode-button')).toHaveCount(0);
       await expect(page.getByTestId('work-mode-summary-panel')).toHaveCount(0);
-      await expect(page.getByTestId('chat-agent-effort-button')).toBeVisible();
+      await expect(page.getByTestId('chat-model-picker-button')).toBeVisible();
 
       await page.getByTestId('chat-composer-permission-mode').click();
       await expect(page.getByTestId('chat-composer-permission-menu')).toBeVisible();

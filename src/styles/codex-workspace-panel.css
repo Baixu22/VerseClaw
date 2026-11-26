@@ -112,6 +112,7 @@
 }
 
 .rs-panel-shell .rs-tab-chip-btn {
+  text-align: left;
   display: flex;
   align-items: center;
   flex: 1 1 auto;
@@ -144,18 +145,15 @@
   color: inherit;
 }
 
-/* Labels fade out at the right edge instead of showing an ellipsis, so a
- * squeezed strip reads as "there is more text" rather than "text was cut". */
+/* The title reserves room for its close control and shows the full name on hover. */
 .rs-panel-shell .rs-tab-label {
   display: block;
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: clip;
+  text-overflow: ellipsis;
   color: inherit;
-  mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 16px), transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 16px), transparent 100%);
 }
 
 .rs-panel-shell .rs-tab-close {

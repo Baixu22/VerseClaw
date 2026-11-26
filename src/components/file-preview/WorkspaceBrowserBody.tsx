@@ -5,10 +5,11 @@
  * Used by `ArtifactPanel`'s browser tab (split-pane on the chat page).
  */
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { Folder } from 'lucide-react';
+import { FileText, Folder } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipHint } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { cn } from '@/lib/utils';
@@ -561,39 +562,53 @@ export function WorkspaceBrowserBody({
     <div className="flex h-full min-h-0 flex-col">
       <header
         className={cn(
-          'flex h-8 shrink-0 items-center justify-between gap-3 border-b border-black/5 px-2 dark:border-white/10',
+          'workspace-files-heading flex min-h-12 shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-2',
         )}
       >
-        <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           {narrow && selectedRel && (
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => selectRelPath(null)} aria-label={t('workspace.actions.backToTree', 'Back to files')} title={t('workspace.actions.backToTree', 'Back to files')}>
+            <TooltipHint label={t('workspace.actions.backToTree', 'Back to files')}><Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => selectRelPath(null)} aria-label={t('workspace.actions.backToTree', 'Back to files')}>
               <ArrowLeft className="h-3.5 w-3.5" />
-            </Button>
+            </Button></TooltipHint>
           )}
-          <span className="truncate font-mono text-[11px] text-muted-foreground">
-            {selectedRel || workspaceLabel || workspace}
-          </span>
+          {selectedNode ? <FileText aria-hidden="true" className="h-4 w-4 shrink-0 text-muted-foreground" /> : <Folder aria-hidden="true" className="h-4 w-4 shrink-0 text-muted-foreground" />}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div tabIndex={0} className="min-w-0 rounded-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                <p className="truncate text-[13px] font-medium text-foreground" data-testid="workspace-files-title">
+                  {selectedNode?.name || workspaceLabel || workspace.replace(/.*[\\/]/, '')}
+                </p>
+                <p className="truncate text-[11px] leading-4 text-muted-foreground" data-testid="workspace-files-path">
+                  {selectedRel || workspace}
+                </p>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-96 break-all">{selectedNode?.absPath || workspace}</TooltipContent>
+          </Tooltip>
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          <TooltipHint label={t('workspace.actions.refresh', 'Refresh')}>
           <Button
             variant="ghost"
             size="icon"
             className="h-7 w-7"
             onClick={reload}
             disabled={state.status === 'loading'}
-            title={t('workspace.actions.refresh', 'Refresh')}
+            aria-label={t('workspace.actions.refresh', 'Refresh')}
           >
             <RefreshCw className={cn('h-3.5 w-3.5', state.status === 'loading' && 'animate-spin')} />
           </Button>
+          </TooltipHint>
           <details className="relative">
+            <TooltipHint label={t('workspace.actions.more', 'More file actions')}>
             <summary
               className="flex h-7 w-7 cursor-default list-none items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
               aria-label={t('workspace.actions.more', 'More file actions')}
-              title={t('workspace.actions.more', 'More file actions')}
               data-testid="workspace-files-menu"
             >
               <Ellipsis className="h-3.5 w-3.5" />
             </summary>
+            </TooltipHint>
             <div className="absolute right-0 top-8 z-30 min-w-48 rounded-md border border-border bg-surface-modal p-1 shadow-lg">
               <button type="button" className="rs-browser-options-item" onClick={() => setShowHidden((value) => !value)}>
                 {showHidden

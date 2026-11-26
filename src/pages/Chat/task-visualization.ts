@@ -28,6 +28,8 @@ export interface TaskStep {
   /** First event in this run; later output updates keep the same transcript slot. */
   eventOrder?: number;
   inputDetail?: string;
+  /** Payload from a tool update or completion, including an echo of its input. */
+  outputDetail?: string;
   /** Operation target captured before long arguments are reduced for display. */
   target?: string;
   /** Wall-clock start when the runtime supplied one. */
@@ -469,17 +471,20 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
         break;
       }
       case 'tool.updated': {
+        const outputDetail = runtimeDetail(event.partialResult);
         upsertStep({
           id: event.toolCallId,
           label: event.name,
           status: 'running',
           kind: 'tool',
-          detail: runtimeDetail(event.partialResult),
+          detail: outputDetail,
+          outputDetail,
           depth: 1,
         });
         break;
       }
       case 'tool.completed': {
+        const outputDetail = runtimeDetail(event.result);
         const startedAt = toolStartedAt.get(event.toolCallId);
         const durationMs = startedAt != null && typeof event.ts === 'number'
           ? Math.max(0, event.ts - startedAt)
@@ -489,7 +494,8 @@ export function deriveRuntimeTaskSteps(runState: ChatRuntimeRunState | null | un
           label: event.name,
           status: event.isError ? 'error' : 'completed',
           kind: 'tool',
-          detail: runtimeDetail(event.result),
+          detail: outputDetail,
+          outputDetail,
           durationMs,
           depth: 1,
         });

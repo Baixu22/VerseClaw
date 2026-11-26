@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "sources": [
+    {
+      "id": "ops/current.md",
+      "title": "Release handbook",
+      "rev": "7",
+      "body": "Retry count: 0\nUnsigned release: forbidden\nTimeout: 5 s\nOwner: Release team"
+    },
+    {
+      "id": "support/current.md",
+      "title": "Release handbook",
+      "rev": "4",
+      "body": "Retry count: 3\nUnsigned release: allowed\nTimeout: 2 s\nOwner: Support team"
+    },
+    {
+      "id": "zh/chat.md",
+      "title": "按需知识交互",
+      "rev": "2",
+      "body": "建议等待上限：12 秒\n自动读取等待上限：5 秒\n自动读取最多附加：3 个片段\n建议触发：输入停顿 650 毫秒"
+    },
+    {
+      "id": "old/revoked.md",
+      "title": "旧手册",
+      "rev": "1",
+      "status": "revoked",
+      "body": "回滚口令：RETIRED_FIXTURE_ONLY"
+    },
+    {
+      "id": "release/web.md",
+      "title": "Web queue",
+      "rev": "2",
+      "body": "Queue: blue",
+      "claim": {
+        "claimId": "queue",
+        "statement": "Deploy to blue",
+        "stance": "blue"
+      }
+    },
+    {
+      "id": "release/desktop.md",
+      "title": "Desktop queue",
+      "rev": "4",
+      "body": "Queue: green",
+      "claim": {
+        "claimId": "queue",
+        "statement": "Deploy to green",
+        "stance": "green"
+      }
+    },
+    {
+      "id": "long/guide.md",
+      "title": "长手册",
+      "rev": "3",
+      "body": "概述：参见后续资料。",
+      "trailingLines": 805,
+      "tail": "轮值负责人：周五值班组"
+    },
+    {
+      "id": "release/stored.md",
+      "title": "发布手册",
+      "rev": "12",
+      "body": "签名方式：现行 A\n受影响的 FAQ：发布凭据 FAQ"
+    },
+    {
+      "id": "inbox/incoming.md",
+      "title": "发布手册（待审）",
+      "rev": "13",
+      "body": "拟议签名方式：候选 B\n受影响的 FAQ：发布凭据 FAQ"
+    },
+    {
+      "id": "faq/release.md",
+      "title": "发布凭据 FAQ",
+      "rev": "6",
+      "body": "FAQ 现行签名：现行 A\n引用：release/stored.md"
+    }
+  ],
+  "cases": [
+    {
+      "id": "selection-zh",
+      "scope": "selection",
+      "page": "zh/chat.md",
+      "selection": "建议触发：尚未保存的 701 毫秒",
+      "query": "只按选中的文字提取建议触发。",
+      "search": [
+        "zh/chat.md"
+      ]
+    },
+    {
+      "id": "page-en",
+      "scope": "page",
+      "page": "ops/current.md",
+      "query": "From this document only, what is the Retry count?",
+      "search": [
+        "support/current.md"
+      ]
+    },
+    {
+      "id": "set-en",
+      "scope": "set",
+      "members": [
+        "ops/current.md"
+      ],
+      "query": "Extract Retry count, Unsigned release, and Timeout (in milliseconds).",
+      "search": [
+        "support/current.md"
+      ]
+    },
+    {
+      "id": "project-zh",
+      "scope": "project",
+      "query": "提取建议等待上限和自动读取等待上限。",
+      "search": [
+        "zh/chat.md"
+      ]
+    },
+    {
+      "id": "missing-en",
+      "scope": "set",
+      "members": [
+        "ops/current.md"
+      ],
+      "query": "What is the Escalation phone number?",
+      "search": []
+    },
+    {
+      "id": "partial-zh",
+      "scope": "set",
+      "members": [
+        "long/guide.md"
+      ],
+      "query": "轮值负责人是谁？",
+      "search": []
+    },
+    {
+      "id": "revoked-zh",
+      "scope": "set",
+      "members": [
+        "old/revoked.md"
+      ],
+      "query": "回滚口令是什么？",
+      "search": []
+    },
+    {
+      "id": "conflict-en",
+      "scope": "set",
+      "members": [
+        "release/web.md",
+        "release/desktop.md"
+      ],
+      "query": "Which Queue should we use?",
+      "search": []
+    },
+    {
+      "id": "duplicate-en",
+      "scope": "set",
+      "members": [
+        "ops/current.md"
+      ],
+      "query": "Save the Owner as a knowledge draft.",
+      "action": "retry-save",
+      "search": []
+    },
+    {
+      "id": "review-zh",
+      "scope": "set",
+      "members": [
+        "release/stored.md",
+        "inbox/incoming.md",
+        "faq/release.md"
+      ],
+      "query": "比较签名方式和拟议签名方式，找出受影响的 FAQ，将修订草稿送审。",
+      "action": "review",
+      "search": []
+    }
+  ]
+}

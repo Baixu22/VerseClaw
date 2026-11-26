@@ -26,6 +26,7 @@ export type ToolActivityGroupModel = {
   diffs: RunCodeDiffSurface[];
   entries: ToolActivityEntry[];
   current?: ToolActivityEntry;
+  failedEntry?: ToolActivityEntry;
   isCurrent?: boolean;
   pendingResult?: boolean;
   traceId?: UserRunCard['traceId'];
@@ -172,7 +173,7 @@ export function buildToolActivityGroups(
   const steps = [...retained, ...card.steps.filter(step => !excludedToolIds.has(step.id)
     && !excludedToolIds.has(step.id.startsWith('tool-result-') ? step.id.slice(12) : step.id))
     .map(step => historyById.has(step.id) && step.kind === 'tool'
-      ? { ...step, inputDetail: historyById.get(step.id)!.detail } : step)]
+      ? { ...step, inputDetail: historyById.get(step.id)!.detail ?? step.inputDetail } : step)]
     .map(step => step.id.startsWith('tool-result-') && rawResults.has(step.id.slice(12))
       ? { ...step, detail: rawResults.get(step.id.slice(12)) } : step);
   const orderFor = (id: string, fallback: number) => (callOrders.get(id.startsWith('tool-result-') ? id.slice(12) : id) ?? callOrders.size + fallback)
@@ -221,7 +222,7 @@ export function buildToolActivityGroups(
         kind: terminal ? 'command' : toolActivityKind(step!),
         iconId: terminal ? toolActivityIconId({ label: 'exec_command', target: terminal.command }) : toolActivityIconId(step!),
         target: terminal?.command ?? toolActivityTarget(step!),
-        running: card.active && (terminal?.status === 'running' || step?.status === 'running'),
+        running: card.active && card.status === 'running' && (terminal?.status === 'running' || step?.status === 'running'),
         order: step?.eventOrder ?? terminal?.eventOrder ?? item.order });
       previousAnchor = index;
     }
@@ -233,8 +234,12 @@ export function buildToolActivityGroups(
       ? { ...step, status: results.get(step.id)!.status } : step);
     for (const entry of group.entries) if (results.has(entry.id)) entry.running = false;
     group.current = group.entries.findLast(entry => entry.running);
-    const failed = group.steps.some(step => step.status === 'error') || group.terminals.some(terminal => terminal.status === 'failed');
-    group.status = failed ? 'error' : group.current ? 'running' : card.status === 'aborted' && group.steps.some(step => step.status === 'running') ? 'aborted' : 'completed';
+    const failedIds = new Set([
+      ...group.steps.filter(step => step.status === 'error').map(step => step.id.replace(/^tool-result-/, '')),
+      ...group.terminals.filter(terminal => terminal.status === 'failed').map(terminal => terminal.toolCallId ?? terminal.id),
+    ]);
+    group.failedEntry = group.entries.findLast(entry => failedIds.has(entry.id));
+    group.status = group.current ? 'running' : failedIds.size ? 'error' : 'completed';
     group.pendingResult = !card.active && (group.steps.some(step => step.status === 'running') || group.terminals.some(terminal => terminal.status === 'running'));
     if (card.status === 'error' && group.pendingResult) group.status = 'error';
     if (card.status === 'aborted' && group.pendingResult) group.status = 'aborted';

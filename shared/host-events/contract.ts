@@ -209,6 +209,11 @@ export type ClawGraphLifecycleEvent = {
   snapshot: ClawGraphRunSnapshot;
 };
 
+export type KnowledgeAnswerProgress = {
+  requestId: string;
+  phase: 'searching' | 'reading' | 'thinking' | 'verifying';
+};
+
 export type HostEventContract = {
   gateway: {
     statusChanged: (payload: GatewayStatus) => void;
@@ -222,6 +227,7 @@ export type HostEventContract = {
     error: (payload: GatewayErrorEvent) => void;
   };
   chat: {
+    knowledgeAnswerProgress: (payload: KnowledgeAnswerProgress) => void;
     runtimeEvent: (payload: ChatRuntimeEvent) => void;
     queueStatus: (payload: ChatQueueStatusEvent) => void;
     workspaceNavigationChanged: () => void;
@@ -302,6 +308,7 @@ export const HOST_EVENT_CHANNELS = {
     error: 'gateway:error',
   },
   chat: {
+    knowledgeAnswerProgress: 'chat:knowledge-answer-progress',
     runtimeEvent: 'chat:runtime-event',
     queueStatus: 'chat:queue-status',
     workspaceNavigationChanged: 'chat:workspace-navigation-changed',

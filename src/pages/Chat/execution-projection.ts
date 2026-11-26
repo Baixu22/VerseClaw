@@ -10,7 +10,7 @@ import {
   type ScopedRunId,
   type WorkspaceId,
 } from '@shared/product-semantics';
-import { isInternalMessage } from '@/stores/chat/helpers';
+import { getMessageStopReason, isInternalMessage } from '@/stores/chat/helpers';
 import {
   extractImages,
   extractText,
@@ -56,6 +56,42 @@ export type GraphStepCacheEntry = {
 };
 
 export type UserRunStatus = 'running' | 'completed' | 'error' | 'aborted';
+
+export type AssistantOutputPhase = 'working' | 'thinking' | 'tools' | 'syncing' | 'streaming';
+
+export const assistantPhaseLabels = {
+  working: 'turnSummary.working',
+  thinking: 'assistantRender.activity.thinking',
+  tools: 'assistantRender.activity.usingTools',
+  syncing: 'assistantRender.activity.processingToolResults',
+  streaming: 'assistantRender.activity.writing',
+} as const;
+
+/** Prefer the most recent output event over buffers retained from earlier phases. */
+export function assistantOutputPhase(
+  run: ChatRuntimeRunState | null | undefined, stream: ExecutionStreamState, visibleReply: string | null, pendingFinal: boolean,
+): AssistantOutputPhase {
+  const last = run?.events.findLast(event =>
+    ((event.type === 'assistant.delta' || event.type === 'thinking.delta') && Boolean(event.text || event.delta))
+    || event.type === 'tool.started' || event.type === 'tool.updated' || event.type === 'tool.completed');
+  const runtimeAt = normalizeRunTimestamp(last?.ts);
+  const messageAt = normalizeRunTimestamp(stream.streamTimestamp);
+  if (messageAt && runtimeAt && messageAt > runtimeAt && !stream.hasStreamTools) {
+    if (visibleReply && stream.hasStreamText) return 'streaming';
+    if (stream.hasStreamThinking) return 'thinking';
+  }
+  switch (last?.type) {
+    case 'assistant.delta': return 'streaming';
+    case 'thinking.delta': return 'thinking';
+    case 'tool.started':
+    case 'tool.updated': return 'tools';
+    case 'tool.completed': return 'syncing';
+  }
+  if (stream.hasRunningStreamToolStatus) return 'tools';
+  if (visibleReply || stream.hasStreamImages) return 'streaming';
+  if (stream.hasStreamThinking) return 'thinking';
+  return pendingFinal || stream.hasStreamToolStatus ? 'syncing' : 'working';
+}
 
 export type UserRunCard = {
   runKey: string;
@@ -393,13 +429,18 @@ function deriveRunLifecycle(input: {
   hasRunError: boolean;
 }): Pick<UserRunCard, 'status' | 'startedAt' | 'endedAt' | 'hasVisibleReply' | 'completionAuthority'> {
   const runtimeStatus = input.runtimeRun?.status;
-  const status: UserRunStatus = runtimeStatus === 'aborted'
-    ? 'aborted'
-    : runtimeStatus === 'error' || input.hasRunError || input.steps.some((step) => step.status === 'error')
-      ? 'error'
-      : input.active || runtimeStatus === 'running'
-        ? 'running'
-        : 'completed';
+  let status: UserRunStatus;
+  if (runtimeStatus === 'aborted') status = 'aborted';
+  else if (runtimeStatus === 'error' || input.hasRunError) status = 'error';
+  else if (runtimeStatus === 'completed') status = 'completed';
+  else if (input.active || runtimeStatus === 'running') status = 'running';
+  else {
+    const reason = getMessageStopReason(input.replyMessage);
+    if (reason === 'aborted') status = 'aborted';
+    else if (reason === 'error') status = 'error';
+    else if (reason === 'stop' || reason === 'end_turn') status = 'completed';
+    else status = input.steps.some(step => step.status === 'error') ? 'error' : 'completed';
+  }
   const startedAt = normalizeRunTimestamp(input.runtimeRun?.startedAt)
     ?? normalizeRunTimestamp(input.triggerMessage.timestamp);
   const endedAt = status === 'running'
@@ -690,6 +731,23 @@ export function deriveUserRunProjection({
     const replyIndexOffset = findReplyMessageIndex(postTriggerMessages, hasActiveStreamingReply);
     const replyIndex = replyIndexOffset === -1 ? null : idx + 1 + replyIndexOffset;
 
+    // A final history refresh can contain the answer before it contains the tool
+    // records. Keep settled calls already observed for this exact user message.
+    const priorSteps = !isLatestOpenRun && message.id ? graphStepCache[runKey]?.steps : undefined;
+    if (priorSteps) {
+      const settled = new Map(priorSteps.filter(step => step.kind === 'tool' && step.status !== 'running'
+        && !surfaces.promotedStepIds.has(step.id)).map(step => [step.id, step]));
+      if (settled.size) {
+        steps = steps.map(step => {
+          const receipt = settled.get(step.id);
+          if (!receipt || step.kind !== 'tool') return step;
+          settled.delete(step.id);
+          return step.status === 'running' ? receipt : step;
+        });
+        steps.push(...settled.values());
+      }
+    }
+
     const segmentAgentLabel = getAgentLabel(agents, currentAgentId);
     const segmentSessionLabel = sessionLabels[currentSessionKey] || currentSessionKey;
 
@@ -959,6 +1017,8 @@ function sameCachedSteps(existing: GraphStepCacheEntry | undefined, card: UserRu
         && step.status === nextStep.status
         && step.kind === nextStep.kind
         && step.detail === nextStep.detail
+        && step.inputDetail === nextStep.inputDetail
+        && step.outputDetail === nextStep.outputDetail
         && step.depth === nextStep.depth
         && step.parentId === nextStep.parentId;
     });

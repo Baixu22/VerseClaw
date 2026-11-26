@@ -10,7 +10,9 @@
  * are sent with the message (no base64 over WebSocket).
  */
 import { Fragment, useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, type ReactNode, type ComponentType } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { KnowledgeConversationMenu } from './KnowledgeConversationMenu';
+import { knowledgeBotQuestion } from './knowledge-bot-mention';
 import {
   Archive,
   ArrowUp,
@@ -26,7 +28,6 @@ import {
   Eye,
   FilePlus,
   FileText,
-  Flame,
   FolderGit2,
   FolderPlus,
   Gauge,
@@ -89,7 +90,6 @@ import { toast } from 'sonner';
 import { rendererExtensionRegistry } from '@/extensions/registry';
 import { collectDroppedFiles } from '@/lib/collect-dropped-files';
 import { fetchQuickAccessSkills } from '@/lib/quick-access-skills';
-import { getAgentEffortLabelKey } from '@/components/chat/ChatAgentEffortPopover';
 import { ChatModelSettingsCard } from '@/components/chat/ChatModelSettingsCard';
 import { ChatContextPressure } from '@/components/chat/ChatContextPressure';
 import { ChatContextIndicator } from '@/components/chat/ChatContextIndicator';
@@ -146,6 +146,7 @@ export interface FileAttachment {
 
 interface ChatInputProps {
   onSend: (text: string, opts?: SendOptions) => void;
+  onKnowledgeMention?: (question: string) => boolean;
   disabled?: boolean;
   sending?: boolean;
   /** A checkpointed stop keeps its affordance when the session is reopened. */
@@ -1001,6 +1002,7 @@ function readFileAsBase64(file: globalThis.File): Promise<string> {
 
 export function ChatInput({
   onSend,
+  onKnowledgeMention,
   disabled = false,
   sending = false,
   paused = false,
@@ -1224,6 +1226,7 @@ export function ChatInput({
   );
   const [providerGateOpen, setProviderGateOpen] = useState(false);
   const navigate = useNavigate();
+  const chatLocation = useLocation();
   const effectiveModelRef = resolveChatModelRef({
     session: currentSession,
     hasMessages: useChatStore((s) => s.messages.length > 0),
@@ -1241,7 +1244,6 @@ export function ChatInput({
   const effectiveModelDisplay = effectiveModelRef
     ? describeModelRef(effectiveModelRef)
     : { name: effectiveModelLabel, source: null };
-  const currentEffortLabel = t(getAgentEffortLabelKey(executionEffortPreview));
   const mentionableAgents = useMemo(
     () => (agents ?? []).filter((agent) => agent.id !== currentAgentId),
     [agents, currentAgentId],
@@ -1264,7 +1266,7 @@ export function ChatInput({
     for (const group of suggestedKnowledgeGroups) counts[group.key] = group.candidates.length;
     return counts;
   }, [suggestedKnowledgeGroups]);
-  const showAgentPicker = mentionableAgents.length > 0;
+  const showAgentPicker = mentionableAgents.length > 0 || Boolean(onKnowledgeMention);
   // Keep model choice discoverable even when only one configured model exists.
   // The current agent model is also a valid fallback while provider accounts
   // are still hydrating, so the control never vanishes during startup.
@@ -2428,6 +2430,22 @@ export function ChatInput({
     || ((knowledgeRoutingBusy || knowledgeSearching) && !knowledgePickerOpen)
     || hasFailedAttachments;
 
+  const tryKnowledgeMention = useCallback(() => {
+    const question = knowledgeBotQuestion(input);
+    if (question === null || !onKnowledgeMention) return false;
+    if (inputDisabled || historyLoading || capabilityExecuting) return true;
+    if (attachments.length || selectedKnowledgeRefs.length || targetAgentId) {
+      toast.message(t('mention.textOnly', { ns: 'knowledge' }));
+      return true;
+    }
+    if (onKnowledgeMention(question)) {
+      captureHeroComposerPosition();
+      updateInput('');
+      setActionMenuOpen(false);
+    }
+    return true;
+  }, [input, onKnowledgeMention, inputDisabled, historyLoading, capabilityExecuting, attachments.length, selectedKnowledgeRefs.length, targetAgentId, t, captureHeroComposerPosition, updateInput]);
+
   const completeSend = useCallback(async (
     textToSend: string,
     attachmentsToSend: FileAttachment[] | undefined,
@@ -2523,6 +2541,7 @@ export function ChatInput({
    * sendMessage parks in the renderer queue until the run settles.
    */
   const handleRunningSend = useCallback(async (mode?: LongTaskInputMode) => {
+    if (tryKnowledgeMention()) return;
     if (!sending) return;
     const readyAttachments = attachments.filter(a => a.status === 'ready');
     const knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
@@ -2550,6 +2569,7 @@ export function ChatInput({
     attachments,
     capabilityExecuting,
     completeSend,
+    tryKnowledgeMention,
     hasFailedAttachments,
     input,
     knowledgeMode,
@@ -2989,6 +3009,7 @@ export function ChatInput({
   }, [t]);
 
   const handleSend = useCallback(async () => {
+    if (tryKnowledgeMention()) return;
     if (slashInput.active) {
       selectSlashItem(findExactSlashItem() ?? selectedSlashItem);
       return;
@@ -3056,7 +3077,7 @@ export function ChatInput({
     } finally {
       sendPreparingRef.current = false;
     }
-  }, [input, attachments, canSend, allReady, hasFailedAttachments, capabilityExecuting, inputDisabled, sending, completeSend, handleRunningSend, targetAgentId, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, handleUnsupportedCapabilityRequest, slashInput.active, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
+  }, [input, attachments, canSend, allReady, hasFailedAttachments, capabilityExecuting, inputDisabled, sending, completeSend, handleRunningSend, targetAgentId, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, handleUnsupportedCapabilityRequest, slashInput.active, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot, tryKnowledgeMention]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -3775,6 +3796,13 @@ export function ChatInput({
                         <summary data-testid="chat-composer-agent" aria-label={t('composer.pickAgent')} className="codex-composer-menu__item flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                           <AtSign className="size-4" aria-hidden="true" />{t('composer.pickAgent')}
                         </summary>
+                        {onKnowledgeMention && <ComposerActionButton icon={BookOpen} label={t('mention.name', { ns: 'knowledge' })}
+                          testId="chat-mention-knowledge" onClick={() => {
+                            setTargetAgentId(null);
+                            updateInput(`${t('mention.token', { ns: 'knowledge' })} ${knowledgeBotQuestion(input) ?? input}`);
+                            setActionMenuOpen(false);
+                            textareaRef.current?.focus();
+                          }} />}
                         {mentionableAgents.map((agent) => (
                           <AgentPickerItem key={agent.id} agent={agent} selected={agent.id === targetAgentId}
                             onSelect={() => { setTargetAgentId(agent.id); setActionMenuOpen(false); textareaRef.current?.focus(); }} />
@@ -4088,6 +4116,13 @@ export function ChatInput({
                   data-testid="chat-knowledge-scope-menu"
                   role="dialog" aria-label={t('composer.knowledgeScopeTitle')}
                 >
+                  <KnowledgeConversationMenu key={`history:${knowledgeWorkspaceId ?? ''}`} workspaceId={knowledgeWorkspaceId ?? null} onOpen={context => {
+                    const query = new URLSearchParams(chatLocation.search);
+                    query.set('knowledge', 'ask');
+                    navigate({ pathname: '/', search: query.toString() }, { state: { knowledgeContext: {
+                      ...context, homeSessionKey: currentSessionKey, initialQuestion: input,
+                    } } });
+                  }} />
                   {KNOWLEDGE_SCOPES.map((scope) => {
                     const isActive = scope === knowledgeScope;
                     return (
@@ -4277,17 +4312,6 @@ export function ChatInput({
                 >
                   <ModelBrandIcon modelRef={effectiveModelRef} size={15} className="codex-model-picker-brand" />
                   <span className="codex-model-picker-label" data-testid="chat-model-picker-label">{effectiveModelDisplay.name}</span>
-                  <span
-                    data-testid="chat-agent-effort-button"
-                    className={cn(
-                      'codex-execution-settings__effort-shortcut',
-                      executionEffortPreview === 'max' && 'is-max',
-                    )}
-                    title={currentEffortLabel}
-                    aria-hidden="true"
-                  >
-                    <Flame className="h-3.5 w-3.5 shrink-0" />
-                  </span>
                   <ChevronDown className={cn('codex-composer-chevron codex-model-picker-chevron', modelPickerOpen && 'is-open')} />
                 </button>
                     </span>

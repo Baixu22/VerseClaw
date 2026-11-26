@@ -1,4 +1,38 @@
 {
+  "mention": {
+    "name": "知识库助手",
+    "token": "@知识库助手",
+    "open": "打开会话",
+    "steps": "操作记录",
+    "busy": "知识库助手正在处理这个会话中的问题。",
+    "textOnly": "请向知识库助手发送文字问题，或打开它的会话选择资料。",
+    "phases": {
+      "idle": "随时为你查找知识",
+      "waiting": "请求已发送",
+      "searching": "正在检索知识库",
+      "reading": "正在阅读获准来源",
+      "thinking": "正在整理答案",
+      "verifying": "正在核对引用内容",
+      "finished": "回答已就绪",
+      "confused": "还需要更多来源",
+      "failed": "请求失败",
+      "interrupted": "与本次请求的连接已结束，可以重新查询。"
+    }
+  },
+  "conversation": {
+    "approve": "批准发送到「{{name}}」",
+    "history": "知识库会话记录",
+    "openAssistant": "打开知识助手",
+    "askReply": "就这条回复问知识助手",
+    "question": "关于主会话中的这条回复：\n\n{{text}}\n\n",
+    "sendHome": "发送到「{{name}}」",
+    "openHome": "查看「{{name}}」",
+    "sent": "已发送到「{{name}}」",
+    "fromKnowledge": "来自知识助手的问答",
+    "unconfirmed": "尚未收到送达回执，可重试同一条消息。",
+    "targetChanged": "目标会话已不在当前工作区。",
+    "unsaved": "本地存储空间不足或不可用，当前记录仅保存在内存中。"
+  },
   "research": {
     "cancel": "取消研究",
     "progress": "第 {{round}}/{{maxRounds}} 轮 · 查询 {{queries}}/{{maxQueries}} 次",
@@ -283,6 +317,8 @@
     "chatTitle": "问知识库",
     "backToChat": "返回对话",
     "bot": {
+      "pet": "摸摸小助手",
+      "petted": "小助手开心地回应了你",
       "dragHint": "点击提问 · 拖动换位置",
       "states": {
         "idle": "随时为你查找知识",
@@ -796,5 +832,9 @@
       "promoted": "已转为草稿",
       "dismissed": "已忽略"
     }
+  },
+  "libraryFlow": {
+    "workspaceChanged": "请从当前工作区重新打开来源集。",
+    "archive": "旧版问答记录（只读）"
   }
 }

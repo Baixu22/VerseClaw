@@ -1,6 +1,11 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render as renderView, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ArtifactPanel } from '@/components/file-preview/ArtifactPanel';
+function render(ui: ReactElement) {
+  return renderView(ui, { wrapper: TooltipProvider });
+}
 import {
   ARTIFACT_PANEL_DEFAULT_WIDTH,
   openWorkspacePanel,

@@ -99,6 +99,7 @@
 .codex-header-menu.chat-toolbar-more-menu {
   width: min(256px, calc(100vw - 16px));
   max-height: calc(100vh - 80px);
+  background: var(--color-background-control-panel);
 }
 .chat-header-dropdown-trigger {
   height: 30px;

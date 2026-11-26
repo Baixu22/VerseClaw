@@ -3,7 +3,7 @@ import { useId, type ReactNode } from 'react';
 import { useTickingNow } from '@/hooks/use-ticking-now';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import type { UserRunStatus } from '@/pages/Chat/execution-projection';
+import { assistantPhaseLabels, type AssistantOutputPhase, type UserRunStatus } from '@/pages/Chat/execution-projection';
 import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { ThinkingReasoning } from './ThinkingReasoning';
 import type { AssistantReasoning } from './model';
@@ -88,6 +88,7 @@ export function TurnSummaryCard({
   reasoningStreaming = false,
   waitingForInput = false,
   showStatusIndicator = true,
+  phase,
   onExpandedChange,
   children,
 }: {
@@ -106,6 +107,7 @@ export function TurnSummaryCard({
   reasoningStreaming?: boolean;
   waitingForInput?: boolean;
   showStatusIndicator?: boolean;
+  phase?: AssistantOutputPhase;
   onExpandedChange: (expanded: boolean) => void;
   children: ReactNode;
 }) {
@@ -117,7 +119,7 @@ export function TurnSummaryCard({
   const effectiveNow = now ?? tickingNow;
   const duration = formatDuration(startedAt, endedAt, effectiveNow, t);
   const label = waitingForInput ? t('composerRequests.title') : status === 'running'
-    ? duration
+    ? phase && phase !== 'working' ? t(assistantPhaseLabels[phase]) : duration
       ? t('turnSummary.workingFor', { duration })
       : t('turnSummary.working')
     : status === 'aborted'
@@ -134,6 +136,7 @@ export function TurnSummaryCard({
       className="group/run-activity min-w-0 border-b border-border/50 pb-2 text-sm text-muted-foreground"
       data-testid="chat-turn-summary-card"
       data-status={status}
+      data-phase={status === 'running' ? (waitingForInput ? 'waiting' : phase) : undefined}
     >
       <Collapsible
         variant="plain"
@@ -144,11 +147,12 @@ export function TurnSummaryCard({
         contentTestId="chat-turn-summary-details"
         contentClassName="flex min-w-0 flex-col gap-1.5"
         title={
-          <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5">
+          <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 font-normal text-[var(--color-transcript-activity)]">
             {showStatusIndicator && status === 'running' && !activity && !expanded && (
-              <span data-testid="chat-turn-summary-orb"><OrbStatus state={waitingForInput ? 'waiting' : 'working'} size={20} label={label} /></span>
+              <span data-testid="chat-turn-summary-orb"><OrbStatus state={waitingForInput ? 'waiting' : phase === 'tools' ? 'working' : phase ?? 'working'} size={20} label={label} /></span>
             )}
             <span className={cn(status === 'error' && 'text-destructive')}>{label}</span>
+            {status === 'running' && !waitingForInput && phase && phase !== 'working' && duration && <span className="text-xs tabular-nums">{duration}</span>}
             {!expanded && summary && <TurnSummaryBadges counts={summary} />}
           </span>
         }

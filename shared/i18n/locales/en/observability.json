@@ -76,7 +76,24 @@
     "custom": "Saved view",
     "saveCurrent": "Save current view"
   },
+  "steps": {
+    "metrics": "Metrics",
+    "filters": "Filters",
+    "filtered": "Filters active",
+    "chooseRun": "Choose run",
+    "back": "Back",
+    "runDetails": "Run details",
+    "technical": "Technical details",
+    "toolResult": "Tool result",
+    "prompt": "User request",
+    "reply": "Assistant reply",
+    "empty": "No steps recorded for this run.",
+    "showEvents": "Show other events ({{count}})",
+    "hideEvents": "Hide other events",
+    "reasoning": "Reasoning"
+  },
   "views": {
+    "steps": "Execution steps",
     "label": "View",
     "graph": "Graph",
     "tree": "Run tree",
@@ -131,6 +148,7 @@
     "emptyBody": "Choose a run from the trace list to inspect the agent chain, model calls, tools, approvals, and errors."
   },
   "tabs": {
+    "all": "All tabs",
     "details": "Details",
     "summary": "Summary",
     "issues": "Issues",

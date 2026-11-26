@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { KnowledgeBot } from './KnowledgeBot';
+import { KnowledgeBot, type KnowledgeBotState } from './KnowledgeBot';
 
 const STORAGE_KEY = 'clawx.knowledge.bot-position.v1';
 type Position = { x: number; y: number };
@@ -38,7 +38,11 @@ function restore(): Position | null {
   } catch { return null; }
 }
 
-export function KnowledgeBotLauncher({ onOpen, hidden = false }: { onOpen: () => void; hidden?: boolean }) {
+export function KnowledgeBotLauncher({ onOpen, hidden = false, activity = 'idle' }: {
+  onOpen: () => void;
+  hidden?: boolean;
+  activity?: KnowledgeBotState;
+}) {
   const { t } = useTranslation('knowledge');
   const [position, setPosition] = useState<Position | null>(restore);
   const [dragging, setDragging] = useState(false);
@@ -50,6 +54,8 @@ export function KnowledgeBotLauncher({ onOpen, hidden = false }: { onOpen: () =>
   const gesture = useRef<{ id: number; start: Position; origin: Position; lastX: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
   const wasHidden = useRef(hidden);
+  const pose = dragging ? 'dragging' : activity === 'idle' && hovered ? 'curious' : activity;
+  const hint = activity === 'idle' ? t('librarian.bot.dragHint') : t(`librarian.bot.states.${activity}`);
 
   useLayoutEffect(() => {
     if (wasHidden.current && !hidden) buttonRef.current?.focus({ preventScroll: true });
@@ -130,11 +136,11 @@ export function KnowledgeBotLauncher({ onOpen, hidden = false }: { onOpen: () =>
           onOpen();
         }}>
         <span className="knowledge-bot-launcher__body" style={{ '--bot-tilt': `${tilt}deg` } as CSSProperties}>
-          <KnowledgeBot size={SIZE} state={dragging ? 'dragging' : hovered ? 'curious' : 'idle'} follow />
+          <KnowledgeBot size={SIZE} state={pose} follow />
         </span>
-        <span className="sr-only" id="knowledge-bot-drag-hint">{t('librarian.bot.dragHint')}</span>
+        <span className="sr-only" id="knowledge-bot-drag-hint">{hint}</span>
       </button>
     </TooltipTrigger>
-    <TooltipContent>{t('librarian.bot.dragHint')}</TooltipContent>
+    <TooltipContent>{hint}</TooltipContent>
   </Tooltip>;
 }

@@ -4,6 +4,7 @@
  * filesystem boundaries and recently-attested workspaces.
  */
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import syncFs from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -798,7 +799,16 @@ async function ensureGitRepo(dir: string, isBrandNewWorkspace: boolean) {
     return;
   }
   try {
-    await runCommandWithTimeout(["git", "init"], { cwd: dir, timeoutMs: 10_000 });
+    const { resolveTaskDomain } = await import("../../../shared/task-system/identity.js");
+    const { withExecutionTaskBarrier } = await import("./execution-task-barrier.js");
+    const domain = resolveTaskDomain(dir);
+    // First Task creation and bootstrap share the barrier: an established local
+    // authority must keep its coordinator backend and branch through restoration.
+    withExecutionTaskBarrier([domain.id], () => {
+      if (syncFs.existsSync(domain.database) || syncFs.existsSync(path.join(dir, ".git"))) return;
+      if (resolveTaskDomain(dir).id !== domain.id) return;
+      execFileSync("git", ["init"], { cwd: dir, timeout: 10_000, windowsHide: true, stdio: "ignore" });
+    });
   } catch {
     // Ignore git init failures; workspace creation should still succeed.
   }

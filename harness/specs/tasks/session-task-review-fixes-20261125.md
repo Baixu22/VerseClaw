@@ -4,7 +4,7 @@ title: 修复已合并会话与持久任务机制的七项缺陷
 lifecycleStatus: active
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 917a71cba7b2dfc8aedbdb3b75b7b693e3900f1e
+diffBase: 2aa1168619e4ba6dcbcb0bc90946d61afe6fc13e
 intent: 完成任务取消和会话恢复闭环，统一只读工具与运行凭证，隔离迟到的界面更新，并使副作用准入按任务点查。
 requiredRules:
   - backend-communication-boundary
@@ -27,6 +27,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/tool-mutation.ts
   - openclaw_runtime/src/agents/tool-mutation.test.ts
   - openclaw_runtime/src/agents/agent-tools.ts
+  - openclaw_runtime/src/agents/workspace.ts
   - openclaw_runtime/src/agents/tools/persistent-task-tool.ts
   - src/stores/chat.ts
   - src/pages/Chat/index.tsx
@@ -63,6 +64,7 @@ requiredTests:
 acceptance:
   - 活动模型、进行中的文件操作和委派取消均等待原运行及效果回执，失败停止保留 cancelling。
   - 会话恢复按原代次迁移 writer 和只读引用，重试幂等；旧代次、旧 epoch 和未决效果继续拒绝。
+  - 已建立任务身份的本地工作区首次初始化保持原 backend，恢复继续同一任务；无任务的新工作区保持自动 Git 初始化。
   - 暂停恢复不复活暂停前运行，新的恢复运行可以调用模型和受管工具。
   - 只读查询在前后工具边界使用同一判定，带副作用的 shell、未知工具和写入仍受控；rg 外部程序和 Git 的文本转换、外部 diff 及分页程序不能绕过任务领取。
   - 原会话历史等待、资源拒绝和工作区任务操作的迟到响应不会污染新视图或草稿。

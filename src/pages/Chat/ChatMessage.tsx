@@ -1,4 +1,7 @@
 import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdown';
+import { assistantPhaseLabels, type AssistantOutputPhase } from './execution-projection';
+import { UserMessageBubble } from '@/components/assistant-render/UserMessageBubble';
+import { BookOpen } from 'lucide-react';
 import { UsedKnowledge } from './UsedKnowledge';
 /**
  * Chat Message Component
@@ -94,6 +97,7 @@ interface ChatMessageProps {
   onSubmitInteractionResponse?: (text: string) => void;
   onDraftInteractionResponse?: (text: string) => void;
   onQuoteResponse?: (text: string) => void;
+  onAskKnowledge?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
   onResendUserMessage?: (text: string) => void;
   canResendUserMessage?: boolean;
@@ -116,7 +120,7 @@ interface ChatMessageProps {
     startedAt?: number | null;
     now?: number;
     tokenCount?: number | null;
-    state?: 'thinking' | 'streaming' | 'syncing';
+    state?: AssistantOutputPhase;
   } | null;
   /**
    * Live token usage for the current streaming run. Passed to the
@@ -236,6 +240,7 @@ export const ChatMessage = memo(function ChatMessage({
   onSubmitInteractionResponse,
   onDraftInteractionResponse,
   onQuoteResponse,
+  onAskKnowledge,
   canForkFromMessage = false,
   canSubmitInteractionResponse = true,
   onResendUserMessage,
@@ -669,6 +674,7 @@ export const ChatMessage = memo(function ChatMessage({
             imageCopyTarget={imageCopyTarget}
             usage={showStreamStatus ? null : { message, liveUsage, isStreaming }}
             onQuoteResponse={!isStreaming ? onQuoteResponse : undefined}
+            onAskKnowledge={!isStreaming ? onAskKnowledge : undefined}
             onFork={
               canForkFromMessage && transcriptEntryId && onForkFromMessage && canResendUserMessage && !isStreaming
                 ? () => onForkFromMessage(transcriptEntryId)
@@ -708,11 +714,9 @@ function AssistantStreamStatusBar({
   const now = useTickingNow(status.active);
   const elapsed = formatElapsedSeconds(status.startedAt, now);
   const tokenCount = status.tokenCount ?? 0;
-  const dotState = status.state === 'syncing'
-    ? 'syncing'
-    : status.state === 'streaming'
-      ? 'streaming'
-      : 'thinking';
+  const phase = status.state ?? 'working';
+  const label = t(assistantPhaseLabels[phase]);
+  const dotState = phase === 'tools' ? 'working' : phase;
 
   return (
     <div
@@ -725,15 +729,18 @@ function AssistantStreamStatusBar({
           data-testid="assistant-stream-status-dot"
           data-state="thinking"
         >
-          {t('assistantRender.activity.thinking')}
+          {label}
         </Shimmer>
       ) : (
-        <OrbStatus
-          state={dotState}
-          label={t('assistantRender.activity.thinking')}
-          className="size-4 shrink-0 text-primary"
-          data-testid="assistant-stream-status-dot"
-        />
+        <>
+          <OrbStatus
+            state={dotState}
+            label={label}
+            className="size-4 shrink-0 text-primary"
+            data-testid="assistant-stream-status-dot"
+          />
+          <span>{label}</span>
+        </>
       )}
       <span className="tabular-nums" data-testid="assistant-stream-status-elapsed">
         {elapsed}
@@ -906,12 +913,14 @@ function AssistantHoverBar({
   imageCopyTarget,
   usage,
   onQuoteResponse,
+  onAskKnowledge,
   onFork,
 }: {
   text: string;
   timestamp?: number;
   imageCopyTarget?: ImageCopyTarget | null;
   onQuoteResponse?: (text: string) => void;
+  onAskKnowledge?: (text: string) => void;
   onFork?: () => void;
   usage?: {
     message: RawMessage;
@@ -984,6 +993,14 @@ function AssistantHoverBar({
             <TooltipContent side="top">{t('messageActions.quoteResponse')}</TooltipContent>
           </Tooltip>
         )}
+        {onAskKnowledge && text.trim() && <Tooltip>
+          <TooltipTrigger asChild>
+            <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground/75"
+              data-testid="chat-ask-knowledge-about-reply" onClick={() => onAskKnowledge(text)}
+              aria-label={t('conversation.askReply', { ns: 'knowledge' })}><BookOpen className="h-3.5 w-3.5" /></Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('conversation.askReply', { ns: 'knowledge' })}</TooltipContent>
+        </Tooltip>}
         {onFork && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -1268,22 +1285,6 @@ function UserMessageEditor({
         </Tooltip>
       </div>
     </form>
-  );
-}
-
-/** Sent text uses an opaque card with the conversation's own material tokens. */
-function UserMessageBubble({
-  text,
-}: {
-  text: string;
-}) {
-  return (
-    <div
-      className="chat-user-message-card relative min-w-0 overflow-hidden text-left transition-colors duration-150"
-      data-testid="chat-user-message-bubble"
-    >
-      <p className="whitespace-pre-wrap break-words text-[14px] font-[445] leading-[22px]">{text}</p>
-    </div>
   );
 }
 

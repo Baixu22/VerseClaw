@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — DO NOT EDIT.
 Source of truth: shared/dcs/prod-flags-catalog.ts
 Regenerate: pnpm catalogs:gen   |   Check freshness: pnpm catalogs:check
-Generated at: 2026-11-22T20:56:45.246Z
+Generated at: 2026-11-26T05:19:48.304Z
 -->
 
 Machine-readable source of truth for defaults, risk, enable, and rollback.
@@ -75,7 +75,7 @@ This file is generated — edit the source of truth instead.
 - risk: opt-in
 - enable: Choose the default answer strategy in Knowledge operations; Knowledge Librarian keeps the current explicit selection.
 - rollback: Restore strict in Knowledge operations.
-- executor: wired — `src/pages/Chat/KnowledgeChat.tsx:62`
+- executor: wired — `src/pages/Chat/KnowledgeChat.tsx:100`, `src/pages/Knowledge/knowledge-bot-run.ts:61`
 
 > Open answers identify model knowledge separately from owner evidence.
 

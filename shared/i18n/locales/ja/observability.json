@@ -111,6 +111,7 @@
     }
   },
   "tabs": {
+    "all": "すべてのタブ",
     "details": "詳細",
     "summary": "概要",
     "issues": "問題",
@@ -260,7 +261,24 @@
     "custom": "保存済みビュー",
     "saveCurrent": "現在のビューを保存"
   },
+  "steps": {
+    "metrics": "指標",
+    "filters": "絞り込み",
+    "filtered": "絞り込み中",
+    "chooseRun": "実行を選択",
+    "back": "戻る",
+    "runDetails": "実行の詳細",
+    "technical": "技術情報",
+    "toolResult": "ツールの結果",
+    "prompt": "ユーザーの質問",
+    "reply": "アシスタントの回答",
+    "empty": "この実行にはまだステップが記録されていません。",
+    "showEvents": "その他のイベントを表示（{{count}}）",
+    "hideEvents": "その他のイベントを閉じる",
+    "reasoning": "思考の記録"
+  },
   "views": {
+    "steps": "実行の流れ",
     "label": "ビュー",
     "graph": "グラフ",
     "tree": "実行ツリー",

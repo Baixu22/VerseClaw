@@ -32,6 +32,7 @@ const seededHistory = [
         '',
         '- Bold text: **works**',
         '- Inline code: `worksToo()`',
+        '- Follow the [reference](https://example.com/docs) for details.',
         '',
         '> Quoted context stays visually grouped.',
         '',
@@ -121,15 +122,10 @@ test.describe('Verse Claw assistant reply Markdown styling', () => {
         });
       });
 
-      // Located by testid, not by fill utility. The previous selector
-      // (`div.rounded-2xl.bg-brand`) went stale when the bubble stopped using a
-      // `bg-brand` token — it matched nothing, so this assertion had been dead
-      // before the transcript adopted the Codex recipe. The point of the check
-      // is that user prompts stay bubbled while assistant text renders plain,
-      // so assert the rounding that carries that contrast.
       const userBubble = page.getByTestId('chat-user-message-bubble').filter({ hasText: 'Please render a Markdown reply plainly.' }).first();
       await expect(userBubble).toBeVisible({ timeout: 30_000 });
-      await expect(userBubble).toHaveClass(/rounded-2xl/);
+      expect(await userBubble.evaluate(el => parseFloat(getComputedStyle(el).borderTopLeftRadius))).toBeGreaterThan(0);
+      await expect(userBubble).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
       const assistantProse = page.locator('.prose').filter({ hasText: 'Plain Markdown reply' }).first();
       await expect(assistantProse).toBeVisible({ timeout: 30_000 });
@@ -141,6 +137,19 @@ test.describe('Verse Claw assistant reply Markdown styling', () => {
       await expect(assistantProse.locator('input[type="checkbox"]')).toBeChecked();
       await expect(assistantProse.getByTestId('assistant-code-header')).toContainText('ts');
       await expect(assistantProse.locator('pre')).toContainText('const rich = true;');
+      await expect(assistantProse.locator('.markdown-syntax-token').first()).toBeAttached();
+      for (const theme of ['dark', 'light']) {
+        await page.evaluate(theme => document.documentElement.classList.toggle('dark', theme === 'dark'), theme);
+        const colors = await assistantProse.evaluate(element => {
+          const ink = (selector: string) => getComputedStyle(element.querySelector(selector)!).color;
+          return {
+            prose: [ink('h3'), ink('p'), ink('a'), ink('li code'), ink('blockquote')],
+            syntax: [...element.querySelectorAll('.markdown-syntax-token')].map(token => getComputedStyle(token).color),
+          };
+        });
+        expect(new Set(colors.prose).size).toBe(colors.prose.length);
+        expect(new Set(colors.syntax).size).toBeGreaterThan(1);
+      }
       // The button publishes its state through `aria-label`; the `title`
       // attribute was dropped in the Codex visual polish and this assertion had
       // been dead since. The 2000ms revert timer bounds the observable window,

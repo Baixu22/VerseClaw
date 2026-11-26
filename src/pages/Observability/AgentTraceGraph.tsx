@@ -39,32 +39,15 @@ const PADDING = 28;
 const MIN_ZOOM = 0.55;
 const MAX_ZOOM = 1.65;
 
-function nodeIcon(kind: ObservabilityGraphNode['kind']) {
-  switch (kind) {
-    case 'root':
-      return GitBranch;
-    case 'agent':
-    case 'subagent':
-      return Bot;
-    case 'orchestrator':
-    case 'router':
-      return Route;
-    case 'model':
-      return BrainCircuit;
-    case 'tool':
-      return Terminal;
-    case 'memory':
-    case 'context':
-      return CircleDot;
-    case 'approval':
-      return KeyRound;
-    case 'file':
-      return FileCode2;
-    case 'error':
-      return AlertTriangle;
-    default:
-      return ShieldCheck;
-  }
+const nodeIcons: Record<ObservabilityGraphNode['kind'], typeof GitBranch> = {
+  root: GitBranch, agent: Bot, subagent: Bot, orchestrator: Route, router: Route,
+  model: BrainCircuit, tool: Terminal, memory: CircleDot, context: CircleDot,
+  approval: KeyRound, file: FileCode2, error: AlertTriangle, event: ShieldCheck,
+};
+
+export function TraceNodeIcon({ kind, className }: { kind: ObservabilityGraphNode['kind']; className: string }) {
+  const Icon = nodeIcons[kind] ?? ShieldCheck;
+  return <Icon aria-hidden="true" className={className} />;
 }
 
 function nodeTone(node: ObservabilityGraphNode) {
@@ -478,7 +461,6 @@ export function AgentTraceGraph({
           </svg>
 
           {filteredNodes.map((node) => {
-            const Icon = nodeIcon(node.kind);
             const agent = agents.find((candidate) => candidate.id === node.agentId) ?? null;
             const tone = toneClasses(nodeTone(node));
             const selected = selectedNodeId === node.id;
@@ -510,7 +492,7 @@ export function AgentTraceGraph({
                 {agent && (node.kind === 'agent' || node.kind === 'subagent' || node.roleName) ? (
                   <AgentRoleIdentity agentId={agent.id} name={agent.name} avatar={agent.avatar} roleName={node.roleName ?? node.kind} size={26} />
                 ) : <span className={cn('relative flex h-6 w-6 shrink-0 items-center justify-center rounded border', tone.tint)}>
-                  <Icon className="h-3.5 w-3.5" />
+                  <TraceNodeIcon kind={node.kind} className="h-3.5 w-3.5" />
                   {isSlow && (
                     <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 text-white">
                       <Clock className="h-2 w-2" />

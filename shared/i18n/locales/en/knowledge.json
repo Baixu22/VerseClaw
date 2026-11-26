@@ -1,4 +1,38 @@
 {
+  "mention": {
+    "name": "Knowledge assistant",
+    "token": "@knowledge",
+    "open": "Open conversation",
+    "steps": "Activity",
+    "busy": "The knowledge assistant is already working on this conversation.",
+    "textOnly": "Send the knowledge assistant a text question, or open its conversation to choose sources.",
+    "phases": {
+      "idle": "Ready to help",
+      "waiting": "Request sent",
+      "searching": "Searching the knowledge base",
+      "reading": "Reading admitted sources",
+      "thinking": "Preparing the answer",
+      "verifying": "Checking cited claims",
+      "finished": "Answer ready",
+      "confused": "More sources are needed",
+      "failed": "Request failed",
+      "interrupted": "The connection to this request ended. Retry to continue."
+    }
+  },
+  "conversation": {
+    "approve": "Approve sending to {{name}}",
+    "history": "Knowledge conversations",
+    "openAssistant": "Open knowledge assistant",
+    "askReply": "Ask the knowledge assistant about this reply",
+    "question": "About this chat reply:\n\n{{text}}\n\n",
+    "sendHome": "Send to {{name}}",
+    "openHome": "Open {{name}}",
+    "sent": "Sent to {{name}}",
+    "fromKnowledge": "Question and answer from the knowledge assistant",
+    "unconfirmed": "Delivery was not confirmed. Retry this message to check the same send.",
+    "targetChanged": "The destination chat is no longer in this workspace.",
+    "unsaved": "Local storage is full or unavailable. This conversation is currently saved in memory only."
+  },
   "research": {
     "cancel": "Cancel research",
     "progress": "Round {{round}}/{{maxRounds}} · Queries {{queries}}/{{maxQueries}}",
@@ -311,6 +345,8 @@
     "chatTitle": "Ask the knowledge base",
     "backToChat": "Back to chat",
     "bot": {
+      "pet": "Pet the assistant",
+      "petted": "The assistant gives you a happy wiggle",
       "dragHint": "Click to ask · drag to move",
       "states": {
         "idle": "Ready to help",
@@ -796,5 +832,9 @@
       "promoted": "Promoted",
       "dismissed": "Dismissed"
     }
+  },
+  "libraryFlow": {
+    "workspaceChanged": "Open the source set from the current workspace.",
+    "archive": "Earlier chats (read-only)"
   }
 }

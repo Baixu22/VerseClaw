@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from 'react';
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import { Archive, Bot, BrainCircuit, Camera, ChevronDown, Database, Download, FileCode2, FileCog, FilePenLine, FilePlus2, FileText, FileType2, FlaskConical, FolderOpen, GitBranch, GitCommitHorizontal, GitCompareArrows, GitMerge, Globe, Hammer, Image, ImagePlus, ListTodo, Mouse, MousePointerClick, Network, Package, Presentation, Search, Table2, Terminal, Trash2, Upload, Wrench } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Shimmer } from '@/components/ai-elements/shimmer';
@@ -40,11 +41,13 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
   const completed = new Intl.ListFormat(i18n?.language, { style: 'long', type: 'conjunction' })
     .format(kinds.map(kind => t(`toolActivity.completed.${kind}`)));
   const action = current ? t(`toolActivity.running.${current.kind}`) : completed;
-  const target = current?.target ?? current?.name;
-  const label = group.status === 'error' ? t('toolActivity.failed', { action: group.pendingResult ? t('toolActivity.pendingResult') : action })
+  const failedTarget = group.failedEntry?.target ?? group.failedEntry?.name;
+  const target = active ? current?.target ?? current?.name : undefined;
+  const failureLabel = failedTarget ? t('toolActivity.failedTarget', { target: failedTarget }) : undefined;
+  const label = group.status === 'error' ? failureLabel ?? t('toolActivity.failed', { action: group.pendingResult ? t('toolActivity.pendingResult') : completed })
     : group.status === 'aborted' ? t('toolActivity.stopped') : group.pendingResult ? t('toolActivity.pendingResult') : action;
   const summaryText = target ? `${label} ${target}` : label;
-  const summaryEntry = current ?? group.entries[0];
+  const summaryEntry = active ? current : group.failedEntry ?? group.entries[0];
 
   return (
     <section
@@ -70,10 +73,18 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
             <Shimmer className="tool-activity-shimmer">{summaryText}</Shimmer>
           </span> : <span>{summaryText}</span>}
         </span>
+        {active && failureLabel && (
+          <span className="tool-activity-failure" title={failureLabel}>{failureLabel}</span>
+        )}
         <ChevronDown strokeWidth={1.5} className={cn('tool-activity-chevron', expanded && 'is-expanded')} />
       </button>
+      <AnimatePresence initial={false}>
       {expanded && (
-        <div id={contentId} className="tool-activity-details" data-testid="chat-tool-activity-details">
+        <AnimatedToolDetails
+          key="details"
+          id={contentId}
+        >
+        <div className="tool-activity-details" data-testid="chat-tool-activity-details">
           <ExecutionGraphCard
             agentLabel={group.agentLabel}
             steps={group.steps}
@@ -89,7 +100,21 @@ export function ToolActivityGroup({ group, expanded, onExpandedChange, expandedS
           />
           {children}
         </div>
+        </AnimatedToolDetails>
       )}
+      </AnimatePresence>
     </section>
   );
+}
+
+function AnimatedToolDetails({ id, children }: { id: string; children: ReactNode }) {
+  const present = useIsPresent();
+  const reducedMotion = useReducedMotion();
+  return <motion.div id={id} className="overflow-hidden" inert={!present} aria-hidden={!present || undefined}
+    initial={{ height: 0, opacity: 0 }}
+    animate={{ height: 'auto', opacity: 1 }}
+    exit={{ height: 0, opacity: 0, transition: { duration: reducedMotion ? 0 : 0.16 } }}
+    transition={{ duration: reducedMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1], opacity: { duration: reducedMotion ? 0 : 0.14 } }}>
+    {children}
+  </motion.div>;
 }

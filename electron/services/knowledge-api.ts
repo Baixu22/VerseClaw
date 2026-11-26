@@ -3348,9 +3348,11 @@ export function __resetHostGovernedAdaptersForTests(): void {
 
 export function createKnowledgeApi({
   gatewayManager,
+  onAnswerProgress,
   runtimeLessonsReporter = defaultRuntimeLessonsReporter,
 }: {
   gatewayManager: GatewayManager;
+  onAnswerProgress?: (event: import('@shared/host-events/contract').KnowledgeAnswerProgress) => void;
   runtimeLessonsReporter?: RuntimeLessonsReporter;
 }): CompleteHostServiceRegistry['knowledge'] {
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
@@ -3433,6 +3435,7 @@ export function createKnowledgeApi({
     } });
 
   async function buildAnswerFromSourceSet(input: {
+    requestId?: string;
     answerMode?: KnowledgeAnswerMode;
     question: string;
     sourceRefs: KnowledgeSourceRef[];
@@ -3444,12 +3447,16 @@ export function createKnowledgeApi({
     history?: KnowledgeConversationTurn[];
   }): Promise<KnowledgeAnswerFromSourceSetResult> {
     const question = input.question.trim();
+    const report = (phase: import('@shared/host-events/contract').KnowledgeAnswerProgress['phase']) => {
+      if (input.requestId) onAnswerProgress?.({ requestId: input.requestId, phase });
+    };
     const answerMode = input.answerMode ?? 'strict';
     let sourceRefs = normalizeSourceRefs(input.sourceRefs);
     let retrieval: KnowledgeRetrievalReport | undefined;
     if (sourceRefs.length === 0 && input.synthesis) {
       const previousQuestion = boundedKnowledgeHistory(input.history).filter(turn => turn.role === 'user').at(-1)?.content.slice(0, 500);
       const query = previousQuestion ? `${question}\n${previousQuestion}` : question;
+      report('searching');
       retrieval = await retrieveFromOwner({ query, workspaceId: input.workspaceId, mode: 'suggest' });
       sourceRefs = getRouteSearchRows(retrieval).slice(0, 6).flatMap(row => {
         const lookup = rowString(row, ['pagePath', 'path', 'lookup', 'id']);
@@ -3502,6 +3509,7 @@ export function createKnowledgeApi({
       }),
       embeddingProvider: semantic ? embeddingProvider : undefined,
     });
+    if (sourceRefs.length) report('reading');
     let evidence = await readEvidence(sourceRefs, semanticRequested);
     let { sources } = evidence;
     let unknowns = evidence.unknowns;
@@ -3538,6 +3546,7 @@ export function createKnowledgeApi({
           sourceRef: source.citation!.sourceRef, revision: source.citation!.revision, contentDigest: source.citation!.contentDigest,
           ...(source.conflictGroupId ? { conflictGroupId: source.conflictGroupId } : {}),
         }));
+        report('thinking');
         const result = await runKnowledgeModel(gatewayManager,
           buildKnowledgeQaPrompt({ question, history: input.history, sources: modelSelection.sources, answerMode }),
           'Knowledge Librarian', modelRemaining(), sessionKey ? { sessionKey, workspaceId: readScope.identity.workspaceId, workspaceDir: readScope.identity.workspaceDir, references } : undefined);
@@ -3559,6 +3568,7 @@ export function createKnowledgeApi({
         if (bound.some(claim => claim.kind === 'source')) {
           const supportRefs = references.filter(ref => modelSources.some(source => source.citation?.refId === ref.id));
           try {
+            report('verifying');
             const support = await runKnowledgeModel(gatewayManager, buildKnowledgeSupportPrompt(question, bound, modelSources),
               'Knowledge claim support', modelRemaining(), { sessionKey: sessionKey!, workspaceId: readScope.identity.workspaceId,
                 workspaceDir: readScope.identity.workspaceDir, references: supportRefs });
@@ -4547,6 +4557,7 @@ export function createKnowledgeApi({
       }
       return buildAnswerFromSourceSet({
         question,
+        requestId: getString(body.requestId),
         sourceRefs: normalizeSourceRefs(body.sourceRefs),
         artifactType: normalizeArtifactType(body.artifactType),
         sourceSetId: getString(body.sourceSetId),

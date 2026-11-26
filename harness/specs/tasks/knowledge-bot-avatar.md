@@ -11,6 +11,7 @@ touchedAreas:
   - vite.config.ts
   - src/components/knowledge-bot/**
   - src/components/assistant-render/AssistantMarkdown.tsx
+  - src/components/assistant-render/UserMessageBubble.tsx
   - src/pages/Knowledge/**
   - src/pages/Chat/KnowledgeChat.tsx
   - src/pages/Chat/ChatMessage.tsx
@@ -18,6 +19,7 @@ touchedAreas:
   - tests/unit/knowledge-chat.test.tsx
   - tests/unit/knowledge-page.test.tsx
   - tests/unit/knowledge-bot.test.tsx
+  - tests/unit/chat-message.test.tsx
   - tests/e2e/knowledge-bot.spec.ts
   - tests/e2e/knowledge-ux-cdp.spec.ts
   - harness/specs/tasks/knowledge-bot-avatar.md
@@ -30,6 +32,7 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - README.ru-RU.md
 expectedUserBehavior:
   - Knowledge shows the approved orange solid character; drag is limited to 112 pixels from its corner dock, with an elastic edge and snapback on out-of-range release.
   - Click or keyboard activation opens a compact nonmodal floating conversation without navigating away or obscuring the whole Knowledge page.
@@ -63,6 +66,8 @@ acceptance:
   - Animation states come from actual async call boundaries and composer focus; no simulated tokens, keyword sentiment or invented tool activity.
   - The existing source-backed, non-streaming answer is not represented as token streaming.
   - Historical answers settle; only the active answer or pending avatar follows live work.
+  - The floating and standalone transcripts use the main Chat user bubble and full-width assistant Markdown. The companion sits below a reply so tables and code retain the full column.
+  - Hovering over the idle companion invites its attention. Clicking, tapping or activating it with the keyboard elicits a brief celebration. A minimized launcher shows pending work and its outcome.
   - Reduced motion, hidden/offscreen suspension and unmount cleanup are implemented.
   - A real Electron automated interaction test records bounded drag, snapback, floating open/close, async transitions, retry, shared Markdown and light/dark/narrow screenshots as agent driven evidence.
 docs:

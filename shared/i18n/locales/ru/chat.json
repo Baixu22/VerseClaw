@@ -2639,7 +2639,9 @@
     },
     "activity": {
       "thinking": "Ассистент думает",
-      "processingToolResults": "Обработка результатов инструментов"
+      "processingToolResults": "Обработка результатов инструментов",
+      "usingTools": "Вызов инструментов",
+      "writing": "Подготовка ответа"
     },
     "quote": {
       "action": "??????????"
@@ -2778,6 +2780,10 @@
     "omittedToggle": "Обрезано по бюджету ({{count}})"
   },
   "messageNav": {
+    "addBookmark": "Добавить ход в закладки",
+    "removeBookmark": "Удалить закладку",
+    "nextBookmark": "Следующая закладка",
+    "preview": "Предпросмотр вопроса {{ordinal}}",
     "label": "Навигация по вопросам",
     "jumpTo": "Перейти к вопросу {{ordinal}}"
   },
@@ -3088,6 +3094,7 @@
     "selectionUnavailable": "Сопоставление с выбранными источниками недоступно"
   },
   "toolActivity": {
+    "failedTarget": "Ошибка: {{target}}",
     "running": {
       "read": "Чтение",
       "write": "Запись",

@@ -125,6 +125,9 @@ test('cancels an active model, restores its task identity, reads a fork and resu
     await expect.poll(() => held, { timeout: 60_000 }).toBe(true);
     const active = await hostInvoke<{ tasks: TaskView[] }>(app, 'taskLedger', 'managedTasks', { workspaceId: project.workspaceId });
     evidence.activeBeforeCancel = active;
+    const gitAfterBootstrap = await hostInvoke<{ success: boolean; status: { isRepository: boolean } }>(app, 'git', 'status', {});
+    evidence.gitAfterBootstrap = gitAfterBootstrap;
+    expect(gitAfterBootstrap.status.isRepository).toBe(false);
     expect(active.tasks.find(task => task.contract.taskNodeId === cancellationTaskId)).toMatchObject({ contract: { state: 'doing' }, claim: { state: 'active', generation: project.generation } });
     await holdHostReply(app, 'observe', 'observe', project.workspaceId);
     await openLedger(page, project.workspaceId, projectSession);

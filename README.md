@@ -95,12 +95,16 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 | Task reports | Expand a persistent task card to inspect its source, runs, effects, candidate checks and retained evidence. Recorded model calls are counted once across coordinator and worker views; catalog prices are estimates and missing amounts remain unknown. | [Task reports](docs/modules/multi-agent-and-tasks.md) |
 | Project and session navigation | Project names open their coordinator; the project view retains every explicitly associated coordinator across agents. Families expand within existing workgroups and show scoped tasks. Ledger history opens linked transcripts and checkpoint artifacts. Fork questions stay as drafts; Handoff creates and sends with restart recovery. | [Session and task flow](docs/modules/multi-agent-and-tasks.md) |
 | Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers, and retired VToken | [Verse tools](docs/modules/verse-tools.md) |
-| Resources and observability | ResourceFabric with bounded per-operation latency feedback and memory/event-loop pressure control, background shedding, process tracking, token/cost limits and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
+| Resources and observability | ResourceFabric with bounded per-operation latency feedback and memory/event-loop pressure control, background shedding, process tracking, token/cost limits and recovery. The Observability page lists model calls, tools and errors in time order. | [Resources and observability](docs/modules/resources-and-observability.md) |
 | Integrations and other surfaces | 15 channel types, schedules, Skills/MCP, Inbox, remote tasks, Code Review, VerseConf documents, media, Billing and Agent Dev | [Integrations and surfaces](docs/modules/integrations-and-surfaces.md) |
 
 The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
 
 Chat text and the input share the available conversation width. Adjacent tool operations form a folded group after each progress explanation. Folded summaries show an unboxed semantic icon and the latest operation text, entering left to right once with a continuous white running shimmer. Only the current running folded summary animates its Lucide icon; expanded rows and settled operations keep static icons, including on hover. Reduced motion keeps icons and text static. Expanded tool and command rows keep their progress strips, background, timer and completion check. Icons reflect file types, Git, browser actions, tests, builds, packages, memory, databases and agents. Expanding a group shows its calls, arguments, results, command output and file changes in order. Completed groups stay static and retain manual disclosure state. Final replies, delivered resources and pending requests remain accessible. Long previews keep wrapping and copy the complete retained content. Completed replies keep response-aligned actions and usage information.
+
+Bookmark a turn from its left-rail preview, then use the bookmark control to jump between saved turns. Tool details expand smoothly and use smaller summary text. Workspace actions and Settings navigation show the shared tooltip.
+
+While a reply is in progress, the turn summary distinguishes thinking, processing tool results and writing. A failed parallel call names its target while other calls continue.
 
 Session status uses a single surface, with completed processes folded into history. Opening a process uses the same terminal view as the conversation, including output copying and scrolling that respects earlier lines being read. Matched tool calls and results share one disclosure; diagnostics stay at the end.
 
@@ -270,6 +274,9 @@ No separate database server is required.
 - Knowledge imports keep same-named sources separate, reviewed creates reject collisions, and interrupted governance commits resume from recorded Wiki effects. Removed preinstalled skills stay removed across restarts.
 - Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
 - Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
+- Knowledge uses the main chat’s question bubbles and reply formatting. Click the orange assistant beneath its latest idle reply to pet it. Minimize the conversation to follow its progress from the corner.
+- Open **Knowledge conversations** from the chat composer to resume a saved thread. The book icon beneath a chat reply takes it to the knowledge assistant. **Send to** returns a selected question, answer and citations to the named chat.
+- Start a message with `@knowledge` or `@知识库助手` to show the knowledge assistant’s current activity. Add a question to query inline. The character and operation log follow retrieval, source reads, answer generation and citation checks, then show the answer and sources.
 - Chinese lexical retrieval, bounded long-document continuation, a provider-scoped embedding cache and version-bound Steward findings share the same admission boundary. An opt-in public GitHub directory connector sends updates and withdrawals to Inbox; other SaaS connectors are not implemented.
 - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
 
@@ -358,6 +365,8 @@ Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the Cl
 ### Persistent task execution
 
 Cancellation waits for the assigned run and pending effects to finish. Restored sessions retain their task binding after identity validation. Read-only forks can inspect conversation history, and delayed replies keep their original session and workspace.
+
+A local workspace with an established task keeps its original environment during first-run setup, so automatic Git initialization cannot invalidate later session restoration.
 
 Worker details show task acceptance from the task owner for the displayed session. Once the task owner accepts the verified evidence, refresh to read the accepted result. Recorded verifier checks and task-owner acceptance are shown separately; worker links in the ledger open their transcript panel.
 

@@ -2097,8 +2097,12 @@ describe('knowledge host API', () => {
       }),
     };
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
-    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
-    const answer = await api.answerFromSourceSet({ question: '它的端口呢？', sourceRefs: [], synthesis: true, history: [{ role: 'user', content: '讨论网关' }] });
+    const progress = vi.fn();
+    const reportingApi = createKnowledgeApi({ gatewayManager: gatewayManager as never, onAnswerProgress: progress });
+    const answer = await reportingApi.answerFromSourceSet({ requestId: 'knowledge-progress-test', question: '它的端口呢？', sourceRefs: [], synthesis: true, history: [{ role: 'user', content: '讨论网关' }] });
+    expect(progress.mock.calls.map(([event]) => event.phase)).toEqual(outcome === 'same' || outcome === 'unsupported'
+      ? ['searching', 'reading', 'thinking', 'verifying'] : ['searching', 'reading', 'thinking']);
+    expect(progress.mock.calls.every(([event]) => event.requestId === 'knowledge-progress-test')).toBe(true);
     if (outcome === 'provider-error') {
       expect(answer).toMatchObject({ synthesisMode: 'unknown', groundingStatus: 'partial', model: { status: 'error' } });
       expect(answer.sources).toHaveLength(1); expect(answer.unknowns.join(' ')).toContain('provider unavailable');

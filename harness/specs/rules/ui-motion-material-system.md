@@ -51,6 +51,7 @@ Requirements:
 - Modal scrims and large drawers must not use `backdrop-filter` while hardware acceleration is unavailable.
 - Settings navigation selection must not use layout-projection animation; preserve the selected material with compositor-friendly opacity or color transitions.
 - Chat layout and message consumers do not subscribe to changing overlay state. The retired visual-version switch must not return through a separate context or fallback branch.
+- The Observability step list keeps running and failed nodes visible. Routine events, aggregate metrics and technical details use explicit disclosures. A narrow content column switches between runs and detail.
 - Platform-native title-bar controls remain outside modal scrims and fully interactive.
 - Renderer-visible text uses `react-i18next` with complete `en`, `zh`, `ja`, and `ru` locale coverage.
 - Settings URLs and existing stable E2E test ids remain compatible.

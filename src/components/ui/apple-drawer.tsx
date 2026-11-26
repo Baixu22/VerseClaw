@@ -12,6 +12,7 @@ export interface AppleDrawerProps {
   onOpenChange: (open: boolean) => void;
   onOpened?: () => void;
   onClosed?: () => void;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
   title: ReactNode;
   description?: ReactNode;
   size?: AppleDrawerSize;
@@ -33,6 +34,7 @@ export function AppleDrawer({
   onOpenChange,
   onOpened,
   onClosed,
+  onEscapeKeyDown,
   title,
   description,
   size = 'regular',
@@ -113,6 +115,7 @@ export function AppleDrawer({
           className="apple-drawer-overlay fixed inset-x-0 bottom-0 top-10 z-modal bg-overlay-backdrop"
         />
         <Drawer.Content
+          onEscapeKeyDown={onEscapeKeyDown}
           data-testid={testId}
           onAnimationEnd={handleContentAnimationEnd}
           className={cn(
