@@ -63,11 +63,13 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
   const readReceipt = async (id: string) => {
     const request = ++receiptRequest.current;
     try {
-      const { messages } = await hostApi.sessions.collaborationMessages({ requester, target, id });
+      const result = await hostApi.sessions.collaborationMessages({ requester, target, id });
+      if (!result.success) throw new Error('COLLABORATION_RECEIPT_UNAVAILABLE');
+      const { messages } = result;
       if (active.current !== readKey || receiptRequest.current !== request) return null;
       setReceipt(messages.receipt ? { key: readKey, value: messages.receipt } : null);
       if (!messages.receipt) setState(messages.state);
-      return messages.receipt;
+      return messages;
     } catch {
       if (active.current === readKey && receiptRequest.current === request) {
         setReceipt(null);
@@ -94,8 +96,13 @@ export function SessionCollaborationMessages({ requester, target, tasks = [] }: 
   };
   const check = async () => {
     if (!draft || !draftKey) return;
-    const current = await readReceipt(draft.id);
-    if (!current || useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id !== draft.id) return;
+    const messages = await readReceipt(draft.id);
+    if (!messages || useSessionCollaborationUi.getState().messageDrafts[draftKey]?.id !== draft.id) return;
+    const current = messages.receipt;
+    if (!current) {
+      if (messages.state === 'empty') update(draftKey, { phase: 'draft' });
+      return;
+    }
     if (['accepted', 'queued', 'delivered', 'replied'].includes(current.phase)) update(draftKey, { id: crypto.randomUUID(), text: '', phase: 'draft', replyTo: undefined });
     else if (['rejected', 'expired'].includes(current.phase)) update(draftKey, { phase: 'draft' });
   };

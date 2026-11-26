@@ -53,9 +53,6 @@ export async function prepareSessionCollaborationMessage(value: unknown, context
     if (!found) throw new Error('COLLABORATION_TASK_REFERENCE_STALE');
   }
   assertSessionCollaborationSource(message, context, client, now);
-  const previous = context.dedupe.get(`collaboration:${message.id}`);
-  if (previous && (previous.payload as { payloadDigest?: string } | undefined)?.payloadDigest !== message.payloadDigest) throw new Error('COLLABORATION_MESSAGE_ID_CONFLICT');
-  context.dedupe.set(`collaboration:${message.id}`, { ts: now, ok: true, payload: { payloadDigest: message.payloadDigest } });
   return { message, provenance: sessionCollaborationProvenance(message) };
 }
 
@@ -65,12 +62,16 @@ export const sessionCollaborationProvenance = (message: SessionCollaborationMess
     targetGeneration: message.target.sessionGeneration, payloadDigest: message.payloadDigest, ...(message.replyTo ? { replyTo: message.replyTo } : {}) },
 });
 
-export function projectSessionMessageReceipt(receipt: SessionCollaborationMessageReceipt, context: GatewayRequestContext): SessionCollaborationMessageReceipt {
+export function projectSessionMessageReceipt(receipt: SessionCollaborationMessageReceipt): SessionCollaborationMessageReceipt {
   if (!receipt.run || receipt.phase === 'rejected' || receipt.phase === 'expired' || receipt.phase === 'replied') return receipt;
-  const target = receipt.message.target, active = context.chatAbortControllers.get(receipt.run.runId);
-  const known = active?.sessionKey === target.sessionKey && active.sessionId === target.sessionGeneration && !active.controller.signal.aborted;
+  const target = receipt.message.target;
+  const started = isEmbeddedAgentExecutionActive({
+    runId: receipt.run.runId, sessionKey: target.sessionKey, sessionId: target.sessionGeneration,
+  });
   const terminal = readScopedAgentRunOutcome(receipt.run.runId, target.sessionKey, target.sessionGeneration);
-  return known || terminal ? { ...receipt, phase: 'delivered', reason: receipt.replyRef ? undefined : 'reply-not-read' } : receipt;
+  return started || terminal?.status === 'ok'
+    ? { ...receipt, phase: 'delivered', reason: receipt.replyRef ? undefined : 'reply-not-read' }
+    : receipt;
 }
 
 export async function readSessionCollaborationMessages(value: unknown, context: GatewayRequestContext): Promise<SessionCollaborationMessagePage> {
@@ -92,7 +93,7 @@ export async function readSessionCollaborationMessages(value: unknown, context: 
     readMessageIntents(store => {
       if (query.id) {
         const row = store.get(query.id);
-        if (row && [row.source_scope, row.target_scope].includes(messageScopeKey(query.target))) page.receipt = projectSessionMessageReceipt(store.receipt(row), context);
+        if (row && [row.source_scope, row.target_scope].includes(messageScopeKey(query.target))) page.receipt = projectSessionMessageReceipt(store.receipt(row));
       } else {
         page.items = store.summaries(query.target, sequence, query.limit!, query.taskNodeId);
         if (page.items.length === query.limit) page.nextCursor = Buffer.from(JSON.stringify([basis, page.items.at(-1)!.sequence])).toString('base64url');

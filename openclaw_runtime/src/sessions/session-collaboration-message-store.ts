@@ -14,6 +14,8 @@ type IntentRow = { seq: number; id: string; payload_digest: string; envelope_jso
   source_scope: string; target_scope: string; task_node: string | null; dispatch_key: string;
   state: 'accepted' | 'dispatching' | 'settled'; receipt_json: string | null; reply_json: string | null; updated_at: number };
 type MessageDb = { session_message_intents: Omit<IntentRow, 'seq'> & { seq: Generated<number> } };
+type DeliveryRow = Pick<IntentRow, 'id' | 'source_scope' | 'target_scope' | 'state' | 'receipt_json' | 'updated_at'>;
+type DeliveryProjection = Pick<SessionCollaborationMessageReceipt, 'phase' | 'run' | 'replyRef' | 'updatedAt'>;
 export type SessionMessageSummary = Omit<SessionCollaborationMessage, 'message'> & { preview: string; truncated: boolean };
 export const messageScopeKey = (scope: AutonomySessionScope) => JSON.stringify([scope.workspaceId, scope.projectId, scope.sessionKey, scope.sessionGeneration]);
 const deliveryProgress: ReadonlyArray<SessionCollaborationMessageReceipt['phase']> = ['accepted', 'queued', 'delivered', 'replied'];
@@ -109,6 +111,25 @@ export class SessionCollaborationMessageStore {
     return { schemaVersion: 'SessionCollaborationReceipt/v1', message, phase: row.state === 'accepted' ? 'accepted' : 'unknown',
       run: null, replyRef: null, updatedAt: row.updated_at, ...(row.state === 'dispatching' ? { reason: 'dispatch-outcome-unknown' } : {}) };
   }
+
+  private deliveryProjection(row: DeliveryRow, seen = new Set<string>()): DeliveryProjection {
+    if (seen.has(row.id) || seen.size >= 4) throw new Error('COLLABORATION_MESSAGE_REFERENCE_CYCLE');
+    seen.add(row.id);
+    const receipt = row.receipt_json ? JSON.parse(row.receipt_json) as DeliveryProjection & { coalescedTo?: string } : null;
+    if (receipt?.coalescedTo && receipt.coalescedTo !== row.id) {
+      const original = executeSqliteQueryTakeFirstSync(this.db, this.query().selectFrom('session_message_intents')
+        .select(['id', 'source_scope', 'target_scope', 'state', 'receipt_json', 'updated_at'])
+        .where('id', '=', receipt.coalescedTo)
+        .where('source_scope', '=', row.source_scope).where('target_scope', '=', row.target_scope));
+      if (original) return this.deliveryProjection(original, seen);
+    }
+    return {
+      phase: receipt?.phase ?? (row.state === 'accepted' ? 'accepted' : 'unknown'),
+      run: receipt?.run ?? null,
+      replyRef: receipt?.replyRef ?? null,
+      updatedAt: receipt?.updatedAt ?? row.updated_at,
+    };
+  }
   summaries(scope: AutonomySessionScope, after: number, limit: number, taskNodeId?: string) {
     const key = messageScopeKey(scope);
     let query = this.query().selectFrom('session_message_intents').select(['seq', 'id', 'header_json', 'state', 'receipt_json', 'updated_at', 'source_scope', 'target_scope', 'payload_digest'])
@@ -118,17 +139,18 @@ export class SessionCollaborationMessageStore {
     return executeSqliteQuerySync(this.db, query).rows.map(row => {
       const header = JSON.parse(row.header_json) as SessionMessageSummary;
       if (header.id !== row.id || header.payloadDigest !== row.payload_digest || messageScopeKey(header.source) !== row.source_scope || messageScopeKey(header.target) !== row.target_scope) throw new Error('COLLABORATION_MESSAGE_HEADER_MISMATCH');
-      return { sequence: row.seq, header,
-      phase: row.receipt_json ? (JSON.parse(row.receipt_json) as SessionCollaborationMessageReceipt).phase : row.state === 'accepted' ? 'accepted' as const : 'unknown' as const,
-      run: row.receipt_json ? (JSON.parse(row.receipt_json) as SessionCollaborationMessageReceipt).run : null,
-      replyRef: row.receipt_json ? (JSON.parse(row.receipt_json) as SessionCollaborationMessageReceipt).replyRef : null,
-      updatedAt: row.updated_at };
+      return { sequence: row.seq, header, ...this.deliveryProjection(row) };
     });
   }
 }
 
 export function messageIntentWriter() { return new SessionCollaborationMessageStore(openOpenClawStateDatabase().db, true); }
-export function readMessageIntents<T>(read: (store: SessionCollaborationMessageStore) => T): T {
+export function readMessageIntents<T>(read: (store: SessionCollaborationMessageStore) => T): T | undefined {
   const db = new (requireNodeSqlite().DatabaseSync)(resolveOpenClawStateSqlitePath(), { readOnly: true });
-  try { return read(new SessionCollaborationMessageStore(db)); } finally { db.close(); }
+  try {
+    const table = db.prepare("SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'session_message_intents'").get();
+    return table ? read(new SessionCollaborationMessageStore(db)) : undefined;
+  } finally {
+    db.close();
+  }
 }

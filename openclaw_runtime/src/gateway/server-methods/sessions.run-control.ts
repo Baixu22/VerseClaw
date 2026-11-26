@@ -21,6 +21,7 @@ import {
 } from "../../../packages/gateway-protocol/src/index.js";
 import { renderRecoveryContextProjection } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
+import { resolveNestedAgentLaneForSession } from "../../agents/lanes.js";
 import { createCheckpointRollbackDeps } from "../../agents/checkpoint-rollback-executor.js";
 import { executeReplayRollback } from "../../agents/replay-rollback-authority.js";
 import { getLongTaskCheckpointById } from "../../agents/long-task-control/store.js";
@@ -306,13 +307,24 @@ async function handleSessionSend(params: {
       const { messageIntentWriter } = await import('../../sessions/session-collaboration-message-store.js');
       assertSessionCollaborationSource(collaboration.message, params.context, params.client);
       if (loadSessionEntry(canonicalKey, { readOnly: true, skipCache: true }).entry?.sessionId !== collaboration.message.target.sessionGeneration) throw new Error('COLLABORATION_TARGET_GENERATION_CHANGED');
-      const store = messageIntentWriter(), intent = store.accept(collaboration.message);
+      const store = messageIntentWriter();
+      let intent: ReturnType<typeof store.accept>;
+      try {
+        intent = store.accept(collaboration.message);
+      } catch (error) {
+        if (error instanceof Error && error.message === 'COLLABORATION_MESSAGE_ID_CONFLICT') {
+          params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, error.message));
+          return;
+        }
+        throw error;
+      }
       if (!store.claim(intent.id, intent.payload_digest)) {
         params.respond(true, { receipt: store.receipt(store.get(intent.id)!) }, undefined, { cached: true }); return;
       }
       await agentHandlers.agent({ req: params.req, client: params.client, context: params.context, isWebchatConnect: params.isWebchatConnect,
         params: { message: collaboration.message.message, sessionKey: canonicalKey, expectedSessionId: collaboration.message.target.sessionGeneration,
           workspaceId: collaboration.message.target.workspaceId, idempotencyKey: intent.dispatch_key, deliver: false,
+          ...(collaboration.message.actor === 'agent' ? { lane: resolveNestedAgentLaneForSession(canonicalKey) } : {}),
           sourceReplyDeliveryMode: 'message_tool_only', inputProvenance: collaboration.provenance },
         respond: (ok, payload, error, meta) => {
           releaseSendStartPermitOnce();
