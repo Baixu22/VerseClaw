@@ -467,6 +467,8 @@ flowchart LR
 
 检查入口：tests/e2e/session-collaboration-benefit.spec.ts。新文件测试在对应实现叶建立；继承必要的类型、contract/comms 和 Harness 检查。精选证据落 harness/specs/fixtures/session-collaboration-center/D4/，记录输入、原事件、命令/退出/计数、源/候选/产物哈希、来源状态与 actor；原始跑次走 D:/tmp。
 
+固定脚本输入位于 `harness/specs/fixtures/session-collaboration-center/D4/benchmark.json`。旅程逐组保存 `benefit-raw-pairs.json`，按任务回应、原调用、终态通知和 Main RSS 样本对照；同目录 `summarize.mjs` 读取原始记录并计算同对样本的 p50/p95。派发到启动和 Task Trace 排队时长各自保留。脚本组标明本地替身 provider，live 模型收益由同候选的独立运行提供。
+
 失败与回退：保留第一轮失败和对照材料，只优化对应消费点；不改变冻结输入或补填未观测指标。
 
 ### D5 裁定本周期是否需要可重建会话索引
