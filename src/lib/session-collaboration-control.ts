@@ -8,7 +8,10 @@ import type { AutonomySessionScope, ScopedRunId } from '@shared/types/identity-s
 export async function invokeSessionCollaborationControl(input: { action: SessionCollaborationControl; requester: AutonomySessionScope;
   target: AutonomySessionScope; run?: ScopedRunId | null; message?: string },
   openOwner: (action: SessionCollaborationControl, scope: AutonomySessionScope) => Promise<void> | void) {
-  const page = await readSessionCollaborationPage(parseSessionCollaborationQuery({ requester: input.requester, target: input.target, limit: 1 }));
+  const page = await readSessionCollaborationPage(
+    parseSessionCollaborationQuery({ requester: input.requester, target: input.target, limit: 1 }),
+    hostApi.sessionActivity.query,
+  );
   const row = page.items[0];
   if (!row?.detail || row.sources.session.state !== 'ready') throw new Error(`CONTROL_SOURCE_${page.reason ?? page.state}`);
   const descriptor = qualifySessionCollaborationControl(input.action, input.target, row.detail.scope, input.run ?? null, row.sources.run.value);

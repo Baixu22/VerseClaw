@@ -10,6 +10,7 @@ touchedAreas:
   - shared/types/session-collaboration-control.ts
   - src/lib/session-collaboration-control.ts
   - tests/unit/session-collaboration-control-semantics.test.ts
+  - tests/unit/session-collaboration-panel.test.tsx
   - tests/e2e/session-collaboration-controls.spec.ts
   - harness/specs/tasks/session-collaboration-b3.md
   - docs/dev/session-lifecycle-control-matrix.md
@@ -26,7 +27,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
-  - pnpm exec vitest run tests/unit/session-collaboration-control-semantics.test.ts --maxWorkers=1 --no-file-parallelism
+  - pnpm exec vitest run tests/unit/session-collaboration-control-semantics.test.ts tests/unit/session-collaboration-panel.test.tsx --maxWorkers=1 --no-file-parallelism
   - pnpm run test:e2e tests/e2e/session-collaboration-controls.spec.ts
   - pnpm run typecheck
   - pnpm run contract:check

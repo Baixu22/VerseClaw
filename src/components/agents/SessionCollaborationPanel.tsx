@@ -172,7 +172,9 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
           {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>
             <div className="flex flex-wrap gap-2 pt-3">{(Object.keys(SESSION_COLLABORATION_CONTROLS) as SessionCollaborationControl[]).filter(action => action !== 'message').map(action => <Button type="button" key={action} variant="outline"
               disabled={SESSION_COLLABORATION_CONTROLS[action].requiresRun && !row.sources.run.value}
-              onClick={() => void invokeSessionCollaborationControl({ action, requester, target: row.detail!.scope, run: row.sources.run.value }, () => openSession()).catch(() => setReadState('unavailable'))}>
+              onClick={() => void invokeSessionCollaborationControl({ action, requester, target: row.detail!.scope, run: row.sources.run.value }, () => openSession()).catch(() => {
+                if (current.current.viewKey === viewKey && current.current.selectedKey === selectedKey) setReadState('unavailable');
+              })}>
               {t(`collaboration.controls.${action}`)}</Button>)}</div>
           </details>}
           <details className="rounded-md border border-border p-2 text-xs text-muted-foreground"><summary className="cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.sourcesTitle')}</summary>

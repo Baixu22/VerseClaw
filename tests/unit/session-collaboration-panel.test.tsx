@@ -6,10 +6,13 @@ import { parseSessionCollaborationQuery, emptySessionCollaborationPage, type Ses
 import { createSessionActivityReadSnapshot } from '../../shared/types/session-activity';
 import { normalizeTaskReference } from '../../shared/types/identity-scope';
 
-const mocks = vi.hoisted(() => ({ query: vi.fn(), read: vi.fn(), watch: vi.fn(), cancel: vi.fn(), activate: vi.fn(), openPanel: vi.fn(),
+const mocks = vi.hoisted(() => ({ query: vi.fn(), read: vi.fn(), watch: vi.fn(), cancel: vi.fn(), stop: vi.fn(), activate: vi.fn(), openPanel: vi.fn(),
   notification: undefined as ((value: { method: string }) => void) | undefined,
   gatewayStatus: undefined as ((value: { state: string }) => void) | undefined }));
-vi.mock('../../src/lib/host-api', () => ({ hostApi: { sessionActivity: { query: mocks.query, read: mocks.read, watch: mocks.watch, cancelWatch: mocks.cancel } } }));
+vi.mock('../../src/lib/host-api', () => ({ hostApi: {
+  sessionActivity: { query: mocks.query, read: mocks.read, watch: mocks.watch, cancelWatch: mocks.cancel },
+  sessions: { stop: mocks.stop },
+} }));
 vi.mock('../../src/lib/host-events', () => ({ hostEvents: {
   onGatewayNotification: (listener: typeof mocks.notification) => { mocks.notification = listener; return () => {}; },
   onGatewayStatus: (listener: typeof mocks.gatewayStatus) => { mocks.gatewayStatus = listener; return () => {}; },
@@ -18,6 +21,7 @@ vi.mock('../../src/lib/workspace-session', () => ({ activateWorkspaceScopedSessi
 vi.mock('../../src/stores/artifact-panel', () => ({ openWorkspacePanel: mocks.openPanel }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, params?: { count?: number }) => `${key}${params?.count === undefined ? '' : `:${params.count}`}`, i18n: { language: 'en' } }) }));
 import { SessionCollaborationPanel } from '../../src/components/agents/SessionCollaborationPanel';
+import { invokeSessionCollaborationControl } from '../../src/lib/session-collaboration-control';
 import { subscribeSessionCollaboration, useSessionCollaborationUi } from '../../src/stores/session-collaboration';
 
 const a = { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'agent:main:a', sessionGeneration: 'generation-a' };
@@ -54,6 +58,21 @@ describe('shared collaboration panel', () => {
   it('keeps an unread requester separate from a real empty result', () => {
     render(<MemoryRouter><SessionCollaborationPanel /></MemoryRouter>);
     expect(screen.getByText('collaboration.requesterMissing')).toBeTruthy(); expect(mocks.query).not.toHaveBeenCalled();
+  });
+  it('qualifies stop through the Host reader before calling its scoped owner', async () => {
+    const target = parseSessionCollaborationQuery({ requester: b }).requester;
+    const control = { action: 'stop' as const, requester: input.requester, target };
+    const openOwner = vi.fn();
+    await invokeSessionCollaborationControl(control, openOwner);
+    expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ requester: input.requester, target, limit: 1 }));
+    expect(mocks.stop).toHaveBeenCalledWith({ sessionKey: b.sessionKey, workspaceId: b.workspaceId, expectedSessionId: b.sessionGeneration });
+    expect(openOwner).not.toHaveBeenCalled();
+
+    mocks.query.mockImplementationOnce(async query => ({
+      success: true, page: emptySessionCollaborationPage(query, 'stale', 'generation-changed'),
+    }));
+    await expect(invokeSessionCollaborationControl(control, openOwner)).rejects.toThrow('CONTROL_SOURCE_generation-changed');
+    expect(mocks.stop).toHaveBeenCalledOnce();
   });
   it('loads only the selected detail, preserves keyboard focus on refresh and cancels on unmount', async () => {
     const mounted = render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
