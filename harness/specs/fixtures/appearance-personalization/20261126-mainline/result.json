@@ -1,0 +1,44 @@
+{
+  "scope": "Windows Settings appearance, layout and conversation reading preferences",
+  "driven_by": "agent",
+  "actor": "Codex and Playwright",
+  "date": "2026-11-26",
+  "sourceCommit": "73607b3f9dfdff15823b91d4620740c36e40c5c5",
+  "baseCommit": "2aa1168619e4ba6dcbcb0bc90946d61afe6fc13e",
+  "sourceTree": "e4e114009abbb5ee23b8cc190c5401726a14149b",
+  "runtimeTree": "760857bb490c8948d448ab03e79f9e74d36be3d6",
+  "electron": "40.8.4",
+  "buildProvenance": "bound",
+  "result": "passed",
+  "routes": [
+    "general",
+    "models",
+    "agents",
+    "channels",
+    "skills",
+    "browser",
+    "system",
+    "developer",
+    "billing",
+    "archived",
+    "recovery",
+    "storage"
+  ],
+  "unitTestsPassed": 82,
+  "electronCases": [
+    "ok 1 tests\\e2e\\appearance-personalization.spec.ts:10:5 › personalizes real conversation text, persists across launches and restores appearance alone (29.0s)",
+    "ok 2 tests\\e2e\\settings-controls-fakecoding.spec.ts:34:9 › FakeCoding settings content alignment › renders reference card, row and control geometry in dark mode (7.3s)",
+    "ok 3 tests\\e2e\\settings-controls-fakecoding.spec.ts:34:9 › FakeCoding settings content alignment › renders reference card, row and control geometry in light mode (7.3s)",
+    "ok 4 tests\\e2e\\settings-controls-fakecoding.spec.ts:138:7 › FakeCoding settings content alignment › keeps rows readable and controls reachable at the minimum window (6.4s)",
+    "ok 5 tests\\e2e\\settings-theme-css.spec.ts:55:5 › applies CSS to settings pages, shared controls and portalled layers (15.2s)"
+  ],
+  "sourceGuardPassed": true,
+  "cleanup": "passed",
+  "remainingProcesses": 0,
+  "artifactsSha256": {
+    "appearance-zh-light.png": "b2bc44b2afa0064819af35a8231924c44d1fbb76eea6099e5426f0121aabf26e",
+    "appearance-zh-dark.png": "023904a496afd0b495dcc675e7dac9b606804514622cb78443e1659192d67172",
+    "appearance-zh-narrow.png": "9f229893550645e902bfcd62abf20ef0659751eaba55e6c6508ae970acc696c3",
+    "settings-computed-css.json": "163c43e348ff4798d74ca42bc6e5a7e6739ec397acb646bb3b790a3b678d5f12"
+  }
+}

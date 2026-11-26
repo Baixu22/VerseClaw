@@ -48,3 +48,7 @@ pnpm run test:e2e:run tests/e2e/appearance-personalization.spec.ts tests/e2e/set
 每次验收记录源码基线、构建产物、Electron 版本和结果目录。端到端用例通过正常设置入口操作，聊天历史与归档记录使用本地测试数据。配色断言读取可见 DOM 的 `getComputedStyle`，比较切换前后的值，并将设置路由与颜色读数写入 `settings-computed-css.json`。对比度断言使用实际解析颜色。截图用于复核裁切、换行及焦点位置。
 
 验收以三个端到端文件全部通过、源码变动检查通过、测试进程已清理为准。控件未挂载、实际色值未变、弹层颜色回退、重启丢失或窄屏越界均应保留失败记录。新增设置模块自动进入路由遍历；新增控件类型时，需在该模块实际打开控件，并补充对应的样式断言。
+
+## 主线集成实测
+
+2026 年 11 月 26 日，Windows Electron 40.8.4 对功能提交 `73607b3f9` 的 5 项端到端测试全部通过。测试遍历 12 个设置入口，验证了重启恢复、弹层配色、桌面双栏及 375 CSS px 宽窗口的大字号布局。青玉强调色与设置卡片的对比度在浅色模式为 5.67∶1，在深色模式为 5.73∶1。[验收记录](../../harness/specs/fixtures/appearance-personalization/20261126-mainline/result.json) · [CSS 实测数据](../../harness/specs/fixtures/appearance-personalization/20261126-mainline/settings-computed-css.json) · [中文界面](../../harness/specs/fixtures/appearance-personalization/20261126-mainline/appearance-zh-light.png)
