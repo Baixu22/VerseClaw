@@ -447,7 +447,7 @@ export function isMutatingToolCall(toolName: string, args: unknown): boolean {
     case "subagents":
       return action === "kill" || action === "steer";
     case "session_status":
-      return typeof record?.model === "string" && record.model.trim().length > 0;
+      return record?.readOnly !== true && typeof record?.model === "string" && record.model.trim().length > 0;
     case "team_orchestrate":
     case "task_loop":
     case "mission_loop":
@@ -482,6 +482,7 @@ export function requiresSessionTaskScope(toolName: string, args: unknown): boole
       "memory_search",
       "memory_get",
       "sessions_list",
+      "sessions_watch",
       "sessions_history",
       "sessions_yield",
       "get_goal",
@@ -490,7 +491,7 @@ export function requiresSessionTaskScope(toolName: string, args: unknown): boole
   ) {
     return false;
   }
-  if (name === "session_status") return record?.model !== undefined;
+  if (name === "session_status") return record?.readOnly !== true && record?.model !== undefined;
   if (name === "exec" || name === "bash")
     return !isPlainReadOnlyShellCommand(readShellCommand(record));
   if (name === "process")

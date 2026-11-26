@@ -45,6 +45,8 @@ import type { SessionDelegationReceipt } from '@shared/types/session-delegation'
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionActivitySubagent, SessionActivitySubagentStatus } from '@shared/types/session-activity';
 import type { TaskEvidence, TaskView } from '@shared/task-system/types';
+import { SessionCollaborationPanel } from '@/components/agents/SessionCollaborationPanel';
+import { parseSessionActivityReadQuery } from '@shared/types/session-activity';
 
 type RosterEntry = {
   key: string;
@@ -99,6 +101,9 @@ export function WorkspaceAgentsPanel() {
   const snapshot = useSessionActivityStore((s) => selectSessionActivitySnapshot(s, workspace?.id, sessionKey));
   const subagents = snapshot?.subagents;
   const parentGeneration = snapshot?.session.sessionId;
+  const collaborationScope = workspace?.id && parentGeneration ? parseSessionActivityReadQuery({ scope: {
+    workspaceId: workspace.id, projectId: workspace.id, sessionKey, sessionGeneration: parentGeneration,
+  } }).scope : undefined;
   const scopeKey = JSON.stringify([workspace?.id, sessionKey, parentGeneration]);
   const viewScope = useMemo(() => ({ key: scopeKey }), [scopeKey]);
   const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
@@ -252,6 +257,11 @@ export function WorkspaceAgentsPanel() {
 
   return (
     <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-agents-panel">
+      <details className="mb-3 shrink-0 rounded-md border border-border p-2">
+        <summary className="cursor-pointer text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('agents:collaboration.title')}</summary>
+        <div className="max-h-[28rem] overflow-y-auto pt-2"><SessionCollaborationPanel requester={collaborationScope}
+          workspace={collaborationScope ? { workspaceId: collaborationScope.workspaceId, projectId: collaborationScope.projectId } : undefined} /></div>
+      </details>
       <SessionDelegationStatus workspaceId={workspace?.id} sessionKey={sessionKey} generation={parentGeneration}
         receipt={dispatchReceipt} snapshot={snapshot} worker={subagents?.find((entry) => entry.id === selected?.key)}
         task={transcript?.key === selected?.key && transcript?.scope === viewScope ? transcript.task : null}

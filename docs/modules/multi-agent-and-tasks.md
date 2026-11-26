@@ -1,5 +1,15 @@
 # 多智能体、任务与工作流
 
+## 会话协作的任务与运行引用
+
+会话工具提供 `sessions_list({ collaboration: true })` 的有界发现与 `session_status({ readOnly: true, scope })` 的详情读取。UI 经 typed `sessionActivity.query` 使用相同字段和事实。查询按原 TaskSystem 目标搜索，保持任务 revision/digest、原 writer claim 与 observer 引用；真实来源仍由 SessionStore 提供。
+
+当前工具请求标为 inflight，实际 bash 进程标为 running，分别保留原 owner 的身份；没有记录的运行身份或未观测动作保持 unknown。只读状态请求由原 mutation/admission 分类识别为读取；同时请求模型更改会在工具入口拒绝。
+
+跨会话查询通过 `hostApi.sessionActivity.read` 提供显式范围与物理代次。两独立会话和子代理分别保留自己的 ScopedRun；子代理的真实 `spawnedBy` 来自 SessionStore，任务关系来自 TaskSystem。只读任务引用携带 authorityId、taskNodeId、revision、digest、原 claim 的 session/generation/epoch 和 `referenceOnly`，便于回到原 owner 继续读取目标和证据。
+
+TaskSystem 成功读取空绑定时返回 `empty`；缺失任务数据库返回 `unavailable`，过期的任务代次返回 `stale`。Workspace binding、执行域与后台来源各自携带状态和读取时间。读取使用原 schema 的只读连接，保持原 writer claim、验收与资源资格。
+
 任务快照读取持久事件与任务 owner 的记录。派生 JSON 缓存发生写锁争用时跳过该次刷新，读取与执行准入继续使用当前 owner 数据；显式缓存写入保留串行文件锁。
 
 后台队列派发读取聊天 owner 的接收回执。明确被拒绝的消息保留在原持久队列中并记录拒绝原因，可沿原会话继续核实和恢复。

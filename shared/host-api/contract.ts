@@ -74,7 +74,9 @@ import type {
   MemorySurfaceSnapshot,
   MemorySurfaceSource,
 } from '../types/memory';
-import type { SessionActivitySnapshot } from '../types/session-activity';
+import type { SessionActivitySnapshot, SessionActivityReadQuery } from '../types/session-activity';
+import type { SessionCollaborationQuery, SessionCollaborationPage } from '../types/session-collaboration';
+import type { SessionCollaborationWatch, SessionCollaborationWatchResult } from '../types/session-collaboration-watch';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -824,6 +826,7 @@ export type SessionActivitySnapshotResult = HostSuccess & {
   snapshot: SessionActivitySnapshot;
   runtimeAvailable: boolean;
 };
+export type SessionCollaborationQueryResult = HostSuccess & { page: SessionCollaborationPage };
 export type WorkspaceWebPreviewStartPayload = {
   mode?: WorkspacePreviewMode;
   targetPath?: string;
@@ -5971,6 +5974,10 @@ export type HostApiContract = {
   };
   sessionActivity: {
     snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
+    read: (payload: SessionActivityReadQuery) => SessionActivitySnapshotResult;
+    query: (payload: SessionCollaborationQuery) => SessionCollaborationQueryResult;
+    watch: (payload: SessionCollaborationWatch) => HostSuccess & { watch: SessionCollaborationWatchResult };
+    cancelWatch: (payload: { id: string; query: SessionCollaborationQuery }) => HostSuccess & { cancelled: boolean };
   };
   git: {
     init: () => GitOperationResult;

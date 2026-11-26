@@ -20,7 +20,35 @@ agent:<agentId>:<suffix>
 
 默认主会话是 `agent:main:main`。session key 不是 runId，也不是 Task Ledger node id。session stop 不完成任务；archive 不删除任务；run abort 不替代 session stop。
 
+### 跨会话身份读取
+
+`hostApi.sessionActivity.read({ scope, expectedBindingRevision?, expectedExecution? })` 读取显式的 workspace/project、sessionKey 和 sessionGeneration。Main 使用 typed `host:invoke`，经自己的 Gateway WebSocket 调用已有 `session.activitySnapshot`；Runtime 从原 SessionStore 和运行 registry 取得当前身份，并从执行域与 TaskSystem 读取原任务引用。
+
+`snapshot.readModel.sources` 分别标明会话、ScopedRun、任务、执行域、Workspace binding 和后台来源。`ready` 是已读事实，`empty` 是 owner 确认的空任务或无当前运行；`not_read` 表示尚未查询，`unavailable` 表示 owner 缺失或不可读，`stale` 表示代次或绑定已改变，`unknown` 表示缺少身份核验依据。消费者按来源状态读取值与 `readAt`。
+
+同 key 跨工作区、旧 generation、旧执行域或绑定 revision 会被拒绝。Runtime 读取后复核 session 与执行域，Main 在异步返回边界再次核对，reset 会丢弃整份旧关联。查询使用现有 SQLite 的只读连接；Workspace 选择、会话、任务、模型配置与资源准入保持原 owner 状态。
+
 ## 2. 持久化模型
+
+### 会话发现与轻量详情
+
+`hostApi.sessionActivity.query({ requester, workspace?, target?, search?, fields?, limit?, cursor? })` 与 agent 的 `sessions_list({ collaboration: true })` 消费同一读取合同。`requester` 绑定原 workspace/project/sessionKey/generation，`target` 固定详情的目标范围；`workspace` 过滤项目，`search` 匹配会话 metadata 与原 TaskSystem 目标。
+
+列表默认 20 条，最多 50 条，单次检查最多 100 个可见候选。游标绑定读取者、过滤条件、可见候选和原 metadata 身份，metadata 或读取策略变化、reset 均返回 stale。字段可选择 goal、tasks、run、actions、origin、execution；未选择的字段为 not_read。目标摘要最多 512 个 Unicode 字符，原任务 digest/revision 与详情引用保留，完整任务目标可通过 A1 `read` 接口按需取得。
+
+agent 使用 `session_status({ readOnly: true, scope: row.detail.scope })` 读取目标详情；不指定 scope 时读取当前运行的会话。只读模式拒绝模型更改，跳过转录用量与状态卡的配置写入。读取结果包含原任务目标、writer/observer 引用、ScopedRun、实际工具/进程动作和逐来源状态。
+
+查询先应用既有 visibility、A2A allow 与 sandbox 读取策略，再读取任务和动作；它不读取完整 transcript，不调用摘要模型，也不切换活动工作区。实际动作从原 session-task effect request 和 bash process owner 投影，工具的 ScopedRun 使用 Main 原准入结果；待准入、缺少归属或运行中尚未观测到动作时保留 unknown。同 key/generation 的准入工作区或项目不符返回 unavailable/scope-mismatch。搜索无法核验的目标计入 unknownMatches；每个执行根在一次查询中只尝试一个任务连接，旧 schema 保持原数据并返回 unavailable。
+
+协作模式使用上述 workspace、search、fields、limit、cursor 参数；混入旧列表模式的过滤或转录参数会被拒绝。Main、UI 和工具共同校验返回范围、字段选择与读取预算，缺少 session owner 的行不携带任务或运行事实。
+
+回复的旧 requester、当前会话行或详情代次返回 `stale/generation-changed`，同代范围不符返回 `stale/scope-mismatch`。`not_read` 的 `readAt` 为 null，未知搜索匹配保留 unknown；重复会话行、未知原因码和失败页的分页游标被共同拒绝为 `unknown/protocol-unverified`。
+
+Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`；读取已返回但合法页缺失时为 `unknown/protocol-unverified`。Main、UI 与只读会话工具保留请求者身份并清除事实和分页，参数与发送者身份仍在读取前校验。
+
+`sessions_watch({ scope, condition, run?, cursor?, timeoutMs? })` 与 typed `sessionActivity.watch` 按原 owner 条件等待。`run-terminal` 使用原 ScopedRun，`task-receipt` 等待 TaskSystem 回执，`idle` 仅表示会话空闲；`changed` 和 `blocking-changed` 补读已变化的原来源。单次最长 25 秒，返回游标可供重连与去重；页面卸载通过 `cancelWatch` 释放该读取者的等待，不发送消息或调用目标模型。
+
+系统总览和项目会话面板提供同一个会话协作视图，可搜索其他会话的目标、查看已观测动作并选中来源详情。列表分页读取，详情和历史按需打开；更新保留搜索、选择和键盘焦点。会话、worker 历史和任务入口使用既有导航，来源未读取或不可用时显示相应状态。
 
 核心实现：
 

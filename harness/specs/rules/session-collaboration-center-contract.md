@@ -6,6 +6,7 @@ appliesTo:
   - session-collaboration-center
   - session-collaboration-center-plan
   - session-collaboration-identity-read-model
+  - session-collaboration-a2
 ---
 # 会话协作中心合同
 
@@ -16,9 +17,15 @@ appliesTo:
 - 新边界复用 shared/types/identity-scope.ts、ScopedRunId 与原 task/session/checkout 引用。逻辑 key、物理 generation、run、claim epoch、绑定 revision 和检出实例分别携带，不从字符串或目录猜测。
 - SessionActivity 是共用跨 owner 读模型。TaskSystem 持有任务目标、依赖、领取和完成；会话、消息、进程、资源及经验状态各由已有 owner 写入。材料投影与索引不成为第二状态源。
 - 每次查询和控制绑定显式 scope。部分来源 unavailable/stale/unknown 逐来源返回；相同 key 在不同工作区不能共用观测或草稿。
+- 工具动作的 ScopedRun 保留原 Main 准入身份；待准入请求保持 unknown，同 key/generation 的工作区或项目不符返回 unavailable/scope-mismatch。只读副本不改写原在途请求或准入结果。
 - Task 链接只关联工作，不产生会话血缘；真实来源消费 SessionDerivation 与 session store。读取不隐式创建任务、claim、会话或数据库。
 
 ## 通信与控制
+
+- 共用发现和详情读取绑定原 requester/target scope；模型参数不成为读取者身份。沿同一 Query 合同消费原 owner，先做 visibility/A2A/sandbox 筛选，再读取任务和动作。字段未选保留 not_read；cursor 绑定 metadata 身份，来源变化或 reset 拒绝旧页。只读状态请求跳过模型配置与转录统计，mutation/admission 分类同样保持只读。
+- 共用回复校验保留 generation-changed 与同代 scope-mismatch 的区别，当前会话行与 requester 身份一致。每页会话 key 唯一；not_read 没有观测时间并使用 source-not-read，来源原因码消费原 SessionActivity 合同。未知匹配不能写成 empty，失败或过期页不保留分页游标和计数。
+- 发现/详情的 owner 读取失败返回 unavailable/owner-unavailable，已完成读取但缺失合法 Query 页返回 unknown/protocol-unverified；Main、UI 与既有工具使用相同结果。输入和调用者身份的拒绝发生在读取前，不被此错误投影吞掉。
+- 条件等待只拥有监听与有界游标，绑定原读取者、目标代次、ScopedRun 和条件。原运行终态、会话空闲与 TaskSystem 回执分别读取；取消、超时和卸载释放监听，重连补读与未知事件缺口不制造完成事实。
 
 - Renderer 使用 typed host-api / host:invoke；Main 持有 Gateway WebSocket。新增协作模块不直连 Gateway，也不恢复本地 HTTP fallback。
 - 优先扩展现有 sessions_list、session_status 的只读模式、sessions_history 和 sessions_send；新增有条件等待仅拥有订阅及结果引用。

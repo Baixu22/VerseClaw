@@ -5,7 +5,12 @@ import type {
   SessionActivityTask,
   SessionActivityTerminalStatus,
 } from '@shared/types/session-activity';
-import { createEmptySessionActivitySnapshot } from '@shared/types/session-activity';
+import { createEmptySessionActivitySnapshot, createSessionActivityReadSnapshot, fenceSessionActivityRead, parseSessionActivityReadQuery } from '@shared/types/session-activity';
+import { normalizeAutonomySessionScope } from '@shared/types/identity-scope';
+import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from './workspaces-api';
+import { canonicalPath } from '../../shared/task-system/identity';
+import { emptySessionCollaborationPage, parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
+import { parseSessionCollaborationWatch, validateSessionCollaborationWatch, type SessionCollaborationWatchResult } from '@shared/types/session-collaboration-watch';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import type { GatewayManager } from '../gateway/manager';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
@@ -125,6 +130,100 @@ export function createSessionActivityApi({
   const taskLedgerApi = createTaskLedgerApi();
 
   return {
+    watch: async (input) => {
+      const request = parseSessionCollaborationWatch(input);
+      const failed = (state: 'unknown' | 'unavailable', reason: 'protocol-unverified' | 'owner-unavailable' | 'owner-missing'): SessionCollaborationWatchResult =>
+        ({ schemaVersion: 'SessionCollaborationWatch/v1', id: request.id, state, cursor: null, event: null,
+          page: emptySessionCollaborationPage(request.query, state, reason) });
+      try {
+        if (!await getWorkspaceRootPathById(request.query.requester.workspaceId)) return { success: true, watch: failed('unavailable', 'owner-missing') };
+        const result = await ctx.gatewayManager!.rpc<{ watch: SessionCollaborationWatchResult }>('session.activitySnapshot', { watch: request }, request.timeoutMs! + 5_000);
+        return { success: true, watch: validateSessionCollaborationWatch(request, result?.watch) ?? failed('unknown', 'protocol-unverified') };
+      } catch { return { success: true, watch: failed('unavailable', 'owner-unavailable') }; }
+    },
+    cancelWatch: async (input) => {
+      const query = parseSessionCollaborationQuery(input.query);
+      if (typeof input.id !== 'string' || !/^[A-Za-z0-9._:-]{1,160}$/.test(input.id)) throw new TypeError('Watch ID required');
+      const result = await ctx.gatewayManager!.rpc<{ cancelled: boolean }>('session.activitySnapshot', { cancelWatch: { id: input.id, query } }, 5_000);
+      return { success: true, cancelled: result.cancelled === true };
+    },
+    query: async (input) => {
+      const query = parseSessionCollaborationQuery(input);
+      try {
+        const root = await getWorkspaceRootPathById(query.requester.workspaceId);
+        if (!root) return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-missing') };
+        const response = await gatewayManager.rpc<{ page: SessionCollaborationPage }>('session.activitySnapshot', { query });
+        if (await getWorkspaceRootPathById(query.requester.workspaceId) !== root)
+          return { success: true, page: emptySessionCollaborationPage(query, 'stale', 'scope-mismatch') };
+        return { success: true, page: validateSessionCollaborationPage(query, response?.page) };
+      } catch { return { success: true, page: emptySessionCollaborationPage(query, 'unavailable', 'owner-unavailable') }; }
+    },
+    read: async (input) => {
+      const query = parseSessionActivityReadQuery(input);
+      let snapshot = createSessionActivityReadSnapshot(query.scope);
+      const result = () => ({ success: true as const, snapshot, runtimeAvailable: snapshot.readModel.sources.session.state === 'ready' });
+      const fence = (state: 'unavailable' | 'stale' | 'unknown', reason: Parameters<typeof fenceSessionActivityRead>[2]) => {
+        snapshot = fenceSessionActivityRead(snapshot, state, reason); return result();
+      };
+      const root = await getWorkspaceRootPathById(query.scope.workspaceId);
+      if (!root) return fence('unavailable', 'owner-missing');
+      let binding: Awaited<ReturnType<typeof getPersistedCoordinatorBinding>>;
+      try { binding = structuredClone(await getPersistedCoordinatorBinding(query.scope.workspaceId, query.scope.sessionKey)); }
+      catch { return fence('unavailable', 'owner-unavailable'); }
+      if (query.expectedBindingRevision !== undefined && binding?.bindingRevision !== query.expectedBindingRevision)
+        return fence('stale', 'binding-changed');
+      if (binding?.sessionGeneration && binding.sessionGeneration !== query.scope.sessionGeneration)
+        return fence('stale', 'generation-changed');
+      try {
+        const response = await gatewayManager.rpc<RuntimeActivityResponse>('session.activitySnapshot', query);
+        const read = response.snapshot?.readModel;
+        if (read?.schemaVersion !== 'SessionCollaborationRead/v1') return fence('unknown', 'protocol-unverified');
+        normalizeAutonomySessionScope(read.scope, query.scope);
+        if (read.sources.session.state === 'ready') {
+          normalizeAutonomySessionScope(read.sources.session.value.scope, query.scope);
+          if (response.snapshot?.session?.sessionKey !== query.scope.sessionKey || response.snapshot.session.sessionId !== query.scope.sessionGeneration)
+            return fence('stale', 'scope-mismatch');
+          if (read.sources.run.state === 'ready' && read.sources.run.value) normalizeAutonomySessionScope({ ...read.sources.run.value.scope,
+            sessionGeneration: query.scope.sessionGeneration }, query.scope);
+        }
+        snapshot = { ...snapshot, ...response.snapshot, readModel: read };
+        const [afterRoot, afterBinding] = await Promise.all([
+          getWorkspaceRootPathById(query.scope.workspaceId), getPersistedCoordinatorBinding(query.scope.workspaceId, query.scope.sessionKey),
+        ]);
+        if (afterRoot !== root || JSON.stringify(afterBinding) !== JSON.stringify(binding)) return fence('stale', 'binding-changed');
+        if (binding && read.sources.execution.state === 'ready'
+          && canonicalPath(binding.environment.canonicalRoot) !== read.sources.execution.value.executionWorktree)
+          return fence('stale', 'execution-changed');
+        // The Host await is another reset boundary; revalidate against a fresh Runtime owner read.
+        const final = await gatewayManager.rpc<RuntimeActivityResponse>('session.activitySnapshot', query);
+        const finalRead = final.snapshot?.readModel;
+        if (finalRead?.schemaVersion !== 'SessionCollaborationRead/v1') return fence('unknown', 'protocol-unverified');
+        if (finalRead?.sources.session.state !== 'ready') {
+          if (read.sources.session.state === 'ready') {
+            const source = finalRead.sources.session;
+            if (source.state === 'stale' || source.state === 'unavailable' || source.state === 'unknown') return fence(source.state, source.reason);
+            return fence('unknown', 'protocol-unverified');
+          }
+        } else {
+          normalizeAutonomySessionScope(finalRead.sources.session.value.scope, query.scope);
+          if (final.snapshot?.session?.sessionKey !== query.scope.sessionKey || final.snapshot.session.sessionId !== query.scope.sessionGeneration)
+            return fence('stale', 'scope-mismatch');
+          if (finalRead.sources.run.state === 'ready' && finalRead.sources.run.value) normalizeAutonomySessionScope({ ...finalRead.sources.run.value.scope,
+            sessionGeneration: query.scope.sessionGeneration }, query.scope);
+        }
+        if (read.sources.execution.state === 'ready' && finalRead?.sources.execution.state === 'ready'
+          && JSON.stringify(read.sources.execution.value) !== JSON.stringify(finalRead.sources.execution.value)) return fence('stale', 'execution-changed');
+        const [finalRoot, finalBinding] = await Promise.all([
+          getWorkspaceRootPathById(query.scope.workspaceId), getPersistedCoordinatorBinding(query.scope.workspaceId, query.scope.sessionKey),
+        ]);
+        if (finalRoot !== root || JSON.stringify(finalBinding) !== JSON.stringify(binding)) return fence('stale', 'binding-changed');
+        snapshot = { ...snapshot, ...final.snapshot, readModel: finalRead };
+        snapshot.readModel.sources.binding = binding
+          ? { owner: 'workspaces', state: 'ready', readAt: Date.now(), value: { bindingRevision: binding.bindingRevision, sessionGeneration: binding.sessionGeneration, state: binding.state } }
+          : { owner: 'workspaces', state: 'unavailable', readAt: Date.now(), value: null, reason: 'owner-missing' };
+      } catch { return fence('unavailable', 'owner-unavailable'); }
+      return result();
+    },
     snapshot: async (payload: SessionActivitySnapshotPayload) => {
       const sessionKey = payload.sessionKey?.trim();
       if (!sessionKey) throw new Error('sessionKey is required');

@@ -31,6 +31,8 @@ Trajectory reads prepare their session data when requested; closing a connection
 
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
+Session tools support bounded discovery and read-only details for other sessions, including task goals, run references, observed actions and source availability. See [Sessions](docs/modules/sessions.md).
+
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
 
 Chat groups ordinary streamed text updates by animation frame. Approvals, cancellation, errors and completion publish immediately; completed message content stays stable while the active reply grows.

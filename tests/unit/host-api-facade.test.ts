@@ -15,6 +15,24 @@ beforeEach(() => {
 });
 
 describe('hostApi facade', () => {
+  it('discovers collaboration facts through typed Main host:invoke', async () => {
+    hostInvoke.mockResolvedValue({ ok: true, data: { success: true } });
+    const { hostApi } = await import('@/lib/host-api');
+    const { parseSessionCollaborationQuery } = await import('@shared/types/session-collaboration');
+    const input = parseSessionCollaborationQuery({ requester: { workspaceId: 'workspace-a', projectId: 'workspace-a',
+      sessionKey: 'agent:main:requester', sessionGeneration: 'generation-a' }, limit: 20, fields: ['goal', 'tasks'] });
+    await hostApi.sessionActivity.query(input);
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({ module: 'sessionActivity', action: 'query', payload: input }));
+  });
+  it('reads a collaboration scope through typed Main host:invoke', async () => {
+    hostInvoke.mockResolvedValue({ ok: true, data: { success: true } });
+    const { hostApi } = await import('@/lib/host-api');
+    const { parseSessionActivityReadQuery } = await import('@shared/types/session-activity');
+    const input = parseSessionActivityReadQuery({ scope: { workspaceId: 'workspace-a', projectId: 'workspace-a',
+      sessionKey: 'agent:main:read', sessionGeneration: 'generation-a' }, expectedBindingRevision: 3 });
+    await hostApi.sessionActivity.read(input);
+    expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({ module: 'sessionActivity', action: 'read', payload: input }));
+  });
   it('reads system portfolio and project identity through Main', async () => {
     hostInvoke.mockResolvedValue({ ok: true, data: {} });
     const { hostApi } = await import('@/lib/host-api');

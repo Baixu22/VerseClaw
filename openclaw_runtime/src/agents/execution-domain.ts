@@ -10,6 +10,7 @@ import { TaskSystemStore } from "../../../shared/task-system/store.js";
 import { checkoutWriterSnapshot } from "./worktree-writer.js";
 import { TASK_SCHEMA_VERSION } from '../../../shared/task-system/store.js';
 import { withExecutionTaskBarrier } from './execution-task-barrier.js';
+import { resolveExecutionStatePath } from '../state/execution-state-db.js';
 
 type DomainDatabase = Pick<DB, "execution_domain_registrations">;
 export type ExecutionDomainRegistration = {
@@ -31,8 +32,11 @@ export type ExecutionDomainResolution =
   | { state: "registered"; local: TaskDomain; authority: TaskDomain; registration: ExecutionDomainRegistration }
   | { state: "unavailable"; reason: string };
 
-function readRegistration(domainId: string): ExecutionDomainRegistration | null {
-  const { db } = openOpenClawStateDatabase();
+function readRegistration(domainId: string, readOnly = false): ExecutionDomainRegistration | null {
+  const db = readOnly
+    ? new (requireNodeSqlite().DatabaseSync)(resolveExecutionStatePath(), { readOnly: true })
+    : openOpenClawStateDatabase().db;
+  try {
   const query = getNodeSqliteKysely<DomainDatabase>(db);
   const row = executeSqliteQueryTakeFirstSync(db, query.selectFrom("execution_domain_registrations").selectAll().where("domain_id", "=", domainId));
   if (!row) return null;
@@ -42,6 +46,7 @@ function readRegistration(domainId: string): ExecutionDomainRegistration | null 
     throw new Error("execution_domain_registration_invalid");
   }
   return value;
+  } finally { if (readOnly) db.close(); }
 }
 
 /** Read-only probing never creates a task database or upgrades its schema. */
@@ -57,10 +62,10 @@ function assertAuthorityDatabase(domain: TaskDomain): void {
   } finally { db.close(); }
 }
 
-export function resolveExecutionDomain(workspaceRoot: string, expectedProjectRevision?: number): ExecutionDomainResolution {
+export function resolveExecutionDomain(workspaceRoot: string, expectedProjectRevision?: number, readOnly = false): ExecutionDomainResolution {
   try {
     const local = resolveTaskDomain(workspaceRoot);
-    const registration = readRegistration(local.id);
+    const registration = readRegistration(local.id, readOnly);
     if (!registration) return { state: "independent", local, authority: local };
     if (registration.domainRootIdentity !== filesystemInstance(local.root)) throw new Error("execution_clone_replaced");
     if (expectedProjectRevision !== undefined && registration.projectRevision !== expectedProjectRevision) {
@@ -74,7 +79,7 @@ export function resolveExecutionDomain(workspaceRoot: string, expectedProjectRev
     }
     // Only a direct local authority is accepted; registration chains cannot
     // silently redirect a task or form a loop across independent clones.
-    if (readRegistration(authority.id)) throw new Error("execution_task_authority_indirect");
+    if (readRegistration(authority.id, readOnly)) throw new Error("execution_task_authority_indirect");
     assertAuthorityDatabase(authority);
     return { state: "registered", local, authority: { ...authority, worktree: local.worktree }, registration };
   } catch (error) {

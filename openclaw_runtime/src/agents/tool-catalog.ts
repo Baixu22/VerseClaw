@@ -343,6 +343,14 @@ const CORE_TOOL_DEFINITIONS: CoreToolDefinition[] = [
     includeInOpenClawGroup: true,
   },
   {
+    id: 'sessions_watch',
+    label: 'sessions_watch',
+    description: 'Wait for a scoped session owner event without calling its model',
+    sectionId: 'sessions',
+    profiles: ['coding', 'messaging'],
+    includeInOpenClawGroup: true,
+  },
+  {
     id: "sessions_history",
     label: "sessions_history",
     description: SESSIONS_HISTORY_TOOL_DISPLAY_SUMMARY,

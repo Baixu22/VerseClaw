@@ -1,4 +1,52 @@
 {
+    "collaboration": {
+        "title": "会话协作",
+        "description": "查找正在进行的工作，并按需读取原始来源。",
+        "refresh": "刷新",
+        "requesterMissing": "打开具有已知工作区的会话后，可读取相关工作。",
+        "search": "搜索会话和任务目标",
+        "loading": "正在读取会话来源…",
+        "stale": "保留上次观测；当前来源需要重新读取。",
+        "results": "最近结果",
+        "resources": "资源",
+        "unknownMatches": "目标匹配未知：{{count}} 项",
+        "more": "下一页",
+        "close": "关闭详情",
+        "openSession": "打开会话",
+        "openWorker": "读取 worker 历史",
+        "openTask": "打开任务",
+        "sourcesTitle": "来源与身份",
+        "page": {
+            "not_read": "尚未读取会话来源。",
+            "ready": "已列出 {{count}} 个会话。",
+            "empty": "没有匹配的会话。",
+            "unavailable": "会话来源当前不可用。",
+            "stale": "会话身份已改变，请刷新当前状态。",
+            "unknown": "部分会话来源尚无法核验。"
+        },
+        "status": {
+            "running": "运行中",
+            "idle": "空闲",
+            "unknown": "活动未知"
+        },
+        "sources": {
+            "ready": "可读取",
+            "empty": "为空",
+            "not_read": "未读取",
+            "unavailable": "不可用",
+            "stale": "已过期",
+            "unknown": "未知"
+        },
+        "fields": {
+            "session": "会话",
+            "goal": "目标",
+            "tasks": "任务",
+            "run": "运行",
+            "actions": "动作",
+            "origin": "来源关系",
+            "execution": "执行域"
+        }
+    },
     "title": "Agents",
     "subtitle": "创建新的 Agent，可以将特定频道路由到不同的人格配置或工作区。",
     "refresh": "刷新",
