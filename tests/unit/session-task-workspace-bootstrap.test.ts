@@ -8,6 +8,7 @@ import { openExecutionTaskStore } from '../../openclaw_runtime/src/agents/execut
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
+import { resolveExecutionStatePath } from '../../openclaw_runtime/src/state/execution-state-db';
 
 describe('workspace bootstrap preserves established task ownership', () => {
   let fixture: string;
@@ -43,8 +44,10 @@ describe('workspace bootstrap preserves established task ownership', () => {
     } finally { store.close(); }
   });
   it('still initializes Git for a new workspace with no task authority', async () => {
+    expect(existsSync(resolveExecutionStatePath())).toBe(false);
     await ensureAgentWorkspace({ dir: workspace, ensureBootstrapFiles: true });
     expect(existsSync(join(workspace, '.git'))).toBe(true);
     expect(existsSync(join(workspace, 'AGENTS.md'))).toBe(true);
+    expect(existsSync(resolveTaskDomain(workspace).database)).toBe(false);
   });
 });

@@ -28,6 +28,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/tool-mutation.test.ts
   - openclaw_runtime/src/agents/agent-tools.ts
   - openclaw_runtime/src/agents/workspace.ts
+  - openclaw_runtime/src/agents/execution-task-barrier.ts
   - openclaw_runtime/src/agents/tools/persistent-task-tool.ts
   - src/stores/chat.ts
   - src/pages/Chat/index.tsx

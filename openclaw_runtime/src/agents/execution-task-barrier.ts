@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, realpathSync } from 'node:fs';
+import { existsSync, mkdirSync, realpathSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { withTaskLedgerJournalLockSync } from '../../../shared/task-ledger-journal-lock.js';
 import { resolveExecutionStatePath } from '../state/execution-state-db.js';
@@ -9,6 +9,7 @@ const held = new Set<string>();
 /** Registration, first Task open and cleanup use the same ordered domain locks. */
 export function withExecutionTaskBarrier<T>(domainIds: string[], operation: () => T): T {
   const stateFile = resolve(resolveExecutionStatePath());
+  mkdirSync(dirname(stateFile), { recursive: true });
   const actual = existsSync(stateFile) ? realpathSync.native(stateFile) : resolve(realpathSync.native(dirname(stateFile)), basename(stateFile));
   const prefix = process.platform === 'win32' ? actual.toLowerCase() : actual;
   const keys = [...new Set(domainIds)].map(id => `${prefix}.task-domain-${createHash('sha256').update(id).digest('hex')}`)
