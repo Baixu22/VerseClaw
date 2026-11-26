@@ -147,10 +147,27 @@ test('Project RAG packs real owner evidence for ordinary, media, queued, retry a
     expect(general.synthesisMode).toBe('model');
     expect(general.claims).toEqual(expect.arrayContaining([expect.objectContaining({ kind: 'general', citations: [] })]));
     await writeFile(join(vault, 'concepts/conflict-port.md'), document('Conflict port', 'The deployment port is 9999.'));
+    const withClaim = (body: string) => body.replace('revision: 1\n', 'revision: 1\nclaims:\n  - id: deployment-port\n    text: '
+      + (body.includes('9999') ? 'The deployment port is 9999.' : quote) + '\n');
+    await writeFile(join(vault, 'concepts/z-first.md'), withClaim(document('Z first', quote)));
+    await writeFile(join(vault, 'concepts/conflict-port.md'), withClaim(document('Conflict port', 'The deployment port is 9999.')));
     const conflict = await qaAnswer('RAG10 conflict deployment ports', 'strict', [...selected,
       { id: 'concepts/conflict-port.md', path: 'concepts/conflict-port.md', kind: 'wiki' }]);
     expect(conflict.synthesisMode).toBe('unknown'); expect(JSON.stringify(conflict.unknowns)).toContain('different deployment ports');
+    expect(conflict.conflictSet).toEqual(expect.arrayContaining([expect.objectContaining({
+      key: 'claim:deployment-port', stances: expect.arrayContaining([quote, 'The deployment port is 9999.']),
+    })]));
+    await writeFile(join(vault, 'concepts/ambiguous-claim.md'), document('Repeated claim', 'Port reference\nPort')
+      .replace('revision: 1\n', 'revision: 1\nclaims:\n  - id: transport\n    text: Port\n'));
+    const readRepeated = (lineCount: number) => host<Json>(page, 'knowledge', 'get', {
+      lookup: 'concepts/ambiguous-claim.md', corpus: 'wiki', workspaceId: owner.id, fromLine: 1, lineCount,
+    });
+    const repeatedPartial = await readRepeated(1), repeatedComplete = await readRepeated(2);
+    expect(repeatedPartial.claims).toEqual([]);
+    expect(repeatedComplete.claims).toEqual([{ id: 'transport', text: 'Port' }]);
+    receipt.claimOccurrence = { partialReadExcluded: true, completeReadIncluded: true };
     receipt.answerContract = { unsupported, missing, general, conflict };
+    await writeFile(join(vault, 'concepts/z-first.md'), document('Z first', quote));
 
     await page.getByTestId('sidebar-nav-knowledge').click();
     await expect(page.getByTestId('knowledge-page')).toBeVisible();

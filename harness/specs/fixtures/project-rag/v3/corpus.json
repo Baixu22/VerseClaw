@@ -1,0 +1,2070 @@
+{
+  "schema": "ProjectRagCorpus/v1",
+  "id": "project-rag-v3",
+  "frozenAt": "2026-11-10T04:49:07.401Z",
+  "repositoryRevision": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+  "actor": "codex/project-rag-corpus-author",
+  "driven_by": "agent",
+  "sourceCount": 54,
+  "description": "Pinned real project files; agent-authored four-language queries and file-delivery tasks. No natural-user cohort is claimed.",
+  "owner": {
+    "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+    "vault": "harness/specs/fixtures/project-rag/v3/owner/vault",
+    "workspaceId": "rag-corpus-workspace",
+    "principalId": "operator"
+  },
+  "families": [
+    {
+      "id": "owner-version",
+      "split": "calibration",
+      "sourceIds": [
+        "owner-version-1",
+        "owner-version-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "wiki-read-policy",
+      "split": "calibration",
+      "sourceIds": [
+        "wiki-read-policy-1",
+        "wiki-read-policy-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "host-knowledge-scope",
+      "split": "calibration",
+      "sourceIds": [
+        "host-knowledge-scope-1",
+        "host-knowledge-scope-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "bounded-page-read",
+      "split": "calibration",
+      "sourceIds": [
+        "bounded-page-read-1",
+        "bounded-page-read-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "source-set-limit",
+      "split": "calibration",
+      "sourceIds": [
+        "source-set-limit-1",
+        "source-set-limit-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "cjk-tokenizer",
+      "split": "calibration",
+      "sourceIds": [
+        "cjk-tokenizer-1",
+        "cjk-tokenizer-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "memory-temporal",
+      "split": "calibration",
+      "sourceIds": [
+        "memory-temporal-1",
+        "memory-temporal-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "host-deadline",
+      "split": "calibration",
+      "sourceIds": [
+        "host-deadline-1",
+        "host-deadline-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "host-action-timeouts",
+      "split": "calibration",
+      "sourceIds": [
+        "host-action-timeouts-1",
+        "host-action-timeouts-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "development-commands",
+      "split": "calibration",
+      "sourceIds": [
+        "development-commands-1",
+        "development-commands-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "session-continuity",
+      "split": "validation",
+      "sourceIds": [
+        "session-continuity-1",
+        "session-continuity-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "workspace-preflight",
+      "split": "validation",
+      "sourceIds": [
+        "workspace-preflight-1",
+        "workspace-preflight-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "provider-accounts",
+      "split": "validation",
+      "sourceIds": [
+        "provider-accounts-1",
+        "provider-accounts-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "usage-aggregation",
+      "split": "validation",
+      "sourceIds": [
+        "usage-aggregation-1"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "knowledge-governance",
+      "split": "validation",
+      "sourceIds": [
+        "knowledge-governance-1",
+        "knowledge-governance-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "local-embedding-model",
+      "split": "validation",
+      "sourceIds": [
+        "local-embedding-model-1"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "existing-semantic-provider",
+      "split": "validation",
+      "sourceIds": [
+        "existing-semantic-provider-1"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "role-memory-store",
+      "split": "validation",
+      "sourceIds": [
+        "role-memory-store-1"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "file-path-boundary",
+      "split": "validation",
+      "sourceIds": [
+        "file-path-boundary-1"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "task-working-context",
+      "split": "validation",
+      "sourceIds": [
+        "task-working-context-1"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "dcs-turn-budget",
+      "split": "held-out",
+      "sourceIds": [
+        "dcs-turn-budget-1",
+        "dcs-turn-budget-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "context-candidates",
+      "split": "held-out",
+      "sourceIds": [
+        "context-candidates-1",
+        "context-candidates-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "context-resource-contract",
+      "split": "held-out",
+      "sourceIds": [
+        "context-resource-contract-1",
+        "context-resource-contract-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "background-admission",
+      "split": "held-out",
+      "sourceIds": [
+        "background-admission-1",
+        "background-admission-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "bounded-cache",
+      "split": "held-out",
+      "sourceIds": [
+        "bounded-cache-1",
+        "bounded-cache-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "provider-outbound-quota",
+      "split": "held-out",
+      "sourceIds": [
+        "provider-outbound-quota-1",
+        "provider-outbound-quota-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "backup-restore",
+      "split": "held-out",
+      "sourceIds": [
+        "backup-restore-1",
+        "backup-restore-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "experience-adoption",
+      "split": "held-out",
+      "sourceIds": [
+        "experience-adoption-1",
+        "experience-adoption-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "orchestration-capacity",
+      "split": "held-out",
+      "sourceIds": [
+        "orchestration-capacity-1",
+        "orchestration-capacity-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    },
+    {
+      "id": "role-contracts",
+      "split": "held-out",
+      "sourceIds": [
+        "role-contracts-1",
+        "role-contracts-2"
+      ],
+      "grouping": "original-repository-file-and-explicit-companions"
+    }
+  ],
+  "sources": [
+    {
+      "id": "owner-version-1",
+      "familyId": "owner-version",
+      "split": "calibration",
+      "path": "owner/vault/concepts/owner-version-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/owner-version-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:8000dfb0c37e3d8bd389b78c324e0777432f003cf2b747edbdcba733e6442c18",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts",
+        "gitBlob": "cb4187e72f7027fcc4c3e2af3583af6d38a3117a",
+        "digest": "sha256:ec29e3828d7f1fb43842aef78cf8cb2c15d717db30a00510165b1374c49135c7",
+        "startByte": 476,
+        "endByteExclusive": 14747
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "owner-version-2",
+      "familyId": "owner-version",
+      "split": "calibration",
+      "path": "owner/vault/concepts/owner-version-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/owner-version-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:7e265844a91b4a6ccc69d5110ed6b21c09e2b3361e92bfdbfc49c20370687a17",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/knowledge/owner-read-contract.ts",
+        "gitBlob": "11e7c08f9177022fe35617f41ab37966862916ec",
+        "digest": "sha256:314fa83aec385bb7188d9e70a0b690c53e45906be120db6e3fd440edbc7ab65f",
+        "startByte": 440,
+        "endByteExclusive": 637
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "wiki-read-policy-1",
+      "familyId": "wiki-read-policy",
+      "split": "calibration",
+      "path": "owner/vault/concepts/wiki-read-policy-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/wiki-read-policy-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:a91b3e2edb0438fa8dece7b0379732de02a6592135957f85bef6b194a2d114cf",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/extensions/memory-wiki/src/owner-read.ts",
+        "gitBlob": "fdf34be26a66d779fa84b45131183298a97e917e",
+        "digest": "sha256:0149c6bcf71182ff05d2ba893a6997b8ed5d64151fcbd1e2fa21591829b17ad2",
+        "startByte": 476,
+        "endByteExclusive": 10193
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "wiki-read-policy-2",
+      "familyId": "wiki-read-policy",
+      "split": "calibration",
+      "path": "owner/vault/concepts/wiki-read-policy-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/wiki-read-policy-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:a809d98525f184b9e36a8a8334fb3baf6abda95533b686f27e179dd0d740dd6a",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/extensions/memory-wiki/src/query.ts",
+        "gitBlob": "18ff9264bb3e870ccaae81e9ddf299a6de6ea67c",
+        "digest": "sha256:b2b4fd31f9b59b5165543a8e325bb8a3da227d5027018fb1456da0f44a2490a5",
+        "startByte": 466,
+        "endByteExclusive": 54932
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "host-knowledge-scope-1",
+      "familyId": "host-knowledge-scope",
+      "split": "calibration",
+      "path": "owner/vault/concepts/host-knowledge-scope-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/host-knowledge-scope-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:27a6970aa420e16c475f8d1cf718457d2160aa92743ac72602e730e242d66540",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/knowledge-read-scope.ts",
+        "gitBlob": "1405938144e885d650959ddb552cb59cd9428cea",
+        "digest": "sha256:b00b8cf9dcf914b596099696830298e2d6a964fd67dd653daaed3ca89d7c0d20",
+        "startByte": 444,
+        "endByteExclusive": 4842
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "host-knowledge-scope-2",
+      "familyId": "host-knowledge-scope",
+      "split": "calibration",
+      "path": "owner/vault/concepts/host-knowledge-scope-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/host-knowledge-scope-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:5265c13dea7f60e09fbd4779eca234db5a52c0e240bdd6d567619ce1981e631f",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/chat-api.ts",
+        "gitBlob": "1b83c8b6279112cc132f35a4fc6acfbe7d1dbaa0",
+        "digest": "sha256:e3bafb89235e8891cb0e73871c97d8f3a148cc5379913aba125a17573f6575f5",
+        "startByte": 420,
+        "endByteExclusive": 34941
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "bounded-page-read-1",
+      "familyId": "bounded-page-read",
+      "split": "calibration",
+      "path": "owner/vault/concepts/bounded-page-read-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/bounded-page-read-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:254236d1968db256e6ffbcebe24ff023e78f6eef7f9076642afb89ae907ccefa",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/knowledge-source-set-answer.ts",
+        "gitBlob": "ede9ac05218cd50985c69b9319b9a7f28c76abe7",
+        "digest": "sha256:2d277d64bf3a05da78bd040ff4341efae6a800df8474bc505e7751eb9b0e1b05",
+        "startByte": 458,
+        "endByteExclusive": 18886
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "bounded-page-read-2",
+      "familyId": "bounded-page-read",
+      "split": "calibration",
+      "path": "owner/vault/concepts/bounded-page-read-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/bounded-page-read-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:b3ba41fd910fbcbe77e72321b96e1eb70c6dae97c1cf7edd609114da06808463",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/knowledge-evidence-qa.ts",
+        "gitBlob": "aa8b5c1f36297692e70eebcce7b014c399067413",
+        "digest": "sha256:2fe36720f89633d63041dde737e029c72f7d2a0b9a70f101998a56129f5205f4",
+        "startByte": 446,
+        "endByteExclusive": 7439
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "source-set-limit-1",
+      "familyId": "source-set-limit",
+      "split": "calibration",
+      "path": "owner/vault/concepts/source-set-limit-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/source-set-limit-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:7f453ee7193e7c389da71ab7d8506bbc05284f096eff771c38958b295a485523",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/context-engine/source-set.ts",
+        "gitBlob": "49eaa218bb3688de18030aabeb1905e534cbd521",
+        "digest": "sha256:0f7fc2147f7c08a2f9282aeb9c4011797835526c815581bec187effda7299579",
+        "startByte": 460,
+        "endByteExclusive": 37444
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "source-set-limit-2",
+      "familyId": "source-set-limit",
+      "split": "calibration",
+      "path": "owner/vault/concepts/source-set-limit-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/source-set-limit-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:fa0fada4a28653cc201b16c66e59a757c4d4a4ef7b11dc81de49f13b791b73c3",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/context-engine/assembler.ts",
+        "gitBlob": "2b82fe4b91bb794bf3ebdf2d2bc22ba8f1213add",
+        "digest": "sha256:22470211584dcff5ceb07010268321aff9211fdbe2d1b3186717f774a32cf216",
+        "startByte": 458,
+        "endByteExclusive": 31674
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "cjk-tokenizer-1",
+      "familyId": "cjk-tokenizer",
+      "split": "calibration",
+      "path": "owner/vault/concepts/cjk-tokenizer-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/cjk-tokenizer-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:d10c778ee1cb5d0f8944de9599b7aee1c05f60a43f8f5cd47b6d0e7106b94279",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/runtime-core/memory-tokenization.ts",
+        "gitBlob": "344efdc412be5a09af635f70d183693d3c670048",
+        "digest": "sha256:531e61a22590b1d8a9f59a7b4c9a011ca5aaa7779fbb3e8dc57998bd7c73ac06",
+        "startByte": 474,
+        "endByteExclusive": 862
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "cjk-tokenizer-2",
+      "familyId": "cjk-tokenizer",
+      "split": "calibration",
+      "path": "owner/vault/concepts/cjk-tokenizer-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/cjk-tokenizer-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:7f5277c331126592f4484e2423390a964959c57a7eb8bdfeb954428ca3754316",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+        "gitBlob": "9346cddb51962a11ddc87facd51cf9d90595565f",
+        "digest": "sha256:0ca3c52f6473bee79384dcb7edd691f47beeded3cd184d0e76f8f4e3ecc54721",
+        "startByte": 482,
+        "endByteExclusive": 45958
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "memory-temporal-1",
+      "familyId": "memory-temporal",
+      "split": "calibration",
+      "path": "owner/vault/concepts/memory-temporal-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/memory-temporal-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:b226f73afc537aee86a02c4192c5c28f8f64a059f7cc0e9aa3a55606cee060d3",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/runtime-core/memory-temporal-policy.ts",
+        "gitBlob": "3e15ce8ff0e75d319c37565edd6c24e6906b57e1",
+        "digest": "sha256:063ac60bf8f4b061116dd9cbb00b57c498d8a3a3ea204680276ad76471a6a5a0",
+        "startByte": 480,
+        "endByteExclusive": 12263
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "memory-temporal-2",
+      "familyId": "memory-temporal",
+      "split": "calibration",
+      "path": "owner/vault/concepts/memory-temporal-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/memory-temporal-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:c7a6f7cf636fee00fa36607858d9c7a68c7b5ef3535205ba451ad61c4df68bf6",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/runtime-core/memory-temporal-detector.ts",
+        "gitBlob": "33d55290b158db2180ef86ee0ba35f9184c017c6",
+        "digest": "sha256:30c3df954e9dd463ee06bff6c7746f339a2d4da40c0dbf3622e75bd69a749255",
+        "startByte": 484,
+        "endByteExclusive": 2070
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "host-deadline-1",
+      "familyId": "host-deadline",
+      "split": "calibration",
+      "path": "owner/vault/concepts/host-deadline-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/host-deadline-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:e5a991a3526c827b48e8575dcb878a316750745caf414011ca9c31cebb43eade",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/host-api/host-deadline.ts",
+        "gitBlob": "4191f1ab8ba5ce5da529a86d277ff72ab77a77c5",
+        "digest": "sha256:3d1d88cd4ccd9387986df61df4356b13d57face03c578fdad3f7ecd1b902d175",
+        "startByte": 426,
+        "endByteExclusive": 5243
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "host-deadline-2",
+      "familyId": "host-deadline",
+      "split": "calibration",
+      "path": "owner/vault/concepts/host-deadline-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/host-deadline-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:d592ebe7980aea95cd602208cefc40e0d32f372113395dbedc9b5cdef8d3c3d3",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "src/lib/host-api-client.ts",
+        "gitBlob": "c6c4799779fc84b3229e85c1a5feaa69e18a9291",
+        "digest": "sha256:2da01aca16076e805d24b7dce5bbb039ce970475bfd92cdcd6b6b2605a7705a0",
+        "startByte": 414,
+        "endByteExclusive": 10481
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "host-action-timeouts-1",
+      "familyId": "host-action-timeouts",
+      "split": "calibration",
+      "path": "owner/vault/concepts/host-action-timeouts-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/host-action-timeouts-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:64917b3b3045979cab0e229e2d4e4b4dfd49d10315334eb06c3609cc54ac27b2",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/host-api/host-action-timeouts.ts",
+        "gitBlob": "736b219fadff891338aef524588d3e107af04a00",
+        "digest": "sha256:5e90cfaad91f1f38886fe07a3aea112125c834b7ea3a3abff345d97037beed6f",
+        "startByte": 440,
+        "endByteExclusive": 2300
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "host-action-timeouts-2",
+      "familyId": "host-action-timeouts",
+      "split": "calibration",
+      "path": "owner/vault/concepts/host-action-timeouts-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/host-action-timeouts-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:6d4d1781caa6521a0f5a88d74e64de863b550f10a64b86e860fdd7dec2abfe08",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/main/ipc/host-invoke.ts",
+        "gitBlob": "84e92d0604dbc4bd841e7692e4acad5cb93edb95",
+        "digest": "sha256:d66eda648f78d98f7ed1c28491843ba7f1d3c197b007aaa09c1ae81ea883cc0f",
+        "startByte": 426,
+        "endByteExclusive": 14035
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "development-commands-1",
+      "familyId": "development-commands",
+      "split": "calibration",
+      "path": "owner/vault/concepts/development-commands-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/development-commands-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:3f843ec65e794bd349b6c4de67ecbf15177651ed8d6d04806d97dc05f4c0b5cc",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "docs/modules/development-and-validation.md",
+        "gitBlob": "375149c6b939215066d0e5c0fb6354761e1f6c30",
+        "digest": "sha256:69a6b7011e592e29cd4ff36656282f4f5c9cd071bf6dfa65922d01d5e4573b79",
+        "startByte": 444,
+        "endByteExclusive": 13913
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "development-commands-2",
+      "familyId": "development-commands",
+      "split": "calibration",
+      "path": "owner/vault/concepts/development-commands-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/development-commands-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:7bcbda8622e1d5180f1a9d71bb879331aedc80b1797ec39b4443bdb2d71076ce",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "scripts/harness-ci.mjs",
+        "gitBlob": "45c266d4d1ab19ce915490049a7554d5d1226949",
+        "digest": "sha256:19ab9f1e15e60c944290b1293dbd975c162656f94e9314614c44755e589b8a37",
+        "startByte": 406,
+        "endByteExclusive": 2885
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "session-continuity-1",
+      "familyId": "session-continuity",
+      "split": "validation",
+      "path": "owner/vault/concepts/session-continuity-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/session-continuity-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:a2f4f3687548fe23a2c83a6caf10fa6c57174d6728ead11bf26efbd3404dbeb0",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "docs/modules/sessions.md",
+        "gitBlob": "bdc1cdd4ed2788e199f6e6113d9f70416f83b1a8",
+        "digest": "sha256:cdc6486400de48fae62a966b6c24724a30c895da86c6129610c056381dd7ba62",
+        "startByte": 408,
+        "endByteExclusive": 18443
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "session-continuity-2",
+      "familyId": "session-continuity",
+      "split": "validation",
+      "path": "owner/vault/concepts/session-continuity-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/session-continuity-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:525ba7004f802db8889acc6c2c8d9cd3c35405aa028a1d258dac974f6cf47846",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "src/stores/chat/history-rpc-params.ts",
+        "gitBlob": "62a1456cd40074f7ca932ba23bbdeb70e31826b3",
+        "digest": "sha256:484f38e46b260f828b3a16f09cc505cf6a7a052ddd9d50353f2e431aa3ce6f37",
+        "startByte": 436,
+        "endByteExclusive": 2757
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "workspace-preflight-1",
+      "familyId": "workspace-preflight",
+      "split": "validation",
+      "path": "owner/vault/concepts/workspace-preflight-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/workspace-preflight-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:2400d3e6021a1fdc502181df19b48f5d912849fd866f9af7660bf8d835da997a",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "docs/modules/workspace-and-coding.md",
+        "gitBlob": "389a33f476009c62c41b09f106ee0c021aac4335",
+        "digest": "sha256:6df199bda1a30d4ff80ef2284ec35050686f1dcae0c3790b53ef9b1451886b0f",
+        "startByte": 432,
+        "endByteExclusive": 14946
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "workspace-preflight-2",
+      "familyId": "workspace-preflight",
+      "split": "validation",
+      "path": "owner/vault/concepts/workspace-preflight-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/workspace-preflight-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:42252eac3b8f6ad99a922d5270321cb1d08a93d8908a226e2a2ce67d2f925650",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/types/workspace.ts",
+        "gitBlob": "502ac876e0a88ea6e8a1f5ac0bfa7b229c9a82ea",
+        "digest": "sha256:9dcd02931e63f2f64658a11ba33fa5c247501e98f38dba9d59aaccf47bcb357d",
+        "startByte": 412,
+        "endByteExclusive": 16171
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "provider-accounts-1",
+      "familyId": "provider-accounts",
+      "split": "validation",
+      "path": "owner/vault/concepts/provider-accounts-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/provider-accounts-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:de69269f34252f59b39e5f5d5571609b526ead62e1eea5f9d2944d522771df27",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "docs/modules/llm-and-models.md",
+        "gitBlob": "4b7c962517eada7af1068560cd73d58f8d2056da",
+        "digest": "sha256:e1ee75666575c377e10c8b84f9d5d4aeeff85f5395f47fe3ff4ec3a38a36aad6",
+        "startByte": 420,
+        "endByteExclusive": 13966
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "provider-accounts-2",
+      "familyId": "provider-accounts",
+      "split": "validation",
+      "path": "owner/vault/concepts/provider-accounts-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/provider-accounts-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:ca2550f590f78e389fdbf4cecae0edd86ca817c0b206f06f41d668bcdb1f2e71",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "src/lib/providers.ts",
+        "gitBlob": "533c16ea4bca719f35f92edfcb3ff5c55a09539c",
+        "digest": "sha256:f4495962cd20d1ad34dce1f31f34c60509f95c7b54effb742c371ad065e34936",
+        "startByte": 402,
+        "endByteExclusive": 12101
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "usage-aggregation-1",
+      "familyId": "usage-aggregation",
+      "split": "validation",
+      "path": "owner/vault/concepts/usage-aggregation-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/usage-aggregation-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:7384d3f99fd12b262cadbae8f7699a440055b29ed848cb0da02d68cc3494b1d4",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/usage-api.ts",
+        "gitBlob": "75da694481f539a52573f91ddeeea3834bd5580f",
+        "digest": "sha256:96971438d38b5f2203f801db2bbee272cb521e5b0a4d49b8e4700864252c20a6",
+        "startByte": 422,
+        "endByteExclusive": 13522
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "knowledge-governance-1",
+      "familyId": "knowledge-governance",
+      "split": "validation",
+      "path": "owner/vault/concepts/knowledge-governance-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/knowledge-governance-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:d915fb6d120dea747751c8393d913dd3e0ebdefd8afee43105bda791a69668ac",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "docs/modules/knowledge-base.md",
+        "gitBlob": "9ad8367d66f002f9700c2d63cfb1814b02f20dee",
+        "digest": "sha256:4a8e5eb45cd81805f6dc49d876c2568bc789ac1a6a3c5bc223b18a1e0384bfe1",
+        "startByte": 420,
+        "endByteExclusive": 18401
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "knowledge-governance-2",
+      "familyId": "knowledge-governance",
+      "split": "validation",
+      "path": "owner/vault/concepts/knowledge-governance-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/knowledge-governance-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:74e8fec81443c5cee5a38eaa3f3c2f107d1c564fc5d3c561797cd22197502296",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/knowledge-api.ts",
+        "gitBlob": "14dd49a4f189be3cd5c2ca89b58506c35e49cec5",
+        "digest": "sha256:779a9801fd7bedd7aa7a50872d0760500c724f181962d9ea5d79e555331f6d7c",
+        "startByte": 430,
+        "endByteExclusive": 258220
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "local-embedding-model-1",
+      "familyId": "local-embedding-model",
+      "split": "validation",
+      "path": "owner/vault/concepts/local-embedding-model-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/local-embedding-model-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:940c86c493babd6aba920d9595d66cee9b293a580b2d641177b4882dd7c2316b",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/memory-host-sdk/host/embedding-defaults.ts",
+        "gitBlob": "c2b23ff1a6be160e92c898d59e711af728c29d34",
+        "digest": "sha256:b44509612df04b6109364f239d8bf9394526b6243081b8cf0a7beefc8e2a38ef",
+        "startByte": 488,
+        "endByteExclusive": 705
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "existing-semantic-provider-1",
+      "familyId": "existing-semantic-provider",
+      "split": "validation",
+      "path": "owner/vault/concepts/existing-semantic-provider-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/existing-semantic-provider-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:964b907ce5147d85d795ea82fad61a5173724d1443a852c632db1a77a4d84816",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/knowledge-embedding-provider.ts",
+        "gitBlob": "a820d6ac7052957aeda9ac2015fa7fd1123c895c",
+        "digest": "sha256:1c3dca66c70565a2b997a52cb95073bbe5fac742abbc1329bffda40438049cae",
+        "startByte": 460,
+        "endByteExclusive": 8623
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "role-memory-store-1",
+      "familyId": "role-memory-store",
+      "split": "validation",
+      "path": "owner/vault/concepts/role-memory-store-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/role-memory-store-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:1f631d66dbcc0b573e806c80e106dd39af52e83cd98cfcf76c8d79fbd97d3a4a",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/memory/memory-store.ts",
+        "gitBlob": "dc1f17cb3c4b1c1adfca437e86ccbfc0aded100b",
+        "digest": "sha256:9263b43075fead3d5449c7bd5bfee3ea86d947a045d83c226ab9ad00ff4ff513",
+        "startByte": 448,
+        "endByteExclusive": 95347
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "file-path-boundary-1",
+      "familyId": "file-path-boundary",
+      "split": "validation",
+      "path": "owner/vault/concepts/file-path-boundary-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/file-path-boundary-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:20e42905777f78a480bef763c634667e76610f64451b608dd8ced29388b836f7",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/path-broker.ts",
+        "gitBlob": "f4c48f208ec6b2cb1b61ad65283c2c4784816990",
+        "digest": "sha256:56cfd721fcc11fdcf0749c0e1425d93997afa9a762e798d884f321b4f922452f",
+        "startByte": 426,
+        "endByteExclusive": 5153
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "task-working-context-1",
+      "familyId": "task-working-context",
+      "split": "validation",
+      "path": "owner/vault/concepts/task-working-context-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/task-working-context-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:fc649febb70c024d27cc67ca305912b1ad9e6d28159b85ee1d579ee448a6e13d",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/types/task-ledger.ts",
+        "gitBlob": "df4422f0798ef4269ec5507d191b33811a69edbc",
+        "digest": "sha256:75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413",
+        "startByte": 416,
+        "endByteExclusive": 8487
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "dcs-turn-budget-1",
+      "familyId": "dcs-turn-budget",
+      "split": "held-out",
+      "path": "owner/vault/concepts/dcs-turn-budget-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/dcs-turn-budget-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:71d1aaf5d44ea305e60a1b5ccdf99436daf4eb95a96115ca612050888c3a4492",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+        "gitBlob": "16c4af932286e8d7dfb0f95296999498be95dd64",
+        "digest": "sha256:8f6aa04cd7c61d26c2d50a8fcf1a86c84bfa0da274e0b696721f73ef8ea595e7",
+        "startByte": 482,
+        "endByteExclusive": 28515
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "dcs-turn-budget-2",
+      "familyId": "dcs-turn-budget",
+      "split": "held-out",
+      "path": "owner/vault/concepts/dcs-turn-budget-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/dcs-turn-budget-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:5eb1c71e5da3d8b0fe531a35ad901ff852a56ce1e9e5be42132e004ac0fc538e",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/context-engine/injection-budget-config-source.ts",
+        "gitBlob": "4bc1082989e4fcbca3ce3dd08a15b5d13adb59b2",
+        "digest": "sha256:336191781d7083575457a14204ebd00d10e355dce4b8c1434793824818310abf",
+        "startByte": 500,
+        "endByteExclusive": 5203
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "context-candidates-1",
+      "familyId": "context-candidates",
+      "split": "held-out",
+      "path": "owner/vault/concepts/context-candidates-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/context-candidates-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:e00f1d525bd9ad577cf7d5575556375ba3052cc191b9582f11a2fa8ca6131ff0",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+        "gitBlob": "7e2589bc80ffb5e9e936b397cd1500cd442ce2b7",
+        "digest": "sha256:1607c6f0483b46caefd548b0e24cfb7d4d732493c5edf96f328e0d27b7bde5ba",
+        "startByte": 474,
+        "endByteExclusive": 18105
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "context-candidates-2",
+      "familyId": "context-candidates",
+      "split": "held-out",
+      "path": "owner/vault/concepts/context-candidates-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/context-candidates-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:a339a361ea0f5df79833548b0d6c27e00731a86c727fb3841c7eb395fd89db0c",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+        "gitBlob": "76821c36a469dd4730973cea6aa7bc1f8cbfae77",
+        "digest": "sha256:5f1dc9f761dc0ecb73b209f61c2dd7ccd6355d7c62c5436182a6169797c9bf72",
+        "startByte": 480,
+        "endByteExclusive": 41551
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "context-resource-contract-1",
+      "familyId": "context-resource-contract",
+      "split": "held-out",
+      "path": "owner/vault/concepts/context-resource-contract-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/context-resource-contract-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:8c96008c0f209514248a8986e3a1f151bc13aa7df644e3e4357fd6f0c739d0ca",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/types/context-runtime-kit.ts",
+        "gitBlob": "5d345fca4b5c42bd2bd4cf70ae99f9e7baca25ae",
+        "digest": "sha256:e6c245f352a72aaf082658ec68a85c3f31a9ea10464e38e0f90668d6c235867a",
+        "startByte": 432,
+        "endByteExclusive": 18202
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "context-resource-contract-2",
+      "familyId": "context-resource-contract",
+      "split": "held-out",
+      "path": "owner/vault/concepts/context-resource-contract-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/context-resource-contract-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:62a99f1efac01b0382b7a9528afa1534a775fafe605614b13056b12781db8d63",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "docs/context-runtime-kit/README.md",
+        "gitBlob": "738a7ad60954dd6aeaa6fee89568a9571f26a006",
+        "digest": "sha256:073315996a7414c4c50b970ecdf6cbe9d8aae03a85bcb43512284eae308dd3b7",
+        "startByte": 428,
+        "endByteExclusive": 3482
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "background-admission-1",
+      "familyId": "background-admission",
+      "split": "held-out",
+      "path": "owner/vault/concepts/background-admission-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/background-admission-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:6404ebf43df51f6fcb3d778bce039af5ce2071d9d55148a244a3659c677d0c77",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/resources/background-work-gate.ts",
+        "gitBlob": "4be7066fb318619692029e3b90423a2c5d329e2f",
+        "digest": "sha256:d5dd54a337748aa17b496952071b295cae95ec093fbbf06d03f63d1fb883ef06",
+        "startByte": 470,
+        "endByteExclusive": 7573
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "background-admission-2",
+      "familyId": "background-admission",
+      "split": "held-out",
+      "path": "owner/vault/concepts/background-admission-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/background-admission-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:0406a47d5e2c0fcf464d108e69f7809d57c9a228e15f4014e688ebd43c12ea44",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/types/resources.ts",
+        "gitBlob": "cf29192252b2d221789d0cff9fcf3d3d7b6a10c5",
+        "digest": "sha256:eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713",
+        "startByte": 412,
+        "endByteExclusive": 5025
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "bounded-cache-1",
+      "familyId": "bounded-cache",
+      "split": "held-out",
+      "path": "owner/vault/concepts/bounded-cache-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/bounded-cache-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:ad0e70dda2e88e1a0782d2af4c504ee0109456f94b364be809333f96cba67029",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/resources/bounded-cache.ts",
+        "gitBlob": "b2a5a5cf73088a2f26e80e219fad67a1de04f502",
+        "digest": "sha256:c86fc2a7e65c9bf2b30e43101680b79b92456ef74be7c4e9413dca323f5c9149",
+        "startByte": 428,
+        "endByteExclusive": 4735
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "bounded-cache-2",
+      "familyId": "bounded-cache",
+      "split": "held-out",
+      "path": "owner/vault/concepts/bounded-cache-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/bounded-cache-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:4acfb6b872a8af53486efe44e90fc3afb90f9aac2c82b3fce665a9369051fc47",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "shared/resources/singleflight.ts",
+        "gitBlob": "c9ba2315554f6a5736d9a8a2de71da9d6873cf4b",
+        "digest": "sha256:b64ecaa252e1208ad02f245f6724ac5d9cba327af9f7810bffd4bc6629e2abd8",
+        "startByte": 426,
+        "endByteExclusive": 3287
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "provider-outbound-quota-1",
+      "familyId": "provider-outbound-quota",
+      "split": "held-out",
+      "path": "owner/vault/concepts/provider-outbound-quota-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/provider-outbound-quota-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:fdf5492155d336dd32f628c13f28004944aca959d436473403d30ce8534750c9",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/agents/provider-outbound-budget.ts",
+        "gitBlob": "3ba1661fd8c279e2c8a784e7b296dde74b807333",
+        "digest": "sha256:bf0a267416aa9033b1dd6ca11abebba5e9cd344caf75b612bf2b858252b00a95",
+        "startByte": 472,
+        "endByteExclusive": 23270
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "provider-outbound-quota-2",
+      "familyId": "provider-outbound-quota",
+      "split": "held-out",
+      "path": "owner/vault/concepts/provider-outbound-quota-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/provider-outbound-quota-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:0adf74008a6e8e1c5f0e739c466e6cbb1a74544445a653f63233666aa45eef87",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "docs/modules/resources-and-observability.md",
+        "gitBlob": "da580fcb633196b1a2b549aa769e2a3d7b07b6b4",
+        "digest": "sha256:6ac78f4bf8c478f11a2776dbf671a8ccf2f1b18b382e52e6799c60d5a1917c39",
+        "startByte": 446,
+        "endByteExclusive": 27610
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "backup-restore-1",
+      "familyId": "backup-restore",
+      "split": "held-out",
+      "path": "owner/vault/concepts/backup-restore-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/backup-restore-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:b58a7f7c15c9cec3fd6935ae32342cc6e3fb91179268d310dea87fb18ea95acd",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "electron/services/backup-restore.ts",
+        "gitBlob": "1cef4e32c1146e4aeca9d81854dc0ee9b668713d",
+        "digest": "sha256:302f7fcb268b8d74f67f20450a7d7ca9355e95441b680d7f3f6aec6aa4e28d6b",
+        "startByte": 432,
+        "endByteExclusive": 14482
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "backup-restore-2",
+      "familyId": "backup-restore",
+      "split": "held-out",
+      "path": "owner/vault/concepts/backup-restore-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/backup-restore-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:36f2f2b7d74cfa7d1f36abe0fe3ab142e7c121d066b8a359787aeca9d238d0b7",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/infra/backup-create.ts",
+        "gitBlob": "943c4ed15468bbd19348eb65c503824e391a1cd9",
+        "digest": "sha256:77b1c1ea2f44d485cb1eca1566e8d867a0345ab3a2eeeb42c6ab9e3cf23a70f6",
+        "startByte": 448,
+        "endByteExclusive": 13191
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "experience-adoption-1",
+      "familyId": "experience-adoption",
+      "split": "held-out",
+      "path": "owner/vault/concepts/experience-adoption-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/experience-adoption-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:e24ea861545589d1b25e9e82a71b5c7a3e80185732a561de1367fc77c85d67de",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+        "gitBlob": "06552522211d9401f5a673fcb23007ee6c113db6",
+        "digest": "sha256:b302db8fcbe618f7b44731d2d6cd58db5a3eaf62bf60f25d78d30c4dd889c215",
+        "startByte": 470,
+        "endByteExclusive": 43933
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "experience-adoption-2",
+      "familyId": "experience-adoption",
+      "split": "held-out",
+      "path": "owner/vault/concepts/experience-adoption-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/experience-adoption-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:309c57bf192125171d5e5a000ca98faee0a056123d810d527afe1a5b96f4737d",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/knowledge/sekb/feature-flags.ts",
+        "gitBlob": "49574190883b62060dd396619354d8c6a5a17c63",
+        "digest": "sha256:4d5773fba3f02f1b33205e404e1390f243d5639d7ec944f6746590efbea4b227",
+        "startByte": 466,
+        "endByteExclusive": 3991
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "orchestration-capacity-1",
+      "familyId": "orchestration-capacity",
+      "split": "held-out",
+      "path": "owner/vault/concepts/orchestration-capacity-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/orchestration-capacity-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:177ce8dc148b01f0e43d72ab0dde8e0054bc590910ff4add945158a802c5dfff",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+        "gitBlob": "4ef0b6b6d62a5ab01e9e22a5eaf8aedf8cff4e8f",
+        "digest": "sha256:42092785352056b4cdea850077475a375f2d151f3b4aa1ae36a360905e2c6b1e",
+        "startByte": 488,
+        "endByteExclusive": 11143
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "orchestration-capacity-2",
+      "familyId": "orchestration-capacity",
+      "split": "held-out",
+      "path": "owner/vault/concepts/orchestration-capacity-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/orchestration-capacity-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:79f958dd3cb9d9e556ccba68e3b6f862aaa92260c360ea165f10e189de4dc37c",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/agents/role-router.ts",
+        "gitBlob": "164b6fa5982e55c4e666f52bca1f0bc74820959d",
+        "digest": "sha256:d523e9cd1510725f4889ebb40f1a7f4ab5f70f059f2829c29439453309ce5a5a",
+        "startByte": 446,
+        "endByteExclusive": 6435
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "role-contracts-1",
+      "familyId": "role-contracts",
+      "split": "held-out",
+      "path": "owner/vault/concepts/role-contracts-1.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/role-contracts-1.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:c45fa11e3616886c1e534bc588770c11179d4702989eb3c82e1acbda3abff035",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/agents/role-contract.ts",
+        "gitBlob": "d3ea21d9ae55f77e87cc79a0aa61780cdaf65b84",
+        "digest": "sha256:2c795e993a9693afd7d418fa7406b3485d54d8d9bde325d9cbaa5a4a007a7d29",
+        "startByte": 450,
+        "endByteExclusive": 19455
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    },
+    {
+      "id": "role-contracts-2",
+      "familyId": "role-contracts",
+      "split": "held-out",
+      "path": "owner/vault/concepts/role-contracts-2.md",
+      "ref": {
+        "domain": "wiki",
+        "authorityId": "memory-wiki",
+        "namespaceId": "memory-wiki:7110f60d21ad6a8a9bf581eb4588349e813fad654f6aa07de4097210a393e139",
+        "subjectId": "concepts/role-contracts-2.md",
+        "revision": "1",
+        "schema": "SourceRef/v2",
+        "sourceDigest": "sha256:29f94f01c6a72344e40d517fc02a0d66772db4dc5796ba5dbb65ae95e6d3f1a9",
+        "policyEpoch": "sha256:225a2aa5d474c5c792ce0d72a72a87b3e6d2b15926dc27302de137402c662154"
+      },
+      "ownerRevision": "1",
+      "origin": {
+        "repository": "ClawX",
+        "commit": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+        "path": "openclaw_runtime/src/agents/team-template.ts",
+        "gitBlob": "042c2e7e1107bf4de8ff2cbcd077a14b2d46eeb6",
+        "digest": "sha256:b1aebaf41972b2af39a5d0e469a60496867838fd2abe8cf004b4fe5d099c554d",
+        "startByte": 450,
+        "endByteExclusive": 3546
+      },
+      "normalization": "verbatim-pinned-git-bytes-inside-owner-page",
+      "authorship": {
+        "actor": "codex/project-rag-corpus-author",
+        "driven_by": "agent",
+        "origin": "real-project-source",
+        "verifiedAt": "2026-11-10T04:49:07.401Z"
+      }
+    }
+  ],
+  "queryCount": 240,
+  "taskCount": 60,
+  "negativeCount": 64,
+  "oracleVisibility": "evaluator-only; never materialize oracle or global request registries into a participant workspace"
+}

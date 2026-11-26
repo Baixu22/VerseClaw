@@ -1,0 +1,1 @@
+export function runRagCommand(argv: string[], options: { cwd: string; env: NodeJS.ProcessEnv; log: string; timeoutMs: number }): Promise<{ exitCode: number | null; timedOut: boolean; durationMs: number }>;

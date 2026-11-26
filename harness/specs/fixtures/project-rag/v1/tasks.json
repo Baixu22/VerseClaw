@@ -1,0 +1,2982 @@
+[
+  {
+    "id": "t-owner-version-1",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "configuration-repair",
+    "queryId": "q-owner-version-1-en",
+    "title": "configuration-repair: owner-version/coordinateSpace",
+    "instruction": "Which coordinate space must an owner citation use?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-owner-version-1.json",
+    "requiredFields": [
+      "coordinateSpace"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "coordinateSpace": null
+      },
+      "untouched": {
+        "requestId": "t-owner-version-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-owner-version-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-owner-version-2",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "configuration-repair",
+    "queryId": "q-owner-version-2-zh",
+    "title": "configuration-repair: owner-version/endIsExclusive",
+    "instruction": "owner 引用范围是否包含结束字节？请以 endIsExclusive 表达。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-owner-version-2.json",
+    "requiredFields": [
+      "endIsExclusive"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "endIsExclusive": null
+      },
+      "untouched": {
+        "requestId": "t-owner-version-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-owner-version-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-wiki-read-policy-1",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "configuration-repair",
+    "queryId": "q-wiki-read-policy-1-ja",
+    "title": "configuration-repair: wiki-read-policy/defaultStatus",
+    "instruction": "Wiki のメタデータに status がない場合、どの状態になりますか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-wiki-read-policy-1.json",
+    "requiredFields": [
+      "defaultStatus"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultStatus": null
+      },
+      "untouched": {
+        "requestId": "t-wiki-read-policy-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-wiki-read-policy-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-wiki-read-policy-2",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "configuration-repair",
+    "queryId": "q-wiki-read-policy-2-ru",
+    "title": "configuration-repair: wiki-read-policy/readContextLifetimeMs",
+    "instruction": "Сколько миллисекунд действует новый контекст чтения Wiki?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-wiki-read-policy-2.json",
+    "requiredFields": [
+      "readContextLifetimeMs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "readContextLifetimeMs": null
+      },
+      "untouched": {
+        "requestId": "t-wiki-read-policy-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-wiki-read-policy-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-knowledge-scope-1",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "configuration-repair",
+    "queryId": "q-host-knowledge-scope-1-en",
+    "title": "configuration-repair: host-knowledge-scope/generationLookupMethod",
+    "instruction": "Which Gateway method supplies the physical generation for a Host knowledge read?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-host-knowledge-scope-1.json",
+    "requiredFields": [
+      "generationLookupMethod"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "generationLookupMethod": null
+      },
+      "untouched": {
+        "requestId": "t-host-knowledge-scope-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-knowledge-scope-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-knowledge-scope-2",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "configuration-repair",
+    "queryId": "q-host-knowledge-scope-2-zh",
+    "title": "configuration-repair: host-knowledge-scope/materializeMethod",
+    "instruction": "已拥有的逻辑会话没有物理代次时，Host 调用哪个方法物化？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-host-knowledge-scope-2.json",
+    "requiredFields": [
+      "materializeMethod"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "materializeMethod": null
+      },
+      "untouched": {
+        "requestId": "t-host-knowledge-scope-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-knowledge-scope-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-bounded-page-read-1",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "configuration-repair",
+    "queryId": "q-bounded-page-read-1-ja",
+    "title": "configuration-repair: bounded-page-read/scanLineCeiling",
+    "instruction": "既存の有界 page reader が継続して読む最大行番号は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-bounded-page-read-1.json",
+    "requiredFields": [
+      "scanLineCeiling"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "scanLineCeiling": null
+      },
+      "untouched": {
+        "requestId": "t-bounded-page-read-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-bounded-page-read-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-bounded-page-read-2",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "configuration-repair",
+    "queryId": "q-bounded-page-read-2-ru",
+    "title": "configuration-repair: bounded-page-read/scanCharacterCeiling",
+    "instruction": "При каком суммарном числе символов останавливается ограниченное дочитывание?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-bounded-page-read-2.json",
+    "requiredFields": [
+      "scanCharacterCeiling"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "scanCharacterCeiling": null
+      },
+      "untouched": {
+        "requestId": "t-bounded-page-read-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-bounded-page-read-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-source-set-limit-1",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "configuration-repair",
+    "queryId": "q-source-set-limit-1-en",
+    "title": "configuration-repair: source-set-limit/defaultLimit",
+    "instruction": "What is the SourceSet retrieval limit when the caller omits it?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-source-set-limit-1.json",
+    "requiredFields": [
+      "defaultLimit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultLimit": null
+      },
+      "untouched": {
+        "requestId": "t-source-set-limit-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-source-set-limit-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-source-set-limit-2",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "configuration-repair",
+    "queryId": "q-source-set-limit-2-zh",
+    "title": "configuration-repair: source-set-limit/maximumLimit",
+    "instruction": "SourceSet 强制执行的结果数量硬上限是多少？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-source-set-limit-2.json",
+    "requiredFields": [
+      "maximumLimit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "maximumLimit": null
+      },
+      "untouched": {
+        "requestId": "t-source-set-limit-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-source-set-limit-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-cjk-tokenizer-1",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "configuration-repair",
+    "queryId": "q-cjk-tokenizer-1-ja",
+    "title": "configuration-repair: cjk-tokenizer/grams",
+    "instruction": "現在の CJK bigram アルゴリズムで「中文测试」を処理した結果を順に示してください。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-cjk-tokenizer-1.json",
+    "requiredFields": [
+      "grams"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "grams": null
+      },
+      "untouched": {
+        "requestId": "t-cjk-tokenizer-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-cjk-tokenizer-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-cjk-tokenizer-2",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "configuration-repair",
+    "queryId": "q-cjk-tokenizer-2-ru",
+    "title": "configuration-repair: cjk-tokenizer/minimumHanRun",
+    "instruction": "Сколько иероглифов Han подряд нужно fallback tokenizer для создания серии?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-cjk-tokenizer-2.json",
+    "requiredFields": [
+      "minimumHanRun"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "minimumHanRun": null
+      },
+      "untouched": {
+        "requestId": "t-cjk-tokenizer-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-cjk-tokenizer-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-memory-temporal-1",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "configuration-repair",
+    "queryId": "q-memory-temporal-1-en",
+    "title": "configuration-repair: memory-temporal/defaultTemporalPolicy",
+    "instruction": "What temporal policy does an empty memory query use?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-memory-temporal-1.json",
+    "requiredFields": [
+      "defaultTemporalPolicy"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultTemporalPolicy": null
+      },
+      "untouched": {
+        "requestId": "t-memory-temporal-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-memory-temporal-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-memory-temporal-2",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "configuration-repair",
+    "queryId": "q-memory-temporal-2-zh",
+    "title": "configuration-repair: memory-temporal/acceptedYearRange",
+    "instruction": "显式 as_of 启发式允许解析的年份闭区间是什么？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-memory-temporal-2.json",
+    "requiredFields": [
+      "acceptedYearRange"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "acceptedYearRange": null
+      },
+      "untouched": {
+        "requestId": "t-memory-temporal-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-memory-temporal-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-deadline-1",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "configuration-repair",
+    "queryId": "q-host-deadline-1-ja",
+    "title": "configuration-repair: host-deadline/effectiveTimeoutMs",
+    "instruction": "ローカル上限が300 msで論理リクエストの残りが100 msの場合、実効タイムアウトは何msですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-host-deadline-1.json",
+    "requiredFields": [
+      "effectiveTimeoutMs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "effectiveTimeoutMs": null
+      },
+      "untouched": {
+        "requestId": "t-host-deadline-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-deadline-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-deadline-2",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "configuration-repair",
+    "queryId": "q-host-deadline-2-ru",
+    "title": "configuration-repair: host-deadline/expiredRemainingMs",
+    "instruction": "Какой остаток бюджета возвращается, когда now позже deadlineAtMs?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-host-deadline-2.json",
+    "requiredFields": [
+      "expiredRemainingMs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "expiredRemainingMs": null
+      },
+      "untouched": {
+        "requestId": "t-host-deadline-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-deadline-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-action-timeouts-1",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "configuration-repair",
+    "queryId": "q-host-action-timeouts-1-en",
+    "title": "configuration-repair: host-action-timeouts/defaultTimeoutMs",
+    "instruction": "What is the default Host action timeout in milliseconds?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-host-action-timeouts-1.json",
+    "requiredFields": [
+      "defaultTimeoutMs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "defaultTimeoutMs": null
+      },
+      "untouched": {
+        "requestId": "t-host-action-timeouts-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-action-timeouts-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-host-action-timeouts-2",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "configuration-repair",
+    "queryId": "q-host-action-timeouts-2-zh",
+    "title": "configuration-repair: host-action-timeouts/longTimeoutMs",
+    "instruction": "白名单中的长 Host action 总超时是多少毫秒？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-host-action-timeouts-2.json",
+    "requiredFields": [
+      "longTimeoutMs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "longTimeoutMs": null
+      },
+      "untouched": {
+        "requestId": "t-host-action-timeouts-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-host-action-timeouts-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-development-commands-1",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "configuration-repair",
+    "queryId": "q-development-commands-1-ja",
+    "title": "configuration-repair: development-commands/runtimeBuildCommand",
+    "instruction": "embedded runtime を再ビルドし Gateway 起動を確認する開発コマンドは何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-development-commands-1.json",
+    "requiredFields": [
+      "runtimeBuildCommand"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "runtimeBuildCommand": null
+      },
+      "untouched": {
+        "requestId": "t-development-commands-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-development-commands-1",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-development-commands-2",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "profile": "local",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "configuration-repair",
+    "queryId": "q-development-commands-2-ru",
+    "title": "configuration-repair: development-commands/fullTypecheckProjects",
+    "instruction": "Какие три проекта должны пройти полный typecheck?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "config/t-development-commands-2.json",
+    "requiredFields": [
+      "fullTypecheckProjects"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "calibration"
+    },
+    "input": {
+      "values": {
+        "fullTypecheckProjects": null
+      },
+      "untouched": {
+        "requestId": "t-development-commands-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-development-commands-2",
+      "kind": "configuration-repair",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-session-continuity-1",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "diagnostic-report",
+    "queryId": "q-session-continuity-1-en",
+    "title": "diagnostic-report: session-continuity/mainSessionKey",
+    "instruction": "What is the default main logical session key?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-session-continuity-1.json",
+    "requiredFields": [
+      "mainSessionKey"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "mainSessionKey": null
+      },
+      "untouched": {
+        "requestId": "t-session-continuity-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-session-continuity-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-session-continuity-2",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-session-continuity-2-zh",
+    "title": "diagnostic-report: session-continuity/rendererHistoryLimits",
+    "instruction": "报告 renderer 的消息保留数、加载批量和同时 DOM 渲染上限。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-session-continuity-2.json",
+    "requiredFields": [
+      "rendererHistoryLimits"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "rendererHistoryLimits": null
+      },
+      "untouched": {
+        "requestId": "t-session-continuity-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-session-continuity-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-workspace-preflight-1",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "diagnostic-report",
+    "queryId": "q-workspace-preflight-1-ja",
+    "title": "diagnostic-report: workspace-preflight/unwritableFallback",
+    "instruction": "読み取り可能でも書き込み不可の workspace はどの権限モードを使いますか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-workspace-preflight-1.json",
+    "requiredFields": [
+      "unwritableFallback"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "unwritableFallback": null
+      },
+      "untouched": {
+        "requestId": "t-workspace-preflight-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-workspace-preflight-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-workspace-preflight-2",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-workspace-preflight-2-ru",
+    "title": "diagnostic-report: workspace-preflight/gitIsRequired",
+    "instruction": "Обязан ли каталог быть Git-репозиторием, чтобы стать Workspace?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-workspace-preflight-2.json",
+    "requiredFields": [
+      "gitIsRequired"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "gitIsRequired": null
+      },
+      "untouched": {
+        "requestId": "t-workspace-preflight-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-workspace-preflight-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-provider-accounts-1",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "diagnostic-report",
+    "queryId": "q-provider-accounts-1-en",
+    "title": "diagnostic-report: provider-accounts/modelsSettingsRoute",
+    "instruction": "Where does the compatibility /models route redirect?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-provider-accounts-1.json",
+    "requiredFields": [
+      "modelsSettingsRoute"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "modelsSettingsRoute": null
+      },
+      "untouched": {
+        "requestId": "t-provider-accounts-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-provider-accounts-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-provider-accounts-2",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-provider-accounts-2-zh",
+    "title": "diagnostic-report: provider-accounts/rendererSecrets",
+    "instruction": "renderer 允许看到哪种形式的 provider 密钥？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-provider-accounts-2.json",
+    "requiredFields": [
+      "rendererSecrets"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "rendererSecrets": null
+      },
+      "untouched": {
+        "requestId": "t-provider-accounts-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-provider-accounts-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-usage-aggregation-1",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "diagnostic-report",
+    "queryId": "q-usage-aggregation-1-ja",
+    "title": "diagnostic-report: usage-aggregation/defaultUsageWindow",
+    "instruction": "aggregate window が欠落または不正の場合、どの usage window が選ばれますか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-usage-aggregation-1.json",
+    "requiredFields": [
+      "defaultUsageWindow"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "defaultUsageWindow": null
+      },
+      "untouched": {
+        "requestId": "t-usage-aggregation-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-usage-aggregation-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-usage-aggregation-2",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-usage-aggregation-2-ru",
+    "title": "diagnostic-report: usage-aggregation/riskLedgerLimit",
+    "instruction": "Сколько записей риска prompt-cache может хранить ledger?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-usage-aggregation-2.json",
+    "requiredFields": [
+      "riskLedgerLimit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "riskLedgerLimit": null
+      },
+      "untouched": {
+        "requestId": "t-usage-aggregation-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-usage-aggregation-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-knowledge-governance-1",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "diagnostic-report",
+    "queryId": "q-knowledge-governance-1-en",
+    "title": "diagnostic-report: knowledge-governance/primaryTabs",
+    "instruction": "Which two primary Knowledge workbench tabs are documented?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-knowledge-governance-1.json",
+    "requiredFields": [
+      "primaryTabs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "primaryTabs": null
+      },
+      "untouched": {
+        "requestId": "t-knowledge-governance-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-knowledge-governance-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-knowledge-governance-2",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-knowledge-governance-2-zh",
+    "title": "diagnostic-report: knowledge-governance/durableSequence",
+    "instruction": "按顺序列出从 Knowledge Inbox 到 durable Wiki page 的治理步骤。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-knowledge-governance-2.json",
+    "requiredFields": [
+      "durableSequence"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "durableSequence": null
+      },
+      "untouched": {
+        "requestId": "t-knowledge-governance-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-knowledge-governance-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-local-embedding-model-1",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "diagnostic-report",
+    "queryId": "q-local-embedding-model-1-ja",
+    "title": "diagnostic-report: local-embedding-model/localModel",
+    "instruction": "現在デフォルトのローカル embedding モデル artifact は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-local-embedding-model-1.json",
+    "requiredFields": [
+      "localModel"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "localModel": null
+      },
+      "untouched": {
+        "requestId": "t-local-embedding-model-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-local-embedding-model-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-local-embedding-model-2",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-local-embedding-model-2-ru",
+    "title": "diagnostic-report: local-embedding-model/quantization",
+    "instruction": "Какая квантизация указана в имени стандартного локального embedding artifact?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-local-embedding-model-2.json",
+    "requiredFields": [
+      "quantization"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "quantization": null
+      },
+      "untouched": {
+        "requestId": "t-local-embedding-model-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-local-embedding-model-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-existing-semantic-provider-1",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "diagnostic-report",
+    "queryId": "q-existing-semantic-provider-1-en",
+    "title": "diagnostic-report: existing-semantic-provider/maximumBatchSize",
+    "instruction": "What batch-size ceiling does the existing selected-source embedding adapter enforce?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-existing-semantic-provider-1.json",
+    "requiredFields": [
+      "maximumBatchSize"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "maximumBatchSize": null
+      },
+      "untouched": {
+        "requestId": "t-existing-semantic-provider-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-existing-semantic-provider-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-existing-semantic-provider-2",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-existing-semantic-provider-2-zh",
+    "title": "diagnostic-report: existing-semantic-provider/embeddingTimeoutsMs",
+    "instruction": "分别报告每批超时和完整 embedding operation 期限，单位毫秒。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-existing-semantic-provider-2.json",
+    "requiredFields": [
+      "embeddingTimeoutsMs"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "embeddingTimeoutsMs": null
+      },
+      "untouched": {
+        "requestId": "t-existing-semantic-provider-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-existing-semantic-provider-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-role-memory-store-1",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "diagnostic-report",
+    "queryId": "q-role-memory-store-1-ja",
+    "title": "diagnostic-report: role-memory-store/roleStoreFilename",
+    "instruction": "構造化 Role Memory store の SQLite ファイル名は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-role-memory-store-1.json",
+    "requiredFields": [
+      "roleStoreFilename"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "roleStoreFilename": null
+      },
+      "untouched": {
+        "requestId": "t-role-memory-store-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-role-memory-store-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-role-memory-store-2",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-role-memory-store-2-ru",
+    "title": "diagnostic-report: role-memory-store/sameAsNativeMemory",
+    "instruction": "Является ли structured role-card store тем же authority, что memorySearch/QMD/MEMORY.md?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-role-memory-store-2.json",
+    "requiredFields": [
+      "sameAsNativeMemory"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "sameAsNativeMemory": null
+      },
+      "untouched": {
+        "requestId": "t-role-memory-store-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-role-memory-store-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-file-path-boundary-1",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "en",
+    "kind": "diagnostic-report",
+    "queryId": "q-file-path-boundary-1-en",
+    "title": "diagnostic-report: file-path-boundary/maximumPathCharacters",
+    "instruction": "What maximum input path length does the file broker allow?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-file-path-boundary-1.json",
+    "requiredFields": [
+      "maximumPathCharacters"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "maximumPathCharacters": null
+      },
+      "untouched": {
+        "requestId": "t-file-path-boundary-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-file-path-boundary-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-file-path-boundary-2",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "zh",
+    "kind": "diagnostic-report",
+    "queryId": "q-file-path-boundary-2-zh",
+    "title": "diagnostic-report: file-path-boundary/uncAllowed",
+    "instruction": "UNC/SMB 路径能通过 assertSafeHostFilePath 吗？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-file-path-boundary-2.json",
+    "requiredFields": [
+      "uncAllowed"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "uncAllowed": null
+      },
+      "untouched": {
+        "requestId": "t-file-path-boundary-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-file-path-boundary-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-task-working-context-1",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ja",
+    "kind": "diagnostic-report",
+    "queryId": "q-task-working-context-1-ja",
+    "title": "diagnostic-report: task-working-context/workingContextFields",
+    "instruction": "canonical Working Context フィールドを宣言順に示してください。",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-task-working-context-1.json",
+    "requiredFields": [
+      "workingContextFields"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "workingContextFields": null
+      },
+      "untouched": {
+        "requestId": "t-task-working-context-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-task-working-context-1",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-task-working-context-2",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "profile": "quality",
+    "cohort": "project-operational",
+    "locale": "ru",
+    "kind": "diagnostic-report",
+    "queryId": "q-task-working-context-2-ru",
+    "title": "diagnostic-report: task-working-context/nodeStatuses",
+    "instruction": "Какие статусы допустимы для узлов Task Ledger?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-task-working-context-2.json",
+    "requiredFields": [
+      "nodeStatuses"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "validation"
+    },
+    "input": {
+      "values": {
+        "nodeStatuses": null
+      },
+      "untouched": {
+        "requestId": "t-task-working-context-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-task-working-context-2",
+      "kind": "diagnostic-report",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-dcs-turn-budget-1",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-dcs-turn-budget-1-en",
+    "title": "cross-source-research: dcs-turn-budget/turnCharacterBudget",
+    "instruction": "What is the shared turn injection character budget?\nWhich configuration field supplies the turn character limit?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-dcs-turn-budget-1.json",
+    "requiredFields": [
+      "turnCharacterBudget",
+      "budgetConfigKey"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "turnCharacterBudget": null,
+        "budgetConfigKey": null
+      },
+      "untouched": {
+        "requestId": "t-dcs-turn-budget-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-dcs-turn-budget-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-dcs-turn-budget-2",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "zh",
+    "kind": "cross-source-research",
+    "queryId": "q-dcs-turn-budget-2-zh",
+    "title": "cross-source-research: dcs-turn-budget/dropAlertRatio",
+    "instruction": "turn-injection 丢弃预算占比达到多少时触发告警阈值？\n哪个配置字段提供 turn 字符上限？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-dcs-turn-budget-2.json",
+    "requiredFields": [
+      "dropAlertRatio",
+      "budgetConfigKey"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "dropAlertRatio": null,
+        "budgetConfigKey": null
+      },
+      "untouched": {
+        "requestId": "t-dcs-turn-budget-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-dcs-turn-budget-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-context-candidates-1",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-context-candidates-1-ja",
+    "title": "cross-source-research: context-candidates/candidateSchema",
+    "instruction": "Context Orchestrator candidate の schema は何ですか？\norchestrator がインポートする candidate projector は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-candidates-1.json",
+    "requiredFields": [
+      "candidateSchema",
+      "orchestratorProjector"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "candidateSchema": null,
+        "orchestratorProjector": null
+      },
+      "untouched": {
+        "requestId": "t-context-candidates-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-candidates-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-context-candidates-2",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ru",
+    "kind": "cross-source-research",
+    "queryId": "q-context-candidates-2-ru",
+    "title": "cross-source-research: context-candidates/candidateTargets",
+    "instruction": "В какие target может проецироваться context candidate?\nКакой candidate projector импортирует orchestrator?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-candidates-2.json",
+    "requiredFields": [
+      "candidateTargets",
+      "orchestratorProjector"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "candidateTargets": null,
+        "orchestratorProjector": null
+      },
+      "untouched": {
+        "requestId": "t-context-candidates-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-candidates-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-context-resource-contract-1",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-context-resource-contract-1-en",
+    "title": "cross-source-research: context-resource-contract/bundleSchemaVersion",
+    "instruction": "What schemaVersion does the PromptBundle type require?\nWhich pipeline superseded the removed orphan codebase index?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-resource-contract-1.json",
+    "requiredFields": [
+      "bundleSchemaVersion",
+      "codebaseIndexReplacement"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "bundleSchemaVersion": null,
+        "codebaseIndexReplacement": null
+      },
+      "untouched": {
+        "requestId": "t-context-resource-contract-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-resource-contract-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-context-resource-contract-2",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "zh",
+    "kind": "cross-source-research",
+    "queryId": "q-context-resource-contract-2-zh",
+    "title": "cross-source-research: context-resource-contract/compactViewsNavigationOnly",
+    "instruction": "CompactView 是否仅用于导航？请用 compactViewsNavigationOnly 表达。\n哪个 pipeline 取代了已移除的孤立 codebase index？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-context-resource-contract-2.json",
+    "requiredFields": [
+      "compactViewsNavigationOnly",
+      "codebaseIndexReplacement"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "compactViewsNavigationOnly": null,
+        "codebaseIndexReplacement": null
+      },
+      "untouched": {
+        "requestId": "t-context-resource-contract-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-context-resource-contract-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-background-admission-1",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-background-admission-1-ja",
+    "title": "cross-source-research: background-admission/queueWatermarks",
+    "instruction": "デフォルトのキュー high/low watermarks と最小 dwell 時間を示してください。\nbackground gate で foreground リクエストを表す priority は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-background-admission-1.json",
+    "requiredFields": [
+      "queueWatermarks",
+      "foregroundPriority"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "queueWatermarks": null,
+        "foregroundPriority": null
+      },
+      "untouched": {
+        "requestId": "t-background-admission-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-background-admission-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-background-admission-2",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ru",
+    "kind": "cross-source-research",
+    "queryId": "q-background-admission-2-ru",
+    "title": "cross-source-research: background-admission/foregroundDeferred",
+    "instruction": "Откладывает ли BackgroundWorkGate foreground работу при shedding?\nКакое значение priority обозначает foreground запросы background gate?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-background-admission-2.json",
+    "requiredFields": [
+      "foregroundDeferred",
+      "foregroundPriority"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "foregroundDeferred": null,
+        "foregroundPriority": null
+      },
+      "untouched": {
+        "requestId": "t-background-admission-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-background-admission-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-bounded-cache-1",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-bounded-cache-1-en",
+    "title": "cross-source-research: bounded-cache/getRefreshesTtl",
+    "instruction": "Does getting an entry implicitly refresh its absolute TTL?\nWhich resource primitive coalesces same-key concurrent requests?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-bounded-cache-1.json",
+    "requiredFields": [
+      "getRefreshesTtl",
+      "requestCoalescer"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "getRefreshesTtl": null,
+        "requestCoalescer": null
+      },
+      "untouched": {
+        "requestId": "t-bounded-cache-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-bounded-cache-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-bounded-cache-2",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "zh",
+    "kind": "cross-source-research",
+    "queryId": "q-bounded-cache-2-zh",
+    "title": "cross-source-research: bounded-cache/expiresAtBoundaryIsExpired",
+    "instruction": "now 等于 expiresAt 时，缓存项是否已过期？\n哪个资源原语合并同 key 的并发请求？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-bounded-cache-2.json",
+    "requiredFields": [
+      "expiresAtBoundaryIsExpired",
+      "requestCoalescer"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "expiresAtBoundaryIsExpired": null,
+        "requestCoalescer": null
+      },
+      "untouched": {
+        "requestId": "t-bounded-cache-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-bounded-cache-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-provider-outbound-quota-1",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-provider-outbound-quota-1-ja",
+    "title": "cross-source-research: provider-outbound-quota/quotaOwner",
+    "instruction": "物理 provider リクエストの並行数を管理する owner 名は何ですか？\noutbound quota が管理する計測単位は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-provider-outbound-quota-1.json",
+    "requiredFields": [
+      "quotaOwner",
+      "budgetUnit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "quotaOwner": null,
+        "budgetUnit": null
+      },
+      "untouched": {
+        "requestId": "t-provider-outbound-quota-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-provider-outbound-quota-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-provider-outbound-quota-2",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ru",
+    "kind": "cross-source-research",
+    "queryId": "q-provider-outbound-quota-2-ru",
+    "title": "cross-source-research: provider-outbound-quota/busyOnActiveAliasRebind",
+    "instruction": "Нужно ли возвращать busy при перепривязке занятого alias provider quota?\nКакую измеряемую единицу ограничивает outbound quota?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-provider-outbound-quota-2.json",
+    "requiredFields": [
+      "busyOnActiveAliasRebind",
+      "budgetUnit"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "busyOnActiveAliasRebind": null,
+        "budgetUnit": null
+      },
+      "untouched": {
+        "requestId": "t-provider-outbound-quota-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-provider-outbound-quota-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-backup-restore-1",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-backup-restore-1-en",
+    "title": "cross-source-research: backup-restore/overwriteExisting",
+    "instruction": "May a restore overwrite an existing target file?\nWhich archive file describes the backed-up assets?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-backup-restore-1.json",
+    "requiredFields": [
+      "overwriteExisting",
+      "archiveManifest"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "overwriteExisting": null,
+        "archiveManifest": null
+      },
+      "untouched": {
+        "requestId": "t-backup-restore-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-backup-restore-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-backup-restore-2",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "zh",
+    "kind": "cross-source-research",
+    "queryId": "q-backup-restore-2-zh",
+    "title": "cross-source-research: backup-restore/failureRollbackScope",
+    "instruction": "后续 archive entry 失败时，回滚哪些文件？\n归档中哪个文件描述已备份的 assets？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-backup-restore-2.json",
+    "requiredFields": [
+      "failureRollbackScope",
+      "archiveManifest"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "failureRollbackScope": null,
+        "archiveManifest": null
+      },
+      "untouched": {
+        "requestId": "t-backup-restore-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-backup-restore-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-experience-adoption-1",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-experience-adoption-1-ja",
+    "title": "cross-source-research: experience-adoption/requiredPrincipleStatus",
+    "instruction": "adoption を記録する前に principle が必要とする状態は何ですか？\nSEKB master gate を制御する環境変数は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-experience-adoption-1.json",
+    "requiredFields": [
+      "requiredPrincipleStatus",
+      "masterEnableEnvironment"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "requiredPrincipleStatus": null,
+        "masterEnableEnvironment": null
+      },
+      "untouched": {
+        "requestId": "t-experience-adoption-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-experience-adoption-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-experience-adoption-2",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ru",
+    "kind": "cross-source-research",
+    "queryId": "q-experience-adoption-2-ru",
+    "title": "cross-source-research: experience-adoption/adoptionDispositions",
+    "instruction": "Какие disposition может вернуть record_adoption?\nКакая переменная окружения управляет master gate SEKB?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-experience-adoption-2.json",
+    "requiredFields": [
+      "adoptionDispositions",
+      "masterEnableEnvironment"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "adoptionDispositions": null,
+        "masterEnableEnvironment": null
+      },
+      "untouched": {
+        "requestId": "t-experience-adoption-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-experience-adoption-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-orchestration-capacity-1",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "en",
+    "kind": "cross-source-research",
+    "queryId": "q-orchestration-capacity-1-en",
+    "title": "cross-source-research: orchestration-capacity/unmeasuredConcurrencyCap",
+    "instruction": "What concurrency cap is used when no measured worker cap is supplied?\nWhich routing mode decomposes a complex task into lead and workers?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-orchestration-capacity-1.json",
+    "requiredFields": [
+      "unmeasuredConcurrencyCap",
+      "complexRoutingMode"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "unmeasuredConcurrencyCap": null,
+        "complexRoutingMode": null
+      },
+      "untouched": {
+        "requestId": "t-orchestration-capacity-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-orchestration-capacity-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-orchestration-capacity-2",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "zh",
+    "kind": "cross-source-research",
+    "queryId": "q-orchestration-capacity-2-zh",
+    "title": "cross-source-research: orchestration-capacity/highEffortCost",
+    "instruction": "wave scheduler 给 high effort 的规划成本是多少？\n复杂任务拆分为 lead 和 workers 使用哪种 routing mode？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-orchestration-capacity-2.json",
+    "requiredFields": [
+      "highEffortCost",
+      "complexRoutingMode"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "highEffortCost": null,
+        "complexRoutingMode": null
+      },
+      "untouched": {
+        "requestId": "t-orchestration-capacity-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-orchestration-capacity-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-role-contracts-1",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ja",
+    "kind": "cross-source-research",
+    "queryId": "q-role-contracts-1-ja",
+    "title": "cross-source-research: role-contracts/reviewerRoleName",
+    "instruction": "Reviewer contract の canonical role name は何ですか？\n組み込み Security Audit Team の verifier role は何ですか？",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-role-contracts-1.json",
+    "requiredFields": [
+      "reviewerRoleName",
+      "securityTeamVerifier"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "reviewerRoleName": null,
+        "securityTeamVerifier": null
+      },
+      "untouched": {
+        "requestId": "t-role-contracts-1",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-role-contracts-1",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "t-role-contracts-2",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "profile": "research",
+    "cohort": "hard-cross-source",
+    "locale": "ru",
+    "kind": "cross-source-research",
+    "queryId": "q-role-contracts-2-ru",
+    "title": "cross-source-research: role-contracts/skepticRoleName",
+    "instruction": "Какое canonical role name у контракта Skeptic?\nКакой verifier role у встроенной Security Audit Team?",
+    "delivery": "Write the required JSON file. Repair all null fields from the admitted source; retain untouched fields; provide one exact owner citation per field. Model text alone does not complete the task.",
+    "outputPath": "reports/t-role-contracts-2.json",
+    "requiredFields": [
+      "skepticRoleName",
+      "securityTeamVerifier"
+    ],
+    "scope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator",
+      "sourceSplit": "held-out"
+    },
+    "input": {
+      "values": {
+        "skepticRoleName": null,
+        "securityTeamVerifier": null
+      },
+      "untouched": {
+        "requestId": "t-role-contracts-2",
+        "workspaceId": "rag-corpus-workspace",
+        "productLock": "none/suggest"
+      }
+    },
+    "outputSchema": {
+      "schema": "ProjectRagTaskOutput/v1",
+      "taskId": "t-role-contracts-2",
+      "kind": "cross-source-research",
+      "values": "required fields with supported typed values",
+      "untouched": "unchanged copy of input.untouched",
+      "citations": "field/sourceId/quote/SourceRef-v2 per required field",
+      "unknowns": "explicit array"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  }
+]

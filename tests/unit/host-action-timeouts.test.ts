@@ -18,6 +18,11 @@ describe('DCS mutation host timeouts', () => {
     expect(hostActionTimeoutMs('chat', 'sendWithMedia')).toBe(HOST_ACTION_LONG_TIMEOUT_MS);
     expect(hostActionTimeoutMs('chat', 'history')).toBe(HOST_ACTION_DEFAULT_TIMEOUT_MS);
   });
+
+  it('allows frozen offline policy grading and keeps diagnostics reads on their normal budget', () => {
+    expect(hostActionTimeoutMs('knowledge', 'policyPromote')).toBe(HOST_ACTION_LONG_TIMEOUT_MS);
+    expect(hostActionTimeoutMs('knowledge', 'observabilityStatus')).toBe(HOST_ACTION_DEFAULT_TIMEOUT_MS);
+  });
 });
 
 it('bounds a long Mission tick without extending unrelated Gateway RPCs', () => {

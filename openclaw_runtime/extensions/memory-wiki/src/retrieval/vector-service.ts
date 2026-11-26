@@ -7,6 +7,7 @@ import {
   type VectorBackendId,
   type VectorProjectionBackend,
   type VectorProjectionV1,
+  type RetrievalSpendCall,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   digestOwnerReadContent,
@@ -482,7 +483,7 @@ export function createMemoryWikiVectorService(options: {
       identity: MemoryWikiReadIdentity,
       text: string,
       limit = 10,
-      request?: { signal?: AbortSignal; deadlineAt?: number },
+      request?: { signal?: AbortSignal; deadlineAt?: number; remoteSpend?: RetrievalSpendCall },
     ) {
       const context = assertScope(identity),
         space = currentSpace(identity);
@@ -503,6 +504,7 @@ export function createMemoryWikiVectorService(options: {
         expectedSpaceId: space.spaceId,
         signal,
         deadlineAt: request?.deadlineAt,
+        remoteSpend: request?.remoteSpend,
       });
       signal.throwIfAborted();
       const eligibleIds = store.eligibleIds(active);

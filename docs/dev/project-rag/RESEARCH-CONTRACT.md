@@ -6,6 +6,12 @@
 
 状态传输失败后，前端请求停止并读取 Main 最后复验的结果。该快照仍在运行时，界面按实际中断原因显示无法继续、超时或取消；超时和传输失败在没有来源时显示研究暂不可用，有来源时显示部分结果。Main 已返回终态时，保留其停止原因。
 
+启动或状态回执返回失败、结果观察回调抛错时，前端向同一 requestId/workspace/session 发送取消并保留原错误；请求结束后移除取消监听。后台规划收到取消后停止，迟到回答继续受原终态约束。
+
+取消或期限可以先于 Main 启动准入。迟到启动回执到达后，前端再次取消同一请求并忽略该回执；启动与状态结果发布前继续检查取消和原期限。已停止的请求按取消或超时交付最后复验的部分结果，owner 改变的终态保留 scope-changed。
+
+最后一次 owner 状态复验仍在等待时，取消监听保持有效；此时点击取消会向同一请求补发停止，并在复验返回后保留 cancelled。复验拒绝继续清除旧结果，scope-changed 终态继续保留；读回成功或失败结算后再移除监听。该读回沿用 1.5 秒上限。
+
 选中的来源仍可显式附加到普通 Chat。切回 Local 或 Quality 后恢复单次来源检索，知识交互模式与来源范围保持独立。自动推荐使用既有检索入口；多轮控制器由显式搜索启动。
 
 ## 请求合同与上限
@@ -20,7 +26,7 @@
 | --- | --- |
 | 总期限 | 从开始准备 owner 身份起 30 秒 |
 | 检索 | 3 轮、8 个不同 query，每轮最多 3 个 query |
-| 规划模型 | 最多 2 次，每次独立预留且最多 1 次物理 provider 调用 |
+| 规划模型 | 规划与独立支持判断合计最多 2 次，每次独立预留且最多 1 次物理 provider 调用 |
 | 规划 token 预留 | 合计 16,000，每次最多 8,000；每次输出最多 1,024 |
 | 规划费用预留 | 合计 USD 0.05；全局、项目或会话 owner 限额可继续收紧 |
 | 检索证据 | 12 个来源片段、估算 5,000 tokens、15,000 字符 |
@@ -38,7 +44,9 @@
 
 一次性内部模型会话使用执行 owner 提供的 workspace、会话 key 和实际 generation 建立预算记录；这类会话没有持久 transcript 行。普通会话仍通过持久 session owner 复读身份。
 
-Research 的来源检索允许本地 embedding、向量和重排路径。当前远端 embedding/rerank 没有可供本次请求预留的费用合同，因此本控制器收紧其 egress，使用可用的本地路径并返回检索退化状态。普通 Local/Quality/Research 单次检索继续遵循既有 provider 选择。
+Research 读取已选择的本地或远端 embedding/rerank。远端路径为同一请求预分配最多 4,000 tokens 和 USD 0.0125，规划与支持判断使用剩余的 12,000 tokens 和 USD 0.0375，总上限保持不变。每个实际发送批次通过 Provider Spend 的原 SQLite 事务检查 host/project/session 和请求累计预留；缓存命中不预留。费率取当前模型配置中的正数 input 价格且 output 为零，缺失或默认零价格返回 `remote-retrieval-cost-unquoted`；embedding adapter 还须声明单次发送和输入用量回读能力。指定的 Qwen3-VL 默认模型保持不变。
+
+远端用量来自 provider 回执，缺失时保留未知负债，并拒绝同请求继续新增付费调用。失败响应和超额用量保留原始消费；发送前 owner 变化取消未发送预留。取消沿 `wiki.retrieval.cancel` 传到同 owner 的检索控制器，保留五分钟取消标记以拒绝迟到启动。Main 尚未收到检索费用回执时显示 inFlight 和未知费用。
 
 上下文增强关闭时，DCS 内部 Context Ladder 同时停止读取 BlockStore；配置开关与环境变量开关均执行这一约束。
 
@@ -50,7 +58,9 @@ Research 的来源检索允许本地 embedding、向量和重排路径。当前�
 
 `ResearchStep/v1` 保存每轮查询、新增证据数和来源引用。重复、没有新增证据、引用覆盖充分、查询或轮次用尽、证据上限、期限与取消均有明确停止原因。旧版本、撤权或 scope 改变时清除依赖旧证据的引用、推断与关系线索。
 
-证据保存当前 SourceRef、原文字节、source/chunk digest 和读取范围。规划器的覆盖项与冲突项必须引用实际 DCS 保留的来源，并包含当前 owner 字节中的精确引文；模型推断单列。DCS 的 complete chunk/conflict-group 次序和预算仍决定送入模型的内容。
+证据保存当前 SourceRef、原文字节、source/chunk digest 和读取范围。规划器的覆盖项与冲突项必须引用实际 DCS 保留的来源，并包含当前 owner 字节中的精确引文；覆盖项另外提供直接回答，并通过独立模型调用核对对应子问题、数值、单位、时间和否定。规划器自行输出的支持标签会被剥离；支持判断缺失、uncertain/unsupported 或缺少来源 freshness 时保留缺口。模型推断单列。DCS 的 complete chunk/conflict-group 次序和预算仍决定送入模型的内容。
+
+规划和支持判断共享原两次模型预算；两次耗尽后，后续 query 仍可补充证据，未取得支持判断的新问题保留 `semantic-review-budget-exhausted` 缺口。取消支持调用时保留其预留和未知用量，迟到结果不能恢复覆盖。
 
 `recomputeResearchCoverage` 按最终 `RetainedEvidenceManifest/v1` 重新计算覆盖。被预算丢弃的引用形成缺口；冲突组按整体保留，依赖丢弃证据的推断清除。缺少来源、检索路径、freshness、费用用量或完整引用组时，结果带相应缺口并返回 partial/unavailable。
 
@@ -66,3 +76,7 @@ Research 的来源检索允许本地 embedding、向量和重排路径。当前�
 身份复验通过同一 session owner 的 `sessions.describe(identityOnly=true)` 重新读取会话 key、generation 和状态，省略完整会话列表所需的模型与转录元数据解析。状态查询仍受5秒上限约束，证据读取前后和交付前继续复验。
 
 状态复验耗尽5秒等待时，只返回当前请求的计划、阶段和用量元数据，证据、引用、关系与推断全部置空；同一请求在原30秒期限内继续等待下一次复验。复验恢复后交付当前 owner 验证过的结果。权限、会话代际或来源版本改变仍终止该请求并清空结果。
+
+Plugin SDK 的 `knowledge-retrieval` 公开 `createRetrievalSpend`、请求预算/用量与批次回调类型；插件沿该 seam 复用 Provider Spend。OpenAI-compatible embedding 的 `requestAccounting` 与 `onUsage` 由 adapter 声明并回传，不从向量数量或 tokenizer 估算实际用量。
+
+重排结束或失败后，回退结果也重新读取owner权限与版本；撤权来源的所有片段从最终结果移除。取消、禁用或更换重排配置终止该代provider，新请求不得继续使用旧句柄。

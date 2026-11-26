@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { loadCapacityInput } from "./lib/project-rag-capacity-input";
+import type { VectorProjectionV1 } from "../openclaw_runtime/src/knowledge/retrieval/vector-contracts";
 import { execFileSync } from "node:child_process";
 import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -23,9 +25,12 @@ async function main() {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
   }
-  const count = mode === "portable" ? 20_000 : 100_000,
-    dimensions = 768;
-  const space = createEmbeddingSpace({
+  const candidate = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8", windowsHide: true }).trim();
+  const captured = process.argv[4] ? await loadCapacityInput(process.argv[4], candidate) : undefined;
+  const count = captured?.input.count ?? (mode === "portable" ? 20_000 : 100_000), dimensions = captured?.space.dimensions ?? 768;
+  assert(count >= (mode === "portable" ? 20_000 : 100_000), "Capacity input is below the frozen row count");
+  const namespaceId = captured?.input.namespaceId ?? "agent-capacity";
+  const space = captured?.space ?? createEmbeddingSpace({
     providerRef: "agent-capacity-fixture",
     model: "deterministic-latent32-topic-v1",
     modelRevision: "seed-87319",
@@ -60,7 +65,7 @@ async function main() {
       : createLanceVectorBackend(path.join(output, "lance"));
   const capability = await backend.capability();
   assert(capability.available, capability.reason);
-  const generation = store.begin("agent-capacity", "agent-workspace", space, backend.id);
+  const generation = store.begin(namespaceId, "agent-workspace", space, backend.id);
   let peakRss = process.memoryUsage().rss;
   const sample = setInterval(() => {
     peakRss = Math.max(peakRss, process.memoryUsage().rss);
@@ -69,10 +74,7 @@ async function main() {
     schema: "ProjectRagVectorCapacity/v1",
     actor: "codex/project-rag",
     driven_by: "agent",
-    candidate: execFileSync("git", ["rev-parse", "HEAD"], {
-      encoding: "utf8",
-      windowsHide: true,
-    }).trim(),
+    candidate,
     dirtyDevelopmentProbe: Boolean(
       execFileSync("git", ["status", "--porcelain"], {
         encoding: "utf8",
@@ -83,7 +85,10 @@ async function main() {
     mode,
     rows: count,
     dimensions,
-    fixture: {
+    semanticQualityMeasured: false,
+    input: captured ? { provenance: captured.input.provenance, manifestDigest: captured.digest, corpusDigest: captured.input.corpusDigest,
+      space: captured.space, verifiedProviderResponses: true } : null,
+    fixture: captured ? null : {
       kind: "agent-generated deterministic synthetic vectors",
       distribution: "32 latent coordinates repeated across768 with topic jitter",
       seed: 87319,
@@ -97,17 +102,19 @@ async function main() {
   const ids: string[] = [];
   try {
     const buildStart = performance.now();
-    for (let offset = 0; offset < count; offset += 256) {
-      const rows = Array.from({ length: Math.min(256, count - offset) }, (_, n) => {
-        const id = offset + n,
-          key = `v${String(id).padStart(6, "0")}`;
-        ids.push(key);
-        return {
+    async function* rows(): AsyncGenerator<VectorProjectionV1> {
+      if (captured) {
+        for await (const row of captured.rows()) yield { schema: "VectorProjection/v1", id: row.id,
+          generationId: generation.generationId, workspaceId: "agent-workspace", namespaceId, spaceId: space.spaceId,
+          chunkId: row.id, chunkDigest: row.chunkDigest, sourceGeneration: row.source.sourceDigest, source: row.source, vector: row.vector };
+      } else for (let id = 0; id < count; id++) {
+        const key = `v${String(id).padStart(6, "0")}`;
+        yield {
           schema: "VectorProjection/v1" as const,
           id: key,
           generationId: generation.generationId,
           workspaceId: "agent-workspace",
-          namespaceId: "agent-capacity",
+          namespaceId,
           spaceId: space.spaceId,
           chunkId: "chunk-" + key,
           chunkDigest: digestOwnerReadContent(key),
@@ -117,7 +124,7 @@ async function main() {
             schema: "SourceRef/v2" as const,
             domain: "wiki" as const,
             authorityId: "agent-fixture",
-            namespaceId: "agent-capacity",
+            namespaceId,
             subjectId: "source-" + id,
             revision: "1",
             sourceDigest: digestOwnerReadContent(key),
@@ -131,12 +138,18 @@ async function main() {
             },
           },
         };
-      });
-      await backend.write(generation, space, rows);
-      if (mode === "ann") store.write(generation, space, rows);
-      peakRss = Math.max(peakRss, process.memoryUsage().rss);
-      if (offset % 4096 === 0) console.log("rows", offset, "/", count);
+      }
     }
+    let batch: VectorProjectionV1[] = [], restartVector: number[] | undefined;
+    const flush = async () => { await backend.write(generation, space, batch); if (mode === "ann") store.write(generation, space, batch); batch = []; };
+    for await (const row of rows()) {
+      ids.push(row.id); if (ids.length === 2) restartVector = row.vector;
+      batch.push(row);
+      if (batch.length === 256) await flush();
+      peakRss = Math.max(peakRss, process.memoryUsage().rss);
+    }
+    if (batch.length) await flush();
+    if (captured) report.sourceInputs = [...captured.evidencePins.values()];
     assert(store.publish(generation, count));
     report.writeMs = Math.round(performance.now() - buildStart);
     await save();
@@ -152,10 +165,10 @@ async function main() {
     const timings: number[] = [],
       recalls: number[] = [];
     for (let queryId = 0; queryId < 31; queryId++) {
-      const q = vector(100_001 + queryId),
+      const q = captured?.queries[queryId].vector ?? vector(100_001 + queryId),
         start = performance.now();
       const hits = await backend.search({
-        namespaceId: "agent-capacity",
+        namespaceId,
         workspaceId: "agent-workspace",
         generationId: generation.generationId,
         space,
@@ -167,7 +180,7 @@ async function main() {
       let exact: string[];
       if (mode === "ann") {
         const all = await backend.search({
-          namespaceId: "agent-capacity",
+          namespaceId,
           workspaceId: "agent-workspace",
           generationId: generation.generationId,
           space,
@@ -179,13 +192,12 @@ async function main() {
         exact = all.map((row) => row.id);
       } else {
         const gold: { id: string; distance: number }[] = [];
-        for (let i = 0; i < count; i++)
-          if (i % 5 !== 0) {
-            const v = vector(i);
-            let dot = 0;
-            for (let n = 0; n < dimensions; n++) dot += v[n] * q[n];
-            gold.push({ id: ids[i], distance: 1 - dot });
-          }
+        const eligibleSet = new Set(eligible);
+        for await (const row of rows()) if (eligibleSet.has(row.id)) {
+          let dot = 0;
+          for (let n = 0; n < dimensions; n++) dot += row.vector[n] * q[n];
+          gold.push({ id: row.id, distance: 1 - dot });
+        }
         gold.sort((a, b) => a.distance - b.distance || a.id.localeCompare(b.id));
         exact = gold.slice(0, 20).map((row) => row.id);
       }
@@ -224,15 +236,15 @@ async function main() {
         ? createPortableVectorBackend({ path: dbPath })
         : createLanceVectorBackend(path.join(output, "lance"));
     const reopened = await backend.search({
-      namespaceId: "agent-capacity",
+      namespaceId,
       workspaceId: "agent-workspace",
       generationId: generation.generationId,
       space,
-      vector: vector(1),
+      vector: restartVector!,
       limit: 1,
-      eligibleIds: ["v000001"],
+      eligibleIds: [ids[1]],
     });
-    assert.equal(reopened[0]?.id, "v000001");
+    assert.equal(reopened[0]?.id, ids[1]);
     report.restart = { status: "pass" };
     const size = async (dir: string): Promise<number> => {
       let bytes = 0;
@@ -244,6 +256,9 @@ async function main() {
     };
     report.diskBytes = await size(output);
     report.peakRssBytes = peakRss;
+    assert.equal(execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8", windowsHide: true }).trim(), candidate, "Capacity candidate changed during execution");
+    assert.equal(Boolean(execFileSync("git", ["status", "--porcelain"], { encoding: "utf8", windowsHide: true }).trim()), report.dirtyDevelopmentProbe,
+      "Capacity worktree changed during execution");
     report.status = "pass";
   } catch (error) {
     report.status = "fail";

@@ -1,0 +1,205 @@
+{
+  "schema": "ProjectRagPromotionPolicy/v1",
+  "id": "project-rag-policy-v1",
+  "actor": "codex/project-rag-corpus-author",
+  "driven_by": "agent",
+  "adr": "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md",
+  "profiles": {
+    "local": {
+      "retrieval": {
+        "candidateK": 40,
+        "rerankK": 0,
+        "finalK": 4,
+        "maxTokens": 1200,
+        "maxChars": 3200,
+        "deadlineMs": 900
+      },
+      "taskEnvelope": {
+        "maximumTotalUsd": 0.5,
+        "maxTotalTokens": 64000,
+        "deadlineMs": 600000,
+        "maxModelCalls": 12,
+        "allCostStages": [
+          "embedding",
+          "rerank",
+          "planning",
+          "generation",
+          "tools"
+        ],
+        "unknownReserveUsd": 0.05,
+        "missingUsage": "not-eligible-for-promotion",
+        "cancellation": "one-shared-deadline",
+        "finalDcsCharacterCeiling": 6000
+      }
+    },
+    "quality": {
+      "retrieval": {
+        "candidateK": 80,
+        "rerankK": 30,
+        "finalK": 6,
+        "maxTokens": 2200,
+        "maxChars": 6000,
+        "deadlineMs": 2500
+      },
+      "taskEnvelope": {
+        "maximumTotalUsd": 1,
+        "maxTotalTokens": 64000,
+        "deadlineMs": 600000,
+        "maxModelCalls": 12,
+        "allCostStages": [
+          "embedding",
+          "rerank",
+          "planning",
+          "generation",
+          "tools"
+        ],
+        "unknownReserveUsd": 0.1,
+        "missingUsage": "not-eligible-for-promotion",
+        "cancellation": "one-shared-deadline",
+        "finalDcsCharacterCeiling": 6000
+      }
+    },
+    "research": {
+      "retrieval": {
+        "candidateK": 120,
+        "rerankK": 60,
+        "finalK": 12,
+        "maxTokens": 5000,
+        "maxChars": 15000,
+        "deadlineMs": 30000,
+        "maxRounds": 3,
+        "maxQueries": 8,
+        "maxPlanningModelCalls": 2
+      },
+      "taskEnvelope": {
+        "maximumTotalUsd": 2,
+        "maxTotalTokens": 96000,
+        "deadlineMs": 1200000,
+        "maxModelCalls": 18,
+        "allCostStages": [
+          "embedding",
+          "rerank",
+          "planning",
+          "generation",
+          "tools"
+        ],
+        "unknownReserveUsd": 0.2,
+        "missingUsage": "not-eligible-for-promotion",
+        "cancellation": "one-shared-deadline",
+        "finalDcsCharacterCeiling": 6000
+      }
+    }
+  },
+  "tasks": {
+    "local": {
+      "minimumSuccessGain": 0.05,
+      "maximumCostIncrease": 0.1,
+      "zeroBaselineAbsoluteUsd": 0.02
+    },
+    "quality": {
+      "minimumSuccessGain": 0.05,
+      "maximumCostIncrease": 0.1,
+      "zeroBaselineAbsoluteUsd": 0.05
+    },
+    "research": {
+      "minimumSuccessGain": 0.1,
+      "maximumCostIncrease": 0.25,
+      "zeroBaselineAbsoluteUsd": 0.25
+    }
+  },
+  "retrieval": {
+    "primaryMetric": "nDCG@5",
+    "minimumNdcg5Gain": 0.05,
+    "confidenceLowerBound": "strictly-positive",
+    "recallAt20": "not-lower-than-shared-safe-page-baseline",
+    "exactRefPrecision": 1,
+    "relevanceGrades": {
+      "0": "no valid owner/version/span overlap",
+      "1": "nonzero overlap of the exact owner span",
+      "2": "at least 80 percent of required raw bytes",
+      "3": "candidate contains the complete required source span"
+    },
+    "duplicatePolicy": "first candidate per exact owner subject and gold span",
+    "reportGroups": [
+      "locale",
+      "intent",
+      "sourceFamilyId"
+    ]
+  },
+  "rerank": {
+    "minimumNdcg5Gain": 0.03,
+    "confidenceLowerBound": "strictly-positive",
+    "candidatePool": "same-frozen-id-and-span-pool"
+  },
+  "qa": {
+    "exactQuotePrecision": 1,
+    "claimSupport": "per-claim-required-source-spans",
+    "completeness": "all-required-fields",
+    "wholeTaskSuccess": "artifact-and-scope-and-quotes-and-values",
+    "answerMatchIsTaskPass": false
+  },
+  "autoRead": {
+    "precisionMinimum": 0.95,
+    "ci95LowerMinimum": 0.9,
+    "relevanceMinimum": 0.9,
+    "negativesMustNeverAutoAttach": true
+  },
+  "safety": {
+    "deniedSnippetBytes": 0,
+    "deniedEmbeddingBytes": 0,
+    "deniedRerankBytes": 0,
+    "deniedProviderBytes": 0,
+    "cancelledLateInjection": 0
+  },
+  "platform": {
+    "portableChunks": 20000,
+    "annChunks": 100000,
+    "annRecallAt20": 0.98,
+    "soakHours": 72,
+    "lostJobs": 0,
+    "duplicatePublication": 0,
+    "revocationLeaks": 0
+  },
+  "statistics": {
+    "implementation": "scripts/lib/paired-ablation.mjs",
+    "confidenceLevel": 0.95,
+    "taskRepeats": 3,
+    "taskInferenceUnit": "taskId",
+    "taskAggregation": "pass^3",
+    "queryInferenceUnit": "sourceFamilyId",
+    "queryAggregation": "mean-of-eight-language-and-question-variants",
+    "pairedCaseFloor": 20,
+    "zeroVariance": "interval-not-estimable",
+    "noDroppedOrIncompletePairs": true,
+    "targetPower": 0.8,
+    "power": "compute required cases using pairedEffect; 60 planned tasks are not a power claim",
+    "expansion": {
+      "trigger": "blinded-calibration-variance-before-held-out-release",
+      "stepCasesPerProfile": 20,
+      "selection": "new disjoint repository source families selected and graded independently of treatment outcomes",
+      "newCorpusVersion": true,
+      "overwriteExistingGold": false,
+      "cumulativeRepeatedLooks": "not-allowed",
+      "restartThreeArmPlan": true
+    }
+  },
+  "execution": {
+    "initialQueryIds": 240,
+    "initialTasks": 60,
+    "arms": [
+      "off",
+      "page",
+      "full"
+    ],
+    "repeats": 3,
+    "initialSlots": 540,
+    "randomization": "deterministic-latin-square-arm-order",
+    "freshSessionPerSlot": true,
+    "memoryWriteback": false,
+    "providerBinding": "one-clean-candidate/model/endpoint/rate/usage-parser binding before any slot; keys excluded",
+    "unresolvedProvider": "not-run",
+    "retries": "recorded-new-attempt-never-overwrite-original-slot",
+    "heldOutRelease": "clean-treatment-candidate-and-calibration-freeze-receipt",
+    "funding": "limits-only-no-provider-request-in-freeze"
+  }
+}

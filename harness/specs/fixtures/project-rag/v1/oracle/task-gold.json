@@ -1,0 +1,3819 @@
+[
+  {
+    "taskId": "t-owner-version-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "coordinateSpace",
+        "value": "raw-source-utf8-v1",
+        "sourceId": "owner-version-1",
+        "quote": "  coordinateSpace: \"raw-source-utf8-v1\";\n  startByte: number;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/owner-version-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:2a8e8862421572501d0540b97228d6318bda7579280ef5e45d458a5669a467b1",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 696,
+            "endByteExclusive": 758,
+            "startLine": 33,
+            "endLine": 34
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-owner-version-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-owner-version-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "endIsExclusive",
+        "value": true,
+        "sourceId": "owner-version-1",
+        "quote": "  endByteExclusive: number;\n  startLine: number;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/owner-version-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:2a8e8862421572501d0540b97228d6318bda7579280ef5e45d458a5669a467b1",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 758,
+            "endByteExclusive": 807,
+            "startLine": 35,
+            "endLine": 36
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-owner-version-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-wiki-read-policy-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "defaultStatus",
+        "value": "active",
+        "sourceId": "wiki-read-policy-1",
+        "quote": "  const status = metadata.status === undefined ? \"active\" : metadata.status;\n  if (\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/wiki-read-policy-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:88b63c15470bc2ea20e5574dca110a3e1509a1cabe21c0d0258b273acbcc2e87",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 4181,
+            "endByteExclusive": 4265,
+            "startLine": 118,
+            "endLine": 119
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-wiki-read-policy-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-wiki-read-policy-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "readContextLifetimeMs",
+        "value": 30000,
+        "sourceId": "wiki-read-policy-1",
+        "quote": "    expiresAt: new Date(Date.now() + 30_000).toISOString(),\n  });\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/wiki-read-policy-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:88b63c15470bc2ea20e5574dca110a3e1509a1cabe21c0d0258b273acbcc2e87",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 3677,
+            "endByteExclusive": 3743,
+            "startLine": 104,
+            "endLine": 105
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-wiki-read-policy-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-host-knowledge-scope-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "generationLookupMethod",
+        "value": "sessions.describe",
+        "sourceId": "host-knowledge-scope-1",
+        "quote": "    'sessions.describe', { key: sessionKey }, 15_000,\n  );\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/host-knowledge-scope-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:26e7d5fbca85701c60aa40d85a4d64e4f56beb99d78483a34e37bf057ee3cd9a",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2538,
+            "endByteExclusive": 2597,
+            "startLine": 59,
+            "endLine": 60
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-host-knowledge-scope-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-host-knowledge-scope-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "materializeMethod",
+        "value": "sessions.create",
+        "sourceId": "host-knowledge-scope-1",
+        "quote": "    await gateway.rpc('sessions.create', { key: scope.identity.agentSessionKey, ...(agentId ? { agentId } : {}) }, 30_000);\n    scope = await captureKnowledgeReadScope(gateway, selection, egressProviderRefs);\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/host-knowledge-scope-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:26e7d5fbca85701c60aa40d85a4d64e4f56beb99d78483a34e37bf057ee3cd9a",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 4488,
+            "endByteExclusive": 4697,
+            "startLine": 90,
+            "endLine": 91
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-host-knowledge-scope-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-bounded-page-read-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "scanLineCeiling",
+        "value": 800,
+        "sourceId": "bounded-page-read-1",
+        "quote": "  for (let fromLine = 81; fromLine <= Math.min(800, Number(first.totalLines) || 80); fromLine += 80) {\n    if (chars >= 96_000) break;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/bounded-page-read-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:5a5b42589ea2feaa203c2706184ae3f5d9900acc7188deaa15a6efc8b511de64",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 5202,
+            "endByteExclusive": 5337,
+            "startLine": 120,
+            "endLine": 121
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-bounded-page-read-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-bounded-page-read-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "scanCharacterCeiling",
+        "value": 96000,
+        "sourceId": "bounded-page-read-1",
+        "quote": "    if (chars >= 96_000) break;\n    const page = await input.read({ fromLine, lineCount: 80 });\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/bounded-page-read-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:5a5b42589ea2feaa203c2706184ae3f5d9900acc7188deaa15a6efc8b511de64",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 5305,
+            "endByteExclusive": 5401,
+            "startLine": 121,
+            "endLine": 122
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-bounded-page-read-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-source-set-limit-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "defaultLimit",
+        "value": 5,
+        "sourceId": "source-set-limit-1",
+        "quote": "const DEFAULT_LIMIT = 5;\nconst MAX_LIMIT = 20;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/source-set-limit-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:dce95c7a51bcbeb8eb35d73d75253d97151022c0f1485e690c124f404bd1a32e",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 6893,
+            "endByteExclusive": 6940,
+            "startLine": 288,
+            "endLine": 289
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-source-set-limit-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-source-set-limit-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "maximumLimit",
+        "value": 20,
+        "sourceId": "source-set-limit-1",
+        "quote": "const MAX_LIMIT = 20;\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/source-set-limit-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:dce95c7a51bcbeb8eb35d73d75253d97151022c0f1485e690c124f404bd1a32e",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 6918,
+            "endByteExclusive": 6941,
+            "startLine": 289,
+            "endLine": 290
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-source-set-limit-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-cjk-tokenizer-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "grams",
+        "value": [
+          "中文",
+          "文测",
+          "测试"
+        ],
+        "sourceId": "cjk-tokenizer-1",
+        "quote": "export function cjkBigrams(text: string): string[] {\n  const grams: string[] = [];\n  for (const run of text.match(CJK_RUN_RE) ?? []) {\n    for (let i = 0; i + 2 <= run.length; i += 1) {\n      grams.push(run.slice(i, i + 2));\n    }\n  }\n  return grams;\n}\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/cjk-tokenizer-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:5dbaae946856d3490012abd619dc1dc65a1e32d76eded7235992faaa600fefbd",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 625,
+            "endByteExclusive": 878,
+            "startLine": 26,
+            "endLine": 34
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-cjk-tokenizer-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-cjk-tokenizer-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "minimumHanRun",
+        "value": 2,
+        "sourceId": "cjk-tokenizer-1",
+        "quote": "export const CJK_RUN_RE = /[\\u4e00-\\u9fff]{2,}/g;\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/cjk-tokenizer-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:5dbaae946856d3490012abd619dc1dc65a1e32d76eded7235992faaa600fefbd",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 574,
+            "endByteExclusive": 625,
+            "startLine": 24,
+            "endLine": 25
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-cjk-tokenizer-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-memory-temporal-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "defaultTemporalPolicy",
+        "value": "strict_current",
+        "sourceId": "memory-temporal-1",
+        "quote": "    return { policy: \"strict_current\", intentKeywords: [] };\n  }\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/memory-temporal-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ea94e6ab039edceaf684c02f691f6f81f25fee9adffecbda49cc038784364707",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 4639,
+            "endByteExclusive": 4704,
+            "startLine": 147,
+            "endLine": 148
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-memory-temporal-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-memory-temporal-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "acceptedYearRange",
+        "value": [
+          1900,
+          2100
+        ],
+        "sourceId": "memory-temporal-1",
+        "quote": "    if (!Number.isNaN(year) && year >= 1900 && year <= 2100) {\n      // as_of 时间点 = 该年 1 月 1 日 00:00:00 UTC\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/memory-temporal-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ea94e6ab039edceaf684c02f691f6f81f25fee9adffecbda49cc038784364707",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 4937,
+            "endByteExclusive": 5059,
+            "startLine": 156,
+            "endLine": 157
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-memory-temporal-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-host-deadline-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "effectiveTimeoutMs",
+        "value": 100,
+        "sourceId": "host-deadline-1",
+        "quote": "  return Math.max(0, Math.min(local, remaining));\n}\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/host-deadline-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:a98d6be863318299db6809217fa1374324ab96baf54c0b1a7eb397006fdfbe1c",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 3702,
+            "endByteExclusive": 3754,
+            "startLine": 118,
+            "endLine": 119
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-host-deadline-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-host-deadline-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "expiredRemainingMs",
+        "value": 0,
+        "sourceId": "host-deadline-1",
+        "quote": "  return Math.max(0, deadline.deadlineAtMs - now());\n}\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/host-deadline-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:a98d6be863318299db6809217fa1374324ab96baf54c0b1a7eb397006fdfbe1c",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 3010,
+            "endByteExclusive": 3065,
+            "startLine": 94,
+            "endLine": 95
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-host-deadline-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-host-action-timeouts-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "defaultTimeoutMs",
+        "value": 60000,
+        "sourceId": "host-action-timeouts-1",
+        "quote": "export const HOST_ACTION_DEFAULT_TIMEOUT_MS = 60_000;\nexport const HOST_ACTION_LONG_TIMEOUT_MS = 15 * 60_000;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/host-action-timeouts-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:759502d5d99c9d91f65d1118fa7f44f830ee61c245f53f0105cbfb5cafaacc35",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 741,
+            "endByteExclusive": 851,
+            "startLine": 30,
+            "endLine": 31
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-host-action-timeouts-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-host-action-timeouts-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "longTimeoutMs",
+        "value": 900000,
+        "sourceId": "host-action-timeouts-1",
+        "quote": "export const HOST_ACTION_LONG_TIMEOUT_MS = 15 * 60_000;\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/host-action-timeouts-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:759502d5d99c9d91f65d1118fa7f44f830ee61c245f53f0105cbfb5cafaacc35",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 795,
+            "endByteExclusive": 852,
+            "startLine": 31,
+            "endLine": 32
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-host-action-timeouts-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-development-commands-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "runtimeBuildCommand",
+        "value": "pnpm run build:runtime",
+        "sourceId": "development-commands-1",
+        "quote": "| `pnpm run build:runtime` | embedded runtime build + Gateway startup smoke |\n| `pnpm run build` | 完整 app/runtime/plugin/skill 资源准备与 electron-builder 打包入口；不是发布授权 |\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/development-commands-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:75eea0c929ce9cb4ddaed8993d4237b802da6c34cc01726d4f91276fa04e1dcc",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 3191,
+            "endByteExclusive": 3391,
+            "startLine": 91,
+            "endLine": 92
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-development-commands-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-development-commands-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "fullTypecheckProjects",
+        "value": [
+          "node",
+          "web",
+          "test"
+        ],
+        "sourceId": "development-commands-1",
+        "quote": "| `pnpm run typecheck` | node + web + test types，三者必须通过 |\n| `pnpm run typecheck:node` | 只跑 node project |\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/development-commands-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:75eea0c929ce9cb4ddaed8993d4237b802da6c34cc01726d4f91276fa04e1dcc",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 3813,
+            "endByteExclusive": 3937,
+            "startLine": 105,
+            "endLine": 106
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-development-commands-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-session-continuity-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "mainSessionKey",
+        "value": "agent:main:main",
+        "sourceId": "session-continuity-1",
+        "quote": "默认主会话是 `agent:main:main`。session key 不是 runId，也不是 Task Ledger node id。session stop 不完成任务；archive 不删除任务；run abort 不替代 session stop。\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/session-continuity-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ade5eecc0f48beb6473af3834e59ba869bad79bf363ff428ceb5aab3da568f02",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1341,
+            "endByteExclusive": 1533,
+            "startLine": 43,
+            "endLine": 44
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-session-continuity-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-session-continuity-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "rendererHistoryLimits",
+        "value": {
+          "retained": 300,
+          "load": 200,
+          "rendered": 120
+        },
+        "sourceId": "session-continuity-1",
+        "quote": "- renderer 默认最多保留 300 条消息、一次加载 200 条、DOM 同时渲染 120 条。\n- 大历史窗口化渲染，避免一次性挂载全部节点。\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/session-continuity-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ade5eecc0f48beb6473af3834e59ba869bad79bf363ff428ceb5aab3da568f02",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2529,
+            "endByteExclusive": 2692,
+            "startLine": 70,
+            "endLine": 71
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-session-continuity-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-workspace-preflight-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "unwritableFallback",
+        "value": "readOnly",
+        "sourceId": "workspace-preflight-1",
+        "quote": "| writable | 不可写不阻断 Workspace，但强制 read-only fallback |\n| git | 只作为信息/影响 undo hint，不是接受前提 |\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/workspace-preflight-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:f1494e578c48e341192e5bbc67198c259b83c9bb92a3267234fe81133eaf75a0",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2385,
+            "endByteExclusive": 2524,
+            "startLine": 88,
+            "endLine": 89
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-workspace-preflight-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-workspace-preflight-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "gitIsRequired",
+        "value": false,
+        "sourceId": "workspace-preflight-1",
+        "quote": "| git | 只作为信息/影响 undo hint，不是接受前提 |\n| sensitivePath | drive root、home root、Windows/Unix system dir、credential dir 等阻断或警告 |\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/workspace-preflight-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:f1494e578c48e341192e5bbc67198c259b83c9bb92a3267234fe81133eaf75a0",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2460,
+            "endByteExclusive": 2629,
+            "startLine": 89,
+            "endLine": 90
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-workspace-preflight-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-provider-accounts-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "modelsSettingsRoute",
+        "value": "/settings/models",
+        "sourceId": "provider-accounts-1",
+        "quote": "用户入口：`Settings → Models & Providers`，兼容路由 `/models` 会重定向到 `/settings/models`。主实现位于：\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/provider-accounts-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:47e40bc6d4e6f5489740638590d0d21a0c102b9b746e9f83e2876480715f5950",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1280,
+            "endByteExclusive": 1411,
+            "startLine": 44,
+            "endLine": 45
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-provider-accounts-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-provider-accounts-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "rendererSecrets",
+        "value": "masked",
+        "sourceId": "provider-accounts-1",
+        "quote": "密钥通过 `electron/services/secrets/secret-store.ts` 和 Electron `safeStorage` 封装存储；Renderer 只应看到 masked 值。OS 加密不可用时，健康检查应报告不可用，而不是把“文件存在”当作可安全解密。\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/provider-accounts-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:47e40bc6d4e6f5489740638590d0d21a0c102b9b746e9f83e2876480715f5950",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 3045,
+            "endByteExclusive": 3292,
+            "startLine": 84,
+            "endLine": 85
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-provider-accounts-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-usage-aggregation-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "defaultUsageWindow",
+        "value": "30d",
+        "sourceId": "usage-aggregation-1",
+        "quote": "  return '30d';\n}\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/usage-aggregation-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:17ae975f9afbf045dc42b3dee040b4d84e6ab0d1dfbd768616f4884b4dc3fe3f",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1948,
+            "endByteExclusive": 1966,
+            "startLine": 64,
+            "endLine": 65
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-usage-aggregation-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-usage-aggregation-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "riskLedgerLimit",
+        "value": 200,
+        "sourceId": "usage-aggregation-1",
+        "quote": "const PROMPT_CACHE_RISK_LEDGER_LIMIT = 200;\nconst PROMPT_CACHE_CHANGE_CODES = new Set<PromptCacheChangeCode>([\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/usage-aggregation-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:17ae975f9afbf045dc42b3dee040b4d84e6ab0d1dfbd768616f4884b4dc3fe3f",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1967,
+            "endByteExclusive": 2078,
+            "startLine": 67,
+            "endLine": 68
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-usage-aggregation-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-knowledge-governance-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "primaryTabs",
+        "value": [
+          "Library",
+          "Review Queue"
+        ],
+        "sourceId": "knowledge-governance-1",
+        "quote": "`src/pages/Knowledge/index.tsx` 当前有两个主入口：**Library** 和 **Review Queue**。\nInbox、Drafts、Review、Runtime Lessons 和 Governance 是按需打开的内部工作视图，\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/knowledge-governance-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:deecff903a2502265b4d6e76bdfe38bef47765597061eb5ebe46cade9333914b",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1672,
+            "endByteExclusive": 1864,
+            "startLine": 46,
+            "endLine": 47
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-knowledge-governance-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-knowledge-governance-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "durableSequence",
+        "value": [
+          "Knowledge Inbox",
+          "Draft",
+          "Steward / review",
+          "Change Proposal",
+          "explicit apply",
+          "memory-wiki durable page"
+        ],
+        "sourceId": "knowledge-governance-1",
+        "quote": "  -> Knowledge Inbox\n  -> Draft\n  -> Steward / review\n  -> Change Proposal\n  -> explicit apply\n  -> memory-wiki durable page\n  -> provenance + audit + receipt\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/knowledge-governance-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:deecff903a2502265b4d6e76bdfe38bef47765597061eb5ebe46cade9333914b",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2499,
+            "endByteExclusive": 2658,
+            "startLine": 76,
+            "endLine": 82
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-knowledge-governance-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-local-embedding-model-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "localModel",
+        "value": "hf:ggml-org/embeddinggemma-300m-qat-q8_0-GGUF/embeddinggemma-300m-qat-Q8_0.gguf",
+        "sourceId": "local-embedding-model-1",
+        "quote": "  \"hf:ggml-org/embeddinggemma-300m-qat-q8_0-GGUF/embeddinggemma-300m-qat-Q8_0.gguf\";\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/local-embedding-model-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:946f9254a9a63109576f99d854a981ae27e6e0178a860143d366913f24f89db8",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 644,
+            "endByteExclusive": 729,
+            "startLine": 25,
+            "endLine": 25
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-local-embedding-model-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-local-embedding-model-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "quantization",
+        "value": "Q8_0",
+        "sourceId": "local-embedding-model-1",
+        "quote": "export const DEFAULT_LOCAL_MODEL =\n  \"hf:ggml-org/embeddinggemma-300m-qat-q8_0-GGUF/embeddinggemma-300m-qat-Q8_0.gguf\";\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/local-embedding-model-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:946f9254a9a63109576f99d854a981ae27e6e0178a860143d366913f24f89db8",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 609,
+            "endByteExclusive": 729,
+            "startLine": 24,
+            "endLine": 25
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-local-embedding-model-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-existing-semantic-provider-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "maximumBatchSize",
+        "value": 8,
+        "sourceId": "existing-semantic-provider-1",
+        "quote": "const MAX_BATCH_SIZE = 8;\n/** Default total budget for one embedding operation (query + all batches). */\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/existing-semantic-provider-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:6be805e45d8430a847a7f2804a8072d990232ea4d358827f8fad254f98ba11be",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 973,
+            "endByteExclusive": 1078,
+            "startLine": 32,
+            "endLine": 33
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-existing-semantic-provider-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-existing-semantic-provider-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "embeddingTimeoutsMs",
+        "value": {
+          "batch": 30000,
+          "operation": 120000
+        },
+        "sourceId": "existing-semantic-provider-1",
+        "quote": "const REQUEST_TIMEOUT_MS = 30_000;\nconst MAX_BATCH_SIZE = 8;\n/** Default total budget for one embedding operation (query + all batches). */\nexport const DEFAULT_EMBEDDING_DEADLINE_MS = 120_000;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/existing-semantic-provider-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:6be805e45d8430a847a7f2804a8072d990232ea4d358827f8fad254f98ba11be",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 938,
+            "endByteExclusive": 1132,
+            "startLine": 31,
+            "endLine": 34
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-existing-semantic-provider-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-role-memory-store-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "roleStoreFilename",
+        "value": "role-memory.sqlite",
+        "sourceId": "role-memory-store-1",
+        "quote": "const DEFAULT_DB_FILENAME = \"role-memory.sqlite\";\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/role-memory-store-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:2c6880cec1667010782b2c7f8633a1152f16f14ab646621f668c2223b2895a84",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2609,
+            "endByteExclusive": 2660,
+            "startLine": 89,
+            "endLine": 90
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-role-memory-store-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-role-memory-store-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "sameAsNativeMemory",
+        "value": false,
+        "sourceId": "role-memory-store-1",
+        "quote": "// This is intentionally separate from memorySearch/QMD/MEMORY.md. The native\n// memory engine remains the source/retrieval layer; this store owns structured\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/role-memory-store-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:2c6880cec1667010782b2c7f8633a1152f16f14ab646621f668c2223b2895a84",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 513,
+            "endByteExclusive": 671,
+            "startLine": 25,
+            "endLine": 26
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-role-memory-store-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-file-path-boundary-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "maximumPathCharacters",
+        "value": 4096,
+        "sourceId": "file-path-boundary-1",
+        "quote": "const MAX_PATH_CHARS = 4096;\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/file-path-boundary-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:8bff37fc96935ba3cf97a8919de7736eb00ad4fe1bbb856ad86dd67e08b81349",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1208,
+            "endByteExclusive": 1238,
+            "startLine": 51,
+            "endLine": 52
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-file-path-boundary-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-file-path-boundary-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "uncAllowed",
+        "value": false,
+        "sourceId": "file-path-boundary-1",
+        "quote": "    throw new PathBrokerError('uncPath', 'UNC paths are not allowed');\n  }\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/file-path-boundary-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:8bff37fc96935ba3cf97a8919de7736eb00ad4fe1bbb856ad86dd67e08b81349",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 3460,
+            "endByteExclusive": 3535,
+            "startLine": 110,
+            "endLine": 111
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-file-path-boundary-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-task-working-context-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "workingContextFields",
+        "value": [
+          "Objective",
+          "Constraints",
+          "ConfirmedFacts",
+          "Decisions",
+          "OpenRisks",
+          "ActiveFiles",
+          "Evidence",
+          "NextAction"
+        ],
+        "sourceId": "task-working-context-1",
+        "quote": "export const TASK_LEDGER_WORKING_CONTEXT_FIELDS = [\n  'Objective',\n  'Constraints',\n  'ConfirmedFacts',\n  'Decisions',\n  'OpenRisks',\n  'ActiveFiles',\n  'Evidence',\n  'NextAction',\n] as const;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/task-working-context-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:323202aa4f334b64aef6563bf8230d7d4ef7ce90b5012528ee32bf3192a7aa73",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1415,
+            "endByteExclusive": 1608,
+            "startLine": 64,
+            "endLine": 73
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-task-working-context-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-task-working-context-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "nodeStatuses",
+        "value": [
+          "todo",
+          "doing",
+          "blocked",
+          "review",
+          "done",
+          "dropped"
+        ],
+        "sourceId": "task-working-context-1",
+        "quote": "export type TaskLedgerNodeStatus = 'todo' | 'doing' | 'blocked' | 'review' | 'done' | 'dropped';\nexport type TaskLedgerActor = 'user' | 'assistant' | 'system';\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/task-working-context-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:323202aa4f334b64aef6563bf8230d7d4ef7ce90b5012528ee32bf3192a7aa73",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 579,
+            "endByteExclusive": 739,
+            "startLine": 33,
+            "endLine": 34
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-task-working-context-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-dcs-turn-budget-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "turnCharacterBudget",
+        "value": 6000,
+        "sourceId": "dcs-turn-budget-1",
+        "quote": "export const TURN_INJECTION_CHAR_BUDGET = 6000;\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/dcs-turn-budget-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:d89deeacd86db4b01d6bc536bcf60a67874fb63516df52a0818a157618473589",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 5586,
+            "endByteExclusive": 5635,
+            "startLine": 135,
+            "endLine": 136
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "budgetConfigKey",
+        "value": "totalChars",
+        "sourceId": "dcs-turn-budget-2",
+        "quote": " * `runtime.contextBlock.injectionBudget.{totalChars,dropAlertRatio}` lives in\n * `openclaw.json`, but the budget getters run on every turn and the runtime is\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/dcs-turn-budget-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:cd28cfc1e84456a59d3cf76df2d5d188fefdf48e39fd49bf227239bb7c9a0dd3",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 595,
+            "endByteExclusive": 754,
+            "startLine": 26,
+            "endLine": 27
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-dcs-turn-budget-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-dcs-turn-budget-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "dropAlertRatio",
+        "value": 0.1,
+        "sourceId": "dcs-turn-budget-1",
+        "quote": "export const TURN_INJECTION_DROP_ALERT_RATIO = 0.1;\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/dcs-turn-budget-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:d89deeacd86db4b01d6bc536bcf60a67874fb63516df52a0818a157618473589",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 6047,
+            "endByteExclusive": 6100,
+            "startLine": 144,
+            "endLine": 145
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "budgetConfigKey",
+        "value": "totalChars",
+        "sourceId": "dcs-turn-budget-2",
+        "quote": " * `runtime.contextBlock.injectionBudget.{totalChars,dropAlertRatio}` lives in\n * `openclaw.json`, but the budget getters run on every turn and the runtime is\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/dcs-turn-budget-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:cd28cfc1e84456a59d3cf76df2d5d188fefdf48e39fd49bf227239bb7c9a0dd3",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 595,
+            "endByteExclusive": 754,
+            "startLine": 26,
+            "endLine": 27
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-dcs-turn-budget-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-context-candidates-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "candidateSchema",
+        "value": "ContextCandidate/v1",
+        "sourceId": "context-candidates-1",
+        "quote": "export const CONTEXT_CANDIDATE_SCHEMA = \"ContextCandidate/v1\" as const;\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-candidates-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:2f4764db9e8884b77c9ddb4027802926f6c2f127f19e132d5515d9e3e509f2f2",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1117,
+            "endByteExclusive": 1190,
+            "startLine": 42,
+            "endLine": 43
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "orchestratorProjector",
+        "value": "projectContextCandidates",
+        "sourceId": "context-candidates-2",
+        "quote": "  projectContextCandidates,\n  recordContextCandidateSkip,\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-candidates-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:b06188f2ef26e2871703650fabc3c20f2e1ba3c0dc1dfbf360763e74e266b130",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1950,
+            "endByteExclusive": 2008,
+            "startLine": 59,
+            "endLine": 60
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-context-candidates-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-context-candidates-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "candidateTargets",
+        "value": [
+          "system_prompt",
+          "message",
+          "message_replacement"
+        ],
+        "sourceId": "context-candidates-1",
+        "quote": "export type ContextCandidateTarget = \"system_prompt\" | \"message\" | \"message_replacement\";\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-candidates-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:2f4764db9e8884b77c9ddb4027802926f6c2f127f19e132d5515d9e3e509f2f2",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1190,
+            "endByteExclusive": 1281,
+            "startLine": 44,
+            "endLine": 45
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "orchestratorProjector",
+        "value": "projectContextCandidates",
+        "sourceId": "context-candidates-2",
+        "quote": "  projectContextCandidates,\n  recordContextCandidateSkip,\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-candidates-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:b06188f2ef26e2871703650fabc3c20f2e1ba3c0dc1dfbf360763e74e266b130",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1950,
+            "endByteExclusive": 2008,
+            "startLine": 59,
+            "endLine": 60
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-context-candidates-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-context-resource-contract-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "bundleSchemaVersion",
+        "value": 1,
+        "sourceId": "context-resource-contract-1",
+        "quote": "export type PromptBundle = {\n  schemaVersion: 1;\n  instructionKernel?: string;\n  resourceMap: PromptBundleResourceMapEntry[];\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-resource-contract-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:f335f5307c9c1cba002806ce3f49bb8ee357ecbaa27a4544f295185c45fc557c",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2870,
+            "endByteExclusive": 2996,
+            "startLine": 133,
+            "endLine": 136
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "codebaseIndexReplacement",
+        "value": "FactStore",
+        "sourceId": "context-resource-contract-2",
+        "quote": "  codebase index was superseded by the FactStore tree-sitter pipeline —\n  symbols, `calls`/`imports`/`tested_by` edges via\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-resource-contract-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:bf84365f6276fd9e4f7b82c419d6e5038955e7929b45d824fc1588e2c43f92a1",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1846,
+            "endByteExclusive": 1971,
+            "startLine": 56,
+            "endLine": 57
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-context-resource-contract-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-context-resource-contract-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "compactViewsNavigationOnly",
+        "value": true,
+        "sourceId": "context-resource-contract-1",
+        "quote": "  navigationOnly: true;\n  hardSelectors: Selector[];\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-resource-contract-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:f335f5307c9c1cba002806ce3f49bb8ee357ecbaa27a4544f295185c45fc557c",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2165,
+            "endByteExclusive": 2218,
+            "startLine": 99,
+            "endLine": 100
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "codebaseIndexReplacement",
+        "value": "FactStore",
+        "sourceId": "context-resource-contract-2",
+        "quote": "  codebase index was superseded by the FactStore tree-sitter pipeline —\n  symbols, `calls`/`imports`/`tested_by` edges via\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/context-resource-contract-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:bf84365f6276fd9e4f7b82c419d6e5038955e7929b45d824fc1588e2c43f92a1",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1846,
+            "endByteExclusive": 1971,
+            "startLine": 56,
+            "endLine": 57
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-context-resource-contract-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-background-admission-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "queueWatermarks",
+        "value": {
+          "high": 16,
+          "low": 4,
+          "minDwellMs": 10000
+        },
+        "sourceId": "background-admission-1",
+        "quote": "export const DEFAULT_BACKGROUND_WORK_WATERMARKS = { highQueueDepth: 16, lowQueueDepth: 4, highTreeRssBytes: 3 * 1024 ** 3, lowTreeRssBytes: 2 * 1024 ** 3, highCpuPercent: 300, lowCpuPercent: 120, minDwellMs: 10_000 };\ntype Pending = { task: () => Promise<unknown> | unknown; resolve: (value: unknown) => void; reject: (error: unknown) => void };\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/background-admission-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:d5148ac3cd3000391fdf4520e926510a9aea97467a521739deb4eebab5a0fa06",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 845,
+            "endByteExclusive": 1191,
+            "startLine": 36,
+            "endLine": 37
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "foregroundPriority",
+        "value": "foreground",
+        "sourceId": "background-admission-2",
+        "quote": "export type BackgroundWorkPriority = \"foreground\" | \"background\";\nexport type BackgroundWorkDeferReason = \"shed-signal\" | \"queue-depth\" | \"tree-rss\" | \"tree-cpu\" | \"event-loop\";\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/background-admission-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:d5552b7c5010f2dcf661cf8793a10e62404d40b985794bd58438c1cfc63f92f4",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 4291,
+            "endByteExclusive": 4469,
+            "startLine": 169,
+            "endLine": 170
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-background-admission-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-background-admission-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "foregroundDeferred",
+        "value": false,
+        "sourceId": "background-admission-1",
+        "quote": "  shouldDefer(priority: BackgroundWorkPriority): boolean { if (priority === \"foreground\") { this.state = { ...this.state, foregroundChecks: this.state.foregroundChecks + 1 }; return false; } return this.state.deferring; }\n  shouldResume(priority: BackgroundWorkPriority = \"background\"): boolean { return priority === \"background\" && !this.state.deferring; }\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/background-admission-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:d5148ac3cd3000391fdf4520e926510a9aea97467a521739deb4eebab5a0fa06",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2160,
+            "endByteExclusive": 2518,
+            "startLine": 46,
+            "endLine": 47
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "foregroundPriority",
+        "value": "foreground",
+        "sourceId": "background-admission-2",
+        "quote": "export type BackgroundWorkPriority = \"foreground\" | \"background\";\nexport type BackgroundWorkDeferReason = \"shed-signal\" | \"queue-depth\" | \"tree-rss\" | \"tree-cpu\" | \"event-loop\";\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/background-admission-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:d5552b7c5010f2dcf661cf8793a10e62404d40b985794bd58438c1cfc63f92f4",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 4291,
+            "endByteExclusive": 4469,
+            "startLine": 169,
+            "endLine": 170
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-background-admission-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-bounded-cache-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "getRefreshesTtl",
+        "value": false,
+        "sourceId": "bounded-cache-1",
+        "quote": " * Values are never refreshed implicitly; callers decide when to read again.\n */\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/bounded-cache-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:32986b885f2f62b5bccddff04aec9a8a36709eaa5d6c15cc584943fa5b571b87",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 514,
+            "endByteExclusive": 595,
+            "startLine": 25,
+            "endLine": 26
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "requestCoalescer",
+        "value": "Singleflight",
+        "sourceId": "bounded-cache-2",
+        "quote": "export class Singleflight<K, V> {\n  private readonly inFlight = new Map<K, Flight<V>>();\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/bounded-cache-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:496316e5711d92cb51f2bc4b98ad0740bf2ca269b8f13d10c8ac19033c693a33",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 826,
+            "endByteExclusive": 915,
+            "startLine": 34,
+            "endLine": 35
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-bounded-cache-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-bounded-cache-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "expiresAtBoundaryIsExpired",
+        "value": true,
+        "sourceId": "bounded-cache-1",
+        "quote": "    if (entry.expiresAt <= this.now()) {\n      this.delete(key);\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/bounded-cache-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:32986b885f2f62b5bccddff04aec9a8a36709eaa5d6c15cc584943fa5b571b87",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2009,
+            "endByteExclusive": 2074,
+            "startLine": 66,
+            "endLine": 67
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "requestCoalescer",
+        "value": "Singleflight",
+        "sourceId": "bounded-cache-2",
+        "quote": "export class Singleflight<K, V> {\n  private readonly inFlight = new Map<K, Flight<V>>();\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/bounded-cache-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:496316e5711d92cb51f2bc4b98ad0740bf2ca269b8f13d10c8ac19033c693a33",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 826,
+            "endByteExclusive": 915,
+            "startLine": 34,
+            "endLine": 35
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-bounded-cache-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-provider-outbound-quota-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "quotaOwner",
+        "value": "provider-outbound-budget",
+        "sourceId": "provider-outbound-quota-1",
+        "quote": "const log = createSubsystemLogger(\"provider-outbound-budget\");\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/provider-outbound-quota-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:cf9ae2446d8417a556af7363c7841b89687b68339c0fab3fdd7cc61e885e0616",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2998,
+            "endByteExclusive": 3062,
+            "startLine": 64,
+            "endLine": 65
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "budgetUnit",
+        "value": "physical-request-concurrency",
+        "sourceId": "provider-outbound-quota-2",
+        "quote": "旧槽位仍可继续排空；不能把这种状态解释成已经证明的无限容量。此处只治理物理请求并发，\n尚不代表跨项目/会话 token 或货币成本已完成预留与核销。\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/provider-outbound-quota-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:e8e75d6a9efb43611fa4cb91b3b3534d22a45ffdff378f8955370503ee77ff4f",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 13421,
+            "endByteExclusive": 13626,
+            "startLine": 246,
+            "endLine": 247
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-provider-outbound-quota-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-provider-outbound-quota-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "busyOnActiveAliasRebind",
+        "value": true,
+        "sourceId": "provider-outbound-quota-1",
+        "quote": "    if (count > 0 && resolveProviderOutboundLimits(id, copied)) throw new ProviderBudgetReconfigureBusyError();\n  }\n  for (const managed of groups.values()) {\n    const state = managed.gate.stats();\n    if (!state.active && !state.queued) continue;\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/provider-outbound-quota-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:cf9ae2446d8417a556af7363c7841b89687b68339c0fab3fdd7cc61e885e0616",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 17339,
+            "endByteExclusive": 17588,
+            "startLine": 441,
+            "endLine": 445
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "budgetUnit",
+        "value": "physical-request-concurrency",
+        "sourceId": "provider-outbound-quota-2",
+        "quote": "旧槽位仍可继续排空；不能把这种状态解释成已经证明的无限容量。此处只治理物理请求并发，\n尚不代表跨项目/会话 token 或货币成本已完成预留与核销。\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/provider-outbound-quota-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:e8e75d6a9efb43611fa4cb91b3b3534d22a45ffdff378f8955370503ee77ff4f",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 13421,
+            "endByteExclusive": 13626,
+            "startLine": 246,
+            "endLine": 247
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-provider-outbound-quota-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-backup-restore-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "overwriteExisting",
+        "value": false,
+        "sourceId": "backup-restore-1",
+        "quote": " *   1. **Conservative writes.** Restore never overwrites an existing file. The\n *      user's current data is the more recent state; overwriting it with an\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/backup-restore-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:8055916f281cf91cb6925b39c88f0b5ae4809007a427ceb75a4203bfcebfa71f",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1403,
+            "endByteExclusive": 1560,
+            "startLine": 43,
+            "endLine": 44
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "archiveManifest",
+        "value": "manifest.json",
+        "sourceId": "backup-restore-2",
+        "quote": "    const manifestPath = path.join(tempDir, \"manifest.json\");\n    await writeJson(\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/backup-restore-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:b5dd813f77b0eb452eb215eb06e99a68eef45b471538d92a5a90423c861c9feb",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 11212,
+            "endByteExclusive": 11295,
+            "startLine": 337,
+            "endLine": 338
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-backup-restore-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-backup-restore-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "failureRollbackScope",
+        "value": "files-created-this-restore",
+        "sourceId": "backup-restore-1",
+        "quote": " *   4. **Rollback.** Files written during a restore are removed if a later\n *      entry fails, so a partial failure does not leave a half-restored tree.\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/backup-restore-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:8055916f281cf91cb6925b39c88f0b5ae4809007a427ceb75a4203bfcebfa71f",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2047,
+            "endByteExclusive": 2202,
+            "startLine": 52,
+            "endLine": 53
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "archiveManifest",
+        "value": "manifest.json",
+        "sourceId": "backup-restore-2",
+        "quote": "    const manifestPath = path.join(tempDir, \"manifest.json\");\n    await writeJson(\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/backup-restore-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:b5dd813f77b0eb452eb215eb06e99a68eef45b471538d92a5a90423c861c9feb",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 11212,
+            "endByteExclusive": 11295,
+            "startLine": 337,
+            "endLine": 338
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-backup-restore-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-experience-adoption-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "requiredPrincipleStatus",
+        "value": "active",
+        "sourceId": "experience-adoption-1",
+        "quote": "    if (principle.status !== \"active\") return \"principle-not-active\";\n  }\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/experience-adoption-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:bcc41128e9746821f70490768792d25e731b7fd726479c4bb21ad00849a47d36",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 7454,
+            "endByteExclusive": 7528,
+            "startLine": 161,
+            "endLine": 162
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "masterEnableEnvironment",
+        "value": "OPENCLAW_SEKB_ENABLED",
+        "sourceId": "experience-adoption-2",
+        "quote": "  const fromEnv = envTriState(env, \"OPENCLAW_SEKB_ENABLED\");\n  if (fromEnv !== undefined) {\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/experience-adoption-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:8cab8dfcca502c4ef1a31533cf741fa5b3eb15251dc738e46913732b1d622d1b",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1656,
+            "endByteExclusive": 1748,
+            "startLine": 61,
+            "endLine": 62
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-experience-adoption-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-experience-adoption-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "adoptionDispositions",
+        "value": [
+          "recorded",
+          "duplicate",
+          "rejected",
+          "conflict"
+        ],
+        "sourceId": "experience-adoption-1",
+        "quote": "    disposition: \"recorded\" | \"duplicate\" | \"rejected\" | \"conflict\";\n  } {\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/experience-adoption-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:bcc41128e9746821f70490768792d25e731b7fd726479c4bb21ad00849a47d36",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 21551,
+            "endByteExclusive": 21626,
+            "startLine": 479,
+            "endLine": 480
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "masterEnableEnvironment",
+        "value": "OPENCLAW_SEKB_ENABLED",
+        "sourceId": "experience-adoption-2",
+        "quote": "  const fromEnv = envTriState(env, \"OPENCLAW_SEKB_ENABLED\");\n  if (fromEnv !== undefined) {\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/experience-adoption-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:8cab8dfcca502c4ef1a31533cf741fa5b3eb15251dc738e46913732b1d622d1b",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1656,
+            "endByteExclusive": 1748,
+            "startLine": 61,
+            "endLine": 62
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-experience-adoption-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-orchestration-capacity-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "unmeasuredConcurrencyCap",
+        "value": 1,
+        "sourceId": "orchestration-capacity-1",
+        "quote": "  return typeof value === \"number\" && Number.isSafeInteger(value) && value > 0 ? value : 1;\n}\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/orchestration-capacity-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:6a2fe899a20b4c1f15b04d4b024744f63f68c9fdaea2ef37d8825612713a3c4b",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2437,
+            "endByteExclusive": 2531,
+            "startLine": 91,
+            "endLine": 92
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "complexRoutingMode",
+        "value": "lead-workers",
+        "sourceId": "orchestration-capacity-2",
+        "quote": "export type RoleRouteMode = \"router\" | \"lead-workers\" | \"adversarial-review\";\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/orchestration-capacity-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:063021ce1b094cfebc038a3869a9d473396db6c0b21654bb8fa634c3890bf08e",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 678,
+            "endByteExclusive": 757,
+            "startLine": 33,
+            "endLine": 34
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-orchestration-capacity-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-orchestration-capacity-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "highEffortCost",
+        "value": 3,
+        "sourceId": "orchestration-capacity-1",
+        "quote": "  high: 3,\n  xhigh: 4,\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/orchestration-capacity-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:6a2fe899a20b4c1f15b04d4b024744f63f68c9fdaea2ef37d8825612713a3c4b",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2180,
+            "endByteExclusive": 2203,
+            "startLine": 83,
+            "endLine": 84
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "complexRoutingMode",
+        "value": "lead-workers",
+        "sourceId": "orchestration-capacity-2",
+        "quote": "export type RoleRouteMode = \"router\" | \"lead-workers\" | \"adversarial-review\";\n\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/orchestration-capacity-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:063021ce1b094cfebc038a3869a9d473396db6c0b21654bb8fa634c3890bf08e",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 678,
+            "endByteExclusive": 757,
+            "startLine": 33,
+            "endLine": 34
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-orchestration-capacity-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-role-contracts-1",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "reviewerRoleName",
+        "value": "reviewer",
+        "sourceId": "role-contracts-1",
+        "quote": "    name: \"reviewer\",\n    displayName: \"Reviewer\",\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/role-contracts-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:979076dd69ff47dce67e5d03e91cadb309780eba41b13ca6dcda6ea898e21478",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 15264,
+            "endByteExclusive": 15315,
+            "startLine": 381,
+            "endLine": 382
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "securityTeamVerifier",
+        "value": "skeptic",
+        "sourceId": "role-contracts-2",
+        "quote": "    id: \"security-audit\",\n    name: \"Security Audit Team\",\n    description: \"Security reviewer and skeptic-led adversarial review for auth, permissions, and secrets work.\",\n    mode: \"adversarial-review\",\n    defaultLeadRole: \"security-reviewer\",\n    verifierRole: \"skeptic\",\n    roles: [\n      { roleName: \"security-reviewer\", required: true },\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/role-contracts-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:71aa836ea95075c9d7342e1d562f50acee15f08e35b2669f021f61fe96427a73",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1186,
+            "endByteExclusive": 1532,
+            "startLine": 42,
+            "endLine": 49
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-role-contracts-1",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "taskId": "t-role-contracts-2",
+    "facts": [
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "skepticRoleName",
+        "value": "skeptic",
+        "sourceId": "role-contracts-1",
+        "quote": "    name: \"skeptic\",\n    displayName: \"Skeptic\",\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/role-contracts-1.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:979076dd69ff47dce67e5d03e91cadb309780eba41b13ca6dcda6ea898e21478",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 18246,
+            "endByteExclusive": 18295,
+            "startLine": 445,
+            "endLine": 446
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      },
+      {
+        "schema": "SourceSpanGold/v1",
+        "field": "securityTeamVerifier",
+        "value": "skeptic",
+        "sourceId": "role-contracts-2",
+        "quote": "    id: \"security-audit\",\n    name: \"Security Audit Team\",\n    description: \"Security reviewer and skeptic-led adversarial review for auth, permissions, and secrets work.\",\n    mode: \"adversarial-review\",\n    defaultLeadRole: \"security-reviewer\",\n    verifierRole: \"skeptic\",\n    roles: [\n      { roleName: \"security-reviewer\", required: true },\n",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:256ef5a431cfcc4329ad1a33d2f4702f236c00afc62db323c749c0da2de02263",
+          "subjectId": "concepts/role-contracts-2.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:71aa836ea95075c9d7342e1d562f50acee15f08e35b2669f021f61fe96427a73",
+          "policyEpoch": "sha256:47dddf16301f13c9ce9b4bd0d03215cb978ea3e5213fc3967a7b476ce84b96f0",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1186,
+            "endByteExclusive": 1532,
+            "startLine": 42,
+            "endLine": 49
+          }
+        },
+        "authorship": {
+          "actor": "codex/project-rag-corpus-author",
+          "driven_by": "agent",
+          "origin": "agent-authored-query-oracle-over-pinned-project-source",
+          "writtenAt": "2026-11-09T22:32:47.090Z",
+          "review": "pending-independent-agent-review",
+          "humanData": false
+        }
+      }
+    ],
+    "outputRequired": true,
+    "keepUntouched": {
+      "requestId": "t-role-contracts-2",
+      "workspaceId": "rag-corpus-workspace",
+      "productLock": "none/suggest"
+    },
+    "grading": "full-file-contract",
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-09T22:32:47.090Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  }
+]

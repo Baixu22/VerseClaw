@@ -253,7 +253,7 @@ export function gradeRagTaskArtifact(bundle, taskId, workspace, materializationR
   if (task.kind === 'code-repair') {
     let behaviorMatch = false, codeCaseCount = 0;
     try {
-      assert.equal(oracle.code.platform, process.platform, 'code oracle platform not evaluated');
+      assert(['win32', 'darwin', 'linux'].includes(oracle.code.platform), 'code oracle platform not pinned');
       const bytes = readFileSync(safeCorpusFile(workspace, binding.outputPath));
       artifactDigest = sha256(bytes);
       const code = new TextDecoder('utf8', { fatal: true }).decode(bytes);

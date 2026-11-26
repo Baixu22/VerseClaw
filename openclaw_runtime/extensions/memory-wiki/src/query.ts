@@ -219,6 +219,7 @@ type WikiGetResult = {
   reason?: string;
   pageType?: string;
   hasConflicts?: boolean;
+  claims?: Array<{ id: string; text: string }>;
 };
 
 export type QueryableWikiPage = WikiPageSummary & {
@@ -1769,12 +1770,15 @@ export async function getMemoryWikiPage(params: {
       });
       if (current.status === "denied") return deny(current.reason);
       const snapshot = current.snapshot;
-      const totalLines = parseWikiMarkdown(currentRaw).body.split(/\r?\n/).length;
+      const body = parseWikiMarkdown(currentRaw).body;
+      const totalLines = body.split(/\r?\n/).length;
       const slice = snapshot.content;
       const rawPrefix = Buffer.from(currentRaw, "utf8")
         .subarray(0, snapshot.source.locator!.startByte)
         .toString("utf8");
-      const bodyStart = currentRaw.length - parseWikiMarkdown(currentRaw).body.length;
+      const bodyStart = currentRaw.length - body.length;
+      const sliceStart = rawPrefix.length - bodyStart;
+      const sliceEnd = sliceStart + slice.length;
       const actualFromLine = 1 + (rawPrefix.slice(bodyStart).match(/\n/g)?.length ?? 0);
       const actualLineCount = slice.length
         ? snapshot.source.locator!.endLine - snapshot.source.locator!.startLine + 1
@@ -1796,6 +1800,13 @@ export async function getMemoryWikiPage(params: {
         hasConflicts:
           currentPage.contradictions.length > 0 ||
           currentPage.claims.some((claim) => isClaimContestedStatus(claim.status)),
+        // Claims have no occurrence locator. Every occurrence must be inside
+        // the owner read; an incidental match cannot bind an unread claim.
+        claims: currentPage.claims.flatMap((claim) => {
+          if (!claim.id || claim.text.trim().length < 2 || !slice.includes(claim.text)) return [];
+          if (body.indexOf(claim.text) < sliceStart || body.lastIndexOf(claim.text) + claim.text.length > sliceEnd) return [];
+          return [{ id: claim.id, text: claim.text }];
+        }),
         sourceRef: snapshot.source,
         ownerSnapshot: snapshot,
       };

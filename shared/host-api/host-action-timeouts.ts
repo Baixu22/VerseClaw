@@ -22,6 +22,7 @@ export const HOST_ACTION_LONG_TIMEOUT_MS = 15 * 60_000;
  * - chat.sendWithMedia: a real agent turn may run several read/edit/exec steps
  * - gateway.rpc mission.run: one bounded Mission tick runs its Task Loop and reviewer
  * - sessions.compact/compactRange: the runtime may need a live-model summary
+ * - knowledge.policyPromote: reopen and independently grade the frozen offline evidence package
  * (No host-api git.clone or E2E-run action exists in the current contract.)
  */
 const HOST_ACTION_LONG_SET = new Set<string>([
@@ -46,6 +47,7 @@ const HOST_ACTION_LONG_SET = new Set<string>([
   'workspaces.reconcileConfiguration',
   'sessions.compact',
   'sessions.compactRange',
+  'knowledge.policyPromote',
 ]);
 
 export function hostActionTimeoutMs(module: string, action: string, payload?: unknown): number {

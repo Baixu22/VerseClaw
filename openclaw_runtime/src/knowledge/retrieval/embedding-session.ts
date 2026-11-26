@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { RetrievalSpendCall } from "./spend.js";
 import type { EmbeddingProvider } from "../../plugins/embedding-provider-types.js";
 import {
   digestOwnerReadContent,
@@ -101,6 +102,7 @@ export class KnowledgeEmbeddingSession {
           space: EmbeddingSpaceV1;
           signal?: AbortSignal;
           deadlineAt?: number;
+          remoteSpend?: RetrievalSpendCall;
         }
       | {
           kind: "document";
@@ -109,6 +111,7 @@ export class KnowledgeEmbeddingSession {
           space: EmbeddingSpaceV1;
           signal?: AbortSignal;
           deadlineAt?: number;
+          remoteSpend?: RetrievalSpendCall;
         },
   ): Promise<{ vectors: number[][]; job: EmbeddingJobV1 }> {
     this.assertContext(input.context);
@@ -237,15 +240,31 @@ export class KnowledgeEmbeddingSession {
         );
         const missing = keys.flatMap((key, index) => (this.cache.has(key) ? [] : [index]));
         job.cacheHits += keys.length - missing.length;
+        const remoteSpend = this.options.transport === "remote" ? input.remoteSpend : undefined;
+        if (
+          missing.length &&
+          remoteSpend &&
+          this.options.provider.requestAccounting !== "single-call-input-tokens"
+        )
+          throw new Error("remote-retrieval-usage-contract-unavailable");
+        const fetchVectors = (onUsage?: (tokens: unknown) => void) =>
+          this.options.provider.embedBatch(
+            missing.map((index) => texts[index]),
+            { inputType: input.kind, signal, onUsage },
+          );
         const fetched = missing.length
           ? await waitForRetrievalOperation(
-              this.options.provider.embedBatch(
-                missing.map((index) => texts[index]),
-                {
-                  inputType: input.kind,
-                  signal,
-                },
-              ),
+              remoteSpend
+                ? remoteSpend(
+                    {
+                      providerRef: this.options.space.providerRef,
+                      model: this.options.space.model,
+                      texts: missing.map((index) => texts[index]),
+                      signal,
+                    },
+                    fetchVectors,
+                  )
+                : fetchVectors(),
               signal,
             )
           : [];

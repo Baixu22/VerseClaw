@@ -1,0 +1,9 @@
+{
+  "schema": "ProjectRagCorpusRelease/v1",
+  "id": "project-rag-v3",
+  "freezeDigest": "sha256:63cc3f14b2977d0ba3bd4a988b11661c62fc50f3a1e7bf61ac1acf9090eb0470",
+  "sourceRevision": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "createdAt": "2026-11-10T04:49:28.514Z"
+}
