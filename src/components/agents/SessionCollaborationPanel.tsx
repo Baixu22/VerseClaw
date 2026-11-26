@@ -158,7 +158,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
           </div>
           <p className="break-words text-sm">{row.sources.goal.state === 'ready' ? row.sources.goal.value?.text : sourceText(row.sources.goal.state)}</p>
           <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-2 text-xs">
-            <dt>{t('collaboration.resources')}</dt><dd>{snapshot ? sourceText(snapshot.readModel?.sources.resources.state ?? 'unknown') : sourceText('not_read')}</dd>
+            <dt>{t('collaboration.resources')}</dt><dd>{sourceText(snapshot?.resources ? 'ready' : 'not_read')}</dd>
             <dt>{t('collaboration.results')}</dt><dd>{sourceText('not_read')}</dd>
           </dl>
           <details className="rounded-md border border-border p-2 text-xs text-muted-foreground"><summary className="cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.sourcesTitle')}</summary>
