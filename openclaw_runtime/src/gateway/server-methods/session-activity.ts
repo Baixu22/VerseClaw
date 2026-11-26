@@ -130,6 +130,14 @@ function taskStatus(status: string) {
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
   "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.resourceInventory !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One resource inventory query required');
+        const { readSessionCollaborationResources } = await import('./session-collaboration-resources.js');
+        respond(true, { resources: await readSessionCollaborationResources(params.resourceInventory, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration resource query' }); }
+      return;
+    }
     if (params.modelUsage !== undefined) {
       try {
         if (Object.keys(params).length !== 1) throw new TypeError('One model usage query required');

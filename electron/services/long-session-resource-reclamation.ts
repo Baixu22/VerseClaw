@@ -19,6 +19,12 @@ import {
 } from '@shared/long-session-resource-reclamation';
 import { readProcessTreeSample } from '../../openclaw_runtime/src/process/process-tree-sampler';
 
+function scopedDesktopOwner(kind: SessionOwnerInventory['kind'], owner: string, generation: string | null): SessionOwnerInventory {
+  return { kind, owner, generation, authority: 'managed', observationScope: 'session', state: 'unknown',
+    count: null, pids: null, processTreePids: null, rssKb: null, cpuPercent: null, activePermits: null, waiters: null,
+    helperRefs: null, worktreeIds: null, sessionIds: null, sampledAt: Date.now() };
+}
+
 /**
  * Worktree ownership is tracked in the existing runtime registry. This adapter
  * never fabricates an id from the session key and never deletes a foreign
@@ -150,8 +156,17 @@ export async function collectLongSessionResourceInventory(params: {
   scope: ReclaimScope;
   terminalManager?: TerminalSessionManager;
   runtimeInventory?: LongSessionResourceInventory | null;
+  scopedRead?: boolean;
+  sharedGatewayPid?: number;
 }): Promise<LongSessionResourceInventory> {
-  const terminalInventory =
+  const readOwner = <T>(read: () => T, fallback: T): { value: T; available: boolean } => {
+    try { return { value: read(), available: true }; }
+    catch (error) {
+      if (!params.scopedRead) throw error;
+      return { value: fallback, available: false };
+    }
+  };
+  const terminals = readOwner(() =>
     typeof params.terminalManager?.listAll === 'function'
       ? params.terminalManager.listAll()
       : (params.terminalManager?.list({
@@ -164,20 +179,46 @@ export async function collectLongSessionResourceInventory(params: {
           expectedSessionId: terminal.expectedSessionId ?? null,
           pid: terminal.pid,
           keepOnLeave: terminal.keepOnLeave !== false,
-        })).filter((terminal) => Boolean(terminal.sessionId));
+          reservedPorts: [],
+        })).filter((terminal) => Boolean(terminal.sessionId)), []);
+  const terminalInventory = terminals.value;
   const terminalEntries = terminalInventory.filter((terminal) => (
     terminal.sessionKey === params.scope.sessionKey
     && (!params.scope.workspaceId || terminal.workspaceId === params.scope.workspaceId)
     && (!params.scope.expectedSessionId || terminal.expectedSessionId === params.scope.expectedSessionId)
   ));
-  const browserSessions = getDefaultAgentBrowserService().list().filter((session) => (
+  const browserRead = readOwner(() => getDefaultAgentBrowserService().list().filter((session) => (
     session.sessionKey === params.scope.sessionKey
     && (!params.scope.workspaceId || !session.workspaceId || session.workspaceId === params.scope.workspaceId)
-  ));
-  const tracked = (getResourceTracker().list().resources ?? []).filter((resource) => (
+  )), []);
+  const browserSessions = browserRead.value;
+  const portRead = readOwner(() => (getResourceTracker().list().resources ?? []).filter((resource) => (
     resource.sessionKey === params.scope.sessionKey
     && (!params.scope.workspaceId || !resource.workspaceId || resource.workspaceId === params.scope.workspaceId)
-  ));
+  )), []);
+  const tracked = portRead.value;
+  if (params.scopedRead) {
+    const generation = params.scope.expectedSessionId ?? null;
+    const runtime = params.runtimeInventory?.owners ?? [];
+    const reservedPorts = [...new Set(terminalEntries.flatMap(terminal => terminal.reservedPorts ?? []))].sort((a, b) => a - b);
+    const terminal = scopedDesktopOwner('terminal', 'TerminalSessionManager', generation);
+    if (params.terminalManager && terminals.available && generation) {
+      terminal.state = 'known';
+      terminal.count = terminalEntries.length;
+      terminal.sessionIds = terminalEntries.map(entry => entry.sessionId);
+    }
+    const reservations = { ...scopedDesktopOwner('background-port', 'TerminalSessionManager', generation),
+      state: terminal.state, count: terminal.state === 'known' ? reservedPorts.length : null, reservedPorts };
+    const browser = { ...scopedDesktopOwner('browser', 'HostAgentBrowserService', generation),
+      ...(browserRead.available && browserSessions.length === 0 ? { state: 'known' as const, count: 0 } : {}) };
+    const portTracker = { ...scopedDesktopOwner('background-port', 'ResourceTracker', generation), authority: 'observed' as const,
+      ...(portRead.available && tracked.length === 0 ? { state: 'known' as const, count: 0 } : {}) };
+    const shared = { ...scopedDesktopOwner('shared-gateway', 'GatewayManager', null), observationScope: 'shared' as const,
+      authority: 'observed' as const, state: params.sharedGatewayPid ? 'known' as const : 'unknown' as const,
+      pids: params.sharedGatewayPid ? [params.sharedGatewayPid] : null };
+    return { schema: 'LongSessionResourceInventory/v1', scope: params.scope, capturedAt: new Date().toISOString(),
+      owners: [...runtime, terminal, reservations, browser, portTracker, shared] };
+  }
   const terminalPids = terminalEntries
     .map((terminal) => terminal.pid)
     .filter((pid): pid is number => typeof pid === 'number' && pid > 0);

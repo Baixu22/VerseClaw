@@ -1,5 +1,26 @@
 {
     "collaboration": {
+        "resourceDetails": {
+            "shared": "Общий ресурс",
+            "reservations": "Зарезервированные порты",
+            "count": "Количество",
+            "rss": "Резидентная память",
+            "cpu": "ЦП",
+            "activePermits": "Активные разрешения",
+            "waiters": "Ожидающие",
+            "pids": "Идентификаторы процессов",
+            "kinds": {
+                "process": "Дерево процессов",
+                "terminal": "Терминалы",
+                "browser": "Сессии браузера",
+                "background-port": "Наблюдаемые порты",
+                "worktree": "Управляемые рабочие деревья",
+                "admission-permit": "Допуск к выполнению",
+                "provider": "Бюджет провайдера",
+                "durable-helper": "Фоновые процессы",
+                "shared-gateway": "Процесс Gateway"
+            }
+        },
         "usage": {
             "title": "Использование моделей",
             "session": "История текущей сессии",

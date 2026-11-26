@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { RefreshCw, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { readSessionCollaborationPage } from '@/lib/session-read-model';
 import { activateWorkspaceScopedSession } from '@/lib/workspace-session';
@@ -12,10 +11,10 @@ import { openWorkspacePanel } from '@/stores/artifact-panel';
 import { EMPTY_COLLABORATION_VIEW, subscribeSessionCollaboration, useSessionCollaborationUi } from '@/stores/session-collaboration';
 import { parseSessionCollaborationQuery, type SessionCollaborationPage, type SessionCollaborationRow } from '@shared/types/session-collaboration';
 import type { AutonomyProjectScope, AutonomySessionScope } from '@shared/types/identity-scope';
-import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { SessionCollaborationMessages } from './SessionCollaborationMessages';
 import { SessionCollaborationMaterials } from './SessionCollaborationMaterials';
 import { SessionCollaborationUsage } from './SessionCollaborationUsage';
+import { SessionCollaborationResources } from './SessionCollaborationResources';
 import { invokeSessionCollaborationControl } from '@/lib/session-collaboration-control';
 import { SESSION_COLLABORATION_CONTROLS, type SessionCollaborationControl } from '@shared/types/session-collaboration-control';
 
@@ -30,7 +29,6 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
   const [cursor, setCursor] = useState<string>();
   const [observed, setObserved] = useState<{ key: string; page: SessionCollaborationPage; stale: boolean } | null>(null);
   const [selectedRow, setSelectedRow] = useState<{ key: string; row: SessionCollaborationRow } | null>(null);
-  const [detail, setDetail] = useState<{ key: string; snapshot: SessionActivitySnapshot } | null>(null);
   const [loading, setLoading] = useState(false), [readState, setReadState] = useState('not_read');
   const revision = useRef(0);
   const query = useMemo(() => requester ? parseSessionCollaborationQuery({ requester, ...(workspace ? { workspace } : {}),
@@ -40,7 +38,6 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
   const current = useRef({ viewKey, selectedKey }); current.current = { viewKey, selectedKey };
   const page = observed?.key === queryKey ? observed.page : null;
   const row = selectedRow?.key === `${viewKey}:${selectedKey}` ? selectedRow.row : null;
-  const snapshot = detail?.key === `${viewKey}:${selectedKey}` ? detail.snapshot : null;
 
   const refresh = useCallback(async () => {
     if (!query) return;
@@ -69,7 +66,6 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     let active = true;
     const target = parseSessionCollaborationQuery({ requester, target: scope, limit: 1 });
     void readSessionCollaborationPage(target).then(value => { if (active && current.current.viewKey === viewKey && value.items[0]) setSelectedRow({ key, row: value.items[0] }); });
-    void hostApi.sessionActivity.read({ scope }).then(value => { if (active && current.current.viewKey === viewKey && value.success && value.snapshot) setDetail({ key, snapshot: value.snapshot }); }).catch(() => {});
     const unsubscribe = subscribeSessionCollaboration({ id: crypto.randomUUID(), query: target, condition: 'changed' }, value => {
       if (!active || current.current.viewKey !== viewKey || current.current.selectedKey !== collaborationScopeKey(scope)) return;
       if (value.page.items[0]) setSelectedRow({ key, row: value.page.items[0] });
@@ -136,11 +132,9 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
               to={`/task-ledger?${new URLSearchParams({ workspaceId: row.detail!.scope.workspaceId, nodeId: task.taskNodeId })}`}>{t('collaboration.openTask')}</Link>)}
           </div>
           <p className="break-words text-sm">{row.sources.goal.state === 'ready' ? row.sources.goal.value?.text : sourceText(row.sources.goal.state)}</p>
-          <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-2 text-xs">
-            <dt>{t('collaboration.resources')}</dt><dd>{sourceText(snapshot?.resources ? 'ready' : 'not_read')}</dd>
-          </dl>
           {requester && row.detail && <SessionCollaborationMessages requester={requester} target={row.detail.scope} />}
           {requester && row.detail && <SessionCollaborationUsage key={`${viewKey}:${selectedKey}`} requester={requester} target={row.detail.scope} />}
+          {requester && row.detail && <SessionCollaborationResources key={`resources:${viewKey}:${selectedKey}`} requester={requester} target={row.detail.scope} />}
           {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>
             <div className="flex flex-wrap gap-2 pt-3">{(Object.keys(SESSION_COLLABORATION_CONTROLS) as SessionCollaborationControl[]).filter(action => action !== 'message').map(action => <Button type="button" key={action} variant="outline"
               disabled={SESSION_COLLABORATION_CONTROLS[action].requiresRun && !row.sources.run.value}

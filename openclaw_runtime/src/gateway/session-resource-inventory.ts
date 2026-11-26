@@ -6,7 +6,7 @@ import { resolveDurableHelperRoot } from "../agents/goal-wake-helper-protocol.js
 import { createWorktreeService } from "../agents/worktree-service.js";
 import { observeWorktree } from "../agents/worktree-registry.js";
 import { captureProcessTrees } from "../process/os-containment.js";
-import { readProcessTreeSample } from "../process/process-tree-sampler.js";
+import { ProcessTreeSampler, readProcessTreeSample } from "../process/process-tree-sampler.js";
 import { getProcessSupervisor } from "../process/supervisor/index.js";
 import { parseAgentSessionKey } from "../routing/session-key.js";
 import { sessionAdmissionRegistry, type SessionAdmissionIdentity } from "../sessions/session-admission-registry.js";
@@ -17,6 +17,7 @@ import type {
   LongSessionResourceInventory,
   SessionOwnerInventory,
 } from "../../../shared/long-session-resource-reclamation.js";
+import { projectCollaborationProcessSample } from "../../../shared/types/session-collaboration-resources.js";
 
 export type RuntimeSessionResourceInventoryInput = {
   sessionKey: string;
@@ -25,7 +26,10 @@ export type RuntimeSessionResourceInventoryInput = {
   workspaceId?: string | null;
   rootPath?: string | null;
   agentWorkspaceDir?: string | null;
+  scopedRead?: boolean;
 };
+
+const collaborationSampler = new ProcessTreeSampler();
 
 function uniquePids(values: Array<number | undefined>): number[] {
   return [...new Set(values.filter((value): value is number => (
@@ -108,29 +112,32 @@ export async function readRuntimeSessionResourceInventory(
   }
 
   const supervisor = getProcessSupervisor();
-  const supervisorRuns = supervisor.snapshotRunsForLifecycle(identity);
-  const bashHandles = snapshotProcessSessionsForLifecycle(identity);
-  const helperPids = await snapshotDurableHelperPidsForSession(
+  const handles = () => {
+    const runs = supervisor.snapshotRunsForLifecycle(identity);
+    const bash = snapshotProcessSessionsForLifecycle(identity);
+    return { runs, bash, signature: JSON.stringify([
+      ...runs.map(run => ['supervisor', run.runId, run.pid]), ...bash.filter(handle => handle.pid).map(handle => ['bash', handle.id, handle.pid]),
+    ].sort()) };
+  };
+  const before = handles();
+  const helperPids = input.scopedRead ? null : await snapshotDurableHelperPidsForSession(
     identity.canonicalSessionKey,
     { rootDir: resolveDurableHelperRoot(resolveConfigDir()) },
   ).catch(() => null);
   const rootPids = uniquePids([
-    ...supervisorRuns.map((run) => run.pid),
-    ...bashHandles.map((handle) => handle.pid),
+    ...before.runs.map((run) => run.pid),
+    ...before.bash.map((handle) => handle.pid),
     ...(helperPids ?? []),
   ]);
-  const [sample, treeCapture] = await Promise.all([
-    rootPids.length > 0
-      ? readProcessTreeSample({ rootPids })
-      : Promise.resolve({
-          status: "empty" as const,
-          processCount: 0,
-          treeRssBytes: 0,
-          treeCpuPercent: 0,
-        }),
-    captureProcessTrees(rootPids),
-  ]);
-  const processKnown = sample.status !== "unknown" && helperPids !== null && treeCapture.status !== "unknown";
+  const [treeCapture, sample] = input.scopedRead
+    ? [await captureProcessTrees(rootPids), await collaborationSampler.sample({ rootPids })]
+    : await Promise.all([captureProcessTrees(rootPids), readProcessTreeSample({ rootPids })]);
+  const scopedProcess = input.scopedRead ? projectCollaborationProcessSample({ sample, roots: rootPids,
+    captured: treeCapture.status === 'ok' ? treeCapture.capturedPids : null,
+    handlesStable: before.signature === handles().signature && before.runs.every(run => Boolean(run.pid)) &&
+      before.bash.every(handle => !handle.lifecycleOwner || Boolean(handle.pid)), now: Date.now() }) : null;
+  const processKnown = (scopedProcess ? scopedProcess.state === 'known' :
+    sample.status !== "unknown" && helperPids !== null && treeCapture.status !== "unknown");
   const admission = sessionAdmissionRegistry.snapshot(identity);
   let worktrees: ReturnType<ReturnType<typeof createWorktreeService>["listOwned"]> | null = null;
   let worktreesKnown = false;
@@ -140,7 +147,7 @@ export async function readRuntimeSessionResourceInventory(
       worktrees = createWorktreeService(worktreeRoot).listOwned({
         agentId: identity.agentId, sessionKey: identity.canonicalSessionKey,
         expectedSessionId: identity.expectedSessionId,
-      });
+      }, input.scopedRead);
       worktreesKnown = worktrees.every(record => observeWorktree(record) === "ready");
     }
   } catch (error) {
@@ -159,12 +166,13 @@ export async function readRuntimeSessionResourceInventory(
       pids: rootPids,
       processTreePids: treeCapture.status === "ok" ? [...treeCapture.capturedPids.keys()].sort((a, b) => a - b) : null,
       rssKb: sample.treeRssBytes === null ? null : Math.ceil(sample.treeRssBytes / 1024),
-      cpuPercent: sample.treeCpuPercent,
+      cpuPercent: !input.scopedRead && !rootPids.length ? 0 : sample.treeCpuPercent,
       activePermits: null,
       waiters: null,
       helperRefs: helperPids?.length ?? null,
       worktreeIds: null,
       sessionIds: null,
+      ...(scopedProcess ?? {}),
       ...(processKnown ? {} : { detail: "one or more runtime owner reads are unknown; zero is not inferred" }),
     },
     {
@@ -197,7 +205,7 @@ export async function readRuntimeSessionResourceInventory(
           authority: "managed",
           generation,
           state: worktreesKnown ? "known" : "unknown",
-          count: worktrees.length,
+          count: input.scopedRead && !worktreesKnown ? null : worktrees.length,
           pids: null,
           processTreePids: null,
           rssKb: null,
@@ -205,10 +213,12 @@ export async function readRuntimeSessionResourceInventory(
           activePermits: null,
           waiters: null,
           helperRefs: null,
-          worktreeIds: worktrees.map((record) => record.id),
+          worktreeIds: input.scopedRead && !worktreesKnown ? null : worktrees.map((record) => record.id),
           sessionIds: null,
           ...(worktreesKnown ? {} : { detail: "managed checkout registration is incomplete, missing or replaced" }),
         },
+    ...(input.scopedRead ? [unknownOwner({ kind: 'durable-helper', owner: 'GoalWakeDurableHelper', generation,
+      detail: 'Durable helper rows identify a session key and lack a physical session generation' })] : []),
   ];
 
   if (providerEnabled) {
@@ -219,13 +229,14 @@ export async function readRuntimeSessionResourceInventory(
       const { getSessionEntry } = await import('../config/sessions/store.js');
       const { resolveStorePath } = await import('../config/sessions/paths.js');
       const entry = getSessionEntry({ storePath: resolveStorePath(runtimeConfig.session?.store, { agentId: identity.agentId }), sessionKey: identity.canonicalSessionKey });
-      if (entry?.sessionId !== identity.expectedSessionId || (input.workspaceId && entry.workspaceId && input.workspaceId.trim() !== entry.workspaceId)) {
+      if (entry?.sessionId !== identity.expectedSessionId ||
+          (input.workspaceId && (input.scopedRead || entry.workspaceId) && input.workspaceId.trim() !== entry.workspaceId)) {
         throw new Error('Provider inventory session scope mismatch');
       }
       const workspaceId = entry.workspaceId as WorkspaceId | undefined;
       if (providerPolicy.project && !workspaceId) throw new Error('Provider inventory project scope unavailable');
       const spend = providerSpendSnapshot({ ...(workspaceId ? { workspaceId, projectId: resolveProjectIdForWorkspace(workspaceId) } : {}),
-        sessionKey: identity.canonicalSessionKey as SessionKey, sessionGeneration: identity.expectedSessionId });
+        sessionKey: identity.canonicalSessionKey as SessionKey, sessionGeneration: identity.expectedSessionId }, { readOnly: input.scopedRead });
       const session = spend.find(row => row.scope === 'session')!;
       owners.push({ ...unknownOwner({ kind: 'provider', owner: 'ProviderOutboundBudget', generation,
         detail: 'Provider-owner spend journal; amounts are token counts and integer microdollars, not invoices' }),

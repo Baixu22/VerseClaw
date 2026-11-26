@@ -1,5 +1,26 @@
 {
     "collaboration": {
+        "resourceDetails": {
+            "shared": "共有",
+            "reservations": "予約済みポート",
+            "count": "件数",
+            "rss": "常駐メモリ",
+            "cpu": "CPU",
+            "activePermits": "有効な許可",
+            "waiters": "待機数",
+            "pids": "プロセス ID",
+            "kinds": {
+                "process": "プロセスツリー",
+                "terminal": "ターミナル",
+                "browser": "ブラウザーセッション",
+                "background-port": "観測済みポート",
+                "worktree": "管理ワークツリー",
+                "admission-permit": "実行許可",
+                "provider": "プロバイダー予算",
+                "durable-helper": "バックグラウンドヘルパー",
+                "shared-gateway": "Gateway プロセス"
+            }
+        },
         "usage": {
             "title": "モデル使用量",
             "session": "現在のセッション履歴",

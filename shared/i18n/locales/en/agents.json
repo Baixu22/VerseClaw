@@ -1,5 +1,26 @@
 {
     "collaboration": {
+        "resourceDetails": {
+            "shared": "Shared",
+            "reservations": "Reserved ports",
+            "count": "Count",
+            "rss": "Resident memory",
+            "cpu": "CPU",
+            "activePermits": "Active permits",
+            "waiters": "Waiting",
+            "pids": "Process IDs",
+            "kinds": {
+                "process": "Process tree",
+                "terminal": "Terminals",
+                "browser": "Browser sessions",
+                "background-port": "Observed ports",
+                "worktree": "Managed worktrees",
+                "admission-permit": "Execution admission",
+                "provider": "Provider budget",
+                "durable-helper": "Background helpers",
+                "shared-gateway": "Gateway process"
+            }
+        },
         "usage": {
             "title": "Model usage",
             "session": "Session transcript",

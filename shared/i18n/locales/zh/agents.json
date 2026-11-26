@@ -1,5 +1,26 @@
 {
     "collaboration": {
+        "resourceDetails": {
+            "shared": "共享",
+            "reservations": "预留端口",
+            "count": "数量",
+            "rss": "驻留内存",
+            "cpu": "CPU",
+            "activePermits": "有效准入",
+            "waiters": "等待数",
+            "pids": "进程 ID",
+            "kinds": {
+                "process": "进程树",
+                "terminal": "终端",
+                "browser": "浏览器会话",
+                "background-port": "观测端口",
+                "worktree": "受管工作树",
+                "admission-permit": "执行准入",
+                "provider": "模型预算",
+                "durable-helper": "后台辅助进程",
+                "shared-gateway": "Gateway 进程"
+            }
+        },
         "usage": {
             "title": "模型消耗",
             "session": "当前代次会话累计",

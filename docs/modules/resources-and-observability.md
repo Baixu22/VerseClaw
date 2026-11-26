@@ -54,6 +54,8 @@ callback式 bash 输出溢出使用私有文件同步分段写入，为生产者
 
 ## 2. ResourceFabric
 
+会话协作详情在展开时读取与当前物理代次绑定的资源。Runtime 提供原进程树、准入、工作树和 provider owner 记录；Main 补充终端句柄、预留端口和共享 Gateway。进程树采样核对同一组 owner 句柄与 PID 创建标记，免除多入口重复核算。观测端口和浏览器记录缺少物理代次时保留未知状态。资源读取沿用原 owner 的只读入口，回收动作仍由既有控制入口执行。
+
 实现：
 
 - `electron/services/resource-fabric.ts`

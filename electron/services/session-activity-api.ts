@@ -20,6 +20,7 @@ import type { TerminalSessionManager } from './terminal-session-manager';
 import { collectLongSessionResourceInventory } from './long-session-resource-reclamation';
 import { buildSessionHostReadiness } from '../gateway/session-host-readiness';
 import { emptyCollaborationUsage, parseSessionCollaborationUsageQuery, validateCollaborationUsage } from '@shared/types/session-collaboration-usage';
+import { emptyCollaborationResources, parseSessionCollaborationResourceQuery, validateCollaborationResources } from '@shared/types/session-collaboration-resources';
 
 type RuntimeActivityResponse = {
   snapshot?: Partial<SessionActivitySnapshot> & {
@@ -181,6 +182,40 @@ export function createSessionActivityApi({
         if (!after || after.id !== active.id || after.activeSessionKey !== active.activeSessionKey || after.rootPath !== active.rootPath)
           return failed('stale', 'scope-mismatch');
         return { success: true, usage: validateCollaborationUsage(query, response?.usage) };
+      } catch { return failed('unavailable', 'owner-unavailable'); }
+    },
+    resources: async (input) => {
+      const query = parseSessionCollaborationResourceQuery(input);
+      const { requester, target } = query;
+      const failed = (state: 'unavailable' | 'stale', reason: 'owner-unavailable' | 'scope-mismatch' | 'binding-changed' | 'generation-changed') =>
+        ({ success: true, resources: emptyCollaborationResources(query, state, reason) });
+      try {
+        const [active, binding] = await Promise.all([getActiveWorkspaceProfile(),
+          getPersistedCoordinatorBinding(target.workspaceId, target.sessionKey)]);
+        if (!active || active.id !== requester.workspaceId || active.activeSessionKey !== requester.sessionKey)
+          return failed('unavailable', 'scope-mismatch');
+        if (binding?.sessionGeneration && binding.sessionGeneration !== target.sessionGeneration)
+          return failed('stale', 'generation-changed');
+        const gateway = gatewayManager.getStatus();
+        const reply = await gatewayManager.rpc<{ resources?: unknown }>('session.activitySnapshot', { resourceInventory: query }, 27_000);
+        const resources = validateCollaborationResources(query, reply?.resources);
+        if (resources.state !== 'ready' || !resources.inventory) return { success: true, resources };
+        const inventory = await collectLongSessionResourceInventory({ scope: resources.inventory.scope, runtimeInventory: resources.inventory,
+          terminalManager, scopedRead: true, sharedGatewayPid: gateway.state === 'running' ? gateway.pid : undefined });
+        const visibility = parseSessionCollaborationQuery({ ...query, fields: [], limit: 1 });
+        const [current, currentBinding, final] = await Promise.all([
+          getActiveWorkspaceProfile(), getPersistedCoordinatorBinding(target.workspaceId, target.sessionKey),
+          gatewayManager.rpc<{ page?: SessionCollaborationPage }>('session.activitySnapshot', { query: visibility }),
+        ]);
+        const page = validateSessionCollaborationPage(visibility, final?.page);
+        if (page.state !== 'ready') return { success: true, resources: emptyCollaborationResources(query,
+          page.state === 'empty' ? 'unavailable' : page.state, page.reason ?? 'not-visible') };
+        const gatewayAfter = gatewayManager.getStatus();
+        if (!current || current.id !== active.id || current.activeSessionKey !== active.activeSessionKey || current.rootPath !== active.rootPath ||
+            gatewayAfter.connectedAt !== gateway.connectedAt || gatewayAfter.pid !== gateway.pid)
+          return failed('stale', 'scope-mismatch');
+        if (JSON.stringify(currentBinding) !== JSON.stringify(binding)) return failed('stale', 'binding-changed');
+        return { success: true, resources: validateCollaborationResources(query, { ...resources, inventory }) };
       } catch { return failed('unavailable', 'owner-unavailable'); }
     },
     read: async (input) => {

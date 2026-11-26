@@ -5,6 +5,7 @@ import type { SessionCollaborationWatch } from '@shared/types/session-collaborat
 import type { SessionCollaborationMessageInput, SessionCollaborationMessageQuery } from '@shared/types/session-collaboration-message';
 import type { SessionCollaborationMaterialPresentation, SessionCollaborationMaterialQuery } from '@shared/types/session-collaboration-material';
 import type { SessionCollaborationUsageQuery } from '@shared/types/session-collaboration-usage';
+import type { SessionCollaborationResourceQuery } from '@shared/types/session-collaboration-resources';
 import type { AutonomySessionScope } from '@shared/types/identity-scope';
 import type { SystemProjectRead } from '@shared/types/system-portfolio';
 import type { SystemControlChange } from '@shared/types/system-control';
@@ -906,6 +907,7 @@ export const hostApi = {
     read: (input: SessionActivityReadQuery) => invokeHost('sessionActivity', 'read', input),
     query: (input: SessionCollaborationQuery) => invokeHost('sessionActivity', 'query', input),
     modelUsage: (input: SessionCollaborationUsageQuery) => invokeHost('sessionActivity', 'modelUsage', input),
+    resources: (input: SessionCollaborationResourceQuery) => invokeHost('sessionActivity', 'resources', input),
     watch: (input: SessionCollaborationWatch) => invokeHost('sessionActivity', 'watch', input),
     cancelWatch: (input: { id: string; query: SessionCollaborationQuery }) => invokeHost('sessionActivity', 'cancelWatch', input),
   },
