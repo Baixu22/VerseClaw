@@ -36,6 +36,7 @@ touchedAreas:
   - src/lib/session-read-model.ts
   - src/stores/session-collaboration.ts
   - tests/e2e/fixtures/session-collaboration.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
   - tests/e2e/session-collaboration-*.spec.ts
   - tests/unit/host-api-facade.test.ts
   - tests/unit/session-collaboration-*.test.ts*

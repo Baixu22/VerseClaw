@@ -140,6 +140,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
   log: LlmRequestLog[];
   /** Requests the mock saw but could not answer usefully; see `recordAnomaly`. */
   anomalies: string[];
+  close: () => Promise<void>;
 }> {
   const log: LlmRequestLog[] = [];
   /**
@@ -310,7 +311,14 @@ export function startScriptedLlm(script: LlmScript): Promise<{
     server.listen(0, '127.0.0.1', () => {
       const address = server.address();
       if (!address || typeof address === 'string') throw new Error('llm port failed');
-      resolve({ server, port: address.port, log, anomalies });
+      resolve({
+        server, port: address.port, log, anomalies,
+        close: () => {
+          const closed = server[Symbol.asyncDispose]();
+          server.closeAllConnections();
+          return closed;
+        },
+      });
     });
   });
 }
