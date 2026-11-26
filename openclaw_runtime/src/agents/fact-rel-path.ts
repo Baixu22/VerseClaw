@@ -3,15 +3,22 @@
  */
 import path from "node:path";
 import { normalizeFactPath } from "../context-engine/factstore/ignore.js";
+import { resolveWorkspaceFile } from "./session-read-hashes.js";
 
 export function toFactRelPath(filePath: string, workspaceRoot: string): string | undefined {
   const trimmed = filePath.trim();
   if (!trimmed) {
     return undefined;
   }
-  const root = path.resolve(workspaceRoot);
-  const absolute = path.isAbsolute(trimmed) ? path.resolve(trimmed) : path.resolve(root, trimmed);
-  const relative = path.relative(root, absolute);
+  return toResolvedFactRelPath(resolveWorkspaceFile(workspaceRoot, filePath), workspaceRoot);
+}
+
+/** Project an already resolved filesystem target without expanding its filename again. */
+export function toResolvedFactRelPath(
+  absolutePath: string,
+  workspaceRoot: string,
+): string | undefined {
+  const relative = path.relative(path.resolve(workspaceRoot), path.resolve(absolutePath));
   if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
     return undefined;
   }

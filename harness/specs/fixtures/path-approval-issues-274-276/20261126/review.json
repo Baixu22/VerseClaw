@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "body": "In write-journal-core.ts undoLastWrites, the previous assertSandboxPath({filePath, cwd: targetRoot, root: targetRoot}) check is replaced by assertNoPathAliasEscape({absolutePath: entry.absPath, rootPath: targetRoot}). If assertNoPathAliasEscape does not perform the same containment/alias validation (e.g., it only rejects path-alias tokens and does not verify the target is inside rootRoot), undo could restore journal snapshot bytes to a target outside the sandbox/workspace, turning a containment check into a weaker one. Need to confirm the exact semantics of assertNoPathAliasEscape vs assertSandboxPath before this is considered safe.",
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/tools/write-journal-core.ts",
+        "line": 430
+      },
+      "confidence": 0.5,
+      "priority": "P1",
+      "title": "Undo target validation may be weaker after swapping assertSandboxPath for assertNoPathAliasEscape"
+    },
+    {
+      "body": "In wrapToolWithWriteJournal, paths for non-apply_patch tools are now resolved via resolveWorkspaceFile before acquirePatchBatchLocks, and the previous lockTargets mapping (path.isAbsolute ? path.resolve : path.resolve(workspaceRoot, filePath)) is replaced by the already-resolved paths. If resolveWorkspaceFile (now resolveToCwd) resolves inputs differently than the native write/edit tool's own resolver for some input form (e.g., a raw absolute path containing a literal ~ directory, or an @-prefixed path), the journal lease target and the actual written target can diverge, so the lock would not serialize writes to the same file. The new tests cover @ and file-URL forms, but the equivalence with the native resolver for all accepted input forms needs verification.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/tools/write-journal.ts",
+        "line": 224
+      },
+      "confidence": 0.45,
+      "priority": "P1",
+      "title": "Journal lock target may diverge from the native write target for some input forms"
+    }
+  ],
+  "overall_confidence": 0.5,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The bundle centralizes path normalization so preflight, approval binding, journal snapshots, leases, stale-read hashes and undo all operate on the same resolved target, and adds coverage for tilde, file-URL and equal-byte content-approval cases. The two flagged items are conditional on exact semantics of the newly introduced helpers (assertNoPathAliasEscape containment strength and resolveWorkspaceFile/resolveToCwd equivalence with the native tool resolver); they do not indicate a confirmed defect from the diff alone, so the patch is assessed correct pending those semantic checks."
+}

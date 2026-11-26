@@ -12,10 +12,11 @@ import {
 } from "node:fs";
 import path from "node:path";
 import { FsSafeError, root as fsRoot } from "../../infra/fs-safe.js";
-import { assertSandboxPath } from "../sandbox-paths.js";
-import { toRelativeWorkspacePath } from "../path-policy.js";
+import { assertNoPathAliasEscape } from "../../infra/path-alias-guards.js";
+import { toRelativeWorkspacePathFromResolved } from "../path-policy.js";
 import { codingObservability } from "../../context-engine/coding-observability.js";
-import { toFactRelPath } from "../fact-rel-path.js";
+import { toResolvedFactRelPath } from "../fact-rel-path.js";
+import { resolveWorkspaceFile } from "../session-read-hashes.js";
 
 export type WriteJournalBatchState = "prepared" | "committed" | "rolled_back" | "recovery_required";
 
@@ -188,7 +189,7 @@ export function snapshotBeforeWrite(params: {
 }): WriteJournalEntry | null {
   const absPath = path.isAbsolute(params.filePath)
     ? path.resolve(params.filePath)
-    : path.resolve(params.workspaceRoot, params.filePath);
+    : resolveWorkspaceFile(params.workspaceRoot, params.filePath);
   let hadPrior = false;
   let priorContent: Buffer | undefined;
   try {
@@ -225,9 +226,9 @@ export function snapshotPreparedWrite(params: {
     const journal = getOrCreateWriteJournal(params.workspaceRoot, sessionId);
     const absPath = path.isAbsolute(params.filePath)
       ? path.resolve(params.filePath)
-      : path.resolve(params.workspaceRoot, params.filePath);
+      : resolveWorkspaceFile(params.workspaceRoot, params.filePath);
     const rel =
-      toFactRelPath(params.filePath, params.workspaceRoot) ??
+      toResolvedFactRelPath(absPath, params.workspaceRoot) ??
       path.relative(params.workspaceRoot, absPath).replace(/\\/g, "/");
     mkdirSync(journal.rootDir, { recursive: true });
     const base = path.basename(rel || "file");
@@ -400,13 +401,19 @@ export async function undoLastWrites(
     }
     try {
       if (params.workspaceOnly) {
-        (validateWorkspacePath ?? toRelativeWorkspacePath)(params.workspaceRoot, entry.absPath);
+        (validateWorkspacePath ?? toRelativeWorkspacePathFromResolved)(
+          params.workspaceRoot,
+          entry.absPath,
+        );
       }
       // Snapshot bytes always belong to this workspace, even when an operator
       // explicitly permits restoring an external target. Never follow a swapped
       // .pre link to bring external bytes into the restored file.
       const journalRoot = await fsRoot(params.workspaceRoot);
-      const snapshotRelative = toRelativeWorkspacePath(params.workspaceRoot, entry.snapshotPath);
+      const snapshotRelative = toRelativeWorkspacePathFromResolved(
+        params.workspaceRoot,
+        entry.snapshotPath,
+      );
       let preimage: Buffer | undefined;
       if (entry.hadPrior) {
         try {
@@ -419,9 +426,13 @@ export async function undoLastWrites(
         }
       }
       const targetRoot = params.workspaceOnly ? params.workspaceRoot : path.dirname(entry.absPath);
-      await assertSandboxPath({ filePath: entry.absPath, cwd: targetRoot, root: targetRoot });
+      const relative = toRelativeWorkspacePathFromResolved(targetRoot, entry.absPath);
+      await assertNoPathAliasEscape({
+        absolutePath: entry.absPath,
+        rootPath: targetRoot,
+        boundaryLabel: "sandbox root",
+      });
       const destination = await fsRoot(targetRoot);
-      const relative = toRelativeWorkspacePath(targetRoot, entry.absPath);
       // Keep the validated target literal; fs-safe also accepts bounded
       // absolute paths, avoiding a second ~ expansion during recovery.
       const restorePath = path.resolve(destination.rootReal, relative);

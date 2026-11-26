@@ -84,6 +84,9 @@ Tool UI 计划带 `requiresApproval: true` 或 `status: "proposed"` 时作为计
 
 ## 3. Workspace preflight
 
+预检与工作区创建先用同一入口展开 `~`，再解析 realpath。预检结果保留输入
+`rootPath`，并通过 `resolvedPath` 返回实际目标目录。
+
 选择目录前执行六项检查：
 
 | 检查 | 行为 |
@@ -133,6 +136,9 @@ MCP 目录为空时显示已连接和 0 个工具；目录加载失败时显示�
 - 不承诺“严格零 diff”：系统 metadata 写入是明确例外。
 
 ### `acceptEdits`
+
+- 外部文件写入的批准绑定目标路径和 UTF-8 内容摘要；同长度的不同内容也需要
+  新批准。拒绝替换内容后，原内容的批准仍可使用一次。
 
 - Workspace 内普通编辑可接受；
 - 网络、破坏性、外部写等 high-risk 动作需要审批；
@@ -309,6 +315,11 @@ worker 保留普通工具和提示词。恢复中的旧标记也不会发起新�
 显示为退役条目；并发编码可显式选择工作树隔离，由现有 journal 与候选回流 owner 处理。
 
 ### Write journal
+
+write/edit 的 journal、文件锁和 stale 读取摘要使用写入工具的路径解析。
+`~/` 指向 home 下的实际文件，撤销恢复该目标；已解析绝对路径中的字面 `~`
+目录保持原路径。file URL 解码后的目标文件名在快照、stale 检查和恢复中保持
+原字节，不再展开；`apply_patch` 使用其既有目标解析后再记录 journal。
 
 限域 write/edit 在读取 journal 原文件快照前验证工作区边界；可信来源也不能绕过
 `workspaceOnly`。等待路径锁后通过现有 fs-safe 根读取快照，拒绝的外部文件内容不会

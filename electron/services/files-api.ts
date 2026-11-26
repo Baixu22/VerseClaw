@@ -251,7 +251,7 @@ function normalizeApprovalId(value: unknown): string | undefined {
 }
 
 function buildFileWriteRequestHash(path: string, content: string): string {
-  return `${resolve(path)}:${Buffer.byteLength(content, 'utf8')}`;
+  return `${resolve(path)}:${crypto.createHash('sha256').update(content, 'utf8').digest('hex')}`;
 }
 
 export function createFilesApi(): CompleteHostServiceRegistry['files'] {
