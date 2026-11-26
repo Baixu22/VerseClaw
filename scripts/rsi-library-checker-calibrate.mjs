@@ -98,18 +98,21 @@ export function calibrationVerdict(phase, grade) {
 
 export async function loadCalibrationInputs(root, inputs) {
   const plan = read(file(inputs, 'plan.json')), prepared = read(file(inputs, 'report.json'));
-  const supplemental = plan.schemaVersion === 'RsiSupplementalMeasurementPlan/v1';
+  const usaco = plan.schemaVersion === 'RsiUsacoMeasurementPlan/v1';
+  const supplemental = plan.schemaVersion === 'RsiSupplementalMeasurementPlan/v1' || usaco;
+  const pythonFamily = usaco ? 'Usaco' : 'Supplemental';
   assert((plan.schemaVersion === 'RsiLibraryCheckerMeasurementPlan/v1' || supplemental) && plan.driven_by === 'agent'
     && plan.realHumanEvidence === false && plan.modelRequests === 0 && plan.usage === 'scripted-control', 'calibration-plan');
-  assert(prepared.schemaVersion === (supplemental ? 'RsiSupplementalMeasurementInputs/v1' : 'RsiLibraryCheckerMeasurementInputs/v1') && prepared.modelRequests === 0
+  assert(prepared.schemaVersion === (supplemental ? `Rsi${pythonFamily}MeasurementInputs/v1` : 'RsiLibraryCheckerMeasurementInputs/v1') && prepared.modelRequests === 0
     && prepared.formalAdmission === false && prepared.planSha256 === await sha(file(inputs, 'plan.json')), 'calibration-prepared-plan');
   const selection = supplemental ? plan.selectedSources?.map(row => row.caseId) : plan.selectedProblems;
   assert(Array.isArray(selection) && selection.length > 0 && new Set(selection).size === selection.length
-    && selection.every(name => supplemental ? /^supplemental-[a-f0-9]{16}$/u.test(name) : /^[A-Za-z0-9_]+$/u.test(name)), 'calibration-selection');
+    && selection.every(name => usaco ? /^usaco-[1-9][0-9]*$/u.test(name)
+      : supplemental ? /^supplemental-[a-f0-9]{16}$/u.test(name) : /^[A-Za-z0-9_]+$/u.test(name)), 'calibration-selection');
   assert.deepEqual(prepared.cases.map(row => row.problem), selection, 'calibration-input-order');
   if (supplemental) {
     assert(typeof plan.pythonVersion === 'string' && /^Python 3\.\d+\.\d+[A-Za-z0-9.+-]*$/u.test(plan.pythonVersion)
-      && plan.calibrationSchemaVersion === 'RsiSupplementalCalibrationBatch/v1', 'calibration-isolated-python-required');
+      && plan.calibrationSchemaVersion === `Rsi${pythonFamily}CalibrationBatch/v1`, 'calibration-isolated-python-required');
     for (const [index, selected] of plan.selectedSources.entries()) {
       assert(typeof selected.familyId === 'string' && selected.familyId.length > 0
         && typeof selected.sourceKey === 'string' && selected.sourceKey.length > 0
@@ -119,7 +122,32 @@ export async function loadCalibrationInputs(root, inputs) {
         'calibration-whole-family-binding');
     }
   }
-  assert(Number.isSafeInteger(plan.minimumSystemAvailableBytes) && plan.minimumSystemAvailableBytes >= (supplemental ? 3221225472 : 1610612736),
+  if (usaco) {
+    const familyPath = file(inputs, 'family-review.json'), review = read(familyPath);
+    assert(plan.sourceFamilyReviewSha256 === await sha(familyPath)
+      && prepared.sourceFamilyReviewSha256 === plan.sourceFamilyReviewSha256
+      && review.schemaVersion === 'RsiUsacoFamilyReview/v2' && review.formalAdmission === false
+      && review.historicalBaseManifestSha256 === '4cd43e9eb87864da8d16f8603aa16a959d0ec168eec904d4f86aca628992e916'
+      && review.driven_by === 'agent' && review.realHumanEvidence === false
+      && review.runnerCalibration === false && review.modelRequests === 0 && review.executedPrograms === 0
+      && review.semanticIndependenceReview === 'pending'
+      && review.qualifiedFamilyIncrement === 0 && review.planSha256 === plan.sourceFamilyPlanSha256,
+    'calibration-usaco-family-review');
+    const contractsFile = 'harness/specs/fixtures/rsi-live-experience/usaco-output-contracts.json';
+    const contractsPath = file(root, contractsFile);
+    assert.equal(await sha(contractsPath), plan.sourceFilesSha256[contractsFile], 'calibration-usaco-contracts-drift');
+    const contracts = read(contractsPath);
+    const approved = new Set(review.sourceCandidates.filter(row => row.outputComparison === 'normalized-text'
+      && contracts[row.sourceIdentity]?.comparison === 'normalized-text').map(row => row.sourceIdentity));
+    for (const selected of plan.selectedSources) {
+      assert(approved.has(selected.sourceKey), 'calibration-usaco-output-comparison');
+      const family = review.families[selected.familyOrder];
+      assert(family?.status === 'new-component' && family.oldFamilyIds.length === 0 && family.familyId === selected.familyId
+        && family.sourceIdentities[selected.sourceOrder] === selected.sourceKey
+        && selected.caseId === selected.sourceKey.replace(':', '-'), 'calibration-usaco-unobserved-family');
+    }
+  }
+  assert(Number.isSafeInteger(plan.minimumSystemAvailableBytes) && plan.minimumSystemAvailableBytes >= (usaco ? 4294967296 : supplemental ? 3221225472 : 1610612736),
     'calibration-memory-budget');
   for (const name of ['scripts/rsi-library-checker-calibrate.mjs', 'scripts/rsi-native-checker-worker.py',
     'scripts/rsi-native-checker-replay.py', 'scripts/lib/rsi-native-checker.mjs', ...(supplemental
@@ -130,8 +158,8 @@ export async function loadCalibrationInputs(root, inputs) {
     && /^[a-f0-9]{64}$/u.test(entry.referenceSha256) && Number.isSafeInteger(entry.vectors) && entry.vectors >= 5,
   'calibration-case-input');
   return { plan, prepared, selection, supplemental,
-    batchVersion: supplemental ? 'RsiSupplementalCalibrationBatch/v1' : 'RsiLibraryCheckerCalibrationBatch/v1',
-    phaseVersion: supplemental ? 'RsiSupplementalCalibrationPhase/v1' : 'RsiLibraryCheckerCalibrationPhase/v1',
+    batchVersion: supplemental ? `Rsi${pythonFamily}CalibrationBatch/v1` : 'RsiLibraryCheckerCalibrationBatch/v1',
+    phaseVersion: supplemental ? `Rsi${pythonFamily}CalibrationPhase/v1` : 'RsiLibraryCheckerCalibrationPhase/v1',
     evidenceDirectory: supplemental ? 'stdio-python-evidence' : 'native-checker-evidence',
     planSha256: await sha(file(inputs, 'plan.json')), inputsSha256: await sha(file(inputs, 'report.json')), root, inputs };
 }

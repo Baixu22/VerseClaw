@@ -1,0 +1,12 @@
+{
+  "usaco:1347": {
+    "comparison": "normalized-text",
+    "basis": "Candy Cane Feast requires the final height of each cow on a separate line in input order. Each height is a uniquely determined integer.",
+    "artifacts": {
+      "results": {"url": "https://usaco.org/index.php?page=dec23results", "sha256": "a56ffbcce38969a2d9230fd11936bf168d32ec19fc4b01f87f6bd8e916d91f56"},
+      "problem": {"url": "https://usaco.org/index.php?page=viewproblem2&cpid=1347", "sha256": "816b6610d753149002744ec3d094bd8a304061a33fd89b3321b206c25e306ada"},
+      "solution": {"url": "https://usaco.org/current/data/sol_prob1_bronze_dec23.html", "sha256": "4699804389915f50dfee172e2d8727d0c6c663f6358f0b5e57292eba73381aa9"},
+      "tests": {"url": "https://usaco.org/current/data/prob1_bronze_dec23.zip", "sha256": "3e23342c453cc7efcde2ebdad69eb96cd475befbabada661be23e5d3cf7093f7"}
+    }
+  }
+}
