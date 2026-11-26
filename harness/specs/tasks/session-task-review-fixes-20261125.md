@@ -25,6 +25,7 @@ touchedAreas:
   - electron/services/workspaces-api.ts
   - electron/services/sessions-api.ts
   - openclaw_runtime/src/agents/tool-mutation.ts
+  - openclaw_runtime/src/agents/tool-mutation.test.ts
   - openclaw_runtime/src/agents/agent-tools.ts
   - openclaw_runtime/src/agents/tools/persistent-task-tool.ts
   - src/stores/chat.ts
@@ -63,7 +64,7 @@ acceptance:
   - 活动模型、进行中的文件操作和委派取消均等待原运行及效果回执，失败停止保留 cancelling。
   - 会话恢复按原代次迁移 writer 和只读引用，重试幂等；旧代次、旧 epoch 和未决效果继续拒绝。
   - 暂停恢复不复活暂停前运行，新的恢复运行可以调用模型和受管工具。
-  - 只读查询在前后工具边界使用同一判定，带副作用的 shell、未知工具和写入仍受控；rg 的预处理和 hostname helper 不能绕过任务领取。
+  - 只读查询在前后工具边界使用同一判定，带副作用的 shell、未知工具和写入仍受控；rg 外部程序和 Git 的文本转换、外部 diff 及分页程序不能绕过任务领取。
   - 原会话历史等待、资源拒绝和工作区任务操作的迟到响应不会污染新视图或草稿。
   - 接力在后台获得接收回执后，按目标草稿记录版本清理并保存原草稿，保留目标中的新编辑和其它会话草稿。
   - 副作用准入不读取全量 Task Ledger；一千和一万任务的同机样本分别保存。

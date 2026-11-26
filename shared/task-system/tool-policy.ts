@@ -27,7 +27,7 @@ const READ_ONLY_GH_PR_SUBCOMMANDS = new Set(["checks", "diff", "list", "status",
 const READ_ONLY_GH_ISSUE_SUBCOMMANDS = new Set(["list", "status", "view"]);
 
 const UNSAFE_RG_FLAGS = new Set(["--pre", "--pre-glob", "--hostname-bin"]);
-const UNSAFE_GIT_FLAGS = new Set(["--ext-diff", "--output", "-o", "--open-files-in-pager"]);
+const UNSAFE_GIT_FLAGS = new Set(["--ext-diff", "--textconv", "--output", "-o", "--open-files-in-pager"]);
 
 /** Git global flags that consume the next token as their value, so that value
  * is not mistaken for the subcommand (`git -C /repo status`). */
@@ -48,6 +48,8 @@ const GIT_GLOBAL_FLAGS_WITH_VALUE = new Set([
  * intended repository. Read-only-looking subcommands behind these must not be
  * treated as read-only. Case matters: `-c` sets config, `-C` changes directory. */
 const UNSAFE_GIT_GLOBAL_FLAGS = new Set([
+  "-p",
+  "--paginate",
   "-c",
   "-C",
   "--git-dir",
@@ -200,6 +202,12 @@ function isReadOnlyGitCommand(tokens: readonly string[]): boolean {
     return false;
   }
   const { subcommand, index } = resolved;
+  // Git diff readers otherwise run converters or diff helpers from local configuration.
+  // Require the guards first so neither can be consumed as another option's value.
+  if (["diff", "show", "log"].includes(subcommand) &&
+      (tokens[index + 1] !== "--no-textconv" || tokens[index + 2] !== "--no-ext-diff")) {
+    return false;
+  }
   if (READ_ONLY_GIT_SUBCOMMANDS.has(subcommand)) {
     return true;
   }

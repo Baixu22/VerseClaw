@@ -68,6 +68,8 @@
 - latest | The Kanban Guide | Kanban Guides — https://kanbanguides.org/the-kanban-guide/
 - Shift handover - HSE — https://www.hse.gov.uk/humanfactors/topics/shift-handover.htm
 
+**只读命令。** 无领取的会话可查询文件、记忆与会话历史。Git 差异和历史命令在子命令后先传入 `--no-textconv --no-ext-diff`，例如 `git diff --no-textconv --no-ext-diff -- src/`，以关闭仓库配置中的外部转换程序。请求外部分页、搜索预处理或 hostname helper 的命令需要有效任务领取。
+
 **会话优先交互。** 普通聊天由 agent 通过 `task_control.start` 定位目标并领取任务，讨论可以没有任务。`sessionTask` 按工作区、会话与 generation 读取绑定和子任务；任务与窗口事件合并刷新，旧作用域响应丢弃。读取失败保留陈旧状态并提供刷新。
 
 **会话任务托盘。** 运行任务停靠在输入框上方，默认展示目标、状态、已知步骤进度与当前步骤，完成后收为一行回执。展开后可查看任务 ID、子任务、更新时间与账本链接；菜单支持复制完整 ID、展开、刷新和隐藏。隐藏只保存显示偏好，后台任务与执行资格保持。运行计划全部完成且本轮结束后离开托盘，回合摘要保留记录。

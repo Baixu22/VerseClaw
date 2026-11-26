@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { TaskSystemStore } from '../../shared/task-system/store';
@@ -234,7 +235,9 @@ describe('all tool boundaries use the same read-only policy', () => {
     ['sessions_list', {}], ['sessions_history', { sessionKey }], ['get_goal', {}],
     ['read_file', { path: 'result.txt' }], ['grep', { pattern: 'task' }], ['glob', { pattern: '*.ts' }],
     ['exec', { command: 'git status' }], ['exec', { command: 'rg --files' }], ['process', { action: 'list' }],
-    ['exec', { command: 'git log -c' }], ['exec', { command: 'git diff -C' }], ['exec', { command: 'git show -c' }],
+    ['exec', { command: 'git log --no-textconv --no-ext-diff -c' }],
+    ['exec', { command: 'git diff --no-textconv --no-ext-diff -C' }],
+    ['exec', { command: 'git show --no-textconv --no-ext-diff -c' }],
     ['subagents', { action: 'info' }],
   ])('permits %s for an observer without claiming execution', async (toolName, params) => {
     const task = start();
@@ -251,6 +254,11 @@ describe('all tool boundaries use the same read-only policy', () => {
   });
   it.each(['git -c core.pager=bad status', 'git -ccore.pager=bad status', 'git -C/tmp status',
     'rg --pre=bad query', 'rg --pre bad query', 'rg --hostname-bin=bad query', 'rg --hostname-bin bad query',
+    'git diff', 'git log -p', 'git show HEAD', 'git diff --textconv', 'git grep --textconv query',
+    'git diff --no-textconv --no-ext-diff --textconv', 'git diff --no-textconv --no-ext-diff --ext-diff',
+    'git diff -- --no-textconv --no-ext-diff', 'git -p diff --no-textconv --no-ext-diff',
+    'git diff --word-diff-regex --no-textconv --no-ext-diff',
+    'git --paginate diff --no-textconv --no-ext-diff',
     'echo hello > result.txt', 'git status; touch result.txt'])('still requires admission for shell effects: %s', async (command) => {
     const execute = vi.fn(async () => 1);
     const guard = createTaskRuntimeGuard(state.root, 'agent:main:unbound', 'unbound-generation', 'run');
@@ -272,5 +280,30 @@ describe('all tool boundaries use the same read-only policy', () => {
   it('does not classify unknown tools or model changes as reads', () => {
     expect(isReadOnlyTaskTool('unknown_extension', { action: 'read' })).toBe(false);
     expect(isReadOnlyTaskTool('session_status', { model: 'different/model' })).toBe(false);
+  });
+  it('reads an actual Git diff without invoking its configured converter', async () => {
+    const repository = join(state.root, 'git-reader');
+    mkdirSync(repository);
+    const invocation = join(repository, 'converter-invoked.txt');
+    const converter = join(repository, 'converter.cjs');
+    writeFileSync(converter, `const fs = require('node:fs'); fs.writeFileSync(${JSON.stringify(invocation)}, 'called'); process.stdout.write(fs.readFileSync(process.argv[2]));`);
+    const git = (args: string[]) => execFileSync('git', args, { cwd: repository, encoding: 'utf8', windowsHide: true });
+    git(['init', '--quiet']);
+    git(['config', 'diff.reader.textconv', `"${process.execPath.replaceAll('\\', '/')}" "${converter.replaceAll('\\', '/')}"`]);
+    writeFileSync(join(repository, '.gitattributes'), 'input.txt diff=reader\n');
+    writeFileSync(join(repository, 'input.txt'), 'before\n');
+    git(['add', '.gitattributes', 'input.txt']);
+    writeFileSync(join(repository, 'input.txt'), 'after\n');
+    const guard = createTaskRuntimeGuard(state.root, 'agent:main:unbound', 'unbound-generation', 'run');
+    const command = 'git diff --no-textconv --no-ext-diff -- input.txt';
+    const diff = await executeTaskGuarded(guard, 'safe-diff', 'exec', async () => git(command.split(' ').slice(1)), { command });
+    expect(diff).toContain('+after');
+    expect(existsSync(invocation)).toBe(false);
+    const execute = vi.fn(async () => git(['diff', '--', 'input.txt']));
+    await expect(executeTaskGuarded(guard, 'configured-diff', 'exec', execute, { command: 'git diff -- input.txt' })).rejects.toThrow('TASK_CLAIM_REQUIRED');
+    expect(execute).not.toHaveBeenCalled();
+    expect(existsSync(invocation)).toBe(false);
+    git(['diff', '--', 'input.txt']);
+    expect(readFileSync(invocation, 'utf8')).toBe('called');
   });
 });
