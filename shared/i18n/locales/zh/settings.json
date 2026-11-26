@@ -6,6 +6,8 @@
   "title": "设置",
   "subtitle": "配置您的 Verse Claw 体验",
   "navigation": {
+    "chooseSection": "选择设置模块",
+    "noResults": "没有匹配的设置，试试功能名称或相关词。",
     "back": "返回应用",
     "groups": {
       "configuration": "AI 配置",
@@ -14,7 +16,7 @@
     },
     "general": {
       "title": "通用",
-      "description": "外观、语言、启动项与应用信息。"
+      "description": "外观、对话字体、主题颜色、语言、启动项与应用信息。"
     },
     "models": {
       "title": "模型与提供商",
@@ -121,6 +123,38 @@
     "actionFailed": "恢复操作失败"
   },
   "appearance": {
+    "colorsHeading": "主题与配色",
+    "readingHeading": "文字与阅读",
+    "preferencesHeading": "应用偏好",
+    "settingsText": "设置字号",
+    "settingsSizes": {
+      "standard": "标准",
+      "large": "大",
+      "larger": "特大"
+    },
+    "sampleQuestion": "这段对话在当前外观下是什么样子？",
+    "accent": "强调色",
+    "accentDescription": "选择发送按钮、开关和键盘焦点使用的颜色。",
+    "accents": {
+      "original": "原色",
+      "ocean": "海蓝",
+      "jade": "青玉",
+      "iris": "鸢紫",
+      "rose": "玫瑰",
+      "amber": "琥珀"
+    },
+    "customColor": "自定义颜色",
+    "readingSize": "对话字号",
+    "readingSizeValue": "{{size}} px",
+    "readingFont": "对话字体",
+    "fonts": {
+      "system": "系统字体",
+      "serif": "衬线字体",
+      "mono": "等宽字体"
+    },
+    "preview": "阅读预览",
+    "sample": "晨光落在桌边，一个想法在字里行间渐渐清晰。",
+    "restore": "恢复默认外观",
     "title": "外观与语言",
     "description": "自定义外观和风格",
     "theme": "主题",
@@ -134,9 +168,9 @@
     "launchAtStartupDesc": "登录系统后自动启动 Verse Claw",
     "uiDepthMode": {
       "title": "界面深度",
-      "description": "Basic 保持常用界面更简洁。Advanced 显示更多 checkpoint 证据、压缩警告、角色契约和诊断信息。",
-      "basic": "Basic",
-      "advanced": "Advanced"
+      "description": "高级模式额外显示检查点记录、压缩提醒、角色约定和诊断信息。",
+      "basic": "基础",
+      "advanced": "高级"
     },
     "contextDisplay": {
       "title": "显示上下文用量",

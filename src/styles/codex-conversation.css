@@ -17,7 +17,7 @@
   --reply-ink: var(--color-chat-foreground);
   --reply-body: var(--color-transcript-prose);
   --reply-muted: color-mix(in srgb, var(--color-chat-secondary) 80%, var(--reply-ink));
-  --reply-link: color-mix(in srgb, var(--color-chat-running) 82%, var(--reply-ink));
+  --reply-link: var(--appearance-ink, color-mix(in srgb, var(--color-chat-running) 82%, var(--reply-ink)));
   --reply-code: color-mix(in srgb, var(--purple-400) 67%, var(--reply-ink));
   --reply-line: hsl(var(--conversation-border-heavy) / 0.65);
   color: var(--reply-body);

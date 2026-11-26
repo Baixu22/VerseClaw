@@ -6,6 +6,8 @@
     "section": "Loading settings section"
   },
   "navigation": {
+    "chooseSection": "Choose a settings module",
+    "noResults": "No matching settings. Try a feature name or related term.",
     "back": "Back to app",
     "groups": {
       "configuration": "AI Configuration",
@@ -14,7 +16,7 @@
     },
     "general": {
       "title": "General",
-      "description": "Appearance, language, startup, and app details."
+      "description": "Appearance, conversation fonts, theme colors, language, startup, and app details."
     },
     "models": {
       "title": "Models & Providers",
@@ -121,6 +123,38 @@
     "actionFailed": "Recovery action failed"
   },
   "appearance": {
+    "colorsHeading": "Theme and color",
+    "readingHeading": "Text and reading",
+    "preferencesHeading": "App preferences",
+    "settingsText": "Settings text size",
+    "settingsSizes": {
+      "standard": "Standard",
+      "large": "Large",
+      "larger": "Extra large"
+    },
+    "sampleQuestion": "How will a conversation look with these settings?",
+    "accent": "Accent color",
+    "accentDescription": "Choose the color of actions, switches, and keyboard focus.",
+    "accents": {
+      "original": "Original",
+      "ocean": "Ocean",
+      "jade": "Jade",
+      "iris": "Iris",
+      "rose": "Rose",
+      "amber": "Amber"
+    },
+    "customColor": "Custom color",
+    "readingSize": "Conversation text size",
+    "readingSizeValue": "{{size}} px",
+    "readingFont": "Conversation typeface",
+    "fonts": {
+      "system": "System",
+      "serif": "Serif",
+      "mono": "Monospace"
+    },
+    "preview": "Reading preview",
+    "sample": "Early light spills across the desk. A thought takes shape, one line at a time.",
+    "restore": "Restore appearance defaults",
     "title": "Appearance & language",
     "description": "Customize the look and feel",
     "theme": "Theme",

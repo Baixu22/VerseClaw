@@ -1,0 +1,264 @@
+/* Preserve the original palette until a user chooses an accent. Bound the
+ * perceptual lightness to keep custom colors legible in either theme. */
+:root[data-custom-accent] {
+  --appearance-ink: oklch(from var(--appearance-source) min(l, 0.48) c h);
+  --appearance-on-ink: var(--gray-0);
+  --primary: from var(--appearance-ink) h s l;
+  --primary-foreground: from var(--appearance-on-ink) h s l;
+  --ring: var(--primary);
+  --color-text-accent: var(--appearance-ink);
+  --color-icon-accent: var(--appearance-ink);
+  --color-border-focus: var(--appearance-ink);
+  --color-background-accent: color-mix(in srgb, var(--appearance-ink) 12%, var(--color-background-surface));
+  --color-text-on-accent: var(--appearance-on-ink);
+  --color-chat-composer-focus: var(--appearance-ink);
+  --sp-switch-thumb: var(--appearance-on-ink);
+  --sp-focus-ring: var(--appearance-ink);
+}
+:root.dark[data-custom-accent] {
+  --appearance-ink: oklch(from var(--appearance-source) max(l, 0.82) c h);
+  --appearance-on-ink: var(--gray-1000);
+}
+
+/* Route chrome and its separate portal host share the same preferences. */
+:root[data-settings-text='large'] [data-settings-appearance] { --settings-text-scale: 1.15; }
+:root[data-settings-text='larger'] [data-settings-appearance] { --settings-text-scale: 1.3; }
+[data-settings-appearance] :is([data-slot='select-option'], .settings-search-label input, .settings-mobile-select) {
+  font-size: calc(13px * var(--settings-text-scale, 1));
+}
+:root[data-custom-accent] [data-settings-appearance] {
+  --settings-canvas: color-mix(in srgb, var(--appearance-ink) 3%, hsl(var(--background)));
+  --settings-panel: color-mix(in srgb, var(--appearance-ink) 6%, var(--color-background-elevated-primary-opaque));
+  --sp-card-bg: var(--settings-panel);
+  --sp-menu-bg: var(--settings-panel);
+  --sp-link: var(--appearance-ink);
+  --card: from var(--settings-panel) h s l;
+  --material-panel: var(--card);
+  --surface-modal: var(--card);
+  --popover: var(--card);
+}
+:root[data-custom-accent] .codex-settings-sidebar {
+  background-color: color-mix(in srgb, var(--appearance-ink) 7%, hsl(var(--surface-sidebar)));
+}
+:root[data-custom-accent] [data-settings-appearance] :is(
+  .sp-segmented button[aria-pressed='true'],
+  [role='tab'][aria-selected='true'],
+  [data-slot='select-option'][data-state='checked'],
+  .sp-multiselect [aria-selected='true']
+) {
+  background: var(--color-background-accent);
+  color: var(--appearance-ink);
+}
+:root[data-custom-accent] [data-settings-appearance] :is(
+  .sp-btn-primary, [data-variant='default'], [data-slot='switch'][data-state='checked']
+) {
+  background-color: var(--appearance-ink);
+  border-color: var(--appearance-ink);
+  color: var(--appearance-on-ink);
+}
+:root[data-custom-accent] [data-settings-appearance] [data-slot='switch-thumb'][data-state='checked'] {
+  background-color: var(--appearance-on-ink);
+}
+:root[data-custom-accent] [data-settings-appearance] [data-slot='theme-selector-item'][aria-checked='true'] [data-slot='theme-selector-ring'] {
+  border-color: var(--color-border-focus);
+}
+:root[data-custom-accent] .appearance-size .effort-preview-progress {
+  background: var(--color-background-accent);
+}
+:root[data-custom-accent] .appearance-size .effort-preview-thumb { background: var(--appearance-ink); }
+
+:root[data-custom-accent] .codex-settings-nav-item[aria-current='page'] {
+  background: var(--color-background-accent);
+}
+:root[data-custom-accent] .codex-settings-nav-item[aria-current='page'] svg {
+  color: var(--color-icon-accent);
+}
+
+:root[data-reading-font='serif'] {
+  --reading-family: Georgia, 'Songti SC', 'Noto Serif CJK SC', SimSun, 'Yu Mincho', serif;
+}
+:root[data-reading-font='mono'] {
+  --reading-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+}
+.reading-text {
+  font-family: var(--reading-family, inherit);
+  font-size: var(--reading-size, 14px);
+  line-height: calc(var(--reading-size, 14px) * 22 / 14);
+}
+
+/* The content width, not the window width, determines when controls and
+ * their preview can comfortably sit side by side. */
+.codex-settings-page__content:has(.appearance-settings) {
+  max-width: 840px;
+}
+.codex-settings-page__content:has(.appearance-settings) .codex-settings-page__intro {
+  margin-block: 4px 26px;
+}
+.codex-settings-page__content:has(.appearance-settings) .codex-settings-page__title {
+  font-size: calc(28px * var(--settings-text-scale, 1));
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.appearance-settings {
+  container-type: inline-size;
+  min-width: 0;
+  color: var(--sp-text);
+}
+.appearance-settings > section + section {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-border);
+}
+.appearance-section-heading, .appearance-label-line, .appearance-type-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+.appearance-section-heading { margin-bottom: 16px; }
+.appearance-section-heading h2 {
+  margin: 0;
+  font-size: calc(18px * var(--settings-text-scale, 1));
+  font-weight: 600;
+  line-height: 1.4;
+}
+.appearance-settings h3, .appearance-preview figcaption {
+  margin: 0;
+  font-size: calc(14px * var(--settings-text-scale, 1));
+  font-weight: 500;
+  line-height: 1.45;
+}
+.appearance-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 20px 36px;
+}
+.appearance-field { display: grid; min-width: 0; gap: 12px; }
+.appearance-restore, .appearance-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 32px;
+  border-radius: var(--radius-md);
+  color: var(--sp-text-secondary);
+  font-size: calc(13px * var(--settings-text-scale, 1));
+  line-height: 1.4;
+  cursor: pointer;
+}
+.appearance-restore { padding: 0 6px; }
+.appearance-restore:disabled { opacity: 0.55; cursor: default; }
+.appearance-restore:hover:enabled, .appearance-custom:hover { background: var(--sp-hover-bg); color: var(--sp-text); }
+.appearance-settings [data-slot='theme-selector'] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.appearance-settings [data-slot='theme-selector-item'] { width: 100%; aspect-ratio: 1.85; }
+.appearance-settings [data-slot='theme-selector-label'] {
+  text-align: center;
+  font-size: calc(12px * var(--settings-text-scale, 1));
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.appearance-value {
+  color: var(--sp-text-secondary);
+  font-size: calc(13px * var(--settings-text-scale, 1));
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+.appearance-palette {
+  gap: 8px;
+  padding-inline-start: 24px;
+  border-inline-start: 1px solid var(--color-border);
+}
+.appearance-swatches { display: flex; flex-wrap: wrap; gap: 4px; }
+.appearance-swatch {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1.5px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.appearance-swatch:hover { background-color: var(--sp-hover-bg); }
+.appearance-swatch[aria-pressed='true'] { border-color: var(--color-border-focus); }
+.appearance-swatch-dot {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gray-100) 50%, var(--gray-750) 50%);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--gray-0);
+}
+.appearance-swatch-dot svg { filter: drop-shadow(0 1px 1px var(--gray-750)); }
+.appearance-custom { position: relative; padding-inline: 4px; }
+.appearance-custom input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.appearance-swatch:focus-visible, .appearance-restore:focus-visible, .appearance-custom:focus-within,
+.appearance-type-controls .sp-segmented button:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+.appearance-type-controls { display: grid; min-width: 0; gap: 14px; }
+.appearance-type-row .sp-segmented {
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-lg);
+  background: var(--sp-fill-5);
+}
+.appearance-type-row .sp-segmented button {
+  min-height: 28px;
+  padding-inline: 9px;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--sp-text-secondary);
+  line-height: 1.4;
+  white-space: normal;
+}
+.appearance-type-row .sp-segmented button[aria-pressed='true'] {
+  background: var(--sp-card-bg);
+  color: var(--sp-text);
+  box-shadow: var(--shadow-hairline), var(--shadow-sm);
+}
+.appearance-size { gap: 8px; }
+.appearance-size .effort-preview { padding-block: 0; }
+.appearance-size .effort-preview-label { display: none; }
+.appearance-preview {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-inline-start: 2px solid var(--color-icon-accent);
+  border-radius: var(--radius-lg);
+  background: var(--sp-card-bg);
+  color: var(--sp-text);
+  overflow-wrap: anywhere;
+}
+.appearance-preview figcaption {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--sp-text-secondary);
+  font-size: calc(12px * var(--settings-text-scale, 1));
+}
+.appearance-preview-conversation { display: flex; flex-direction: column; gap: 14px; padding: 16px; }
+.appearance-preview-conversation p { text-wrap: pretty; }
+@container (max-width: 620px) {
+  .appearance-columns { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .appearance-palette { padding-inline-start: 0; border-inline-start: 0; }
+  .appearance-settings [data-slot='theme-selector'] { max-width: 400px; padding-inline: 7px; }
+  /* Keep the slider's 24px filter bleed and the theme focus rings inside the column. */
+  .appearance-size .effort-preview { padding-inline: 24px; }
+}
+@container (max-width: 350px) {
+  .appearance-section-heading { align-items: flex-start; }
+  .appearance-settings [data-slot='theme-selector'] { gap: 9px; }
+  .appearance-type-row { gap: 8px; }
+}

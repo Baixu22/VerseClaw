@@ -3,7 +3,7 @@
  * Handles routing and global providers
  */
 import { Navigate, Routes, Route, useNavigate, useLocation, type Location } from 'react-router-dom';
-import { Component, lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, lazy, memo, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import i18n, { changeLanguageWithResources } from './i18n';
@@ -22,6 +22,7 @@ import { recoverFromDynamicImportLoadError } from './lib/dynamic-import-recovery
 import { getAgentDevScenarioRoute, installAgentDevTestSurface } from './lib/agent-dev';
 import { isDevRuntime, resolveSurfaceAccess } from './lib/surface-access';
 import { applyDocumentTheme } from './lib/theme';
+import { applyDocumentAppearance } from './lib/appearance';
 import { SettingsRoute } from './pages/Settings/SettingsRoute';
 import { resolveUiVersion } from './lib/ui-version';
 import type { WorkspacePanelIntent } from '@shared/types/workspace';
@@ -264,6 +265,7 @@ function App() {
     && new URLSearchParams(window.location.search).get('e2eSkipSetup') === '1';
   const initSettings = useSettingsStore((state) => state.init);
   const theme = useSettingsStore((state) => state.theme);
+  const appearance = useSettingsStore((state) => state.appearance);
   const language = useSettingsStore((state) => state.language);
   const setupComplete = useSettingsStore((state) => state.setupComplete);
   const devModeUnlocked = useSettingsStore((state) => state.devModeUnlocked);
@@ -279,6 +281,10 @@ function App() {
   const backgroundPath = settingsOpen
     ? settingsLocationState?.settingsBackgroundPath ?? '/'
     : toRoutePath(location);
+
+  useLayoutEffect(() => {
+    applyDocumentAppearance(document.documentElement, appearance);
+  }, [appearance]);
 
   useEffect(() => {
     document.documentElement.dataset.uiVersion = uiVersion;
@@ -416,7 +422,7 @@ function App() {
         />
         </UiOverlayProvider>
 
-        <div ref={setAppOverlayHost} id="app-overlay-root" data-testid="app-overlay-root" />
+        <div ref={setAppOverlayHost} id="app-overlay-root" data-testid="app-overlay-root" data-settings-appearance={settingsOpen ? '' : undefined} />
 
         {/* Global toast notifications */}
         <Toaster
