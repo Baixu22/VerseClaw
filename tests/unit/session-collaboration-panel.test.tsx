@@ -6,7 +6,7 @@ import { parseSessionCollaborationQuery, emptySessionCollaborationPage, type Ses
 import { createSessionActivityReadSnapshot } from '../../shared/types/session-activity';
 import { normalizeTaskReference } from '../../shared/types/identity-scope';
 
-const mocks = vi.hoisted(() => ({ query: vi.fn(), read: vi.fn(), watch: vi.fn(), cancel: vi.fn(), activate: vi.fn(),
+const mocks = vi.hoisted(() => ({ query: vi.fn(), read: vi.fn(), watch: vi.fn(), cancel: vi.fn(), activate: vi.fn(), openPanel: vi.fn(),
   notification: undefined as ((value: { method: string }) => void) | undefined,
   gatewayStatus: undefined as ((value: { state: string }) => void) | undefined }));
 vi.mock('../../src/lib/host-api', () => ({ hostApi: { sessionActivity: { query: mocks.query, read: mocks.read, watch: mocks.watch, cancelWatch: mocks.cancel } } }));
@@ -15,7 +15,7 @@ vi.mock('../../src/lib/host-events', () => ({ hostEvents: {
   onGatewayStatus: (listener: typeof mocks.gatewayStatus) => { mocks.gatewayStatus = listener; return () => {}; },
 } }));
 vi.mock('../../src/lib/workspace-session', () => ({ activateWorkspaceScopedSession: mocks.activate }));
-vi.mock('../../src/stores/artifact-panel', () => ({ openWorkspacePanel: vi.fn() }));
+vi.mock('../../src/stores/artifact-panel', () => ({ openWorkspacePanel: mocks.openPanel }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, params?: { count?: number }) => `${key}${params?.count === undefined ? '' : `:${params.count}`}`, i18n: { language: 'en' } }) }));
 import { SessionCollaborationPanel } from '../../src/components/agents/SessionCollaborationPanel';
 import { subscribeSessionCollaboration, useSessionCollaborationUi } from '../../src/stores/session-collaboration';
@@ -102,5 +102,40 @@ describe('shared collaboration panel', () => {
     } finally {
       unsubscribe();
     }
+  });
+
+  it('opens the worker after its parent switch changes the requester', async () => {
+    const parentKey = 'agent:main:parent-b';
+    mocks.query.mockImplementation(async request => {
+      const result = page(request);
+      const child = result.items.find(item => item.sessionKey === b.sessionKey);
+      if (child?.sources.origin.state === 'ready') child.sources.origin.value.parentSessionKey = parentKey;
+      return { success: true, page: result };
+    });
+    const mounted = render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    mocks.activate.mockImplementationOnce(async (_workspaceId, sessionKey, isCurrent: () => boolean) => {
+      expect(sessionKey).toBe(parentKey);
+      expect(isCurrent()).toBe(true);
+      const parent = parseSessionCollaborationQuery({ requester: { ...b, sessionKey: parentKey } }).requester;
+      await act(async () => mounted.rerender(<MemoryRouter><SessionCollaborationPanel requester={parent} /></MemoryRouter>));
+      return true;
+    });
+    fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
+    fireEvent.click(await screen.findByRole('button', { name: 'collaboration.openWorker' }));
+    await waitFor(() => expect(mocks.openPanel).toHaveBeenCalledWith({ panel: 'subagent', sessionKey: b.sessionKey }));
+  });
+
+  it('marks retained details stale when their watch loses the source', async () => {
+    let fail!: (error: Error) => void;
+    mocks.watch.mockImplementationOnce(() => new Promise((_, reject) => { fail = reject; }));
+    render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
+    await waitFor(() => expect(mocks.read).toHaveBeenCalled());
+    await act(async () => fail(new Error('Connection closed')));
+    const detail = within(screen.getByTestId('collaboration-detail'));
+    expect(detail.getByText('Goal workspace-b')).toBeTruthy();
+    const status = await detail.findByRole('status');
+    expect(status.textContent).toContain('collaboration.stale');
+    expect(status.textContent).toContain('collaboration.page.unavailable:0');
   });
 });

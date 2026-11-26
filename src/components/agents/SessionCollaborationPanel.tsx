@@ -38,6 +38,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
   const page = observed?.key === queryKey ? observed.page : null;
   const row = selectedRow?.key === detailKey ? selectedRow.row : null;
   const snapshot = detail?.key === detailKey ? detail.snapshot : null;
+  const detailIssue = detailState?.key === detailKey && detailState.state !== 'ready' ? detailState.state : null;
 
   const refresh = useCallback(async () => {
     if (!query) return;
@@ -106,7 +107,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     const key = worker ? origin?.spawnedBy ?? origin?.parentSessionKey : row.sessionKey;
     if (!key) return;
     try {
-      if (!await activateWorkspaceScopedSession(row.detail.scope.workspaceId, key, isCurrent) || !isCurrent()) return;
+      if (!await activateWorkspaceScopedSession(row.detail.scope.workspaceId, key, isCurrent)) return;
       navigate('/chat');
       if (worker) openWorkspacePanel({ panel: 'subagent', sessionKey: row.sessionKey });
     } catch { setReadState('unavailable'); }
@@ -145,9 +146,12 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
       {page?.nextCursor && <Button type="button" variant="outline" onClick={() => setCursor(page.nextCursor!)} disabled={loading} data-testid="collaboration-more">{t('collaboration.more')}</Button>}
       {view.selected && <div className="space-y-3 border-t border-border pt-3" data-testid="collaboration-detail">
         <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="break-words text-sm font-medium">
-          {row?.label ?? (detailState?.key === detailKey ? t(`collaboration.page.${detailState.state}`, { count: 0 }) : t('collaboration.loading'))}
+          {row?.label ?? (detailIssue ? t(`collaboration.page.${detailIssue}`, { count: 0 }) : t('collaboration.loading'))}
         </h3>
           <Button type="button" variant="ghost" onClick={() => updateView(viewKey, { selected: null })}>{t('collaboration.close')}</Button></div>
+        {row && detailIssue && <p role="status" aria-atomic="true" className="text-sm text-muted-foreground">
+          {t('collaboration.stale')} {t(`collaboration.page.${detailIssue}`, { count: 0 })}
+        </p>}
         {row && <>
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" className="h-9" onClick={() => void openSession()}><ExternalLink className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />{t('collaboration.openSession')}</Button>
