@@ -1,0 +1,3327 @@
+{
+  "schemaVersion": "RsiIndependentCodingCases/v2",
+  "driven_by": "agent",
+  "actor": "codex/independent-case-author",
+  "purpose": "Prospective disjoint coding-contract validation and held-out task pool; constructed tasks, not observed production incidents.",
+  "inferenceUnit": "one distinct implementation contract; repeats are paired within a case",
+  "cases": [
+    {
+      "id": "experience-stabledistinctby",
+      "name": "stableDistinctBy",
+      "split": "validation",
+      "prompt": "Return the first record for each own-property key value, preserving order. Values of the key must be string, number, boolean or null and are compared by primitive type and value. Reject missing keys, non-record rows and object/array key values. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function stableDistinctBy(rows: Record<string, unknown>[], key: string): Record<string, unknown>[];",
+      "reference": "export function stableDistinctBy(rows,key){\n  if(!Array.isArray(rows)||typeof key!=='string')throw Error('input');\n  const seen=new Set(),out=[];\n  for(const row of rows){if(!row||typeof row!=='object'||Array.isArray(row)||!Object.hasOwn(row,key))throw Error('row');const x=row[key];if(x!==null&&!['string','number','boolean'].includes(typeof x))throw Error('key');const id=JSON.stringify([typeof x,x]);if(!seen.has(id)){seen.add(id);out.push(structuredClone(row));}}\n  return out;\n}\n",
+      "vectors": [
+        {
+          "args": [
+            [],
+            "id"
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              {
+                "id": 1,
+                "x": "a"
+              },
+              {
+                "id": 1,
+                "x": "b"
+              },
+              {
+                "id": "1"
+              },
+              {
+                "id": false
+              },
+              {
+                "id": null
+              }
+            ],
+            "id"
+          ],
+          "expected": [
+            {
+              "id": 1,
+              "x": "a"
+            },
+            {
+              "id": "1"
+            },
+            {
+              "id": false
+            },
+            {
+              "id": null
+            }
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "k": ""
+              },
+              {
+                "k": 0
+              },
+              {
+                "k": ""
+              }
+            ],
+            "k"
+          ],
+          "expected": [
+            {
+              "k": ""
+            },
+            {
+              "k": 0
+            }
+          ]
+        },
+        {
+          "args": [
+            [
+              {}
+            ],
+            "id"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": {}
+              }
+            ],
+            "id"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": "positive",
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-weightedshares",
+      "name": "weightedShares",
+      "split": "validation",
+      "prompt": "Allocate total nonnegative integer units proportionally to nonnegative integer weights. Use largest remainders: floor each exact share, then distribute leftover units by descending fractional remainder, ties by earlier index. Reject unsafe integer inputs, empty weights, and positive total with zero total weight. Total zero returns zeros even for all-zero weights. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function weightedShares(total: number, weights: number[]): number[];",
+      "reference": "export function weightedShares(total,weights){\n  if(!Number.isSafeInteger(total)||total<0||!Array.isArray(weights)||!weights.length||weights.some(x=>!Number.isSafeInteger(x)||x<0))throw Error('input');\n  const w=weights.map(BigInt),sum=w.reduce((a,b)=>a+b,0n);if(sum===0n){if(total)throw Error('zero');return weights.map(()=>0);}\n  const products=w.map(x=>x*BigInt(total)),out=products.map(x=>Number(x/sum));let left=total-out.reduce((a,b)=>a+b,0);\n  const order=products.map((x,i)=>({i,r:x%sum})).sort((a,b)=>a.r===b.r?a.i-b.i:a.r>b.r?-1:1);for(let i=0;i<left;i++)out[order[i].i]++;return out;\n}\n",
+      "vectors": [
+        {
+          "args": [
+            5,
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "expected": [
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "args": [
+            10,
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": [
+            2,
+            3,
+            5
+          ]
+        },
+        {
+          "args": [
+            0,
+            [
+              0,
+              0
+            ]
+          ],
+          "expected": [
+            0,
+            0
+          ]
+        },
+        {
+          "args": [
+            7,
+            [
+              0,
+              1
+            ]
+          ],
+          "expected": [
+            0,
+            7
+          ]
+        },
+        {
+          "args": [
+            1,
+            [
+              0,
+              0
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            -1,
+            [
+              1
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-reconcilepatch",
+      "name": "reconcilePatch",
+      "split": "validation",
+      "prompt": "Given a record and an array of {key, expected, value}, apply all changes to a cloned record only if each key is an own property and its current primitive value equals expected. Keys must be unique, reject __proto__, prototype and constructor. Reject any conflict or malformed change. Existing keys not mentioned remain. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function reconcilePatch(record: Record<string, unknown>, changes: {key:string;expected:unknown;value:unknown}[]): Record<string, unknown>;",
+      "reference": "export function reconcilePatch(record,changes){\n  if(!record||typeof record!=='object'||Array.isArray(record)||!Array.isArray(changes))throw Error('input');const seen=new Set();\n  for(const c of changes){if(!c||typeof c.key!=='string'||seen.has(c.key)||['__proto__','prototype','constructor'].includes(c.key)||!Object.hasOwn(record,c.key)||!Object.is(record[c.key],c.expected))throw Error('conflict');seen.add(c.key);}\n  const out=structuredClone(record);for(const c of changes)Object.defineProperty(out,c.key,{value:structuredClone(c.value),writable:true,enumerable:true,configurable:true});return out;\n}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "x": 0,
+              "b": false
+            },
+            [
+              {
+                "key": "x",
+                "expected": 0,
+                "value": 1
+              }
+            ]
+          ],
+          "expected": {
+            "x": 1,
+            "b": false
+          }
+        },
+        {
+          "args": [
+            {},
+            []
+          ],
+          "expected": {}
+        },
+        {
+          "args": [
+            {
+              "x": 1
+            },
+            [
+              {
+                "key": "x",
+                "expected": 2,
+                "value": 3
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {
+              "x": 1
+            },
+            [
+              {
+                "key": "x",
+                "expected": 1,
+                "value": 2
+              },
+              {
+                "key": "x",
+                "expected": 1,
+                "value": 3
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {},
+            [
+              {
+                "key": "constructor",
+                "expected": null,
+                "value": 1
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-compareversions",
+      "name": "compareVersions",
+      "split": "validation",
+      "prompt": "Compare strict semantic versions MAJOR.MINOR.PATCH with optional hyphen-separated prerelease dot identifiers and optional +build metadata. Core and numeric prerelease identifiers must not have leading zeros; core numbers are arbitrary-length decimals. Build metadata does not affect order. Numeric prerelease sorts before text, release after prerelease. Return -1, 0, or 1; reject malformed versions. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function compareVersions(left: string, right: string): number;",
+      "reference": "export function compareVersions(left,right){\n  const parse=s=>{if(typeof s!=='string')throw Error('type');const m=/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$/.exec(s);if(!m)throw Error('version');const pre=m[4]?.split('.');if(pre?.some(x=>/^\\d+$/.test(x)&&x.length>1&&x[0]==='0'))throw Error('zero');return {core:m.slice(1,4).map(BigInt),pre};};\n  const a=parse(left),b=parse(right);for(let i=0;i<3;i++)if(a.core[i]!==b.core[i])return a.core[i]<b.core[i]?-1:1;if(!a.pre||!b.pre)return a.pre?-1:b.pre?1:0;\n  for(let i=0;i<Math.max(a.pre.length,b.pre.length);i++){const x=a.pre[i],y=b.pre[i];if(x===undefined)return -1;if(y===undefined)return 1;if(x===y)continue;const nx=/^\\d+$/.test(x),ny=/^\\d+$/.test(y);if(nx&&ny)return BigInt(x)<BigInt(y)?-1:1;if(nx!==ny)return nx?-1:1;return x<y?-1:1;}return 0;\n}\n",
+      "vectors": [
+        {
+          "args": [
+            "1.2.3",
+            "1.2.3+build"
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            "1.0.0-alpha.2",
+            "1.0.0-alpha.10"
+          ],
+          "expected": -1
+        },
+        {
+          "args": [
+            "1.0.0",
+            "1.0.0-rc.1"
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            "9007199254740993.0.0",
+            "9007199254740992.9.9"
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            "1.01.0",
+            "1.0.0"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "1.0.0-01",
+            "1.0.0"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-parsedurationms",
+      "name": "parseDurationMs",
+      "split": "validation",
+      "prompt": "Parse a string consisting of an unsigned decimal number followed by ms, s, m, or h, with optional surrounding whitespace. Accept at most three fractional decimal places and require the resulting milliseconds to be a nonnegative safe integer. No exponent, sign, internal spaces, or missing unit. Return milliseconds. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function parseDurationMs(value: string): number;",
+      "reference": "export function parseDurationMs(value){if(typeof value!=='string')throw Error('type');const m=/^(\\d+)(?:\\.(\\d{1,3}))?(ms|s|m|h)$/.exec(value.trim());if(!m)throw Error('format');const scale={ms:1n,s:1000n,m:60000n,h:3600000n}[m[3]];const frac=m[2]??'',den=10n**BigInt(frac.length);const num=(BigInt(m[1])*den+BigInt(frac||'0'))*scale;if(num%den)throw Error('fraction');const result=Number(num/den);if(!Number.isSafeInteger(result))throw Error('range');return result;}\n",
+      "vectors": [
+        {
+          "args": [
+            "1.5s"
+          ],
+          "expected": 1500
+        },
+        {
+          "args": [
+            " 2m "
+          ],
+          "expected": 120000
+        },
+        {
+          "args": [
+            "0ms"
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            "0.1ms"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "1e3ms"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "-1s"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-slicecodepoints",
+      "name": "sliceCodePoints",
+      "split": "validation",
+      "prompt": "Return count Unicode code points of text starting at nonnegative integer start. Use code points rather than UTF-16 code units; no grapheme normalization. Start beyond length returns empty. Reject non-string text and negative or unsafe integer indices. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function sliceCodePoints(text: string, start: number, count: number): string;",
+      "reference": "export function sliceCodePoints(text,start,count){if(typeof text!=='string'||!Number.isSafeInteger(start)||!Number.isSafeInteger(count)||start<0||count<0)throw Error('input');return Array.from(text).slice(start,start+count).join('');}\n",
+      "vectors": [
+        {
+          "args": [
+            "a😀b",
+            1,
+            1
+          ],
+          "expected": "😀"
+        },
+        {
+          "args": [
+            "a😀b",
+            2,
+            4
+          ],
+          "expected": "b"
+        },
+        {
+          "args": [
+            "éx",
+            0,
+            2
+          ],
+          "expected": "é"
+        },
+        {
+          "args": [
+            "abc",
+            8,
+            2
+          ],
+          "expected": ""
+        },
+        {
+          "args": [
+            "abc",
+            0,
+            0
+          ],
+          "expected": ""
+        },
+        {
+          "args": [
+            "abc",
+            -1,
+            2
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-resolvealias",
+      "name": "resolveAlias",
+      "split": "validation",
+      "prompt": "Follow own-property string-to-string aliases from key until a name has no own mapping. Return that terminal name. Reject non-string targets, empty strings, repeated names (cycles), and invalid inputs. Prototype properties are never aliases. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function resolveAlias(aliases: Record<string,string>, key: string): string;",
+      "reference": "export function resolveAlias(aliases,key){if(!aliases||typeof aliases!=='object'||Array.isArray(aliases)||typeof key!=='string'||!key)throw Error('input');const seen=new Set();let name=key;while(Object.hasOwn(aliases,name)){if(seen.has(name))throw Error('cycle');seen.add(name);name=aliases[name];if(typeof name!=='string'||!name)throw Error('target');}return name;}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "a": "b",
+              "b": "c"
+            },
+            "a"
+          ],
+          "expected": "c"
+        },
+        {
+          "args": [
+            {},
+            "constructor"
+          ],
+          "expected": "constructor"
+        },
+        {
+          "args": [
+            {
+              "a": "b"
+            },
+            "x"
+          ],
+          "expected": "x"
+        },
+        {
+          "args": [
+            {
+              "a": "a"
+            },
+            "a"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {
+              "a": "b",
+              "b": "a"
+            },
+            "a"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {
+              "a": 0
+            },
+            "a"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-paginatebycursor",
+      "name": "paginateByCursor",
+      "split": "validation",
+      "prompt": "Rows have unique nonempty string id. Return {items,nextCursor} containing at most limit rows strictly after the row with cursor, or from the start when cursor is null. Limit must be a positive safe integer. nextCursor is the last returned id only when more rows remain, otherwise null. Reject absent cursors and duplicate or invalid ids. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function paginateByCursor(rows: {id:string}[], cursor: string|null, limit: number): {items:{id:string}[];nextCursor:string|null};",
+      "reference": "export function paginateByCursor(rows,cursor,limit){if(!Array.isArray(rows)||!Number.isSafeInteger(limit)||limit<=0||!(cursor===null||typeof cursor==='string'))throw Error('input');const ids=new Set();for(const r of rows){if(!r||typeof r.id!=='string'||!r.id||ids.has(r.id))throw Error('id');ids.add(r.id);}const index=cursor===null?-1:rows.findIndex(r=>r.id===cursor);if(cursor!==null&&index<0)throw Error('cursor');const items=structuredClone(rows.slice(index+1,index+1+limit));return {items,nextCursor:index+1+items.length<rows.length?items.at(-1).id:null};}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "id": "a"
+              },
+              {
+                "id": "b"
+              },
+              {
+                "id": "c"
+              }
+            ],
+            null,
+            2
+          ],
+          "expected": {
+            "items": [
+              {
+                "id": "a"
+              },
+              {
+                "id": "b"
+              }
+            ],
+            "nextCursor": "b"
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a"
+              },
+              {
+                "id": "b"
+              }
+            ],
+            "a",
+            2
+          ],
+          "expected": {
+            "items": [
+              {
+                "id": "b"
+              }
+            ],
+            "nextCursor": null
+          }
+        },
+        {
+          "args": [
+            [],
+            null,
+            2
+          ],
+          "expected": {
+            "items": [],
+            "nextCursor": null
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a"
+              }
+            ],
+            "x",
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a"
+              },
+              {
+                "id": "a"
+              }
+            ],
+            null,
+            2
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-applysetoperations",
+      "name": "applySetOperations",
+      "split": "validation",
+      "prompt": "Start from primitive string/number values, keeping the first occurrence of duplicates. Apply {op:\"add\"|\"remove\",value} in order; add appends only if absent, remove removes any matching item. Primitive types matter. Reject non-array inputs, non-string/number values and unknown operations. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function applySetOperations(initial: (string|number)[], operations: {op:string;value:string|number}[]): (string|number)[];",
+      "reference": "export function applySetOperations(initial,operations){const valid=x=>typeof x==='string'||typeof x==='number'&&Number.isFinite(x);if(!Array.isArray(initial)||!Array.isArray(operations)||initial.some(x=>!valid(x))||operations.some(x=>!x||!['add','remove'].includes(x.op)||!valid(x.value)))throw Error('input');const s=new Set(initial);for(const x of operations){if(x.op==='add')s.add(x.value);else s.delete(x.value);}return [...s];}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              1,
+              1,
+              "1"
+            ],
+            [
+              {
+                "op": "remove",
+                "value": 1
+              },
+              {
+                "op": "add",
+                "value": 1
+              }
+            ]
+          ],
+          "expected": [
+            "1",
+            1
+          ]
+        },
+        {
+          "args": [
+            [],
+            [
+              {
+                "op": "add",
+                "value": "a"
+              },
+              {
+                "op": "add",
+                "value": "a"
+              }
+            ]
+          ],
+          "expected": [
+            "a"
+          ]
+        },
+        {
+          "args": [
+            [
+              0
+            ],
+            []
+          ],
+          "expected": [
+            0
+          ]
+        },
+        {
+          "args": [
+            [],
+            [
+              {
+                "op": "clear",
+                "value": 0
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              null
+            ],
+            []
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-normalizeheaders",
+      "name": "normalizeHeaders",
+      "split": "validation",
+      "prompt": "Normalize an array of [name,value] HTTP header strings. Header names must be nonempty ASCII HTTP token characters and are lowercased. Trim horizontal space at each value edge and combine repeated names in encounter order with comma-space. Reject CR, LF and NUL anywhere, malformed pairs and invalid names. Return a plain record without prototype pollution. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function normalizeHeaders(entries: [string,string][]): Record<string,string>;",
+      "reference": "export function normalizeHeaders(entries){if(!Array.isArray(entries))throw Error('input');const out={};for(const e of entries){if(!Array.isArray(e)||e.length!==2||e.some(x=>typeof x!=='string'||/[\\r\\n\\0]/.test(x))||!/^[-!#$%&'*+.^_`|~0-9A-Za-z]+$/.test(e[0]))throw Error('header');const k=e[0].toLowerCase(),v=e[1].replace(/^[ \\t]+|[ \\t]+$/g,'');Object.defineProperty(out,k,{value:Object.hasOwn(out,k)?out[k]+', '+v:v,writable:true,enumerable:true,configurable:true});}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              [
+                "X-Test",
+                " a "
+              ],
+              [
+                "x-test",
+                "b"
+              ]
+            ]
+          ],
+          "expected": {
+            "x-test": "a, b"
+          }
+        },
+        {
+          "args": [
+            []
+          ],
+          "expected": {}
+        },
+        {
+          "args": [
+            [
+              [
+                "__proto__",
+                "safe"
+              ]
+            ]
+          ],
+          "expected": {
+            "__proto__": "safe"
+          }
+        },
+        {
+          "args": [
+            [
+              [
+                "X",
+                "a\r\nBad: yes"
+              ]
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              [
+                "bad name",
+                "x"
+              ]
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              [
+                "x",
+                "a\u0000b"
+              ]
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-redactliteralsecrets",
+      "name": "redactLiteralSecrets",
+      "split": "validation",
+      "prompt": "Replace every literal occurrence of any nonempty secret string with [REDACTED], scanning left to right and choosing the longest matching secret at each position. Treat secrets literally, including regex metacharacters. Ignore duplicate secrets. Reject empty secrets or non-string inputs. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function redactLiteralSecrets(text: string, secrets: string[]): string;",
+      "reference": "export function redactLiteralSecrets(text,secrets){if(typeof text!=='string'||!Array.isArray(secrets)||secrets.some(s=>typeof s!=='string'||!s.length))throw Error('input');const list=[...new Set(secrets)].sort((a,b)=>b.length-a.length);let out='',i=0;while(i<text.length){const s=list.find(s=>text.startsWith(s,i));if(s){out+='[REDACTED]';i+=s.length;}else out+=text[i++];}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            "abc ab",
+            [
+              "ab",
+              "abc"
+            ]
+          ],
+          "expected": "[REDACTED] [REDACTED]"
+        },
+        {
+          "args": [
+            "a.b a+b",
+            [
+              "a.b",
+              "a+b"
+            ]
+          ],
+          "expected": "[REDACTED] [REDACTED]"
+        },
+        {
+          "args": [
+            "aaaa",
+            [
+              "aa"
+            ]
+          ],
+          "expected": "[REDACTED][REDACTED]"
+        },
+        {
+          "args": [
+            "plain",
+            []
+          ],
+          "expected": "plain"
+        },
+        {
+          "args": [
+            "x",
+            [
+              ""
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-safejoinpath",
+      "name": "safeJoinPath",
+      "split": "validation",
+      "prompt": "Join a nonempty absolute POSIX base path with a relative POSIX child using one slash. Base may end with slash. Child may contain nested ordinary segments but must reject empty, absolute, dot, dot-dot, empty interior segments, backslashes, colon and NUL. The root-only base / is valid. Any segments present after the root must be ordinary nonempty segments; a trailing slash on the base is permitted. Return the joined path; never normalize a prohibited segment away. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function safeJoinPath(base: string, child: string): string;",
+      "reference": "export function safeJoinPath(base,child){if(typeof base!=='string'||typeof child!=='string'||!base.startsWith('/')||/[\\\\:\\0]/.test(base+child))throw Error('path');const b=base.replace(/\\/+$/,'');const parts=b.slice(1).split('/');if(b&&parts.some(x=>!x||x==='.'||x==='..'))throw Error('base');if(!child||child.startsWith('/')||child.split('/').some(x=>!x||x==='.'||x==='..'))throw Error('child');return (b||'')+'/'+child;}\n",
+      "vectors": [
+        {
+          "args": [
+            "/workspace/",
+            "src/a.js"
+          ],
+          "expected": "/workspace/src/a.js"
+        },
+        {
+          "args": [
+            "/",
+            "x"
+          ],
+          "expected": "/x"
+        },
+        {
+          "args": [
+            "/a",
+            "../b"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "/a",
+            "/b"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "/a",
+            "x//y"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "/a",
+            "x\\y"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "/a",
+            "x:y"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": "negative",
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-grantdecision",
+      "name": "grantDecision",
+      "split": "validation",
+      "prompt": "Evaluate exact resource/action grants at time now. A grant has effect allow or deny, resource, action and optional expiresAt. A matching unexpired deny overrides allows; absent allow denies. A grant expires when expiresAt <= now. All fields and finite numeric times must be valid even for unrelated grants. No wildcard semantics. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function grantDecision(grants: {effect:string;resource:string;action:string;expiresAt?:number}[], request: {resource:string;action:string}, now: number): boolean;",
+      "reference": "export function grantDecision(grants,request,now){if(!Array.isArray(grants)||!request||typeof request.resource!=='string'||typeof request.action!=='string'||!Number.isFinite(now))throw Error('input');let allow=false,deny=false;for(const g of grants){if(!g||!['allow','deny'].includes(g.effect)||typeof g.resource!=='string'||typeof g.action!=='string'||(g.expiresAt!==undefined&&!Number.isFinite(g.expiresAt)))throw Error('grant');if(g.resource!==request.resource||g.action!==request.action||(g.expiresAt!==undefined&&g.expiresAt<=now))continue;if(g.effect==='deny')deny=true;else allow=true;}return allow&&!deny;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "effect": "allow",
+                "resource": "a",
+                "action": "read"
+              }
+            ],
+            {
+              "resource": "a",
+              "action": "read"
+            },
+            10
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              {
+                "effect": "allow",
+                "resource": "a",
+                "action": "read"
+              },
+              {
+                "effect": "deny",
+                "resource": "a",
+                "action": "read"
+              }
+            ],
+            {
+              "resource": "a",
+              "action": "read"
+            },
+            10
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              {
+                "effect": "allow",
+                "resource": "a",
+                "action": "read",
+                "expiresAt": 10
+              }
+            ],
+            {
+              "resource": "a",
+              "action": "read"
+            },
+            10
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [],
+            {
+              "resource": "a",
+              "action": "read"
+            },
+            0
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              {
+                "effect": "other",
+                "resource": "b",
+                "action": "read"
+              }
+            ],
+            {
+              "resource": "a",
+              "action": "read"
+            },
+            0
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-resolvetaskorder",
+      "name": "resolveTaskOrder",
+      "split": "validation",
+      "prompt": "Produce a deterministic topological ordering of task ids. Tasks are {id,dependsOn}; ids must be unique nonempty strings and dependencies must exist, be unique and not self-references. Repeatedly choose the earliest input-position task among currently ready tasks, including newly ready tasks. Reject cycles and malformed inputs. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function resolveTaskOrder(tasks: {id:string;dependsOn:string[]}[]): string[];",
+      "reference": "export function resolveTaskOrder(tasks){if(!Array.isArray(tasks))throw Error('input');const ids=new Set();for(const t of tasks){if(!t||typeof t.id!=='string'||!t.id||ids.has(t.id)||!Array.isArray(t.dependsOn))throw Error('task');ids.add(t.id);}for(const t of tasks)if(new Set(t.dependsOn).size!==t.dependsOn.length||t.dependsOn.some(d=>d===t.id||!ids.has(d)))throw Error('dependency');const done=new Set(),out=[];while(out.length<tasks.length){const next=tasks.find(t=>!done.has(t.id)&&t.dependsOn.every(d=>done.has(d)));if(!next)throw Error('cycle');done.add(next.id);out.push(next.id);}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "id": "b",
+                "dependsOn": [
+                  "a"
+                ]
+              },
+              {
+                "id": "a",
+                "dependsOn": []
+              },
+              {
+                "id": "c",
+                "dependsOn": []
+              }
+            ]
+          ],
+          "expected": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "args": [
+            []
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "dependsOn": []
+              },
+              {
+                "id": "b",
+                "dependsOn": []
+              }
+            ]
+          ],
+          "expected": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "dependsOn": [
+                  "b"
+                ]
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "dependsOn": [
+                  "b"
+                ]
+              },
+              {
+                "id": "b",
+                "dependsOn": [
+                  "a"
+                ]
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-diffrecords",
+      "name": "diffRecords",
+      "split": "validation",
+      "prompt": "Compare two shallow plain records whose values are JSON primitives. Return {added,removed,changed} sorted lexicographically by key. added and removed are key arrays; changed contains keys present in both with unequal primitive value or type. Distinguish missing from null, zero, false and empty strings. Reject arrays, null records and non-primitive values. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function diffRecords(before: Record<string,unknown>, after: Record<string,unknown>): {added:string[];removed:string[];changed:string[]};",
+      "reference": "export function diffRecords(before,after){for(const x of [before,after])if(!x||typeof x!=='object'||Array.isArray(x)||Object.values(x).some(v=>v!==null&&!['string','number','boolean'].includes(typeof v)))throw Error('record');const a=Object.keys(before),b=Object.keys(after);return {added:b.filter(k=>!Object.hasOwn(before,k)).sort(),removed:a.filter(k=>!Object.hasOwn(after,k)).sort(),changed:a.filter(k=>Object.hasOwn(after,k)&&!Object.is(before[k],after[k])).sort()};}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "a": 0,
+              "b": false,
+              "z": null
+            },
+            {
+              "a": false,
+              "b": false,
+              "c": ""
+            }
+          ],
+          "expected": {
+            "added": [
+              "c"
+            ],
+            "removed": [
+              "z"
+            ],
+            "changed": [
+              "a"
+            ]
+          }
+        },
+        {
+          "args": [
+            {},
+            {}
+          ],
+          "expected": {
+            "added": [],
+            "removed": [],
+            "changed": []
+          }
+        },
+        {
+          "args": [
+            {},
+            {
+              "x": null
+            }
+          ],
+          "expected": {
+            "added": [
+              "x"
+            ],
+            "removed": [],
+            "changed": []
+          }
+        },
+        {
+          "args": [
+            [],
+            {}
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {
+              "a": {}
+            },
+            {}
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-compressruns",
+      "name": "compressRuns",
+      "split": "validation",
+      "prompt": "Run-length encode adjacent equal JSON primitive values into [value,count] pairs. Primitive type matters. Do not combine nonadjacent equal values. Reject arrays/objects as values and reject non-array input. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function compressRuns(values: (string|number|boolean|null)[]): [unknown,number][];",
+      "reference": "export function compressRuns(values){if(!Array.isArray(values)||values.some(v=>v!==null&&!['number','string','boolean'].includes(typeof v)))throw Error('input');const out=[];for(const x of values){const last=out.at(-1);if(last&&Object.is(last[0],x))last[1]++;else out.push([x,1]);}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              1,
+              1,
+              "1",
+              1
+            ]
+          ],
+          "expected": [
+            [
+              1,
+              2
+            ],
+            [
+              "1",
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "args": [
+            [
+              false,
+              false,
+              null,
+              null
+            ]
+          ],
+          "expected": [
+            [
+              false,
+              2
+            ],
+            [
+              null,
+              2
+            ]
+          ]
+        },
+        {
+          "args": [
+            []
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              "a",
+              "b",
+              "a"
+            ]
+          ],
+          "expected": [
+            [
+              "a",
+              1
+            ],
+            [
+              "b",
+              1
+            ],
+            [
+              "a",
+              1
+            ]
+          ]
+        },
+        {
+          "args": [
+            [
+              {}
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-decodecsvline",
+      "name": "decodeCsvLine",
+      "split": "validation",
+      "prompt": "Parse one CSV record into strings. Commas separate fields, quoted fields begin with a double quote and represent an internal double quote by doubling it. After a closing quote only comma or end is allowed. Unquoted fields cannot contain quotes, CR or LF. Quoted fields may contain CR/LF. Empty input represents one empty field; a trailing comma adds an empty field. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function decodeCsvLine(line: string): string[];",
+      "reference": "export function decodeCsvLine(line){if(typeof line!=='string')throw Error('input');const out=[];let i=0;while(true){let field='';if(line[i]==='\"'){i++;let closed=false;while(i<line.length){if(line[i]==='\"'){if(line[i+1]==='\"'){field+='\"';i+=2;}else{i++;closed=true;break;}}else field+=line[i++];}if(!closed||(i<line.length&&line[i]!==','))throw Error('quote');}else{while(i<line.length&&line[i]!==','){if(/[\"\\r\\n]/.test(line[i]))throw Error('field');field+=line[i++];}}out.push(field);if(i===line.length)break;i++;if(i===line.length){out.push('');break;}}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            "a,\"b,c\",\"d\"\"e\","
+          ],
+          "expected": [
+            "a",
+            "b,c",
+            "d\"e",
+            ""
+          ]
+        },
+        {
+          "args": [
+            ""
+          ],
+          "expected": [
+            ""
+          ]
+        },
+        {
+          "args": [
+            "\"a\nb\",c"
+          ],
+          "expected": [
+            "a\nb",
+            "c"
+          ]
+        },
+        {
+          "args": [
+            "\"abc"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "\"a\"b"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "a\"b"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-formatbytecount",
+      "name": "formatByteCount",
+      "split": "validation",
+      "prompt": "Format a nonnegative safe integer byte count using B, KiB, MiB, GiB or TiB. Choose the largest unit up to TiB for which the value is at least one. Bytes use an integer; other units use one decimal place, including trailing .0. Round to nearest tenth using normal nonnegative rounding and do not promote again if rounding reaches 1024.0. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function formatByteCount(bytes: number): string;",
+      "reference": "export function formatByteCount(bytes){if(!Number.isSafeInteger(bytes)||bytes<0)throw Error('input');const units=['B','KiB','MiB','GiB','TiB'];let i=0,value=bytes;while(value>=1024&&i<4){value/=1024;i++;}return i===0?value+' B':value.toFixed(1)+' '+units[i];}\n",
+      "vectors": [
+        {
+          "args": [
+            0
+          ],
+          "expected": "0 B"
+        },
+        {
+          "args": [
+            1023
+          ],
+          "expected": "1023 B"
+        },
+        {
+          "args": [
+            1024
+          ],
+          "expected": "1.0 KiB"
+        },
+        {
+          "args": [
+            1536
+          ],
+          "expected": "1.5 KiB"
+        },
+        {
+          "args": [
+            1048575
+          ],
+          "expected": "1024.0 KiB"
+        },
+        {
+          "args": [
+            -1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            0.5
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-matchroute",
+      "name": "matchRoute",
+      "split": "validation",
+      "prompt": "Match a request path against an ordered list of route patterns. Both use a leading slash and nonempty segments; / is valid. Pattern :name segments capture one decoded request segment. Literal segments compare exactly after request percent-decoding. Reject malformed percent escapes, decoded slash/backslash, query/hash suffixes and duplicate/empty parameter names. Validate all route patterns before matching. Return {index,params} for the first match or null. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function matchRoute(patterns: string[], path: string): {index:number;params:Record<string,string>}|null;",
+      "reference": "export function matchRoute(patterns,path){const split=s=>{if(typeof s!=='string'||!s.startsWith('/')||/[?#\\\\]/.test(s))throw Error('path');if(s==='/')return [];const a=s.slice(1).split('/');if(a.some(x=>!x))throw Error('segments');return a;};if(!Array.isArray(patterns))throw Error('patterns');const routes=patterns.map(p=>{const parts=split(p),seen=new Set();for(const x of parts)if(x.startsWith(':')){const n=x.slice(1);if(!/^[A-Za-z][A-Za-z0-9_]*$/.test(n)||seen.has(n))throw Error('param');seen.add(n);}return parts;});const actual=split(path).map(x=>{const s=decodeURIComponent(x);if(/[\\/\\\\]/.test(s))throw Error('segment');return s;});for(let i=0;i<routes.length;i++){const route=routes[i],params={};if(route.length!==actual.length)continue;let ok=true;for(let j=0;j<route.length;j++){if(route[j].startsWith(':'))Object.defineProperty(params,route[j].slice(1),{value:actual[j],enumerable:true});else if(route[j]!==actual[j]){ok=false;break;}}if(ok)return {index:i,params};}return null;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              "/users/:id",
+              "/users/all"
+            ],
+            "/users/a%20b"
+          ],
+          "expected": {
+            "index": 0,
+            "params": {
+              "id": "a b"
+            }
+          }
+        },
+        {
+          "args": [
+            [
+              "/"
+            ],
+            "/"
+          ],
+          "expected": {
+            "index": 0,
+            "params": {}
+          }
+        },
+        {
+          "args": [
+            [
+              "/a"
+            ],
+            "/b"
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [
+              "/:id/:id"
+            ],
+            "/a/b"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              "/:id"
+            ],
+            "/a%2Fb"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              "/x"
+            ],
+            "/x?q=1"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-accumulatewindow",
+      "name": "accumulateWindow",
+      "split": "validation",
+      "prompt": "For samples {time,value}, include time >= start and time < end and return {count,sum,min,max,mean}. Empty windows return count 0, sum 0 and null min/max/mean. Every sample and both bounds must be finite numbers, and start <= end; validate even excluded samples. Input order is irrelevant. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function accumulateWindow(samples: {time:number;value:number}[], start: number, end: number): {count:number;sum:number;min:number|null;max:number|null;mean:number|null};",
+      "reference": "export function accumulateWindow(samples,start,end){if(!Array.isArray(samples)||!Number.isFinite(start)||!Number.isFinite(end)||start>end||samples.some(x=>!x||!Number.isFinite(x.time)||!Number.isFinite(x.value)))throw Error('input');const a=samples.filter(x=>x.time>=start&&x.time<end).map(x=>x.value);const sum=a.reduce((x,y)=>x+y,0);return {count:a.length,sum,min:a.length?Math.min(...a):null,max:a.length?Math.max(...a):null,mean:a.length?sum/a.length:null};}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "time": 2,
+                "value": 3
+              },
+              {
+                "time": 1,
+                "value": -1
+              },
+              {
+                "time": 3,
+                "value": 9
+              }
+            ],
+            1,
+            3
+          ],
+          "expected": {
+            "count": 2,
+            "sum": 2,
+            "min": -1,
+            "max": 3,
+            "mean": 1
+          }
+        },
+        {
+          "args": [
+            [],
+            0,
+            1
+          ],
+          "expected": {
+            "count": 0,
+            "sum": 0,
+            "min": null,
+            "max": null,
+            "mean": null
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "time": 0,
+                "value": 0
+              }
+            ],
+            0,
+            1
+          ],
+          "expected": {
+            "count": 1,
+            "sum": 0,
+            "min": 0,
+            "max": 0,
+            "mean": 0
+          }
+        },
+        {
+          "args": [
+            [],
+            2,
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "time": 10,
+                "value": "1"
+              }
+            ],
+            0,
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-canonicaljson",
+      "name": "canonicalJson",
+      "split": "heldOut",
+      "prompt": "Serialize JSON-compatible input with object keys sorted lexicographically at every depth, retaining array order and primitive values. Do not add whitespace. Reject nonfinite numbers and unsupported values. Strings and keys use JSON string escaping. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function canonicalJson(value: unknown): string;",
+      "reference": "export function canonicalJson(value){const visit=x=>{if(x===null||typeof x==='string'||typeof x==='boolean')return JSON.stringify(x);if(typeof x==='number'){if(!Number.isFinite(x))throw Error('number');return JSON.stringify(x);}if(Array.isArray(x))return '['+x.map(visit).join(',')+']';if(x&&typeof x==='object')return '{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+visit(x[k])).join(',')+'}';throw Error('value');};return visit(value);}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "z": 0,
+              "a": {
+                "y": false,
+                "x": null
+              }
+            }
+          ],
+          "expected": "{\"a\":{\"x\":null,\"y\":false},\"z\":0}"
+        },
+        {
+          "args": [
+            [
+              {
+                "b": 2,
+                "a": 1
+              },
+              "x"
+            ]
+          ],
+          "expected": "[{\"a\":1,\"b\":2},\"x\"]"
+        },
+        {
+          "args": [
+            "a\nb"
+          ],
+          "expected": "\"a\\nb\""
+        },
+        {
+          "args": [
+            null
+          ],
+          "expected": "null"
+        },
+        {
+          "args": [
+            {
+              "2": 2,
+              "10": 10
+            }
+          ],
+          "expected": "{\"10\":10,\"2\":2}"
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": "positive",
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-boundedlevenshtein",
+      "name": "boundedLevenshtein",
+      "split": "heldOut",
+      "prompt": "Compute Levenshtein edit distance between Unicode code-point strings using unit insertion, deletion and substitution. If distance exceeds limit, return limit+1. Limit must be a nonnegative safe integer. Reject invalid inputs. No transposition edit. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function boundedLevenshtein(left: string, right: string, limit: number): number;",
+      "reference": "export function boundedLevenshtein(left,right,limit){if(typeof left!=='string'||typeof right!=='string'||!Number.isSafeInteger(limit)||limit<0)throw Error('input');const a=Array.from(left),b=Array.from(right);let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const next=[i];for(let j=1;j<=b.length;j++)next[j]=Math.min(next[j-1]+1,prev[j]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=next;}return Math.min(prev[b.length],limit+1);}\n",
+      "vectors": [
+        {
+          "args": [
+            "kitten",
+            "sitting",
+            5
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            "kitten",
+            "sitting",
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            "😀",
+            "",
+            3
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            "ab",
+            "ba",
+            5
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            "same",
+            "same",
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            "a",
+            "b",
+            -1
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-decodebase64url",
+      "name": "decodeBase64Url",
+      "split": "heldOut",
+      "prompt": "Decode unpadded canonical base64url into an array of byte values. Only ASCII letters, digits, dash and underscore are allowed; empty input is valid. Reject padding, impossible lengths and nonzero unused tail bits. The re-encoded bytes must equal the original text exactly. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function decodeBase64Url(text: string): number[];",
+      "reference": "export function decodeBase64Url(text){if(typeof text!=='string'||!/^[A-Za-z0-9_-]*$/.test(text)||text.length%4===1)throw Error('encoding');const b=Buffer.from(text,'base64url');if(b.toString('base64url')!==text)throw Error('canonical');return [...b];}\n",
+      "vectors": [
+        {
+          "args": [
+            ""
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            "Zg"
+          ],
+          "expected": [
+            102
+          ]
+        },
+        {
+          "args": [
+            "_-4"
+          ],
+          "expected": [
+            255,
+            238
+          ]
+        },
+        {
+          "args": [
+            "Zg=="
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "Z"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "Zh"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-flattentree",
+      "name": "flattenTree",
+      "split": "heldOut",
+      "prompt": "Flatten an ordered forest into preorder rows {id,parentId,depth}. Each node has unique nonempty string id and optional children array. Root parentId is null, root depth is 0. Reject duplicate ids, null/non-object nodes and invalid children. Preserve sibling order. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function flattenTree(forest: {id:string;children?:unknown[]}[]): {id:string;parentId:string|null;depth:number}[];",
+      "reference": "export function flattenTree(forest){if(!Array.isArray(forest))throw Error('forest');const seen=new Set(),out=[];const walk=(nodes,parentId,depth)=>{for(const n of nodes){if(!n||typeof n!=='object'||Array.isArray(n)||typeof n.id!=='string'||!n.id||seen.has(n.id)||(n.children!==undefined&&!Array.isArray(n.children)))throw Error('node');seen.add(n.id);out.push({id:n.id,parentId,depth});walk(n.children??[],n.id,depth+1);}};walk(forest,null,0);return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "children": [
+                  {
+                    "id": "b"
+                  }
+                ]
+              },
+              {
+                "id": "c"
+              }
+            ]
+          ],
+          "expected": [
+            {
+              "id": "a",
+              "parentId": null,
+              "depth": 0
+            },
+            {
+              "id": "b",
+              "parentId": "a",
+              "depth": 1
+            },
+            {
+              "id": "c",
+              "parentId": null,
+              "depth": 0
+            }
+          ]
+        },
+        {
+          "args": [
+            []
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "children": []
+              }
+            ]
+          ],
+          "expected": [
+            {
+              "id": "x",
+              "parentId": null,
+              "depth": 0
+            }
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "children": [
+                  {
+                    "id": "a"
+                  }
+                ]
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "children": null
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-reducecounteroperations",
+      "name": "reduceCounterOperations",
+      "split": "heldOut",
+      "prompt": "Apply operations to a nonnegative safe integer counter. An operation is {kind:\"add\"|\"subtract\",amount} with nonnegative safe integer amount, or {kind:\"compare-set\",expected,value} with nonnegative safe integers. Reject compare conflicts, negative results and overflow. Return the final value; all operations must have exactly the fields stated. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function reduceCounterOperations(initial: number, operations: Record<string,unknown>[]): number;",
+      "reference": "export function reduceCounterOperations(initial,operations){const valid=x=>Number.isSafeInteger(x)&&x>=0;if(!valid(initial)||!Array.isArray(operations))throw Error('input');let n=initial;for(const o of operations){if(!o||typeof o!=='object')throw Error('op');if(o.kind==='add'||o.kind==='subtract'){if(Object.keys(o).sort().join()!=='amount,kind'||!valid(o.amount))throw Error('amount');n+=o.kind==='add'?o.amount:-o.amount;}else if(o.kind==='compare-set'){if(Object.keys(o).sort().join()!=='expected,kind,value'||!valid(o.expected)||!valid(o.value)||o.expected!==n)throw Error('conflict');n=o.value;}else throw Error('kind');if(!valid(n))throw Error('range');}return n;}\n",
+      "vectors": [
+        {
+          "args": [
+            2,
+            [
+              {
+                "kind": "add",
+                "amount": 3
+              },
+              {
+                "kind": "compare-set",
+                "expected": 5,
+                "value": 1
+              }
+            ]
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            0,
+            []
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            5,
+            [
+              {
+                "kind": "subtract",
+                "amount": 5
+              }
+            ]
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            0,
+            [
+              {
+                "kind": "subtract",
+                "amount": 1
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            1,
+            [
+              {
+                "kind": "compare-set",
+                "expected": 2,
+                "value": 3
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            9007199254740991,
+            [
+              {
+                "kind": "add",
+                "amount": 1
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-selectretention",
+      "name": "selectRetention",
+      "split": "heldOut",
+      "prompt": "Select ids to retain from records {id,updatedAt,pinned}. Ids are unique strings; updatedAt and now are finite numbers; ttl is a nonnegative finite duration and limit a nonnegative safe integer. Pinned records are always retained and do not consume limit. Other records with now-updatedAt <= ttl are eligible, including future dates. Keep the newest limit unpinned, ties by input order. Return selected ids in original input order. Validate every record. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function selectRetention(records: {id:string;updatedAt:number;pinned:boolean}[], now:number, ttl:number, limit:number): string[];",
+      "reference": "export function selectRetention(records,now,ttl,limit){if(!Array.isArray(records)||!Number.isFinite(now)||!Number.isFinite(ttl)||ttl<0||!Number.isSafeInteger(limit)||limit<0)throw Error('input');const ids=new Set();for(const r of records){if(!r||typeof r.id!=='string'||!r.id||ids.has(r.id)||!Number.isFinite(r.updatedAt)||typeof r.pinned!=='boolean')throw Error('record');ids.add(r.id);}const picked=new Set(records.filter(r=>r.pinned).map(r=>r.id));const candidates=records.map((r,i)=>({...r,i})).filter(r=>!r.pinned&&now-r.updatedAt<=ttl).sort((a,b)=>b.updatedAt-a.updatedAt||a.i-b.i).slice(0,limit);for(const r of candidates)picked.add(r.id);return records.filter(r=>picked.has(r.id)).map(r=>r.id);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "updatedAt": 0,
+                "pinned": true
+              },
+              {
+                "id": "b",
+                "updatedAt": 9,
+                "pinned": false
+              },
+              {
+                "id": "c",
+                "updatedAt": 8,
+                "pinned": false
+              }
+            ],
+            10,
+            5,
+            1
+          ],
+          "expected": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "updatedAt": 5,
+                "pinned": false
+              }
+            ],
+            10,
+            5,
+            1
+          ],
+          "expected": [
+            "x"
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "updatedAt": 11,
+                "pinned": false
+              }
+            ],
+            10,
+            0,
+            1
+          ],
+          "expected": [
+            "x"
+          ]
+        },
+        {
+          "args": [
+            [],
+            0,
+            0,
+            0
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "updatedAt": 0,
+                "pinned": false
+              },
+              {
+                "id": "x",
+                "updatedAt": 1,
+                "pinned": false
+              }
+            ],
+            1,
+            2,
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-maskemail",
+      "name": "maskEmail",
+      "split": "heldOut",
+      "prompt": "Mask a simple email address. Require exactly one @, a nonempty local part, and domain labels of ASCII letters/digits with optional interior hyphens, at least two labels. Domain comparisons are case-insensitive and output domain is lowercase. Local part cannot contain whitespace or @. Keep its first Unicode code point and replace all remaining local code points with exactly three asterisks (also use three when local length is one). Reject malformed addresses. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function maskEmail(address: string): string;",
+      "reference": "export function maskEmail(address){if(typeof address!=='string')throw Error('type');const a=address.split('@');if(a.length!==2||!a[0]||/\\s/.test(a[0]))throw Error('local');const labels=a[1].split('.');if(labels.length<2||labels.some(s=>! /^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(s)))throw Error('domain');return Array.from(a[0])[0]+'***@'+a[1].toLowerCase();}\n",
+      "vectors": [
+        {
+          "args": [
+            "alice@Example.COM"
+          ],
+          "expected": "a***@example.com"
+        },
+        {
+          "args": [
+            "a@x.io"
+          ],
+          "expected": "a***@x.io"
+        },
+        {
+          "args": [
+            "😀x@a.co"
+          ],
+          "expected": "😀***@a.co"
+        },
+        {
+          "args": [
+            "a@@b.co"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "a@-x.co"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "a b@x.co"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-partitionrange",
+      "name": "partitionRange",
+      "split": "heldOut",
+      "prompt": "Partition [0,length) into exactly parts contiguous half-open intervals, sizes differing by at most one. Earlier intervals receive the remainder. Allow empty intervals when parts exceeds length. length is a nonnegative safe integer; parts is a positive safe integer at most 10000. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function partitionRange(length:number, parts:number): [number,number][];",
+      "reference": "export function partitionRange(length,parts){if(!Number.isSafeInteger(length)||length<0||!Number.isSafeInteger(parts)||parts<1||parts>10000)throw Error('input');const size=Math.floor(length/parts),extra=length%parts,out=[];let start=0;for(let i=0;i<parts;i++){const end=start+size+(i<extra?1:0);out.push([start,end]);start=end;}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            10,
+            3
+          ],
+          "expected": [
+            [
+              0,
+              4
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              7,
+              10
+            ]
+          ]
+        },
+        {
+          "args": [
+            2,
+            4
+          ],
+          "expected": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        },
+        {
+          "args": [
+            0,
+            2
+          ],
+          "expected": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "args": [
+            1,
+            0
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            -1,
+            2
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-parsekeyvaluelines",
+      "name": "parseKeyValueLines",
+      "split": "heldOut",
+      "prompt": "Parse newline-separated key=value pairs into a record. Trim surrounding whitespace on each whole line, key and value. Ignore blank lines and lines beginning with # after trimming. Split on the first equals sign; keys must match ASCII [A-Za-z_][A-Za-z0-9_]* and may not be __proto__, constructor or prototype. Duplicate keys are errors. Values may be empty or contain more equals signs. Accept CRLF and LF. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function parseKeyValueLines(text:string): Record<string,string>;",
+      "reference": "export function parseKeyValueLines(text){if(typeof text!=='string')throw Error('type');const out={};for(const raw of text.split(/\\r?\\n/)){const line=raw.trim();if(!line||line.startsWith('#'))continue;const pos=line.indexOf('=');if(pos<0)throw Error('pair');const key=line.slice(0,pos).trim(),value=line.slice(pos+1).trim();if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)||['__proto__','constructor','prototype'].includes(key)||Object.hasOwn(out,key))throw Error('key');out[key]=value;}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            " # comment\na = 1\nb=x=y\nempty="
+          ],
+          "expected": {
+            "a": "1",
+            "b": "x=y",
+            "empty": ""
+          }
+        },
+        {
+          "args": [
+            "a=0\r\nb=false"
+          ],
+          "expected": {
+            "a": "0",
+            "b": "false"
+          }
+        },
+        {
+          "args": [
+            ""
+          ],
+          "expected": {}
+        },
+        {
+          "args": [
+            "a=1\na=2"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "__proto__=x"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "no-equals"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-comparevectorclocks",
+      "name": "compareVectorClocks",
+      "split": "heldOut",
+      "prompt": "Compare two vector clocks: records mapping arbitrary own keys to nonnegative safe integer counters. Missing counters mean zero. Return equal if all match, before if all left counters <= right with at least one less, after for the reverse, otherwise concurrent. Reject invalid records or counters. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function compareVectorClocks(left:Record<string,number>, right:Record<string,number>): \"equal\"|\"before\"|\"after\"|\"concurrent\";",
+      "reference": "export function compareVectorClocks(left,right){for(const x of [left,right])if(!x||typeof x!=='object'||Array.isArray(x)||Object.values(x).some(v=>!Number.isSafeInteger(v)||v<0))throw Error('clock');let less=false,greater=false;for(const k of new Set([...Object.keys(left),...Object.keys(right)])){const a=Object.hasOwn(left,k)?left[k]:0,b=Object.hasOwn(right,k)?right[k]:0;less ||=a<b;greater ||=a>b;}return less&&greater?'concurrent':less?'before':greater?'after':'equal';}\n",
+      "vectors": [
+        {
+          "args": [
+            {},
+            {
+              "x": 0
+            }
+          ],
+          "expected": "equal"
+        },
+        {
+          "args": [
+            {
+              "a": 1
+            },
+            {
+              "a": 2
+            }
+          ],
+          "expected": "before"
+        },
+        {
+          "args": [
+            {
+              "a": 2
+            },
+            {
+              "a": 1
+            }
+          ],
+          "expected": "after"
+        },
+        {
+          "args": [
+            {
+              "a": 2
+            },
+            {
+              "b": 2
+            }
+          ],
+          "expected": "concurrent"
+        },
+        {
+          "args": [
+            {
+              "a": -1
+            },
+            {}
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-decodejsonpointer",
+      "name": "decodeJsonPointer",
+      "split": "heldOut",
+      "prompt": "Decode an RFC6901 JSON pointer string to tokens. Empty pointer means the root and returns []. Other pointers must begin with slash. Split before decoding; ~0 means tilde and ~1 means slash. Reject any other or trailing tilde escape. Preserve empty tokens; do not percent-decode. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function decodeJsonPointer(pointer:string): string[];",
+      "reference": "export function decodeJsonPointer(pointer){if(typeof pointer!=='string')throw Error('type');if(pointer==='')return [];if(!pointer.startsWith('/'))throw Error('root');return pointer.slice(1).split('/').map(s=>{if(/~(?:[^01]|$)/.test(s))throw Error('escape');return s.replace(/~1/g,'/').replace(/~0/g,'~');});}\n",
+      "vectors": [
+        {
+          "args": [
+            ""
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            "/a~1b/~0x"
+          ],
+          "expected": [
+            "a/b",
+            "~x"
+          ]
+        },
+        {
+          "args": [
+            "//"
+          ],
+          "expected": [
+            "",
+            ""
+          ]
+        },
+        {
+          "args": [
+            "/~01"
+          ],
+          "expected": [
+            "~1"
+          ]
+        },
+        {
+          "args": [
+            "/%2F"
+          ],
+          "expected": [
+            "%2F"
+          ]
+        },
+        {
+          "args": [
+            "/x~2"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "a"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-setjsonpointer",
+      "name": "setJsonPointer",
+      "split": "heldOut",
+      "prompt": "Return a deep-cloned JSON document with value replacing or creating one property at a decoded JSON pointer. Empty pointer replaces the whole document. Intermediate containers and keys must already exist. Array tokens must be canonical nonnegative decimal indices smaller than the current length; appending and holes are prohibited. Decode only ~0 and ~1; reject all dangerous object keys __proto__, constructor, prototype at every level. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function setJsonPointer(document:unknown, pointer:string, value:unknown): unknown;",
+      "reference": "export function setJsonPointer(document,pointer,value){if(typeof pointer!=='string')throw Error('pointer');if(pointer==='')return structuredClone(value);if(!pointer.startsWith('/'))throw Error('pointer');const tokens=pointer.slice(1).split('/').map(s=>{if(/~(?:[^01]|$)/.test(s))throw Error('escape');const k=s.replace(/~1/g,'/').replace(/~0/g,'~');if(['__proto__','constructor','prototype'].includes(k))throw Error('key');return k;});const out=structuredClone(document);let cur=out;for(let i=0;i<tokens.length;i++){if(!cur||typeof cur!=='object')throw Error('container');const k=tokens[i];if(Array.isArray(cur)&&(!/^(0|[1-9]\\d*)$/.test(k)||!Number.isSafeInteger(Number(k))||Number(k)>=cur.length))throw Error('index');if(i===tokens.length-1){Object.defineProperty(cur,k,{value:structuredClone(value),writable:true,enumerable:true,configurable:true});}else{if(!Object.hasOwn(cur,k))throw Error('missing');cur=cur[k];}}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "a": [
+                1,
+                2
+              ]
+            },
+            "/a/1",
+            0
+          ],
+          "expected": {
+            "a": [
+              1,
+              0
+            ]
+          }
+        },
+        {
+          "args": [
+            {
+              "a/b": {}
+            },
+            "/a~1b/x",
+            false
+          ],
+          "expected": {
+            "a/b": {
+              "x": false
+            }
+          }
+        },
+        {
+          "args": [
+            {},
+            "",
+            null
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            {
+              "a": []
+            },
+            "/a/0",
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {},
+            "/__proto__/x",
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {},
+            "/missing/x",
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              1
+            ],
+            "/01",
+            2
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": "negative",
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-parsecontentrange",
+      "name": "parseContentRange",
+      "split": "heldOut",
+      "prompt": "Parse a response Content-Range string of the exact form \"bytes start-end/total\" where start/end/total are canonical unsigned decimal safe integers, or total is *. Require start <= end and, when total is known, end < total. Exactly one ASCII space follows bytes, no padding whitespace. Return {start,end,total} with total null for *; reject other forms. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function parseContentRange(header:string): {start:number;end:number;total:number|null};",
+      "reference": "export function parseContentRange(header){if(typeof header!=='string')throw Error('type');const m=/^bytes (0|[1-9]\\d*)-(0|[1-9]\\d*)\\/(\\*|0|[1-9]\\d*)$/.exec(header);if(!m)throw Error('format');const start=Number(m[1]),end=Number(m[2]),total=m[3]==='*'?null:Number(m[3]);if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start>end||(total!==null&&(!Number.isSafeInteger(total)||end>=total)))throw Error('range');return {start,end,total};}\n",
+      "vectors": [
+        {
+          "args": [
+            "bytes 0-9/10"
+          ],
+          "expected": {
+            "start": 0,
+            "end": 9,
+            "total": 10
+          }
+        },
+        {
+          "args": [
+            "bytes 5-5/*"
+          ],
+          "expected": {
+            "start": 5,
+            "end": 5,
+            "total": null
+          }
+        },
+        {
+          "args": [
+            "bytes 0-10/10"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "bytes 01-2/3"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "bytes 3-2/4"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "bytes */10"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-encodeeventstream",
+      "name": "encodeEventStream",
+      "split": "heldOut",
+      "prompt": "Encode an array of events into server-sent event text. Each event has string data and optional string event/id and nonnegative safe integer retry. event and id must contain no CR, LF or NUL. Output optional event, id, retry fields in that order, then one \"data: \" line per data line (split CRLF, CR or LF), then an empty line. Include empty data lines. Reject unknown fields and malformed values. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function encodeEventStream(events:{data:string;event?:string;id?:string;retry?:number}[]): string;",
+      "reference": "export function encodeEventStream(events){if(!Array.isArray(events))throw Error('events');return events.map(e=>{if(!e||typeof e.data!=='string'||Object.keys(e).some(k=>!['data','event','id','retry'].includes(k)))throw Error('event');const lines=[];for(const k of ['event','id'])if(e[k]!==undefined){if(typeof e[k]!=='string'||/[\\r\\n\\0]/.test(e[k]))throw Error('field');lines.push(k+': '+e[k]);}if(e.retry!==undefined){if(!Number.isSafeInteger(e.retry)||e.retry<0)throw Error('retry');lines.push('retry: '+e.retry);}for(const line of e.data.split(/\\r\\n|\\r|\\n/))lines.push('data: '+line);return lines.join('\\n')+'\\n\\n';}).join('');}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "event": "update",
+                "id": "1",
+                "retry": 0,
+                "data": "a\nb"
+              }
+            ]
+          ],
+          "expected": "event: update\nid: 1\nretry: 0\ndata: a\ndata: b\n\n"
+        },
+        {
+          "args": [
+            [
+              {
+                "data": ""
+              }
+            ]
+          ],
+          "expected": "data: \n\n"
+        },
+        {
+          "args": [
+            []
+          ],
+          "expected": ""
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x\ny",
+                "data": "ok"
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "data": "x",
+                "extra": 1
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "data": "x",
+                "retry": -1
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-matchacceptlanguage",
+      "name": "matchAcceptLanguage",
+      "split": "heldOut",
+      "prompt": "Select from supported language tags, preserving their spelling. Header is comma-separated ranges with optional ;q=decimal from 0 to 1 with at most three decimal places. Trim range whitespace, validate all ranges. Sort by descending q then header order, ignore q=0. A range matches supported tags case-insensitively, exact first then primary-language match in supported order; * chooses the first supported. Return fallback when no match. Reject invalid tags, q values and duplicate q parameters. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function matchAcceptLanguage(header:string, supported:string[], fallback:string): string;",
+      "reference": "export function matchAcceptLanguage(header,supported,fallback){const tag=/^[A-Za-z]{1,8}(?:-[A-Za-z0-9]{1,8})*$/;if(typeof header!=='string'||!Array.isArray(supported)||supported.some(s=>typeof s!=='string'||!tag.test(s))||typeof fallback!=='string')throw Error('input');if(!header.trim())return fallback;const ranges=header.split(',').map((s,i)=>{const p=s.trim().split(';');const name=p[0].trim();if((name!=='*'&&!tag.test(name))||p.length>2)throw Error('range');let q=1;if(p.length===2){const m=/^q=(0(?:\\.\\d{1,3})?|1(?:\\.0{1,3})?)$/.exec(p[1].trim());if(!m)throw Error('quality');q=Number(m[1]);}return {name,q,i};}).sort((a,b)=>b.q-a.q||a.i-b.i);for(const r of ranges){if(r.q===0)continue;if(r.name==='*'&&supported.length)return supported[0];const low=r.name.toLowerCase();const exact=supported.find(s=>s.toLowerCase()===low);if(exact)return exact;const primary=supported.find(s=>s.split('-')[0].toLowerCase()===low.split('-')[0]);if(primary)return primary;}return fallback;}\n",
+      "vectors": [
+        {
+          "args": [
+            "fr;q=0.8, en-GB;q=1",
+            [
+              "en-US",
+              "en-GB",
+              "fr"
+            ],
+            "xx"
+          ],
+          "expected": "en-GB"
+        },
+        {
+          "args": [
+            "zh-TW",
+            [
+              "zh-CN",
+              "en"
+            ],
+            "en"
+          ],
+          "expected": "zh-CN"
+        },
+        {
+          "args": [
+            "de;q=0, *;q=0.5",
+            [
+              "en",
+              "de"
+            ],
+            "xx"
+          ],
+          "expected": "en"
+        },
+        {
+          "args": [
+            "",
+            [
+              "en"
+            ],
+            "xx"
+          ],
+          "expected": "xx"
+        },
+        {
+          "args": [
+            "en;q=1.1",
+            [
+              "en"
+            ],
+            "xx"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "en;q=0.1;q=0.2",
+            [
+              "en"
+            ],
+            "xx"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-coerceconfig",
+      "name": "coerceConfig",
+      "split": "heldOut",
+      "prompt": "Validate a shallow config against a schema record. Each descriptor is {type:\"string\"|\"number\"|\"boolean\",default?}; number descriptors may also have finite min/max with min<=max. Missing values use an own default if present; otherwise error. Values are never implicitly converted. Reject unknown config keys, invalid descriptors/defaults, and dangerous schema keys. Return a fresh record with exactly the schema keys. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function coerceConfig(config:Record<string,unknown>, schema:Record<string,{type:string;default?:unknown;min?:number;max?:number}>): Record<string,unknown>;",
+      "reference": "export function coerceConfig(config,schema){if(!config||typeof config!=='object'||Array.isArray(config)||!schema||typeof schema!=='object'||Array.isArray(schema)||Object.keys(config).some(k=>!Object.hasOwn(schema,k)))throw Error('config');const out={};for(const [k,d] of Object.entries(schema)){if(['__proto__','prototype','constructor'].includes(k)||!d||!['string','number','boolean'].includes(d.type)||Object.keys(d).some(x=>!['type','default','min','max'].includes(x)))throw Error('schema');if(d.type!=='number'&&(d.min!==undefined||d.max!==undefined)||d.min!==undefined&&!Number.isFinite(d.min)||d.max!==undefined&&!Number.isFinite(d.max)||d.min!==undefined&&d.max!==undefined&&d.min>d.max)throw Error('bounds');const valid=v=>typeof v===d.type&&(d.type!=='number'||Number.isFinite(v)&&(d.min===undefined||v>=d.min)&&(d.max===undefined||v<=d.max));if(Object.hasOwn(d,'default')&&!valid(d.default))throw Error('default');const v=Object.hasOwn(config,k)?config[k]:Object.hasOwn(d,'default')?d.default:undefined;if(!valid(v))throw Error('value');out[k]=v;}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "n": 0
+            },
+            {
+              "n": {
+                "type": "number",
+                "min": 0
+              },
+              "flag": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          ],
+          "expected": {
+            "n": 0,
+            "flag": false
+          }
+        },
+        {
+          "args": [
+            {},
+            {}
+          ],
+          "expected": {}
+        },
+        {
+          "args": [
+            {
+              "x": 1
+            },
+            {}
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {
+              "n": "1"
+            },
+            {
+              "n": {
+                "type": "number"
+              }
+            }
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {},
+            {
+              "n": {
+                "type": "number",
+                "default": -1,
+                "min": 0
+              }
+            }
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            {},
+            {
+              "constructor": {
+                "type": "string",
+                "default": "x"
+              }
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-ordernumericlabels",
+      "name": "orderNumericLabels",
+      "split": "heldOut",
+      "prompt": "Stable natural-sort strings by runs of ASCII digits and non-digits. Numeric runs compare arbitrary-length integer value; equal numeric value compares fewer leading zeros first. Non-numeric runs compare by Unicode code-unit lexical order, case-sensitive. If all corresponding runs tie, fewer runs first, then preserve original order. Reject non-string elements. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function orderNumericLabels(labels:string[]): string[];",
+      "reference": "export function orderNumericLabels(labels){if(!Array.isArray(labels)||labels.some(s=>typeof s!=='string'))throw Error('input');const cmp=(a,b)=>{const x=a.match(/\\d+|\\D+/g)??[],y=b.match(/\\d+|\\D+/g)??[];for(let i=0;i<Math.min(x.length,y.length);i++){const u=x[i],v=y[i];if(u===v)continue;if(/^\\d+$/.test(u)&&/^\\d+$/.test(v)){const n=BigInt(u),m=BigInt(v);if(n!==m)return n<m?-1:1;if(u.length!==v.length)return u.length-v.length;}else return u<v?-1:1;}return x.length-y.length;};return [...labels].sort(cmp);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              "item10",
+              "item2",
+              "item02",
+              "item1"
+            ]
+          ],
+          "expected": [
+            "item1",
+            "item2",
+            "item02",
+            "item10"
+          ]
+        },
+        {
+          "args": [
+            [
+              "x9007199254740993",
+              "x9007199254740992"
+            ]
+          ],
+          "expected": [
+            "x9007199254740992",
+            "x9007199254740993"
+          ]
+        },
+        {
+          "args": [
+            [
+              "b",
+              "",
+              "a"
+            ]
+          ],
+          "expected": [
+            "",
+            "a",
+            "b"
+          ]
+        },
+        {
+          "args": [
+            [
+              "A2",
+              "a1"
+            ]
+          ],
+          "expected": [
+            "A2",
+            "a1"
+          ]
+        },
+        {
+          "args": [
+            [
+              "x",
+              1
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-mergethreeway",
+      "name": "mergeThreeWay",
+      "split": "heldOut",
+      "prompt": "Merge shallow records with JSON primitive values using base/local/remote. A missing key is distinct from any value. If local and remote agree use that result; else if one side equals base use the other side. Otherwise record a conflict and keep the local result. Return {merged,conflicts}, with conflicts sorted lexicographically; deletions remove keys. Reject invalid records and non-primitive values. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function mergeThreeWay(base:Record<string,unknown>, local:Record<string,unknown>, remote:Record<string,unknown>): {merged:Record<string,unknown>;conflicts:string[]};",
+      "reference": "export function mergeThreeWay(base,local,remote){for(const x of [base,local,remote])if(!x||typeof x!=='object'||Array.isArray(x)||Object.values(x).some(v=>v!==null&&!['string','number','boolean'].includes(typeof v)))throw Error('record');const merged={},conflicts=[];const get=(x,k)=>({present:Object.hasOwn(x,k),value:x[k]});const equal=(a,b)=>a.present===b.present&&(!a.present||Object.is(a.value,b.value));for(const k of [...new Set([...Object.keys(base),...Object.keys(local),...Object.keys(remote)])].sort()){const b=get(base,k),l=get(local,k),r=get(remote,k);let chosen;if(equal(l,r))chosen=l;else if(equal(l,b))chosen=r;else if(equal(r,b))chosen=l;else{chosen=l;conflicts.push(k);}if(chosen.present)Object.defineProperty(merged,k,{value:chosen.value,enumerable:true,writable:true,configurable:true});}return {merged,conflicts};}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "x": 1
+            },
+            {
+              "x": 2
+            },
+            {
+              "x": 1,
+              "y": 0
+            }
+          ],
+          "expected": {
+            "merged": {
+              "x": 2,
+              "y": 0
+            },
+            "conflicts": []
+          }
+        },
+        {
+          "args": [
+            {
+              "x": 1
+            },
+            {},
+            {
+              "x": 2
+            }
+          ],
+          "expected": {
+            "merged": {},
+            "conflicts": [
+              "x"
+            ]
+          }
+        },
+        {
+          "args": [
+            {},
+            {
+              "x": null
+            },
+            {
+              "x": null
+            }
+          ],
+          "expected": {
+            "merged": {
+              "x": null
+            },
+            "conflicts": []
+          }
+        },
+        {
+          "args": [
+            {
+              "a": false
+            },
+            {
+              "a": 0
+            },
+            {
+              "a": ""
+            }
+          ],
+          "expected": {
+            "merged": {
+              "a": 0
+            },
+            "conflicts": [
+              "a"
+            ]
+          }
+        },
+        {
+          "args": [
+            {},
+            {
+              "x": []
+            },
+            {}
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-linearinterpolate",
+      "name": "linearInterpolate",
+      "split": "heldOut",
+      "prompt": "Interpolate samples {x,y} linearly at query. Require a nonempty array with finite coordinates, unique x values and finite query; samples may arrive unordered. Clamp outside the x range to the nearest endpoint y. Exact x returns its y. A singleton returns its y. Do not mutate the array. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function linearInterpolate(samples:{x:number;y:number}[], query:number): number;",
+      "reference": "export function linearInterpolate(samples,query){if(!Array.isArray(samples)||!samples.length||!Number.isFinite(query)||samples.some(s=>!s||!Number.isFinite(s.x)||!Number.isFinite(s.y)))throw Error('input');const a=[...samples].sort((l,r)=>l.x-r.x);if(a.some((s,i)=>i&&s.x===a[i-1].x))throw Error('duplicate');if(query<=a[0].x)return a[0].y;if(query>=a.at(-1).x)return a.at(-1).y;const i=a.findIndex(s=>s.x>=query),l=a[i-1],r=a[i];return l.y+(r.y-l.y)*(query-l.x)/(r.x-l.x);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "x": 10,
+                "y": 20
+              },
+              {
+                "x": 0,
+                "y": 0
+              }
+            ],
+            5
+          ],
+          "expected": 10
+        },
+        {
+          "args": [
+            [
+              {
+                "x": 1,
+                "y": 4
+              }
+            ],
+            10
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [
+              {
+                "x": 0,
+                "y": 3
+              },
+              {
+                "x": 2,
+                "y": 7
+              }
+            ],
+            -1
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            [
+              {
+                "x": 0,
+                "y": 3
+              },
+              {
+                "x": 2,
+                "y": 7
+              }
+            ],
+            2
+          ],
+          "expected": 7
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "x": 1,
+                "y": 1
+              },
+              {
+                "x": 1,
+                "y": 2
+              }
+            ],
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": false,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    },
+    {
+      "id": "experience-combineaccesslists",
+      "name": "combineAccessLists",
+      "split": "heldOut",
+      "prompt": "Intersect parent and child access policies. Each is {allow:string[],deny:string[]}; strings are nonempty resource names, * is permitted only in allow and means all resources. Effective allow is their intersection, then unioned denies are removed. If both allow wildcard, output allow [\"*\"] and retain sorted denies. Otherwise allow is sorted unique explicit resources after filtering, and deny is sorted union. Reject unknown fields, invalid arrays and wildcard deny. Do not mutate any input or perform external effects.",
+      "declaration": "export declare function combineAccessLists(parent:{allow:string[];deny:string[]}, child:{allow:string[];deny:string[]}): {allow:string[];deny:string[]};",
+      "reference": "export function combineAccessLists(parent,child){for(const p of [parent,child])if(!p||Object.keys(p).sort().join()!=='allow,deny'||!Array.isArray(p.allow)||!Array.isArray(p.deny)||[...p.allow,...p.deny].some(x=>typeof x!=='string'||!x)||p.deny.includes('*'))throw Error('policy');const a=new Set(parent.allow),b=new Set(child.allow),deny=[...new Set([...parent.deny,...child.deny])].sort();let allow;if(a.has('*')&&b.has('*'))allow=['*'];else if(a.has('*'))allow=[...b];else if(b.has('*'))allow=[...a];else allow=[...a].filter(x=>b.has(x));return {allow:allow.filter(x=>x==='*'||!deny.includes(x)).sort(),deny};}\n",
+      "vectors": [
+        {
+          "args": [
+            {
+              "allow": [
+                "*"
+              ],
+              "deny": [
+                "secret"
+              ]
+            },
+            {
+              "allow": [
+                "b",
+                "secret",
+                "a"
+              ],
+              "deny": [
+                "b"
+              ]
+            }
+          ],
+          "expected": {
+            "allow": [
+              "a"
+            ],
+            "deny": [
+              "b",
+              "secret"
+            ]
+          }
+        },
+        {
+          "args": [
+            {
+              "allow": [
+                "*"
+              ],
+              "deny": [
+                "x"
+              ]
+            },
+            {
+              "allow": [
+                "*"
+              ],
+              "deny": [
+                "y"
+              ]
+            }
+          ],
+          "expected": {
+            "allow": [
+              "*"
+            ],
+            "deny": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        {
+          "args": [
+            {
+              "allow": [
+                "a"
+              ],
+              "deny": []
+            },
+            {
+              "allow": [
+                "b"
+              ],
+              "deny": []
+            }
+          ],
+          "expected": {
+            "allow": [],
+            "deny": []
+          }
+        },
+        {
+          "args": [
+            {
+              "allow": [],
+              "deny": []
+            },
+            {
+              "allow": [
+                "*"
+              ],
+              "deny": []
+            }
+          ],
+          "expected": {
+            "allow": [],
+            "deny": []
+          }
+        },
+        {
+          "args": [
+            {
+              "allow": [
+                "*"
+              ],
+              "deny": [
+                "*"
+              ]
+            },
+            {
+              "allow": [
+                "*"
+              ],
+              "deny": []
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": null,
+      "provenance": {
+        "kind": "constructed-independent-contract",
+        "actor": "codex/independent-case-author",
+        "recordedFailureClaim": false,
+        "purpose": "Frozen coding-contract generalization and experience screening"
+      }
+    }
+  ],
+  "publicErrorConvention": "Unless a contract explicitly defines a denial return value, reject means throw an Error; do not silently skip invalid or conflicting input.",
+  "revisionReason": "Prospective clarification of rejection signalling and root-only base, following frozen v5 validation. Original v1 stays unchanged."
+}

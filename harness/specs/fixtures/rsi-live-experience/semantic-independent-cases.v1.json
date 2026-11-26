@@ -1,0 +1,2861 @@
+{
+  "schemaVersion": "RsiIndependentCodingCases/v2",
+  "datasetVersion": "RsiSemanticIndependentCases/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-contract-tf0903-20261113-01a1d34b",
+  "realHumanEvidence": false,
+  "purpose": "New constructed contract pool for offline verification and a separately authorized pilot. Formal measured-candidate generation requires a larger independent population and a new freeze after pilot qualification.",
+  "inferenceUnit": "independent-contract-group",
+  "publicErrorConvention": "Unless a contract explicitly defines a denial return value, reject means throw an Error; do not silently skip invalid or conflicting input.",
+  "cases": [
+    {
+      "id": "semantic-priceprogressiveunits",
+      "name": "priceProgressiveUnits",
+      "split": "validation",
+      "independenceGroup": "price-progressive-units",
+      "prompt": "Implement priceProgressiveUnits. Charge nonnegative safe integer units against strictly increasing positive safe integer tier end points, with a final null end. Each rate is nonnegative integer cents per unit. Earlier tiers charge first. Reject malformed tiers, missing unlimited final tier or unsafe total. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function priceProgressiveUnits(units: number, tiers: {end: number | null; rate: number}[]): number;",
+      "reference": "export function priceProgressiveUnits(units, tiers) {\n    if (!Number.isSafeInteger(units) || units < 0 || !Array.isArray(tiers) || !tiers.length) throw Error('input');\n    let prev = 0, total = 0;\n    for (let i = 0; i < tiers.length; i++) { const t = tiers[i]; if (!t || !Number.isSafeInteger(t.rate) || t.rate < 0 || (i === tiers.length - 1 ? t.end !== null : !Number.isSafeInteger(t.end) || t.end <= prev)) throw Error('tier');\n      total += Math.max(0, Math.min(units, t.end ?? units) - prev) * t.rate; if (!Number.isSafeInteger(total)) throw Error('overflow'); prev = t.end ?? units; }\n    return total;\n  }\n",
+      "vectors": [
+        {
+          "args": [
+            0,
+            [
+              {
+                "end": null,
+                "rate": 4
+              }
+            ]
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            7,
+            [
+              {
+                "end": 5,
+                "rate": 2
+              },
+              {
+                "end": null,
+                "rate": 3
+              }
+            ]
+          ],
+          "expected": 16
+        },
+        {
+          "args": [
+            5,
+            [
+              {
+                "end": 5,
+                "rate": 2
+              },
+              {
+                "end": null,
+                "rate": 3
+              }
+            ]
+          ],
+          "expected": 10
+        },
+        {
+          "args": [
+            -1,
+            [
+              {
+                "end": null,
+                "rate": 2
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            2,
+            [
+              {
+                "end": 3,
+                "rate": 2
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            9007199254740991,
+            [
+              {
+                "end": null,
+                "rate": 2
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": "negative"
+    },
+    {
+      "id": "semantic-decideweightedquorum",
+      "name": "decideWeightedQuorum",
+      "split": "validation",
+      "independenceGroup": "decide-weighted-quorum",
+      "prompt": "Implement decideWeightedQuorum. Each vote has a unique nonempty id, positive safe integer weight and stance yes/no/abstain. A positive integer threshold is reached when yes weight is at least threshold; deny when yes plus abstaining weight cannot reach it; otherwise pending. Return yesWeight, noWeight and decision. Reject unsafe sums. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function decideWeightedQuorum(votes: {id:string;weight:number;stance:string}[], threshold:number): {yesWeight:number;noWeight:number;decision:string};",
+      "reference": "export function decideWeightedQuorum(votes, threshold) {\n   if (!Array.isArray(votes) || !Number.isSafeInteger(threshold) || threshold <= 0) throw Error('input');\n   const seen = new Set(); let yesWeight=0,noWeight=0,abstain=0;\n   for (const v of votes) { if (!v || typeof v.id!=='string' || !v.id || seen.has(v.id) || !Number.isSafeInteger(v.weight) || v.weight<=0 || !['yes','no','abstain'].includes(v.stance)) throw Error('vote'); seen.add(v.id); if(v.stance==='yes')yesWeight+=v.weight; else if(v.stance==='no')noWeight+=v.weight; else abstain+=v.weight; }\n   if(!Number.isSafeInteger(yesWeight+noWeight+abstain))throw Error('overflow');\n   return {yesWeight,noWeight,decision:yesWeight>=threshold?'allow':yesWeight+abstain<threshold?'deny':'pending'};\n }\n",
+      "vectors": [
+        {
+          "args": [
+            [],
+            1
+          ],
+          "expected": {
+            "yesWeight": 0,
+            "noWeight": 0,
+            "decision": "deny"
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "weight": 2,
+                "stance": "yes"
+              }
+            ],
+            2
+          ],
+          "expected": {
+            "yesWeight": 2,
+            "noWeight": 0,
+            "decision": "allow"
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "weight": 2,
+                "stance": "abstain"
+              }
+            ],
+            2
+          ],
+          "expected": {
+            "yesWeight": 0,
+            "noWeight": 0,
+            "decision": "pending"
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "weight": 1,
+                "stance": "yes"
+              },
+              {
+                "id": "a",
+                "weight": 1,
+                "stance": "no"
+              }
+            ],
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true
+    },
+    {
+      "id": "semantic-parseipv4cidr",
+      "name": "parseIpv4Cidr",
+      "split": "validation",
+      "independenceGroup": "parse-ipv4-cidr",
+      "prompt": "Implement parseIpv4Cidr. Parse canonical dotted decimal IPv4/prefix, rejecting leading zero octets except 0 and prefixes outside 0..32. Return network and broadcast as dotted addresses and size as number of addresses. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function parseIpv4Cidr(text:string): {network:string;broadcast:string;size:number};",
+      "reference": "export function parseIpv4Cidr(text) {\n  if(typeof text!=='string'||!/^\\d+\\.\\d+\\.\\d+\\.\\d+\\/(0|[1-9]\\d?)$/.test(text))throw Error('syntax');\n  const [ip,p]=text.split('/'), octets=ip.split('.'); if(octets.some(x=>! /^(0|[1-9]\\d{0,2})$/.test(x)||Number(x)>255)||Number(p)>32)throw Error('range');\n  const n=octets.reduce((a,x)=>a*256+Number(x),0),size=2**(32-Number(p)),start=Math.floor(n/size)*size;\n  const format=n=>[24,16,8,0].map(bits=>Math.floor(n/2**bits)%256).join('.');return {network:format(start),broadcast:format(start+size-1),size};\n }\n",
+      "vectors": [
+        {
+          "args": [
+            "192.168.2.9/24"
+          ],
+          "expected": {
+            "network": "192.168.2.0",
+            "broadcast": "192.168.2.255",
+            "size": 256
+          }
+        },
+        {
+          "args": [
+            "1.2.3.4/32"
+          ],
+          "expected": {
+            "network": "1.2.3.4",
+            "broadcast": "1.2.3.4",
+            "size": 1
+          }
+        },
+        {
+          "args": [
+            "0.0.0.0/0"
+          ],
+          "expected": {
+            "network": "0.0.0.0",
+            "broadcast": "255.255.255.255",
+            "size": 4294967296
+          }
+        },
+        {
+          "args": [
+            "01.2.3.4/24"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "1.2.3.4/33"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "256.2.3.4/24"
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true
+    },
+    {
+      "id": "semantic-unfoldcontinuationlines",
+      "name": "unfoldContinuationLines",
+      "split": "validation",
+      "independenceGroup": "unfold-continuation-lines",
+      "prompt": "Implement unfoldContinuationLines. Replace each CRLF followed by one or more spaces or tabs with one space. Reject any remaining CR or LF, all other control characters except tab, or non-string input; preserve ordinary spaces. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function unfoldContinuationLines(text:string): string;",
+      "reference": "export function unfoldContinuationLines(text) {\n  if(typeof text!=='string')throw Error('input');const out=text.replace(/\\r\\n[ \\t]+/g,' ');if(/[\\x00-\\x08\\x0a-\\x1f\\x7f]/.test(out))throw Error('control');return out;\n }\n",
+      "vectors": [
+        {
+          "args": [
+            "one\r\n  two"
+          ],
+          "expected": "one two"
+        },
+        {
+          "args": [
+            "a\r\n\tb\r\n c"
+          ],
+          "expected": "a b c"
+        },
+        {
+          "args": [
+            " a  b "
+          ],
+          "expected": " a  b "
+        },
+        {
+          "args": [
+            "a\r\nb"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "a\nb"
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-canreservecapacity",
+      "name": "canReserveCapacity",
+      "split": "validation",
+      "independenceGroup": "can-reserve-capacity",
+      "prompt": "Implement canReserveCapacity. Bookings are [start,end,units] with safe integer start>=0, end>start and units>0. For an equally shaped request and positive integer capacity, return whether adding it stays within capacity at every time. End points are half open. Reject malformed input or already overbooked original bookings. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function canReserveCapacity(bookings:number[][], request:number[], capacity:number): boolean;",
+      "reference": "export function canReserveCapacity(bookings,request,capacity) {\n  if(!Array.isArray(bookings)||!Number.isSafeInteger(capacity)||capacity<=0)throw Error('input');\n  const peak=rows=>{const events=[];for(const r of rows){if(!Array.isArray(r)||r.length!==3||!r.every(Number.isSafeInteger)||r[0]<0||r[1]<=r[0]||r[2]<=0)throw Error('booking');events.push([r[0],r[2]],[r[1],-r[2]]);}events.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);let n=0,m=0;for(const e of events){n+=e[1];if(!Number.isSafeInteger(n))throw Error('overflow');m=Math.max(m,n);}return m;};\n  if(peak(bookings)>capacity)throw Error('original');return peak([...bookings,request])<=capacity;\n }\n",
+      "vectors": [
+        {
+          "args": [
+            [],
+            [
+              0,
+              2,
+              2
+            ],
+            2
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              [
+                0,
+                2,
+                2
+              ]
+            ],
+            [
+              2,
+              4,
+              2
+            ],
+            2
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              [
+                0,
+                3,
+                2
+              ]
+            ],
+            [
+              2,
+              4,
+              1
+            ],
+            2
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [],
+            [
+              1,
+              1,
+              1
+            ],
+            2
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            [
+              3,
+              4,
+              1
+            ],
+            2
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-distributedebit",
+      "name": "distributeDebit",
+      "split": "validation",
+      "independenceGroup": "distribute-debit",
+      "prompt": "Implement distributeDebit. Debit a nonnegative safe integer amount from an array of nonnegative safe integer balances in order. If insufficient total, return ok:false and a copy of the original balances. Otherwise return ok:true and remaining balances. Reject malformed data or unsafe totals. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function distributeDebit(balances:number[], amount:number): {ok:boolean;balances:number[]};",
+      "reference": "export function distributeDebit(balances,amount) {\n  if(!Array.isArray(balances)||balances.some(x=>!Number.isSafeInteger(x)||x<0)||!Number.isSafeInteger(amount)||amount<0)throw Error('input');const total=balances.reduce((a,b)=>a+b,0);if(!Number.isSafeInteger(total))throw Error('overflow');\n  if(total<amount)return {ok:false,balances:[...balances]};let left=amount;return {ok:true,balances:balances.map(x=>{const taken=Math.min(left,x);left-=taken;return x-taken;})};\n }\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              2,
+              4
+            ],
+            5
+          ],
+          "expected": {
+            "ok": true,
+            "balances": [
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "args": [
+            [
+              2,
+              4
+            ],
+            7
+          ],
+          "expected": {
+            "ok": false,
+            "balances": [
+              2,
+              4
+            ]
+          }
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": {
+            "ok": true,
+            "balances": []
+          }
+        },
+        {
+          "args": [
+            [
+              1,
+              -2
+            ],
+            0
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              9007199254740991,
+              1
+            ],
+            1
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-instantrunoffwinner",
+      "name": "instantRunoffWinner",
+      "split": "validation",
+      "independenceGroup": "instant-runoff-winner",
+      "prompt": "Implement instantRunoffWinner. Candidates are unique nonempty strings. Each ballot is a nonempty list of distinct known candidates, ordered by preference. Repeatedly count the first surviving choice; a strict majority of active ballots wins. Otherwise eliminate the lowest count, breaking ties by lexicographically greatest candidate. Exhausted ballots do not count. Return null if no active ballots. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function instantRunoffWinner(candidates:string[], ballots:string[][]): string | null;",
+      "reference": "export function instantRunoffWinner(candidates,ballots) {\n  if(!Array.isArray(candidates)||!candidates.length||candidates.some(x=>typeof x!=='string'||!x)||new Set(candidates).size!==candidates.length||!Array.isArray(ballots))throw Error('input');\n  if(ballots.some(b=>!Array.isArray(b)||!b.length||new Set(b).size!==b.length||b.some(x=>!candidates.includes(x))))throw Error('ballot');const active=new Set(candidates);\n  while(active.size){const counts=new Map([...active].map(x=>[x,0]));let total=0;for(const b of ballots){const first=b.find(x=>active.has(x));if(first!==undefined){counts.set(first,counts.get(first)+1);total++;}}if(!total)return null;for(const [x,n] of counts)if(n>total/2)return x;\n  const loser=[...active].sort((a,b)=>counts.get(a)-counts.get(b)||(a<b?1:a>b?-1:0))[0];active.delete(loser);}return null;\n }\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              "a",
+              "b"
+            ],
+            [
+              [
+                "a"
+              ],
+              [
+                "b"
+              ]
+            ]
+          ],
+          "expected": "a"
+        },
+        {
+          "args": [
+            [
+              "a",
+              "b",
+              "c"
+            ],
+            [
+              [
+                "a",
+                "b"
+              ],
+              [
+                "b"
+              ],
+              [
+                "c",
+                "b"
+              ]
+            ]
+          ],
+          "expected": "b"
+        },
+        {
+          "args": [
+            [
+              "x"
+            ],
+            []
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [
+              "a"
+            ],
+            [
+              [
+                "b"
+              ]
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              "a",
+              "a"
+            ],
+            [
+              [
+                "a"
+              ]
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-validateluhndigits",
+      "name": "validateLuhnDigits",
+      "split": "validation",
+      "independenceGroup": "validate-luhn-digits",
+      "prompt": "Implement validateLuhnDigits. Return whether a nonempty string of ASCII digits passes the Luhn checksum. Starting from the rightmost check digit, double every second digit and subtract nine from doubled values above nine. Reject other input characters and nonstrings. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function validateLuhnDigits(digits:string): boolean;",
+      "reference": "export function validateLuhnDigits(digits) {if(typeof digits!=='string'||!/^\\d+$/.test(digits))throw Error('input');let sum=0;for(let i=digits.length-1,j=0;i>=0;i--,j++){let n=Number(digits[i]);if(j%2)n=n*2>9?n*2-9:n*2;sum+=n;}return sum%10===0;}\n",
+      "vectors": [
+        {
+          "args": [
+            "79927398713"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            "79927398714"
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            "0"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            ""
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "12 3"
+          ],
+          "throws": true
+        }
+      ],
+      "anchor": "positive"
+    },
+    {
+      "id": "semantic-minimumwatermark",
+      "name": "minimumWatermark",
+      "split": "validation",
+      "independenceGroup": "minimum-watermark",
+      "prompt": "Implement minimumWatermark. Sources have unique nonempty ids and nonnegative safe integer watermark values. Return the minimum watermark among required unique nonempty ids. Missing required sources or an empty required list return null. Validate every supplied source and required id. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function minimumWatermark(sources:{id:string;watermark:number}[], required:string[]): number | null;",
+      "reference": "export function minimumWatermark(sources,required) {\n  if(!Array.isArray(sources)||!Array.isArray(required)||required.some(x=>typeof x!=='string'||!x)||new Set(required).size!==required.length)throw Error('input');const map=new Map();\n  for(const s of sources){if(!s||typeof s.id!=='string'||!s.id||map.has(s.id)||!Number.isSafeInteger(s.watermark)||s.watermark<0)throw Error('source');map.set(s.id,s.watermark);}return !required.length||required.some(id=>!map.has(id))?null:Math.min(...required.map(id=>map.get(id)));\n }\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "watermark": 9
+              },
+              {
+                "id": "b",
+                "watermark": 4
+              }
+            ],
+            [
+              "a",
+              "b"
+            ]
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "watermark": 0
+              }
+            ],
+            [
+              "a"
+            ]
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [],
+            [
+              "a"
+            ]
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [],
+            []
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [],
+            [
+              "a",
+              "a"
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-expandminuteschedule",
+      "name": "expandMinuteSchedule",
+      "split": "validation",
+      "independenceGroup": "expand-minute-schedule",
+      "prompt": "Implement expandMinuteSchedule. Parse a comma-separated minute expression. Each term is *, a decimal minute 0..59, or an ascending inclusive range a-b. A */step or a-b/step uses integer step 1..59. Return sorted distinct minutes. Reject empty terms, leading zero numbers except 0, whitespace, descending ranges and steps on single numbers. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function expandMinuteSchedule(expression:string): number[];",
+      "reference": "export function expandMinuteSchedule(expression) {\n  if(typeof expression!=='string'||!expression)throw Error('input');const out=new Set(),num=s=>{if(!/^(0|[1-9]\\d?)$/.test(s)||+s>59)throw Error('number');return +s;};\n  for(const term of expression.split(',')){const parts=term.split('/');if(parts.length>2)throw Error('term');const range=parts[0],step=parts.length===2?num(parts[1]):1;if(step===0)throw Error('step');let a,b;if(range==='*'){a=0;b=59;}else if(range.includes('-')){const ends=range.split('-');if(ends.length!==2)throw Error('range');a=num(ends[0]);b=num(ends[1]);}else{if(parts.length===2)throw Error('step');a=b=num(range);}if(a>b)throw Error('range');for(let n=a;n<=b;n+=step)out.add(n);}return [...out].sort((a,b)=>a-b);\n }\n",
+      "vectors": [
+        {
+          "args": [
+            "*/20"
+          ],
+          "expected": [
+            0,
+            20,
+            40
+          ]
+        },
+        {
+          "args": [
+            "1-5/2,3,8"
+          ],
+          "expected": [
+            1,
+            3,
+            5,
+            8
+          ]
+        },
+        {
+          "args": [
+            "59"
+          ],
+          "expected": [
+            59
+          ]
+        },
+        {
+          "args": [
+            "2-1"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "5/2"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "01"
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-matchsimplewildcard",
+      "name": "matchSimpleWildcard",
+      "split": "validation",
+      "independenceGroup": "match-simple-wildcard",
+      "prompt": "Implement matchSimpleWildcard. Match an entire Unicode string against a pattern containing literal code points, ? for exactly one code point and * for zero or more. There is no escape syntax and slashes have no special meaning. Return a boolean; reject nonstrings. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function matchSimpleWildcard(text:string, pattern:string): boolean;",
+      "reference": "export function matchSimpleWildcard(text,pattern) {if(typeof text!=='string'||typeof pattern!=='string')throw Error('input');const t=[...text],p=[...pattern];let row=Array(t.length+1).fill(false);row[0]=true;for(const c of p){const next=Array(t.length+1).fill(false);if(c==='*')next[0]=row[0];for(let i=1;i<=t.length;i++)next[i]=c==='*'?row[i]||next[i-1]:(c==='?'||c===t[i-1])&&row[i-1];row=next;}return row[t.length];}\n",
+      "vectors": [
+        {
+          "args": [
+            "a/b",
+            "a*b"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            "😀",
+            "?"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            "",
+            "*"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            "abc",
+            "a?"
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            null,
+            "*"
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-isoweekdate",
+      "name": "isoWeekDate",
+      "split": "validation",
+      "independenceGroup": "iso-week-date",
+      "prompt": "Implement isoWeekDate. Convert an ISO week year (integer 100..9999), week (1..53) and weekday (1 Monday..7 Sunday) into YYYY-MM-DD UTC. Reject a week that belongs to another ISO year and dates outside the four-digit-year range. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function isoWeekDate(year:number, week:number, weekday:number): string;",
+      "reference": "export function isoWeekDate(year,week,weekday) {\n  if(![year,week,weekday].every(Number.isInteger)||year<100||year>9999||week<1||week>53||weekday<1||weekday>7)throw Error('input');\n  const jan4=new Date(Date.UTC(year,0,4));const monday=jan4.getTime()-((jan4.getUTCDay()+6)%7)*86400000;const target=new Date(monday+((week-1)*7+weekday-1)*86400000),thursday=new Date(target.getTime()+(4-((target.getUTCDay()+6)%7+1))*86400000);\n  if(thursday.getUTCFullYear()!==year||target.getUTCFullYear()<100||target.getUTCFullYear()>9999)throw Error('week');return target.toISOString().slice(0,10);\n }\n",
+      "vectors": [
+        {
+          "args": [
+            2020,
+            53,
+            5
+          ],
+          "expected": "2021-01-01"
+        },
+        {
+          "args": [
+            2021,
+            1,
+            1
+          ],
+          "expected": "2021-01-04"
+        },
+        {
+          "args": [
+            2024,
+            1,
+            1
+          ],
+          "expected": "2024-01-01"
+        },
+        {
+          "args": [
+            2021,
+            53,
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            2024,
+            1,
+            0
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-netaccounttransfers",
+      "name": "netAccountTransfers",
+      "split": "validation",
+      "independenceGroup": "net-account-transfers",
+      "prompt": "Implement netAccountTransfers. Transfers have distinct nonempty ids, nonempty from/to account names and positive safe integer amounts. Reject self-transfers, malformed transfers or unsafe per-account running net balances. Return all mentioned accounts sorted by name with received minus sent amount, including zero balances. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function netAccountTransfers(transfers:{id:string;from:string;to:string;amount:number}[]): {account:string;net:number}[];",
+      "reference": "export function netAccountTransfers(transfers) {\n  if(!Array.isArray(transfers))throw Error('input');const seen=new Set(),sums=new Map();for(const t of transfers){if(!t||['id','from','to'].some(k=>typeof t[k]!=='string'||!t[k])||seen.has(t.id)||t.from===t.to||!Number.isSafeInteger(t.amount)||t.amount<=0)throw Error('transfer');seen.add(t.id);for(const [a,n] of [[t.from,-t.amount],[t.to,t.amount]]){const v=(sums.get(a)||0)+n;if(!Number.isSafeInteger(v))throw Error('overflow');sums.set(a,v);}}return [...sums.keys()].sort().map(account=>({account,net:sums.get(account)}));\n }\n",
+      "vectors": [
+        {
+          "args": [
+            []
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "from": "a",
+                "to": "b",
+                "amount": 3
+              }
+            ]
+          ],
+          "expected": [
+            {
+              "account": "a",
+              "net": -3
+            },
+            {
+              "account": "b",
+              "net": 3
+            }
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "from": "a",
+                "to": "b",
+                "amount": 3
+              },
+              {
+                "id": "y",
+                "from": "b",
+                "to": "a",
+                "amount": 3
+              }
+            ]
+          ],
+          "expected": [
+            {
+              "account": "a",
+              "net": 0
+            },
+            {
+              "account": "b",
+              "net": 0
+            }
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "from": "a",
+                "to": "a",
+                "amount": 1
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "from": "a",
+                "to": "b",
+                "amount": 0
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-checkquotedbrackets",
+      "name": "checkQuotedBrackets",
+      "split": "validation",
+      "independenceGroup": "check-quoted-brackets",
+      "prompt": "Implement checkQuotedBrackets. Return whether (), [] and {} are balanced and properly nested outside single- or double-quoted strings. A backslash escapes the next code unit only inside quotes. Unclosed quotes or trailing quoted escapes return false. All other text is ignored; reject nonstrings. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function checkQuotedBrackets(text:string): boolean;",
+      "reference": "export function checkQuotedBrackets(text) {if(typeof text!=='string')throw Error('input');const stack=[],pairs={')':'(',']':'[','}':'{'};let quote=null;for(let i=0;i<text.length;i++){const c=text[i];if(quote){if(c==='\\\\'){if(++i===text.length)return false;}else if(c===quote)quote=null;}else if(c==='\"'||c===\"'\")quote=c;else if('([{'.includes(c))stack.push(c);else if(Object.hasOwn(pairs,c)&&stack.pop()!==pairs[c])return false;}return quote===null&&stack.length===0;}\n",
+      "vectors": [
+        {
+          "args": [
+            "a({[]})"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            "[\"}\"]"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            "([)]"
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            "'open"
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            1
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-tokenizearithmetic",
+      "name": "tokenizeArithmetic",
+      "split": "validation",
+      "independenceGroup": "tokenize-arithmetic",
+      "prompt": "Implement tokenizeArithmetic. Tokenize a nonempty arithmetic expression into canonical nonnegative integer strings, operators + - * / and parentheses. Ignore spaces and tabs only. Reject leading-zero multi-digit integers, unsupported characters or an empty token sequence. Do not evaluate or validate grammar. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function tokenizeArithmetic(text:string): string[];",
+      "reference": "export function tokenizeArithmetic(text) {if(typeof text!=='string')throw Error('input');const out=[];let i=0;while(i<text.length){const c=text[i];if(c===' '||c==='\\t'){i++;continue;}if(/[0-9]/.test(c)){let j=i+1;while(j<text.length&&/[0-9]/.test(text[j]))j++;const n=text.slice(i,j);if(n.length>1&&n[0]==='0')throw Error('number');out.push(n);i=j;}else if('+-*/()'.includes(c)){out.push(c);i++;}else throw Error('character');}if(!out.length)throw Error('empty');return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            "12 + (3*0)"
+          ],
+          "expected": [
+            "12",
+            "+",
+            "(",
+            "3",
+            "*",
+            "0",
+            ")"
+          ]
+        },
+        {
+          "args": [
+            "--1"
+          ],
+          "expected": [
+            "-",
+            "-",
+            "1"
+          ]
+        },
+        {
+          "args": [
+            "\t9/2"
+          ],
+          "expected": [
+            "9",
+            "/",
+            "2"
+          ]
+        },
+        {
+          "args": [
+            "01"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "2\n3"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            ""
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-selectfeaturerule",
+      "name": "selectFeatureRule",
+      "split": "validation",
+      "independenceGroup": "select-feature-rule",
+      "prompt": "Implement selectFeatureRule. Rules have unique nonempty ids, integer priority, a when object of string values and a boolean enabled. Match rules whose own when keys equal own context string values. Pick greatest priority, then most when keys, then lexicographically smallest id. Return {id,enabled} or null. Reject non-record contexts/conditions and malformed rules. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function selectFeatureRule(rules:{id:string;priority:number;when:Record<string,string>;enabled:boolean}[], context:Record<string,string>): {id:string;enabled:boolean} | null;",
+      "reference": "export function selectFeatureRule(rules,context) {\n  const record=x=>x!==null&&typeof x==='object'&&!Array.isArray(x)&&Object.values(x).every(v=>typeof v==='string');if(!Array.isArray(rules)||!record(context))throw Error('input');const ids=new Set(),matches=[];\n  for(const r of rules){if(!r||typeof r.id!=='string'||!r.id||ids.has(r.id)||!Number.isSafeInteger(r.priority)||typeof r.enabled!=='boolean'||!record(r.when))throw Error('rule');ids.add(r.id);if(Object.entries(r.when).every(([k,v])=>Object.hasOwn(context,k)&&context[k]===v))matches.push(r);}\n  matches.sort((a,b)=>b.priority-a.priority||Object.keys(b.when).length-Object.keys(a.when).length||(a.id<b.id?-1:a.id>b.id?1:0));return matches.length?{id:matches[0].id,enabled:matches[0].enabled}:null;\n }\n",
+      "vectors": [
+        {
+          "args": [
+            [],
+            {}
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "priority": 1,
+                "when": {},
+                "enabled": true
+              }
+            ],
+            {}
+          ],
+          "expected": {
+            "id": "a",
+            "enabled": true
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "b",
+                "priority": 1,
+                "when": {},
+                "enabled": false
+              },
+              {
+                "id": "a",
+                "priority": 1,
+                "when": {},
+                "enabled": true
+              }
+            ],
+            {}
+          ],
+          "expected": {
+            "id": "a",
+            "enabled": true
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "priority": 1,
+                "when": {
+                  "tier": "pro"
+                },
+                "enabled": true
+              }
+            ],
+            {}
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [],
+            null
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-composeaffinetransforms",
+      "name": "composeAffineTransforms",
+      "split": "validation",
+      "independenceGroup": "compose-affine-transforms",
+      "prompt": "Implement composeAffineTransforms. Each affine transform [a,b,c,d,e,f] maps (x,y) to (a*x+c*y+e,b*x+d*y+f). Return the six coefficients of applying first, then second. Both arrays must contain exactly six finite numbers; reject non-finite output and normalize signed zero to positive zero. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function composeAffineTransforms(first:number[], second:number[]): number[];",
+      "reference": "export function composeAffineTransforms(first,second) {if(![first,second].every(x=>Array.isArray(x)&&x.length===6&&x.every(Number.isFinite)))throw Error('input');const [a,b,c,d,e,f]=first,[g,h,i,j,k,l]=second;const out=[g*a+i*b,h*a+j*b,g*c+i*d,h*c+j*d,g*e+i*f+k,h*e+j*f+l];if(!out.every(Number.isFinite))throw Error('overflow');return out.map(x=>x===0?0:x);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              1,
+              0,
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              2,
+              0,
+              0,
+              2,
+              0,
+              0
+            ]
+          ],
+          "expected": [
+            2,
+            0,
+            0,
+            2,
+            4,
+            6
+          ]
+        },
+        {
+          "args": [
+            [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              1,
+              4,
+              5
+            ]
+          ],
+          "expected": [
+            1,
+            0,
+            0,
+            1,
+            4,
+            5
+          ]
+        },
+        {
+          "args": [
+            [
+              0,
+              1,
+              -1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              -1,
+              0,
+              0,
+              0
+            ]
+          ],
+          "expected": [
+            -1,
+            0,
+            0,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "args": [
+            [
+              1
+            ],
+            [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              1,
+              0,
+              0,
+              1,
+              0,
+              "x"
+            ],
+            [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-circularslice",
+      "name": "circularSlice",
+      "split": "validation",
+      "independenceGroup": "circular-slice",
+      "prompt": "Implement circularSlice. For an array, a safe integer start (negative allowed), and a nonnegative safe integer count at most 1000, take count entries while wrapping around. Return [] for count zero even on empty arrays. A positive count on empty input is rejected. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function circularSlice(values:unknown[], start:number, count:number): unknown[];",
+      "reference": "export function circularSlice(values,start,count) {if(!Array.isArray(values)||!Number.isSafeInteger(start)||!Number.isSafeInteger(count)||count<0||count>1000||(!values.length&&count))throw Error('input');const n=values.length,s=n?((start%n)+n)%n:0;return Array.from({length:count},(_,i)=>values[(s+i)%n]);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ],
+            -1,
+            4
+          ],
+          "expected": [
+            3,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "args": [
+            [],
+            0,
+            0
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              "x"
+            ],
+            3,
+            3
+          ],
+          "expected": [
+            "x",
+            "x",
+            "x"
+          ]
+        },
+        {
+          "args": [
+            [],
+            0,
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              1
+            ],
+            0,
+            1001
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-stablelargestscores",
+      "name": "stableLargestScores",
+      "split": "validation",
+      "independenceGroup": "stable-largest-scores",
+      "prompt": "Implement stableLargestScores. Return the ids of the k highest finite numeric scores, descending by score and preserving original order for ties. Row ids must be distinct nonempty strings and k a nonnegative safe integer. Return all rows when k exceeds length. Reject any malformed row even if k is zero. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function stableLargestScores(rows:{id:string;score:number}[], k:number): string[];",
+      "reference": "export function stableLargestScores(rows,k) {if(!Array.isArray(rows)||!Number.isSafeInteger(k)||k<0)throw Error('input');const ids=new Set();for(const r of rows){if(!r||typeof r.id!=='string'||!r.id||ids.has(r.id)||!Number.isFinite(r.score))throw Error('row');ids.add(r.id);}return rows.map((r,i)=>({...r,i})).sort((a,b)=>b.score-a.score||a.i-b.i).slice(0,k).map(r=>r.id);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "score": 2
+              },
+              {
+                "id": "b",
+                "score": 4
+              },
+              {
+                "id": "c",
+                "score": 4
+              }
+            ],
+            2
+          ],
+          "expected": [
+            "b",
+            "c"
+          ]
+        },
+        {
+          "args": [
+            [],
+            2
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "score": -1
+              }
+            ],
+            5
+          ],
+          "expected": [
+            "x"
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "score": "1"
+              }
+            ],
+            0
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [],
+            -1
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-resolveballotthresholds",
+      "name": "resolveBallotThresholds",
+      "split": "validation",
+      "independenceGroup": "resolve-ballot-thresholds",
+      "prompt": "Implement resolveBallotThresholds. Thresholds are positive safe integers in strictly increasing order. For nonnegative safe integer score, return the zero-based index of the highest reached threshold, or -1. Validate the complete threshold list. This returns an index rather than a threshold value. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function resolveBallotThresholds(score:number, thresholds:number[]): number;",
+      "reference": "export function resolveBallotThresholds(score,thresholds) {if(!Number.isSafeInteger(score)||score<0||!Array.isArray(thresholds))throw Error('input');let prev=0,out=-1;for(let i=0;i<thresholds.length;i++){const t=thresholds[i];if(!Number.isSafeInteger(t)||t<=prev)throw Error('threshold');if(score>=t)out=i;prev=t;}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            5,
+            [
+              3,
+              5,
+              9
+            ]
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            0,
+            [
+              1
+            ]
+          ],
+          "expected": -1
+        },
+        {
+          "args": [
+            100,
+            []
+          ],
+          "expected": -1
+        },
+        {
+          "args": [
+            5,
+            [
+              3,
+              3
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            5,
+            [
+              7,
+              6
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-calculateovertimepay",
+      "name": "calculateOvertimePay",
+      "split": "heldOut",
+      "independenceGroup": "calculate-overtime-pay",
+      "prompt": "Implement calculateOvertimePay. Daily minutes are seven nonnegative safe integers, each at most 1440. Regular weekly minutes receive integer centsPerHour; minutes above regularMinutes receive double rate. Return integer cents rounded down once after summing minute pay. Rates and weekly threshold are nonnegative safe integers; reject overflow. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function calculateOvertimePay(dailyMinutes:number[], centsPerHour:number, regularMinutes:number): number;",
+      "reference": "export function calculateOvertimePay(days,rate,limit) {if(!Array.isArray(days)||days.length!==7||days.some(x=>!Number.isSafeInteger(x)||x<0||x>1440)||!Number.isSafeInteger(rate)||rate<0||!Number.isSafeInteger(limit)||limit<0)throw Error('input');const total=days.reduce((a,b)=>a+b,0),numerator=(Math.min(total,limit)+2*Math.max(0,total-limit))*rate;if(!Number.isSafeInteger(numerator))throw Error('overflow');return Math.floor(numerator/60);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              60,
+              60,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            600,
+            60
+          ],
+          "expected": 1800
+        },
+        {
+          "args": [
+            [
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            100,
+            60
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            100,
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              1
+            ],
+            100,
+            1
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              1441,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            100,
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true
+    },
+    {
+      "id": "semantic-assignmeetingrooms",
+      "name": "assignMeetingRooms",
+      "split": "heldOut",
+      "independenceGroup": "assign-meeting-rooms",
+      "prompt": "Implement assignMeetingRooms. Meetings have unique nonempty ids and nonnegative safe integer start/end with end>start. Sort by start then original position. Assign the lowest numbered room whose previous end is <= start, creating rooms from 0. Return roomCount and assignments in original input order. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function assignMeetingRooms(meetings:{id:string;start:number;end:number}[]): {roomCount:number;rooms:number[]};",
+      "reference": "export function assignMeetingRooms(meetings) {if(!Array.isArray(meetings))throw Error('input');const ids=new Set();meetings.forEach(m=>{if(!m||typeof m.id!=='string'||!m.id||ids.has(m.id)||!Number.isSafeInteger(m.start)||m.start<0||!Number.isSafeInteger(m.end)||m.end<=m.start)throw Error('meeting');ids.add(m.id);});const ends=[],rooms=Array(meetings.length);for(const {m,i} of meetings.map((m,i)=>({m,i})).sort((a,b)=>a.m.start-b.m.start||a.i-b.i)){let room=ends.findIndex(x=>x<=m.start);if(room<0)room=ends.length;ends[room]=m.end;rooms[i]=room;}return {roomCount:ends.length,rooms};}\n",
+      "vectors": [
+        {
+          "args": [
+            []
+          ],
+          "expected": {
+            "roomCount": 0,
+            "rooms": []
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "b",
+                "start": 2,
+                "end": 3
+              },
+              {
+                "id": "a",
+                "start": 0,
+                "end": 2
+              }
+            ]
+          ],
+          "expected": {
+            "roomCount": 1,
+            "rooms": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "start": 0,
+                "end": 3
+              },
+              {
+                "id": "b",
+                "start": 1,
+                "end": 2
+              },
+              {
+                "id": "c",
+                "start": 2,
+                "end": 4
+              }
+            ]
+          ],
+          "expected": {
+            "roomCount": 2,
+            "rooms": [
+              0,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "start": 1,
+                "end": 1
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "start": 0,
+                "end": 1
+              },
+              {
+                "id": "a",
+                "start": 2,
+                "end": 3
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-auditdoubleentry",
+      "name": "auditDoubleEntry",
+      "split": "heldOut",
+      "independenceGroup": "audit-double-entry",
+      "prompt": "Implement auditDoubleEntry. Each journal entry has a unique nonempty id, nonempty account, side debit/credit and a positive safe integer amount. Return balanced and debitTotal and creditTotal. Empty journals balance. Reject malformed entries, duplicate ids or unsafe totals. Do not silently repair an imbalance. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function auditDoubleEntry(entries:{id:string;account:string;side:string;amount:number}[]): {balanced:boolean;debitTotal:number;creditTotal:number};",
+      "reference": "export function auditDoubleEntry(entries) {if(!Array.isArray(entries))throw Error('input');let debitTotal=0,creditTotal=0;const ids=new Set();for(const e of entries){if(!e||typeof e.id!=='string'||!e.id||ids.has(e.id)||typeof e.account!=='string'||!e.account||!['debit','credit'].includes(e.side)||!Number.isSafeInteger(e.amount)||e.amount<=0)throw Error('entry');ids.add(e.id);if(e.side==='debit')debitTotal+=e.amount;else creditTotal+=e.amount;if(!Number.isSafeInteger(debitTotal)||!Number.isSafeInteger(creditTotal))throw Error('overflow');}return {balanced:debitTotal===creditTotal,debitTotal,creditTotal};}\n",
+      "vectors": [
+        {
+          "args": [
+            []
+          ],
+          "expected": {
+            "balanced": true,
+            "debitTotal": 0,
+            "creditTotal": 0
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "account": "cash",
+                "side": "debit",
+                "amount": 3
+              },
+              {
+                "id": "b",
+                "account": "sales",
+                "side": "credit",
+                "amount": 3
+              }
+            ]
+          ],
+          "expected": {
+            "balanced": true,
+            "debitTotal": 3,
+            "creditTotal": 3
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "account": "cash",
+                "side": "debit",
+                "amount": 4
+              }
+            ]
+          ],
+          "expected": {
+            "balanced": false,
+            "debitTotal": 4,
+            "creditTotal": 0
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "account": "cash",
+                "side": "other",
+                "amount": 1
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "account": "cash",
+                "side": "debit",
+                "amount": -1
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true,
+      "anchor": "negative"
+    },
+    {
+      "id": "semantic-canonicaldecimaltext",
+      "name": "canonicalDecimalText",
+      "split": "heldOut",
+      "independenceGroup": "canonical-decimal-text",
+      "prompt": "Implement canonicalDecimalText. Normalize a signed decimal string with optional decimal point, at least one digit before it and if present at least one after it. Reject exponent, whitespace and other syntax. Remove leading integer zeros and trailing fractional zeros; normalize negative zero to 0. Preserve arbitrary precision as text. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function canonicalDecimalText(text:string): string;",
+      "reference": "export function canonicalDecimalText(text) {if(typeof text!=='string'||! /^[+-]?\\d+(?:\\.\\d+)?$/.test(text))throw Error('input');const negative=text[0]==='-',s=text.replace(/^[+-]/,''),[whole,part='']=s.split('.');const a=whole.replace(/^0+(?=\\d)/,''),b=part.replace(/0+$/,'');const result=a+(b?'.'+b:'');return negative&&result!=='0'?'-'+result:result;}\n",
+      "vectors": [
+        {
+          "args": [
+            "+00012.3400"
+          ],
+          "expected": "12.34"
+        },
+        {
+          "args": [
+            "-000.000"
+          ],
+          "expected": "0"
+        },
+        {
+          "args": [
+            "12345678901234567890.0010"
+          ],
+          "expected": "12345678901234567890.001"
+        },
+        {
+          "args": [
+            "1e3"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            ".5"
+          ],
+          "throws": true
+        }
+      ],
+      "anchor": "positive"
+    },
+    {
+      "id": "semantic-boundedretrydelay",
+      "name": "boundedRetryDelay",
+      "split": "heldOut",
+      "independenceGroup": "bounded-retry-delay",
+      "prompt": "Implement boundedRetryDelay. Given nonnegative safe integer attempt, baseMs, capMs, and optional retryAfterMs (null or nonnegative safe integer), return min(capMs, max(baseMs*2^attempt, retryAfterMs or 0)). Cap before unsafe exponential growth. Reject baseMs>capMs and attempt>10000. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function boundedRetryDelay(attempt:number, baseMs:number, capMs:number, retryAfterMs:number | null): number;",
+      "reference": "export function boundedRetryDelay(attempt,base,cap,after) {if(![attempt,base,cap].every(x=>Number.isSafeInteger(x)&&x>=0)||attempt>10000||base>cap||after!==null&&(!Number.isSafeInteger(after)||after<0))throw Error('input');let n=base;for(let i=0;i<attempt&&n<cap&&n>0;i++)n=Math.min(cap,n*2);return Math.min(cap,Math.max(n,after??0));}\n",
+      "vectors": [
+        {
+          "args": [
+            2,
+            100,
+            1000,
+            null
+          ],
+          "expected": 400
+        },
+        {
+          "args": [
+            0,
+            100,
+            1000,
+            500
+          ],
+          "expected": 500
+        },
+        {
+          "args": [
+            10000,
+            1,
+            999,
+            null
+          ],
+          "expected": 999
+        },
+        {
+          "args": [
+            20,
+            0,
+            10,
+            null
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            0,
+            10,
+            1,
+            null
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-applyinventorysale",
+      "name": "applyInventorySale",
+      "split": "heldOut",
+      "independenceGroup": "apply-inventory-sale",
+      "prompt": "Implement applyInventorySale. Stock rows contain unique nonempty sku and nonnegative safe integer quantity. Sale lines contain nonempty sku and positive safe integer quantity. Aggregate repeated sale lines. Unknown sku or insufficient stock returns {ok:false,sku:first failing sku in first-sale order,stock:original copy}; otherwise subtract totals and return ok:true,sku:null. Validate all input before business rejection. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function applyInventorySale(stock:{sku:string;quantity:number}[], sale:{sku:string;quantity:number}[]): {ok:boolean;sku:string | null;stock:{sku:string;quantity:number}[]};",
+      "reference": "export function applyInventorySale(stock,sale) {if(!Array.isArray(stock)||!Array.isArray(sale))throw Error('input');const map=new Map(),totals=new Map();for(const s of stock){if(!s||typeof s.sku!=='string'||!s.sku||map.has(s.sku)||!Number.isSafeInteger(s.quantity)||s.quantity<0)throw Error('stock');map.set(s.sku,s.quantity);}for(const s of sale){if(!s||typeof s.sku!=='string'||!s.sku||!Number.isSafeInteger(s.quantity)||s.quantity<=0)throw Error('sale');const n=(totals.get(s.sku)||0)+s.quantity;if(!Number.isSafeInteger(n))throw Error('overflow');totals.set(s.sku,n);}for(const [sku,n] of totals)if(!map.has(sku)||map.get(sku)<n)return {ok:false,sku,stock:stock.map(x=>({...x}))};return {ok:true,sku:null,stock:stock.map(s=>({sku:s.sku,quantity:s.quantity-(totals.get(s.sku)||0)}))};}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "sku": "a",
+                "quantity": 5
+              }
+            ],
+            [
+              {
+                "sku": "a",
+                "quantity": 2
+              },
+              {
+                "sku": "a",
+                "quantity": 1
+              }
+            ]
+          ],
+          "expected": {
+            "ok": true,
+            "sku": null,
+            "stock": [
+              {
+                "sku": "a",
+                "quantity": 2
+              }
+            ]
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "sku": "a",
+                "quantity": 2
+              }
+            ],
+            [
+              {
+                "sku": "a",
+                "quantity": 3
+              }
+            ]
+          ],
+          "expected": {
+            "ok": false,
+            "sku": "a",
+            "stock": [
+              {
+                "sku": "a",
+                "quantity": 2
+              }
+            ]
+          }
+        },
+        {
+          "args": [
+            [],
+            []
+          ],
+          "expected": {
+            "ok": true,
+            "sku": null,
+            "stock": []
+          }
+        },
+        {
+          "args": [
+            [],
+            [
+              {
+                "sku": "x",
+                "quantity": 1
+              }
+            ]
+          ],
+          "expected": {
+            "ok": false,
+            "sku": "x",
+            "stock": []
+          }
+        },
+        {
+          "args": [
+            [],
+            [
+              {
+                "sku": "x",
+                "quantity": 1
+              },
+              {
+                "sku": "z",
+                "quantity": 0
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "safetyRequired": true
+    },
+    {
+      "id": "semantic-evaluatepostfixintegers",
+      "name": "evaluatePostfixIntegers",
+      "split": "heldOut",
+      "independenceGroup": "evaluate-postfix-integers",
+      "prompt": "Implement evaluatePostfixIntegers. Evaluate a token array containing canonical signed integer strings and + - * div operators. div truncates toward zero. Require exactly one result, safe integer intermediate results, two operands per operator and nonzero divisor. Reject malformed tokens, -0, overflow and empty expression. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function evaluatePostfixIntegers(tokens:string[]): number;",
+      "reference": "export function evaluatePostfixIntegers(tokens) {if(!Array.isArray(tokens))throw Error('input');const stack=[];for(const t of tokens){if(typeof t!=='string')throw Error('token');if(['+','-','*','div'].includes(t)){if(stack.length<2)throw Error('stack');const b=stack.pop(),a=stack.pop();if(t==='div'&&b===0)throw Error('zero');const n=t==='+'?a+b:t==='-'?a-b:t==='*'?a*b:Math.trunc(a/b);if(!Number.isSafeInteger(n))throw Error('overflow');stack.push(n);}else{if(!/^(0|-?[1-9]\\d*)$/.test(t)||!Number.isSafeInteger(Number(t)))throw Error('number');stack.push(Number(t));}}if(stack.length!==1)throw Error('stack');return stack[0];}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              "7",
+              "3",
+              "-",
+              "2",
+              "*"
+            ]
+          ],
+          "expected": 8
+        },
+        {
+          "args": [
+            [
+              "-7",
+              "2",
+              "div"
+            ]
+          ],
+          "expected": -3
+        },
+        {
+          "args": [
+            [
+              "0"
+            ]
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "1",
+              "0",
+              "div"
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              "1",
+              "2"
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              "-0"
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-decodeunsignedvarints",
+      "name": "decodeUnsignedVarints",
+      "split": "heldOut",
+      "independenceGroup": "decode-unsigned-varints",
+      "prompt": "Implement decodeUnsignedVarints. Decode a flat array of integer bytes into minimal unsigned base-128 varints, little endian 7-bit groups. Reject values beyond Number.MAX_SAFE_INTEGER, a trailing continuation, nonminimal encodings and malformed bytes. Return an array of numbers. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function decodeUnsignedVarints(bytes:number[]): number[];",
+      "reference": "export function decodeUnsignedVarints(bytes) {if(!Array.isArray(bytes)||bytes.some(x=>!Number.isInteger(x)||x<0||x>255))throw Error('input');const out=[];let value=0,factor=1,count=0;for(const b of bytes){count++;value+=(b&127)*factor;if(!Number.isSafeInteger(value)||count>8)throw Error('overflow');if(b<128){if(count>1&&(b&127)===0)throw Error('nonminimal');out.push(value);value=0;factor=1;count=0;}else factor*=128;}if(count)throw Error('truncated');return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              0,
+              127,
+              128,
+              1
+            ]
+          ],
+          "expected": [
+            0,
+            127,
+            128
+          ]
+        },
+        {
+          "args": [
+            [
+              172,
+              2
+            ]
+          ],
+          "expected": [
+            300
+          ]
+        },
+        {
+          "args": [
+            []
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              128
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              128,
+              0
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              256
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-formatromaninteger",
+      "name": "formatRomanInteger",
+      "split": "heldOut",
+      "independenceGroup": "format-roman-integer",
+      "prompt": "Implement formatRomanInteger. Format an integer 1..3999 using uppercase subtractive Roman notation, with IV, IX, XL, XC, CD and CM. Reject all other values. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function formatRomanInteger(value:number): string;",
+      "reference": "export function formatRomanInteger(value) {if(!Number.isInteger(value)||value<1||value>3999)throw Error('input');const pairs=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let out='';for(const [n,s] of pairs)while(value>=n){out+=s;value-=n;}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            4
+          ],
+          "expected": "IV"
+        },
+        {
+          "args": [
+            1994
+          ],
+          "expected": "MCMXCIV"
+        },
+        {
+          "args": [
+            3999
+          ],
+          "expected": "MMMCMXCIX"
+        },
+        {
+          "args": [
+            0
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            1.5
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-intersectavailability",
+      "name": "intersectAvailability",
+      "split": "heldOut",
+      "independenceGroup": "intersect-availability",
+      "prompt": "Implement intersectAvailability. Two lists contain sorted non-overlapping [start,end] safe integer intervals with start>=0 and end>start; touching intervals are allowed. Return their nonempty half-open intersections, merging touching output intervals. Reject any malformed or unsorted list. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function intersectAvailability(left:number[][], right:number[][]): number[][];",
+      "reference": "export function intersectAvailability(left,right) {for(const list of [left,right]){if(!Array.isArray(list))throw Error('input');let end=-1;for(const x of list){if(!Array.isArray(x)||x.length!==2||!x.every(Number.isSafeInteger)||x[0]<0||x[1]<=x[0]||x[0]<end)throw Error('interval');end=x[1];}}const out=[];let i=0,j=0;while(i<left.length&&j<right.length){const s=Math.max(left[i][0],right[j][0]),e=Math.min(left[i][1],right[j][1]);if(s<e){if(out.length&&out.at(-1)[1]===s)out.at(-1)[1]=e;else out.push([s,e]);}if(left[i][1]<right[j][1])i++;else j++;}return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              [
+                0,
+                3
+              ],
+              [
+                5,
+                8
+              ]
+            ],
+            [
+              [
+                2,
+                6
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              2,
+              3
+            ],
+            [
+              5,
+              6
+            ]
+          ]
+        },
+        {
+          "args": [
+            [
+              [
+                0,
+                2
+              ],
+              [
+                2,
+                4
+              ]
+            ],
+            [
+              [
+                0,
+                4
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "args": [
+            [],
+            []
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              [
+                0,
+                1
+              ]
+            ],
+            [
+              [
+                1,
+                2
+              ]
+            ]
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              [
+                2,
+                4
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            []
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-firstfitpackages",
+      "name": "firstFitPackages",
+      "split": "heldOut",
+      "independenceGroup": "first-fit-packages",
+      "prompt": "Implement firstFitPackages. Weights are positive safe integers at most capacity, and capacity is a positive safe integer. In input order, place each weight in the earliest bin with enough remaining capacity; otherwise append a new bin. Return bin index per weight and final bin loads. Reject all invalid items before returning. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function firstFitPackages(weights:number[], capacity:number): {assignments:number[];loads:number[]};",
+      "reference": "export function firstFitPackages(weights,capacity) {if(!Number.isSafeInteger(capacity)||capacity<=0||!Array.isArray(weights)||weights.some(x=>!Number.isSafeInteger(x)||x<=0||x>capacity))throw Error('input');const loads=[],assignments=[];for(const w of weights){let i=loads.findIndex(x=>w<=capacity-x);if(i<0){i=loads.length;loads.push(0);}loads[i]+=w;assignments.push(i);}return {assignments,loads};}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              6,
+              6,
+              4,
+              4
+            ],
+            10
+          ],
+          "expected": {
+            "assignments": [
+              0,
+              1,
+              0,
+              1
+            ],
+            "loads": [
+              10,
+              10
+            ]
+          }
+        },
+        {
+          "args": [
+            [],
+            3
+          ],
+          "expected": {
+            "assignments": [],
+            "loads": []
+          }
+        },
+        {
+          "args": [
+            [
+              1,
+              1,
+              1
+            ],
+            2
+          ],
+          "expected": {
+            "assignments": [
+              0,
+              0,
+              1
+            ],
+            "loads": [
+              2,
+              1
+            ]
+          }
+        },
+        {
+          "args": [
+            [
+              0
+            ],
+            2
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              3
+            ],
+            2
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-parserfcdate",
+      "name": "parseRfcDate",
+      "split": "heldOut",
+      "independenceGroup": "parse-rfc-date",
+      "prompt": "Implement parseRfcDate. Parse exactly Ddd, DD Mon YYYY HH:mm:ss GMT with English RFC weekday/month names and year 0100..9999. Verify the actual calendar day and matching weekday, reject leap seconds and invalid dates. Return UTC epoch milliseconds. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function parseRfcDate(text:string): number;",
+      "reference": "export function parseRfcDate(text) {if(typeof text!=='string')throw Error('input');const m=/^(Sun|Mon|Tue|Wed|Thu|Fri|Sat), (\\d{2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) GMT$/.exec(text);if(!m)throw Error('syntax');const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],day=+m[2],month=months.indexOf(m[3]),year=+m[4],h=+m[5],n=+m[6],s=+m[7];if(year<100||h>23||n>59||s>59)throw Error('range');const date=new Date(Date.UTC(year,month,day,h,n,s));if(date.getUTCFullYear()!==year||date.getUTCMonth()!==month||date.getUTCDate()!==day||days[date.getUTCDay()]!==m[1])throw Error('calendar');return date.getTime();}\n",
+      "vectors": [
+        {
+          "args": [
+            "Thu, 01 Jan 1970 00:00:00 GMT"
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            "Sat, 01 Jan 2000 00:00:00 GMT"
+          ],
+          "expected": 946684800000
+        },
+        {
+          "args": [
+            "Fri, 01 Jan 1971 00:00:00 GMT"
+          ],
+          "expected": 31536000000
+        },
+        {
+          "args": [
+            "Fri, 01 Jan 1970 00:00:00 GMT"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "Sun, 31 Feb 2024 00:00:00 GMT"
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-applytextsplices",
+      "name": "applyTextSplices",
+      "split": "heldOut",
+      "independenceGroup": "apply-text-splices",
+      "prompt": "Implement applyTextSplices. Splices have safe integer start/end UTF-16 offsets within text, start<=end and string replacement. Sort by start; reject overlapping ranges and duplicate start offsets, including multiple insertions at one position. Offsets always refer to the original text. Return the replaced string. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function applyTextSplices(text:string, splices:{start:number;end:number;replacement:string}[]): string;",
+      "reference": "export function applyTextSplices(text,splices) {if(typeof text!=='string'||!Array.isArray(splices))throw Error('input');for(const s of splices)if(!s||!Number.isSafeInteger(s.start)||!Number.isSafeInteger(s.end)||s.start<0||s.end<s.start||s.end>text.length||typeof s.replacement!=='string')throw Error('splice');const sorted=[...splices].sort((a,b)=>a.start-b.start);let end=0,prev=-1,out='';for(const s of sorted){if(s.start<end||s.start===prev)throw Error('overlap');out+=text.slice(end,s.start)+s.replacement;end=s.end;prev=s.start;}return out+text.slice(end);}\n",
+      "vectors": [
+        {
+          "args": [
+            "abcdef",
+            [
+              {
+                "start": 4,
+                "end": 6,
+                "replacement": "Y"
+              },
+              {
+                "start": 0,
+                "end": 2,
+                "replacement": "X"
+              }
+            ]
+          ],
+          "expected": "XcdY"
+        },
+        {
+          "args": [
+            "abc",
+            [
+              {
+                "start": 1,
+                "end": 1,
+                "replacement": "!"
+              }
+            ]
+          ],
+          "expected": "a!bc"
+        },
+        {
+          "args": [
+            "x",
+            []
+          ],
+          "expected": "x"
+        },
+        {
+          "args": [
+            "abc",
+            [
+              {
+                "start": 0,
+                "end": 2,
+                "replacement": ""
+              },
+              {
+                "start": 1,
+                "end": 3,
+                "replacement": ""
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "a",
+            [
+              {
+                "start": 0,
+                "end": 0,
+                "replacement": "a"
+              },
+              {
+                "start": 0,
+                "end": 0,
+                "replacement": "b"
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-evaluatebooleancircuit",
+      "name": "evaluateBooleanCircuit",
+      "split": "heldOut",
+      "independenceGroup": "evaluate-boolean-circuit",
+      "prompt": "Implement evaluateBooleanCircuit. A circuit is an array of nodes with unique nonempty ids. const nodes have boolean value; not nodes have one input id; and/or/xor nodes have two input ids. Resolve all nodes regardless of output; reject cycles, missing inputs or wrong arity. Return the selected output boolean, or reject unknown output. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function evaluateBooleanCircuit(nodes:{id:string;op:string;value?:boolean;inputs?:string[]}[], output:string): boolean;",
+      "reference": "export function evaluateBooleanCircuit(nodes,output) {if(!Array.isArray(nodes)||typeof output!=='string')throw Error('input');const map=new Map(),values=new Map(),visiting=new Set();for(const n of nodes){if(!n||typeof n.id!=='string'||!n.id||map.has(n.id)||!['const','not','and','or','xor'].includes(n.op))throw Error('node');if(n.op==='const'?typeof n.value!=='boolean':!Array.isArray(n.inputs)||n.inputs.length!==(n.op==='not'?1:2)||n.inputs.some(x=>typeof x!=='string'))throw Error('arity');map.set(n.id,n);}const calc=id=>{if(values.has(id))return values.get(id);if(!map.has(id)||visiting.has(id))throw Error('dependency');visiting.add(id);const n=map.get(id),args=n.op==='const'?[]:n.inputs.map(calc);const value=n.op==='const'?n.value:n.op==='not'?!args[0]:n.op==='and'?args[0]&&args[1]:n.op==='or'?args[0]||args[1]:args[0]!==args[1];visiting.delete(id);values.set(id,value);return value;};for(const id of map.keys())calc(id);return calc(output);}\n",
+      "vectors": [
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "op": "const",
+                "value": true
+              },
+              {
+                "id": "b",
+                "op": "not",
+                "inputs": [
+                  "a"
+                ]
+              }
+            ],
+            "b"
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "op": "const",
+                "value": true
+              }
+            ],
+            "a"
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "op": "xor",
+                "inputs": [
+                  "a",
+                  "a"
+                ]
+              },
+              {
+                "id": "a",
+                "op": "const",
+                "value": true
+              }
+            ],
+            "x"
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "op": "not",
+                "inputs": [
+                  "a"
+                ]
+              }
+            ],
+            "a"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "op": "const",
+                "value": true
+              },
+              {
+                "id": "b",
+                "op": "not",
+                "inputs": [
+                  "missing"
+                ]
+              }
+            ],
+            "a"
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-normalizelongitude",
+      "name": "normalizeLongitude",
+      "split": "heldOut",
+      "independenceGroup": "normalize-longitude",
+      "prompt": "Implement normalizeLongitude. Normalize a finite numeric longitude to [-180,180), using degrees. Multiples of 360 map to positive zero and 180 maps to -180. Reject values with absolute magnitude greater than 1e12 and nonnumbers. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function normalizeLongitude(degrees:number): number;",
+      "reference": "export function normalizeLongitude(degrees) {if(!Number.isFinite(degrees)||Math.abs(degrees)>1e12)throw Error('input');const out=((degrees+180)%360+360)%360-180;return out===0?0:out;}\n",
+      "vectors": [
+        {
+          "args": [
+            180
+          ],
+          "expected": -180
+        },
+        {
+          "args": [
+            -181
+          ],
+          "expected": 179
+        },
+        {
+          "args": [
+            720
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            90.5
+          ],
+          "expected": 90.5
+        },
+        {
+          "args": [
+            "90"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            10000000000000
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-selectauctionwinner",
+      "name": "selectAuctionWinner",
+      "split": "heldOut",
+      "independenceGroup": "select-auction-winner",
+      "prompt": "Implement selectAuctionWinner. Bids contain a unique nonempty id, positive safe integer amount and nonnegative safe integer timestamp. Reserve is a nonnegative safe integer. Pick greatest amount at least reserve, then earliest timestamp, then lexicographically smallest id. Return id and price equal to the winning amount, or null. Validate all bids. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function selectAuctionWinner(bids:{id:string;amount:number;timestamp:number}[], reserve:number): {id:string;price:number} | null;",
+      "reference": "export function selectAuctionWinner(bids,reserve) {if(!Array.isArray(bids)||!Number.isSafeInteger(reserve)||reserve<0)throw Error('input');const ids=new Set();for(const b of bids){if(!b||typeof b.id!=='string'||!b.id||ids.has(b.id)||!Number.isSafeInteger(b.amount)||b.amount<=0||!Number.isSafeInteger(b.timestamp)||b.timestamp<0)throw Error('bid');ids.add(b.id);}const list=bids.filter(b=>b.amount>=reserve).sort((a,b)=>b.amount-a.amount||a.timestamp-b.timestamp||(a.id<b.id?-1:a.id>b.id?1:0));return list.length?{id:list[0].id,price:list[0].amount}:null;}\n",
+      "vectors": [
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "amount": 5,
+                "timestamp": 1
+              }
+            ],
+            6
+          ],
+          "expected": null
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "b",
+                "amount": 9,
+                "timestamp": 2
+              },
+              {
+                "id": "a",
+                "amount": 9,
+                "timestamp": 2
+              }
+            ],
+            1
+          ],
+          "expected": {
+            "id": "a",
+            "price": 9
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "b",
+                "amount": 9,
+                "timestamp": 1
+              },
+              {
+                "id": "a",
+                "amount": 9,
+                "timestamp": 2
+              }
+            ],
+            1
+          ],
+          "expected": {
+            "id": "b",
+            "price": 9
+          }
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "a",
+                "amount": 0,
+                "timestamp": 0
+              }
+            ],
+            0
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-decodepercentsegment",
+      "name": "decodePercentSegment",
+      "split": "heldOut",
+      "independenceGroup": "decode-percent-segment",
+      "prompt": "Implement decodePercentSegment. Decode percent-encoded UTF-8 with literal plus signs preserved. Reject malformed escapes, invalid UTF-8, decoded slash or backslash, NUL, . or .. as the whole result. Empty strings are allowed. Return decoded text. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function decodePercentSegment(text:string): string;",
+      "reference": "export function decodePercentSegment(text) {if(typeof text!=='string')throw Error('input');const out=decodeURIComponent(text);if(/[\\/\\\\\\x00]/.test(out)||out==='.'||out==='..')throw Error('segment');return out;}\n",
+      "vectors": [
+        {
+          "args": [
+            "a+b%20c"
+          ],
+          "expected": "a+b c"
+        },
+        {
+          "args": [
+            "%E4%B8%AD"
+          ],
+          "expected": "中"
+        },
+        {
+          "args": [
+            ""
+          ],
+          "expected": ""
+        },
+        {
+          "args": [
+            "%2f"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "%C0%AF"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "%2e%2e"
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-expandipv6groups",
+      "name": "expandIpv6Groups",
+      "split": "heldOut",
+      "independenceGroup": "expand-ipv6-groups",
+      "prompt": "Implement expandIpv6Groups. Parse an IPv6 address consisting only of hexadecimal groups and at most one :: compression. Each explicit group has 1..4 hex digits. Without compression require eight groups; with compression require fewer than eight. Reject dotted forms, zones or brackets. Return eight lowercase four-digit groups separated by colons. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function expandIpv6Groups(text:string): string;",
+      "reference": "export function expandIpv6Groups(text) {if(typeof text!=='string'||!/^[0-9a-fA-F:]+$/.test(text))throw Error('input');const parts=text.split('::');if(parts.length>2)throw Error('compression');const parse=s=>s===''?[]:s.split(':').map(g=>{if(!/^[0-9a-fA-F]{1,4}$/.test(g))throw Error('group');return g.toLowerCase().padStart(4,'0');});const left=parse(parts[0]),right=parts.length===2?parse(parts[1]):[];if(parts.length===1&&left.length!==8||parts.length===2&&left.length+right.length>=8)throw Error('count');return [...left,...Array(parts.length===2?8-left.length-right.length:0).fill('0000'),...right].join(':');}\n",
+      "vectors": [
+        {
+          "args": [
+            "::1"
+          ],
+          "expected": "0000:0000:0000:0000:0000:0000:0000:0001"
+        },
+        {
+          "args": [
+            "2001:DB8::"
+          ],
+          "expected": "2001:0db8:0000:0000:0000:0000:0000:0000"
+        },
+        {
+          "args": [
+            "1:2:3:4:5:6:7:8"
+          ],
+          "expected": "0001:0002:0003:0004:0005:0006:0007:0008"
+        },
+        {
+          "args": [
+            "1::2::3"
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            "1:2:3:4:5:6:7:8::"
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-resolvetournamentseeds",
+      "name": "resolveTournamentSeeds",
+      "split": "heldOut",
+      "independenceGroup": "resolve-tournament-seeds",
+      "prompt": "Implement resolveTournamentSeeds. Players have unique nonempty ids and nonnegative safe integer points and losses. Sort by points descending, losses ascending, then id lexicographically. Assign competition ranks: players with equal points and losses share rank, and the next rank equals its 1-based sorted position. Return id/rank rows. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function resolveTournamentSeeds(players:{id:string;points:number;losses:number}[]): {id:string;rank:number}[];",
+      "reference": "export function resolveTournamentSeeds(players) {if(!Array.isArray(players))throw Error('input');const ids=new Set();for(const p of players){if(!p||typeof p.id!=='string'||!p.id||ids.has(p.id)||!Number.isSafeInteger(p.points)||p.points<0||!Number.isSafeInteger(p.losses)||p.losses<0)throw Error('player');ids.add(p.id);}const sorted=[...players].sort((a,b)=>b.points-a.points||a.losses-b.losses||(a.id<b.id?-1:a.id>b.id?1:0));let rank=0;return sorted.map((p,i)=>{if(i===0||p.points!==sorted[i-1].points||p.losses!==sorted[i-1].losses)rank=i+1;return {id:p.id,rank};});}\n",
+      "vectors": [
+        {
+          "args": [
+            []
+          ],
+          "expected": []
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "b",
+                "points": 3,
+                "losses": 0
+              },
+              {
+                "id": "a",
+                "points": 3,
+                "losses": 0
+              },
+              {
+                "id": "c",
+                "points": 2,
+                "losses": 0
+              }
+            ]
+          ],
+          "expected": [
+            {
+              "id": "a",
+              "rank": 1
+            },
+            {
+              "id": "b",
+              "rank": 1
+            },
+            {
+              "id": "c",
+              "rank": 3
+            }
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "points": 0,
+                "losses": 0
+              }
+            ]
+          ],
+          "expected": [
+            {
+              "id": "x",
+              "rank": 1
+            }
+          ]
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "points": -1,
+                "losses": 0
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              {
+                "id": "x",
+                "points": 1,
+                "losses": 0
+              },
+              {
+                "id": "x",
+                "points": 2,
+                "losses": 0
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "id": "semantic-checksumadler32",
+      "name": "checksumAdler32",
+      "split": "heldOut",
+      "independenceGroup": "checksum-adler32",
+      "prompt": "Implement checksumAdler32. Compute Adler-32 for an array of integer bytes, starting a=1 and b=0, reducing each modulo 65521 after every byte. Return the unsigned numeric checksum b*65536+a. Reject any element outside integer 0..255. Never mutate inputs or perform external effects.",
+      "declaration": "export declare function checksumAdler32(bytes:number[]): number;",
+      "reference": "export function checksumAdler32(bytes) {if(!Array.isArray(bytes)||bytes.some(x=>!Number.isInteger(x)||x<0||x>255))throw Error('input');let a=1,b=0;for(const x of bytes){a=(a+x)%65521;b=(b+a)%65521;}return b*65536+a;}\n",
+      "vectors": [
+        {
+          "args": [
+            []
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            [
+              65
+            ]
+          ],
+          "expected": 4325442
+        },
+        {
+          "args": [
+            [
+              0,
+              0
+            ]
+          ],
+          "expected": 131073
+        },
+        {
+          "args": [
+            [
+              256
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "args": [
+            [
+              1.2
+            ]
+          ],
+          "throws": true
+        }
+      ]
+    }
+  ]
+}

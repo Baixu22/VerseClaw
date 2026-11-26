@@ -43,6 +43,7 @@ export function prepareGradeWorkspace(options: {
   revision: string;
   edits?: GradeEdits;
 }): Promise<{ workspace: string; revision: string; edits: string[]; oracleFiles: string[] }>;
+export function prepareStdioGradeWorkspace(options: Parameters<typeof prepareGradeWorkspace>[0]): ReturnType<typeof prepareGradeWorkspace>;
 
 export type OracleDiagnostic = {
   kind: string;
@@ -62,6 +63,8 @@ export type OracleExecution = {
   timedOut: boolean;
   signal: string | null;
   error: string | null;
+  errorCode?: string | null;
+  elapsedMs?: number;
   report: any | null;
   reportPath: string | null;
   stdoutPath: string;
