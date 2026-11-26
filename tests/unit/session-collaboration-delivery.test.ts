@@ -46,6 +46,20 @@ describe('original message intent owner', () => {
     expect(store.receipt(store.get(msg.id)!).phase).toBe('accepted');
     store.record(msg.id, { ...receipt, phase: 'rejected', updatedAt: 4 }); expect(store.receipt(store.get(msg.id)!).phase).toBe('accepted');
   });
+  it('keeps confirmed delivery when earlier acknowledgements arrive after reopening the owner', () => {
+    const msg = message();
+    const run = normalizeRunScope({ runId: 'receiver-run', scope: { workspaceId: b.workspaceId, projectId: b.projectId, sessionKey: b.sessionKey } });
+    store.accept(msg);
+    store.claim(msg.id, msg.payloadDigest);
+    const delivered = { schemaVersion: 'SessionCollaborationReceipt/v1' as const, message: msg, phase: 'delivered' as const, run, replyRef: null, updatedAt: 10 };
+    store.record(msg.id, delivered);
+    db.close();
+    db = new (requireNodeSqlite().DatabaseSync)(path);
+    store = new SessionCollaborationMessageStore(db);
+    store.record(msg.id, { ...delivered, phase: 'queued', updatedAt: 11 });
+    store.record(msg.id, { ...delivered, phase: 'accepted', run: null, updatedAt: 12 });
+    expect(store.receipt(store.get(msg.id)!)).toEqual(delivered);
+  });
   it('retains the actual owner reply and its byte hash separately from metadata pages', () => {
     const msg = message(), text = 'Receiver reply', run = normalizeRunScope({ runId: 'receiver-run', scope: { workspaceId: b.workspaceId, projectId: b.projectId, sessionKey: b.sessionKey } });
     store.accept(msg); store.claim(msg.id, msg.payloadDigest);

@@ -16,6 +16,7 @@ type IntentRow = { seq: number; id: string; payload_digest: string; envelope_jso
 type MessageDb = { session_message_intents: Omit<IntentRow, 'seq'> & { seq: Generated<number> } };
 export type SessionMessageSummary = Omit<SessionCollaborationMessage, 'message'> & { preview: string; truncated: boolean };
 export const messageScopeKey = (scope: AutonomySessionScope) => JSON.stringify([scope.workspaceId, scope.projectId, scope.sessionKey, scope.sessionGeneration]);
+const deliveryProgress: ReadonlyArray<SessionCollaborationMessageReceipt['phase']> = ['accepted', 'queued', 'delivered', 'replied'];
 
 /** The existing shared state DB owns message intents; run and queue facts remain with their owners. */
 export class SessionCollaborationMessageStore {
@@ -69,16 +70,24 @@ export class SessionCollaborationMessageStore {
         .where('id', '=', id).where('payload_digest', '=', digest).where('state', '=', 'accepted').returning('id'))));
   }
   record(id: string, input: SessionCollaborationMessageReceipt) {
-    const row = this.get(id); if (!row) throw new Error('COLLABORATION_MESSAGE_MISSING');
-    const original = verifySessionCollaborationMessage(JSON.parse(row.envelope_json));
-    const receipt = { ...validateSessionCollaborationReceipt(original, input), message: original };
-    const previous = row.receipt_json ? JSON.parse(row.receipt_json) as SessionCollaborationMessageReceipt : null;
-    if (previous && ['accepted', 'queued', 'delivered', 'replied'].includes(previous.phase) && ['unknown', 'rejected'].includes(receipt.phase)) return;
-    if (previous?.phase === 'replied' && receipt.phase !== 'replied') return;
-    const { message: _message, reply, ...metadata } = receipt;
-    executeSqliteQuerySync(this.db, this.query().updateTable('session_message_intents').set({ state: 'settled', receipt_json: JSON.stringify(metadata),
-      reply_json: reply ? JSON.stringify(reply) : row.reply_json, updated_at: receipt.updatedAt })
-      .where('id', '=', id).where('payload_digest', '=', original.payloadDigest));
+    runSqliteImmediateTransactionSync(this.db, () => {
+      const row = this.get(id);
+      if (!row) throw new Error('COLLABORATION_MESSAGE_MISSING');
+      const original = verifySessionCollaborationMessage(JSON.parse(row.envelope_json));
+      const receipt = validateSessionCollaborationReceipt(original, input);
+      const previous = row.receipt_json ? JSON.parse(row.receipt_json) as SessionCollaborationMessageReceipt : null;
+      if (previous?.phase === 'replied' && receipt.phase !== 'replied') return;
+      if (previous) {
+        const recordedStep = deliveryProgress.indexOf(previous.phase);
+        const incomingStep = deliveryProgress.indexOf(receipt.phase);
+        if (recordedStep >= 0 && (receipt.phase === 'unknown' || receipt.phase === 'rejected')) return;
+        if (incomingStep >= 0 && incomingStep < recordedStep) return;
+      }
+      const { message: _message, reply, ...metadata } = receipt;
+      executeSqliteQuerySync(this.db, this.query().updateTable('session_message_intents').set({ state: 'settled', receipt_json: JSON.stringify(metadata),
+        reply_json: reply ? JSON.stringify(reply) : row.reply_json, updated_at: receipt.updatedAt })
+        .where('id', '=', id).where('payload_digest', '=', original.payloadDigest));
+    });
   }
   receipt(row: IntentRow, seen = new Set<string>()): SessionCollaborationMessageReceipt {
     if (seen.has(row.id) || seen.size >= 4) throw new Error('COLLABORATION_MESSAGE_REFERENCE_CYCLE');
