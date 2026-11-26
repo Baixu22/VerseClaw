@@ -58,6 +58,7 @@ for (const theme of ['light', 'dark'] as const) {
       }
       await page.evaluate(() => { window.location.hash = '/observability'; });
       await expect(page.getByTestId('observability-page')).toBeVisible();
+      await page.getByTestId('observability-metrics-toggle').click();
       for (const width of [1280, 960]) {
         await checkSurface(page, testInfo, `${theme}-observability`, width);
         const clippedHeight = await page.getByTestId('observability-primary-metrics').evaluate((element) => {

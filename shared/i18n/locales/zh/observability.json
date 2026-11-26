@@ -76,7 +76,24 @@
     "custom": "已保存视图",
     "saveCurrent": "保存当前视图"
   },
+  "steps": {
+    "metrics": "指标",
+    "filters": "筛选",
+    "filtered": "已筛选",
+    "chooseRun": "切换运行",
+    "back": "返回",
+    "runDetails": "运行详情",
+    "technical": "技术详情",
+    "toolResult": "工具结果",
+    "prompt": "用户提问",
+    "reply": "助手回复",
+    "empty": "这次运行还没有步骤记录。",
+    "showEvents": "显示其他事件（{{count}}）",
+    "hideEvents": "收起其他事件",
+    "reasoning": "思考记录"
+  },
   "views": {
+    "steps": "执行过程",
     "label": "视图",
     "graph": "图谱",
     "tree": "运行树",
@@ -131,6 +148,7 @@
     "emptyBody": "从追踪列表选择一次运行，查看 Agent 链路、模型调用、工具、审批和错误。"
   },
   "tabs": {
+    "all": "全部标签",
     "details": "详情",
     "summary": "摘要",
     "issues": "问题",
