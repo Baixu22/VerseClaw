@@ -46,6 +46,7 @@ it('preserves original versions through conflict, replacement, revocation and mi
     expect(revoke()).toEqual(revoke());
     expect(store.sharedMaterialStatus(successor, source, Date.now()).state).toBe('revoked');
     expect(store.readSharedMaterial(source, source, firstRef)).toEqual(first);
+    expect(store.readHistoricalSharedMaterial(source, source, firstRef)).toMatchObject({ material: first, state: 'unknown' });
     expect(store.readHistoricalSharedMaterial({ ...source, sessionGeneration: 'unbound' }, source, firstRef)).toBeNull();
   } finally {
     store.close();

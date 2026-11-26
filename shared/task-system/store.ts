@@ -784,7 +784,12 @@ export class TaskSystemStore {
   }
   readHistoricalSharedMaterial(viewer: AutonomySessionScope, source: AutonomySessionScope, ref: SessionCollaborationMaterialRef) {
     this.assertReadCurrent();
-    if (this.binding(viewer.sessionKey, viewer.sessionGeneration)?.contract.taskNodeId !== ref.taskNodeId) return null;
+    try {
+      if (this.binding(viewer.sessionKey, viewer.sessionGeneration)?.contract.taskNodeId !== ref.taskNodeId) return null;
+    } catch (error) {
+      if (error instanceof Error && error.message === 'TASK_GENERATION_STALE') return null;
+      throw error;
+    }
     const material = this.readSharedMaterial(viewer, source, ref);
     if (!material) return null;
     const retainedEvidence = this.retentionReceipts(material.taskNodeId).filter(receipt => receipt.source.kind === 'evidence' &&

@@ -6,6 +6,8 @@ import { createHash } from 'node:crypto';
 import { expect, it, vi } from 'vitest';
 import { readSessionCollaborationMaterials } from '../../openclaw_runtime/src/gateway/server-methods/session-collaboration-material';
 import type { GatewayRequestContext } from '../../openclaw_runtime/src/gateway/server-methods/types';
+import { openExecutionStateDatabase } from '../../openclaw_runtime/src/state/execution-state-db';
+import { closeOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import type { AutonomySessionScope } from '../../shared/types/identity-scope';
@@ -17,6 +19,7 @@ vi.mock('../../openclaw_runtime/src/gateway/server-methods/session-collaboration
 
 it('searches only the visible source scopes and opens the original version by its digest', async () => {
   const root = mkdtempSync(join(tmpdir(), 'collaboration-material-query-'));
+  vi.stubEnv('CLAWX_EXECUTION_STATE_PATH', join(root, 'execution.sqlite'));
   const now = Date.now();
   const store = new TaskSystemStore(resolveTaskDomain(root), () => now - 10_000);
   const requester = { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'agent:main:reader',
@@ -25,6 +28,7 @@ it('searches only the visible source scopes and opens the original version by it
   const context = {} as GatewayRequestContext;
   const query = (filters: Record<string, unknown>) => readSessionCollaborationMaterials({ requester, ...filters }, context);
   try {
+    openExecutionStateDatabase();
     loadSessionEntry.mockImplementation(key => ({ canonicalKey: key, entry: { workspaceId: requester.workspaceId, workspaceDir: root,
       sessionId: key === source.sessionKey ? source.sessionGeneration : requester.sessionGeneration } }));
     visibility.mockImplementation(input => ({ state: 'ready', items: (input.target ? [input.target] : [requester, source])
@@ -67,6 +71,8 @@ it('searches only the visible source scopes and opens the original version by it
       .toMatchObject({ state: 'unavailable', reason: 'not-visible', detail: null });
   } finally {
     store.close();
+    closeOpenClawStateDatabase();
+    vi.unstubAllEnvs();
     rmSync(root, { recursive: true, force: true });
     vi.resetAllMocks();
   }
