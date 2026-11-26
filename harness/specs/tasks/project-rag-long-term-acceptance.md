@@ -7,8 +7,18 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-19
 intent: 证明长期目标已经交付，并结束临时并行实现。
-diffBase: c6d47704411a5b4ee86dd5ec82bb8070987486fd
+diffBase: 02c35d14696c732801dbadffe784de7de55ee057
 touchedAreas:
+  - "docs/dev/project-rag/RESEARCH-CONTRACT.md"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval-rerank.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/plan.ts"
+  - "scripts/knowledge-rag-acceptance.ts"
+  - "scripts/knowledge-rag-adaptation-readback.ts"
+  - "scripts/lib/project-rag-adaptation-readback.d.mts"
+  - "scripts/lib/project-rag-promotion.mjs"
+  - "tests/unit/project-rag-capacity-input.test.ts"
+  - "tests/unit/project-rag-rerank-provider.test.ts"
+  - "harness/specs/fixtures/project-rag/g2-closeout-review-20261126/**"
   - "docs/dev/project-rag/EVALUATION-CONTRACT.md"
   - "scripts/knowledge-rag-vector-capacity.ts"
   - "scripts/lib/project-rag-acceptance.d.mts"
@@ -101,6 +111,7 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "pnpm exec vitest run tests/unit/project-rag-rerank-provider.test.ts tests/unit/project-rag-plan-owner.test.ts tests/unit/project-rag-research-controller.test.ts tests/unit/project-rag-observability-store.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec vitest run tests/unit/project-rag-adaptation-readback.test.ts tests/unit/project-rag-capacity-input.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec vitest run tests/unit/knowledge-retrieval.test.ts tests/unit/knowledge-evidence-qa.test.ts tests/unit/harness-specs.test.ts tests/unit/project-rag-acceptance-readback.test.ts --maxWorkers=1 --cache=false"
   - "pnpm exec playwright test tests/e2e/project-rag-chat-modes.spec.ts tests/e2e/project-rag-research.spec.ts --workers=1 --retries=0"

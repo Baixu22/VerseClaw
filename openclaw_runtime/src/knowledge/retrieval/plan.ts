@@ -461,18 +461,29 @@ export async function runRetrievalPlan<T>(options: {
             throw new Error("Rerank result does not match the admitted candidate set");
           }
           const ordered = receipt.results.map((row) => byId.get(row.id)!);
-          const checked: typeof pool = [];
-          for (const hit of ordered) {
-            const reason = await bounded(() => options.verify(hit, signal));
-            if (reason) throw new Error(`Rerank owner verification failed: ${reason}`);
-            checked.push(hit);
-          }
-          ranked = [...checked, ...verified.slice(candidates.length)];
+          ranked = [...ordered, ...verified.slice(candidates.length)];
         } catch (error) {
           result.fallbackReasons.push(
             `rerank-failed:${error instanceof Error ? error.message : String(error)}`.slice(0, 240),
           );
         }
+      }
+    }
+    if (needsRerank && options.rerank) {
+      let changed = false;
+      // Successful and failed provider waits both invalidate the earlier owner reads.
+      for (const hit of ranked ?? verified) {
+        let reason: string | undefined;
+        try { reason = await bounded(() => options.verify(hit, signal)); }
+        catch (error) { reason = error instanceof Error ? error.message : String(error); }
+        if (reason) {
+          changed = true;
+          result.filters.push({ namespaceId: hit.sourceRef.namespaceId, subjectId: hit.sourceRef.subjectId, reason });
+        }
+      }
+      if (changed) {
+        ranked = undefined;
+        result.fallbackReasons.push("rerank-failed:owner-evidence-changed");
       }
     }
     result.stages!.push({ stage: "rerank", elapsedMs: performance.now() - rerankStart,

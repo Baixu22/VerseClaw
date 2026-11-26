@@ -117,6 +117,8 @@ describe('retrieval diagnostics owner and atomic transition behavior', () => {
     expect(row.modelRuns).toHaveLength(1);
     expect(row.usage).toMatchObject({ totalModelTokens: 21, modelCostUsd: 0.01, costUsd: null });
     expect(row.dcs?.runId).toBe('run-1');
+    await expect(service.correlate(identity, { ...input, providerSpend: { ...input.providerSpend, actualTokens: 22 } }))
+      .rejects.toThrow('Conflicting retained evidence run');
   });
   it('requires original offline evidence even for direct owner promotion calls', async () => {
     const { service } = fixture();

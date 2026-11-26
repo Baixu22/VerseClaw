@@ -1,0 +1,256 @@
+{
+  "schema": "G2CloseoutReview/v1",
+  "actor": "codex-g2-closeout-review",
+  "driven_by": "agent",
+  "reviewMode": "primary-agent-code-review-and-adversarial-regressions",
+  "sourceBase": "02c35d14696c732801dbadffe784de7de55ee057",
+  "status": "findings-fixed-development-verified",
+  "unresolvedFindings": [],
+  "findings": [
+    {
+      "id": "G2-REV-01",
+      "priority": "P1",
+      "status": "fixed",
+      "problem": "Rerank re-verification failure returned the earlier owner-approved source through RRF fallback. Failed provider waits skipped the final re-verification.",
+      "fix": "Revalidate the full retained/fallback candidate pool after all provider outcomes; denied parent sources are removed.",
+      "test": "tests/unit/project-rag-rerank-provider.test.ts"
+    },
+    {
+      "id": "G2-REV-02",
+      "priority": "P1",
+      "status": "fixed",
+      "problem": "An acquired rerank provider remained callable after cancellation, disablement or replacement.",
+      "fix": "Bind handles and network signals to the selection lifecycle; reject old handles before dispatch and reject late outputs.",
+      "test": "tests/unit/project-rag-rerank-provider.test.ts"
+    },
+    {
+      "id": "G2-REV-03",
+      "priority": "P1",
+      "status": "fixed",
+      "problem": "Frozen adaptation plans did not pin the dataset/authoring bytes or enforce expected profile/baseline; DCS comparison accepted a subset.",
+      "fix": "Bind dataset, authoring and snapshot hashes to the plan; require expected profile and baseline; match both directions of retained pins; compare held-out costs and classify supported conflict answers correctly.",
+      "test": "tests/unit/project-rag-adaptation-readback.test.ts"
+    },
+    {
+      "id": "G2-REV-04",
+      "priority": "P1",
+      "status": "fixed",
+      "problem": "Renamed copies of one vector response could inflate capacity counts; final readback trusted a supplied source inventory and aggregate metrics.",
+      "fix": "Reject repeated document/query evidence and provider items, require l2 and unique output indices, stream-revalidate every source/vector and exact pin inventory, recompute recall/P95 from all31 measurements.",
+      "test": "tests/unit/project-rag-capacity-input.test.ts; tests/unit/project-rag-acceptance-readback.test.ts"
+    },
+    {
+      "id": "G2-REV-05",
+      "priority": "P2",
+      "status": "fixed",
+      "problem": "A repeated model correlation with changed token/cost/model identity was silently treated as an identical run.",
+      "fix": "Reject conflicting measured usage and model identities for an existing run.",
+      "test": "tests/unit/project-rag-observability-store.test.ts"
+    }
+  ],
+  "validation": {
+    "actor": "codex-g2-closeout-review",
+    "driven_by": "agent",
+    "status": "passed",
+    "steps": [
+      {
+        "name": "unit",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "vitest",
+          "run",
+          "tests/unit/project-rag-acceptance-readback.test.ts",
+          "tests/unit/project-rag-adaptation-readback.test.ts",
+          "tests/unit/project-rag-capacity-input.test.ts",
+          "tests/unit/project-rag-research-controller.test.ts",
+          "tests/unit/project-rag-observability-store.test.ts",
+          "tests/unit/project-rag-rerank-provider.test.ts",
+          "tests/unit/project-rag-plan-owner.test.ts",
+          "tests/unit/project-rag-offline-package.test.ts",
+          "tests/unit/project-rag-receipts-promotion.test.ts",
+          "--maxWorkers=1",
+          "--cache=false",
+          "--reporter=json",
+          "--outputFile=D:\\tmp\\g2-closeout-review-20261126-01a21178\\final-checks\\unit.json"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 73.188,
+        "logSha256": "4b085101098c79e96e35527230ef48cc1c2202d8f2f6d0ffda8d121f90aac37d"
+      },
+      {
+        "name": "types",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "tsgo",
+          "-p",
+          "D:\\tmp\\g2-closeout-review-20261126-01a21178\\tsconfig.review.json",
+          "--pretty",
+          "false"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 16.25,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "lint",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "exec",
+          "eslint",
+          "scripts/knowledge-rag-acceptance.ts",
+          "scripts/knowledge-rag-adaptation-readback.ts",
+          "scripts/lib/project-rag-capacity-input.ts",
+          "tests/unit/project-rag-capacity-input.test.ts",
+          "tests/unit/project-rag-adaptation-readback.test.ts",
+          "tests/unit/project-rag-acceptance-readback.test.ts",
+          "tests/unit/project-rag-rerank-provider.test.ts",
+          "tests/unit/project-rag-observability-store.test.ts"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 7.547,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "harness",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/project-rag-long-term-acceptance.md"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 2.078,
+        "logSha256": "3547505a9b3ef7a69df4e1992fbefe3cb3b886e30033e23f9b7772bccc6593c3"
+      },
+      {
+        "name": "dry-run",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/tasks/project-rag-long-term-acceptance.md",
+          "--dry-run"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 2.0,
+        "logSha256": "5a5445aaa1ecd5d4e79840c0bbaedb96c74765800d28b95538e12a4f1cba20f8"
+      },
+      {
+        "name": "comms-replay",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "run",
+          "comms:replay"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.563,
+        "logSha256": "c2a4a9584c7d8086fa59bec6c17a11f192a1d118649faf925efa0aae48852809"
+      },
+      {
+        "name": "comms-compare",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:/tmp/g4-relay-20261113-01a1d438/corepack-home/v1/pnpm/11.2.2/bin/pnpm.cjs",
+          "run",
+          "comms:compare"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 0.468,
+        "logSha256": "aa4058cc506789fc5a38cb07e53a4a0de06fca07a514864c2d62c10150976cba"
+      }
+    ],
+    "startedAt": "2026-11-26T00:53:17.889809+00:00",
+    "activeStep": null,
+    "completedAt": "2026-11-26T00:55:00.024286+00:00"
+  },
+  "tests": 182,
+  "sourceInputs": [
+    {
+      "path": "docs/dev/project-rag/EVALUATION-CONTRACT.md",
+      "sha256": "0df5140049ea6f55676738fdb49baff9417559871ab52a6f2a8cb8bf427b44fc"
+    },
+    {
+      "path": "docs/dev/project-rag/RESEARCH-CONTRACT.md",
+      "sha256": "5e2d1a48144cf65c94490dfa0489c8403919e0a323c5045f9d90b2118bd3dc07"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-long-term-acceptance.md",
+      "sha256": "9e1fa5e88acd3ceb8c91d9833d1ddb512853636b2f855e0b1540483b11749585"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-rerank.ts",
+      "sha256": "08856c5063247f241979882d3787abfc9a0b378d10b7ec153bcb5dddfced940a"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval/observability-service.ts",
+      "sha256": "997afc5b126bd361bced1b09ef74f580c26b3c9940dcc6468f6a9fd765fbc89d"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/plan.ts",
+      "sha256": "a0f4ce359e9929f74267cd1e306511e3bccad49de1388792f586213df5685a49"
+    },
+    {
+      "path": "scripts/knowledge-rag-acceptance.ts",
+      "sha256": "3b72113e6e4eecc77010b1676b24f1928f8a65ef425b958bb3bce1ddb6b00d05"
+    },
+    {
+      "path": "scripts/knowledge-rag-adaptation-readback.ts",
+      "sha256": "1f0d2c2d34f6f442f81198303503bc7e2544655bf83157fd54d466bc9e82dadc"
+    },
+    {
+      "path": "scripts/lib/project-rag-acceptance.d.mts",
+      "sha256": "2d7e0f3afb6250c6b4adc01d312bb9a287b9959906c83cd08673bafb2294b110"
+    },
+    {
+      "path": "scripts/lib/project-rag-acceptance.mjs",
+      "sha256": "c7049818a6a4f052785dc2c3095c6f53634de2f9c465f1f7103cdbbe3b5fc9c0"
+    },
+    {
+      "path": "scripts/lib/project-rag-adaptation-readback.d.mts",
+      "sha256": "ac63076c8d736b9a48d977d5dc70fc48e94e1b43340edbac8085b849cbf1f365"
+    },
+    {
+      "path": "scripts/lib/project-rag-adaptation-readback.mjs",
+      "sha256": "565948a1cef5e98cddf07c4ce74514412cde8844a90ca3fd61088f48d51c9cee"
+    },
+    {
+      "path": "scripts/lib/project-rag-capacity-input.ts",
+      "sha256": "03a2bf1232d0cc69eae329abb5ec9aea4249638f7b1804d817e47a857d36a2d5"
+    },
+    {
+      "path": "scripts/lib/project-rag-promotion.mjs",
+      "sha256": "1692c41fb5219ac06fe50ea229b72d6d3abd71cb6bceb66858e0f4712130f414"
+    },
+    {
+      "path": "tests/unit/project-rag-acceptance-readback.test.ts",
+      "sha256": "d3e1501e6abca8dee098a189d01be093b50e75dd09b809bce183e07e2b221471"
+    },
+    {
+      "path": "tests/unit/project-rag-adaptation-readback.test.ts",
+      "sha256": "ee1bea2841efe51f1fb7ebb0f761a2b1d4dcaae5dcf554f86bb3985c00cfdea7"
+    },
+    {
+      "path": "tests/unit/project-rag-capacity-input.test.ts",
+      "sha256": "88a129837dc7ffd86bd38c702357b2137b12f93dee20ba9d947f868cfac7c805"
+    },
+    {
+      "path": "tests/unit/project-rag-observability-store.test.ts",
+      "sha256": "b6c4bf8702bf844beb1836ff324bb24ea97973797e6f961ba23a304e443598c2"
+    },
+    {
+      "path": "tests/unit/project-rag-rerank-provider.test.ts",
+      "sha256": "40f3465a00edc138aac580f2543c58d14287e5b6ab69e2c2a3faec41cd5596c1"
+    }
+  ],
+  "acceptance": "deferred-by-owner; to be tracked by separate GitHub issue"
+}

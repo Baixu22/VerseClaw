@@ -23,7 +23,7 @@ export async function loadCapacityInput(file: string, candidate: string) {
   assert(input.schema === 'ProjectRagCapacityInput/v1' && input.driven_by === 'agent' && input.provenance === 'real-model-output'
     && input.candidate === candidate, 'Capacity input provenance/candidate mismatch');
   const space = createEmbeddingSpace(input.space);
-  assert(space.spaceId === input.space.spaceId && [768, 4096].includes(space.dimensions), 'Capacity input space mismatch');
+  assert(space.spaceId === input.space.spaceId && [768, 4096].includes(space.dimensions) && space.normalization === 'l2', 'Capacity input space mismatch');
   assert(Number.isSafeInteger(input.count) && input.count > 0 && input.count <= 1000000
     && /^sha256:[a-f0-9]{64}$/.test(input.corpusDigest), 'Invalid capacity input size or corpus');
   const inside = async (name: string) => {
@@ -58,20 +58,33 @@ export async function loadCapacityInput(file: string, candidate: string) {
       && receipt.status === 'completed' && receipt.candidate === candidate && receipt.spaceId === space.spaceId
       && receipt.providerRef === space.providerRef && receipt.model === space.model && receipt.responseId && receipt.kind === kind
       && receipt.corpusDigest === input.corpusDigest && Number.isSafeInteger(row.receipt.index), 'Capacity provider provenance mismatch');
-    const original = receipt.outputs?.find((output: { index: number }) => output.index === row.receipt.index);
+    assert(Array.isArray(receipt.outputs) && receipt.outputs.length > 0
+      && receipt.outputs.every((output: { index: number }) => Number.isSafeInteger(output.index) && output.index >= 0)
+      && new Set(receipt.outputs.map((output: { index: number }) => output.index)).size === receipt.outputs.length,
+    'Capacity provider output indices invalid');
+    const original = receipt.outputs.find((output: { index: number }) => output.index === row.receipt.index);
     assert(original?.chunkDigest === row.chunkDigest && original.sourceDigest === source.sourceDigest, 'Capacity provider source binding mismatch');
     const vector = validateEmbeddingVector(space, row.vector), expected = validateEmbeddingVector(space, original.vector);
     assert(vector.every((value, i) => Math.abs(value - expected[i]) < 1e-7), 'Capacity vector differs from provider output');
     return { ...row, vector };
   };
   assert(Array.isArray(input.queries) && input.queries.length === 31, 'Capacity requires 31 frozen model queries');
-  const queries: CapacityVector[] = [];
-  for (const query of input.queries) queries.push(await validate(query, 'query'));
+  const evidenceKey = (row: CapacityVector) => JSON.stringify([row.source.domain, row.source.authorityId, row.source.namespaceId,
+    row.source.subjectId, row.source.revision, row.source.sourceDigest, row.source.policyEpoch,
+    row.source.locator!.startByte, row.source.locator!.endByteExclusive]);
+  const responseKey = (row: CapacityVector) => row.receipt.digest + ':' + row.receipt.index;
+  const queries: CapacityVector[] = [], querySources = new Set<string>(), queryResponses = new Set<string>();
+  for (const query of input.queries) {
+    const row = await validate(query, 'query');
+    assert(!querySources.has(evidenceKey(row)) && !queryResponses.has(responseKey(row)), 'Repeated capacity query evidence');
+    querySources.add(evidenceKey(row)); queryResponses.add(responseKey(row)); queries.push(row);
+  }
   assert(new Set(queries.map(query => query.id)).size === queries.length, 'Duplicate capacity queries');
   const vectorFile = await inside(input.vectors.path);
   assert(/^sha256:[a-f0-9]{64}$/.test(input.vectors.digest), 'Capacity vectors digest missing');
   const rows = async function* () {
     const hashStream = createHash('sha256'), decoder = new StringDecoder('utf8'), ids = new Set<string>();
+    const sourcePins = new Set<string>(), responsePins = new Set<string>();
     let pending = '', count = 0;
     for await (const chunk of createReadStream(vectorFile, { highWaterMark: 64 * 1024 })) {
       hashStream.update(chunk); pending += decoder.write(chunk as Buffer);
@@ -80,7 +93,9 @@ export async function loadCapacityInput(file: string, candidate: string) {
         const line = pending.slice(0, end); pending = pending.slice(end + 1);
         assert(Buffer.byteLength(line) <= 1024 * 1024 && line.trim(), 'Capacity vector row invalid or too large');
         const row = await validate(JSON.parse(line), 'document');
-        assert(!ids.has(row.id) && ++count <= input.count, 'Duplicate or excess capacity rows'); ids.add(row.id); yield row;
+        assert(!ids.has(row.id) && ++count <= input.count, 'Duplicate or excess capacity rows');
+        assert(!sourcePins.has(evidenceKey(row)) && !responsePins.has(responseKey(row)), 'Repeated capacity evidence');
+        ids.add(row.id); sourcePins.add(evidenceKey(row)); responsePins.add(responseKey(row)); yield row;
       }
       assert(Buffer.byteLength(pending) <= 1024 * 1024, 'Capacity vector row too large');
     }

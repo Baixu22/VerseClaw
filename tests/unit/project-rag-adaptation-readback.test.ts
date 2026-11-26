@@ -35,7 +35,8 @@ function fixture() {
   const datasetPin = save('dataset.json', dataset);
   const binding = { modelDigest: pin, generationSettingsDigest: pin, embeddingSpaceDigest: pin, chunkerDigest: pin, corpusDigest: snapshot.snapshotDigest };
   const plan = { schema: 'KnowledgeAdaptationRunPlan/v1', driven_by: 'agent', candidate, evaluatorVersion: RAG_QUERY_EVALUATOR_VERSION,
-    policyDigest: pin, baselinePolicyDigest: pin, frozenAt: now - 1000, profile: 'quality', ...binding };
+    policyDigest: pin, baselinePolicyDigest: pin, frozenAt: now - 1000, profile: 'quality', ...binding,
+    datasetDigest: datasetPin.digest, authoringDigest: sha256(jsonBytes(authored)), snapshotFileDigest: sha256(jsonBytes(snapshot)) };
   const planPin = save('plan.json', plan);
   const captures = queries.flatMap((q, i) => ['page', 'full'].map(arm => {
     const sourceRef = sources[i].snapshot.source, text = '8080';
@@ -53,8 +54,8 @@ function fixture() {
   const manifest = { schema: 'KnowledgeAdaptationQualification/v1', driven_by: 'agent', plan: planPin, snapshot: save('snapshot.json', snapshot),
     dataset: datasetPin, authoring: save('authoring.json', authored), captures: [] as Array<{path: string; digest: string}> };
   const verify = () => { manifest.captures = captures.map((row, i) => save('capture-' + i + '.json', row));
-    return verifyKnowledgeAdaptationPackage(root, save('qualification.json', manifest), candidate, pin); };
-  return { verify, captures, root, manifest, save };
+    return verifyKnowledgeAdaptationPackage(root, save('qualification.json', manifest), candidate, pin, 'quality', pin); };
+  return { verify, captures, root, manifest, save, plan };
 }
 
 it('regrades owner evidence and leaves a small project corpus insufficient for policy promotion', () => {
@@ -85,5 +86,26 @@ it('does not accept changed gold merely because its outer manifest hash was upda
   const f = fixture(), dataset = JSON.parse(readFileSync(join(f.root, 'dataset.json'), 'utf8'));
   dataset.gold[0].facts[0].sourceRef.locator.endByteExclusive = 1;
   f.manifest.dataset = f.save('dataset.json', dataset);
-  expect(() => f.verify()).toThrow('Reviewed support source mismatch');
+  expect(() => f.verify()).toThrow('Frozen adaptation dataset changed');
+});
+it('rejects a dataset substituted after the run plan was frozen', () => {
+  const f = fixture(), changed = JSON.parse(readFileSync(join(f.root, 'dataset.json'), 'utf8'));
+  changed.review.note = 'new review after execution';
+  const authoring = JSON.parse(readFileSync(join(f.root, 'authoring.json'), 'utf8'));
+  authoring.review = changed.review;
+  f.manifest.dataset = f.save('dataset.json', changed); f.manifest.authoring = f.save('authoring.json', authoring);
+  for (const capture of f.captures) {
+    const judge = JSON.parse(readFileSync(join(f.root, capture.judgment.path), 'utf8'));
+    judge.datasetDigest = f.manifest.dataset.digest; capture.judgment = f.save(capture.judgment.path, judge);
+  }
+  expect(() => f.verify()).toThrow('Frozen adaptation dataset');
+});
+it.each(['profile', 'baselinePolicyDigest'] as const)('rejects a substituted %s even when the candidate policy digest is unchanged', field => {
+  const f = fixture(); f.plan[field] = field === 'profile' ? 'local' : sha256('weaker-baseline');
+  f.manifest.plan = f.save('plan.json', f.plan);
+  expect(() => f.verify()).toThrow(field === 'profile' ? 'Adaptation profile mismatch' : 'Adaptation baseline mismatch');
+});
+it('rejects a selected subset that omits a source actually retained by DCS', () => {
+  const f = fixture(); f.captures[0].stages.retained.results = [];
+  expect(() => f.verify()).toThrow('differs from DCS');
 });

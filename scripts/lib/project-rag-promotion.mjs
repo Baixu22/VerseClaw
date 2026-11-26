@@ -175,7 +175,8 @@ export function verifyOfflineRagPolicyPackage(directory, expectedManifestDigest,
     assert.equal(trial.costUsd, measuredCost, 'Measured task cost drift');
     assert.equal(trial.safetyViolations, Number(attempt.safetyViolation));
   }
-  const adaptation = verifyKnowledgeAdaptationPackage(root, manifest.adaptation, report.candidateCommit, evaluation.candidateDigest);
+  const adaptation = verifyKnowledgeAdaptationPackage(root, manifest.adaptation, report.candidateCommit, evaluation.candidateDigest,
+    candidate.profile, evaluation.baselineDigest);
   assert.equal(adaptation.status, 'qualified', 'Actual-KB adaptation qualification incomplete: ' + adaptation.reasons.join(', '));
   return { candidate, expectedPolicyDigest: evaluation.baselineDigest, evaluation,
     evidenceRoot: root, evidenceManifestDigest: expectedManifestDigest };

@@ -41,6 +41,7 @@ export function createMemoryWikiRerankService(options: {
   const state = () =>
     options.openKeyedStore<Saved>({ namespace: "retrieval-rerank-selection", maxEntries: 16 });
   let saved: Saved | undefined;
+  let lifecycle = new AbortController();
   let status: {
     mode: "disabled" | "local" | "remote";
     status: "disabled" | "ready" | "unavailable" | "cancelled";
@@ -126,6 +127,8 @@ export function createMemoryWikiRerankService(options: {
       if (configured.apiKey && !secret.value)
         throw new Error("Remote rerank credential is not configured");
     }
+    lifecycle.abort(new Error("Rerank selection changed"));
+    lifecycle = new AbortController();
     saved = {
       selection: normalized,
       identity: structuredClone(identity),
@@ -179,6 +182,7 @@ export function createMemoryWikiRerankService(options: {
     cancel(identity: MemoryWikiReadIdentity) {
       return enqueue(async () => {
         assertScope(identity);
+        lifecycle.abort(new Error("Rerank provider cancelled"));
         if (saved) {
           saved = { ...saved, suspended: true };
           await state().register(key, saved);
@@ -194,6 +198,7 @@ export function createMemoryWikiRerankService(options: {
     disable(identity: MemoryWikiReadIdentity) {
       return enqueue(async () => {
         assertScope(identity);
+        lifecycle.abort(new Error("Rerank provider disabled"));
         await state().delete(key);
         saved = undefined;
         status = { mode: "disabled", status: "disabled", credentialEpoch: status.credentialEpoch };
@@ -202,6 +207,7 @@ export function createMemoryWikiRerankService(options: {
     },
     async close() {
       await enqueue(async () => {
+        lifecycle.abort(new Error("Rerank provider closed"));
         saved = undefined;
       });
     },
@@ -211,6 +217,11 @@ export function createMemoryWikiRerankService(options: {
     ): Promise<RerankProviderV1> {
       assertScope(identity);
       if (!saved || saved.suspended) throw new Error("Rerank provider is not configured");
+      const active = saved, lifecycleSignal = lifecycle.signal;
+      const assertCurrent = () => {
+        lifecycleSignal.throwIfAborted(); assertScope(identity);
+        if (saved !== active || saved.suspended) throw new Error("Rerank provider selection changed");
+      };
       status = {
         mode: saved.selection.mode,
         status: "ready",
@@ -234,14 +245,17 @@ export function createMemoryWikiRerankService(options: {
         selection.mode === "remote" && !configured
           ? process.env.SILICONFLOW_API_KEY
           : secret?.value;
+      assertCurrent();
       return createEndpointRerankProvider({
         providerRef,
         model,
         endpoint: url,
-        request: async (body, signal) => {
+        request: async (body, requestSignal) => {
+          assertCurrent();
+          const signal = AbortSignal.any([requestSignal, lifecycleSignal]);
           const dispatch = async (reportInputTokens?: (tokens: unknown) => void) => {
             signal.throwIfAborted();
-            assertScope(identity);
+            assertCurrent();
             const { response, release } = await fetchWithSsrFGuard({
               url,
               signal,
@@ -274,6 +288,7 @@ export function createMemoryWikiRerankService(options: {
                   result.tokens?.input_tokens ??
                   result.meta?.tokens?.input_tokens,
               );
+              assertCurrent();
               return result;
             } finally {
               await release();

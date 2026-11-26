@@ -25,11 +25,20 @@ async function fixture(dimensions = 768) {
     providerRef: space.providerRef, model: space.model, responseId: 'agent-fixture-response', corpusDigest,
     outputs: [{ index: 0, vector, chunkDigest: sourceFile.digest, sourceDigest: sourceFile.digest }] };
   const documentReceipt = await save('document-response.json', { ...receipt, kind: 'document' });
-  const queryReceipt = await save('query-response.json', { ...receipt, kind: 'query' });
+  const queryContent = Array.from({ length: 31 }, (_, i) => `query-${i.toString().padStart(2, '0')}\n`).join('');
+  const queryFile = await save('queries.txt', queryContent);
+  const queries = Array.from({ length: 31 }, (_, i) => {
+    const text = `query-${i.toString().padStart(2, '0')}\n`, startByte = i * Buffer.byteLength(text);
+    return { id: 'query-' + i, source: { ...source, subjectId: 'queries.txt', sourceDigest: queryFile.digest,
+      locator: { ...source.locator, startByte, endByteExclusive: startByte + Buffer.byteLength(text), startLine: i + 1, endLine: i + 1 } },
+      chunkDigest: sha256(text), vector, sourceFile: queryFile };
+  });
+  const queryReceipt = await save('query-response.json', { ...receipt, kind: 'query',
+    outputs: queries.map((query, index) => ({ index, vector, chunkDigest: query.chunkDigest, sourceDigest: queryFile.digest })) });
   const row = { id: 'vector-0', source, chunkDigest: sourceFile.digest, vector, sourceFile, receipt: { ...documentReceipt, index: 0 } };
   const manifest = { schema: 'ProjectRagCapacityInput/v1', driven_by: 'agent', provenance: 'real-model-output', candidate, corpusDigest,
     namespaceId: 'fixture', space, count: 1, vectors: await save('vectors.jsonl', JSON.stringify(row) + '\n'),
-    queries: Array.from({ length: 31 }, (_, i) => ({ ...row, id: 'query-' + i, receipt: { ...queryReceipt, index: 0 } })) };
+    queries: queries.map((query, index) => ({ ...query, receipt: { ...queryReceipt, index } })) };
   await save('manifest.json', manifest);
   return { root, candidate, row, manifest, save, file: join(root, 'manifest.json') };
 }
@@ -47,7 +56,8 @@ it('rejects source, vector and candidate substitutions', async () => {
   await f.save('vectors.jsonl', JSON.stringify(f.row) + '\n');
   await expect(async () => { for await (const _row of input.rows()) { /* exhaust verified input */ } }).rejects.toThrow('differs from provider');
   await f.save('source.txt', 'changed');
-  await expect(loadCapacityInput(f.file, f.candidate)).rejects.toThrow('source/receipt changed');
+  const changed = await loadCapacityInput(f.file, f.candidate);
+  await expect(async () => { for await (const _row of changed.rows()) { /* read source bytes */ } }).rejects.toThrow('source/receipt changed');
 });
 it('rejects truncated streams and a forged space identity', async () => {
   const f = await fixture(), input = await loadCapacityInput(f.file, f.candidate);
@@ -55,4 +65,18 @@ it('rejects truncated streams and a forged space identity', async () => {
   await expect(async () => { for await (const _row of input.rows()) { /* exhaust verified input */ } }).rejects.toThrow('final newline');
   f.manifest.space = { ...f.manifest.space, spaceId: sha256('wrong-space') }; await f.save('manifest.json', f.manifest);
   await expect(loadCapacityInput(f.file, f.candidate)).rejects.toThrow('space mismatch');
+});
+it('rejects aliases of one vector response used to inflate the capacity row count', async () => {
+  const f = await fixture();
+  f.manifest.count = 2;
+  f.manifest.vectors = await f.save('vectors.jsonl', [f.row, { ...f.row, id: 'renamed-copy' }].map(row => JSON.stringify(row)).join('\n') + '\n');
+  await f.save('manifest.json', f.manifest);
+  const input = await loadCapacityInput(f.file, f.candidate);
+  await expect(async () => { for await (const _row of input.rows()) { /* consume input */ } }).rejects.toThrow('Repeated capacity evidence');
+});
+it('rejects repeated query evidence despite different query ids', async () => {
+  const f = await fixture();
+  f.manifest.queries[1] = { ...f.manifest.queries[0], id: 'different-label' };
+  await f.save('manifest.json', f.manifest);
+  await expect(loadCapacityInput(f.file, f.candidate)).rejects.toThrow('Repeated capacity query evidence');
 });

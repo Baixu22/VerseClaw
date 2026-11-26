@@ -277,7 +277,10 @@ export function createMemoryWikiObservabilityService(options: {
           const prior = row.receipt.modelRuns.find((run) => run.runId === input.runId);
           if (prior) {
             if (prior.retainedDigest !== retainedDigest || prior.purpose !== input.purpose
-              || JSON.stringify(prior.support) !== JSON.stringify(input.support))
+              || JSON.stringify(prior.support) !== JSON.stringify(input.support)
+              || prior.actualTokens !== (input.providerSpend?.actualTokens ?? null)
+              || prior.actualCostUsd !== (input.providerSpend?.actualCostUsd ?? null)
+              || JSON.stringify(prior.modelRefs) !== JSON.stringify(modelRefs))
               throw new Error("Conflicting retained evidence run");
             return row;
           }

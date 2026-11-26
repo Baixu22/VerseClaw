@@ -77,7 +77,7 @@ async function main() {
   if (!input || !output) throw new Error('Usage: knowledge-rag-acceptance readback <manifest> <output> | soak <plan> <new-directory>');
   if (mode === 'soak') { await soak(resolve(input), resolve(output)); return; }
   if (mode !== 'readback') throw new Error('Unknown RAG acceptance command');
-  const report = readProjectRagAcceptance(dirname(resolve(input)), await json(resolve(input)));
+  const report = await readProjectRagAcceptance(dirname(resolve(input)), await json(resolve(input)));
   await writeFile(resolve(output), JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
   if (report.status !== 'passed') process.exitCode = 1;
 }

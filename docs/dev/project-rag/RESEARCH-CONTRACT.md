@@ -78,3 +78,5 @@ Research 读取已选择的本地或远端 embedding/rerank。远端路径为同
 状态复验耗尽5秒等待时，只返回当前请求的计划、阶段和用量元数据，证据、引用、关系与推断全部置空；同一请求在原30秒期限内继续等待下一次复验。复验恢复后交付当前 owner 验证过的结果。权限、会话代际或来源版本改变仍终止该请求并清空结果。
 
 Plugin SDK 的 `knowledge-retrieval` 公开 `createRetrievalSpend`、请求预算/用量与批次回调类型；插件沿该 seam 复用 Provider Spend。OpenAI-compatible embedding 的 `requestAccounting` 与 `onUsage` 由 adapter 声明并回传，不从向量数量或 tokenizer 估算实际用量。
+
+重排结束或失败后，回退结果也重新读取owner权限与版本；撤权来源的所有片段从最终结果移除。取消、禁用或更换重排配置终止该代provider，新请求不得继续使用旧句柄。

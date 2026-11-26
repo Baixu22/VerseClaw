@@ -7,7 +7,7 @@ import { jsonBytes, sha256, safeCorpusFile } from './project-rag-corpus.mjs';
 import { pairedEffect } from './paired-ablation.mjs';
 
 /** Reopen the actual-KB evaluation, original captures and blind judgments. Never trust summary scores. */
-export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandidate, expectedPolicyDigest) {
+export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandidate, expectedPolicyDigest, expectedProfile, expectedBaselineDigest) {
   const root = realpathSync(directory);
   const read = ref => {
     assert(ref && typeof ref.path === 'string' && /^sha256:[a-f0-9]{64}$/.test(ref.digest), 'Missing adaptation evidence pin');
@@ -23,6 +23,12 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
     'Adaptation candidate mismatch');
   assert.equal(plan.evaluatorVersion, RAG_QUERY_EVALUATOR_VERSION, 'Adaptation evaluator mismatch');
   assert.equal(plan.policyDigest, expectedPolicyDigest, 'Adaptation policy mismatch');
+  assert(['local', 'quality', 'research'].includes(expectedProfile) && /^sha256:[a-f0-9]{64}$/.test(expectedBaselineDigest), 'Missing expected adaptation contract');
+  assert.equal(plan.profile, expectedProfile, 'Adaptation profile mismatch');
+  assert.equal(plan.baselinePolicyDigest, expectedBaselineDigest, 'Adaptation baseline mismatch');
+  assert.equal(plan.datasetDigest, manifest.dataset?.digest, 'Frozen adaptation dataset changed');
+  assert.equal(plan.authoringDigest, manifest.authoring?.digest, 'Frozen adaptation authoring changed');
+  assert.equal(plan.snapshotFileDigest, manifest.snapshot?.digest, 'Frozen adaptation snapshot changed');
   assert(['local', 'quality', 'research'].includes(plan.profile) && /^sha256:[a-f0-9]{64}$/.test(plan.baselinePolicyDigest), 'Invalid adaptation baseline/profile');
   assert(Number.isSafeInteger(plan.frozenAt) && plan.frozenAt > 0, 'Missing pre-execution adaptation freeze');
   for (const key of ['modelDigest', 'generationSettingsDigest', 'embeddingSpaceDigest', 'chunkerDigest', 'corpusDigest'])
@@ -108,12 +114,15 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
     }
     assert(scores.retained && capture.retainedEvidence?.schema === 'RetainedEvidenceManifest/v1', 'Final DCS evidence missing');
     const retainedPins = capture.retainedEvidence.units.flatMap(unit => unit.citations.map(citation => citation.sourceRef));
-    assert(capture.stages.retained.results.every(hit => retainedPins.some(source => isDeepStrictEqual(source, hit.sourceRef))), 'Retained capture differs from DCS');
+    const selectedPins = capture.stages.retained.results.map(hit => hit.sourceRef);
+    assert(selectedPins.every(source => retainedPins.some(pin => isDeepStrictEqual(source, pin)))
+      && retainedPins.every(source => selectedPins.some(pin => isDeepStrictEqual(source, pin))), 'Retained capture differs from DCS');
     const answer = read(capture.answer).value, judge = read(capture.judgment).value;
     assert(answer.candidate === expectedCandidate && answer.planDigest === manifest.plan.digest && answer.queryId === query.id
       && answer.arm === capture.arm && /^sha256:[a-f0-9]{64}$/.test(answer.inputDigest) && sha256(answer.text) === answer.textDigest,
     'Answer identity mismatch');
-    assert(judge.driven_by === 'agent' && judge.actor !== answer.actor && judge.status === 'completed'
+    assert(typeof answer.actor === 'string' && answer.actor.trim() && typeof judge.actor === 'string' && judge.actor.trim()
+      && judge.driven_by === 'agent' && judge.actor !== answer.actor && judge.status === 'completed'
       && judge.blinded === true && judge.answerDigest === answer.textDigest && judge.inputDigest === answer.inputDigest
       && judge.datasetDigest === manifest.dataset.digest && [judge.correct, judge.support, judge.abstain].every(value => value === 0 || value === 1),
     'Independent answer judgment mismatch');
@@ -121,7 +130,8 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
     assert(gold, 'Missing adaptation gold');
     assert(['answerable', 'absent', 'conflicting'].includes(gold.answerability)
       && (gold.answerability === 'absent' ? gold.facts.length === 0 : gold.facts.length > 0), 'Gold answerability mismatch');
-    const success = judge.correct === 1 && judge.support === 1 && (gold.answerability === 'answerable' || judge.abstain === 1);
+    const success = capture.status === 'completed' && answer.status === 'completed' && judge.correct === 1 && judge.support === 1
+      && (gold.answerability !== 'absent' || judge.abstain === 1);
     const losses = Object.entries(scores).filter(([, score]) => score.recallAt20 < 1).map(([stage]) => stage);
     const failureStage = gold.answerability === 'absent' ? success ? null : 'abstention'
       : losses[0] ?? (!judge.support ? 'answer-support' : !judge.correct ? 'answer' : null);
@@ -139,8 +149,8 @@ export function verifyKnowledgeAdaptationPackage(directory, pin, expectedCandida
   const effect = pairedEffect(familyRows('page'), familyRows('full'), { metric: 'score', k: 1, minCases: 20 });
   if (effect.pairCount < 20 || !effect.ci95 || effect.ci95[0] <= 0 || effect.meanDiff < (plan.profile === 'research' ? 0.1 : 0.05))
     reasons.add('adaptation-quality-gain-unproven');
-  const baselineCost = mean(rows.filter(row => row.arm === 'page').map(row => row.costUsd ?? 0));
-  const fullCost = mean(rows.filter(row => row.arm === 'full').map(row => row.costUsd ?? 0));
+  const baselineCost = mean(rows.filter(row => row.arm === 'page' && row.split === 'held-out').map(row => row.costUsd ?? 0));
+  const fullCost = mean(rows.filter(row => row.arm === 'full' && row.split === 'held-out').map(row => row.costUsd ?? 0));
   const allowedCost = baselineCost === 0 ? plan.profile === 'research' ? 0.25 : plan.profile === 'quality' ? 0.05 : 0.02
     : baselineCost * (plan.profile === 'research' ? 1.25 : 1.1);
   if (fullCost > allowedCost) reasons.add('adaptation-cost-gain-unproven');

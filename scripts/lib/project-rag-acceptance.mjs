@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFileSync, realpathSync, statSync, openSync, readSync, closeSync } from 'node:fs';
+import { readFileSync, realpathSync, statSync } from 'node:fs';
 import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { verifyOfflineRagPolicyPackage } from './project-rag-promotion.mjs';
 import { defaultRetrievalPolicy, evaluateOfflineRetrievalPromotion } from '../../openclaw_runtime/src/knowledge/retrieval/policy.ts';
@@ -9,6 +9,8 @@ import { fileURLToPath } from 'node:url';
 import { ACCEPTANCE_REPORT_SCHEMA, validateReportEvidence } from './agent-engineering-acceptance.mjs';
 import { verifyKnowledgeAdaptationPackage } from './project-rag-adaptation-readback.mjs';
 import { createEmbeddingSpace } from '../../openclaw_runtime/src/knowledge/retrieval/embedding-space.ts';
+import { loadCapacityInput } from './project-rag-capacity-input.ts';
+import { isDeepStrictEqual } from 'node:util';
 
 export const RAG_SOAK_MINIMUM_MS = 72 * 60 * 60 * 1000;
 export const RAG_CAPACITY_MODELS = Object.freeze({ 768: 'google/embeddinggemma-300m', 4096: 'Qwen/Qwen3-VL-Embedding-8B' });
@@ -23,10 +25,19 @@ export function validateRagCapacity(capacity, mode, dimensions) {
     || !Number.isFinite(capacity.query?.warmP95Ms) || capacity.query.warmP95Ms > (mode === 'portable' ? 900 : 2500)
     || !Array.isArray(capacity.query?.timingsMs) || capacity.query.timingsMs.length !== 31
     || capacity.query.timingsMs.some(ms => !Number.isFinite(ms) || ms < 0)) reasons.push('capacity-incomplete');
+  const measured = capacity?.query;
+  if (!Array.isArray(measured?.eachRecall) || measured.eachRecall.length !== 31
+    || measured.eachRecall.some(value => !Number.isFinite(value) || value < 0 || value > 1)) reasons.push('capacity-raw-measurement-missing');
+  else if (Math.abs(measured.eachRecall.reduce((sum, value) => sum + value, 0) / 31 - measured.recallAt20) > 1e-12)
+    reasons.push('capacity-recall-summary-mismatch');
+  if (Array.isArray(measured?.timingsMs) && measured.timingsMs.length === 31) {
+    const warm = measured.timingsMs.slice(1).sort((a, b) => a - b);
+    if (warm[Math.ceil(warm.length * 0.95) - 1] !== measured.warmP95Ms) reasons.push('capacity-latency-summary-mismatch');
+  }
   try {
     const space = createEmbeddingSpace(capacity.input.space);
     if (capacity.dimensions !== dimensions || space.dimensions !== dimensions || space.spaceId !== capacity.input.space.spaceId
-      || space.model !== RAG_CAPACITY_MODELS[dimensions] || capacity.input.provenance !== 'real-model-output'
+      || space.model !== RAG_CAPACITY_MODELS[dimensions] || space.normalization !== 'l2' || capacity.input.provenance !== 'real-model-output'
       || capacity.input.verifiedProviderResponses !== true || capacity.fixture !== null
       || !/^sha256:[a-f0-9]{64}$/.test(capacity.input.manifestDigest) || !/^sha256:[a-f0-9]{64}$/.test(capacity.input.corpusDigest))
       reasons.push('real-model-capacity-missing');
@@ -34,23 +45,20 @@ export function validateRagCapacity(capacity, mode, dimensions) {
   return reasons;
 }
 
-function verifyCapacityInputs(directory, pin, report) {
+async function verifyCapacityInputs(directory, pin, report) {
   const input = readBoundEvidence(directory, pin);
   if ('sha256:' + pin.sha256 !== report.input.manifestDigest || input.candidate !== report.candidate
     || input.corpusDigest !== report.input.corpusDigest || input.space?.spaceId !== report.input.space.spaceId
     || input.provenance !== 'real-model-output' || input.count !== report.rows) throw new Error('Capacity input identity mismatch');
-  const root = dirname(realpathSync(resolve(directory, pin.path)));
-  const inputs = [input.vectors, ...(report.sourceInputs ?? [])];
+  const file = realpathSync(resolve(directory, pin.path));
   if (!Array.isArray(report.sourceInputs) || !report.sourceInputs.length) throw new Error('Capacity original source/response pins missing');
-  for (const ref of inputs) {
-    if (!ref || typeof ref.path !== 'string' || !/^sha256:[a-f0-9]{64}$/.test(ref.digest)) throw new Error('Capacity input pin missing');
-    const file = realpathSync(resolve(root, ref.path)), sub = relative(root, file);
-    if (isAbsolute(sub) || sub === '..' || sub.startsWith('..' + sep)) throw new Error('Capacity input escaped sealed directory');
-    const fd = openSync(file, 'r'), buffer = Buffer.allocUnsafe(64 * 1024), digest = createHash('sha256');
-    try { let count; while ((count = readSync(fd, buffer, 0, buffer.length, null))) digest.update(buffer.subarray(0, count)); }
-    finally { closeSync(fd); }
-    if ('sha256:' + digest.digest('hex') !== ref.digest) throw new Error('Capacity original input changed');
-  }
+  const verified = await loadCapacityInput(file, report.candidate);
+  if (verified.digest !== report.input.manifestDigest || !isDeepStrictEqual(verified.space, report.input.space))
+    throw new Error('Capacity complete space identity mismatch');
+  for await (const _row of verified.rows()) { /* Revalidate every vector, source range and provider output. */ }
+  const sorted = pins => [...pins].map(pin => ({ path: pin.path, digest: pin.digest })).sort((a, b) => a.path.localeCompare(b.path));
+  if (!isDeepStrictEqual(sorted(verified.evidencePins.values()), sorted(report.sourceInputs)))
+    throw new Error('Capacity original source/response inventory mismatch');
 }
 
 export function readBoundEvidence(root, input) {
@@ -104,7 +112,7 @@ export function validateRagSoakProbe(probe) {
 }
 
 /** All evidence is read from sealed files and must bind the same clean product candidate. */
-export function readProjectRagAcceptance(directory, manifest) {
+export async function readProjectRagAcceptance(directory, manifest) {
   const reasons = [];
   if (manifest?.schema !== 'ProjectRagAcceptanceManifest/v1' || !/^[a-f0-9]{40}$/.test(manifest.candidate))
     throw new Error('Invalid RAG acceptance manifest');
@@ -161,10 +169,10 @@ export function readProjectRagAcceptance(directory, manifest) {
     const failures = validateRagCapacity(capacity, mode, dimensions);
     reasons.push(...failures.map(reason => `${mode}-${dimensions}:${reason}`));
     if (failures.includes('capacity-incomplete')) reasons.push(`${mode}:capacity-incomplete`);
-    if (!failures.length) try { verifyCapacityInputs(directory, candidates[0].input, capacity); }
+    if (!failures.length) try { await verifyCapacityInputs(directory, candidates[0].input, capacity); }
     catch (error) { reasons.push(`${mode}-${dimensions}:${error.message}`); }
   }
-  const policyDigests = new Map();
+  const policies = new Map();
   for (const profile of ['local', 'quality', 'research']) {
     try {
       const pin = manifest.policyPackages?.find(row => row.profile === profile);
@@ -172,18 +180,20 @@ export function readProjectRagAcceptance(directory, manifest) {
       const file = realpathSync(resolve(directory, pin.path));
       const verified = verifyOfflineRagPolicyPackage(dirname(file), 'sha256:' + pin.sha256, basename(file));
       const result = verified.evaluation;
-      policyDigests.set(profile, result.candidateDigest);
       if (result.candidateCommit !== manifest.candidate || result.profile !== profile)
         reasons.push(`${profile}:evaluation-candidate-or-profile-mismatch`);
       reasons.push(...evaluateOfflineRetrievalPromotion(verified.candidate, defaultRetrievalPolicy(profile), result)
         .map(reason => `${profile}:${reason}`));
+      policies.set(profile, result);
     } catch (error) { reasons.push(`${profile}:${error.message}`); }
   }
   let adaptation;
   try {
     const profile = manifest.adaptationProfile ?? 'research';
-    if (!policyDigests.has(profile)) throw new Error('Matching qualified policy missing');
-    adaptation = verifyKnowledgeAdaptationPackage(directory, manifest.adaptation, manifest.candidate, policyDigests.get(profile));
+    const policy = policies.get(profile);
+    if (!policy) throw new Error('Matching qualified policy missing');
+    adaptation = verifyKnowledgeAdaptationPackage(directory, manifest.adaptation, manifest.candidate, policy.candidateDigest,
+      profile, policy.baselineDigest);
     if (adaptation.status !== 'qualified') reasons.push(...adaptation.reasons);
   } catch (error) { reasons.push('actual-knowledge-adaptation:' + error.message); }
   const execution = read(manifest.taskExecutions, 'task-executions');

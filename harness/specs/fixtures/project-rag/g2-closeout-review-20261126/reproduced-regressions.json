@@ -1,0 +1,22 @@
+[
+  {
+    "file": "review-red.json",
+    "sha256": "96ecf5e4878dd536cdbde01e143b632653d079ba884f04be1c150b2ed1d4ce26",
+    "passed": 16,
+    "failed": 3,
+    "failures": [
+      "rejects a dataset substituted after the run plan was frozen",
+      "rejects aliases of one vector response used to inflate the capacity row count",
+      "retrieval diagnostics owner and atomic transition behavior links only actual matching retained pins and shows measured model usage separately"
+    ]
+  },
+  {
+    "file": "rerank-review-red.json",
+    "sha256": "67966a22ccea3f6e5315cc1c74d5c5291907310b81839e29f4af28a2f74dd864",
+    "passed": 12,
+    "failed": 1,
+    "failures": [
+      "Project RAG RerankProvider/v1 preserves RRF on invalid, failed and owner-revoked rerank results"
+    ]
+  }
+]

@@ -75,6 +75,30 @@ describe('Project RAG RerankProvider/v1', () => {
     expect(service.status(identity).status).toBe('ready');
     expect((await service.provider(identity)).schema).toBe('RerankProvider/v1');
   });
+  it.each(['cancel', 'disable', 'replace'] as const)('stops an already acquired provider after %s', async change => {
+    const values = new Map<string, unknown>(), requests: string[] = [];
+    const server = createServer((request, response) => {
+      requests.push(request.url ?? ''); response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({ results: [{ index: 0, relevance_score: 1 }] }));
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const address = server.address() as { port: number };
+    const service = createMemoryWikiRerankService({ config: resolveMemoryWikiConfig({ vault: { path: 'D:/tmp/rag-review-owner' } }),
+      openKeyedStore: (() => ({ lookup: async (key: string) => values.get(key), register: async (key: string, value: unknown) => values.set(key, value),
+        delete: async (key: string) => values.delete(key) })) as never });
+    const identity = { workspaceId: 'w', workspaceDir: 'D:/tmp', agentSessionKey: 's', sessionId: 'i', egressProviderRefs: [] };
+    try {
+      const selection = { mode: 'local' as const, endpoint: `http://127.0.0.1:${address.port}` };
+      await service.configure(selection, identity);
+      const old = await service.provider(identity);
+      if (change === 'replace') await service.configure(selection, identity);
+      else await service[change](identity);
+      await expect(old.rerank('query', [{ id: 'one', text: 'secret owner text' }], {
+        signal: new AbortController().signal, deadlineAtMs: Date.now() + 1000, batchSize: 1, batchChars: 100,
+      })).rejects.toThrow(/Rerank/);
+      expect(requests).toEqual([]);
+    } finally { await service.close(); await new Promise<void>(resolve => server.close(() => resolve())); }
+  });
   it('validates complete finite-score permutations and batches with a shared deadline', async () => {
     const requests: string[][] = [];
     const provider = createEndpointRerankProvider({ providerRef: 'fixture', model: 'Qwen/Qwen3-Reranker-0.6B', endpoint: 'http://fixture/rerank', request: async body => {
@@ -131,8 +155,19 @@ describe('Project RAG RerankProvider/v1', () => {
       const result = await runRetrievalPlan({ plan: createRetrievalPlan({ query: 'gateway', namespaceIds: ['fixture'], profile: 'quality' }),
         retrieve: async () => ({ status: 'available', hits: [hit('a'), hit('b')] }), verify: async () => { verifies += 1; return failure === 'owner-revoked' && verifies === 3 ? 'revoked' : undefined; },
         rerank: { provider: { ...providerStub(), rerank: async () => { if (failure === 'provider-error') throw new Error('unavailable'); return { schema: 'RerankResult/v1', status: 'complete', providerRef: 'fixture', model: 'Qwen/Qwen3-Reranker-0.6B', scoreKind: 'raw-relevance', calibrated: false, candidateCount: 2, batchCount: 1, elapsedMs: 1, results: failure === 'bad-result' ? [{ id: 'b', score: 2 }] : [{ id: 'b', score: 2 }, { id: 'a', score: 1 }] }; } }, candidates: row => ({ id: row.id, text: row.data }) } });
-      expect(result.results.map(row => row.id)).toEqual(['a', 'b']); expect(result.status).toBe('partial'); expect(result.fallbackReasons.some(reason => reason.startsWith('rerank-failed:'))).toBe(true);
+      expect(result.results.map(row => row.id)).toEqual(failure === 'owner-revoked' ? ['a'] : ['a', 'b']);
+      expect(result.status).toBe('partial'); expect(result.fallbackReasons.some(reason => reason.startsWith('rerank-failed:'))).toBe(true);
     }
+  });
+  it('removes sources revoked during a failed provider call before lexical fallback', async () => {
+    let revoked = false;
+    const result = await runRetrievalPlan({ plan: createRetrievalPlan({ query: 'gateway', namespaceIds: ['fixture'], profile: 'quality' }),
+      retrieve: async () => ({ status: 'available', hits: [hit('a'), hit('b')] }),
+      verify: async row => revoked && row.id === 'a' ? 'revoked' : undefined,
+      rerank: { provider: { ...providerStub(), rerank: async () => { revoked = true; throw new Error('provider disconnected'); } },
+        candidates: row => ({ id: row.id, text: row.data }) } });
+    expect(result.results.map(row => row.id)).toEqual(['b']);
+    expect(result.filters).toContainEqual({ namespaceId: 'fixture', subjectId: 'a', reason: 'revoked' });
   });
 
   it('runs the multilingual fixed-pool ablation with explicit fixture or live provenance', { timeout: 120000 }, async () => {
