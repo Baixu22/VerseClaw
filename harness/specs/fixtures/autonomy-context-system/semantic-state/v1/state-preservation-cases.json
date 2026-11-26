@@ -1,0 +1,4111 @@
+{
+  "schema": "AutonomyContextSemanticStateEvidence/v1",
+  "driven_by": "agent",
+  "hashScheme": "sha256-utf8-lf",
+  "actor": "codex/context-system-01a213b7",
+  "sourceFiles": [
+    {
+      "path": "shared/long-session-continuity.ts",
+      "sha256": "86a48b7fdbfb45b60cb2921b0f2bcd535910e37e9691fc859d4b81e582ee7bc6"
+    },
+    {
+      "path": "shared/types/context-item.ts",
+      "sha256": "a86ab5254772515bc703e70e86f4bc69fa25fdbdd1ebcde663c39b133d0498a1"
+    },
+    {
+      "path": "shared/task-ledger-working-context.ts",
+      "sha256": "41456b3a1b5f71babb9f6b83422ff430391875cb8c318d08fcc643344ee58c48"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "efd7fb250db8c2da1da48292078049cd76631e4298ab75155ac4fcc61d835c95"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "bf0de7b6d8599f2759e03ef9f31e948c5beb5f2c2037fc965e4919561c2fa12b"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "2cdb3b45cfbca3301d8692e091eb9ecf98bb5bc87d2c8d0ff44daeffd081625c"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+      "sha256": "1117587583e23aed12c20bacbfd786384ec7a7ab9bb25d627398e0bb86040ac0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-hooks/compaction-addressability.ts",
+      "sha256": "d8f0fc9f2dbc689d6a176bb21599b975126aac341bca6129765df407788506fd"
+    },
+    {
+      "path": "tests/unit/autonomy-context-semantic-state.test.ts",
+      "sha256": "e66d10b41de878b4d0084299c44fbafa19cb2fdc9187a5a632d32f9a99185e70"
+    },
+    {
+      "path": "tests/unit/compression-artifact.test.ts",
+      "sha256": "7ab75ca8bf0108d3225e5862c16ce6a4f7dbe9e2b403ea322bf2d32a6bfbfa6c"
+    },
+    {
+      "path": "tests/unit/long-session-continuity-context.test.ts",
+      "sha256": "0977b6ca269d704ac5ddea07514863a5e151b3c135f311253fb10c8e88276f84"
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-context-c02-predecessor.json",
+      "sha256": "dfe9087b6e55b7438a5b3667c5761eed6720e65e94521e1e656afa76a1e673c8"
+    }
+  ],
+  "observations": [
+    {
+      "kind": "revision",
+      "cycles": [
+        {
+          "cycle": 1,
+          "action": "json",
+          "resultSha256": "02bd175f329720378ce83dd56a1b6b1f5291a60182d6c54b5e0d1e8d248a267a",
+          "artifactSha256": "8c28a7657e4f6cc0da04e35b60251109cea0d567ead21a3592cc9486b9dd2229",
+          "retainedAtom": {
+            "id": "new",
+            "type": "constraint",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "task:task-1",
+            "polarity": "positive",
+            "status": "verified",
+            "text": "Use JSON.",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "session",
+                "ref": "user-revision-2"
+              }
+            ],
+            "supersedes": [
+              "old"
+            ],
+            "conflicts": [
+              "alternate"
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:new",
+            "kind": "constraint",
+            "source": "compression-artifact",
+            "text": "Use JSON.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "positive",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "archive",
+                  "ref": "context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+                  "label": "pre-compaction checkpoint"
+                },
+                {
+                  "type": "session",
+                  "ref": "user-revision-2"
+                }
+              ],
+              "supersedes": [
+                "old"
+              ],
+              "conflicts": [
+                "alternate"
+              ],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "positive",
+            "evidenceRefs": [
+              "archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+              "session:user-revision-2"
+            ],
+            "chars": 9
+          },
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            },
+            {
+              "ref": "compression-atom:old",
+              "reason": "revoked-or-superseded"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=894/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [constraint] Use JSON. (source=compression-artifact; scope=task:task-1; freshness=unknown; trust=owner-fact; sourceStatus=verified; verification=verified; polarity=positive; sourceScope=\"task:task-1\"; refs=[{\"type\":\"archive\",\"ref\":\"context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json\",\"label\":\"pre-compaction checkpoint\"},{\"type\":\"session\",\"ref\":\"user-revision-2\"}]; supersedes=[\"old\"]; conflicts=[\"alternate\"])\n- [decision] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.69\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\n- [constraint:verified:critical; polarity=positive; scope=task:task-1; id=new; identity=decision-1] Use JSON. (supersedes:old conflicts:alternate) refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,session:user-revision-2\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- none\n\nblocked:\n- none\n\ndecisions:\n- none\n\nevidenceRefs:\n- tool:result:probe-A\n- session:user-revision-2\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=1 conflicts=1\n\n- [constraint:superseded:critical; polarity=positive; scope=task:task-1; id=old; identity=decision-1] Use CSV. refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,tool:result:probe-A",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [constraint:verified:critical; polarity=positive; scope=task:task-1; id=new; identity=decision-1] Use JSON. (supersedes:old conflicts:alternate) refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,session:user-revision-2\\n- [constraint:superseded:critical; polarity=positive; scope=task:task-1; id=old; identity=decision-1] Use CSV. refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+            "checksum": "sha256:51838bb69331946b5b3a71a6e1ff07dc809f61d62950fe47dafdda808c791704",
+            "byteLength": 1683,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        },
+        {
+          "cycle": 2,
+          "action": "json",
+          "resultSha256": "02bd175f329720378ce83dd56a1b6b1f5291a60182d6c54b5e0d1e8d248a267a",
+          "artifactSha256": "5d746d57db72485b9da3922aff4d069e02796f89ae1e23b929cee37624ec2abb",
+          "retainedAtom": {
+            "id": "new",
+            "type": "constraint",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "task:task-1",
+            "polarity": "positive",
+            "status": "verified",
+            "text": "Use JSON.",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "session",
+                "ref": "user-revision-2"
+              }
+            ],
+            "supersedes": [
+              "old"
+            ],
+            "conflicts": [
+              "alternate"
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:new",
+            "kind": "constraint",
+            "source": "compression-artifact",
+            "text": "Use JSON.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "positive",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "archive",
+                  "ref": "context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+                  "label": "pre-compaction checkpoint"
+                },
+                {
+                  "type": "session",
+                  "ref": "user-revision-2"
+                }
+              ],
+              "supersedes": [
+                "old"
+              ],
+              "conflicts": [
+                "alternate"
+              ],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "positive",
+            "evidenceRefs": [
+              "archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+              "session:user-revision-2"
+            ],
+            "chars": 9
+          },
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            },
+            {
+              "ref": "compression-atom:old",
+              "reason": "revoked-or-superseded"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=975/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [constraint] Use JSON. (source=compression-artifact; scope=task:task-1; freshness=unknown; trust=owner-fact; sourceStatus=verified; verification=verified; polarity=positive; sourceScope=\"task:task-1\"; refs=[{\"type\":\"archive\",\"ref\":\"context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json\",\"label\":\"pre-compaction checkpoint\"},{\"type\":\"session\",\"ref\":\"user-revision-2\"}]; supersedes=[\"old\"]; conflicts=[\"alternate\"])\n- [decision] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### In Progress (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.68\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\n- [constraint:verified:critical; polarity=positive; scope=task:task-1; id=new; identity=decision-1] Use JSON. (supersedes:old conflicts:alternate) refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,session:user-revision-2\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- ### In Progress\n\nblocked:\n- ### In Progress\n- Inspect result.\n- ### Blocked\n\ndecisions:\n- none\n\nevidenceRefs:\n- archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json (pre-compaction checkpoint)\n- tool:result:probe-A\n- archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json (pre-compaction checkpoint)\n- session:user-revision-2\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=1 conflicts=1\n\n- [constraint:superseded:critical; polarity=positive; scope=task:task-1; id=old; identity=decision-1] Use CSV. refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,tool:result:probe-A",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [constraint:verified:critical; polarity=positive; scope=task:task-1; id=new; identity=decision-1] Use JSON. (supersedes:old conflicts:alternate) refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,session:user-revision-2\\n- [constraint:superseded:critical; polarity=positive; scope=task:task-1; id=old; identity=decision-1] Use CSV. refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-revision-2-8695aa08414054ea.context-archive.json",
+            "checksum": "sha256:8695aa08414054eabfaea13dbbc9fe081b3e8428bd7be511e5cb6bfb9879c8f3",
+            "byteLength": 2591,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        },
+        {
+          "cycle": 3,
+          "action": "json",
+          "resultSha256": "02bd175f329720378ce83dd56a1b6b1f5291a60182d6c54b5e0d1e8d248a267a",
+          "artifactSha256": "29873fe94651c474e914c1edf1773bcd307dae227fb9ae03af6929f55a77ba7f",
+          "retainedAtom": {
+            "id": "new",
+            "type": "constraint",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "task:task-1",
+            "polarity": "positive",
+            "status": "verified",
+            "text": "Use JSON.",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "session",
+                "ref": "user-revision-2"
+              }
+            ],
+            "supersedes": [
+              "old"
+            ],
+            "conflicts": [
+              "alternate"
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:new",
+            "kind": "constraint",
+            "source": "compression-artifact",
+            "text": "Use JSON.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "positive",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "archive",
+                  "ref": "context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+                  "label": "pre-compaction checkpoint"
+                },
+                {
+                  "type": "session",
+                  "ref": "user-revision-2"
+                }
+              ],
+              "supersedes": [
+                "old"
+              ],
+              "conflicts": [
+                "alternate"
+              ],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "positive",
+            "evidenceRefs": [
+              "archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json",
+              "session:user-revision-2"
+            ],
+            "chars": 9
+          },
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            },
+            {
+              "ref": "compression-atom:old",
+              "reason": "revoked-or-superseded"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=905/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [constraint] Use JSON. (source=compression-artifact; scope=task:task-1; freshness=unknown; trust=owner-fact; sourceStatus=verified; verification=verified; polarity=positive; sourceScope=\"task:task-1\"; refs=[{\"type\":\"archive\",\"ref\":\"context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json\",\"label\":\"pre-compaction checkpoint\"},{\"type\":\"session\",\"ref\":\"user-revision-2\"}]; supersedes=[\"old\"]; conflicts=[\"alternate\"])\n- [decision] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### In Progress (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.68\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\n- [constraint:verified:critical; polarity=positive; scope=task:task-1; id=new; identity=decision-1] Use JSON. (supersedes:old conflicts:alternate) refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,session:user-revision-2\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- ### In Progress\n\nblocked:\n- ### In Progress\n- Inspect result.\n- ### Blocked\n\ndecisions:\n- none\n\nevidenceRefs:\n- archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json (pre-compaction checkpoint)\n- tool:result:probe-A\n- archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json (pre-compaction checkpoint)\n- session:user-revision-2\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=1 conflicts=1\n\n- [constraint:superseded:critical; polarity=positive; scope=task:task-1; id=old; identity=decision-1] Use CSV. refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,tool:result:probe-A",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [constraint:verified:critical; polarity=positive; scope=task:task-1; id=new; identity=decision-1] Use JSON. (supersedes:old conflicts:alternate) refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,session:user-revision-2\\n- [constraint:superseded:critical; polarity=positive; scope=task:task-1; id=old; identity=decision-1] Use CSV. refs=archive:context-archive://agent%3Amain%3Ac02/c02-revision-1-51838bb69331946b.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-revision-3-403e83c2d35db655.context-archive.json",
+            "checksum": "sha256:403e83c2d35db65529052ca8c4e99186fa2a0ac19006055a1bd82ba09dc07419",
+            "byteLength": 2557,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "negative",
+      "cycles": [
+        {
+          "cycle": 1,
+          "action": "probe-B",
+          "resultSha256": "3a9326924517c230b6861c60f35d4e084143d20b3a13b7c036fe95efae10680f",
+          "artifactSha256": "7b3536b401d5c9ce11fb6885e6839fdbea0d47c74666ff6070917b918252b4a2",
+          "retainedAtom": {
+            "id": "a1",
+            "type": "decision",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "task:task-1",
+            "polarity": "negative",
+            "status": "verified",
+            "text": "probe-A",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "tool",
+                "ref": "result:probe-A"
+              }
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "probe-A",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "archive",
+                  "ref": "context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+                  "label": "pre-compaction checkpoint"
+                },
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+              "tool:result:probe-A"
+            ],
+            "chars": 7
+          },
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=843/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [constraint] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [decision] probe-A (source=compression-artifact; scope=task:task-1; freshness=unknown; trust=owner-fact; sourceStatus=verified; verification=verified; polarity=negative; sourceScope=\"task:task-1\"; refs=[{\"type\":\"archive\",\"ref\":\"context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json\",\"label\":\"pre-compaction checkpoint\"},{\"type\":\"tool\",\"ref\":\"result:probe-A\"}])\n- [open-dependency] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.69\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\nconstraints:\n- none\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- none\n\nblocked:\n- none\n\n- [decision:verified:critical; polarity=negative; scope=task:task-1; id=a1; identity=decision-1] probe-A refs=archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json,tool:result:probe-A\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [decision:verified:critical; polarity=negative; scope=task:task-1; id=a1; identity=decision-1] probe-A refs=archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+            "checksum": "sha256:04401c82ec81f0be94c7b700273989c5c5759869bc09bdcb04df476c8da9c66d",
+            "byteLength": 1267,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        },
+        {
+          "cycle": 2,
+          "action": "probe-B",
+          "resultSha256": "3a9326924517c230b6861c60f35d4e084143d20b3a13b7c036fe95efae10680f",
+          "artifactSha256": "10d1726ddd5fb4dfad7bf45079a68bdbc81f61a84c9bd4f5891c5efcadc76a7e",
+          "retainedAtom": {
+            "id": "a1",
+            "type": "decision",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "task:task-1",
+            "polarity": "negative",
+            "status": "verified",
+            "text": "probe-A",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "tool",
+                "ref": "result:probe-A"
+              }
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "probe-A",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "archive",
+                  "ref": "context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+                  "label": "pre-compaction checkpoint"
+                },
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+              "tool:result:probe-A"
+            ],
+            "chars": 7
+          },
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=924/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [constraint] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [decision] probe-A (source=compression-artifact; scope=task:task-1; freshness=unknown; trust=owner-fact; sourceStatus=verified; verification=verified; polarity=negative; sourceScope=\"task:task-1\"; refs=[{\"type\":\"archive\",\"ref\":\"context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json\",\"label\":\"pre-compaction checkpoint\"},{\"type\":\"tool\",\"ref\":\"result:probe-A\"}])\n- [open-dependency] ### In Progress (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.68\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\nconstraints:\n- none\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- ### In Progress\n\nblocked:\n- ### In Progress\n- Inspect result.\n- ### Blocked\n\n- [decision:verified:critical; polarity=negative; scope=task:task-1; id=a1; identity=decision-1] probe-A refs=archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json,tool:result:probe-A\n\nevidenceRefs:\n- archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json (pre-compaction checkpoint)\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [decision:verified:critical; polarity=negative; scope=task:task-1; id=a1; identity=decision-1] probe-A refs=archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-negative-2-3b032508cb0fc08a.context-archive.json",
+            "checksum": "sha256:3b032508cb0fc08ad1510abed581a609bf87f21d09e50403f2412c67ba6a73ae",
+            "byteLength": 1869,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        },
+        {
+          "cycle": 3,
+          "action": "probe-B",
+          "resultSha256": "3a9326924517c230b6861c60f35d4e084143d20b3a13b7c036fe95efae10680f",
+          "artifactSha256": "4e590024feeb94bdccaea258abbed472b4f277ab971ffd80003a5db225df8c28",
+          "retainedAtom": {
+            "id": "a1",
+            "type": "decision",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "task:task-1",
+            "polarity": "negative",
+            "status": "verified",
+            "text": "probe-A",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "tool",
+                "ref": "result:probe-A"
+              }
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "probe-A",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "archive",
+                  "ref": "context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+                  "label": "pre-compaction checkpoint"
+                },
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json",
+              "tool:result:probe-A"
+            ],
+            "chars": 7
+          },
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=854/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [constraint] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [decision] probe-A (source=compression-artifact; scope=task:task-1; freshness=unknown; trust=owner-fact; sourceStatus=verified; verification=verified; polarity=negative; sourceScope=\"task:task-1\"; refs=[{\"type\":\"archive\",\"ref\":\"context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json\",\"label\":\"pre-compaction checkpoint\"},{\"type\":\"tool\",\"ref\":\"result:probe-A\"}])\n- [open-dependency] ### In Progress (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.68\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\nconstraints:\n- none\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- ### In Progress\n\nblocked:\n- ### In Progress\n- Inspect result.\n- ### Blocked\n\n- [decision:verified:critical; polarity=negative; scope=task:task-1; id=a1; identity=decision-1] probe-A refs=archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json,tool:result:probe-A\n\nevidenceRefs:\n- archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json (pre-compaction checkpoint)\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [decision:verified:critical; polarity=negative; scope=task:task-1; id=a1; identity=decision-1] probe-A refs=archive:context-archive://agent%3Amain%3Ac02/c02-negative-1-04401c82ec81f0be.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-negative-3-45c24ec5ba5546a6.context-archive.json",
+            "checksum": "sha256:45c24ec5ba5546a626785fed80af10da39500f821623edd22ce7bd35238370fd",
+            "byteLength": 1835,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "temporary",
+      "cycles": [
+        {
+          "cycle": 1,
+          "action": "prose",
+          "resultSha256": "8e8cc5a7ecc7cf5af31c4deba5f11e97131bd324cc4dbe3098bdedaa69b43f32",
+          "artifactSha256": "7afe8c3c6d7b560b81f9bf484a1c26f9c29b8c40cf47d92890fe770d531a1a2d",
+          "retainedAtom": {
+            "id": "a1",
+            "type": "constraint",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "turn:1",
+            "polarity": "positive",
+            "status": "verified",
+            "text": "Use bullets.",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "tool",
+                "ref": "result:probe-A"
+              }
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": null,
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            },
+            {
+              "ref": "compression-atom:a1",
+              "reason": "unknown-scope"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=442/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [decision] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.69\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- none\n\nblocked:\n- none\n\ndecisions:\n- none\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [constraint:verified:critical; polarity=positive; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Use bullets. refs=archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json,tool:result:probe-A",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [constraint:verified:critical; polarity=positive; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Use bullets. refs=archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json",
+            "checksum": "sha256:a235dc91cb4541f5c6de7894c86dd4f919a25d4763297670fd56e0061c2b0955",
+            "byteLength": 1274,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        },
+        {
+          "cycle": 2,
+          "action": "prose",
+          "resultSha256": "8e8cc5a7ecc7cf5af31c4deba5f11e97131bd324cc4dbe3098bdedaa69b43f32",
+          "artifactSha256": "a2e383b3908cc86f897381774b8d29fedea610b49c195008fea8e8456bb21674",
+          "retainedAtom": {
+            "id": "a1",
+            "type": "constraint",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "turn:1",
+            "polarity": "positive",
+            "status": "verified",
+            "text": "Use bullets.",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "tool",
+                "ref": "result:probe-A"
+              }
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": null,
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            },
+            {
+              "ref": "compression-atom:a1",
+              "reason": "unknown-scope"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=523/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [decision] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### In Progress (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.68\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- ### In Progress\n\nblocked:\n- ### In Progress\n- Inspect result.\n- ### Blocked\n\ndecisions:\n- none\n\nevidenceRefs:\n- archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json (pre-compaction checkpoint)\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [constraint:verified:critical; polarity=positive; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Use bullets. refs=archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json,tool:result:probe-A",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [constraint:verified:critical; polarity=positive; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Use bullets. refs=archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-temporary-2-2fb33e1a090e785a.context-archive.json",
+            "checksum": "sha256:2fb33e1a090e785ae27ff89155b4ecad2be798d4e7709bea21f215a2f6e10945",
+            "byteLength": 1879,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        },
+        {
+          "cycle": 3,
+          "action": "prose",
+          "resultSha256": "8e8cc5a7ecc7cf5af31c4deba5f11e97131bd324cc4dbe3098bdedaa69b43f32",
+          "artifactSha256": "dfade9b44c335fa098aed5f9731c1b3029f1ad16c58bd77e5beee9e1d6bd6c0c",
+          "retainedAtom": {
+            "id": "a1",
+            "type": "constraint",
+            "canonicalIdentity": "decision-1",
+            "severity": "critical",
+            "confidence": 1,
+            "scope": "turn:1",
+            "polarity": "positive",
+            "status": "verified",
+            "text": "Use bullets.",
+            "evidenceRefs": [
+              {
+                "type": "archive",
+                "ref": "context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json",
+                "label": "pre-compaction checkpoint"
+              },
+              {
+                "type": "tool",
+                "ref": "result:probe-A"
+              }
+            ],
+            "updatedAt": 123,
+            "source": {
+              "kind": "message",
+              "ref": "message:source"
+            }
+          },
+          "item": null,
+          "exclusions": [
+            {
+              "ref": "task-ledger:task-1",
+              "reason": "unknown-scope"
+            },
+            {
+              "ref": "compression-atom:a1",
+              "reason": "unknown-scope"
+            }
+          ],
+          "rendered": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=known; complete=false; bindingRevision=1; chars=453/1800; truncated=false\n- [objective] Complete task. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [decision] none (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### In Progress (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [open-dependency] ### Blocked (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\n- [next-action] Inspect result. (source=compression-artifact; scope=session:agent:main:c02; freshness=unknown; trust=owner-fact)\nOriginal history is not copied into this turn: transcript=session:agent:main:c02; taskLedger=task-ledger:ws; taskLedgerEvents=0; compression=checkpoint. Recall old evidence on demand through the owning session/task APIs.",
+          "projection": "Recovery Context Projection\n\nquality: medium score=0.68\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: none\n\nactive:\n- Inspect result.\n- ### Blocked\n- ### In Progress\n\nblocked:\n- ### In Progress\n- Inspect result.\n- ### Blocked\n\ndecisions:\n- none\n\nevidenceRefs:\n- archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json (pre-compaction checkpoint)\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [constraint:verified:critical; polarity=positive; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Use bullets. refs=archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json,tool:result:probe-A",
+          "redistillation": "{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"<previous-compaction-ledger>\\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\\n\\n- [constraint:verified:critical; polarity=positive; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Use bullets. refs=archive:context-archive://agent%3Amain%3Ac02/c02-temporary-1-a235dc91cb4541f5.context-archive.json,tool:result:probe-A\\n</previous-compaction-ledger>\"}],\"timestamp\":0}",
+          "archive": {
+            "uri": "context-archive://agent%3Amain%3Ac02/c02-temporary-3-1338dfc97afbc1f9.context-archive.json",
+            "checksum": "sha256:1338dfc97afbc1f9fc41a5173153cfe105e03e75e3b8f9ac13423a9d67493ab0",
+            "byteLength": 1845,
+            "createdAt": "1970-01-01T00:00:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "unknown-owner",
+      "item": {
+        "owner": "compression-artifact",
+        "scope": {
+          "kind": "task",
+          "key": "task-1"
+        },
+        "freshness": "unknown",
+        "trust": "owner-fact",
+        "id": "compression-atom:a1",
+        "kind": "decision",
+        "source": "compression-artifact",
+        "text": "probe-A",
+        "semantic": {
+          "owner": "compression-artifact",
+          "sourceStatus": "agent_approved",
+          "verification": "unknown",
+          "polarity": "negative",
+          "scope": "task:task-1",
+          "evidenceRefs": [
+            {
+              "type": "tool",
+              "ref": "result:probe-A"
+            }
+          ],
+          "supersedes": [],
+          "conflicts": [],
+          "sourceRef": "message:source",
+          "sourceVersion": "123"
+        },
+        "polarity": "negative",
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ],
+        "chars": 7
+      }
+    },
+    {
+      "kind": "scope-and-opposition",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "1970-01-01T00:00:01.000Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 492,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "probe-A",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 7
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:positive",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "probe-A",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "positive",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "positive",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 7
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "unknown",
+            "detail": "task ledger snapshot unavailable"
+          },
+          {
+            "source": "working-context",
+            "status": "unknown",
+            "detail": "accepted working context unavailable"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "latest checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "unknown",
+            "detail": "memory surface unavailable"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "compression-atom:foreign",
+            "reason": "out-of-scope"
+          },
+          {
+            "ref": "compression-atom:retired",
+            "reason": "revoked-or-superseded"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      }
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "task",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "workspace",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "agent",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "role",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "project:other",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "future:owner",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "user:other",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "unbound-scope",
+      "scope": "global",
+      "exclusions": [
+        {
+          "ref": "task-ledger:task-1",
+          "reason": "unknown-scope"
+        },
+        {
+          "ref": "compression-atom:a1",
+          "reason": "unknown-scope"
+        }
+      ]
+    },
+    {
+      "kind": "scoped-eight-reference-mirrors",
+      "type": "constraint",
+      "scope": "turn:1",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.374Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result-0",
+          "tool:result-1",
+          "tool:result-2",
+          "tool:result-3",
+          "tool:result-4",
+          "tool:result-5",
+          "tool:result-6",
+          "tool:result-7"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.7\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\nevidenceRefs:\n- tool:result-0\n- tool:result-1\n- tool:result-2\n- tool:result-3\n- tool:result-4\n- tool:result-5\n- tool:result-6\n- tool:result-7\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [constraint:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Scoped constraint. refs=tool:result-0,tool:result-1,tool:result-2,tool:result-3,tool:result-4,tool:result-5,tool:result-6,tool:result-7"
+    },
+    {
+      "kind": "scoped-eight-reference-mirrors",
+      "type": "constraint",
+      "scope": "task:other",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.374Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "out-of-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result-0",
+          "tool:result-1",
+          "tool:result-2",
+          "tool:result-3",
+          "tool:result-4",
+          "tool:result-5",
+          "tool:result-6",
+          "tool:result-7"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.7\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\n- [constraint:verified:critical; polarity=negative; scope=task:other; id=a1; identity=decision-1] Scoped constraint. refs=tool:result-0,tool:result-1,tool:result-2,tool:result-3,tool:result-4,tool:result-5,tool:result-6,tool:result-7\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\nevidenceRefs:\n- tool:result-0\n- tool:result-1\n- tool:result-2\n- tool:result-3\n- tool:result-4\n- tool:result-5\n- tool:result-6\n- tool:result-7\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0"
+    },
+    {
+      "kind": "scoped-eight-reference-mirrors",
+      "type": "decision",
+      "scope": "turn:1",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.375Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result-0",
+          "tool:result-1",
+          "tool:result-2",
+          "tool:result-3",
+          "tool:result-4",
+          "tool:result-5",
+          "tool:result-6",
+          "tool:result-7"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.76\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\nevidenceRefs:\n- tool:result-0\n- tool:result-1\n- tool:result-2\n- tool:result-3\n- tool:result-4\n- tool:result-5\n- tool:result-6\n- tool:result-7\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [decision:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Scoped decision. refs=tool:result-0,tool:result-1,tool:result-2,tool:result-3,tool:result-4,tool:result-5,tool:result-6,tool:result-7"
+    },
+    {
+      "kind": "scoped-eight-reference-mirrors",
+      "type": "decision",
+      "scope": "task:other",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.375Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "out-of-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result-0",
+          "tool:result-1",
+          "tool:result-2",
+          "tool:result-3",
+          "tool:result-4",
+          "tool:result-5",
+          "tool:result-6",
+          "tool:result-7"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.76\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\n- [decision:verified:critical; polarity=negative; scope=task:other; id=a1; identity=decision-1] Scoped decision. refs=tool:result-0,tool:result-1,tool:result-2,tool:result-3,tool:result-4,tool:result-5,tool:result-6,tool:result-7\n\nevidenceRefs:\n- tool:result-0\n- tool:result-1\n- tool:result-2\n- tool:result-3\n- tool:result-4\n- tool:result-5\n- tool:result-6\n- tool:result-7\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0"
+    },
+    {
+      "kind": "scoped-eight-reference-mirrors",
+      "type": "next_action",
+      "scope": "turn:1",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.375Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 74,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 14
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result-0",
+          "tool:result-1",
+          "tool:result-2",
+          "tool:result-3",
+          "tool:result-4",
+          "tool:result-5",
+          "tool:result-6",
+          "tool:result-7"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: high score=0.87\n\nobjective: Complete task.\n\nevidenceRefs:\n- tool:result-0\n- tool:result-1\n- tool:result-2\n- tool:result-3\n- tool:result-4\n- tool:result-5\n- tool:result-6\n- tool:result-7\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [next_action:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Scoped next_action. refs=tool:result-0,tool:result-1,tool:result-2,tool:result-3,tool:result-4,tool:result-5,tool:result-6,tool:result-7"
+    },
+    {
+      "kind": "scoped-eight-reference-mirrors",
+      "type": "next_action",
+      "scope": "task:other",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.376Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 74,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result-0",
+              "tool:result-1",
+              "tool:result-2",
+              "tool:result-3",
+              "tool:result-4",
+              "tool:result-5",
+              "tool:result-6",
+              "tool:result-7"
+            ],
+            "chars": 14
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "out-of-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result-0",
+          "tool:result-1",
+          "tool:result-2",
+          "tool:result-3",
+          "tool:result-4",
+          "tool:result-5",
+          "tool:result-6",
+          "tool:result-7"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: high score=0.87\n\nobjective: Complete task.\n\n- [next_action:verified:critical; polarity=negative; scope=task:other; id=a1; identity=decision-1] Scoped next_action. refs=tool:result-0,tool:result-1,tool:result-2,tool:result-3,tool:result-4,tool:result-5,tool:result-6,tool:result-7\n\nevidenceRefs:\n- tool:result-0\n- tool:result-1\n- tool:result-2\n- tool:result-3\n- tool:result-4\n- tool:result-5\n- tool:result-6\n- tool:result-7\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0"
+    },
+    {
+      "kind": "archive-origin",
+      "type": "constraint",
+      "legacyFormat": false,
+      "handle": {
+        "uri": "context-archive://agent%3Amain%3Ac02/archive-origin-constraint-4d508016e7d99b36.context-archive.json",
+        "checksum": "sha256:4d508016e7d99b36e6d2559b1b9ad82ae5bd3fab5729157df4962cb0a535816c",
+        "byteLength": 1024,
+        "createdAt": "1970-01-01T00:00:00.000Z"
+      },
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.377Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.7\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [constraint:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Archived constraint. refs=archive:context-archive://agent%3Amain%3Ac02/archive-origin-constraint-4d508016e7d99b36.context-archive.json,tool:result:probe-A"
+    },
+    {
+      "kind": "archive-origin",
+      "type": "constraint",
+      "legacyFormat": true,
+      "handle": {
+        "uri": "context-archive://agent%3Amain%3Ac02/archive-origin-constraint-4d508016e7d99b36.context-archive.json",
+        "checksum": "sha256:4d508016e7d99b36e6d2559b1b9ad82ae5bd3fab5729157df4962cb0a535816c",
+        "byteLength": 1024,
+        "createdAt": "1970-01-01T00:00:00.000Z"
+      },
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.378Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.7\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [constraint:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Archived constraint. refs=archive:context-archive://agent%3Amain%3Ac02/archive-origin-constraint-4d508016e7d99b36.context-archive.json,tool:result:probe-A"
+    },
+    {
+      "kind": "archive-origin",
+      "type": "decision",
+      "legacyFormat": false,
+      "handle": {
+        "uri": "context-archive://agent%3Amain%3Ac02/archive-origin-decision-c715277c5c937afc.context-archive.json",
+        "checksum": "sha256:c715277c5c937afc4ce0e6ef41524b0cf52303a23fe92ff03a4d5e5424805add",
+        "byteLength": 993,
+        "createdAt": "1970-01-01T00:00:00.000Z"
+      },
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.379Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.76\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [decision:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Archived decision. refs=archive:context-archive://agent%3Amain%3Ac02/archive-origin-decision-c715277c5c937afc.context-archive.json,tool:result:probe-A"
+    },
+    {
+      "kind": "archive-origin",
+      "type": "decision",
+      "legacyFormat": true,
+      "handle": {
+        "uri": "context-archive://agent%3Amain%3Ac02/archive-origin-decision-c715277c5c937afc.context-archive.json",
+        "checksum": "sha256:c715277c5c937afc4ce0e6ef41524b0cf52303a23fe92ff03a4d5e5424805add",
+        "byteLength": 993,
+        "createdAt": "1970-01-01T00:00:00.000Z"
+      },
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.379Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.76\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [decision:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Archived decision. refs=archive:context-archive://agent%3Amain%3Ac02/archive-origin-decision-c715277c5c937afc.context-archive.json,tool:result:probe-A"
+    },
+    {
+      "kind": "archive-origin",
+      "type": "next_action",
+      "legacyFormat": false,
+      "handle": {
+        "uri": "context-archive://agent%3Amain%3Ac02/archive-origin-next_action-9ee69f80a02099cf.context-archive.json",
+        "checksum": "sha256:9ee69f80a02099cfbbec133237aa6aaf94593dcc7c33c126ed28d718c21dafd9",
+        "byteLength": 1025,
+        "createdAt": "1970-01-01T00:00:00.000Z"
+      },
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.380Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 74,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: high score=0.87\n\nobjective: Complete task.\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [next_action:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Archived next_action. refs=archive:context-archive://agent%3Amain%3Ac02/archive-origin-next_action-9ee69f80a02099cf.context-archive.json,tool:result:probe-A"
+    },
+    {
+      "kind": "archive-origin",
+      "type": "next_action",
+      "legacyFormat": true,
+      "handle": {
+        "uri": "context-archive://agent%3Amain%3Ac02/archive-origin-next_action-9ee69f80a02099cf.context-archive.json",
+        "checksum": "sha256:9ee69f80a02099cfbbec133237aa6aaf94593dcc7c33c126ed28d718c21dafd9",
+        "byteLength": 1025,
+        "createdAt": "1970-01-01T00:00:00.000Z"
+      },
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.380Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 74,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression:open-dependency:0",
+            "reason": "unresolved-semantic-origin"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: high score=0.87\n\nobjective: Complete task.\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [next_action:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=a1; identity=decision-1] Archived next_action. refs=archive:context-archive://agent%3Amain%3Ac02/archive-origin-next_action-9ee69f80a02099cf.context-archive.json,tool:result:probe-A"
+    },
+    {
+      "kind": "session-owner-scope",
+      "unbound": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "1970-01-01T00:00:01.000Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "unknown",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 0,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "unknown",
+            "detail": "task ledger snapshot unavailable"
+          },
+          {
+            "source": "working-context",
+            "status": "unknown",
+            "detail": "accepted working context unavailable"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "latest checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "unknown",
+            "detail": "memory surface unavailable"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionAvailable": true
+        },
+        "evidenceRefs": []
+      },
+      "bound": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.381Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 485,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "probe-A",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "session",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 7
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "missing": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.381Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 232,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Complete task.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 14
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:a1",
+            "reason": "unknown-scope"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      }
+    },
+    {
+      "kind": "long-task-id",
+      "length": 156,
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "1970-01-01T00:00:01.000Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 4000,
+          "usedChars": 571,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "constraint",
+            "source": "compression-artifact",
+            "text": "Keep the long task constraint.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 30
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "unknown",
+            "detail": "task ledger snapshot unavailable"
+          },
+          {
+            "source": "working-context",
+            "status": "unknown",
+            "detail": "accepted working context unavailable"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "latest checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "unknown",
+            "detail": "memory surface unavailable"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      }
+    },
+    {
+      "kind": "long-task-id",
+      "length": 256,
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "1970-01-01T00:00:01.000Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 4000,
+          "usedChars": 771,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "constraint",
+            "source": "compression-artifact",
+            "text": "Keep the long task constraint.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 30
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "unknown",
+            "detail": "task ledger snapshot unavailable"
+          },
+          {
+            "source": "working-context",
+            "status": "unknown",
+            "detail": "accepted working context unavailable"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "latest checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "unknown",
+            "detail": "memory surface unavailable"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      }
+    },
+    {
+      "kind": "long-task-id",
+      "length": 512,
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "1970-01-01T00:00:01.000Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 4000,
+          "usedChars": 1283,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "constraint",
+            "source": "compression-artifact",
+            "text": "Keep the long task constraint.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 30
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "unknown",
+            "detail": "task ledger snapshot unavailable"
+          },
+          {
+            "source": "working-context",
+            "status": "unknown",
+            "detail": "accepted working context unavailable"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "latest checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "unknown",
+            "detail": "memory surface unavailable"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      }
+    },
+    {
+      "kind": "distinct-records-same-text",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.382Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "known",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 371,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Shared text.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 12
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:constraint:0",
+            "kind": "constraint",
+            "source": "compression-artifact",
+            "text": "Shared text.",
+            "evidenceRefs": [
+              "session:new-constraint"
+            ],
+            "chars": 12
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:decision:0",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "Shared text.",
+            "evidenceRefs": [
+              "session:new-decision"
+            ],
+            "chars": 12
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Shared text.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 12
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:retired",
+            "reason": "revoked-or-superseded"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A",
+          "session:new-constraint",
+          "session:new-decision"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: low score=0.52\n\nobjective: Shared text.\n\nnextAction: Shared text.\n\nconstraints:\n- Shared text.\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\ndecisions:\n- Shared text.\n\nevidenceRefs:\n- tool:result:probe-A\n\nsemanticAtoms: verified=0 unverified=0 stale=0 superseded=1 conflicts=0\n\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired; identity=decision-1] Shared text. refs=tool:result:probe-A"
+    },
+    {
+      "kind": "unresolved-origin-after-checkpoint-limit",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.386Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 1656,
+          "truncated": true,
+          "droppedItems": 42,
+          "criticalOmissions": 1
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Continue the current task from compressed context.",
+            "evidenceRefs": [
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A",
+              "tool:result:probe-A"
+            ],
+            "chars": 50
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:old-0",
+            "kind": "evidence",
+            "source": "compression-artifact",
+            "text": "Old observation 0.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 18
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:old-1",
+            "kind": "evidence",
+            "source": "compression-artifact",
+            "text": "Old observation 1.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 18
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:old-10",
+            "kind": "evidence",
+            "source": "compression-artifact",
+            "text": "Old observation 10.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 19
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:old-11",
+            "kind": "evidence",
+            "source": "compression-artifact",
+            "text": "Old observation 11.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 19
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:old-12",
+            "kind": "evidence",
+            "source": "compression-artifact",
+            "text": "Old observation 12.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 19
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:old-13",
+            "kind": "evidence",
+            "source": "compression-artifact",
+            "text": "Old observation 13.",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 19
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression:constraint:0",
+            "reason": "unresolved-semantic-origin",
+            "critical": true
+          },
+          {
+            "ref": "compression:open-dependency:0",
+            "reason": "unresolved-semantic-origin"
+          },
+          {
+            "ref": "compression:next-action",
+            "reason": "unresolved-semantic-origin"
+          },
+          {
+            "ref": "compression-atom:old-14",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-15",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-16",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-17",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-18",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-19",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-2",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-20",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-21",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-22",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-23",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-24",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-25",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-26",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-27",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-28",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-29",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-3",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-30",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-31",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-32",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-33",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-34",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-35",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-36",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-37",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-38",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-39",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-4",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-40",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-41",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-42",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-43",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-44",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-45",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-46",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-47",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-5",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-6",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-7",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-8",
+            "reason": "budget"
+          },
+          {
+            "ref": "compression-atom:old-9",
+            "reason": "budget"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: medium score=0.72\n\nobjective: Continue the current task from compressed context.\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-0; identity=decision-1] Old observation 0. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-1; identity=decision-1] Old observation 1. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-2; identity=decision-1] Old observation 2. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-3; identity=decision-1] Old observation 3. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-4; identity=decision-1] Old observation 4. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-5; identity=decision-1] Old observation 5. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-6; identity=decision-1] Old observation 6. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-7; identity=decision-1] Old observation 7. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-8; identity=decision-1] Old observation 8. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-9; identity=decision-1] Old observation 9. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-10; identity=decision-1] Old observation 10. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-11; identity=decision-1] Old observation 11. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-12; identity=decision-1] Old observation 12. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-13; identity=decision-1] Old observation 13. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-14; identity=decision-1] Old observation 14. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-15; identity=decision-1] Old observation 15. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-16; identity=decision-1] Old observation 16. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-17; identity=decision-1] Old observation 17. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-18; identity=decision-1] Old observation 18. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-19; identity=decision-1] Old observation 19. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-20; identity=decision-1] Old observation 20. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-21; identity=decision-1] Old observation 21. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-22; identity=decision-1] Old observation 22. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-23; identity=decision-1] Old observation 23. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-24; identity=decision-1] Old observation 24. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-25; identity=decision-1] Old observation 25. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-26; identity=decision-1] Old observation 26. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-27; identity=decision-1] Old observation 27. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-28; identity=decision-1] Old observation 28. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-29; identity=decision-1] Old observation 29. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-30; identity=decision-1] Old observation 30. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-31; identity=decision-1] Old observation 31. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-32; identity=decision-1] Old observation 32. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-33; identity=decision-1] Old observation 33. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-34; identity=decision-1] Old observation 34. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-35; identity=decision-1] Old observation 35. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-36; identity=decision-1] Old observation 36. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-37; identity=decision-1] Old observation 37. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-38; identity=decision-1] Old observation 38. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-39; identity=decision-1] Old observation 39. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-40; identity=decision-1] Old observation 40. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-41; identity=decision-1] Old observation 41. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-42; identity=decision-1] Old observation 42. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-43; identity=decision-1] Old observation 43. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-44; identity=decision-1] Old observation 44. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-45; identity=decision-1] Old observation 45. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-46; identity=decision-1] Old observation 46. refs=tool:result:probe-A\n\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-47; identity=decision-1] Old observation 47. refs=tool:result:probe-A\n\nevidenceRefs:\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n- tool:result:probe-A\n\nsemanticAtoms: verified=48 unverified=0 stale=0 superseded=0 conflicts=0\n\n[unresolved semantic sources=late-next,late-constraint; recall original artifact]",
+      "summary": "## Goal\nContinue the current task from compressed context.\n\n## Constraints & Preferences\n- [unresolved semantic source=late-constraint; recall original artifact]\n\n## Progress\n### Done\n- none\n\n### In Progress\n- [unresolved semantic source=late-next; recall original artifact]\n\n### Blocked\n- none\n\n## Key Decisions\n- none\n\n## Next Steps\n1. [unresolved semantic source=late-next; recall original artifact]\n\n## Critical Context\n- none\n\n## Semantic Atoms\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-0; identity=decision-1] Old observation 0. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-1; identity=decision-1] Old observation 1. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-2; identity=decision-1] Old observation 2. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-3; identity=decision-1] Old observation 3. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-4; identity=decision-1] Old observation 4. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-5; identity=decision-1] Old observation 5. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-6; identity=decision-1] Old observation 6. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-7; identity=decision-1] Old observation 7. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-8; identity=decision-1] Old observation 8. refs=tool:result:probe-A\n- [entity:verified:nice_to_have; polarity=negative; scope=task:task-1; id=old-9; identity=decision-1] Old observation 9. refs=tool:result:probe-A"
+    },
+    {
+      "kind": "actual-predecessor-fallback",
+      "sourceCommit": "af93c1e311f997f3e52b56f0a1d9ddb63fbfc0b0",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.387Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 83,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 0
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:objective",
+            "kind": "objective",
+            "source": "compression-artifact",
+            "text": "Continue in a new turn.",
+            "evidenceRefs": [
+              "session:new",
+              "session:old-user"
+            ],
+            "chars": 23
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression-atom:old-next",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression:open-dependency:0",
+            "reason": "unresolved-semantic-origin"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "session:new",
+          "session:old-user"
+        ]
+      },
+      "projection": "Recovery Context Projection\n\nquality: high score=0.87\n\nobjective: Continue in a new turn.\n\nevidenceRefs:\n- session:new (user message)\n- session:old-user\n\nsemanticAtoms: verified=1 unverified=0 stale=0 superseded=0 conflicts=0\n\n- [next_action:verified:critical; polarity=negative; scope=turn:1; applicability=unconfirmed-turn; id=old-next; identity=next] Avoid the old next step. refs=session:old-user"
+    },
+    {
+      "kind": "wrong-type-scalar",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "2026-11-25T20:33:42.387Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "partial",
+        "complete": false,
+        "budget": {
+          "maxChars": 1800,
+          "usedChars": 403,
+          "truncated": false,
+          "droppedItems": 0,
+          "criticalOmissions": 1
+        },
+        "items": [
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "task",
+              "key": "task-1"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression-atom:a1",
+            "kind": "decision",
+            "source": "compression-artifact",
+            "text": "Goal X",
+            "semantic": {
+              "owner": "compression-artifact",
+              "sourceStatus": "verified",
+              "verification": "verified",
+              "polarity": "negative",
+              "scope": "task:task-1",
+              "evidenceRefs": [
+                {
+                  "type": "tool",
+                  "ref": "result:probe-A"
+                }
+              ],
+              "supersedes": [],
+              "conflicts": [],
+              "sourceRef": "message:source",
+              "sourceVersion": "123"
+            },
+            "polarity": "negative",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 6
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:open-dependency:0",
+            "kind": "open-dependency",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [],
+            "chars": 15
+          },
+          {
+            "owner": "compression-artifact",
+            "scope": {
+              "kind": "session",
+              "key": "agent:main:c02"
+            },
+            "freshness": "unknown",
+            "trust": "owner-fact",
+            "id": "compression:next-action",
+            "kind": "next-action",
+            "source": "compression-artifact",
+            "text": "Inspect result.",
+            "evidenceRefs": [
+              "tool:result:probe-A"
+            ],
+            "chars": 15
+          }
+        ],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "available",
+            "detail": "events=0; nodes=0"
+          },
+          {
+            "source": "working-context",
+            "status": "available"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "available",
+            "detail": "accepted=0; modelVisible=0"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "task-ledger:task-1",
+            "reason": "unknown-scope"
+          },
+          {
+            "ref": "compression:objective",
+            "reason": "unresolved-semantic-origin",
+            "critical": true
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionCheckpointId": "checkpoint",
+          "compressionAvailable": true
+        },
+        "evidenceRefs": [
+          "tool:result:probe-A"
+        ]
+      }
+    },
+    {
+      "kind": "next-compression-priority",
+      "text": "<previous-compaction-ledger>\nPrevious compaction atom ledger to re-distill with the current conversation. Prefer current messages; keep active critical atoms addressable and drop stale or superseded work.\n\n- [goal:verified:critical; polarity=negative; scope=task:task-1; id=current-goal; identity=decision-1] Current goal. refs=tool:result:probe-A\n- [next_action:verified:critical; polarity=negative; scope=task:task-1; id=current-next; identity=decision-1] Current next step. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-0; identity=decision-1] Retired 0. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-1; identity=decision-1] Retired 1. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-2; identity=decision-1] Retired 2. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-3; identity=decision-1] Retired 3. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-4; identity=decision-1] Retired 4. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-5; identity=decision-1] Retired 5. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-6; identity=decision-1] Retired 6. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-7; identity=decision-1] Retired 7. refs=tool:result:probe-A\n- [decision:superseded:critical; polarity=negative; scope=task:task-1; id=retired-8; identity=decision-1] Retired 8. refs=tool:result:probe-A\n[records omitted; recall original artifact]\n</previous-compaction-ledger>"
+    },
+    {
+      "kind": "bounded-records",
+      "projection": "Recovery Context Projection\n\nquality: high score=0.9\n\nobjective: Complete task.\n\nnextAction: Inspect result.\n\n- [constraint:verified:critical; polarity=negative; scope=task:task-1; id=a1; identity=decision-1] Bounded critical constraint Bounded critical constraint Bounded critical constraint Bounded critical constraint Bounded critical constraint Bounded critical constraint Bounded critical constraint Bounded critical con [truncated] refs=tool:result:probe-A\n\ncurrentState: Inspect result.\n\nactive:\n- Inspect result.\n\n- [decision:verified:critical; polarity=negative; scope=task:task-1; id=small-0; identity=decision-1] probe-A refs=tool:result:probe-A\n\nevidenceRefs:\n- tool:result:probe-A\n[projection sections omitted by budget; recall the original artifact before acting]",
+      "pack": {
+        "schemaVersion": "ContinuityContextPack/v1",
+        "generatedAt": "1970-01-01T00:00:01.000Z",
+        "sessionKey": "agent:main:c02",
+        "workspaceId": "ws",
+        "bindingRevision": 1,
+        "activeTaskNodeId": "task-1",
+        "status": "unknown",
+        "complete": false,
+        "budget": {
+          "maxChars": 200,
+          "usedChars": 0,
+          "truncated": true,
+          "droppedItems": 1,
+          "criticalOmissions": 1
+        },
+        "items": [],
+        "sourceStates": [
+          {
+            "source": "task-ledger",
+            "status": "unknown",
+            "detail": "task ledger snapshot unavailable"
+          },
+          {
+            "source": "working-context",
+            "status": "unknown",
+            "detail": "accepted working context unavailable"
+          },
+          {
+            "source": "compression-artifact",
+            "status": "available",
+            "detail": "latest checkpoint"
+          },
+          {
+            "source": "memory",
+            "status": "unknown",
+            "detail": "memory surface unavailable"
+          },
+          {
+            "source": "knowledge",
+            "status": "empty",
+            "detail": "no selected knowledge refs"
+          }
+        ],
+        "exclusions": [
+          {
+            "ref": "compression-atom:a1",
+            "reason": "budget"
+          }
+        ],
+        "originalHistory": {
+          "transcriptRef": "session:agent:main:c02",
+          "taskLedgerRef": "task-ledger:ws",
+          "taskLedgerEventCount": 0,
+          "compressionAvailable": true
+        },
+        "evidenceRefs": []
+      }
+    }
+  ]
+}

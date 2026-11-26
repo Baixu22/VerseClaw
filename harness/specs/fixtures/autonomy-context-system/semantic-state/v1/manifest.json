@@ -1,0 +1,61 @@
+{
+  "schema": "C02EvidenceManifest/v1",
+  "driven_by": "agent",
+  "actor": "codex/context-system-01a213b7",
+  "sourceCandidate": {
+    "commit": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+    "tree": "03bb460cdd5ef8471a7eecec05782d83cbfd125a",
+    "dirty": false
+  },
+  "hashScheme": "sha256-utf8-lf",
+  "files": [
+    {
+      "path": "autoreview.json",
+      "sha256": "7ed55ebb08edca6feeaf5076a91ec3905d7184dab69de2efca7daab40655946d"
+    },
+    {
+      "path": "credential-scan.json",
+      "sha256": "d2f9363f720cd5dd73e05623ad09550c152b68049106b7fdd02710d5a53958eb"
+    },
+    {
+      "path": "electron-observation.json",
+      "sha256": "79248346399dfd9aeeeb749e55c7ab65f52db90b4e2db4a774a0f3bb26e3d5e9"
+    },
+    {
+      "path": "electron-results.json",
+      "sha256": "c10de644bead0a13ec8984b665be8251f3799fb3a84d45a3892281b305665cf7"
+    },
+    {
+      "path": "independent-verdict.json",
+      "sha256": "c181a8cc0607aa5a711bd9fcf3507b92336a76db3f9a5281c12b170ed5785d80"
+    },
+    {
+      "path": "independent-verdict.md",
+      "sha256": "afdf069965f03f310ac9a434d682eb0934ca7dc09eb88929a8e16306177f97b9"
+    },
+    {
+      "path": "legacy-read-parity.json",
+      "sha256": "43648361df2730e696d5169faf56b0bf5dcab951e6a62aee1c4f463508996cb4"
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "93199bc9c671d9c1ad7e7166ddc46e1807c1436b4b2ff552fe772bdd4d541566"
+    },
+    {
+      "path": "semantic-state-mapping.json",
+      "sha256": "08450f61ceb7f8914641f498899e9d9dc777d34b1bfad13848f8c382580a99f9"
+    },
+    {
+      "path": "source-readback.json",
+      "sha256": "f2316eb3a700e63fd1ed89cdf11f4d126c520ae7e918a637b0f8ed12c083ea3b"
+    },
+    {
+      "path": "state-preservation-cases.json",
+      "sha256": "c334f720152049d5fd2021373ad5efa2ea3f8e54db90e14724e415939aa02c49"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "0f5c846cfd67e6cd90c46f6a5f954ad8a9dc8285125245955237e879383b8445"
+    }
+  ]
+}

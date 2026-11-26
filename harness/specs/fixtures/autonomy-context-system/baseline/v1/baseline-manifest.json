@@ -1,0 +1,306 @@
+{
+  "schema": "AutonomyContextBaselineManifest/v1",
+  "actor": "codex/autonomy-context-tf0955",
+  "driven_by": "agent",
+  "generatedAt": "2026-11-25T16:48:14.143377+00:00",
+  "sourceBaseline": "f18b0d7ea9d4b4a34f231a49178225a01e71ca0f",
+  "sourceCandidate": "5e8c2e2861bb87d33149a2a284430fe204bb1f63",
+  "sourceTree": "4c117a8b4ec515122af149acfceb78c30cd9fcf9",
+  "branch": "codex/autonomy-context-tf0955-20261125",
+  "preregistrationCommit": "21a51f237",
+  "fixturePath": "tests/unit/fixtures/autonomy-context-baseline.v2.json",
+  "hashScheme": "sha256-utf8-lf",
+  "sourceFiles": [
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "921bca768486e50b42d4d7c2a55b8838374d402d4b9876199d0c10dd93229ba4"
+    },
+    {
+      "path": "electron/services/resource-envelope.ts",
+      "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6"
+    },
+    {
+      "path": "harness/specs/guides/autonomy-context-system-design.md",
+      "sha256": "ae94e2af07190a06c23775e3b45d5a0fc032b557538f30026416ff2eb2e70af0"
+    },
+    {
+      "path": "harness/specs/rules/autonomy-context-system-contract.md",
+      "sha256": "ca81c185334d7d3326478f1f961851e43557ae331389ab224da62c291c86f416"
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-context-system.md",
+      "sha256": "5861d72acd2599e85a712fe99479f8bfb6451087fe6fff028a562967b1200635"
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-context-baseline.md",
+      "sha256": "9a20a87d06b47be4061951a9265f850330a4dc9dca465d795203b454767b25e6"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+      "sha256": "3df56c0d9d43cd6d8ac98b26a2c1fa7e22f983fd74f55aeb21761ce3b6d1bae7"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "9adaaafff48cdf051b718e6d1e5b8354f8c0e29859d33443e35b9367b7fbabf0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/cross-area/cross-area-facades.ts",
+      "sha256": "2a26de5e497849ddfa6b90d9e81055f550bcd956dcaabf727b3e7e451dc2bf14"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+      "sha256": "25586e17886a3d345e5cb5329ccc0112d4d009434c68380001e1963a046e0201"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "ac354af731e64561f37bd920fde131dd0b64bf3a4949618dfa00cffb66673ecd"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.ts",
+      "sha256": "b0cc53b2744ade3c0c4b3b944dce86a06741c5da91ffc0802e1002c04c0e2b0c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/harness/context-engine-lifecycle.ts",
+      "sha256": "055819ae60af17b898bd520f62410e553fe31850653e23b5bd93f2a2b3279224"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mission-control/controller.ts",
+      "sha256": "8852571c663a813096960b3cb57539c496550867026ea3ecca19dbb390270a42"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/provider-transport-fetch.ts",
+      "sha256": "c64cdba0657062b48ec3eb6ef09850eaae2e262d034b7810485487599e1ad14a"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/resource-aware-wave-scheduler.ts",
+      "sha256": "9a86631a35437500f253d9be1d374171e8742cc600868fbe1d46ca742edde8d4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "sha256": "6f0e7539b322e757587bb0fbdb679877620d4336c148e92136fc4be1bccae952"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+      "sha256": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/context-orchestrator.ts",
+      "sha256": "319324caa75910eb40522512b7e3f06950d66141e9665123cd5e3b161f900a33"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/registry/context-item-registry.ts",
+      "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/tools/context-write-tool.ts",
+      "sha256": "35140c6df47630ac049197bfafa6b559de0803c7330d320c715bb53bb45735e9"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/turn-injection-budget.ts",
+      "sha256": "6f3ff109bb3232cb0b72569cc9fb97a7492727629bdf30c01a2d54bdd2fb6ad8"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/working-memory-regather.ts",
+      "sha256": "88a9cd0bf8e1ddc0585ffdcfb97fee9abafb1181fcdfd5d73d76bdf86e897e1e"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/sekb/experience-block-bridge.ts",
+      "sha256": "8a6dc4d5db48b6e36e46a30120cb3e03dfb095d98ab3911542b55bee47c45611"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-context.ts",
+      "sha256": "d99af54a0881938fc9174ace10a5f8c3a781f4e06b994f4b5d8c7fc0d69630d5"
+    },
+    {
+      "path": "package.json",
+      "sha256": "ab70f4c808e614b146d309980ba8649c11a79be609851c2ad04d8597ec7d20a6"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "9a36ae57be4028d929b42b1461c67f3913fccdfb8e30c0bfe24b9379afab1ac4"
+    },
+    {
+      "path": "scripts/verify-autonomy-context-baseline.mjs",
+      "sha256": "1dbbafad512d0f2300f9dcc07c5080e1fb62fdbd42bde191397e9041813fb01e"
+    },
+    {
+      "path": "shared/knowledge/experience.ts",
+      "sha256": "0e84fb32dc1e654c1fcfff3f1efb772a1c96f807c94333ddb1b15c070ed484ad"
+    },
+    {
+      "path": "shared/long-session-continuity.ts",
+      "sha256": "e2c161b1c0489afbda848efc3ac6ac26a24b77c5c696110d4edb557f49c37c79"
+    },
+    {
+      "path": "shared/long-session-paired-evaluation.ts",
+      "sha256": "6ed4ef78b4cebc195bf322ec950cbd7e357063265f2717f7dec329c648d348b7"
+    },
+    {
+      "path": "shared/permission-effect-contract.ts",
+      "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087"
+    },
+    {
+      "path": "shared/task-ledger-working-context.ts",
+      "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+    },
+    {
+      "path": "shared/task-system/project-coordinator.ts",
+      "sha256": "629fbc7f612bacc0e4aae82100f0101e34018dd451e0fd46a3ec212727d0f839"
+    },
+    {
+      "path": "shared/task-system/runtime.ts",
+      "sha256": "7d13716752b2c9ea34e2ed3c3db0990d14980e6b5691d9267d30f17188cd36a9"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "59da3331a19ca4e2c472ccbd6853f0f04f5e2e439ec3453ed95cdc7de525519f"
+    },
+    {
+      "path": "shared/task-system/trace.ts",
+      "sha256": "37b8a612874c3e7ef5060657930627e257de627fa6a76d0f8678fb632ff39271"
+    },
+    {
+      "path": "shared/types/context-folding.ts",
+      "sha256": "f27a4cc997cb64d1ed1ed9240d0d7af11058561ddad4850fa56ef9e0ce815458"
+    },
+    {
+      "path": "shared/types/context-item.ts",
+      "sha256": "7e7d156475097786c95ec96239bbdeecd20ee149169285d3f8cc9704466c9b41"
+    },
+    {
+      "path": "shared/types/session-effective-policy.ts",
+      "sha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f"
+    },
+    {
+      "path": "shared/types/system-control.ts",
+      "sha256": "71a9649d54564c035e6f1c7a3f29c51bb6b60bff40e0cbf6c6474b1ce8967c75"
+    },
+    {
+      "path": "shared/types/tar.d.ts",
+      "sha256": "bc165d24f2d4da0b410f4349e7ca2dfe3d0e35ff66e7756e702bd9edb7e76a55"
+    },
+    {
+      "path": "shared/types/task-ledger.ts",
+      "sha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413"
+    },
+    {
+      "path": "tests/setup.ts",
+      "sha256": "7c9c36877661fc922163d3304b0e18edac978038b89b1ac8d8b3bdecbad04cdf"
+    },
+    {
+      "path": "tests/unit/autonomy-context-baseline.test.ts",
+      "sha256": "fb07c3bebb730963b3bac593f01e79ffe8d58a277d1e6f1765fe56bfcaaca360"
+    },
+    {
+      "path": "tests/unit/autonomy-context-paired.test.ts",
+      "sha256": "a336d7304011cdffd1612e11d42d74310143fb89ef080133245ca9a66f66c141"
+    },
+    {
+      "path": "tests/unit/compression-artifact.test.ts",
+      "sha256": "a44c659310a4bce91a2bedd81f4b7b440668559b5b584826d673601c9e672f1e"
+    },
+    {
+      "path": "tests/unit/context-observation-masking.test.ts",
+      "sha256": "0ed8c02efb8a0e4f5c333ad506210091965ebb58445046b39077503be0b0f597"
+    },
+    {
+      "path": "tests/unit/durable-task-system.test.ts",
+      "sha256": "2ad6c8930d5c5b884af3f842dc21718d32faa8b0504527bb29ebd36cf4fb9460"
+    },
+    {
+      "path": "tests/unit/long-session-continuity-context.test.ts",
+      "sha256": "a54f0f62d942153317941de36a7d334026000a7adc6433464c9ef6ecc0fb6fc7"
+    },
+    {
+      "path": "tests/unit/long-session-paired-evaluation.test.ts",
+      "sha256": "8861b2d701f53c6e3626511ad67d124380701007067360c1c902bb278243b3fb"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "sha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324"
+    },
+    {
+      "path": "tsconfig.test.json",
+      "sha256": "d955f555eb6ea9abb946b292ca1249c23645b99728a02b7a7d6e9359c8cc49c4"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "fc7eff28afa43ff1020c17e894c08a2a375fbc72c25ed0df2c5fd123416f8e42"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/frozen-evaluation-policy.json",
+      "sha256": "9b492f7b7716f72edb525fff8ca9a79315f80743c62e80d70f03e7cf8504946b"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/offline-readback.json",
+      "sha256": "96e6f436e6e37975c307064d65f581c1e90a15a9ed586049113c2ffe283e84d2"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/preregistration-portable.json",
+      "sha256": "678c4cdbd2376c929807a5db840587d08ace03cd9e58af4c145ab1b31c21c5af"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/preregistration.json",
+      "sha256": "670770d5285fa2227d72bfb7223a1d8642bcbeefa54f337e09570c8d579ad58b"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/scenario-matrix.json",
+      "sha256": "2796130417e969b6786450c581828afb5f3d31ef4b485f14ae4dda386aa082e5"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/source-audit.json",
+      "sha256": "fab267186fb1468b4736acaec09c6cda17152d0bafb88a26053e17d6a8452a6b"
+    },
+    {
+      "path": "harness/specs/fixtures/autonomy-context-system/baseline/v1/validation.json",
+      "sha256": "cea8d01b7f323e1095c3223421d46b2606ffe8609781bfa0a783b6b5bc1217eb"
+    },
+    {
+      "path": "tests/unit/fixtures/autonomy-context-baseline.v2.json",
+      "sha256": "22f3a74c895690c161247567743532077e8a5b1e01f6656983cf3e6c303521e0"
+    }
+  ],
+  "environment": {
+    "node": "v24.22.1",
+    "platform": "Windows",
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm": "11.2.2",
+    "dependencyMode": "existing local installation; verify_deps_before_run=false",
+    "runRoot": "D:\\tmp\\autonomy-context-tf0955-20261125"
+  },
+  "scope": {
+    "families": 15,
+    "frozenCases": 45,
+    "executedCases": 30,
+    "armsRun": [
+      "current",
+      "simple-masking"
+    ],
+    "plannedArms": [
+      "working-projection",
+      "conditioned"
+    ],
+    "continuations": 120,
+    "heldoutExecuted": 0,
+    "liveProviderCalls": 0
+  },
+  "sourceDrift": {
+    "baselineCommitMatchesInvestigation": true,
+    "planningAnchorRawMismatch": [
+      "electron/services/chat-api.ts"
+    ],
+    "cause": "CRLF in the source checkout versus LF in the worktree; normalized content matches.",
+    "productionSourceChanged": false
+  },
+  "reproduce": {
+    "run": "Set TEMP/TMP=D:/tmp and pnpm_config_verify_deps_before_run=false; use a fresh CLAWX_C01_OUTPUT and run the declared Vitest commands through the resource queue.",
+    "verify": "node scripts/verify-autonomy-context-baseline.mjs --run-report <new-output>/offline-run.json"
+  },
+  "legacyBaseline": {
+    "path": "tests/unit/fixtures/autonomy-context-baseline.json",
+    "sha256": "b35e61d517aeaf42daa1cba73ee03ac2d97d70b609a199ad2c138f85efe69294"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "C02IntegrationManifest/v1",
+  "actor": "codex/context-system-01a213b7",
+  "driven_by": "agent",
+  "sourceCandidate": {
+    "commit": "49d5922b7103b7a15953d304eec4d09242322275",
+    "tree": "3bff8a58ca508717eb98717c0f315ee5c6aa6a38",
+    "dirty": false
+  },
+  "hashScheme": "sha256-utf8-lf",
+  "files": [
+    {
+      "path": "credential-scan.json",
+      "sha256": "e6ee8b4f2f448c310546f9d2b47c30aec14758aef8abfb302eacc3c3ec43a0ca"
+    },
+    {
+      "path": "electron-results.json",
+      "sha256": "8657b00cbdd5691e9e27815d34662e8a1fda2cb75397726f459e3e9b714c43fe"
+    },
+    {
+      "path": "harness-baseline-comparison.json",
+      "sha256": "a6ffabc3e3911e897e4bf59c3d8804c7e60f9086d35c7a3ab850a3782093bb10"
+    },
+    {
+      "path": "independent-verdict.json",
+      "sha256": "35147eebec3a3085d15000e00b576ea28529bb18bb9305101c67db8d062ce4ca"
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "2817bd28620c68f0bfb73bf304c0e5ae6e86c0bc3f09441c04aeeb6ed12c4306"
+    },
+    {
+      "path": "source-readback.json",
+      "sha256": "f41e1bb32ba68562add7d80154fca997caffa14552cd5a02f3f54a0e4b444475"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "e0ff0c6d37e2da61949510a00ffc14f350b46cec8a1c4eb90340ed969ac068b7"
+    }
+  ]
+}

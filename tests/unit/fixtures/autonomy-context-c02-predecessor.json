@@ -1,0 +1,74 @@
+{
+  "sourceCommit": "af93c1e311f997f3e52b56f0a1d9ddb63fbfc0b0",
+  "sourcePath": "openclaw_runtime/packages/agent-core/src/harness/compaction/compression-artifact.ts",
+  "driven_by": "agent",
+  "artifact": {
+    "schemaVersion": 1,
+    "objective": "Continue in a new turn.",
+    "constraints": [],
+    "currentState": "Avoid the old next step.",
+    "done": [],
+    "inProgress": [
+      {
+        "text": "Avoid the old next step.",
+        "evidenceRefs": [
+          {
+            "type": "session",
+            "ref": "new",
+            "label": "user message"
+          }
+        ]
+      }
+    ],
+    "blocked": [],
+    "decisions": [],
+    "filesTouched": [],
+    "testsRun": [],
+    "failedAttempts": [],
+    "deviations": [],
+    "nextAction": "Avoid the old next step.",
+    "reviewNeeded": [],
+    "evidenceRefs": [
+      {
+        "type": "session",
+        "ref": "new",
+        "label": "user message"
+      },
+      {
+        "type": "session",
+        "ref": "old-user"
+      }
+    ],
+    "unverifiedClaims": [],
+    "semanticAtoms": [
+      {
+        "id": "old-next",
+        "type": "next_action",
+        "canonicalIdentity": "next",
+        "severity": "critical",
+        "confidence": 1,
+        "scope": "turn:1",
+        "polarity": "negative",
+        "status": "verified",
+        "text": "Avoid the old next step.",
+        "evidenceRefs": [
+          {
+            "type": "session",
+            "ref": "old-user"
+          }
+        ]
+      }
+    ],
+    "quality": {
+      "score": 0.87,
+      "level": "high",
+      "fieldCoverage": 0.71,
+      "evidenceCoverage": 1,
+      "artifactTokens": 200,
+      "projectionTokens": 104,
+      "warnings": [
+        "missing_recovery_fields"
+      ]
+    }
+  }
+}

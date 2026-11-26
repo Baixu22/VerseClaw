@@ -1,0 +1,322 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-acceptance\\context-system-c02-205be98d\\playwright.config.ts",
+    "rootDir": "D:/ClawX-acceptance/context-system-c02-205be98d/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-acceptance\\context-system-c02-205be98d\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/autonomy-context-system-20261126/electron-results-r2",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-acceptance/context-system-c02-205be98d/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "long-session-continuity-context.spec.ts",
+      "file": "long-session-continuity-context.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19516,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"sourceCandidate\":\"205be98dc2d6b6c56a488d7a6e20ad763d098d47\",\"sourceDirty\":\"\",\"schema\":\"clawx.long-session.d1-continuity-preview/v1\",\"driven_by\":\"agent\",\"actor\":\"codex-long-session-r2\",\"negatives\":[\"accepted fact for another task is excluded from current task context\",\"ordinary session missing coordinator binding -> no pack\",\"deleted coordinator session -> binding invalidated -> no pack\"],\"foreignAcceptedTask\":{\"foreignId\":\"922d5e4b-3c0e-45fc-b24e-33346e61e6d7\",\"isolated\":{\"success\":true,\"validation\":\"current\",\"pack\":{\"schemaVersion\":\"ContinuityContextPack/v1\",\"generatedAt\":\"2026-11-25T20:44:37.160Z\",\"sessionKey\":\"agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\",\"workspaceId\":\"default\",\"bindingRevision\":1,\"activeTaskNodeId\":\"2b49f677-51af-49d3-a1bc-1803f9f400bb\",\"status\":\"partial\",\"complete\":false,\"budget\":{\"maxChars\":1800,\"usedChars\":1031,\"truncated\":false,\"droppedItems\":0,\"criticalOmissions\":0},\"items\":[{\"id\":\"working-context:Constraints:1\",\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"text\":\"Stay inside workspace scope.; Never inject unapproved candidates.\",\"owner\":\"task-ledger\",\"scope\":{\"kind\":\"task\",\"key\":\"2b49f677-51af-49d3-a1bc-1803f9f400bb\"},\"freshness\":\"fresh\",\"acceptedAt\":\"2026-11-25T20:44:33.415Z\",\"expiresAt\":\"2026-11-26T20:44:33.414Z\",\"trust\":\"owner-accepted\",\"evidenceRefs\":[\"session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\"],\"semantic\":{\"owner\":\"task-ledger-working-context\",\"sourceStatus\":\"confirmed\",\"verification\":\"unknown\",\"polarity\":\"unknown\",\"scope\":\"task:2b49f677-51af-49d3-a1bc-1803f9f400bb\",\"evidenceRefs\":[{\"type\":\"session\",\"ref\":\"agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\"}],\"supersedes\":[],\"conflicts\":[],\"sourceRef\":\"6757f41a-14bc-4559-8e0b-37d49bb660cf\",\"sourceVersion\":\"1\"},\"chars\":65},{\"owner\":\"task-ledger\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"},\"freshness\":\"fresh\",\"trust\":\"owner-fact\",\"evidenceRefs\":[],\"id\":\"task-node:2b49f677-51af-49d3-a1bc-1803f9f400bb:next\",\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"text\":\"Verify accepted continuity owners.\",\"chars\":34},{\"id\":\"working-context:NextAction:1\",\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"text\":\"Run the real continuity preview.\",\"owner\":\"task-ledger\",\"scope\":{\"kind\":\"task\",\"key\":\"2b49f677-51af-49d3-a1bc-1803f9f400bb\"},\"freshness\":\"fresh\",\"acceptedAt\":\"2026-11-25T20:44:33.415Z\",\"expiresAt\":\"2026-11-26T20:44:33.414Z\",\"trust\":\"owner-accepted\",\"evidenceRefs\":[\"session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\"],\"semantic\":{\"owner\":\"task-ledger-working-context\",\"sourceStatus\":\"confirmed\",\"verification\":\"unknown\",\"polarity\":\"unknown\",\"scope\":\"task:2b49f677-51af-49d3-a1bc-1803f9f400bb\",\"evidenceRefs\":[{\"type\":\"session\",\"ref\":\"agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\"}],\"supersedes\":[],\"conflicts\":[],\"sourceRef\":\"76dad36a-3a49-4fd2-b70a-4111073f9ac7\",\"sourceVersion\":\"1\"},\"chars\":32},{\"id\":\"accepted-memory:role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a\",\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"owner\":\"memory\",\"text\":\"role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a (user; workspace)\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-results-r2\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mwwldor8\"},\"freshness\":\"fresh\",\"acceptedAt\":\"2026-11-25T20:44:36.399Z\",\"trust\":\"owner-accepted\",\"evidenceRefs\":[\"memory:role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a\"],\"chars\":75}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=9; nodes=2\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"empty\",\"detail\":\"no selected knowledge refs\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mwwldor8\",\"reason\":\"pending-not-accepted\"}],\"originalHistory\":{\"transcriptRef\":\"session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\",\"taskLedgerRef\":\"task-ledger:default\",\"taskLedgerEventCount\":9,\"compressionAvailable\":false},\"evidenceRefs\":[\"session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\",\"memory:role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a\"]},\"rendered\":\"Continuity context (owner-derived, bounded metadata; verify work with tools):\\nschema=ContinuityContextPack/v1; status=partial; complete=false; bindingRevision=1; chars=1031/1800; truncated=false\\n- [constraint] Stay inside workspace scope.; Never inject unapproved candidates. (source=task-ledger-working-context; scope=task:2b49f677-51af-49d3-a1bc-1803f9f400bb; freshness=fresh; trust=owner-accepted; sourceStatus=confirmed; verification=unknown; polarity=unknown; sourceScope=\\\"task:2b49f677-51af-49d3-a1bc-1803f9f400bb\\\"; refs=[{\\\"type\\\":\\\"session\\\",\\\"ref\\\":\\\"agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\\\"}])\\n- [next-action] Verify accepted continuity owners. (source=task-ledger-node; scope=workspace:default; freshness=fresh; trust=owner-fact)\\n- [next-action] Run the real continuity preview. (source=task-ledger-working-context; scope=task:2b49f677-51af-49d3-a1bc-1803f9f400bb; freshness=fresh; trust=owner-accepted; sourceStatus=confirmed; verification=unknown; polarity=unknown; sourceScope=\\\"task:2b49f677-51af-49d3-a1bc-1803f9f400bb\\\"; refs=[{\\\"type\\\":\\\"session\\\",\\\"ref\\\":\\\"agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\\\"}])\\n- [memory-ref] role-memory-card:mem_20fc52c7-4f85-4fb1-87b1-4f637f5af29a (user; workspace) (source=accepted-memory-ref; scope=workspace:D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-results-r2\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mwwldor8; freshness=fresh; trust=owner-accepted)\\nUnavailable/unknown sources: compression-artifact:unavailable\\nOriginal history is not copied into this turn: transcript=session:agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd; taskLedger=task-ledger:default; taskLedgerEvents=9; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\"}},\"primary\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-results-r2\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-preview.json\",\"status\":\"passed\",\"packStatus\":\"partial\",\"items\":[{\"kind\":\"constraint\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"task\",\"key\":\"2b49f677-51af-49d3-a1bc-1803f9f400bb\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-node\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}},{\"kind\":\"next-action\",\"source\":\"task-ledger-working-context\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"task\",\"key\":\"2b49f677-51af-49d3-a1bc-1803f9f400bb\"}},{\"kind\":\"memory-ref\",\"source\":\"accepted-memory-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-results-r2\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\workspace-mwwldor8\"}},{\"kind\":\"knowledge-ref\",\"source\":\"knowledge-ref\",\"freshness\":\"fresh\",\"scope\":{\"kind\":\"workspace\",\"key\":\"default\"}}],\"sourceStates\":[{\"source\":\"task-ledger\",\"status\":\"available\",\"detail\":\"events=6; nodes=1\"},{\"source\":\"working-context\",\"status\":\"available\"},{\"source\":\"compression-artifact\",\"status\":\"unavailable\",\"detail\":\"no compression artifact for this session\"},{\"source\":\"memory\",\"status\":\"available\",\"detail\":\"accepted=1; modelVisible=1\"},{\"source\":\"knowledge\",\"status\":\"available\",\"detail\":\"refs=1\"}],\"exclusions\":[{\"ref\":\"task-ledger-working-context:d1-pending-risk-mwwldor8\",\"reason\":\"pending-not-accepted\"}],\"observationPath\":\"D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-results-r2\\\\long-session-continuity-co-5953e-losed-across-scope-rollback\\\\continuity-observation.json\"}\n"
+                    }
+                  ],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.615Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.616Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-25T20:44:23.616Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=24100, ppid=3224\n[2026-11-25T20:44:23.616Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:23.636Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-25T20:44:23.636Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:23.637Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-25T20:44:23.637Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.665Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.665Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [24100:1126/044423.671:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[24100:1126/044423.671:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.786Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.787Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:23.788Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:23.788Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-25T20:44:23.788Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:23.788Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.814Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.815Z] [INFO] Gateway start requested (port=62880)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.818Z] [DEBUG] Device identity loaded (deviceId=1ac6a1b2c8233832c5b3920f3eedbcc2699a2176182b130727d0a8b56980de61)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.818Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.914Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:24100) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:23.971Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:24.035Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.081Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:24.083Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":48,\"providerEnvMs\":5,\"channelStartupPolicyMs\":1,\"uvEnvMs\":4,\"mcpEnvMs\":29,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":106,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:24.084Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=62880, entry=\"D:\\ClawX-acceptance\\context-system-c02-205be98d\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 62880 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-acceptance\\context-system-c02-205be98d\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:24.125Z] [INFO] Gateway process started (pid=33420)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:24.125Z] [DEBUG] Gateway manager now owns process pid=33420\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.265Z] [WARN] [Gateway stderr] (node:33420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.265Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.413Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-run-r2\\\\verse-claw-e2e-run-C7wx09\\\\verse-claw-e2e-home-gnuV6d\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.413Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-run-r2\\\\verse-claw-e2e-run-C7wx09\\\\verse-claw-e2e-home-gnuV6d\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.414Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-run-r2\\\\verse-claw-e2e-run-C7wx09\\\\verse-claw-e2e-home-gnuV6d\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.415Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-run-r2\\\\verse-claw-e2e-run-C7wx09\\\\verse-claw-e2e-home-gnuV6d\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:24.416Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-run-r2\\\\verse-claw-e2e-run-C7wx09\\\\verse-claw-e2e-home-gnuV6d\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:26.312Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:26.546Z] [DEBUG] [Gateway stderr] (node:33420) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:26.546Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:26.546Z] [DEBUG] [Gateway stderr] (node:33420) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:27.187Z] [DEBUG] Gateway ready after 14 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:27.188Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:62880/ws)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:27.869Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:27.870Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-25T20:44:27.870Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:27.872Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=e459cdfb-1a8f-4273-abc4-bfa8c6bff0c5 peer=127.0.0.1:62904->127.0.0.1:62880 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:62880 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:31.488Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:62880/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:31.490Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:31.498Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:31.498Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-25T20:44:31.498Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:31.517Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:31.518Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:31.519Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:31.520Z] [INFO] [metric] gateway.startup {\"configSyncMs\":211,\"spawnToReadyMs\":3063,\"readyToConnectMs\":4332,\"totalMs\":7606}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:31.568Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\tmp\\\\autonomy-context-system-20261126\\\\electron-run-r2\\\\verse-claw-e2e-run-C7wx09\\\\verse-claw-e2e-home-gnuV6d\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:33.068Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\autonomy-context-system-20261126\\electron-results-r2\\long-session-continuity-co-5953e-losed-across-scope-rollback\\workspace-mwwldor8\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:36.175Z] [WARN] [Gateway stderr] \u001b[34m[reload]\u001b[39m \u001b[33mno SIGUSR1 listener found; restart skipped\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.249Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=a81bdb6f-7a7b-492d-b7c4-f24f9877e705 sessionKey=agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.332Z] [INFO] [session:delete] key=agent:main:dashboard:66ae3922-6909-442d-80c1-41bb77fb5ebd agentId=main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.332Z] [INFO] [session:delete] sessionsJson=D:\\tmp\\autonomy-context-system-20261126\\electron-run-r2\\verse-claw-e2e-run-C7wx09\\verse-claw-e2e-home-gnuV6d\\.openclaw\\agents\\main\\sessions\\sessions.json\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:37.333Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\\tmp\\autonomy-context-system-20261126\\electron-run-r2\\verse-claw-e2e-run-C7wx09\\verse-claw-e2e-home-gnuV6d\\.openclaw\\agents\\main\\sessions\\sessions.json'\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.376Z] [INFO] [session-delete-gate] Cleared operationId=a81bdb6f-7a7b-492d-b7c4-f24f9877e705\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.539Z] [INFO] Gateway stop requested\n[2026-11-25T20:44:37.539Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[2026-11-25T20:44:37.540Z] [INFO] Sending kill to Gateway process (pid=33420)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:62883/92080e6d-3425-4471-9630-52f00894d825\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-25T20:44:37.548Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.548Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.862Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.862Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.888Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.889Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.889Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.889Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-25T20:44:37.889Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-25T20:44:19.537Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "65da97443d18bad3cbc4-ddcf5c9e94569314a2d2",
+          "file": "long-session-continuity-context.spec.ts",
+          "line": 87,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-25T20:44:18.780Z",
+    "duration": 21224.816,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

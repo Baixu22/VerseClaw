@@ -35,6 +35,59 @@ export type ProjectionMode =
   | 'index_only'
   | 'omitted';
 
+/** A projection of the source owner's state; accepting it grants no new authority. */
+export type ContextSemanticState = {
+  owner: 'compression-artifact' | 'task-ledger-working-context';
+  sourceStatus: string;
+  verification: 'verified' | 'unverified' | 'unknown';
+  polarity: 'positive' | 'negative' | 'neutral' | 'unknown';
+  scope: string;
+  evidenceRefs: Array<{ type: string; ref: string; label?: string }>;
+  supersedes: string[];
+  conflicts: string[];
+  sourceRef?: string;
+  sourceVersion?: string;
+};
+
+export function normalizeContextSemanticState(value: unknown): ContextSemanticState {
+  const record = asRecord(value, 'Semantic state');
+  if (record.owner !== 'compression-artifact' && record.owner !== 'task-ledger-working-context')
+    validationError('Unknown semantic state owner', 'invalid_semantic_owner');
+  const bounded = (value: unknown, label: string, max = 300): string => {
+    const text = nonEmptyString(value, label);
+    if (text.length > max) validationError(`${label} exceeds ${max} characters`, 'semantic_state_too_large');
+    return text;
+  };
+  const sourceStatus = bounded(record.sourceStatus, 'Source status', 80);
+  const evidenceRefs = normalizeArray(record.evidenceRefs, 'Semantic evidence', value => {
+    const ref = asRecord(value, 'Semantic evidence');
+    return { type: bounded(ref.type, 'Evidence type', 64), ref: bounded(ref.ref, 'Evidence ref', 512),
+      ...(ref.label !== undefined ? { label: bounded(ref.label, 'Evidence label', 120) } : {}) };
+  });
+  if (evidenceRefs.length > 20) validationError('Too many semantic evidence refs', 'semantic_state_too_large');
+  const relations = (value: unknown): string[] => {
+    const values = normalizeArray(value, 'Semantic relations', value => bounded(value, 'Semantic relation', 200));
+    if (values.length > 20) validationError('Too many semantic relations', 'semantic_state_too_large');
+    return [...new Set(values)];
+  };
+  // Working Context confirmed/accepted is an owner decision, not independent verification.
+  const verification = record.owner === 'compression-artifact' && sourceStatus === 'verified' && evidenceRefs.length
+    ? 'verified' : sourceStatus === 'unverified' ? 'unverified' : 'unknown';
+  return {
+    owner: record.owner,
+    sourceStatus,
+    verification,
+    polarity: record.polarity === 'positive' || record.polarity === 'negative' || record.polarity === 'neutral'
+      ? record.polarity : 'unknown',
+    // Working Context replay accepts 512-character task IDs, plus "task:".
+    scope: bounded(record.scope, 'Semantic scope', 517),
+    evidenceRefs,
+    supersedes: relations(record.supersedes), conflicts: relations(record.conflicts),
+    ...(record.sourceRef !== undefined ? { sourceRef: bounded(record.sourceRef, 'Semantic source ref', 512) } : {}),
+    ...(record.sourceVersion !== undefined ? { sourceVersion: bounded(record.sourceVersion, 'Semantic source version', 160) } : {}),
+  };
+}
+
 export type SourceRefType =
   | 'transcript'
   | 'tool_call'
@@ -137,6 +190,7 @@ export type ContextItem = {
   provenance: Provenance;
   archiveHandle?: ArchiveHandle;
   contentHash?: CvkChecksum;
+  semantic?: ContextSemanticState;
   metadata?: Record<string, unknown>;
 };
 
@@ -498,6 +552,7 @@ export function normalizeContextItem(value: unknown): ContextItem {
     provenance: normalizeProvenance(record.provenance),
     ...(record.archiveHandle !== undefined ? { archiveHandle: normalizeArchiveHandle(record.archiveHandle) } : {}),
     ...(record.contentHash !== undefined ? { contentHash: normalizeChecksum(record.contentHash) } : {}),
+    ...(record.semantic !== undefined ? { semantic: normalizeContextSemanticState(record.semantic) } : {}),
     ...(metadata ? { metadata } : {}),
   };
 }

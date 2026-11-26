@@ -3104,6 +3104,7 @@ export type CompressionEvidenceRef = {
 export type CompressionFact = {
   text: string;
   evidenceRefs: CompressionEvidenceRef[];
+  semanticAtomId?: string;
 };
 export type CompressionSemanticAtomStatus = 'verified' | 'unverified' | 'stale' | 'superseded';
 export type CompressionSemanticAtomPolarity = 'positive' | 'negative' | 'neutral';
@@ -3127,6 +3128,7 @@ export type CompressionSemanticAtom = {
   scope: string;
   polarity: CompressionSemanticAtomPolarity;
   status: CompressionSemanticAtomStatus;
+  sourceStatus?: string;
   text: string;
   evidenceRefs: CompressionEvidenceRef[];
   supersedes?: string[];
@@ -3174,6 +3176,7 @@ export type CompressionArtifact = {
   causalAnchorCount?: number;
   warnings?: string[];
   semanticAtoms?: CompressionSemanticAtom[];
+  semanticOrigins?: Partial<Record<'objective' | 'currentState' | 'nextAction', string>>;
 };
 export type SessionCompressionArtifactPayload = SessionCompactionPayload & {
   checkpointId?: string;
