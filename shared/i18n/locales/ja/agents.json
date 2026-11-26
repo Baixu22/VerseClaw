@@ -1,5 +1,20 @@
 {
     "collaboration": {
+        "materials": {
+            "title": "共有資料",
+            "filter": "タスク、ファイル、トピック、または証拠",
+            "search": "検索",
+            "empty": "一致する資料がありません。別のタスク、ファイル、トピックで検索できます。",
+            "unavailable": "資料の情報源を読み取れません。",
+            "moreToRead": "次のページで残りの情報源を検索できます。",
+            "version": "バージョン {{version}} · タスク改訂 {{revision}}",
+            "evidence": "証拠",
+            "states": {
+                "claim": "主張",
+                "evidence-backed": "証拠確認済み",
+                "expired": "期限切れ"
+            }
+        },
         "messages": {
             "title": "メッセージと返信",
             "from": "送信元",

@@ -62,6 +62,8 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 `task_control.publishMaterial` 将当前任务的事实、主张、决策候选、产物、冲突和交接记录发布到原 TaskSystem。发布携带稳定 `material.id`、摘要、证据引用、敏感性及可选适用条件和到期时间。来源绑定当前运行与会话代次。摘要字节或产物哈希经当前任务证据确认后可标为 `evidence-backed`，缺少对应证据的事实保留为 `claim`。相同意图重试返回首次发布回执。
 
+在会话协作面板展开“共享材料”，可按任务、文件、主题或证据查询当前工作区内可见会话的材料。列表提供有界摘要和分页，选中后按原材料版本读取完整摘要、适用条件、产物哈希与证据引用。受限材料仅由原发布会话代次读取。模型可通过 `sessions_list({ materials: { search, taskNodeId, file, evidenceRef } })` 使用同一入口，详情传入结果中的 `source` 作为 `target`，并附原 `ref`。
+
 核心实现：
 
 - `openclaw_runtime/src/agents/sessions/session-manager.ts`

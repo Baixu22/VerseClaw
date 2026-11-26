@@ -1,5 +1,20 @@
 {
     "collaboration": {
+        "materials": {
+            "title": "共享材料",
+            "filter": "任务、文件、主题或证据",
+            "search": "搜索",
+            "empty": "没有匹配的材料。可搜索其他任务、文件或主题。",
+            "unavailable": "材料来源不可用。",
+            "moreToRead": "继续下一页以搜索其余来源。",
+            "version": "材料版本 {{version}} · 任务修订 {{revision}}",
+            "evidence": "证据",
+            "states": {
+                "claim": "主张",
+                "evidence-backed": "证据已核实",
+                "expired": "已过期"
+            }
+        },
         "messages": {
             "title": "消息与回复",
             "from": "发件会话",

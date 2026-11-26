@@ -63,6 +63,7 @@ import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWo
 import { createSessionCollaborationMessage, validateSessionCollaborationReceipt, verifySessionCollaborationMessage } from '@shared/session-collaboration-message';
 import { parseSessionCollaborationMessageInput, parseSessionCollaborationMessageQuery, validateSessionCollaborationMessagePage, type SessionCollaborationMessagePage } from '@shared/types/session-collaboration-message';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
+import { emptyMaterialPage, parseSessionCollaborationMaterialQuery, validateMaterialPage } from '@shared/types/session-collaboration-material';
 import { classifyDerivation } from '@shared/types/session-derivation';
 import {
   executeSessionDelegation,
@@ -2403,6 +2404,21 @@ export function createSessionsApi(ctx: {
       if (!result.taskContext || result.taskContext.schemaVersion !== 'SessionCollaborationTaskContext/v1') throw new Error('CONTEXT_PROTOCOL_UNVERIFIED');
       normalizeAutonomySessionScope(result.taskContext.scope, query.target);
       return { success: true, taskContext: result.taskContext };
+    },
+    collaborationMaterials: async (payload) => {
+      const query = parseSessionCollaborationMaterialQuery(payload);
+      try {
+        const active = await readCollaborationSender();
+        if (!active || !ctx.gatewayManager)
+          return { success: true, materials: emptyMaterialPage(query, 'unavailable', 'owner-unavailable') };
+        try { normalizeAutonomySessionScope(query.requester, active.scope); }
+        catch { return { success: true, materials: emptyMaterialPage(query, 'stale', 'scope-mismatch') }; }
+        const result = await ctx.gatewayManager.rpc<{ materials: unknown }>('session.activitySnapshot', { materials: query }, 15_000);
+        const after = await getActiveWorkspaceProfile();
+        const materials = after?.id === active.scope.workspaceId && after.activeSessionKey === active.scope.sessionKey
+          ? validateMaterialPage(query, result?.materials) : emptyMaterialPage(query, 'stale', 'scope-mismatch');
+        return { success: true, materials };
+      } catch { return { success: true, materials: emptyMaterialPage(query, 'unavailable', 'owner-unavailable') }; }
     },
     collaborationMessages: async (payload) => {
       const query = parseSessionCollaborationMessageQuery(payload);

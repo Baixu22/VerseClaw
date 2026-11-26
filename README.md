@@ -12,7 +12,7 @@ Activating a project keeps its directory and permission policy aligned with the 
 
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
-Session tools support bounded discovery and read-only details for other sessions, including task goals, run references, observed actions and source availability. The current task writer can publish versioned findings and artifact references with evidence. See [Sessions](docs/modules/sessions.md).
+Session tools support bounded discovery and read-only details for other sessions, including task goals, run references, observed actions and source availability. The current task writer can publish versioned findings and artifact references with evidence. Shared materials are searchable by task, file, topic, or evidence within the current workspace. See [Sessions](docs/modules/sessions.md).
 
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
 

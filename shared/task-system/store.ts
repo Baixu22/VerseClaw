@@ -30,7 +30,8 @@ import { taskSimilarity } from "./recognition.js";
 import { nextReadyPlanChild, TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
 import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReference, type TaskArtifactRetentionReceipt } from './artifact-retention.js';
 import type { TaskModelCall, TaskModelUsage, TaskTraceEvent, TaskTraceSnapshot } from './trace.js';
-import { parseSessionCollaborationMaterial, type SessionCollaborationMaterial } from '../types/session-collaboration-material.js';
+import { MATERIAL_SCAN_LIMIT, materialReference, materialSource, parseSessionCollaborationMaterial,
+  canReadMaterial, equalMaterialRef, type SessionCollaborationMaterial, type SessionCollaborationMaterialRef } from '../types/session-collaboration-material.js';
 import { normalizeAutonomySessionScope, normalizeRunScope, type AutonomySessionScope } from '../types/identity-scope.js';
 
 const MAX_CONTEXT = 12_000;
@@ -674,6 +675,28 @@ export class TaskSystemStore {
         return material;
       });
     });
+  }
+  sharedMaterialEvents(viewer: AutonomySessionScope, source: AutonomySessionScope, before: number, limit: number) {
+    this.assertReadCurrent();
+    if (!canReadMaterial(viewer, source, 'internal')) return [];
+    return (this.db.prepare(`SELECT seq,json FROM task_events
+      WHERE kind='shared_material_published' AND seq < ?
+      AND json_extract(json,'$.sourceRun.scope.workspaceId') = ?
+      AND json_extract(json,'$.sourceRun.scope.projectId') = ?
+      AND json_extract(json,'$.sourceRun.scope.sessionKey') = ?
+      AND json_extract(json,'$.sourceGeneration') = ?
+      AND (json_extract(json,'$.sensitivity') = 'internal' OR
+        (json_extract(json,'$.sensitivity') = 'restricted' AND ? = 1))
+      ORDER BY seq DESC LIMIT ?`).all(before, source.workspaceId, source.projectId, source.sessionKey, source.sessionGeneration,
+      Number(canReadMaterial(viewer, source, 'restricted')), Math.min(MATERIAL_SCAN_LIMIT + 1, limit)) as Array<Row & { seq: number }>)
+      .map(({ seq, json }) => ({ seq, material: JSON.parse(json) as SessionCollaborationMaterial }));
+  }
+  readSharedMaterial(viewer: AutonomySessionScope, source: AutonomySessionScope, ref: SessionCollaborationMaterialRef) {
+    this.assertReadCurrent();
+    const material = this.read<SessionCollaborationMaterial>('SELECT result AS json FROM task_requests WHERE id=?', `material:${ref.id}`);
+    if (!material || !equalMaterialRef(ref, materialReference(material)) || !canReadMaterial(viewer, source, material.sensitivity)) return null;
+    try { normalizeAutonomySessionScope(materialSource(material), source); } catch { return null; }
+    return material;
   }
   traceSnapshot(taskNodeId: string): TaskTraceSnapshot {
     return this.transaction(() => {
