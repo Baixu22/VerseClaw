@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "status": "passed",
+  "runnerSha256": "bf75ff5d1693e26df0286ce60383966433b6be63191868a1285e6c3b16904c0d",
+  "acceptedControls": [
+    "complete-result"
+  ],
+  "rejectedControls": [
+    "todo",
+    "todo-with-inconsistent-passed-count",
+    "skipped",
+    "failed",
+    "passed-count-mismatch",
+    "missing-todo-count",
+    "empty-result",
+    "unsuccessful-run",
+    "non-integer-count"
+  ]
+}

@@ -1,0 +1,14 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ tests/unit/session-task-review-fixes.test.ts (53 tests) 5959ms
+     ✓ stops an active model with no tool operation before releasing its claim  707ms
+     ✓ migrates a writer and a different retained reference in the same transaction  314ms
+     ✓ reads an actual Git diff without invoking its configured converter  572ms
+
+ Test Files  1 passed (1)
+      Tests  53 passed (53)
+   Start at  14:06:53
+   Duration  13.79s (transform 5.35s, setup 243ms, import 6.94s, tests 5.96s, environment 0ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial-r2/10-session-task-review-fixes.test.json

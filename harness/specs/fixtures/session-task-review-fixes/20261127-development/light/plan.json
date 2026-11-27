@@ -1,0 +1,300 @@
+{
+  "schema": "session-task-validation-plan/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "root": "D:/ClawX-work/session-task-review-fixes-20261125-01a21019",
+  "run": "development-light",
+  "candidate": {
+    "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+    "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+    "base": "c0450f50c0046a8c021188e9eb472b10f1203b6f"
+  },
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "a090074b3f8253b2625f3fd7cba4e527d221b20e5c1fbd16ff970526820f89d4",
+      "gitBlob": "030216a698474a2f8bf28250fb5bd3c77b3829e2"
+    },
+    {
+      "path": "README.md",
+      "sha256": "ccf1b93caf46284e86414cbf140f89a002d644e1d58d67d4fac6e06d02596d3a",
+      "gitBlob": "988fae2ed02beba080ca7e4a4772135dc22842de"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "bea2361911c76ad44cf022308d45f674e5c4da31b6ddf545f083f846defe5495",
+      "gitBlob": "f7fb29341fcc4df0463bd7c062865cbf1d671943"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "bec5a4678f4d5b01797d4d96a0144d3c24ce0135fc6bec3fb588a693435dbc7a",
+      "gitBlob": "2d288fadd8d5a7497d4c8bcf0520164945ec9860"
+    },
+    {
+      "path": "docs/dev/durable-task-system/DESIGN.md",
+      "sha256": "bf5893d03c1ec2cebaf88802e479af23bef87207307aec0258d71a48c4b9e8a2",
+      "gitBlob": "3d4d7ae1ea16c58ef9e4dee147dcce88d2a40efb"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "77ee9d351f4409ea7ff4b08ba27f800f93c7ef08a6d56f63b6dc65c23b614f3a",
+      "gitBlob": "07cb5738bc3b074e2b469c66149beed93ac69110"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "c35e871c4084f3cbf29bfd236ed24add3f6f59fe99d40be21fb112f249279280",
+      "gitBlob": "32063fb2cb983869773ce731afee23a23873e411"
+    },
+    {
+      "path": "electron/services/task-ledger-service.ts",
+      "sha256": "0d1be5ec7fdd5666a81340b1ad65810c9b0a3430889cbe2e7abe41474282910c",
+      "gitBlob": "470da5c4b9201e6f852ae0df128efd1de6fceb6c"
+    },
+    {
+      "path": "electron/services/task-system-service.ts",
+      "sha256": "a05714ae902ebcdd14a87bbb0ea63960fcbfdb3869e7eaebd59291b2b0f1a5bc",
+      "gitBlob": "8148ce660447f4860d0b5f6dee683aaea122790f"
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "sha256": "c4726b56fc9b32b0650736ac84dde118315f1002ad5cf31145a785e467b7cfd2",
+      "gitBlob": "a32ac0f4bf451591531b86bb297fb407aa481d26"
+    },
+    {
+      "path": "harness/specs/rules/durable-task-system-boundary.md",
+      "sha256": "7aec537ea7d348e1370af851bee063e9f0e93d6e7046b6bef99ce943e62ec15a",
+      "gitBlob": "c521ff4147d783d54014b324cd5cb7440d86378f"
+    },
+    {
+      "path": "harness/specs/scenarios/durable-task-system.md",
+      "sha256": "fb0df5f0f18099bc5809d5ed9992797de90f71f24abecef9119365f75d7627d4",
+      "gitBlob": "0110c88dd96e991ae42eb3fefd385fdba66b40e6"
+    },
+    {
+      "path": "harness/specs/tasks/session-task-review-fixes-20261125.md",
+      "sha256": "4edd97e190bfc0ac668f318a3b43d7b4a2acf2a9bb81c9a24a2004faa737ecd2",
+      "gitBlob": "afea3d2b26777eca6ac1453312a8df7af0969657"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "sha256": "c21571ea19b46612ccdf687b8441ed7b1012d11a74b4191e8762a8e72fabe0e2",
+      "gitBlob": "eddcf63d7ef005d327f97c5e33cde8cfccfa805d"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-barrier.ts",
+      "sha256": "297f1d10c747e77832debc7df4d68ad87caee9ba63907297b9df472d7c4d7678",
+      "gitBlob": "44cb48880e7d5d4718367a3889e091a5abbdd6d8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tool-mutation.test.ts",
+      "sha256": "f9547cc1049b2136f3c395f80bc142fa84a70dc704902627ecaaf5b4d6f344e5",
+      "gitBlob": "3e7b9a3a420c6c1056e6c79e353b33633abc1f9a"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tool-mutation.ts",
+      "sha256": "0422fa594319a49baf34943c93f9298b144a1303f0d436a90af66474b95389f0",
+      "gitBlob": "f32520324489a84d0ff110d47713bf51a14a6015"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "sha256": "c8e80b0831baae3254e1306f056980c5a93f16ac20d5ec132e6b071d632203cd",
+      "gitBlob": "cf27ee3b7c5070a4ca38dd5630e01753870e9032"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/workspace.ts",
+      "sha256": "df7f55be5296039f84ba9dc85f8163dff7aa5dac76e26be801d8b4075eba165b",
+      "gitBlob": "bafc25ddefa4764a8cd8d681b22523fca1dfcf75"
+    },
+    {
+      "path": "shared/task-system/runtime.ts",
+      "sha256": "f146c044f3de9b1ead8920984b33fafbcca66389271296e2af24d0e26202b85f",
+      "gitBlob": "db451c166c3a8d64fb14e54919a1f6bf1809f78c"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "1f6ce5382f10c93d88a856dcf9b405485225a0f0086c156dcfda44f7663a4637",
+      "gitBlob": "02117664a1e75d74c0f9e255d31252e41420c69a"
+    },
+    {
+      "path": "shared/task-system/tool-policy.ts",
+      "sha256": "1e8a3392b0def8ad7bb505f3f75c742b7cdbb2438c42e36da0f427c8fb3c96c1",
+      "gitBlob": "f40138b4a6c1ca22b600194c102f48ac72abfeb4"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "68aa30d8c3d537eb902e66ef449d69f363e298e99ec15ad6461eedb79d83d2f5",
+      "gitBlob": "2fff7bde991db253bd4112e6b4616e4fd36b3a48"
+    },
+    {
+      "path": "src/pages/TaskLedger/ManagedTasks.tsx",
+      "sha256": "24770a133db9f7e20bebb38131600e1d8a204efc057504ad322002c631d58ac5",
+      "gitBlob": "0811677eb8867c129be61d7a328bc02b3351b68d"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "ea84d97b039ebd2423065f5934f7d5fe0ce6eb5b10b5f4bbcd5a5d93a412180f",
+      "gitBlob": "eff02acb744c29b972b574a430aaceaa415da7f3"
+    },
+    {
+      "path": "tests/e2e/session-task-review-fixes.spec.ts",
+      "sha256": "0b4c8c79b566dadaf68aef2015b7ed6bb5411dcd4971c06ea7de3f755db23ec5",
+      "gitBlob": "c3095bf350fb5ca11604768d3b836e9ae09fa7ae"
+    },
+    {
+      "path": "tests/unit/chat-pending-message-queue.test.ts",
+      "sha256": "30f18ae213f9b4a78830152dc52ba698cf4534303467cd03d8dc4f506c96a5f4",
+      "gitBlob": "032d3c6b5e7537c19cdaef5f81187a7c93eab767"
+    },
+    {
+      "path": "tests/unit/chat-store-history-retry.test.ts",
+      "sha256": "35a9cb5075a93b81b9899ea956dc9e89fc0f924aee48085251c80227266613c3",
+      "gitBlob": "313324324bde56933487f24d6eb6912625081987"
+    },
+    {
+      "path": "tests/unit/session-lifecycle-tail.test.ts",
+      "sha256": "fe8b911a5989669f16844bd149c864e3e0394e08686c020ca1bd015c2c944f05",
+      "gitBlob": "d42edffd4555f751e98b0450ff9594e209640be5"
+    },
+    {
+      "path": "tests/unit/session-task-review-fixes.test.ts",
+      "sha256": "1383f9f798d5be1baecd6aca121eedc749e8780fd9f67955e6cd635e4940b0ba",
+      "gitBlob": "ca6f5b5df43a4b5084cfce9b79b119e5b066e3ed"
+    },
+    {
+      "path": "tests/unit/session-task-scope-completion.test.ts",
+      "sha256": "845a62fc2086298a4220fc797bca32d33cb0037c763255f46ec33f0d3b59eea3",
+      "gitBlob": "35bd43781c7e593bc2ac5a73fdaa2b56fdef39a2"
+    },
+    {
+      "path": "tests/unit/session-task-state-guidance.test.tsx",
+      "sha256": "8d8100f68f4cae2299a45b9f1216b09b9fb3d3cc5e99664d041df3a7e809043e",
+      "gitBlob": "12c4fd9b73c8abcad392ac39582221444870bf77"
+    },
+    {
+      "path": "tests/unit/session-task-workspace-bootstrap.test.ts",
+      "sha256": "872fb55850339580f6a9509079c422c4cf1b781a7177585b6e99e49e3590f31e",
+      "gitBlob": "1370922524cdb33e7103395fbdb5961047e6540b"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "9f73e932ab8ef90608fea9f66f89ba5eaa565422fbc7bad646fbc7bc0168c18f",
+      "gitBlob": "c4aa6e1fd8f23000089faa9b5c80cb00a69005bd"
+    },
+    {
+      "path": "src/components/chat/ComposerDraftPreview.tsx",
+      "sha256": "8296aaca56224ccf3a3488a8b54c22f712778699a27385e69fa89c3441459400",
+      "gitBlob": "6b1338d131a6f5cffcab60ccf34d58c1f19682da"
+    },
+    {
+      "path": "src/components/chat/DraftReferenceRow.tsx",
+      "sha256": "0f2907c0711a2a06a0de44b36e2907c77632ae06ca2cf206001f4d6f395f92e3",
+      "gitBlob": "cb48e71404cbecf138007c5ba3a2d13b5d241672"
+    },
+    {
+      "path": "src/components/assistant-render/MessageReferences.tsx",
+      "sha256": "aab09746f2f0c0d434525ecb3826ffef273c99c50e69487e8df0ca8418aa8864",
+      "gitBlob": "e6977874d0d71515aff3b83edcdcbfa16def9413"
+    },
+    {
+      "path": "src/lib/composer-references.ts",
+      "sha256": "5a5ccd5709dea71aed58582a57ffdf01d453570fd7895e69206df8b0af132b35",
+      "gitBlob": "1ba279296d405033ebd82a84fa0e47a85dd643e7"
+    },
+    {
+      "path": "src/lib/chat-display-text.ts",
+      "sha256": "181882b87b818d7b6439c850e53f4683ede80ad06a46c362d3d06b2c7882af49",
+      "gitBlob": "a373929428b9396f3b04bfbd1ab6158f01d79569"
+    },
+    {
+      "path": "package.json",
+      "sha256": "530e698d34113a56d56ab1e664e85604fca6350bc51e5759858f27031ca35e16",
+      "gitBlob": "886b148837fb9b59f3ba74bddd0ac952f495da76"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "b21110b2298d264663635cd9f841117007fd82e07025f7c0bbbac5841ab8c572",
+      "gitBlob": "5d31c37a71d3ca96beb236f26533d41733b9f4b9"
+    },
+    {
+      "path": "tests/unit/chat-input.test.tsx",
+      "sha256": "c57eb3af939fdcd5da5470018749451ece1d2de490b4c7ea75d7e59c416b7538",
+      "gitBlob": "9e88172f7c4a5f90fb906ed1d3ab9c4b0a72e706"
+    },
+    {
+      "path": "tests/unit/composer-references.test.ts",
+      "sha256": "f44426f24cec82c2229fef5047e7ecd801a8dee49b9f840ce28af9305ea3ec4c",
+      "gitBlob": "dd63bf1244545ef8cfbd50e300c94faa17ffd235"
+    }
+  ],
+  "groups": {
+    "light": [
+      {
+        "id": "lint",
+        "argv": [
+          "C:/Program Files/nodejs/node.exe",
+          "--max-old-space-size=256",
+          "node_modules/eslint/bin/eslint.js",
+          "tests/unit/session-task-scope-completion.test.ts",
+          "--max-warnings",
+          "0"
+        ]
+      },
+      {
+        "id": "contract",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=256",
+          "scripts/contract-check.mjs"
+        ]
+      },
+      {
+        "id": "comms-replay",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=256",
+          "scripts/comms/replay.mjs"
+        ]
+      },
+      {
+        "id": "comms-compare",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=256",
+          "scripts/comms/compare.mjs"
+        ]
+      },
+      {
+        "id": "harness-validate",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=256",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/session-task-review-fixes-20261125.md"
+        ]
+      },
+      {
+        "id": "harness-dry-run",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--max-old-space-size=256",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/session-task-review-fixes-20261125.md",
+          "--dry-run"
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "TMPDIR": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "false",
+    "COMMS_OUTPUT_DIR": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\comms"
+  },
+  "executionMode": "development-only; heavy acceptance deferred by user",
+  "availableMemoryMiBBefore": 2203.41
+}

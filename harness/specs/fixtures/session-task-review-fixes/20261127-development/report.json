@@ -1,0 +1,58 @@
+{
+  "schema": "session-task-development-closeout/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "at": "2026-11-27T07:08:39.133384+00:00",
+  "testCandidate": {
+    "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+    "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a"
+  },
+  "metadataCandidate": {
+    "commit": "71b8686bd8341c494357dd58ead7d91cf7044e05",
+    "tree": "593c5380f363010b6819130ca9b56c735be21507",
+    "dirty": false
+  },
+  "unit": {
+    "files": 22,
+    "numTotalTests": 478,
+    "numPassedTests": 478,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0
+  },
+  "originalLightChecks": 6,
+  "metadataChecks": 2,
+  "runnerHardening": {
+    "positiveControls": 1,
+    "negativeControls": 9,
+    "status": "passed",
+    "reusedResults": 478,
+    "testsRerun": 0
+  },
+  "review": {
+    "driven_by": "agent",
+    "actor": "codex/tf0950-relay",
+    "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+    "task": "/root/tf0950_acceptance",
+    "attempts": 3,
+    "status": "provider_unavailable",
+    "error": "HTTP 502; upstream connection refused (os error 10061)",
+    "reviewVerdict": null,
+    "at": "2026-11-27T07:06:22.332227+00:00",
+    "candidate": "71b8686bd8341c494357dd58ead7d91cf7044e05"
+  },
+  "fullAcceptance": "deferred_by_user",
+  "pendingFullChecks": [
+    "full typecheck",
+    "test typecheck",
+    "runtime build",
+    "desktop build",
+    "six Electron flows",
+    "Harness CI"
+  ],
+  "dependencyMode": "existing node_modules junctions; no fresh install",
+  "taskForest": {
+    "id": "TF-0950",
+    "status": "in_progress"
+  }
+}

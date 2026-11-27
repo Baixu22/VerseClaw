@@ -1,0 +1,34 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps a scoped send refusal when history has no newer terminal error
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > binds a knowledge ACK to the exact new turn when the preceding turn has identical text
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps the optimistic user message when completion refresh wins the transcript write race
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not restore a pending optimistic message after deleting the session
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not emit a false no-response error when history poll shows tool progress
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > surfaces an idle-timeout hint when a role-only stream placeholder stalls the run
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not treat prior-turn assistant history as progress for a new send
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+ ✓ tests/unit/chat-store-history-retry.test.ts (37 tests) 3073ms
+     ✓ keeps a scoped send refusal when history has no newer terminal error  1093ms
+     ✓ does not burn the first-load retry path when the first attempt becomes stale  940ms
+
+ Test Files  1 passed (1)
+      Tests  37 passed (37)
+   Start at  14:03:33
+   Duration  5.02s (transform 1.19s, setup 186ms, import 294ms, tests 3.07s, environment 776ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial/06-chat-store-history-retry.test.json
