@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "candidate": {
+    "commit": "820d894c4059f26fd9de81575435b9d0bde0560b",
+    "tree": "5756e140cda70daff8cab9bbcb4b2b8aaf73799b",
+    "dirty": false
+  },
+  "steps": [
+    {
+      "name": "validate",
+      "argv": [
+        "node",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md"
+      ],
+      "exitCode": 0,
+      "seconds": 0.875,
+      "stdoutPath": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\validate.stdout.txt",
+      "stdoutSha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010",
+      "stderrPath": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\validate.stderr.txt",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "dry-run",
+      "argv": [
+        "node",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "run",
+        "--dry-run",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md"
+      ],
+      "exitCode": 0,
+      "seconds": 0.8130000000001019,
+      "stdoutPath": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\dry-run.stdout.txt",
+      "stdoutSha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d",
+      "stderrPath": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\dry-run.stderr.txt",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "status": "passed"
+}

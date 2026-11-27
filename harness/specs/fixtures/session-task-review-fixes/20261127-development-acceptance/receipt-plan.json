@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "candidate": {
+    "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+    "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a"
+  },
+  "root": "D:\\ClawX-work\\session-task-review-fixes-20261125-01a21019",
+  "files": [
+    "tests/unit/session-task-scope-completion.test.ts",
+    "openclaw_runtime/src/agents/tool-mutation.test.ts",
+    "tests/unit/autonomy-context-semantic-state.test.ts",
+    "tests/unit/chat-input.test.tsx",
+    "tests/unit/chat-pending-message-queue.test.ts",
+    "tests/unit/chat-store-history-retry.test.ts",
+    "tests/unit/composer-references.test.ts",
+    "tests/unit/durable-task-delegation.test.ts",
+    "tests/unit/durable-task-runtime.test.ts",
+    "tests/unit/durable-task-system.test.ts",
+    "tests/unit/durable-task-tool.test.ts",
+    "tests/unit/knowledge-bot-mention.test.tsx",
+    "tests/unit/knowledge-chat.test.tsx",
+    "tests/unit/long-session-coordinator-binding.test.ts",
+    "tests/unit/session-lifecycle-tail.test.ts",
+    "tests/unit/session-task-review-fixes.test.ts",
+    "tests/unit/session-task-scope-bridge.test.ts",
+    "tests/unit/session-task-scope.test.ts",
+    "tests/unit/session-task-state-guidance.test.tsx",
+    "tests/unit/session-task-workspace-bootstrap.test.ts",
+    "tests/unit/task-ledger-snapshot-cache.test.ts",
+    "tests/unit/task-model-usage.test.ts"
+  ],
+  "expectedTests": 478,
+  "source": "Original frozen 22-file development plan, rechecked against retained test commands"
+}
