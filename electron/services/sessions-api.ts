@@ -56,7 +56,7 @@ import { assertManagedTaskAdmission, openTaskSystem, persistentTaskChatContext }
 import { projectCoordinatorProfile, projectCoordinatorScope } from '../../shared/task-system/project-coordinator';
 import { routeRole } from '../../openclaw_runtime/src/agents/role-router';
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
-import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
+import { createWorkspacesApi, getActiveWorkspaceProfile, observeWorkspaceNavigation, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
   getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
 import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type AutonomySessionScope, type WorkspaceId } from '@shared/types/identity-scope';
@@ -65,6 +65,7 @@ import { parseSessionCollaborationMessageInput, parseSessionCollaborationMessage
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
 import { emptyMaterialPage, parseSessionCollaborationMaterialQuery, validateMaterialPage } from '@shared/types/session-collaboration-material';
 import { emptyTaskContext, type SessionCollaborationTaskContext } from '@shared/types/session-collaboration-context';
+import { emptyCollaborationHints, parseCollaborationHintsQuery, validateCollaborationHints } from '@shared/types/session-collaboration-hints';
 import { classifyDerivation } from '@shared/types/session-derivation';
 import {
   executeSessionDelegation,
@@ -2263,6 +2264,27 @@ export function createSessionsApi(ctx: {
         normalizeAutonomySessionScope(result.taskContext.scope, query.target);
         return { success: true, taskContext: result.taskContext };
       } catch { return failure('owner-unavailable'); }
+    },
+    collaborationHints: async (payload) => {
+      const query = parseCollaborationHintsQuery(payload);
+      const failure = (reason: string) => ({ success: true, hints: emptyCollaborationHints(query,
+        reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
+      let navigationChanged = false;
+      const stopNavigation = observeWorkspaceNavigation(() => { navigationChanged = true; });
+      try {
+        const before = await collaborationReaderIssue(query.requester);
+        if (before) return failure(before);
+        const result = await ctx.gatewayManager!.rpc<{ hints: unknown }>('session.activitySnapshot', { coordinationHints: query }, 15_000);
+        const after = await collaborationReaderIssue(query.requester);
+        if (after) return failure(after);
+        const accessQuery = parseSessionCollaborationQuery({ ...query, fields: [] });
+        const access = await ctx.gatewayManager!.rpc<{ page: SessionCollaborationPage }>('session.activitySnapshot', { query: accessQuery }, 10_000);
+        if (navigationChanged) return failure('scope-mismatch');
+        const visible = validateSessionCollaborationPage(accessQuery, access?.page);
+        return { success: true, hints: visible.state === 'ready' ? validateCollaborationHints(query, result?.hints)
+          : emptyCollaborationHints(query, visible.state, visible.reason) };
+      } catch { return failure('owner-unavailable'); }
+      finally { stopNavigation(); }
     },
     collaborationMaterials: async (payload) => {
       const query = parseSessionCollaborationMaterialQuery(payload);

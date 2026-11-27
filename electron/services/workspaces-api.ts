@@ -70,14 +70,14 @@ const workspaceNavigationObservers=new Set<()=>void>();
 export function observeWorkspaceNavigation(observer:()=>void):()=>void {
   workspaceNavigationObservers.add(observer);return()=>{workspaceNavigationObservers.delete(observer);};
 }
-function publishWorkspaceNavigation(before:WorkspaceProfile[],after:WorkspaceProfile[]) {
+function publishWorkspaceNavigation(before:WorkspaceProfile[],after:WorkspaceProfile[],activeWorkspaceChanged:boolean) {
   const navigation=(profiles:WorkspaceProfile[])=>JSON.stringify(profiles.map(profile=>({
     id:profile.id,name:profile.name,rootPath:profile.rootPath,activeSessionKey:profile.activeSessionKey,
     sessionKeys:Object.keys(profile.sessionStates??{}).sort(),agentBindings:profile.agentBindings,
     bindingKeys:Object.keys(profile.coordinatorBindings??{}).sort(),coordinator:profile.projectCoordinatorSessionKey,
     folders:profile.sessionFolders,assignments:profile.sessionFolderAssignments,archived:profile.archivedSessionKeys,
   })));
-  if(navigation(before)!==navigation(after))for(const observer of workspaceNavigationObservers)observer();
+  if(activeWorkspaceChanged||navigation(before)!==navigation(after))for(const observer of workspaceNavigationObservers)observer();
 }
 
 type WorkspaceCreateBody = {
@@ -500,6 +500,7 @@ async function writeDocument(document: WorkspaceStoreDocument, coordinatorMutati
   // A UI-state save may have read before a writer claim was issued. Only the
   // serialized coordinator owner replaces its own fields.
   const current = (store.get('profiles') ?? []) as WorkspaceProfile[];
+  const previousActiveWorkspaceId = store.get('activeWorkspaceId');
   const profiles = coordinatorMutation ? current.map((profile) => {
     const updated = document.profiles.find((entry) => entry.id === profile.id);
     if (!updated) return profile;
@@ -518,7 +519,7 @@ async function writeDocument(document: WorkspaceStoreDocument, coordinatorMutati
   });
   store.set('profiles', profiles);
   if (!coordinatorMutation) store.set('activeWorkspaceId', document.activeWorkspaceId);
-  publishWorkspaceNavigation(current,profiles);
+  publishWorkspaceNavigation(current,profiles,previousActiveWorkspaceId!==store.get('activeWorkspaceId'));
 }
 
 function toSnapshot(document: WorkspaceStoreDocument): WorkspaceSnapshot {
@@ -826,6 +827,7 @@ async function migrateWorkspaceExecution(ctx: WorkspacesApiContext, input: Works
       }]});
       const store=await getWorkspaceStore();
       const latest=(store.get('profiles')??[]) as WorkspaceProfile[];
+      const previousActiveWorkspaceId=store.get('activeWorkspaceId');
       const sourceState=source.sessionStates?.[operation.sessionKey]??{};
       const activate=active&&store.get('activeWorkspaceId')===source.id&&source.activeSessionKey===operation.sessionKey;
       const profiles=latest.map(profile=>{
@@ -854,7 +856,7 @@ async function migrateWorkspaceExecution(ctx: WorkspacesApiContext, input: Works
       }
       store.set('profiles',profiles);
       if(activate)store.set('activeWorkspaceId',target.id);
-      publishWorkspaceNavigation(latest,profiles);
+      publishWorkspaceNavigation(latest,profiles,previousActiveWorkspaceId!==store.get('activeWorkspaceId'));
       return binding;
     },
   },ctx.gatewayManager);

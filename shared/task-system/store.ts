@@ -34,6 +34,7 @@ import { MATERIAL_SCAN_LIMIT, materialReference, materialSource, parseSessionCol
   canReadMaterial, equalMaterialRef, parseMaterialReference, type SessionCollaborationMaterial,
   type SessionCollaborationMaterialRef, type SessionCollaborationMaterialStatus } from '../types/session-collaboration-material.js';
 import { normalizeAutonomySessionScope, normalizeRunScope, type AutonomySessionScope } from '../types/identity-scope.js';
+import type { TaskCoordinationFacts } from '../types/session-collaboration-hints.js';
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
@@ -1174,6 +1175,40 @@ export class TaskSystemStore {
       this.assertReadCurrent();
       return { task, context, evidence, capturedAt };
     } finally { this.db.exec('RELEASE SAVEPOINT task_context_snapshot'); }
+  }
+  sessionCoordinationSnapshot(sessionKey: string, generation: string,
+    reader?: { sessionKey: string; generation: string }): TaskCoordinationFacts | null {
+    this.assertReadCurrent();
+    this.db.exec('SAVEPOINT task_coordination_snapshot');
+    try {
+      const target = this.binding(sessionKey, generation);
+      if (!target) return null;
+      const { taskNodeId, revision, digest: contractDigest, state } = target.contract;
+      const peer = reader ? this.binding(reader.sessionKey, reader.generation) : null;
+      const sameTask = peer?.contract.taskNodeId === taskNodeId && peer.contract.revision === revision && peer.contract.digest === contractDigest;
+      // These are original checkpoint file references, not file locks or permission to write.
+      const recordedPaths = (view: TaskView | null) => (view?.checkpoint?.artifacts ?? []).map(item => item.path)
+        .filter(path => isAbsolute(path)).map(path => {
+          const normalized = resolve(path).replace(/\\/g, '/');
+          return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+        });
+      const peerPaths = new Set(recordedPaths(peer));
+      const sharedArtifacts = sameTask ? [] : [...new Set(recordedPaths(target).filter(path => peerPaths.has(path)))].slice(0, 4)
+        .map(path => {
+          const local = relative(this.domain.worktree, path).replace(/\\/g, '/');
+          return !local || local === '..' || local.startsWith('../') || isAbsolute(local) ? `artifact:${digest(path).slice(0, 16)}` : local;
+        });
+      const claim = target.claim;
+      const facts: TaskCoordinationFacts = { task: { taskNodeId, revision, digest: contractDigest, state }, referenceOnly: Boolean(target.referenceOnly),
+        claim: claim ? { sessionKey: claim.sessionKey, generation: claim.generation, epoch: claim.epoch,
+          state: claim.state, expiresAt: claim.expiresAt } : null,
+        pendingOperations: target.pendingOperations,
+        dependencies: (target.contract.dependencies ?? []).map(taskNodeId => ({ taskNodeId,
+          state: this.read<TaskContract>('SELECT json FROM task_contracts WHERE id=?', taskNodeId)?.state ?? 'unknown' })),
+        relation: peer ? sameTask ? 'same-task' : sharedArtifacts.length ? 'shared-artifact' : 'different' : 'unknown', sharedArtifacts };
+      this.assertReadCurrent();
+      return facts;
+    } finally { this.db.exec('RELEASE SAVEPOINT task_coordination_snapshot'); }
   }
   assertOwner(credential: TaskCredential, allowPaused = false): TaskView {
     const view = this.get(credential.taskNodeId);

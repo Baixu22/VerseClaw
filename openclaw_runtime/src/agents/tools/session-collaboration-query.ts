@@ -7,6 +7,7 @@ import { parseSessionActivityReadQuery } from '../../../../shared/types/session-
 import { emptyMaterialPage, parseSessionCollaborationMaterialQuery, validateMaterialPage } from '../../../../shared/types/session-collaboration-material.js';
 import type { OpenClawConfig } from '../../config/types.openclaw.js';
 import { normalizeAutonomySessionScope } from '../../../../shared/types/identity-scope.js';
+import { emptyCollaborationHints, parseCollaborationHintsQuery, validateCollaborationHints } from '../../../../shared/types/session-collaboration-hints.js';
 
 export type SessionCollaborationToolContext = {
   agentSessionKey?: string;
@@ -25,6 +26,20 @@ export function readSessionCollaborationToolOwner(opts: SessionCollaborationTool
   const owner = sessionActivityOwnerScope(loaded.canonicalKey, loaded.entry);
   if (!owner || loaded.canonicalKey !== key || loaded.legacyKey) throw new TypeError('Current session owner unavailable');
   return { owner, generation, root: loaded.entry?.workspaceDir ?? loaded.entry?.spawnedWorkspaceDir };
+}
+
+export async function querySessionCollaborationHintsTool(opts: SessionCollaborationToolContext | undefined, value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(key => key !== 'target'))
+    throw new TypeError('Coordination hints require only a scoped target');
+  const { owner, generation } = readSessionCollaborationToolOwner(opts);
+  const query = parseCollaborationHintsQuery({ ...value, requester: { ...owner, sessionGeneration: generation }, limit: 1 });
+  if (owner.sessionGeneration !== generation) return emptyCollaborationHints(query, 'stale', 'generation-changed');
+  try {
+    const result = await (opts?.callGateway ?? callGateway)<{ hints: unknown }>({ method: 'session.activitySnapshot',
+      params: { coordinationHints: query }, ...(opts?.config ? { config: opts.config } : {}) });
+    normalizeAutonomySessionScope(readSessionCollaborationToolOwner(opts).owner, owner);
+    return validateCollaborationHints(query, result?.hints);
+  } catch { return emptyCollaborationHints(query, 'unavailable', 'owner-unavailable'); }
 }
 
 export async function querySessionCollaborationMaterialsTool(opts: SessionCollaborationToolContext | undefined, value: unknown) {

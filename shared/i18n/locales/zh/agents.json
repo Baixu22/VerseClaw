@@ -116,6 +116,47 @@
             "actions": "动作",
             "origin": "来源关系",
             "execution": "执行域"
+        },
+        "hints": {
+            "title": "协作提示",
+            "description": "读取原任务和准入观测。需操作时打开原任务，由该入口核对当前资格。",
+            "observedAt": "观测时间：{{time}}",
+            "writer": "原领取者：{{session}} · epoch {{epoch}} · {{state}} · 租约到期 {{time}}",
+            "writerUnknown": "当前没有可回读的写入者回执。",
+            "pending": "{{count}} 项任务操作尚待结算。",
+            "dependencies": "尚未验收的前置任务",
+            "noTask": "当前会话尚未关联任务。",
+            "role": {
+                "observer": "此会话持有任务的只读引用。",
+                "bound": "此会话关联原任务领取记录。"
+            },
+            "relation": {
+                "same-task": "你与此会话引用同一任务修订。",
+                "shared-artifact": "两任务均记录过这些文件路径；协作写入前请核对各自任务。",
+                "different": "当前引用的是不同任务。",
+                "unknown": "暂时无法与当前活动任务比较。"
+            },
+            "claim": {
+                "active": "活跃",
+                "paused": "已暂停",
+                "recovery_required": "需要恢复",
+                "released": "已释放"
+            },
+            "taskState": {
+                "ready": "就绪",
+                "doing": "进行中",
+                "paused": "已暂停",
+                "review": "待审查",
+                "cancelling": "取消中",
+                "done": "已验收",
+                "cancelled": "已取消",
+                "unknown": "未知"
+            },
+            "admission": {
+                "fenced": "准入已关闭：{{active}} 个在途许可，{{waiting}} 个清退等待。",
+                "observed": "准入观测：{{active}} 个在途许可，{{waiting}} 个清退等待。"
+            },
+            "taskUnavailable": "TaskSystem 来源不可用，暂时无法确认任务关联。"
         }
     },
     "title": "Agents",

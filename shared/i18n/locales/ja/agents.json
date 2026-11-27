@@ -116,6 +116,47 @@
             "actions": "操作",
             "origin": "由来",
             "execution": "実行ドメイン"
+        },
+        "hints": {
+            "title": "連携のヒント",
+            "description": "元のタスクと実行許可の観測を表示します。操作は元のタスクを開き、現在の権限を確認して実行します。",
+            "observedAt": "観測日時：{{time}}",
+            "writer": "記録された担当：{{session}} · epoch {{epoch}} · {{state}} · リース期限 {{time}}",
+            "writerUnknown": "書き込み担当の記録を取得できません。",
+            "pending": "{{count}} 件のタスク操作が未確定です。",
+            "dependencies": "未承認の前提タスク",
+            "noTask": "このセッションに現在リンクされたタスクはありません。",
+            "role": {
+                "observer": "このセッションはタスクの読み取り専用参照を持ちます。",
+                "bound": "このセッションは元のタスク担当記録にリンクされています。"
+            },
+            "relation": {
+                "same-task": "現在のセッションと同じタスクのリビジョンを参照しています。",
+                "shared-artifact": "両タスクに同じファイルパスの記録があります。書き込み前に各タスクを確認してください。",
+                "different": "異なるタスクを参照しています。",
+                "unknown": "現在のタスクとの比較は取得できません。"
+            },
+            "claim": {
+                "active": "アクティブ",
+                "paused": "一時停止",
+                "recovery_required": "復旧が必要",
+                "released": "解放済み"
+            },
+            "taskState": {
+                "ready": "準備完了",
+                "doing": "進行中",
+                "paused": "一時停止",
+                "review": "レビュー中",
+                "cancelling": "キャンセル中",
+                "done": "承認済み",
+                "cancelled": "キャンセル済み",
+                "unknown": "不明"
+            },
+            "admission": {
+                "fenced": "実行許可は閉鎖中：使用中 {{active}} 件、終了待ち {{waiting}} 件。",
+                "observed": "実行許可の観測：使用中 {{active}} 件、終了待ち {{waiting}} 件。"
+            },
+            "taskUnavailable": "TaskSystem を取得できないため、タスクの関連付けは不明です。"
         }
     },
     "title": "Agents",

@@ -80,6 +80,7 @@ import type { SessionCollaborationWatch, SessionCollaborationWatchResult } from 
 import type { SessionCollaborationMessageInput, SessionCollaborationMessageReceipt, SessionCollaborationMessageQuery, SessionCollaborationMessagePage } from '../types/session-collaboration-message';
 import type { AutonomySessionScope } from '../types/identity-scope';
 import type { SessionCollaborationTaskContext } from '../types/session-collaboration-context';
+import type { SessionCollaborationHints } from '../types/session-collaboration-hints';
 import type { SessionCollaborationMaterialPage, SessionCollaborationMaterialPresentation, SessionCollaborationMaterialQuery } from '../types/session-collaboration-material';
 import type {
   SessionDelegationPayload,
@@ -6321,6 +6322,7 @@ export type HostApiContract = {
   sessions: {
     collaborationSender: () => HostSuccess & { source: { scope: AutonomySessionScope; name: string } | null; reason?: string };
     collaborationContext: (payload: SessionCollaborationQuery) => HostSuccess & { taskContext: SessionCollaborationTaskContext };
+    collaborationHints: (payload: SessionCollaborationQuery) => HostSuccess & { hints: SessionCollaborationHints };
     collaborationMaterials: (payload: SessionCollaborationMaterialQuery) => HostSuccess & { materials: SessionCollaborationMaterialPage };
     presentCollaborationMaterial: (payload: SessionCollaborationMaterialPresentation) => HostSuccess & { recorded: boolean };
     collaborationMessages: (payload: SessionCollaborationMessageQuery) => HostSuccess & { messages: SessionCollaborationMessagePage };

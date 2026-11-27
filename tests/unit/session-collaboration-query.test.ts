@@ -162,6 +162,23 @@ it('uses the same Main-owned Gateway for watch and cancellation', async () => {
   await expect(api.watch(request)).resolves.toMatchObject({ watch: { state: 'stale', page: { reason: 'scope-mismatch', items: [] } } });
 });
 
+it('exposes coordination observations through the existing sessions_list and Gateway route without writes', async () => {
+  const before = ownerState();
+  const call = vi.fn(async (request: { params: Record<string, unknown> }) => {
+    let response: unknown;
+    await sessionActivityHandlers['session.activitySnapshot']({ params: request.params,
+      context: { chatAbortControllers: runs, getRuntimeConfig: () => mocks.cfg },
+      respond: (ok: boolean, data: unknown, error?: { message: string }) => { if (!ok) throw new Error(error?.message); response = data; },
+    } as never);
+    return response;
+  });
+  const tool = createSessionsListTool({ agentSessionKey: A, agentSessionId: 'generation-a', callGateway: call as never });
+  const result = await tool.execute('coordination-tool', { coordination: { target: scope() } });
+  expect(result.details).toMatchObject({ schemaVersion: 'SessionCollaborationHints/v1', state: 'ready',
+    task: { relation: 'same-task', referenceOnly: false, claim: { sessionKey: A, generation: 'generation-a' } } });
+  expect(ownerState()).toEqual(before);
+});
+
 it('reads a bounded final material batch through the Gateway and rejects a reset during its reply', async () => {
   const claim = tasksA.binding(A, 'generation-a')!.claim!;
   const material = tasksA.publishSharedMaterial(claim, { id: 'batch-route', kind: 'claim', summary: 'Original owner result',
