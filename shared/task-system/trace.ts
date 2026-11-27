@@ -39,6 +39,7 @@ export type TaskTraceQuery = {
   candidate?: string;
 };
 export type TaskModelCall = {
+  category?: 'task' | 'coordination';
   callId: string;
   runId: string;
   provider: string;

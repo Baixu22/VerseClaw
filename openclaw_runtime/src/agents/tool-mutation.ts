@@ -179,7 +179,7 @@ export function isMutatingToolCall(toolName: string, args: unknown): boolean {
     case "subagents":
       return action === "kill" || action === "steer";
     case "session_status":
-      return typeof record?.model === "string" && record.model.trim().length > 0;
+      return record?.readOnly !== true && typeof record?.model === "string" && record.model.trim().length > 0;
     case "team_orchestrate":
     case "task_loop":
     case "mission_loop":

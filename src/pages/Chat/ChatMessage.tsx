@@ -101,6 +101,7 @@ interface ChatMessageProps {
   onAskKnowledge?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
   onResendUserMessage?: (text: string) => void;
+  requestUserEdit?: () => boolean;
   canResendUserMessage?: boolean;
   canForkFromMessage?: boolean;
   /**
@@ -245,6 +246,7 @@ export const ChatMessage = memo(function ChatMessage({
   canForkFromMessage = false,
   canSubmitInteractionResponse = true,
   onResendUserMessage,
+  requestUserEdit,
   canResendUserMessage = true,
   onForkFromMessage,
   onCompactRange,
@@ -404,10 +406,17 @@ export const ChatMessage = memo(function ChatMessage({
   const [userEditDraft, setUserEditDraft] = useState(text);
   const [lightboxImg, setLightboxImg] = useState<{ src: string; fileName: string; filePath?: string; base64?: string; mimeType?: string } | null>(null);
 
+  const resendAtEditStart = useRef(onResendUserMessage);
   const handleStartUserMessageEdit = useCallback(() => {
+    resendAtEditStart.current = onResendUserMessage;
     setUserEditDraft(text);
     setIsEditingUserMessage(true);
-  }, [text]);
+  }, [onResendUserMessage, text]);
+  useEffect(() => {
+    if (!isUser || !canResendUserMessage || !onResendUserMessage || !requestUserEdit) return;
+    const timer = setTimeout(() => { if (requestUserEdit()) handleStartUserMessageEdit(); }, 0);
+    return () => clearTimeout(timer);
+  }, [canResendUserMessage, handleStartUserMessageEdit, isUser, onResendUserMessage, requestUserEdit]);
 
   const handleCancelUserMessageEdit = useCallback(() => {
     setUserEditDraft(text);
@@ -416,10 +425,10 @@ export const ChatMessage = memo(function ChatMessage({
 
   const handleSubmitUserMessageEdit = useCallback(() => {
     const nextText = userEditDraft.trim();
-    if (!nextText || !canResendUserMessage || !onResendUserMessage) return;
+    if (!nextText || !canResendUserMessage || !resendAtEditStart.current) return;
     setIsEditingUserMessage(false);
-    onResendUserMessage(nextText);
-  }, [canResendUserMessage, onResendUserMessage, userEditDraft]);
+    resendAtEditStart.current(nextText);
+  }, [canResendUserMessage, userEditDraft]);
 
   // Never render tool result messages in chat UI
   if (isToolResult) return null;

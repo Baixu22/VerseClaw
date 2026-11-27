@@ -51,6 +51,7 @@ import { useProviderStore } from '@/stores/providers';
 import { useSettingsStore } from '@/stores/settings';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { isSessionIntentFresh, useSessionIntentStore } from '@/stores/session-intent';
+import { parseSessionCollaborationQuery } from '@shared/types/session-collaboration';
 import {
   ARTIFACT_PANEL_MAX_WIDTH,
   ARTIFACT_PANEL_MIN_WIDTH,
@@ -780,9 +781,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
   const setPermissionMode = useWorkspacesStore((s) => s.setPermissionMode);
-  /** Cross-surface intents (today: handoff started from the sidebar menu). */
-  const sessionIntent = useSessionIntentStore((s) => s.intent);
-  const clearSessionIntent = useSessionIntentStore((s) => s.clear);
+  const sessionIntent = useSessionIntentStore((state) => state.intent);
+  const consumeSessionIntent = useSessionIntentStore((state) => state.consume);
 
   const [knowledgeScope, setKnowledgeScope] = useState<WorkspaceKnowledgeScope>('none');
   const [knowledgeMode, setKnowledgeMode] = useState<KnowledgeInvocationMode>('suggest');
@@ -967,6 +967,46 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const controlScopeRef = useRef<object | null>(controlScope);
   controlScopeRef.current = controlScope;
   const isCurrentControlScope = useCallback(() => controlScopeRef.current === controlScope, [controlScope]);
+  const collaborationControl = sessionIntent?.kind === 'collaboration-control' &&
+    isSessionIntentFresh(sessionIntent) && sessionIntent.sessionKey === currentSessionKey &&
+    sessionIntent.scope.workspaceId === activeWorkspace?.id && sessionIntent.scope.sessionGeneration === controlGeneration
+    ? sessionIntent : null;
+  const [verifiedGuide, setVerifiedGuide] = useState<typeof collaborationControl>(null);
+  useEffect(() => {
+    const intent = collaborationControl;
+    if (intent?.action !== 'guide' || !intent.runId) return;
+    let current = true;
+    const query = parseSessionCollaborationQuery({ requester: intent.requester, target: intent.scope, limit: 1, fields: ['run'] });
+    void Promise.all([
+      hostApi.sessionActivity.query(query),
+      hostApi.sessions.longTaskControlStatus({ sessionKey: intent.scope.sessionKey, agentId: currentAgentId }),
+    ]).then(([result, status]) => {
+      if (!current || !isCurrentControlScope() || !isSessionIntentFresh(intent)) return;
+      const run = result.page?.items[0]?.sources.run;
+      if (result.page?.state === 'ready' && run?.state === 'ready' && run.value?.runId === intent.runId &&
+          status.success && status.latestCheckpoint?.taskLedgerRootId) {
+        setLongTaskControlStatus(status);
+        setVerifiedGuide(intent);
+      } else if (consumeSessionIntent(intent)) {
+        toast.error(status.success && !status.latestCheckpoint?.taskLedgerRootId
+          ? t('composer.intervention.longTaskRequired') : t('operationGenerationUnavailable'));
+      }
+    }).catch(() => {
+      if (current && isCurrentControlScope() && consumeSessionIntent(intent)) toast.error(t('operationGenerationUnavailable'));
+    });
+    return () => { current = false; };
+  }, [collaborationControl, consumeSessionIntent, currentAgentId, isCurrentControlScope, t]);
+  const consumeCollaborationControl = useCallback(() => {
+    if (!collaborationControl || !isCurrentControlScope() || !isSessionIntentFresh(collaborationControl)) return false;
+    const chat = useChatStore.getState();
+    const { scope, runId } = collaborationControl;
+    if (useWorkspacesStore.getState().activeWorkspaceId !== scope.workspaceId ||
+        chat.currentSessionKey !== scope.sessionKey ||
+        chat.sessions.find(session => session.key === scope.sessionKey)?.sessionId !== scope.sessionGeneration ||
+        (runId && chat.activeRunId && chat.activeRunId !== runId) ||
+        (collaborationControl.action === 'guide' && verifiedGuide !== collaborationControl)) return false;
+    return consumeSessionIntent(collaborationControl) !== null;
+  }, [collaborationControl, consumeSessionIntent, isCurrentControlScope, verifiedGuide]);
   useEffect(() => {
     let cancelled = false;
     setHandoffOperation(null);
@@ -2451,16 +2491,24 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
    * than fired late.
    */
   useEffect(() => {
-    if (!sessionIntent || sessionIntent.kind !== 'handoff') return;
+    if (!sessionIntent) return;
     if (!isSessionIntentFresh(sessionIntent)) {
-      clearSessionIntent();
+      consumeSessionIntent(sessionIntent);
       return;
     }
-    if (sessionIntent.sessionKey !== currentSessionKey) return;
-    if (!controlGeneration) return;
-    clearSessionIntent();
+    if (sessionIntent.sessionKey !== currentSessionKey || !controlGeneration) return;
+    if (sessionIntent.kind === 'collaboration-control') {
+      if (sessionIntent.action === 'interruptSend') return;
+      if (sessionIntent.scope.workspaceId !== activeWorkspace?.id || sessionIntent.scope.sessionGeneration !== controlGeneration) {
+        consumeSessionIntent(sessionIntent);
+        return;
+      }
+      if (collaborationControl?.action !== 'handoff' || !consumeCollaborationControl()) return;
+    } else if (!consumeSessionIntent(sessionIntent)) {
+      return;
+    }
     void handlePrepareHandoffRef.current?.();
-  }, [clearSessionIntent, controlGeneration, currentSessionKey, sessionIntent]);
+  }, [activeWorkspace?.id, collaborationControl, consumeCollaborationControl, consumeSessionIntent, controlGeneration, currentSessionKey, sessionIntent]);
 
   const handleCreateHandoffSession = useCallback(async () => {
     const draft = handoffDraft.trim();
@@ -2711,6 +2759,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const pendingImageGeneration = executionProjection.pendingImageGeneration;
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
+  const requestedEditIndex = collaborationControl?.action === 'truncate' && isGatewayRunning && !inputRunActive
+    ? messages.findLastIndex(message => normalizeMessageRole(message.role) === 'user' &&
+      Boolean(getTranscriptEntryId(message)) && Boolean(extractText(message).trim())) : -1;
   const showStartupSetup = isEmpty && !inputRunActive && !composerPaused
     && !currentSession.hasActiveRun && !(currentSession.messageCount ?? 0)
     && !Object.values(runtimeRuns).some(run => run.sessionKey === currentSessionKey && run.startedAt != null);
@@ -2815,7 +2866,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     messageId?: string;
     messageIndex: number;
   }) => {
-    if (!isGatewayRunning || inputRunActive) return;
+    if (!isCurrentControlScope() || !isGatewayRunning || inputRunActive) return;
     void resendUserMessage({
       text: input.messageText,
       messageId: input.messageId,
@@ -2825,7 +2876,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       console.warn('[chat:resendUserMessage] failed', error);
       toast.error(t('messageActions.resendFailed'));
     });
-  }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
+  }, [currentSessionKey, inputRunActive, isCurrentControlScope, isGatewayRunning, resendUserMessage, t]);
   /* Per-row resend handlers, memoized so ChatMessage's React.memo holds across
    * parent re-renders. The inline arrow that used to live at the call site was
    * recreated on every render, which broke memo and forced AssistantMarkdown to
@@ -3168,6 +3219,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     return () => observer.disconnect();
   }, [currentSessionKey]);
   const scrollToMessageIndex = messageViewport.scrollToIndex;
+  useEffect(() => {
+    if (requestedEditIndex >= 0) scrollToMessageIndex(requestedEditIndex);
+  }, [requestedEditIndex, scrollToMessageIndex]);
   const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
     const rows = visibleMessageRows;
     const users = rows.filter((row) => !row.hidden && isRealUserMessage(row.message));
@@ -3524,6 +3578,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             onCheckpoints={() => setCheckpointsOpen(true)}
             checkpointsDisabled={sending || pendingFinal}
             onForkSession={handleForkSession}
+            requestFork={collaborationControl?.action === 'fork' ? consumeCollaborationControl : undefined}
+            requestMigration={collaborationControl?.action === 'migrate' ? consumeCollaborationControl : undefined}
             forkDisabled={forkDisabled}
             forkDisabledReason={forkDisabledReason}
             forkBusy={forkBusy}
@@ -3712,7 +3768,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         onAskKnowledge={askKnowledgeAboutReply}
                         canForkFromMessage={row.canForkFromMessage && !forkDisabled}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
-                        onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
+                        onResendUserMessage={getResendUserMessageHandler(getTranscriptEntryId(row.message) ?? row.message.id, row.index)}
+                        requestUserEdit={row.index === requestedEditIndex ? consumeCollaborationControl : undefined}
                         onForkFromMessage={handleForkFromMessage}
                         onCompactRange={handleCompactMessageRange}
                       />
@@ -3983,6 +4040,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </div>
       )}
       <ChatInput
+        requestGuide={collaborationControl?.action === 'guide' && verifiedGuide === collaborationControl ? () => {
+          if (!consumeCollaborationControl() || !collaborationControl.runId) return null;
+          return { scope: collaborationControl.scope, runId: collaborationControl.runId };
+        } : undefined}
+        runtimeRuns={runtimeRuns}
+        observedRunId={activeRunId}
         leadingContent={activeWorkspace && !isEmpty ? (
           <div className="mb-1 empty:hidden">
             <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} summaryOnly active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />

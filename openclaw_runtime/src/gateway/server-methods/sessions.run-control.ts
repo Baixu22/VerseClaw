@@ -1,5 +1,5 @@
 // Sessions gateway run-control methods (send/steer/abort/queue drain/long-task status).
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
 import {
   normalizeOptionalString,
   readStringValue,
@@ -21,13 +21,16 @@ import {
 } from "../../../packages/gateway-protocol/src/index.js";
 import { renderRecoveryContextProjection } from "../../../packages/agent-core/src/harness/compaction/compression-artifact.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
+import { resolveNestedAgentLaneForSession } from "../../agents/lanes.js";
 import { createCheckpointRollbackDeps } from "../../agents/checkpoint-rollback-executor.js";
 import { executeReplayRollback } from "../../agents/replay-rollback-authority.js";
 import { getLongTaskCheckpointById } from "../../agents/long-task-control/store.js";
 import { checkpointContentDiff } from "../../agents/checkpoint-diff.js";
 import { updateSessionStore, type SessionEntry } from "../../config/sessions.js";
 import { normalizeAgentId, parseAgentSessionKey } from "../../routing/session-key.js";
+import { resolveSendPolicy } from "../../sessions/send-policy.js";
 import { resolveSessionKeyForRun } from "../server-session-key.js";
+import { watchChatRunReplacement, type ChatRunReplacementGuard } from "../chat-abort.js";
 import { resolveSessionStoreAgentId } from "../session-store-key.js";
 import { listSessionCompactionCheckpoints } from "../session-compaction-checkpoints.js";
 import { reactivateCompletedSubagentSession } from "../session-subagent-reactivation.js";
@@ -59,6 +62,7 @@ import {
   getLatestLongTaskIntervention,
   listLongTaskCheckpoints,
   listLongTaskInterventions,
+  readLongTaskInterventionReceipt,
 } from "../../agents/long-task-control/store.js";
 import type {
   GatewayClient,
@@ -174,6 +178,10 @@ async function handleSessionSend(params: {
     return;
   }
   const p = params.params;
+  if (p.expectedRunId !== undefined && (!params.interruptIfActive || typeof p.expectedSessionId !== "string")) {
+    params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "Run-scoped steer requires the session generation"));
+    return;
+  }
   const key = requireSessionKey((p as { key?: unknown }).key, params.respond);
   if (!key) {
     return;
@@ -191,6 +199,18 @@ async function handleSessionSend(params: {
   const requestedAgentId = requestedAgent.agentId;
   const loaded = loadSessionEntry(key, { agentId: requestedAgentId });
   let { entry, canonicalKey, storePath } = loaded;
+  let collaboration: Awaited<ReturnType<typeof import('./session-collaboration-message.js')['prepareSessionCollaborationMessage']>> | undefined;
+  if (p.collaboration !== undefined) {
+    try {
+      if (params.interruptIfActive) throw new Error('COLLABORATION_MESSAGE_IS_NOT_STEER');
+      const { prepareSessionCollaborationMessage } = await import('./session-collaboration-message.js');
+      collaboration = await prepareSessionCollaborationMessage(p.collaboration, params.context, params.client);
+      if (collaboration.message.target.sessionKey !== canonicalKey || collaboration.message.message !== p.message
+        || (p.idempotencyKey !== undefined && p.idempotencyKey !== collaboration.message.id)) throw new Error('COLLABORATION_MESSAGE_SCOPE_MISMATCH');
+    } catch (error) {
+      params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, error instanceof Error ? error.message : 'Invalid collaboration message')); return;
+    }
+  }
   if (typeof p.expectedSessionId === "string" && entry?.sessionId !== p.expectedSessionId) {
     params.respond(
       false,
@@ -199,7 +219,7 @@ async function handleSessionSend(params: {
     );
     return;
   }
-  if (p.requesterSessionKey || p.expectedRequesterSessionId) {
+  if (!collaboration && (p.requesterSessionKey || p.expectedRequesterSessionId)) {
     if (
       typeof p.requesterSessionKey !== "string" ||
       typeof p.expectedRequesterSessionId !== "string" ||
@@ -262,6 +282,11 @@ async function handleSessionSend(params: {
     params.interruptIfActive ? "sessions-steer" : "sessions-send",
   );
   let interruptedActiveRun = false;
+  const rawIdempotencyKey = (p as { idempotencyKey?: string }).idempotencyKey;
+  const idempotencyKey = typeof rawIdempotencyKey === "string" && rawIdempotencyKey.trim() ? rawIdempotencyKey.trim() : randomUUID();
+  let replacementRunGuard: ChatRunReplacementGuard | undefined;
+  let replacementGuardTransferred = false;
+  let releaseCollaborationSource: (() => void) | undefined;
   // TF-0082: the permit must fence the whole run-start window (steer interrupt,
   // transcript seq read, chat.send preamble) so a reset/delete racing mid-send
   // cannot seed a run on a stale generation. It is released as soon as the run
@@ -272,6 +297,7 @@ async function handleSessionSend(params: {
     if (!sendStartPermitReleased) {
       sendStartPermitReleased = true;
       releaseSessionsSendPermit();
+      releaseCollaborationSource?.();
     }
   };
   let sendAcked = false;
@@ -279,7 +305,103 @@ async function handleSessionSend(params: {
   let sendCached = false;
   let startedRunId: string | undefined;
   try {
+    if (collaboration) {
+      releaseCollaborationSource = acquireSessionAdmissionPermit({ canonicalSessionKey: collaboration.message.source.sessionKey,
+        expectedSessionId: collaboration.message.source.sessionGeneration }, 'sessions-send');
+      const source = loadSessionEntry(collaboration.message.source.sessionKey, { readOnly: true, skipCache: true });
+      if (source.entry?.sessionId !== collaboration.message.source.sessionGeneration || source.entry.workspaceId !== collaboration.message.source.workspaceId) throw new Error('COLLABORATION_SOURCE_GENERATION_CHANGED');
+      const current = loadSessionEntry(canonicalKey, { readOnly: true, skipCache: true });
+      if (current.entry?.sessionId !== collaboration.message.target.sessionGeneration || current.entry.workspaceId !== collaboration.message.target.workspaceId) throw new Error('COLLABORATION_TARGET_GENERATION_CHANGED');
+      const { agentHandlers } = await import('./agent.js');
+      const { assertSessionCollaborationSource } = await import('./session-collaboration-message.js');
+      assertSessionCollaborationSource(collaboration.message, params.context, params.client);
+      const { messageIntentWriter } = await import('../../sessions/session-collaboration-message-store.js');
+      assertSessionCollaborationSource(collaboration.message, params.context, params.client);
+      const admittedEntry = loadSessionEntry(canonicalKey, { readOnly: true, skipCache: true }).entry;
+      if (admittedEntry?.sessionId !== collaboration.message.target.sessionGeneration ||
+          admittedEntry.workspaceId !== collaboration.message.target.workspaceId) {
+        throw new Error('COLLABORATION_TARGET_GENERATION_CHANGED');
+      }
+      const store = messageIntentWriter();
+      let intent: ReturnType<typeof store.accept> | undefined;
+      try {
+        if (store.get(collaboration.message.id)) {
+          intent = store.accept(collaboration.message);
+          if (intent.state !== 'accepted') {
+            params.respond(true, { receipt: store.receipt(intent) }, undefined, { cached: true });
+            return;
+          }
+        }
+        if (resolveSendPolicy({
+          cfg: params.context.getRuntimeConfig(),
+          entry: admittedEntry,
+          sessionKey: canonicalKey,
+          channel: admittedEntry.channel,
+          chatType: admittedEntry.chatType,
+        }) === "deny") {
+          params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "send blocked by session policy"));
+          return;
+        }
+        intent ??= store.accept(collaboration.message);
+      } catch (error) {
+        if (error instanceof Error && error.message === 'COLLABORATION_MESSAGE_ID_CONFLICT') {
+          params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, error.message));
+          return;
+        }
+        throw error;
+      }
+      const dispatch = intent;
+      if (!store.claim(dispatch.id, dispatch.payload_digest)) {
+        params.respond(true, { receipt: store.receipt(store.get(dispatch.id)!) }, undefined, { cached: true }); return;
+      }
+      // The generation-checked session supplies the workspace to the original agent command.
+      await agentHandlers.agent({ req: params.req, client: params.client, context: params.context, isWebchatConnect: params.isWebchatConnect,
+        params: { message: collaboration.message.message, sessionKey: canonicalKey, expectedSessionId: collaboration.message.target.sessionGeneration,
+          idempotencyKey: dispatch.dispatch_key, deliver: false,
+          ...(collaboration.message.actor === 'agent' ? { lane: resolveNestedAgentLaneForSession(canonicalKey) } : {}),
+          sourceReplyDeliveryMode: 'message_tool_only', inputProvenance: collaboration.provenance },
+        respond: (ok, payload, error, meta) => {
+          releaseSendStartPermitOnce();
+          const ack = payload as { runId?: string; status?: string; result?: { payloads?: Array<{ text?: string }> } } | undefined;
+          const phase = !ok ? 'rejected' : ack?.status === 'ok' ? 'delivered'
+            : ack?.status === 'queued' || ack?.status === 'accepted' ? ack.status : 'unknown';
+          const receipt: import('../../../../shared/types/session-collaboration-message.js').SessionCollaborationMessageReceipt = {
+            schemaVersion: 'SessionCollaborationReceipt/v1', message: collaboration!.message,
+            phase, run: ack?.runId ? { runId: ack.runId, scope: {
+              workspaceId: collaboration!.message.target.workspaceId, projectId: collaboration!.message.target.projectId, sessionKey: collaboration!.message.target.sessionKey } } : null,
+            replyRef: null, updatedAt: Date.now(), ...(!ok ? { reason: error?.message ?? 'dispatch-rejected' } : {}),
+          };
+          const fullReply = ack?.status === 'ok' ? ack.result?.payloads?.map(item => item.text ?? '').filter(text => text.trim() && text.trim() !== 'NO_REPLY').join('\n') : undefined;
+          if (fullReply && receipt.run) {
+            const text = Array.from(fullReply).slice(0, 8000).join(''), sha256 = createHash('sha256').update(text).digest('hex');
+            receipt.phase = 'replied'; receipt.replyRef = `session-message:${dispatch.id}:${sha256}`;
+            receipt.reply = { text, sha256, run: receipt.run, truncated: text.length < fullReply.length };
+          }
+          store.record(dispatch.id, receipt);
+          params.respond(ok, ok ? { receipt: store.receipt(store.get(dispatch.id)!) } : payload, error, meta);
+        },
+      });
+      emitSessionsChanged(params.context, { sessionKey: canonicalKey, reason: 'send' });
+      return;
+    }
     if (params.interruptIfActive) {
+      const expectedRunId = typeof p.expectedRunId === "string" ? p.expectedRunId : undefined;
+      if (expectedRunId) {
+        replacementRunGuard = watchChatRunReplacement(params.context.chatAbortControllers,
+          canonicalKey, entry.sessionId, expectedRunId, idempotencyKey);
+        const current = loadSessionEntry(canonicalKey, { readOnly: true, skipCache: true }).entry;
+        if (!current || current.sessionId !== p.expectedSessionId || (p.workspaceId && current.workspaceId !== p.workspaceId)) {
+          params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "SESSION_STEER_SCOPE_CHANGED"));
+          return;
+        }
+        if (resolveSendPolicy({
+          cfg: params.context.getRuntimeConfig(), entry: current, sessionKey: canonicalKey,
+          channel: current.channel, chatType: current.chatType,
+        }) === "deny") {
+          params.respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "send blocked by session policy"));
+          return;
+        }
+      }
       const interruptResult = await interruptSessionRunIfActive({
         req: params.req,
         context: params.context,
@@ -289,6 +411,7 @@ async function handleSessionSend(params: {
         canonicalKey,
         agentId: requestedAgentId,
         sessionId: entry.sessionId,
+        expectedRunId,
       });
       if (interruptResult.error) {
         params.respond(false, undefined, interruptResult.error);
@@ -299,13 +422,12 @@ async function handleSessionSend(params: {
 
     const messageSeq =
       (await readSessionMessageCountAsync(entry.sessionId, storePath, entry.sessionFile)) + 1;
-    const rawIdempotencyKey = (p as { idempotencyKey?: string }).idempotencyKey;
-    const idempotencyKey =
-      typeof rawIdempotencyKey === "string" && rawIdempotencyKey.trim()
-        ? rawIdempotencyKey.trim()
-        : randomUUID();
+    replacementGuardTransferred = interruptedActiveRun && replacementRunGuard !== undefined;
     await chatHandlers["chat.send"]({
       req: params.req,
+      ...(interruptedActiveRun && typeof p.expectedRunId === "string"
+        ? { replacementForRunId: p.expectedRunId, replacementRunGuard }
+        : {}),
       params: {
         sessionKey: canonicalKey,
         ...(canonicalKey === "global" && requestedAgentId ? { agentId: requestedAgentId } : {}),
@@ -382,6 +504,7 @@ async function handleSessionSend(params: {
       });
     }
   } finally {
+    if (!replacementGuardTransferred) replacementRunGuard?.release();
     releaseSendStartPermitOnce();
   }
 }
@@ -522,15 +645,28 @@ export const sessionsRunControlHandlers: GatewayRequestHandlers = {
       respond(false, undefined, requestedAgent.error);
       return;
     }
-    const { canonicalKey } = loadSessionEntry(key, {
-      agentId: requestedAgent.agentId,
+    const { canonicalKey, entry } = loadSessionEntry(key, {
+      agentId: requestedAgent.agentId, readOnly: true, skipCache: true,
     });
+    let events;
+    if (p.guideReceipt) {
+      const guide = p.guideReceipt;
+      if (!entry || canonicalKey !== key || entry.sessionId !== guide.sessionGeneration || entry.workspaceId !== guide.workspaceId) {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "CHAT_GUIDE_SCOPE_CHANGED"));
+        return;
+      }
+      const event = readLongTaskInterventionReceipt(canonicalKey, `chat:${guide.id}:guide:event`);
+      events = event?.mode === "guide" && event.status === "steered" && event.runId === guide.runId &&
+        event.workspaceId === guide.workspaceId && event.payload.sessionGeneration === guide.sessionGeneration ? [event] : [];
+    } else {
+      events = listLongTaskInterventions(canonicalKey, p.limit);
+    }
     respond(
       true,
       {
         ok: true,
         key: canonicalKey,
-        events: listLongTaskInterventions(canonicalKey, p.limit),
+        events,
       },
       undefined,
     );

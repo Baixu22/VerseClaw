@@ -1,0 +1,21 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/session-collaboration-b-relay",
+  "baselineSourceSha256": "07c1710e540fe2f241175f5ed16f3b7907995d8e37cd089be21f090a1c81a232",
+  "argv": [
+    "node",
+    "--max-old-space-size=640",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/chat-input.test.tsx",
+    "-t",
+    "preserves draft revisions during",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile.json=D:\\tmp\\session-collaboration-b-relay-20261127\\draft-revision-red.json"
+  ],
+  "exitCode": 1,
+  "expectedRegressionFailures": 2,
+  "status": "reproduced"
+}

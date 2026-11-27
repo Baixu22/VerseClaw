@@ -10,6 +10,7 @@ import { normalizeAgentId } from "../../routing/session-key.js";
 import type { OpenClawConfig } from "../types.openclaw.js";
 import { resolveStorePath } from "./paths.js";
 import { loadSessionStore } from "./store-load.js";
+import { loadExistingSqliteSessionStoreReadOnly } from './store-sqlite.js';
 import {
   resolveAgentSessionStoreTargetsSync,
   resolveAllAgentSessionStoreTargetsSync,
@@ -28,9 +29,15 @@ function mergeSessionEntryIntoCombined(params: {
   entry: SessionEntry;
   agentId: string;
   canonicalKey: string;
+  readOnly?: boolean;
 }) {
   const { cfg, combined, entry, agentId, canonicalKey } = params;
   const existing = combined[canonicalKey];
+  if (params.readOnly) {
+    const selected = existing && (existing.updatedAt ?? 0) > (entry.updatedAt ?? 0) ? existing : entry;
+    combined[canonicalKey] = { ...selected, spawnedBy: canonicalizeSpawnedByForAgent(cfg, agentId, selected.spawnedBy) };
+    return;
+  }
 
   if (existing && (existing.updatedAt ?? 0) > (entry.updatedAt ?? 0)) {
     // Preserve the freshest entry while still canonicalizing spawnedBy for this agent store.
@@ -66,17 +73,18 @@ function mergeSessionEntryIntoCombined(params: {
 /** Loads and canonicalizes session entries for gateway views across one or more agent stores. */
 export function loadCombinedSessionStoreForGateway(
   cfg: OpenClawConfig,
-  opts: { agentId?: string; configuredAgentsOnly?: boolean } = {},
+  opts: { agentId?: string; configuredAgentsOnly?: boolean; readOnly?: boolean } = {},
 ): {
   storePath: string;
   store: Record<string, SessionEntry>;
 } {
   const storeConfig = cfg.session?.store;
+  const readStore = (storePath: string) => opts.readOnly ? loadExistingSqliteSessionStoreReadOnly(storePath) : loadSessionStore(storePath, { clone: false });
   if (storeConfig && !isStorePathTemplate(storeConfig)) {
     // A single shared store still needs keys canonicalized as if owned by the default agent.
     const storePath = resolveStorePath(storeConfig);
     const defaultAgentId = normalizeAgentId(resolveDefaultAgentId(cfg));
-    const store = loadSessionStore(storePath, { clone: false });
+    const store = readStore(storePath);
     const combined: Record<string, SessionEntry> = {};
     for (const [key, entry] of Object.entries(store)) {
       const canonicalKey = resolveStoredSessionKeyForAgentStore({
@@ -90,6 +98,7 @@ export function loadCombinedSessionStoreForGateway(
         entry,
         agentId: defaultAgentId,
         canonicalKey,
+        readOnly: opts.readOnly,
       });
     }
     return { storePath, store: combined };
@@ -108,7 +117,7 @@ export function loadCombinedSessionStoreForGateway(
   for (const target of targets) {
     const agentId = target.agentId;
     const storePath = target.storePath;
-    const store = loadSessionStore(storePath, { clone: false });
+    const store = readStore(storePath);
     for (const [key, entry] of Object.entries(store)) {
       const canonicalKey = resolveStoredSessionKeyForAgentStore({
         cfg,
@@ -121,6 +130,7 @@ export function loadCombinedSessionStoreForGateway(
         entry,
         agentId,
         canonicalKey,
+        readOnly: opts.readOnly,
       });
     }
   }

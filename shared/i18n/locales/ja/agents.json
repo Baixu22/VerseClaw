@@ -1,4 +1,100 @@
 {
+    "collaboration": {
+        "messages": {
+            "title": "メッセージと返信",
+            "from": "送信元",
+            "to": "送信先",
+            "reply": "返信",
+            "replyUnknown": "返信の情報源は未読です。",
+            "replyReference": "返信参照",
+            "allTasks": "すべてのタスク",
+            "sender": "{{name}} から送信",
+            "sourceMissing": "現在の送信元を確認できません。",
+            "purpose": "用途",
+            "body": "メッセージ",
+            "send": "送信",
+            "retryOriginal": "元のメッセージを再送",
+            "check": "元の受領記録を読む",
+            "purposes": {
+                "finding": "発見",
+                "status": "状態",
+                "request": "依頼",
+                "handoff": "引き継ぎ",
+                "result": "結果"
+            },
+            "states": {
+                "not_read": "メッセージは未読です。",
+                "ready": "メッセージの情報源を読みました。",
+                "empty": "この範囲にメッセージはありません。",
+                "unavailable": "メッセージの情報源を利用できません。",
+                "stale": "セッションの識別情報が変わりました。",
+                "unknown": "配信状況は不明です。元の受領記録を確認してください。",
+                "accepted": "意図を受理",
+                "queued": "待機列に追加",
+                "delivered": "agent に受け渡し",
+                "replied": "返信済み",
+                "rejected": "拒否",
+                "expired": "期限切れ"
+            }
+        },
+        "controls": {
+            "title": "元のセッション操作",
+            "guide": "実行ガイドを開く",
+            "interruptSend": "中断後の送信を開く",
+            "stop": "セッション停止",
+            "compact": "コンテキスト整理",
+            "truncate": "履歴境界を開く",
+            "fork": "分岐を開く",
+            "handoff": "引き継ぎを開く",
+            "migrate": "実行環境移行を開く"
+        },
+        "title": "セッション連携",
+        "description": "進行中の作業を探し、元の情報を必要に応じて読みます。",
+        "refresh": "更新",
+        "requesterMissing": "ワークスペースが確認できるセッションを開くと、関連作業を読めます。",
+        "search": "セッションとタスク目標を検索",
+        "loading": "セッションの情報源を読み込み中…",
+        "stale": "前回の観測を保持しています。現在の情報源を再読込してください。",
+        "results": "最近の結果",
+        "resources": "リソース",
+        "unknownMatches": "目標の一致が不明：{{count}} 件",
+        "more": "次のページ",
+        "close": "詳細を閉じる",
+        "openSession": "セッションを開く",
+        "openWorker": "worker 履歴を読む",
+        "openTask": "タスクを開く",
+        "sourcesTitle": "情報源と識別情報",
+        "page": {
+            "not_read": "セッションの情報源は未読です。",
+            "ready": "表示中のセッション：{{count}}",
+            "empty": "一致するセッションはありません。",
+            "unavailable": "セッションの情報源を利用できません。",
+            "stale": "セッションの識別情報が変わりました。現在の状態を更新してください。",
+            "unknown": "一部の情報源を確認できません。"
+        },
+        "status": {
+            "running": "実行中",
+            "idle": "待機中",
+            "unknown": "活動不明"
+        },
+        "sources": {
+            "ready": "利用可能",
+            "empty": "空",
+            "not_read": "未読",
+            "unavailable": "利用不可",
+            "stale": "古い情報",
+            "unknown": "不明"
+        },
+        "fields": {
+            "session": "セッション",
+            "goal": "目標",
+            "tasks": "タスク",
+            "run": "実行",
+            "actions": "操作",
+            "origin": "由来",
+            "execution": "実行ドメイン"
+        }
+    },
     "title": "Agents",
     "subtitle": "新しい Agent を作成し、特定のチャンネルを異なるパーソナリティやワークスペースにルーティングできます。",
     "refresh": "更新",

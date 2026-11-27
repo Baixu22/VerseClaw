@@ -276,7 +276,7 @@ export function isPlainReadOnlyShellCommand(command: string | undefined): boolea
 
 const READ_ONLY_TASK_TOOLS = new Set([
   "read", "grep", "glob", "find", "ls", "web_search", "web_fetch", "memory_search", "memory_get",
-  "sessions_list", "sessions_history", "sessions_yield", "get_goal", "task_control",
+  "sessions_list", "sessions_watch", "sessions_history", "sessions_yield", "get_goal", "task_control",
   "read_file", "read_files", "search_content", "result_query", "list_directory",
   "context_read", "context_search", "memory_query", "memory_recall",
 ]);
@@ -285,7 +285,7 @@ export function isReadOnlyTaskTool(toolName: string, args?: unknown): boolean {
   const name = toolName.trim().toLowerCase();
   const record = args && typeof args === "object" && !Array.isArray(args) ? args as Record<string, unknown> : undefined;
   if (READ_ONLY_TASK_TOOLS.has(name)) return true;
-  if (name === "session_status") return record?.model === undefined;
+  if (name === "session_status") return record?.readOnly === true || record?.model === undefined;
   if (name === "exec" || name === "bash") return isPlainReadOnlyShellCommand(readShellCommand(record));
   const action = typeof record?.action === "string" ? record.action.trim().toLowerCase().replace(/[\s-]+/g, "_") : "";
   if (name === "process") return ["list", "poll", "log"].includes(action);

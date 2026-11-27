@@ -31,6 +31,8 @@ Trajectory reads prepare their session data when requested; closing a connection
 
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
+Session tools support bounded discovery and read-only details for other sessions, including task goals, run references, observed actions and source availability. See [Sessions](docs/modules/sessions.md).
+
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
 
 Chat groups ordinary streamed text updates by animation frame. Approvals, cancellation, errors and completion publish immediately; completed message content stays stable while the active reply grows.
@@ -57,7 +59,7 @@ Session navigation restores the visible message and draft. Background work updat
 
 Message Fork requires a recorded transcript boundary and shows why the action is unavailable. Suggestions to continue elsewhere use the existing editable Handoff preview; a new conversation is created only by its explicit action.
 
-During a long task, **Send options** offers queueing, guidance and stop-then-send with a description of each outcome. Branching opens a conversation for your next message; summary handoff previews editable content before **Create and send**. Context organization and handoff sources keep technical details collapsed. [Conversation controls](docs/dev/chat-continuity-controls.md).
+During a long task, **Send options** offers queueing, guidance and stop-then-send with a description of each outcome. Branching opens a conversation for your next message; summary handoff previews editable content before **Create and send**. Context organization and handoff sources keep technical details collapsed. [Conversation controls](docs/dev/chat-continuity-controls.md). If a scoped guidance reply is lost, check its receipt from the composer, even after that run ends. Confirmation clears only the unchanged submitted draft; later edits remain.
 
 Handoff becomes available when the session identity finishes loading. Pending sidebar handoffs wait for that identity, and previews remain bound to the current session generation.
 If activation is interrupted, retrying keeps the original child session and checks its generation before sending.

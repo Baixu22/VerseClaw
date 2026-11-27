@@ -1,0 +1,6 @@
+{
+  "driven_by": "agent",
+  "head": "bb9031ff341029fa9cfd59bbc129a5024dd05f94",
+  "patchSha256": "f6a6d71d863e7582fb941404029b6aa5e5cd8a4b421a28d41f070a08fe070230",
+  "model": "ccs-ai/gpt-6.1-sol"
+}

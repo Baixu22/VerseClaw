@@ -2,6 +2,10 @@
 
 SessionKey 标识逻辑会话，sessionId 标识 generation，runId 标识一次执行，leaf 标识 transcript 边界。下面的“成功”均以对应 owner 回执或回读为准；切换后的迟到响应只处理原目标。任务、会话、运行和资源各自保留状态。
 
+会话协作目录使用同一矩阵：消息进入原 sessions.send，guide 表示原 /loop 同 run 输入，sessions.steer 表示中断后发送。协作入口先回读完整 scope/run；stop 和 compact 使用原 generation 接口，其余范围、分支、接力、迁移和 guide 打开原 owner 操作入口，由它完成边界选择、能力核验和提交。
+
+引导响应丢失时，输入框保留原请求 ID，并可查询原运行的持久回执；原运行结束或出现后继运行后仍可查询。确认后仅清理提交时未再编辑的草稿版本，查询期间的编辑以及切换后的其它会话草稿保持原样。取消引导模式保留输入文字。中断后发送的运行约束延续到实际派发边界，后继运行出现时拒绝该操作。
+
 | 操作及现有入口 | Owner / Host action | 可用条件与目标 | 确认、取消 | pending / success | failure / unknown 与恢复 |
 | --- | --- | --- | --- | --- | --- |
 | 新会话：项目菜单、新会话按钮、`/new` | Workspace / `createWorkspaceScopedNewSession`，Chat store / `newSession` | 显式 workspace/agent；保存来源草稿和会话状态后创建新 key | 明确的新建操作直接执行 | 准备期间保留来源；完成后激活新 key，来源历史可重开 | Workspace 写入失败保留错误；由项目列表回读实际新建结果，避免用空白画面推断持久成功 |

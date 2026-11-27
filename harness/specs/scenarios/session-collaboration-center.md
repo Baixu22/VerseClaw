@@ -13,7 +13,25 @@ requiredRules:
 ---
 # 会话协作中心场景
 
+A2 通过 typed sessionActivity.query 与 sessions_list(collaboration=true)、session_status(readOnly=true) 共用有界发现和详情读取。正反场景核对目标搜索、工作区/会话过滤、分页/字段上限、来源状态、游标与 reset 拒绝、visibility/A2A/sandbox 读取策略，以及原 owner 前后状态；完整 transcript 读取与模型调用保持 0。
+
+回复中的旧 requester、当前会话行及详情 generation 在三个入口一致返回 stale/generation-changed；同代范围不符保留 scope-mismatch。重复会话行、伪造 not_read 观测、未知原因码、失败页分页游标和将 unknownMatches 改签成 empty 的反例一致返回 protocol-unverified。
+
+Workspace/Gateway 读取抛错和 UI Host 读取失败保留 unavailable/owner-unavailable；空值、缺少 page 的旧信封和未成功的 UI 信封保留 unknown/protocol-unverified，两个会话工具与 Main/UI 清除相同事实和游标。参数错误仍在原读取调用前拒绝。
+
+工具请求待 Main 准入时动作保持 unknown，准入后回读原 ScopedRun；修改阅读副本后原 owner 身份仍一致。同 key/generation 的异工作区准入在 Main、UI 和两个工具返回 unavailable/scope-mismatch；目标换代后不读取旧代在途动作。
+
 本场景定义后续 A–E 叶的自动验收旅程。节点与读写合同见 session-collaboration-center-plan，范围为本机已配置、原权限允许的工作区与会话。
+
+A3 使用原运行终态缓存与 TaskSystem 事件等待条件，按 scope/游标补读，运行终态、空闲与任务回执分别返回。覆盖重复事件、读取中变化、25 秒总时限、取消、缺失来源、旧代和重连；退出时释放原监听。
+
+A4 的系统总览和项目会话面板共用 SessionCollaborationPanel。查询来源、分页、选中详情和监听均按原 scope 读取；自动更新保留搜索、选中和焦点，卸载取消原等待。四语及宽窄、主题与 reduced-motion 旅程覆盖原会话、worker 和任务入口。
+
+B1 的消息意图不接受调用者输入的来源或权限字段。按原运行/Main owner 绑定来源，Gateway 拒绝异内容同 ID、未签发的运行来源、不可见目标、旧代、任务修订不符和过期输入。typed provenance 保持 inter_session，原 actor/run 与创建时间由首次原回执保留。
+
+B2 覆盖持久接受和派发窗口中断、数据库/Gateway 重开、同 ID 重试与异内容拒绝。原意图和回执查询保持只读；派发无回执保持 unknown，重复请求不会启动第二个目标 turn。
+
+A1 的共用读取入口是 typed `hostApi.sessionActivity.read`。每个目标传入原 workspace/project/sessionKey/sessionGeneration，并可固定 Workspace binding revision 与执行域引用。`readModel.sources` 明确区分已读事实、真实为空、未读取、不可用、过期和未知；读取前后从原 owner 核对会话、任务、配置、检出与资源资格。正反例包含同 key 跨工作区、旧 generation、旧 binding/执行域 revision、缺失 owner，以及 Runtime 读取和 Main 等待期间的 reset。
 
 1. Agent 建立两个独立会话 A/B 和 A 的子会话 C，使用既有任务/session owner 绑定各自目标、代次、运行和检出。系统/项目入口读取同一总览；B 的任务与 C 的 parent 不从界面文字推断。
 2. A 按任务主题查到 B 的工作，读取其短摘要、当前实际操作及成果入口。打开 C 的原历史，返回时筛选、选中、草稿和滚动仍保留。UI 与模型工具的身份/状态相同。

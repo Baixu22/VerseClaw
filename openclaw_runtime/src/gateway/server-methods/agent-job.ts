@@ -34,6 +34,8 @@ let agentRunListenerStarted = false;
 type AgentRunSnapshot = AgentWaitTerminalSnapshot & {
   runId: string;
   ts: number;
+  sessionKey?: string;
+  sessionId?: string;
 };
 
 type PendingAgentRunTerminal = {
@@ -194,6 +196,8 @@ function createPendingErrorTimeoutSnapshot(snapshot: AgentRunSnapshot): AgentRun
 
 function createSnapshotFromLifecycleEvent(params: {
   runId: string;
+  sessionKey?: string;
+  sessionId?: string;
   phase: "end" | "error";
   data?: Record<string, unknown>;
 }): AgentRunSnapshot {
@@ -217,6 +221,8 @@ function createSnapshotFromLifecycleEvent(params: {
   });
   return {
     runId,
+    ...(params.sessionKey ? { sessionKey: params.sessionKey } : {}),
+    ...(params.sessionId ? { sessionId: params.sessionId } : {}),
     status: terminalOutcome.status,
     startedAt,
     endedAt,
@@ -260,6 +266,8 @@ function ensureAgentRunListener() {
     }
     const snapshot = createSnapshotFromLifecycleEvent({
       runId: evt.runId,
+      sessionKey: evt.sessionKey,
+      sessionId: evt.sessionId,
       phase,
       data: evt.data,
     });
@@ -285,6 +293,14 @@ function ensureAgentRunListener() {
 function getCachedAgentRun(runId: string) {
   pruneAgentRunCache();
   return agentRunCache.get(runId);
+}
+
+/** Cross-session consumers require the lifecycle owner's original physical identity. */
+export function readScopedAgentRunOutcome(runId: string, sessionKey: string, sessionId: string) {
+  ensureAgentRunListener();
+  const snapshot = getCachedAgentRun(runId);
+  return snapshot?.sessionKey === sessionKey && snapshot.sessionId === sessionId && !snapshot.pendingError
+    ? { ...snapshot } : null;
 }
 
 function addAgentRunWaiter(runId: string): () => void {
@@ -447,6 +463,8 @@ export async function waitForAgentJob(params: {
       }
       const snapshot = createSnapshotFromLifecycleEvent({
         runId: evt.runId,
+        sessionKey: evt.sessionKey,
+        sessionId: evt.sessionId,
         phase,
         data: evt.data,
       });

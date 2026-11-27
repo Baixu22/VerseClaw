@@ -5,7 +5,7 @@
  */
 import { create } from 'zustand';
 import { readSessionDerivationFacts } from '@shared/types/session-derivation';
-import { mergeSessionActivity, readSessionListPages } from '@/lib/session-read-model';
+import { getTranscriptEntryId, mergeSessionActivity, readSessionListPages } from '@/lib/session-read-model';
 import { hostApi, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
 import { useGatewayStore } from './gateway';
 import { useAgentsStore } from './agents';
@@ -4263,11 +4263,13 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       throw new Error('Cannot resend while a run is active');
     }
 
-    const targetMessage = state.messages[input.messageIndex];
-    const targetMessageId = (input.messageId || targetMessage?.id || '').trim();
-    if (!targetMessageId) {
-      throw new Error('Cannot resend this message because it has no transcript id');
-    }
+    const requestedMessageId = input.messageId?.trim();
+    const targetMessage = requestedMessageId
+      ? state.messages.find(message => getTranscriptEntryId(message) === requestedMessageId)
+      : state.messages[input.messageIndex];
+    if (!targetMessage) throw new Error('The message is no longer in the current history');
+    const targetMessageId = getTranscriptEntryId(targetMessage);
+    if (!targetMessageId) throw new Error('Cannot resend this message because it has no transcript id');
 
     const truncateResult = await hostApi.sessions.truncate({
       sessionKey,
@@ -4288,15 +4290,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
 
     set((current) => {
       if (current.currentSessionKey !== sessionKey) return {};
-      const matchedIndex = current.messages.findIndex((message, index) => (
-        (targetMessageId && message.id === targetMessageId)
-        || (index === input.messageIndex && message.role === 'user')
-      ));
-      const cutoff = matchedIndex >= 0
-        ? matchedIndex
-        : Math.max(0, Math.min(input.messageIndex, current.messages.length));
+      const cutoff = current.messages.findIndex(message => getTranscriptEntryId(message) === targetMessageId);
       return {
-        messages: current.messages.slice(0, cutoff),
+        messages: cutoff < 0 ? current.messages : current.messages.slice(0, cutoff),
         sending: false,
         activeRunId: null,
         streamingText: '',
@@ -4311,7 +4307,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       };
     });
 
-    const references = targetMessage?._knowledgeRefs?.map(reference => ({ ...reference }));
+    if (get().currentSessionKey !== sessionKey) return;
+    const references = targetMessage._knowledgeRefs?.map(reference => ({ ...reference }));
     await get().sendMessage(trimmed, references?.length ? {
       knowledgeReferences: references,
       knowledgeScope: targetMessage._knowledgeScope ?? (references.every(reference => reference.corpus === 'memory') ? 'memory' : 'wiki'),

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { parseSessionCollaborationQuery } from '@shared/types/session-collaboration';
 import { act, fireEvent, render as testingLibraryRender, screen, waitFor, within } from '@testing-library/react';
 import { HashRouter } from 'react-router-dom';
 import { ChatInput } from '@/pages/Chat/ChatInput';
@@ -23,6 +24,8 @@ function render(ui: ReactElement) {
 }
 
 const hostApiFetchMock = vi.hoisted(() => vi.fn());
+const sendGuidanceMock = vi.hoisted(() => vi.fn());
+const readGuidanceReceipt = vi.hoisted(() => vi.fn());
 const { agentsState, chatState, gatewayState, providersState, mcpState, artifactPanelMocks, permissionMocks, taskLedgerMocks, settingsState } = vi.hoisted(() => ({
   agentsState: {
     agents: [] as Array<Record<string, unknown>>,
@@ -161,7 +164,9 @@ vi.mock('@/lib/host-api', () => ({
   hostApi: {
     sessions: {
       patchRuntimeModel: vi.fn(async () => ({ success: true })),
+      longTaskControlHistory: readGuidanceReceipt,
     },
+    chat: { sendWithMedia: sendGuidanceMock },
     runtimeApprovals: {
       list: vi.fn(async () => ({ pending: [] })),
       resolve: vi.fn(async () => ({ success: true })),
@@ -2066,6 +2071,155 @@ describe('ChatInput slash session lifecycle commands', () => {
         'No messages in the current session to copy.',
       );
     });
+  });
+
+  it('keeps background-run guidance scoped and preserves the draft until the owner accepts it', async () => {
+    const onSend = vi.fn();
+    sendGuidanceMock.mockReset();
+    sendGuidanceMock.mockResolvedValueOnce({ success: false, error: 'Delivery unavailable' })
+      .mockResolvedValueOnce({ success: true, result: { runId: 'background-run' } });
+    const scope = parseSessionCollaborationQuery({ requester: {
+      workspaceId: 'workspace-1', projectId: 'workspace-1', sessionKey: 'agent:main:main', sessionGeneration: 'background-1',
+    } }).requester;
+    chatState.sessions = [{ key: scope.sessionKey, sessionId: scope.sessionGeneration }];
+    const requestGuide = vi.fn().mockReturnValueOnce({ scope, runId: 'background-run' });
+    renderChatInput(onSend, {
+      sending: false, workspace: workspace(), draftValue: 'Continue using the reviewed input.',
+      longTaskControlStatus: LOOP_SESSION_STATUS, requestGuide,
+    });
+
+    const guidance = await screen.findByTestId('chat-intervention-guide');
+    expect(screen.queryByTestId('chat-intervention-interrupt')).not.toBeInTheDocument();
+    fireEvent.click(guidance);
+    await waitFor(() => expect(sendGuidanceMock).toHaveBeenCalledWith(expect.objectContaining({
+      message: 'Continue using the reviewed input.', inputMode: 'guide', expectedGuideRunId: 'background-run',
+      expectedSessionGeneration: scope.sessionGeneration, workspaceId: scope.workspaceId, sessionKey: scope.sessionKey,
+    })));
+    expect(await screen.findByTestId('chat-composer-input')).toHaveValue('Continue using the reviewed input.');
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter', ctrlKey: true });
+    await waitFor(() => expect(sendGuidanceMock).toHaveBeenCalledTimes(2));
+    expect(sendGuidanceMock.mock.calls[1]?.[0].idempotencyKey).toBe(sendGuidanceMock.mock.calls[0]?.[0].idempotencyKey);
+    await waitFor(() => expect(screen.queryByTestId('chat-guidance-scope')).not.toBeInTheDocument());
+    expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it('fences an expired guidance draft and lets the user cancel without losing the text', async () => {
+    const scope = parseSessionCollaborationQuery({ requester: {
+      workspaceId: 'workspace-1', projectId: 'workspace-1', sessionKey: 'agent:main:main', sessionGeneration: 'background-1',
+    } }).requester;
+    chatState.sessions = [{ key: scope.sessionKey, sessionId: scope.sessionGeneration }];
+    sendGuidanceMock.mockClear();
+    const requestGuide = vi.fn().mockReturnValueOnce({ scope, runId: 'old-run' });
+    renderChatInput(vi.fn(), {
+      workspace: workspace(), draftValue: 'Retain this draft', requestGuide, longTaskControlStatus: LOOP_SESSION_STATUS,
+      runtimeRuns: { 'old-run': { runId: 'old-run', sessionKey: scope.sessionKey, status: 'completed',
+        assistantText: '', thinkingText: '', events: [] } },
+    });
+    expect(await screen.findByTestId('chat-guidance-scope')).toHaveTextContent('operationGenerationUnavailable');
+    expect(screen.getByTestId('chat-intervention-guide')).toBeDisabled();
+    fireEvent.click(screen.getByTestId('chat-guidance-cancel'));
+    expect(screen.queryByTestId('chat-guidance-scope')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-input')).toHaveValue('Retain this draft');
+    expect(sendGuidanceMock).not.toHaveBeenCalled();
+  });
+
+  it('reads the lost acknowledgement after the original run ends while preserving an edited draft', async () => {
+    const scope = parseSessionCollaborationQuery({ requester: {
+      workspaceId: 'workspace-1', projectId: 'workspace-1', sessionKey: 'agent:main:main', sessionGeneration: 'background-1',
+    } }).requester;
+    const runId = 'finished-run';
+    chatState.sessions = [{ key: scope.sessionKey, sessionId: scope.sessionGeneration }];
+    sendGuidanceMock.mockReset().mockResolvedValue({ success: false, error: 'Connection lost' });
+    readGuidanceReceipt.mockReset();
+    const props = { requestGuide: vi.fn().mockReturnValueOnce({ scope, runId }), workspace: workspace(),
+      longTaskControlStatus: LOOP_SESSION_STATUS, draftValue: 'Original guidance' };
+    const onSend = vi.fn();
+    const view = renderChatInput(onSend, props);
+    fireEvent.click(await screen.findByTestId('chat-intervention-guide'));
+    await waitFor(() => expect(sendGuidanceMock).toHaveBeenCalledTimes(1));
+    const id = sendGuidanceMock.mock.calls[0][0].idempotencyKey;
+    const event = { sessionKey: scope.sessionKey, workspaceId: scope.workspaceId, runId, mode: 'guide',
+      status: 'steered', idempotencyKey: `chat:${id}:guide:event`, payload: { sessionGeneration: scope.sessionGeneration } };
+    readGuidanceReceipt.mockResolvedValueOnce({ success: true, key: scope.sessionKey, events: [] })
+      .mockResolvedValueOnce({ success: true, key: scope.sessionKey, events: [event] });
+    view.rerender(<TooltipProvider><ChatInput {...props} onSend={onSend} observedRunId="replacement-run" /></TooltipProvider>);
+    const editor = screen.getByTestId('chat-composer-input');
+    fireEvent.change(editor, { target: { value: 'Next draft' } });
+    fireEvent.click(await screen.findByTestId('chat-guidance-receipt'));
+    await waitFor(() => expect(readGuidanceReceipt).toHaveBeenCalledWith({
+      sessionKey: scope.sessionKey, guideReceipt: { id, workspaceId: scope.workspaceId, sessionGeneration: scope.sessionGeneration, runId },
+    }));
+    await waitFor(() => expect(screen.getByTestId('chat-guidance-receipt')).toBeEnabled());
+    fireEvent.click(screen.getByTestId('chat-guidance-receipt'));
+    await waitFor(() => expect(screen.queryByTestId('chat-guidance-scope')).not.toBeInTheDocument());
+    expect(editor).toHaveValue('Next draft');
+    expect(sendGuidanceMock).toHaveBeenCalledTimes(1);
+    expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it.each(['send acknowledgement', 'receipt lookup'] as const)('preserves draft revisions during %s', async (path) => {
+    const scope = parseSessionCollaborationQuery({ requester: {
+      workspaceId: 'workspace-1', projectId: 'workspace-1', sessionKey: 'agent:main:main', sessionGeneration: 'background-1',
+    } }).requester;
+    const runId = 'original-run';
+    chatState.sessions = [{ key: scope.sessionKey, sessionId: scope.sessionGeneration }];
+    let finish!: (value: unknown) => void;
+    const pending = new Promise(resolve => { finish = resolve; });
+    sendGuidanceMock.mockReset().mockReturnValue(path === 'send acknowledgement'
+      ? pending : Promise.resolve({ success: false, error: 'Connection lost' }));
+    readGuidanceReceipt.mockReset().mockReturnValue(pending);
+    const onSend = vi.fn();
+    renderChatInput(onSend, { requestGuide: vi.fn().mockReturnValueOnce({ scope, runId }), workspace: workspace(),
+      longTaskControlStatus: LOOP_SESSION_STATUS, draftValue: 'Original guidance' });
+    fireEvent.click(await screen.findByTestId('chat-intervention-guide'));
+    await waitFor(() => expect(sendGuidanceMock).toHaveBeenCalledTimes(1));
+    const id = sendGuidanceMock.mock.calls[0][0].idempotencyKey;
+    if (path === 'receipt lookup') {
+      await waitFor(() => expect(screen.getByTestId('chat-guidance-receipt')).toBeEnabled());
+      fireEvent.click(screen.getByTestId('chat-guidance-receipt'));
+      await waitFor(() => expect(readGuidanceReceipt).toHaveBeenCalledTimes(1));
+    }
+    const editor = screen.getByTestId('chat-composer-input');
+    fireEvent.change(editor, { target: { value: 'New edit' } });
+    fireEvent.change(editor, { target: { value: 'Original guidance' } });
+    await act(async () => finish(path === 'send acknowledgement'
+      ? { success: true, result: { runId } }
+      : { success: true, key: scope.sessionKey, events: [{ idempotencyKey: `chat:${id}:guide:event`,
+        status: 'steered', mode: 'guide', sessionKey: scope.sessionKey, workspaceId: scope.workspaceId,
+        runId, payload: { sessionGeneration: scope.sessionGeneration } }] }));
+    await waitFor(() => expect(screen.queryByTestId('chat-guidance-scope')).not.toBeInTheDocument());
+    expect(editor).toHaveValue('Original guidance');
+    expect(sendGuidanceMock).toHaveBeenCalledTimes(1);
+    expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it('does not apply a late guidance receipt to another session draft', async () => {
+    const scope = parseSessionCollaborationQuery({ requester: {
+      workspaceId: 'workspace-1', projectId: 'workspace-1', sessionKey: 'agent:main:main', sessionGeneration: 'background-1',
+    } }).requester;
+    const runId = 'original-run';
+    chatState.sessions = [{ key: scope.sessionKey, sessionId: scope.sessionGeneration }];
+    sendGuidanceMock.mockReset().mockResolvedValue({ success: false, error: 'Connection lost' });
+    let finish!: (value: unknown) => void;
+    readGuidanceReceipt.mockReset().mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    const onSend = vi.fn();
+    const props = { requestGuide: vi.fn().mockReturnValueOnce({ scope, runId }), workspace: workspace(),
+      longTaskControlStatus: LOOP_SESSION_STATUS, draftValue: 'Original guidance' };
+    const view = renderChatInput(onSend, props);
+    fireEvent.click(await screen.findByTestId('chat-intervention-guide'));
+    await waitFor(() => expect(screen.getByTestId('chat-guidance-receipt')).toBeEnabled());
+    const id = sendGuidanceMock.mock.calls[0][0].idempotencyKey;
+    fireEvent.click(screen.getByTestId('chat-guidance-receipt'));
+    await waitFor(() => expect(readGuidanceReceipt).toHaveBeenCalledTimes(1));
+    chatState.currentSessionKey = 'agent:main:other';
+    chatState.sessions.push({ key: chatState.currentSessionKey, sessionId: 'other-generation' });
+    view.rerender(<TooltipProvider><ChatInput {...props} onSend={onSend} draftValue="Other session draft" /></TooltipProvider>);
+    await act(async () => finish({ success: true, key: scope.sessionKey, events: [{ idempotencyKey: `chat:${id}:guide:event`,
+      status: 'steered', mode: 'guide', sessionKey: scope.sessionKey, workspaceId: scope.workspaceId,
+      runId, payload: { sessionGeneration: scope.sessionGeneration } }] }));
+    expect(screen.getByTestId('chat-composer-input')).toHaveValue('Other session draft');
+    expect(screen.queryByTestId('chat-guidance-scope')).not.toBeInTheDocument();
+    expect(sendGuidanceMock).toHaveBeenCalledTimes(1);
   });
 
   it('keeps long-task modes out of ordinary Chat and queues the running draft locally', async () => {

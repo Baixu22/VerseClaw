@@ -55,6 +55,27 @@ type RegisteredChatAbortController = {
   cleanup: () => void;
 };
 
+export type ChatRunReplacementGuard = { changed: () => boolean; release: () => void };
+const runStartObservers = new WeakMap<Map<string, ChatAbortControllerEntry>, Set<(runId: string, entry: ChatAbortControllerEntry) => void>>();
+
+/** Observe starts throughout one steer handoff, including runs that finish before its next check. */
+export function watchChatRunReplacement(controllers: Map<string, ChatAbortControllerEntry>, sessionKey: string,
+  sessionId: string, originalRunId: string, replacementRunId: string): ChatRunReplacementGuard {
+  const observers = runStartObservers.get(controllers) ?? new Set();
+  runStartObservers.set(controllers, observers);
+  let changed = false;
+  const observe = (runId: string, entry: ChatAbortControllerEntry) => {
+    if (entry.sessionKey === sessionKey && entry.sessionId === sessionId &&
+        runId !== originalRunId && runId !== replacementRunId) changed = true;
+  };
+  for (const [runId, entry] of controllers) observe(runId, entry);
+  observers.add(observe);
+  return { changed: () => changed, release: () => {
+    observers.delete(observe);
+    if (!observers.size) runStartObservers.delete(controllers);
+  } };
+}
+
 export function isChatStopCommandText(text: string): boolean {
   return isAbortRequestText(text);
 }
@@ -166,6 +187,7 @@ export function registerChatAbortController(params: {
     kind: params.kind,
   };
   params.chatAbortControllers.set(params.runId, entry);
+  for (const observe of runStartObservers.get(params.chatAbortControllers) ?? []) observe(params.runId, entry);
   return { controller, registered: true, entry, cleanup };
 }
 

@@ -55,6 +55,17 @@ vi.mock('node:fs/promises', async (importOriginal) => {
 const SUMMARY_HEAD_BYTES = 64 * 1024;
 const SUMMARY_TAIL_BYTES = 128 * 1024;
 
+describe('collaboration field and page limits', () => {
+  it('keeps the same normalized defaults across UI and tool parsing', async () => {
+    const { parseSessionCollaborationQuery } = await import('@shared/types/session-collaboration');
+    const input = { requester: { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'agent:main:source', sessionGeneration: 'generation-a' } };
+    const once = parseSessionCollaborationQuery(input);
+    expect(parseSessionCollaborationQuery(once)).toEqual(once);
+    expect(once.limit).toBe(20);
+    expect(() => parseSessionCollaborationQuery({ ...input, limit: 51 })).toThrow();
+  });
+});
+
 describe('bounded session summaries', () => {
   let configDir: string;
   let sessionsDir: string;

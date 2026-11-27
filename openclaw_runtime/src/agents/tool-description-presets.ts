@@ -19,6 +19,7 @@ export function describeSessionsListTool(): string {
   return [
     "List visible sessions; filter by kind, label, agentId, search, activity.",
     "Use before sessions_history or sessions_send target selection.",
+    "collaboration=true reads bounded goals, task/run references and source states without transcript enrichment; use workspace, search, fields, limit and cursor.",
   ].join(" ");
 }
 
@@ -75,6 +76,7 @@ export function describeSessionStatusTool(): string {
     'Use `sessionKey="current"` for current session; UI labels like `openclaw-tui` are not keys.',
     "`model` sets session override; `model=default` resets.",
     "Use for active model/session config questions.",
+    "readOnly=true reads collaboration details without transcript usage or model changes; pass scope from a sessions_list collaboration result for another session.",
   ].join(" ");
 }
 

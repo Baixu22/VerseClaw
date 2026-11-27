@@ -71,6 +71,30 @@ vi.mock('@electron/utils/token-usage', () => ({
  * instead of relying solely on attempt.ts local effectiveWorkspace.
  */
 describe('chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout)', () => {
+  it('keeps pinned guide content stable when coordinator context changes between retries', async () => {
+    getWorkspaceRootPathByIdMock.mockResolvedValue(coordinatorRoot);
+    getPersistedCoordinatorBindingMock.mockResolvedValue(coordinatorBinding());
+    loadTaskLedgerSnapshotMock.mockRejectedValue(new Error('Pinned guidance must not rebuild task context'));
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => method === 'sessions.describe'
+        ? { session: { sessionId: 'generation-1' } } : { steered: true, runId: 'original-run' }),
+      getStatus: vi.fn(() => ({ state: 'running', gatewayReady: true })),
+    };
+    const { createChatApi } = await import('@electron/services/chat-api');
+    const api = createChatApi({ gatewayManager: gatewayManager as never });
+    const request = { sessionKey: 'agent:main:main', workspaceId: 'ws-app', expectedSessionGeneration: 'generation-1',
+      expectedGuideRunId: 'original-run', inputMode: 'guide', message: 'Keep this exact guidance.',
+      knowledgeScope: 'none', idempotencyKey: 'stable-guide-request' };
+    expect(await api.sendWithMedia(request)).toMatchObject({ success: true, result: { runId: 'original-run' } });
+    getPersistedCoordinatorBindingMock.mockResolvedValue(coordinatorBinding({ bindingRevision: 2 }));
+    expect(await api.sendWithMedia(request)).toMatchObject({ success: true, result: { runId: 'original-run' } });
+    const calls = (gatewayManager.rpc.mock.calls as unknown[][]).filter(call => call[0] === 'chat.send');
+    expect(calls).toHaveLength(2);
+    expect(calls[0][1]).toMatchObject({ message: request.message, expectedGuideRunId: 'original-run' });
+    expect(calls[1][1]).toEqual(calls[0][1]);
+    expect(loadTaskLedgerSnapshotMock).not.toHaveBeenCalled();
+  });
+
   it('keeps user text unchanged while restoring a task started without manual coordinator setup',async()=>{
     const root=mkdtempSync(resolve(tmpdir(),'quiet-task-chat-'));const tasks=new TaskSystemStore(resolveTaskDomain(root));
     try{

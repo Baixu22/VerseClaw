@@ -3,6 +3,89 @@ import type { SessionEffectivePolicy } from './session-effective-policy.js';
 import type { SessionStageProjection } from './session-stage.js';
 import type { SessionDerivation } from './session-derivation.js';
 import type { LongSessionResourceInventory } from '../long-session-resource-reclamation.js';
+import { normalizeAutonomySessionScope, type AutonomySessionScope, type ScopedRunId } from './identity-scope.js';
+import type { TaskAuthorityBasis } from '../task-system/identity.js';
+import type { TaskClaim, TaskContract } from '../task-system/types.js';
+
+export type SessionActivityReadQuery = {
+  scope: AutonomySessionScope;
+  expectedBindingRevision?: number;
+  expectedExecution?: TaskAuthorityBasis;
+};
+export type SessionActivityReadState = 'ready' | 'empty' | 'not_read' | 'unavailable' | 'stale' | 'unknown';
+export const SESSION_ACTIVITY_READ_REASONS = ['source-not-read', 'owner-missing', 'owner-unavailable',
+  'scope-mismatch', 'generation-changed', 'binding-changed', 'execution-changed',
+  'run-identity-missing', 'protocol-unverified', 'not-visible'] as const;
+export type SessionActivityReadReason = typeof SESSION_ACTIVITY_READ_REASONS[number];
+export type SessionActivityReadSource<T> = { owner: string } & (
+  | { state: 'ready' | 'empty'; value: T; readAt: number }
+  | { state: Exclude<SessionActivityReadState, 'ready' | 'empty'>; value: null; readAt: number | null; reason: SessionActivityReadReason }
+);
+export type SessionActivityTaskReference = {
+  authorityId: string;
+  taskNodeId: TaskContract['taskNodeId'];
+  revision: number;
+  digest: string;
+  objective: string;
+  state: TaskContract['state'];
+  referenceOnly: boolean;
+  claim: Pick<TaskClaim, 'sessionKey' | 'generation' | 'epoch' | 'state'> | null;
+};
+export type SessionActivityReadModel = {
+  schemaVersion: 'SessionCollaborationRead/v1';
+  /** Requested scope; sources.session carries the independently verified owner scope. */
+  scope: AutonomySessionScope;
+  sources: {
+    session: SessionActivityReadSource<{ scope: AutonomySessionScope; agentId: string; parentSessionKey: string | null; spawnedBy: string | null }>;
+    run: SessionActivityReadSource<ScopedRunId | null>;
+    tasks: SessionActivityReadSource<SessionActivityTaskReference[]>;
+    execution: SessionActivityReadSource<TaskAuthorityBasis>;
+    binding: SessionActivityReadSource<{ bindingRevision: number; sessionGeneration: string | null; state: 'active' | 'paused' | 'invalid' }>;
+    background: SessionActivityReadSource<null>;
+  };
+};
+
+/** Validate query shape only; each source still compares it with its own current owner. */
+export function parseSessionActivityReadQuery(value: unknown): SessionActivityReadQuery {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError('Session activity read query required');
+  const query = value as Record<string, unknown>;
+  if (Object.keys(query).some(key => !['scope', 'expectedBindingRevision', 'expectedExecution'].includes(key)))
+    throw new TypeError('Unexpected session activity read field');
+  const scope = normalizeAutonomySessionScope(query.scope, query.scope as AutonomySessionScope);
+  if (query.expectedBindingRevision !== undefined && (!Number.isSafeInteger(query.expectedBindingRevision) || Number(query.expectedBindingRevision) < 1))
+    throw new TypeError('Positive binding revision required');
+  if (query.expectedExecution !== undefined && (!query.expectedExecution || typeof query.expectedExecution !== 'object' || Array.isArray(query.expectedExecution)))
+    throw new TypeError('Execution owner reference required');
+  if (query.expectedExecution !== undefined) {
+    const execution = query.expectedExecution as Record<string, unknown>;
+    const textFields = ['localDomainId', 'authorityId', 'authorityDatabase', 'executionWorktree', 'identityDigest'];
+    if (Object.keys(execution).some(key => ![...textFields, 'registrationRevision', 'projectRevision', 'databaseIdentity', 'worktreeIncarnation'].includes(key))
+      || textFields.some(key => typeof execution[key] !== 'string' || !(execution[key] as string).trim())
+      || ['registrationRevision', 'projectRevision'].some(key => execution[key] !== null && (!Number.isSafeInteger(execution[key]) || Number(execution[key]) < 1))
+      || ['databaseIdentity', 'worktreeIncarnation'].some(key => execution[key] !== undefined && (typeof execution[key] !== 'string' || !(execution[key] as string).trim())))
+      throw new TypeError('Invalid execution owner reference');
+  }
+  return { scope, ...(query.expectedBindingRevision === undefined ? {} : { expectedBindingRevision: query.expectedBindingRevision as number }),
+    ...(query.expectedExecution === undefined ? {} : { expectedExecution: query.expectedExecution as TaskAuthorityBasis }) };
+}
+
+/** Empty arrays become facts only after their named owner answers. */
+export function createSessionActivityReadSnapshot(scope: AutonomySessionScope, now = Date.now()): SessionActivitySnapshot & { readModel: SessionActivityReadModel } {
+  const unread = (owner: string) => ({ owner, state: 'not_read' as const, value: null, readAt: null, reason: 'source-not-read' as const });
+  return { ...createEmptySessionActivitySnapshot(scope.sessionKey, now), readModel: {
+    schemaVersion: 'SessionCollaborationRead/v1', scope,
+    sources: { session: unread('sessions'), run: unread('runtime'), tasks: unread('TaskSystem'),
+      execution: unread('execution-domain'), binding: unread('workspaces'), background: unread('session-lifecycle') },
+  } };
+}
+
+/** A changed owner invalidates the whole join, including already read task/run values. */
+export function fenceSessionActivityRead(snapshot: SessionActivitySnapshot & { readModel: SessionActivityReadModel },
+  state: 'unavailable' | 'stale' | 'unknown', reason: SessionActivityReadReason) {
+  const fenced = createSessionActivityReadSnapshot(snapshot.readModel.scope);
+  for (const source of Object.values(fenced.readModel.sources)) Object.assign(source, { state, reason, readAt: fenced.capturedAt });
+  return fenced;
+}
 
 export type SessionActivityRunStatus = 'idle' | 'running' | 'waiting_approval' | 'completed' | 'failed' | 'aborted';
 export type SessionActivityTaskKind = 'mission' | 'taskLoop' | 'clawGraph' | 'taskLedger';
@@ -255,6 +338,8 @@ export type SessionCompletionBatch = {
 };
 
 export type SessionActivitySnapshot = {
+  /** Explicit cross-session read contract; legacy UI snapshots retain their existing shape. */
+  readModel?: SessionActivityReadModel;
   session: {
     sessionKey: string;
     /** Physical generation used by lifecycle cleanup receipts. */

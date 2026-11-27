@@ -1,0 +1,5 @@
+Listing tests:
+  session-collaboration-controls.spec.ts:6:5 › scoped collaboration opens original controls and fences an old generation
+  session-collaboration-controls.spec.ts:45:5 › a delayed guidance receipt preserves a draft edited back to its original text
+  session-collaboration-delivery-recovery.spec.ts:10:5 › durable message replay survives a Gateway restart without a second target turn
+Total: 3 tests in 2 files

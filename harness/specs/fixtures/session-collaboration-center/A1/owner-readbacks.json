@@ -1,0 +1,2739 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-tf0919",
+  "modelCalls": 0,
+  "receipts": [
+    {
+      "case": "two-independent-and-child",
+      "root": "D:\\tmp\\session-collaboration-A1-rYowXW",
+      "inputs": [
+        {
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          }
+        },
+        {
+          "scope": {
+            "workspaceId": "workspace-b",
+            "projectId": "workspace-b",
+            "sessionKey": "agent:main:collaboration-b",
+            "sessionGeneration": "generation-b"
+          }
+        },
+        {
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-child",
+            "sessionGeneration": "generation-c"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "session": {
+            "sessionKey": "agent:main:collaboration-a",
+            "runId": "run-a",
+            "status": "running",
+            "startedAt": 10,
+            "endedAt": null,
+            "error": null,
+            "updatedAt": 0,
+            "sessionId": "generation-a"
+          },
+          "git": null,
+          "tasks": [
+            {
+              "id": "856f8219-8958-451a-a733-c537732abe45",
+              "kind": "taskLedger",
+              "title": "Goal for agent:main:collaboration-a",
+              "status": "running",
+              "source": "task-ledger",
+              "updatedAt": 1795498577011
+            }
+          ],
+          "subagents": [],
+          "completionBatches": [],
+          "terminals": [],
+          "goals": [],
+          "processes": [],
+          "lineage": [],
+          "continuity": {
+            "queueCount": 0,
+            "contextPressure": null,
+            "checkpoint": false,
+            "blockedReason": null
+          },
+          "availability": {
+            "git": false,
+            "tasks": true,
+            "subagents": true,
+            "terminals": false,
+            "continuity": true
+          },
+          "backgroundRead": {
+            "state": "unknown",
+            "readAt": null,
+            "failedAt": null
+          },
+          "capturedAt": 1795498577063,
+          "readModel": {
+            "schemaVersion": "SessionCollaborationRead/v1",
+            "scope": {
+              "workspaceId": "workspace-a",
+              "projectId": "workspace-a",
+              "sessionKey": "agent:main:collaboration-a",
+              "sessionGeneration": "generation-a"
+            },
+            "sources": {
+              "session": {
+                "owner": "sessions",
+                "state": "ready",
+                "readAt": 1795498577052,
+                "value": {
+                  "scope": {
+                    "workspaceId": "workspace-a",
+                    "projectId": "workspace-a",
+                    "sessionKey": "agent:main:collaboration-a",
+                    "sessionGeneration": "generation-a"
+                  },
+                  "agentId": "main",
+                  "parentSessionKey": null,
+                  "spawnedBy": null
+                }
+              },
+              "run": {
+                "owner": "runtime",
+                "state": "ready",
+                "readAt": 1795498577052,
+                "value": {
+                  "runId": "run-a",
+                  "scope": {
+                    "workspaceId": "workspace-a",
+                    "projectId": "workspace-a",
+                    "sessionKey": "agent:main:collaboration-a"
+                  }
+                }
+              },
+              "tasks": {
+                "owner": "TaskSystem",
+                "state": "ready",
+                "value": [
+                  {
+                    "authorityId": "25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b",
+                    "taskNodeId": "856f8219-8958-451a-a733-c537732abe45",
+                    "revision": 1,
+                    "digest": "83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588",
+                    "objective": "Goal for agent:main:collaboration-a",
+                    "state": "doing",
+                    "referenceOnly": false,
+                    "claim": {
+                      "sessionKey": "agent:main:collaboration-a",
+                      "generation": "generation-a",
+                      "epoch": 1,
+                      "state": "active"
+                    }
+                  }
+                ],
+                "readAt": 1795498577060
+              },
+              "execution": {
+                "owner": "execution-domain",
+                "state": "ready",
+                "readAt": 1795498577055,
+                "value": {
+                  "localDomainId": "25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b",
+                  "authorityId": "25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b",
+                  "authorityDatabase": "d:\\tmp\\session-collaboration-a1-ryowxw\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+                  "executionWorktree": "d:/tmp/session-collaboration-a1-ryowxw/workspace-a",
+                  "registrationRevision": null,
+                  "projectRevision": null,
+                  "worktreeIncarnation": "3325120695:1125899919392699:1795498576810661200",
+                  "identityDigest": "36dea3e5e5ff6c2235a6c8d9e067562bc09e2f4c685d2738c0fa988da5fc575d",
+                  "databaseIdentity": "3325120695:2533274802946069:1795498576971641600"
+                }
+              },
+              "binding": {
+                "owner": "workspaces",
+                "state": "ready",
+                "readAt": 1795498577063,
+                "value": {
+                  "bindingRevision": 3,
+                  "sessionGeneration": "generation-a",
+                  "state": "active"
+                }
+              },
+              "background": {
+                "owner": "session-lifecycle",
+                "state": "not_read",
+                "value": null,
+                "readAt": null,
+                "reason": "source-not-read"
+              }
+            }
+          }
+        },
+        {
+          "session": {
+            "sessionKey": "agent:main:collaboration-b",
+            "runId": "run-b",
+            "status": "running",
+            "startedAt": 20,
+            "endedAt": null,
+            "error": null,
+            "updatedAt": 0,
+            "sessionId": "generation-b"
+          },
+          "git": null,
+          "tasks": [
+            {
+              "id": "0a63185b-3049-4768-9d53-1146be391d31",
+              "kind": "taskLedger",
+              "title": "Goal for agent:main:collaboration-b",
+              "status": "running",
+              "source": "task-ledger",
+              "updatedAt": 1795498577016
+            }
+          ],
+          "subagents": [],
+          "completionBatches": [],
+          "terminals": [],
+          "goals": [],
+          "processes": [],
+          "lineage": [],
+          "continuity": {
+            "queueCount": 0,
+            "contextPressure": null,
+            "checkpoint": false,
+            "blockedReason": null
+          },
+          "availability": {
+            "git": false,
+            "tasks": true,
+            "subagents": true,
+            "terminals": false,
+            "continuity": true
+          },
+          "backgroundRead": {
+            "state": "unknown",
+            "readAt": null,
+            "failedAt": null
+          },
+          "capturedAt": 1795498577087,
+          "readModel": {
+            "schemaVersion": "SessionCollaborationRead/v1",
+            "scope": {
+              "workspaceId": "workspace-b",
+              "projectId": "workspace-b",
+              "sessionKey": "agent:main:collaboration-b",
+              "sessionGeneration": "generation-b"
+            },
+            "sources": {
+              "session": {
+                "owner": "sessions",
+                "state": "ready",
+                "readAt": 1795498577077,
+                "value": {
+                  "scope": {
+                    "workspaceId": "workspace-b",
+                    "projectId": "workspace-b",
+                    "sessionKey": "agent:main:collaboration-b",
+                    "sessionGeneration": "generation-b"
+                  },
+                  "agentId": "main",
+                  "parentSessionKey": null,
+                  "spawnedBy": null
+                }
+              },
+              "run": {
+                "owner": "runtime",
+                "state": "ready",
+                "readAt": 1795498577077,
+                "value": {
+                  "runId": "run-b",
+                  "scope": {
+                    "workspaceId": "workspace-b",
+                    "projectId": "workspace-b",
+                    "sessionKey": "agent:main:collaboration-b"
+                  }
+                }
+              },
+              "tasks": {
+                "owner": "TaskSystem",
+                "state": "ready",
+                "value": [
+                  {
+                    "authorityId": "11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81",
+                    "taskNodeId": "0a63185b-3049-4768-9d53-1146be391d31",
+                    "revision": 1,
+                    "digest": "4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f",
+                    "objective": "Goal for agent:main:collaboration-b",
+                    "state": "doing",
+                    "referenceOnly": false,
+                    "claim": {
+                      "sessionKey": "agent:main:collaboration-b",
+                      "generation": "generation-b",
+                      "epoch": 1,
+                      "state": "active"
+                    }
+                  }
+                ],
+                "readAt": 1795498577084
+              },
+              "execution": {
+                "owner": "execution-domain",
+                "state": "ready",
+                "readAt": 1795498577079,
+                "value": {
+                  "localDomainId": "11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81",
+                  "authorityId": "11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81",
+                  "authorityDatabase": "d:\\tmp\\session-collaboration-a1-ryowxw\\workspace-b\\.git\\verse-claw\\task-ledger.sqlite3",
+                  "executionWorktree": "d:/tmp/session-collaboration-a1-ryowxw/workspace-b",
+                  "registrationRevision": null,
+                  "projectRevision": null,
+                  "worktreeIncarnation": "3325120695:5910974523473892:1795498576852202800",
+                  "identityDigest": "901ac3fde92d2ef289dad28bbaaf0304ad7e3d9fa96a30d5d94b65416e85509f",
+                  "databaseIdentity": "3325120695:2251799826235417:1795498576990641400"
+                }
+              },
+              "binding": {
+                "owner": "workspaces",
+                "state": "ready",
+                "readAt": 1795498577087,
+                "value": {
+                  "bindingRevision": 3,
+                  "sessionGeneration": "generation-b",
+                  "state": "active"
+                }
+              },
+              "background": {
+                "owner": "session-lifecycle",
+                "state": "not_read",
+                "value": null,
+                "readAt": null,
+                "reason": "source-not-read"
+              }
+            }
+          }
+        },
+        {
+          "session": {
+            "sessionKey": "agent:main:collaboration-child",
+            "runId": "run-c",
+            "status": "running",
+            "startedAt": null,
+            "endedAt": null,
+            "error": null,
+            "updatedAt": 0,
+            "sessionId": "generation-c"
+          },
+          "git": null,
+          "tasks": [
+            {
+              "id": "856f8219-8958-451a-a733-c537732abe45",
+              "kind": "taskLedger",
+              "title": "Goal for agent:main:collaboration-a",
+              "status": "running",
+              "source": "task-ledger",
+              "updatedAt": 1795498577011
+            }
+          ],
+          "subagents": [],
+          "completionBatches": [],
+          "terminals": [],
+          "goals": [],
+          "processes": [],
+          "lineage": [],
+          "continuity": {
+            "queueCount": 0,
+            "contextPressure": null,
+            "checkpoint": false,
+            "blockedReason": null
+          },
+          "availability": {
+            "git": false,
+            "tasks": true,
+            "subagents": true,
+            "terminals": false,
+            "continuity": true
+          },
+          "backgroundRead": {
+            "state": "unknown",
+            "readAt": null,
+            "failedAt": null
+          },
+          "capturedAt": 1795498577110,
+          "readModel": {
+            "schemaVersion": "SessionCollaborationRead/v1",
+            "scope": {
+              "workspaceId": "workspace-a",
+              "projectId": "workspace-a",
+              "sessionKey": "agent:main:collaboration-child",
+              "sessionGeneration": "generation-c"
+            },
+            "sources": {
+              "session": {
+                "owner": "sessions",
+                "state": "ready",
+                "readAt": 1795498577100,
+                "value": {
+                  "scope": {
+                    "workspaceId": "workspace-a",
+                    "projectId": "workspace-a",
+                    "sessionKey": "agent:main:collaboration-child",
+                    "sessionGeneration": "generation-c"
+                  },
+                  "agentId": "main",
+                  "parentSessionKey": null,
+                  "spawnedBy": "agent:main:collaboration-a"
+                }
+              },
+              "run": {
+                "owner": "runtime",
+                "state": "ready",
+                "readAt": 1795498577100,
+                "value": {
+                  "runId": "run-c",
+                  "scope": {
+                    "workspaceId": "workspace-a",
+                    "projectId": "workspace-a",
+                    "sessionKey": "agent:main:collaboration-child"
+                  }
+                }
+              },
+              "tasks": {
+                "owner": "TaskSystem",
+                "state": "ready",
+                "value": [
+                  {
+                    "authorityId": "25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b",
+                    "taskNodeId": "856f8219-8958-451a-a733-c537732abe45",
+                    "revision": 1,
+                    "digest": "83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588",
+                    "objective": "Goal for agent:main:collaboration-a",
+                    "state": "doing",
+                    "referenceOnly": true,
+                    "claim": {
+                      "sessionKey": "agent:main:collaboration-a",
+                      "generation": "generation-a",
+                      "epoch": 1,
+                      "state": "active"
+                    }
+                  }
+                ],
+                "readAt": 1795498577107
+              },
+              "execution": {
+                "owner": "execution-domain",
+                "state": "ready",
+                "readAt": 1795498577102,
+                "value": {
+                  "localDomainId": "25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b",
+                  "authorityId": "25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b",
+                  "authorityDatabase": "d:\\tmp\\session-collaboration-a1-ryowxw\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+                  "executionWorktree": "d:/tmp/session-collaboration-a1-ryowxw/workspace-a",
+                  "registrationRevision": null,
+                  "projectRevision": null,
+                  "worktreeIncarnation": "3325120695:1125899919392699:1795498576810661200",
+                  "identityDigest": "36dea3e5e5ff6c2235a6c8d9e067562bc09e2f4c685d2738c0fa988da5fc575d",
+                  "databaseIdentity": "3325120695:2533274802946069:1795498576971641600"
+                }
+              },
+              "binding": {
+                "owner": "workspaces",
+                "state": "ready",
+                "readAt": 1795498577110,
+                "value": {
+                  "bindingRevision": 3,
+                  "sessionGeneration": "generation-c",
+                  "state": "active"
+                }
+              },
+              "background": {
+                "owner": "session-lifecycle",
+                "state": "not_read",
+                "value": null,
+                "readAt": null,
+                "reason": "source-not-read"
+              }
+            }
+          }
+        }
+      ],
+      "before": {
+        "sessions": {
+          "agent:main:collaboration-a": {
+            "sessionId": "generation-a",
+            "workspaceId": "workspace-a",
+            "workspaceDir": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+            "updatedAt": 10
+          },
+          "agent:main:collaboration-b": {
+            "sessionId": "generation-b",
+            "workspaceId": "workspace-b",
+            "workspaceDir": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b",
+            "updatedAt": 10
+          },
+          "agent:main:collaboration-child": {
+            "sessionId": "generation-c",
+            "workspaceId": "workspace-a",
+            "workspaceDir": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+            "spawnedBy": "agent:main:collaboration-a",
+            "updatedAt": 10
+          }
+        },
+        "tasks": [
+          [
+            {
+              "table": "task_contracts",
+              "rows": [
+                {
+                  "id": "856f8219-8958-451a-a733-c537732abe45",
+                  "fingerprint": "83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588",
+                  "business_key": null,
+                  "state": "doing",
+                  "revision": 1,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"doing\",\"createdAt\":1795498577009,\"updatedAt\":1795498577011}"
+                }
+              ]
+            },
+            {
+              "table": "task_claims",
+              "rows": [
+                {
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "session_key": "agent:main:collaboration-a",
+                  "generation": "generation-a",
+                  "epoch": 1,
+                  "state": "active",
+                  "json": "{\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"sessionKey\":\"agent:main:collaboration-a\",\"generation\":\"generation-a\",\"epoch\":1,\"attemptId\":\"a8a56698-4a7b-4f64-95b6-0e67d501aee0\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-a\",\"contractRevision\":1,\"expiresAt\":1795498697011,\"state\":\"active\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_bindings",
+              "rows": [
+                {
+                  "session_key": "agent:main:collaboration-a",
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "generation": "generation-a",
+                  "epoch": 1
+                }
+              ]
+            },
+            {
+              "table": "task_references",
+              "rows": [
+                {
+                  "session_key": "agent:main:collaboration-child",
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "generation": "generation-c",
+                  "role": "observer"
+                }
+              ]
+            },
+            {
+              "table": "task_events",
+              "rows": [
+                {
+                  "seq": 1,
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "kind": "created",
+                  "at": 1795498577009,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"ready\",\"createdAt\":1795498577009,\"updatedAt\":1795498577009}"
+                },
+                {
+                  "seq": 2,
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "kind": "claimed",
+                  "at": 1795498577011,
+                  "json": "{\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"sessionKey\":\"agent:main:collaboration-a\",\"generation\":\"generation-a\",\"epoch\":1,\"attemptId\":\"a8a56698-4a7b-4f64-95b6-0e67d501aee0\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-a\",\"contractRevision\":1,\"expiresAt\":1795498697011,\"state\":\"active\"}"
+                },
+                {
+                  "seq": 3,
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "kind": "reference_inherited",
+                  "at": 1795498577022,
+                  "json": "{\"sourceSessionKey\":\"agent:main:collaboration-a\",\"sourceGeneration\":\"generation-a\",\"sessionKey\":\"agent:main:collaboration-child\",\"generation\":\"generation-c\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_requests",
+              "rows": [
+                {
+                  "id": "create:create",
+                  "hash": "93cdd1bc7ade36adc5d68bbd855a6e144ed14c9fd82517189396d4c3c8f77370",
+                  "result": "{\"kind\":\"created\",\"task\":{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"ready\",\"createdAt\":1795498577009,\"updatedAt\":1795498577009},\"claim\":null,\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}}"
+                },
+                {
+                  "id": "claim:claim",
+                  "hash": "b58b9113c2d12aa452b23cbce12568bc7213f8f6c0f45301a8edde1d30521211",
+                  "result": "{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"doing\",\"createdAt\":1795498577009,\"updatedAt\":1795498577011},\"claim\":{\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"sessionKey\":\"agent:main:collaboration-a\",\"generation\":\"generation-a\",\"epoch\":1,\"attemptId\":\"a8a56698-4a7b-4f64-95b6-0e67d501aee0\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-a\",\"contractRevision\":1,\"expiresAt\":1795498697011,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+                }
+              ]
+            },
+            {
+              "table": "task_active_runs",
+              "rows": []
+            },
+            {
+              "table": "task_operations",
+              "rows": []
+            }
+          ],
+          [
+            {
+              "table": "task_contracts",
+              "rows": [
+                {
+                  "id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "fingerprint": "4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f",
+                  "business_key": null,
+                  "state": "doing",
+                  "revision": 1,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"doing\",\"createdAt\":1795498577014,\"updatedAt\":1795498577016}"
+                }
+              ]
+            },
+            {
+              "table": "task_claims",
+              "rows": [
+                {
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "session_key": "agent:main:collaboration-b",
+                  "generation": "generation-b",
+                  "epoch": 1,
+                  "state": "active",
+                  "json": "{\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"sessionKey\":\"agent:main:collaboration-b\",\"generation\":\"generation-b\",\"epoch\":1,\"attemptId\":\"4f869eb9-2cee-499c-8527-27d7729111fb\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-b\",\"contractRevision\":1,\"expiresAt\":1795498697016,\"state\":\"active\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_bindings",
+              "rows": [
+                {
+                  "session_key": "agent:main:collaboration-b",
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "generation": "generation-b",
+                  "epoch": 1
+                }
+              ]
+            },
+            {
+              "table": "task_references",
+              "rows": []
+            },
+            {
+              "table": "task_events",
+              "rows": [
+                {
+                  "seq": 1,
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "kind": "created",
+                  "at": 1795498577014,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"ready\",\"createdAt\":1795498577014,\"updatedAt\":1795498577014}"
+                },
+                {
+                  "seq": 2,
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "kind": "claimed",
+                  "at": 1795498577016,
+                  "json": "{\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"sessionKey\":\"agent:main:collaboration-b\",\"generation\":\"generation-b\",\"epoch\":1,\"attemptId\":\"4f869eb9-2cee-499c-8527-27d7729111fb\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-b\",\"contractRevision\":1,\"expiresAt\":1795498697016,\"state\":\"active\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_requests",
+              "rows": [
+                {
+                  "id": "create:create",
+                  "hash": "d997ed48ae4d504a2dc40f4cf91aa3c09a3d54e36ed1cde1590fc1b041e028ad",
+                  "result": "{\"kind\":\"created\",\"task\":{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"ready\",\"createdAt\":1795498577014,\"updatedAt\":1795498577014},\"claim\":null,\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}}"
+                },
+                {
+                  "id": "claim:claim",
+                  "hash": "7e04750ebf7d2c60af761bbeff15c05b1a70234af14ff86b744d0cfd2ab0ff8d",
+                  "result": "{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"doing\",\"createdAt\":1795498577014,\"updatedAt\":1795498577016},\"claim\":{\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"sessionKey\":\"agent:main:collaboration-b\",\"generation\":\"generation-b\",\"epoch\":1,\"attemptId\":\"4f869eb9-2cee-499c-8527-27d7729111fb\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-b\",\"contractRevision\":1,\"expiresAt\":1795498697016,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+                }
+              ]
+            },
+            {
+              "table": "task_active_runs",
+              "rows": []
+            },
+            {
+              "table": "task_operations",
+              "rows": []
+            }
+          ]
+        ],
+        "bindings": {
+          "agent:main:collaboration-a": {
+            "schemaVersion": 1,
+            "workspaceId": "workspace-a",
+            "agentId": "main",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a",
+            "taskLedgerReferences": [],
+            "environment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+              "backend": "local-workspace",
+              "branch": null,
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "state": "active",
+            "bindingRevision": 3,
+            "invalidationReason": null,
+            "archiveRestorePolicy": "none",
+            "createdAt": "2026-11-24T00:00:00Z",
+            "updatedAt": "2026-11-24T00:00:00Z"
+          },
+          "agent:main:collaboration-b": {
+            "schemaVersion": 1,
+            "workspaceId": "workspace-b",
+            "agentId": "main",
+            "sessionKey": "agent:main:collaboration-b",
+            "sessionGeneration": "generation-b",
+            "taskLedgerReferences": [],
+            "environment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b",
+              "backend": "local-workspace",
+              "branch": null,
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "state": "active",
+            "bindingRevision": 3,
+            "invalidationReason": null,
+            "archiveRestorePolicy": "none",
+            "createdAt": "2026-11-24T00:00:00Z",
+            "updatedAt": "2026-11-24T00:00:00Z"
+          },
+          "agent:main:collaboration-child": {
+            "schemaVersion": 1,
+            "workspaceId": "workspace-a",
+            "agentId": "main",
+            "sessionKey": "agent:main:collaboration-child",
+            "sessionGeneration": "generation-c",
+            "taskLedgerReferences": [],
+            "environment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+              "backend": "local-workspace",
+              "branch": null,
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "state": "active",
+            "bindingRevision": 3,
+            "invalidationReason": null,
+            "archiveRestorePolicy": "none",
+            "createdAt": "2026-11-24T00:00:00Z",
+            "updatedAt": "2026-11-24T00:00:00Z"
+          }
+        },
+        "config": {},
+        "runs": [
+          {
+            "id": "run-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionId": "generation-a",
+            "workspaceId": "workspace-a",
+            "controller": false,
+            "startedAtMs": 10
+          },
+          {
+            "id": "run-b",
+            "sessionKey": "agent:main:collaboration-b",
+            "sessionId": "generation-b",
+            "workspaceId": "workspace-b",
+            "controller": false,
+            "startedAtMs": 20
+          }
+        ],
+        "dbFiles": {
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\execution.sqlite": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\execution.sqlite-wal": "a08c4a6eb67ecfd933245eb585c7efee28d6b4c608f6ca554dcac95f73561849",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\agents\\main\\agent\\openclaw-agent.sqlite": "3617ad196aaa4d247567ad40475fc37735bd27a46bde17ddd624ec22031e4bbf",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\agents\\main\\agent\\openclaw-agent.sqlite-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\state\\openclaw.sqlite": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\state\\openclaw.sqlite-wal": "12ec065b95a69f1073f73d7bf5d74e822fc8da97a36ae346a4b3db54d0d4406e",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3-wal": "e9da238dd372f847735265238320f90f8288cf1a9f49eac08757ee8287f32af2",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b\\.git\\verse-claw\\task-ledger.sqlite3": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b\\.git\\verse-claw\\task-ledger.sqlite3-wal": "5f505386abdde5af50b3e64c73d005f041049132babe750a2e5cec6ff5891140"
+        }
+      },
+      "after": {
+        "sessions": {
+          "agent:main:collaboration-a": {
+            "sessionId": "generation-a",
+            "workspaceId": "workspace-a",
+            "workspaceDir": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+            "updatedAt": 10
+          },
+          "agent:main:collaboration-b": {
+            "sessionId": "generation-b",
+            "workspaceId": "workspace-b",
+            "workspaceDir": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b",
+            "updatedAt": 10
+          },
+          "agent:main:collaboration-child": {
+            "sessionId": "generation-c",
+            "workspaceId": "workspace-a",
+            "workspaceDir": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+            "spawnedBy": "agent:main:collaboration-a",
+            "updatedAt": 10
+          }
+        },
+        "tasks": [
+          [
+            {
+              "table": "task_contracts",
+              "rows": [
+                {
+                  "id": "856f8219-8958-451a-a733-c537732abe45",
+                  "fingerprint": "83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588",
+                  "business_key": null,
+                  "state": "doing",
+                  "revision": 1,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"doing\",\"createdAt\":1795498577009,\"updatedAt\":1795498577011}"
+                }
+              ]
+            },
+            {
+              "table": "task_claims",
+              "rows": [
+                {
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "session_key": "agent:main:collaboration-a",
+                  "generation": "generation-a",
+                  "epoch": 1,
+                  "state": "active",
+                  "json": "{\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"sessionKey\":\"agent:main:collaboration-a\",\"generation\":\"generation-a\",\"epoch\":1,\"attemptId\":\"a8a56698-4a7b-4f64-95b6-0e67d501aee0\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-a\",\"contractRevision\":1,\"expiresAt\":1795498697011,\"state\":\"active\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_bindings",
+              "rows": [
+                {
+                  "session_key": "agent:main:collaboration-a",
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "generation": "generation-a",
+                  "epoch": 1
+                }
+              ]
+            },
+            {
+              "table": "task_references",
+              "rows": [
+                {
+                  "session_key": "agent:main:collaboration-child",
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "generation": "generation-c",
+                  "role": "observer"
+                }
+              ]
+            },
+            {
+              "table": "task_events",
+              "rows": [
+                {
+                  "seq": 1,
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "kind": "created",
+                  "at": 1795498577009,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"ready\",\"createdAt\":1795498577009,\"updatedAt\":1795498577009}"
+                },
+                {
+                  "seq": 2,
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "kind": "claimed",
+                  "at": 1795498577011,
+                  "json": "{\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"sessionKey\":\"agent:main:collaboration-a\",\"generation\":\"generation-a\",\"epoch\":1,\"attemptId\":\"a8a56698-4a7b-4f64-95b6-0e67d501aee0\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-a\",\"contractRevision\":1,\"expiresAt\":1795498697011,\"state\":\"active\"}"
+                },
+                {
+                  "seq": 3,
+                  "task_id": "856f8219-8958-451a-a733-c537732abe45",
+                  "kind": "reference_inherited",
+                  "at": 1795498577022,
+                  "json": "{\"sourceSessionKey\":\"agent:main:collaboration-a\",\"sourceGeneration\":\"generation-a\",\"sessionKey\":\"agent:main:collaboration-child\",\"generation\":\"generation-c\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_requests",
+              "rows": [
+                {
+                  "id": "create:create",
+                  "hash": "93cdd1bc7ade36adc5d68bbd855a6e144ed14c9fd82517189396d4c3c8f77370",
+                  "result": "{\"kind\":\"created\",\"task\":{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"ready\",\"createdAt\":1795498577009,\"updatedAt\":1795498577009},\"claim\":null,\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}}"
+                },
+                {
+                  "id": "claim:claim",
+                  "hash": "b58b9113c2d12aa452b23cbce12568bc7213f8f6c0f45301a8edde1d30521211",
+                  "result": "{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-a\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"domain\":\"25bc31b8da02e7184e87c65eef57328bb6bf4a430b514789ed038f471e63f83b\",\"revision\":1,\"digest\":\"83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588\",\"state\":\"doing\",\"createdAt\":1795498577009,\"updatedAt\":1795498577011},\"claim\":{\"taskNodeId\":\"856f8219-8958-451a-a733-c537732abe45\",\"sessionKey\":\"agent:main:collaboration-a\",\"generation\":\"generation-a\",\"epoch\":1,\"attemptId\":\"a8a56698-4a7b-4f64-95b6-0e67d501aee0\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-a\",\"contractRevision\":1,\"expiresAt\":1795498697011,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+                }
+              ]
+            },
+            {
+              "table": "task_active_runs",
+              "rows": []
+            },
+            {
+              "table": "task_operations",
+              "rows": []
+            }
+          ],
+          [
+            {
+              "table": "task_contracts",
+              "rows": [
+                {
+                  "id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "fingerprint": "4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f",
+                  "business_key": null,
+                  "state": "doing",
+                  "revision": 1,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"doing\",\"createdAt\":1795498577014,\"updatedAt\":1795498577016}"
+                }
+              ]
+            },
+            {
+              "table": "task_claims",
+              "rows": [
+                {
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "session_key": "agent:main:collaboration-b",
+                  "generation": "generation-b",
+                  "epoch": 1,
+                  "state": "active",
+                  "json": "{\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"sessionKey\":\"agent:main:collaboration-b\",\"generation\":\"generation-b\",\"epoch\":1,\"attemptId\":\"4f869eb9-2cee-499c-8527-27d7729111fb\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-b\",\"contractRevision\":1,\"expiresAt\":1795498697016,\"state\":\"active\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_bindings",
+              "rows": [
+                {
+                  "session_key": "agent:main:collaboration-b",
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "generation": "generation-b",
+                  "epoch": 1
+                }
+              ]
+            },
+            {
+              "table": "task_references",
+              "rows": []
+            },
+            {
+              "table": "task_events",
+              "rows": [
+                {
+                  "seq": 1,
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "kind": "created",
+                  "at": 1795498577014,
+                  "json": "{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"ready\",\"createdAt\":1795498577014,\"updatedAt\":1795498577014}"
+                },
+                {
+                  "seq": 2,
+                  "task_id": "0a63185b-3049-4768-9d53-1146be391d31",
+                  "kind": "claimed",
+                  "at": 1795498577016,
+                  "json": "{\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"sessionKey\":\"agent:main:collaboration-b\",\"generation\":\"generation-b\",\"epoch\":1,\"attemptId\":\"4f869eb9-2cee-499c-8527-27d7729111fb\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-b\",\"contractRevision\":1,\"expiresAt\":1795498697016,\"state\":\"active\"}"
+                }
+              ]
+            },
+            {
+              "table": "task_requests",
+              "rows": [
+                {
+                  "id": "create:create",
+                  "hash": "d997ed48ae4d504a2dc40f4cf91aa3c09a3d54e36ed1cde1590fc1b041e028ad",
+                  "result": "{\"kind\":\"created\",\"task\":{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"ready\",\"createdAt\":1795498577014,\"updatedAt\":1795498577014},\"claim\":null,\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}}"
+                },
+                {
+                  "id": "claim:claim",
+                  "hash": "7e04750ebf7d2c60af761bbeff15c05b1a70234af14ff86b744d0cfd2ab0ff8d",
+                  "result": "{\"contract\":{\"objective\":\"Goal for agent:main:collaboration-b\",\"constraints\":[],\"acceptance\":[{\"id\":\"read\",\"description\":\"Owner receipt\",\"verification\":{\"kind\":\"owner-receipt\",\"owner\":\"test-owner\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"task-ledger-core\",\"requestId\":\"create\"},\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"domain\":\"11e8c10d79a4f622c9f759998ef8385e776fd58194d96a7d1fe94b6d2853cb81\",\"revision\":1,\"digest\":\"4f726d61517fa368818bb924220cbb85943dc88e6d05943442c4d020ac00e32f\",\"state\":\"doing\",\"createdAt\":1795498577014,\"updatedAt\":1795498577016},\"claim\":{\"taskNodeId\":\"0a63185b-3049-4768-9d53-1146be391d31\",\"sessionKey\":\"agent:main:collaboration-b\",\"generation\":\"generation-b\",\"epoch\":1,\"attemptId\":\"4f869eb9-2cee-499c-8527-27d7729111fb\",\"worktree\":\"d:/tmp/session-collaboration-a1-ryowxw/workspace-b\",\"contractRevision\":1,\"expiresAt\":1795498697016,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+                }
+              ]
+            },
+            {
+              "table": "task_active_runs",
+              "rows": []
+            },
+            {
+              "table": "task_operations",
+              "rows": []
+            }
+          ]
+        ],
+        "bindings": {
+          "agent:main:collaboration-a": {
+            "schemaVersion": 1,
+            "workspaceId": "workspace-a",
+            "agentId": "main",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a",
+            "taskLedgerReferences": [],
+            "environment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+              "backend": "local-workspace",
+              "branch": null,
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "state": "active",
+            "bindingRevision": 3,
+            "invalidationReason": null,
+            "archiveRestorePolicy": "none",
+            "createdAt": "2026-11-24T00:00:00Z",
+            "updatedAt": "2026-11-24T00:00:00Z"
+          },
+          "agent:main:collaboration-b": {
+            "schemaVersion": 1,
+            "workspaceId": "workspace-b",
+            "agentId": "main",
+            "sessionKey": "agent:main:collaboration-b",
+            "sessionGeneration": "generation-b",
+            "taskLedgerReferences": [],
+            "environment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b",
+              "backend": "local-workspace",
+              "branch": null,
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "state": "active",
+            "bindingRevision": 3,
+            "invalidationReason": null,
+            "archiveRestorePolicy": "none",
+            "createdAt": "2026-11-24T00:00:00Z",
+            "updatedAt": "2026-11-24T00:00:00Z"
+          },
+          "agent:main:collaboration-child": {
+            "schemaVersion": 1,
+            "workspaceId": "workspace-a",
+            "agentId": "main",
+            "sessionKey": "agent:main:collaboration-child",
+            "sessionGeneration": "generation-c",
+            "taskLedgerReferences": [],
+            "environment": {
+              "kind": "local",
+              "canonicalRoot": "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a",
+              "backend": "local-workspace",
+              "branch": null,
+              "detachedHead": false,
+              "setupProfile": null
+            },
+            "state": "active",
+            "bindingRevision": 3,
+            "invalidationReason": null,
+            "archiveRestorePolicy": "none",
+            "createdAt": "2026-11-24T00:00:00Z",
+            "updatedAt": "2026-11-24T00:00:00Z"
+          }
+        },
+        "config": {},
+        "runs": [
+          {
+            "id": "run-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionId": "generation-a",
+            "workspaceId": "workspace-a",
+            "controller": false,
+            "startedAtMs": 10
+          },
+          {
+            "id": "run-b",
+            "sessionKey": "agent:main:collaboration-b",
+            "sessionId": "generation-b",
+            "workspaceId": "workspace-b",
+            "controller": false,
+            "startedAtMs": 20
+          }
+        ],
+        "dbFiles": {
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\execution.sqlite": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\execution.sqlite-wal": "a08c4a6eb67ecfd933245eb585c7efee28d6b4c608f6ca554dcac95f73561849",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\agents\\main\\agent\\openclaw-agent.sqlite": "3617ad196aaa4d247567ad40475fc37735bd27a46bde17ddd624ec22031e4bbf",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\agents\\main\\agent\\openclaw-agent.sqlite-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\state\\openclaw.sqlite": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\owner-state\\state\\openclaw.sqlite-wal": "12ec065b95a69f1073f73d7bf5d74e822fc8da97a36ae346a4b3db54d0d4406e",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3-wal": "e9da238dd372f847735265238320f90f8288cf1a9f49eac08757ee8287f32af2",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b\\.git\\verse-claw\\task-ledger.sqlite3": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda",
+          "D:\\tmp\\session-collaboration-A1-rYowXW\\workspace-b\\.git\\verse-claw\\task-ledger.sqlite3-wal": "5f505386abdde5af50b3e64c73d005f041049132babe750a2e5cec6ff5891140"
+        }
+      },
+      "beforeSha256": "75e36c81e6f6868bc86081518c93402da239a5079fd94c2415765f9332aee9dc",
+      "afterSha256": "75e36c81e6f6868bc86081518c93402da239a5079fd94c2415765f9332aee9dc"
+    },
+    {
+      "case": "workspace",
+      "input": {
+        "scope": {
+          "workspaceId": "workspace-b",
+          "projectId": "workspace-b",
+          "sessionKey": "agent:main:collaboration-a",
+          "sessionGeneration": "generation-a"
+        }
+      },
+      "snapshot": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498577432,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-b",
+            "projectId": "workspace-b",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577432,
+              "reason": "scope-mismatch"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577432,
+              "reason": "scope-mismatch"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577432,
+              "reason": "scope-mismatch"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577432,
+              "reason": "scope-mismatch"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577432,
+              "reason": "scope-mismatch"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577432,
+              "reason": "scope-mismatch"
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "project",
+      "input": {
+        "scope": {
+          "workspaceId": "workspace-a",
+          "projectId": "workspace-b",
+          "sessionKey": "agent:main:collaboration-a",
+          "sessionGeneration": "generation-a"
+        }
+      },
+      "snapshot": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498577775,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-b",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577775,
+              "reason": "scope-mismatch"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577775,
+              "reason": "scope-mismatch"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577775,
+              "reason": "scope-mismatch"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577775,
+              "reason": "scope-mismatch"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577775,
+              "reason": "scope-mismatch"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498577775,
+              "reason": "scope-mismatch"
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "generation",
+      "input": {
+        "scope": {
+          "workspaceId": "workspace-a",
+          "projectId": "workspace-a",
+          "sessionKey": "agent:main:collaboration-a",
+          "sessionGeneration": "old-generation"
+        }
+      },
+      "snapshot": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498578060,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "old-generation"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498578060,
+              "reason": "generation-changed"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498578060,
+              "reason": "generation-changed"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498578060,
+              "reason": "generation-changed"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498578060,
+              "reason": "generation-changed"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498578060,
+              "reason": "generation-changed"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498578060,
+              "reason": "generation-changed"
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "missing-owner",
+      "input": {
+        "scope": {
+          "workspaceId": "workspace-a",
+          "projectId": "workspace-a",
+          "sessionKey": "agent:main:missing",
+          "sessionGeneration": "generation-a"
+        }
+      },
+      "snapshot": {
+        "session": {
+          "sessionKey": "agent:main:missing",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498578372,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:missing",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498578372,
+              "reason": "owner-missing"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498578372,
+              "reason": "owner-missing"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498578372,
+              "reason": "owner-missing"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498578372,
+              "reason": "owner-missing"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498578372,
+              "reason": "owner-missing"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "unavailable",
+              "value": null,
+              "readAt": 1795498578372,
+              "reason": "owner-missing"
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "read-states",
+      "unread": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498578771,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            }
+          }
+        }
+      },
+      "empty": {
+        "session": {
+          "sessionKey": "agent:main:discussion",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0,
+          "sessionId": "generation-discussion"
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": true,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498578678,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:discussion",
+            "sessionGeneration": "generation-discussion"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "ready",
+              "readAt": 1795498578668,
+              "value": {
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:discussion",
+                  "sessionGeneration": "generation-discussion"
+                },
+                "agentId": "main",
+                "parentSessionKey": null,
+                "spawnedBy": null
+              }
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "empty",
+              "readAt": 1795498578668,
+              "value": null
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "empty",
+              "value": [],
+              "readAt": 1795498578674
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "ready",
+              "readAt": 1795498578670,
+              "value": {
+                "localDomainId": "51547df9a845e67413fdfd3894bdd66454edf5ebfacdbe1442fb8a3d7a3a8748",
+                "authorityId": "51547df9a845e67413fdfd3894bdd66454edf5ebfacdbe1442fb8a3d7a3a8748",
+                "authorityDatabase": "d:\\tmp\\session-collaboration-a1-oz48ib\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+                "executionWorktree": "d:/tmp/session-collaboration-a1-oz48ib/workspace-a",
+                "registrationRevision": null,
+                "projectRevision": null,
+                "worktreeIncarnation": "3325120695:1407374896104164:1795498578451848300",
+                "identityDigest": "91b220526de205cc95cb6e04a3eddc212e3aa940d39055054df5b8ab0b81a591",
+                "databaseIdentity": "3325120695:1125899919394241:1795498578606215000"
+              }
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            }
+          }
+        }
+      },
+      "unavailable": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": "run-a",
+          "status": "running",
+          "startedAt": 10,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0,
+          "sessionId": "generation-a"
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498578770,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "ready",
+              "readAt": 1795498578765,
+              "value": {
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:collaboration-a",
+                  "sessionGeneration": "generation-a"
+                },
+                "agentId": "main",
+                "parentSessionKey": null,
+                "spawnedBy": null
+              }
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "ready",
+              "readAt": 1795498578765,
+              "value": {
+                "runId": "run-a",
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:collaboration-a"
+                }
+              }
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "unavailable",
+              "readAt": 1795498578767,
+              "value": null,
+              "reason": "owner-missing"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "ready",
+              "readAt": 1795498578767,
+              "value": {
+                "localDomainId": "a8fd98647ad2feff06731b60ce660a1a3a269f1f4591161337ff1a7fff501d61",
+                "authorityId": "a8fd98647ad2feff06731b60ce660a1a3a269f1f4591161337ff1a7fff501d61",
+                "authorityDatabase": "d:\\tmp\\session-collaboration-a1-oz48ib\\no-task-owner\\.git\\verse-claw\\task-ledger.sqlite3",
+                "executionWorktree": "d:/tmp/session-collaboration-a1-oz48ib/no-task-owner",
+                "registrationRevision": null,
+                "projectRevision": null,
+                "worktreeIncarnation": "3325120695:844424942683592:1795498578716784600",
+                "identityDigest": "41e71128bdff6fc0eacfb45fee551d52c7ac941506d3e4eaff05e40966574483"
+              }
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "missing-session-and-execution-owner",
+      "root": "D:\\tmp\\session-collaboration-A1-hYBAeX",
+      "absentSessionDirectoryCreated": false,
+      "absentExecutionDatabaseCreated": false
+    },
+    {
+      "case": "unknown-run-owners",
+      "unpinned": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0,
+          "sessionId": "generation-a"
+        },
+        "git": null,
+        "tasks": [
+          {
+            "id": "e0ac8ecf-681a-42de-87c6-0eb906228b0f",
+            "kind": "taskLedger",
+            "title": "Goal for agent:main:collaboration-a",
+            "status": "running",
+            "source": "task-ledger",
+            "updatedAt": 1795498579357
+          }
+        ],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": true,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498579385,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "ready",
+              "readAt": 1795498579371,
+              "value": {
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:collaboration-a",
+                  "sessionGeneration": "generation-a"
+                },
+                "agentId": "main",
+                "parentSessionKey": null,
+                "spawnedBy": null
+              }
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "unknown",
+              "readAt": 1795498579371,
+              "value": null,
+              "reason": "run-identity-missing"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "ready",
+              "value": [
+                {
+                  "authorityId": "ffd9fcf035fae71443d112ad035ff92e47e4d897f8c65f4083cf773485e72a06",
+                  "taskNodeId": "e0ac8ecf-681a-42de-87c6-0eb906228b0f",
+                  "revision": 1,
+                  "digest": "83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588",
+                  "objective": "Goal for agent:main:collaboration-a",
+                  "state": "doing",
+                  "referenceOnly": false,
+                  "claim": {
+                    "sessionKey": "agent:main:collaboration-a",
+                    "generation": "generation-a",
+                    "epoch": 1,
+                    "state": "active"
+                  }
+                }
+              ],
+              "readAt": 1795498579380
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "ready",
+              "readAt": 1795498579374,
+              "value": {
+                "localDomainId": "ffd9fcf035fae71443d112ad035ff92e47e4d897f8c65f4083cf773485e72a06",
+                "authorityId": "ffd9fcf035fae71443d112ad035ff92e47e4d897f8c65f4083cf773485e72a06",
+                "authorityDatabase": "d:\\tmp\\session-collaboration-a1-yvfvpu\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+                "executionWorktree": "d:/tmp/session-collaboration-a1-yvfvpu/workspace-a",
+                "registrationRevision": null,
+                "projectRevision": null,
+                "worktreeIncarnation": "3325120695:1407374896104991:1795498579153146200",
+                "identityDigest": "d139ecff6246225a36ffe3367ec4ea7849ea5b0369853f2c6f92c5f7de48063d",
+                "databaseIdentity": "3325120695:844424942683753:1795498579314818500"
+              }
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            }
+          }
+        }
+      },
+      "missing": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-child",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0,
+          "sessionId": "generation-c"
+        },
+        "git": null,
+        "tasks": [
+          {
+            "id": "e0ac8ecf-681a-42de-87c6-0eb906228b0f",
+            "kind": "taskLedger",
+            "title": "Goal for agent:main:collaboration-a",
+            "status": "running",
+            "source": "task-ledger",
+            "updatedAt": 1795498579357
+          }
+        ],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": true,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498579396,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-child",
+            "sessionGeneration": "generation-c"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "ready",
+              "readAt": 1795498579386,
+              "value": {
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:collaboration-child",
+                  "sessionGeneration": "generation-c"
+                },
+                "agentId": "main",
+                "parentSessionKey": null,
+                "spawnedBy": "agent:main:collaboration-a"
+              }
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "unknown",
+              "readAt": 1795498579386,
+              "value": null,
+              "reason": "owner-missing"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "ready",
+              "value": [
+                {
+                  "authorityId": "ffd9fcf035fae71443d112ad035ff92e47e4d897f8c65f4083cf773485e72a06",
+                  "taskNodeId": "e0ac8ecf-681a-42de-87c6-0eb906228b0f",
+                  "revision": 1,
+                  "digest": "83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588",
+                  "objective": "Goal for agent:main:collaboration-a",
+                  "state": "doing",
+                  "referenceOnly": true,
+                  "claim": {
+                    "sessionKey": "agent:main:collaboration-a",
+                    "generation": "generation-a",
+                    "epoch": 1,
+                    "state": "active"
+                  }
+                }
+              ],
+              "readAt": 1795498579393
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "ready",
+              "readAt": 1795498579388,
+              "value": {
+                "localDomainId": "ffd9fcf035fae71443d112ad035ff92e47e4d897f8c65f4083cf773485e72a06",
+                "authorityId": "ffd9fcf035fae71443d112ad035ff92e47e4d897f8c65f4083cf773485e72a06",
+                "authorityDatabase": "d:\\tmp\\session-collaboration-a1-yvfvpu\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+                "executionWorktree": "d:/tmp/session-collaboration-a1-yvfvpu/workspace-a",
+                "registrationRevision": null,
+                "projectRevision": null,
+                "worktreeIncarnation": "3325120695:1407374896104991:1795498579153146200",
+                "identityDigest": "d139ecff6246225a36ffe3367ec4ea7849ea5b0369853f2c6f92c5f7de48063d",
+                "databaseIdentity": "3325120695:844424942683753:1795498579314818500"
+              }
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "old-task-generation-and-execution-revision",
+      "staleTask": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0,
+          "sessionId": "new-generation"
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498579731,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "new-generation"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "ready",
+              "readAt": 1795498579721,
+              "value": {
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:collaboration-a",
+                  "sessionGeneration": "new-generation"
+                },
+                "agentId": "main",
+                "parentSessionKey": null,
+                "spawnedBy": null
+              }
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "empty",
+              "readAt": 1795498579721,
+              "value": null
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "stale",
+              "readAt": 1795498579728,
+              "value": null,
+              "reason": "generation-changed"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "ready",
+              "readAt": 1795498579724,
+              "value": {
+                "localDomainId": "28d843bd3fdc76eaf38411c559669ac46a1ca6a5474f9d4a5055b367dd5507ee",
+                "authorityId": "28d843bd3fdc76eaf38411c559669ac46a1ca6a5474f9d4a5055b367dd5507ee",
+                "authorityDatabase": "d:\\tmp\\session-collaboration-a1-4nnsnq\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+                "executionWorktree": "d:/tmp/session-collaboration-a1-4nnsnq/workspace-a",
+                "registrationRevision": null,
+                "projectRevision": null,
+                "worktreeIncarnation": "3325120695:1407374896105062:1795498579488837700",
+                "identityDigest": "3651bc8b7eb37436cda974cb2eca60380a207869521b270f73bc95196d8095fd",
+                "databaseIdentity": "3325120695:1688849872815814:1795498579648255200"
+              }
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            }
+          }
+        }
+      },
+      "staleExecution": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498579757,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498579757,
+              "reason": "execution-changed"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498579757,
+              "reason": "execution-changed"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498579757,
+              "reason": "execution-changed"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498579757,
+              "reason": "execution-changed"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498579757,
+              "reason": "execution-changed"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498579757,
+              "reason": "execution-changed"
+            }
+          }
+        }
+      },
+      "expectedExecution": {
+        "localDomainId": "28d843bd3fdc76eaf38411c559669ac46a1ca6a5474f9d4a5055b367dd5507ee",
+        "authorityId": "28d843bd3fdc76eaf38411c559669ac46a1ca6a5474f9d4a5055b367dd5507ee",
+        "authorityDatabase": "d:\\tmp\\session-collaboration-a1-4nnsnq\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+        "executionWorktree": "d:/tmp/session-collaboration-a1-4nnsnq/workspace-a",
+        "registrationRevision": null,
+        "projectRevision": null,
+        "worktreeIncarnation": "3325120695:1407374896105062:1795498579488837700",
+        "identityDigest": "3651bc8b7eb37436cda974cb2eca60380a207869521b270f73bc95196d8095fd",
+        "databaseIdentity": "3325120695:1688849872815814:1795498579648255200"
+      }
+    },
+    {
+      "case": "reset-during-runtime-read",
+      "snapshot": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498580081,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580081,
+              "reason": "generation-changed"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580081,
+              "reason": "generation-changed"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580081,
+              "reason": "generation-changed"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580081,
+              "reason": "generation-changed"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580081,
+              "reason": "generation-changed"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580081,
+              "reason": "generation-changed"
+            }
+          }
+        }
+      },
+      "ownerAfter": {
+        "sessionId": "reset-during-read",
+        "workspaceId": "workspace-a",
+        "workspaceDir": "D:\\tmp\\session-collaboration-A1-DJmR1f\\workspace-a",
+        "updatedAt": 10
+      }
+    },
+    {
+      "case": "reset-during-host-read-and-old-binding-revision",
+      "reset": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498580419,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "generation-changed"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "generation-changed"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "generation-changed"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "generation-changed"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "generation-changed"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "generation-changed"
+            }
+          }
+        }
+      },
+      "staleBinding": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": null,
+          "status": "idle",
+          "startedAt": null,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0
+        },
+        "git": null,
+        "tasks": [],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": false,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498580419,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "binding-changed"
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "binding-changed"
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "binding-changed"
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "binding-changed"
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "binding-changed"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "stale",
+              "value": null,
+              "readAt": 1795498580419,
+              "reason": "binding-changed"
+            }
+          }
+        }
+      }
+    },
+    {
+      "case": "missing-workspace-binding",
+      "input": {
+        "scope": {
+          "workspaceId": "workspace-a",
+          "projectId": "workspace-a",
+          "sessionKey": "agent:main:collaboration-a",
+          "sessionGeneration": "generation-a"
+        }
+      },
+      "snapshot": {
+        "session": {
+          "sessionKey": "agent:main:collaboration-a",
+          "runId": "run-a",
+          "status": "running",
+          "startedAt": 10,
+          "endedAt": null,
+          "error": null,
+          "updatedAt": 0,
+          "sessionId": "generation-a"
+        },
+        "git": null,
+        "tasks": [
+          {
+            "id": "9a37f97b-87ae-454a-b9b1-61bad1ecf0a9",
+            "kind": "taskLedger",
+            "title": "Goal for agent:main:collaboration-a",
+            "status": "running",
+            "source": "task-ledger",
+            "updatedAt": 1795498580687
+          }
+        ],
+        "subagents": [],
+        "completionBatches": [],
+        "terminals": [],
+        "goals": [],
+        "processes": [],
+        "lineage": [],
+        "continuity": {
+          "queueCount": 0,
+          "contextPressure": null,
+          "checkpoint": false,
+          "blockedReason": null
+        },
+        "availability": {
+          "git": false,
+          "tasks": true,
+          "subagents": true,
+          "terminals": false,
+          "continuity": true
+        },
+        "backgroundRead": {
+          "state": "unknown",
+          "readAt": null,
+          "failedAt": null
+        },
+        "capturedAt": 1795498580737,
+        "readModel": {
+          "schemaVersion": "SessionCollaborationRead/v1",
+          "scope": {
+            "workspaceId": "workspace-a",
+            "projectId": "workspace-a",
+            "sessionKey": "agent:main:collaboration-a",
+            "sessionGeneration": "generation-a"
+          },
+          "sources": {
+            "session": {
+              "owner": "sessions",
+              "state": "ready",
+              "readAt": 1795498580727,
+              "value": {
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:collaboration-a",
+                  "sessionGeneration": "generation-a"
+                },
+                "agentId": "main",
+                "parentSessionKey": null,
+                "spawnedBy": null
+              }
+            },
+            "run": {
+              "owner": "runtime",
+              "state": "ready",
+              "readAt": 1795498580727,
+              "value": {
+                "runId": "run-a",
+                "scope": {
+                  "workspaceId": "workspace-a",
+                  "projectId": "workspace-a",
+                  "sessionKey": "agent:main:collaboration-a"
+                }
+              }
+            },
+            "tasks": {
+              "owner": "TaskSystem",
+              "state": "ready",
+              "value": [
+                {
+                  "authorityId": "b5718455c10e182644e7b1aaffc571f194a82474692f9322c8fd123b73dcf882",
+                  "taskNodeId": "9a37f97b-87ae-454a-b9b1-61bad1ecf0a9",
+                  "revision": 1,
+                  "digest": "83c60ef97273f2626a7ab2ec7d363879cc1043553eb7b7b90732bf2bbe066588",
+                  "objective": "Goal for agent:main:collaboration-a",
+                  "state": "doing",
+                  "referenceOnly": false,
+                  "claim": {
+                    "sessionKey": "agent:main:collaboration-a",
+                    "generation": "generation-a",
+                    "epoch": 1,
+                    "state": "active"
+                  }
+                }
+              ],
+              "readAt": 1795498580734
+            },
+            "execution": {
+              "owner": "execution-domain",
+              "state": "ready",
+              "readAt": 1795498580729,
+              "value": {
+                "localDomainId": "b5718455c10e182644e7b1aaffc571f194a82474692f9322c8fd123b73dcf882",
+                "authorityId": "b5718455c10e182644e7b1aaffc571f194a82474692f9322c8fd123b73dcf882",
+                "authorityDatabase": "d:\\tmp\\session-collaboration-a1-4ckkq8\\workspace-a\\.git\\verse-claw\\task-ledger.sqlite3",
+                "executionWorktree": "d:/tmp/session-collaboration-a1-4ckkq8/workspace-a",
+                "registrationRevision": null,
+                "projectRevision": null,
+                "worktreeIncarnation": "3325120695:2533274802947946:1795498580494523700",
+                "identityDigest": "cd952e6bc6a142624b7514416dd3d04f507d34dbb3d8fe68128a0c1cabb8e1e2",
+                "databaseIdentity": "3325120695:1970324849526712:1795498580645733600"
+              }
+            },
+            "binding": {
+              "owner": "workspaces",
+              "state": "unavailable",
+              "readAt": 1795498580737,
+              "value": null,
+              "reason": "owner-missing"
+            },
+            "background": {
+              "owner": "session-lifecycle",
+              "state": "not_read",
+              "value": null,
+              "readAt": null,
+              "reason": "source-not-read"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

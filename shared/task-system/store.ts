@@ -146,6 +146,7 @@ export class TaskSystemStore {
     readonly domain: TaskDomain,
     readonly now: () => number = Date.now,
     private readonly access?: TaskAuthorityAccess,
+    readOnly = false,
   ) {
     if (
       access &&
@@ -155,6 +156,17 @@ export class TaskSystemStore {
         access.domain.worktree !== domain.worktree)
     )
       throw new Error("TASK_AUTHORITY_DOMAIN_MISMATCH");
+    // Observers open the current schema without first-open, migration or writer barriers.
+    if (readOnly) {
+      this.assertAuthorityCurrent();
+      const db = new DatabaseSync(domain.database, { readOnly: true });
+      try {
+        const version = db.prepare("PRAGMA user_version").get() as { user_version: number };
+        if (version.user_version !== TASK_SCHEMA_VERSION) throw new Error("TASK_READ_SCHEMA_MISMATCH");
+        this.db = db;
+      } catch (error) { db.close(); throw error; }
+      return;
+    }
     const initialize = () => {
       this.assertAuthorityCurrent();
       mkdirSync(dirname(domain.database), { recursive: true });
@@ -584,11 +596,12 @@ export class TaskSystemStore {
     taskNodeId: string,
     afterSequence = 0,
     limit = 100,
+    direction: 'asc' | 'desc' = 'asc',
   ): Array<{ seq: number; kind: string; at: number; json: string }> {
     this.assertReadCurrent();
     return this.db
       .prepare(
-        "SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? ORDER BY seq LIMIT ?",
+        `SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? ORDER BY seq ${direction === 'desc' ? 'DESC' : 'ASC'} LIMIT ?`,
       )
       .all(taskNodeId, Math.max(0, afterSequence), Math.min(500, Math.max(1, limit))) as Array<{
       seq: number;
@@ -1861,12 +1874,12 @@ export class TaskSystemStore {
         d.parent.generation === generation && d.contractRevision === view.contract.revision);
     return delegation ? { credential: credentialIdentity(delegation.parent), role: 'coordinator' } : null;
   }
-  beginModelCall(credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model'>): TaskModelCall {
+  beginModelCall(credential: TaskCredential, identity: Pick<TaskModelCall, 'callId' | 'runId' | 'provider' | 'model' | 'category'>): TaskModelCall {
     return this.transaction(() => {
       for (const key of ['callId', 'runId', 'provider', 'model'] as const) text(identity[key], `MODEL_${key}`, 512);
       const existing = this.read<TaskModelCall>('SELECT result AS json FROM task_requests WHERE id=?', `model-call:${identity.callId}`);
       if (existing) {
-        if (!sameModelIdentity(existing, credential, identity)) throw new Error('TASK_MODEL_CALL_IDENTITY_CONFLICT');
+        if (!sameModelIdentity(existing, credential, identity) || (existing.category ?? 'task') !== (identity.category ?? 'task')) throw new Error('TASK_MODEL_CALL_IDENTITY_CONFLICT');
         return existing;
       }
       const scope = this.modelCallScope(credential.sessionKey, credential.generation, identity.runId);

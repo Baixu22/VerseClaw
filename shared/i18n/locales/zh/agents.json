@@ -1,4 +1,100 @@
 {
+    "collaboration": {
+        "messages": {
+            "title": "消息与回复",
+            "from": "发件会话",
+            "to": "收件会话",
+            "reply": "回复",
+            "replyUnknown": "尚未读取回复来源。",
+            "replyReference": "回复引用",
+            "allTasks": "全部任务",
+            "sender": "从 {{name}} 发送",
+            "sourceMissing": "当前发件身份不可用。",
+            "purpose": "用途",
+            "body": "消息正文",
+            "send": "发送",
+            "retryOriginal": "重试原消息",
+            "check": "回读原回执",
+            "purposes": {
+                "finding": "发现",
+                "status": "状态",
+                "request": "请求",
+                "handoff": "交接",
+                "result": "结果"
+            },
+            "states": {
+                "not_read": "尚未读取消息。",
+                "ready": "消息来源已读取。",
+                "empty": "此范围没有消息。",
+                "unavailable": "消息来源不可用。",
+                "stale": "会话身份已改变。",
+                "unknown": "投递结果未知，请先回读原回执。",
+                "accepted": "意图已接受",
+                "queued": "已排队",
+                "delivered": "已交给 agent",
+                "replied": "已回复",
+                "rejected": "已拒绝",
+                "expired": "已过期"
+            }
+        },
+        "controls": {
+            "title": "原会话控制",
+            "guide": "打开运行引导",
+            "interruptSend": "打开中断后发送",
+            "stop": "停止会话",
+            "compact": "整理上下文",
+            "truncate": "打开转录边界",
+            "fork": "打开分支",
+            "handoff": "打开接力",
+            "migrate": "打开执行环境迁移"
+        },
+        "title": "会话协作",
+        "description": "查找正在进行的工作，并按需读取原始来源。",
+        "refresh": "刷新",
+        "requesterMissing": "打开具有已知工作区的会话后，可读取相关工作。",
+        "search": "搜索会话和任务目标",
+        "loading": "正在读取会话来源…",
+        "stale": "保留上次观测；当前来源需要重新读取。",
+        "results": "最近结果",
+        "resources": "资源",
+        "unknownMatches": "目标匹配未知：{{count}} 项",
+        "more": "下一页",
+        "close": "关闭详情",
+        "openSession": "打开会话",
+        "openWorker": "读取 worker 历史",
+        "openTask": "打开任务",
+        "sourcesTitle": "来源与身份",
+        "page": {
+            "not_read": "尚未读取会话来源。",
+            "ready": "已列出 {{count}} 个会话。",
+            "empty": "没有匹配的会话。",
+            "unavailable": "会话来源当前不可用。",
+            "stale": "会话身份已改变，请刷新当前状态。",
+            "unknown": "部分会话来源尚无法核验。"
+        },
+        "status": {
+            "running": "运行中",
+            "idle": "空闲",
+            "unknown": "活动未知"
+        },
+        "sources": {
+            "ready": "可读取",
+            "empty": "为空",
+            "not_read": "未读取",
+            "unavailable": "不可用",
+            "stale": "已过期",
+            "unknown": "未知"
+        },
+        "fields": {
+            "session": "会话",
+            "goal": "目标",
+            "tasks": "任务",
+            "run": "运行",
+            "actions": "动作",
+            "origin": "来源关系",
+            "execution": "执行域"
+        }
+    },
     "title": "Agents",
     "subtitle": "创建新的 Agent，可以将特定频道路由到不同的人格配置或工作区。",
     "refresh": "刷新",

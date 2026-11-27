@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "candidate": "ef34abac19a02e8642132b322361445a11708c4a",
+  "path": "harness/specs/tasks/session-collaboration-identity-read-model.md",
+  "sha256": "55b32227e6130d6689de82649834c379f1811d35b8fd3f4180666eecd659f3c4",
+  "gitBlob": "f687bd4cb500af0c555841c2427260361d31fe76",
+  "reason": "Materialized unchanged inherited A1 task spec after final checks; all production sources were already in the run manifest."
+}

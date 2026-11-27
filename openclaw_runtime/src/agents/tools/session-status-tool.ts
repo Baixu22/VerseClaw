@@ -58,7 +58,10 @@ import {
   SESSION_STATUS_TOOL_DISPLAY_SUMMARY,
 } from "../tool-description-presets.js";
 import type { AnyAgentTool } from "./common.js";
-import { normalizeToolModelOverride, readStringParam } from "./common.js";
+import { jsonResult, normalizeToolModelOverride, readStringParam } from "./common.js";
+import { querySessionCollaborationTool } from './session-collaboration-query.js';
+import type { callGateway } from '../../gateway/call.js';
+import { SESSION_COLLABORATION_FIELDS } from '../../../../shared/types/session-collaboration.js';
 import {
   createAgentToAgentPolicy,
   createSessionVisibilityGuard,
@@ -74,6 +77,10 @@ import {
 const SessionStatusToolSchema = Type.Object({
   sessionKey: Type.Optional(Type.String()),
   model: Type.Optional(Type.String()),
+  readOnly: Type.Optional(Type.Boolean()),
+  scope: Type.Optional(Type.Object({ workspaceId: Type.String({ minLength: 1 }), projectId: Type.String({ minLength: 1 }),
+    sessionKey: Type.String({ minLength: 1 }), sessionGeneration: Type.String({ minLength: 1 }) })),
+  fields: Type.Optional(Type.Array(Type.String({ enum: [...SESSION_COLLABORATION_FIELDS] }))),
 });
 
 type CommandsStatusRuntimeModule = {
@@ -487,6 +494,8 @@ async function resolveModelOverride(params: {
 
 export function createSessionStatusTool(opts?: {
   agentSessionKey?: string;
+  agentSessionId?: string;
+  callGateway?: typeof callGateway;
   /**
    * The actual live run session key. When the tool is constructed with a sandbox/policy
    * session key (e.g. a Telegram direct peer key), this allows `session_status({sessionKey:
@@ -508,6 +517,7 @@ export function createSessionStatusTool(opts?: {
     parameters: SessionStatusToolSchema,
     execute: async (_toolCallId, args) => {
       const params = args as Record<string, unknown>;
+      if (params.readOnly === true) return jsonResult(await querySessionCollaborationTool(opts, params, true));
       const cfg = opts?.config ?? getRuntimeConfig();
       const { mainKey, alias, effectiveRequesterKey } = resolveSandboxedSessionToolContext({
         cfg,

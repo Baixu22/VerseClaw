@@ -33,6 +33,8 @@ import {
   SESSIONS_LIST_TOOL_DISPLAY_SUMMARY,
 } from "../tool-description-presets.js";
 import type { AnyAgentTool } from "./common.js";
+import { querySessionCollaborationTool } from './session-collaboration-query.js';
+import { SESSION_COLLABORATION_FIELDS } from '../../../../shared/types/session-collaboration.js';
 import {
   jsonResult,
   readNonNegativeIntegerParam,
@@ -64,6 +66,10 @@ const SessionsListToolSchema = Type.Object({
   search: Type.Optional(Type.String({ minLength: 1 })),
   includeDerivedTitles: Type.Optional(Type.Boolean()),
   includeLastMessage: Type.Optional(Type.Boolean()),
+  collaboration: Type.Optional(Type.Boolean()),
+  workspace: Type.Optional(Type.Object({ workspaceId: Type.String({ minLength: 1 }), projectId: Type.String({ minLength: 1 }) })),
+  cursor: Type.Optional(Type.String()),
+  fields: Type.Optional(Type.Array(Type.String({ enum: [...SESSION_COLLABORATION_FIELDS] }))),
 });
 
 type GatewayCaller = typeof callGateway;
@@ -83,6 +89,8 @@ function readSessionRunStatus(value: unknown): SessionRunStatus | undefined {
 /** Creates the sessions-list tool with gateway-backed listing and local transcript enrichment. */
 export function createSessionsListTool(opts?: {
   agentSessionKey?: string;
+  runSessionKey?: string;
+  agentSessionId?: string;
   sandboxed?: boolean;
   config?: OpenClawConfig;
   callGateway?: GatewayCaller;
@@ -95,6 +103,7 @@ export function createSessionsListTool(opts?: {
     parameters: SessionsListToolSchema,
     execute: async (_toolCallId, args) => {
       const params = args as Record<string, unknown>;
+      if (params.collaboration === true) return jsonResult(await querySessionCollaborationTool(opts, params));
       const cfg = opts?.config ?? getRuntimeConfig();
       const { mainKey, alias, requesterInternalKey, restrictToSpawned } =
         resolveSandboxedSessionToolContext({
