@@ -19,6 +19,7 @@ requiredProfiles:
   - fast
   - comms
 touchedAreas:
+  - AGENTS.md
   - shared/task-system/**
   - electron/services/task-system-service.ts
   - electron/services/task-ledger-service.ts
