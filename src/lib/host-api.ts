@@ -1522,6 +1522,7 @@ export const hostApi = {
   sessions: {
     collaborationSender: () => invokeHost('sessions', 'collaborationSender'),
     collaborationContext: (input: SessionCollaborationQuery) => invokeHost('sessions', 'collaborationContext', input),
+    collaborationHints: (input: SessionCollaborationQuery) => invokeHost('sessions', 'collaborationHints', input),
     collaborationMaterials: (input: SessionCollaborationMaterialQuery) => invokeHost('sessions', 'collaborationMaterials', input),
     presentCollaborationMaterial: (input: SessionCollaborationMaterialPresentation) => invokeHost('sessions', 'presentCollaborationMaterial', input),
     collaborationMessages: (input: SessionCollaborationMessageQuery) => invokeHost('sessions', 'collaborationMessages', input),

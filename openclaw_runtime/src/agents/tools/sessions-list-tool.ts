@@ -33,7 +33,7 @@ import {
   SESSIONS_LIST_TOOL_DISPLAY_SUMMARY,
 } from "../tool-description-presets.js";
 import type { AnyAgentTool } from "./common.js";
-import { querySessionCollaborationMaterialsTool, querySessionCollaborationTool } from './session-collaboration-query.js';
+import { querySessionCollaborationMaterialsTool, querySessionCollaborationTool, querySessionCollaborationHintsTool } from './session-collaboration-query.js';
 import { materialToolResult } from '../session-collaboration-material-prompt.js';
 import { SESSION_COLLABORATION_FIELDS } from '../../../../shared/types/session-collaboration.js';
 import {
@@ -68,6 +68,8 @@ const SessionsListToolSchema = Type.Object({
   includeDerivedTitles: Type.Optional(Type.Boolean()),
   includeLastMessage: Type.Optional(Type.Boolean()),
   collaboration: Type.Optional(Type.Boolean()),
+  coordination: Type.Optional(Type.Object({ target: Type.Object({ workspaceId: Type.String(), projectId: Type.String(),
+    sessionKey: Type.String(), sessionGeneration: Type.String() }, { additionalProperties: false }) }, { additionalProperties: false })),
   materials: Type.Optional(Type.Object({
     target: Type.Optional(Type.Object({
       workspaceId: Type.String(), projectId: Type.String(), sessionKey: Type.String(), sessionGeneration: Type.String(),
@@ -120,6 +122,10 @@ export function createSessionsListTool(opts?: {
     parameters: SessionsListToolSchema,
     execute: async (toolCallId, args) => {
       const params = args as Record<string, unknown>;
+      if (params.coordination !== undefined) {
+        if (Object.keys(params).some(key => key !== 'coordination')) throw new TypeError('Use one coordination query');
+        return jsonResult(await querySessionCollaborationHintsTool(opts, params.coordination));
+      }
       if (params.materials !== undefined) {
         if (Object.keys(params).some(key => key !== 'materials')) throw new TypeError('Use one material query');
         return jsonResult(await materialToolResult(await querySessionCollaborationMaterialsTool(opts, params.materials), toolCallId, opts));

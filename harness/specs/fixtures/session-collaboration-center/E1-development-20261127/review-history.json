@@ -1,0 +1,467 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "autoreview-r1",
+      "receipt": {
+        "candidate": "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+        "tree": "abbdcb863d098a1013208772eea813c81aaa7981",
+        "patchSha256": "149702f33241f3b72a28fc21ccaa4e4a6c39f88dfb8d187b9b6d1190bc33c8fe",
+        "datasetSha256": "9cd5bbf996594b87222599f892d8236a0576b4fa486fdbdc8a97103819ba380e",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e1-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r1-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r1-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r1-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r1.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r1.json"
+        ],
+        "exitCode": 1,
+        "seconds": 431.234,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e1",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "b7629587823d5d66c30ebc5b68c60c1f2a764d6d88df9b0fde0d566c163011cb",
+      "result": {
+        "findings": [
+          {
+            "title": "[P2] 避免因历史 checkpoint 文件消失而清空全部提示",
+            "body": "当任一参与比较的 checkpoint 文件被删除、移动或随构建清理时，这里的 canonicalPath() 会通过 realpathSync.native() 抛出 ENOENT，最终使 Gateway 返回 task 和 admission 均为空的 unavailable。即使两个会话引用同一任务，peerPaths 仍会先执行并触发该异常。checkpoint() 保存时已将路径规范化为绝对路径；比较原始引用不应要求文件继续存在，也不应让失效文件阻断依赖、领取者和准入事实的读取。可通过记录 shared.txt 的 checkpoint、删除该文件后再次读取协作提示复现。",
+            "priority": "P2",
+            "confidence": 0.99,
+            "category": "bug",
+            "code_location": {
+              "file_path": "shared/task-system/store.ts",
+              "line": 1190
+            }
+          },
+          {
+            "title": "[P2] 按任务 authority 判断是否可以比较跨 worktree 会话",
+            "body": "当同一 workspace/project 的读取者使用主工作树、目标使用 linked worktree，且两者引用同一任务时，两个执行目录虽然不同，resolveTaskDomain()/createExecutionTaskAccess() 仍会解析到同一 TaskSystem 数据库。此处要求目录完全相同，导致不向 sessionCoordinationSnapshot() 传入 reader，结果固定为 relation: unknown，同任务及共享产物提示均无法生成。仓库已有双 Git worktree 共用任务域的合同；应在核对双方当前 authority 后决定是否比较，而不是要求执行目录相同。",
+            "priority": "P2",
+            "confidence": 0.97,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-hints.ts",
+              "line": 32
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读源码审查发现两处可复现缺陷：历史 checkpoint 文件消失会使整页协作提示不可用；共用任务 authority 的不同 worktree 会话无法完成任务关系比较。这两处均影响 E1 的核心读取行为，需要修复。",
+        "overall_confidence": 0.98
+      },
+      "resultSha256": "2bb019d15865540e7958d71603dbbb2f6e1293912c7ed29dcf46c66a8c08673f"
+    },
+    {
+      "run": "autoreview-r2",
+      "receipt": {
+        "candidate": "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+        "tree": "abbdcb863d098a1013208772eea813c81aaa7981",
+        "patchSha256": "0a05b9c13f5c96062e3deee00db7e1dee387d6020bd99e15a5034f52eb33fb1a",
+        "datasetSha256": "7e946a8f3cf4b8d454ec5cc51f9855fc54a7f914b2a7901d9f158fc58dacdc1d",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e1-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r2-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r2-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r2-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r2.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r2.json"
+        ],
+        "exitCode": 1,
+        "seconds": 408.828,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e1",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "5c99398c288df4403bf90594913c1f7b6f21db6c1b57805dcaea0efe089b5569",
+      "result": {
+        "findings": [
+          {
+            "body": "当目标会话可见、TaskSystem 数据库不存在且准入计数为零时，前面的分支已记录 `taskReadState: 'unavailable'` 和 `task-owner-missing`，但这里因所有计数都为零将状态设为 `unknown`。Main 端校验会把非 `ready`/`empty` 响应清空准入观测；界面随后只显示通用的“未知”，不会显示具体的 TaskSystem 不可用提示。此场景下应保留可用的准入观测并明确呈现任务来源不可用。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-hints.ts",
+              "line": 51
+            },
+            "confidence": 0.88,
+            "priority": "P2",
+            "title": "[P2] 无准入活动时丢失 TaskSystem 不可用状态"
+          }
+        ],
+        "overall_confidence": 0.88,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "发现一处状态映射缺陷：TaskSystem 缺失且准入计数为零时，响应被降为 unknown，导致界面隐藏具体来源状态和准入观测。"
+      },
+      "resultSha256": "a30bb459946de27edbd8132071af2c2ceb055569942f9032d0265c1fa46c6921"
+    },
+    {
+      "run": "autoreview-r3",
+      "receipt": {
+        "candidate": "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+        "tree": "abbdcb863d098a1013208772eea813c81aaa7981",
+        "patchSha256": "a99cf8a55d254313d9369a10f6fc38a4b83b69661d31c55d3893a96a4378cf55",
+        "datasetSha256": "f5e8b800eba8a88e21bacd5dcc491e0c7c329cb92b713704be1930c3fe416a4d",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e1-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r3-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r3-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r3-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r3.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r3.json"
+        ],
+        "exitCode": 1,
+        "seconds": 215.766,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e1",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "2aa522c00f429fe117564cba279876a38dc8336832f793e71545cd952f60297e",
+      "result": {
+        "findings": [
+          {
+            "body": "展开提示后，若完整读取耗时超过通知间隔（例如读取需 500 ms，其他会话每 200 ms 产生一次 `session.message`），这里会在前次读取完成前再次调用 `refresh()`。每次刷新都会递增 `sequence` 并清空页面，使所有较早请求在第 22/25 行被丢弃，提示持续显示加载状态，直到通知停止。Main 已通过 `sessions.subscribe` 接收所有会话的消息，因此无关会话也能触发此问题。应合并读取期间的通知、在当前读取结束后补一次刷新，并按相关会话过滤通知，避免持续作废尚未完成的请求。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationHints.tsx",
+              "line": 35
+            },
+            "confidence": 0.97,
+            "priority": "P2",
+            "title": "[P2] 合并进行中的通知刷新，避免协作提示读取饥饿"
+          }
+        ],
+        "overall_confidence": 0.94,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读检查发现一处异步刷新缺陷：持续会话通知会反复作废尚未完成的读取，使协作提示无法显示结果。按要求未运行测试、构建或完整集成验收。"
+      },
+      "resultSha256": "0e571599ca4c0d1be7673a98063e48f9aca2f0b77240be4a90bc2e56cae93f51"
+    },
+    {
+      "run": "autoreview-r4",
+      "receipt": {
+        "candidate": "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+        "tree": "abbdcb863d098a1013208772eea813c81aaa7981",
+        "patchSha256": "630ea9b5b5628a962a01045e9ac48d343cb27210064a2b2dc5f66b3ffb4de3cb",
+        "datasetSha256": "d7beb6f858c51751cfc5b9b7f5a47ee0045cc2114f9ddc5dafcafbfb6689b076",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e1-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r4-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r4-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r4-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r4.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r4.json"
+        ],
+        "exitCode": 1,
+        "seconds": 174.921,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e1",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "c15d9dcb702a18c4f5fd73fdb3407d7ad365365ef52d973d1292fc24469590eb",
+      "result": {
+        "findings": [
+          {
+            "body": "该方法把 checkpoint 中的本机绝对路径写入 `sharedArtifacts`，而 `sessions_list({ coordination })` 会将整份提示作为工具结果交给模型。目标任务在用户目录或其他私有目录中的文件被两个任务引用时，模型提供方会收到包含用户名和本机目录结构的路径；比较共享引用不需要暴露这些信息。返回工作区相对路径或仅返回安全的路径标识即可避免该泄露。",
+            "category": "security",
+            "code_location": {
+              "file_path": "shared/task-system/store.ts",
+              "line": 1192
+            },
+            "confidence": 0.91,
+            "priority": "P2",
+            "title": "[P2] 避免将本机绝对路径发送给模型"
+          }
+        ],
+        "overall_confidence": 0.88,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "协作提示的读取路径复用现有可见性与代次校验，但共享产物路径会随 coordination 工具结果发送给模型，泄露本机目录信息。"
+      },
+      "resultSha256": "67a0683ab89bdc545fcbc2256c698a65ad5caeb17183e6dcdb6ed584ebf3d8a5"
+    },
+    {
+      "run": "autoreview-r6",
+      "receipt": {
+        "candidate": "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+        "tree": "abbdcb863d098a1013208772eea813c81aaa7981",
+        "patchSha256": "b7ecc6b2647099fdc6a85f818910f0be29f3b7c4aa335df148c9b93dc7871196",
+        "datasetSha256": "f0dde6db691e3df57ba71ef942842d61ff2a6fe3cc226b1269c965b1fbe79693",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e1-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r6-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r6-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r6-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r6.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r6.json"
+        ],
+        "exitCode": 1,
+        "seconds": 454.563,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e1",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "d23fc74777645ff3183ce0ac22d7f884328bb51325f4070f6419d82fd015828f",
+      "result": {
+        "findings": [
+          {
+            "title": "[P1] 在异步读取者复核后重新校验目标可见性",
+            "body": "coordinationHints 返回后，这里还会异步执行 collaborationReaderIssue；该函数通过 sessions.describe 和仅针对 requester 自身的查询复核读取者，没有复核 target。可复现条件是：A 读取 B，首次 Gateway 查询已返回 ready，随后在读取者复核期间将 visibility 从 all 收紧为 self，且 A 保持当前会话。读取者复核仍会成功，validateCollaborationHints 也只检查响应作用域与原请求相等，最终仍把 B 的任务、领取者和文件引用返回给 Renderer。目标在此期间换代也会返回旧代次数据。应在这些异步步骤之后，通过原 owner 重新校验目标的当前可见性及代次，并在失效时清空提示。",
+            "priority": "P1",
+            "confidence": 0.97,
+            "category": "security",
+            "code_location": {
+              "file_path": "electron/services/sessions-api.ts",
+              "line": 2276
+            }
+          },
+          {
+            "title": "[P2] 将提示缓存和失效处理绑定到实际活动读取者",
+            "body": "缓存键和 effect 依赖只包含 target，但请求实际使用 collaborationSender 返回的活动读取者。在系统协作页保持挂载时，通过现有 workspaces.switch 等 Host 导航操作把活动读取者从 A 切换到 B，SystemPortfolioPanel 用于 discovery 的第一个 coordinator 可以保持不变，因此父组件的 detailKey 也不会变化。本组件没有订阅 workspaceNavigationChanged；gateway store 对该事件合成的 sessions.changed 只进入其内部处理，不会转发到这里的 hostEvents 监听器。结果是 A 的 same-task/shared-artifact 比较仍向 B 显示，B 后续携带自身 sessionKey 的通知还会被旧 readerKey 过滤。应在实际读取者切换时清除观测、使在途响应失效，并按新的完整读取者作用域重新读取。",
+            "priority": "P2",
+            "confidence": 0.94,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationHints.tsx",
+              "line": 66
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读核对了 E1 变更及相关 owner、权限与代次检查、任务和材料消费路径。发现两个需要修复的问题：Main 层异步复核留下了目标权限或代次失效后仍交付旧数据的窗口；UI 缓存未随实际活动读取者切换而失效，会持续显示属于旧读取者的比较结果。",
+        "overall_confidence": 0.95
+      },
+      "resultSha256": "68f95b8c58306045368ebb248eec48e54907ac560efed8e4ca47ebf5cf9bfaf2"
+    },
+    {
+      "run": "autoreview-r7",
+      "receipt": {
+        "candidate": "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+        "tree": "abbdcb863d098a1013208772eea813c81aaa7981",
+        "patchSha256": "45b20b0ab47a43b7eadf02e7dd6a48f1aa8e47924dcd216c74e62f9d800c8cbc",
+        "datasetSha256": "41f10542bbd627f6fd6ac3cc4e1a3052e2d6eb5046f38c6959681f12fb9de6ae",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e1-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r7-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r7-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r7-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r7.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r7.json"
+        ],
+        "exitCode": 1,
+        "seconds": 286.75,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e1",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "b1fc905789029c2d0729bd16ed1047fb42322dbdfc7bc01e2848896f6df4df3e",
+      "result": {
+        "findings": [
+          {
+            "title": "[P1] 在最后一次 Gateway 查询后复核活动读取者",
+            "body": "新增的目标可见性查询发生在最后一次 collaborationReaderIssue 之后，形成了新的异步身份检查窗口。可复现条件：A 读取目标 T，通过读取者复核后，在最后一次 access RPC 等待期间调用 workspaces.switch 切到 B，并保持 A 和 T 的会话代次不变。Gateway 仍按请求中的 A 检查 T，因此可以返回 ready；这里随后直接交付 A 的任务及准入事实，即使当前活动读取者 B 无权查看 T。现有 host 单测只覆盖读取者复核期间目标失效，没有覆盖最后一次目标查询期间活动读取者切换。应在最后一次异步调用后校验 Main 当前活动读取者，或使用覆盖整个请求的导航版本失效检查，变化时清空结果。",
+            "priority": "P1",
+            "confidence": 0.97,
+            "category": "security",
+            "code_location": {
+              "file_path": "electron/services/sessions-api.ts",
+              "line": 2279
+            }
+          },
+          {
+            "title": "[P2] 覆盖只切换活动工作区时的提示失效",
+            "body": "这里依赖 workspaceNavigationChanged 清除旧读取者的观测，但现有 workspaces.switch 不一定发出该事件：writeDocument 调用的 publishWorkspaceNavigation 只比较 profiles 的部分字段，没有比较 activeWorkspaceId，而 switch 仅更新目标 profile 的 lastOpenedAt、updatedAt，这两个字段也不在比较范围内。可复现条件：系统协作页保持挂载并显示 A 的提示，通过 Host 切到已存在的工作区 B，保持 discovery coordinator 和所选目标不变；两工作区使用相同 rootPath、permissionMode 时，也无需配置变化或 Gateway 重连。此时 readerRevision 不变，A 的 same-task/shared-artifact 比较继续显示，B 的会话通知还会被旧 readerKey 过滤。新增测试直接调用 mocks.navigation，绕过了实际事件产生路径。应让活动工作区 ID 的变化产生失效信号，或直接绑定完整活动读取者作用域。",
+            "priority": "P2",
+            "confidence": 0.99,
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationHints.tsx",
+              "line": 56
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读检查了 E1 变更、测试及相关 owner 和事件路径。新增目标查询覆盖了 r6 所述读取者复核期间目标权限或代次变化的场景，但最后一次 RPC 之后仍缺少活动读取者检查；UI 的导航失效处理也未覆盖实际 workspaces.switch 不发通知的路径。这两处会分别导致旧读取者结果被交付及旧比较结果持续显示。按要求未运行测试、构建或完整集成验收。",
+        "overall_confidence": 0.97
+      },
+      "resultSha256": "f9806986fa538ba9bea8dd663c1c30d91da056f0c59694bb85e397ab7aa8dc47"
+    },
+    {
+      "run": "autoreview-r8",
+      "receipt": {
+        "candidate": "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+        "tree": "abbdcb863d098a1013208772eea813c81aaa7981",
+        "patchSha256": "6c5408026d00e881a10991a01e5c8703cff243a06f6b50231af3f403f80ca750",
+        "datasetSha256": "93c473dd23d6e1f96aab17740042f9dff5a2f7ba0d54fc3d7708b17d8dd37d80",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e1-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r8-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "de8db24c8299239c83fc74ec34df3e74b0e6eb99",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r8-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r8-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r8.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e1-20261127\\autoreview-r8.json"
+        ],
+        "exitCode": 0,
+        "seconds": 311.094,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e1",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "5cf19cd561287e0b804393d73a59ef070249bced6a696042e9b8f5669b82b4c0",
+      "result": {
+        "findings": [],
+        "overall_confidence": 0.88,
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "未发现本次 E1 变更引入的可操作缺陷。活动工作区切换会发布导航通知；Main 在异步读取期间记录该失效，并在最终目标可见性校验后丢弃旧结果。目标读取者、会话代次、TaskSystem 执行域和只读准入观测均有对应校验。"
+      },
+      "resultSha256": "3babd725bd37a2c880a0cf3c720c6213f0874b3e41fc25a38fcd41c263791cfd"
+    }
+  ]
+}

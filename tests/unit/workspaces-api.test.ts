@@ -170,6 +170,24 @@ describe('workspaces api compatibility migration', () => {
     }finally{stop();}
   });
 
+  it('publishes active workspace switches with unchanged roots and permissions after persistence', async () => {
+    const { createWorkspacesApi, observeWorkspaceNavigation } = await import('@electron/services/workspaces-api');
+    storeState.profiles.push({ ...(storeState.profiles[0] as object), id: 'other', name: 'Other', activeSessionKey: 'agent:research:other' });
+    const api = createWorkspacesApi();
+    const listed = await api.list();
+    storeState.profiles = structuredClone(listed.profiles);
+    const activeIds: Array<string | null> = [];
+    const stop = observeWorkspaceNavigation(() => activeIds.push(storeState.activeWorkspaceId));
+    try {
+      await api.switch({ id: 'other' });
+      expect(activeIds).toEqual(['other']);
+      await api.switch({ id: 'other' });
+      expect(activeIds).toEqual(['other']);
+      await api.switch({ id: 'legacy' });
+      expect(activeIds).toEqual(['other', 'legacy']);
+    } finally { stop(); }
+  });
+
   it('normalizes legacy nested session folders and new parent input to one level', async () => {
     storeState.profiles[0] = {
       ...(storeState.profiles[0] as Record<string, unknown>),

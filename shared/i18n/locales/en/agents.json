@@ -116,6 +116,47 @@
             "actions": "Actions",
             "origin": "Origin",
             "execution": "Execution domain"
+        },
+        "hints": {
+            "title": "Coordination hints",
+            "description": "Read task and admission observations. Open the original task to take an action; its owner checks current eligibility.",
+            "observedAt": "Observed at {{time}}",
+            "writer": "Recorded writer: {{session}} · epoch {{epoch}} · {{state}} · lease ends {{time}}",
+            "writerUnknown": "No writer receipt is available.",
+            "pending": "{{count}} task operations await settlement.",
+            "dependencies": "Prerequisites not yet accepted",
+            "noTask": "No task is currently linked to this session.",
+            "role": {
+                "observer": "This session has a read-only task reference.",
+                "bound": "This session is linked to the recorded task writer."
+            },
+            "relation": {
+                "same-task": "You and this session refer to the same task revision.",
+                "shared-artifact": "Both tasks recorded these file paths. Check each task before coordinating writes.",
+                "different": "The current task references are distinct.",
+                "unknown": "A comparison with your active task is unavailable."
+            },
+            "claim": {
+                "active": "active",
+                "paused": "paused",
+                "recovery_required": "recovery required",
+                "released": "released"
+            },
+            "taskState": {
+                "ready": "ready",
+                "doing": "in progress",
+                "paused": "paused",
+                "review": "in review",
+                "cancelling": "cancelling",
+                "done": "accepted",
+                "cancelled": "cancelled",
+                "unknown": "unknown"
+            },
+            "admission": {
+                "fenced": "Admission is fenced: {{active}} active permits; {{waiting}} drain waiters.",
+                "observed": "Admission observation: {{active}} active permits; {{waiting}} drain waiters."
+            },
+            "taskUnavailable": "TaskSystem is unavailable; the task association is unknown."
         }
     },
     "title": "Agents",

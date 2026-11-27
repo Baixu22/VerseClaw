@@ -452,3 +452,11 @@ Chat activity panel 只把与当前 workspace/run/gateway generation 匹配的�
 - 当前结论：**可重建会话索引与会话能力预设均为 NO-GO**，原因是缺少实测查询压力与消费需求语料，而不是技术不可行。
 - 本决策不新增索引、store、adapter 或 preset；冻结 `SessionEffectivePolicy` 语义，不建多机 SessionStore 适配器。
 - 重开条件与未来写集/owner 见决策记录第 3、5 节。
+
+## 协作提示
+
+选中会话后展开“协作提示”，按需读取原 TaskSystem 的当前任务、依赖状态、领取者、租约时间和未结算操作。与活动会话引用同一任务修订时明确标注；两任务记录过同一 checkpoint 文件时列出产物引用，实际写入资格继续由原任务领取和执行入口核对。准入观测来自 SessionAdmissionRegistry，区分在途许可与清退等待。
+
+“打开任务”跳转到原任务入口；提示读取与刷新不领取任务、不派发模型、不修改租约或资源。模型可调用 `sessions_list({ coordination: { target } })` 读取同一观测，target 使用发现结果中的完整会话作用域。权限或代次变化后清除旧结果。
+
+切换活动工作区或会话时，提示清除上一个读取者的观测并重新读取；切换期间仍在途的结果会失效。

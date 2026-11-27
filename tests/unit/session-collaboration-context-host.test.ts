@@ -3,9 +3,13 @@ import { beforeEach, expect, it, vi } from 'vitest';
 import type { GatewayManager } from '../../electron/gateway/manager';
 import { emptySessionCollaborationPage, parseSessionCollaborationQuery, type SessionCollaborationQuery } from '../../shared/types/session-collaboration';
 import { emptyMaterialPage, type SessionCollaborationMaterialQuery } from '../../shared/types/session-collaboration-material';
+import { emptyCollaborationHints, parseCollaborationHintsQuery } from '../../shared/types/session-collaboration-hints';
 
-const mocks = vi.hoisted(() => ({ profile: vi.fn(), read: vi.fn(), generation: 'current-generation' }));
-vi.mock('../../electron/services/workspaces-api', () => ({ getActiveWorkspaceProfile: mocks.profile }));
+const mocks = vi.hoisted(() => ({ profile: vi.fn(), read: vi.fn(), query: vi.fn(), generation: 'current-generation',
+  navigation: undefined as (() => void) | undefined }));
+vi.mock('../../electron/services/workspaces-api', () => ({ getActiveWorkspaceProfile: mocks.profile,
+  observeWorkspaceNavigation: (listener: () => void) => { mocks.navigation = listener; return () => { mocks.navigation = undefined; }; },
+}));
 import { createSessionsApi } from '../../electron/services/sessions-api';
 
 const scope = parseSessionCollaborationQuery({ requester: { workspaceId: 'workspace', projectId: 'workspace',
@@ -14,11 +18,12 @@ const target = { ...scope, sessionKey: 'agent:main:source' as typeof scope.sessi
 const input = { requester: scope, target, limit: 1 };
 
 function senderPage(query: SessionCollaborationQuery) {
+  const scope = query.target ?? query.requester;
   const notRead = (owner: string) => ({ owner, state: 'not_read', value: null, readAt: null, reason: 'source-not-read' });
   return { ...emptySessionCollaborationPage(query, 'ready'), scanned: 1,
-    items: [{ sessionKey: query.requester.sessionKey, label: 'Current reader', status: 'unknown',
-      detail: { scope: query.requester }, sources: {
-        session: { owner: 'sessions', state: 'ready', value: { scope: query.requester, agentId: 'main' }, readAt: Date.now() },
+    items: [{ sessionKey: scope.sessionKey, label: 'Current reader', status: 'unknown',
+      detail: { scope }, sources: {
+        session: { owner: 'sessions', state: 'ready', value: { scope, agentId: 'main' }, readAt: Date.now() },
         goal: notRead('TaskSystem'), tasks: notRead('TaskSystem'), run: notRead('runtime'),
         actions: notRead('session-task-effects/bash-processes'), origin: notRead('sessions'), execution: notRead('execution-domain'),
       } }] };
@@ -29,7 +34,7 @@ function api() {
     query?: SessionCollaborationQuery; taskContext?: SessionCollaborationQuery; materials?: SessionCollaborationMaterialQuery;
   }) => {
     if (method === 'sessions.describe') return { session: { sessionId: mocks.generation } };
-    if (payload.query) return { page: senderPage(payload.query) };
+    if (payload.query) return { page: await mocks.query(payload.query) };
     return mocks.read(payload);
   });
   return createSessionsApi({ gatewayManager: { rpc } as unknown as GatewayManager });
@@ -38,6 +43,8 @@ function api() {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.generation = scope.sessionGeneration;
+  mocks.navigation = undefined;
+  mocks.query.mockImplementation(senderPage);
   mocks.profile.mockResolvedValue({ id: scope.workspaceId, activeSessionKey: scope.sessionKey, name: 'Reader', rootPath: 'D:/fixture' });
   mocks.read.mockImplementation(async ({ taskContext, materials }) => taskContext ? { taskContext: {
     schemaVersion: 'SessionCollaborationTaskContext/v1', scope: taskContext.target, state: 'empty', task: null, context: null,
@@ -79,4 +86,50 @@ it('drops material results when the active requester resets during reading', asy
   await expect(api().collaborationMaterials({ requester: scope })).resolves.toMatchObject({ materials: {
     state: 'stale', reason: 'generation-changed', items: [], detail: null,
   } });
+});
+
+it('binds coordination hints to the actual active reader before and after the Gateway response', async () => {
+  mocks.read.mockImplementation(async () => ({ hints: emptyCollaborationHints(parseCollaborationHintsQuery(input), 'empty') }));
+  const host = api();
+  expect(await host.collaborationHints(input)).toMatchObject({ hints: { state: 'empty' } });
+  mocks.read.mockClear();
+  expect(await host.collaborationHints({ ...input, requester: target })).toMatchObject({ hints: { state: 'stale', task: null } });
+  expect(mocks.read).not.toHaveBeenCalled();
+  mocks.read.mockImplementationOnce(async () => { mocks.generation = 'reset'; return { hints: emptyCollaborationHints(parseCollaborationHintsQuery(input), 'empty') }; });
+  expect(await host.collaborationHints(input)).toMatchObject({ hints: { state: 'stale', task: null } });
+});
+
+it.each(['unavailable', 'stale'] as const)('clears hints when the target becomes %s during the asynchronous reader recheck', async state => {
+  let hintsRead = false, changed = false;
+  mocks.read.mockImplementation(async () => {
+    hintsRead = true;
+    return { hints: { ...emptyCollaborationHints(parseCollaborationHintsQuery(input), 'ready'),
+      admission: { owner: 'SessionAdmissionRegistry', active: 2, waiters: 1, fenced: true } } };
+  });
+  mocks.query.mockImplementation((query: SessionCollaborationQuery) => {
+    if (hintsRead && query.target?.sessionKey === scope.sessionKey) changed = true;
+    if (changed && query.target?.sessionKey === target.sessionKey)
+      return emptySessionCollaborationPage(query, state, state === 'stale' ? 'generation-changed' : 'not-visible');
+    return senderPage(query);
+  });
+  expect(await api().collaborationHints(input)).toMatchObject({ hints: { state, task: null, admission: null } });
+  expect(changed).toBe(true);
+});
+
+it.each([false, true])('invalidates the complete hint read when navigation occurs during the last target RPC (roundtrip: %s)', async roundtrip => {
+  mocks.read.mockImplementation(async () => ({ hints: { ...emptyCollaborationHints(parseCollaborationHintsQuery(input), 'ready'),
+    admission: { owner: 'SessionAdmissionRegistry', active: 2, waiters: 1, fenced: true } } }));
+  mocks.query.mockImplementation((query: SessionCollaborationQuery) => {
+    if (query.target?.sessionKey === target.sessionKey) {
+      mocks.profile.mockResolvedValue({ id: 'other', activeSessionKey: 'agent:main:other', name: 'Other' });
+      mocks.navigation?.();
+      if (roundtrip) {
+        mocks.profile.mockResolvedValue({ id: scope.workspaceId, activeSessionKey: scope.sessionKey, name: 'Reader' });
+        mocks.navigation?.();
+      }
+    }
+    return senderPage(query);
+  });
+  expect(await api().collaborationHints(input)).toMatchObject({ hints: { state: 'stale', task: null, admission: null } });
+  expect(mocks.navigation).toBeUndefined();
 });

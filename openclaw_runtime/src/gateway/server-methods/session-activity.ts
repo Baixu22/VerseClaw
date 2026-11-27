@@ -130,6 +130,14 @@ function taskStatus(status: string) {
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
   "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.coordinationHints !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One coordination query required');
+        const { readSessionCollaborationHints } = await import('./session-collaboration-hints.js');
+        respond(true, { hints: await readSessionCollaborationHints(params.coordinationHints, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid coordination query' }); }
+      return;
+    }
     if (params.materialsBatch !== undefined) {
       try {
         if (Object.keys(params).length !== 1) throw new TypeError('One material batch query required');
