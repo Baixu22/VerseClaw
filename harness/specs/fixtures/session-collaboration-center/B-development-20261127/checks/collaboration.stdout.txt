@@ -1,0 +1,44 @@
+
+ RUN  v4.1.1 D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps a scoped send refusal when history has no newer terminal error
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > binds a knowledge ACK to the exact new turn when the preceding turn has identical text
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > keeps the optimistic user message when completion refresh wins the transcript write race
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not restore a pending optimistic message after deleting the session
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not emit a false no-response error when history poll shows tool progress
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > surfaces an idle-timeout hint when a role-only stream placeholder stalls the run
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+stdout | tests/unit/chat-store-history-retry.test.ts > useChatStore startup history retry > does not treat prior-turn assistant history as progress for a new send
+[sendMessage] RPC result: success=true, runId=new-knowledge-run
+
+ ✓ tests/unit/chat-store-history-retry.test.ts (37 tests) 1988ms
+     ✓ keeps a scoped send refusal when history has no newer terminal error  484ms
+     ✓ does not burn the first-load retry path when the first attempt becomes stale  922ms
+ ✓ tests/unit/session-collaboration-panel.test.tsx (10 tests) 1831ms
+     ✓ loads only the selected detail, preserves keyboard focus on refresh and cancels on unmount  338ms
+     ✓ recovers an expired page cursor while keeping the filter and selected session  421ms
+     ✓ opens the worker after its parent switch changes the requester  312ms
+ ✓ tests/unit/session-collaboration-message-view.test.tsx (6 tests) 444ms
+ ✓ tests/unit/session-collaboration-delivery.test.ts (7 tests) 341ms
+ ✓ tests/unit/session-collaboration-watch.test.ts (9 tests) 19ms
+ ✓ tests/unit/session-collaboration-message-envelope.test.ts (10 tests) 13ms
+ ✓ tests/unit/session-collaboration-message-budget.test.ts (1 test) 12ms
+ ✓ tests/unit/session-collaboration-control-semantics.test.ts (3 tests) 4ms
+
+ Test Files  8 passed (8)
+      Tests  83 passed (83)
+   Start at  17:30:08
+   Duration  11.72s (transform 2.00s, setup 614ms, import 2.95s, tests 4.65s, environment 2.19s)
+
+JSON report written to D:/tmp/session-collaboration-b-relay-20261127/final-checks/collaboration.json

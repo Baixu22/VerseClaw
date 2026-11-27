@@ -1,0 +1,114 @@
+{
+  "schema": "session-task-development-evidence/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "candidate": {
+    "commit": "cf2b04a1747b3912069edeb5354e2ea12ce4b6b2",
+    "tree": "9fbf77d071251f3709db54a3a61fd839fdaa94fd",
+    "base": "4085cd46b9a604e0617e91feff33f6ee8c24d7f0"
+  },
+  "development": "complete",
+  "independentCodeReview": "pass",
+  "reviewProvider": "ccs-ai",
+  "reviewModel": "ccs-ai/gpt-6.1-sol",
+  "heavyAcceptance": "deferred_by_user",
+  "lightChecks": [
+    {
+      "id": "contract",
+      "exitCode": 0
+    },
+    {
+      "id": "comms-replay",
+      "exitCode": 0
+    },
+    {
+      "id": "comms-compare",
+      "exitCode": 0
+    },
+    {
+      "id": "harness-validate",
+      "exitCode": 0
+    },
+    {
+      "id": "harness-dry-run",
+      "exitCode": 0
+    }
+  ],
+  "bootstrap": {
+    "executedCandidate": {
+      "commit": "e6eb6b7528924d05f2a537be2730c05e3df04270",
+      "tree": "997119013921e9f7d160f09fc27b6ac6e292397d",
+      "base": "89ce35af1bc248a030b86ed2d17e25b6a6d8da81"
+    },
+    "passed": 2,
+    "failed": 0,
+    "sourceEqualityReviewed": [
+      "openclaw_runtime/src/agents/workspace.ts",
+      "openclaw_runtime/src/agents/execution-task-barrier.ts",
+      "tests/unit/session-task-workspace-bootstrap.test.ts"
+    ]
+  },
+  "cancelledJobs": [
+    {
+      "id": "session-task-tf0950-checks-20261126-r7",
+      "status": "cancelled",
+      "startedAt": null,
+      "supervisor": null,
+      "root": null
+    },
+    {
+      "id": "session-task-tf0950-runtime-20261126-r7",
+      "status": "cancelled",
+      "startedAt": null,
+      "supervisor": null,
+      "root": null
+    },
+    {
+      "id": "session-task-tf0950-desktop-20261126-r7",
+      "status": "cancelled",
+      "startedAt": null,
+      "supervisor": null,
+      "root": null
+    },
+    {
+      "id": "session-task-tf0950-electron-20261126-r7",
+      "status": "cancelled",
+      "startedAt": null,
+      "supervisor": null,
+      "root": null
+    },
+    {
+      "id": "session-task-tf0950-harness-ci-20261126-r7",
+      "status": "cancelled",
+      "startedAt": null,
+      "supervisor": null,
+      "root": null
+    }
+  ],
+  "helpers": [
+    {
+      "pid": 48216,
+      "createdAt": "2026-11-26T20:30:49.640150+08:00",
+      "script": "advance-resume.py",
+      "status": "stopped"
+    },
+    {
+      "pid": 34408,
+      "createdAt": "2026-11-26T20:30:49.696256+08:00",
+      "script": "settle-completed-runs.py",
+      "status": "stopped"
+    }
+  ],
+  "automaticDispatch": false,
+  "deferredChecks": [
+    "full focused unit and 1k/10k scaling sample",
+    "uncached Main/Web/Test typechecks",
+    "Runtime build and gateway smoke",
+    "desktop build",
+    "six Electron scenarios",
+    "harness-ci",
+    "Task Forest full history export"
+  ],
+  "fullAcceptanceResumption": "After an explicit request to resume expensive acceptance, freeze the then-current candidate and generate fresh plans, review bindings and job IDs. Preserve all existing runs.",
+  "taskForestStatus": "in_progress"
+}

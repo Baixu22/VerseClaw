@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
@@ -9,6 +9,8 @@ import { hostApi } from '@/lib/host-api';
 import type { SystemControlState } from '@shared/types/system-control';
 import type { SystemProjectSnapshot } from '@shared/types/system-portfolio';
 import { ProjectConfigurationPanel } from './ProjectConfigurationPanel';
+import { SessionCollaborationPanel } from './SessionCollaborationPanel';
+import { resolveProjectIdForWorkspace, type AutonomySessionScope } from '@shared/types/identity-scope';
 
 export function SystemPortfolioPanel() {
   const { t, i18n } = useTranslation('agents');
@@ -54,6 +56,13 @@ export function SystemPortfolioPanel() {
     finally { await refreshAll(); }
   };
   const projects = Object.values(entries).filter(entry => entry.profile.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
+  const collaborationOwner = Object.values(entries).find(entry => entry.snapshot?.coordinator.sessionKey && entry.snapshot.coordinator.generation)?.snapshot;
+  const workspaceId = collaborationOwner?.workspaceId;
+  const sessionKey = collaborationOwner?.coordinator.sessionKey;
+  const generation = collaborationOwner?.coordinator.generation;
+  const collaborationScope = useMemo<AutonomySessionScope | undefined>(() => workspaceId && sessionKey && generation
+    ? { workspaceId, projectId: resolveProjectIdForWorkspace(workspaceId), sessionKey, sessionGeneration: generation } : undefined,
+  [workspaceId, sessionKey, generation]);
   return <section className="h-full overflow-y-auto p-4 sm:p-5" data-testid="system-portfolio" data-scope="system">
     <div className="mx-auto max-w-7xl space-y-3">
       <header className="flex flex-wrap items-start justify-between gap-3">
@@ -84,6 +93,7 @@ export function SystemPortfolioPanel() {
       {loading && <p role="status">{t('portfolio.loading')}</p>}
       {unavailable && <p role="status" className="text-amber-700 dark:text-amber-400">{t('portfolio.listUnavailable')}</p>}
       {!loading && !unavailable && projects.length === 0 && <p role="status">{t('portfolio.empty')}</p>}
+      <SessionCollaborationPanel requester={collaborationScope} />
       <div className="divide-y divide-border rounded-lg border border-border bg-background">
         {projects.map(({ profile, snapshot, loading: reading, unavailable: failed }) => {
           const canOpen = !failed && snapshot && ['ready', 'paused'].includes(snapshot.coordinator.state);

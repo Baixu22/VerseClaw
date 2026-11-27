@@ -3,18 +3,19 @@ import { TaskSystemStore } from "./store.js";
 import { resolveTaskDomain, type TaskAuthorityAccess } from "./identity.js";
 import type { TaskCredential } from "./types.js";
 import type { TaskModelCall, TaskModelUsage } from './trace.js';
+import { isReadOnlyTaskTool } from './tool-policy.js';
 
 /** Capture the original execution before the request; settlement keeps that identity. */
 export function createTaskModelUsageRecorder(guard: ReturnType<typeof createTaskRuntimeGuard>) {
   const calls = new Map<string, TaskModelCall>();
   return {
-    start(callId: string, provider: string, model: string): void {
+    start(callId: string, provider: string, model: string, category?: TaskModelCall['category']): void {
       if (!guard?.runId || !guard.generation || !existsSync(guard.domain.database)) return;
       const store = new TaskSystemStore(guard.domain, undefined, guard.access);
       try {
         const credential = guard.credential ?? store.modelCallScope(guard.sessionKey, guard.generation, guard.runId)?.credential;
         if (!credential || credential.sessionKey !== guard.sessionKey || credential.generation !== guard.generation) return;
-        calls.set(callId, store.beginModelCall(credential, { callId, runId: guard.runId, provider, model }));
+        calls.set(callId, store.beginModelCall(credential, { callId, runId: guard.runId, provider, model, ...(category ? { category } : {}) }));
       } finally { store.close(); }
     },
     finish(callId: string, usage: TaskModelUsage): void {
@@ -57,7 +58,7 @@ const activeRuns = new Map<
     timer: ReturnType<typeof setInterval>;
   }
 >();
-function keepTaskRun(guard: NonNullable<ReturnType<typeof createTaskRuntimeGuard>>) {
+function keepTaskRun(guard: NonNullable<ReturnType<typeof createTaskRuntimeGuard>>, allowPaused = false) {
   if (!guard.credential || !guard.runId) return;
   const key = JSON.stringify([
     guard.domain.id,
@@ -67,7 +68,7 @@ function keepTaskRun(guard: NonNullable<ReturnType<typeof createTaskRuntimeGuard
   ]);
   const store = new TaskSystemStore(guard.domain, undefined, guard.access);
   try {
-    store.beginRun(guard.credential, guard.runId);
+    store.beginRun(guard.credential, guard.runId, allowPaused);
   } finally {
     store.close();
   }
@@ -77,10 +78,10 @@ function keepTaskRun(guard: NonNullable<ReturnType<typeof createTaskRuntimeGuard
     let db: TaskSystemStore | undefined;
     try {
       db = new TaskSystemStore(guard.domain, undefined, guard.access);
-      db.control(credential, "renew");
+      const view = db.assertOwner(credential, true);
+      if (view.claim?.state === "active") db.control(credential, "renew");
     } catch {
       clearInterval(timer);
-      activeRuns.delete(key);
     } finally {
       db?.close();
     }
@@ -155,8 +156,7 @@ export function readPersistentTaskContext(
   if (!guard || !existsSync(guard.domain.database)) return null;
   const store = new TaskSystemStore(guard.domain, undefined, guard.access);
   try {
-    if (guard.credential && store.get(guard.credential.taskNodeId).claim?.state === "active")
-      keepTaskRun(guard);
+    if (guard.credential) keepTaskRun(guard, store.get(guard.credential.taskNodeId).claim?.state !== "active");
     return store.context(sessionKey!, generation);
   } finally {
     store.close();
@@ -203,7 +203,7 @@ export function restoreTaskModelContext(
     if (!view.referenceOnly) {
       if (!guard.credential) throw new Error("TASK_CLAIM_REQUIRED");
       store.assertOwner(guard.credential, true);
-      if (view.claim.state === "active") keepTaskRun(guard);
+      keepTaskRun(guard, view.claim.state !== "active");
     }
     const marker = "\n<PERSISTENT_TASK_CONTRACT>\n";
     const index = basePrompt.lastIndexOf(marker);
@@ -231,25 +231,10 @@ export async function executeTaskGuarded<T>(
   params?: unknown,
 ): Promise<T> {
   if (!guard) return execute();
-  const readonlyTools = new Set([
-    "read",
-    "grep",
-    "find",
-    "ls",
-    "web_search",
-    "web_fetch",
-    "session_status",
-    "sessions_yield",
-    "task_control",
-    "read_file",
-    "read_files",
-    "search_content",
-    "result_query",
-    "list_directory",
-  ]);
+  const readOnly = isReadOnlyTaskTool(toolName, params);
   if (!existsSync(guard.domain.database)) {
     if (guard.credential) throw new Error("TASK_STORE_UNAVAILABLE");
-    if (readonlyTools.has(toolName)) return execute();
+    if (readOnly) return execute();
     throw new Error(
       "TASK_CLAIM_REQUIRED: create or select the persistent task with task_control before executing side effects",
     );
@@ -271,7 +256,7 @@ export async function executeTaskGuarded<T>(
     }
   }
   if (!guard.credential) {
-    if (toolName === 'read' && readonlyTools.has(toolName)) {
+    if (toolName === 'read' && readOnly) {
       const reader = new TaskSystemStore(guard.domain, undefined, guard.access);
       try {
         const result = await execute();
@@ -279,7 +264,7 @@ export async function executeTaskGuarded<T>(
         return result;
       } finally { reader.close(); }
     }
-    if (readonlyTools.has(toolName)) return execute();
+    if (readOnly) return execute();
     throw new Error("TASK_CLAIM_REQUIRED");
   }
   const store = new TaskSystemStore(guard.domain, undefined, guard.access);
@@ -287,7 +272,7 @@ export async function executeTaskGuarded<T>(
   let heartbeat: ReturnType<typeof setInterval> | undefined;
   try {
     if (store.binding(guard.sessionKey, guard.generation)?.referenceOnly) {
-      if (readonlyTools.has(toolName)) return execute();
+      if (readOnly) return execute();
       throw new Error("TASK_REFERENCE_READ_ONLY");
     }
     if (
@@ -299,9 +284,9 @@ export async function executeTaskGuarded<T>(
       store.reconcileProcessResult(credential, result);
       return result;
     }
-    store.assertOwner(credential);
-    keepTaskRun(guard);
-    if (readonlyTools.has(toolName)) return execute();
+    const owner = store.assertOwner(credential, readOnly);
+    keepTaskRun(guard, readOnly && owner.claim?.state !== "active");
+    if (readOnly) return execute();
     const verificationInputs = store.verificationInputs(credential, toolName, params);
     store.beginOperation(credential, operationId, toolName);
     heartbeat = setInterval(() => {

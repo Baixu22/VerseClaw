@@ -13,7 +13,8 @@
 
 /* Assistant replies share the transcript's alignment. Prose has a reading
  * measure, while tables, code and embedded resources can use the full column. */
-.codex-markdown {
+.codex-markdown,
+.chat-long-message-preview.reading-text {
   --reply-ink: var(--color-chat-foreground);
   --reply-body: var(--color-transcript-prose);
   --reply-muted: color-mix(in srgb, var(--color-chat-secondary) 80%, var(--reply-ink));
@@ -33,6 +34,129 @@
   --reply-ink: var(--gray-0);
   --reply-code: color-mix(in srgb, var(--purple-300) 70%, var(--reply-ink));
 }
+
+.chat-user-message-card :is(.codex-markdown, .chat-long-message-preview) {
+  --reply-ink: var(--color-chat-message-text);
+  color: var(--reply-ink);
+  font-family: var(--reading-family, inherit);
+  font-size: var(--reading-size, 14px);
+  font-weight: 445;
+  line-height: calc(var(--reading-size, 14px) * 22 / 14);
+}
+
+.chat-user-message-card .codex-markdown p { white-space: pre-wrap; }
+
+.chat-website-link {
+  position: relative;
+  min-width: 0;
+  padding-inline-start: 1.3em;
+  color: var(--reply-link, var(--color-chat-running));
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+  text-underline-offset: .18em;
+  overflow-wrap: anywhere;
+}
+button.chat-website-link { text-align: start; cursor: pointer; }
+.chat-website-link:hover { text-decoration-color: currentColor; }
+.chat-website-icon {
+  position: absolute;
+  inset-block-start: .12em;
+  inset-inline-start: 0;
+  width: .95em;
+  height: .95em;
+  color: var(--color-chat-secondary);
+}
+.chat-website-icon > :is(img, svg) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 2px;
+  object-fit: contain;
+}
+.chat-website-preview {
+  width: min(208px, calc(100vw - 20px));
+  max-width: var(--radix-tooltip-content-available-width, 208px);
+  aspect-ratio: 16 / 9;
+  pointer-events: none;
+}
+.chat-website-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.chat-github-reference {
+  display: inline-flex;
+  align-items: center;
+  max-width: min(100%, 33ch);
+  min-width: 0;
+  gap: .35em;
+  padding: .12em .5em;
+  border-radius: 999px;
+  background: var(--color-background-button-secondary);
+  color: var(--color-chat-foreground);
+  font-size: .84em;
+  line-height: 1.35;
+  vertical-align: baseline;
+  cursor: pointer;
+}
+.chat-github-reference:hover { background: var(--color-chat-menu-hover); }
+.chat-github-reference svg { flex: none; width: 1em; height: 1em; }
+.chat-github-reference span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.chat-github-reference:focus-visible, .chat-website-link:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.chat-website-resource {
+  display: inline-flex;
+  align-items: center;
+  gap: .3em;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.chat-website-resource-text { min-width: 0; }
+.chat-website-resource-detail {
+  display: block;
+  color: var(--color-chat-secondary);
+  font-size: .8em;
+  overflow-wrap: anywhere;
+}
+.chat-website-resource-actions { display: inline-flex; flex: none; }
+.chat-website-resource-inline:not(:hover):not(:focus-within) .chat-website-resource-actions { opacity: 0; }
+
+.chat-long-message-preview {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-message-disclosure, .chat-session-reference {
+  display: inline-flex;
+  align-items: center;
+  gap: .35em;
+  color: var(--color-chat-foreground);
+  border-radius: .35rem;
+}
+.chat-message-disclosure { min-height: 28px; margin-top: .3rem; font-size: .8rem; font-weight: 600; }
+.chat-session-reference {
+  max-width: min(100%, 28ch);
+  min-width: 0;
+  padding: .08em .35em;
+  background: var(--color-background-button-secondary);
+  font-size: .82em;
+  line-height: 1.3;
+  vertical-align: baseline;
+}
+.chat-session-reference svg {
+  flex: none;
+  width: .9em;
+  height: .9em;
+  color: var(--color-chat-secondary);
+}
+.chat-session-reference span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-message-disclosure:hover, .chat-session-reference:hover { text-decoration: underline; }
+.chat-message-disclosure:focus-visible, .chat-session-reference:focus-visible { outline: 2px solid var(--color-border-focus); }
 
 /* Transcript and composer use the available conversation column. */
 .chat-conversation-measure {

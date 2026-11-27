@@ -1,0 +1,41 @@
+{
+  "driven_by": "agent",
+  "actor": "session-task-fixes-electron",
+  "result": {
+    "key": "agent:main:dashboard:7338e247-7b2f-4eda-b4f0-acde07820af9",
+    "messages": [],
+    "sending": false
+  },
+  "project": {
+    "workspaceId": "review-navigation",
+    "rootPath": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\results\\session-task-review-fixes--e703e-is-waiting-for-real-history\\navigation-workspace",
+    "sessionKey": "agent:main:session-1795616078614-reviewnavigation",
+    "generation": "527e297c-5901-4321-88de-cd2a47da398a"
+  },
+  "target": {
+    "ok": true,
+    "key": "agent:main:dashboard:a77702bf-a94e-4f65-a80d-3136fc8540e5",
+    "sessionId": "24c61982-a6db-435d-8d6d-f99ad8321065",
+    "entry": {
+      "sessionId": "24c61982-a6db-435d-8d6d-f99ad8321065",
+      "sessionFile": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\run-root\\verse-claw-e2e-run-fgpS9T\\verse-claw-e2e-user-data-Qc7wGO\\openclaw-source-state\\agents\\main\\sessions\\24c61982-a6db-435d-8d6d-f99ad8321065.jsonl",
+      "updatedAt": 1795616090868,
+      "label": "Nav B"
+    },
+    "runStarted": false
+  },
+  "selected": {
+    "ok": true,
+    "key": "agent:main:dashboard:7338e247-7b2f-4eda-b4f0-acde07820af9",
+    "sessionId": "138394f7-90fa-4125-b1c1-2a36e28e738f",
+    "entry": {
+      "sessionId": "138394f7-90fa-4125-b1c1-2a36e28e738f",
+      "sessionFile": "D:\\tmp\\session-task-fixes-20261125-01a21019\\e2e-r14\\run-root\\verse-claw-e2e-run-fgpS9T\\verse-claw-e2e-user-data-Qc7wGO\\openclaw-source-state\\agents\\main\\sessions\\138394f7-90fa-4125-b1c1-2a36e28e738f.jsonl",
+      "updatedAt": 1795616090970,
+      "label": "Nav C"
+    },
+    "runStarted": false
+  },
+  "sourceDraftAfterNewSession": "C draft remains",
+  "status": "passed"
+}

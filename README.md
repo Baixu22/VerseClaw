@@ -31,6 +31,8 @@ Trajectory reads prepare their session data when requested; closing a connection
 
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
+Session tools support bounded discovery and read-only details for other sessions, including task goals, run references, observed actions and source availability. See [Sessions](docs/modules/sessions.md).
+
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.
 
 Chat groups ordinary streamed text updates by animation frame. Approvals, cancellation, errors and completion publish immediately; completed message content stays stable while the active reply grows.
@@ -57,7 +59,7 @@ Session navigation restores the visible message and draft. Background work updat
 
 Message Fork requires a recorded transcript boundary and shows why the action is unavailable. Suggestions to continue elsewhere use the existing editable Handoff preview; a new conversation is created only by its explicit action.
 
-During a long task, **Send options** offers queueing, guidance and stop-then-send with a description of each outcome. Branching opens a conversation for your next message; summary handoff previews editable content before **Create and send**. Context organization and handoff sources keep technical details collapsed. [Conversation controls](docs/dev/chat-continuity-controls.md).
+During a long task, **Send options** offers queueing, guidance and stop-then-send with a description of each outcome. Branching opens a conversation for your next message; summary handoff previews editable content before **Create and send**. Context organization and handoff sources keep technical details collapsed. [Conversation controls](docs/dev/chat-continuity-controls.md). If a scoped guidance reply is lost, check its receipt from the composer, even after that run ends. Confirmation clears only the unchanged submitted draft; later edits remain.
 
 Handoff becomes available when the session identity finishes loading. Pending sidebar handoffs wait for that identity, and previews remain bound to the current session generation.
 If activation is interrupted, retrying keeps the original child session and checks its generation before sending.
@@ -124,7 +126,15 @@ Pending runtime approvals replace the owning conversation's input area with the 
 
 Questions, choices, plan proposals and permission requests use one decision surface in the composer's position. Runtime approvals take priority, followed by workspace permissions and other requests. The draft stays mounted while the decision surface is active and returns when requests are resolved; interrupted question selections are retained. These surfaces share the composer's material, rounded outline and action row. Running plan progress leaves the composer when its run ends, and its history remains in the process disclosure. The activity panel reuses the sidebar's session rows, including pinning, rename and context menus.
 
-Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer; remote images and media are never loaded automatically and offer an open action instead. Charts draw their declared type with a data table available, standalone links become link cards, and any other structured resource gets a labelled fallback card.
+Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer. Remote image and media attachments offer an open action. Charts draw their declared type with a data table available, and other structured resources get a labelled fallback card.
+
+User messages and replies render Markdown tables, task lists and fenced code. GitHub repository links display the GitHub icon and `owner/repo` in a compact pill. In a sentence, `owner/repo#42` and `owner/repo@abcdef1` link to the issue and commit. Select a recognized session ID or session key to open its conversation. Long messages open with a short preview. Message copies include the full Markdown with recognized API keys masked. Sending or explicitly editing your message uses the original text.
+
+The editor marks recognized references and Markdown syntax as you type. Select Preview to view formatted Markdown, LaTeX, JSON, Git diffs or a long draft in the editing area. Edit source restores the original draft. Recognized keys are masked in the editor and in copied or cut selections. Sending uses the original value.
+
+The References row shows a count and a short summary as you type. Expand it to open a repository, session or workspace file, or to copy a color or dimensions. For example, try `repo:facebook/react`, `src/App.tsx:42`, `npm:zod`, `#0EA5E9` and `1280×720`.
+
+Paste a repository or URL on its own to show its reference in the composer. Websites display their link text with a site icon. Hover or focus the link for half a second to see its 16:9 preview when available. Select **Edit link** to return to the original text. A typed link offers **Show reference**. References inside a sentence are available from the References list. Pasting a recognized conversation ID or key on its own displays a one-line title that opens the conversation. Use the pencil button to edit the original identifier.
 
 ## Current maturity boundaries
 
@@ -366,6 +376,10 @@ Keep changes scoped, provide relevant validation and update all four root README
 Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation/workspace interactions, including web-search source cards, adapted from [Rare UI](https://rareui.com) by Swami Malode retain attribution under `src/components/rareui`.
 
 ### Persistent task execution
+
+Cancellation waits for the assigned run and pending effects to finish. Restored sessions retain their task binding after identity validation. Read-only forks can inspect conversation history, and delayed replies keep their original session and workspace.
+
+A local workspace with an established task keeps its original environment during first-run setup, so automatic Git initialization cannot invalidate later session restoration.
 
 Worker details show task acceptance from the task owner for the displayed session. Once the task owner accepts the verified evidence, refresh to read the accepted result. Recorded verifier checks and task-owner acceptance are shown separately; worker links in the ledger open their transcript panel.
 

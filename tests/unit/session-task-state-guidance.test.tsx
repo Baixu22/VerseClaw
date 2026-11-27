@@ -97,7 +97,7 @@ describe('U2 project and Ledger causes', () => {
     fireEvent.click(screen.getByTestId('session-tasks-toggle'));
     expect(screen.getByTestId('session-task-list')).toHaveTextContent(ledger.summary.permissionDenied);
     expect(screen.queryByTestId('session-task-select-task-a')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: ledger.summary.refresh }));
+    fireEvent.click(await screen.findByRole('button', { name: ledger.summary.refresh }));
     await waitFor(() => expect(screen.getByTestId('session-task-container')).toHaveAttribute('data-state', 'ready'));
     expect(screen.getByTestId('session-task-list')).toHaveTextContent('Recorded task');
     expect(host.snapshot.mock.calls).toEqual([[{ workspaceId: 'project-a' }], [{ workspaceId: 'project-a' }]]);
@@ -211,6 +211,30 @@ describe('U2 dependency navigation uses the existing task owner', () => {
     await act(async () => { finish({ tasks: [task('input')] }); });
     expect(screen.queryByRole('heading', { name: 'Task input' })).not.toBeInTheDocument();
     expect(host.command).not.toHaveBeenCalled();
+  });
+  it.each([true, false])('ignores the old workspace command completion (success: %s)', async (success) => {
+    let finish!: (result: { success: boolean; error?: string }) => void;
+    host.queryTasks.mockImplementation(async ({ workspaceId }) => ({ success: true, tasks: [task(workspaceId)] }));
+    host.command.mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    const view = render(<ManagedTasks workspaceId="project-a" sessionKey="session-a" />);
+    await screen.findByRole('heading', { name: 'Task project-a' });
+    fireEvent.click(within(card('Task project-a')).getByRole('button', { name: ledger.managed.claim }));
+    view.rerender(<ManagedTasks workspaceId="project-b" sessionKey="session-b" />);
+    await screen.findByRole('heading', { name: 'Task project-b' });
+    await act(async () => { finish({ success, error: success ? undefined : 'Old A failure' }); });
+    expect(screen.queryByRole('heading', { name: 'Task project-a' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Old A failure')).not.toBeInTheDocument();
+    expect(host.queryTasks.mock.calls.map(([request]) => request.workspaceId)).toEqual(['project-a', 'project-b']);
+    expect(within(card('Task project-b')).getByRole('button', { name: ledger.managed.claim })).toBeEnabled();
+  });
+  it('shows a current owner refusal after refreshing its list', async () => {
+    host.queryTasks.mockResolvedValue({ success: true, tasks: [task('current')] });
+    host.command.mockResolvedValue({ success: false, error: 'Owner refused the claim' });
+    render(<ManagedTasks workspaceId="project-a" sessionKey="session-a" />);
+    await screen.findByRole('heading', { name: 'Task current' });
+    fireEvent.click(within(card('Task current')).getByRole('button', { name: ledger.managed.claim }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Owner refused the claim');
+    expect(host.queryTasks).toHaveBeenCalledTimes(2);
   });
 });
 

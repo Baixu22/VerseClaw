@@ -3466,7 +3466,7 @@ export async function runEmbeddedAttempt(
             isDiagnosticFlagEnabled("trace.cost-sampling", params.config),
           nextCallId: () => `${params.runId}:model:${(diagnosticModelCallSeq += 1)}`,
           onUsageStarted: ({ callId }) => {
-            try { taskModelUsage.start(taskUsageCallKey(callId), params.provider, params.modelId); }
+            try { taskModelUsage.start(taskUsageCallKey(callId), params.provider, params.modelId, params.inputProvenance?.collaboration ? 'coordination' : undefined); }
             catch (error) { log.warn(`task model usage start unavailable: ${String(error)}`); }
           },
           onUsage: ({ callId, endedAt, snapshot }) => {

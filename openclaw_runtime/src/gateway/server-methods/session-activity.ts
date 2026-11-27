@@ -22,6 +22,91 @@ import { readRuntimeSessionResourceInventory } from "../session-resource-invento
 import { projectSessionStage } from "./session-stage-projection.js";
 import { readSessionDerivation } from "./session-derivation-projection.js";
 import type { GatewayRequestHandlers } from "./types.js";
+import type { GatewayRequestContext } from "./types.js";
+import { existsSync } from "node:fs";
+import { normalizeAutonomySessionScope } from "../../../../shared/types/identity-scope.js";
+import { createSessionActivityReadSnapshot, fenceSessionActivityRead, parseSessionActivityReadQuery,
+  type SessionActivityReadQuery } from "../../../../shared/types/session-activity.js";
+import { readSessionActivityRun, readSessionActivityTaskReferences, sessionActivityOwnerScope } from './session-activity-read-model.js';
+
+async function readScopedActivity(query: SessionActivityReadQuery, context: GatewayRequestContext) {
+  const snapshot = createSessionActivityReadSnapshot(query.scope);
+  const sources = snapshot.readModel.sources;
+  const fail = (state: 'unavailable' | 'stale' | 'unknown', reason: Parameters<typeof fenceSessionActivityRead>[2]) =>
+    fenceSessionActivityRead(snapshot, state, reason);
+  let loaded: ReturnType<typeof loadSessionEntry>;
+  try { loaded = loadSessionEntry(query.scope.sessionKey, { skipCache: true, readOnly: true }); }
+  catch { return fail('unavailable', 'owner-unavailable'); }
+  const entry = loaded.entry;
+  if (!entry) return fail('unavailable', 'owner-missing');
+  if (loaded.canonicalKey !== query.scope.sessionKey || loaded.legacyKey) return fail('unavailable', 'scope-mismatch');
+  if (!entry.workspaceId || !entry.sessionId) return fail('unknown', 'owner-missing');
+  const ownerScope = sessionActivityOwnerScope(query.scope.sessionKey, entry)!;
+  if (entry.sessionId !== query.scope.sessionGeneration) return fail('stale', 'generation-changed');
+  try { normalizeAutonomySessionScope(query.scope, ownerScope); }
+  catch { return fail('unavailable', 'scope-mismatch'); }
+  const agentId = parseAgentSessionKey(loaded.canonicalKey)?.agentId;
+  if (!agentId) return fail('unknown', 'owner-missing');
+  sources.session = { owner: 'sessions', state: 'ready', readAt: Date.now(), value: {
+    scope: ownerScope, agentId, parentSessionKey: entry.parentSessionKey ?? null, spawnedBy: entry.spawnedBy ?? null,
+  } };
+  snapshot.session.sessionId = entry.sessionId;
+  const run = await readSessionActivityRun(ownerScope, entry, context);
+  sources.run = run.source;
+  if (run.source.state === 'unavailable' && run.source.reason === 'scope-mismatch') return fail('unavailable', 'scope-mismatch');
+  snapshot.session.runId = run.source.value?.runId ?? null;
+  snapshot.session.status = snapshot.session.runId ? 'running' : 'idle';
+  snapshot.session.startedAt = run.startedAt;
+  const root = entry.workspaceDir ?? entry.spawnedWorkspaceDir;
+  let assertExecutionCurrent: (() => void) | undefined;
+  if (root) {
+    try {
+      const [{ createExecutionTaskAccess }, { TaskSystemStore }] = await Promise.all([
+        import('../../agents/execution-task-authority.js'), import('../../../../shared/task-system/store.js'),
+      ]);
+      const access = createExecutionTaskAccess(root, query.expectedExecution, true);
+      assertExecutionCurrent = access.assertCurrent;
+      sources.execution = { owner: 'execution-domain', state: 'ready', readAt: Date.now(), value: structuredClone(access.basis) };
+      if (!existsSync(access.domain.database)) sources.tasks = { owner: 'TaskSystem', state: 'unavailable', readAt: Date.now(), value: null, reason: 'owner-missing' };
+      else {
+        const store = new TaskSystemStore(access.domain, undefined, access, true);
+        try {
+          const { task, references } = readSessionActivityTaskReferences(store, ownerScope);
+          sources.tasks = { owner: 'TaskSystem', state: references.length ? 'ready' : 'empty', value: references, readAt: Date.now() };
+          snapshot.tasks = references.map(ref => ({ id: ref.taskNodeId, kind: 'taskLedger', title: ref.objective,
+            status: taskStatus(ref.state === 'doing' ? 'running' : ref.state === 'done' ? 'completed' : ref.state),
+            source: 'task-ledger', updatedAt: task!.contract.updatedAt }));
+          snapshot.availability.tasks = true;
+        } finally { store.close(); }
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '';
+      if (message === 'TASK_GENERATION_STALE') {
+        sources.tasks = { owner: 'TaskSystem', state: 'stale', readAt: Date.now(), value: null, reason: 'generation-changed' };
+      } else if (/TASK_AUTHORITY_|execution_.*(?:stale|replaced|missing)/i.test(message))
+        return fail('stale', 'execution-changed');
+      else {
+        if (query.expectedExecution && sources.execution.state !== 'ready') return fail('stale', 'execution-changed');
+        if (sources.execution.state !== 'ready') sources.execution = { owner: 'execution-domain', state: 'unavailable', value: null, readAt: Date.now(), reason: 'owner-unavailable' };
+        sources.tasks = { owner: 'TaskSystem', state: 'unavailable', value: null, readAt: Date.now(), reason: 'owner-unavailable' };
+      }
+    }
+  } else {
+    if (query.expectedExecution) return fail('stale', 'execution-changed');
+    sources.execution = { owner: 'execution-domain', state: 'unknown', readAt: Date.now(), value: null, reason: 'owner-missing' };
+    sources.tasks = { owner: 'TaskSystem', state: 'unavailable', readAt: Date.now(), value: null, reason: 'owner-missing' };
+  }
+  // Re-read after asynchronous owner access: a reset must discard the entire old join.
+  try {
+    const after = loadSessionEntry(ownerScope.sessionKey, { skipCache: true, readOnly: true });
+    if (after.canonicalKey !== loaded.canonicalKey || after.legacyKey || after.entry?.sessionId !== entry.sessionId
+      || after.entry?.workspaceId !== entry.workspaceId || (after.entry?.workspaceDir ?? after.entry?.spawnedWorkspaceDir) !== root)
+      return fail('stale', 'generation-changed');
+    assertExecutionCurrent?.();
+  } catch { return fail('stale', 'execution-changed'); }
+  snapshot.capturedAt = Date.now();
+  return snapshot;
+}
 
 function readSessionKey(params: Record<string, unknown>): string | null {
   const value = params.sessionKey ?? params.key;
@@ -44,7 +129,40 @@ function taskStatus(status: string) {
 }
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
-  "session.activitySnapshot": async ({ params, respond, context }) => {
+  "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.messages !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One message query required');
+        const { readSessionCollaborationMessages } = await import('./session-collaboration-message.js');
+        respond(true, { messages: await readSessionCollaborationMessages(params.messages, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration message query' }); }
+      return;
+    }
+    if (params.watch !== undefined || params.cancelWatch !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One watch operation required');
+        const owner = client?.connect.device?.id ?? client?.connect.client.id ?? 'embedded';
+        const { watchSessionCollaboration, cancelSessionCollaborationWatch } = await import('./session-collaboration-watch.js');
+        respond(true, params.cancelWatch !== undefined ? cancelSessionCollaborationWatch(params.cancelWatch, context, owner)
+          : { watch: await watchSessionCollaboration(params.watch, context, owner) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration watch' }); }
+      return;
+    }
+    if (params.query !== undefined) {
+      try {
+        const { readSessionCollaborationQuery } = await import('./session-collaboration-query.js');
+        respond(true, { page: await readSessionCollaborationQuery(params.query, context) }, undefined);
+      }
+      catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration query' }); }
+      return;
+    }
+    if (params.scope !== undefined) {
+      let query: SessionActivityReadQuery;
+      try { query = parseSessionActivityReadQuery(params); }
+      catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid session activity read scope' }); return; }
+      respond(true, { snapshot: await readScopedActivity(query, context) }, undefined);
+      return;
+    }
     const sessionKey = readSessionKey(params);
     if (!sessionKey) {
       respond(false, undefined, {

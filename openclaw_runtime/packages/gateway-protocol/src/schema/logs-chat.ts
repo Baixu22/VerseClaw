@@ -137,6 +137,7 @@ export const ChatSendParamsSchema = Type.Object(
   {
     sessionKey: ChatSendSessionKeyString,
     expectedSessionGeneration: Type.Optional(NonEmptyString),
+    expectedGuideRunId: Type.Optional(NonEmptyString),
     requesterSessionKey: Type.Optional(NonEmptyString),
     expectedRequesterSessionId: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),

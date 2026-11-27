@@ -1,14 +1,11 @@
-/**
- * Cards for resources with no richer surface. A website link and an unknown
- * structured resource both show only sanitized, display-safe fields; neither ever
- * embeds the target or renders the raw payload.
- */
-import { Check, Copy, ExternalLink, FileQuestion, FolderOpen, Globe, PanelRight } from 'lucide-react';
+import { Check, Copy, ExternalLink, FileQuestion, FolderOpen, PanelRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useCopyToClipboard } from '@/components/tool-ui/shared/use-copy-to-clipboard';
 import { Button } from '@/components/ui/button';
 import { hostApi } from '@/lib/host-api';
+import { maskChatSecrets } from '@/lib/chat-display-text';
+import { parseGitHubUrl } from '@/lib/github-link';
 import { cn } from '@/lib/utils';
 import {
   sanitizeResourceUrl,
@@ -16,6 +13,8 @@ import {
   type ConversationUnknownResource,
 } from '@/pages/Chat/conversation-resources';
 import { openWorkspacePanel } from '@/stores/artifact-panel';
+import { GitHubCard } from '../GitHubCard';
+import { WebsiteLink } from '../WebsiteLink';
 import { ConversationImage } from './ConversationImage';
 
 function IconAction({
@@ -45,68 +44,38 @@ function IconAction({
   );
 }
 
-function hostOf(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./i, '');
-  } catch {
-    return url;
-  }
-}
-
 export function WebsiteLinkCard({
   url,
   title,
   description,
   allowSidePreview = false,
+  inline = false,
 }: {
   url: string;
   title?: string;
   description?: string;
   /** Only where the workspace panel is on screen. It loads nothing until the user acts there. */
   allowSidePreview?: boolean;
+  inline?: boolean;
 }) {
   const { t } = useTranslation('chat');
   const { copiedId, copy } = useCopyToClipboard();
   const { displayUrl, openUrl } = sanitizeResourceUrl(url);
 
-  const handleOpen = () => {
-    if (!openUrl) return;
-    hostApi.shell.openExternal(openUrl).catch(() => {
-      toast.error(t('resources.media.openFailed'));
-    });
-  };
-
   // A disallowed scheme or malformed target is not a link; keep the words visible.
   if (!displayUrl) {
-    return <span className="break-words text-sm text-muted-foreground">{title ?? url}</span>;
+    return <span className="break-words text-sm text-muted-foreground">{maskChatSecrets(title ?? url)}</span>;
   }
-
-  const host = hostOf(displayUrl);
+  if (openUrl && parseGitHubUrl(openUrl)?.type === 'repo') return <GitHubCard url={openUrl} />;
 
   return (
-    <section
-      className="my-2 flex w-[480px] max-w-full items-center gap-3 rounded-lg border border-border bg-background/70 px-3 py-2 shadow-sm"
-      aria-label={title ?? host}
-      data-testid="chat-resource-website-link"
-    >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-black/5 text-muted-foreground dark:bg-white/10">
-        <Globe className="h-4 w-4" />
+    <span className={cn('chat-website-resource', inline && 'chat-website-resource-inline')} data-testid="chat-resource-website-link">
+      <span className="chat-website-resource-text">
+        <WebsiteLink url={url} testId="chat-resource-open-external">{title}</WebsiteLink>
+        {!inline && title && <span className="chat-website-resource-detail">{displayUrl}</span>}
+        {description && <span className="chat-website-resource-detail">{maskChatSecrets(description)}</span>}
       </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-xs font-medium text-foreground" title={title ?? host}>{title ?? host}</span>
-        {description && <span className="block truncate text-2xs text-muted-foreground" title={description}>{description}</span>}
-        <span className="block truncate text-2xs text-muted-foreground" title={displayUrl}>
-          <span className="font-medium">{host}</span>
-          {' · '}
-          {displayUrl}
-        </span>
-      </span>
-      <span className="flex shrink-0 items-center">
-        {openUrl && (
-          <IconAction label={t('resources.link.open')} onClick={handleOpen} testId="chat-resource-open-external">
-            <ExternalLink className="h-3.5 w-3.5" />
-          </IconAction>
-        )}
+      <span className="chat-website-resource-actions">
         {openUrl && allowSidePreview && (
           <IconAction
             label={t('resources.link.preview')}
@@ -120,7 +89,7 @@ export function WebsiteLinkCard({
           {copiedId === 'link' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
         </IconAction>
       </span>
-    </section>
+    </span>
   );
 }
 

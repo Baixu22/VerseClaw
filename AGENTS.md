@@ -14,9 +14,9 @@
 6. **对 task-forest 收口的直接影响**：产出自动化等价物并如实标注后即可收口；"还差真人 verdict"不再是保持节点 open 的合法理由。原 §Task Forest closure policy 中 `claiming real-human evidence` 仍属于必须停手的越权项（它约束的是*声称*，不是*要求*）。
 7. **新写 spec / 节点 / runbook 时**：不要新增任何以"真人操作或真人数据"为前置的验收条件。若确需人机交互入口，写成自动可执行的模拟步骤，并把模拟产物标为 agent 驱动。
 
-## Auto-review and subagent model default（临时）
+## Auto-review and subagent model default
 
-Codex 自动代码审查与所有子代理临时使用 provider 星驰（ccs-ai）的 gpt-6.1-sol，模型标识为 ccs-ai/gpt-6.1-sol。
+Codex 自动代码审查、开发验收与所有子代理默认使用 provider 星驰（ccs-ai）的 gpt-6.1-sol，模型标识为 ccs-ai/gpt-6.1-sol。此设置适用于后续开发任务。
 
 - 调用 spawn_agent 时显式传入 model: "ccs-ai/gpt-6.1-sol"。
 - 此设置适用于所有 agent role、任务类型和重试。

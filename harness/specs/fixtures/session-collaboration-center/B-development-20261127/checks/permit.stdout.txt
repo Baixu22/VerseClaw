@@ -1,0 +1,11 @@
+
+ RUN  v4.1.1 D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source
+
+ ✓ openclaw_runtime/src/gateway/server-methods/sessions.send-permit-lifetime.test.ts (9 tests) 17ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  17:33:49
+   Duration  26.09s (transform 18.68s, setup 120ms, import 25.75s, tests 17ms, environment 0ms)
+
+JSON report written to D:/tmp/session-collaboration-b-relay-20261127/final-checks-r2/permit.json

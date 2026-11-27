@@ -2,6 +2,7 @@ import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdo
 import { assistantPhaseLabels, type AssistantOutputPhase } from './execution-projection';
 import { UserMessageBubble } from '@/components/assistant-render/UserMessageBubble';
 import { BookOpen } from 'lucide-react';
+import { maskChatSecrets } from '@/lib/chat-display-text';
 import { UsedKnowledge } from './UsedKnowledge';
 /**
  * Chat Message Component
@@ -100,6 +101,7 @@ interface ChatMessageProps {
   onAskKnowledge?: (text: string) => void;
   canSubmitInteractionResponse?: boolean;
   onResendUserMessage?: (text: string) => void;
+  requestUserEdit?: () => boolean;
   canResendUserMessage?: boolean;
   canForkFromMessage?: boolean;
   /**
@@ -244,6 +246,7 @@ export const ChatMessage = memo(function ChatMessage({
   canForkFromMessage = false,
   canSubmitInteractionResponse = true,
   onResendUserMessage,
+  requestUserEdit,
   canResendUserMessage = true,
   onForkFromMessage,
   onCompactRange,
@@ -271,6 +274,7 @@ export const ChatMessage = memo(function ChatMessage({
     [isUser, isStreaming, message, suppressAssistantText, suppressReasoning, suppressToolCards, suppressComposerInteractions, textOverride],
   );
   const text = projection.displayText;
+  const actionText = useMemo(() => maskChatSecrets(text), [text]);
   const reasoning = suppressReasoning ? EMPTY_REASONING : reasoningOverride ?? projection.reasoning;
   const hasText = projection.hasText;
   const resolvableContentImages = projection.contentImages;
@@ -402,10 +406,17 @@ export const ChatMessage = memo(function ChatMessage({
   const [userEditDraft, setUserEditDraft] = useState(text);
   const [lightboxImg, setLightboxImg] = useState<{ src: string; fileName: string; filePath?: string; base64?: string; mimeType?: string } | null>(null);
 
+  const resendAtEditStart = useRef(onResendUserMessage);
   const handleStartUserMessageEdit = useCallback(() => {
+    resendAtEditStart.current = onResendUserMessage;
     setUserEditDraft(text);
     setIsEditingUserMessage(true);
-  }, [text]);
+  }, [onResendUserMessage, text]);
+  useEffect(() => {
+    if (!isUser || !canResendUserMessage || !onResendUserMessage || !requestUserEdit) return;
+    const timer = setTimeout(() => { if (requestUserEdit()) handleStartUserMessageEdit(); }, 0);
+    return () => clearTimeout(timer);
+  }, [canResendUserMessage, handleStartUserMessageEdit, isUser, onResendUserMessage, requestUserEdit]);
 
   const handleCancelUserMessageEdit = useCallback(() => {
     setUserEditDraft(text);
@@ -414,10 +425,10 @@ export const ChatMessage = memo(function ChatMessage({
 
   const handleSubmitUserMessageEdit = useCallback(() => {
     const nextText = userEditDraft.trim();
-    if (!nextText || !canResendUserMessage || !onResendUserMessage) return;
+    if (!nextText || !canResendUserMessage || !resendAtEditStart.current) return;
     setIsEditingUserMessage(false);
-    onResendUserMessage(nextText);
-  }, [canResendUserMessage, onResendUserMessage, userEditDraft]);
+    resendAtEditStart.current(nextText);
+  }, [canResendUserMessage, userEditDraft]);
 
   // Never render tool result messages in chat UI
   if (isToolResult) return null;
@@ -557,7 +568,7 @@ export const ChatMessage = memo(function ChatMessage({
                 sendLabel={t('messageActions.sendEdit')}
               />
             ) : (
-              <UserMessageBubble text={text} />
+              <UserMessageBubble text={text} allowSidePreview />
             )
           ) : (
             <AssistantMarkdown text={text} isStreaming={isStreaming} allowSidePreview />
@@ -644,7 +655,7 @@ export const ChatMessage = memo(function ChatMessage({
         {/* Hover row for user messages */}
         {showUserHoverBar && !isEditingUserMessage && (
           <UserMessageActions
-            text={text}
+            text={actionText}
             timestamp={message.timestamp}
             canEdit={Boolean(onResendUserMessage) && canResendUserMessage}
             onEdit={handleStartUserMessageEdit}
@@ -669,7 +680,7 @@ export const ChatMessage = memo(function ChatMessage({
         {/* Hover row for assistant messages */}
         {showAssistantHoverBar && (
           <AssistantHoverBar
-            text={text}
+            text={actionText}
             timestamp={message.timestamp}
             imageCopyTarget={imageCopyTarget}
             usage={showStreamStatus ? null : { message, liveUsage, isStreaming }}

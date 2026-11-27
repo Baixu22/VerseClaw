@@ -1,0 +1,674 @@
+{
+  "success": true,
+  "total": 133,
+  "passed": 133,
+  "failed": 0,
+  "pending": 0,
+  "cases": [
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership replaces an exited process's run without replacing its task owner or checkpoint",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership retains the run when the PID probe establishes no exit (undefined)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership retains the run when the PID probe establishes no exit (EPERM)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership retains the old run after process exit while an effect is started",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership retains the old run after process exit while an effect is unknown",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership refuses a changed contract for the same business key",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership rejects a second owner and a stale revision",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership does not convert lease expiration into automatic reassignment",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership enforces dependencies and rejects cycles",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership uses one task domain for two real Git worktrees",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "name": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade reads a collaboration scope through typed Main host:invoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade reads system portfolio and project identity through Main",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes the typed session stop surface through the sessions module",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls settings.getAll through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade throws response errors",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls settings.setMany and reset through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes project rules methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes agent browser methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes code review methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes Remote Forge reads through the typed host facade",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes uv installer setup through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes vtoken methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade routes git methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes log file path and tail lines through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls channels.accounts through hostInvoke with options",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes channel credential validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes channel target lookup payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls agents.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls providers.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes provider validation payload through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade passes provider OAuth requests through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls work provider APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls knowledge APIs through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls sessions.summaries through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls session compaction methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls clawGraph methods through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls cron.list through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls skills.clawhubList through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability queryTraces through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade calls observability reportTrace through hostInvoke",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade uses a function-shaped host API contract to type host invocations",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade lets service handlers inherit payload types from the host API contract",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep uninvoked direct IPC channels registered",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep the legacy unified app:request client path",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "name": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) retains the runtime lineage and missing-parent diagnostic through Main",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'an RPC timeout is unknown, never an e…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'an owner read exception is unknown, n…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a response without the owner projecti…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'an envelope without a snapshot is unk…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a gateway without the method stays un…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a projection whose goal-wake owner re…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a projection that omits the owner-rea…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a successful empty read is known'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) 'a finished main run with live backgro…'",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) keeps a successful empty read as a fact: known, dated, and warning-free",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) keeps background activity after the main run ended",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (Main service) forwards the canonical workspace id into the runtime policy read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) does not present a failed first read as a successful empty read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) retains live background facts when a re-read fails and marks them stale",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) marks a host-reported unknown read without inventing a failure for an unsupported host",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-background-read.test.ts",
+      "name": "session activity background read (renderer store) returns to known/current after a successful re-read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-store-scope.test.ts",
+      "name": "session activity request and workspace scope does not let an older request overwrite the newest backend policy",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-store-scope.test.ts",
+      "name": "session activity request and workspace scope drops same-key rows immediately when the workspace scope changes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-store-scope.test.ts",
+      "name": "session activity request and workspace scope rejects a response carrying another workspace policy",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-store-scope.test.ts",
+      "name": "session activity request and workspace scope keeps the PTY identity separate from the current chat generation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-activity-store-scope.test.ts",
+      "name": "session activity request and workspace scope refreshes policy after an approval or authorization event",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity reads two independent sessions and an embedded child through the same Runtime and typed Main owner contract without mutation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects workspace without returning a current-session fallback",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects project without returning a current-session fallback",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects generation without returning a current-session fallback",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects missing-owner without returning a current-session fallback",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity distinguishes not read, owner-confirmed empty tasks, unknown workspace, and unavailable task owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity does not initialize an absent session or execution owner while querying",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity keeps generation-less runs and missing child run owners unknown rather than confirming idle",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity fences old task generations and execution binding revisions",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity discards the whole join when reset happens while the Task owner is read",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity discards a reset during Main await and rejects old workspace binding revisions before RPC",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects a binding changed during the Host read, and preserves a missing binding as a source gap",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity checks bindings after the final Runtime await and validates ScopedRun identities",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity refuses unverified legacy replies, another scope, and a missing workspace without reading current Git or ledger",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\"},\"writeClaim\":true}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\"},\"expectedBindingRevision\":0}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\"},\"expectedExecution\":{\"authorityId\":\"forged\",\"writeClaim\":true}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\",\"authority\":\"writer\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "name": "A1 owner-backed collaboration identity opens TaskSystem read-only without migration or write effects and keeps the checkout incarnation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model retains a parent on the next owner page without loading a transcript for every older row",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model rejects a non-progressing owner cursor",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model uses transcript entry metadata for message actions before provider or optimistic IDs",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model retains actual list generation and spawn/fork fields and shares precedence with continuity stages",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model preserves all 2 descendants with one visual indentation level",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model preserves all 20 descendants with one visual indentation level",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model preserves all 100 descendants with one visual indentation level",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model retains the direct source of a grandchild even when visually grouped at the family root",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model keeps cross-project/workstream parents outside the group while allowing source navigation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model does not confuse unloaded sources with an owner-confirmed missing parent",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "session family list read model keeps cycles, incomplete fork facts and truncated chains visible without fabricating roots",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container reads linked business tasks and keeps their recorded status",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container does not infer task ownership or kind from matching titles or IDs",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container distinguishes a discussion container from owner failure",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container rejects a response for another scope: {\"workspaceId\":\"workspace-b\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container rejects a response for another scope: {\"sessionKey\":\"other\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container rejects a response for another scope: {\"generation\":\"old\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container preserves stale business-task diagnostics even if a current turn-check link exists",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-family-read-model.test.ts",
+      "name": "scoped task container does not use task link source fields to establish a session lineage",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-generation-freshness.test.ts",
+      "name": "generation reads across a session-store cache collision reads the persisted generation with skipCache (deleted main agent: false)",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/session-generation-freshness.test.ts",
+      "name": "generation reads across a session-store cache collision reads the persisted generation with skipCache (deleted main agent: true)",
+      "status": "passed"
+    }
+  ]
+}

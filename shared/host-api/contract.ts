@@ -75,7 +75,11 @@ import type {
   MemorySurfaceSnapshot,
   MemorySurfaceSource,
 } from '../types/memory';
-import type { SessionActivitySnapshot } from '../types/session-activity';
+import type { SessionActivitySnapshot, SessionActivityReadQuery } from '../types/session-activity';
+import type { SessionCollaborationQuery, SessionCollaborationPage } from '../types/session-collaboration';
+import type { SessionCollaborationWatch, SessionCollaborationWatchResult } from '../types/session-collaboration-watch';
+import type { SessionCollaborationMessageInput, SessionCollaborationMessageReceipt, SessionCollaborationMessageQuery, SessionCollaborationMessagePage } from '../types/session-collaboration-message';
+import type { AutonomySessionScope } from '../types/identity-scope';
 import type {
   SessionDelegationPayload,
   SessionDelegationResult,
@@ -825,6 +829,7 @@ export type SessionActivitySnapshotResult = HostSuccess & {
   snapshot: SessionActivitySnapshot;
   runtimeAvailable: boolean;
 };
+export type SessionCollaborationQueryResult = HostSuccess & { page: SessionCollaborationPage };
 export type WorkspaceWebPreviewStartPayload = {
   mode?: WorkspacePreviewMode;
   targetPath?: string;
@@ -2929,6 +2934,13 @@ export type MediaThumbnailEntry = {
   mimeType?: string;
 };
 export type MediaThumbnailsPayload = { paths: MediaThumbnailEntry[] };
+export type LinkPreviewPayload = { url: string; mode?: 'favicon' };
+export type LinkPreviewResult = {
+  title?: string;
+  description?: string;
+  thumbnail?: string;
+  favicon?: string;
+} | null;
 export type MediaThumbnailResult = Record<string, {
   preview: string | null;
   fileSize: number;
@@ -3030,6 +3042,7 @@ export type SessionSendWorkerPayload = {
   message: string;
   idempotencyKey: string;
   mode: 'send' | 'steer';
+  expectedRunId?: string;
 };
 export type SessionSendWorkerResult = HostSuccess & { phase: 'accepted' | 'queued' | 'steered' | 'rejected' | 'unknown'; run?: ScopedRunId; receipt?: { idempotencyKey: string; source: 'runtime-ack' | 'runtime-intervention'; queueItemId?: string } };
 export type SessionSummariesPayload = { sessionKeys?: string[]; limit?: number };
@@ -3225,6 +3238,9 @@ export type SessionExpandSelectorResult = HostSuccess & {
 export type SessionLongTaskControlPayload = SessionCompactionPayload;
 export type SessionLongTaskControlHistoryPayload = SessionCompactionPayload & {
   limit?: number;
+};
+export type SessionLongTaskControlHistoryQuery = SessionLongTaskControlHistoryPayload & {
+  guideReceipt?: { id: string; workspaceId: string; sessionGeneration: string; runId: string };
 };
 export type SessionLongTaskControlStatusResult = HostSuccess & LongTaskControlStatus;
 export type SessionLongTaskControlHistoryResult = HostSuccess & {
@@ -3643,6 +3659,7 @@ export type ChatSendWithMediaPayload = {
   expectedSessionGeneration?: string;
   media?: ChatMediaItem[];
   inputMode?: ChatInputMode;
+  expectedGuideRunId?: string;
   knowledgeScope?: WorkspaceKnowledgeScope;
   knowledgeMode?: KnowledgeInvocationMode;
   knowledgeReferences?: ChatKnowledgeReference[];
@@ -5972,6 +5989,10 @@ export type HostApiContract = {
   };
   sessionActivity: {
     snapshot: (payload: SessionActivitySnapshotPayload) => SessionActivitySnapshotResult;
+    read: (payload: SessionActivityReadQuery) => SessionActivitySnapshotResult;
+    query: (payload: SessionCollaborationQuery) => SessionCollaborationQueryResult;
+    watch: (payload: SessionCollaborationWatch) => HostSuccess & { watch: SessionCollaborationWatchResult };
+    cancelWatch: (payload: { id: string; query: SessionCollaborationQuery }) => HostSuccess & { cancelled: boolean };
   };
   git: {
     init: () => GitOperationResult;
@@ -6288,6 +6309,7 @@ export type HostApiContract = {
     registerHtmlPreview: (payload: HtmlPreviewDocumentPayload) => HtmlPreviewDocumentResult;
   };
   media: {
+    linkPreview: (payload: LinkPreviewPayload) => LinkPreviewResult;
     thumbnails: (payload: MediaThumbnailsPayload) => MediaThumbnailResult;
     saveImage: (payload: SaveImagePayload) => JsonRecord;
     imageGenerationSettings: () => ImageGenerationSettingsResult;
@@ -6296,6 +6318,9 @@ export type HostApiContract = {
     testImageGeneration: (payload: ImageGenerationTestPayload) => ImageGenerationTestResult;
   };
   sessions: {
+    collaborationSender: () => HostSuccess & { source: { scope: AutonomySessionScope; name: string } | null; reason?: string };
+    collaborationMessages: (payload: SessionCollaborationMessageQuery) => HostSuccess & { messages: SessionCollaborationMessagePage };
+    sendCollaborationMessage: (payload: SessionCollaborationMessageInput & { expectedSource: AutonomySessionScope }) => HostSuccess & { receipt: SessionCollaborationMessageReceipt | null; phase: SessionCollaborationMessageReceipt['phase']; error?: string };
     delegate: (payload: SessionDelegationPayload) => SessionDelegationResult;
     dispatchPlanTask: (payload: ProjectPlanDispatchPayload) => SessionDelegationResult;
     dispatchSystemProject: (payload: SystemProjectDispatchPayload) => SessionDelegationResult;
@@ -6313,7 +6338,7 @@ export type HostApiContract = {
     recallOriginal: (payload: SessionRecallOriginalPayload) => SessionRecallOriginalResult;
     expandSelector: (payload: SessionExpandSelectorPayload) => SessionExpandSelectorResult;
     longTaskControlStatus: (payload: SessionLongTaskControlPayload) => SessionLongTaskControlStatusResult;
-    longTaskControlHistory: (payload: SessionLongTaskControlHistoryPayload) => SessionLongTaskControlHistoryResult;
+    longTaskControlHistory: (payload: SessionLongTaskControlHistoryQuery) => SessionLongTaskControlHistoryResult;
     resumeCheckpoints: (payload: SessionLongTaskControlHistoryPayload) => SessionResumeCheckpointsResult;
     restoreCheckpoint: (payload: SessionRestoreCheckpointPayload) => SessionRestoreCheckpointResult;
     checkpointDiff: (payload: SessionRestoreCheckpointPayload) => SessionCheckpointDiffResult;

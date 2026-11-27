@@ -101,12 +101,16 @@ async function expectAllResources(page: Page): Promise<void> {
 
   await expect(page.getByTestId('chat-tool-ui-table')).toContainText('North');
   await expect(page.getByTestId('chat-tool-ui-weather')).toContainText('Seattle');
-  await expect(page.getByTestId('chat-tool-ui-web-search')).toContainText('Search source');
+  const search = page.getByTestId('chat-tool-ui-web-search');
+  const searchToggle = search.getByTestId('chat-web-search-trigger');
+  await searchToggle.click();
+  await expect(search).toContainText('Search source');
+  await searchToggle.click();
 
   // Files, links, and the unknown.
   await expect(page.getByTestId('assistant-attachment-card').filter({ hasText: 'report.pdf' })).toHaveCount(1, { timeout: 20_000 });
   const link = page.getByTestId('chat-resource-website-link').filter({ hasText: 'Project docs' });
-  await expect(link).toContainText(REMOTE_HOST);
+  await expect(link.getByRole('link', { name: 'Project docs' })).toHaveAttribute('href', `https://${REMOTE_HOST}/docs`);
   await expect(page.getByRole('link', { name: 'inline link' })).toHaveCount(1);
   await expect(page.locator('main iframe[src*="example.invalid"], iframe[src*="example.invalid"]')).toHaveCount(0);
 
@@ -145,6 +149,7 @@ test.describe('Conversation resources', () => {
           },
         },
         hostApi: {
+          [stableStringify(['media', 'linkPreview', null])]: null,
           [stableStringify(['/api/gateway/status', 'GET'])]: {
             ok: true,
             data: { status: 200, ok: true, json: { state: 'running', port: 18789, pid: 12345 } },

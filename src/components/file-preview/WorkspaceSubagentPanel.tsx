@@ -32,6 +32,7 @@ import { extractText, normalizeMessageRole } from '@/pages/Chat/message-utils';
 import { useChatStore } from '@/stores/chat';
 import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
 import { useWorkspacesStore } from '@/stores/workspaces';
+import { isSessionIntentFresh, useSessionIntentStore } from '@/stores/session-intent';
 import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStatus';
 import { subagentIdentity } from '@shared/subagent-identity';
 import type { RawMessage } from '@shared/chat/types';
@@ -53,6 +54,7 @@ function statusTone(status: SessionActivitySubagentStatus | undefined): string {
 
 export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: string }) {
   const { t } = useTranslation('chat');
+  const { t: tAgents } = useTranslation('agents');
   const navigate = useNavigate();
   const dispatchInputId = useId();
   const parentSessionKey = useChatStore((s) => s.currentSessionKey);
@@ -65,6 +67,13 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   const scopeRef = useRef(viewScope); scopeRef.current = viewScope;
   const loadVersion = useRef(0);
   const [childGeneration, setChildGeneration] = useState<string | null>(null);
+  const controlIntent = useSessionIntentStore(state => state.intent);
+  const consumeControl = useSessionIntentStore(state => state.consume);
+  const pendingSteer = controlIntent?.kind === 'collaboration-control' && controlIntent.action === 'interruptSend' &&
+    controlIntent.scope.workspaceId === workspace?.id && controlIntent.sessionKey === childSessionKey ? controlIntent : null;
+  const [armedSteer, setArmedSteer] = useState<{ scopeKey: string; generation: string; runId: string } | null>(null);
+  const steerTarget = armedSteer?.scopeKey === scopeKey ? armedSteer : null;
+  const dispatchInputRef = useRef<HTMLTextAreaElement | null>(null);
   const [sendPhase, setSendPhase] = useState<'accepted' | 'queued' | 'steered' | 'rejected' | 'unknown' | null>(null);
   const sendIntent = useRef<{ text: string; scope: string; id: string; generation: string } | null>(null);
   useEffect(() => { setSendPhase(null); setDispatching(false); }, [scopeKey]);
@@ -75,6 +84,16 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
   const [loading, setLoading] = useState(false);
   const [dispatchTask, setDispatchTask] = useState('');
   const [dispatching, setDispatching] = useState(false);
+  useEffect(() => {
+    if (!pendingSteer || !childGeneration || !snapshot?.session.sessionId || sendPhase === 'unknown') return;
+    if (!consumeControl(pendingSteer)) return;
+    if (!isSessionIntentFresh(pendingSteer) || !pendingSteer.runId || pendingSteer.scope.sessionGeneration !== childGeneration) {
+      toast.error(t('operationGenerationUnavailable'));
+      return;
+    }
+    setArmedSteer({ scopeKey, generation: childGeneration, runId: pendingSteer.runId });
+    dispatchInputRef.current?.focus();
+  }, [childGeneration, consumeControl, pendingSteer, scopeKey, sendPhase, snapshot?.session.sessionId, t]);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   /* Live roster entry, so the header's status keeps up with the run while the
@@ -112,6 +131,7 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
         setSendPhase(receiptPhase);
         setDispatchTask((current) => current === intent.text ? '' : current);
         sendIntent.current = null;
+        setArmedSteer(current => current?.scopeKey === scopeKey ? null : current);
       }
       setTranscriptError(null);
       setLoading(false);
@@ -153,14 +173,21 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
     try {
       if (!workspace?.id || !snapshot?.session.sessionId || !childGeneration) throw new Error(t('agentsPanel.transcriptUnavailable'));
       if (sendIntent.current?.text !== task || sendIntent.current.scope !== scopeKey) sendIntent.current = { text: task, scope: scopeKey, id: crypto.randomUUID(), generation: childGeneration };
+      if (steerTarget && steerTarget.generation !== childGeneration) {
+        sendIntent.current = null;
+        throw new Error(t('operationGenerationUnavailable'));
+      }
       const response = await hostApi.sessions.sendWorker({ workspaceId: workspace.id, parentSessionKey,
         expectedParentGeneration: snapshot.session.sessionId, childSessionKey, expectedChildGeneration: childGeneration,
-        message: task, mode: 'send', idempotencyKey: sendIntent.current.id });
+        message: task, mode: steerTarget ? 'steer' : 'send',
+        ...(steerTarget ? { expectedRunId: steerTarget.runId } : {}),
+        idempotencyKey: sendIntent.current.id });
       if (scopeRef.current !== viewScope) return;
       setSendPhase(response.phase);
       if (response.phase === 'rejected') sendIntent.current = null;
       if (!response.success) throw new Error(response.error ?? t('agentsPanel.dispatchFailed'));
       sendIntent.current = null;
+      setArmedSteer(current => current === steerTarget ? null : current);
       setDispatchTask((current) => current === task ? '' : current);
       toast.success(t(`delegationStages.status.${response.phase}`));
     } catch (error) {
@@ -168,7 +195,8 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
     } finally {
       if (scopeRef.current === viewScope) setDispatching(false);
     }
-  }, [dispatchTask, dispatching, parentSessionKey, t, childGeneration, childSessionKey, snapshot?.session.sessionId, workspace?.id, scopeKey, viewScope]);
+  }, [dispatchTask, dispatching, parentSessionKey, t, childGeneration, childSessionKey,
+    snapshot?.session.sessionId, steerTarget, workspace?.id, scopeKey, viewScope]);
 
   const statusLabel = entry
     ? t(`sessionActivity.subagentStatus.${entry.status}`, { defaultValue: entry.status })
@@ -307,11 +335,12 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
 
       <div className="mt-2 shrink-0 border-t border-border/60 pt-2">
         <label htmlFor={dispatchInputId} className="mb-1 block text-2xs font-medium text-muted-foreground">
-          {t('agentsPanel.dispatchLabel')}
+          {steerTarget ? tAgents('collaboration.controls.interruptSend') : t('agentsPanel.dispatchLabel')}
         </label>
         <div className="flex items-end gap-2">
           <Textarea
             id={dispatchInputId}
+            ref={dispatchInputRef}
             value={dispatchTask}
             onChange={(event) => setDispatchTask(event.target.value)}
             placeholder={t('agentsPanel.dispatchPlaceholder', { role: identity.name })}
@@ -330,15 +359,19 @@ export function WorkspaceSubagentPanel({ childSessionKey }: { childSessionKey: s
             size="sm"
             className="h-9 shrink-0 gap-1.5 px-3"
             disabled={!dispatchTask.trim() || dispatching || !childGeneration || sendPhase === 'unknown'}
-            aria-label={t('composer.send')}
+            aria-label={steerTarget ? tAgents('collaboration.controls.interruptSend') : t('composer.send')}
             onClick={() => void handleDispatch()}
             data-testid="workspace-subagent-dispatch"
           >
             {dispatching
               ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
               : <Send className="size-3.5" aria-hidden="true" />}
-            <span>{t('composer.send')}</span>
+            <span>{steerTarget ? tAgents('collaboration.controls.interruptSend') : t('composer.send')}</span>
           </Button>
+          {steerTarget && <Button type="button" variant="ghost" size="sm" disabled={dispatching || sendPhase === 'unknown'}
+            onClick={() => { sendIntent.current = null; setArmedSteer(null); }}>
+            {t('common:actions.cancel')}
+          </Button>}
         </div>
       </div>
     </div>

@@ -81,6 +81,7 @@ import { createSessionsNewContextTool } from "./tools/sessions-new-context-tool.
 import { isCheckpointedContextResetEnabled } from "./checkpointed-context-reset.js";
 import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
 import { createSessionsListTool } from "./tools/sessions-list-tool.js";
+import { createSessionsWatchTool } from './tools/sessions-watch-tool.js';
 import { createSessionsSendTool } from "./tools/sessions-send-tool.js";
 import { createSessionsSpawnTool } from "./tools/sessions-spawn-tool.js";
 import { createSessionsYieldTool } from "./tools/sessions-yield-tool.js";
@@ -584,10 +585,14 @@ export function createOpenClawTools(
     ...(includeUpdatePlanTool ? [createUpdatePlanTool()] : []),
     createSessionsListTool({
       agentSessionKey: options?.agentSessionKey,
+      runSessionKey: options?.runSessionKey,
+      agentSessionId: options?.sessionId,
       sandboxed: options?.sandboxed,
       config: resolvedConfig,
       callGateway: effectiveCallGateway,
     }),
+    createSessionsWatchTool({ agentSessionKey: options?.agentSessionKey, runSessionKey: options?.runSessionKey,
+      agentSessionId: options?.sessionId, config: resolvedConfig, callGateway: effectiveCallGateway }),
     createSessionsHistoryTool({
       agentSessionKey: options?.agentSessionKey,
       sandboxed: options?.sandboxed,
@@ -599,6 +604,9 @@ export function createOpenClawTools(
       : [
           createSessionsSendTool({
             agentSessionKey: options?.agentSessionKey,
+            runSessionKey: options?.runSessionKey,
+            agentSessionId: options?.sessionId,
+            runId: options?.runId,
             agentChannel: options?.agentChannel,
             sandboxed: options?.sandboxed,
             config: resolvedConfig,
@@ -729,6 +737,8 @@ export function createOpenClawTools(
     }),
     createSessionStatusTool({
       agentSessionKey: options?.agentSessionKey,
+      agentSessionId: options?.sessionId,
+      callGateway: effectiveCallGateway,
       runSessionKey: options?.runSessionKey,
       config: resolvedConfig,
       sandboxed: options?.sandboxed,

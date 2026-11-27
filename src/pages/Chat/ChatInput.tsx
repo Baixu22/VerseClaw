@@ -60,6 +60,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { chatSecretRanges, maskChatSecrets, maskChatSelection } from '@/lib/chat-display-text';
+import { ComposerDraftPreview } from '@/components/chat/ComposerDraftPreview';
+import { useDraftSessions } from '@/components/assistant-render/MessageReferences';
+import { segmentPromptSpans, type PromptSpan } from '@/lib/composer-references';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
 import { readKnowledgeResearch } from '@/lib/knowledge-research';
@@ -69,7 +73,8 @@ import type { ResearchResultV1 } from '@shared/knowledge/research';
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
 import { boundedKnowledgeRead, knowledgeRequestKey } from '@/lib/knowledge-interaction';
 import type { RetrievalProfile } from '@shared/knowledge/retrieval';
-import type { SendOptions } from '@shared/chat/types';
+import type { ChatRuntimeRunState, SendOptions } from '@shared/chat/types';
+import type { AutonomySessionScope } from '@shared/types/identity-scope';
 import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
 import { useAgentsStore } from '@/stores/agents';
@@ -144,8 +149,13 @@ export interface FileAttachment {
   error?: string;
 }
 
+type GuideTarget = { scope: AutonomySessionScope; runId: string };
+type GuideDraft = GuideTarget & { submission?: { digest: string; id: string; draftVersion: number } };
 interface ChatInputProps {
   onSend: (text: string, opts?: SendOptions) => void;
+  requestGuide?: () => GuideTarget | null;
+  runtimeRuns?: Readonly<Record<string, ChatRuntimeRunState>>;
+  observedRunId?: string | null;
   onKnowledgeMention?: (question: string) => boolean;
   disabled?: boolean;
   sending?: boolean;
@@ -910,66 +920,95 @@ function findSkillTokenRanges(value: string): SkillTokenRange[] {
 const SKILL_TOKEN_BUTTON_CLASS =
   'rounded-md bg-skill-bg/14 text-skill-fg [-webkit-box-decoration-break:clone] [box-decoration-break:clone] [text-shadow:0_0_10px_rgba(47,107,255,0.38)] dark:bg-skill-bg/18 dark:text-skill-fg-dark dark:[text-shadow:0_0_12px_rgba(37,99,235,0.42)]';
 
-function renderHighlightedComposerText(
-  value: string,
-  tokenRanges: SkillTokenRange[],
-  options: { onPreviewSkill: (skillName: string) => void; previewTooltip: string },
+function renderComposerInlineOverlay(
+  spans: PromptSpan[],
+  rawValue: string,
+  options: {
+    onPreviewSkill: (skillName: string) => void;
+    previewTooltip: string;
+  },
 ) {
-  if (tokenRanges.length === 0) {
-    return <>{value}{value.endsWith('\n') ? '\n' : '\u200b'}</>;
+  if (spans.length === 0) {
+    return <>{rawValue}{rawValue.endsWith('\n') ? '\n' : '\u200b'}</>;
   }
 
   const chunks: React.ReactNode[] = [];
-  let cursor = 0;
-
-  for (const tokenRange of tokenRanges) {
-    const token = value.slice(tokenRange.start, tokenRange.end);
-    const tokenLabel = token.trimEnd();
-    const tokenTrailingSpace = token.slice(tokenLabel.length);
-    const skillName = tokenLabel.startsWith('/') ? tokenLabel.slice(1) : tokenLabel;
-
-    if (tokenRange.start > cursor) {
-      chunks.push(value.slice(cursor, tokenRange.start));
+  for (const span of spans) {
+    if (span.kind === 'text') {
+      chunks.push(span.text);
+      continue;
     }
+    if (span.kind === 'secret') {
+      chunks.push(
+        <span
+          key={`secret-${span.start}`}
+          className="composer-inline-secret"
+          data-testid="composer-inline-secret"
+        >
+          {span.masked}
+        </span>,
+      );
+      continue;
+    }
+    if (span.kind === 'skill') {
+      chunks.push(
+        <Tooltip key={`skill-token-${span.start}`}>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              data-testid="chat-composer-skill-token"
+              data-skill-name={span.skillName}
+              className={cn(
+                'inline h-auto border-0 p-0 font-inherit leading-inherit',
+                'pointer-events-auto cursor-pointer underline-offset-2 hover:underline',
+                'text-left align-baseline shadow-none transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0',
+                SKILL_TOKEN_BUTTON_CLASS,
+              )}
+              onMouseDown={(event) => {
+                // Keep focus in the textarea while still receiving the click.
+                event.preventDefault();
+              }}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                options.onPreviewSkill(span.skillName);
+              }}
+            >
+              {span.text}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">{options.previewTooltip}</TooltipContent>
+        </Tooltip>,
+        span.trailingSpace,
+      );
+      continue;
+    }
+    if (span.kind !== 'reference') {
+      chunks.push(
+        <span key={`${span.kind}-${span.start}`} className={`composer-inline-${span.kind}`}>
+          {span.text}
+        </span>,
+      );
+      continue;
+    }
+    // Reference styles leave glyph metrics unchanged for the textarea overlay.
+    const ref = span.reference;
+    const isColor = ref.kind === 'color';
     chunks.push(
-      <Tooltip key={`skill-token-${tokenRange.start}`}>
-        <TooltipTrigger asChild>
-      <button
-        type="button"
-        data-testid="chat-composer-skill-token"
-        data-skill-name={skillName}
-        className={cn(
-          'inline h-auto border-0 p-0 font-inherit leading-inherit',
-          'pointer-events-auto cursor-pointer underline-offset-2 hover:underline',
-          'text-left align-baseline shadow-none transition-colors',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0',
-          SKILL_TOKEN_BUTTON_CLASS,
-        )}
-        onMouseDown={(event) => {
-          // Keep focus in the textarea while still receiving the click.
-          event.preventDefault();
-        }}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          options.onPreviewSkill(skillName);
-        }}
+      <span
+        key={`ref-${span.start}`}
+        className="composer-inline-token"
+        data-kind={ref.kind}
+        data-testid="composer-inline-token"
+        style={isColor ? ({ '--inline-swatch': ref.target } as React.CSSProperties) : undefined}
       >
-        {tokenLabel}
-      </button>
-        </TooltipTrigger>
-        <TooltipContent side="top">{options.previewTooltip}</TooltipContent>
-      </Tooltip>,
-      tokenTrailingSpace,
+        {span.text}
+      </span>,
     );
-    cursor = tokenRange.end;
   }
 
-  if (cursor < value.length) {
-    chunks.push(value.slice(cursor));
-  }
-  chunks.push(value.endsWith('\n') ? '\n' : '\u200b');
-
+  chunks.push(rawValue.endsWith('\n') ? '\n' : '\u200b');
   return <>{chunks}</>;
 }
 
@@ -1002,6 +1041,9 @@ function readFileAsBase64(file: globalThis.File): Promise<string> {
 
 export function ChatInput({
   onSend,
+  requestGuide,
+  runtimeRuns,
+  observedRunId,
   onKnowledgeMention,
   disabled = false,
   sending = false,
@@ -1055,6 +1097,10 @@ export function ChatInput({
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [deliveryMenuOpen, setDeliveryMenuOpen] = useState(false);
+  const [guideTarget, setGuideTarget] = useState<GuideDraft | null>(null);
+  const guideTargetRef = useRef(guideTarget);
+  guideTargetRef.current = guideTarget;
+  const [guideSubmitting, setGuideSubmitting] = useState(false);
   const [executionEffortPreview, setExecutionEffortPreview] = useState<AgentReasoningEffort>('auto');
   const [knowledgePickerOpen, setKnowledgePickerOpen] = useState(false);
   const [knowledgeQuery, setKnowledgeQuery] = useState('');
@@ -1115,6 +1161,7 @@ export function ChatInput({
     finally { selectingTaskRef.current = false; setTaskSelectionBusy(false); }
   }, [t]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const draftOverlayRef = useRef<HTMLDivElement>(null);
   const runStartTimerRef = useRef<number | null>(null);
   const runStartingRef = useRef(false);
   const previousSendingRef = useRef(sending);
@@ -1140,6 +1187,7 @@ export function ChatInput({
   const knowledgePickerRef = useRef<HTMLDivElement>(null);
   const isComposingRef = useRef(false);
   const lastDraftValueRef = useRef(draftValue);
+  const draftVersionRef = useRef(0);
   const gatewayStatus = useGatewayStore((s) => s.status);
   const agents = useAgentsStore((s) => s.agents);
   const lastChatModelRef = useSettingsStore((s) => s.lastChatModelRef);
@@ -1206,6 +1254,7 @@ export function ChatInput({
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
   );
+  const draftWorkspaceRoot = workspace?.rootPath || currentAgent?.workspace;
   useEffect(() => {
     setExecutionEffortPreview(currentAgent?.reasoningEffort ?? 'auto');
   }, [currentAgent?.id, currentAgent?.reasoningEffort]);
@@ -1292,7 +1341,32 @@ export function ChatInput({
   const historyLoading = useChatStore((state) => state.loading);
   const connectionPending = gatewayStatus.state === 'starting' || (gatewayStatus.state === 'running' && !isGatewayUsable);
   const inputDisabled = disabled || !isGatewayUsable;
-  const skillTokenRanges = useMemo(() => findSkillTokenRanges(input), [input]);
+  const [renderedDraft, setRenderedDraft] = useState<{
+    text: string;
+    sessionKey: string;
+    mode: 'rich' | 'link';
+  } | null>(null);
+  const draftView = renderedDraft?.text === input && renderedDraft.sessionKey === currentSessionKey
+    ? renderedDraft.mode
+    : 'source';
+  useEffect(() => {
+    setRenderedDraft(null);
+  }, [currentSessionKey]);
+
+  const draftSessions = useDraftSessions();
+  const secretRanges = useMemo(() => chatSecretRanges(input), [input]);
+  const displayInput = useMemo(() => maskChatSelection(input, secretRanges, 0, input.length, true), [input, secretRanges]);
+  const skillTokenRanges = useMemo(() => findSkillTokenRanges(displayInput), [displayInput]);
+  const promptSpans = useMemo(
+    () => (input ? segmentPromptSpans(input, draftSessions.index, skillTokenRanges) : []),
+    [input, draftSessions.index, skillTokenRanges],
+  );
+  const singleReference = promptSpans.find(span => span.kind === 'reference');
+  const hasInlineDecorations = useMemo(
+    () => promptSpans.some((span) => span.kind !== 'text'),
+    [promptSpans],
+  );
+  const hasDraftOverlay = skillTokenRanges.length > 0 || secretRanges.length > 0 || hasInlineDecorations;
   const openWorkspacePanel = useArtifactPanel((s) => s.openWorkspacePanel);
 
   /**
@@ -1414,10 +1488,17 @@ export function ChatInput({
     };
   }, [hero]);
 
+  const focusDraftEditor = useCallback(() => {
+    requestAnimationFrame(() => textareaRef.current?.focus({ preventScroll: true }));
+  }, []);
+
   const updateInput = useCallback((value: string) => {
+    draftVersionRef.current += 1;
+    if (!value && draftView === 'link') focusDraftEditor();
+    setRenderedDraft(null);
     setInput(value);
     onDraftChange?.(value);
-  }, [onDraftChange]);
+  }, [draftView, focusDraftEditor, onDraftChange]);
 
   const recordPromptCacheDecision = useCallback((
     assessment: PromptCacheRiskAssessment,
@@ -1933,7 +2014,9 @@ export function ChatInput({
 
   useEffect(() => {
     if (draftValue === lastDraftValueRef.current) return;
+    draftVersionRef.current += 1;
     lastDraftValueRef.current = draftValue;
+    setRenderedDraft(current => current?.text === draftValue ? current : null);
     setInput(draftValue ?? '');
   }, [draftValue]);
 
@@ -1991,13 +2074,15 @@ export function ChatInput({
     };
   }, [currentSessionKey]);
 
-  // Auto-resize textarea
+  const resizeDraft = useCallback(() => {
+    const editor = textareaRef.current;
+    if (!editor?.offsetWidth) return;
+    editor.style.height = 'auto';
+    editor.style.height = `${Math.min(editor.scrollHeight, 240)}px`;
+  }, []);
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 240)}px`;
-    }
-  }, [input]);
+    resizeDraft();
+  }, [input, draftView, resizeDraft]);
 
   // Focus textarea on mount (avoids Windows focus loss after session delete + native dialog)
   useEffect(() => {
@@ -2055,8 +2140,9 @@ export function ChatInput({
     setSkillsError(null);
   }, [currentAgentId]);
 
-  const handleInputChange = useCallback((value: string) => {
+  const handleInputChange = useCallback((value: string, pasted = false) => {
     updateInput(value);
+    if (pasted) setRenderedDraft({ text: value, sessionKey: currentSessionKey, mode: 'link' });
     setSlashMenuDismissed(false);
     if (parseSlashInput(value).active) {
       setActionMenuOpen(false);
@@ -2064,7 +2150,50 @@ export function ChatInput({
       setWorkspaceMenuOpen(false);
       setKnowledgePickerOpen(false);
     }
-  }, [updateInput]);
+  }, [currentSessionKey, updateInput]);
+
+  // Copy from the full draft's ranges so even selecting the middle of a key is masked.
+  const copyDraftSelection = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const editor = event.currentTarget;
+    const { selectionStart, selectionEnd } = editor;
+    if (selectionStart === selectionEnd) return;
+    if (!secretRanges.some(range => range.start < selectionEnd && range.end > selectionStart)) return;
+    event.preventDefault();
+    event.clipboardData.setData('text/plain', maskChatSelection(input, secretRanges, selectionStart, selectionEnd));
+    if (event.type === 'cut') {
+      editor.setRangeText('', selectionStart, selectionEnd, 'start');
+      handleInputChange(editor.value);
+    }
+  };
+  const syncDraftOverlay = useCallback(() => {
+    const editor = textareaRef.current;
+    const overlay = draftOverlayRef.current;
+    if (editor && overlay) {
+      overlay.style.width = `${editor.clientWidth}px`;
+      overlay.scrollTop = editor.scrollTop;
+      overlay.scrollLeft = editor.scrollLeft;
+    }
+  }, []);
+  useLayoutEffect(() => {
+    const editor = textareaRef.current;
+    if (!editor) return;
+    let width = editor.offsetWidth;
+    let frame = 0;
+    syncDraftOverlay();
+    const observer = new ResizeObserver(() => {
+      if (editor.offsetWidth !== width) {
+        width = editor.offsetWidth;
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(resizeDraft);
+      }
+      syncDraftOverlay();
+    });
+    observer.observe(editor);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [hasDraftOverlay, resizeDraft, syncDraftOverlay]);
 
   const moveCaretTo = useCallback((position: number) => {
     textareaRef.current?.focus();
@@ -2388,7 +2517,17 @@ export function ChatInput({
   const allReady = attachments.length === 0 || attachments.every(a => a.status === 'ready');
   const hasFailedAttachments = attachments.some((a) => a.status === 'error');
   const hasComposerDraft = Boolean(input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0);
-  const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !historyLoading && !sending && !capabilityExecuting && !switchingModelRef && !providerSnapshotLoading;
+  const sessionOwner = workspace ?? useWorkspacesStore.getState().activeWorkspace;
+  const currentSessionGeneration = currentSession?.sessionId;
+  const pinnedGuide = guideTarget?.scope.workspaceId === sessionOwner?.id &&
+    guideTarget?.scope.sessionKey === currentSessionKey && guideTarget.scope.sessionGeneration === currentSessionGeneration
+    ? guideTarget : null;
+  const guideOutcome = pinnedGuide ? runtimeRuns?.[pinnedGuide.runId] : undefined;
+  const guideExpired = Boolean(pinnedGuide &&
+    ((guideOutcome?.sessionKey === pinnedGuide.scope.sessionKey && guideOutcome.status !== 'running') ||
+      (observedRunId && observedRunId !== pinnedGuide.runId)));
+  const hasRunningInput = sending || Boolean(pinnedGuide);
+  const canSend = (input.trim() || attachments.length > 0 || selectedKnowledgeRefs.length > 0) && allReady && !inputDisabled && !historyLoading && !hasRunningInput && !capabilityExecuting && !switchingModelRef && !providerSnapshotLoading;
   // Explicit long-task modes (queue/guide/interrupt/revise-goal) are only
   // accepted by chat.send when the session has a /loop Task Ledger root; the
   // gateway reads it from the latest checkpoint carrying one
@@ -2398,8 +2537,8 @@ export function ChatInput({
   // A draft typed during a run can always be sent: as a long-task intervention
   // in /loop sessions, otherwise into the renderer queue that drains when the
   // run settles. Uploading or failed attachments hold it back either way.
-  const canSendDuringRun = sending && hasComposerDraft && allReady && !hasFailedAttachments && !inputDisabled && !capabilityExecuting && !switchingModelRef && !providerSnapshotLoading;
-  const composerSendState = sending
+  const canSendDuringRun = hasRunningInput && (!pinnedGuide || (longTaskModesAvailable && !guideExpired && !guideSubmitting)) && hasComposerDraft && allReady && !hasFailedAttachments && !inputDisabled && !capabilityExecuting && !switchingModelRef && !providerSnapshotLoading;
+  const composerSendState = hasRunningInput
     ? hasComposerDraft
       ? 'running-with-draft'
       : 'running'
@@ -2420,8 +2559,55 @@ export function ChatInput({
   useEffect(() => {
     // The menu belongs to one pending draft in one run; never let it reopen by
     // itself when the next draft or run brings the trigger back.
-    if (!showDeliveryMenu) setDeliveryMenuOpen(false);
-  }, [showDeliveryMenu]);
+    if (!showDeliveryMenu && !pinnedGuide) setDeliveryMenuOpen(false);
+  }, [pinnedGuide, showDeliveryMenu]);
+  const cancelGuidance = useCallback(() => {
+    guideTargetRef.current = null;
+    setGuideTarget(null);
+    setDeliveryMenuOpen(false);
+  }, []);
+  const readGuideReceipt = async () => {
+    const guide = pinnedGuide;
+    if (!guide?.submission || sendDispatchRef.current) return;
+    const { id, draftVersion } = guide.submission;
+    const { scope, runId } = guide;
+    const view = sendIdentityRef.current;
+    sendDispatchRef.current = true;
+    setGuideSubmitting(true);
+    try {
+      const history = await hostApi.sessions.longTaskControlHistory({
+        sessionKey: scope.sessionKey,
+        guideReceipt: { id, workspaceId: scope.workspaceId, sessionGeneration: scope.sessionGeneration, runId },
+      });
+      if (guideTargetRef.current !== guide) return;
+      const confirmed = history.success && history.key === scope.sessionKey && history.events.some(event =>
+        event.idempotencyKey === `chat:${id}:guide:event` && event.status === 'steered' && event.mode === 'guide' &&
+        event.sessionKey === scope.sessionKey && event.workspaceId === scope.workspaceId && event.runId === runId &&
+        event.payload.sessionGeneration === scope.sessionGeneration);
+      if (!confirmed) {
+        toast.message(t('collaboration.messages.states.unknown', { ns: 'agents' }));
+        return;
+      }
+      if (view === sendIdentityRef.current && draftVersionRef.current === draftVersion) updateInput('');
+      cancelGuidance();
+    } catch (error) {
+      if (guideTargetRef.current === guide) toastUserError(error, { fallback: t('composer.longTaskControl.interventionFailed') });
+    } finally {
+      sendDispatchRef.current = false;
+      setGuideSubmitting(false);
+    }
+  };
+  useEffect(() => {
+    if (guideTarget && !pinnedGuide) cancelGuidance();
+  }, [cancelGuidance, guideTarget, pinnedGuide]);
+  useEffect(() => {
+    if (inputDisabled || !longTaskModesAvailable) return;
+    const guide = requestGuide?.();
+    if (!guide) return;
+    setGuideTarget(guide);
+    textareaRef.current?.focus({ preventScroll: true });
+    setDeliveryMenuOpen(true);
+  }, [inputDisabled, longTaskModesAvailable, requestGuide]);
   const showInlineComposerStatus = !isGatewayUsable
     || chatComposerStatusComponents.length > 0
     || pendingMessages.length > 0
@@ -2454,11 +2640,13 @@ export function ChatInput({
     sendKnowledgeMode: KnowledgeInvocationMode,
     sendKnowledgeReferences: ChatKnowledgeReference[] = [],
     inputMode?: LongTaskInputMode,
+    expectedGuide?: GuideDraft | null,
   ): Promise<boolean> => {
     if (sendDispatchRef.current) return false;
     sendDispatchRef.current = true;
     try {
       const sendIdentity = sendIdentityRef.current;
+      const sendDraftVersion = draftVersionRef.current;
       const safeAttachments = attachmentsToSend && attachmentsToSend.length > 0 ? attachmentsToSend : undefined;
 
       if (sendKnowledgeMode === 'auto-read' && sendKnowledgeScope !== 'none' && sendKnowledgeReferences.length === 0 && textToSend) {
@@ -2481,8 +2669,38 @@ export function ChatInput({
       }
 
       if (sendIdentity !== sendIdentityRef.current) return false;
+      if (expectedGuide) {
+        if (guideTargetRef.current !== expectedGuide || draftVersionRef.current !== sendDraftVersion) return false;
+        const digest = textToSend;
+        const submission = expectedGuide.submission;
+        if (submission && submission.digest !== digest) {
+          toast.error(t('operationGenerationUnavailable'));
+          return false;
+        }
+        const authorized = { ...expectedGuide, submission: submission ?? { digest, id: crypto.randomUUID(), draftVersion: sendDraftVersion } };
+        guideTargetRef.current = authorized;
+        setGuideTarget(authorized);
+        setGuideSubmitting(true);
+        const { scope, runId } = expectedGuide;
+        const result = await hostApi.chat.sendWithMedia({
+          sessionKey: scope.sessionKey, workspaceId: scope.workspaceId, expectedSessionGeneration: scope.sessionGeneration,
+          expectedGuideRunId: runId, inputMode: 'guide', message: textToSend, deliver: false,
+          idempotencyKey: authorized.submission.id, knowledgeScope: 'none',
+        });
+        if (!result.success || result.result?.runId !== runId) {
+          if (guideTargetRef.current === authorized) {
+            const runChanged = result.error?.includes('CHAT_GUIDE_RUN_CHANGED');
+            toast.error(runChanged ? t('operationGenerationUnavailable') : (result.error ?? t('composer.longTaskControl.interventionFailed')));
+          }
+          return false;
+        }
+        if (guideTargetRef.current !== authorized || sendIdentity !== sendIdentityRef.current ||
+            draftVersionRef.current !== authorized.submission.draftVersion) {
+          if (guideTargetRef.current === authorized) cancelGuidance();
+          return false;
+        }
+      }
 
-      console.log(`[handleSend] text="${textToSend.substring(0, 50)}", attachments=${safeAttachments?.length ?? 0}, sending=${!!safeAttachments}`);
       if (safeAttachments) {
         console.log('[handleSend] Attachment details:', safeAttachments.map(a => ({
           id: a.id, fileName: a.fileName, mimeType: a.mimeType, fileSize: a.fileSize,
@@ -2498,7 +2716,9 @@ export function ChatInput({
         textareaRef.current.style.height = 'auto';
       }
       recordKnowledgeReferences(sendKnowledgeReferences);
-      if (inputMode) {
+      if (expectedGuide) {
+        cancelGuidance();
+      } else if (inputMode) {
         onSend(
           textToSend,
           {
@@ -2529,10 +2749,17 @@ export function ChatInput({
       setTargetAgentId(null);
       setKnowledgePickerOpen(false);
       return true;
+    } catch (error) {
+      if (!expectedGuide) throw error;
+      if (guideTargetRef.current?.runId === expectedGuide.runId) {
+        toastUserError(error, { fallback: t('composer.longTaskControl.interventionFailed') });
+      }
+      return false;
     } finally {
+      if (expectedGuide) setGuideSubmitting(false);
       sendDispatchRef.current = false;
     }
-  }, [activeTaskNodeId, captureHeroComposerPosition, onSend, effectiveModelRef, recordKnowledgeReferences, routeKnowledgeForMessage, updateInput]);
+  }, [activeTaskNodeId, cancelGuidance, captureHeroComposerPosition, onSend, effectiveModelRef, recordKnowledgeReferences, routeKnowledgeForMessage, t, updateInput]);
 
   /**
    * Sends the draft while a run is active. In /loop sessions it is an explicit
@@ -2541,24 +2768,30 @@ export function ChatInput({
    * sendMessage parks in the renderer queue until the run settles.
    */
   const handleRunningSend = useCallback(async (mode?: LongTaskInputMode) => {
-    if (tryKnowledgeMention()) return;
-    if (!sending) return;
+    if (!pinnedGuide && tryKnowledgeMention()) return;
+    if (!hasRunningInput) return;
+    if (pinnedGuide && (!longTaskModesAvailable || guideExpired || guideSubmitting)) return;
+    if (pinnedGuide && (attachments.length || selectedKnowledgeRefs.length)) {
+      toast.error(t('composer.intervention.guideTooltip'));
+      return;
+    }
     const readyAttachments = attachments.filter(a => a.status === 'ready');
     const knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
     const textToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
     if ((!textToSend && readyAttachments.length === 0) || !allReady || hasFailedAttachments || capabilityExecuting) return;
 
-    const inputMode = longTaskModesAvailable ? mode ?? 'queue' : undefined;
+    const inputMode = pinnedGuide ? 'guide' : longTaskModesAvailable ? mode ?? 'queue' : undefined;
     const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
     setDeliveryMenuOpen(false);
     const sent = await completeSend(
       textToSend,
       readyAttachments.length > 0 ? readyAttachments : undefined,
-      targetAgentId,
-      sendKnowledgeScope,
+      pinnedGuide ? null : targetAgentId,
+      pinnedGuide ? 'none' : sendKnowledgeScope,
       knowledgeMode,
       knowledgeReferencesToSend,
       inputMode === 'queue' && !longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId ? undefined : inputMode,
+      pinnedGuide,
     );
     // A renderer-queued draft leaves the composer without reaching the
     // transcript yet; say where it went. A mention targets another session,
@@ -2573,12 +2806,14 @@ export function ChatInput({
     hasFailedAttachments,
     input,
     knowledgeMode,
-    longTaskControlStatus?.available,
     longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId,
     knowledgeScope,
     longTaskModesAvailable,
     selectedKnowledgeRefs,
-    sending,
+    hasRunningInput,
+    guideExpired,
+    guideSubmitting,
+    pinnedGuide,
     t,
     targetAgentId,
   ]);
@@ -2927,7 +3162,7 @@ export function ChatInput({
                 .join('\n')
             : '';
       try {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(maskChatSecrets(text));
         toast.success(t('composer.slashCommands.toasts.copyDone'));
       } catch (error) {
         toast.error(t('composer.slashCommands.toasts.copyFailed', { error: String(error) }));
@@ -3009,6 +3244,7 @@ export function ChatInput({
   }, [t]);
 
   const handleSend = useCallback(async () => {
+    if (pinnedGuide) { if (canSendDuringRun) await handleRunningSend('guide'); return; }
     if (tryKnowledgeMention()) return;
     if (slashInput.active) {
       selectSlashItem(findExactSlashItem() ?? selectedSlashItem);
@@ -3077,7 +3313,7 @@ export function ChatInput({
     } finally {
       sendPreparingRef.current = false;
     }
-  }, [input, attachments, canSend, allReady, hasFailedAttachments, capabilityExecuting, inputDisabled, sending, completeSend, handleRunningSend, targetAgentId, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, handleUnsupportedCapabilityRequest, slashInput.active, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot, tryKnowledgeMention]);
+  }, [input, attachments, canSend, canSendDuringRun, pinnedGuide, allReady, hasFailedAttachments, capabilityExecuting, inputDisabled, sending, completeSend, handleRunningSend, targetAgentId, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, handleUnsupportedCapabilityRequest, slashInput.active, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot, tryKnowledgeMention]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -3168,7 +3404,7 @@ export function ChatInput({
       // While a run is active, Mod+Enter guides and Mod+Shift+Enter interrupts
       // in /loop sessions. Shift+Enter alone must stay a newline: drafting a
       // multi-line follow-up during a run is normal and must not abort it.
-      if (sending && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      if (hasRunningInput && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
         const nativeEvent = e.nativeEvent as KeyboardEvent;
         if (isComposingRef.current || nativeEvent.isComposing || nativeEvent.keyCode === 229) {
           return;
@@ -3265,6 +3501,7 @@ export function ChatInput({
         }
       }
       if (e.key === 'Escape') {
+        if (pinnedGuide && !guideSubmitting) cancelGuidance();
         setModelPickerOpen(false);
         setWorkspaceMenuOpen(false);
         setKnowledgePickerOpen(false);
@@ -3277,7 +3514,7 @@ export function ChatInput({
           return;
         }
         e.preventDefault();
-        if (sending) {
+        if (hasRunningInput) {
           if (canSendDuringRun) void handleRunningSend();
           return;
         }
@@ -3285,15 +3522,18 @@ export function ChatInput({
       }
     },
     [
+      cancelGuidance,
       canSendDuringRun,
       findExactSlashItem,
+      guideSubmitting,
       handleRunningSend,
       handleSend,
       input,
       moveCaretTo,
+      pinnedGuide,
       selectSlashItem,
       selectedSlashItem,
-      sending,
+      hasRunningInput,
       skillTokenRanges,
       slashItems.length,
       slashInput,
@@ -3647,13 +3887,34 @@ export function ChatInput({
             </div>
           )}
 
-          <div className="relative min-h-[48px]">
-            {skillTokenRanges.length > 0 && (
+          <ComposerDraftPreview
+            text={slashInput.active ? '' : input}
+            singleReference={singleReference?.kind === 'reference' && singleReference.text === input.trim()
+              ? singleReference.reference
+              : undefined}
+            sessionKey={currentSessionKey}
+            secretCount={secretRanges.length}
+            viewMode={draftView}
+            onViewModeChange={mode => {
+              setRenderedDraft(mode === 'source' ? null : { text: input, sessionKey: currentSessionKey, mode });
+              if (mode === 'source') focusDraftEditor();
+            }}
+            onLinkEnter={handleKeyDown}
+            onOpenFile={draftWorkspaceRoot ? (path) => {
+              openWorkspacePanel({ panel: 'files', filePath: draftWorkspaceRoot.replace(/[\\/]+$/, '') + '/' + path });
+            } : undefined}
+          >
+            {hasDraftOverlay && (
               <div
+                ref={draftOverlayRef}
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 z-20 overflow-hidden whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground"
+                data-testid="composer-draft-overlay"
+                className={cn(
+                  'pointer-events-none absolute inset-0 z-20 overflow-hidden whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground',
+                  secretRanges.length > 0 && 'composer-sensitive-text',
+                )}
               >
-                {renderHighlightedComposerText(input, skillTokenRanges, {
+                {renderComposerInlineOverlay(promptSpans, displayInput, {
                   onPreviewSkill: (name) => {
                     void handleSkillTokenPreview(name);
                   },
@@ -3664,7 +3925,7 @@ export function ChatInput({
             <Textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => handleInputChange(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value, (e.nativeEvent as InputEvent).inputType === 'insertFromPaste')}
               onKeyDown={handleKeyDown}
               onSelect={normalizeSelectionAroundSkill}
               onClick={normalizeSelectionAroundSkill}
@@ -3675,16 +3936,22 @@ export function ChatInput({
                 isComposingRef.current = false;
               }}
               onPaste={handlePaste}
+              onCopy={copyDraftSelection}
+              onCut={copyDraftSelection}
+              onScroll={syncDraftOverlay}
+              onDragStart={event => { if (secretRanges.length) event.preventDefault(); }}
+              spellCheck={secretRanges.length ? false : undefined}
               placeholder={inputDisabled ? t('composer.gatewayDisconnectedPlaceholder') : t('composer.placeholder')}
               disabled={inputDisabled}
               data-testid="chat-composer-input"
               className={cn(
                 'relative min-h-[48px] max-h-[240px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none bg-transparent p-0 text-sm leading-relaxed placeholder:text-muted-foreground/60',
-                skillTokenRanges.length > 0 ? 'z-0 text-transparent caret-foreground selection:bg-primary/20' : 'z-10',
+                hasDraftOverlay ? 'z-0 text-transparent caret-foreground selection:bg-primary/20' : 'z-10',
+                secretRanges.length > 0 && 'composer-sensitive-text composer-sensitive-input',
               )}
               rows={1}
             />
-          </div>
+          </ComposerDraftPreview>
 
           {/* Action Row — icons on their own line */}
           <div className="codex-composer-actions-row mt-1.5 flex min-w-0 items-center gap-1">
@@ -4339,7 +4606,18 @@ export function ChatInput({
                   </ComposerPopover>
               </div>
             )}
-            {composerSendState === 'running-with-draft' && (
+            {pinnedGuide && (
+              <div className="flex items-center gap-2 text-xs" data-testid="chat-guidance-scope">
+                <span role="status">{guideExpired ? t('operationGenerationUnavailable') : t('composer.intervention.guide')}</span>
+                {pinnedGuide.submission && <Button type="button" variant="ghost" size="sm" disabled={guideSubmitting || inputDisabled}
+                  onClick={() => void readGuideReceipt()} data-testid="chat-guidance-receipt">
+                  {t('collaboration.messages.check', { ns: 'agents' })}
+                </Button>}
+                <Button type="button" variant="ghost" size="sm" disabled={guideSubmitting}
+                  onClick={cancelGuidance} data-testid="chat-guidance-cancel">{t('common:actions.cancel')}</Button>
+              </div>
+            )}
+            {composerSendState === 'running-with-draft' && !pinnedGuide && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className="inline-flex">
@@ -4430,7 +4708,7 @@ export function ChatInput({
                   }}
                 >
                   <div className="codex-composer-menu__label">{t('composer.intervention.sendDraft')}</div>
-                  {DELIVERY_MODE_OPTIONS.map(({ mode, icon: Icon, labelKey, hintKey, shortcut }) => (
+                  {DELIVERY_MODE_OPTIONS.filter(({ mode }) => !pinnedGuide || mode === 'guide').map(({ mode, icon: Icon, labelKey, hintKey, shortcut }) => (
                     <Fragment key={mode}>
                     {mode === 'interrupt' && <div role="separator" className="composer-delivery-divider" />}
                     <button

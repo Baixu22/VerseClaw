@@ -4,13 +4,15 @@
  * via the Main-owned host API. Session selector, thinking toggle, and refresh
  * are in the toolbar; messages render with markdown + streaming.
  */
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/shallow';
 import { createChatContentCache } from '@/stores/chat/content-cache';
 import { useMessageViewport } from '@/hooks/use-message-viewport';
 import { classifyDerivation, type SessionDerivation } from '@shared/types/session-derivation';
 import { SessionFamilyNavigation } from '@/components/chat/SessionFamilyNavigation';
+import { MessageReferenceProvider } from '@/components/assistant-render/MessageReferences';
+import { maskChatSecrets } from '@/lib/chat-display-text';
 import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
 import { useSessionReadingPosition } from './use-session-reading-position';
 import { getTranscriptEntryId } from '@/lib/session-read-model';
@@ -49,6 +51,7 @@ import { useProviderStore } from '@/stores/providers';
 import { useSettingsStore } from '@/stores/settings';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { isSessionIntentFresh, useSessionIntentStore } from '@/stores/session-intent';
+import { parseSessionCollaborationQuery } from '@shared/types/session-collaboration';
 import {
   ARTIFACT_PANEL_MAX_WIDTH,
   ARTIFACT_PANEL_MIN_WIDTH,
@@ -706,6 +709,20 @@ function KnowledgeErrorAdvisoryCard({
   );
 }
 
+const composerDraftsByScope = new Map<string, { value: string }>();
+const composerDraftListeners = new Set<() => void>();
+
+function subscribeComposerDrafts(listener: () => void) {
+  composerDraftListeners.add(listener);
+  return () => { composerDraftListeners.delete(listener); };
+}
+
+function releasePersistedComposerDraft(scope: string, record: { value: string }) {
+  if (composerDraftsByScope.get(scope) !== record) return;
+  composerDraftsByScope.delete(scope);
+  for (const listener of composerDraftListeners) listener();
+}
+
 export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {}) {
   const { t } = useTranslation(['chat', 'common']);
   const navigate = useNavigate();
@@ -764,9 +781,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const createWorkspace = useWorkspacesStore((s) => s.createWorkspace);
   const saveWorkspaceState = useWorkspacesStore((s) => s.saveWorkspaceState);
   const setPermissionMode = useWorkspacesStore((s) => s.setPermissionMode);
-  /** Cross-surface intents (today: handoff started from the sidebar menu). */
-  const sessionIntent = useSessionIntentStore((s) => s.intent);
-  const clearSessionIntent = useSessionIntentStore((s) => s.clear);
+  const sessionIntent = useSessionIntentStore((state) => state.intent);
+  const consumeSessionIntent = useSessionIntentStore((state) => state.consume);
 
   const [knowledgeScope, setKnowledgeScope] = useState<WorkspaceKnowledgeScope>('none');
   const [knowledgeMode, setKnowledgeMode] = useState<KnowledgeInvocationMode>('suggest');
@@ -854,7 +870,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   });
   const skipNextWorkspaceStateSaveRef = useRef(false);
   const draftSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pendingWorkspaceSaveRef = useRef<{ id: string; sessionKey: string; state: WorkspaceUiState } | null>(null);
+  const pendingWorkspaceSaveRef = useRef<(() => Promise<void>) | null>(null);
   const pendingViewSaveRef = useRef<(() => Promise<void>) | null>(null);
   const [gitRevision, setGitRevision] = useState(0);
   const handleGitChanged = useCallback(() => {
@@ -951,6 +967,46 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const controlScopeRef = useRef<object | null>(controlScope);
   controlScopeRef.current = controlScope;
   const isCurrentControlScope = useCallback(() => controlScopeRef.current === controlScope, [controlScope]);
+  const collaborationControl = sessionIntent?.kind === 'collaboration-control' &&
+    isSessionIntentFresh(sessionIntent) && sessionIntent.sessionKey === currentSessionKey &&
+    sessionIntent.scope.workspaceId === activeWorkspace?.id && sessionIntent.scope.sessionGeneration === controlGeneration
+    ? sessionIntent : null;
+  const [verifiedGuide, setVerifiedGuide] = useState<typeof collaborationControl>(null);
+  useEffect(() => {
+    const intent = collaborationControl;
+    if (intent?.action !== 'guide' || !intent.runId) return;
+    let current = true;
+    const query = parseSessionCollaborationQuery({ requester: intent.requester, target: intent.scope, limit: 1, fields: ['run'] });
+    void Promise.all([
+      hostApi.sessionActivity.query(query),
+      hostApi.sessions.longTaskControlStatus({ sessionKey: intent.scope.sessionKey, agentId: currentAgentId }),
+    ]).then(([result, status]) => {
+      if (!current || !isCurrentControlScope() || !isSessionIntentFresh(intent)) return;
+      const run = result.page?.items[0]?.sources.run;
+      if (result.page?.state === 'ready' && run?.state === 'ready' && run.value?.runId === intent.runId &&
+          status.success && status.latestCheckpoint?.taskLedgerRootId) {
+        setLongTaskControlStatus(status);
+        setVerifiedGuide(intent);
+      } else if (consumeSessionIntent(intent)) {
+        toast.error(status.success && !status.latestCheckpoint?.taskLedgerRootId
+          ? t('composer.intervention.longTaskRequired') : t('operationGenerationUnavailable'));
+      }
+    }).catch(() => {
+      if (current && isCurrentControlScope() && consumeSessionIntent(intent)) toast.error(t('operationGenerationUnavailable'));
+    });
+    return () => { current = false; };
+  }, [collaborationControl, consumeSessionIntent, currentAgentId, isCurrentControlScope, t]);
+  const consumeCollaborationControl = useCallback(() => {
+    if (!collaborationControl || !isCurrentControlScope() || !isSessionIntentFresh(collaborationControl)) return false;
+    const chat = useChatStore.getState();
+    const { scope, runId } = collaborationControl;
+    if (useWorkspacesStore.getState().activeWorkspaceId !== scope.workspaceId ||
+        chat.currentSessionKey !== scope.sessionKey ||
+        chat.sessions.find(session => session.key === scope.sessionKey)?.sessionId !== scope.sessionGeneration ||
+        (runId && chat.activeRunId && chat.activeRunId !== runId) ||
+        (collaborationControl.action === 'guide' && verifiedGuide !== collaborationControl)) return false;
+    return consumeSessionIntent(collaborationControl) !== null;
+  }, [collaborationControl, consumeSessionIntent, isCurrentControlScope, verifiedGuide]);
   useEffect(() => {
     let cancelled = false;
     setHandoffOperation(null);
@@ -976,10 +1032,18 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     setHandoffBusy(false);
     return () => { if (controlScopeRef.current === controlScope) controlScopeRef.current = null; };
   }, [controlScope]);
-  const [composerDraft, setComposerDraft] = useState('');
+  const composerDraftScope = JSON.stringify([activeWorkspace?.id ?? null, currentSessionKey]);
+  const recordedComposerDraft = useSyncExternalStore(subscribeComposerDrafts, () => composerDraftsByScope.get(composerDraftScope));
+  const composerDraft = recordedComposerDraft?.value ?? (activeWorkspace && workspaceOwnsSession(activeWorkspace, currentSessionKey)
+    ? getWorkspaceSessionState(activeWorkspace, currentSessionKey).draftInput ?? '' : '');
+  const setComposerDraft = useCallback((value: string, scope = composerDraftScope) => {
+    const record = { value };
+    composerDraftsByScope.set(scope, record);
+    for (const listener of composerDraftListeners) listener();
+    return record;
+  }, [composerDraftScope]);
   const [executionBusy, setExecutionBusy] = useState(false);
   const [worktreeProgress, setWorktreeProgress] = useState<WorktreeCreationProgressState | null>(null);
-  const composerDraftRevision = useRef(0);
   const draftEditedSessionsRef = useRef(new Set<string>());
   const [composerPaused, setComposerPaused] = useState(false);
   const pauseComposerPendingRef = useRef(false);
@@ -1070,7 +1134,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       lastRestoredWorkspaceIdRef.current = nextWorkspace?.id ?? targetWorkspace.id;
       lastObservedSessionKeyRef.current = target.sessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-      setComposerDraft('');
       setRunActivityExpandedOverrides({});
       setRunActivityStepDetailsExpanded({});
       setContextRange(null);
@@ -1096,7 +1159,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       lastRestoredWorkspaceIdRef.current = nextWorkspace.id;
       lastObservedSessionKeyRef.current = target.sessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-      setComposerDraft('');
       setRunActivityExpandedOverrides({});
       setRunActivityStepDetailsExpanded({});
       setContextRange(null);
@@ -1139,7 +1201,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     setLiveUsage(null);
     resetSessionView(nextSessionKey);
     if (target.isFresh) {
-      setComposerDraft('');
       setRunActivityExpandedOverrides({});
       setRunActivityStepDetailsExpanded({});
       setKnowledgeScope('none');
@@ -1171,7 +1232,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       : null;
     lastObservedSessionKeyRef.current = nextSessionKey;
     workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-    setComposerDraft('');
     setComposerPaused(false);
     setRunActivityExpandedOverrides({});
     setRunActivityStepDetailsExpanded({});
@@ -1233,7 +1293,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         lastRestoredWorkspaceIdRef.current = nextWorkspace?.id ?? null;
         lastObservedSessionKeyRef.current = nextSessionKey;
         workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-        setComposerDraft('');
         setRunActivityExpandedOverrides({});
         setRunActivityStepDetailsExpanded({});
         setContextRange(null);
@@ -1417,7 +1476,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       workspaceId: activeWorkspace.id,
       sessionKey: currentSessionKey,
     };
-    setComposerDraft(sessionState.draftInput ?? '');
     setComposerPaused(sessionState.composerRunState === 'paused');
     setRunActivityExpandedOverrides({
       ...(sessionState.graphExpanded ?? {}),
@@ -1432,7 +1490,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
      * falls back to the workspace-level blob for legacy profiles, which made one
      * session's open panel reappear in every other session of that project. */
     restoreArtifactPanelState(activeWorkspace.sessionStates?.[currentSessionKey]?.artifactPanel ?? { open: false });
-  }, [activeWorkspace, currentSessionKey, restoreArtifactPanelState]);
+  }, [activeWorkspace, composerDraftScope, currentSessionKey, restoreArtifactPanelState]);
 
   useEffect(() => {
     if (!activeWorkspace?.id || activeWorkspace.activeSessionKey === currentSessionKey) return;
@@ -1452,17 +1510,23 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
 
   const handleComposerDraftChange = useCallback((value: string) => {
     draftEditedSessionsRef.current.add(currentSessionKey);
-    composerDraftRevision.current += 1;
-    setComposerDraft(value);
+    const record = setComposerDraft(value);
     if (!activeWorkspace?.id) return;
     if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
-    const pending = { id: activeWorkspace.id, sessionKey: currentSessionKey, state: captureCurrentWorkspaceSessionState(value) };
-    pendingWorkspaceSaveRef.current = pending;
+    const input = { id: activeWorkspace.id, sessionKey: currentSessionKey, state: captureCurrentWorkspaceSessionState(value) };
+    const scope = composerDraftScope;
+    const save = () => saveWorkspaceState(input)
+      .then(() => releasePersistedComposerDraft(scope, record))
+      .catch(error => {
+        if (composerDraftsByScope.get(scope) === record && useWorkspacesStore.getState().activeWorkspaceId === input.id
+          && useChatStore.getState().currentSessionKey === input.sessionKey) toastUserError(error);
+      });
+    pendingWorkspaceSaveRef.current = save;
     draftSaveTimerRef.current = setTimeout(() => {
-      if (pendingWorkspaceSaveRef.current === pending) pendingWorkspaceSaveRef.current = null;
-      void saveWorkspaceState(pending);
+      if (pendingWorkspaceSaveRef.current === save) pendingWorkspaceSaveRef.current = null;
+      void save();
     }, 250);
-  }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, currentSessionKey, saveWorkspaceState]);
+  }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, composerDraftScope, currentSessionKey, saveWorkspaceState, setComposerDraft]);
 
   const handleKnowledgeScopeChange = useCallback((scope: WorkspaceKnowledgeScope) => {
     setKnowledgeScope(scope);
@@ -1888,7 +1952,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       if (timer.current) clearTimeout(timer.current);
       // Pending data and closures retain the original workspace/session.
       const pending = draft.current;
-      if (pending) void useWorkspacesStore.getState().saveWorkspaceState(pending);
+      if (pending) void pending();
       else void view.current?.();
       draft.current = null;
       view.current = null;
@@ -2427,16 +2491,24 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
    * than fired late.
    */
   useEffect(() => {
-    if (!sessionIntent || sessionIntent.kind !== 'handoff') return;
+    if (!sessionIntent) return;
     if (!isSessionIntentFresh(sessionIntent)) {
-      clearSessionIntent();
+      consumeSessionIntent(sessionIntent);
       return;
     }
-    if (sessionIntent.sessionKey !== currentSessionKey) return;
-    if (!controlGeneration) return;
-    clearSessionIntent();
+    if (sessionIntent.sessionKey !== currentSessionKey || !controlGeneration) return;
+    if (sessionIntent.kind === 'collaboration-control') {
+      if (sessionIntent.action === 'interruptSend') return;
+      if (sessionIntent.scope.workspaceId !== activeWorkspace?.id || sessionIntent.scope.sessionGeneration !== controlGeneration) {
+        consumeSessionIntent(sessionIntent);
+        return;
+      }
+      if (collaborationControl?.action !== 'handoff' || !consumeCollaborationControl()) return;
+    } else if (!consumeSessionIntent(sessionIntent)) {
+      return;
+    }
     void handlePrepareHandoffRef.current?.();
-  }, [clearSessionIntent, controlGeneration, currentSessionKey, sessionIntent]);
+  }, [activeWorkspace?.id, collaborationControl, consumeCollaborationControl, consumeSessionIntent, controlGeneration, currentSessionKey, sessionIntent]);
 
   const handleCreateHandoffSession = useCallback(async () => {
     const draft = handoffDraft.trim();
@@ -2458,9 +2530,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       lastRestoredWorkspaceIdRef.current = activeWorkspace?.id ?? null;
       lastObservedSessionKeyRef.current = nextSessionKey;
       workspaceStateRestoreRef.current = { workspaceId: null, sessionKey: null };
-      setComposerDraft(draft);
+      const targetDraftScope = JSON.stringify([activeWorkspace?.id ?? null, nextSessionKey]);
+      const targetDraftVersion = setComposerDraft(draft, targetDraftScope);
       const revision = useChatStore.getState().viewRevision;
-      const draftRevision = composerDraftRevision.current;
       const targetGeneration = useChatStore.getState().sessions.find((session) => session.key === nextSessionKey)?.sessionId;
       const ownsView = () => controlScopeRef.current != null
         && useWorkspacesStore.getState().activeWorkspaceId === activeWorkspace?.id
@@ -2479,10 +2551,15 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       await sendMessage(draft, { idempotencyKey: handoffFirstSendKey(operationId), handoffOperationId: operationId });
       if (activeWorkspace?.id) {
         const checked = await hostApi.sessions.handoffOperation({ workspaceId: activeWorkspace.id, sessionKey: nextSessionKey, operationId, reconcile: true });
+        const accepted = checked.operation && ['accepted', 'sent'].includes(checked.operation.phase);
+        if (accepted && composerDraftsByScope.get(targetDraftScope) === targetDraftVersion) {
+          const clearedDraftVersion = setComposerDraft('', targetDraftScope);
+          await saveWorkspaceState({ id: activeWorkspace.id, sessionKey: nextSessionKey, state: { draftInput: '' } });
+          releasePersistedComposerDraft(targetDraftScope, clearedDraftVersion);
+        }
         if (!ownsView()) return;
         setHandoffOperation(checked.operation);
-        if (checked.operation && ['accepted', 'sent'].includes(checked.operation.phase)) {
-          if (composerDraftRevision.current === draftRevision) setComposerDraft('');
+        if (accepted) {
           toast.success(t('composer.handoff.toastCreated'));
         }
       }
@@ -2500,7 +2577,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     handoffOperation,
     showContinuityFailureToast,
     persistCurrentContinuitySourceSession,
+    saveWorkspaceState,
     sendMessage,
+    setComposerDraft,
     t,
   ]);
 
@@ -2680,6 +2759,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const pendingImageGeneration = executionProjection.pendingImageGeneration;
   const shouldClearStoreLifecycleFromHistory = executionProjection.shouldClearStoreLifecycleFromHistory;
   const inputRunActive = executionProjection.inputRunActive;
+  const requestedEditIndex = collaborationControl?.action === 'truncate' && isGatewayRunning && !inputRunActive
+    ? messages.findLastIndex(message => normalizeMessageRole(message.role) === 'user' &&
+      Boolean(getTranscriptEntryId(message)) && Boolean(extractText(message).trim())) : -1;
   const showStartupSetup = isEmpty && !inputRunActive && !composerPaused
     && !currentSession.hasActiveRun && !(currentSession.messageCount ?? 0)
     && !Object.values(runtimeRuns).some(run => run.sessionKey === currentSessionKey && run.startedAt != null);
@@ -2784,7 +2866,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     messageId?: string;
     messageIndex: number;
   }) => {
-    if (!isGatewayRunning || inputRunActive) return;
+    if (!isCurrentControlScope() || !isGatewayRunning || inputRunActive) return;
     void resendUserMessage({
       text: input.messageText,
       messageId: input.messageId,
@@ -2794,7 +2876,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       console.warn('[chat:resendUserMessage] failed', error);
       toast.error(t('messageActions.resendFailed'));
     });
-  }, [currentSessionKey, inputRunActive, isGatewayRunning, resendUserMessage, t]);
+  }, [currentSessionKey, inputRunActive, isCurrentControlScope, isGatewayRunning, resendUserMessage, t]);
   /* Per-row resend handlers, memoized so ChatMessage's React.memo holds across
    * parent re-renders. The inline arrow that used to live at the call site was
    * recreated on every render, which broke memo and forced AssistantMarkdown to
@@ -3137,13 +3219,16 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     return () => observer.disconnect();
   }, [currentSessionKey]);
   const scrollToMessageIndex = messageViewport.scrollToIndex;
+  useEffect(() => {
+    if (requestedEditIndex >= 0) scrollToMessageIndex(requestedEditIndex);
+  }, [requestedEditIndex, scrollToMessageIndex]);
   const messageNavItems = useMemo<MessageNavRailItem[]>(() => {
     const rows = visibleMessageRows;
     const users = rows.filter((row) => !row.hidden && isRealUserMessage(row.message));
     return users.map((row, ordinal) => {
       const end = users[ordinal + 1]?.index ?? messages.length;
       const reply = rows.findLast((candidate) => candidate.index > row.index && candidate.index < end && !candidate.hidden && candidate.message.role === 'assistant' && !candidate.suppressAssistantText);
-      const preview = (text: string, limit: number) => text.replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
+      const preview = (text: string, limit: number) => maskChatSecrets(text).replace(/```[\s\S]*?```/g, '').replace(/<[^>]*>/g, '').replace(/[*#`]/g, '').replace(/\s+/g, ' ').trim().slice(0, limit);
       return { id: getTranscriptEntryId(row.message), index: row.index, ordinal: ordinal + 1, title: preview(extractText(row.message), 110) || t('messageNav.jumpTo', { ordinal: ordinal + 1 }), response: reply ? preview(projectMessageRender(reply.message, { isUser: false, suppressAssistantText: reply.suppressAssistantText, suppressToolCards: reply.suppressToolCards, suppressReasoning: reply.suppressReasoning, textOverride: reply.textOverride }).displayText, 180) : undefined, completedAt: reply?.message.timestamp };
     });
   }, [visibleMessageRows, messages.length, t]);
@@ -3403,6 +3488,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
 
   return (
     <TooltipProvider>
+    <MessageReferenceProvider sessions={sessions} labels={sessionLabels} open={openFamilySession}>
     <div
       ref={splitContainerRef}
       data-testid="chat-page"
@@ -3492,6 +3578,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             onCheckpoints={() => setCheckpointsOpen(true)}
             checkpointsDisabled={sending || pendingFinal}
             onForkSession={handleForkSession}
+            requestFork={collaborationControl?.action === 'fork' ? consumeCollaborationControl : undefined}
+            requestMigration={collaborationControl?.action === 'migrate' ? consumeCollaborationControl : undefined}
             forkDisabled={forkDisabled}
             forkDisabledReason={forkDisabledReason}
             forkBusy={forkBusy}
@@ -3680,7 +3768,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         onAskKnowledge={askKnowledgeAboutReply}
                         canForkFromMessage={row.canForkFromMessage && !forkDisabled}
                         canResendUserMessage={isGatewayRunning && !inputRunActive}
-                        onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
+                        onResendUserMessage={getResendUserMessageHandler(getTranscriptEntryId(row.message) ?? row.message.id, row.index)}
+                        requestUserEdit={row.index === requestedEditIndex ? consumeCollaborationControl : undefined}
                         onForkFromMessage={handleForkFromMessage}
                         onCompactRange={handleCompactMessageRange}
                       />
@@ -3951,6 +4040,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </div>
       )}
       <ChatInput
+        requestGuide={collaborationControl?.action === 'guide' && verifiedGuide === collaborationControl ? () => {
+          if (!consumeCollaborationControl() || !collaborationControl.runId) return null;
+          return { scope: collaborationControl.scope, runId: collaborationControl.runId };
+        } : undefined}
+        runtimeRuns={runtimeRuns}
+        observedRunId={activeRunId}
         leadingContent={activeWorkspace && !isEmpty ? (
           <div className="mb-1 empty:hidden">
             <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} summaryOnly active sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenChangesReview} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
@@ -4288,6 +4383,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       </Dialog>
 
     </div>
+    </MessageReferenceProvider>
     </TooltipProvider>
   );
 }

@@ -1,4 +1,9 @@
 import { knowledgeHostApi } from './host-api/knowledge';
+import type { SessionActivityReadQuery } from '@shared/types/session-activity';
+import type { SessionCollaborationQuery } from '@shared/types/session-collaboration';
+import type { SessionCollaborationWatch } from '@shared/types/session-collaboration-watch';
+import type { SessionCollaborationMessageInput, SessionCollaborationMessageQuery } from '@shared/types/session-collaboration-message';
+import type { AutonomySessionScope } from '@shared/types/identity-scope';
 import type { SystemProjectRead } from '@shared/types/system-portfolio';
 import type { SystemControlChange } from '@shared/types/system-control';
 import type { ProjectConfigurationApply, ProjectConfigurationInput, ProjectConfigurationRecovery } from '@shared/project-configuration';
@@ -361,6 +366,7 @@ import type {
   SessionContextFoldProjectionResult,
   SessionListArchivedResult,
   SessionLongTaskControlHistoryPayload,
+  SessionLongTaskControlHistoryQuery,
   SessionLongTaskControlHistoryResult,
   SessionLongTaskControlPayload,
   SessionPermanentDeletePayload,
@@ -896,6 +902,10 @@ export const hostApi = {
   },
   sessionActivity: {
     snapshot: (input: SessionActivitySnapshotPayload) => invokeHost('sessionActivity', 'snapshot', input),
+    read: (input: SessionActivityReadQuery) => invokeHost('sessionActivity', 'read', input),
+    query: (input: SessionCollaborationQuery) => invokeHost('sessionActivity', 'query', input),
+    watch: (input: SessionCollaborationWatch) => invokeHost('sessionActivity', 'watch', input),
+    cancelWatch: (input: { id: string; query: SessionCollaborationQuery }) => invokeHost('sessionActivity', 'cancelWatch', input),
   },
   git: {
     init: (): Promise<GitOperationResult> => invokeHost('git', 'init'),
@@ -1496,6 +1506,7 @@ export const hostApi = {
     registerHtmlPreview: (html: string) => invokeHost('files', 'registerHtmlPreview', { html }),
   },
   media: {
+    linkPreview: (url: string, mode?: 'favicon') => invokeHost('media', 'linkPreview', mode ? { url, mode } : { url }),
     thumbnails: (input: { paths: MediaThumbnailEntry[] }) => invokeHost('media', 'thumbnails', input),
     saveImage: (input: SaveImagePayload) => invokeHost('media', 'saveImage', input),
     imageGenerationSettings: () => invokeHost('media', 'imageGenerationSettings'),
@@ -1508,6 +1519,9 @@ export const hostApi = {
     ),
   },
   sessions: {
+    collaborationSender: () => invokeHost('sessions', 'collaborationSender'),
+    collaborationMessages: (input: SessionCollaborationMessageQuery) => invokeHost('sessions', 'collaborationMessages', input),
+    sendCollaborationMessage: (input: SessionCollaborationMessageInput & { expectedSource: AutonomySessionScope }) => invokeHost('sessions', 'sendCollaborationMessage', input),
     dispatchSystemProject: (input: SystemProjectDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchSystemProject', input),
     dispatchPlanTask: (input: ProjectPlanDispatchPayload): Promise<SessionDelegationResult> => invokeHost('sessions', 'dispatchPlanTask', input),
     delegate: (input: SessionDelegationPayload): Promise<SessionDelegationResult> => (
@@ -1555,7 +1569,7 @@ export const hostApi = {
       invokeHost('sessions', 'longTaskControlStatus', input)
     ),
     longTaskControlHistory: (
-      input: SessionLongTaskControlHistoryPayload,
+      input: SessionLongTaskControlHistoryQuery,
     ): Promise<SessionLongTaskControlHistoryResult> => (
       invokeHost('sessions', 'longTaskControlHistory', input)
     ),

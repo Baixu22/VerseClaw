@@ -11,8 +11,8 @@ import { checkoutWriterSnapshot } from './worktree-writer.js';
 
 export type ExecutionTaskAuthorityBasis = TaskAuthorityBasis;
 
-function resolveAuthority(workspaceRoot: string) {
-  const resolution = resolveExecutionDomain(workspaceRoot);
+function resolveAuthority(workspaceRoot: string, readOnly = false) {
+  const resolution = resolveExecutionDomain(workspaceRoot, undefined, readOnly);
   if (resolution.state === "unavailable") throw new Error(resolution.reason);
   const registration = resolution.state === "registered" ? resolution.registration : null;
   const basis: ExecutionTaskAuthorityBasis = {
@@ -39,17 +39,17 @@ function basisSignature(basis: ExecutionTaskAuthorityBasis): string {
 }
 
 /** Instance-scoped access: registration changes never redirect a live TaskSystemStore. */
-export function createExecutionTaskAccess(workspaceRoot: string, expected?: ExecutionTaskAuthorityBasis): TaskAuthorityAccess & {
+export function createExecutionTaskAccess(workspaceRoot: string, expected?: ExecutionTaskAuthorityBasis, readOnly = false): TaskAuthorityAccess & {
   basis: ExecutionTaskAuthorityBasis;
 } {
-  const resolved = resolveAuthority(workspaceRoot);
+  const resolved = resolveAuthority(workspaceRoot, readOnly);
   const signature = basisSignature(resolved.basis);
   if (expected && signature !== basisSignature(expected)) throw new Error("TASK_AUTHORITY_STALE");
   let databaseIdentity = existsSync(resolved.domain.database) ? filesystemInstance(resolved.domain.database) : undefined;
   if (expected?.databaseIdentity && databaseIdentity !== expected.databaseIdentity) throw new Error('TASK_AUTHORITY_DATABASE_REPLACED');
   if (databaseIdentity) resolved.basis.databaseIdentity = databaseIdentity;
   const assertCurrent = () => {
-    const current = resolveAuthority(workspaceRoot);
+    const current = resolveAuthority(workspaceRoot, readOnly);
     if (signature !== basisSignature(current.basis)) throw new Error("TASK_AUTHORITY_STALE");
     if (existsSync(resolved.domain.database)) {
       const identity = filesystemInstance(resolved.domain.database);
@@ -80,7 +80,7 @@ export function createExecutionTaskAccess(workspaceRoot: string, expected?: Exec
     }),
     resolveRelated(root: string): TaskDomain {
       assertCurrent();
-      return resolveAuthority(root).domain;
+      return resolveAuthority(root, readOnly).domain;
     },
   };
 }

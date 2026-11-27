@@ -1,5 +1,11 @@
 **本方案把目标契约、执行资格和产物验收作为三个独立的事实。** 任务规划服务用户目标，运行尝试可以更换；领取记录负责决定当前谁能推进，完成事实由要求与实际证据逐项对应后产生。研发 Task Forest 只记录本工作树的实施节点。
 
+取消同时核对活动运行和未决效果。原运行结束或匹配会话代次的 Runtime 停止回执完成后，任务 owner 才结算取消；被释放的协调者使用精确 run 的停止入口，避免影响已换选的其它任务。心跳失效停止续租，原运行的终态清理仍保留。
+
+归档恢复消费 Runtime 的 previousSessionId 和新 sessionId，在任务事务内迁移绑定并提升 writer epoch；只读引用迁移代次而不领取写入资格。活跃运行、未知效果和未结算评审阻止 writer 迁移。恢复重试保持同一领取，显式暂停保持暂停状态。agent 恢复沿新运行已读取的暂停 epoch 继续，允许该运行自身的只读上下文记录，拒绝暂停前的旧运行。
+
+工具副作用分类集中在 shared/task-system/tool-policy.ts。Main 准入读取当前任务和原父任务的持久来源，事件提交使用不生成全量快照的 owner 入口；列表投影使用节点和链接索引合并。Renderer 将等待历史期间的后台发送写入目标会话缓存，迟到操作回调核对原作用域和读取代次。
+
 **采用这些机制的原因。**
 
 | 成熟设计 | 抽象到本项目的规则 | 明确取舍 |
@@ -16,6 +22,8 @@
 **执行资格有三个检查点。** claim 在 SQLite 单事务中产生；模型调用边界重新读契约并核验版本；实际受管工具在调用前登记操作并检查 epoch。会话身份由宿主给出，任务控制工具参数不能替换 session/generation。Fork 不继承 writer；handoff 在未知副作用消除或隔离后换代。同一 session 的两个 run 也会被持久的 active-run 记录区分。
 
 首次执行同样经过领取检查：工作树尚无任务库时，读取与讨论可以继续，首次受管副作用要求 agent 通过 `task_control` 创建或选择任务并领取。不能用“数据库还没创建”作为免除目标持久化的条件。
+
+本地工作区已有任务库时，首次 Runtime 初始化保留原 backend，不再自动创建 Git 仓库。Git 初始化与首次任务建库共享执行域屏障，保持协调者环境与任务身份一致；后续归档恢复按原任务迁移会话代次，显式环境变化继续接受严格校验。
 
 **跨工作树共享以仓库任务域为准。** linked worktree 与主检出通过 Git common directory 使用同一数据库。ordinary workspace 使用显式根目录。目标的持久 UUID 不包含工作树路径。现阶段是同机共享文件系统，不对不同 clone 或不同机器声称互斥；远程部署要将同一协议迁到单一协调服务，不能复制 SQLite 文件实现多主写入。
 
@@ -61,6 +69,8 @@
 - How to do distributed locking — Martin Kleppmann’s blog — https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
 - latest | The Kanban Guide | Kanban Guides — https://kanbanguides.org/the-kanban-guide/
 - Shift handover - HSE — https://www.hse.gov.uk/humanfactors/topics/shift-handover.htm
+
+**只读命令。** 无领取的会话可查询文件、记忆与会话历史。Git 差异和历史命令在子命令后先传入 `--no-textconv --no-ext-diff`，例如 `git diff --no-textconv --no-ext-diff -- src/`，以关闭仓库配置中的外部转换程序。请求外部分页、搜索预处理或 hostname helper 的命令需要有效任务领取。
 
 **会话优先交互。** 普通聊天由 agent 通过 `task_control.start` 定位目标并领取任务，讨论可以没有任务。`sessionTask` 按工作区、会话与 generation 读取绑定和子任务；任务与窗口事件合并刷新，旧作用域响应丢弃。读取失败保留陈旧状态并提供刷新。
 

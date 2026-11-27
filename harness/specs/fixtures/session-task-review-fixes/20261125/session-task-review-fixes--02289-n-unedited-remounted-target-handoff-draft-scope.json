@@ -1,0 +1,372 @@
+{
+  "driven_by": "agent",
+  "actor": "session-task-fixes-electron",
+  "provider": "local-scripted",
+  "editTarget": false,
+  "remount": true,
+  "stayTarget": true,
+  "status": "passed",
+  "restoredOwnerDraft": "Draft restored by the profile owner",
+  "targetSessionKey": "agent:main:session-1795616030057-7b631e88-5cc",
+  "selectedSessionKey": "agent:main:dashboard:7487b402-1c46-4900-b723-1231070cb55a",
+  "targetDraft": "Draft restored by the profile owner",
+  "history": {
+    "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc",
+    "sessionId": "0bec653c-81eb-4700-b2a5-64312e8fe99a",
+    "messages": [
+      {
+        "role": "user",
+        "content": "REVIEW-HANDOFF-SCOPE: continue the recorded source",
+        "timestamp": 1795616030547,
+        "idempotencyKey": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913:user",
+        "__openclaw": {
+          "id": "65bc4adc",
+          "recordTimestampMs": 1795616031708,
+          "seq": 1
+        }
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "HANDOFF-TARGET-ANSWER-FINISHED"
+          }
+        ],
+        "api": "openai-completions",
+        "provider": "custom-sessionc",
+        "model": "mock-coder",
+        "usage": {
+          "input": 120,
+          "output": 30,
+          "totalTokens": 150,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": {
+            "total": 0
+          }
+        },
+        "stopReason": "stop",
+        "timestamp": 1795616031735,
+        "__openclaw": {
+          "id": "36021f0c",
+          "recordTimestampMs": 1795616031749,
+          "seq": 2
+        }
+      }
+    ],
+    "defaults": {
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "contextTokens": 128000,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium"
+    },
+    "sessionInfo": {
+      "key": "agent:main:session-1795616030057-7b631e88-5cc",
+      "kind": "direct",
+      "displayName": "Verse Claw",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1795616032023,
+      "sessionId": "0bec653c-81eb-4700-b2a5-64312e8fe99a",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "inputTokens": 120,
+      "outputTokens": 30,
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "startedAt": 1795616031671,
+      "endedAt": 1795616031773,
+      "runtimeMs": 102,
+      "parentSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    },
+    "thinkingLevel": "medium"
+  },
+  "providerLog": [
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:13 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:HANDOFF-SCOPE-ANSWER-FINISHED"
+    },
+    {
+      "model": "mock-coder",
+      "turn": "[Wed 2026-11-25 22:13 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:HANDOFF-TARGET-ANSWER-FINISHED"
+    }
+  ],
+  "responses": [
+    {
+      "id": "396d836b-357d-4d96-87e7-cf9e7906b558",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operation": {
+          "id": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "workspaceId": "review-handoff-scope",
+          "agentId": "main",
+          "sourceSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "sourceGeneration": "d94cb8f5-77c7-46ec-86f6-8b3778fd5b66",
+          "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc",
+          "sessionGeneration": "0bec653c-81eb-4700-b2a5-64312e8fe99a",
+          "draftInput": "REVIEW-HANDOFF-SCOPE: continue the recorded source",
+          "draftDigest": "76e0e6b83bed48af6a350129ab2d1206e68ec429339c75952116a4b17e8c5b83",
+          "firstSendIdempotencyKey": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "phase": "ready",
+          "handoffDepth": 1,
+          "handoffRootSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "rootHandoffId": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "createdAt": "2026-11-25T14:13:50.057Z",
+          "updatedAt": "2026-11-25T14:13:50.210Z"
+        }
+      }
+    },
+    {
+      "id": "3ac2d6ac-e887-413b-a87d-54d0418cc90b",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operation": {
+          "id": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "workspaceId": "review-handoff-scope",
+          "agentId": "main",
+          "sourceSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "sourceGeneration": "d94cb8f5-77c7-46ec-86f6-8b3778fd5b66",
+          "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc",
+          "sessionGeneration": "0bec653c-81eb-4700-b2a5-64312e8fe99a",
+          "draftInput": "REVIEW-HANDOFF-SCOPE: continue the recorded source",
+          "draftDigest": "76e0e6b83bed48af6a350129ab2d1206e68ec429339c75952116a4b17e8c5b83",
+          "firstSendIdempotencyKey": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "phase": "accepted",
+          "handoffDepth": 1,
+          "handoffRootSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "rootHandoffId": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "createdAt": "2026-11-25T14:13:50.057Z",
+          "updatedAt": "2026-11-25T14:13:50.651Z",
+          "firstSendRequestDigest": "55c4518321de4c10a30ae118a9ffb99a409f6caf50a0c908eb1448d29572490b",
+          "error": null,
+          "receipt": {
+            "source": "gateway-ack",
+            "run": {
+              "runId": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+              "scope": {
+                "workspaceId": "review-handoff-scope",
+                "projectId": "review-handoff-scope",
+                "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "cb71b348-2d58-430a-8f9e-5988adcf677f",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operation": {
+          "id": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "workspaceId": "review-handoff-scope",
+          "agentId": "main",
+          "sourceSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "sourceGeneration": "d94cb8f5-77c7-46ec-86f6-8b3778fd5b66",
+          "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc",
+          "sessionGeneration": "0bec653c-81eb-4700-b2a5-64312e8fe99a",
+          "draftInput": "REVIEW-HANDOFF-SCOPE: continue the recorded source",
+          "draftDigest": "76e0e6b83bed48af6a350129ab2d1206e68ec429339c75952116a4b17e8c5b83",
+          "firstSendIdempotencyKey": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "phase": "accepted",
+          "handoffDepth": 1,
+          "handoffRootSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "rootHandoffId": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "createdAt": "2026-11-25T14:13:50.057Z",
+          "updatedAt": "2026-11-25T14:13:51.226Z",
+          "firstSendRequestDigest": "55c4518321de4c10a30ae118a9ffb99a409f6caf50a0c908eb1448d29572490b",
+          "error": null,
+          "receipt": {
+            "source": "gateway-ack",
+            "run": {
+              "runId": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+              "scope": {
+                "workspaceId": "review-handoff-scope",
+                "projectId": "review-handoff-scope",
+                "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "68acac32-15c9-4eb9-af2c-aac8ba3598ef",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operation": {
+          "id": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "workspaceId": "review-handoff-scope",
+          "agentId": "main",
+          "sourceSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "sourceGeneration": "d94cb8f5-77c7-46ec-86f6-8b3778fd5b66",
+          "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc",
+          "sessionGeneration": "0bec653c-81eb-4700-b2a5-64312e8fe99a",
+          "draftInput": "REVIEW-HANDOFF-SCOPE: continue the recorded source",
+          "draftDigest": "76e0e6b83bed48af6a350129ab2d1206e68ec429339c75952116a4b17e8c5b83",
+          "firstSendIdempotencyKey": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "phase": "accepted",
+          "handoffDepth": 1,
+          "handoffRootSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "rootHandoffId": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "createdAt": "2026-11-25T14:13:50.057Z",
+          "updatedAt": "2026-11-25T14:13:51.449Z",
+          "firstSendRequestDigest": "55c4518321de4c10a30ae118a9ffb99a409f6caf50a0c908eb1448d29572490b",
+          "error": null,
+          "receipt": {
+            "source": "gateway-ack",
+            "run": {
+              "runId": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+              "scope": {
+                "workspaceId": "review-handoff-scope",
+                "projectId": "review-handoff-scope",
+                "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "8fc7f026-1fb1-4a88-84a4-8767d97d4504",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operation": null
+      }
+    },
+    {
+      "id": "b213dad8-bac5-4aa9-a717-62c301bf266b",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operation": null
+      }
+    },
+    {
+      "id": "b872d519-474a-47ca-a266-18c2f70216fa",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operation": {
+          "id": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "workspaceId": "review-handoff-scope",
+          "agentId": "main",
+          "sourceSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "sourceGeneration": "d94cb8f5-77c7-46ec-86f6-8b3778fd5b66",
+          "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc",
+          "sessionGeneration": "0bec653c-81eb-4700-b2a5-64312e8fe99a",
+          "draftInput": "REVIEW-HANDOFF-SCOPE: continue the recorded source",
+          "draftDigest": "76e0e6b83bed48af6a350129ab2d1206e68ec429339c75952116a4b17e8c5b83",
+          "firstSendIdempotencyKey": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "phase": "sent",
+          "handoffDepth": 1,
+          "handoffRootSessionKey": "agent:main:session-1795616009994-reviewhandoffscope",
+          "rootHandoffId": "7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+          "createdAt": "2026-11-25T14:13:50.057Z",
+          "updatedAt": "2026-11-25T14:13:52.712Z",
+          "firstSendRequestDigest": "55c4518321de4c10a30ae118a9ffb99a409f6caf50a0c908eb1448d29572490b",
+          "error": null,
+          "receipt": {
+            "source": "transcript",
+            "run": {
+              "runId": "handoff-first:7b631e88-5ccb-4ffe-96b0-21caff1d3913",
+              "scope": {
+                "workspaceId": "review-handoff-scope",
+                "projectId": "review-handoff-scope",
+                "sessionKey": "agent:main:session-1795616030057-7b631e88-5cc"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

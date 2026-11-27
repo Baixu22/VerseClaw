@@ -1,6 +1,6 @@
 // @vitest-environment node
-import { createHash } from 'node:crypto';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { createHash, randomUUID } from 'node:crypto';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -29,7 +29,7 @@ import { createTaskLedgerApi } from '@electron/services/task-ledger-api';
 import { createWorkspacesApi } from '@electron/services/workspaces-api';
 import { readTaskLedgerEvents } from '@electron/services/task-ledger-service';
 import { handoffManagedSessionTask, startManagedSessionEffect } from '@electron/services/task-system-service';
-import { TaskSystemStore } from '@shared/task-system/store';
+import { normalizeTaskContract, TaskSystemStore } from '@shared/task-system/store';
 import { resolveTaskDomain } from '@shared/task-system/identity';
 import { createTaskRuntimeGuard, executeTaskGuarded, finishPersistentTaskRun } from '@shared/task-system/runtime';
 import { createPersistentTaskTool } from '../../openclaw_runtime/src/agents/tools/persistent-task-tool';
@@ -69,14 +69,14 @@ function startTask(sessionKey = parent, generation = 'generation-parent', object
 function request(sessionKey = parent, runId = 'run-parent', generation = 'generation-parent'): SessionTaskEffectRequest {
   return { requestId: runId + ':request', sessionKey, sessionGeneration: generation, runId, workspaceDir: state.root, toolName: 'write' };
 }
-function api(onRunRead?: (runId: string, readCount: number) => void) {
+function api(onRunRead?: (runId: string, readCount: number) => void | Promise<void>) {
   let readCount = 0;
   return createWorkspacesApi({ taskLedgerApi: ledger, gatewayManager: { rpc: vi.fn(async (method: string, payload: Record<string, string>) => {
     if (method === 'sessions.describe') return { session: { key: payload.key,
       sessionId: generations.get(payload.key) ?? 'generation-parent',
       hasActiveRun: payload.key === parent ? runs.get('run-parent')?.active === true : runs.get('run-child')?.active === true } };
     if (method !== 'taskScope.runState') throw new Error('Unexpected ' + method);
-    onRunRead?.(payload.runId, ++readCount);
+    await onRunRead?.(payload.runId, ++readCount);
     const run = runs.get(payload.runId) ?? (payload.processScope === 'session'
       ? runs.get(payload.sessionKey === parent ? 'run-parent' : 'run-child') : undefined);
     return { ...payload, currentGeneration: run?.generation ?? null, workspaceId: run?.workspaceId ?? 'workspace-a',
@@ -138,6 +138,73 @@ afterEach(async () => {
 });
 
 describe('first effect consumes the canonical execution contract', () => {
+  it('reads task admission by identity without a full Ledger snapshot', async () => {
+    startTask();
+    const snapshot = vi.spyOn(ledger, 'snapshot').mockRejectedValue(new Error('The admission attempted a full scan'));
+    try {
+      await expect(api().admitTaskEffect(request())).resolves.toMatchObject({ status: 'granted' });
+      expect(snapshot).not.toHaveBeenCalled();
+    } finally { snapshot.mockRestore(); }
+  });
+  it.each([1000, 10000])('keeps admission scoped with %s persisted task contracts', async (size) => {
+    const task = startTask();
+    const normalized = normalizeTaskContract({ objective: 'Historical scope fixture', target: 'owner-proof.json', constraints: [],
+      acceptance: [{ id: 'proof', description: 'Recorded fixture bytes', verification: { kind: 'file-sha256', path: 'owner-proof.json', sha256: proofSha256 } }] });
+    const fingerprint = createHash('sha256').update(JSON.stringify(normalized)).digest('hex');
+    const insert = tasks.db.prepare('INSERT INTO task_contracts VALUES(?,?,?,?,?,?)');
+    tasks.db.exec('BEGIN IMMEDIATE');
+    for (let index = 1; index < size; index++) {
+      const taskNodeId = randomUUID();
+      const fixture = { ...normalized, taskNodeId, domain: tasks.domain.id, revision: 1, digest: fingerprint, state: 'ready',
+        origin: { source: 'agent-scale-fixture', requestId: `fixture-${index}` }, createdAt: 1, updatedAt: 1 };
+      insert.run(taskNodeId, fingerprint, null, 'ready', 1, JSON.stringify(fixture));
+    }
+    tasks.db.exec('COMMIT');
+    const snapshot = vi.spyOn(ledger, 'snapshot').mockRejectedValue(new Error('Admission loaded the entire task list'));
+    const admissionMs = [] as number[];
+    try {
+      const owner = api();
+      for (let sample = 0; sample < 5; sample++) {
+        const started = performance.now();
+        const admitted = await owner.admitTaskEffect({ ...request(), requestId: `scale-${size}-${sample}` });
+        admissionMs.push(performance.now() - started);
+        expect(admitted.claim.taskNodeId).toBe(task.contract.taskNodeId);
+      }
+      expect(snapshot).not.toHaveBeenCalled();
+    } finally { snapshot.mockRestore(); }
+    const snapshotMs = [] as number[];
+    for (let sample = 0; sample < 3; sample++) {
+      const started = performance.now();
+      const result = await ledger.snapshot({ workspaceId: 'workspace-a' });
+      snapshotMs.push(performance.now() - started);
+      expect(result.snapshot.nodes).toHaveLength(size);
+    }
+    const directory = process.env.CLAWX_SESSION_TASK_REVIEW_METRICS_DIR;
+    if (directory) {
+      await mkdir(directory, { recursive: true });
+      await writeFile(join(directory, `scale-${size}.json`), JSON.stringify({ driven_by: 'agent', actor: 'session-task-fixes',
+        size, admissionMs, snapshotMs, fullSnapshotCallsDuringAdmission: 0 }, null, 2));
+    }
+  }, 30000);
+  it('restores the Workspace and Task owner generations before admitting the next run', async () => {
+    const task = startTask();
+    const live = api();
+    await live.admitTaskEffect(request());
+    const before = await binding();
+    await live.coordinatorLifecycle({ type: 'archive', workspaceId: 'workspace-a', sessionKey: parent });
+    generations.set(parent, 'generation-restored');
+    runs.set('run-parent', { active: false, quiescent: true, generation: 'generation-restored' });
+    await live.coordinatorLifecycle({ type: 'restore', workspaceId: 'workspace-a', sessionKey: parent,
+      previousSessionGeneration: 'generation-parent', sessionGeneration: 'generation-restored' });
+    const restored = await binding();
+    expect(restored).toMatchObject({ state: 'active', sessionGeneration: 'generation-restored', activeTaskNodeId: task.contract.taskNodeId });
+    expect(restored?.writerClaim).toBeUndefined();
+    expect(restored!.bindingRevision).toBeGreaterThan(before!.bindingRevision);
+    expect(tasks.binding(parent, 'generation-restored')?.claim?.epoch).toBe(task.claim!.epoch + 1);
+    expect(() => tasks.binding(parent, 'generation-parent')).toThrow('TASK_GENERATION_STALE');
+    runs.set('restored-run', { active: true, quiescent: false, generation: 'generation-restored' });
+    await expect(live.admitTaskEffect(request(parent, 'restored-run', 'generation-restored'))).resolves.toMatchObject({ status: 'granted' });
+  });
   it('rechecks a restrictive project permission before the next effect', async () => {
     startTask(); await api().admitTaskEffect(request());
     const document = JSON.parse(readFileSync(state.store, 'utf8'));
@@ -150,17 +217,14 @@ describe('first effect consumes the canonical execution contract', () => {
     let release!: () => void, entered!: () => void;
     const gate = new Promise<void>(done => { release = done; });
     const reached = new Promise<void>(done => { entered = done; });
-    const pausedLedger = { ...ledger, snapshot: async (...args: Parameters<typeof ledger.snapshot>) => { entered(); await gate; return ledger.snapshot(...args); } };
-    const live = api();
-    const original = ledger.snapshot;
-    ledger.snapshot = pausedLedger.snapshot;
+    const live = api(async (_runId, readCount) => { if (readCount === 1) { entered(); await gate; } });
     const admission = live.admitTaskEffect(request());
     await reached;
     let permissionCommitted = false;
     const update = Promise.resolve(live.update({ id: 'workspace-a', permissionMode: 'readOnly' })).then(result => { permissionCommitted = true; return result; });
     await new Promise(done => setTimeout(done, 20));
     expect(permissionCommitted).toBe(false);
-    ledger.snapshot = original; release();
+    release();
     await expect(admission).resolves.toMatchObject({ status: 'granted' });
     await update;
     await expect(live.admitTaskEffect({ ...request(), requestId: 'after-revocation' })).rejects.toThrow('TASK_SCOPE_PERMISSION_REVOKED');

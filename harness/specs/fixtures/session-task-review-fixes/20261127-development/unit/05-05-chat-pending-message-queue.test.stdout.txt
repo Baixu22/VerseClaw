@@ -1,0 +1,48 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > queues a message sent while a run is active instead of dropping it
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > delivers a displayed question response immediately without long-task inputMode
+[sendMessage] RPC result: success=true, runId=answer-1
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > does not report a model outage while the current runtime is waiting for permission
+[sendMessage] RPC result: success=true, runId=waiting-1
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > drains queued messages and sends them after the run ends
+[sendMessage] RPC result: success=undefined, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > does not queue long-task interventions (inputMode passes through)
+[sendMessage] RPC result: success=undefined, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > keeps a send to B in B during history loading (target cached: true)
+[sendMessage] RPC result: success=true, runId=run-b
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > keeps a send to B in B during history loading (target cached: false)
+[sendMessage] RPC result: success=true, runId=run-b
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > keeps a late resource denial out of the selected session
+[sendMessage] RPC result: success=false, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > does not write a delayed send into a reused session in another workspace
+[sendMessage] RPC result: success=true, runId=old-workspace-run
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > discards a successful reply after the target generation changed
+[sendMessage] RPC result: success=true, runId=old-run
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > settles the original cached send when its workspace was changed before failure
+[sendMessage] RPC result: success=false, runId=none
+
+stdout | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > cleans an old cached send after generation refresh without reviving its message
+[sendMessage] RPC result: success=true, runId=old-cached-run
+
+ ✓ tests/unit/chat-pending-message-queue.test.ts (12 tests) 1538ms
+     ✓ queues a message sent while a run is active instead of dropping it  1228ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  14:03:28
+   Duration  3.20s (transform 1.05s, setup 174ms, import 72ms, tests 1.54s, environment 790ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial/05-chat-pending-message-queue.test.json

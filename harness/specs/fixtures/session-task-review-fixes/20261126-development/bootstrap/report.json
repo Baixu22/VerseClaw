@@ -1,0 +1,44 @@
+{
+  "schema": "session-task-validation/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "candidate": {
+    "commit": "e6eb6b7528924d05f2a537be2730c05e3df04270",
+    "tree": "997119013921e9f7d160f09fc27b6ac6e292397d",
+    "base": "89ce35af1bc248a030b86ed2d17e25b6a6d8da81"
+  },
+  "group": "bootstrap",
+  "planSha256": "311a0934d3dc3e6fe1e446ea958b42f86086a4359810364d81f46ab685d414e5",
+  "started": "2026-11-26T13:48:20.799Z",
+  "steps": [
+    {
+      "id": "bootstrap",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-task-workspace-bootstrap.test.ts",
+        "--config",
+        "D:\\tmp\\session-task-relay-20261126-01a213b9\\vitest-r7.config.mts",
+        "--outputFile.json=D:\\tmp\\session-task-relay-20261126-01a213b9\\bootstrap1\\unit-results.json"
+      ],
+      "driven_by": "agent",
+      "actor": "codex/tf0950-relay",
+      "started": "2026-11-26T13:48:21.567Z",
+      "ended": "2026-11-26T13:48:27.780Z",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutPath": "D:\\tmp\\session-task-relay-20261126-01a213b9\\bootstrap1\\bootstrap\\bootstrap.stdout.log",
+      "stderrPath": "D:\\tmp\\session-task-relay-20261126-01a213b9\\bootstrap1\\bootstrap\\bootstrap.stderr.log",
+      "stdoutSha256": "e9f8d6d749a4abc974bc4bc1f1af76c4f21dc794b8c919d89dee04dbfbc52e30",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAfter": {
+        "commit": "e6eb6b7528924d05f2a537be2730c05e3df04270",
+        "tree": "997119013921e9f7d160f09fc27b6ac6e292397d",
+        "dirty": false
+      }
+    }
+  ],
+  "status": "passed",
+  "ended": "2026-11-26T13:48:27.978Z"
+}

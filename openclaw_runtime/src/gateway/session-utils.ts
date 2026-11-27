@@ -52,6 +52,7 @@ import {
 } from "../agents/subagent-run-liveness.js";
 import { listThinkingLevelOptions } from "../auto-reply/thinking.js";
 import { getRuntimeConfig } from "../config/io.js";
+import { loadExistingSqliteSessionStoreReadOnly } from '../config/sessions/store-sqlite.js';
 import { resolveAgentModelFallbackValues } from "../config/model-input.js";
 import { resolveStateDir } from "../config/paths.js";
 import {
@@ -935,7 +936,7 @@ export function resolveDeletedAgentIdFromSessionKey(
 
 export function loadSessionEntry(
   sessionKey: string,
-  opts?: { agentId?: string; clone?: boolean; skipCache?: boolean },
+  opts?: { agentId?: string; clone?: boolean; skipCache?: boolean; readOnly?: boolean },
 ) {
   const cfg = getRuntimeConfig();
   const key = normalizeOptionalString(sessionKey) ?? "";
@@ -945,6 +946,7 @@ export function loadSessionEntry(
     ...(opts?.clone === false ? { clone: false } : {}),
     ...(opts?.agentId ? { agentId: opts.agentId } : {}),
     ...(opts?.skipCache === true ? { skipCache: true } : {}),
+    ...(opts?.readOnly === true ? { readOnly: true, scanLegacyKeys: false } : {}),
   });
   const storePath = target.storePath;
   const store = target.store;
@@ -1358,6 +1360,7 @@ function resolveGatewaySessionStoreLookup(params: {
   clone?: boolean;
   skipCache?: boolean;
   initialStore?: Record<string, SessionEntry>;
+  readOnly?: boolean;
 }): {
   storePath: string;
   store: Record<string, SessionEntry>;
@@ -1371,7 +1374,9 @@ function resolveGatewaySessionStoreLookup(params: {
   };
   const loadOptions = { clone: params.clone, skipCache: params.skipCache };
   let selectedStorePath = fallback.storePath;
-  let selectedStore = params.initialStore ?? loadSessionStore(fallback.storePath, loadOptions);
+  const readStore = (storePath: string) => params.readOnly
+    ? loadExistingSqliteSessionStoreReadOnly(storePath) : loadSessionStore(storePath, loadOptions);
+  let selectedStore = params.initialStore ?? readStore(fallback.storePath);
   let selectedMatch = findFreshestStoreMatch(selectedStore, ...scanTargets);
   let selectedUpdatedAt = selectedMatch?.entry.updatedAt ?? Number.NEGATIVE_INFINITY;
 
@@ -1380,7 +1385,7 @@ function resolveGatewaySessionStoreLookup(params: {
     if (!candidate) {
       continue;
     }
-    const store = loadSessionStore(candidate.storePath, loadOptions);
+    const store = readStore(candidate.storePath);
     const match = findFreshestStoreMatch(store, ...scanTargets);
     if (!match) {
       continue;
@@ -1487,9 +1492,10 @@ export function resolveGatewaySessionStoreTargetWithStore(params: {
   skipCache?: boolean;
   scanLegacyKeys?: boolean;
   store?: Record<string, SessionEntry>;
+  readOnly?: boolean;
 }): GatewaySessionStoreTargetWithStore {
   const key = normalizeOptionalString(params.key) ?? "";
-  const explicitDeletedMainTarget = resolveExplicitDeletedLegacyMainStoreTarget({
+  const explicitDeletedMainTarget = params.readOnly ? null : resolveExplicitDeletedLegacyMainStoreTarget({
     cfg: params.cfg,
     key,
     clone: params.clone,
@@ -1517,6 +1523,7 @@ export function resolveGatewaySessionStoreTargetWithStore(params: {
     clone: params.clone,
     skipCache: params.skipCache,
     initialStore: params.store,
+    readOnly: params.readOnly,
   });
 
   if (canonicalKey === "global" || canonicalKey === "unknown") {

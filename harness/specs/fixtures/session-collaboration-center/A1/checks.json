@@ -1,0 +1,852 @@
+{
+  "required": [
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/session-collaboration-identity.test.ts",
+        "tests/unit/session-activity-store-scope.test.ts",
+        "tests/unit/session-family-read-model.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/session-activity-background-read.test.ts",
+        "tests/unit/session-generation-freshness.test.ts",
+        "tests/unit/durable-task-system.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/session-collaboration-A1-20261124/unit-final-r2/vitest.json"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/session-collaboration-identity.test.ts",
+        "tests/unit/session-activity-store-scope.test.ts",
+        "tests/unit/session-family-read-model.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/session-activity-background-read.test.ts",
+        "tests/unit/session-generation-freshness.test.ts",
+        "tests/unit/durable-task-system.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/session-collaboration-A1-20261124/unit-final-r2/vitest.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:36:08.768867+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 4571021312,
+      "pid": 16712,
+      "exitCode": 0,
+      "durationSeconds": 22.781,
+      "peakObservedRssBytes": 903577600,
+      "finishedAt": "2026-11-24T05:36:31.542576+00:00",
+      "availableMemoryAfter": 4831330304,
+      "stdout.logSha256": "996d9e530a44ccee332425509dd63cefba319232a75265c86b53a3c0e5299fe7",
+      "stderr.logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:39:50.057180+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 3109892096,
+      "pid": 32716,
+      "exitCode": 0,
+      "durationSeconds": 115.406,
+      "peakObservedRssBytes": 6326902784,
+      "finishedAt": "2026-11-24T05:41:45.481085+00:00",
+      "availableMemoryAfter": 6880755712,
+      "stdout.logSha256": "9b36af5f1513d07f3aaaa6b72031682e4a4cebe3f0c1c79b8e847a3524863157",
+      "stderr.logSha256": "f2e7f65dfb997e4f5b690711e61a6f0998a1c5bf3e1825f83cad573e0ad5611a"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "run",
+        "contract:check"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "contract:check"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:43:54.913371+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 1964544000,
+      "pid": 3228,
+      "exitCode": 0,
+      "durationSeconds": 2.625,
+      "peakObservedRssBytes": 351387648,
+      "finishedAt": "2026-11-24T05:43:57.537804+00:00",
+      "availableMemoryAfter": 3037016064,
+      "stdout.logSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderr.logSha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "run",
+        "comms:replay"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:43:58.032347+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 2973540352,
+      "pid": 32588,
+      "exitCode": 0,
+      "durationSeconds": 1.031,
+      "peakObservedRssBytes": 179490816,
+      "finishedAt": "2026-11-24T05:43:59.064536+00:00",
+      "availableMemoryAfter": 2868035584,
+      "stdout.logSha256": "1ee46956c0ba3ff01931b7b063bb13d4be58499495ba20e2f6ef9728370cc881",
+      "stderr.logSha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "run",
+        "comms:compare"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:43:59.501205+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 2807201792,
+      "pid": 38068,
+      "exitCode": 0,
+      "durationSeconds": 0.532,
+      "peakObservedRssBytes": 39051264,
+      "finishedAt": "2026-11-24T05:44:00.036441+00:00",
+      "availableMemoryAfter": 2762760192,
+      "stdout.logSha256": "7ac2813911908d3b19f21bbb2126e3c75d0852b007b50e8c4b6282ade8cc43a9",
+      "stderr.logSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-identity-read-model.md"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-identity-read-model.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:44:00.512651+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 2723971072,
+      "pid": 6852,
+      "exitCode": 0,
+      "durationSeconds": 2.078,
+      "peakObservedRssBytes": 410710016,
+      "finishedAt": "2026-11-24T05:44:02.597719+00:00",
+      "availableMemoryAfter": 2547875840,
+      "stdout.logSha256": "f80d6cd46c9185f62d61cb0479c634231e207a7a986c34a7b08fab85d72946e4",
+      "stderr.logSha256": "d61a6be7f0a2c755d7b2db30aaec81677701e65c0bd03799819418f85126a6e7"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-identity-read-model.md",
+        "--dry-run"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-collaboration-identity-read-model.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:50:09.644728+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 4929744896,
+      "pid": 32236,
+      "exitCode": 0,
+      "durationSeconds": 2.063,
+      "peakObservedRssBytes": 393023488,
+      "finishedAt": "2026-11-24T05:50:11.712058+00:00",
+      "availableMemoryAfter": 4920070144,
+      "stdout.logSha256": "83aec3289219d106def0137014d8690228c039c4497ad848077b0d30436d9fdc",
+      "stderr.logSha256": "398d814a92a11a85f16463c235cc87cbfdb5ad890db8b76dc6382bfd692b04fa"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "cfa2ac31794d9014645d250811a523e06a619143",
+        "HEAD"
+      ],
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "cfa2ac31794d9014645d250811a523e06a619143",
+        "HEAD"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:44:05.568846+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 2307637248,
+      "pid": 19504,
+      "exitCode": 0,
+      "durationSeconds": 0.531,
+      "peakObservedRssBytes": 7909376,
+      "finishedAt": "2026-11-24T05:44:06.088308+00:00",
+      "availableMemoryAfter": 2266419200,
+      "stdout.logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "exec",
+        "eslint",
+        "shared/types/session-activity.ts",
+        "shared/task-system/store.ts",
+        "shared/host-api/contract.ts",
+        "electron/services/session-activity-api.ts",
+        "src/lib/host-api.ts",
+        "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+        "openclaw_runtime/src/gateway/session-utils.ts",
+        "openclaw_runtime/src/agents/execution-domain.ts",
+        "openclaw_runtime/src/agents/execution-task-authority.ts",
+        "tests/unit/session-collaboration-identity.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "eslint",
+        "shared/types/session-activity.ts",
+        "shared/task-system/store.ts",
+        "shared/host-api/contract.ts",
+        "electron/services/session-activity-api.ts",
+        "src/lib/host-api.ts",
+        "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+        "openclaw_runtime/src/gateway/session-utils.ts",
+        "openclaw_runtime/src/agents/execution-domain.ts",
+        "openclaw_runtime/src/agents/execution-task-authority.ts",
+        "tests/unit/session-collaboration-identity.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:44:06.595809+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 2261598208,
+      "pid": 41760,
+      "exitCode": 0,
+      "durationSeconds": 5.188,
+      "peakObservedRssBytes": 632209408,
+      "finishedAt": "2026-11-24T05:44:11.778446+00:00",
+      "availableMemoryAfter": 1877626880,
+      "stdout.logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "schemaVersion": 1,
+      "driven_by": "agent",
+      "actor": "codex-tf0919",
+      "command": [
+        "pnpm",
+        "run",
+        "repo:artifacts:check"
+      ],
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "repo:artifacts:check"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+      "candidate": {
+        "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+        "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+        "dirty": false,
+        "changes": []
+      },
+      "startedAt": "2026-11-24T05:44:12.232872+00:00",
+      "temp": "D:/tmp",
+      "nodeHeapMiB": 768,
+      "GOMAXPROCS": 2,
+      "GOMEMLIMIT": "768MiB",
+      "availableMemoryBefore": 1836716032,
+      "pid": 8392,
+      "exitCode": 0,
+      "durationSeconds": 5.234,
+      "peakObservedRssBytes": 209252352,
+      "finishedAt": "2026-11-24T05:44:17.470248+00:00",
+      "availableMemoryAfter": 1066442752,
+      "stdout.logSha256": "2d0ab8c2c0e72a98f7a700a82e3cc23e01f28acb01ae2a1446a4c7d22ee20c6e",
+      "stderr.logSha256": "f62d1dbbb5220d55c5deff1fc44b06476881b770066fcf3c9d0ecb2c407bb252"
+    }
+  ],
+  "typecheck": {
+    "success": true,
+    "mode": "parallel",
+    "testTypes": {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 73147,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    },
+    "cache": {
+      "enabled": false,
+      "status": "disabled",
+      "key": null,
+      "inputCount": 0,
+      "report": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX\\artifacts\\typecheck-cache\\report.json"
+    },
+    "totalDurationMs": 114459,
+    "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+    "results": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 44
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 41261
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 13247
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 73147,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  },
+  "harness": {
+    "specPath": "harness\\specs\\tasks\\session-collaboration-identity-read-model.md",
+    "scenario": "gateway-backend-communication",
+    "taskType": "runtime-bridge",
+    "startedAt": "2026-11-24T05:50:10.594Z",
+    "finishedAt": "2026-11-24T05:50:11.158Z",
+    "changedFiles": [
+      "docs/modules/multi-agent-and-tasks.md",
+      "docs/modules/sessions.md",
+      "electron/services/session-activity-api.ts",
+      "harness/specs/scenarios/session-collaboration-center.md",
+      "harness/specs/tasks/session-collaboration-identity-read-model.md",
+      "openclaw_runtime/src/agents/execution-domain.ts",
+      "openclaw_runtime/src/agents/execution-task-authority.ts",
+      "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "openclaw_runtime/src/gateway/session-utils.ts",
+      "shared/host-api/contract.ts",
+      "shared/task-system/store.ts",
+      "shared/types/session-activity.ts",
+      "src/lib/host-api.ts",
+      "tests/unit/host-api-facade.test.ts",
+      "tests/unit/session-collaboration-identity.test.ts"
+    ],
+    "residualPaths": [],
+    "ownership": {
+      "checked": true,
+      "covered": [
+        "docs/modules/multi-agent-and-tasks.md",
+        "docs/modules/sessions.md",
+        "electron/services/session-activity-api.ts",
+        "harness/specs/scenarios/session-collaboration-center.md",
+        "harness/specs/tasks/session-collaboration-identity-read-model.md",
+        "openclaw_runtime/src/agents/execution-domain.ts",
+        "openclaw_runtime/src/agents/execution-task-authority.ts",
+        "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+        "openclaw_runtime/src/gateway/session-utils.ts",
+        "shared/host-api/contract.ts",
+        "shared/task-system/store.ts",
+        "shared/types/session-activity.ts",
+        "src/lib/host-api.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/session-collaboration-identity.test.ts"
+      ],
+      "residual": [],
+      "uncovered": []
+    },
+    "selectedProfiles": [
+      "fast",
+      "comms"
+    ],
+    "steps": [
+      {
+        "profile": "rules",
+        "name": "Backend communication boundary scan",
+        "status": "pass",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Generate extension bridge",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "ext:bridge"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Lint without autofix",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "lint:check"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Typecheck",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "typecheck"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "fast",
+        "name": "Unit tests",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "test"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "comms",
+        "name": "Comms replay",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "comms:replay"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      },
+      {
+        "profile": "comms",
+        "name": "Comms compare",
+        "command": "pnpm",
+        "args": [
+          "-w",
+          "run",
+          "comms:compare"
+        ],
+        "status": "skipped",
+        "exitCode": 0,
+        "durationMs": 0
+      }
+    ],
+    "failures": [],
+    "result": "pass"
+  },
+  "commsReplay": {
+    "schema": "comms-replay-metrics/v1",
+    "generated_at": "2026-11-24T05:43:58.434Z",
+    "candidate": {
+      "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+      "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6"
+    },
+    "scenario": "all",
+    "scenarios": {
+      "gateway-restart-during-run": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.4166666666666667,
+        "rpc_p50_ms": 240,
+        "rpc_p95_ms": 240,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 1,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.4,
+          "total_gateway_events": 4,
+          "unique_gateway_events": 4,
+          "total_rpc_calls": 1
+        }
+      },
+      "happy-path-chat": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.2857142857142857,
+        "rpc_p50_ms": 180,
+        "rpc_p95_ms": 180,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 0,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 3.5,
+          "total_gateway_events": 3,
+          "unique_gateway_events": 3,
+          "total_rpc_calls": 1
+        }
+      },
+      "history-overlap-guard": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 1,
+        "rpc_p50_ms": 95,
+        "rpc_p95_ms": 95,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 0,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2,
+          "total_gateway_events": 2,
+          "unique_gateway_events": 2,
+          "total_rpc_calls": 1
+        }
+      },
+      "invalid-config-patch-recovered": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.4166666666666667,
+        "rpc_p50_ms": 110,
+        "rpc_p95_ms": 130,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 1,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.4,
+          "total_gateway_events": 3,
+          "unique_gateway_events": 3,
+          "total_rpc_calls": 2
+        }
+      },
+      "multi-agent-channel-switch": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 0,
+        "history_load_qps": 0,
+        "rpc_p50_ms": 210,
+        "rpc_p95_ms": 240,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 0,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.1,
+          "total_gateway_events": 5,
+          "unique_gateway_events": 5,
+          "total_rpc_calls": 2
+        }
+      },
+      "network-degraded": {
+        "duplicate_event_rate": 0,
+        "event_fanout_ratio": 1,
+        "history_inflight_max": 1,
+        "history_load_qps": 0.35714285714285715,
+        "rpc_p50_ms": 420,
+        "rpc_p95_ms": 820,
+        "rpc_timeout_rate": 0,
+        "gateway_reconnect_count": 1,
+        "message_loss_count": 0,
+        "message_order_violation_count": 0,
+        "_meta": {
+          "duration_sec": 2.8,
+          "total_gateway_events": 3,
+          "unique_gateway_events": 3,
+          "total_rpc_calls": 2
+        }
+      }
+    },
+    "aggregate": {
+      "duplicate_event_rate": 0,
+      "event_fanout_ratio": 1,
+      "history_inflight_max": 1,
+      "history_load_qps": 0.41269841269841273,
+      "rpc_p50_ms": 209.16666666666666,
+      "rpc_p95_ms": 284.1666666666667,
+      "rpc_timeout_rate": 0,
+      "gateway_reconnect_count": 3,
+      "message_loss_count": 0,
+      "message_order_violation_count": 0
+    }
+  },
+  "commsCompare": {
+    "schema": "comms-compare-report/v1",
+    "generated_at": "2026-11-24T05:43:59.922Z",
+    "candidate": {
+      "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+      "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6"
+    },
+    "replay_candidate": {
+      "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+      "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6"
+    },
+    "result": "PASS",
+    "failures": [],
+    "rows": [
+      "| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |",
+      "| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |",
+      "| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |",
+      "| history_inflight_max | 1.0000 | <= 1 | PASS |",
+      "| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |",
+      "| message_loss_count | 0.0000 | <= 0 | PASS |",
+      "| message_order_violation_count | 0.0000 | <= 0 | PASS |",
+      "| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |",
+      "| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |"
+    ]
+  },
+  "baselineCi": {
+    "schemaVersion": 1,
+    "driven_by": "agent",
+    "actor": "codex-tf0919",
+    "command": [
+      "pnpm",
+      "run",
+      "harness:ci"
+    ],
+    "argv": [
+      "C:/Program Files/nodejs/node.exe",
+      "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+      "run",
+      "harness:ci"
+    ],
+    "cwd": "C:\\Users\\27933\\.codex\\worktrees\\23e5\\ClawX",
+    "candidate": {
+      "commit": "4dc12b110521ed89a74150ead1332151e1f3bde9",
+      "tree": "b6ef775c140dfc0476dfd0129390f5e03e9e15e6",
+      "dirty": false,
+      "changes": []
+    },
+    "startedAt": "2026-11-24T05:44:18.082202+00:00",
+    "temp": "D:/tmp",
+    "nodeHeapMiB": 768,
+    "GOMAXPROCS": 2,
+    "GOMEMLIMIT": "768MiB",
+    "availableMemoryBefore": 984743936,
+    "pid": 45392,
+    "exitCode": 1,
+    "durationSeconds": 30.015,
+    "peakObservedRssBytes": 711184384,
+    "finishedAt": "2026-11-24T05:44:48.093872+00:00",
+    "availableMemoryAfter": 1997312000,
+    "stdout.logSha256": "2cfad25cb3d8394ee231d1d5002cc62ecbc7bd10c6f25b3c2a4f2501d2d6c43a",
+    "stderr.logSha256": "9f5b0c2a0d2c2a0070510c49eaaf61e4d6d0fbd2706214831adf273824cf6a3f"
+  }
+}

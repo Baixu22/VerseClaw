@@ -315,17 +315,22 @@ export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promi
   if(workspaceId){
     const { listManagedTasks }=await import('./task-system-service');
     const managed=await listManagedTasks(workspaceId);
+    const nodeIndexes = new Map(snapshot.nodes.map((node, index) => [node.id, index]));
+    const sessionLinks = new Set(snapshot.sessionLinks.map(link => JSON.stringify([link.nodeId, link.sessionKey, link.sessionGeneration])));
     for(const view of managed){
       const {contract}=view;
       const projected:TaskLedgerNode={id:contract.taskNodeId,title:contract.objective,description:contract.target,kind:'task',status:contract.state==='ready'?'todo':contract.state==='paused'||contract.state==='cancelling'?'blocked':contract.state==='cancelled'?'dropped':contract.state,createdAt:new Date(contract.createdAt).toISOString(),updatedAt:new Date(contract.updatedAt).toISOString(),metadata:{readonlyProjection:true,source:'task-ledger.execution-contract',contractRevision:contract.revision}};
       projected.parentId = view.parentTaskNodeId ?? null;
       projected.evidenceRefs = view.checkpoint?.artifacts.map(artifact => ({ type: 'file', ref: artifact.path,
         label: basename(artifact.path), metadata: { sha256: artifact.sha256, source: 'task-contract-checkpoint' } })) ?? [];
-      const index=snapshot.nodes.findIndex(node=>node.id===contract.taskNodeId);
-      if(index<0){snapshot.nodes.push(projected);snapshot.rootNodeIds.push(projected.id);}else snapshot.nodes[index]={...snapshot.nodes[index],...projected};
+      const index = nodeIndexes.get(contract.taskNodeId);
+      if (index === undefined) { nodeIndexes.set(projected.id, snapshot.nodes.length); snapshot.nodes.push(projected); }
+      else snapshot.nodes[index] = { ...snapshot.nodes[index], ...projected };
       if (view.claim && view.claim.state !== 'released') {
         const { sessionKey, generation } = view.claim;
-        if (!snapshot.sessionLinks.some(link => link.nodeId === contract.taskNodeId && link.sessionKey === sessionKey && link.sessionGeneration === generation)) {
+        const linkKey = JSON.stringify([contract.taskNodeId, sessionKey, generation]);
+        if (!sessionLinks.has(linkKey)) {
+          sessionLinks.add(linkKey);
           snapshot.sessionLinks.push({ id: `contract:${contract.taskNodeId}:${sessionKey}:${generation}`,
             nodeId: contract.taskNodeId, sessionKey, sessionGeneration: generation,
             relation: 'related', createdAt: new Date(contract.createdAt).toISOString() });
@@ -354,6 +359,15 @@ export async function appendTaskLedgerEvents(
   inputs: TaskLedgerEventInput[],
   batchIdempotencyKey?: string | null,
 ): Promise<TaskLedgerSnapshot> {
+  await commitTaskLedgerEvents(workspaceId, inputs, batchIdempotencyKey);
+  return loadTaskLedgerSnapshot(workspaceId);
+}
+
+export async function commitTaskLedgerEvents(
+  workspaceId: string | undefined | null,
+  inputs: TaskLedgerEventInput[],
+  batchIdempotencyKey?: string | null,
+): Promise<void> {
   const normalizedWorkspaceId = normalizeTaskLedgerWorkspaceId(workspaceId);
   const dir = getTaskLedgerDirForKey(normalizedWorkspaceId);
   await mkdir(dir, { recursive: true });
@@ -368,7 +382,6 @@ export async function appendTaskLedgerEvents(
 
   const nextEvents=inputs.map(input=>createTaskLedgerEvent(normalizedWorkspaceId,input,batchIdempotencyKey));
   appendPersistentTaskEvents(getTaskLedgerEventsPathForKey(normalizedWorkspaceId),nextEvents,batchIdempotencyKey);
-  return loadTaskLedgerSnapshot(workspaceId);
 }
 
 const lifecycleWrites = new Map<string, Promise<TaskLedgerSnapshot>>();
