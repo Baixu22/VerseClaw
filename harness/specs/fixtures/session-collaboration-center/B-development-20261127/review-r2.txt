@@ -1,0 +1,7 @@
+autoreview findings: 1
+[P2] Reject replacement after any successor run
+openclaw_runtime/src/gateway/server-methods/chat.ts:3396
+This guard detects a successor only while it is active. If another sender starts and finishes a run after the original is interrupted but before this replacement reaches its dispatch check, both active-run checks are clear and the stale steer text is dispatched against the newer session state. Preserve and verify a run-generation or sequence token so any successor causes rejection, even after it finishes.
+
+overall: patch is incorrect (0.92)
+The replacement guard checks only whether a run is active at the time of each check, so a successor that starts and finishes during the handoff can evade it.

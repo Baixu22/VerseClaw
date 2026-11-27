@@ -1,0 +1,122 @@
+
+ RUN  v4.1.1 D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source
+
+stdout | tests/unit/chat-input.test.tsx
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/chat-input.test.tsx > ChatInput agent targeting > stages dropped folders via disk path instead of buffer upload
+[stagePathFiles] Staging files: [ '/tmp/project-folder' ]
+
+stdout | tests/unit/chat-input.test.tsx > ChatInput agent targeting > stages dropped folders via disk path instead of buffer upload
+[stagePathFiles] Stage result: [
+  {
+    id: 'folder-id',
+    fileName: 'Archive',
+    mimeType: 'application/x-directory',
+    fileSize: 0,
+    stagedPath: '/tmp/project-folder',
+    hasPreview: false
+  }
+]
+
+ ✓ tests/unit/chat-input.test.tsx (104 tests) 13584ms
+     ✓ formats pasted JSON and diff while preserving the original draft, including large integers  341ms
+     ✓ shows suggest-mode knowledge candidates and attaches them only after user action  1487ms
+     ✓ dismisses knowledge preflight for the same input and still sends if routing fails  1636ms
+     ✓ does not reopen source inspection after a profile change  794ms
+ ✓ tests/unit/chat-send-input-mode.test.ts (14 tests) 4024ms
+     ✓ rejects explicit inputMode without an active /loop Task Ledger root  599ms
+     ✓ checkpoints before aborting, records checkpointed event, and responds ok  478ms
+     ✓ replays the original durable guide after its run ends and rejects changed content  501ms
+     ✓ rejects a retained controller whose original execution is no longer active  501ms
+     ✓ steers the active run and records steered evidence  499ms
+     ✓ falls back to a normal send when steering is rejected  410ms
+     ✓ persists the queued message and broadcasts queue status  433ms
+     ✓ retains a queued follow-up when the chat owner rejects its drain  430ms
+stdout | tests/unit/chat-message.test.tsx
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/chat-message.test.tsx (40 tests) 1458ms
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > keeps pinned guide content stable when coordinator context changes between retries
+[2026-11-27T09:30:06.697Z] [INFO] [chat:sendWithMedia] Sending: message="Keep this exact guidance.", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > keeps pinned guide content stable when coordinator context changes between retries
+[2026-11-27T09:30:06.698Z] [INFO] [chat:sendWithMedia] RPC result: {"steered":true,"runId":"original-run"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > keeps pinned guide content stable when coordinator context changes between retries
+[2026-11-27T09:30:06.732Z] [INFO] [chat:sendWithMedia] Sending: message="Keep this exact guidance.", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > keeps pinned guide content stable when coordinator context changes between retries
+[2026-11-27T09:30:06.732Z] [INFO] [chat:sendWithMedia] RPC result: {"steered":true,"runId":"original-run"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > keeps user text unchanged while restoring a task started without manual coordinator setup
+[2026-11-27T09:30:07.103Z] [INFO] [chat:sendWithMedia] Sending: message="Continue the export fix.", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > keeps user text unchanged while restoring a task started without manual coordinator setup
+[2026-11-27T09:30:07.103Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"quiet-run"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > forwards workspaceId to Gateway rpcParams when renderer sends it
+[2026-11-27T09:30:07.144Z] [INFO] [chat:sendWithMedia] Sending: message="Continue work", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > forwards workspaceId to Gateway rpcParams when renderer sends it
+[2026-11-27T09:30:07.144Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-ws-id"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > produces workspaceFingerprint from workspace rootPath and forwards to Gateway
+[2026-11-27T09:30:07.179Z] [INFO] [chat:sendWithMedia] Sending: message="Continue work", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > produces workspaceFingerprint from workspace rootPath and forwards to Gateway
+[2026-11-27T09:30:07.179Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-ws-fp"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > omits workspaceFingerprint when workspaceId is absent (no workspace scope)
+[2026-11-27T09:30:07.225Z] [INFO] [chat:sendWithMedia] Sending: message="Plain chat", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > omits workspaceFingerprint when workspaceId is absent (no workspace scope)
+[2026-11-27T09:30:07.225Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-no-ws"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > forwards workspaceId but omits workspaceFingerprint when rootPath lookup fails
+[2026-11-27T09:30:07.260Z] [INFO] [chat:sendWithMedia] Sending: message="Continue work", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > forwards workspaceId but omits workspaceFingerprint when rootPath lookup fails
+[2026-11-27T09:30:07.260Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-ws-no-root"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > does not call getWorkspaceRootPathById when workspaceId is absent
+[2026-11-27T09:30:07.293Z] [INFO] [chat:sendWithMedia] Sending: message="Plain chat", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > does not call getWorkspaceRootPathById when workspaceId is absent
+[2026-11-27T09:30:07.294Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-no-lookup"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > uses the active coordinator environment and verified session generation
+[2026-11-27T09:30:07.334Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > uses the active coordinator environment and verified session generation
+[2026-11-27T09:30:07.334Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-coordinator"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > materializes a pending handoff generation after the first successful Chat send
+[2026-11-27T09:30:07.370Z] [INFO] [chat:sendWithMedia] Sending: message="first child turn", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > materializes a pending handoff generation after the first successful Chat send
+[2026-11-27T09:30:07.371Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-child"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > forwards the ambient logical deadline to Gateway chat.send (NET-E)
+[2026-11-27T09:30:07.404Z] [INFO] [chat:sendWithMedia] Sending: message="Continue work", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > forwards the ambient logical deadline to Gateway chat.send (NET-E)
+[2026-11-27T09:30:07.404Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-deadline"}
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > omits deadlineAtMs when no logical deadline is ambient (NET-E)
+[2026-11-27T09:30:07.439Z] [INFO] [chat:sendWithMedia] Sending: message="Continue work", attachments=0, fileRefs=0
+
+stdout | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > omits deadlineAtMs when no logical deadline is ambient (NET-E)
+[2026-11-27T09:30:07.439Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"run-no-deadline"}
+
+ ✓ tests/unit/chat-api-workspace-fingerprint.test.ts (12 tests) 1313ms
+     ✓ keeps pinned guide content stable when coordinator context changes between retries  603ms
+     ✓ keeps user text unchanged while restoring a task started without manual coordinator setup  377ms
+
+ Test Files  4 passed (4)
+      Tests  170 passed (170)
+   Start at  17:29:20
+   Duration  46.86s (transform 11.24s, setup 390ms, import 22.77s, tests 20.38s, environment 2.58s)
+
+JSON report written to D:/tmp/session-collaboration-b-relay-20261127/final-checks/composer.json

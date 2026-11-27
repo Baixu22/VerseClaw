@@ -1,0 +1,715 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/session-collaboration-b-relay",
+  "candidate": {
+    "commit": "ef34abac19a02e8642132b322361445a11708c4a",
+    "tree": "a8b2089e202be5163c89955fa72bcc0e60fd41b4",
+    "dirty": false
+  },
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "4eea2be831e9a4c44dedc2d512b68030a541248ea2c2e592a73ec16c8d5bc5c4",
+      "gitBlob": "eb907d10235f732db4e39dfa16875b94c0706157"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b990885d34410803049536e71f8b2c5b89936515e0be4a6deb89fe3f62b49470",
+      "gitBlob": "50ccf62ae32916b07efd4159f5c443edb213a5f0"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "e904951eccc123c87d40b9515e1d233db8b96bad338d42a7383a698a2893c910",
+      "gitBlob": "b99f76b6b783402ac96e6d88f08d9f791d9be6f2"
+    },
+    {
+      "path": "docs/dev/session-lifecycle-control-matrix.md",
+      "sha256": "d340c7e6b1c31304e5dc9faa7257a82f0d8aa0126409898700744d6343a3e325",
+      "gitBlob": "601d7797febff78b71b72d08dcec7cb3a1b67013"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "1fa88e353c6ec65e591d650a87180a8a91b6affbd9db39c064fa7338556d162b",
+      "gitBlob": "a618e8dc14a144fc12ab17b55879ece690448c12"
+    },
+    {
+      "path": "docs/modules/sessions.md",
+      "sha256": "104deb5acf1a62fe27d4fd7f0597cae95f6d7293c60e59c5a3636ebfd0ab8b8a",
+      "gitBlob": "bfca4a18ff5fe0c3a98a52c429447318fd562928"
+    },
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "18fdd6e3b10505779f2fb87eef8ffe660562eb495a4116f49c1b008241e18c59",
+      "gitBlob": "30c6de379fb0cf45fedaf98a2a1dd5f807efc79c"
+    },
+    {
+      "path": "electron/services/session-activity-api.ts",
+      "sha256": "4fa362eace3bf8d2171f9eedc81d111f189fb293ef670d543415d72db9f6804f",
+      "gitBlob": "dfdfb51310d4df0df0f6ae0fef6e050b19a33689"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "4e2c91027db893d9ffac8825b4e7e16e26242a27900595df76d7c96094c112e8",
+      "gitBlob": "2f5073f5640a9f93929f7293b99cb3f861307fdb"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/REPORT.md",
+      "sha256": "5da2ddc2d9e80053e494c9ec174de4b52533eff91452d817c528654a812f43d2",
+      "gitBlob": "ca2482617ebd113d233b482310659d4170da5734"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/SHA256SUMS",
+      "sha256": "e7223f80f93caec6352050c49e43cc930f197eb28b559dc382db02396677d3dc",
+      "gitBlob": "6ff48a958acafcfda1c5fa6e72cc6da146034a36"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/checks.json",
+      "sha256": "eb70d146b3058d65e72c02d0211b277da1ba3b9386c3362d4efb2481fd8b3048",
+      "gitBlob": "4c94d246dca272472cb15c92ff9577bf7276a190"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/owner-readbacks.json",
+      "sha256": "57e80983d854f72b4c249784426c992042ca3306a5db2068099c0842f3c6308a",
+      "gitBlob": "d5048f63334eb5c9a78de14182f471cfb08f8f17"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/raw-index.json",
+      "sha256": "fe07996987fa03f60e0e06f4f046db7c89b4439ee33b80d1ad25a46f35756c61",
+      "gitBlob": "a9088c15c47741f9e0a75275124ea8a2e9ecdb8f"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/report.json",
+      "sha256": "90d64815981411607d2371eccc6b8b30bc0b3c604497d8a31c027d48f87dd752",
+      "gitBlob": "febd6c0059fdb67b560c25fe0b89ff7e598408cf"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/unit-tests.json",
+      "sha256": "45e24953dfc59d9fc7462828d4afbecf283e2e569280a7d9a48dd5151f0cd380",
+      "gitBlob": "be0440fa8971e30a9a8695ba49f4d9ed5259957b"
+    },
+    {
+      "path": "harness/specs/fixtures/session-collaboration-center/A1/verify.py",
+      "sha256": "663d8413cc6ce1cab7678cc934354db14dffc6d35cf3ce5b38a29b76cc17c895",
+      "gitBlob": "aa91d2192b6a4e32c4e5282a7510554ba91eb665"
+    },
+    {
+      "path": "harness/specs/guides/session-collaboration-center-plan.md",
+      "sha256": "8e24566ed00ace5063c050e65391a121f36ffed607b0b8c4b581f08e410c2d70",
+      "gitBlob": "75b9df490a8874247d00af20815e2b794021f647"
+    },
+    {
+      "path": "harness/specs/rules/session-collaboration-center-contract.md",
+      "sha256": "b9e3b266cdd236ad692f52e7d5d56c4f132986a0e9a8667e4a7677ce0bc6347b",
+      "gitBlob": "543ce728a2e1489840e5359c098de2cc1ea16b4a"
+    },
+    {
+      "path": "harness/specs/scenarios/session-collaboration-center.md",
+      "sha256": "55c9cc76f4384b3ec10bf031de35433ae4def6b7e3ac62b2830d3b72c2d6d3e8",
+      "gitBlob": "b7fb1854beae85260568183fa6d665bdc6fe07f0"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-a-mainline.md",
+      "sha256": "80517fbf3b887f0b70543a667a6c4555dabd3b2bc91b3cd3093f0da4c3416a45",
+      "gitBlob": "c01431bd724291d350509a76ce2bae8e2f68d0fe"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-a2.md",
+      "sha256": "26dc05fade989455cec01c780f42c008746a79bb4bf4739012c8c27523c12ac7",
+      "gitBlob": "1755337ccfcf170f59e52ab26731c0e476a00290"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-a3.md",
+      "sha256": "f165e9fedb24b1f5d18e294f66becdad70383f88b312af0067301bec4bff804f",
+      "gitBlob": "0ea9bcb37dd41da99c243c2d51c545bafa3cecc1"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-a4.md",
+      "sha256": "d53773ced4debae474cee1690f6830b3307099b66bfa02d8993b2e49629fbf91",
+      "gitBlob": "2f8af30ba88ea1d604a46436eaf94cc440cbdd5b"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-a5.md",
+      "sha256": "8af74282e0f793b60811f570ec3fd2850a5d285dbb9b798347639e203890487c",
+      "gitBlob": "f246a273dec7358535c2bf147924302ca461696c"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-b-mainline.md",
+      "sha256": "b1dd8a60e0f4c513f164117d05c3e8f01e526347c76d3afac826eee351a30c62",
+      "gitBlob": "1c9599b6bcb785f35c782c02ff1f1ae143613a2b"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-b1.md",
+      "sha256": "9c6480284d81e967705f62b35cf3593508429ad7c5e2b2d23ebf3f57b0775926",
+      "gitBlob": "6127f6694927888f7e5c1b25fb84ea146f356000"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-b2.md",
+      "sha256": "7b3b579dfe2cb5d10be531677d8c0a6200ab6b8eb9dead7987b2583153451121",
+      "gitBlob": "0912522c7149387f2edcb04a86dbf7cd6ca57bec"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-b3.md",
+      "sha256": "6967e1f7cb5f9e79097471e68c9393ad274ef0d875aeb99317faf6ac85c8828c",
+      "gitBlob": "2dfa032a1bf132d95122a223012292e675e055f2"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-b4.md",
+      "sha256": "c5484418ddebc3abbead188aaeda54ac2f0faba37dd539d44ce3d9b6db70affc",
+      "gitBlob": "8a34069103615057505484d13fe147bf2e07efac"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-b5.md",
+      "sha256": "4d57b847d9c080a6280ebea656c02110a15f458bfe5c664555d34ee4db7dec34",
+      "gitBlob": "c8aa7b2881bd1df0468005a9cee6fbb367a71c65"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "sha256": "b3108808bebec09638a181dbfecf6f4c8e3c49ca68b3559bb0417e06231a819d",
+      "gitBlob": "c7b38a2baefecd61bf83752eb35a837fbec9f0fa"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/primitives.ts",
+      "sha256": "f21901e55025bae3a94fefa67af5597f7b6969ee59305572897f01775528015e",
+      "gitBlob": "a5612bcc1c1c0064d52775d7f5eff779fefe321e"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+      "sha256": "573f87cd19edf82ff1b4e731da008c45aa69bda298473d95e4566115190e1caa",
+      "gitBlob": "d6abf0a173e317d135a2ad2b8e503d2bdb453363"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.policy.ts",
+      "sha256": "ae15855cbded98a882148f822f60e7176396421ef03bcdd0386628ae65d657b3",
+      "gitBlob": "f699a83003cc7e8ea5cb49db02ff31d2691f90ba"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt-tool-construction-plan.ts",
+      "sha256": "0af254738f4e64d2604f046243948bb9432025dc5e65f3c094ca2ff7d196418a",
+      "gitBlob": "fa654f23dc69a0a47d9a34b6f023107d8c188419"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "69720664d0f57608afb3d1081f183bce8d37eb19278af6f2b9e74b383b4d1e30",
+      "gitBlob": "546cf1363adaf42025842ca0f21434dd5b7aa117"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-domain.ts",
+      "sha256": "01db4f2448e68497fb8c26ac6e7b8392b39410b3b953f64c55964985871f1140",
+      "gitBlob": "5c6f5797ae8279d3a7d9a62a7fba77ec0faa5f88"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-authority.ts",
+      "sha256": "48de05aa33914fe39cfb4f761324002021b5c856aec824e64b587c84e7dda1ae",
+      "gitBlob": "a2136174c8fd8db185b8ea96ab05e014dc0ae34b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/store.ts",
+      "sha256": "f72192d7d471de1c3aa708c72daaca95584971833a1c995a509feb620d6a6fc5",
+      "gitBlob": "d4d28471d194432912ee4e93437a19e07c7518d3"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/openclaw-tools.ts",
+      "sha256": "3376f3bece2c29a372ad115f5814d895eb54c2b18a14379d970b16c3f015f030",
+      "gitBlob": "0adaeeabd7aeb9f69cfe7cfa6642493ca941caf0"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/session-task-scope.ts",
+      "sha256": "800b26888baaa507963d6fa77c067710e867d221f7fc5dd43ff526f6e78a9366",
+      "gitBlob": "fe873c34bd63b20234bab3f701f00dc81a3cfad4"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tool-catalog.ts",
+      "sha256": "a1d215cdac53ca4cdc8a15e3aa6af1202723b5afeb89f02e8596722d6ef71c5c",
+      "gitBlob": "399c13371bada884a2dd3a2f5f54aff6cad4323d"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tool-description-presets.ts",
+      "sha256": "43a1a19292b8f2b1326e3af6b0d42b4bb230ae7f941ba9b4799cfcffef14c254",
+      "gitBlob": "46e53c933d0f140210297a25e7206a53de68005b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tool-mutation.ts",
+      "sha256": "6d40086b95a0f1aa1ef2d1267d7ec0a13b5f67f7bfc3bc7d6b8d16de2d4a5099",
+      "gitBlob": "9828aaa381ffe2d46416ae28a4e45d44f488d3c1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/session-collaboration-query.ts",
+      "sha256": "a52aa1f69f5a2aae536366280d10a78adde007035fab36c8504a62c4fbac54d9",
+      "gitBlob": "be673a5e3706ba5b72a58cf550763a6fe594edb8"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/session-collaboration-send.ts",
+      "sha256": "dc455906222633c8a3bc61189ada62a163a6f359d5450863e4e0c1b56571531a",
+      "gitBlob": "12adc6044d2a66ecc0757656edb1a4323abedbce"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/session-status-tool.ts",
+      "sha256": "2f15184143fb767611e751d02bd23c43840f2823f528f9893db69dccbda1e003",
+      "gitBlob": "c4b9a4f8766be89f437fa91b8029e559232e2533"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/sessions-list-tool.ts",
+      "sha256": "2b21fa610753ecdab87bea018660af086f71925911e97c32188a6212d946258f",
+      "gitBlob": "5df8535935dbbee9bd5b785c273a0df3f44babd7"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/sessions-send-tool.ts",
+      "sha256": "e95f8704ffb0a739a8597789b635eb3b49ed2268d75c1234f0a053791d45e528",
+      "gitBlob": "a4e67da8f220baac2e1c31c6f43218c5e6185e41"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/sessions-watch-tool.ts",
+      "sha256": "2edd7e4e4aa1366805d6f3610a6d8b9a9ad9f5659657620e8d46841bc4b6447c",
+      "gitBlob": "6219a972e5edd3450c6b619ad0213cf40b0a2d03"
+    },
+    {
+      "path": "openclaw_runtime/src/config/sessions/combined-store-gateway.ts",
+      "sha256": "9bf5520975ff214032c354525717a5ccea93c7ce892ccf08ada272c40354ab7e",
+      "gitBlob": "06f2479dd4afc3c4a06e9bd8f84218706a404710"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/chat-abort.ts",
+      "sha256": "f7f9dfdf8da580d5619460ca0f4e3aaa46035d4bec85078ae67287695d84ea2c",
+      "gitBlob": "6f8c44ee7f5f57f7331533d711d5f773e5d59a71"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/agent-job.ts",
+      "sha256": "3e5a603b46682468fe7ca1deef417525592ef6a9acb860e15f9ce9319d1fce54",
+      "gitBlob": "e185d1290fa3370ad11955122b7952a213bbceba"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "sha256": "65b62099ebf2f7972e72936e63f2aede7bc8e796811142234e64fa8dc6b66302",
+      "gitBlob": "6bcec527b7bed864610f2c3689cf340e8e664792"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity-read-model.ts",
+      "sha256": "cf371cb180d2623dca700fe086afbedc50b1379befe25fa050fca2f46e2c3941",
+      "gitBlob": "fe1dfc4c35faede04fd2feb21c5e57b509f5e1dd"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "sha256": "c2a9b95b0370636d091eeff5d887868708a6ed74a0dd1279a261efffee1ad40c",
+      "gitBlob": "92a2a8c898de8e04c25c720149b035d430f1ddde"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-message.ts",
+      "sha256": "91ce7459e15f92d86689ab40cdcfe5925c4e45876e919b7225f7bd2ada07b389",
+      "gitBlob": "d6951e6650025a1de2fdf37129b46344cb989ad8"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-query.ts",
+      "sha256": "ca310e300d965989469b0c449e6cab2f09ccebd10d0a5ca300c5504aa2ba618d",
+      "gitBlob": "0f57e75db0bb1c6a040866ec601f599c97d24612"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-watch.ts",
+      "sha256": "8b75bb7cbaaa6677d1f4d805af997dfc9a0e82cb0695cc315a1a5bd2ee339b95",
+      "gitBlob": "2a9fdb519e3d030dfd853aa23c550393045f3506"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+      "sha256": "36020f2f557dbdd39c7eecadd5ae76ae2fc13851bf401f26f0073e1378801197",
+      "gitBlob": "8c28c2e0538d7e09a85218ca21e42cf33375ca60"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.send-permit-lifetime.test.ts",
+      "sha256": "ae4765326199374ed91f47ec50888460158eb81dd08d299a291cb9bf8efacd35",
+      "gitBlob": "cf0c7c80ac61060c4359099e73f23684f9fbf35d"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.shared.ts",
+      "sha256": "8fa99c5a5b227373e98916134b29a839d69e10a1187547febb630aa2df4ccc93",
+      "gitBlob": "179bda3a36431ece84a2bcdcc853b78dae88d050"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/shared-types.ts",
+      "sha256": "01b8cbc400331078530aa48ad1ab78563e0efbf2d97aa67a74280c6904829ac8",
+      "gitBlob": "9a17f7b33b97759654b9b5f61c2bcb291f77e991"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-utils.ts",
+      "sha256": "2ee3af3c9b052a4087df26eb3e8182ad4231caf653112f24c2e99e30d1672adc",
+      "gitBlob": "11f809e27045ca0773110946dbfb460c0cd1724e"
+    },
+    {
+      "path": "openclaw_runtime/src/sessions/input-provenance.ts",
+      "sha256": "4d0e4ee5af29ed4e574806108199efd8b7a1bb6a357dbb0341055862b4fff8fd",
+      "gitBlob": "e09ce04e172eef1ad5f782e9e86a9a9fb6bb7270"
+    },
+    {
+      "path": "openclaw_runtime/src/sessions/session-collaboration-message-store.ts",
+      "sha256": "df1da15f0517e1007051b9dc70197f45e4cc762a6d8912fc384ebc3fd2ae59f5",
+      "gitBlob": "349d5ca6d5543ad0e6b6b797dc1b6f9bf582da7d"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "07907733cd2f2b6374bb70b192315f1307e43d21fde1353fdda27890180130ff",
+      "gitBlob": "b9097e5d4d755d369b1fa13362b8186a1084aca1"
+    },
+    {
+      "path": "shared/i18n/locales/en/agents.json",
+      "sha256": "fa2631b43417862b4aac8282dd9dae4fd37800c337531081fef4bdcb36f1c7b0",
+      "gitBlob": "a20264676e03463f3333fc54cad7ca0c60df7f16"
+    },
+    {
+      "path": "shared/i18n/locales/ja/agents.json",
+      "sha256": "ca0d072ef8fd14bf5e0e014516d234a94591ca993db4d31f5097236dbaf3338c",
+      "gitBlob": "9308d256a4c0ac430aefaccd952bdb0d5e6269c2"
+    },
+    {
+      "path": "shared/i18n/locales/ru/agents.json",
+      "sha256": "9e36231fe13468bfa71f36a71f6e13f4adc452da1bbb06ec30ead25a7f48c729",
+      "gitBlob": "52b101dc1ed5a7638651cba6b56d96fa8d3bbf8f"
+    },
+    {
+      "path": "shared/i18n/locales/zh/agents.json",
+      "sha256": "5a3812f5d9e6dce844e68155f0e222988b9a8d07771fc3035c28ab8d308d804f",
+      "gitBlob": "ceebf146baf3e4a04f2f56c99ba5f5b9529c1b30"
+    },
+    {
+      "path": "shared/session-collaboration-message.ts",
+      "sha256": "f1e83e1c34685c0895a84ab3f2ead24ac3ed08660989c72c56ae36f6f4001eda",
+      "gitBlob": "5f51d11d567217a8096773b99884d62866df84ca"
+    },
+    {
+      "path": "shared/session-collaboration-watch.ts",
+      "sha256": "02b0c89d698d0b228db2abacd65e31e89c3a266c8574e465059a0efa21d302d7",
+      "gitBlob": "43b5cc6b2024cc18568d55ce6013e99a790ef375"
+    },
+    {
+      "path": "shared/task-system/runtime.ts",
+      "sha256": "93679f96b82a67eeb510255c6478ea9b1b1d105032c92fafd1405fd38fbf2525",
+      "gitBlob": "ffe91e8cbf5a08221eef8a584f205c5d58118450"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "8f26b5c1f73af08290e4cd09eec2c2d1d853aa597f79c89c06f256c28fbf4104",
+      "gitBlob": "0c0f02b605d15e22d6ad79e9d18a676f9c8cfba3"
+    },
+    {
+      "path": "shared/task-system/tool-policy.ts",
+      "sha256": "28709f4f2127073f2a48e814a7fb04f13b5087259ea734ad76889e78dd8c1cac",
+      "gitBlob": "35404922a6adb1ff88e8ddc6bc75eee7a819ea3a"
+    },
+    {
+      "path": "shared/task-system/trace.ts",
+      "sha256": "89beb053e4f70ff9542ba5298d6d3989d613831b7820ca2211b48814de91173d",
+      "gitBlob": "0c401ec074b98b2274fc2dc4abf4157ecef35ff4"
+    },
+    {
+      "path": "shared/types/session-activity.ts",
+      "sha256": "feaad4e0f36e366c2bd9ea6837ea12952c4e6db126e478248aca3cd8218e368f",
+      "gitBlob": "26739800e8e37f7965e76674f724ebaf5888805c"
+    },
+    {
+      "path": "shared/types/session-collaboration-control.ts",
+      "sha256": "8ca635e10f3492b94afde99febdd4cb8ff7608e9bfe8d901f3a685b02cd4c69c",
+      "gitBlob": "0ed71ee03c0e58b3d71e2cc4b20af03151719019"
+    },
+    {
+      "path": "shared/types/session-collaboration-message.ts",
+      "sha256": "14a5837558b79ba484a4af27ded5cbb1f334e7a1c530ea8b31acb9bd8cfbeb6f",
+      "gitBlob": "c4176a052707ebf9556580fb312bd939993bf4a2"
+    },
+    {
+      "path": "shared/types/session-collaboration-watch.ts",
+      "sha256": "c727d54930d809aae04a5479f52beb4915e6680dea81733d371ef8154470d8d9",
+      "gitBlob": "74218456566d59337bd3a9bc27f71b0081f9a3ef"
+    },
+    {
+      "path": "shared/types/session-collaboration.ts",
+      "sha256": "b05d659839f8e039000d52fc7efe65c33e76d5a9ea7dc3891441d9e239c819bc",
+      "gitBlob": "0d68d0f360cfaee6f75b5b7938ed13a2a7435432"
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationMessages.tsx",
+      "sha256": "562a59a2353a9db769abedbbcfac975e2ec55731d16f45d49c0688a9e8a46c14",
+      "gitBlob": "d99f6055fbfdda3ec8b9eb6772082084b5d2a5af"
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationPanel.tsx",
+      "sha256": "6b20fba8f4100bacc9a70f136ae4f9515e867e99b23f7ab654918962821e24ed",
+      "gitBlob": "27eed627228249e053ad8b8b2eb5ae8db6f0e0e3"
+    },
+    {
+      "path": "src/components/agents/SystemPortfolioPanel.tsx",
+      "sha256": "b01cd3fd9843ba80b2acb07331ac896bdd8d81e73e8165f2c8b93c8ec56c4ce3",
+      "gitBlob": "90c5023450b345f806cc9cae41dbdf29ceaeac52"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+      "sha256": "3d08e23a3577a092144152fc64117a15d6dc2100d87666ca43dd761fe8b7c327",
+      "gitBlob": "bf1664b3e19f2eb59fd3fb969130f145b0171409"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+      "sha256": "a3868359ef84b48fa8e0ba71597999de200a0462745e7e400ca5e176b7a0f899",
+      "gitBlob": "c3656c9191f1b689f3c3b8cdee6cb5a08b80d60b"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "2b5b97c1ced33b3be5e19367a7d7fa2d1de954828ce0999258459eb51e9dad96",
+      "gitBlob": "a6b37317d2cf5ad51af11fa0fe44ea1918728d69"
+    },
+    {
+      "path": "src/lib/session-collaboration-control.ts",
+      "sha256": "def4a401dd1edadbc9d218a22364a653ca42ee548b37e35315dbfd560f85d82b",
+      "gitBlob": "603870e64d7c84cc574351abe22be7070f15691c"
+    },
+    {
+      "path": "src/lib/session-read-model.ts",
+      "sha256": "7341fd903f04831fc166a9b404ef92ad7ab519534383525ae13e22c551290eed",
+      "gitBlob": "93ad4a3ca74e04bb1ffe531a69a0b64000097b51"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "972054837f287fe784a1fa4ea026a9d129d7b051d8b56de162f345f450a14fe6",
+      "gitBlob": "8ebecd6353e5a4ba0e71a94cec3c03e20ef31ca1"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "fa3feb0a2bbed6cf0cdb5158c0b61840085dc4b0ea52741cac4db3ee1031a46e",
+      "gitBlob": "68c6b734fe2974ed49a4fa337cb80fdeef29fcfc"
+    },
+    {
+      "path": "src/pages/Chat/ChatToolbar.tsx",
+      "sha256": "c3fc1624b1c66a6cf1836d968d40d9154a8f4913f803f2b29d8a7569177c23e1",
+      "gitBlob": "f140ae9f6331059b65f1a5b3f56aee905ff13c7f"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionMigrationControl.tsx",
+      "sha256": "7c934bac3028b950d888d17771423ec6532759289707940a20b4d21b65228ca8",
+      "gitBlob": "9502ca1c867d805dfe34ced3e136dced6602a18a"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "5f8e017e75bc077b61ba09f67f9ec2db6e0fb7c9f495795afd530e0bf41b17f7",
+      "gitBlob": "4de34ff78aabd38fcfa4832595403d7b6ad1f5d0"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "688cccdbe3fa0680801313fc5fe4b6cd72e604c2d150ad0887fd795f3e85fa91",
+      "gitBlob": "ca18869003d7ac235e5ab24da4a0c39c1b49f273"
+    },
+    {
+      "path": "src/stores/session-collaboration.ts",
+      "sha256": "33578c0b5a54f59fce7a1168e3870118236a38276391728656e7fa758d2679e9",
+      "gitBlob": "d3cb740a8e8ded217ab1baeb04546d0c99ec0a0d"
+    },
+    {
+      "path": "src/stores/session-intent.ts",
+      "sha256": "3b88b0c5e6f38abec501b2da08098fdbaf69dc5838e24bcef332e6000f833209",
+      "gitBlob": "30607ae9d43d6ee0e62d8115c6d8070accbb0a58"
+    },
+    {
+      "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "sha256": "7b2264c90918ab7729ebd01bd0711b4b98515b440d961a764bd9bb83f087a5d3",
+      "gitBlob": "cbff50fd7c2dde5adc72b17dfeef01ce94257485"
+    },
+    {
+      "path": "tests/e2e/fixtures/session-collaboration.ts",
+      "sha256": "00cb43927b8a2adb6cfd6771f795f985dfa55fd9b01d0b1924ad079a26cdd02b",
+      "gitBlob": "a34fd32a9baad0ef915655dd7f8dce34957a4a05"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-controls.spec.ts",
+      "sha256": "049fe79d35326a95ee0301e7271d21f683679a870ebc3503d3c0b26f7f2751c6",
+      "gitBlob": "192f306a7a004e67f2b9fb9ca4dd82a025fbee34"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-delivery-recovery.spec.ts",
+      "sha256": "aab95cf2dc34f541220779ff558b250686886d876a752178d571a5eff74f1df8",
+      "gitBlob": "18163644fd6958a76e6c7ea1e124c6f89d89c23c"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-message-budget.spec.ts",
+      "sha256": "4e848284783b63171544be21ea2f365dbc7ed2ac4a62ba3e389e102bb4c230c9",
+      "gitBlob": "63e699f44ab0399612700b6375fcbb44c03fd717"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-message-view.spec.ts",
+      "sha256": "0415001ea8083addad8cdc78c368b63c79eec31e486361d5c7f184f33c4ab6a2",
+      "gitBlob": "5724c0d55f6d7423aed4240efa18e1d07ec66ef1"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-overview.spec.ts",
+      "sha256": "65f2585200c27a3b0bd017d7fe7ea34dda4dd89aef0109332f78081ee604d967",
+      "gitBlob": "0a98b3f0f27c7ca6ac9128ac24cecb0758c953a4"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-scale.spec.ts",
+      "sha256": "dd464872f93a3d4f3f2f946a610478ef65e8f6d5cfca9f2bc43e738ff5407521",
+      "gitBlob": "cf8789dd01bf92aa30c0ffadd362b823df62018c"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-watch.spec.ts",
+      "sha256": "007c16548f3e4ff3e78b0d6d138a9ac34b87bd7dc8fe6de15c1a632f1819b094",
+      "gitBlob": "0e72976550ab1ff663470ba465b55909e6d757bb"
+    },
+    {
+      "path": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "sha256": "6401e59807aa5723eb190e7911311a00d8cd04b4fe856cb468e0dee7a4e7c20a",
+      "gitBlob": "441c49a69cbd2c8c419751310f213568b384b118"
+    },
+    {
+      "path": "tests/unit/chat-input.test.tsx",
+      "sha256": "601d9a106cd80158ff5d83c8b6fa823e0bbf5458534b498c56580d33fe274001",
+      "gitBlob": "20dd90f52a4817bab0dfabfbea7446d97383199c"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "sha256": "e466d6bdfd6401f20945c2b5f5f490a4d816a05e9feeacea4547de15d0931880",
+      "gitBlob": "a589156c92018be8f98813fd2907a5328cfab662"
+    },
+    {
+      "path": "tests/unit/chat-send-input-mode.test.ts",
+      "sha256": "bb507a589e78748d8280a9c0313db3f444e88ba433badfd30c4811db967caa65",
+      "gitBlob": "dc020dd03e941c532199a86ccf4055485221210a"
+    },
+    {
+      "path": "tests/unit/chat-store-history-retry.test.ts",
+      "sha256": "bd807af61065804d3e8e4ca96feb77a7db6524b11690dc9d7bcc286789cd7151",
+      "gitBlob": "90b1d30b38945162eacbcb61324389847f717c70"
+    },
+    {
+      "path": "tests/unit/host-api-facade.test.ts",
+      "sha256": "f95b0ea0831d26ed760b1965c9f3698057b49f0d846eda2cf0d9a6e67e728d03",
+      "gitBlob": "590ec80d7aa465b41a0487b1390ef916fea539af"
+    },
+    {
+      "path": "tests/unit/session-collaboration-control-semantics.test.ts",
+      "sha256": "558cda6ee5642efae70e56dc93f25f7f4bcede8d9fbcd64b0341f5bf0ec8b464",
+      "gitBlob": "25cdc52e85787a8f0a276e27503a3a1cf71de3a9"
+    },
+    {
+      "path": "tests/unit/session-collaboration-delivery.test.ts",
+      "sha256": "b54b23f914b82695816721bebae06be89203aa62b1427104bece8e320870957d",
+      "gitBlob": "3b5d8a4efca8c3b1df2af166af62367811586480"
+    },
+    {
+      "path": "tests/unit/session-collaboration-identity.test.ts",
+      "sha256": "36cfd0b41e9b61923372378775faa92863273c6761e179520f7b65210d2f0f16",
+      "gitBlob": "86e28ff3c4146aa7b1fcf605ec23fe49380d7ede"
+    },
+    {
+      "path": "tests/unit/session-collaboration-message-budget.test.ts",
+      "sha256": "16ab266703be338cbd03f6e14ba6d42a1bfffe486f9dc84c403f7fa63e771143",
+      "gitBlob": "879f397fab5fd66f6910fb7b281d223753305df3"
+    },
+    {
+      "path": "tests/unit/session-collaboration-message-envelope.test.ts",
+      "sha256": "bfdd0bf34ccb7eb81089d0076970a9abdfc60067bd422851a426343b8049f3bb",
+      "gitBlob": "9591cc7c192dc16bb0f83149cd8690cac7ef9f1e"
+    },
+    {
+      "path": "tests/unit/session-collaboration-message-view.test.tsx",
+      "sha256": "846206a3045cd45a415f6f246061842675e9a5ce85c612708b7719da798097cc",
+      "gitBlob": "6c8c70a1f1db3288035eeb1d563fadcfa08ef61a"
+    },
+    {
+      "path": "tests/unit/session-collaboration-panel.test.tsx",
+      "sha256": "2993526aa4e791fe97ed423993bc1d20f2fb32b5ddb559366f4fa61e8303ac72",
+      "gitBlob": "813cee4428216a24089b048d81b508a58eadb0bd"
+    },
+    {
+      "path": "tests/unit/session-collaboration-query.test.ts",
+      "sha256": "b72c8be24491e22a721790e19ba84617ec48e68a5acd6f468a57335e3827efc8",
+      "gitBlob": "0ed3f620c47735e9c4ce9bdef4e95fcdf3e7ed1a"
+    },
+    {
+      "path": "tests/unit/session-collaboration-watch.test.ts",
+      "sha256": "05541630451fae20a12087cabd96a1d2fd371cb06a8a5c5354151aa82a13f2fd",
+      "gitBlob": "ca10970f73ab5d5ef10fffcf6d80a42cf1eedd1e"
+    },
+    {
+      "path": "tests/unit/session-summary-bounded-read.test.ts",
+      "sha256": "adb1f08d39fdc6d3133f053f634cdb4ebcd37dd1f503ff1d8a5183bc62e529a7",
+      "gitBlob": "3b669d48bfa48a192d40c0050a12a1c5da6589d9"
+    }
+  ],
+  "steps": [
+    {
+      "id": "composer",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/chat-message.test.tsx",
+        "tests/unit/chat-send-input-mode.test.ts",
+        "tests/unit/chat-api-workspace-fingerprint.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\composer.json"
+      ],
+      "exitCode": 0,
+      "seconds": 47.672,
+      "stdoutPath": "D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\composer.stdout.txt",
+      "stdoutSha256": "111bc34fb6b17fe19d63525450f2fc59b8453c87602c1941cbe00f221533d5f4",
+      "stderrPath": "D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\composer.stderr.txt",
+      "stderrSha256": "e52f6c20c6005a490a5468c1dacc0aabcd5b557e6ceb256b5fde169881dfadbc"
+    },
+    {
+      "id": "collaboration",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/session-collaboration-control-semantics.test.ts",
+        "tests/unit/session-collaboration-delivery.test.ts",
+        "tests/unit/session-collaboration-message-budget.test.ts",
+        "tests/unit/session-collaboration-message-envelope.test.ts",
+        "tests/unit/session-collaboration-message-view.test.tsx",
+        "tests/unit/session-collaboration-panel.test.tsx",
+        "tests/unit/session-collaboration-watch.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\collaboration.json"
+      ],
+      "exitCode": 0,
+      "seconds": 12.203,
+      "stdoutPath": "D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\collaboration.stdout.txt",
+      "stdoutSha256": "a2c442c091b37a4332d377b4dd4bffd10d74f5e02d3ab52d51b3f148dc11bb74",
+      "stderrPath": "D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\collaboration.stderr.txt",
+      "stderrSha256": "a5e7bf0bd06881678472b1f7f87da6f8ad4428334f6d240b75c2f832180e52bc"
+    },
+    {
+      "id": "query-integration",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=640",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/session-collaboration-identity.test.ts",
+        "tests/unit/session-collaboration-query.test.ts",
+        "tests/unit/session-summary-bounded-read.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\query-integration.json"
+      ],
+      "exitCode": 1,
+      "seconds": 43.843,
+      "stdoutPath": "D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\query-integration.stdout.txt",
+      "stdoutSha256": "fc67e595792af2abaf9f9db9c28a03119ef482f31c4223174e22485f133cd563",
+      "stderrPath": "D:\\tmp\\session-collaboration-b-relay-20261127\\final-checks\\query-integration.stderr.txt",
+      "stderrSha256": "185423344329ba1cdaad9d7612f243e1093356c4b380f80957dabdd2a5ab5c81"
+    }
+  ],
+  "startedAt": "2026-11-27T09:29:19.891049+00:00",
+  "dependencyMode": "existing dependency junctions; no installation",
+  "fullAcceptance": "deferred_by_user",
+  "status": "failed",
+  "error": "Check failed: query-integration",
+  "endedAt": "2026-11-27T09:31:03.927865+00:00"
+}

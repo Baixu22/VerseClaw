@@ -1,0 +1,67 @@
+
+ RUN  v4.1.1 D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source
+
+ ✓ tests/unit/session-collaboration-query.test.ts (29 tests) 14626ms
+   ✓ uses the same Main-owned Gateway for watch and cancellation  441ms
+   ✓ releases cancelled and expired Gateway waits while their initial owner reads are pending  346ms
+     ✓ returns the same owner-backed scopes, goals, actions and task references through UI and both existing session tools without mutation  411ms
+     ✓ keeps owned runs running without observed actions and rejects empty ready actions across consumers  411ms
+     ✓ distinguishes failed owner reads from missing reply envelopes across Main, UI and both tools  395ms
+     ✓ filters by real TaskSystem goals and workspace without switching the active workspace  388ms
+     ✓ keeps an unverifiable goal unknown while filtering metadata rows that have no session identity  348ms
+     ✓ reuses one read-only TaskSystem connection per execution root and reads no transcript bytes  376ms
+     ✓ attempts an incompatible TaskSystem schema only once per execution root and preserves its bytes  403ms
+     ✓ returns bounded Unicode goals and preserves the full TaskSystem objective at the A1 detail entry  433ms
+     ✓ reads an original in-flight tool request with its own run identity and removes it when the owner settles  449ms
+     ✓ preserves a foreign admission scope for the same key and generation and rejects its actions across consumers  523ms
+     ✓ pages using a scoped metadata cursor and rejects old generations and cursor identities  425ms
+     ✓ invalidates a cursor after metadata label or effective visibility changes  411ms
+     ✓ keeps unselected fields not_read and bounds discovery to a single 100-candidate scan  866ms
+     ✓ distinguishes verified empty tasks, idle runs, unavailable owners and unknown activity  557ms
+     ✓ fences reset during the owner join and never reuses a current-session result for another workspace  474ms
+     ✓ applies original self visibility before hydrating task details  1384ms
+     ✓ applies original tree visibility before hydrating task details  408ms
+     ✓ applies original agent visibility before hydrating task details  436ms
+     ✓ uses existing A2A allow rules and sandbox clamps without accepting policy overrides from parameters  533ms
+     ✓ rejects model edits, spoofed requesters and stale sender generations on readOnly tool requests  431ms
+     ✓ rejects malformed, unselected and cross-scope replies consistently at Main, UI and tool consumers  679ms
+     ✓ preserves unknown search matches and rejects a fabricated empty page across consumers  481ms
+     ✓ rejects an unbounded or authority-bearing query before owner hydration: {"limit":51}  444ms
+     ✓ rejects an unbounded or authority-bearing query before owner hydration: {"limit":0}  437ms
+     ✓ rejects an unbounded or authority-bearing query before owner hydration: {"fields":["unknown"]}  629ms
+     ✓ rejects an unbounded or authority-bearing query before owner hydration: {"cursor":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}  417ms
+     ✓ rejects an unbounded or authority-bearing query before owner hydration: {"requester":{"workspaceId":"workspace-a","projectId":"workspace-a","sessionKey":"agent:main:a2-a","sessionGeneration":"generation-a","writeClaim":true}}  687ms
+ ✓ tests/unit/session-collaboration-identity.test.ts (20 tests) 10870ms
+     ✓ reads two independent sessions and an embedded child through the same Runtime and typed Main owner contract without mutation  557ms
+     ✓ rejects workspace without returning a current-session fallback  442ms
+     ✓ rejects project without returning a current-session fallback  406ms
+     ✓ rejects generation without returning a current-session fallback  390ms
+     ✓ rejects missing-owner without returning a current-session fallback  527ms
+     ✓ distinguishes not read, owner-confirmed empty tasks, unknown workspace, and unavailable task owner  537ms
+     ✓ does not initialize an absent session or execution owner while querying  382ms
+     ✓ keeps generation-less runs and missing child run owners unknown rather than confirming idle  373ms
+     ✓ fences old task generations and execution binding revisions  408ms
+     ✓ discards the whole join when reset happens while the Task owner is read  424ms
+     ✓ discards a reset during Main await and rejects old workspace binding revisions before RPC  434ms
+     ✓ rejects a binding changed during the Host read, and preserves a missing binding as a source gap  439ms
+     ✓ checks bindings after the final Runtime await and validates ScopedRun identities  512ms
+     ✓ refuses unverified legacy replies, another scope, and a missing workspace without reading current Git or ledger  473ms
+     ✓ rejects malformed and authority-bearing input: {"scope":{}}  524ms
+     ✓ rejects malformed and authority-bearing input: {"scope":{"workspaceId":"workspace-a","projectId":"workspace-a","sessionKey":"agent:main:collaboration-a","sessionGeneration":"generation-a"},"writeClaim":true}  553ms
+     ✓ rejects malformed and authority-bearing input: {"scope":{"workspaceId":"workspace-a","projectId":"workspace-a","sessionKey":"agent:main:collaboration-a","sessionGeneration":"generation-a"},"expectedBindingRevision":0}  1234ms
+     ✓ rejects malformed and authority-bearing input: {"scope":{"workspaceId":"workspace-a","projectId":"workspace-a","sessionKey":"agent:main:collaboration-a","sessionGeneration":"generation-a"},"expectedExecution":{"authorityId":"forged","writeClaim":true}}  499ms
+     ✓ rejects malformed and authority-bearing input: {"scope":{"workspaceId":"workspace-a","projectId":"workspace-a","sessionKey":"agent:main:collaboration-a","sessionGeneration":"generation-a","authority":"writer"}}  596ms
+     ✓ opens TaskSystem read-only without migration or write effects and keeps the checkout incarnation  1155ms
+ ❯ tests/unit/session-summary-bounded-read.test.ts (3 tests | 2 failed) 3278ms
+     ✓ keeps the same normalized defaults across UI and tool parsing 6ms
+     × reads only the bounded head and tail and preserves a line ending exactly at the head boundary 3263ms
+     × deduplicates keys, caps one request at 100 sessions, and reads sessions.json once per agent 7ms
+ ✓ tests/unit/host-api-facade.test.ts (49 tests) 936ms
+     ✓ keeps production main, preload, renderer, and shared imports on their side of the boundary  394ms
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  2 failed | 99 passed (101)
+   Start at  17:30:20
+   Duration  43.21s (transform 8.38s, setup 513ms, import 9.88s, tests 29.71s, environment 2.26s)
+
+JSON report written to D:/tmp/session-collaboration-b-relay-20261127/final-checks/query-integration.json

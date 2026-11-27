@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "sourceTree": "bbd5d05a77203ffabdc1326c06a38515e52e737e",
+  "sourceEqualTo": "D:/ClawX-work/session-collaboration-mainline-20261126",
+  "buildReused": "D:/ClawX-work/session-collaboration-mainline-20261126/packages/versebrowser/dist",
+  "dependencyWrites": false,
+  "packageInstall": false
+}

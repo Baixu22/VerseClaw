@@ -1,0 +1,3 @@
+import { defineConfig } from 'D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source/node_modules/vitest/dist/config.js';
+import base from 'D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source/vitest.config.ts';
+export default defineConfig({ ...base, root: 'D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source', cacheDir: 'D:/tmp/session-collaboration-b-relay-20261127/runtime-permit-cache', test: { ...base.test, environment: 'node', include: ['openclaw_runtime/src/gateway/server-methods/sessions.send-permit-lifetime.test.ts'], maxWorkers: 1, fileParallelism: false } });

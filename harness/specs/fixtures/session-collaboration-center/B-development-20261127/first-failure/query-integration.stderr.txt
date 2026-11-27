@@ -1,0 +1,17 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/session-summary-bounded-read.test.ts > bounded session summaries > reads only the bounded head and tail and preserves a line ending exactly at the head boundary
+ FAIL  tests/unit/session-summary-bounded-read.test.ts > bounded session summaries > deduplicates keys, caps one request at 100 sessions, and reads sessions.json once per agent
+Error: Cannot find package '@verse-claw/versebrowser' imported from D:/tmp/session-collaboration-mainline-20261126/A/review-fixes-source/electron/services/agent-browser-api.ts
+ ❯ electron/services/agent-browser-api.ts:21:1
+     19| import { findSessionDeleteGateBySession } from './session-delete-gate';
+     20| import { recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } fr…
+     21| import {
+       | ^
+     22|   AgentBrowserFacade,
+     23|   AgentBrowserService as ModuleAgentBrowserService,
+ ❯ electron/services/sessions-api.ts:81:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
