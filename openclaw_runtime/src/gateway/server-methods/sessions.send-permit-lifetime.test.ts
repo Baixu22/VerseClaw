@@ -9,6 +9,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import { registerChatAbortController, type ChatAbortControllerEntry, type ChatRunReplacementGuard } from "../chat-abort.js";
 
 const sendMocks = vi.hoisted(() => ({
   resolveRequestedGlobalAgentId: vi.fn(),
@@ -91,8 +92,10 @@ function makeRespond() {
   return { calls, respond };
 }
 
+const controllers = new Map<string, ChatAbortControllerEntry>();
 const context = {
   getRuntimeConfig: () => ({}) as OpenClawConfig,
+  chatAbortControllers: controllers,
 } as never;
 
 type ChatSendOptions = {
@@ -118,6 +121,7 @@ describe("sessions.send/steer admission permit lifetime", () => {
       mock.mockReset();
     }
     sessionAdmissionRegistry.clearForTests();
+    controllers.clear();
     sendMocks.resolveRequestedGlobalAgentId.mockReturnValue({ ok: true, agentId: "agent-a" });
     sendMocks.resolveDeletedAgentIdFromSessionKey.mockReturnValue(null);
     sendMocks.loadSessionEntry.mockReturnValue({
@@ -128,6 +132,15 @@ describe("sessions.send/steer admission permit lifetime", () => {
     sendMocks.readSessionMessageCountAsync.mockResolvedValue(0);
     sendMocks.interruptSessionRunIfActive.mockResolvedValue({ interrupted: false });
     sendMocks.reactivateCompletedSubagentSession.mockResolvedValue(undefined);
+  });
+
+  it("refuses run-scoped steer without the original session generation", async () => {
+    const calls = await invokeSend("sessions.steer", { expectedRunId: "original-run" });
+    expect(calls).toEqual([expect.objectContaining({ ok: false, error: expect.objectContaining({
+      message: "Run-scoped steer requires the session generation",
+    }) })]);
+    expect(sendMocks.interruptSessionRunIfActive).not.toHaveBeenCalled();
+    expect(sendMocks.chatSend).not.toHaveBeenCalled();
   });
 
   it("holds the permit through the chat.send preamble and releases it at the run ack", async () => {
@@ -148,6 +161,25 @@ describe("sessions.send/steer admission permit lifetime", () => {
     expect(activePermits()).toBe(0);
     expect(calls[0]?.ok).toBe(true);
     expect(calls[0]?.payload).toMatchObject({ runId: "run-1", messageSeq: 1 });
+  });
+
+  it("carries a finished successor across the interrupt and transcript-read gap", async () => {
+    sendMocks.interruptSessionRunIfActive.mockResolvedValue({ interrupted: true });
+    sendMocks.readSessionMessageCountAsync.mockImplementation(async () => {
+      const successor = registerChatAbortController({ chatAbortControllers: controllers,
+        sessionKey: CANONICAL_KEY, sessionId: CURRENT_SESSION_ID, runId: "short-successor", timeoutMs: 1000 });
+      successor.cleanup();
+      return 0;
+    });
+    sendMocks.chatSend.mockImplementation(async (options: ChatSendOptions & { replacementRunGuard: ChatRunReplacementGuard }) => {
+      expect(options.replacementRunGuard.changed()).toBe(true);
+      options.replacementRunGuard.release();
+      options.respond(false, undefined, { message: "SESSION_STEER_RUN_CHANGED" });
+    });
+    const calls = await invokeSend("sessions.steer", { expectedRunId: "original-run", expectedSessionId: CURRENT_SESSION_ID });
+    expect(calls[0]?.ok).toBe(false);
+    expect(sendMocks.chatSend).toHaveBeenCalledOnce();
+    expect(activePermits()).toBe(0);
   });
 
   it("forwards the requester fence through the real chat start boundary", async () => {

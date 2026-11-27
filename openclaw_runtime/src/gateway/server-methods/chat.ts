@@ -63,6 +63,7 @@ import {
 } from "../../agents/user-message-queue.js";
 import {
   getLatestLongTaskLedgerRootId,
+  readLongTaskInterventionReceipt,
   LONG_TASK_INPUT_MODES,
   recordLongTaskCheckpoint,
   recordLongTaskInterventionEvent,
@@ -205,6 +206,7 @@ import {
   startOptionalServerMethodModelCatalogLoad,
 } from "./optional-model-catalog.js";
 import { hasTrackedActiveSessionRun } from "./session-active-runs.js";
+import { isEmbeddedAgentRunActive } from "../../agents/embedded-agent-runner/runs.js";
 import { emitSessionsChanged } from "./session-change-event.js";
 import type {
   GatewayClient,
@@ -3180,7 +3182,9 @@ export const chatHandlers: GatewayRequestHandlers = {
       runIds: res.aborted ? [runId] : [],
     });
   },
-  "chat.send": async ({ params, respond, context, client }) => {
+  "chat.send": async ({ params, respond, context, client, replacementForRunId, replacementRunGuard }) => {
+    let replacementDispatchPending = false;
+    try {
     const chatSendReceivedAtMs = performance.now();
     console.error("[chat.send.trace] handler entered");
     context.logGateway.info("chat.send handler entered");
@@ -3222,6 +3226,7 @@ export const chatHandlers: GatewayRequestHandlers = {
       workspaceId?: string;
       workspaceDir?: string;
       expectedSessionGeneration?: string;
+      expectedGuideRunId?: string;
       requesterSessionKey?: string;
       expectedRequesterSessionId?: string;
       /**
@@ -3269,7 +3274,7 @@ export const chatHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    const suppressCommandInterpretation = p.suppressCommandInterpretation === true;
+    const suppressCommandInterpretation = p.suppressCommandInterpretation === true || replacementForRunId !== undefined;
     const explicitOriginResult = normalizeExplicitChatSendOrigin({
       originatingChannel: p.originatingChannel,
       originatingTo: p.originatingTo,
@@ -3283,7 +3288,7 @@ export const chatHandlers: GatewayRequestHandlers = {
     if (
       (p.systemInputProvenance ||
         p.systemProvenanceReceipt ||
-        suppressCommandInterpretation ||
+        p.suppressCommandInterpretation === true ||
         explicitOriginResult.value) &&
       !canInjectSystemProvenance(client)
     ) {
@@ -3386,6 +3391,24 @@ export const chatHandlers: GatewayRequestHandlers = {
     );
     const sessionLoadMs = roundedChatSendTimingMs(performance.now() - sessionLoadStartedAtMs);
     const { cfg, entry, canonicalKey: sessionKey } = sessionLoadResult;
+    // A steer permit fences generation changes. Concurrent senders can still start a new run.
+    const replacementSlotChanged = (ownController?: AbortController) => {
+      if (replacementForRunId === undefined) return false;
+      if (!replacementRunGuard || replacementRunGuard.changed()) return true;
+      if (!p.expectedSessionGeneration || clientRunId === replacementForRunId) return true;
+      if (isEmbeddedAgentRunActive(p.expectedSessionGeneration)) return true;
+      for (const active of context.chatAbortControllers.values()) {
+        if (active.controller !== ownController && !active.controller.signal.aborted &&
+            (active.sessionKey === sessionKey || active.sessionKey === rawSessionKey) &&
+            active.projectSessionActive !== false) return true;
+      }
+      return false;
+    };
+    const rejectReplacement = () => respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "SESSION_STEER_RUN_CHANGED"));
+    if (replacementSlotChanged()) {
+      rejectReplacement();
+      return;
+    }
     if (
       (p.expectedSessionGeneration && entry?.sessionId !== p.expectedSessionGeneration) ||
       !requesterGenerationMatches(p, entry)
@@ -3506,6 +3529,48 @@ export const chatHandlers: GatewayRequestHandlers = {
       return;
     }
 
+    const expectedGuideRun = p.expectedGuideRunId ? context.chatAbortControllers.get(p.expectedGuideRunId) : undefined;
+    const guideRunChanged = () => respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, "CHAT_GUIDE_RUN_CHANGED"));
+    const guideRequest = p.expectedGuideRunId && p.expectedSessionGeneration && p.inputMode === "guide" && !stopCommand &&
+      normalizedAttachments.length === 0 && knowledgeScope === "none" ? {
+      key: `chat-guide:${clientRunId}`,
+      digest: createHash("sha256").update(JSON.stringify([
+        workspaceId ?? entry?.workspaceId, sessionKey, p.expectedSessionGeneration, p.expectedGuideRunId, inboundMessage,
+      ])).digest("hex"),
+    } : null;
+    const guidePayload = p.expectedGuideRunId
+      ? { ok: true, steered: true, mode: "guide", queued: true, runId: p.expectedGuideRunId }
+      : { ok: true, steered: true, mode: "guide", queued: true };
+    if (p.expectedGuideRunId && !guideRequest) {
+      guideRunChanged();
+      return;
+    }
+    const replayGuide = () => {
+      if (!guideRequest) return false;
+      const cached = context.dedupe.get(guideRequest.key)?.payload as { digest?: string; queued?: boolean } | undefined;
+      const persisted = cached?.queued ? undefined : readLongTaskInterventionReceipt(sessionKey, `chat:${clientRunId}:guide:event`);
+      const receipt = persisted ? {
+        digest: persisted.payload.guideRequestDigest,
+        queued: persisted.mode === "guide" && persisted.status === "steered" && persisted.runId === p.expectedGuideRunId,
+      } : cached;
+      if (!receipt) return false;
+      if (receipt?.digest === guideRequest.digest && receipt.queued) {
+        respond(true, guidePayload, undefined, { cached: true });
+      } else {
+        respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST,
+          receipt?.digest === guideRequest.digest ? "CHAT_GUIDE_OUTCOME_UNCONFIRMED" : "CHAT_GUIDE_ID_CONFLICT"));
+      }
+      return true;
+    };
+    if (replayGuide()) return;
+    if (p.expectedGuideRunId && (
+        !expectedGuideRun || expectedGuideRun.controller.signal.aborted || expectedGuideRun.controlUiVisible === false ||
+        expectedGuideRun.sessionKey !== sessionKey || expectedGuideRun.sessionId !== p.expectedSessionGeneration ||
+        (expectedGuideRun.workspaceId && expectedGuideRun.workspaceId !== entry?.workspaceId))) {
+      guideRunChanged();
+      return;
+    }
+
     if (stopCommand) {
       const releaseStopPermit = acquireSessionAdmissionPermit(
         {
@@ -3550,11 +3615,10 @@ export const chatHandlers: GatewayRequestHandlers = {
     // replace) the existing stop-command + active-run-dedupe machinery above.
     // The classifier lives in agents/input-classifier.ts; the action builder is in
     // sessions/input-mode.ts.
-    const activeEntryForSession = findActiveChatAbortEntryForSession(
-      context.chatAbortControllers,
-      sessionKey,
-    );
-    if (activeEntryForSession && !stopCommand) {
+    const activeEntryForSession = p.expectedGuideRunId && expectedGuideRun
+      ? { runId: p.expectedGuideRunId, entry: expectedGuideRun }
+      : findActiveChatAbortEntryForSession(context.chatAbortControllers, sessionKey);
+    if (activeEntryForSession && !stopCommand && replacementForRunId === undefined) {
       const { createInputModeAction } = await import("../../sessions/input-mode.js");
       // Honor an explicit inputMode from the caller (UI) when it is a valid mode.
       // Without this the classifier regex alone decides, silently dropping the
@@ -3748,9 +3812,14 @@ export const chatHandlers: GatewayRequestHandlers = {
         // real embedded-agent queue (same path as the /steer command). This
         // appends to the agent's steering queue and is read by the LLM loop
         // without aborting the current run.
-        const { resolveActiveEmbeddedRunSessionId, queueEmbeddedAgentMessageWithOutcomeAsync } =
+        const { isEmbeddedAgentExecutionActive, resolveActiveEmbeddedRunSessionId, queueEmbeddedAgentMessageWithOutcomeAsync } =
           await import("../../agents/embedded-agent-runner/runs.js");
         const activeSessionId = resolveActiveEmbeddedRunSessionId(sessionKey);
+        if (p.expectedGuideRunId && (context.chatAbortControllers.get(p.expectedGuideRunId) !== expectedGuideRun ||
+            expectedGuideRun?.controller.signal.aborted || !activeSessionId || activeSessionId !== p.expectedSessionGeneration)) {
+          guideRunChanged();
+          return;
+        }
         if (activeSessionId) {
           const releaseGuidePermit = acquireSessionAdmissionPermit(
             {
@@ -3761,6 +3830,17 @@ export const chatHandlers: GatewayRequestHandlers = {
             "chat-send",
           );
           try {
+            // This check and the queue's handle capture run synchronously in the same turn.
+            if (p.expectedGuideRunId && !isEmbeddedAgentExecutionActive({
+              runId: p.expectedGuideRunId, sessionKey, sessionId: activeSessionId,
+            })) {
+              guideRunChanged();
+              return;
+            }
+            if (guideRequest) {
+              if (replayGuide()) return;
+              context.dedupe.set(guideRequest.key, { ts: Date.now(), ok: false, payload: { digest: guideRequest.digest, queued: false } });
+            }
             const outcome = await queueEmbeddedAgentMessageWithOutcomeAsync(
               activeSessionId,
               inboundMessage,
@@ -3791,9 +3871,19 @@ export const chatHandlers: GatewayRequestHandlers = {
                 mode: "guide",
                 trigger: interventionPolicy.resumeTrigger ?? "guide",
                 status: "steered",
-                payload: { message: inboundMessage },
+                payload: { message: inboundMessage, ...(guideRequest ? {
+                  guideRequestDigest: guideRequest.digest, sessionGeneration: p.expectedSessionGeneration,
+                } : {}) },
               });
-              respond(true, { ok: true, steered: true, mode: "guide", queued: true }, undefined);
+              if (guideRequest) {
+                context.dedupe.set(guideRequest.key, { ts: Date.now(), ok: true, payload: { digest: guideRequest.digest, queued: true } });
+              }
+              respond(true, guidePayload, undefined);
+              return;
+            }
+            if (guideRequest) {
+              context.dedupe.delete(guideRequest.key);
+              guideRunChanged();
               return;
             }
             // Steering rejected (e.g. run ended between detection and injection):
@@ -3811,10 +3901,18 @@ export const chatHandlers: GatewayRequestHandlers = {
               payload: { reason: outcome.reason ?? "steering_rejected", message: inboundMessage },
             });
           } catch {
+            if (guideRequest) {
+              respond(false, undefined, errorShape(ErrorCodes.UNAVAILABLE, "CHAT_GUIDE_OUTCOME_UNCONFIRMED"));
+              return;
+            }
             // Best-effort steering; fall through to normal send on failure.
           } finally {
             releaseGuidePermit();
           }
+        }
+        if (p.expectedGuideRunId) {
+          guideRunChanged();
+          return;
         }
         // No active run resolvable, or steering failed: deliver as a normal run.
         // Fall through to the standard chat.send dispatch below.
@@ -3944,6 +4042,10 @@ export const chatHandlers: GatewayRequestHandlers = {
     );
     let activeRunAbort: ReturnType<typeof registerChatAbortController>;
     try {
+      if (replacementSlotChanged()) {
+        rejectReplacement();
+        return;
+      }
       activeRunAbort = registerChatAbortController({
         chatAbortControllers: context.chatAbortControllers,
         runId: clientRunId,
@@ -4119,6 +4221,12 @@ export const chatHandlers: GatewayRequestHandlers = {
         undefined,
         errorShape(ErrorCodes.INVALID_REQUEST, "CHAT_SESSION_GENERATION_CHANGED"),
       );
+      return;
+    }
+    if (replacementSlotChanged(activeRunAbort.controller)) {
+      activeRunAbort.cleanup();
+      clearActiveChatSendDedupeRun(context.dedupe, activeChatSendDedupeKey, clientRunId);
+      rejectReplacement();
       return;
     }
     if (activeRunAbort.controller.signal.aborted) {
@@ -4559,6 +4667,7 @@ export const chatHandlers: GatewayRequestHandlers = {
         }
         emitServerTiming("first-assistant-event", undefined, dispatchStartedAtMs);
       };
+      replacementDispatchPending = true;
       void measureDiagnosticsTimelineSpan(
         "gateway.chat_send.dispatch_inbound",
         // NET-E (TF-0442): the whole dispatch - and every nested provider call -
@@ -4575,6 +4684,7 @@ export const chatHandlers: GatewayRequestHandlers = {
                 !requesterGenerationMatches(p, dispatchEntry)
               )
                 throw new Error("CHAT_SESSION_GENERATION_CHANGED");
+              if (replacementSlotChanged(activeRunAbort.controller)) throw new Error("SESSION_STEER_RUN_CHANGED");
               const dispatchResult = await dispatchInboundMessage({
                 ctx,
                 cfg,
@@ -5341,12 +5451,14 @@ export const chatHandlers: GatewayRequestHandlers = {
           });
         })
         .finally(() => {
+          replacementRunGuard?.release();
           activeRunAbort.cleanup();
           clearActiveChatSendDedupeRun(context.dedupe, activeChatSendDedupeKey, clientRunId);
           context.removeChatRun(clientRunId, clientRunId, sessionKey);
         });
     } catch (err) {
       activeRunAbort.cleanup();
+      replacementRunGuard?.release();
       clearActiveChatSendDedupeRun(context.dedupe, activeChatSendDedupeKey, clientRunId);
       context.removeChatRun(clientRunId, clientRunId, sessionKey);
       const error = errorShape(ErrorCodes.UNAVAILABLE, String(err));
@@ -5376,6 +5488,9 @@ export const chatHandlers: GatewayRequestHandlers = {
         agentId,
         errorMessage: String(err),
       });
+    }
+    } finally {
+      if (!replacementDispatchPending) replacementRunGuard?.release();
     }
   },
   "chat.inject": async ({ params, respond, context }) => {

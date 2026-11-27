@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { existsSync } from "node:fs";
 import type { Insertable, Selectable, Updateable } from "kysely";
 import { executeSqliteQuerySync, getNodeSqliteKysely } from "../../infra/kysely-sync.js";
+import { requireNodeSqlite } from "../../infra/node-sqlite.js";
+import { resolveOpenClawStateSqlitePath } from "../../state/openclaw-state-db.paths.js";
 import {
   EVIDENCE_REF_TYPES,
   type Checkpoint,
@@ -875,6 +878,20 @@ export function getLatestLongTaskIntervention(
       .limit(1),
   ).rows[0];
   return row ? interventionRowToRecord(row) : undefined;
+}
+
+export function readLongTaskInterventionReceipt(sessionKey: string, idempotencyKey: string): LongTaskInterventionEventRecord | undefined {
+  const pathname = resolveOpenClawStateSqlitePath();
+  if (!existsSync(pathname)) return undefined;
+  const db = new (requireNodeSqlite().DatabaseSync)(pathname, { readOnly: true });
+  try {
+    const row = executeSqliteQuerySync(db, getNodeSqliteKysely<LongTaskDatabase>(db)
+      .selectFrom("long_task_intervention_events").selectAll()
+      .where("session_key", "=", sessionKey).where("idempotency_key", "=", idempotencyKey).limit(1)).rows[0];
+    return row ? interventionRowToRecord(row) : undefined;
+  } finally {
+    db.close();
+  }
 }
 
 export function listLongTaskInterventions(

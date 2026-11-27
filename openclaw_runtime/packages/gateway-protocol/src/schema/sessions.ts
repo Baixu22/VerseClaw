@@ -329,6 +329,7 @@ export const SessionsSendParamsSchema = Type.Object(
     key: NonEmptyString,
     collaboration: Type.Optional(Type.Unknown()),
     expectedSessionId: Type.Optional(NonEmptyString),
+    expectedRunId: Type.Optional(NonEmptyString),
     requesterSessionKey: Type.Optional(NonEmptyString),
     expectedRequesterSessionId: Type.Optional(NonEmptyString),
     workspaceId: Type.Optional(NonEmptyString),
@@ -876,6 +877,9 @@ export const SessionsLongTaskControlHistoryParamsSchema = Type.Object(
     key: NonEmptyString,
     agentId: Type.Optional(NonEmptyString),
     limit: Type.Optional(Type.Integer({ minimum: 1 })),
+    guideReceipt: Type.Optional(Type.Object({
+      id: NonEmptyString, workspaceId: NonEmptyString, sessionGeneration: NonEmptyString, runId: NonEmptyString,
+    }, { additionalProperties: false })),
   },
   { additionalProperties: false },
 );

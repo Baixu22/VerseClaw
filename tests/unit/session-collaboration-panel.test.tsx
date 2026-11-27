@@ -22,6 +22,7 @@ vi.mock('../../src/stores/artifact-panel', () => ({ openWorkspacePanel: mocks.op
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, params?: { count?: number }) => `${key}${params?.count === undefined ? '' : `:${params.count}`}`, i18n: { language: 'en' } }) }));
 import { SessionCollaborationPanel } from '../../src/components/agents/SessionCollaborationPanel';
 import { invokeSessionCollaborationControl } from '../../src/lib/session-collaboration-control';
+import { useSessionIntentStore } from '../../src/stores/session-intent';
 import { subscribeSessionCollaboration, useSessionCollaborationUi } from '../../src/stores/session-collaboration';
 
 const a = { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'agent:main:a', sessionGeneration: 'generation-a' };
@@ -50,6 +51,7 @@ function page(query: SessionCollaborationQuery) {
 }
 beforeEach(() => {
   vi.clearAllMocks(); useSessionCollaborationUi.setState({ views: {} });
+  useSessionIntentStore.getState().clear();
   mocks.query.mockImplementation(async query => ({ success: true, page: page(query) }));
   mocks.read.mockImplementation(async query => ({ success: true, snapshot: createSessionActivityReadSnapshot(query.scope) }));
   mocks.watch.mockImplementation(() => new Promise(() => {})); mocks.cancel.mockResolvedValue({ success: true, cancelled: true });
@@ -58,6 +60,18 @@ describe('shared collaboration panel', () => {
   it('keeps an unread requester separate from a real empty result', () => {
     render(<MemoryRouter><SessionCollaborationPanel /></MemoryRouter>);
     expect(screen.getByText('collaboration.requesterMissing')).toBeTruthy(); expect(mocks.query).not.toHaveBeenCalled();
+  });
+  it('passes the scoped action to the chat owner after activating the selected session', async () => {
+    const target = parseSessionCollaborationQuery({ requester: b }).requester;
+    mocks.activate.mockResolvedValueOnce(true);
+    render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(target.sessionKey)}`));
+    fireEvent.click(await screen.findByTestId('collaboration-control-handoff'));
+    await waitFor(() => expect(useSessionIntentStore.getState().intent).toMatchObject({
+      kind: 'collaboration-control', action: 'handoff', sessionKey: target.sessionKey, scope: target,
+    }));
+    expect(mocks.activate).toHaveBeenCalledWith(target.workspaceId, target.sessionKey, expect.any(Function));
+    expect(mocks.stop).not.toHaveBeenCalled();
   });
   it('qualifies stop through the Host reader before calling its scoped owner', async () => {
     const target = parseSessionCollaborationQuery({ requester: b }).requester;

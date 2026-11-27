@@ -54,6 +54,7 @@ type ChatSendWithMediaPayload = {
   idempotencyKey?: unknown;
   handoffOperationId?: unknown;
   expectedSessionGeneration?: unknown;
+  expectedGuideRunId?: unknown;
   media?: unknown;
   inputMode?: unknown;
   knowledgeScope?: unknown;
@@ -440,6 +441,13 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
       if (!sessionKey || !idempotencyKey) {
         return { success: false, error: 'Invalid chat send payload' };
       }
+      if (body.expectedGuideRunId !== undefined &&
+          (body.inputMode !== 'guide' || typeof body.expectedSessionGeneration !== 'string' ||
+            typeof body.expectedGuideRunId !== 'string' || !body.expectedGuideRunId.trim() ||
+            (Array.isArray(body.media) && body.media.length > 0) ||
+            (Array.isArray(body.knowledgeReferences) && body.knowledgeReferences.length > 0))) {
+        return { success: false, error: 'CHAT_GUIDE_SCOPE_REQUIRED' };
+      }
       const requestedReasoningEffort =
         body.reasoningEffort === undefined
           ? undefined
@@ -493,7 +501,8 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
           };
         }
 
-        const earlyMockResult = body.handoffOperationId ? null : handleMockChatSend({
+        const pinnedGuide = typeof body.expectedGuideRunId === 'string';
+        const earlyMockResult = body.handoffOperationId || pinnedGuide ? null : handleMockChatSend({
           sessionKey,
           message: typeof body.message === 'string' ? body.message : '',
           deliver: body.deliver ?? false,
@@ -512,15 +521,17 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
         }) : undefined;
         if (knowledgeReadScope?.expectedSessionGeneration && typeof body.expectedSessionGeneration === 'string'
           && body.expectedSessionGeneration !== knowledgeReadScope.expectedSessionGeneration) throw new Error('Knowledge session generation changed');
-        let message = applyToolUiResponseContract(typeof body.message === 'string' ? body.message : '');
-        const continuityMessage = await applyLongSessionContinuityContext(message, {
+        const originalText = typeof body.message === 'string' ? body.message : '';
+        // An in-run guide carries the user's input. The active run already has its task context.
+        let message = pinnedGuide ? originalText : applyToolUiResponseContract(originalText);
+        const continuityMessage = pinnedGuide ? null : await applyLongSessionContinuityContext(message, {
           gatewayManager,
           sessionKey,
           workspaceId: typeof body.workspaceId === 'string' ? body.workspaceId.trim() : '',
           activeTaskNodeId: typeof body.activeTaskNodeId === 'string' ? body.activeTaskNodeId : undefined,
           knowledgeReferences,
         });
-        message = continuityMessage?.message ?? await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
+        if (!pinnedGuide) message = continuityMessage?.message ?? await applyTaskLedgerContext(message, body.workspaceId, body.activeTaskNodeId);
         const imageAttachments: Array<Record<string, unknown>> = [];
         const fileReferences: string[] = [];
         const media = normalizeMedia(body.media);
@@ -621,7 +632,8 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
         ) {
           rpcParams.inputMode = body.inputMode;
         }
-        if (workspaceId) {
+        if (typeof body.expectedGuideRunId === 'string') rpcParams.expectedGuideRunId = body.expectedGuideRunId;
+        if (workspaceId && !pinnedGuide) {
           // Validate ownership here; the runtime restores task context at the provider boundary.
           // Keep the user's message byte-for-byte intact in the visible transcript.
           await persistentTaskChatContext(workspaceId,sessionKey,gatewayManager,typeof rpcParams.workspaceDir==='string'?rpcParams.workspaceDir:undefined);
@@ -743,6 +755,10 @@ export function createChatApi({ gatewayManager, selectSessionTask }: {
           labelPrefix: 'Session server',
         });
         logger.info(`[chat:sendWithMedia] RPC result: ${JSON.stringify(result)}`);
+        if (typeof body.expectedGuideRunId === 'string' &&
+            (!isRecord(result) || result.steered !== true || result.runId !== body.expectedGuideRunId)) {
+          return { success: false, error: 'CHAT_GUIDE_OUTCOME_UNCONFIRMED' };
+        }
         const response = isRecord(result) && typeof result.runId === 'string'
           ? { runId: result.runId }
           : undefined;

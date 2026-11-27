@@ -57,6 +57,8 @@ vi.mock('../../openclaw_runtime/src/gateway/session-utils.js', () => ({
 // embedded-agent-runner/runs.js 仅在 chat.ts 中被动态 import（guide 分支与
 // drain 回调），全 mock 以便可控地驱动 steering / drain 竞态。
 vi.mock('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js', () => ({
+  isEmbeddedAgentRunActive: vi.fn(() => false),
+  isEmbeddedAgentExecutionActive: vi.fn(() => false),
   resolveActiveEmbeddedRunSessionId: vi.fn(() => undefined),
   queueEmbeddedAgentMessageWithOutcomeAsync: vi.fn(async () => ({ queued: false })),
 }));
@@ -265,6 +267,97 @@ describe('chat.send inputMode: interrupt', () => {
 });
 
 describe('chat.send inputMode: guide', () => {
+  it('replays the original durable guide after its run ends and rejects changed content', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    const { loadSessionEntry } = await import('../../openclaw_runtime/src/gateway/session-utils.js');
+    const runs = await import('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js');
+    const previous = vi.mocked(loadSessionEntry).getMockImplementation()!;
+    vi.mocked(loadSessionEntry).mockReturnValue({ cfg: {}, canonicalKey: SESSION_KEY,
+      entry: { sessionId: 'session-1', workspaceId: 'workspace-1' } } as never);
+    vi.mocked(runs.resolveActiveEmbeddedRunSessionId).mockReturnValue('session-1');
+    vi.mocked(runs.isEmbeddedAgentExecutionActive).mockReturnValue(true);
+    vi.mocked(runs.queueEmbeddedAgentMessageWithOutcomeAsync).mockClear().mockResolvedValue({ queued: true } as never);
+    const context = makeContext();
+    context.chatAbortControllers.set(RUN_ID, makeAbortEntry(SESSION_KEY));
+    const request = { sessionKey: SESSION_KEY, workspaceId: 'workspace-1', message: 'Stable guidance',
+      inputMode: 'guide', knowledgeScope: 'none', idempotencyKey: 'durable-guide',
+      expectedSessionGeneration: 'session-1', expectedGuideRunId: RUN_ID };
+    try {
+      const first = vi.fn();
+      await callChatSend(context, first, request);
+      expect(first.mock.calls[0]).toEqual([true, expect.objectContaining({ steered: true, runId: RUN_ID }), undefined]);
+      context.chatAbortControllers.clear();
+      context.dedupe.clear();
+      vi.mocked(runs.isEmbeddedAgentExecutionActive).mockReturnValue(false);
+      const replay = vi.fn();
+      await callChatSend(context, replay, request);
+      expect(replay).toHaveBeenCalledWith(true, expect.objectContaining({ steered: true, runId: RUN_ID }), undefined, { cached: true });
+      const conflict = vi.fn();
+      await callChatSend(context, conflict, { ...request, message: 'Different guidance' });
+      expect(conflict).toHaveBeenCalledWith(false, undefined, expect.objectContaining({ message: 'CHAT_GUIDE_ID_CONFLICT' }));
+      expect(runs.queueEmbeddedAgentMessageWithOutcomeAsync).toHaveBeenCalledTimes(1);
+    } finally { vi.mocked(loadSessionEntry).mockImplementation(previous); }
+  });
+
+  it('rejects a retained controller whose original execution is no longer active', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    const { loadSessionEntry } = await import('../../openclaw_runtime/src/gateway/session-utils.js');
+    const runs = await import('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js');
+    const previous = vi.mocked(loadSessionEntry).getMockImplementation()!;
+    vi.mocked(loadSessionEntry).mockReturnValue({ cfg: {}, canonicalKey: SESSION_KEY,
+      entry: { sessionId: 'session-1', workspaceId: 'workspace-1' } } as never);
+    vi.mocked(runs.resolveActiveEmbeddedRunSessionId).mockReturnValue('session-1');
+    vi.mocked(runs.isEmbeddedAgentExecutionActive).mockReturnValue(false);
+    vi.mocked(runs.queueEmbeddedAgentMessageWithOutcomeAsync).mockClear();
+    const context = makeContext();
+    context.chatAbortControllers.set(RUN_ID, makeAbortEntry(SESSION_KEY));
+    try {
+      const respond = vi.fn();
+      await callChatSend(context, respond, { sessionKey: SESSION_KEY, workspaceId: 'workspace-1',
+        message: 'For the original run', idempotencyKey: 'stale-guide', inputMode: 'guide', knowledgeScope: 'none',
+        expectedSessionGeneration: 'session-1', expectedGuideRunId: RUN_ID });
+      expect(respond).toHaveBeenCalledWith(false, undefined, expect.objectContaining({ message: 'CHAT_GUIDE_RUN_CHANGED' }));
+      expect(runs.queueEmbeddedAgentMessageWithOutcomeAsync).not.toHaveBeenCalled();
+    } finally { vi.mocked(loadSessionEntry).mockImplementation(previous); }
+  });
+
+  it.each(['active', 'finished'] as const)('rejects replacement text after a successor is %s', async (state) => {
+    const { loadSessionEntry } = await import('../../openclaw_runtime/src/gateway/session-utils.js');
+    const { abortChatRunById, registerChatAbortController, watchChatRunReplacement } = await import('../../openclaw_runtime/src/gateway/chat-abort.js');
+    const previous = vi.mocked(loadSessionEntry).getMockImplementation()!;
+    vi.mocked(loadSessionEntry).mockReturnValue({ cfg: {}, canonicalKey: SESSION_KEY,
+      entry: { sessionId: 'session-1' } } as never);
+    vi.mocked(abortChatRunById).mockClear();
+    const context = makeContext();
+    const guard = watchChatRunReplacement(context.chatAbortControllers, SESSION_KEY, 'session-1', RUN_ID, 'replacement-request');
+    const successor = registerChatAbortController({ chatAbortControllers: context.chatAbortControllers,
+      sessionKey: SESSION_KEY, sessionId: 'session-1', runId: 'successor-run', timeoutMs: 1000 });
+    if (state === 'finished') successor.cleanup();
+    try {
+      const respond = vi.fn();
+      await chatHandlers['chat.send']({ params: { sessionKey: SESSION_KEY, message: 'stop',
+        expectedSessionGeneration: 'session-1', idempotencyKey: 'replacement-request' },
+      replacementForRunId: RUN_ID, replacementRunGuard: guard, context, respond, client: null, isWebchatConnect: () => false } as never);
+      expect(respond).toHaveBeenCalledWith(false, undefined, expect.objectContaining({ message: 'SESSION_STEER_RUN_CHANGED' }));
+      expect(abortChatRunById).not.toHaveBeenCalled();
+      expect(successor.controller.signal.aborted).toBe(false);
+    } finally { guard.release(); vi.mocked(loadSessionEntry).mockImplementation(previous); }
+  });
+
+  it('ignores original, replacement and unrelated starts and releases the handoff observer', async () => {
+    const { registerChatAbortController, watchChatRunReplacement } = await import('../../openclaw_runtime/src/gateway/chat-abort.js');
+    const context = makeContext();
+    const guard = watchChatRunReplacement(context.chatAbortControllers, SESSION_KEY, 'session-1', RUN_ID, 'replacement');
+    const start = (runId: string, sessionKey = SESSION_KEY, sessionId = 'session-1') =>
+      registerChatAbortController({ chatAbortControllers: context.chatAbortControllers, runId, sessionKey, sessionId, timeoutMs: 1000 });
+    start(RUN_ID).cleanup(); start('replacement').cleanup(); start('neighbor', 'agent:main:neighbor').cleanup();
+    start('different-generation', SESSION_KEY, 'session-2').cleanup();
+    expect(guard.changed()).toBe(false);
+    guard.release();
+    start('after-release').cleanup();
+    expect(guard.changed()).toBe(false);
+  });
+
   it('steers the active run and records steered evidence', async () => {
     seedLedgerRoot(SESSION_KEY);
     const respond = vi.fn();

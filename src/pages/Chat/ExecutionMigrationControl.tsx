@@ -1,4 +1,4 @@
-import { useEffect, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useState, type RefObject } from 'react';
 import { ArrowRightLeft, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { hostApi } from '@/lib/host-api';
@@ -9,9 +9,10 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { ExecutionMigrationOperation } from '@shared/types/execution-migration';
 
-export function ExecutionMigrationControl({ workspaceId, sessionKey, generation, menuItem = false, onOpen, returnFocusRef }: {
+export function ExecutionMigrationControl({ workspaceId, sessionKey, generation, menuItem = false, onOpen, returnFocusRef, requestOpen }: {
   workspaceId?: string; sessionKey: string; generation?: string; menuItem?: boolean; onOpen?: () => void;
   returnFocusRef?: RefObject<HTMLButtonElement | null>;
+  requestOpen?: () => boolean;
 }) {
   const { t }=useTranslation('chat');
   const profiles=useWorkspacesStore(state=>state.profiles);
@@ -26,6 +27,16 @@ export function ExecutionMigrationControl({ workspaceId, sessionKey, generation,
   const retainedError=error||current?.error;
   const targets=profiles.filter(profile=>profile.id!==workspaceId||profile.id===current?.targetWorkspaceId);
   useEffect(()=>{setOpen(false);setError('');setOperation(null);setTarget('');},[workspaceId,sessionKey]);
+  const canOpen = Boolean(workspaceId && (current || (binding?.activeTaskNodeId && generation && targets.length > 0)));
+  const dialogTarget = current?.targetWorkspaceId ?? targets[0]?.id ?? '';
+  const openDialog = useCallback(() => {
+    setTarget(dialogTarget);
+    setOpen(true);
+    onOpen?.();
+  }, [dialogTarget, onOpen]);
+  useEffect(() => {
+    if (canOpen && requestOpen?.()) openDialog();
+  }, [canOpen, openDialog, requestOpen]);
   const start=async()=>{
     if(!workspaceId||(!current&&(!generation||!binding))||busy)return;
     setBusy(true);setError('');
@@ -54,8 +65,8 @@ export function ExecutionMigrationControl({ workspaceId, sessionKey, generation,
     <button type="button" data-testid="execution-migration-open" role={menuItem ? 'menuitem' : undefined}
       className={menuItem ? 'codex-header-menu__item disabled:opacity-40' : 'rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10'}
       aria-label={t(current?'migration.resume':'migration.open')} title={t(current?'migration.resume':'migration.open')}
-      disabled={!current&&(!binding?.activeTaskNodeId||!generation||targets.length===0)}
-      onClick={()=>{setTarget(current?.targetWorkspaceId??targets[0]?.id??'');setOpen(true);onOpen?.();}}>
+      disabled={!canOpen}
+      onClick={openDialog}>
       <ArrowRightLeft className="size-4"/>
       {menuItem && <span>{t(current?'migration.resume':'migration.open')}</span>}
     </button>

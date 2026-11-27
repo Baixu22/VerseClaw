@@ -3041,6 +3041,7 @@ export type SessionSendWorkerPayload = {
   message: string;
   idempotencyKey: string;
   mode: 'send' | 'steer';
+  expectedRunId?: string;
 };
 export type SessionSendWorkerResult = HostSuccess & { phase: 'accepted' | 'queued' | 'steered' | 'rejected' | 'unknown'; run?: ScopedRunId; receipt?: { idempotencyKey: string; source: 'runtime-ack' | 'runtime-intervention'; queueItemId?: string } };
 export type SessionSummariesPayload = { sessionKeys?: string[]; limit?: number };
@@ -3236,6 +3237,9 @@ export type SessionExpandSelectorResult = HostSuccess & {
 export type SessionLongTaskControlPayload = SessionCompactionPayload;
 export type SessionLongTaskControlHistoryPayload = SessionCompactionPayload & {
   limit?: number;
+};
+export type SessionLongTaskControlHistoryQuery = SessionLongTaskControlHistoryPayload & {
+  guideReceipt?: { id: string; workspaceId: string; sessionGeneration: string; runId: string };
 };
 export type SessionLongTaskControlStatusResult = HostSuccess & LongTaskControlStatus;
 export type SessionLongTaskControlHistoryResult = HostSuccess & {
@@ -3654,6 +3658,7 @@ export type ChatSendWithMediaPayload = {
   expectedSessionGeneration?: string;
   media?: ChatMediaItem[];
   inputMode?: ChatInputMode;
+  expectedGuideRunId?: string;
   knowledgeScope?: WorkspaceKnowledgeScope;
   knowledgeMode?: KnowledgeInvocationMode;
   knowledgeReferences?: ChatKnowledgeReference[];
@@ -6332,7 +6337,7 @@ export type HostApiContract = {
     recallOriginal: (payload: SessionRecallOriginalPayload) => SessionRecallOriginalResult;
     expandSelector: (payload: SessionExpandSelectorPayload) => SessionExpandSelectorResult;
     longTaskControlStatus: (payload: SessionLongTaskControlPayload) => SessionLongTaskControlStatusResult;
-    longTaskControlHistory: (payload: SessionLongTaskControlHistoryPayload) => SessionLongTaskControlHistoryResult;
+    longTaskControlHistory: (payload: SessionLongTaskControlHistoryQuery) => SessionLongTaskControlHistoryResult;
     resumeCheckpoints: (payload: SessionLongTaskControlHistoryPayload) => SessionResumeCheckpointsResult;
     restoreCheckpoint: (payload: SessionRestoreCheckpointPayload) => SessionRestoreCheckpointResult;
     checkpointDiff: (payload: SessionRestoreCheckpointPayload) => SessionCheckpointDiffResult;

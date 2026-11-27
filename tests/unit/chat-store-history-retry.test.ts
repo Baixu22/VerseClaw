@@ -147,18 +147,22 @@ describe('useChatStore startup history retry', () => {
     await Promise.resolve();
     expect(send).toHaveBeenCalledWith('structured queued question', expect.any(Object));
   });
-  it('resends the original owner pins and conflict group after resetting the transcript', async () => {
+  it('resends the selected owner pins when loading history changes the edit index', async () => {
     const { useChatStore } = await import('@/stores/chat');
     const send = vi.fn(async () => {});
     const references = [{ id: 'source', title: 'source', lookup: 'source.md', corpus: 'wiki' as const,
       conflictGroupId: 'known-conflicts', revision: '1', contentDigest: 'sha256:' + 'a'.repeat(64) }];
+    const earlier = { id: 'earlier-user-message', role: 'user' as const, content: 'previous turn',
+      _knowledgeRefs: [{ id: 'memory', title: 'memory', lookup: 'memory.md', corpus: 'memory' as const }],
+      _knowledgeScope: 'memory' as const };
     useChatStore.setState({ currentSessionKey: 'agent:main:main', currentAgentId: 'main', sending: false,
-      activeRunId: null, pendingFinal: false, messages: [{ id: 'user-message', role: 'user', content: 'original',
+      activeRunId: null, pendingFinal: false, messages: [earlier, { id: 'user-message', role: 'user', content: 'original',
         _knowledgeRefs: references, _knowledgeScope: 'wiki', _knowledgeMode: 'manual' }], sendMessage: send });
     await useChatStore.getState().resendUserMessage({ text: 'edited', messageIndex: 0, messageId: 'user-message' });
     expect(send).toHaveBeenCalledWith('edited', expect.objectContaining({
       knowledgeReferences: references, knowledgeScope: 'wiki', knowledgeMode: 'manual',
     }));
+    expect(useChatStore.getState().messages).toEqual([earlier]);
   });
 
   it('uses the longer timeout only for the initial foreground history load', async () => {
