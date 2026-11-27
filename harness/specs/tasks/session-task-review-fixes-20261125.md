@@ -87,3 +87,5 @@ docs:
 开发期间可以逐文件、单 worker 执行上述单测，每批结束后释放测试进程，并为每个文件保留候选、原命令、退出码与用例结果。`CLAWX_SESSION_TASK_REVIEW_METRICS_DIR` 指定规模样本目录，测试自动创建缺失目录；一千和一万任务的样本与断言保持不变。契约、通信和本任务规范检查可独立执行，完整类型、构建、Electron 与 Harness CI 在最终集成验收时运行。
 
 串行检查仅在每份结果明确成功、通过数等于总数、失败/挂起/todo 均为零时通过；缺失或无效计数拒绝。接续已有结果时重新核对原始回执、源文件哈希与进程退出，并使用相同判定；测试文件必须唯一且最终覆盖计划中的全部文件，命令、原始结果文件名与断言均须匹配该文件。使用 `scripts/session_task_serial_validation.py --report <report.json> --plan <plan.json> --output <verification.json>` 回读已有结果；计划保留原执行候选、root、files 与 expectedTests，校验回执记录原候选及输入哈希。
+
+串行开发验收以该校验器生成的 `verification.json` 为唯一结果入口，回执 `status: passed` 后才接受测试结果。历史执行器及其 `report.status` 保留为原始运行记录。
