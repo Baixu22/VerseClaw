@@ -587,6 +587,7 @@ export function createOpenClawTools(
       agentSessionKey: options?.agentSessionKey,
       runSessionKey: options?.runSessionKey,
       agentSessionId: options?.sessionId,
+      runId: options?.runId,
       sandboxed: options?.sandboxed,
       config: resolvedConfig,
       callGateway: effectiveCallGateway,

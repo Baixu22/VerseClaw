@@ -15,6 +15,7 @@ import { parseSessionCollaborationQuery, type SessionCollaborationPage, type Ses
 import type { AutonomyProjectScope, AutonomySessionScope } from '@shared/types/identity-scope';
 import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import { SessionCollaborationMessages } from './SessionCollaborationMessages';
+import { SessionCollaborationMaterials } from './SessionCollaborationMaterials';
 import { invokeSessionCollaborationControl } from '@/lib/session-collaboration-control';
 import { SESSION_COLLABORATION_CONTROLS, type SessionCollaborationControl } from '@shared/types/session-collaboration-control';
 
@@ -149,12 +150,13 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
             <span className="flex flex-wrap items-center justify-between gap-2"><span className="break-words text-sm font-medium">{item.label}</span><span className="text-xs text-muted-foreground">{t(`collaboration.status.${item.status}`)}</span></span>
             <span className="block break-words text-sm">{item.sources.goal.state === 'ready' ? item.sources.goal.value?.text : sourceText(item.sources.goal.state)}</span>
             <span className="block break-words text-xs text-muted-foreground">{item.sources.actions.state === 'ready' ? item.sources.actions.value.map(action => action.label).join(' · ') : sourceText(item.sources.actions.state)}</span>
-            <span className="block text-xs text-muted-foreground">{t('collaboration.results')}: {sourceText('not_read')} · {t('collaboration.resources')}: {sourceText('not_read')}</span>
+            <span className="block text-xs text-muted-foreground">{t('collaboration.resources')}: {sourceText('not_read')}</span>
           </button>;
         })}
       </div>
       {page?.unknownMatches ? <p className="text-xs text-muted-foreground">{t('collaboration.unknownMatches', { count: page.unknownMatches })}</p> : null}
       {page?.nextCursor && <Button type="button" variant="outline" onClick={() => setCursor(page.nextCursor!)} disabled={loading} data-testid="collaboration-more">{t('collaboration.more')}</Button>}
+      {(!view.selected || row?.detail) && <SessionCollaborationMaterials key={`${viewKey}:${selectedKey}`} target={row?.detail?.scope} />}
       {view.selected && <div className="space-y-3 border-t border-border pt-3" data-testid="collaboration-detail">
         <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="break-words text-sm font-medium">
           {row?.label ?? (detailIssue ? t(`collaboration.page.${detailIssue}`, { count: 0 }) : t('collaboration.loading'))}
@@ -174,7 +176,6 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
           <p className="break-words text-sm">{row.sources.goal.state === 'ready' ? row.sources.goal.value?.text : sourceText(row.sources.goal.state)}</p>
           <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-2 text-xs">
             <dt>{t('collaboration.resources')}</dt><dd>{sourceText(snapshot?.resources ? 'ready' : 'not_read')}</dd>
-            <dt>{t('collaboration.results')}</dt><dd>{sourceText('not_read')}</dd>
           </dl>
           {requester && row.detail && <SessionCollaborationMessages requester={requester} target={row.detail.scope} tasks={row.sources.tasks.value ?? undefined} />}
           {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs" data-testid="collaboration-controls"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>

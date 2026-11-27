@@ -7,7 +7,7 @@ import type {
 } from '@shared/types/session-activity';
 import { createEmptySessionActivitySnapshot, createSessionActivityReadSnapshot, fenceSessionActivityRead, parseSessionActivityReadQuery } from '@shared/types/session-activity';
 import { normalizeAutonomySessionScope } from '@shared/types/identity-scope';
-import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from './workspaces-api';
+import { getActiveWorkspaceProfile, getPersistedCoordinatorBinding, getWorkspaceRootPathById } from './workspaces-api';
 import { canonicalPath } from '../../shared/task-system/identity';
 import { emptySessionCollaborationPage, parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
 import { parseSessionCollaborationWatch, validateSessionCollaborationWatch, type SessionCollaborationWatchResult } from '@shared/types/session-collaboration-watch';
@@ -140,8 +140,16 @@ export function createSessionActivityApi({
         const workspaceId = request.query.requester.workspaceId;
         const root = await getWorkspaceRootPathById(workspaceId);
         if (!root) return { success: true, watch: failed('unavailable', 'owner-missing') };
+        const owner = request.materialRef ? await getActiveWorkspaceProfile() : null;
+        if (request.materialRef && (!owner || owner.id !== workspaceId ||
+          owner.activeSessionKey !== request.query.requester.sessionKey)) return { success: true, watch: failed('unavailable', 'owner-missing') };
         const result = await gatewayManager.rpc<{ watch: SessionCollaborationWatchResult }>('session.activitySnapshot', { watch: request }, request.timeoutMs! + 5_000);
         if (await getWorkspaceRootPathById(workspaceId) !== root) return { success: true, watch: failed('stale', 'scope-mismatch') };
+        if (owner) {
+          const after = await getActiveWorkspaceProfile();
+          if (after?.id !== owner.id || after.activeSessionKey !== owner.activeSessionKey)
+            return { success: true, watch: failed('unavailable', 'owner-missing') };
+        }
         return { success: true, watch: validateSessionCollaborationWatch(request, result?.watch) ?? failed('unknown', 'protocol-unverified') };
       } catch { return { success: true, watch: failed('unavailable', 'owner-unavailable') }; }
     },

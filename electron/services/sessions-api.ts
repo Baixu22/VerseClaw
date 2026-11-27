@@ -59,10 +59,12 @@ import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contra
 import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
   getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
-import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type WorkspaceId } from '@shared/types/identity-scope';
+import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type AutonomySessionScope, type WorkspaceId } from '@shared/types/identity-scope';
 import { createSessionCollaborationMessage, validateSessionCollaborationReceipt, verifySessionCollaborationMessage } from '@shared/session-collaboration-message';
 import { parseSessionCollaborationMessageInput, parseSessionCollaborationMessageQuery, validateSessionCollaborationMessagePage, type SessionCollaborationMessagePage } from '@shared/types/session-collaboration-message';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
+import { emptyMaterialPage, parseSessionCollaborationMaterialQuery, validateMaterialPage } from '@shared/types/session-collaboration-material';
+import { emptyTaskContext, type SessionCollaborationTaskContext } from '@shared/types/session-collaboration-context';
 import { classifyDerivation } from '@shared/types/session-derivation';
 import {
   executeSessionDelegation,
@@ -1871,6 +1873,14 @@ export function createSessionsApi(ctx: {
     if (page.state !== 'ready' || after?.id !== profile.id || after.activeSessionKey !== profile.activeSessionKey) return null;
     return { scope: candidate, name: profile.name };
   };
+  const collaborationReaderIssue = async (expected: AutonomySessionScope) => {
+    const active = await readCollaborationSender();
+    if (!active) return 'owner-unavailable' as const;
+    try { normalizeAutonomySessionScope(expected, active.scope); return null; }
+    catch {
+      return expected.sessionGeneration === active.scope.sessionGeneration ? 'scope-mismatch' as const : 'generation-changed' as const;
+    }
+  };
   const delegationFlights = new Map<string, Promise<SessionDelegationResult>>();
   const delegationStore = ctx.delegationStore ?? {
     readAdmission: readSessionDelegationAdmission,
@@ -2234,6 +2244,58 @@ export function createSessionsApi(ctx: {
     collaborationSender: async () => {
       try { return { success: true, source: await readCollaborationSender() }; }
       catch { return { success: true, source: null, reason: 'owner-unavailable' }; }
+    },
+    collaborationContext: async (payload) => {
+      const query = parseSessionCollaborationQuery(payload);
+      if (!query.target || query.limit !== 1) throw new TypeError('One context target required');
+      const failure = (reason: string) => ({ success: true, taskContext: emptyTaskContext(query.target!,
+        reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
+      try {
+        const before = await collaborationReaderIssue(query.requester);
+        if (before) return failure(before);
+        const result = await ctx.gatewayManager!.rpc<{ taskContext: SessionCollaborationTaskContext }>(
+          'session.activitySnapshot', { taskContext: query }, 15_000);
+        // The active reader may reset or switch while the original owner is being read.
+        const after = await collaborationReaderIssue(query.requester);
+        if (after) return failure(after);
+        if (!result?.taskContext || result.taskContext.schemaVersion !== 'SessionCollaborationTaskContext/v1')
+          return { success: true, taskContext: emptyTaskContext(query.target, 'unknown', 'protocol-unverified') };
+        normalizeAutonomySessionScope(result.taskContext.scope, query.target);
+        return { success: true, taskContext: result.taskContext };
+      } catch { return failure('owner-unavailable'); }
+    },
+    collaborationMaterials: async (payload) => {
+      const query = parseSessionCollaborationMaterialQuery(payload);
+      const failure = (reason: 'owner-unavailable' | 'scope-mismatch' | 'generation-changed') => ({ success: true,
+        materials: emptyMaterialPage(query, reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
+      try {
+        const before = await collaborationReaderIssue(query.requester);
+        if (before) return failure(before);
+        const result = await ctx.gatewayManager!.rpc<{ materials: unknown }>('session.activitySnapshot', { materials: query }, 15_000);
+        const after = await collaborationReaderIssue(query.requester);
+        return after ? failure(after) : { success: true, materials: validateMaterialPage(query, result?.materials) };
+      } catch { return failure('owner-unavailable'); }
+    },
+    presentCollaborationMaterial: async ({ id, ...payload }) => {
+      const query = parseSessionCollaborationMaterialQuery(payload);
+      if (!/^[A-Za-z0-9._:-]{1,160}$/.test(id) || !query.target || !query.ref) throw new TypeError('Exact material presentation required');
+      const { requester, target, ref } = query;
+      try {
+        const source = await readCollaborationSender();
+        if (!source || !ctx.gatewayManager) return { success: true, recorded: false };
+        normalizeAutonomySessionScope(requester, source.scope);
+        const result = await ctx.gatewayManager.rpc<{ materials: unknown }>('session.activitySnapshot', { materials: query }, 15_000);
+        if (!validateMaterialPage(query, result.materials).detail) return { success: true, recorded: false };
+        const binding = await getPersistedCoordinatorBinding(requester.workspaceId, requester.sessionKey);
+        const { recordExecutionMaterialObservations } = await import('../../openclaw_runtime/src/agents/execution-task-authority');
+        const profile = await getActiveWorkspaceProfile();
+        if (profile?.id !== requester.workspaceId || profile.activeSessionKey !== requester.sessionKey ||
+            (binding?.sessionGeneration && binding.sessionGeneration !== requester.sessionGeneration))
+          return { success: true, recorded: false };
+        const count = recordExecutionMaterialObservations(binding?.environment.canonicalRoot ?? profile.rootPath,
+          [{ id, phase: 'presented', reader: requester, source: target, ref, run: null }]);
+        return { success: true, recorded: count > 0 };
+      } catch { return { success: true, recorded: false }; }
     },
     collaborationMessages: async (payload) => {
       const query = parseSessionCollaborationMessageQuery(payload);

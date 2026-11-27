@@ -1,0 +1,812 @@
+{
+  "driven_by": "agent",
+  "testedTree": "bdfc4b751f85dd52bb1a1a5cf1c259cad7c25f0e",
+  "files": [
+    {
+      "file": "tests/unit/session-collaboration-task-context.test.ts",
+      "testSourceSha256": "2611753ce23817f4d1b388e3fdc0bec086b96a5452dc305bdd2eefd436557bc8",
+      "rawResultSha256": "469aeea10ea5be916f647bbec72e742235fbbc9ce08634df8da383a50b54dc48",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "collaboration task context owner reads an observer checkpoint and original evidence without taking a claim or writing owner events",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-shared-material.test.ts",
+      "testSourceSha256": "ab91a5e4c8bc71c097e02b5d8a8befd21d6711eb2edd036f966ffdbb072e3492",
+      "rawResultSha256": "c7a5f3282fedfb35c75f5062733459423e981f1d727007d1a385f01dccc8e442",
+      "passed": 3,
+      "total": 3,
+      "assertions": [
+        {
+          "name": "TaskSystem collaboration materials binds exact owner evidence and preserves one receipt across runs and database reopen",
+          "status": "passed"
+        },
+        {
+          "name": "TaskSystem collaboration materials keeps unbound text as a claim and rejects stale evidence, scope changes and unsafe inputs",
+          "status": "passed"
+        },
+        {
+          "name": "TaskSystem collaboration materials uses the current runtime run and rejects a prepared migration or old generation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-query.test.ts",
+      "testSourceSha256": "9e7076c1d43eb92173370e44e8e70c1c25cb2622f7016418b31d3b2b39c1395c",
+      "rawResultSha256": "1292b9bf6b63cc1a6b86e852e5e1a0b0d6f614221f56e7a0abb8d8f09d53a682",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "searches only the visible source scopes and opens the original version by its digest",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-lifecycle.test.ts",
+      "testSourceSha256": "5670c05571c1b340612d2084a5895b540936538abc425b6cca2e145c218e0a83",
+      "rawResultSha256": "dc34a79b068c893d59f8c3d778e1e578f320e8e13eba34772e320df7284862d1",
+      "passed": 1,
+      "total": 1,
+      "assertions": [
+        {
+          "name": "preserves original versions through conflict, replacement, revocation and missing evidence",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-adoption.test.ts",
+      "testSourceSha256": "6880e6c9515c5ac793c489b548c052edffbc1539e498e3eec10fee514691e967",
+      "rawResultSha256": "8d97b5a94e981708bd7d1168b454a7e780bcd7c28a771caabbd08fbe1c3f74e7",
+      "passed": 34,
+      "total": 34,
+      "assertions": [
+        {
+          "name": "hydrates an intact current tool result and records only bytes delivered with a successful response",
+          "status": "passed"
+        },
+        {
+          "name": "uses the recorded inner tool selection in tool_call",
+          "status": "passed"
+        },
+        {
+          "name": "uses the recorded inner tool selection in tool_search_code",
+          "status": "passed"
+        },
+        {
+          "name": "uses the recorded inner tool selection in exec",
+          "status": "passed"
+        },
+        {
+          "name": "uses the recorded inner tool selection in wait",
+          "status": "passed"
+        },
+        {
+          "name": "iterates a provider stream whose iterator exposes only next()",
+          "status": "passed"
+        },
+        {
+          "name": "drops material that expires during owner-read before sending the final request",
+          "status": "passed"
+        },
+        {
+          "name": "drops material that expires during payload-hook before sending the final request",
+          "status": "passed"
+        },
+        {
+          "name": "rechecks material that becomes revoked during an asynchronous payload hook",
+          "status": "passed"
+        },
+        {
+          "name": "rechecks material that becomes missing during an asynchronous payload hook",
+          "status": "passed"
+        },
+        {
+          "name": "keeps replacement markers literal when one selected material in a wrapper expires",
+          "status": "passed"
+        },
+        {
+          "name": "uses the newest distinct reusable selections after skipping a revoked material",
+          "status": "passed"
+        },
+        {
+          "name": "records presentation and model observations in the original consumer task without a writer change",
+          "status": "passed"
+        },
+        {
+          "name": "keeps a completed material request on its original task after the same reader selects another task",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'valid' material after 'pretty' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'valid' material after 'whitespace' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'valid' material after 'encoded' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'revoked' material after 'pretty' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'revoked' material after 'whitespace' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'revoked' material after 'encoded' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'missing' material after 'pretty' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'missing' material after 'whitespace' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'missing' material after 'encoded' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'expired' material after 'pretty' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'expired' material after 'whitespace' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies 'expired' material after 'encoded' envelope serialization",
+          "status": "passed"
+        },
+        {
+          "name": "stops the request when post-hook material inspection exceeds the size limit",
+          "status": "passed"
+        },
+        {
+          "name": "stops the request when post-hook material inspection exceeds the depth limit",
+          "status": "passed"
+        },
+        {
+          "name": "keeps material bytes out of a hook that changes the envelope to prefix text",
+          "status": "passed"
+        },
+        {
+          "name": "keeps material bytes out of a hook that changes the envelope to suffix text",
+          "status": "passed"
+        },
+        {
+          "name": "keeps material bytes out of a hook that changes the envelope to flatten text",
+          "status": "passed"
+        },
+        {
+          "name": "hydrates an authorized reference that a hook converts to a native object",
+          "status": "passed"
+        },
+        {
+          "name": "measures the final material payload after call wrappers finish hydration",
+          "status": "passed"
+        },
+        {
+          "name": "qualifies selected materials in one final owner batch after asynchronous preparation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-watch.test.ts",
+      "testSourceSha256": "8fdcd66d0e55859df1d6c748b191caa24e347e84ed9f648ebca3e59de268f358",
+      "rawResultSha256": "fd570a4a7f92cec270f109025b8826436fd3650c2b5864c645a9151bd420797b",
+      "passed": 11,
+      "total": 11,
+      "assertions": [
+        {
+          "name": "scoped collaboration waits does not confuse an idle session with task acceptance and does not repeat an acknowledged idle event",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits binds cursors to scope and condition while ignoring fresh observation timestamps",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits acknowledges a terminal event across row changes and a temporarily absent owner outcome",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits returns a real owner receipt once without turning session idleness into acceptance",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits rereads changes arriving during an owner read and releases its listener",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits finishes cancellation and a deadline while the owner read is still pending",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits returns the original owner generation rejection without publishing a notification",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits returns a material invalidation for the original reference once across a resumed cursor",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits distinguishes repeated material state transitions and replays the same cursor idempotently",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits reads terminal identity from the existing runtime owner and rejects the old generation",
+          "status": "passed"
+        },
+        {
+          "name": "scoped collaboration waits rejects mixed watch requests before subscribing",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-panel.test.tsx",
+      "testSourceSha256": "cf928a5d49864da0d31f82dd1b74065fa2538ec9e88cb21384cb335659526f27",
+      "rawResultSha256": "c3516558fbe053a10ceb99236a2a24dad50c5010284398c7413d8a1daa4534be",
+      "passed": 10,
+      "total": 10,
+      "assertions": [
+        {
+          "name": "shared collaboration panel keeps an unread requester separate from a real empty result",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel passes the scoped action to the chat owner after activating the selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel qualifies stop through the Host reader before calling its scoped owner",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel loads only the selected detail, preserves keyboard focus on refresh and cancels on unmount",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel recovers an expired page cursor while keeping the filter and selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel does not display a late previous-workspace reply under a new requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel fences selected detail when the target is no longer visible",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel replays the selected watch when Gateway reconnects before the pending wait fails",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel opens the worker after its parent switch changes the requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel marks retained details stale when their watch loses the source",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/task-worktree-retention.test.ts",
+      "testSourceSha256": "5bd9185e08059c95b7376342c278adad788f0c28940d6fa8b6e1193730197144",
+      "rawResultSha256": "8545fd8cd17f1393f9335844d7d5fe3d9a596243a87ccbc594f6102f651cbf80",
+      "passed": 18,
+      "total": 18,
+      "assertions": [
+        {
+          "name": "Task evidence retention and original checkout cleanup keeps source evidence available to the bound task reader after material source cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup retains exact old bytes through newer HEAD, deletion, owner reopen and repeated cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup retains overwritten legacy checkpoint paths using their historical writer after handoff",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup keeps a tree when a persisted retention ref is lost and never substitutes another receipt",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (before-cleanup)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (after-preparation)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup reads cleanup history and retained binary pages through the production task tool",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup refuses active claims and pending effects before preparing historical receipts",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup rejects stale access after the same pathname is replaced",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup refuses shared core.worktree redirection at admission and cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup uses the registered Task authority while retaining bytes in the source clone",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup reconciles a real process exit after removal using committed retention receipts",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process first-open",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process checkpoint",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process claim",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process register",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-query.test.ts",
+      "testSourceSha256": "e7cd8db7768b968d4a96fdc4be32bac0974e340414856280a0d41b6afa2d0f3d",
+      "rawResultSha256": "ad14dddc076f86fc6fc34eb665f8249b5165da29ea9fcd4be0404aaca5443a28",
+      "passed": 30,
+      "total": 30,
+      "assertions": [
+        {
+          "name": "uses the same Main-owned Gateway for watch and cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "reads a bounded final material batch through the Gateway and rejects a reset during its reply",
+          "status": "passed"
+        },
+        {
+          "name": "releases cancelled and expired Gateway waits while their initial owner reads are pending",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns the same owner-backed scopes, goals, actions and task references through UI and both existing session tools without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps owned runs running without observed actions and rejects empty ready actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes failed owner reads from missing reply envelopes across Main, UI and both tools",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail filters by real TaskSystem goals and workspace without switching the active workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps an unverifiable goal unknown while filtering metadata rows that have no session identity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reuses one read-only TaskSystem connection per execution root and reads no transcript bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail attempts an incompatible TaskSystem schema only once per execution root and preserves its bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns bounded Unicode goals and preserves the full TaskSystem objective at the A1 detail entry",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reads an original in-flight tool request with its own run identity and removes it when the owner settles",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves a foreign admission scope for the same key and generation and rejects its actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail pages using a scoped metadata cursor and rejects old generations and cursor identities",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail invalidates a cursor after metadata label or effective visibility changes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps unselected fields not_read and bounds discovery to a single 100-candidate scan",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes verified empty tasks, idle runs, unavailable owners and unknown activity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail fences reset during the owner join and never reuses a current-session result for another workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original self visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original tree visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original agent visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail uses existing A2A allow rules and sandbox clamps without accepting policy overrides from parameters",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects model edits, spoofed requesters and stale sender generations on readOnly tool requests",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects malformed, unselected and cross-scope replies consistently at Main, UI and tool consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves unknown search matches and rejects a fabricated empty page across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":51}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":0}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"fields\":[\"unknown\"]}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"cursor\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"requester\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:a2-a\",\"sessionGeneration\":\"generation-a\",\"writeClaim\":true}}",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-control-semantics.test.ts",
+      "testSourceSha256": "558cda6ee5642efae70e56dc93f25f7f4bcede8d9fbcd64b0341f5bf0ec8b464",
+      "rawResultSha256": "3e044e7c32c9651c1f4711f90b075a7cb9cf484295b5dfd72af05ba1b415a6f1",
+      "passed": 3,
+      "total": 3,
+      "assertions": [
+        {
+          "name": "collaboration control semantics keeps guide, interrupt-send and messages distinct",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration control semantics rejects old generations and a different run before control dispatch",
+          "status": "passed"
+        },
+        {
+          "name": "collaboration control semantics leaves boundary selection and persistent operation handling to the original owner",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-delivery.test.ts",
+      "testSourceSha256": "b54b23f914b82695816721bebae06be89203aa62b1427104bece8e320870957d",
+      "rawResultSha256": "fc15a215f96bd9216a79fe260a16fa0a6e88a636f886bcebf4edaaaa45437498",
+      "passed": 7,
+      "total": 7,
+      "assertions": [
+        {
+          "name": "original message intent owner keeps the first source capture through replay and refuses different content",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner leaves the first read empty without creating the message table",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner allows an accepted intent once and preserves unknown dispatch across an actual database reopen",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner retains an owner ack and reads bounded metadata without full message bytes or writes",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner does not replace a known accepted input with a late unknown or rejection",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner keeps confirmed delivery when earlier acknowledgements arrive after reopening the owner",
+          "status": "passed"
+        },
+        {
+          "name": "original message intent owner retains the actual owner reply and its byte hash separately from metadata pages",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "testSourceSha256": "2ad6c8930d5c5b884af3f842dc21718d32faa8b0504527bb29ebd36cf4fb9460",
+      "rawResultSha256": "2196ba6f4264cf73a24983c57589af970bf7fcf094a42ac94aef38e75eb501be",
+      "passed": 27,
+      "total": 27,
+      "assertions": [
+        {
+          "name": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership replaces an exited process's run without replacing its task owner or checkpoint",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (undefined)",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (EPERM)",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the old run after process exit while an effect is started",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the old run after process exit while an effect is unknown",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses a changed contract for the same business key",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership rejects a second owner and a stale revision",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not convert lease expiration into automatic reassignment",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership resumes an idle expired owner in a new epoch after reopening its store",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not revive an expired owner with a started effect",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not revive an expired owner with a unknown effect",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership replays an owner-bound expired admission without checking its retired epoch again",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps generation changes, explicit pauses and clock rollback outside automatic renewal",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership enforces dependencies and rejects cycles",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership uses one task domain for two real Git worktrees",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/durable-task-tool.test.ts",
+      "testSourceSha256": "02f12df880414281d43640af5871bc79b8e4d1f1caf7c391d2b16c56949c235c",
+      "rawResultSha256": "5c0d51fc334468763d1d5222bde157e2b21f14f973af0390ad47c0d30e88c28b",
+      "passed": 3,
+      "total": 3,
+      "assertions": [
+        {
+          "name": "agent-facing production task tool creates, claims, executes a real check, and accepts its owner-produced receipt",
+          "status": "passed"
+        },
+        {
+          "name": "agent-facing production task tool does not let an old task tool take control of a newer epoch",
+          "status": "passed"
+        },
+        {
+          "name": "agent-facing production task tool revises an explicitly changed goal with optimistic versioning and fences the previous run",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-view.test.tsx",
+      "testSourceSha256": "fb94cb5c3b3b667e49928950d663d96aae70b9b2a448717874c7a2c12a4592cf",
+      "rawResultSha256": "a880037716f73ce39d0556fbd129a7e5cc0de09c153e401b89911a6d235fee8e",
+      "passed": 3,
+      "total": 3,
+      "assertions": [
+        {
+          "name": "uses the active reader from Main while preserving the selected material source",
+          "status": "passed"
+        },
+        {
+          "name": "keeps the pending selected detail across collapse and presents it only after reopening",
+          "status": "passed"
+        },
+        {
+          "name": "discards an earlier selected detail when another search finishes first",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-context-host.test.ts",
+      "testSourceSha256": "3928a6b23bd2903fd5a9826e96690bff70562524f56a559fd346a7ecae400a8d",
+      "rawResultSha256": "137c7d0ad48228f82cc98d888faa473572590698c4d45084f1cbe8f451cb7de4",
+      "passed": 4,
+      "total": 4,
+      "assertions": [
+        {
+          "name": "reads task context for the active requester and rejects a forged requester before the owner read",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester generation changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester workspace changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops material results when the active requester resets during reading",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-context-read.test.ts",
+      "testSourceSha256": "cff72bbaad4470079fb7dfb3ca229fdd588a0e036165a5b7fd7608e555c9f42f",
+      "rawResultSha256": "f472ad71042d42d027b71d1a80864d8d7d6d8ce1a5472bd2f05f9d2a6b6eda80",
+      "passed": 5,
+      "total": 5,
+      "assertions": [
+        {
+          "name": "keeps current evidence visible after unrelated task activity exceeds the history page",
+          "status": "passed"
+        },
+        {
+          "name": "rejects a requester change while reading the original task owner",
+          "status": "passed"
+        },
+        {
+          "name": "rejects a target change while reading the original task owner",
+          "status": "passed"
+        },
+        {
+          "name": "rejects a visibility change while reading the original task owner",
+          "status": "passed"
+        },
+        {
+          "name": "reads task, context and evidence from one snapshot when another connection changes the task binding",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-material-ollama.test.ts",
+      "testSourceSha256": "0e2562dd8c2bc91721d3775666ee7850d993cec127c2dadd310837f645254071",
+      "rawResultSha256": "b5589d0392da1c3e485cc4f5d7966b3d5b29082b64c31bb9d03904d6cf3d3a20",
+      "passed": 2,
+      "total": 2,
+      "assertions": [
+        {
+          "name": "sends only qualified valid material through native Ollama after the payload hook resolves",
+          "status": "passed"
+        },
+        {
+          "name": "sends only qualified revoked material through native Ollama after the payload hook resolves",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "rawReportSha256": "ff0e3ed89d279ce1cb6ec883ef8903dbb9cf783ff198172f8ae1992906b3b937"
+}

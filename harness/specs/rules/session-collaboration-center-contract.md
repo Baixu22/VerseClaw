@@ -39,8 +39,17 @@ appliesTo:
 ## 成果、资源和恢复
 
 - 共享材料包含原 task/revision、source session/run、证据引用、内容/产物哈希、敏感性、时间与有效条件。fact/claim/accepted decision 分开，原文和完整历史按需读取。
+- 共享材料发布由当前运行和原 TaskSystem writer 绑定。按当前任务修订与领取代次核对证据回执和文件哈希，只有对应字节得到验证的结论或产物可标为 evidence-backed。通用任务事件流跳过具备会话权限范围的材料正文。
 - 旧 WorkingContext 只经过确认的任务关联桥接；优先消费当前 TaskSystem 的合同/checkpoint/evidence。source 变化、撤销、过期、冲突与缺失可回读。
+- 任务上下文与材料的 Main 入口在读取前后绑定当前活动会话和代次；Gateway 回读上下文后复核读取者与目标的 scope，旧读取者不接收迟到结果。
 - 检索候选、展示、引用和实际消费分开计量；经验接受与记忆写回继续由原 owner 负责。
+- 实际消费与响应回执绑定请求开始时持久保存的模型调用任务、运行和会话代次；读取者切换任务不改签旧请求的归属。
+- Provider 在序列化并发送请求前等待异步 onPayload，并采用返回的载荷。材料复核接受合法 JSON 前导空白，记录的消费对应实际发送内容。
+- 最终载荷的有界材料扫描无法完整执行时中止发送，返回 MATERIAL_PAYLOAD_SCAN_INCOMPLETE；不将跳过复核当成材料缺失。
+- 载荷回调只接收材料引用，完成后再按实际请求中的授权引用注入正文；普通文本前后缀或扁平化丢失结构时不注入。诊断回调在材料处理完成后记录最终请求字节数。
+- 材料与任务上下文在返回正文前复查当前可见性、A2A 和来源关系。最终材料复核使用单次有界 Gateway 批次，在异步准备完成后同步采集各原 owner；模型信封保留 claim/evidence-backed 状态。
+- 合同、上下文与证据使用同一 TaskSystem 读取快照。最终模型载荷再次核对已知到期时间，剔除到期材料；有界冲突扫描未能排除有效冲突时保持 unknown。
+- 异步 payload hook 结束后再读取材料的原来源与有效状态，失效内容通过结构化信封移除。来源删除后的材料读取仍执行当前 visibility、A2A 和 sandbox 策略，任务关联不能替代权限。
 - session/task-subtree/model-call/host/project 的统计范围分开。调用/attempt、进程/owner 去重；held 与 spent、已知小计与未知值分别呈现。缺 usage/价格或未测量的共享进程不填 0。
 - source session 删除和执行根回收遵循现有 retention，保留任务所需原证据。回退只撤回本叶挂接或触发，未知外部效果不盲重放。
 

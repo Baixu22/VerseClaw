@@ -130,6 +130,30 @@ function taskStatus(status: string) {
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
   "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.materialsBatch !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One material batch query required');
+        const { readSessionCollaborationMaterialBatch } = await import('./session-collaboration-material.js');
+        respond(true, { materials: await readSessionCollaborationMaterialBatch(params.materialsBatch, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid material batch query' }); }
+      return;
+    }
+    if (params.materials !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One material query required');
+        const { readSessionCollaborationMaterials } = await import('./session-collaboration-material.js');
+        respond(true, { materials: await readSessionCollaborationMaterials(params.materials, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration material query' }); }
+      return;
+    }
+    if (params.taskContext !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One context query required');
+        const { readSessionCollaborationTaskContext } = await import('./session-collaboration-context.js');
+        respond(true, { taskContext: await readSessionCollaborationTaskContext(params.taskContext, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid collaboration context query' }); }
+      return;
+    }
     if (params.messages !== undefined) {
       try {
         if (Object.keys(params).length !== 1) throw new TypeError('One message query required');

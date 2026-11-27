@@ -53,6 +53,8 @@ import { cancelSessionCollaborationWatch, watchSessionCollaboration } from '../.
 import { createSessionActivityApi } from '../../electron/services/session-activity-api';
 import { readSessionCollaborationPage } from '../../src/lib/session-read-model';
 import { createSessionsListTool } from '../../openclaw_runtime/src/agents/tools/sessions-list-tool';
+import { querySessionCollaborationMaterialBatchTool } from '../../openclaw_runtime/src/agents/tools/session-collaboration-query';
+import { materialReference } from '../../shared/types/session-collaboration-material';
 import { createSessionStatusTool } from '../../openclaw_runtime/src/agents/tools/session-status-tool';
 import { resolveStorePath } from '../../openclaw_runtime/src/config/sessions/paths';
 import { closeSqliteSessionStoreDatabase, loadExistingSqliteSessionStoreReadOnly, replaceSqliteSessionStore } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
@@ -158,6 +160,27 @@ it('uses the same Main-owned Gateway for watch and cancellation', async () => {
     return { watch: result };
   });
   await expect(api.watch(request)).resolves.toMatchObject({ watch: { state: 'stale', page: { reason: 'scope-mismatch', items: [] } } });
+});
+
+it('reads a bounded final material batch through the Gateway and rejects a reset during its reply', async () => {
+  const claim = tasksA.binding(A, 'generation-a')!.claim!;
+  const material = tasksA.publishSharedMaterial(claim, { id: 'batch-route', kind: 'claim', summary: 'Original owner result',
+    sensitivity: 'internal', evidenceRefs: [] }, 'run-a', () => scope());
+  const call = vi.fn(async (request: { params: Record<string, unknown> }) => {
+    let result: unknown;
+    await sessionActivityHandlers['session.activitySnapshot']({ params: request.params,
+      context: { chatAbortControllers: runs, getRuntimeConfig: () => mocks.cfg },
+      respond: (ok: boolean, data: unknown, error?: { message: string }) => { if (!ok) throw new Error(error?.message); result = data; },
+    } as never);
+    return result;
+  });
+  const opts = { agentSessionKey: A, agentSessionId: 'generation-a', config: mocks.cfg, callGateway: call as never };
+  const selections = [{ ref: materialReference(material), source: scope() }];
+  const pages = await querySessionCollaborationMaterialBatchTool(opts, selections);
+  expect(pages).toMatchObject([{ state: 'ready', detail: { material: JSON.parse(JSON.stringify(material)), state: 'claim' } }]);
+  expect(call.mock.calls[0][0].params).toMatchObject({ materialsBatch: [{ requester: scope(), target: scope(), ref: materialReference(material) }] });
+  call.mockImplementationOnce(async () => { put(A, { sessionId: 'reset' }); return { materials: pages }; });
+  expect(await querySessionCollaborationMaterialBatchTool(opts, selections)).toMatchObject([{ state: 'unavailable', detail: null }]);
 });
 
 it('releases cancelled and expired Gateway waits while their initial owner reads are pending', async () => {

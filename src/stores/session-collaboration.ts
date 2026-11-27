@@ -45,7 +45,9 @@ export function subscribeSessionCollaboration(input: SessionCollaborationWatch, 
         if (result.event) { events.add(result.event.id); if (events.size > 64) events.delete(events.values().next().value!); }
         onUpdate(result);
       }
-      continueWaiting = request.timeoutMs! > 0 && (result.state === 'timeout' || (original.condition === 'changed' && result.state === 'changed'));
+      continueWaiting = request.timeoutMs! > 0 && (result.state === 'timeout' ||
+        (original.condition === 'changed' && result.state === 'changed') ||
+        (original.condition === 'material-changed' && result.state === 'satisfied'));
     } catch { if (active && pending === request) failed(request, 'unavailable'); }
     finally {
       if (pending === request) pending = null;

@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.78,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "只读检查了基线差异、工作区补丁及材料权限、生命周期、模型载荷和界面异步路径；未发现可复现且由此变更引入的具体缺陷。"
+}

@@ -4,15 +4,59 @@ import { sessionActivityOwnerScope } from '../../gateway/server-methods/session-
 import { emptySessionCollaborationPage, parseSessionCollaborationQuery, validateSessionCollaborationPage,
   type SessionCollaborationPage, type SessionCollaborationQuery } from '../../../../shared/types/session-collaboration.js';
 import { parseSessionActivityReadQuery } from '../../../../shared/types/session-activity.js';
+import { emptyMaterialPage, parseSessionCollaborationMaterialQuery, validateMaterialPage } from '../../../../shared/types/session-collaboration-material.js';
 import type { OpenClawConfig } from '../../config/types.openclaw.js';
+import { normalizeAutonomySessionScope } from '../../../../shared/types/identity-scope.js';
 
 export type SessionCollaborationToolContext = {
   agentSessionKey?: string;
   runSessionKey?: string;
   agentSessionId?: string;
+  runId?: string;
   config?: OpenClawConfig;
   callGateway?: typeof callGateway;
 };
+
+export function readSessionCollaborationToolOwner(opts: SessionCollaborationToolContext | undefined) {
+  const key = opts?.runSessionKey ?? opts?.agentSessionKey;
+  const generation = opts?.agentSessionId;
+  if (!key || !generation) throw new TypeError('Current run session identity required');
+  const loaded = loadSessionEntry(key, { readOnly: true, skipCache: true });
+  const owner = sessionActivityOwnerScope(loaded.canonicalKey, loaded.entry);
+  if (!owner || loaded.canonicalKey !== key || loaded.legacyKey) throw new TypeError('Current session owner unavailable');
+  return { owner, generation, root: loaded.entry?.workspaceDir ?? loaded.entry?.spawnedWorkspaceDir };
+}
+
+export async function querySessionCollaborationMaterialsTool(opts: SessionCollaborationToolContext | undefined, value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || Object.hasOwn(value, 'requester'))
+    throw new TypeError('Material search expects filters and the current run identity');
+  const { owner, generation } = readSessionCollaborationToolOwner(opts);
+  const query = parseSessionCollaborationMaterialQuery({ ...value, requester: { ...owner, sessionGeneration: generation } });
+  if (owner.sessionGeneration !== generation) return emptyMaterialPage(query, 'stale', 'generation-changed');
+  try {
+    const result = await (opts?.callGateway ?? callGateway)<{ materials: unknown }>({
+      method: 'session.activitySnapshot', params: { materials: query }, ...(opts?.config ? { config: opts.config } : {}),
+    });
+    return validateMaterialPage(query, result?.materials);
+  } catch { return emptyMaterialPage(query, 'unavailable', 'owner-unavailable'); }
+}
+
+export async function querySessionCollaborationMaterialBatchTool(opts: SessionCollaborationToolContext,
+  selections: readonly { ref: unknown; source: unknown }[]) {
+  if (!selections.length || selections.length > 4) throw new TypeError('One bounded material batch required');
+  const { owner, generation } = readSessionCollaborationToolOwner(opts);
+  const queries = selections.map(selection => parseSessionCollaborationMaterialQuery({ ref: selection.ref, target: selection.source,
+    requester: { ...owner, sessionGeneration: generation } }));
+  if (owner.sessionGeneration !== generation) return queries.map(query => emptyMaterialPage(query, 'stale', 'generation-changed'));
+  try {
+    const result = await (opts.callGateway ?? callGateway)<{ materials: unknown[] }>({ method: 'session.activitySnapshot',
+      params: { materialsBatch: queries }, ...(opts.config ? { config: opts.config } : {}) });
+    const after = readSessionCollaborationToolOwner(opts);
+    normalizeAutonomySessionScope(after.owner, owner);
+    if (!Array.isArray(result?.materials) || result.materials.length !== queries.length) throw new TypeError('Incomplete material batch');
+    return queries.map((query, index) => validateMaterialPage(query, result.materials[index]));
+  } catch { return queries.map(query => emptyMaterialPage(query, 'unavailable', 'owner-unavailable')); }
+}
 
 /** The current run supplies requester identity; model arguments only select the target/view. */
 export async function querySessionCollaborationTool(opts: SessionCollaborationToolContext | undefined,
@@ -22,12 +66,8 @@ export async function querySessionCollaborationTool(opts: SessionCollaborationTo
   if (detail && params.model !== undefined) throw new TypeError('readOnly status cannot change a model');
   const fields = detail ? ['readOnly', 'scope', 'sessionKey', 'fields'] : ['collaboration', 'workspace', 'search', 'limit', 'cursor', 'fields'];
   if (Object.keys(params).some(field => !fields.includes(field))) throw new TypeError('Unexpected collaboration tool parameter');
-  const key = opts?.runSessionKey ?? opts?.agentSessionKey;
-  if (!key || !opts?.agentSessionId) throw new TypeError('Current run session identity required');
-  const loaded = loadSessionEntry(key, { readOnly: true, skipCache: true });
-  const owner = sessionActivityOwnerScope(loaded.canonicalKey, loaded.entry);
-  if (!owner || loaded.canonicalKey !== key || loaded.legacyKey) throw new TypeError('Current session owner unavailable');
-  const query: SessionCollaborationQuery = { requester: { ...owner, sessionGeneration: opts.agentSessionId },
+  const { owner, generation } = readSessionCollaborationToolOwner(opts);
+  const query: SessionCollaborationQuery = { requester: { ...owner, sessionGeneration: generation },
     ...(params.workspace === undefined ? {} : { workspace: params.workspace as SessionCollaborationQuery['workspace'] }),
     ...(params.search === undefined ? {} : { search: params.search as string }),
     ...(params.limit === undefined ? {} : { limit: params.limit as number }),
@@ -41,11 +81,11 @@ export async function querySessionCollaborationTool(opts: SessionCollaborationTo
     query.limit = 1;
   }
   const request = parseSessionCollaborationQuery(query);
-  if (owner.sessionGeneration !== opts.agentSessionId) return emptySessionCollaborationPage(request, 'stale', 'generation-changed');
+  if (owner.sessionGeneration !== generation) return emptySessionCollaborationPage(request, 'stale', 'generation-changed');
   let result: { page: SessionCollaborationPage };
   try {
-    result = await (opts.callGateway ?? callGateway)<{ page: SessionCollaborationPage }>({
-      method: 'session.activitySnapshot', params: { query: request }, ...(opts.config ? { config: opts.config } : {}),
+    result = await (opts?.callGateway ?? callGateway)<{ page: SessionCollaborationPage }>({
+      method: 'session.activitySnapshot', params: { query: request }, ...(opts?.config ? { config: opts.config } : {}),
     });
   } catch { return emptySessionCollaborationPage(request, 'unavailable', 'owner-unavailable'); }
   return validateSessionCollaborationPage(request, result?.page);

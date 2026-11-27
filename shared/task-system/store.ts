@@ -29,7 +29,11 @@ import type {
 import { taskSimilarity } from "./recognition.js";
 import { nextReadyPlanChild, TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
 import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReference, type TaskArtifactRetentionReceipt } from './artifact-retention.js';
-import type { TaskModelCall, TaskModelUsage, TaskTraceEvent, TaskTraceSnapshot } from './trace.js';
+import type { TaskMaterialObservation, TaskModelCall, TaskModelUsage, TaskTraceEvent, TaskTraceSnapshot } from './trace.js';
+import { MATERIAL_SCAN_LIMIT, materialReference, materialSource, parseSessionCollaborationMaterial,
+  canReadMaterial, equalMaterialRef, parseMaterialReference, type SessionCollaborationMaterial,
+  type SessionCollaborationMaterialRef, type SessionCollaborationMaterialStatus } from '../types/session-collaboration-material.js';
+import { normalizeAutonomySessionScope, normalizeRunScope, type AutonomySessionScope } from '../types/identity-scope.js';
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
@@ -49,6 +53,8 @@ function withinPath(root: string, pathname: string): boolean {
   return offset === '' || (offset !== '..' && !offset.startsWith(`..${sep}`) && !isAbsolute(offset));
 }
 type Row = { json: string };
+// Material text belongs to the scoped collaboration reader. Generic task feeds can span workspaces.
+const UNSCOPED_TASK_EVENT_FILTER = "kind NOT GLOB 'shared_material_*'";
 const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const text = (value: unknown, name: string, max = 2_000): string => {
   if (typeof value !== "string" || !value.trim() || value.length > max)
@@ -601,7 +607,7 @@ export class TaskSystemStore {
     this.assertReadCurrent();
     return this.db
       .prepare(
-        `SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? ORDER BY seq ${direction === 'desc' ? 'DESC' : 'ASC'} LIMIT ?`,
+        `SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND seq>? AND ${UNSCOPED_TASK_EVENT_FILTER} ORDER BY seq ${direction === 'desc' ? 'DESC' : 'ASC'} LIMIT ?`,
       )
       .all(taskNodeId, Math.max(0, afterSequence), Math.min(500, Math.max(1, limit))) as Array<{
       seq: number;
@@ -609,6 +615,224 @@ export class TaskSystemStore {
       at: number;
       json: string;
     }>;
+  }
+  publishSharedMaterial(
+    credential: TaskCredential,
+    input: unknown,
+    runId: string,
+    readSource: () => AutonomySessionScope,
+  ): SessionCollaborationMaterial {
+    const intent = parseSessionCollaborationMaterial(input);
+    return this.transaction(() => {
+      const { contract, source, sourceRun } = this.assertMaterialWriter(credential, runId, readSource);
+      const task = { taskNodeId: contract.taskNodeId, taskRevision: contract.revision, taskDigest: contract.digest };
+      return this.request(`material:${intent.id}`, { task, source, epoch: credential.epoch, intent }, () => {
+        const createdAt = this.now();
+        if (intent.expiresAt !== undefined && intent.expiresAt <= createdAt) throw new Error('MATERIAL_EXPIRED');
+        const checkedFiles = new Map<string, { path: string; sha256: string }>();
+        const checkFile = (path: string) => {
+          const checked = checkedFiles.get(path) ?? this.hashWorkspaceFile(path);
+          checkedFiles.set(path, checked);
+          checkedFiles.set(checked.path, checked);
+          return checked;
+        };
+        const proofFiles = new Map<string, string>();
+        const repairAttempt = this.repairAttempt(task.taskNodeId);
+        for (const ref of intent.evidenceRefs) {
+          const receipt = this.read<TaskEvidence>('SELECT json FROM task_evidence WHERE task_id=? AND id=?', task.taskNodeId, ref);
+          if (!receipt || receipt.revision !== task.taskRevision || receipt.epoch !== credential.epoch ||
+              (receipt.repairAttempt ?? 0) !== repairAttempt) throw new Error('MATERIAL_EVIDENCE_UNVERIFIED');
+          for (const file of [receipt, ...(receipt.inputArtifacts ?? [])]) {
+            const checked = checkFile(file.path);
+            if (checked.sha256 !== file.sha256) throw new Error('TASK_EVIDENCE_STALE');
+            proofFiles.set(checked.path, checked.sha256);
+          }
+        }
+        const artifacts = intent.artifactRefs?.map(ref => {
+          const current = checkFile(ref.path);
+          if (current.sha256 !== ref.sha256) throw new Error('MATERIAL_ARTIFACT_HASH_MISMATCH');
+          return current;
+        });
+        const artifactRefs = artifacts?.map(file => ({ path: relative(this.domain.worktree, file.path).replace(/\\/g, '/'), sha256: file.sha256 }));
+        // A verified file only confirms statements whose bytes are bound to its receipt.
+        const summaryHash = createHash('sha256').update(intent.summary).digest('hex');
+        const backed = intent.kind === 'artifact' ? Boolean(artifacts?.length && artifacts.every(file => proofFiles.get(file.path) === file.sha256))
+          : (intent.kind === 'fact' || intent.kind === 'decision') && Array.from(proofFiles.values()).includes(summaryHash);
+        let version = 1;
+        if (intent.supersedes) {
+          const prior = this.linkedMaterial(credential, source, intent.supersedes);
+          if (this.materialDisposition(prior) || prior.sensitivity !== intent.sensitivity ||
+              (prior.state === 'evidence-backed' && !backed))
+            throw new Error('MATERIAL_SUPERSESSION_REJECTED');
+          version = prior.version + 1;
+        }
+        for (const ref of intent.conflictsWith ?? []) {
+          const prior = this.linkedMaterial(credential, source, ref);
+          if (intent.sensitivity === 'internal' && prior.sensitivity === 'restricted')
+            throw new Error('MATERIAL_RELATION_SCOPE_MISMATCH');
+        }
+        const content = { ...intent, artifactRefs, kind: intent.kind === 'fact' && !backed ? 'claim' as const : intent.kind };
+        const material: SessionCollaborationMaterial = {
+          ...content, ...task, version, authorityId: this.domain.id, sourceGeneration: source.sessionGeneration,
+          sourceRun, contentDigest: digest(content), state: backed ? 'evidence-backed' : 'claim', createdAt,
+        };
+        normalizeAutonomySessionScope(readSource(), source);
+        this.event(task.taskNodeId, 'shared_material_published', material);
+        return material;
+      });
+    });
+  }
+  private assertMaterialWriter(credential: TaskCredential, runId: string, readSource: () => AutonomySessionScope) {
+    const source = readSource();
+    if (source.sessionKey !== credential.sessionKey || source.sessionGeneration !== credential.generation)
+      throw new Error('MATERIAL_SOURCE_SCOPE_MISMATCH');
+    const sourceRun = normalizeRunScope({ runId, scope: source });
+    const { contract } = this.assertOwner(credential);
+    if (contract.state === 'cancelling') throw new Error('TASK_EXECUTION_NOT_RUNNING');
+    const active = this.db.prepare('SELECT run_id FROM task_active_runs WHERE task_id=? AND epoch=?')
+      .get(credential.taskNodeId, credential.epoch) as { run_id: string } | undefined;
+    if (active && active.run_id !== sourceRun.runId) throw new Error('MATERIAL_SOURCE_RUN_STALE');
+    return { contract, source, sourceRun };
+  }
+  private originalSharedMaterial(ref: SessionCollaborationMaterialRef) {
+    const material = this.read<SessionCollaborationMaterial>('SELECT result AS json FROM task_requests WHERE id=?', `material:${ref.id}`);
+    return material && equalMaterialRef(ref, materialReference(material)) ? material : null;
+  }
+  private linkedMaterial(credential: TaskCredential, source: AutonomySessionScope, ref: SessionCollaborationMaterialRef) {
+    const original = this.originalSharedMaterial(ref);
+    if (!original || original.taskNodeId !== credential.taskNodeId || !canReadMaterial(source, materialSource(original), original.sensitivity))
+      throw new Error('MATERIAL_RELATION_SCOPE_MISMATCH');
+    return original;
+  }
+  revokeSharedMaterial(
+    credential: TaskCredential, reference: unknown, reason: unknown, runId: string, readSource: () => AutonomySessionScope,
+  ) {
+    const ref = parseMaterialReference(reference);
+    const explanation = text(reason, 'MATERIAL_REVOCATION_REASON', 500);
+    return this.transaction(() => {
+      const { source, sourceRun } = this.assertMaterialWriter(credential, runId, readSource);
+      this.linkedMaterial(credential, source, ref);
+      return this.request(`material-revoke:${ref.id}`, { ref, reason: explanation }, () => {
+        normalizeAutonomySessionScope(readSource(), source);
+        const receipt = { ref, reason: explanation, sourceRun, sourceGeneration: source.sessionGeneration, revokedAt: this.now() };
+        this.event(credential.taskNodeId, 'shared_material_revoked', receipt);
+        return receipt;
+      });
+    });
+  }
+  sharedMaterialEvents(viewer: AutonomySessionScope, source: AutonomySessionScope, before: number, limit: number) {
+    this.assertReadCurrent();
+    if (!canReadMaterial(viewer, source, 'internal')) return [];
+    return (this.db.prepare(`SELECT seq,json FROM task_events
+      WHERE kind='shared_material_published' AND seq < ?
+      AND json_extract(json,'$.sourceRun.scope.workspaceId') = ?
+      AND json_extract(json,'$.sourceRun.scope.projectId') = ?
+      AND json_extract(json,'$.sourceRun.scope.sessionKey') = ?
+      AND json_extract(json,'$.sourceGeneration') = ?
+      AND (json_extract(json,'$.sensitivity') = 'internal' OR
+        (json_extract(json,'$.sensitivity') = 'restricted' AND ? = 1))
+      ORDER BY seq DESC LIMIT ?`).all(before, source.workspaceId, source.projectId, source.sessionKey, source.sessionGeneration,
+      Number(canReadMaterial(viewer, source, 'restricted')), Math.min(MATERIAL_SCAN_LIMIT + 1, limit)) as Array<Row & { seq: number }>)
+      .map(({ seq, json }) => ({ seq, material: JSON.parse(json) as SessionCollaborationMaterial }));
+  }
+  readSharedMaterial(viewer: AutonomySessionScope, source: AutonomySessionScope, ref: SessionCollaborationMaterialRef) {
+    this.assertReadCurrent();
+    const material = this.originalSharedMaterial(ref);
+    if (!material || !canReadMaterial(viewer, source, material.sensitivity)) return null;
+    try { normalizeAutonomySessionScope(materialSource(material), source); } catch { return null; }
+    return material;
+  }
+  private materialDisposition(material: SessionCollaborationMaterial): SessionCollaborationMaterialStatus | null {
+    const revoked = this.db.prepare("SELECT 1 FROM task_events WHERE task_id=? AND kind='shared_material_revoked' AND json_extract(json,'$.ref.id')=?")
+      .get(material.taskNodeId, material.id);
+    if (revoked) return { state: 'revoked' };
+    const successor = this.read<SessionCollaborationMaterial>(`SELECT json FROM task_events WHERE task_id=?
+      AND kind='shared_material_published' AND json_extract(json,'$.supersedes.id')=? ORDER BY seq DESC LIMIT 1`, material.taskNodeId, material.id);
+    return successor ? { state: 'superseded', related: [materialReference(successor)] } : null;
+  }
+  sharedMaterialStatus(material: SessionCollaborationMaterial, viewer: AutonomySessionScope, now: number): SessionCollaborationMaterialStatus {
+    this.assertReadCurrent();
+    const disposition = this.materialDisposition(material);
+    if (disposition) return disposition;
+    if (material.expiresAt !== undefined && material.expiresAt <= now) return { state: 'expired' };
+    const contract = this.read<TaskContract>('SELECT json FROM task_contracts WHERE id=?', material.taskNodeId);
+    if (!contract) return { state: 'unknown' };
+    if (contract.revision !== material.taskRevision || contract.digest !== material.taskDigest) return { state: 'stale' };
+    const files = [...material.artifactRefs ?? []];
+    for (const ref of material.evidenceRefs) {
+      const receipt = this.read<TaskEvidence>('SELECT json FROM task_evidence WHERE task_id=? AND id=?', material.taskNodeId, ref);
+      if (!receipt) return { state: 'unknown' };
+      if (receipt.revision !== material.taskRevision) return { state: 'stale' };
+      files.push(receipt, ...(receipt.inputArtifacts ?? []));
+    }
+    try {
+      const hashes = new Map<string, string>();
+      for (const file of files) {
+        const hash = hashes.get(file.path) ?? this.hashWorkspaceFile(file.path).sha256;
+        if (hash !== file.sha256) return { state: 'stale' };
+        hashes.set(file.path, hash);
+      }
+    } catch { return { state: 'unknown' }; }
+    const conflicts = this.db.prepare(`SELECT e.json FROM task_events e WHERE e.task_id=? AND e.kind='shared_material_published'
+      AND EXISTS (SELECT 1 FROM json_each(e.json,'$.conflictsWith') WHERE json_extract(value,'$.id')=?)
+      ORDER BY e.seq DESC LIMIT ?`).all(material.taskNodeId, material.id, MATERIAL_SCAN_LIMIT + 1) as Row[];
+    const related = conflicts.slice(0, MATERIAL_SCAN_LIMIT).map(row => JSON.parse(row.json) as SessionCollaborationMaterial)
+      .filter(conflict => canReadMaterial(viewer, materialSource(conflict), conflict.sensitivity) &&
+        (conflict.expiresAt === undefined || conflict.expiresAt > now) && conflict.taskRevision === contract.revision && !this.materialDisposition(conflict))
+      .slice(0, 8).map(materialReference);
+    // Exhausting a bounded history scan cannot prove that older live conflicts are absent.
+    return related.length ? { state: 'conflict', related }
+      : { state: conflicts.length > MATERIAL_SCAN_LIMIT ? 'unknown' : material.state };
+  }
+  readHistoricalSharedMaterial(viewer: AutonomySessionScope, source: AutonomySessionScope, ref: SessionCollaborationMaterialRef) {
+    this.assertReadCurrent();
+    try {
+      if (this.binding(viewer.sessionKey, viewer.sessionGeneration)?.contract.taskNodeId !== ref.taskNodeId) return null;
+    } catch (error) {
+      if (error instanceof Error && error.message === 'TASK_GENERATION_STALE') return null;
+      throw error;
+    }
+    const material = this.readSharedMaterial(viewer, source, ref);
+    if (!material) return null;
+    const retainedEvidence = this.retentionReceipts(material.taskNodeId).filter(receipt => receipt.source.kind === 'evidence' &&
+      material.evidenceRefs.some(ref => receipt.source.sourceKey.startsWith(`evidence:${ref}:`)))
+      .slice(0, 16).map(receipt => ({ receiptId: receipt.receiptId, sha256: receipt.source.sha256 }));
+    return { material, state: 'unknown' as const, retainedEvidence };
+  }
+  recordMaterialObservations(observations: readonly TaskMaterialObservation[]) {
+    if (!observations.length) return 0;
+    return this.transaction(() => {
+      let count = 0;
+      for (const observation of observations) {
+        const { reader, source, run, phase, ref } = observation;
+        text(observation.id, 'MATERIAL_OBSERVATION_ID', 300);
+        if (!canReadMaterial(reader, source, 'internal')) throw new Error('MATERIAL_OBSERVATION_SCOPE_MISMATCH');
+        if (run) normalizeAutonomySessionScope({ ...run.scope, sessionGeneration: reader.sessionGeneration }, reader);
+        if ((phase === 'presented') !== (run === null) ||
+            (['prompt-used', 'outcome'].includes(phase) && !observation.modelCallId) ||
+            (phase === 'outcome' && !/^[a-f0-9]{64}$/.test(observation.responseDigest ?? ''))) throw new Error('MATERIAL_OBSERVATION_IDENTITY_MISSING');
+        let taskNodeId: TaskCredential['taskNodeId'];
+        if (phase === 'prompt-used' || phase === 'outcome') {
+          // A completed request belongs to its original model call, even after the reader changes tasks.
+          const call = this.read<TaskModelCall>('SELECT result AS json FROM task_requests WHERE id=?', `model-call:${observation.modelCallId}`);
+          if (!call || !run || call.runId !== run.runId || call.credential.sessionKey !== reader.sessionKey ||
+              call.credential.generation !== reader.sessionGeneration) throw new Error('MATERIAL_OBSERVATION_CALL_MISMATCH');
+          taskNodeId = call.credential.taskNodeId;
+        } else {
+          const task = this.binding(reader.sessionKey, reader.sessionGeneration);
+          if (!task) continue;
+          taskNodeId = task.contract.taskNodeId;
+        }
+        const reference = parseMaterialReference(ref);
+        const key = digest([observation.id, phase, reference, reader, run, observation.modelCallId]);
+        this.request(`material-observation:${key}`, observation, () => {
+          this.event(taskNodeId, 'material_observation', observation);
+          return true;
+        });
+        count++;
+      }
+      return count;
+    });
   }
   traceSnapshot(taskNodeId: string): TaskTraceSnapshot {
     return this.transaction(() => {
@@ -627,7 +851,7 @@ export class TaskSystemStore {
         seen.add(id);
         const child = this.get(id); descendants.push(child); pending.push(...(child.childTaskNodeIds ?? []));
       }
-      const readEvents = (id: string): TaskTraceEvent[] => (this.db.prepare('SELECT seq,kind,at,json FROM task_events WHERE task_id=? ORDER BY seq')
+      const readEvents = (id: string): TaskTraceEvent[] => (this.db.prepare(`SELECT seq,kind,at,json FROM task_events WHERE task_id=? AND ${UNSCOPED_TASK_EVENT_FILTER} ORDER BY seq`)
         .all(id) as Array<{ seq: number; kind: string; at: number; json: string }>).map(({ json, ...row }) => ({ ...row, payload: JSON.parse(json) }));
       const events = readEvents(taskNodeId);
       const familyEvents = [events, ...descendants.map(child => readEvents(child.contract.taskNodeId))].flat();
@@ -659,7 +883,7 @@ export class TaskSystemStore {
           | undefined
       )?.sequence ?? 0;
     const rows = this.db
-      .prepare("SELECT seq,task_id,kind,at,json FROM task_events WHERE seq>? ORDER BY seq LIMIT ?")
+      .prepare(`SELECT seq,task_id,kind,at,json FROM task_events WHERE seq>? AND ${UNSCOPED_TASK_EVENT_FILTER} ORDER BY seq LIMIT ?`)
       .all(sequence, Math.max(1, Math.min(500, limit))) as Array<{
       seq: number;
       task_id: string;
@@ -934,6 +1158,22 @@ export class TaskSystemStore {
       if (recent) task=this.view(recent.task_id);
     }
     return {task,children:(task?.childTaskNodeIds??[]).map(id=>this.view(id))};
+  }
+  sessionContextSnapshot(sessionKey: string, generation: string) {
+    this.assertReadCurrent();
+    // A deferred read snapshot keeps another connection's task switch out of this joined response.
+    this.db.exec('SAVEPOINT task_context_snapshot');
+    try {
+      const capturedAt = this.now();
+      const { task } = this.sessionSnapshot(sessionKey, generation);
+      const context = task ? this.context(sessionKey, generation) : null;
+      const evidence = task ? (this.db.prepare(`SELECT json FROM task_evidence
+        WHERE task_id=? AND json_extract(json,'$.revision')=? ORDER BY rowid DESC LIMIT 50`)
+        .all(task.contract.taskNodeId, task.contract.revision) as Row[])
+        .map(row => JSON.parse(row.json) as TaskEvidence) : [];
+      this.assertReadCurrent();
+      return { task, context, evidence, capturedAt };
+    } finally { this.db.exec('RELEASE SAVEPOINT task_context_snapshot'); }
   }
   assertOwner(credential: TaskCredential, allowPaused = false): TaskView {
     const view = this.get(credential.taskNodeId);

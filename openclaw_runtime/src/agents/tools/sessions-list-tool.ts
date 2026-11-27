@@ -33,7 +33,8 @@ import {
   SESSIONS_LIST_TOOL_DISPLAY_SUMMARY,
 } from "../tool-description-presets.js";
 import type { AnyAgentTool } from "./common.js";
-import { querySessionCollaborationTool } from './session-collaboration-query.js';
+import { querySessionCollaborationMaterialsTool, querySessionCollaborationTool } from './session-collaboration-query.js';
+import { materialToolResult } from '../session-collaboration-material-prompt.js';
 import { SESSION_COLLABORATION_FIELDS } from '../../../../shared/types/session-collaboration.js';
 import {
   jsonResult,
@@ -67,6 +68,21 @@ const SessionsListToolSchema = Type.Object({
   includeDerivedTitles: Type.Optional(Type.Boolean()),
   includeLastMessage: Type.Optional(Type.Boolean()),
   collaboration: Type.Optional(Type.Boolean()),
+  materials: Type.Optional(Type.Object({
+    target: Type.Optional(Type.Object({
+      workspaceId: Type.String(), projectId: Type.String(), sessionKey: Type.String(), sessionGeneration: Type.String(),
+    }, { additionalProperties: false })),
+    search: Type.Optional(Type.String({ maxLength: 300 })),
+    taskNodeId: Type.Optional(Type.String({ maxLength: 300 })),
+    file: Type.Optional(Type.String({ maxLength: 1024 })),
+    evidenceRef: Type.Optional(Type.String({ maxLength: 160 })),
+    cursor: Type.Optional(Type.String({ maxLength: 640 })),
+    limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 20 })),
+    ref: Type.Optional(Type.Object({
+      id: Type.String(), authorityId: Type.String(), taskNodeId: Type.String(), version: Type.Integer(),
+      taskRevision: Type.Integer(), taskDigest: Type.String(), contentDigest: Type.String(),
+    }, { additionalProperties: false })),
+  }, { additionalProperties: false })),
   workspace: Type.Optional(Type.Object({ workspaceId: Type.String({ minLength: 1 }), projectId: Type.String({ minLength: 1 }) })),
   cursor: Type.Optional(Type.String()),
   fields: Type.Optional(Type.Array(Type.String({ enum: [...SESSION_COLLABORATION_FIELDS] }))),
@@ -91,6 +107,7 @@ export function createSessionsListTool(opts?: {
   agentSessionKey?: string;
   runSessionKey?: string;
   agentSessionId?: string;
+  runId?: string;
   sandboxed?: boolean;
   config?: OpenClawConfig;
   callGateway?: GatewayCaller;
@@ -101,8 +118,12 @@ export function createSessionsListTool(opts?: {
     displaySummary: SESSIONS_LIST_TOOL_DISPLAY_SUMMARY,
     description: describeSessionsListTool(),
     parameters: SessionsListToolSchema,
-    execute: async (_toolCallId, args) => {
+    execute: async (toolCallId, args) => {
       const params = args as Record<string, unknown>;
+      if (params.materials !== undefined) {
+        if (Object.keys(params).some(key => key !== 'materials')) throw new TypeError('Use one material query');
+        return jsonResult(await materialToolResult(await querySessionCollaborationMaterialsTool(opts, params.materials), toolCallId, opts));
+      }
       if (params.collaboration === true) return jsonResult(await querySessionCollaborationTool(opts, params));
       const cfg = opts?.config ?? getRuntimeConfig();
       const { mainKey, alias, requesterInternalKey, restrictToSpawned } =

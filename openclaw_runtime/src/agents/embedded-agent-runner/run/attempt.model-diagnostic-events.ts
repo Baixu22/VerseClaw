@@ -54,6 +54,7 @@ type ModelCallDiagnosticContext = {
   onStarted?: (info: { callId: string }) => void;
   onUsageStarted?: (info: { callId: string }) => void;
   onUsage?: (info: { callId: string; startedAt: number; endedAt: number; snapshot: DiagnosticModelCallUsageSnapshot }) => void;
+  wrapCall?: (stream: StreamFn, callId: string) => StreamFn;
   onFinished?: (info: {
     callId: string;
     outcome: "completed" | "error";
@@ -719,10 +720,12 @@ export function wrapStreamFnWithDiagnosticModelCallEvents(
       onUsage: ctx.onUsage,
       costDiagnosticsEnabled: ctx.costDiagnosticsEnabled,
     };
-    const propagatedOptions = withDiagnosticTraceparentHeader(options, trace, state);
+    // Observe after per-call payload wrappers settle so byte counts describe the provider request.
+    const streamWithDiagnostics: StreamFn = (callModel, callContext, callOptions) =>
+      streamFn(callModel, callContext, withDiagnosticTraceparentHeader(callOptions, trace, state));
 
     try {
-      const result = streamFn(model, streamContext, propagatedOptions);
+      const result = (ctx.wrapCall?.(streamWithDiagnostics, callId) ?? streamWithDiagnostics)(model, streamContext, options);
       if (isPromiseLike(result)) {
         return result.then(
           (resolved) => observeModelCallResult(resolved, eventBase, startedAt, state),

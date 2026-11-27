@@ -1,0 +1,660 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "active-reader-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true
+      },
+      "error": "Unit checks failed: session-collaboration-material-view.test.tsx",
+      "rawReportSha256": "deb389fe6fbf83212ae016f64e7e2f0404c2bdc0857923d16a5f70aeab69bc34",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-view.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 3,
+            "numPassedTests": 2,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "adoption-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "3513cfe6df7ccb6ed483b075a9d1475966eb6b3c79d6f5db1d0f5d3d0a365e3a",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 9,
+            "numPassedTests": 7,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "conflict-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "34a83ab8e7ba9bbe548a487a0dabcf5f3190f0f7"
+      },
+      "error": "Unit checks failed: session-collaboration-material-lifecycle.test.ts",
+      "rawReportSha256": "9b94523254671b14f14f19b77426f123962b77d8ed9cb1faaf9aeb1c5ec5d835",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-lifecycle.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 1,
+            "numPassedTests": 0,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "context-read-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true
+      },
+      "error": "Unit checks failed: session-collaboration-context-read.test.ts",
+      "rawReportSha256": "f9e6892fcaebec8b6f34f9ff1f63e1f95c36d7008c8e49087ac632590a1a81db",
+      "steps": [
+        {
+          "id": "01-session-collaboration-context-read.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 2,
+            "numPassedTests": 1,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "context-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true
+      },
+      "error": "Unit checks failed: session-collaboration-context-host.test.ts",
+      "rawReportSha256": "4bc7c4f2fc8e92b608c6b1099abaa6532f54ea45de17dbfd7afb7a246aa2c9c9",
+      "steps": [
+        {
+          "id": "01-session-collaboration-context-host.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 4,
+            "numPassedTests": 0,
+            "numFailedTests": 4,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "diagnostic-order-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "09b51359b0ca1b66119106e880763d6a465f0726"
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "569613252bdb008d09cc6971d5f5b88b4230efb463a52a1da2fbd07090cb9ea4",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 33,
+            "numPassedTests": 32,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "evidence-page-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "d403ddbc0da87854d70cacacbf72f694f3bdec34"
+      },
+      "error": "Unit checks failed: session-collaboration-context-read.test.ts",
+      "rawReportSha256": "fde478617bebe2e36e76e488e4ed58cd2b9e0fb01b656e1d8dc604450514b146",
+      "steps": [
+        {
+          "id": "01-session-collaboration-context-read.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 4,
+            "numPassedTests": 3,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "final-unit-r6",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "b00c7c6bd6977e5ccea7c19d28bdf735e34932f0"
+      },
+      "error": "Command '['git', 'write-tree']' returned non-zero exit status 128.",
+      "rawReportSha256": "00e295ecacd6529e870f4b7e979f48524daa8fc6724c5b4cb3059e00b39874da",
+      "steps": [
+        {
+          "id": "01-session-collaboration-task-context.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 1,
+            "numPassedTests": 1,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "hook-order-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "d403ddbc0da87854d70cacacbf72f694f3bdec34"
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "2227abe0caa8105b582b11fe1f95022842af9516f7b86b42316fe35d64bac99b",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 32,
+            "numPassedTests": 29,
+            "numFailedTests": 3,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "late-expiry-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "34a83ab8e7ba9bbe548a487a0dabcf5f3190f0f7"
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "225a7b4eb6bb6f8950c9e179d82f7d65a96c929fd467c8f53843ee6bfcd864bc",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 11,
+            "numPassedTests": 9,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "ollama-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "2a35daa63faba64acb9a030da00a711ec32717a6"
+      },
+      "error": "Unit checks failed: session-collaboration-material-ollama.test.ts",
+      "rawReportSha256": "cbface55a20e18629f21fb806aee2785b47cbe08aaef81b6a3764f7b232d641d",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-ollama.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 2,
+            "numPassedTests": 0,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "r8-fixes-green-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "a0b641bbf7505d6cd4fec4337f7743141bd237a2"
+      },
+      "error": "Unit checks failed: session-collaboration-context-read.test.ts",
+      "rawReportSha256": "9293b7918f49747137eb6be9c3e1e96d1f5c8c4d82d799b25f5c63fa08aaecb5",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 33,
+            "numPassedTests": 33,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "02-session-collaboration-material-ollama.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 2,
+            "numPassedTests": 2,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "03-session-collaboration-context-read.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 4,
+            "numPassedTests": 3,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "r9-fixes-green-r2",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "fd8cc10933d20c301d91d9ab121a38aac2ea03c0"
+      },
+      "error": "Unit checks failed: session-collaboration-query.test.ts",
+      "rawReportSha256": "f7c0fc3741ae86be06ec8d67e9b7a0b335f831ade88e013209ed04da6f5746f9",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 34,
+            "numPassedTests": 34,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "02-session-collaboration-material-query.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 1,
+            "numPassedTests": 1,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "03-session-collaboration-context-read.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 5,
+            "numPassedTests": 5,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "04-session-collaboration-material-ollama.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 2,
+            "numPassedTests": 2,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "05-session-collaboration-query.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 30,
+            "numPassedTests": 29,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "r9-prompt-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "e5a7f49c6e992d7b8e2eaccad1619ce629922c03"
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "a2594c41bdac17b6ed01834e4d15e58070e590d789a5f7b6a36d6c5d445e9d79",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 34,
+            "numPassedTests": 32,
+            "numFailedTests": 2,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "reserialized-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "d07b918823b12ce95a09091755eb1bbfd91dee47"
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "3bc6c4b909d9eda740488a04bf7e216dda9c92309766980c58815ce949b0b5c7",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 18,
+            "numPassedTests": 14,
+            "numFailedTests": 4,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "scan-budget-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "895bbe08e2b41ff16b027c9a2452de4c6abb16ed"
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "0c2bfe13c6825b8a51a435b2250bbfdfa9865b5433740d56c20b442d4092dad1",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 28,
+            "numPassedTests": 22,
+            "numFailedTests": 6,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "snapshot-red-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "34a83ab8e7ba9bbe548a487a0dabcf5f3190f0f7"
+      },
+      "error": "Unit checks failed: session-collaboration-context-read.test.ts",
+      "rawReportSha256": "06515a7f002142d2bc87e39925c1baac20aa9d1cae0726840a478d9cd49cbe4d",
+      "steps": [
+        {
+          "id": "01-session-collaboration-context-read.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 3,
+            "numPassedTests": 2,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "unit-r1",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": false
+      },
+      "error": "Unit checks failed: task-worktree-retention.test.ts",
+      "rawReportSha256": "d855a2ce38d238a324f9f21ed4d0279ad5a79f312b09a3af3a0eb0dcc80e8170",
+      "steps": [
+        {
+          "id": "01-session-collaboration-task-context.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 1,
+            "numPassedTests": 1,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "02-session-collaboration-shared-material.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 3,
+            "numPassedTests": 3,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "03-session-collaboration-material-query.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 1,
+            "numPassedTests": 1,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "04-session-collaboration-material-lifecycle.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 1,
+            "numPassedTests": 1,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "05-session-collaboration-material-adoption.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 7,
+            "numPassedTests": 7,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "06-session-collaboration-watch.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 11,
+            "numPassedTests": 11,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "07-session-collaboration-panel.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 10,
+            "numPassedTests": 10,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "08-task-worktree-retention.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 18,
+            "numPassedTests": 13,
+            "numFailedTests": 5,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "view-red-r2",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true
+      },
+      "error": "Unit checks failed: session-collaboration-material-view.test.tsx",
+      "rawReportSha256": "fffd14080906e86ea10aa094eb2049917f99e50a166405289cc36cc540fcde4b",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-view.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 2,
+            "numPassedTests": 1,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "whitespace-red-r2",
+      "candidate": {
+        "commit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "dirty": true,
+        "workingTree": "2a35daa63faba64acb9a030da00a711ec32717a6"
+      },
+      "error": "Unit checks failed: session-collaboration-material-adoption.test.ts",
+      "rawReportSha256": "e6097c7ec246810a47bd9637ef5217300c7fecce26f26d098be2856817edca9e",
+      "steps": [
+        {
+          "id": "01-session-collaboration-material-adoption.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 22,
+            "numPassedTests": 18,
+            "numFailedTests": 4,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    }
+  ],
+  "retainedRawDirectory": "D:\\tmp\\session-collaboration-c-relay-20261127",
+  "reviewFormatFailure": {
+    "run": "autoreview-r1",
+    "reason": "absolute finding path rejected by the structured validator"
+  }
+}
