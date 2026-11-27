@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "model": "ccs-ai/gpt-6.1-sol",
+  "reports": [
+    {
+      "file": "independent-code-review-r2.md",
+      "sha256": "3954ce858f8c9e6c2dbce8b01978a4a12ff0d37982e35ea66a2db6d56c9e1a6c",
+      "report": "# E1 协作提示独立代码审查 r2\n\n- 候选工作树：`892786a39d9f79a4ae57b5b0bfd75f41f4468ba2`\n- 结论：`request_changes`\n- 审查方式：仅读源码与已有证据；未运行测试、安装、构建、typecheck 或 CI。\n- 原 r1 报告保留在 `independent-code-review.md`，本报告未覆盖它。\n\n## 修复复核\n\n`shared/task-system/store.ts` 仍在 TaskSystem 内部比较 canonical checkpoint path；返回值现改为该 domain worktree 内的相对路径，worktree 外使用 `artifact:<16hex>`，避免上一轮发现的绝对路径回传。\n\n## 发现\n\n**[P2] linked worktree 外部路径触发异常，导致协作任务事实整体不可用**\n\n`shared/task-system/store.ts:1184` 将 `target.contract.digest` 解构到局部字符串变量 `digest`；同方法 `:1199` 的 worktree 外路径分支调用 `digest(path)`。此处调用的是任务 digest 字符串，不是文件路径哈希函数，会抛出 TypeError。Gateway 层捕获异常后返回 `unavailable`，`task` 与 admission 都丢失。\n\n复现条件：读取者与目标位于同一 TaskSystem authority 的两个 linked worktree；两个不同任务的 checkpoint 引用同一文件，且该文件位于 `this.domain.worktree` 之外。已有原始测试 `compares the same TaskSystem authority across two real Git worktrees` 正好触发该分支，结果为 `result.task?.relation === undefined`。\n\n## 原始证据核验\n\n`path-reference-green/report.json` 的 29 个源文件原始 SHA-256、LF 规范化 SHA-256、git index blob 均与当前候选匹配，候选工作树为 `892786a39d9f79a4ae57b5b0bfd75f41f4468ba2`。green 原始 JSON 的 10 条断言中 9 条通过，唯一失败为上述 linked-worktree 用例；失败步骤退出码为 1。保留的 red 原始 JSON 为 8/10，通过证据显示本机绝对路径和 linked-worktree 外部路径两条回归均已命中。\n\n修复 outside-worktree hash 分支后，需要重新绑定候选并复核该回归；本轮不批准。\n"
+    },
+    {
+      "file": "independent-code-review-r3.md",
+      "sha256": "50541e31711b30bb3a1b91c143d85344ed9f4dde20d7f2cdb38a415243cf1241",
+      "report": "# E1 协作提示独立代码审查 r3\n\n- 候选工作树：`ea4572046201ddd7eb463e56d4e73cc809983aa0`\n- 本轮结论：`source_review: pass`；候选终验待绑定的 final-unit/source 证据。\n- 审查方式：只读源码与已有原始证据；未运行测试、安装、构建、typecheck 或 CI。\n- r1 与 r2 报告均保留，未覆盖。\n\n## r2 修复复核\n\n`shared/task-system/store.ts` 将任务契约字段重命名为 `contractDigest`，在任务标识比较和返回任务事实处继续使用该值；`digest(path)` 保留调用模块级 SHA-256 helper。worktree 外路径分支不再把绝对路径输出，而返回 `artifact:<16hex>`；domain worktree 内路径使用规范化相对路径。相较 r2 的失败候选 `892786a39d9f79a4ae57b5b0bfd75f41f4468ba2`，当前暂存树 `ea4572046201ddd7eb463e56d4e73cc809983aa0` 中对应实现差异仅为该变量重命名，已解决链接工作树路径分支的函数遮蔽问题。\n\n当前代码路径支持 r2 回归断言：共享路径位于 linked worktree 外时，摘要通过 helper 生成，返回内容可保持 `shared-artifact` 关系并避免包含 root 路径。当前候选的 `final-unit-r2` 尚未启动；因此这里仅批准源码修复，不替代候选绑定的动态验证。\n\n## 原始证据状态\n\n旧树 `892786a39d9f79a4ae57b5b0bfd75f41f4468ba2` 的 `path-reference-green` 原始报告为 9/10，失败项确为 linked-worktree 场景。当前树的最终 unit 和 source 证据尚未生成，收到后再核对源文件哈希、规范化哈希、Git blob 和逐条 assertions。\n"
+    },
+    {
+      "file": "independent-code-review-r4.md",
+      "sha256": "d2a8ec1e8f6cec950761baa25649f86ca5c2173e63c88d26aac598412c3f0a59",
+      "report": "# E1 协作提示独立代码审查 r4\n\n- 审阅候选暂存树：74f8da9a79ac2f2988d830603347ccef27347696\n- 结论：source_review: pass；新候选绿测与最终验收待完成。\n- 审查方式：仅读源码和已落盘原始报告；未运行测试、安装、构建、typecheck 或 CI。\n\n## r7 两项问题复核\n\nMain 在解析 query 后、首个 await 前注册 observeWorkspaceNavigation；导航观察在整个读请求期间保持为 sticky bool，最后一个 target access RPC 返回后立即检查。若过程中切换后又切回，bool 仍为 true，Main 清空 hints；finally 在成功、失败及早退路径都会取消订阅（electron/services/sessions-api.ts:2272-2287）。目标范围复查仍用原 requester 和完整 target query，经 Gateway 当前 session visibility/generation 检查后验证响应。\n\n工作区 owner 比较原 activeWorkspaceId 与实际 store 写入后的 activeWorkspaceId，再调用原导航观察器（electron/services/workspaces-api.ts:73-78,503-522,830-859）。全仓持久化写入审阅只发现这两条 profiles/activeWorkspaceId 写路径：通用 writeDocument 与 coordinator migration 直接写入；两处均比较前后 stored id。workspaces.switch 走 writeDocument，因此即使两个 profile 的 root 和 permissionMode 相同，active id 改变也会发出观察事件。\n\n红测使用冻结前树 daf48152f548e0bc9e0abdc595539ab1d8da0eb7，Main 最后 RPC 切换/往返场景为 7/9，真实 workspaces.switch owner 通知场景为 18/19；当前修复覆盖了两条失败触发路径。原始红测保留在 late-navigation-red/ 与 navigation-owner-red/。\n\n当前源码与测试用例符合以上修复意图，未发现遗留的具体源码缺陷。navigation-green 和 autoreview-r8 尚无完成报告；当前候选不据此视为动态验收或最终通过。\n"
+    },
+    {
+      "file": "independent-code-review.md",
+      "sha256": "debaf49c9546244e651ef9e885e61aaeaf80fa8312062cc1f2d7093dfc2dab63",
+      "report": "# E1 协作提示独立代码审查\n\n- 候选：`de8db24c8299239c83fc74ec34df3e74b0e6eb99`\n- 已审源码树：`356c5bce314f1fd625f7cdf7a873dbc73440b2d0`\n- 结论：`request_changes`\n- 审查方式：仅读源码和原始证据；未运行测试、安装、构建、typecheck 或 CI。\n\n## 发现\n\n**[P2] 协调提示将本机绝对路径返回给模型**\n\n`shared/task-system/store.ts:1190-1196` 从 target 和 reader 的 checkpoint 读取 artifact 路径，将共同路径 `resolve()` 后写入 `sharedArtifacts`。`TaskSystemStore.checkpoint()` 会把经工作区 authority 校验后的 canonical path 保存在 checkpoint（`shared/task-system/store.ts:1912-1940`），因此这个值可以包含用户目录和本机目录结构。`openclaw_runtime/src/agents/tools/session-collaboration-query.ts:31-43` 将 Gateway 返回的 hints 原样验证后返回；`openclaw_runtime/src/agents/tools/sessions-list-tool.ts:125-127` 再将结果通过 `jsonResult` 作为 `sessions_list({ coordination })` 工具结果交给模型。\n\n触发条件：两个当前可见、属于同一 TaskSystem authority 的不同任务，在各自 checkpoint 中引用同一绝对文件路径；当前 session 调用 `sessions_list` 的 coordination 模式查询目标 session。返回的 `task.sharedArtifacts` 包含 canonical absolute path，因而模型提供方收到本机路径与目录信息。UI 也会直接显示这些值。用于相等性判断的本地路径无需完整返回给 UI 或模型；请把输出缩减为安全的相对引用或不暴露路径的标识，再复核同文件提示语义。\n\n## 原始验证证据\n\n已逐项核对 `final-unit-r1/report.json` 绑定的 29 个源码 SHA-256、LF 规范化 SHA-256 与当前 git index blob；全部匹配候选工作树。6 个 Vitest 原始 JSON 的文件哈希、断言数量、唯一断言名和每条 `passed` 状态均匹配报告，共 89/89。该证据支持候选与定向单测身份，不覆盖上面的模型结果隐私问题。\n\n完整验收和 D5 索引裁定按任务安排延期。本报告与相关原始跑次位于 `D:/tmp/session-collaboration-e1-20261127/`。\n"
+    }
+  ]
+}

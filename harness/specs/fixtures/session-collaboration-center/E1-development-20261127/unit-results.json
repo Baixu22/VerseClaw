@@ -1,0 +1,526 @@
+{
+  "driven_by": "agent",
+  "testedTree": "74f8da9a79ac2f2988d830603347ccef27347696",
+  "files": [
+    {
+      "file": "tests/unit/session-collaboration-coordination-hints.test.ts",
+      "testSourceSha256": "3639724b394c51dc4807d64741c53879b46402aec62307302bed093df39a6ee0",
+      "rawResultSha256": "86578c407046355dab2df09f24476b8b170ba3200bd77a7b3535d9e5844e8cdc",
+      "passed": 10,
+      "total": 10,
+      "assertions": [
+        {
+          "name": "reads exact task identity, observer role and dependency states without writes or a new claim",
+          "status": "passed"
+        },
+        {
+          "name": "distinguishes shared checkpoint paths from task identity and preserves the original writer epoch",
+          "status": "passed"
+        },
+        {
+          "name": "compares the same TaskSystem authority across two real Git worktrees",
+          "status": "passed"
+        },
+        {
+          "name": "keeps a missing task owner distinct from an empty task with 0 active permits",
+          "status": "passed"
+        },
+        {
+          "name": "keeps a missing task owner distinct from an empty task with 1 active permits",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints after a generation change while reading the owner",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints after a visibility change while reading the owner",
+          "status": "passed"
+        },
+        {
+          "name": "uses the original admission fence and drain count without changing permits",
+          "status": "passed"
+        },
+        {
+          "name": "shares the scoped result with the model tool and rejects a requester reset on the reply",
+          "status": "passed"
+        },
+        {
+          "name": "rejects wrong-scope or malformed hints and never accepts task data in an unavailable reply",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-hints-view.test.tsx",
+      "testSourceSha256": "e85a12a46f55f7c638db6ec245461a21d65bb7ba9b064225593a5f60ca78f533",
+      "rawResultSha256": "7c6f7755b06fb352a509561af645bf28ccea339d939a3c94ded4fa771bd93807",
+      "passed": 8,
+      "total": 8,
+      "assertions": [
+        {
+          "name": "loads on demand using the active reader and links to the original task without taking a claim",
+          "status": "passed"
+        },
+        {
+          "name": "removes old facts when a refresh loses visibility and preserves keyboard focus",
+          "status": "passed"
+        },
+        {
+          "name": "does not apply a pending response after the selected target changes",
+          "status": "passed"
+        },
+        {
+          "name": "shows an unavailable task source alongside the available admission observation",
+          "status": "passed"
+        },
+        {
+          "name": "coalesces notifications during a pending read and shows each completed observation",
+          "status": "passed"
+        },
+        {
+          "name": "ignores another session message when both reader and target are known",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates displayed observations when host navigation switches the actual reader",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates pending observations when host navigation switches the actual reader",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-context-host.test.ts",
+      "testSourceSha256": "b41330e20dee0360cfbed689e049333dcaab95f6f4628b42eda92472043970b8",
+      "rawResultSha256": "930024f674d1335332e14042aac395d2c82a17e12257e8828c3f226ceff08740",
+      "passed": 9,
+      "total": 9,
+      "assertions": [
+        {
+          "name": "reads task context for the active requester and rejects a forged requester before the owner read",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester generation changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops task context when the requester workspace changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "drops material results when the active requester resets during reading",
+          "status": "passed"
+        },
+        {
+          "name": "binds coordination hints to the actual active reader before and after the Gateway response",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints when the target becomes unavailable during the asynchronous reader recheck",
+          "status": "passed"
+        },
+        {
+          "name": "clears hints when the target becomes stale during the asynchronous reader recheck",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates the complete hint read when navigation occurs during the last target RPC (roundtrip: false)",
+          "status": "passed"
+        },
+        {
+          "name": "invalidates the complete hint read when navigation occurs during the last target RPC (roundtrip: true)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-query.test.ts",
+      "testSourceSha256": "b66d188dfd51c9fd45576db0e3a5951cf1d39faef1fc0aac05a9cc9431c2630a",
+      "rawResultSha256": "1c0559c4ad80f800c03de602fee0c758511a94ab0f4a4bc4e22a70b09bd965c9",
+      "passed": 31,
+      "total": 31,
+      "assertions": [
+        {
+          "name": "uses the same Main-owned Gateway for watch and cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "exposes coordination observations through the existing sessions_list and Gateway route without writes",
+          "status": "passed"
+        },
+        {
+          "name": "reads a bounded final material batch through the Gateway and rejects a reset during its reply",
+          "status": "passed"
+        },
+        {
+          "name": "releases cancelled and expired Gateway waits while their initial owner reads are pending",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns the same owner-backed scopes, goals, actions and task references through UI and both existing session tools without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps owned runs running without observed actions and rejects empty ready actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes failed owner reads from missing reply envelopes across Main, UI and both tools",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail filters by real TaskSystem goals and workspace without switching the active workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps an unverifiable goal unknown while filtering metadata rows that have no session identity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reuses one read-only TaskSystem connection per execution root and reads no transcript bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail attempts an incompatible TaskSystem schema only once per execution root and preserves its bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns bounded Unicode goals and preserves the full TaskSystem objective at the A1 detail entry",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reads an original in-flight tool request with its own run identity and removes it when the owner settles",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves a foreign admission scope for the same key and generation and rejects its actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail pages using a scoped metadata cursor and rejects old generations and cursor identities",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail invalidates a cursor after metadata label or effective visibility changes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps unselected fields not_read and bounds discovery to a single 100-candidate scan",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes verified empty tasks, idle runs, unavailable owners and unknown activity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail fences reset during the owner join and never reuses a current-session result for another workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original self visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original tree visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original agent visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail uses existing A2A allow rules and sandbox clamps without accepting policy overrides from parameters",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects model edits, spoofed requesters and stale sender generations on readOnly tool requests",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects malformed, unselected and cross-scope replies consistently at Main, UI and tool consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves unknown search matches and rejects a fabricated empty page across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":51}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":0}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"fields\":[\"unknown\"]}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"cursor\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"requester\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:a2-a\",\"sessionGeneration\":\"generation-a\",\"writeClaim\":true}}",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-panel.test.tsx",
+      "testSourceSha256": "cf928a5d49864da0d31f82dd1b74065fa2538ec9e88cb21384cb335659526f27",
+      "rawResultSha256": "9effc4016741425239e83fa5e47f1851c2e93d3f9dd7e8095b3adc488b7913ae",
+      "passed": 10,
+      "total": 10,
+      "assertions": [
+        {
+          "name": "shared collaboration panel keeps an unread requester separate from a real empty result",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel passes the scoped action to the chat owner after activating the selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel qualifies stop through the Host reader before calling its scoped owner",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel loads only the selected detail, preserves keyboard focus on refresh and cancels on unmount",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel recovers an expired page cursor while keeping the filter and selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel does not display a late previous-workspace reply under a new requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel fences selected detail when the target is no longer visible",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel replays the selected watch when Gateway reconnects before the pending wait fails",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel opens the worker after its parent switch changes the requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel marks retained details stale when their watch loses the source",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/durable-task-system.test.ts",
+      "testSourceSha256": "2ad6c8930d5c5b884af3f842dc21718d32faa8b0504527bb29ebd36cf4fb9460",
+      "rawResultSha256": "677270f3e07f4b673e1db8303b77192a976b57868bc6439af44ab3a94b4b7e84",
+      "passed": 27,
+      "total": 27,
+      "assertions": [
+        {
+          "name": "durable product task ownership migrates the prior task schema without changing task identity and rejects future schemas",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership prevents two runs in the same owning session from implementing one task concurrently",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership replaces an exited process's run without replacing its task owner or checkpoint",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (undefined)",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the run when the PID probe establishes no exit (EPERM)",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the old run after process exit while an effect is started",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership retains the old run after process exit while an effect is unknown",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps identity across retries, detects exact duplicates, and separates different goals",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses a changed contract for the same business key",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership persists the goal and checkpoint independently of chat compression and process connections",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership rejects a second owner and a stale revision",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not convert lease expiration into automatic reassignment",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership resumes an idle expired owner in a new epoch after reopening its store",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not revive an expired owner with a started effect",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not revive an expired owner with a unknown effect",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership replays an owner-bound expired admission without checking its retired epoch again",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps generation changes, explicit pauses and clock rollback outside automatic renewal",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps in-flight and unknown operations as a handoff barrier",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership enforces dependencies and rejects cycles",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership accepts only the contract-bound artifact after submitting the same candidate",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership does not let a file hash satisfy a business verification requirement",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership uses one task domain for two real Git worktrees",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership rejects forged generation and same-session calls from another worktree",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership preserves the goal while paused, and fences the previous writer on resume",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses recovery while an unknown external operation lacks its owner receipt",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership keeps a lost-response retry tied to the original attempt after ownership changes",
+          "status": "passed"
+        },
+        {
+          "name": "durable product task ownership refuses oversize goals and does not infer uniqueness from the title",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/workspaces-api.test.ts",
+      "testSourceSha256": "4034acf284986c9c1df64e8b564b40adeba132dbc17bb691ea4173c021cfe740",
+      "rawResultSha256": "f01034cf3259d14758edabe989780f016cbbdd02b999c9a996160a3e06fd2038",
+      "passed": 19,
+      "total": 19,
+      "assertions": [
+        {
+          "name": "workspaces api compatibility migration persists versioned global pause and rejects stale or conflicting requests",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration keeps a project with unfinished configuration recoverable before deletion",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration hydrates old agentId/session fields into selectedAgentId and agentBindings",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration publishes background membership after persistence without publishing draft-only edits",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration publishes active workspace switches with unchanged roots and permissions after persistence",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration normalizes legacy nested session folders and new parent input to one level",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration creates the default workspace from list when no workspace exists",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration falls back to the default workspace when the stored active id is missing",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration keeps independent UI state for each session inside a workspace",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration does not copy the previous active session state into a newly selected empty session",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration keeps each agent binding session independent within the same workspace",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration does not inherit the previous agent state when switching to a new agent binding",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration seeds the Verse Claw harness when creating a workspace profile",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration switches workspaces without rewriting the target workspace session or state",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration P2-001: creates new workspaces with readOnly permission mode by default",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration P2-001: preserves explicit acceptEdits and audits permission mode changes",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration P2-001: auto-default workspace is readOnly and invalid modes migrate to readOnly not acceptEdits",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration switches workspaces without closing the previous workspace resources",
+          "status": "passed"
+        },
+        {
+          "name": "workspaces api compatibility migration workspace delete reclaims Main browser and managed-port owners",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "rawReportSha256": "85656aee144795372df08188847525922cdbbfcc78312863edde035301d81d35"
+}
