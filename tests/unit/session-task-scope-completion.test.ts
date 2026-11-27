@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -180,8 +180,11 @@ describe('first effect consumes the canonical execution contract', () => {
       expect(result.snapshot.nodes).toHaveLength(size);
     }
     const directory = process.env.CLAWX_SESSION_TASK_REVIEW_METRICS_DIR;
-    if (directory) await writeFile(join(directory, `scale-${size}.json`), JSON.stringify({ driven_by: 'agent', actor: 'session-task-fixes',
-      size, admissionMs, snapshotMs, fullSnapshotCallsDuringAdmission: 0 }, null, 2));
+    if (directory) {
+      await mkdir(directory, { recursive: true });
+      await writeFile(join(directory, `scale-${size}.json`), JSON.stringify({ driven_by: 'agent', actor: 'session-task-fixes',
+        size, admissionMs, snapshotMs, fullSnapshotCallsDuringAdmission: 0 }, null, 2));
+    }
   }, 30000);
   it('restores the Workspace and Task owner generations before admitting the next run', async () => {
     const task = startTask();
