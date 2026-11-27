@@ -1,0 +1,661 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "autoreview-r1",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "be15ef58cc3ebcc50fbee2448c6ed477fc118250a3960f4d71831af27d99b4ee",
+        "datasetSha256": "774e14a3f8f83d279d9a9055313c22f8c9d12673e38f53101f733acb1a407967",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+          "--mode",
+          "branch",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r1-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r1-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r1.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r1.json"
+        ],
+        "exitCode": 1,
+        "seconds": 549.266,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "ccd28e0312f06604762ec1a0ae44a4bddf1a8a1b8c674036c12531af30f74bbd",
+      "result": null,
+      "resultSha256": null
+    },
+    {
+      "run": "autoreview-r10",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "bfc273796893d7b21e1a8902b5168cd06cd89b739734308cc2bebb651a002e8f",
+        "datasetSha256": "dd2d3b219e76a08807471f65c2d869e06b4d1cc4e9032a73ca3fcd3a5978c082",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r10-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r10-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r10-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r10.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r10.json"
+        ],
+        "exitCode": 0,
+        "seconds": 731.328,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "c2d56b70bfb604b3881ceeecd5dc162b9cd8cc1babf336ea8ec6a17d40f64568",
+      "result": {
+        "findings": [],
+        "overall_confidence": 0.78,
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "只读检查了基线差异、工作区补丁及材料权限、生命周期、模型载荷和界面异步路径；未发现可复现且由此变更引入的具体缺陷。"
+      },
+      "resultSha256": "e8ba1ea272011dbf215c6d13acb030f8336a537ad34247482561203e03a7353e"
+    },
+    {
+      "run": "autoreview-r2",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "ceaee84e6b10d3c90168cc6f2bb58417cd4b21f84c80998d6f9dd7e723d9622e",
+        "datasetSha256": "e774f73373d088b72cd32b9d02d03a8993465db7f8ad6f7a5fa44c124269606b",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r2-engine.json",
+          "--mode",
+          "branch",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r2-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r2-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r2.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r2.json"
+        ],
+        "exitCode": 1,
+        "seconds": 334.844,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "cf156b8b4dd61e03f1b5ba823117897d44b8f4e0a187dfd3c410597fc81c1e0a",
+      "result": {
+        "findings": [
+          {
+            "body": "StreamFn 返回的 AssistantMessageEventStreamLike 继承 AsyncIterable，其迭代方法返回 AsyncIterator；该类型只保证 next()，不保证自身实现 Symbol.asyncIterator。直接对 iterate() 使用 for await 不满足类型契约，会导致编译错误；合法的仅返回 next() 的流适配器还会在运行时抛出 TypeError。现有测试使用 async generator，掩盖了这一问题。应像 execution-task-guard.ts 一样遍历 { [Symbol.asyncIterator]: iterate }。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 249
+            },
+            "confidence": 0.99,
+            "priority": "P1",
+            "title": "将 AsyncIterator 包装为 AsyncIterable 后再遍历"
+          },
+          {
+            "body": "这里沿用父面板的 requester，但它不一定是当前活动读取者：SystemPortfolioPanel 使用项目列表中第一个协调者作为 requester。创建项目 A、B 后激活 B，再进入系统页展开共享材料，如果列表首项仍是 A，查询就会携带 A 的身份，被 collaborationMaterials 新增的活动会话检查拒绝，界面持续显示材料来源不可用。材料面板应通过 collaborationSender 获取当前读取者，同时保留所选来源的 target。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "src/components/agents/SessionCollaborationPanel.tsx",
+              "line": 159
+            },
+            "confidence": 0.98,
+            "priority": "P2",
+            "title": "为材料面板绑定实际活动读取者"
+          }
+        ],
+        "overall_confidence": 0.98,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读检查涵盖分支差异和未提交补丁。发现流迭代类型契约错误，以及多项目场景下材料查询的读取者身份接线错误，分别影响编译和界面功能。按要求未运行测试、构建或类型检查。"
+      },
+      "resultSha256": "3620854e2cba437998c3d791e4c7e46a5a3477c95f76ea9961116c57edc6fb51"
+    },
+    {
+      "run": "autoreview-r3",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "0af8ee92fa83fabe1c12f63e5e2610724e19f8c32c5571f21ac9dfc91b3d6b75",
+        "datasetSha256": "20e114c4c5df7a165bf214dad3a13c78b3b545b97c7794c5605ce60c7f19e8cf",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r3-engine.json",
+          "--mode",
+          "branch",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r3-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r3-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r3.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r3.json"
+        ],
+        "exitCode": 1,
+        "seconds": 568.344,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "164735f18ab30254632c9ddfec10b2fca1c2f2e9128c2e847a00e209ff21889a",
+      "result": {
+        "findings": [
+          {
+            "title": "[P2] 在最终发送前重新检查材料到期时间",
+            "body": "到期检查发生在每次材料回读之后，但随后还会等待其他材料的串行回读，以及这里的异步 onPayload 钩子。例如，同次请求选择两份材料，先读到的材料将在一秒后到期，而第二份材料回读耗时超过一秒，最终请求仍会包含第一份材料正文，并在成功响应后记录 prompt-used/outcome。应保留所选材料的 expiresAt，在所有异步处理结束、返回最终载荷之前再次检查，移除已到期材料及其消费记录。",
+            "priority": "P2",
+            "confidence": 0.98,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 231
+            }
+          },
+          {
+            "title": "[P2] 将任务合同、上下文和证据绑定到同一读取快照",
+            "body": "sessionSnapshot、context 和 history 分别读取数据库，未处于同一个读取事务中；其中 context 会重新解析会话当前的任务绑定。若 Gateway 取得任务 A 的快照后，Main 在同一会话、同一代次选择了任务 B，返回值会组合 A 的 task/evidence 与 B 的 context，并标记为 ready。末尾的会话 scope 和执行目录检查无法发现这种任务切换。应使用一致的数据库读取快照，或在返回前核对任务绑定、修订和摘要，发现变化后清空此次结果。",
+            "priority": "P2",
+            "confidence": 0.96,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-context.ts",
+              "line": 40
+            }
+          },
+          {
+            "title": "[P2] 在排除无效冲突后再限制返回数量",
+            "body": "查询先取最新八条冲突记录，随后才过滤撤销、过期和不可读记录，会遗漏仍有效的较早冲突。可复现方式：对同一材料发布九条有效冲突，再撤销最新八条；最早一条冲突仍有效，但 sharedMaterialStatus 会返回原材料的 claim/evidence-backed 状态，使其重新通过 isReusableMaterial 并进入模型请求。应在筛选有效冲突之后限制 related 数量；若扫描预算不足以确定不存在有效冲突，应返回 unknown，而不能恢复为可复用状态。",
+            "priority": "P2",
+            "confidence": 0.99,
+            "category": "bug",
+            "code_location": {
+              "file_path": "shared/task-system/store.ts",
+              "line": 778
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读核对了相对指定基线的分支差异及未提交恢复补丁。发现三个可复现的正确性问题：最终请求可能发送已到期材料、任务上下文可能混合不同任务的数据，以及冲突历史截断可能错误恢复材料的可复用状态。完整集成验收按要求保持延期。",
+        "overall_confidence": 0.96
+      },
+      "resultSha256": "2d138f21a34f8a8a9065e69079e6980677a4cd11ff119661cd6e0ed3d6eb10e2"
+    },
+    {
+      "run": "autoreview-r4",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "8fd99a247e75bc50b845594c83424f145f3cbaf1212b55cdcdf12632f4374ab2",
+        "datasetSha256": "3b1dcb60b08405e46ae5bf19d050d10f2b70b54bd673e7fd69b91ac14125bed5",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r4-engine.json",
+          "--mode",
+          "branch",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r4-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r4-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r4.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r4.json"
+        ],
+        "exitCode": 1,
+        "seconds": 1569.766,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "78ffc59d009b889eb21ae6c65eaf3e88e2a8321901653fa4923fa9b19a0cf658",
+      "result": null,
+      "resultSha256": null
+    },
+    {
+      "run": "autoreview-r5",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "8fd99a247e75bc50b845594c83424f145f3cbaf1212b55cdcdf12632f4374ab2",
+        "datasetSha256": "3b1dcb60b08405e46ae5bf19d050d10f2b70b54bd673e7fd69b91ac14125bed5",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r5-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r5-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r5-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r5.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r5.json"
+        ],
+        "exitCode": 1,
+        "seconds": 480.985,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "98df4aada24e372e4ec0e5af40ee14554fa5b22a9506accb0bbf5d7e828b0984",
+      "result": {
+        "findings": [
+          {
+            "body": "材料在 `params.read` 成功后即缓存正文；后续材料读取和此处异步 payload hook 完成后，只重新检查 expiresAt。可复现条件是：选中来源 A 的材料，让后续读取或 `before_provider_request` hook 等待，在等待期间 reset A 或撤销该材料，然后继续请求。已缓存的 A 正文仍会发送给 provider，并在成功响应后记录消费回执。应在最后的异步处理完成后复核所选材料的来源代次和有效状态，并移除已经失效的内容。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 234
+            },
+            "confidence": 0.96,
+            "priority": "P2",
+            "title": "[P2] 异步载荷处理结束后复核材料来源与状态"
+          },
+          {
+            "body": "`replaceAll` 的字符串替换参数会解释 `$&`、`$`` 和 `$'`，而这里的 text 包含材料原文。一个包装工具结果同时包含两份选中材料，其中一份在 payload hook 期间到期、另一份正文含字面量 `$&` 时，清理到期材料会将 `$&` 展开为完整旧文本，把刚剔除的到期正文重新插回请求，并破坏剩余材料内容。应像前面的替换逻辑一样使用函数替换参数 `() => text`，使正文按字面量写入。",
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 243
+            },
+            "confidence": 1,
+            "priority": "P2",
+            "title": "[P2] 到期清理时按字面量替换材料正文"
+          }
+        ],
+        "overall_confidence": 0.97,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读源码审查发现三处可操作缺陷：历史材料读取绕过会话可见性策略、异步处理后继续发送已失效材料，以及字符串替换标记使到期正文重新进入载荷。按要求未运行测试、构建、类型检查或 Electron。"
+      },
+      "resultSha256": "1eef074ecf043a68926b9ba3099952aca82dcfc233e330d69b1c6de87fa2457b"
+    },
+    {
+      "run": "autoreview-r6",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "a6b04b891a56acfa68c851afea4929b0882638b877d139faa0956290d01b8450",
+        "datasetSha256": "1f0ab85ddd855e576ff65ebddb9080db4d12a0c671694f8d640c98de55e448dd",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r6-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r6-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r6-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r6.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r6.json"
+        ],
+        "exitCode": 1,
+        "seconds": 460.703,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "7b17ef809a66fab7cf699343c558e958661d6224e59bcedffb569b34515e944e",
+      "result": {
+        "findings": [
+          {
+            "body": "`onPayload` 扩展钩子可以替换载荷。若钩子在异步等待期间撤销材料，并重序列化或改写包含材料的信封，`replacement.text` 就不再完整出现在 `outbound` 中；此处会跳过该材料的最终 owner 回读，撤销前取出的摘要仍会发给模型。应按材料信封中的稳定选择 ID 识别并复核载荷中的材料，不能依赖整段序列化文本完全匹配。",
+            "category": "security",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 242
+            },
+            "confidence": 0.94,
+            "priority": "P2",
+            "title": "[P2] 钩子改写信封后会绕过材料最终复核"
+          }
+        ],
+        "overall_confidence": 0.93,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "异步 payload hook 可合法替换模型请求载荷。最终复核以原始整段材料文本是否仍存在来筛选待复核材料，导致载荷改写后撤销状态无法阻止旧摘要进入模型请求。"
+      },
+      "resultSha256": "414f1553577909aa83e0b417cf38ce56dc95147fd28e3ac00aef1d38033b5989"
+    },
+    {
+      "run": "autoreview-r7",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "77f54cf6fb85b4b34370a36f9f55082b2a79e706fd7b1e4baa1468ac423eaef0",
+        "datasetSha256": "cdffe6fdbe53508b2d21ee7a975d42db0882be3658edbd0427dd2aab4f1c5b17",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r7-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r7-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r7-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r7.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r7.json"
+        ],
+        "exitCode": 1,
+        "seconds": 464.891,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "5faa69c084df60af4d18939732ee40a94f7d30f89138effa6b3d5cfe87b22b8c",
+      "result": {
+        "findings": [
+          {
+            "title": "[P1] 处理 JSON 前导空白，避免跳过最终材料核验",
+            "body": "当异步 onPayload hook 给材料结果 JSON 加上前导换行或空格时，这里的 startsWith 检查会直接返回原字符串，即使它仍是合法 JSON。如果材料在该 hook 等待期间被撤销、到期或失去读取权限，后面的 collect 就无法发现信封，不会再次调用 params.read，qualify 也不会移除已注入的正文。最终 provider 仍会收到失效材料，而且不会留下消费回执。可用“hook 暂停期间撤销材料，然后将工具结果改为 '\\n' + JSON.stringify(JSON.parse(text))”复现。应接受合法 JSON 前导空白，并确保已注入但无法重新核验的正文不会继续发送。",
+            "priority": "P1",
+            "confidence": 0.99,
+            "category": "security",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 61
+            }
+          },
+          {
+            "title": "[P2] 让原生 Ollama 等待并采用异步材料载荷回调的结果",
+            "body": "此处把材料正文注入放进异步 onPayload 回调，但受支持的原生 Ollama 发送路径在 openclaw_runtime/extensions/ollama/src/stream.ts:1176 调用回调后既不 await，也不采用返回值，随后直接序列化原 body。使用原生 Ollama 执行 sessions_list 材料详情查询后，模型下一次请求因此只收到引用信封，始终收不到材料正文。若异步回调在模型响应完成前结束，delivered 还会被填充，从而为实际未发送的正文写入 prompt-used/outcome 回执。需要同步修正该 transport 的回调消费契约，并核对实际发送的请求体。",
+            "priority": "P2",
+            "confidence": 0.99,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 198
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "只读检查覆盖了相对指定 main 基线的分支差异及暂存修复。最终材料核验可以被合法 JSON 前导空白跳过，导致已失效或失去权限的正文继续发送；原生 Ollama 也未消费新加入的异步载荷回调结果，导致材料复用失败，并可能记录错误的消费回执。这两项均需要修复。",
+        "overall_confidence": 0.98
+      },
+      "resultSha256": "f8321ff78159c762c7235b79d12c1dceebdf97a079e1bab586d2e63b086237f0"
+    },
+    {
+      "run": "autoreview-r8",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "cf98ef2e11a896bc20ff9e93066be1dc80d369d2051cbbb9a0e1f3348cceedff",
+        "datasetSha256": "14dca172dc9398a482faa7504d16f314eb310ee3a53a808774057c1405d69144",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r8-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r8-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r8-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r8.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r8.json"
+        ],
+        "exitCode": 1,
+        "seconds": 430.937,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "b6c552e5a035c8c17e1b193bf164bef895b2e43baba6e9ef81d240331d23879e",
+      "result": {
+        "findings": [
+          {
+            "title": "在限制历史条数前筛选证据事件",
+            "body": "这里先读取最近 50 条通用任务事件，再筛选 evidence/owner_verified，导致有效证据被后续无关事件挤出。例如，同一修订下调用 verifyFile 生成一条回执，再写入 50 次 checkpoint，sessionContextSnapshot 就会返回 evidence: []，而原回执仍存在于 task_evidence 中且有效。collaborationContext 仍返回 ready，也没有证据截断标记或续页入口，读取者因此无法从该接口取得原证据。应在 SQL 查询中先限定证据事件及当前修订，再应用条数上限，或直接从原证据表读取有界回执。",
+            "priority": "P2",
+            "confidence": 0.98,
+            "category": "bug",
+            "code_location": {
+              "file_path": "shared/task-system/store.ts",
+              "line": 1170
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "发现一处可直接从源码确认的功能缺陷：任务上下文的证据读取会受到无关历史事件数量影响，在活跃任务中静默返回空证据。该问题影响 C1 的原任务证据复用，需要修复。审查采用只读源码检查，包含指定主线以来的分支变更及暂存修复，未运行测试、构建或集成验收。",
+        "overall_confidence": 0.93
+      },
+      "resultSha256": "cba55a7e139df18bf73cb02f65665a2222e6ed3840e6f2b367a1977569090a71"
+    },
+    {
+      "run": "autoreview-r9",
+      "receipt": {
+        "candidate": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+        "tree": "0d43dbe7635b81fbbd7620e0347d2eb0e97e4b8f",
+        "patchSha256": "38216ef69257b9e301df3cbf046bc2dcead788c7d2bccc8e6a4057621ad697a8",
+        "datasetSha256": "3f65b53dbf5fe2986b86bef1ebef4f390204d2ebd522e643e57bd2233d54d959",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r9-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "c834668c555a86aabc6d58065132916f5693830b",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r9-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r9-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r9.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-c-relay-20261127\\autoreview-r9.json"
+        ],
+        "exitCode": 1,
+        "seconds": 576.031,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-c-relay",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "8d9a916fbd730ad05ee22fe932508c7e26fc757239121c0d3c91d8b75e7a0397",
+      "result": {
+        "findings": [
+          {
+            "title": "[P1] 返回材料正文前重新核对来源可见性",
+            "body": "正常来源分支只在最初的 readSessionCollaborationQuery 中检查 visibility、A2A 和来源隶属关系。随后 await readOwner 完成后，这里只检查 requester 的 scope。若读取期间将 visibility 从 all 改为 self，或移除 target 对 requester 的父子关联，而会话代次保持不变，接口仍会返回已失去读取权限的完整材料；Main 的前后检查也只核对活动读取者，无法拦截这种变化。应在返回详情和列表摘要前，用当前配置及来源元数据重新授权，类似本文件删除来源分支的前后检查。",
+            "priority": "P1",
+            "confidence": 0.94,
+            "category": "security",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-material.ts",
+              "line": 115
+            }
+          },
+          {
+            "title": "[P1] 避免等待其它材料时继续采用已过时的复核结果",
+            "body": "最终复核的 Promise.all 会保留先完成的材料状态，直到其它 owner 读取全部完成。可复现顺序是：同时选中 A、B，第二轮 A 读取返回 claim，让 B 的读取暂停，此时撤销 A，再释放 B。currentMaterial 对缓存的 A 只重新检查到期时间和引用，并不重新读取撤销状态，因此最终请求仍包含 A 的正文，成功响应后还会记录 prompt-used/outcome。需要在所有异步准备完成后执行覆盖选中材料的统一最终复核，或增加能使等待期间旧结果失效的状态版本检查。",
+            "priority": "P1",
+            "confidence": 0.97,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 282
+            }
+          },
+          {
+            "title": "[P2] 在注入模型的材料中保留核验状态",
+            "body": "modelMaterial 会替换整个工具材料信封，却没有保留 claim/evidence-backed 状态。发布 kind 为 decision 或 artifact 的材料时，即使摘要没有获得对应证据确认，其 kind 仍保持 decision/artifact，只有 state 标明它是 claim；注入后这个区别消失。直接按 ref 打开材料时 items 为空，模型收到的请求中也没有其它位置保留该状态，因而无法判断这是未经确认的决策候选还是已有证据支持的材料。应将核验状态一并注入，并纳入最终信封一致性校验。",
+            "priority": "P2",
+            "confidence": 0.96,
+            "category": "bug",
+            "code_location": {
+              "file_path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+              "line": 142
+            }
+          }
+        ],
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": "已只读检查相对指定主线的分支差异及未提交补丁。当前实现仍会在读取期间权限收紧后返回材料，并可能在等待其它材料复核时发送已经撤销的正文；最终模型材料还丢失了主张与证据支持状态的区别。这些问题影响权限边界、实际消费追溯和材料可信度表达。按要求未运行测试、构建、类型检查或 Electron。",
+        "overall_confidence": 0.95
+      },
+      "resultSha256": "601af8048bcae0a0f2bef85b6b8236b1b154a0eca7ff4102dada26c27113e227"
+    }
+  ]
+}

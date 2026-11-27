@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "ba3d4e0a92188305f7cb5ff36e521d8e5df81a0cf5bc64028d9c86834e5096c0"
+    },
+    {
+      "path": "checks.json",
+      "sha256": "e504237f8b2a83b16f50ac3df3372aa43be126374047a58497901543aac1ccb2"
+    },
+    {
+      "path": "first-failures.json",
+      "sha256": "48aa36c755d0b59cea6ffaedccd258699535de99f9c451ed4df83a877b3264b9"
+    },
+    {
+      "path": "independent-acceptance.md",
+      "sha256": "52bfa8fd67f85c9b70abd4d34276e0cb24ff90deb7fb8f508416051ff5ffa0b8"
+    },
+    {
+      "path": "report.json",
+      "sha256": "3529404568efcff3fc04f82df1a565cd0cbb9b854deb0048dde3e94bd96c16e6"
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "8c6746daf5bd2cdd86d470098f714f882e8b04c1eae556a870a4434369a76ce2"
+    },
+    {
+      "path": "review-final.json",
+      "sha256": "8f9f78b054ee56e97d7054d11bc484d202d067532f20bbdbcb6ed3abf784bde1"
+    },
+    {
+      "path": "review-history.json",
+      "sha256": "4fb829237c644ae4ca94606881b1f59aa0d23b86d1ee84e3f7d8f8a8a2b45985"
+    },
+    {
+      "path": "review-receipt.json",
+      "sha256": "c2d56b70bfb604b3881ceeecd5dc162b9cd8cc1babf336ea8ec6a17d40f64568"
+    },
+    {
+      "path": "source-binding.json",
+      "sha256": "070efc351e7f3744f076cdb90257e46f16930a608dfb441ee783bae92d5fb6f1"
+    },
+    {
+      "path": "unit-results.json",
+      "sha256": "dc644252a1f347b719b75d9aff9ebc2e7e2a962b6380b9ed10cb8558382234eb"
+    }
+  ]
+}

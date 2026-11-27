@@ -1,0 +1,438 @@
+{
+  "candidate": {
+    "commit": "21346d2b23938d939be20318ac65215812dd46d4",
+    "tree": "bdfc4b751f85dd52bb1a1a5cf1c259cad7c25f0e"
+  },
+  "reviewBaseCommit": "dbcd20bad4c1e7cf8e42ec5eca43dea92c868c43",
+  "reviewPatchSha256": "bfc273796893d7b21e1a8902b5168cd06cd89b739734308cc2bebb651a002e8f",
+  "testedTree": "bdfc4b751f85dd52bb1a1a5cf1c259cad7c25f0e",
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "a049f42f8bbc25599bf74debd9d20d2a649fd79f37bb7d21746511e9c989ffcc",
+      "normalizedSha256": "a049f42f8bbc25599bf74debd9d20d2a649fd79f37bb7d21746511e9c989ffcc",
+      "indexBlob": "b4a5e260de8b951ddab44368875a91ae326f89c0",
+      "gitBlob": "b4a5e260de8b951ddab44368875a91ae326f89c0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "571bfe9a720e4dfadd17dfd22e97ac7921f791fdd28290af2066de29a19a207f",
+      "normalizedSha256": "571bfe9a720e4dfadd17dfd22e97ac7921f791fdd28290af2066de29a19a207f",
+      "indexBlob": "af35578779c2d416373f4bd39d8bab8aab01f874",
+      "gitBlob": "af35578779c2d416373f4bd39d8bab8aab01f874"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "0b61538d88b440809b426dbbd94b5b192751be46ac4203c09fa70c010b3387bb",
+      "normalizedSha256": "0b61538d88b440809b426dbbd94b5b192751be46ac4203c09fa70c010b3387bb",
+      "indexBlob": "ddcdca593863d3c345cdecbf842ff93484080145",
+      "gitBlob": "ddcdca593863d3c345cdecbf842ff93484080145"
+    },
+    {
+      "path": "docs/modules/sessions.md",
+      "sha256": "0c444ab32274738098f1b930e18e623e8ea39a9187261278f7d007bdf24b207b",
+      "normalizedSha256": "0c444ab32274738098f1b930e18e623e8ea39a9187261278f7d007bdf24b207b",
+      "indexBlob": "0f1e0007c992a571e35b9d0d34d5ce3ed0bc5257",
+      "gitBlob": "0f1e0007c992a571e35b9d0d34d5ce3ed0bc5257"
+    },
+    {
+      "path": "electron/services/session-activity-api.ts",
+      "sha256": "34db71c5de78c8c88a53edb9fd69d779fdc9680ac2bd084a021e805722ae4c62",
+      "normalizedSha256": "34db71c5de78c8c88a53edb9fd69d779fdc9680ac2bd084a021e805722ae4c62",
+      "indexBlob": "291d369902f3e549c33ab406ab2aab684d56fb25",
+      "gitBlob": "291d369902f3e549c33ab406ab2aab684d56fb25"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "e51bd1501d418cbfd6c1c182ca3d034d827c221dc439088ab7446d7a1dc4243b",
+      "normalizedSha256": "7347649ba31c14256e5d56cd9dddf86e45db0f98f3ea496f6910b88d774e8a41",
+      "indexBlob": "9308e61ef6e7505aa7aeaa56abd4f06752523df1",
+      "gitBlob": "9308e61ef6e7505aa7aeaa56abd4f06752523df1"
+    },
+    {
+      "path": "harness/specs/rules/session-collaboration-center-contract.md",
+      "sha256": "5dbe9c796880e377cf826812db952facab2a233c8891f4c43e1e034f79266886",
+      "normalizedSha256": "5dbe9c796880e377cf826812db952facab2a233c8891f4c43e1e034f79266886",
+      "indexBlob": "0a54d7c1b7a23fa2ced5b02e3bf8ddb8b6e161d0",
+      "gitBlob": "0a54d7c1b7a23fa2ced5b02e3bf8ddb8b6e161d0"
+    },
+    {
+      "path": "harness/specs/scenarios/session-collaboration-center.md",
+      "sha256": "f53962f2f65cbd5629fb84312a05e60e84b393b1d1d63d6ea36699a0ee4b4039",
+      "normalizedSha256": "f53962f2f65cbd5629fb84312a05e60e84b393b1d1d63d6ea36699a0ee4b4039",
+      "indexBlob": "af667676e82346c30f5279704a12e6ce5c8ba78f",
+      "gitBlob": "af667676e82346c30f5279704a12e6ce5c8ba78f"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-c-mainline.md",
+      "sha256": "f701c7d1f6067cb27e643b15f6a7ca906177e2bdd67b543d21b7145b49a3efe6",
+      "normalizedSha256": "8a8565745dfda1713b18e4b808e5b5358c50ce5ea246785fbaa38bd2887910ff",
+      "indexBlob": "6fe4abe26cc77fd6260f166032b2914290dbdeea",
+      "gitBlob": "6fe4abe26cc77fd6260f166032b2914290dbdeea"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-c1.md",
+      "sha256": "b0c0e6da1a8ea17f3b694482d41c0080d7a52a11eae39e0a3ef65de89bf9a0d7",
+      "normalizedSha256": "b0c0e6da1a8ea17f3b694482d41c0080d7a52a11eae39e0a3ef65de89bf9a0d7",
+      "indexBlob": "99abd1e6c85bd4f3f3d02776eabb12b7e738a140",
+      "gitBlob": "99abd1e6c85bd4f3f3d02776eabb12b7e738a140"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-c2.md",
+      "sha256": "464f807f7cde3a27a09e6a3ce7cde2d1cadd4d3349f6f84b16de66f53cf51d0b",
+      "normalizedSha256": "464f807f7cde3a27a09e6a3ce7cde2d1cadd4d3349f6f84b16de66f53cf51d0b",
+      "indexBlob": "feb62ee503765a92a1f65787eeee16521e83788e",
+      "gitBlob": "feb62ee503765a92a1f65787eeee16521e83788e"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-c3.md",
+      "sha256": "5021ecbebfd63ffee7fcf47da6825e7c42d3f1e4bce24ec0c5b17da1a83e114a",
+      "normalizedSha256": "5021ecbebfd63ffee7fcf47da6825e7c42d3f1e4bce24ec0c5b17da1a83e114a",
+      "indexBlob": "152d293d42fb6da120273545e9e6864ea5382fda",
+      "gitBlob": "152d293d42fb6da120273545e9e6864ea5382fda"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-c4.md",
+      "sha256": "6a8cfdc9323cb369e8a9835b406f449b78cd5402702be81fd6ff19bb6ebcfc6d",
+      "normalizedSha256": "6a8cfdc9323cb369e8a9835b406f449b78cd5402702be81fd6ff19bb6ebcfc6d",
+      "indexBlob": "51f07d4928292eab9e33da5d45160f76b0654573",
+      "gitBlob": "51f07d4928292eab9e33da5d45160f76b0654573"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-c5.md",
+      "sha256": "24e773608e2711d95bce0feb2f092fb02c825f15001456692ab783ef8a651064",
+      "normalizedSha256": "24e773608e2711d95bce0feb2f092fb02c825f15001456692ab783ef8a651064",
+      "indexBlob": "4833645654e69706bc7bf66ed4827a19afd0ff5a",
+      "gitBlob": "4833645654e69706bc7bf66ed4827a19afd0ff5a"
+    },
+    {
+      "path": "openclaw_runtime/extensions/ollama/src/stream.ts",
+      "sha256": "dae5fd57faf641c4c5c1b74295aff966cbd73def3134021a39add7675b447e88",
+      "normalizedSha256": "dae5fd57faf641c4c5c1b74295aff966cbd73def3134021a39add7675b447e88",
+      "indexBlob": "6404340349c9b86b3457a73123f09eed2a0e2c76",
+      "gitBlob": "6404340349c9b86b3457a73123f09eed2a0e2c76"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "sha256": "0a27bb1bc4a62b342c491857b408bffa2feb11970f59d3af022d30f8a054df01",
+      "normalizedSha256": "0a27bb1bc4a62b342c491857b408bffa2feb11970f59d3af022d30f8a054df01",
+      "indexBlob": "08a1f75fa97f8b9e2684be464cf85c91586ad176",
+      "gitBlob": "08a1f75fa97f8b9e2684be464cf85c91586ad176"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.model-diagnostic-events.ts",
+      "sha256": "f0c553ff88c32ad4cd3ed44ce7347dd13037e22a05591e07dafb0b8afe94f7fe",
+      "normalizedSha256": "f0c553ff88c32ad4cd3ed44ce7347dd13037e22a05591e07dafb0b8afe94f7fe",
+      "indexBlob": "753f80ee2ab0c02f523031bf43041492d159584e",
+      "gitBlob": "753f80ee2ab0c02f523031bf43041492d159584e"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+      "sha256": "4f6480376df785886d1c41d8d5902e83732e958d5fdfeaace77b4954070ab645",
+      "normalizedSha256": "4f6480376df785886d1c41d8d5902e83732e958d5fdfeaace77b4954070ab645",
+      "indexBlob": "0133d64cfbe994cd84296727cf5eb93ea2f14317",
+      "gitBlob": "0133d64cfbe994cd84296727cf5eb93ea2f14317"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/execution-task-authority.ts",
+      "sha256": "c9117eff25b4d3daf04d90a18edebc18e06679288cb3ef4d71beb1affaa58bd6",
+      "normalizedSha256": "c9117eff25b4d3daf04d90a18edebc18e06679288cb3ef4d71beb1affaa58bd6",
+      "indexBlob": "8ebf9a0bab8ff2a2881c067de7dc5a68d41b4fd1",
+      "gitBlob": "8ebf9a0bab8ff2a2881c067de7dc5a68d41b4fd1"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/openclaw-tools.ts",
+      "sha256": "d5167795b06ac8d00c00252e2548d3de1c23d2cfc84d4208fad5ea8f9e5ff976",
+      "normalizedSha256": "5936734d59df856629e0196a01cfb76e56b55d3ea020afcccdc5346e6f9ff5b7",
+      "indexBlob": "ad803d9ebccd32990ccde8ad42e430e584425c0c",
+      "gitBlob": "ad803d9ebccd32990ccde8ad42e430e584425c0c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/session-collaboration-material-prompt.ts",
+      "sha256": "7c18bcb2ce5700473f6adeb23bf1856297275d9d74916b93aba65132371f7902",
+      "normalizedSha256": "35ccf710f7e6c2f2dfa7b16eefb825b30f7679f42a37aaf5251ddc9e488f61ca",
+      "indexBlob": "1a0467daba22c718137b2a2116e0c61b83059f6b",
+      "gitBlob": "1a0467daba22c718137b2a2116e0c61b83059f6b"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tool-description-presets.ts",
+      "sha256": "d1cdb8bc9a296eefb19aeddf9972e05e20b187a9a20caf136b100f408795a678",
+      "normalizedSha256": "d1cdb8bc9a296eefb19aeddf9972e05e20b187a9a20caf136b100f408795a678",
+      "indexBlob": "1968c94008123503173d4c56eb807b00ec2fdd70",
+      "gitBlob": "1968c94008123503173d4c56eb807b00ec2fdd70"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/persistent-task-tool.ts",
+      "sha256": "d057b8c253aca0d78a18cd5f695596932e4ce4a13790eb5616bc7684e65cf2a2",
+      "normalizedSha256": "d057b8c253aca0d78a18cd5f695596932e4ce4a13790eb5616bc7684e65cf2a2",
+      "indexBlob": "a44e9f7eb18fee94b105660cd67b2228d165e62c",
+      "gitBlob": "a44e9f7eb18fee94b105660cd67b2228d165e62c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/session-collaboration-query.ts",
+      "sha256": "0843d98a17cb156dda06630fd5bfdca806cdac8c08743a540e801998e22cd5b2",
+      "normalizedSha256": "0843d98a17cb156dda06630fd5bfdca806cdac8c08743a540e801998e22cd5b2",
+      "indexBlob": "12d5efa523b6146694c6642d96cf76739b702f59",
+      "gitBlob": "12d5efa523b6146694c6642d96cf76739b702f59"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/sessions-list-tool.ts",
+      "sha256": "202a8516b7d4e663634d8fc8dfa5d2ceabc724a1d211458ba33b7f8dc3fff87b",
+      "normalizedSha256": "202a8516b7d4e663634d8fc8dfa5d2ceabc724a1d211458ba33b7f8dc3fff87b",
+      "indexBlob": "bfdc221d1bceae81e111b013ddbbd838cea0de26",
+      "gitBlob": "bfdc221d1bceae81e111b013ddbbd838cea0de26"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/tools/sessions-watch-tool.ts",
+      "sha256": "1907f7d69f77cfc656ef8cf74bb02c50fb17d5fdf3480727545fa42ccb6e7c8f",
+      "normalizedSha256": "1907f7d69f77cfc656ef8cf74bb02c50fb17d5fdf3480727545fa42ccb6e7c8f",
+      "indexBlob": "4cdebf43e23db14740a4fd6694a63e6b304a363e",
+      "gitBlob": "4cdebf43e23db14740a4fd6694a63e6b304a363e"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-activity.ts",
+      "sha256": "f9bcc089172801acba9cce31d5a4f14f40fe093c78a991f7cc5413901372b501",
+      "normalizedSha256": "f9bcc089172801acba9cce31d5a4f14f40fe093c78a991f7cc5413901372b501",
+      "indexBlob": "ff2707b7f018bcea26c9e971fc06b84755f11f0f",
+      "gitBlob": "ff2707b7f018bcea26c9e971fc06b84755f11f0f"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-context.ts",
+      "sha256": "2adb059699ed885a95e397e25fe4d6492799dd842e780ee5d39acc93a4b9f6ab",
+      "normalizedSha256": "7d4964c12f7de3582c8dee1035e33e230e4041e949a686c60aa790c68a2e45a0",
+      "indexBlob": "c50ac72d93ca4bff01c8ccbd431e121c195dc721",
+      "gitBlob": "c50ac72d93ca4bff01c8ccbd431e121c195dc721"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-material.ts",
+      "sha256": "573b396b40495f6fd18bf124b9a13f32208180f60d011d7bd229622c79759783",
+      "normalizedSha256": "07b5697dce2fc2ccb98142caf4f97864951ff40265efa8c17ef8072c8aac2e91",
+      "indexBlob": "a794a550337a4551b13ef0a95826c1cb1a45d2dd",
+      "gitBlob": "a794a550337a4551b13ef0a95826c1cb1a45d2dd"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-collaboration-watch.ts",
+      "sha256": "cd740317155a4c11c56ee526a3e808809d13c037ecf6c6ab7b4ab3030c4e9282",
+      "normalizedSha256": "cd740317155a4c11c56ee526a3e808809d13c037ecf6c6ab7b4ab3030c4e9282",
+      "indexBlob": "f5f9b795eed5482f51a325d11893a9139873abe8",
+      "gitBlob": "f5f9b795eed5482f51a325d11893a9139873abe8"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "439595284e11ccb8b74fc954d964e5ac5efdff61a5f7d8375f4992493b8cbfbb",
+      "normalizedSha256": "439595284e11ccb8b74fc954d964e5ac5efdff61a5f7d8375f4992493b8cbfbb",
+      "indexBlob": "c0556761f09d175d643d8c30b40f351da2006f93",
+      "gitBlob": "c0556761f09d175d643d8c30b40f351da2006f93"
+    },
+    {
+      "path": "shared/i18n/locales/en/agents.json",
+      "sha256": "1bb527094025c2dec0551c76d503ecbedd94d103f371b94b9e375ced6e7be84f",
+      "normalizedSha256": "1bb527094025c2dec0551c76d503ecbedd94d103f371b94b9e375ced6e7be84f",
+      "indexBlob": "b76b9d3e6e431b12ad0e8d5ac15b913044a646f6",
+      "gitBlob": "b76b9d3e6e431b12ad0e8d5ac15b913044a646f6"
+    },
+    {
+      "path": "shared/i18n/locales/ja/agents.json",
+      "sha256": "5de5b98331fc6912bbe95bcba12f042018586a260080df6854a5d38146b2fea8",
+      "normalizedSha256": "5de5b98331fc6912bbe95bcba12f042018586a260080df6854a5d38146b2fea8",
+      "indexBlob": "5fb59c69abb300d2df1ba89380b84dac8eec864d",
+      "gitBlob": "5fb59c69abb300d2df1ba89380b84dac8eec864d"
+    },
+    {
+      "path": "shared/i18n/locales/ru/agents.json",
+      "sha256": "10ff72ea1515c7cb1f2040ef579bfb3a03e6b0de7ac5ec396df7978daa221f58",
+      "normalizedSha256": "10ff72ea1515c7cb1f2040ef579bfb3a03e6b0de7ac5ec396df7978daa221f58",
+      "indexBlob": "174fd2d5d342e07867b8cc0590f38a141674efa5",
+      "gitBlob": "174fd2d5d342e07867b8cc0590f38a141674efa5"
+    },
+    {
+      "path": "shared/i18n/locales/zh/agents.json",
+      "sha256": "32dec04e0ea98af9b9872946ac8f705b307d3d71d3e7fe4ecfb78369ec537bf7",
+      "normalizedSha256": "32dec04e0ea98af9b9872946ac8f705b307d3d71d3e7fe4ecfb78369ec537bf7",
+      "indexBlob": "98008b10d20ce96b5e1590b6b5e2dc489714a26f",
+      "gitBlob": "98008b10d20ce96b5e1590b6b5e2dc489714a26f"
+    },
+    {
+      "path": "shared/session-collaboration-watch.ts",
+      "sha256": "42b4a8583992b27ede81838badc1b3cbb3f74b2dc470ea44747e95449103ee5e",
+      "normalizedSha256": "42b4a8583992b27ede81838badc1b3cbb3f74b2dc470ea44747e95449103ee5e",
+      "indexBlob": "b488ade21e3e6448361fc4f4d6a66fa8ce3d6e00",
+      "gitBlob": "b488ade21e3e6448361fc4f4d6a66fa8ce3d6e00"
+    },
+    {
+      "path": "shared/task-system/store.ts",
+      "sha256": "1336df90a3e3f3de24a9c830e1f113110b9778937beabe8b04e685420852b7d0",
+      "normalizedSha256": "a9ab8b1f698448930c1b150f032014743fa4262b475bab94d2633e8a4621ee35",
+      "indexBlob": "94b2fd0f2ce6c812b309a2c9f5f0beb12b65ba70",
+      "gitBlob": "94b2fd0f2ce6c812b309a2c9f5f0beb12b65ba70"
+    },
+    {
+      "path": "shared/task-system/trace.ts",
+      "sha256": "faecf83a550a0621a8fd50c012a0c9e4d559270c0449ad56db98846eb645036a",
+      "normalizedSha256": "faecf83a550a0621a8fd50c012a0c9e4d559270c0449ad56db98846eb645036a",
+      "indexBlob": "60f68aa8d1ff7c69948268dbe783603874bbe89b",
+      "gitBlob": "60f68aa8d1ff7c69948268dbe783603874bbe89b"
+    },
+    {
+      "path": "shared/types/session-collaboration-context.ts",
+      "sha256": "43a6985bb430a633ccee3a918c44cc2faabea6c56e5cf4440198785529ed9640",
+      "normalizedSha256": "73d4b8363bf25197784dfb815a59e1db87677a36eabc56b3599e74b53669f9c1",
+      "indexBlob": "77c0cc537c174ce8cccded620f712509d7161b5e",
+      "gitBlob": "77c0cc537c174ce8cccded620f712509d7161b5e"
+    },
+    {
+      "path": "shared/types/session-collaboration-material.ts",
+      "sha256": "d84156043a908ef0c0167c8bd581f6c4d2b354530175c78afc77b1663ebcf8b4",
+      "normalizedSha256": "d84156043a908ef0c0167c8bd581f6c4d2b354530175c78afc77b1663ebcf8b4",
+      "indexBlob": "e52b81dde884209216ab350c968ede79bb531390",
+      "gitBlob": "e52b81dde884209216ab350c968ede79bb531390"
+    },
+    {
+      "path": "shared/types/session-collaboration-watch.ts",
+      "sha256": "c696e710d5fc5e432a16bd94425120d183fff3c3930ba00869a040d244e280e1",
+      "normalizedSha256": "c696e710d5fc5e432a16bd94425120d183fff3c3930ba00869a040d244e280e1",
+      "indexBlob": "824a817aac3a7c41381a146d6714f84e8387fca4",
+      "gitBlob": "824a817aac3a7c41381a146d6714f84e8387fca4"
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationMaterials.tsx",
+      "sha256": "6a82feeb01fd52ab4d956758280deb72bc2fe5b51e277a8243befd8ede7763d9",
+      "normalizedSha256": "6a82feeb01fd52ab4d956758280deb72bc2fe5b51e277a8243befd8ede7763d9",
+      "indexBlob": "3d16433fa75d12b27d738a59396fbf6628bbc8e9",
+      "gitBlob": "3d16433fa75d12b27d738a59396fbf6628bbc8e9"
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationPanel.tsx",
+      "sha256": "b6020fac284a1066d2a268720d6e17c7e047ff31789941fbe946935c3c318e50",
+      "normalizedSha256": "b6020fac284a1066d2a268720d6e17c7e047ff31789941fbe946935c3c318e50",
+      "indexBlob": "65d19bc0d2c85d3871b15502503b192e12d74f4b",
+      "gitBlob": "65d19bc0d2c85d3871b15502503b192e12d74f4b"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "be22805696ceaece6d58a9cd707f5b7795964d2d79b203d9bfe932387a83af78",
+      "normalizedSha256": "be22805696ceaece6d58a9cd707f5b7795964d2d79b203d9bfe932387a83af78",
+      "indexBlob": "98d35b677718c0f66b4f5282488f32a519db865c",
+      "gitBlob": "98d35b677718c0f66b4f5282488f32a519db865c"
+    },
+    {
+      "path": "src/stores/session-collaboration.ts",
+      "sha256": "746ed5182b4ff651870e7bb6eba28434cc0d476d5cb68d158648e90f65f8452b",
+      "normalizedSha256": "746ed5182b4ff651870e7bb6eba28434cc0d476d5cb68d158648e90f65f8452b",
+      "indexBlob": "454dbdcb12697c99308e53216abe653118ad200a",
+      "gitBlob": "454dbdcb12697c99308e53216abe653118ad200a"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-material-lifecycle.spec.ts",
+      "sha256": "bf73f16fae0514eba28de451d44d5e38619216620bf93948bd4c5c40b50c3b69",
+      "normalizedSha256": "bf73f16fae0514eba28de451d44d5e38619216620bf93948bd4c5c40b50c3b69",
+      "indexBlob": "c2e7682af690e31c26eb520bdea19b700459ce1a",
+      "gitBlob": "c2e7682af690e31c26eb520bdea19b700459ce1a"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-material-reuse.spec.ts",
+      "sha256": "05f5304443fee7b45f81e3c52b87c38a6617eae5d090214db872569f95aaca60",
+      "normalizedSha256": "05f5304443fee7b45f81e3c52b87c38a6617eae5d090214db872569f95aaca60",
+      "indexBlob": "281ed006e009d07bdd1973a15cd0a0a9c074017f",
+      "gitBlob": "281ed006e009d07bdd1973a15cd0a0a9c074017f"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-material-search.spec.ts",
+      "sha256": "d60e894359bff2fe08272c2bed299b48bd079698ea1978989467c36795f6cce3",
+      "normalizedSha256": "d60e894359bff2fe08272c2bed299b48bd079698ea1978989467c36795f6cce3",
+      "indexBlob": "a8cba310338c491deab74c9cfdcd6199b7f8d991",
+      "gitBlob": "a8cba310338c491deab74c9cfdcd6199b7f8d991"
+    },
+    {
+      "path": "tests/unit/session-collaboration-context-host.test.ts",
+      "sha256": "3928a6b23bd2903fd5a9826e96690bff70562524f56a559fd346a7ecae400a8d",
+      "normalizedSha256": "dfef61ef73de5ca9d53555da6c2d38afb0d81b1a20e86a98ab1e72aa06d49937",
+      "indexBlob": "5a963cf74b563d036ea5e6255ac7ca74998a49b4",
+      "gitBlob": "5a963cf74b563d036ea5e6255ac7ca74998a49b4"
+    },
+    {
+      "path": "tests/unit/session-collaboration-context-read.test.ts",
+      "sha256": "cff72bbaad4470079fb7dfb3ca229fdd588a0e036165a5b7fd7608e555c9f42f",
+      "normalizedSha256": "cff72bbaad4470079fb7dfb3ca229fdd588a0e036165a5b7fd7608e555c9f42f",
+      "indexBlob": "5488033a62fb863506458d1cdb2fb361b25b768e",
+      "gitBlob": "5488033a62fb863506458d1cdb2fb361b25b768e"
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-adoption.test.ts",
+      "sha256": "6880e6c9515c5ac793c489b548c052edffbc1539e498e3eec10fee514691e967",
+      "normalizedSha256": "ed5ae93820db16f55cc28cadbddf24506de0fbf9b7c549cebe889d6fd1e4073c",
+      "indexBlob": "e17f229beb0e4966acda4365f2f8c3ebbb428a8d",
+      "gitBlob": "e17f229beb0e4966acda4365f2f8c3ebbb428a8d"
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-lifecycle.test.ts",
+      "sha256": "5670c05571c1b340612d2084a5895b540936538abc425b6cca2e145c218e0a83",
+      "normalizedSha256": "5670c05571c1b340612d2084a5895b540936538abc425b6cca2e145c218e0a83",
+      "indexBlob": "e00c7ec4712436f83fef5c1d0e1a4fe77678430c",
+      "gitBlob": "e00c7ec4712436f83fef5c1d0e1a4fe77678430c"
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-ollama.test.ts",
+      "sha256": "0e2562dd8c2bc91721d3775666ee7850d993cec127c2dadd310837f645254071",
+      "normalizedSha256": "0e2562dd8c2bc91721d3775666ee7850d993cec127c2dadd310837f645254071",
+      "indexBlob": "3b34d5980f039f24daa2c4e10bc071def7ff103e",
+      "gitBlob": "3b34d5980f039f24daa2c4e10bc071def7ff103e"
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-query.test.ts",
+      "sha256": "9e7076c1d43eb92173370e44e8e70c1c25cb2622f7016418b31d3b2b39c1395c",
+      "normalizedSha256": "9e7076c1d43eb92173370e44e8e70c1c25cb2622f7016418b31d3b2b39c1395c",
+      "indexBlob": "e85f1500de1ae869734d6204534b3c737f89c1bb",
+      "gitBlob": "e85f1500de1ae869734d6204534b3c737f89c1bb"
+    },
+    {
+      "path": "tests/unit/session-collaboration-material-view.test.tsx",
+      "sha256": "fb94cb5c3b3b667e49928950d663d96aae70b9b2a448717874c7a2c12a4592cf",
+      "normalizedSha256": "fb94cb5c3b3b667e49928950d663d96aae70b9b2a448717874c7a2c12a4592cf",
+      "indexBlob": "5710844514542b3ab0da0ba6ed53a4ee2830efc9",
+      "gitBlob": "5710844514542b3ab0da0ba6ed53a4ee2830efc9"
+    },
+    {
+      "path": "tests/unit/session-collaboration-panel.test.tsx",
+      "sha256": "cf928a5d49864da0d31f82dd1b74065fa2538ec9e88cb21384cb335659526f27",
+      "normalizedSha256": "cf928a5d49864da0d31f82dd1b74065fa2538ec9e88cb21384cb335659526f27",
+      "indexBlob": "da11d1ae3d98c08e416ba097ee270669a28d2448",
+      "gitBlob": "da11d1ae3d98c08e416ba097ee270669a28d2448"
+    },
+    {
+      "path": "tests/unit/session-collaboration-query.test.ts",
+      "sha256": "e7cd8db7768b968d4a96fdc4be32bac0974e340414856280a0d41b6afa2d0f3d",
+      "normalizedSha256": "e7cd8db7768b968d4a96fdc4be32bac0974e340414856280a0d41b6afa2d0f3d",
+      "indexBlob": "3ab0c73373dd28937615441fe6fd0ae4e318d7c8",
+      "gitBlob": "3ab0c73373dd28937615441fe6fd0ae4e318d7c8"
+    },
+    {
+      "path": "tests/unit/session-collaboration-shared-material.test.ts",
+      "sha256": "ab91a5e4c8bc71c097e02b5d8a8befd21d6711eb2edd036f966ffdbb072e3492",
+      "normalizedSha256": "ab91a5e4c8bc71c097e02b5d8a8befd21d6711eb2edd036f966ffdbb072e3492",
+      "indexBlob": "ee6d82260d8ebca9d065287392079a3cdc614b0d",
+      "gitBlob": "ee6d82260d8ebca9d065287392079a3cdc614b0d"
+    },
+    {
+      "path": "tests/unit/session-collaboration-task-context.test.ts",
+      "sha256": "2611753ce23817f4d1b388e3fdc0bec086b96a5452dc305bdd2eefd436557bc8",
+      "normalizedSha256": "2611753ce23817f4d1b388e3fdc0bec086b96a5452dc305bdd2eefd436557bc8",
+      "indexBlob": "341c3af26748dc54d7a8e1950df519d1d478a22e",
+      "gitBlob": "341c3af26748dc54d7a8e1950df519d1d478a22e"
+    },
+    {
+      "path": "tests/unit/session-collaboration-watch.test.ts",
+      "sha256": "8fdcd66d0e55859df1d6c748b191caa24e347e84ed9f648ebca3e59de268f358",
+      "normalizedSha256": "8fdcd66d0e55859df1d6c748b191caa24e347e84ed9f648ebca3e59de268f358",
+      "indexBlob": "6080a828a227208dc23531a46b8170bdc3a05a86",
+      "gitBlob": "6080a828a227208dc23531a46b8170bdc3a05a86"
+    },
+    {
+      "path": "tests/unit/task-worktree-retention.test.ts",
+      "sha256": "5bd9185e08059c95b7376342c278adad788f0c28940d6fa8b6e1193730197144",
+      "normalizedSha256": "5bd9185e08059c95b7376342c278adad788f0c28940d6fa8b6e1193730197144",
+      "indexBlob": "d7afb05d52cb11916414b2233a3567af5f375cf7",
+      "gitBlob": "d7afb05d52cb11916414b2233a3567af5f375cf7"
+    }
+  ]
+}
