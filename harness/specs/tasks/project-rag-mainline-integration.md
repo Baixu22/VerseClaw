@@ -6,7 +6,7 @@ title: 将经过验证的 G2 检索修复接入主线
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 确保来源撤权、模型取消、语义支持与费用判断在日常运行版本生效。
-diffBase: 4085cd46b9a604e0617e91feff33f6ee8c24d7f0
+diffBase: c834668c555a86aabc6d58065132916f5693830b
 touchedAreas:
   - openclaw_runtime/src/knowledge/retrieval/**
   - openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts
