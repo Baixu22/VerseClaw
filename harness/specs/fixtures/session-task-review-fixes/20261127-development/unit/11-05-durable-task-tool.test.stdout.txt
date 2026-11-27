@@ -1,0 +1,12 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ tests/unit/durable-task-tool.test.ts (3 tests) 1438ms
+     ✓ creates, claims, executes a real check, and accepts its owner-produced receipt  1207ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  14:06:10
+   Duration  10.26s (transform 6.31s, setup 320ms, import 7.68s, tests 1.44s, environment 0ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial-r2/05-durable-task-tool.test.json

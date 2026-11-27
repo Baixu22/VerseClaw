@@ -1,0 +1,15 @@
+stderr | tests/unit/session-task-scope-bridge.test.ts > runtime → Gateway → Main task admission bridge > reports in-flight effects and abandoned runs as non-quiescent even when the chat tracker is empty
+Checkout terminal reconciliation retained ownership ReferenceError: Cannot access 'runCheckouts' before initialization
+    at Module.finishExecutionCheckoutRun (D:/ClawX-work/session-task-review-fixes-20261125-01a21019/openclaw_runtime/src/agents/execution-checkout-tools.ts:84:20)
+    at D:/ClawX-work/session-task-review-fixes-20261125-01a21019/openclaw_runtime/src/agents/session-task-scope.ts:44:97
+
+stderr | tests/unit/session-task-scope-bridge.test.ts > runtime → Gateway → Main task admission bridge > matches durable process reservations by exact run identity and fails closed without identity
+Checkout terminal reconciliation retained ownership ReferenceError: Cannot access 'runCheckouts' before initialization
+    at Module.finishExecutionCheckoutRun (D:/ClawX-work/session-task-review-fixes-20261125-01a21019/openclaw_runtime/src/agents/execution-checkout-tools.ts:84:20)
+    at D:/ClawX-work/session-task-review-fixes-20261125-01a21019/openclaw_runtime/src/agents/session-task-scope.ts:44:97
+
+stderr | tests/unit/session-task-scope-bridge.test.ts > runtime → Gateway → Main task admission bridge > keeps a completed run quiescent while a subsequent run owns the session handle
+Checkout terminal reconciliation retained ownership ReferenceError: Cannot access 'runCheckouts' before initialization
+    at Module.finishExecutionCheckoutRun (D:/ClawX-work/session-task-review-fixes-20261125-01a21019/openclaw_runtime/src/agents/execution-checkout-tools.ts:84:20)
+    at D:/ClawX-work/session-task-review-fixes-20261125-01a21019/openclaw_runtime/src/agents/session-task-scope.ts:44:97
+

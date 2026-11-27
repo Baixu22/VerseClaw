@@ -1,0 +1,48 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "candidate": {
+    "commit": "71b8686bd8341c494357dd58ead7d91cf7044e05",
+    "tree": "593c5380f363010b6819130ca9b56c735be21507",
+    "dirty": false
+  },
+  "steps": [
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md"
+      ],
+      "exitCode": 0,
+      "seconds": 0.547,
+      "stdoutPath": "D:\\tmp\\session-task-relay-20261127-current\\harness-validate.stdout.log",
+      "stdoutSha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010",
+      "stderrPath": "D:\\tmp\\session-task-relay-20261127-current\\harness-validate.stderr.log",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "run",
+        "--dry-run",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md"
+      ],
+      "exitCode": 0,
+      "seconds": 0.594,
+      "stdoutPath": "D:\\tmp\\session-task-relay-20261127-current\\harness-dry-run.stdout.log",
+      "stdoutSha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d",
+      "stderrPath": "D:\\tmp\\session-task-relay-20261127-current\\harness-dry-run.stderr.log",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "status": "passed",
+  "at": "2026-11-27T07:05:25.785785+00:00"
+}

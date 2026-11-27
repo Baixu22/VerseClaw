@@ -1,0 +1,12 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ tests/unit/durable-task-system.test.ts (27 tests) 1509ms
+     ✓ uses one task domain for two real Git worktrees  411ms
+
+ Test Files  1 passed (1)
+      Tests  27 passed (27)
+   Start at  14:06:05
+   Duration  2.74s (transform 426ms, setup 231ms, import 353ms, tests 1.51s, environment 0ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial-r2/04-durable-task-system.test.json
