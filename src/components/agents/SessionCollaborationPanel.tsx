@@ -9,6 +9,7 @@ import { hostEvents } from '@/lib/host-events';
 import { readSessionCollaborationPage } from '@/lib/session-read-model';
 import { activateWorkspaceScopedSession } from '@/lib/workspace-session';
 import { openWorkspacePanel } from '@/stores/artifact-panel';
+import { useSessionIntentStore } from '@/stores/session-intent';
 import { EMPTY_COLLABORATION_VIEW, subscribeSessionCollaboration, useSessionCollaborationUi } from '@/stores/session-collaboration';
 import { parseSessionCollaborationQuery, type SessionCollaborationPage, type SessionCollaborationRow } from '@shared/types/session-collaboration';
 import type { AutonomyProjectScope, AutonomySessionScope } from '@shared/types/identity-scope';
@@ -105,8 +106,9 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     return () => { active = false; unsubscribe(); };
   }, [requester, view.selected, viewKey, selectedKey, detailKey]);
 
-  const openSession = async (worker = false) => {
+  const openSession = async (worker = false, control?: { action: SessionCollaborationControl; scope: AutonomySessionScope; runId?: string }) => {
     if (!requester || !row?.detail) return;
+    if (control && collaborationScopeKey(control.scope) !== collaborationScopeKey(row.detail.scope)) return;
     const isCurrent = () => current.current.viewKey === viewKey && current.current.selectedKey === selectedKey;
     const fresh = await readSessionCollaborationPage(parseSessionCollaborationQuery({ requester, target: row.detail.scope, limit: 1 }), hostApi.sessionActivity.query);
     if (!isCurrent()) return;
@@ -116,10 +118,12 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
     if (!key) return;
     try {
       if (!await activateWorkspaceScopedSession(row.detail.scope.workspaceId, key, isCurrent)) return;
+      if (control) useSessionIntentStore.getState().requestCollaborationControl({ ...control, requester });
       navigate('/chat');
       if (worker) openWorkspacePanel({ panel: 'subagent', sessionKey: row.sessionKey });
     } catch { setReadState('unavailable'); }
   };
+  const workerOrigin = row?.sources.origin.state === 'ready' && Boolean(row.sources.origin.value.spawnedBy ?? row.sources.origin.value.parentSessionKey);
   const sourceText = (state: string) => t(`collaboration.sources.${state}`);
 
   return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-background p-3" data-testid="session-collaboration">
@@ -174,10 +178,17 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
             <dt>{t('collaboration.resources')}</dt><dd>{sourceText(snapshot?.resources ? 'ready' : 'not_read')}</dd>
           </dl>
           {requester && row.detail && <SessionCollaborationMessages requester={requester} target={row.detail.scope} tasks={row.sources.tasks.value ?? undefined} />}
-          {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>
+          {requester && row.detail && <details className="rounded-md border border-border p-3 text-xs" data-testid="collaboration-controls"><summary className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('collaboration.controls.title')}</summary>
             <div className="flex flex-wrap gap-2 pt-3">{(Object.keys(SESSION_COLLABORATION_CONTROLS) as SessionCollaborationControl[]).filter(action => action !== 'message').map(action => <Button type="button" key={action} variant="outline"
-              disabled={SESSION_COLLABORATION_CONTROLS[action].requiresRun && !row.sources.run.value}
-              onClick={() => void invokeSessionCollaborationControl({ action, requester, target: row.detail!.scope, run: row.sources.run.value }, () => openSession()).catch(() => {
+              data-testid={`collaboration-control-${action}`}
+              disabled={(SESSION_COLLABORATION_CONTROLS[action].requiresRun && !row.sources.run.value) || (action === 'interruptSend' && !workerOrigin)}
+              title={action === 'interruptSend' && !workerOrigin ? sourceText('unavailable') : undefined}
+              onClick={() => void invokeSessionCollaborationControl({ action, requester, target: row.detail!.scope, run: row.sources.run.value },
+                (ownerAction, scope) => openSession(ownerAction === 'interruptSend', {
+                  action: ownerAction, scope,
+                  runId: SESSION_COLLABORATION_CONTROLS[ownerAction].requiresRun ? row.sources.run.value?.runId : undefined,
+                }),
+              ).catch(() => {
                 if (current.current.viewKey === viewKey && current.current.selectedKey === selectedKey) setReadState('unavailable');
               })}>
               {t(`collaboration.controls.${action}`)}</Button>)}</div>

@@ -1,0 +1,190 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > archive retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-27T06:06:50.098Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=32b92770-9f98-4fa2-8f83-a374f2d0b63e sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > archive retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-27T06:06:50.190Z] [INFO] [session-delete-gate] Cleared operationId=32b92770-9f98-4fa2-8f83-a374f2d0b63e
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > restore retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-27T06:06:50.212Z] [INFO] [session-delete-gate] Persisted kind=restore operationId=96250382-c947-4d81-8569-f54379f8933b sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > restore retains its Runtime generation after one coordinator failure and retries the same ID
+[2026-11-27T06:06:50.410Z] [INFO] [session-delete-gate] Cleared operationId=96250382-c947-4d81-8569-f54379f8933b
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-27T06:06:50.447Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=32ab3575-6f54-4f07-8f08-7c7e48a31d9d sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-27T06:06:50.467Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-27T06:06:50.467Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-0iLPCW\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-27T06:06:50.469Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-0iLPCW\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-27T06:06:50.470Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-27T06:06:50.471Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-0iLPCW\agents\main\sessions\generation-source.jsonl
+[2026-11-27T06:06:50.471Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-27T06:06:50.473Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps partial resource evidence and retries only remaining resources after a committed delete
+[2026-11-27T06:06:50.579Z] [INFO] [session-delete-gate] Cleared operationId=32ab3575-6f54-4f07-8f08-7c7e48a31d9d
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > reads back an already applied coordinator state after its gate progress write failed
+[2026-11-27T06:06:50.596Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=7fa2dab1-f0f6-4eb4-a723-a6d3d6d28903 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > reads back an already applied coordinator state after its gate progress write failed
+[2026-11-27T06:06:50.676Z] [INFO] [session-delete-gate] Cleared operationId=7fa2dab1-f0f6-4eb4-a723-a6d3d6d28903
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-27T06:06:50.742Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=ef78caab-8c0e-4066-82cc-3bebf23171dd sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-27T06:06:50.766Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-27T06:06:50.766Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-5RdSkw\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-27T06:06:50.775Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-5RdSkw\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-27T06:06:50.776Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-27T06:06:50.783Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-5RdSkw\agents\main\sessions\generation-source.jsonl
+[2026-11-27T06:06:50.783Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-27T06:06:50.790Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > holds the original per-session lock through tail work and rejects a different resume ID
+[2026-11-27T06:06:50.828Z] [INFO] [session-delete-gate] Cleared operationId=ef78caab-8c0e-4066-82cc-3bebf23171dd
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-27T06:06:50.854Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=c19ee13e-d971-4f3b-8fc5-2cd983cb89ab sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-27T06:06:50.875Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-27T06:06:50.875Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-jcrpla\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-27T06:06:50.876Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-jcrpla\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-27T06:06:50.877Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-27T06:06:50.878Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-jcrpla\agents\main\sessions\generation-source.jsonl
+[2026-11-27T06:06:50.878Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-27T06:06:50.878Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > skips completed tails after the final gate-clear write fails
+[2026-11-27T06:06:50.944Z] [INFO] [session-delete-gate] Cleared operationId=c19ee13e-d971-4f3b-8fc5-2cd983cb89ab
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-27T06:06:50.960Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=a7d3859b-cb0e-4078-b423-35044a7a9648 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-27T06:06:51.019Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-27T06:06:51.019Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-mWalhr\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-27T06:06:51.020Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-mWalhr\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-27T06:06:51.020Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-27T06:06:51.021Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-mWalhr\agents\main\sessions\generation-source.jsonl
+[2026-11-27T06:06:51.021Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-27T06:06:51.022Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > retains unknown owner evidence when the terminal owner is unavailable
+[2026-11-27T06:06:51.092Z] [INFO] [session-delete-gate] Cleared operationId=a7d3859b-cb0e-4078-b423-35044a7a9648
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-27T06:06:51.110Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=15e75d9c-c9ea-4485-8646-8c0ad1a31125 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-27T06:06:51.130Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-27T06:06:51.130Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-8rl0mx\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-27T06:06:51.131Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-8rl0mx\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-27T06:06:51.131Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-27T06:06:51.131Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-8rl0mx\agents\main\sessions\generation-source.jsonl
+[2026-11-27T06:06:51.131Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is missing
+[2026-11-27T06:06:51.132Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-27T06:06:51.178Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=2bf20407-ebf6-4b2c-93c3-9883d460cf3d sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-27T06:06:51.200Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-27T06:06:51.200Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-zR81Ix\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-27T06:06:51.201Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-zR81Ix\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-27T06:06:51.202Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-27T06:06:51.202Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-zR81Ix\agents\main\sessions\generation-source.jsonl
+[2026-11-27T06:06:51.202Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > keeps the gate and foreign resources when workspace scope is different
+[2026-11-27T06:06:51.203Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > accepts a session with no coordinator binding as a normal no-op
+[2026-11-27T06:06:51.272Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=5a3ae129-ec86-4e31-8ba8-573fb10454f2 sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > accepts a session with no coordinator binding as a normal no-op
+[2026-11-27T06:06:51.324Z] [INFO] [session-delete-gate] Cleared operationId=5a3ae129-ec86-4e31-8ba8-573fb10454f2
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-27T06:06:51.340Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=f70bf3fd-e782-43d7-a310-ca3617f995bf sessionKey=agent:main:tail
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-27T06:06:51.360Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-27T06:06:51.360Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-1tEFN1\agents\main\sessions\sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-27T06:06:51.361Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-1tEFN1\agents\main\sessions\generation-source.jsonl
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-27T06:06:51.361Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-27T06:06:51.362Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-1tEFN1\agents\main\sessions\generation-source.jsonl
+[2026-11-27T06:06:51.362Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-27T06:06:51.363Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+stdout | tests/unit/session-lifecycle-tail.test.ts > U5 Main lifecycle tail on the original durable gate > does not reclaim a foreign workspace port registered while terminal cleanup awaits
+[2026-11-27T06:06:51.404Z] [INFO] [session-delete-gate] Cleared operationId=f70bf3fd-e782-43d7-a310-ca3617f995bf
+
+ ✓ tests/unit/session-lifecycle-tail.test.ts (11 tests) 1360ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  14:06:45
+   Duration  6.15s (transform 3.02s, setup 233ms, import 3.97s, tests 1.36s, environment 0ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial-r2/09-session-lifecycle-tail.test.json

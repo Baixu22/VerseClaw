@@ -1,0 +1,664 @@
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > hydrates the composer from draftValue and reports draft edits
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > clears the parent draft after sending
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > clears the parent draft after sending
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > opens a matching draft from another session as editable text
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > sends the selected knowledge scope with the composer payload
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > sends the selected knowledge scope with the composer payload
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > changes knowledge invocation mode from the knowledge menu
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > dismisses knowledge preflight for the same input and still sends if routing fails
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > dismisses knowledge preflight for the same input and still sends if routing fails
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > dismisses knowledge preflight for the same input and still sends if routing fails
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > does not render or send Work Mode
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput draft persistence > does not render or send Work Mode
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput slash commands > filters slash commands by command prefix without matching descriptions
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput slash commands > closes the slash menu with Escape
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput slash commands > keeps unknown slash commands in the composer instead of sending
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput slash commands > opens wiki search from slash command and attaches selected context
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput slash commands > opens Mission Control guidance through the Agents route
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput slash commands > opens the compaction dialog from /compact
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > keeps passive message and token counts out of the composer footer
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > queues the draft immediately when the running primary control is clicked
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > pauses the run with one click when there is no composer draft
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > renders a persisted pause as a resume action
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > omits the context status when no context data is available
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > no longer renders compaction diagnostics in the composer status line
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > refuses /compact while the session is sending
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput read-only context status > keeps compact unavailable until its session generation is ready
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > hides the @agent picker when only one agent is configured
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > uses native textarea rendering when no skill token is present
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > lets the user select an agent target and sends it with the message
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > lets the user select an agent target and sends it with the message
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > disables the input while gateway is running but not yet ready
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > shows gateway readiness as a read-only composer status while starting
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > falls back to read-only when a persisted workspace has an invalid permission mode
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > inserts the selected skill from a slash query and prefixes sends
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > ChatInput agent targeting > keeps a leading selected skill token on the normal send path
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > compact composer context > keeps retrieval controls inside one menu and identifies an explicitly selected higher-cost profile
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > compact composer context > keeps normal checkpoint records quiet and reachable from More
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-input.test.tsx > compact composer context > shows nonzero queue and warnings in the input and preserves the drain action
+An update to RuntimeApprovalPrompt inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode gate > rejects a worker send for a changed requester generation before starting a run
+[chat.send.trace] handler entered
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode gate > rejects explicit inputMode without an active /loop Task Ledger root
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=chat-run-test-1 sessionKey=agent:main:test-session loadSessionMs=0.077
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode gate > rejects unknown inputMode values at the protocol layer
+[chat.send.trace] handler entered
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: interrupt > checkpoints before aborting, records checkpointed event, and responds ok
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=chat-run-test-1 sessionKey=agent:main:test-session loadSessionMs=0.062
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > replays the original durable guide after its run ends and rejects changed content
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=durable-guide sessionKey=agent:main:test-session loadSessionMs=0.078
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > replays the original durable guide after its run ends and rejects changed content
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=durable-guide sessionKey=agent:main:test-session loadSessionMs=0.04
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > replays the original durable guide after its run ends and rejects changed content
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=durable-guide sessionKey=agent:main:test-session loadSessionMs=0.034
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > rejects a retained controller whose original execution is no longer active
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=stale-guide sessionKey=agent:main:test-session loadSessionMs=0.08
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > rejects replacement text after a successor is active
+[chat.send.trace] handler entered
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > rejects replacement text after a successor is finished
+[chat.send.trace] handler entered
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > steers the active run and records steered evidence
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=chat-run-test-1 sessionKey=agent:main:test-session loadSessionMs=0.063
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: guide > falls back to a normal send when steering is rejected
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=chat-run-test-1 sessionKey=agent:main:test-session loadSessionMs=0.052
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: queue > persists the queued message and broadcasts queue status
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=chat-run-test-1 sessionKey=agent:main:test-session loadSessionMs=0.058
+
+stderr | tests/unit/chat-send-input-mode.test.ts > chat.send inputMode: queue > retains a queued follow-up when the chat owner rejects its drain
+[chat.send.trace] handler entered
+[chat.send.trace] session loaded runId=queue_drain_agent:main:test-session_1795771799071 sessionKey=agent:main:test-session loadSessionMs=0.131
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/chat-message.test.tsx > ChatMessage image copy > copies image bytes instead of the media URL text when an image attachment is present
+An update to AssistantHoverBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-message.test.tsx > ChatMessage image copy > copies image bytes instead of the media URL text when an image attachment is present
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-message.test.tsx > ChatMessage image copy > keeps response actions compact and quotes or forks through existing callbacks
+An update to AssistantHoverBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > fails closed for paused or generation-mismatched coordinator bindings
+[2026-11-27T09:30:07.335Z] [ERROR] [chat:sendWithMedia] Error: Error: COORDINATOR_BINDING_PAUSED: The long-session environment is not active.
+
+stderr | tests/unit/chat-api-workspace-fingerprint.test.ts > chat-api workspaceId + workspaceFingerprint forwarding (D3 closeout) > fails closed for paused or generation-mismatched coordinator bindings
+[2026-11-27T09:30:07.336Z] [ERROR] [chat:sendWithMedia] Error: Error: COORDINATOR_BINDING_INVALID: generation_mismatch
+

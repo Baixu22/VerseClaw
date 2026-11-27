@@ -1,0 +1,117 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/session-collaboration-b-relay",
+  "at": "2026-11-27T08:24:45.976623+00:00",
+  "head": "bb9031ff341029fa9cfd59bbc129a5024dd05f94",
+  "branch": "codex/session-collaboration-b-20261126",
+  "files": [
+    {
+      "path": "electron/services/chat-api.ts",
+      "sha256": "18fdd6e3b10505779f2fb87eef8ffe660562eb495a4116f49c1b008241e18c59"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "4e2c91027db893d9ffac8825b4e7e16e26242a27900595df76d7c96094c112e8"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-b3.md",
+      "sha256": "da0714fb87598cf65a1515fc058e3947f019adfa7a5021b7c971160dd2ab025d"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "sha256": "b3108808bebec09638a181dbfecf6f4c8e3c49ca68b3559bb0417e06231a819d"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+      "sha256": "573f87cd19edf82ff1b4e731da008c45aa69bda298473d95e4566115190e1caa"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/store.ts",
+      "sha256": "f72192d7d471de1c3aa708c72daaca95584971833a1c995a509feb620d6a6fc5"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "sha256": "691d09a124a43382d5d09409d3c3ca1d316f5d0f3395f025a112f7a7fe68a2d2"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+      "sha256": "c7ad3a6e88c580382760d3dc7b51f915ddd630fb56606614745dbd435370c3d2"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.send-permit-lifetime.test.ts",
+      "sha256": "b1cf6e4930010b6a05ab028e55302f3481f50bcf80388bcfc596094ea6a8ea93"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.shared.ts",
+      "sha256": "8fa99c5a5b227373e98916134b29a839d69e10a1187547febb630aa2df4ccc93"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/shared-types.ts",
+      "sha256": "122cc96df7603409f61fcf474261ab633e6c65fbf6abd41f466fb8ccd4cd704d"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "07907733cd2f2b6374bb70b192315f1307e43d21fde1353fdda27890180130ff"
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationPanel.tsx",
+      "sha256": "6b20fba8f4100bacc9a70f136ae4f9515e867e99b23f7ab654918962821e24ed"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+      "sha256": "a3868359ef84b48fa8e0ba71597999de200a0462745e7e400ca5e176b7a0f899"
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "sha256": "2b5b97c1ced33b3be5e19367a7d7fa2d1de954828ce0999258459eb51e9dad96"
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "sha256": "07c1710e540fe2f241175f5ed16f3b7907995d8e37cd089be21f090a1c81a232"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "56fc3663e5db5422a9e8aa7a9850f080dec5c4d89e217d0748899a2d69c6557f"
+    },
+    {
+      "path": "src/pages/Chat/ChatToolbar.tsx",
+      "sha256": "c3fc1624b1c66a6cf1836d968d40d9154a8f4913f803f2b29d8a7569177c23e1"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionMigrationControl.tsx",
+      "sha256": "7c934bac3028b950d888d17771423ec6532759289707940a20b4d21b65228ca8"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "5f8e017e75bc077b61ba09f67f9ec2db6e0fb7c9f495795afd530e0bf41b17f7"
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "sha256": "688cccdbe3fa0680801313fc5fe4b6cd72e604c2d150ad0887fd795f3e85fa91"
+    },
+    {
+      "path": "src/stores/session-intent.ts",
+      "sha256": "3b88b0c5e6f38abec501b2da08098fdbaf69dc5838e24bcef332e6000f833209"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-controls.spec.ts",
+      "sha256": "a0010d7a87582cd354fa93530a47a3ae0ec7786a0d155c54f74536adf39ce202"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-delivery-recovery.spec.ts",
+      "sha256": "aab95cf2dc34f541220779ff558b250686886d876a752178d571a5eff74f1df8"
+    },
+    {
+      "path": "tests/unit/chat-input.test.tsx",
+      "sha256": "ec32559311aab68767c4daab43689588b40703528bdcb8a10cc26e7eb205ff8c"
+    },
+    {
+      "path": "tests/unit/chat-store-history-retry.test.ts",
+      "sha256": "bd807af61065804d3e8e4ca96feb77a7db6524b11690dc9d7bcc286789cd7151"
+    },
+    {
+      "path": "tests/unit/session-collaboration-panel.test.tsx",
+      "sha256": "2993526aa4e791fe97ed423993bc1d20f2fb32b5ddb559366f4fa61e8303ac72"
+    }
+  ]
+}

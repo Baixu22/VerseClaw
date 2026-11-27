@@ -539,7 +539,33 @@ export async function interruptSessionRunIfActive(params: {
   canonicalKey: string;
   agentId?: string;
   sessionId?: string;
+  expectedRunId?: string;
 }): Promise<{ interrupted: boolean; error?: ReturnType<typeof errorShape> }> {
+  if (params.expectedRunId) {
+    const run = params.context.chatAbortControllers.get(params.expectedRunId);
+    const changed = { interrupted: false, error: errorShape(ErrorCodes.INVALID_REQUEST, "SESSION_STEER_RUN_CHANGED") };
+    if (!run || run.controller.signal.aborted || run.sessionId !== params.sessionId ||
+        (run.sessionKey !== params.canonicalKey && run.sessionKey !== params.requestedKey)) return changed;
+    let interrupted = false;
+    let abortError: ReturnType<typeof errorShape> | undefined;
+    await chatHandlers["chat.abort"]({
+      req: params.req,
+      params: { sessionKey: run.sessionKey, runId: params.expectedRunId, ...(params.agentId ? { agentId: params.agentId } : {}) },
+      respond: (ok, payload, error) => {
+        interrupted = ok && (payload as { aborted?: boolean } | undefined)?.aborted === true;
+        abortError = error;
+        if (interrupted) clearSessionQueues([params.requestedKey, params.canonicalKey, params.sessionId]);
+      },
+      context: params.context,
+      client: params.client,
+      isWebchatConnect: params.isWebchatConnect,
+    });
+    if (!interrupted) return abortError ? { interrupted: false, error: abortError } : changed;
+    if (params.sessionId && !await waitForEmbeddedAgentRunEnd(params.sessionId, 15_000)) {
+      return { interrupted: true, error: errorShape(ErrorCodes.UNAVAILABLE, "The original run is still ending") };
+    }
+    return { interrupted: true };
+  }
   const cfg = params.context.getRuntimeConfig();
   const hasTrackedRun = hasTrackedActiveSessionRun({
     context: params.context,

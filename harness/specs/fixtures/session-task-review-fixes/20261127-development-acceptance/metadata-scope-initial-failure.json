@@ -1,0 +1,15 @@
+{
+  "driven_by": "agent",
+  "candidate": "8a946c2aa5c3dc80e72d6efaabd7704836fe2a04",
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "harness/src/cli.mjs",
+    "validate",
+    "--spec",
+    "harness/specs/tasks/session-task-review-fixes-20261125.md"
+  ],
+  "exitCode": 1,
+  "error": "changed files are not covered by touchedAreas or ownedPaths: AGENTS.md",
+  "resolution": "63c1179ad adds AGENTS.md to touchedAreas"
+}

@@ -1,0 +1,37 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "at": "2026-11-27T08:06:42.028300+00:00",
+  "candidate": {
+    "commit": "820d894c4059f26fd9de81575435b9d0bde0560b",
+    "tree": "5756e140cda70daff8cab9bbcb4b2b8aaf73799b",
+    "dirty": false
+  },
+  "executionChecksCandidate": {
+    "commit": "f073011205e4fe2eb54410df86591fd6f27a3686",
+    "tree": "1cc49f9c74604a899bdab0061cb9d1f04cb660d8",
+    "dirty": false
+  },
+  "codeReview": "pass",
+  "developmentAcceptance": "pass",
+  "reviewerModel": "ccs-ai/gpt-6.1-sol",
+  "checks": {
+    "validatorRegressionGroups": 4,
+    "passedCommands": 5,
+    "historicalResultReadback": {
+      "files": 22,
+      "tests": 478,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "testsRerun": 0
+    }
+  },
+  "fullAcceptance": "deferred_by_user",
+  "CI": "deferred_by_user",
+  "originalEvidence": "../20261127-development",
+  "taskForest": {
+    "id": "TF-0950",
+    "status": "in_progress"
+  }
+}

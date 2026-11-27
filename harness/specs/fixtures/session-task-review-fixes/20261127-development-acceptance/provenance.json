@@ -1,0 +1,120 @@
+{
+  "driven_by": "agent",
+  "files": [
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\review-development.md",
+      "retained": "review-development.md",
+      "sha256": "d4d4b81d63c1fd08b049080f23ab3c35d46daa94fa61dcf67c62cd9bf16439b3"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\artifact-retention.stderr.txt",
+      "retained": "checks/artifact-retention.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\artifact-retention.stdout.txt",
+      "retained": "checks/artifact-retention.stdout.txt",
+      "sha256": "c24ab2b6d21f40ac51a62a26e5742f20f96a716ed56d261d9dbbaee3ae994acd"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\harness-dry-run.stderr.txt",
+      "retained": "checks/harness-dry-run.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\harness-dry-run.stdout.txt",
+      "retained": "checks/harness-dry-run.stdout.txt",
+      "sha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\harness-validate.stderr.txt",
+      "retained": "checks/harness-validate.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\harness-validate.stdout.txt",
+      "retained": "checks/harness-validate.stdout.txt",
+      "sha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\receipt-readback.stderr.txt",
+      "retained": "checks/receipt-readback.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\receipt-readback.stdout.txt",
+      "retained": "checks/receipt-readback.stdout.txt",
+      "sha256": "c2b62652bc5ebc77db17d76f4b559b6c254a028d3322eb01f20a0933a9b5d548"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\receipt-verification-reviewer.json",
+      "retained": "checks/receipt-verification-reviewer.json",
+      "sha256": "81ea32c07a232c38d7315309832348bcdd8713d079b6f78e2f4baaa7c939da0d"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\receipt-verification.json",
+      "retained": "checks/receipt-verification.json",
+      "sha256": "81ea32c07a232c38d7315309832348bcdd8713d079b6f78e2f4baaa7c939da0d"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\report.json",
+      "retained": "checks/report.json",
+      "sha256": "af2272bb172a4102470b6d599a290bff70e1fce0fb9a61c810fc06689e105b12"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\validator-tests.stderr.txt",
+      "retained": "checks/validator-tests.stderr.txt",
+      "sha256": "2c6992c9829eddc55c4c4ffa5572afb8f785f03c267e6de9e4782d91ca9635c3"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\final-checks\\validator-tests.stdout.txt",
+      "retained": "checks/validator-tests.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\dry-run.stderr.txt",
+      "retained": "metadata/dry-run.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\dry-run.stdout.txt",
+      "retained": "metadata/dry-run.stdout.txt",
+      "sha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\report.json",
+      "retained": "metadata/report.json",
+      "sha256": "cedb6cc966124c350b0a909631ba7973dd1fbe4410b63fbe482433a1303f1583"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\validate.stderr.txt",
+      "retained": "metadata/validate.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\acceptance-metadata\\validate.stdout.txt",
+      "retained": "metadata/validate.stdout.txt",
+      "sha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\dependency-install-interruption.json",
+      "retained": "dependency-install-interruption.json",
+      "sha256": "b1208c0c9ce4d25dffe2b263100cbe95ec181dc39c19a3e1a2e88cee542b34b2"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\dependency-manifest-readback.json",
+      "retained": "dependency-manifest-readback.json",
+      "sha256": "fe7b65638b43e7c7aaa3ac2fef7eaa453c6808e1a46831c752de8ca81f849c62"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\receipt-plan.json",
+      "retained": "receipt-plan.json",
+      "sha256": "24bd3cb227f375d7b9d0f9368ffe10299d3c99340d6a7dd734fa3239d19ab9b3"
+    },
+    {
+      "source": "D:\\tmp\\session-task-sol-acceptance-20261127\\metadata-scope-initial-failure.json",
+      "retained": "metadata-scope-initial-failure.json",
+      "sha256": "92d09d86cca275c3285a44bb8975cf59104bdb29171b07f31a38b21f43bfd2fc"
+    }
+  ]
+}

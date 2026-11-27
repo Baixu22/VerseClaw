@@ -1,0 +1,28 @@
+{
+  "schema": "C02MergedMainEvidenceManifest/v1",
+  "driven_by": "agent",
+  "actor": "codex/context-system-01a213b7",
+  "sourceCandidate": {
+    "checkout": "D:/ClawX-work/context-c02-integration-20261126",
+    "commit": "89ce35af1bc248a030b86ed2d17e25b6a6d8da81",
+    "tree": "49320405920d2cc84de8a819c2d69f550388629c",
+    "dirty": false,
+    "mergeParents": [
+      "2aa116861",
+      "6027b406b"
+    ],
+    "pullRequest": 282,
+    "mergedAt": "2026-11-26T11:29:24Z"
+  },
+  "hashScheme": "sha256-utf8-lf",
+  "files": [
+    {
+      "path": "independent-verdict.json",
+      "sha256": "126b228946041d0be9a7e44830ca3cef878da09afa8c7f35a2da5201696917d2"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "3f2ccfb02522a73a7c258de9a57b2a29da22ef188f0c4fa35733a669fb1e5304"
+    }
+  ]
+}

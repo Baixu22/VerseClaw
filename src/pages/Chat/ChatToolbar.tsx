@@ -31,6 +31,8 @@ type ChatToolbarProps = {
   onCheckpoints?: () => void;
   checkpointsDisabled?: boolean;
   onForkSession?: () => void | Promise<void>;
+  requestFork?: () => boolean;
+  requestMigration?: () => boolean;
   forkDisabled?: boolean;
   forkDisabledReason?: string;
   forkBusy?: boolean;
@@ -77,6 +79,8 @@ export function ChatToolbar({
   onCheckpoints,
   checkpointsDisabled,
   onForkSession,
+  requestFork,
+  requestMigration,
   forkDisabled,
   forkDisabledReason,
   forkBusy,
@@ -104,6 +108,9 @@ export function ChatToolbar({
   useEffect(() => {
     if (moreOpen && moreStyle.visibility === 'visible') moreLayerRef.current?.focus({ preventScroll: true });
   }, [moreOpen, moreStyle.visibility, moreLayerRef]);
+  useEffect(() => {
+    if (onForkSession && requestFork?.()) setMoreOpen(true);
+  }, [onForkSession, requestFork, setMoreOpen]);
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
@@ -255,7 +262,7 @@ export function ChatToolbar({
             <Settings2 className="h-4 w-4" aria-hidden="true" />{t('settings:navigation.recovery.title')}
           </button>
           <ExecutionMigrationControl workspaceId={workspaceId} sessionKey={currentSessionKey} generation={sessionGeneration}
-            menuItem onOpen={() => setMoreOpen(false)} returnFocusRef={moreTriggerRef} />
+            menuItem requestOpen={requestMigration} onOpen={() => setMoreOpen(false)} returnFocusRef={moreTriggerRef} />
           <hr className="codex-header-menu__sep" />
           <button type="button" role="menuitem" data-testid="chat-memory-injection-toggle" className="codex-header-menu__item"
             onClick={() => { setMoreOpen(false); setMemoryInjectionOpen(true); }}>

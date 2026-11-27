@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.96,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The replacement guard observes matching session-and-generation run registrations from before the interrupt through the replacement dispatch boundary. Its changed flag survives controller cleanup, and the guard is released on failed handoffs or after dispatch completion. The added regression cases cover short-lived successors, transcript-read gaps, unrelated runs, and observer cleanup. No actionable defect was found in the reviewed change."
+}

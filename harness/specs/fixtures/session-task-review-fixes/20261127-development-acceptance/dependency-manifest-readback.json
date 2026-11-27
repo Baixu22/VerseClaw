@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "trackedDependencyManifests": [
+    {
+      "path": "package.json",
+      "sha256": "530e698d34113a56d56ab1e664e85604fca6350bc51e5759858f27031ca35e16",
+      "matchesHEAD": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "b21110b2298d264663635cd9f841117007fd82e07025f7c0bbbac5841ab8c572",
+      "matchesHEAD": true
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "sha256": "f0f36ec79d8a405c05da9eefcf8ea86f45a9576e13c891235fbf5cf20c3492f7",
+      "matchesHEAD": true
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "9adaaafff48cdf051b718e6d1e5b8354f8c0e29859d33443e35b9367b7fbabf0",
+      "matchesHEAD": true
+    },
+    {
+      "path": "openclaw_runtime/pnpm-workspace.yaml",
+      "sha256": "9360686b26c1db104eea78719149287cab83c69636f945635018ee9cd1689e54",
+      "matchesHEAD": true
+    }
+  ],
+  "candidate": "f073011205e4fe2eb54410df86591fd6f27a3686"
+}

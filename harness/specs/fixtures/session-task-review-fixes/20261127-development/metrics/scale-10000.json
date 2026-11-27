@@ -1,0 +1,18 @@
+{
+  "driven_by": "agent",
+  "actor": "session-task-fixes",
+  "size": 10000,
+  "admissionMs": [
+    199.60629999999946,
+    44.8107,
+    41.94850000000042,
+    44.34490000000005,
+    39.75489999999991
+  ],
+  "snapshotMs": [
+    2929.603299999999,
+    2756.0051999999996,
+    1814.3538000000008
+  ],
+  "fullSnapshotCallsDuringAdmission": 0
+}

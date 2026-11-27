@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { ChatMessage } from '@/pages/Chat/ChatMessage';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -37,6 +37,18 @@ vi.mock('@/lib/file-preview-client', () => ({
 }));
 
 describe('ChatMessage attachment dedupe', () => {
+  it('opens the original message editor from a one-shot collaboration request', async () => {
+    const requestUserEdit = vi.fn().mockReturnValueOnce(true).mockReturnValue(false);
+    const resend = vi.fn();
+    renderMessage(<ChatMessage message={{ role: 'user', content: 'Original message' }}
+      canResendUserMessage onResendUserMessage={resend} requestUserEdit={requestUserEdit} />);
+    const input = await screen.findByTestId('chat-user-message-editor-input');
+    expect(input).toHaveValue('Original message');
+    fireEvent.change(input, { target: { value: 'Revised message' } });
+    fireEvent.click(screen.getByTestId('chat-user-message-edit-send'));
+    await waitFor(() => expect(resend).toHaveBeenCalledExactlyOnceWith('Revised message'));
+  });
+
   it('renders assistant text without an avatar or a reserved avatar column', () => {
     renderMessage(
       <ChatMessage

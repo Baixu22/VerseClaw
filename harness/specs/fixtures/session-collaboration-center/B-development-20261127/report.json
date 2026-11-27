@@ -1,0 +1,50 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/session-collaboration-b-relay",
+  "at": "2026-11-27T09:44:19.575872+00:00",
+  "candidate": {
+    "commit": "ef34abac19a02e8642132b322361445a11708c4a",
+    "tree": "a8b2089e202be5163c89955fa72bcc0e60fd41b4",
+    "dirty": false
+  },
+  "tests": [
+    {
+      "group": "composer",
+      "files": 4,
+      "passed": 170,
+      "failed": 0
+    },
+    {
+      "group": "collaboration",
+      "files": 8,
+      "passed": 83,
+      "failed": 0
+    },
+    {
+      "group": "query-integration",
+      "files": 4,
+      "passed": 101,
+      "failed": 0
+    },
+    {
+      "group": "permit",
+      "files": 1,
+      "passed": 9,
+      "failed": 0
+    }
+  ],
+  "totalPassed": 363,
+  "sourceCount": 124,
+  "codeReview": "pass",
+  "developmentAcceptance": "pass",
+  "reviewerModel": "ccs-ai/gpt-6.1-sol",
+  "fullAcceptance": "deferred_by_user",
+  "electron": "3 tests discovered; execution deferred",
+  "ci": "deferred_by_user",
+  "scope": "B guidance/message recovery development with existing A query prerequisites",
+  "priorA": {
+    "candidate": "cf5fea1183d2850dd937f36a85f047d9e6c3e09f",
+    "evidence": "D:/tmp/session-collaboration-mainline-20261126/A"
+  },
+  "rawArchive": "D:\\tmp\\session-collaboration-b-relay-20261127"
+}

@@ -1,0 +1,126 @@
+{
+  "driven_by": "agent",
+  "mode": "transpile syntax only",
+  "results": [
+    {
+      "path": "electron/services/chat-api.ts",
+      "errors": []
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/src/agents/long-task-control/store.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/chat-abort.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.send-permit-lifetime.test.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/sessions.shared.ts",
+      "errors": []
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/shared-types.ts",
+      "errors": []
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "errors": []
+    },
+    {
+      "path": "src/components/agents/SessionCollaborationPanel.tsx",
+      "errors": []
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+      "errors": []
+    },
+    {
+      "path": "src/lib/host-api.ts",
+      "errors": []
+    },
+    {
+      "path": "src/pages/Chat/ChatInput.tsx",
+      "errors": []
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "errors": []
+    },
+    {
+      "path": "src/pages/Chat/ChatToolbar.tsx",
+      "errors": []
+    },
+    {
+      "path": "src/pages/Chat/ExecutionMigrationControl.tsx",
+      "errors": []
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "errors": []
+    },
+    {
+      "path": "src/stores/chat.ts",
+      "errors": []
+    },
+    {
+      "path": "src/stores/session-intent.ts",
+      "errors": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-controls.spec.ts",
+      "errors": []
+    },
+    {
+      "path": "tests/e2e/session-collaboration-delivery-recovery.spec.ts",
+      "errors": []
+    },
+    {
+      "path": "tests/unit/chat-api-workspace-fingerprint.test.ts",
+      "errors": []
+    },
+    {
+      "path": "tests/unit/chat-input.test.tsx",
+      "errors": []
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "errors": []
+    },
+    {
+      "path": "tests/unit/chat-send-input-mode.test.ts",
+      "errors": []
+    },
+    {
+      "path": "tests/unit/chat-store-history-retry.test.ts",
+      "errors": []
+    },
+    {
+      "path": "tests/unit/session-collaboration-panel.test.tsx",
+      "errors": []
+    }
+  ]
+}

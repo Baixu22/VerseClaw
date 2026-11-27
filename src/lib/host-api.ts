@@ -367,6 +367,7 @@ import type {
   SessionContextFoldProjectionResult,
   SessionListArchivedResult,
   SessionLongTaskControlHistoryPayload,
+  SessionLongTaskControlHistoryQuery,
   SessionLongTaskControlHistoryResult,
   SessionLongTaskControlPayload,
   SessionPermanentDeletePayload,
@@ -1572,7 +1573,7 @@ export const hostApi = {
       invokeHost('sessions', 'longTaskControlStatus', input)
     ),
     longTaskControlHistory: (
-      input: SessionLongTaskControlHistoryPayload,
+      input: SessionLongTaskControlHistoryQuery,
     ): Promise<SessionLongTaskControlHistoryResult> => (
       invokeHost('sessions', 'longTaskControlHistory', input)
     ),

@@ -2339,7 +2339,9 @@ export function createSessionsApi(ctx: {
           params: { key: payload.childSessionKey, expectedSessionId: payload.expectedChildGeneration,
             workspaceId: payload.workspaceId, workspaceDir: binding?.environment.canonicalRoot ?? origin.delegation.workspaceDir ?? active.rootPath,
             requesterSessionKey: payload.parentSessionKey, expectedRequesterSessionId: payload.expectedParentGeneration,
-            message: payload.message, idempotencyKey: payload.idempotencyKey }, timeoutMs: 30_000 });
+            message: payload.message, idempotencyKey: payload.idempotencyKey,
+            ...(payload.expectedRunId !== undefined ? { expectedRunId: payload.expectedRunId } : {}),
+          }, timeoutMs: 30_000 });
         if (isRecord(result) && (result.success === false || result.ok === false)) return { success: false, phase: 'rejected', error: String(result.error ?? 'Worker send rejected') };
         if (isRecord(result) && (result.queued === true || result.steered === true)) return {
           success: true, phase: result.steered === true ? 'steered' : 'queued',
@@ -2605,6 +2607,7 @@ export function createSessionsApi(ctx: {
         key: sessionKey,
         ...(agentId ? { agentId } : {}),
         limit,
+        ...(payload.guideReceipt ? { guideReceipt: payload.guideReceipt } : {}),
       }, 10_000);
       return {
         success: true,

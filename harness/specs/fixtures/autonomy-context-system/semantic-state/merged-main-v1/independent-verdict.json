@@ -1,0 +1,85 @@
+{
+  "schema": "C02MergedMainVerifier/v1",
+  "actor": "c02-merged-main-verifier",
+  "driven_by": "agent",
+  "providerModel": "ccs-ai/gpt-6.1-sol",
+  "reviewedAt": "2026-11-26T21:32:00+08:00",
+  "verdict": "accepted",
+  "sourceEquivalent": true,
+  "candidate": {
+    "checkout": "D:/ClawX-work/context-c02-integration-20261126",
+    "commit": "89ce35af1bc248a030b86ed2d17e25b6a6d8da81",
+    "tree": "49320405920d2cc84de8a819c2d69f550388629c",
+    "dirty": false,
+    "mergeParents": [
+      "2aa116861",
+      "6027b406b"
+    ],
+    "pullRequest": 282,
+    "mergedAt": "2026-11-26T11:29:24Z"
+  },
+  "sourceEquivalence": {
+    "frozenC02Candidate": "205be98dc2d6b6c56a488d7a6e20ad763d098d47",
+    "previousAcceptedCandidate": "97cb2884527b1bc80f74612c7e5ce73e70974ff5",
+    "pathsChecked": 20,
+    "frozenReadbackBlobChecks": 12,
+    "frozenReadbackWholeFileMismatches": 1,
+    "c02ImplementationMismatches": 0,
+    "c02SourceStatus": "unchanged",
+    "unrelatedMainChange": "shared/host-api/contract.ts adds KnowledgeAnswerFromSourceSetPayload.requestId; this sole frozen whole-file hash difference is the concurrent main addition, while the C02 contract implementation remains unchanged",
+    "statement": "C02 源码与已验收候选保持等价；实际 main 合并提交带入并发主线 requestId 字段，C02 实现与旧 build/Electron 绑定不变。"
+  },
+  "mergedMainSanity": {
+    "status": "accepted",
+    "jobId": "context-c02-merged-main-20261126-r1",
+    "plan": "D:/tmp/autonomy-context-system-20261126/c02-merged-main-r1-plan.json",
+    "commandReport": "D:/tmp/autonomy-context-system-20261126/c02-merged-main-r1-command.json",
+    "vitestReport": "D:/tmp/autonomy-context-system-20261126/c02-merged-main-r1-vitest.json",
+    "resourceReceipt": "D:/ClawX-acceptance/resource-queue/runs/context-c02-merged-main-20261126-r1/receipt.json",
+    "commands": [
+      {
+        "name": "C02 focused Vitest regression",
+        "exitCode": 0,
+        "result": "16/16 suites, 106/106 tests passed"
+      },
+      {
+        "name": "contract-check.mjs",
+        "exitCode": 0
+      },
+      {
+        "name": "comms/replay.mjs",
+        "exitCode": 0
+      },
+      {
+        "name": "comms/compare.mjs",
+        "exitCode": 0
+      },
+      {
+        "name": "git diff --check HEAD",
+        "exitCode": 0
+      }
+    ],
+    "candidateBeforeAfter": {
+      "commit": "89ce35af1bc248a030b86ed2d17e25b6a6d8da81",
+      "tree": "49320405920d2cc84de8a819c2d69f550388629c",
+      "dirty": false
+    },
+    "sourceUnchanged": true,
+    "executed": true,
+    "countsAsPass": true,
+    "resource": {
+      "status": "completed",
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "treeExited": true,
+      "budgetExceeded": false
+    }
+  },
+  "priorEvidenceBinding": {
+    "buildCandidate": "49d5922b7103b7a15953d304eec4d09242322275",
+    "electronCandidate": "49d5922b7103b7a15953d304eec4d09242322275",
+    "statement": "原 build/Electron 证据继续绑定 49d5922b，不因实际 main merge 改签。"
+  },
+  "remoteCiStatus": "not-started-account-billing",
+  "remoteCiCountsAsGreen": false
+}

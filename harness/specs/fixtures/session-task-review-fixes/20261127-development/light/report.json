@@ -1,0 +1,165 @@
+{
+  "schema": "session-task-validation/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0950-relay",
+  "candidate": {
+    "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+    "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+    "base": "c0450f50c0046a8c021188e9eb472b10f1203b6f"
+  },
+  "group": "light",
+  "planSha256": "705f9323348357f1b533e5e4b63bba58f2283c5258ace25887fdeb193bf2c9dd",
+  "started": "2026-11-27T06:10:00.512Z",
+  "steps": [
+    {
+      "id": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=256",
+        "node_modules/eslint/bin/eslint.js",
+        "tests/unit/session-task-scope-completion.test.ts",
+        "--max-warnings",
+        "0"
+      ],
+      "driven_by": "agent",
+      "actor": "codex/tf0950-relay",
+      "started": "2026-11-27T06:10:01.046Z",
+      "ended": "2026-11-27T06:10:05.950Z",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\lint.stdout.log",
+      "stderrPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\lint.stderr.log",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAfter": {
+        "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+        "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+        "dirty": false
+      }
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=256",
+        "scripts/contract-check.mjs"
+      ],
+      "driven_by": "agent",
+      "actor": "codex/tf0950-relay",
+      "started": "2026-11-27T06:10:06.459Z",
+      "ended": "2026-11-27T06:10:08.343Z",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\contract.stdout.log",
+      "stderrPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\contract.stderr.log",
+      "stdoutSha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAfter": {
+        "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+        "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+        "dirty": false
+      }
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=256",
+        "scripts/comms/replay.mjs"
+      ],
+      "driven_by": "agent",
+      "actor": "codex/tf0950-relay",
+      "started": "2026-11-27T06:10:08.929Z",
+      "ended": "2026-11-27T06:10:09.397Z",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\comms-replay.stdout.log",
+      "stderrPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\comms-replay.stderr.log",
+      "stdoutSha256": "c7783502efb8bc4a0c5ee6602c071d4086dbf286ec9844084e4e206f64bd0a26",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAfter": {
+        "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+        "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+        "dirty": false
+      }
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=256",
+        "scripts/comms/compare.mjs"
+      ],
+      "driven_by": "agent",
+      "actor": "codex/tf0950-relay",
+      "started": "2026-11-27T06:10:09.879Z",
+      "ended": "2026-11-27T06:10:10.068Z",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\comms-compare.stdout.log",
+      "stderrPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\comms-compare.stderr.log",
+      "stdoutSha256": "3a00e27d924dbf44251c7a3d31210f4a2462a7c32c8afc0e9c07e7053f2ea5b8",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAfter": {
+        "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+        "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+        "dirty": false
+      }
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md"
+      ],
+      "driven_by": "agent",
+      "actor": "codex/tf0950-relay",
+      "started": "2026-11-27T06:10:10.560Z",
+      "ended": "2026-11-27T06:10:11.430Z",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\harness-validate.stdout.log",
+      "stderrPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\harness-validate.stderr.log",
+      "stdoutSha256": "72f9fb03c21603eaac94cab320bfef4d96fa7b41eb26678ed979e06b646d9010",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAfter": {
+        "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+        "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+        "dirty": false
+      }
+    },
+    {
+      "id": "harness-dry-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=256",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/session-task-review-fixes-20261125.md",
+        "--dry-run"
+      ],
+      "driven_by": "agent",
+      "actor": "codex/tf0950-relay",
+      "started": "2026-11-27T06:10:12.042Z",
+      "ended": "2026-11-27T06:10:12.858Z",
+      "exitCode": 0,
+      "signal": null,
+      "stdoutPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\harness-dry-run.stdout.log",
+      "stderrPath": "D:\\tmp\\session-task-final-20261127-01a213b9\\development-light\\light\\harness-dry-run.stderr.log",
+      "stdoutSha256": "90cba72d35e37719d4efe01661af2d9680b8ead9324fb864718bb41b18157a5d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAfter": {
+        "commit": "ff028d7168fd23bfea9c9a7bdb13c14f7b20ae56",
+        "tree": "1a544777a2584c295a49266e62c0b6bdb69a834a",
+        "dirty": false
+      }
+    }
+  ],
+  "status": "passed",
+  "ended": "2026-11-27T06:10:13.087Z"
+}
