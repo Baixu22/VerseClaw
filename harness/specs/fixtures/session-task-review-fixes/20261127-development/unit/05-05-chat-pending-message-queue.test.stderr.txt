@@ -1,0 +1,3 @@
+stderr | tests/unit/chat-pending-message-queue.test.ts > chat pending message queue > delivers a displayed question response immediately without long-task inputMode
+[sendMessage] Ignoring stale chat.send runId { runId: 'answer-1', sessionKey: 'agent:main:main' }
+

@@ -1,0 +1,11 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ tests/unit/composer-references.test.ts (7 tests) 26ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  14:05:37
+   Duration  2.41s (transform 225ms, setup 235ms, import 335ms, tests 26ms, environment 1.23s)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial-r2/01-composer-references.test.json

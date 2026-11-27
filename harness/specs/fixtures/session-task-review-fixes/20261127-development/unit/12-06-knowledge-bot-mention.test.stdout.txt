@@ -1,0 +1,14 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+stdout | tests/unit/knowledge-bot-mention.test.tsx
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/knowledge-bot-mention.test.tsx (5 tests) 24ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  14:06:22
+   Duration  7.05s (transform 1.71s, setup 202ms, import 5.34s, tests 24ms, environment 838ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial-r2/06-knowledge-bot-mention.test.json

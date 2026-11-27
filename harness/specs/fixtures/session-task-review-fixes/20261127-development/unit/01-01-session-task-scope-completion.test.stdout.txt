@@ -1,0 +1,30 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ tests/unit/session-task-scope-completion.test.ts (47 tests) 23217ms
+     ✓ reads task admission by identity without a full Ledger snapshot  841ms
+     ✓ keeps admission scoped with 1000 persisted task contracts  1187ms
+     ✓ keeps admission scoped with 10000 persisted task contracts  8138ms
+     ✓ binds an in-process worker through its persisted worktree owner  365ms
+     ✓ retains the same Main writer through idle renewal and a lost admission ACK  563ms
+     ✓ uses a decomposed scheduled child contract under the recorded parent TaskRef  441ms
+     ✓ consumes a canonical business contract after a failed turn left a diagnostic deviation link  462ms
+     ✓ selects an existing completed task and preserves its status and historical links  566ms
+     ✓ uses the captured worker parent TaskRef with a real child contract despite a later parent selection  526ms
+     ✓ pauses new dispatch while retaining the already admitted writer and workgroup ownership  315ms
+     ✓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary  448ms
+     ✓ captures checkout execution revision while allowing the admitted run through coordinator pause  418ms
+     ✓ rejects effects on a completed canonical task, including after owner reconstruction  453ms
+     ✓ rejects a Legacy done node without creating a canonical replacement or changing it to doing  332ms
+     ✓ does not release a live canonical claim because a new API instance or response settled  432ms
+     ✓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface  786ms
+     ✓ rejects foreign workspace identity and a changed session generation without manufacturing a replacement  321ms
+     ✓ blocks task selection and rebinding on session resources even without a Workspace writer  372ms
+     ✓ requires explicit canonical selection for multiple links and rejects an external reference as a task  447ms
+
+ Test Files  1 passed (1)
+      Tests  47 passed (47)
+   Start at  14:01:51
+   Duration  35.58s (transform 8.09s, setup 433ms, import 10.81s, tests 23.22s, environment 0ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial/01-session-task-scope-completion.test.json

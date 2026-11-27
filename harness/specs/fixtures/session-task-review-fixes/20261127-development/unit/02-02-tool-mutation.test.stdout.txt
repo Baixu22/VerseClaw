@@ -1,0 +1,11 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ openclaw_runtime/src/agents/tool-mutation.test.ts (12 tests) 10ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  14:02:29
+   Duration  3.56s (transform 255ms, setup 252ms, import 129ms, tests 10ms, environment 2.42s)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial/02-tool-mutation.test.json

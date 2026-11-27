@@ -1,0 +1,20 @@
+
+ RUN  v4.1.1 D:/ClawX-work/session-task-review-fixes-20261125-01a21019
+
+ ✓ tests/unit/session-task-state-guidance.test.tsx (13 tests) 5250ms
+     ✓ normalizes a permission rejection, hides selection and refreshes the same owner after a held read  349ms
+     ✓ shows unfinished titles and states, focuses the prerequisite, then calls the original claim action  1076ms
+     ✓ reads one unfiltered page per click and keeps only the exact dependency before focusing it  617ms
+     ✓ keeps an absent dependency blocked after exhausting pages and allows a new read  563ms
+     ✓ keeps a failed dependency read unresolved and retries the same owner cursor  634ms
+     ✓ discards an in-flight dependency read when the workspace changes  555ms
+     ✓ ignores the old workspace command completion (success: true)  540ms
+     ✓ ignores the old workspace command completion (success: false)  523ms
+     ✓ shows a current owner refusal after refreshing its list  334ms
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  14:07:25
+   Duration  8.07s (transform 632ms, setup 205ms, import 1.13s, tests 5.25s, environment 831ms)
+
+JSON report written to D:/tmp/session-task-final-20261127-01a213b9/development-serial-r2/13-session-task-state-guidance.test.json
