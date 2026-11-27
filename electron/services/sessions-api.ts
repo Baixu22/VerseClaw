@@ -59,11 +59,12 @@ import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contra
 import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
   getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
-import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type WorkspaceId } from '@shared/types/identity-scope';
+import { normalizeRunScope, normalizeAutonomySessionScope, resolveProjectIdForWorkspace, type AutonomySessionScope, type WorkspaceId } from '@shared/types/identity-scope';
 import { createSessionCollaborationMessage, validateSessionCollaborationReceipt, verifySessionCollaborationMessage } from '@shared/session-collaboration-message';
 import { parseSessionCollaborationMessageInput, parseSessionCollaborationMessageQuery, validateSessionCollaborationMessagePage, type SessionCollaborationMessagePage } from '@shared/types/session-collaboration-message';
 import { parseSessionCollaborationQuery, validateSessionCollaborationPage, type SessionCollaborationPage } from '@shared/types/session-collaboration';
 import { emptyMaterialPage, parseSessionCollaborationMaterialQuery, validateMaterialPage } from '@shared/types/session-collaboration-material';
+import { emptyTaskContext, type SessionCollaborationTaskContext } from '@shared/types/session-collaboration-context';
 import { classifyDerivation } from '@shared/types/session-derivation';
 import {
   executeSessionDelegation,
@@ -1872,6 +1873,14 @@ export function createSessionsApi(ctx: {
     if (page.state !== 'ready' || after?.id !== profile.id || after.activeSessionKey !== profile.activeSessionKey) return null;
     return { scope: candidate, name: profile.name };
   };
+  const collaborationReaderIssue = async (expected: AutonomySessionScope) => {
+    const active = await readCollaborationSender();
+    if (!active) return 'owner-unavailable' as const;
+    try { normalizeAutonomySessionScope(expected, active.scope); return null; }
+    catch {
+      return expected.sessionGeneration === active.scope.sessionGeneration ? 'scope-mismatch' as const : 'generation-changed' as const;
+    }
+  };
   const delegationFlights = new Map<string, Promise<SessionDelegationResult>>();
   const delegationStore = ctx.delegationStore ?? {
     readAdmission: readSessionDelegationAdmission,
@@ -2239,25 +2248,33 @@ export function createSessionsApi(ctx: {
     collaborationContext: async (payload) => {
       const query = parseSessionCollaborationQuery(payload);
       if (!query.target || query.limit !== 1) throw new TypeError('One context target required');
-      const result = await ctx.gatewayManager!.rpc<{ taskContext: import('../../shared/types/session-collaboration-context').SessionCollaborationTaskContext }>('session.activitySnapshot', { taskContext: query }, 15_000);
-      if (!result.taskContext || result.taskContext.schemaVersion !== 'SessionCollaborationTaskContext/v1') throw new Error('CONTEXT_PROTOCOL_UNVERIFIED');
-      normalizeAutonomySessionScope(result.taskContext.scope, query.target);
-      return { success: true, taskContext: result.taskContext };
+      const failure = (reason: string) => ({ success: true, taskContext: emptyTaskContext(query.target!,
+        reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
+      try {
+        const before = await collaborationReaderIssue(query.requester);
+        if (before) return failure(before);
+        const result = await ctx.gatewayManager!.rpc<{ taskContext: SessionCollaborationTaskContext }>(
+          'session.activitySnapshot', { taskContext: query }, 15_000);
+        // The active reader may reset or switch while the original owner is being read.
+        const after = await collaborationReaderIssue(query.requester);
+        if (after) return failure(after);
+        if (!result?.taskContext || result.taskContext.schemaVersion !== 'SessionCollaborationTaskContext/v1')
+          return { success: true, taskContext: emptyTaskContext(query.target, 'unknown', 'protocol-unverified') };
+        normalizeAutonomySessionScope(result.taskContext.scope, query.target);
+        return { success: true, taskContext: result.taskContext };
+      } catch { return failure('owner-unavailable'); }
     },
     collaborationMaterials: async (payload) => {
       const query = parseSessionCollaborationMaterialQuery(payload);
+      const failure = (reason: 'owner-unavailable' | 'scope-mismatch' | 'generation-changed') => ({ success: true,
+        materials: emptyMaterialPage(query, reason === 'owner-unavailable' ? 'unavailable' : 'stale', reason) });
       try {
-        const active = await readCollaborationSender();
-        if (!active || !ctx.gatewayManager)
-          return { success: true, materials: emptyMaterialPage(query, 'unavailable', 'owner-unavailable') };
-        try { normalizeAutonomySessionScope(query.requester, active.scope); }
-        catch { return { success: true, materials: emptyMaterialPage(query, 'stale', 'scope-mismatch') }; }
-        const result = await ctx.gatewayManager.rpc<{ materials: unknown }>('session.activitySnapshot', { materials: query }, 15_000);
-        const after = await getActiveWorkspaceProfile();
-        const materials = after?.id === active.scope.workspaceId && after.activeSessionKey === active.scope.sessionKey
-          ? validateMaterialPage(query, result?.materials) : emptyMaterialPage(query, 'stale', 'scope-mismatch');
-        return { success: true, materials };
-      } catch { return { success: true, materials: emptyMaterialPage(query, 'unavailable', 'owner-unavailable') }; }
+        const before = await collaborationReaderIssue(query.requester);
+        if (before) return failure(before);
+        const result = await ctx.gatewayManager!.rpc<{ materials: unknown }>('session.activitySnapshot', { materials: query }, 15_000);
+        const after = await collaborationReaderIssue(query.requester);
+        return after ? failure(after) : { success: true, materials: validateMaterialPage(query, result?.materials) };
+      } catch { return failure('owner-unavailable'); }
     },
     presentCollaborationMaterial: async ({ id, ...payload }) => {
       const query = parseSessionCollaborationMaterialQuery(payload);

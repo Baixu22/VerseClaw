@@ -35,6 +35,18 @@ it('preserves original versions through conflict, replacement, revocation and mi
       evidenceRefs: [], conflictsWith: [firstRef, materialReference(alternative)] });
     expect(store.sharedMaterialStatus(first, source, Date.now())).toEqual({ state: 'conflict', related: [materialReference(conflict)] });
     expect(conflict.conflictsWith).toEqual([firstRef, materialReference(alternative)]);
+    for (let index = 0; index < 8; index++) {
+      const newer = publish({ id: `revoked-conflict-${index}`, kind: 'conflict', summary: 'Withdrawn conflict', sensitivity: 'internal',
+        evidenceRefs: [], conflictsWith: [firstRef, materialReference(alternative)] });
+      store.revokeSharedMaterial(claim, materialReference(newer), 'Withdrawn', 'current-run', () => source);
+    }
+    expect(store.sharedMaterialStatus(first, source, Date.now())).toEqual({ state: 'conflict', related: [materialReference(conflict)] });
+    for (let index = 8; index < 60; index++) {
+      const newer = publish({ id: `revoked-conflict-${index}`, kind: 'conflict', summary: 'Withdrawn conflict', sensitivity: 'internal',
+        evidenceRefs: [], conflictsWith: [firstRef, materialReference(alternative)] });
+      store.revokeSharedMaterial(claim, materialReference(newer), 'Withdrawn', 'current-run', () => source);
+    }
+    expect(store.sharedMaterialStatus(first, source, Date.now()).state).toBe('unknown');
     const successor = publish({ ...input, id: 'replacement', supersedes: firstRef });
     expect(successor.version).toBe(2);
     expect(store.sharedMaterialStatus(first, source, Date.now())).toEqual({ state: 'superseded', related: [materialReference(successor)] });

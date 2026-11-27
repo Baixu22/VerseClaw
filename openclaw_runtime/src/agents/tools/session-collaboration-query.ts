@@ -6,6 +6,7 @@ import { emptySessionCollaborationPage, parseSessionCollaborationQuery, validate
 import { parseSessionActivityReadQuery } from '../../../../shared/types/session-activity.js';
 import { emptyMaterialPage, parseSessionCollaborationMaterialQuery, validateMaterialPage } from '../../../../shared/types/session-collaboration-material.js';
 import type { OpenClawConfig } from '../../config/types.openclaw.js';
+import { normalizeAutonomySessionScope } from '../../../../shared/types/identity-scope.js';
 
 export type SessionCollaborationToolContext = {
   agentSessionKey?: string;
@@ -38,6 +39,23 @@ export async function querySessionCollaborationMaterialsTool(opts: SessionCollab
     });
     return validateMaterialPage(query, result?.materials);
   } catch { return emptyMaterialPage(query, 'unavailable', 'owner-unavailable'); }
+}
+
+export async function querySessionCollaborationMaterialBatchTool(opts: SessionCollaborationToolContext,
+  selections: readonly { ref: unknown; source: unknown }[]) {
+  if (!selections.length || selections.length > 4) throw new TypeError('One bounded material batch required');
+  const { owner, generation } = readSessionCollaborationToolOwner(opts);
+  const queries = selections.map(selection => parseSessionCollaborationMaterialQuery({ ref: selection.ref, target: selection.source,
+    requester: { ...owner, sessionGeneration: generation } }));
+  if (owner.sessionGeneration !== generation) return queries.map(query => emptyMaterialPage(query, 'stale', 'generation-changed'));
+  try {
+    const result = await (opts.callGateway ?? callGateway)<{ materials: unknown[] }>({ method: 'session.activitySnapshot',
+      params: { materialsBatch: queries }, ...(opts.config ? { config: opts.config } : {}) });
+    const after = readSessionCollaborationToolOwner(opts);
+    normalizeAutonomySessionScope(after.owner, owner);
+    if (!Array.isArray(result?.materials) || result.materials.length !== queries.length) throw new TypeError('Incomplete material batch');
+    return queries.map((query, index) => validateMaterialPage(query, result.materials[index]));
+  } catch { return queries.map(query => emptyMaterialPage(query, 'unavailable', 'owner-unavailable')); }
 }
 
 /** The current run supplies requester identity; model arguments only select the target/view. */

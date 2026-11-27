@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { expect, it, vi } from 'vitest';
-import { readSessionCollaborationMaterials } from '../../openclaw_runtime/src/gateway/server-methods/session-collaboration-material';
+import { readSessionCollaborationMaterials, readSessionCollaborationMaterialBatch } from '../../openclaw_runtime/src/gateway/server-methods/session-collaboration-material';
 import type { GatewayRequestContext } from '../../openclaw_runtime/src/gateway/server-methods/types';
 import { openExecutionStateDatabase } from '../../openclaw_runtime/src/state/execution-state-db';
 import { closeOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
@@ -25,7 +25,8 @@ it('searches only the visible source scopes and opens the original version by it
   const requester = { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: 'agent:main:reader',
     sessionGeneration: 'reader-generation' } as AutonomySessionScope;
   const source = { ...requester, sessionKey: 'agent:main:writer' as AutonomySessionScope['sessionKey'], sessionGeneration: 'writer-generation' };
-  const context = {} as GatewayRequestContext;
+  let visibilityMode: 'self' | 'all' = 'all';
+  const context = { getRuntimeConfig: () => ({ tools: { sessions: { visibility: visibilityMode } } }) } as GatewayRequestContext;
   const query = (filters: Record<string, unknown>) => readSessionCollaborationMaterials({ requester, ...filters }, context);
   try {
     openExecutionStateDatabase();
@@ -69,6 +70,39 @@ it('searches only the visible source scopes and opens the original version by it
     visibility.mockResolvedValueOnce({ state: 'unavailable', reason: 'not-visible' });
     expect(await query({ target: source, ref: materialReference(current.material) }))
       .toMatchObject({ state: 'unavailable', reason: 'not-visible', detail: null });
+    for (const filters of [{ target: source, ref: materialReference(current.material) }, { search: 'shared topic' }]) {
+      visibilityMode = 'all';
+      const status = TaskSystemStore.prototype.sharedMaterialStatus;
+      const spy = vi.spyOn(TaskSystemStore.prototype, 'sharedMaterialStatus').mockImplementationOnce(function (this: TaskSystemStore, ...args) {
+        const result = status.apply(this, args);
+        visibilityMode = 'self';
+        return result;
+      });
+      try { expect(await query(filters)).toMatchObject({ state: 'unavailable', reason: 'not-visible', detail: null, items: [] }); }
+      finally { spy.mockRestore(); }
+    }
+    visibilityMode = 'all';
+    const other = store.publishSharedMaterial(current.claim, { id: 'batch-other', kind: 'claim', summary: 'Batch peer',
+      sensitivity: 'internal', evidenceRefs: [] }, 'newer-run', () => source);
+    const batch = [current.material, other].map(material => ({ requester, target: source, ref: materialReference(material) }));
+    const sourcePage = () => ({ state: 'ready', items: [{ detail: { scope: source } }], nextCursor: null });
+    visibility.mockImplementationOnce(async () => sourcePage()).mockImplementationOnce(async () => {
+      await Promise.resolve();
+      store.revokeSharedMaterial(current.claim, materialReference(current.material), 'Withdrawn while preparing the batch', 'newer-run', () => source);
+      return sourcePage();
+    });
+    expect((await readSessionCollaborationMaterialBatch(batch, context)).map(page => page.detail?.state)).toEqual(['revoked', 'claim']);
+    await expect(readSessionCollaborationMaterialBatch([...batch, ...batch, batch[0]], context)).rejects.toThrow('bounded material batch');
+    visibilityMode = 'self';
+    store.inheritReference(source.sessionKey, source.sessionGeneration, requester.sessionKey, requester.sessionGeneration);
+    loadSessionEntry.mockImplementation(key => ({ canonicalKey: key, entry: key === source.sessionKey ? undefined
+      : { workspaceId: requester.workspaceId, workspaceDir: root, sessionId: requester.sessionGeneration } }));
+    visibility.mockResolvedValue({ state: 'unavailable', reason: 'not-visible' });
+    expect(await query({ target: source, ref: materialReference(current.material) }))
+      .toMatchObject({ state: 'unavailable', reason: 'not-visible', detail: null });
+    visibilityMode = 'all';
+    expect(await query({ target: source, ref: materialReference(current.material) }))
+      .toMatchObject({ state: 'ready', detail: { material: current.material, state: 'unknown' } });
   } finally {
     store.close();
     closeOpenClawStateDatabase();

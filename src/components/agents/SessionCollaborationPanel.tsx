@@ -156,7 +156,7 @@ export function SessionCollaborationPanel({ requester, workspace }: { requester?
       </div>
       {page?.unknownMatches ? <p className="text-xs text-muted-foreground">{t('collaboration.unknownMatches', { count: page.unknownMatches })}</p> : null}
       {page?.nextCursor && <Button type="button" variant="outline" onClick={() => setCursor(page.nextCursor!)} disabled={loading} data-testid="collaboration-more">{t('collaboration.more')}</Button>}
-      {(!view.selected || row?.detail) && <SessionCollaborationMaterials key={`${viewKey}:${selectedKey}`} requester={requester} target={row?.detail?.scope} />}
+      {(!view.selected || row?.detail) && <SessionCollaborationMaterials key={`${viewKey}:${selectedKey}`} target={row?.detail?.scope} />}
       {view.selected && <div className="space-y-3 border-t border-border pt-3" data-testid="collaboration-detail">
         <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="break-words text-sm font-medium">
           {row?.label ?? (detailIssue ? t(`collaboration.page.${detailIssue}`, { count: 0 }) : t('collaboration.loading'))}

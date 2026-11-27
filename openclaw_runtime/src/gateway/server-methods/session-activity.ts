@@ -130,6 +130,14 @@ function taskStatus(status: string) {
 
 export const sessionActivityHandlers: GatewayRequestHandlers = {
   "session.activitySnapshot": async ({ params, respond, context, client }) => {
+    if (params.materialsBatch !== undefined) {
+      try {
+        if (Object.keys(params).length !== 1) throw new TypeError('One material batch query required');
+        const { readSessionCollaborationMaterialBatch } = await import('./session-collaboration-material.js');
+        respond(true, { materials: await readSessionCollaborationMaterialBatch(params.materialsBatch, context) }, undefined);
+      } catch { respond(false, undefined, { code: 'INVALID_REQUEST', message: 'Invalid material batch query' }); }
+      return;
+    }
     if (params.materials !== undefined) {
       try {
         if (Object.keys(params).length !== 1) throw new TypeError('One material query required');

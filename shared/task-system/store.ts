@@ -775,12 +775,14 @@ export class TaskSystemStore {
     } catch { return { state: 'unknown' }; }
     const conflicts = this.db.prepare(`SELECT e.json FROM task_events e WHERE e.task_id=? AND e.kind='shared_material_published'
       AND EXISTS (SELECT 1 FROM json_each(e.json,'$.conflictsWith') WHERE json_extract(value,'$.id')=?)
-      ORDER BY e.seq DESC LIMIT 8`).all(material.taskNodeId, material.id) as Row[];
-    const related = conflicts.map(row => JSON.parse(row.json) as SessionCollaborationMaterial)
+      ORDER BY e.seq DESC LIMIT ?`).all(material.taskNodeId, material.id, MATERIAL_SCAN_LIMIT + 1) as Row[];
+    const related = conflicts.slice(0, MATERIAL_SCAN_LIMIT).map(row => JSON.parse(row.json) as SessionCollaborationMaterial)
       .filter(conflict => canReadMaterial(viewer, materialSource(conflict), conflict.sensitivity) &&
         (conflict.expiresAt === undefined || conflict.expiresAt > now) && conflict.taskRevision === contract.revision && !this.materialDisposition(conflict))
-      .map(materialReference);
-    return related.length ? { state: 'conflict', related } : { state: material.state };
+      .slice(0, 8).map(materialReference);
+    // Exhausting a bounded history scan cannot prove that older live conflicts are absent.
+    return related.length ? { state: 'conflict', related }
+      : { state: conflicts.length > MATERIAL_SCAN_LIMIT ? 'unknown' : material.state };
   }
   readHistoricalSharedMaterial(viewer: AutonomySessionScope, source: AutonomySessionScope, ref: SessionCollaborationMaterialRef) {
     this.assertReadCurrent();
@@ -809,12 +811,22 @@ export class TaskSystemStore {
         if ((phase === 'presented') !== (run === null) ||
             (['prompt-used', 'outcome'].includes(phase) && !observation.modelCallId) ||
             (phase === 'outcome' && !/^[a-f0-9]{64}$/.test(observation.responseDigest ?? ''))) throw new Error('MATERIAL_OBSERVATION_IDENTITY_MISSING');
-        const task = this.binding(reader.sessionKey, reader.sessionGeneration);
-        if (!task) continue;
+        let taskNodeId: TaskCredential['taskNodeId'];
+        if (phase === 'prompt-used' || phase === 'outcome') {
+          // A completed request belongs to its original model call, even after the reader changes tasks.
+          const call = this.read<TaskModelCall>('SELECT result AS json FROM task_requests WHERE id=?', `model-call:${observation.modelCallId}`);
+          if (!call || !run || call.runId !== run.runId || call.credential.sessionKey !== reader.sessionKey ||
+              call.credential.generation !== reader.sessionGeneration) throw new Error('MATERIAL_OBSERVATION_CALL_MISMATCH');
+          taskNodeId = call.credential.taskNodeId;
+        } else {
+          const task = this.binding(reader.sessionKey, reader.sessionGeneration);
+          if (!task) continue;
+          taskNodeId = task.contract.taskNodeId;
+        }
         const reference = parseMaterialReference(ref);
         const key = digest([observation.id, phase, reference, reader, run, observation.modelCallId]);
         this.request(`material-observation:${key}`, observation, () => {
-          this.event(task.contract.taskNodeId, 'material_observation', observation);
+          this.event(taskNodeId, 'material_observation', observation);
           return true;
         });
         count++;
@@ -1146,6 +1158,22 @@ export class TaskSystemStore {
       if (recent) task=this.view(recent.task_id);
     }
     return {task,children:(task?.childTaskNodeIds??[]).map(id=>this.view(id))};
+  }
+  sessionContextSnapshot(sessionKey: string, generation: string) {
+    this.assertReadCurrent();
+    // A deferred read snapshot keeps another connection's task switch out of this joined response.
+    this.db.exec('SAVEPOINT task_context_snapshot');
+    try {
+      const capturedAt = this.now();
+      const { task } = this.sessionSnapshot(sessionKey, generation);
+      const context = task ? this.context(sessionKey, generation) : null;
+      const evidence = task ? (this.db.prepare(`SELECT json FROM task_evidence
+        WHERE task_id=? AND json_extract(json,'$.revision')=? ORDER BY rowid DESC LIMIT 50`)
+        .all(task.contract.taskNodeId, task.contract.revision) as Row[])
+        .map(row => JSON.parse(row.json) as TaskEvidence) : [];
+      this.assertReadCurrent();
+      return { task, context, evidence, capturedAt };
+    } finally { this.db.exec('RELEASE SAVEPOINT task_context_snapshot'); }
   }
   assertOwner(credential: TaskCredential, allowPaused = false): TaskView {
     const view = this.get(credential.taskNodeId);

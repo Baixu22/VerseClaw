@@ -1173,7 +1173,8 @@ function createRawOllamaStreamFn(
           options: ollamaOptions,
           requestParams: resolveOllamaTopLevelParams(model),
         });
-        options?.onPayload?.(body, model);
+        // Material hydration and other payload hooks must finish before serialization.
+        const payload = (await options?.onPayload?.(body, model)) ?? body;
         const headers: Record<string, string> = {
           "Content-Type": "application/json",
           ...defaultHeaders,
@@ -1191,7 +1192,7 @@ function createRawOllamaStreamFn(
           init: {
             method: "POST",
             headers,
-            body: JSON.stringify(body),
+            body: JSON.stringify(payload),
           },
           policy: ssrfPolicy,
           ...(options?.signal ? { signal: options.signal } : {}),

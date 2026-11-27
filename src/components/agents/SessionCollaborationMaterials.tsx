@@ -10,7 +10,7 @@ import type {
   SessionCollaborationMaterialPage, SessionCollaborationMaterialQuery, SessionCollaborationMaterialState, SessionCollaborationMaterialSummary,
 } from '@shared/types/session-collaboration-material';
 
-export function SessionCollaborationMaterials({ requester, target }: { requester: AutonomySessionScope; target?: AutonomySessionScope }) {
+export function SessionCollaborationMaterials({ target }: { target?: AutonomySessionScope }) {
   const { t } = useTranslation('agents');
   const searchId = useId();
   const sequence = useRef(0);
@@ -20,32 +20,37 @@ export function SessionCollaborationMaterials({ requester, target }: { requester
   const [loading, setLoading] = useState(false);
   const [failure, setFailure] = useState(false);
   const [page, setPage] = useState<SessionCollaborationMaterialPage | null>(null);
+  const [reader, setReader] = useState<AutonomySessionScope | null>(null);
   const [selected, setSelected] = useState<SessionCollaborationMaterialSummary | null>(null);
   const [detail, setDetail] = useState<SessionCollaborationMaterialPage['detail']>(null);
   const [observedState, setObservedState] = useState<SessionCollaborationMaterialState | null>(null);
   useEffect(() => () => { sequence.current++; }, []);
   useEffect(() => {
-    if (!open || !selected || !detail) return;
+    if (!open || !selected || !detail || !reader) return;
     void hostApi.sessions.presentCollaborationMaterial({
-      id: crypto.randomUUID(), requester, target: selected.source, ref: selected.ref,
+      id: crypto.randomUUID(), requester: reader, target: selected.source, ref: selected.ref,
     }).catch(() => {});
     return subscribeSessionCollaboration({
       id: crypto.randomUUID(), condition: 'material-changed', materialRef: selected.ref, observedMaterialState: detail.state,
-      query: { requester, target: selected.source, limit: 1 },
+      query: { requester: reader, target: selected.source, limit: 1 },
     }, result => {
       if (result.event?.materialState) setObservedState(result.event.materialState);
       else if (result.state === 'unknown' || result.state === 'stale' || result.state === 'unavailable') setObservedState('unknown');
     });
-  }, [open, selected, detail, requester]);
+  }, [open, selected, detail, reader]);
 
-  const request = async (query: SessionCollaborationMaterialQuery) => {
+  const request = async (query: Omit<SessionCollaborationMaterialQuery, 'requester'>) => {
     const revision = ++sequence.current;
     setLoading(true);
     setFailure(false);
     try {
-      const result = await hostApi.sessions.collaborationMaterials(query);
+      const active = await hostApi.sessions.collaborationSender();
+      if (sequence.current !== revision) return;
+      if (!active.source) throw new Error('MATERIAL_READER_UNAVAILABLE');
+      const result = await hostApi.sessions.collaborationMaterials({ ...query, requester: active.source.scope });
       if (sequence.current !== revision) return;
       if (!result.success || !result.materials) throw new Error('MATERIAL_QUERY_UNAVAILABLE');
+      setReader(active.source.scope);
       if (query.ref) {
         setDetail(result.materials.detail);
         setFailure(result.materials.state !== 'ready');
@@ -62,13 +67,13 @@ export function SessionCollaborationMaterials({ requester, target }: { requester
     setObservedState(null);
     setSearch(text);
     if (!cursor) setPage(null);
-    void request({ requester, target, ...(text ? { search: text } : {}), cursor });
+    void request({ target, ...(text ? { search: text } : {}), cursor });
   };
   const openMaterial = (item: SessionCollaborationMaterialSummary) => {
     setSelected(item);
     setDetail(null);
     setObservedState(null);
-    void request({ requester, target: item.source, ref: item.ref });
+    void request({ target: item.source, ref: item.ref });
   };
   const status = loading ? t('collaboration.loading') : failure ? t('collaboration.materials.unavailable')
     : page?.state === 'empty' ? t('collaboration.materials.empty')
@@ -82,10 +87,8 @@ export function SessionCollaborationMaterials({ requester, target }: { requester
       setOpen(event.currentTarget.open);
       if (event.currentTarget.open) {
         if (!page && !loading) list(search);
-      } else {
-        sequence.current++;
-        setLoading(false);
       }
+      // Collapsing only hides the view; the pending selection still belongs to this scope.
     }}>
     <summary className="cursor-pointer rounded-sm text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
       {t('collaboration.materials.title')}

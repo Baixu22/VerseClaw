@@ -58,15 +58,19 @@ Workspace、Gateway 或 Host 读取失败返回 `unavailable/owner-unavailable`�
 
 同源目标代次、任务和完全相同内容的 finding/status 突发由原消息 owner 合并，回执携带 coalescedTo 原意图引用；request/handoff/result 保持独立。实际协作模型调用在原 Task Trace 标记 coordination，原价格、用量、预算和队列决定继续由各自 owner 提供。
 
-`sessions.collaborationContext` 读取当前目标 scope 的原 TaskSystem 合同、checkpoint、证据和有界上下文。observer 保留只读引用身份，读取不取得 claim；旧 Ledger WorkingContext 在缺少已验证关联时显示 association-not-verified，不隐式桥接或迁移。
+`sessions.collaborationContext` 读取当前目标 scope 的原 TaskSystem 合同、checkpoint、证据和有界上下文。Main 在读取前后核对活动读取者，切换工作区或会话换代会丢弃旧结果。observer 保留只读引用身份，读取不取得 claim；旧 Ledger WorkingContext 在缺少已验证关联时显示 association-not-verified，不隐式桥接或迁移。
+
+系统页的材料查询使用 Main 返回的实际活动读取者，并保留所选材料来源。模型消费和响应记录绑定请求开始时的模型调用回执，会话切换任务后仍归入原任务。
+
+模型载荷的异步处理结束后再次核对材料来源和有效状态，移除已撤销、过期或来源失效的正文。来源会话删除后，留存材料仍受当前会话可见性、跨 agent 和 sandbox 策略约束。
 
 `task_control.publishMaterial` 将当前任务的事实、主张、决策候选、产物、冲突和交接记录发布到原 TaskSystem。发布携带稳定 `material.id`、摘要、证据引用、敏感性及可选适用条件和到期时间。来源绑定当前运行与会话代次。摘要字节或产物哈希经当前任务证据确认后可标为 `evidence-backed`，缺少对应证据的事实保留为 `claim`。相同意图重试返回首次发布回执。
 
-在会话协作面板展开“共享材料”，可按任务、文件、主题或证据查询当前工作区内可见会话的材料。列表提供有界摘要和分页，选中后按原材料版本读取完整摘要、适用条件、产物哈希与证据引用。受限材料仅由原发布会话代次读取。模型可通过 `sessions_list({ materials: { search, taskNodeId, file, evidenceRef } })` 使用同一入口，详情传入结果中的 `source` 作为 `target`，并附原 `ref`。
+在会话协作面板展开“共享材料”，可按任务、文件、主题或证据查询当前工作区内可见会话的材料。列表提供有界摘要和分页，选中后按原材料版本读取完整摘要、适用条件、产物哈希与证据引用。详情加载时折叠面板会保留当前读取，重新展开后显示原选中版本；新的搜索和选择会使旧请求失效。受限材料仅由原发布会话代次读取。模型可通过 `sessions_list({ materials: { search, taskNodeId, file, evidenceRef } })` 使用同一入口，详情传入结果中的 `source` 作为 `target`，并附原 `ref`。
 
 发布替代版本时使用新的材料 ID，并在 `supersedes` 指明原版本。冲突记录以 `conflictsWith` 保存各方引用；已核实材料的替代同样需要可核实证据。当前任务 writer 可通过 `revokeMaterial` 携带原引用和原因撤销。材料面板跟踪所选版本的状态变化，任务修订、证据或产物变化、期限和来源缺失分别回读。源会话删除后，关联同一任务的授权读者可按原引用查看留存证据回执。
 
-模型工具的持久回复保存材料引用。模型在当次运行中选中原版本后，运行时在准备模型请求时核对可见性和材料状态，并在现有工具回复预算内带入内容。Task Trace 分别保留检索候选、实际打开的界面详情、模型引用、请求所带材料和已收到的响应摘要哈希。
+模型工具的持久回复保存材料引用。模型在当次运行中选中原版本后，运行时先完成载荷回调，再从实际请求中识别原引用、核对可见性和材料状态，并在现有工具回复预算内带入内容。最终选择由原 owner 在一次有界批次中读取，正文保留主张或证据已核实的标签。JSON 格式变化不影响核验；丢失引用结构的文本不带入材料正文。原生 Ollama 等待载荷处理完成后发送结果，诊断字节数按最终请求计算。Task Trace 分别保留检索候选、实际打开的界面详情、模型引用、请求所带材料和已收到的响应摘要哈希。
 
 核心实现：
 

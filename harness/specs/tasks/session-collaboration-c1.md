@@ -7,6 +7,9 @@ taskType: runtime-bridge
 diffBase: c50664674b3ca639ffea972499b6d0942112463d
 intent: 从原 TaskSystem 读取当前 scope 的合同、checkpoint、证据和有界上下文，并保留 observer 身份。
 touchedAreas:
+  - shared/task-system/store.ts
+  - tests/unit/session-collaboration-context-host.test.ts
+  - tests/unit/session-collaboration-context-read.test.ts
   - shared/types/session-collaboration-context.ts
   - openclaw_runtime/src/gateway/server-methods/session-collaboration-context.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.ts
@@ -30,6 +33,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
+  - node node_modules/vitest/vitest.mjs run tests/unit/session-collaboration-context-host.test.ts tests/unit/session-collaboration-context-read.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/session-collaboration-task-context.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm run typecheck
   - pnpm run contract:check
@@ -38,6 +42,7 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/session-collaboration-c1.md
   - pnpm harness run --spec harness/specs/tasks/session-collaboration-c1.md --dry-run
 acceptance:
+  - Main 绑定实际读取者，合同、上下文和证据来自同一数据库读取快照，读取期间换代拒绝返回旧结果。
   - 以原 task owner/revision 和 generation 读取目标、已完成工作、未决项、下一步及证据，不取得 writer。
   - 只读 observer 与执行者区分，空讨论、换代、修订和 owner 不可用返回准确来源。
   - 旧 WorkingContext 只接受具名关联验证；未验证桥接保持 unavailable，不隐式迁移。
@@ -49,5 +54,3 @@ docs:
 # C1 来源
 
 使用 A2 的可见 scope 与原 execution-domain 的只读 TaskSystem 连接。context/checkpoint/history 来自当前 TaskSystem owner，旧 Ledger WorkingContext 关联不自动推断。
-
-本叶源码与回归继续开发，验收仍延期。
