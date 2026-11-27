@@ -4,7 +4,7 @@ title: 修复已合并会话与持久任务机制的七项缺陷
 lifecycleStatus: active
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 4085cd46b9a604e0617e91feff33f6ee8c24d7f0
+diffBase: c0450f50c0046a8c021188e9eb472b10f1203b6f
 intent: 完成任务取消和会话恢复闭环，统一只读工具与运行凭证，隔离迟到的界面更新，并使副作用准入按任务点查。
 requiredRules:
   - backend-communication-boundary
