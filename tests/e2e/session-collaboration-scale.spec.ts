@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { closeElectronApp, expect, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
@@ -26,6 +27,7 @@ function readScaleSessionStore(storePath: string, entries?: SessionEntries): Ses
     } finally { closeSqliteSessionStoreDatabase(storePath); }
   `;
   return JSON.parse(execFileSync(process.execPath, ['--import', 'tsx', '--input-type=module', '--eval', script], {
+    env: { ...process.env, TSX_TSCONFIG_PATH: resolve('openclaw_runtime/tsconfig.json') },
     input: JSON.stringify({ storePath, entries }), encoding: 'utf8', windowsHide: true, timeout: 30_000,
   }));
 }
