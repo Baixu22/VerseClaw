@@ -1,5 +1,6 @@
 // Sessions gateway run-control methods (send/steer/abort/queue drain/long-task status).
 import { randomUUID, createHash } from "node:crypto";
+import { normalizeRunScope } from "../../../../shared/types/identity-scope.js";
 import {
   normalizeOptionalString,
   readStringValue,
@@ -367,8 +368,8 @@ async function handleSessionSend(params: {
             : ack?.status === 'queued' || ack?.status === 'accepted' ? ack.status : 'unknown';
           const receipt: import('../../../../shared/types/session-collaboration-message.js').SessionCollaborationMessageReceipt = {
             schemaVersion: 'SessionCollaborationReceipt/v1', message: collaboration!.message,
-            phase, run: ack?.runId ? { runId: ack.runId, scope: {
-              workspaceId: collaboration!.message.target.workspaceId, projectId: collaboration!.message.target.projectId, sessionKey: collaboration!.message.target.sessionKey } } : null,
+            phase, run: ack?.runId ? normalizeRunScope({ runId: ack.runId, scope: {
+              workspaceId: collaboration!.message.target.workspaceId, projectId: collaboration!.message.target.projectId, sessionKey: collaboration!.message.target.sessionKey } }) : null,
             replyRef: null, updatedAt: Date.now(), ...(!ok ? { reason: error?.message ?? 'dispatch-rejected' } : {}),
           };
           const fullReply = ack?.status === 'ok' ? ack.result?.payloads?.map(item => item.text ?? '').filter(text => text.trim() && text.trim() !== 'NO_REPLY').join('\n') : undefined;
