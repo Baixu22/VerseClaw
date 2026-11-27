@@ -1,0 +1,162 @@
+{
+  "schema": "C02MergedMainValidation/v1",
+  "driven_by": "agent",
+  "actor": "codex/context-system-01a213b7",
+  "candidate": {
+    "commit": "89ce35af1bc248a030b86ed2d17e25b6a6d8da81",
+    "tree": "49320405920d2cc84de8a819c2d69f550388629c",
+    "dirty": false
+  },
+  "sourceUnchanged": true,
+  "commands": [
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/autonomy-context-semantic-state.test.ts",
+        "tests/unit/long-session-continuity-context.test.ts",
+        "tests/unit/compression-artifact.test.ts",
+        "tests/unit/task-ledger-working-context-single-source.test.ts",
+        "tests/unit/memory-tf0500-retirement.test.ts",
+        "tests/unit/memory-tf0500-persistence-retirement.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-vitest.json"
+      ],
+      "exitCode": 0,
+      "seconds": 17.70807671546936,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.0.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.0.stderr.log"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 1.5268752574920654,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.1.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.1.stderr.log"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.18966436386108398,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.2.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.2.stderr.log"
+    },
+    {
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.13257670402526855,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.3.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.3.stderr.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "seconds": 0.08043241500854492,
+      "stdout": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.4.stdout.log",
+      "stderr": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.4.stderr.log"
+    }
+  ],
+  "tests": {
+    "numPassedTests": 106,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numPassedTestSuites": 16,
+    "success": true
+  },
+  "resource": {
+    "jobId": "context-c02-merged-main-20261126-r1",
+    "status": "completed",
+    "exitCode": 0,
+    "commandStarted": true,
+    "treeExited": true,
+    "sourceUnchanged": true,
+    "budgetExceeded": false,
+    "peaks": {
+      "rssMiB": 741.723,
+      "commitMiB": 778.727,
+      "processCount": 5,
+      "cpuPercent": 178.93,
+      "cpuSecondsObserved": 12.75,
+      "readBytesObserved": 104304719,
+      "writeBytesObserved": 82189924
+    }
+  },
+  "rawEvidence": [
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json",
+      "sha256": "7cd9b3d33e34a07bfab9ec30a5a3a5a8761c0bf8d0aeff3fef84fc94528cc1e8"
+    },
+    {
+      "path": "D:\\ClawX-acceptance\\resource-queue\\runs\\context-c02-merged-main-20261126-r1\\receipt.json",
+      "sha256": "8d385fbafc6b63f9dd30586251febdc7d74fa92f8a9c9d3152d18c009992e1a2"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-vitest.json",
+      "sha256": "3fb32b9d0965d1912d7c9863d6e695b25cf58e6d53df082be77191f608d8a759"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-verifier.json",
+      "sha256": "0ce8d62ddbedef2d313fe5b227d32784945f16046d36c64a4c7ce6a65fdadc12"
+    }
+  ],
+  "retainedCommandLogs": [
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.0.stdout.log",
+      "sha256": "ea4f1e5ad246e35ec9971eee7aae4051d8e41c2812cb74c388359fe2a8f1702e"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.0.stderr.log",
+      "sha256": "b351be49af98decd47dba1b869c027ddf8f1fca1a7c480b0e27be8789ac0a9f2"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.1.stdout.log",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.1.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.2.stdout.log",
+      "sha256": "d6dad704227edb9d7df39006dae8cd0921a96d7d46410468ea81a878686d36ba"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.2.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.3.stdout.log",
+      "sha256": "37763c76710f6247d2f68243b98ec9a0309a83f537fd853cb89d7557c254fecb"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.3.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.4.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\tmp\\autonomy-context-system-20261126\\c02-merged-main-r1-command.json.4.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
