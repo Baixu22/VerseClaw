@@ -1,0 +1,554 @@
+{
+  "schema": "ProjectRagOptimizationReadback/v1",
+  "actor": "codex-rag-optimization",
+  "driven_by": "agent",
+  "origin": "agent-built-adaptation",
+  "providerRequests": 0,
+  "sourceCandidate": "afac8fe8bd6ecdbbec70ea0cd984bc4eed039d61",
+  "replayCandidate": "a7a40deadaf8e1e96ca171927d902263d958aaf4",
+  "snapshotDigest": "sha256:b6f998e7acae786bd8624e5ab390265c2d89f153d92eec525b33ca4cac303649",
+  "promotion": false,
+  "contextBudgetChars": 6000,
+  "capsCompared": [
+    2,
+    4
+  ],
+  "productionCaps": [
+    1,
+    2
+  ],
+  "matchedPairs": 79,
+  "sameContextPairs": 18,
+  "changedContextPairs": 61,
+  "excluded": [
+    {
+      "query": "QA-01-1",
+      "arm": "dense",
+      "status": "partial"
+    },
+    {
+      "query": "QA-01-1",
+      "arm": "hybrid",
+      "status": "partial"
+    }
+  ],
+  "armSummaries": [
+    {
+      "arm": "bm25",
+      "matched": 27,
+      "answerableMatched": 18,
+      "excluded": [],
+      "complete": {
+        "2": 11,
+        "4": 11
+      },
+      "changes": {
+        "2": {
+          "gain": [],
+          "loss": []
+        },
+        "4": {
+          "gain": [],
+          "loss": []
+        }
+      }
+    },
+    {
+      "arm": "dense",
+      "matched": 26,
+      "answerableMatched": 17,
+      "excluded": [
+        "QA-01-1"
+      ],
+      "complete": {
+        "2": 13,
+        "4": 15
+      },
+      "changes": {
+        "2": {
+          "gain": [],
+          "loss": []
+        },
+        "4": {
+          "gain": [
+            "QA-08-2",
+            "QA-09-2"
+          ],
+          "loss": []
+        }
+      }
+    },
+    {
+      "arm": "hybrid",
+      "matched": 26,
+      "answerableMatched": 17,
+      "excluded": [
+        "QA-01-1"
+      ],
+      "complete": {
+        "2": 12,
+        "4": 14
+      },
+      "changes": {
+        "2": {
+          "gain": [],
+          "loss": []
+        },
+        "4": {
+          "gain": [
+            "QA-01-2",
+            "QA-08-2"
+          ],
+          "loss": []
+        }
+      }
+    }
+  ],
+  "slices": [
+    {
+      "field": "split",
+      "value": "calibration",
+      "pairs": 25,
+      "sameContext": 3,
+      "changedContext": 22,
+      "recallGains": 1,
+      "recallLosses": 0,
+      "retainedCharsDelta": -2640
+    },
+    {
+      "field": "split",
+      "value": "validation",
+      "pairs": 27,
+      "sameContext": 7,
+      "changedContext": 20,
+      "recallGains": 2,
+      "recallLosses": 0,
+      "retainedCharsDelta": -115
+    },
+    {
+      "field": "split",
+      "value": "held-out",
+      "pairs": 27,
+      "sameContext": 8,
+      "changedContext": 19,
+      "recallGains": 1,
+      "recallLosses": 0,
+      "retainedCharsDelta": 3542
+    },
+    {
+      "field": "arm",
+      "value": "bm25",
+      "pairs": 27,
+      "sameContext": 4,
+      "changedContext": 23,
+      "recallGains": 0,
+      "recallLosses": 0,
+      "retainedCharsDelta": 972
+    },
+    {
+      "field": "arm",
+      "value": "dense",
+      "pairs": 26,
+      "sameContext": 7,
+      "changedContext": 19,
+      "recallGains": 2,
+      "recallLosses": 0,
+      "retainedCharsDelta": 808
+    },
+    {
+      "field": "arm",
+      "value": "hybrid",
+      "pairs": 26,
+      "sameContext": 7,
+      "changedContext": 19,
+      "recallGains": 2,
+      "recallLosses": 0,
+      "retainedCharsDelta": -993
+    }
+  ],
+  "gainCases": [
+    {
+      "query": "QA-01-2",
+      "arm": "hybrid",
+      "split": "calibration",
+      "question": "What is the default chunk overlap, and how are retrieval prefixes treated in citations?",
+      "gold": [
+        {
+          "subjectId": "concepts/source-01.md",
+          "sourceDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+          "support": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 1927,
+            "endByteExclusive": 1936,
+            "startLine": 26,
+            "endLine": 26
+          },
+          "quote": "overlap=0"
+        },
+        {
+          "subjectId": "concepts/source-01.md",
+          "sourceDigest": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+          "support": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2605,
+            "endByteExclusive": 2650,
+            "startLine": 30,
+            "endLine": 30
+          },
+          "quote": "生成的检索前缀不能进入引用正文"
+        }
+      ],
+      "grades": {
+        "2": {
+          "recall": 0.5,
+          "ndcg": 0.38685280723454163,
+          "selectedRecall": 0.5,
+          "retainedUnits": 5,
+          "retainedChars": 5211,
+          "contextDigest": "sha256:c9efb34f5bd693faa773c10ebfed3dc2f94f6bf256821452b550a87500ced158"
+        },
+        "4": {
+          "recall": 1,
+          "ndcg": 0.6934264036172708,
+          "selectedRecall": 1,
+          "retainedUnits": 5,
+          "retainedChars": 5313,
+          "contextDigest": "sha256:4ed671967d69e643ea0259ec89df6549d751fa1ab32fb1f369862df583cb59c3"
+        }
+      },
+      "historicalAnswer": {
+        "candidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "correct": 0,
+        "support": 1,
+        "abstain": 0,
+        "reason": "理由：仅答overlap=0；对引用中的检索前缀称证据未描述，未覆盖gold第二项；已述事实有匹配refId，非整体拒答。",
+        "inputDigest": "sha256:089f26978042346330d904c14c9ee2d06b835004290075f71f087989af3a657e",
+        "outputTextDigest": "sha256:ed25001d66126b3847d9b7b7ec7952facfbd597191003ab24476d4849c1db178",
+        "outputFileDigest": "sha256:c6902f0a67de90bbef9755d08a6113adf9befcfebffb94bc412153cfafa962c4"
+      }
+    },
+    {
+      "query": "QA-08-2",
+      "arm": "dense",
+      "split": "validation",
+      "question": "At what free-disk-space threshold does workspace preflight warn?",
+      "gold": [
+        {
+          "subjectId": "concepts/source-08.md",
+          "sourceDigest": "sha256:c7727a8dc282685716621e462b7312fb60309017fe6cdfdb719f87873c0e421d",
+          "support": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2437,
+            "endByteExclusive": 2456,
+            "startLine": 80,
+            "endLine": 80
+          },
+          "quote": "低于 1 GiB 警告"
+        }
+      ],
+      "grades": {
+        "2": {
+          "recall": 0,
+          "ndcg": 0,
+          "selectedRecall": 0,
+          "retainedUnits": 6,
+          "retainedChars": 5929,
+          "contextDigest": "sha256:1741b9ae24728949c28734102487f101025fb2eb909748721e5959e9873a1e9f"
+        },
+        "4": {
+          "recall": 1,
+          "ndcg": 0.43067655807339306,
+          "selectedRecall": 1,
+          "retainedUnits": 5,
+          "retainedChars": 4950,
+          "contextDigest": "sha256:437027b98ce0f3ffd5f4ce25cbbfc1bb60f9bdfef9ff3c3214f39de738896d56"
+        }
+      },
+      "historicalAnswer": {
+        "candidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "correct": 0,
+        "support": 1,
+        "abstain": 1,
+        "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。",
+        "inputDigest": "sha256:790be5b238a4ce726811bc4bd705d9415bcae3c686a82f3710c8f1497175d2bb",
+        "outputTextDigest": "sha256:32ecef7960b3a53608d0aa8b532b51b16bd35d8fa150068e9787a03a828471c8",
+        "outputFileDigest": "sha256:32ecef7960b3a53608d0aa8b532b51b16bd35d8fa150068e9787a03a828471c8"
+      }
+    },
+    {
+      "query": "QA-08-2",
+      "arm": "hybrid",
+      "split": "validation",
+      "question": "At what free-disk-space threshold does workspace preflight warn?",
+      "gold": [
+        {
+          "subjectId": "concepts/source-08.md",
+          "sourceDigest": "sha256:c7727a8dc282685716621e462b7312fb60309017fe6cdfdb719f87873c0e421d",
+          "support": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2437,
+            "endByteExclusive": 2456,
+            "startLine": 80,
+            "endLine": 80
+          },
+          "quote": "低于 1 GiB 警告"
+        }
+      ],
+      "grades": {
+        "2": {
+          "recall": 0,
+          "ndcg": 0,
+          "selectedRecall": 0,
+          "retainedUnits": 6,
+          "retainedChars": 5721,
+          "contextDigest": "sha256:55e2da0b9c012ebf56ebcd1a679b903912ae7f98b47bbd9db445e63b7b8ec0ce"
+        },
+        "4": {
+          "recall": 1,
+          "ndcg": 0.43067655807339306,
+          "selectedRecall": 1,
+          "retainedUnits": 6,
+          "retainedChars": 5510,
+          "contextDigest": "sha256:60247439f5244161159708f09dcd8c1b1c62923e35e6c3fb35a4e9654f97a6ef"
+        }
+      },
+      "historicalAnswer": {
+        "candidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "correct": 0,
+        "support": 1,
+        "abstain": 1,
+        "reason": "理由：证据未含阈值，答案明确拒答；gold可回答故CORRECT=0。",
+        "inputDigest": "sha256:37644b40a1be2572e602a3ebef0e98f6210714fa37cd1d755e2819d9d9499747",
+        "outputTextDigest": "sha256:49132ec1f061d0b229d0720ce9a3decda03947f734979c9c8c96aba50813505d",
+        "outputFileDigest": "sha256:49132ec1f061d0b229d0720ce9a3decda03947f734979c9c8c96aba50813505d"
+      }
+    },
+    {
+      "query": "QA-09-2",
+      "arm": "dense",
+      "split": "held-out",
+      "question": "Can changing configuration reactivate the retired VToken production injection?",
+      "gold": [
+        {
+          "subjectId": "concepts/source-09.md",
+          "sourceDigest": "sha256:005e3b4460f1fe06b52d728f3bacbc42e7f04dc5d6c05d1994776639e8c13afa",
+          "support": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 2935,
+            "endByteExclusive": 3019,
+            "startLine": 84,
+            "endLine": 84
+          },
+          "quote": "当前生产装配被 `VTOKEN_RETIRED` 永久关闭；它不会因配置重新启用"
+        }
+      ],
+      "grades": {
+        "2": {
+          "recall": 0,
+          "ndcg": 0,
+          "selectedRecall": 0,
+          "retainedUnits": 6,
+          "retainedChars": 5325,
+          "contextDigest": "sha256:d38545389e09986d61583fe35a38094bb5a733a5a4694d8295aceae5d5586f45"
+        },
+        "4": {
+          "recall": 1,
+          "ndcg": 0.5,
+          "selectedRecall": 1,
+          "retainedUnits": 6,
+          "retainedChars": 5251,
+          "contextDigest": "sha256:81aef4b1f057204aaaf07580993ea8a5da6ce4a5c9d36076b18b6cc51cee33b6"
+        }
+      },
+      "historicalAnswer": {
+        "candidate": "f834e4150f62b8be0abf4ac91f58b1ffb7dac9f7",
+        "model": "ccs-workbuddy/deepseek-v4.1-flash",
+        "correct": 1,
+        "support": 1,
+        "abstain": 0,
+        "reason": "理由：回答No与gold一致；所引3a229原文支持其关于旧环境变量不能恢复的限定表述。",
+        "inputDigest": "sha256:4c33849607e10ee1103bff405fbfc588e50e4f1d2b9c513cd69f8c4afb7b0481",
+        "outputTextDigest": "sha256:a35ece7481d0919d9d146845e4eae039f35e1e7b1cd21236fb55a426632e91b3",
+        "outputFileDigest": "sha256:a35ece7481d0919d9d146845e4eae039f35e1e7b1cd21236fb55a426632e91b3"
+      }
+    }
+  ],
+  "neighborExperiment": [
+    {
+      "arm": "page",
+      "positive": 18,
+      "selectedFull": 8,
+      "retainedFull": 6,
+      "expandedSelectedFull": 8,
+      "gained": [],
+      "lostOnPacking": [
+        "QA-01-1",
+        "QA-09-1"
+      ],
+      "expandedQueries": 0,
+      "totalAddedBodyBytes": 0
+    },
+    {
+      "arm": "bm25",
+      "positive": 18,
+      "selectedFull": 11,
+      "retainedFull": 11,
+      "expandedSelectedFull": 11,
+      "gained": [],
+      "lostOnPacking": [],
+      "expandedQueries": 22,
+      "totalAddedBodyBytes": 3589
+    },
+    {
+      "arm": "dense",
+      "positive": 18,
+      "selectedFull": 13,
+      "retainedFull": 13,
+      "expandedSelectedFull": 13,
+      "gained": [],
+      "lostOnPacking": [],
+      "expandedQueries": 22,
+      "totalAddedBodyBytes": 3716
+    },
+    {
+      "arm": "hybrid",
+      "positive": 18,
+      "selectedFull": 12,
+      "retainedFull": 12,
+      "expandedSelectedFull": 12,
+      "gained": [],
+      "lostOnPacking": [],
+      "expandedQueries": 17,
+      "totalAddedBodyBytes": 4108
+    },
+    {
+      "arm": "hybrid-rerank",
+      "positive": 18,
+      "selectedFull": 15,
+      "retainedFull": 15,
+      "expandedSelectedFull": 15,
+      "gained": [],
+      "lostOnPacking": [],
+      "expandedQueries": 19,
+      "totalAddedBodyBytes": 4202
+    }
+  ],
+  "inputDigests": {
+    "report.json": "sha256:63ae02046d9112129708cdc43d7f691aa1b13c217258b73080fc1ea6c58ba23b",
+    "neighbor-replay-r1.json": "sha256:c41a68da3391223bbc437ccaf435999dcd067b2e7921fad97391c36b24d9dfa4",
+    "evaluation-r2.json": "sha256:f50405357241698c6673c333d6aedc5fa56f8f3d956c8d28d84986bf813ebf13",
+    "plan.json": "sha256:ae4c56a5024ca390d562e25b243c3380c1c9bb816632efe9c4a6ed9289b9112c",
+    "answer-r6-observation-joint.json": "sha256:f3306a4078902cdd2b157c62cf1529bfc425eb103e30d6b403ae62a48526b728",
+    "QA-01-1-bm25.json": "sha256:b4648ab2b42d5a94c63510aee79b061146b10e57978b89b2b133b9b41cd65e0d",
+    "QA-01-2-bm25.json": "sha256:f121df730275823fc110155f6b5e2880146976c13adda2c3d77ee60ed6f2325c",
+    "QA-01-2-dense.json": "sha256:5aaf50ac5e2878683a8028c8f9644f06e40a89b08fdbd77abe66e84960eb35b0",
+    "QA-01-2-hybrid.json": "sha256:04285b1e1c4a61a5bba55c872f17a82966e3e2455eb08b940ea0a3ce8aea7df6",
+    "QA-01-2-hybrid.receipt.json": "sha256:ea058bf9263b048241781033d0e5a0df2cd77fadd8a6ce84b16cd4e89c461567",
+    "QA-01-2-hybrid.txt": "sha256:c6902f0a67de90bbef9755d08a6113adf9befcfebffb94bc412153cfafa962c4",
+    "source-01.md": "sha256:744c8376e10e2cd05844e4ccd0f71268e1df9519e300857cb48befbb97dcd21b",
+    "QA-01-3-bm25.json": "sha256:911744dd21d3ee96ba5f7396906723244d94a83271074872c72c91768f4921f8",
+    "QA-01-3-dense.json": "sha256:1b1940c40cec0bd9e018078da31ef2601bbcba290266fc0b3861d676bca21864",
+    "QA-01-3-hybrid.json": "sha256:b39455cdad06fcabdb923f676137591bc878ff666dc35d17da59f194fb902903",
+    "QA-02-1-bm25.json": "sha256:830534c2af19b7194992dd45eb0ca2c3f776710bb071782442beab1afb1bc2f9",
+    "QA-02-1-dense.json": "sha256:763c17359fce710641cac0aaf7bbbccac54315e0266f0ffe637ffb3e9dc74a9b",
+    "QA-02-1-hybrid.json": "sha256:ee1071a8442c66dfabedcf435fb9986590c1219fa4744f9ac803ace954ce3fdb",
+    "QA-02-2-bm25.json": "sha256:e47c49787011dfe2df3a9534d17e1603a5a5e8611afaca74e80eb1d348ceb8ae",
+    "QA-02-2-dense.json": "sha256:bff7b3eeb38f2035914baef2e9dfc71dfb4086c0fee367c2c081bd9bab4843ff",
+    "QA-02-2-hybrid.json": "sha256:f042b1ea125ad6c30ea95a1521302c05841aab8a91b8cebbb4d3027246b5970c",
+    "QA-02-3-bm25.json": "sha256:279da4bb9252d7766c051f6d386a0545d9ae51f9a202ded1656b4cde4ce76530",
+    "QA-02-3-dense.json": "sha256:90f0615b2c29f19977af5b72043ecaec1bb754c71f3c855ecff0e0a659a5eb28",
+    "QA-02-3-hybrid.json": "sha256:0ea35b2c0c3aa50e4bdea4cbe4e6932f6aef1e963cde00206e22742ab5ec4d69",
+    "QA-03-1-bm25.json": "sha256:a58e517c7d646d5e6fa86cff68d16e79a193237f27a24d226c8010d96d36c4ab",
+    "QA-03-1-dense.json": "sha256:4585132f3a3166f748b893485f1f7e7b7714e0582e603e29ed97b867e0174963",
+    "QA-03-1-hybrid.json": "sha256:b78c2f7935eac07306a4c0f3b55d66c57d5ff8d8f26504e9b47615edd4755377",
+    "QA-03-2-bm25.json": "sha256:0c6775d3e8a5db1fc5c263d6711b6d960619eac9794bdfbd4215c247c7636269",
+    "QA-03-2-dense.json": "sha256:4c0e0b88844c1dc6335fe34b3e43dc8728f31d3096bfbc5a3c3d8325a08b1712",
+    "QA-03-2-hybrid.json": "sha256:509a5653d5895275f8322a0f8761f666f00495078a600fd1b40a36c184f808a3",
+    "QA-03-3-bm25.json": "sha256:f5a066fc2182eda5f1fcc20e5f302cd3f12dbdb7ec7c65bf4be68bc5b1ea8f48",
+    "QA-03-3-dense.json": "sha256:00b7cfc1544feaa74d50af3c4672628c6c179f8b4f1a3954511f9a5ad559a7b4",
+    "QA-03-3-hybrid.json": "sha256:977dabb79d2fc5369dcf05d817d975e2595e42169632f0953c1b45095deee246",
+    "QA-04-1-bm25.json": "sha256:4bcd4d0cd14fbebed059173586ad8a27def9b66604ab9fa24c3758cda9f13e44",
+    "QA-04-1-dense.json": "sha256:a7227463a0edcae7cfa0aa630f4a8c272dcf1ae21931a9d8dd00170bc7ce3812",
+    "QA-04-1-hybrid.json": "sha256:8f7e149e76e2cf36dcd7e7739adbf751c21c91c9431b0d37b1f557e79e74ec2c",
+    "QA-04-2-bm25.json": "sha256:f6a5638bc7b2f2f66478774fc84b1991ce12b846db22e017816143f28f72ce25",
+    "QA-04-2-dense.json": "sha256:32387ccf9f6699907223e35a9e88d0407c4cc05f44c740d6e813c036f80c72eb",
+    "QA-04-2-hybrid.json": "sha256:45bffa63db4d3825e52e68db90be05a8829fe573aed772f4c8b708988b7bc2e6",
+    "QA-04-3-bm25.json": "sha256:61232b8db1f5cf4a124ef0931e2523da23179fbb707823ce500dcfe9e37489dd",
+    "QA-04-3-dense.json": "sha256:1c2afd3c99c5221f3748a24369e41322cec1bf824ede91783b841efb05644cab",
+    "QA-04-3-hybrid.json": "sha256:52c734f7e10ae8810b10718df980e82bbc214de1ffbdc8450ab16d7c28031e54",
+    "QA-05-1-bm25.json": "sha256:e5817ff6de9d41a6370159a10593f6248b8a07e2dacc5b45e1cd12a9148b6b4c",
+    "QA-05-1-dense.json": "sha256:dbce2d16dedb96417309b85ce70438e2166efc46f67105a367a1e351131dbd71",
+    "QA-05-1-hybrid.json": "sha256:7d838d29391dab6e833788642de2a64bba86378777edb37bf6e3d3f076793a1c",
+    "QA-05-2-bm25.json": "sha256:409bfe778784b390623db1113ac7e06a3c668f8d202edb8ef139c310fb8dbac1",
+    "QA-05-2-dense.json": "sha256:630109727d7998f1470549769d93bfc3fe59e0412784f91617ddb6a6e6275382",
+    "QA-05-2-hybrid.json": "sha256:6a96c101f0cca42aa41878c2700d26ee015cc7276c6beb7cb3bd04994535ba80",
+    "QA-05-3-bm25.json": "sha256:ebc5405f7dafe8e7e0464425d01b2f4dc013b45cc45f0f7e725e03bfe7d99b36",
+    "QA-05-3-dense.json": "sha256:73a43db0cd55127a367acf059facade20f965a6e98f482a2dfa91ba067f9e3aa",
+    "QA-05-3-hybrid.json": "sha256:d2b798d4893e4d405379ac291e973333d6063b59352ee900c307fc2418e1651e",
+    "QA-06-1-bm25.json": "sha256:ce021588048cd6c2420faddab0b5100b889d77731cd73d1542318ec06dac198b",
+    "QA-06-1-dense.json": "sha256:c0cc759a4b5d109d5c9acaa08cee9a1c036717d9337bbc14111d45f9afa007ae",
+    "QA-06-1-hybrid.json": "sha256:1875e132601c49b2c469410ffa02f58145d114ba7f9b22426990c7a8f2ad0b56",
+    "QA-06-2-bm25.json": "sha256:e89619ac2b51ecf78b4e045becfca7bc579ac0c1d8b8b28e83135212b8abc060",
+    "QA-06-2-dense.json": "sha256:699fd1115883feec8772a7c3a42c56187452244dc85a224a7bdd484be3fa33e8",
+    "QA-06-2-hybrid.json": "sha256:97f59678185fb475719b45031f3ba2df0840fa5a3e2439b587a442256325005f",
+    "QA-06-3-bm25.json": "sha256:e1c344b0a4d5069235d925ffa06bdf34c2e8f0fc5f611304b348e530cd335f7c",
+    "QA-06-3-dense.json": "sha256:5fbb4841a878237cc71594b6fe48f804c02af685a6c0feb10dfd354c4e1c10e8",
+    "QA-06-3-hybrid.json": "sha256:7afc0b78f1eb4dacf2d107567c420367aede38fb9ebcbd6966ee0e9aeadab53f",
+    "QA-07-1-bm25.json": "sha256:dd599b8b4c00265515705203160340a5f0cb8a827903aa8c21c810b04c5d62fe",
+    "QA-07-1-dense.json": "sha256:7c723dec9deaa6256e717ad6217bae612a838f7450b4285d0781adbe419147a5",
+    "QA-07-1-hybrid.json": "sha256:9bea11f8ed87795c770efb89bdd402d503d3078141e8da333016c5429fa894a6",
+    "QA-07-2-bm25.json": "sha256:d6bb5b41dc6cab6dc52607a5bf87d32ba35f99d8f192362b1f4386d8ba9bae64",
+    "QA-07-2-dense.json": "sha256:260acdb6475319e6a8de9edcadb06e862a68301cc8bfafb57fa2be3ee156b383",
+    "QA-07-2-hybrid.json": "sha256:953c78b1822dae0c21c9eef9a998d256bd7dd6bf986d73de581e82234a4ea0fe",
+    "QA-07-3-bm25.json": "sha256:7f80b75b7f4766ecd441f1684beb4a8b1fc97e7c29b9b68d7b6f565c37440db4",
+    "QA-07-3-dense.json": "sha256:ff3ed7cf75b26b7dc03c845c5353fdf9680b096d8e5efa5c17dde2b0665e210c",
+    "QA-07-3-hybrid.json": "sha256:4f309cf8d04d2c49c6c6b233178ff843b54631c0ba46671b39fbc76202781ea1",
+    "QA-08-1-bm25.json": "sha256:f164eff129079ab9f5d0b3276cecc1511a2d44e0fc1088c047c69ad6701a657e",
+    "QA-08-1-dense.json": "sha256:12813d6c0ce89011cdae4b69ee8eedef107ec73f84d732092ebea67ee17fdea6",
+    "QA-08-1-hybrid.json": "sha256:f83251067dc09a71d284878a9422de01cf99b4eb5ea988923194c82329cc087a",
+    "QA-08-2-bm25.json": "sha256:e5c1f295a4e28f8150aeea0f6890c43788a84772969964bab014515290dcac10",
+    "QA-08-2-dense.json": "sha256:a460cc829acf0f1a080e3de8f0e2023be0057d2d259d6ad867a4cefc6f758419",
+    "QA-08-2-dense.receipt.json": "sha256:5dccae524eb63a94b4a1475ef7ca911e89be9c0a493c1af6c347a4dd75b5db16",
+    "QA-08-2-dense.txt": "sha256:32ecef7960b3a53608d0aa8b532b51b16bd35d8fa150068e9787a03a828471c8",
+    "source-08.md": "sha256:c7727a8dc282685716621e462b7312fb60309017fe6cdfdb719f87873c0e421d",
+    "QA-08-2-hybrid.json": "sha256:0aff51828aa0482ff0e95db3d88045d925a241d66f50a8abf19c04555b1b2836",
+    "QA-08-2-hybrid.receipt.json": "sha256:24ad959e42c93cea90248cdbe8a250fd6c17b933e773f4aaa4c151412acb29ee",
+    "QA-08-2-hybrid.txt": "sha256:49132ec1f061d0b229d0720ce9a3decda03947f734979c9c8c96aba50813505d",
+    "QA-08-3-bm25.json": "sha256:eaccaff8fff2f5b7b7e30ec8c2bb4f4b5be1adf8bea438447b9e3eeb157b2f3d",
+    "QA-08-3-dense.json": "sha256:7df18cf42d74f68293770fd7c204bcce8e8da0987b5b442ce5e30c56be9fc053",
+    "QA-08-3-hybrid.json": "sha256:1aef73e55cb334c88975d126460f0d3d199e691b0160e7171ea04591e38e66c4",
+    "QA-09-1-bm25.json": "sha256:73a835db8007a78dcdeb32a7b32e2896c3e9d7ac0555ad2c05e9022dda12f9d7",
+    "QA-09-1-dense.json": "sha256:4bcd9b20f6ba96952a0e9649307612254b352e961ef6e5bb3c6a00df393dc5fe",
+    "QA-09-1-hybrid.json": "sha256:4493d6467386052568baf5e9b59dc4fa76502f90d0c3e891472c6fec9cc500e9",
+    "QA-09-2-bm25.json": "sha256:3f928ea05ed6a178dc57a08063f4102bf6e09f7d8b3d4bc8370178022d957c6e",
+    "QA-09-2-dense.json": "sha256:4e9da36dfafb2473b9cc53ea22a585d7493fbc322e3dc44cdbf434795812bce6",
+    "QA-09-2-dense.receipt.json": "sha256:9fcd6f5347e4ebc737566c08f6244889141bfa37f4455131052601fbf5092d48",
+    "QA-09-2-dense.txt": "sha256:a35ece7481d0919d9d146845e4eae039f35e1e7b1cd21236fb55a426632e91b3",
+    "source-09.md": "sha256:005e3b4460f1fe06b52d728f3bacbc42e7f04dc5d6c05d1994776639e8c13afa",
+    "QA-09-2-hybrid.json": "sha256:d850b87e87bef467d1cd47a2d0938bd5ca0bd255450ef987fad0c809917a65d7",
+    "QA-09-3-bm25.json": "sha256:cf0aafdd173391c4f65d5561aa3dc03e40d96796c34eaa00f9d2d5c8a4c31dc4",
+    "QA-09-3-dense.json": "sha256:1ff2b003cc9f6e381809484516d98c360d3f15ae213dff928338108797f16bb1",
+    "QA-09-3-hybrid.json": "sha256:f5dbbb95fcd138289cfcfdaa655d51f0d03b672ddac6445ef6510a62727f1f35"
+  },
+  "nextAnswerExperiment": {
+    "state": "not-dispatched",
+    "newCalls": 0,
+    "model": "ccs-ai/gpt-6.1-sol",
+    "bothArmsRequireFreshAnswers": true,
+    "reason": "The new acceptance model differs from the historical generator; freeze both arms on the same new model and request settings.",
+    "heldOutStatus": "explored-retrospectively",
+    "promotionHeldOut": "new source-family-separated unseen holdout required",
+    "measures": [
+      "correct-and-supported",
+      "answerable-abstentions",
+      "unanswerable-correct-abstentions",
+      "context-sufficiency",
+      "p95",
+      "known-usage",
+      "unknown-cost"
+    ]
+  }
+}

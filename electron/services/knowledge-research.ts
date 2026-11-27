@@ -220,8 +220,7 @@ export function createKnowledgeResearchApi(options: {
               actualTokens: supportSpend.actualTokens, actualCostUsd: supportSpend.actualCostUsd,
               gaps: support.answerability === 'answerable' ? [] : ['semantic-support-' + support.answerability],
               support: { runId: supportOutput.runId, verdicts: support.claims.map(row => ({ ...row,
-                index: review.coverage.indexOf(proposed[row.index]),
-                status: support.answerability === 'conflicting' ? 'uncertain' as const : row.status })) } };
+                index: review.coverage.indexOf(proposed[row.index]) })) } };
           },
           onUpdate: result => { if (current.result?.stopReason !== 'scope-changed') current.result = result; },
         }).then(result => { if (current.result?.stopReason !== 'scope-changed') current.result = result; }, error => {

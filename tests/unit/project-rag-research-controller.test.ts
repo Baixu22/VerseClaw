@@ -494,6 +494,33 @@ describe('Research Main owner and Host contract', () => {
     expect(result.gaps.some(gap => gap.reason === 'semantic-support-incomplete')).toBe(true);
     expect(fixture.modelCalls).toHaveLength(2);
   });
+  it.each(['insufficient', 'conflicting'] as const)('preserves supported subquestions when the overall support is %s', async answerability => {
+    const fixture = setup({ body: 'Gateway port is 8080. The backup path is unresolved.' }), model = hostState.model!;
+    hostState.model = args => {
+      const output = model(args) as { text: string };
+      const body = JSON.parse(output.text);
+      if (String(args[1]).includes('"claimSupportReview":true')) {
+        body.answerability = answerability;
+        body.claims = [
+          { index: 0, status: 'supported', reason: 'The gateway port is stated explicitly.' },
+          { index: 1, status: 'uncertain', reason: 'The backup path is unresolved.' },
+        ];
+      } else {
+        body.coverage.push({ question: 'backup path', sourceId: body.coverage[0].sourceId,
+          quote: 'The backup path is unresolved.', answer: '/backups' });
+      }
+      return { ...output, text: JSON.stringify(body) };
+    };
+    await fixture.api.researchStart({ ...fixture.request, query: 'Gateway port and backup path' });
+    const result = (await fixture.terminal()).research!;
+    expect(result.status).toBe('partial');
+    expect(result.coverage.map(row => row.question)).toEqual(['Gateway port']);
+    expect(result.gaps).toContainEqual({ schema: 'EvidenceGap/v1', question: 'backup path', reason: 'not-covered' });
+    expect(result.gaps.some(gap => gap.question === 'Gateway port' && gap.reason === 'not-covered')).toBe(false);
+    expect(result.gaps.some(gap => gap.reason === 'semantic-support-' + answerability)).toBe(true);
+    expect(fixture.modelCalls).toHaveLength(2);
+  });
+
   it('requires the support call to retain the same owner source and preserves unknown billed usage', async () => {
     const fixture = setup(), model = hostState.model!;
     hostState.model = args => {

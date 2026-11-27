@@ -6,7 +6,7 @@ title: 将经过验证的 G2 检索修复接入主线
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: 确保来源撤权、模型取消、语义支持与费用判断在日常运行版本生效。
-diffBase: 3be7ee7836281ca6455476ef7199d31d5948a706
+diffBase: 4085cd46b9a604e0617e91feff33f6ee8c24d7f0
 touchedAreas:
   - openclaw_runtime/src/knowledge/retrieval/**
   - openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts
@@ -33,6 +33,7 @@ touchedAreas:
   - harness/specs/fixtures/project-rag/**
   - harness/specs/tasks/project-rag-*.md
   - docs/dev/project-rag/**
+  - docs/modules/knowledge-base.md
   - README*.md
   - scripts/repository-artifacts.json
   - .gitignore
@@ -52,6 +53,7 @@ expectedUserBehavior:
   - 查询期间失去读取权限的来源退出当前候选。
   - 取消、替换或禁用模型后，旧请求停止发送并丢弃迟到结果。
   - 多轮检索给出可核对的证据支持与费用状态。
+  - 部分问题有冲突时保留其他已获支持的问题，并继续显示未解决的缺口。
 acceptance:
   - 重排成功、失败、缺少模型、超时和撤权都有明确结果。原始来源及兄弟片段一同接受复验。
   - 预算、语义支持及最终保留源在对应集成路径有效，查询、语料、成本与来源的读回绑定候选。

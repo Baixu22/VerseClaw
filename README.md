@@ -275,7 +275,7 @@ No separate database server is required.
 - Knowledge uses a `memory-wiki` vault plus local governance metadata.
 - Knowledge imports keep same-named sources separate, reviewed creates reject collisions, and interrupted governance commits resume from recorded Wiki effects. Removed preinstalled skills stay removed across restarts.
 - Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
-- In Chat, Research checks whether the retained passages support each part of the question. Remote Wiki search uses the configured embedding or reranking service when its cost fits the request budget. Unresolved questions remain visible.
+- In Chat, Research checks whether the retained passages support each part of the question. Supported parts remain available when another part has conflicting or insufficient evidence; unresolved questions remain visible. Remote Wiki search uses the configured embedding or reranking service when its cost fits the request budget.
 - Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
 - Knowledge uses the main chat’s question bubbles and reply formatting. Click the orange assistant beneath its latest idle reply to pet it. Minimize the conversation to follow its progress from the corner.
 - Open **Knowledge conversations** from the chat composer to resume a saved thread. The book icon beneath a chat reply takes it to the knowledge assistant. **Send to** returns a selected question, answer and citations to the named chat.

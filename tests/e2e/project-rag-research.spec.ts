@@ -210,13 +210,16 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
   const heldRecovery = new Promise<void>(resolve => { releaseRecovery = resolve; });
   const scopeQuestions = Array.from({ length: 9 }, (_, index) => `RAG16_SCOPE_${index + 1}`);
   const scopeQuery = scopeQuestions.join('; ');
+  const partialSupportQuery = 'RAG16 supported port and conflicting backup path';
   const planningCalls: Array<{ query: string; round: number; references: string[] }> = [];
   const llm = await startScriptedLlm(async text => {
     const supportLine = text.split('\n').map(line => line.trim()).find(line => line.startsWith('{"claimSupportReview":true'));
     if (supportLine) {
-      const input = JSON.parse(supportLine) as { question: string; claims: Array<{ index: number }> };
+      const input = JSON.parse(supportLine) as { question: string; claims: Array<{ index: number; question?: string }> };
       return { text: JSON.stringify({ answerability: input.question.includes('conflicting') ? 'conflicting' : 'answerable',
-        claims: input.claims.map(claim => ({ index: claim.index, status: 'supported', reason: 'The retained source states this value.' })) }) };
+        claims: input.claims.map(claim => ({ index: claim.index,
+          status: claim.question?.includes('conflicting') ? 'uncertain' : 'supported',
+          reason: claim.question?.includes('conflicting') ? 'The retained sources contain conflicting values for this question.' : 'The retained source states this value.' })) }) };
     }
     const line = text.split('\n').map(line => line.trim()).find(line => line.startsWith('{"researchPlanning":true'));
     if (!line) return { text: 'RAG16 ordinary reply' };
@@ -238,6 +241,13 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
       coverage: [], inferences: [], conflicts: [], gaps: [],
     }) };
     const find = (path: string) => input.evidence.find(source => source.lookup.endsWith(path))?.sourceId;
+    if (input.query === partialSupportQuery) {
+      const sourceId = find('mixed-support.md');
+      return { text: JSON.stringify({ queries: [], coverage: sourceId ? [
+        { question: input.questions[0], sourceId, quote: 'RAG16 supported port is 8080.', answer: '8080' },
+        { question: input.questions[1], sourceId, quote: 'Backup path is /backup-a. Backup path is /backup-b.', answer: '/backup-a' },
+      ] : [], inferences: [], conflicts: [], gaps: [] }) };
+    }
     const port = find('gateway.md'), archive = find('archive.md'), other = find('other-port.md');
     if (input.query.includes('cancellation')) await held;
     if (input.query === 'Gateway port transport failure') await heldTransport;
@@ -595,6 +605,16 @@ test('Project RAG Research follows evidence gaps and shows bounded progress, can
     receipt.conflict = conflict; steps.realConflictingSources = true;
     await page.getByTestId('chat-research-conflicts').scrollIntoViewIfNeeded();
     await page.screenshot({ path: testInfo.outputPath('research-conflict.png'), fullPage: true });
+    await writeFile(join(vault, 'concepts/mixed-support.md'), raw('RAG16 supported port and conflicting backup path',
+      'RAG16 supported port is 8080. Backup path is /backup-a. Backup path is /backup-b.'));
+    const partialSupport = await execute(partialSupportQuery);
+    expect(partialSupport.status).toBe('partial');
+    expect(partialSupport.coverage.map(row => row.question)).toEqual(['RAG16 supported port']);
+    expect(partialSupport.gaps).toContainEqual({ schema: 'EvidenceGap/v1', question: 'conflicting backup path', reason: 'not-covered' });
+    expect(partialSupport.gaps.some(gap => gap.question === 'RAG16 supported port' && gap.reason === 'not-covered')).toBe(false);
+    await expect(page.getByTestId('chat-research-gaps')).toContainText('conflicting backup path');
+    receipt.partialSupport = partialSupport; steps.supportedSubquestionRetained = true;
+    await page.screenshot({ path: testInfo.outputPath('research-partial-support.png'), fullPage: true });
     const selected = { requestId: multi.plan.requestId, sessionKey: owner.activeSessionKey, workspaceId: owner.id };
     expect((await host(page, 'knowledge', 'researchStatus', { ...selected, workspaceId: 'foreign-project' })).success).toBe(false);
     expect((await host(page, 'knowledge', 'researchStart', { requestId: 'rag16-scope-forgery', query: 'Gateway port', sessionKey: owner.activeSessionKey,
