@@ -1,0 +1,53 @@
+{
+  "candidate": {
+    "commit": "731055fbb90c8d5e8aec439f76e98f51b66389de",
+    "tree": "3c3700f6d0f9cd601a4728f5e21c7ff7c189aebd"
+  },
+  "reviewBaseCommit": "147fc94847f0711c6138dacc84d13f84f054c128",
+  "reviewPatchSha256": "43210257827ccaea17c140befa9338a56a257f0f18ae1c4a1a218135efa35d13",
+  "testedTree": "3c3700f6d0f9cd601a4728f5e21c7ff7c189aebd",
+  "sources": [
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "23dbbbde9425b0cae3d8bdb2916eca7d6ae107ff64df4355224433c8f81edaba",
+      "normalizedSha256": "23dbbbde9425b0cae3d8bdb2916eca7d6ae107ff64df4355224433c8f81edaba",
+      "indexBlob": "1db628f8c426605434bbc3fb21924c9813c2cb84",
+      "gitBlob": "1db628f8c426605434bbc3fb21924c9813c2cb84"
+    },
+    {
+      "path": "docs/modules/resources-and-observability.md",
+      "sha256": "50ab293187e429acf1c465958fb50ab2cd8c23825a92e7f6e6c1d5ba9ccb4080",
+      "normalizedSha256": "50ab293187e429acf1c465958fb50ab2cd8c23825a92e7f6e6c1d5ba9ccb4080",
+      "indexBlob": "03b92c7da28a5c913cc85a34dbda1de0c3037122",
+      "gitBlob": "03b92c7da28a5c913cc85a34dbda1de0c3037122"
+    },
+    {
+      "path": "docs/modules/sessions.md",
+      "sha256": "70c23dcca76daafab1f63a7b587b14cf7ea282805a54aafefe76b2720b7e6917",
+      "normalizedSha256": "70c23dcca76daafab1f63a7b587b14cf7ea282805a54aafefe76b2720b7e6917",
+      "indexBlob": "e664c6ed8d204676cc94c932b4124948dd43ae67",
+      "gitBlob": "e664c6ed8d204676cc94c932b4124948dd43ae67"
+    },
+    {
+      "path": "harness/specs/scenarios/session-collaboration-center.md",
+      "sha256": "3a10004e199451eb929792d00e51fdb8c97c75b8c4830d95cc79213bfd48433a",
+      "normalizedSha256": "3a10004e199451eb929792d00e51fdb8c97c75b8c4830d95cc79213bfd48433a",
+      "indexBlob": "403d1f6037683b74bb7277910af5beeb6c023f7e",
+      "gitBlob": "403d1f6037683b74bb7277910af5beeb6c023f7e"
+    },
+    {
+      "path": "harness/specs/tasks/session-collaboration-e5.md",
+      "sha256": "9cbc0a5f371561bcb2566d5aebbb53abea89aa7c47574ac8b5e11eda438b0f9b",
+      "normalizedSha256": "9cbc0a5f371561bcb2566d5aebbb53abea89aa7c47574ac8b5e11eda438b0f9b",
+      "indexBlob": "3914bf788d82419d655c82bb3858fbba211bf9ab",
+      "gitBlob": "3914bf788d82419d655c82bb3858fbba211bf9ab"
+    },
+    {
+      "path": "tests/e2e/session-collaboration-center.spec.ts",
+      "sha256": "ea16660b8c218f7ad51b6d97848e7cf58ca9d264d9df938e30a6ff8cc9ba49ce",
+      "normalizedSha256": "ea16660b8c218f7ad51b6d97848e7cf58ca9d264d9df938e30a6ff8cc9ba49ce",
+      "indexBlob": "bf380f4e94119743ff5f6e1bd6e473f9839ab9e8",
+      "gitBlob": "bf380f4e94119743ff5f6e1bd6e473f9839ab9e8"
+    }
+  ]
+}

@@ -598,3 +598,7 @@ Mission 和 Task Loop 的派生生命周期证据按工作区串行写入原 Tas
 会话协作详情的“协作提示”显示当前任务依赖、原领取者与租约、只读引用和未结算操作；同任务比较绑定节点、修订和摘要，同文件提示来自两个任务的原 checkpoint 引用。资源信息只读 SessionAdmissionRegistry 的许可、关闭状态与清退等待。UI 和 `sessions_list` 的 coordination 模式共用原 owner 读取，操作经 Task Ledger 原入口重新核对。
 
 分支和交接在原任务事务中固定可继承的材料引用，引用包含原来源代次、版本及内容摘要。模型的 coordination 结果可发现这些引用，再经原材料接口读取；原材料的撤销、替代和权限变化继续生效。桌面同时呈现原接力和迁移日志阶段，以原操作 ID 恢复创建、首发和绑定。
+
+## 协作整链证据
+
+整链场景使用原 TaskSystem 的材料发布和消费事件确认共享结果进入了目标运行，并按原消息 ID 重放验证没有额外模型调用。自动执行身份记为 agent；完整运行入口为 `harness/specs/tasks/session-collaboration-e5.md`。

@@ -1,0 +1,59 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "final-source-r1",
+      "candidate": {
+        "commit": "147fc94847f0711c6138dacc84d13f84f054c128",
+        "tree": "1915a5fde1c3f981f76711ae42d260a800eec6ce",
+        "dirty": false,
+        "workingTree": "1915a5fde1c3f981f76711ae42d260a800eec6ce"
+      },
+      "error": "Check failed: eslint",
+      "rawReportSha256": "0041ab45861fa476b99b00c2cdf247b7d6d2e5fb87e3617237f812d823efaebe",
+      "steps": [
+        {
+          "id": "contract",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "i18n",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-replay",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "comms-compare",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "harness-validate",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "harness-dry-run",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "electron-collect",
+          "exitCode": 0,
+          "tests": null
+        },
+        {
+          "id": "eslint",
+          "exitCode": 1,
+          "tests": null
+        }
+      ]
+    }
+  ],
+  "retainedRawDirectory": "D:\\tmp\\session-collaboration-e5-closeout-20261128"
+}
