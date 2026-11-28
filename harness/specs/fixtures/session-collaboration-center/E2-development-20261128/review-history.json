@@ -1,0 +1,56 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "autoreview-r1",
+      "receipt": {
+        "candidate": "e57aff2ef3cfc6207e182aa7e50369689b28b953",
+        "tree": "7abe42642348ff2d4eaaa63310b269f9bf2a8b06",
+        "patchSha256": "99a7978afec72637edec9f3d10bc09b446da72a05bb8641af374aa1e1d6e8b6a",
+        "datasetSha256": "bdf7a93d7b3874acc79d2f91ee242b933af55969fef02ca2a2b05057f6980134",
+        "argv": [
+          "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\tmp\\session-collaboration-e2-20261128\\review-with-raw.py",
+          "D:\\tmp\\session-collaboration-e2-20261128\\autoreview-r1-engine.json",
+          "--mode",
+          "local",
+          "--base",
+          "e57aff2ef3cfc6207e182aa7e50369689b28b953",
+          "--engine",
+          "codex",
+          "--stream-engine-output",
+          "--model",
+          "ccs-ai/gpt-6.1-sol",
+          "--thinking",
+          "high",
+          "--no-web-search",
+          "--prompt-file",
+          "D:\\tmp\\session-collaboration-e2-20261128\\autoreview-r1-notes.md",
+          "--dataset",
+          "D:\\tmp\\session-collaboration-e2-20261128\\autoreview-r1-dataset.json",
+          "--output",
+          "D:\\tmp\\session-collaboration-e2-20261128\\autoreview-r1.txt",
+          "--json-output",
+          "D:\\tmp\\session-collaboration-e2-20261128\\autoreview-r1.json"
+        ],
+        "exitCode": 0,
+        "seconds": 377.547,
+        "model": "ccs-ai/gpt-6.1-sol",
+        "driven_by": "agent",
+        "actor": "codex/session-collaboration-e2",
+        "sourceUnchanged": true
+      },
+      "receiptSha256": "1918adae4fd1481f81101f780686f62d54f2551dae10197e683f2e7d3a391133",
+      "result": {
+        "findings": [],
+        "overall_confidence": 0.83,
+        "overall_correctness": "patch is correct",
+        "overall_explanation": "检查了 E2 的材料引用捕获与读取授权、同会话迁移回读、桌面操作状态投影、模型材料准入及异步界面结果处理；未发现可复现的新增缺陷。"
+      },
+      "resultSha256": "42042b9431ec6bb85af87bdb341c3ecdc9ce02a0caa8f053af588da521ee4ed8"
+    }
+  ]
+}

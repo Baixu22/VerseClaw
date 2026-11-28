@@ -447,3 +447,5 @@ Global-session forks and command hooks use the selected agent, or the configured
 Initial and updated compaction summaries preserve active user-designated statements as complete verbatim lines. The [2026-11-16 recovery acceptance](harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-candidate-6115256e-20261116/REPORT.zh-CN.md) records 505 passing regression executions, 120/120 preserved facts and 15/15 correct candidate fault outcomes; two legacy runs match all 15 slots. GA remains NO_GO: recovery P50/P95 is 17.439/83.204 seconds, and the build timing and source LOC gates fail.
 
 Coordination hints in session details show original task prerequisites, recorded writer leases, shared artifact references, and admission observations. Open the original task to act; passive reads do not acquire work or dispatch models.
+
+Forks and task transfers retain bounded references to the original collaboration material versions. Session details show their sources and the existing handoff or migration stage, with links to inspect the material and resume through the original session controls.

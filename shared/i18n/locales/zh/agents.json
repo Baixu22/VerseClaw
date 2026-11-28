@@ -157,6 +157,40 @@
                 "observed": "准入观测：{{active}} 个在途许可，{{waiting}} 个清退等待。"
             },
             "taskUnavailable": "TaskSystem 来源不可用，暂时无法确认任务关联。"
+        },
+        "continuity": {
+            "title": "连续性与恢复",
+            "description": "引用保留原版本和来源，读取与执行资格由原入口核验。",
+            "bounded": "这里只列出最近的有界引用。",
+            "material": "读取 {{id}} · v{{version}}",
+            "task": "任务 {{id}} · 修订 {{revision}}",
+            "pending": "等待创建",
+            "draftRetained": "原草稿已保留",
+            "firstSend": "首次投递",
+            "checkout": "检出引用",
+            "open": "打开会话与恢复",
+            "kind": {
+                "fork": "分支",
+                "handoff": "接力",
+                "migration": "执行环境迁移"
+            },
+            "phase": {
+                "creating": "创建中",
+                "ready": "已就绪",
+                "sending": "发送中",
+                "accepted": "已接收",
+                "sent": "已发送",
+                "failed": "失败",
+                "unknown": "结果未知",
+                "intent": "意图已记录",
+                "fenced": "已隔离",
+                "drained": "已排空",
+                "reserved": "已预留",
+                "session-committed": "会话已迁移",
+                "task-committed": "任务已交接",
+                "binding-committed": "绑定已保存",
+                "confirmed": "已确认"
+            }
         }
     },
     "title": "Agents",

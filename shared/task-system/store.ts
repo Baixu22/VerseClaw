@@ -35,6 +35,7 @@ import { MATERIAL_SCAN_LIMIT, materialReference, materialSource, parseSessionCol
   type SessionCollaborationMaterialRef, type SessionCollaborationMaterialStatus } from '../types/session-collaboration-material.js';
 import { normalizeAutonomySessionScope, normalizeRunScope, type AutonomySessionScope } from '../types/identity-scope.js';
 import type { TaskCoordinationFacts } from '../types/session-collaboration-hints.js';
+import type { TaskCollaborationContinuity } from '../types/session-collaboration-continuity.js';
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
@@ -1205,7 +1206,8 @@ export class TaskSystemStore {
         pendingOperations: target.pendingOperations,
         dependencies: (target.contract.dependencies ?? []).map(taskNodeId => ({ taskNodeId,
           state: this.read<TaskContract>('SELECT json FROM task_contracts WHERE id=?', taskNodeId)?.state ?? 'unknown' })),
-        relation: peer ? sameTask ? 'same-task' : sharedArtifacts.length ? 'shared-artifact' : 'different' : 'unknown', sharedArtifacts };
+        relation: peer ? sameTask ? 'same-task' : sharedArtifacts.length ? 'shared-artifact' : 'different' : 'unknown', sharedArtifacts,
+        continuity: this.collaborationContinuity(sessionKey, generation, taskNodeId) };
       this.assertReadCurrent();
       return facts;
     } finally { this.db.exec('RELEASE SAVEPOINT task_coordination_snapshot'); }
@@ -1264,7 +1266,32 @@ export class TaskSystemStore {
     if (generation && row.generation !== generation) throw new Error("TASK_GENERATION_STALE");
     return { ...this.view(row.task_id), ...(!writer ? { referenceOnly: true } : {}) };
   }
-  inheritReference(sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string): TaskView | null {
+  collaborationContinuity(sessionKey: string, generation: string, taskNodeId: string): TaskCollaborationContinuity[] {
+    this.assertReadCurrent();
+    return (this.db.prepare(`SELECT json FROM task_events WHERE task_id=? AND kind='shared_material_continuity'
+      AND json_extract(json,'$.sessionKey')=? AND json_extract(json,'$.generation')=? ORDER BY seq DESC LIMIT 8`)
+      .all(taskNodeId, sessionKey, generation) as Row[]).map(row => JSON.parse(row.json) as TaskCollaborationContinuity);
+  }
+  private recordCollaborationContinuity(kind: TaskCollaborationContinuity['kind'], source: TaskView,
+    sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string, before?: number) {
+    // Historical transcript timestamps have millisecond precision: exclude the ambiguous boundary millisecond.
+    const cutoff = before === undefined ? Number.MAX_SAFE_INTEGER : before - 1;
+    const publications = (this.db.prepare(`SELECT json FROM task_events WHERE task_id=? AND kind='shared_material_published'
+      AND json_extract(json,'$.sourceRun.scope.sessionKey')=? AND json_extract(json,'$.sourceGeneration')=?
+      AND json_extract(json,'$.sensitivity')='internal' AND json_extract(json,'$.createdAt')<=? ORDER BY seq DESC LIMIT 5`)
+      .all(source.contract.taskNodeId, sourceSessionKey, sourceGeneration, cutoff) as Row[])
+      .map(row => JSON.parse(row.json) as SessionCollaborationMaterial);
+    const inherited = this.collaborationContinuity(sourceSessionKey, sourceGeneration, source.contract.taskNodeId)
+      .flatMap(item => item.materials).map(item => this.originalSharedMaterial(item.ref)).filter((item): item is SessionCollaborationMaterial => Boolean(item));
+    const materials = [...new Map([...publications, ...inherited].filter(item => item.sensitivity === 'internal' && item.createdAt <= cutoff
+      && ['claim', 'evidence-backed'].includes(this.sharedMaterialStatus(item, materialSource(item), this.now()).state))
+      .map(item => [JSON.stringify(materialReference(item)), { source: materialSource(item), ref: materialReference(item) }])).values()];
+    const { taskNodeId, revision, digest, state } = source.contract;
+    this.event(taskNodeId, 'shared_material_continuity', { kind, sourceSessionKey, sourceGeneration, sessionKey, generation,
+      task: { taskNodeId, revision, digest, state }, capturedAt: this.now(), materials: materials.slice(0, 4),
+      truncated: materials.length > 4 || publications.length > 4 } satisfies TaskCollaborationContinuity);
+  }
+  inheritReference(sourceSessionKey: string, sourceGeneration: string, sessionKey: string, generation: string, before?: number): TaskView | null {
     text(sessionKey, "SESSION", 300); text(generation, "GENERATION", 200);
     if (sourceSessionKey === sessionKey) throw new Error("TASK_REFERENCE_SELF");
     return this.transaction(() => {
@@ -1277,6 +1304,7 @@ export class TaskSystemStore {
       }
       this.db.prepare("INSERT INTO task_references VALUES(?,?,?,?)").run(sessionKey, source.contract.taskNodeId, generation, "observer");
       this.event(source.contract.taskNodeId,"reference_inherited",{sourceSessionKey,sourceGeneration,sessionKey,generation});
+      this.recordCollaborationContinuity('fork', source, sourceSessionKey, sourceGeneration, sessionKey, generation, before);
       return this.binding(sessionKey,generation);
     });
   }
@@ -1910,6 +1938,8 @@ export class TaskSystemStore {
         .run(c.sessionKey, c.taskNodeId, c.generation, c.epoch);
       this.saveContract({ ...view.contract, state: "doing", updatedAt: this.now() });
       this.event(c.taskNodeId, "handoff", c);
+      this.recordCollaborationContinuity(credential.sessionKey === sessionKey ? 'migration' : 'handoff', view,
+        credential.sessionKey, credential.generation, sessionKey, generation);
       return this.get(c.taskNodeId);
     });
   }

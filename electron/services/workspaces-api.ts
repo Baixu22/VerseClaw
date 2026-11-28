@@ -50,6 +50,8 @@ import { recordPermissionDecisionEvent } from './permissions-api';
 import { commitTaskLedgerEvents, normalizeTaskLedgerWorkspaceId } from './task-ledger-service';
 import { normalizeRunScope, normalizeTaskReference } from '@shared/types/identity-scope';
 import type { SessionHandoffOperation } from '@shared/types/session-handoff';
+import type { AutonomySessionScope } from '@shared/types/identity-scope';
+import type { CollaborationContinuityOperation } from '@shared/types/session-collaboration-continuity';
 import type { ExecutionMigrationOperation, WorkspaceExecutionMigrationPayload } from '@shared/types/execution-migration';
 import {
   parseSessionTaskEffectRequest,
@@ -731,6 +733,33 @@ export async function readWorkspaceHandoffOperation(input: {
     && (operation.sourceSessionKey === input.sessionKey || operation.sessionKey === input.sessionKey)
     && (!input.operationId || operation.id === input.operationId));
   return operations.toSorted((left, right) => right.createdAt.localeCompare(left.createdAt))[0] ?? null;
+}
+
+export async function readWorkspaceCollaborationContinuity(scope: AutonomySessionScope): Promise<CollaborationContinuityOperation[]> {
+  const document = await readDocument();
+  const entries: Array<{ at: string; value: CollaborationContinuityOperation }> = [];
+  const checkout = (root: string) => createHash('sha256').update(root).digest('hex').slice(0, 16);
+  for (const profile of document.profiles) {
+    if (profile.id === scope.workspaceId) for (const operation of Object.values(profile.handoffOperations ?? {})) {
+      if ((operation.sourceSessionKey !== scope.sessionKey || operation.sourceGeneration !== scope.sessionGeneration)
+        && (operation.sessionKey !== scope.sessionKey || operation.sessionGeneration !== scope.sessionGeneration)) continue;
+      entries.push({ at: operation.updatedAt, value: { kind: 'handoff', id: operation.id, phase: operation.phase,
+        sourceWorkspaceId: operation.workspaceId, targetWorkspaceId: operation.workspaceId,
+        sourceSessionKey: operation.sourceSessionKey, sourceGeneration: operation.sourceGeneration,
+        sessionKey: operation.sessionKey, generation: operation.sessionGeneration, draftRetained: Boolean(operation.draftInput),
+        firstSendIdempotencyKey: operation.firstSendIdempotencyKey, ...(operation.receipt ? { run: operation.receipt.run } : {}) } });
+    }
+    for (const operation of Object.values(profile.executionMigrations ?? {})) {
+      if (operation.sessionKey !== scope.sessionKey || !((operation.workspaceId === scope.workspaceId && operation.sourceGeneration === scope.sessionGeneration)
+        || (operation.targetWorkspaceId === scope.workspaceId && operation.targetGeneration === scope.sessionGeneration))) continue;
+      entries.push({ at: operation.updatedAt, value: { kind: 'migration', id: operation.id, phase: operation.phase,
+        sourceWorkspaceId: operation.workspaceId, targetWorkspaceId: operation.targetWorkspaceId,
+        sourceSessionKey: operation.sessionKey, sourceGeneration: operation.sourceGeneration,
+        sessionKey: operation.sessionKey, generation: operation.targetGeneration, draftRetained: false,
+        sourceCheckout: checkout(operation.sourceRoot), targetCheckout: checkout(operation.targetRoot) } });
+    }
+  }
+  return [...new Map(entries.sort((a, b) => b.at.localeCompare(a.at)).map(item => [item.value.kind + ':' + item.value.id, item.value])).values()].slice(0, 8);
 }
 
 export async function updateWorkspaceHandoffOperation(

@@ -62,6 +62,22 @@ it('shows an unavailable task source alongside the available admission observati
   expect(screen.queryByText('collaboration.hints.noTask')).toBeNull();
 });
 
+it('shows original transition and recovery phases and opens the existing session entry', async () => {
+  const openSession = vi.fn();
+  mocks.read.mockResolvedValueOnce({ success: true, hints: { ...page, task: { ...page.task, continuity: [{ kind: 'fork',
+    sourceSessionKey: reader.sessionKey, sourceGeneration: reader.sessionGeneration, sessionKey: target.sessionKey,
+    generation: target.sessionGeneration, task: page.task.task, capturedAt: 1, truncated: false, materials: [] }] },
+    continuityOperations: [{ kind: 'handoff', id: 'original-operation', phase: 'unknown', sourceWorkspaceId: 'workspace', targetWorkspaceId: 'workspace',
+      sourceSessionKey: reader.sessionKey, sourceGeneration: reader.sessionGeneration, sessionKey: target.sessionKey, generation: target.sessionGeneration,
+      draftRetained: true, firstSendIdempotencyKey: 'handoff-first:original-operation' }] } });
+  render(<MemoryRouter><SessionCollaborationHints target={target} openSession={openSession} /></MemoryRouter>); open();
+  await screen.findByTestId('collaboration-continuity');
+  expect(screen.getByText('original-operation')).toBeTruthy();
+  expect(screen.getByText('collaboration.continuity.draftRetained')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'collaboration.continuity.open' }));
+  expect(openSession).toHaveBeenCalledOnce();
+});
+
 it('coalesces notifications during a pending read and shows each completed observation', async () => {
   vi.useFakeTimers();
   const finish: Array<(value: unknown) => void> = [];

@@ -157,6 +157,40 @@
                 "observed": "実行許可の観測：使用中 {{active}} 件、終了待ち {{waiting}} 件。"
             },
             "taskUnavailable": "TaskSystem を取得できないため、タスクの関連付けは不明です。"
+        },
+        "continuity": {
+            "title": "継続と復旧",
+            "description": "参照は元の版と出典を保持します。アクセスと実行権限は元の管理機構で検証します。",
+            "bounded": "直近の参照を上限付きで表示します。",
+            "material": "{{id}} を読む · v{{version}}",
+            "task": "タスク {{id}} · 改訂 {{revision}}",
+            "pending": "作成待ち",
+            "draftRetained": "元の下書きを保持",
+            "firstSend": "初回送信",
+            "checkout": "チェックアウト参照",
+            "open": "セッションと復旧を開く",
+            "kind": {
+                "fork": "分岐",
+                "handoff": "引き継ぎ",
+                "migration": "実行環境の移行"
+            },
+            "phase": {
+                "creating": "作成中",
+                "ready": "準備完了",
+                "sending": "送信中",
+                "accepted": "受理済み",
+                "sent": "送信済み",
+                "failed": "失敗",
+                "unknown": "結果不明",
+                "intent": "意図を記録",
+                "fenced": "隔離済み",
+                "drained": "排出済み",
+                "reserved": "予約済み",
+                "session-committed": "セッション移行済み",
+                "task-committed": "タスク移管済み",
+                "binding-committed": "関連付け保存済み",
+                "confirmed": "確認済み"
+            }
         }
     },
     "title": "Agents",

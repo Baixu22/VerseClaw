@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { emptyCollaborationHints, parseCollaborationHintsQuery } from '../../../../shared/types/session-collaboration-hints.js';
+import { canReadMaterial } from '../../../../shared/types/session-collaboration-material.js';
 import { parseAgentSessionKey } from '../../routing/session-key.js';
 import { sessionAdmissionRegistry } from '../../sessions/session-admission-registry.js';
 import { loadSessionEntry } from '../session-utils.js';
@@ -32,6 +33,15 @@ export async function readSessionCollaborationHints(value: unknown, context: Gat
           readerAccess?.domain.id === access.domain.id && readerAccess.domain.database === access.domain.database
             ? { sessionKey: query.requester.sessionKey, generation: query.requester.sessionGeneration } : undefined);
         page.taskReadState = page.task ? 'ready' : 'empty';
+        if (page.task?.continuity) for (const transition of page.task.continuity) {
+          transition.materials = transition.materials.filter(item => {
+            if (!canReadMaterial(query.requester, item.source, 'internal')) return false;
+            try { return mayReadCollaborationSource(query.requester, item.source, context); }
+            catch { return transition.kind === 'migration' && item.source.sessionKey === query.target.sessionKey
+              && item.source.sessionGeneration === transition.sourceGeneration
+              && mayReadCollaborationSource(query.requester, query.target, context); }
+          });
+        }
       } finally { store.close(); }
     } else page.reason = 'task-owner-missing';
     const agentId = parseAgentSessionKey(query.target.sessionKey)?.agentId;

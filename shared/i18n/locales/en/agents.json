@@ -157,6 +157,40 @@
                 "observed": "Admission observation: {{active}} active permits; {{waiting}} drain waiters."
             },
             "taskUnavailable": "TaskSystem is unavailable; the task association is unknown."
+        },
+        "continuity": {
+            "title": "Continuity and recovery",
+            "description": "References retain their original version and source. Access and execution permissions are checked by their owners.",
+            "bounded": "Only the most recent references are shown.",
+            "material": "Read {{id}} · v{{version}}",
+            "task": "Task {{id}} · revision {{revision}}",
+            "pending": "Awaiting creation",
+            "draftRetained": "Original draft retained",
+            "firstSend": "First delivery",
+            "checkout": "Checkout reference",
+            "open": "Open session and recovery",
+            "kind": {
+                "fork": "Fork",
+                "handoff": "Handoff",
+                "migration": "Execution migration"
+            },
+            "phase": {
+                "creating": "Creating",
+                "ready": "Ready",
+                "sending": "Sending",
+                "accepted": "Accepted",
+                "sent": "Sent",
+                "failed": "Failed",
+                "unknown": "Outcome unknown",
+                "intent": "Intent recorded",
+                "fenced": "Fenced",
+                "drained": "Drained",
+                "reserved": "Reserved",
+                "session-committed": "Session moved",
+                "task-committed": "Task transferred",
+                "binding-committed": "Binding saved",
+                "confirmed": "Confirmed"
+            }
         }
     },
     "title": "Agents",

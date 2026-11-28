@@ -30,7 +30,7 @@ vi.mock('@electron/services/long-session-resource-reclamation', () => ({ reclaim
 import { createSessionsApi } from '@electron/services/sessions-api';
 import { createChatApi } from '@electron/services/chat-api';
 import { createTaskLedgerApi } from '@electron/services/task-ledger-api';
-import { createWorkspacesApi } from '@electron/services/workspaces-api';
+import { createWorkspacesApi, readWorkspaceCollaborationContinuity } from '@electron/services/workspaces-api';
 import { GatewayRpcError } from '@electron/gateway/protocol';
 
 type Session = { key: string; sessionId: string; parentSessionKey?: string; spawnedBy?: string; hasActiveRun?: boolean };
@@ -107,6 +107,19 @@ beforeEach(async () => {
 afterEach(async () => { await rm(state.root, { recursive: true, force: true }); });
 
 describe('durable handoff owner', () => {
+  it('projects the persisted handoff identity and draft retention after a lost creation response', async () => {
+    lostCreate = true;
+    await expect(services().sessions.createHandoff(payload())).rejects.toThrow('creation response lost');
+    const scope = { workspaceId: 'workspace-a', projectId: 'workspace-a', sessionKey: source, sessionGeneration: 'source-generation' } as const;
+    const pending = await readWorkspaceCollaborationContinuity(scope as never);
+    expect(pending).toMatchObject([{ id: payload().operationId, kind: 'handoff', phase: 'creating', draftRetained: true }]);
+    expect(JSON.stringify(pending)).not.toContain(payload().draftInput);
+    const ready = await services().sessions.createHandoff(payload());
+    const inherited = await readWorkspaceCollaborationContinuity({ ...scope, sessionKey: ready.sessionKey!, sessionGeneration: ready.operation!.sessionGeneration! } as never);
+    expect(inherited).toMatchObject([{ id: pending[0].id, sessionKey: pending[0].sessionKey, phase: 'ready', firstSendIdempotencyKey: ready.operation!.firstSendIdempotencyKey }]);
+    expect(await readWorkspaceCollaborationContinuity({ ...scope, sessionGeneration: 'wrong-generation' } as never)).toEqual([]);
+    expect(rpc.mock.calls.filter(([method]) => method === 'sessions.create')).toHaveLength(1);
+  });
   it('retains one pending child while source resources remain unresolved without a writer binding', async () => {
     sourceResourcesBusy = true;
     await expect(services().sessions.createHandoff(payload())).rejects.toThrow('HANDOFF_SOURCE_WRITER_BUSY');

@@ -1,0 +1,31 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "core-r2",
+      "candidate": {
+        "commit": "e57aff2ef3cfc6207e182aa7e50369689b28b953",
+        "tree": "7abe42642348ff2d4eaaa63310b269f9bf2a8b06",
+        "dirty": true,
+        "workingTree": "a6115ee0a68ded28d5668fa4725b6f03cfc266d7"
+      },
+      "error": "Unit checks failed: session-collaboration-continuity.test.ts",
+      "rawReportSha256": "e7ef8755c9c72f8f077f5bdd5f20784e1f3b5f0365a93ef60eef6f59ceaa4843",
+      "steps": [
+        {
+          "id": "01-session-collaboration-continuity.test",
+          "exitCode": 1,
+          "tests": {
+            "success": false,
+            "numTotalTests": 6,
+            "numPassedTests": 5,
+            "numFailedTests": 1,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        }
+      ]
+    }
+  ],
+  "retainedRawDirectory": "D:\\tmp\\session-collaboration-e2-20261128"
+}

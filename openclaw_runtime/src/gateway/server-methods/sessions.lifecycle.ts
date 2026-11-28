@@ -617,7 +617,7 @@ export const sessionsLifecycleHandlers: GatewayRequestHandlers = {
       respond(false, undefined, created.error);
       return;
     }
-    inheritExecutionTaskReference(source.entry.workspaceDir ?? source.entry.spawnedWorkspaceDir ?? resolveAgentWorkspaceDir(cfg,sourceAgentId),source.canonicalKey,source.entry.sessionId,target.canonicalKey,created.entry.sessionId);
+    inheritExecutionTaskReference(source.entry.workspaceDir ?? source.entry.spawnedWorkspaceDir ?? resolveAgentWorkspaceDir(cfg,sourceAgentId),source.canonicalKey,source.entry.sessionId,target.canonicalKey,created.entry.sessionId,forked.forkedFromTimestamp);
     respond(
       true,
       {
