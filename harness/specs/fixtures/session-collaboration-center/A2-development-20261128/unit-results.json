@@ -1,0 +1,650 @@
+{
+  "driven_by": "agent",
+  "testedTree": "c23fa5191d2fa1ee5d52e1a5c728957cffc62d0e",
+  "files": [
+    {
+      "file": "tests/unit/session-collaboration-panel.test.tsx",
+      "testSourceSha256": "175879b5cb1567bd66edbd0bdbbac25cfff820e9d632aafb411ae7ffafe6168b",
+      "rawResultSha256": "cb4eb10fc80347d3341d3e7dfa2f1a87c65fce0f21fa58dc91695eceb7b53838",
+      "passed": 14,
+      "total": 14,
+      "assertions": [
+        {
+          "name": "shared collaboration panel clears a previously visible list and fences late details when access is revoked during-read",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel clears a previously visible list and fences late details when access is revoked before-refresh",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel keeps an authorized selection hidden by a list filter",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel shows a paused subscription when its acknowledgement cannot be saved",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel keeps an unread requester separate from a real empty result",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel passes the scoped action to the chat owner after activating the selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel qualifies stop through the Host reader before calling its scoped owner",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel loads only the selected detail, preserves keyboard focus on refresh and cancels on unmount",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel recovers an expired page cursor while keeping the filter and selected session",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel does not display a late previous-workspace reply under a new requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel fences selected detail when the target is no longer visible",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel replays the selected watch when Gateway reconnects before the pending wait fails",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel opens the worker after its parent switch changes the requester",
+          "status": "passed"
+        },
+        {
+          "name": "shared collaboration panel marks retained details stale when their watch loses the source",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-query.test.ts",
+      "testSourceSha256": "1fd8b0a156f1530cd0ce4a8c4afdba9f78212e6698df760074429066848c76a2",
+      "rawResultSha256": "31210114dabb2d709ed874869192007315da28fb5273a0134a68aadd697e228c",
+      "passed": 35,
+      "total": 35,
+      "assertions": [
+        {
+          "name": "uses the same Main-owned Gateway for watch and cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "exposes coordination observations through the existing sessions_list and Gateway route without writes",
+          "status": "passed"
+        },
+        {
+          "name": "reads a bounded final material batch through the Gateway and rejects a reset during its reply",
+          "status": "passed"
+        },
+        {
+          "name": "releases cancelled and expired Gateway waits while their initial owner reads are pending",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns the same owner-backed scopes, goals, actions and task references through UI and both existing session tools without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps owned runs running without observed actions and rejects empty ready actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes failed owner reads from missing reply envelopes across Main, UI and both tools",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail filters by real TaskSystem goals and workspace without switching the active workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps an unverifiable goal unknown while filtering metadata rows that have no session identity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reuses one read-only TaskSystem connection per execution root and reads no transcript bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail attempts an incompatible TaskSystem schema only once per execution root and preserves its bytes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail returns bounded Unicode goals and preserves the full TaskSystem objective at the A1 detail entry",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail reads an original in-flight tool request with its own run identity and removes it when the owner settles",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves a foreign admission scope for the same key and generation and rejects its actions across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail pages using a scoped metadata cursor and rejects old generations and cursor identities",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail invalidates a cursor after metadata label or effective visibility changes",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail keeps unselected fields not_read and bounds discovery to a single 100-candidate scan",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail distinguishes verified empty tasks, idle runs, unavailable owners and unknown activity",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail fences reset during the owner join and never reuses a current-session result for another workspace",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original self visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original tree visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail applies original agent visibility before hydrating task details",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rechecks visibility authorization after owner hydration across all consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rechecks a2a authorization after owner hydration across all consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rechecks sandbox authorization after owner hydration across all consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rechecks final-owner-await authorization after owner hydration across all consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail uses existing A2A allow rules and sandbox clamps without accepting policy overrides from parameters",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects model edits, spoofed requesters and stale sender generations on readOnly tool requests",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects malformed, unselected and cross-scope replies consistently at Main, UI and tool consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail preserves unknown search matches and rejects a fabricated empty page across consumers",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":51}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"limit\":0}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"fields\":[\"unknown\"]}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"cursor\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+          "status": "passed"
+        },
+        {
+          "name": "A2 shared session discovery and detail rejects an unbounded or authority-bearing query before owner hydration: {\"requester\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:a2-a\",\"sessionGeneration\":\"generation-a\",\"writeClaim\":true}}",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-summary-bounded-read.test.ts",
+      "testSourceSha256": "adb1f08d39fdc6d3133f053f634cdb4ebcd37dd1f503ff1d8a5183bc62e529a7",
+      "rawResultSha256": "66cb9c9b95d1b19d61c5324daa086c7a0ccb6f782e654d97298695711bdbc945",
+      "passed": 3,
+      "total": 3,
+      "assertions": [
+        {
+          "name": "collaboration field and page limits keeps the same normalized defaults across UI and tool parsing",
+          "status": "passed"
+        },
+        {
+          "name": "bounded session summaries reads only the bounded head and tail and preserves a line ending exactly at the head boundary",
+          "status": "passed"
+        },
+        {
+          "name": "bounded session summaries deduplicates keys, caps one request at 100 sessions, and reads sessions.json once per agent",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-identity.test.ts",
+      "testSourceSha256": "36cfd0b41e9b61923372378775faa92863273c6761e179520f7b65210d2f0f16",
+      "rawResultSha256": "1d8fc485a8774feb999b1a8e28c068c40f80cb8c607aa19682cb697b2bcce5bd",
+      "passed": 20,
+      "total": 20,
+      "assertions": [
+        {
+          "name": "A1 owner-backed collaboration identity reads two independent sessions and an embedded child through the same Runtime and typed Main owner contract without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects workspace without returning a current-session fallback",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects project without returning a current-session fallback",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects generation without returning a current-session fallback",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects missing-owner without returning a current-session fallback",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity distinguishes not read, owner-confirmed empty tasks, unknown workspace, and unavailable task owner",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity does not initialize an absent session or execution owner while querying",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity keeps generation-less runs and missing child run owners unknown rather than confirming idle",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity fences old task generations and execution binding revisions",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity discards the whole join when reset happens while the Task owner is read",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity discards a reset during Main await and rejects old workspace binding revisions before RPC",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects a binding changed during the Host read, and preserves a missing binding as a source gap",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity checks bindings after the final Runtime await and validates ScopedRun identities",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity refuses unverified legacy replies, another scope, and a missing workspace without reading current Git or ledger",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{}}",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\"},\"writeClaim\":true}",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\"},\"expectedBindingRevision\":0}",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\"},\"expectedExecution\":{\"authorityId\":\"forged\",\"writeClaim\":true}}",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity rejects malformed and authority-bearing input: {\"scope\":{\"workspaceId\":\"workspace-a\",\"projectId\":\"workspace-a\",\"sessionKey\":\"agent:main:collaboration-a\",\"sessionGeneration\":\"generation-a\",\"authority\":\"writer\"}}",
+          "status": "passed"
+        },
+        {
+          "name": "A1 owner-backed collaboration identity opens TaskSystem read-only without migration or write effects and keeps the checkout incarnation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/host-api-facade.test.ts",
+      "testSourceSha256": "f95b0ea0831d26ed760b1965c9f3698057b49f0d846eda2cf0d9a6e67e728d03",
+      "rawResultSha256": "aa31a92e8c74cfa06f8befd0bab8c2787bbcaff3de4be5f0a545bf47a9b8039d",
+      "passed": 49,
+      "total": 49,
+      "assertions": [
+        {
+          "name": "hostApi facade discovers collaboration facts through typed Main host:invoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade reads a collaboration scope through typed Main host:invoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade reads system portfolio and project identity through Main",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes handoff creation through Main with the source session and edited draft",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes the typed session stop surface through the sessions module",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls settings.getAll through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes diagnostics.exportSupportBundle through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade throws response errors",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls settings.setMany and reset through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes project rules methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes agent browser methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes code review methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes Remote Forge reads through the typed host facade",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes openclaw, shell, dialog, window, and updates methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes uv installer setup through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes dcsProdFlags methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes vtoken methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade routes git methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade passes log file path and tail lines through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls channels.accounts through hostInvoke with options",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade passes channel credential validation payload through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade passes channel target lookup payload through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls agents.list through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls providers.list through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade passes provider validation payload through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade passes provider OAuth requests through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls chat.sendWithMedia through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls work provider APIs through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls knowledge APIs through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls sessions.summaries through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls session compaction methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls clawGraph methods through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls cron.list through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls skills.clawhubList through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls usage.recentTokenHistory through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls observability queryTraces through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls observability trajectorySessions and trajectoryHistory through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade calls observability reportTrace through hostInvoke",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade keeps hostApi response types on facade methods instead of call-site generics",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade uses a function-shaped host API contract to type host invocations",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade keeps async handler flexibility out of the renderer-facing host API contract",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade keeps production main, preload, renderer, and shared imports on their side of the boundary",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade lets service handlers inherit payload types from the host API contract",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade does not keep hostApi-covered legacy direct IPC channels registered",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade does not keep uninvoked direct IPC channels registered",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade does not keep the legacy unified app:request client path",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade does not keep legacy IPC helper exports or production call sites",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade keeps hostApi response shapes imported from the facade instead of redeclared by consumers",
+          "status": "passed"
+        },
+        {
+          "name": "hostApi facade keeps diagnostics on the extension-contributed host API path",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-boundary-owner.test.ts",
+      "testSourceSha256": "79fbd06f313f4bc2acb88ab3f27518b2ed4994c010f6aa645a1df8b0d78e9301",
+      "rawResultSha256": "206b578498b881bce541d1d880567a9f051ad899447f0e61baa687aff5dcf3b6",
+      "passed": 3,
+      "total": 3,
+      "assertions": [
+        {
+          "name": "authorizes the current reader and target together without hydrating task or message owners",
+          "status": "passed"
+        },
+        {
+          "name": "fences the reader reset inside the final target access query",
+          "status": "passed"
+        },
+        {
+          "name": "fences the target reset inside the final target access query",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "tests/unit/session-collaboration-boundary.test.ts",
+      "testSourceSha256": "a0a8d2d98af010e9b85a254de54858cb55fb366718b12f11b488fb313d69a1df",
+      "rawResultSha256": "994fd6f34e3f32f75fe7098882dbad81c49fce703cdc15b8a8d0d3743636436b",
+      "passed": 21,
+      "total": 21,
+      "assertions": [
+        {
+          "name": "actual desktop collaboration reader returns the original receipt to the current reader without changing the owner response",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester workspaceId before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester projectId before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester sessionKey before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a forged requester sessionGeneration before the message owner read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader does not read messages when the active requester is unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects navigation during reader qualification before reading any message",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader discards the receipt after the requester workspace changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader discards the receipt after the requester generation changes during reading",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a reset while the final reader qualification is awaiting its last profile read",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader drops original message data when the target becomes generation-changed during the final reader check",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader drops original message data when the target becomes not-visible during the final reader check",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a navigation away-and-back during collaborationMessages",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a navigation away-and-back during collaborationContext",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader rejects a navigation away-and-back during collaborationMaterials",
+          "status": "passed"
+        },
+        {
+          "name": "actual desktop collaboration reader drops forged receipt bytes and releases the navigation observer on owner failure",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects wrong message id",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects new target generation",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects foreign run",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects task acceptance phase",
+          "status": "passed"
+        },
+        {
+          "name": "receipt intent and reply identity rejects unbound reply",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "rawReportSha256": "67c08c5f5938fa8e943ce88b425b4f74670d919a226fb2529a14e30ce13ee15d"
+}

@@ -1,0 +1,36 @@
+{
+  "driven_by": "agent",
+  "runs": [
+    {
+      "run": "unit-r1",
+      "candidate": {
+        "commit": "2276f853907b2479d62d671cd70e94da88da6396",
+        "tree": "6921aabbede9d3f387897987d35e2f1f66f5556a",
+        "dirty": true,
+        "workingTree": "cc85773b26f8f711dd98ef35c2a0f4726247ba7c"
+      },
+      "error": "",
+      "rawReportSha256": "c19614dc7151be9e9b9d10fc824839939c98ba4af5ebb3195ebe264c24f5e7a0",
+      "steps": [
+        {
+          "id": "01-session-collaboration-query.test",
+          "exitCode": 0,
+          "tests": {
+            "success": true,
+            "numTotalTests": 35,
+            "numPassedTests": 35,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0
+          }
+        },
+        {
+          "id": "02-session-summary-bounded-read.test",
+          "exitCode": 1,
+          "tests": null
+        }
+      ]
+    }
+  ],
+  "retainedRawDirectory": "D:\\tmp\\session-collaboration-a2-closeout-20261128"
+}
