@@ -453,3 +453,5 @@ Forks and task transfers retain bounded references to the original collaboration
 Reloading the same app window restores collaboration drafts and acknowledged watch cursors. An interrupted send resumes as an unknown result and reads its original receipt before retrying. Materials are reread after reconnect or reader changes; stale source contents are cleared.
 
 Saved drafts remain inspectable with their original session generations and can be discarded explicitly. A failed notification cursor save pauses that subscription and shows a recovery warning.
+
+Collaboration message reads use the active desktop session identity. Navigation or a session reset invalidates in-flight message, task-context and material reads, including a switch away and back.

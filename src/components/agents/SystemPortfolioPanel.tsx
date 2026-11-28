@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
@@ -6,11 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSystemPortfolioStore } from '@/stores/system-portfolio';
 import { hostApi } from '@/lib/host-api';
+import { hostEvents } from '@/lib/host-events';
 import type { SystemControlState } from '@shared/types/system-control';
 import type { SystemProjectSnapshot } from '@shared/types/system-portfolio';
 import { ProjectConfigurationPanel } from './ProjectConfigurationPanel';
 import { SessionCollaborationPanel } from './SessionCollaborationPanel';
-import { resolveProjectIdForWorkspace, type AutonomySessionScope } from '@shared/types/identity-scope';
+import type { AutonomySessionScope } from '@shared/types/identity-scope';
 
 export function SystemPortfolioPanel() {
   const { t, i18n } = useTranslation('agents');
@@ -21,6 +22,26 @@ export function SystemPortfolioPanel() {
   const [controlBusy, setControlBusy] = useState(false);
   const [controlError, setControlError] = useState(false);
   const [dispatches, setDispatches] = useState<Record<string, string>>({});
+  const [collaborationScope, setCollaborationScope] = useState<AutonomySessionScope>();
+  useEffect(() => {
+    let revision = 0;
+    const read = async (invalidate = true) => {
+      const token = ++revision;
+      if (invalidate) setCollaborationScope(undefined);
+      try {
+        const result = await hostApi.sessions.collaborationSender();
+        if (token === revision) setCollaborationScope(previous => JSON.stringify(previous) === JSON.stringify(result.source?.scope)
+          ? previous : result.source?.scope);
+      } catch { if (token === revision) setCollaborationScope(undefined); }
+    };
+    const navigation = hostEvents.onWorkspaceNavigationChanged(() => { void read(); });
+    const reconnect = hostEvents.onGatewayStatus(status => { if (status.state === 'running') void read(); });
+    const sessions = hostEvents.onGatewayNotification(event => {
+      if (event.method?.startsWith('sessions.') || event.method?.startsWith('session.')) void read(false);
+    });
+    void read();
+    return () => { revision++; navigation(); reconnect(); sessions(); };
+  }, []);
   useEffect(() => {
     let cancelled = false;
     void refresh();
@@ -56,13 +77,6 @@ export function SystemPortfolioPanel() {
     finally { await refreshAll(); }
   };
   const projects = Object.values(entries).filter(entry => entry.profile.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
-  const collaborationOwner = Object.values(entries).find(entry => entry.snapshot?.coordinator.sessionKey && entry.snapshot.coordinator.generation)?.snapshot;
-  const workspaceId = collaborationOwner?.workspaceId;
-  const sessionKey = collaborationOwner?.coordinator.sessionKey;
-  const generation = collaborationOwner?.coordinator.generation;
-  const collaborationScope = useMemo<AutonomySessionScope | undefined>(() => workspaceId && sessionKey && generation
-    ? { workspaceId, projectId: resolveProjectIdForWorkspace(workspaceId), sessionKey, sessionGeneration: generation } : undefined,
-  [workspaceId, sessionKey, generation]);
   return <section className="h-full overflow-y-auto p-4 sm:p-5" data-testid="system-portfolio" data-scope="system">
     <div className="mx-auto max-w-7xl space-y-3">
       <header className="flex flex-wrap items-start justify-between gap-3">
