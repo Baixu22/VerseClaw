@@ -339,6 +339,7 @@ describe('A2 shared session discovery and detail', () => {
     const before = structuredClone(ownerState());
     const page = (await runtime(query())).page;
     expect(page.items.filter(row => row.sessionKey !== B).every(row => row.sources.tasks.state === 'unavailable')).toBe(true);
+    expect(page.items.find(row => row.sessionKey === B)?.sources.tasks).toMatchObject({ state: 'ready', value: expect.any(Array) });
     expect(mocks.taskOpens.filter(path => path === tasksA.domain.database)).toHaveLength(1);
     expect(ownerState()).toEqual(before);
     receipts.push({ case: 'incompatible-root-single-attempt', page, taskConnections: mocks.taskOpens.slice(), beforeSha256: hash(before), afterSha256: hash(ownerState()) });

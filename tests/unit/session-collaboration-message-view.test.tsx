@@ -5,7 +5,7 @@ import { parseSessionCollaborationQuery } from '../../shared/types/session-colla
 import { normalizeTaskReference } from '../../shared/types/identity-scope';
 const mocks = vi.hoisted(() => ({ list: vi.fn(), sender: vi.fn(), send: vi.fn() }));
 vi.mock('../../src/lib/host-api', () => ({ hostApi: { sessions: { collaborationMessages: mocks.list, collaborationSender: mocks.sender, sendCollaborationMessage: mocks.send } } }));
-vi.mock('../../src/lib/host-events', () => ({ hostEvents: { onGatewayStatus: () => () => {} } }));
+vi.mock('../../src/lib/host-events', () => ({ hostEvents: { onGatewayStatus: () => () => {}, onWorkspaceNavigationChanged: () => () => {} } }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 import { SessionCollaborationMessages } from '../../src/components/agents/SessionCollaborationMessages';
 import { useSessionCollaborationUi } from '../../src/stores/session-collaboration';
@@ -18,6 +18,19 @@ beforeEach(() => {
 });
 const expand = () => { const details = screen.getByTestId('collaboration-messages') as HTMLDetailsElement; details.open = true; fireEvent(details, new Event('toggle')); };
 describe('message view draft ownership', () => {
+  it.each(['rejected', 'expired'])('allocates a new draft ID after recovering a %s receipt', async phase => {
+    const key = JSON.stringify([source, target]);
+    useSessionCollaborationUi.getState().updateMessageDraft(key, { id: 'ended-intent', text: 'A new explicit attempt', purpose: 'request', phase: 'unknown' });
+    mocks.list.mockImplementation(async ({ id }) => ({ success: true, messages: { state: 'ready', items: [], nextCursor: null,
+      receipt: id ? { message: { id, source, target, message: 'A new explicit attempt', purpose: 'request' }, phase } : null } }));
+    render(<SessionCollaborationMessages requester={source} target={target} />); expand();
+    await waitFor(() => expect(useSessionCollaborationUi.getState().messageDrafts[key].phase).toBe('draft'));
+    expect(mocks.send).not.toHaveBeenCalled();
+    const next = useSessionCollaborationUi.getState().messageDrafts[key];
+    expect(next.id).not.toBe('ended-intent'); expect(next.text).toBe('A new explicit attempt');
+    fireEvent.click(screen.getByTestId('collaboration-message-send'));
+    await waitFor(() => expect(mocks.send).toHaveBeenCalledWith(expect.objectContaining({ id: next.id })));
+  });
   it('reads only on expansion and retains an unknown intent across unmount without a new ID', async () => {
     const mounted = render(<SessionCollaborationMessages requester={source} target={target} />);
     expect(mocks.list).not.toHaveBeenCalled(); expand();

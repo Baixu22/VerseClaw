@@ -11,6 +11,7 @@ vi.mock('../../src/lib/host-api', () => ({ hostApi: { sessions: {
   collaborationMaterials: mocks.query, presentCollaborationMaterial: mocks.present, collaborationSender: mocks.sender,
 } } }));
 vi.mock('../../src/stores/session-collaboration', () => ({ subscribeSessionCollaboration: mocks.watch }));
+vi.mock('../../src/lib/host-events', () => ({ hostEvents: { onWorkspaceNavigationChanged: () => () => {}, onGatewayStatus: () => () => {} } }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 import { SessionCollaborationMaterials } from '../../src/components/agents/SessionCollaborationMaterials';
 
@@ -47,6 +48,42 @@ it('opens the exact inherited material version using the current reader without 
   await screen.findByText('Full original material');
   expect(mocks.query).toHaveBeenCalledOnce();
   expect(mocks.query).toHaveBeenCalledWith({ requester: scope, target: scope, ref });
+});
+
+it.each(['revoked', 'expired', 'stale', 'unknown'])('clears the material body when its owner reports %s', async materialState => {
+  mocks.query.mockResolvedValue(reply(detail));
+  render(<MemoryRouter><SessionCollaborationMaterials target={scope} reference={{ source: scope, ref }} /></MemoryRouter>);
+  await screen.findByText('Full original material');
+  await waitFor(() => expect(mocks.watch).toHaveBeenCalledOnce());
+  act(() => mocks.watch.mock.calls[0][1]({ state: 'satisfied', event: { materialState } }));
+  expect(screen.queryByText('Full original material')).toBeNull();
+  expect(screen.queryByTestId('collaboration-material-detail')).toBeNull();
+});
+
+it.each(['revoked', 'expired', 'stale', 'unknown'] as const)('keeps an already %s body cleared when reopening the original reference', async state => {
+  mocks.query.mockResolvedValue(reply({ ...detail, detail: { ...detail.detail!, state } }));
+  render(<MemoryRouter><SessionCollaborationMaterials target={scope} reference={{ source: scope, ref }} /></MemoryRouter>);
+  await waitFor(() => expect(screen.getByRole('status').textContent).toBe('collaboration.materials.changed'));
+  expect(screen.queryByText('Full original material')).toBeNull();
+  expect(screen.queryByTestId('collaboration-material-detail')).toBeNull();
+});
+
+it('clears a previously listed summary when opening discovers its revocation', async () => {
+  mocks.query.mockResolvedValueOnce(reply(listed)).mockResolvedValueOnce(reply({ ...detail, detail: { ...detail.detail!, state: 'revoked' } }));
+  render(<MemoryRouter><SessionCollaborationMaterials /></MemoryRouter>);
+  toggle(true);
+  fireEvent.click(await screen.findByRole('button', { name: /A selected material/ }));
+  await waitFor(() => expect(screen.queryByText('A selected material…')).toBeNull());
+  expect(screen.queryByText('Full original material')).toBeNull();
+});
+
+it.each(['stale', 'empty'] as const)('clears a previously listed summary when its detail becomes %s', async state => {
+  mocks.query.mockResolvedValueOnce(reply(listed)).mockResolvedValueOnce(reply(emptyMaterialPage({ requester: scope }, state)));
+  render(<MemoryRouter><SessionCollaborationMaterials /></MemoryRouter>);
+  toggle(true);
+  fireEvent.click(await screen.findByRole('button', { name: /A selected material/ }));
+  await waitFor(() => expect(screen.queryByText('A selected material…')).toBeNull());
+  expect(screen.queryByTestId('collaboration-material-detail')).toBeNull();
 });
 
 it('uses the active reader from Main while preserving the selected material source', async () => {

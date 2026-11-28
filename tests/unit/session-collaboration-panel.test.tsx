@@ -16,6 +16,7 @@ vi.mock('../../src/lib/host-api', () => ({ hostApi: {
 vi.mock('../../src/lib/host-events', () => ({ hostEvents: {
   onGatewayNotification: (listener: typeof mocks.notification) => { mocks.notification = listener; return () => {}; },
   onGatewayStatus: (listener: typeof mocks.gatewayStatus) => { mocks.gatewayStatus = listener; return () => {}; },
+  onWorkspaceNavigationChanged: () => () => {},
 } }));
 vi.mock('../../src/lib/workspace-session', () => ({ activateWorkspaceScopedSession: mocks.activate }));
 vi.mock('../../src/stores/artifact-panel', () => ({ openWorkspacePanel: mocks.openPanel }));
@@ -57,6 +58,21 @@ beforeEach(() => {
   mocks.watch.mockImplementation(() => new Promise(() => {})); mocks.cancel.mockResolvedValue({ success: true, cancelled: true });
 });
 describe('shared collaboration panel', () => {
+  it('shows a paused subscription when its acknowledgement cannot be saved', async () => {
+    let finish!: (value: unknown) => void;
+    mocks.watch.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    render(<MemoryRouter><SessionCollaborationPanel requester={input.requester} /></MemoryRouter>);
+    fireEvent.click(await screen.findByTestId(`collaboration-row-${encodeURIComponent(b.sessionKey)}`));
+    await waitFor(() => expect(mocks.watch).toHaveBeenCalledOnce());
+    const request = mocks.watch.mock.calls[0][0];
+    const failed = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('Storage unavailable'); });
+    try {
+      await act(async () => finish({ success: true, watch: { schemaVersion: 'SessionCollaborationWatch/v1', id: request.id,
+        state: 'timeout', cursor: 'save-failed', event: null, page: page(request.query) } }));
+      expect((await screen.findByRole('alert')).textContent).toBe('collaboration.recovery.watchSaveFailed');
+      expect(mocks.watch).toHaveBeenCalledOnce();
+    } finally { failed.mockRestore(); }
+  });
   it('keeps an unread requester separate from a real empty result', () => {
     render(<MemoryRouter><SessionCollaborationPanel /></MemoryRouter>);
     expect(screen.getByText('collaboration.requesterMissing')).toBeTruthy(); expect(mocks.query).not.toHaveBeenCalled();
